@@ -1,0 +1,54 @@
+program: 01_uncertainty_comparison.py
+name: uncertainty_method_comparison
+project: uncertainty_comparison
+description: Systematic comparison of RND, RND-Linear, and Elliptical Bonus uncertainty methods on PointMaze
+method: grid
+metric:
+  goal: minimize
+  name: l2_distance
+parameters:
+  # Method selection
+  method:
+    values: ['rnd', 'rnd_linear', 'elliptical']
+  
+  # RND architecture parameters (only used for RND method)
+  output_dim:
+    values: [64, 128, 256, 512, 1024]
+  hidden_dims:
+    values: ['64,64', '128,128', '256,256', '512,512']
+  
+  # Shared φ(s) parameters (only used for RND_Linear and Elliptical)
+  phi_dim:
+    values: [64, 128, 256, 512, 1024]
+  phi_seed:
+    value: 42  # Fixed for consistent φ(s) sharing
+  
+  # Training parameters
+  num_epochs:
+    value: 30
+  subset_ratio:
+    value: 1.0  # All methods use full 10K dataset for fairness
+  
+  # Gaussian noise levels
+  gaussian_noise:
+    values: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  
+  # Data sampling parameters
+  num_samples:
+    value: 10000  # 10K samples per run
+  run_index:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # 10 different random subsets
+  num_averaging_runs:
+    value: 10  # Average over 10 runs with same 10K samples
+  
+  # Experiment parameters
+  seed:
+    values: [0, 1, 2, 3, 4]  # 5 different random seeds for model initialization
+  wandb_switch:
+    value: true
+  
+  # Grid parameters
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
