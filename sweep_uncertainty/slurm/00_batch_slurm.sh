@@ -1,62 +1,61 @@
 #!/bin/bash
 
-# Batch script for launching uncertainty comparison experiments
+#Define two variables with name job_id and cpu_core
+job_id="uncertainty_comparison/5b7g4rqp"
 
-# Define sweep ID (replace with your actual wandb sweep ID)
-job_id="uncertainty_comparison/YOUR_SWEEP_ID"
-
-echo "Starting uncertainty comparison experiments with sweep ID: $job_id"
-echo "Launching multiple SLURM jobs..."
-
-# Launch GPU jobs
-for i in $(seq 1 5); do
-    echo "Launching GPU job $i..."
+for i in $(seq 1 1); do
     sbatch slurm/01_run_gpu.slurm $job_id&
 done
 
-# Launch CPU jobs for backup/overflow
-for i in $(seq 1 3); do
-    echo "Launching CPU job $i..."
-    sbatch slurm/02_run_cpu.slurm $job_id&
-done
 
-echo "All jobs submitted!"
+# for i in $(seq 1 5); do
+#     sbatch slurm/01_run_gpu.slurm $job_id&
+# done
 
-# Wait and check status
+# for i in $(seq 1 5); do
+#     sbatch slurm/02_run_gnolim.slurm $job_id&
+# done
+
+# for i in $(seq 1 5); do
+#     sbatch slurm/03_run_cpu.slurm $job_id&
+# done
+
+
+
+#wait 180 seconds
 sleep 60
-squeue -u $USER > squeue.log
+squeue -u sl5nw > squeue.log
 
-echo "Current job status:"
-cat squeue.log
 
-# Count running jobs
-count=0
+#read and print each line from squeue.log
 while IFS= read -r line
 do
+#seperate the line by space
     IFS=' ' read -r -a array <<< "$line"
+    #if the last element does not start with "(" print the line, count the number of such line
     if [[ ! ${array[-1]} =~ ^\( ]]; then
         count=$((count+1))
     fi
+   
 done < squeue.log
 
-printf "Running jobs: %d\n" $count
+printf "running count: %d\n" $count
 
-# Optional: Cancel jobs that run too long
-sleep 7200  # Wait 2 hours
-
-echo "Checking for jobs that have run too long..."
-squeue -u $USER > squeue_check.log
+sleep 120
 
 while IFS= read -r line
 do
     IFS=' ' read -r -a array <<< "$line"
     if [[ ${array[-2]} =~ ^[0-9]+$ ]]; then
-        if [ ${array[-2]} -gt 5 ]; then
-            echo "Cancelling long-running job: $line"
+        if [ ${array[-2]} -gt 3 ]; then
+            echo $line
             job_id=${array[0]}
             scancel $job_id
         fi
     fi
-done < squeue_check.log
 
-echo "Batch script completed!"
+if [ $count -ge 50 ]; then
+    scancel -u sl5nw -t PD
+fi 
+
+done < squeue.log

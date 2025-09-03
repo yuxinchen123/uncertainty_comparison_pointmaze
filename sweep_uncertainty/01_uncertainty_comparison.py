@@ -210,10 +210,7 @@ def main():
             
             # Update covariance from full 10K dataset
             print("Updating covariance matrix...")
-            method.update_covariance_from_positions(
-                positions,
-                gaussian_noise=args.gaussian_noise
-            )
+            method.update_covariance_from_positions(positions)
             
             training_losses = None  # No training for elliptical method
             method_info = f"Elliptical-{args.phi_dim}dim"
