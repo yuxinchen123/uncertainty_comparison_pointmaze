@@ -54,12 +54,8 @@ def main():
     # Training parameters
     parser.add_argument('--num_epochs', type=int, default=30,
                        help='Number of training epochs')
-    parser.add_argument('--subset_ratio', type=float, default=1.0,
-                       help='Fraction of data to use for training (for regularization)')
     parser.add_argument('--gaussian_noise', type=float, default=0.0,
-                       help='Standard deviation of Gaussian noise to add during training')
-    
-    # Data parameters
+                        help='Standard deviation of Gaussian noise to add to targets')    # Data parameters
     parser.add_argument('--num_samples', type=int, default=10000,
                        help='Number of samples to extract from dataset')
     parser.add_argument('--run_index', type=int, default=0,
@@ -111,21 +107,22 @@ def main():
     total_positions = len(all_positions)
     print(f"Total available positions in dataset: {total_positions}")
     
-    # Create random subset for this run_index (deterministic based on run_index)
-    print(f"Creating random subset {args.run_index} with {args.num_samples} samples...")
-    np.random.seed(args.run_index + 1000)  # Different seed for each run_index
+    # Single sampling step - use same positions for both ground truth and training
+    print(f"Creating random subset with {args.num_samples} samples...")
+    current_seed = args.seed + args.run_index  # Different seed for each run_index
+    np.random.seed(current_seed)
     
     if args.num_samples > total_positions:
         print(f"Warning: Requested {args.num_samples} samples but only {total_positions} available")
-        subset_indices = np.arange(total_positions)
         positions = all_positions
     else:
-        # Randomly sample indices (deterministic for this run_index)
+        # Randomly sample indices (deterministic for this run_index) 
         subset_indices = np.random.choice(total_positions, args.num_samples, replace=False)
         subset_indices = np.sort(subset_indices)  # Sort for consistent iteration
         positions = all_positions[subset_indices]
     
-    print(f"Random subset {args.run_index}: selected {len(positions)} positions")
+    print(f"✓ Selected {len(positions)} positions using seed {current_seed}")
+    print(f"Position range: X=[{np.min(positions[:, 0]):.3f}, {np.max(positions[:, 0]):.3f}], Y=[{np.min(positions[:, 1]):.3f}, {np.max(positions[:, 1]):.3f}]")
     print(f"Will average over {args.num_averaging_runs} training runs with these same {args.num_samples} samples")
     
     # Calculate ground truth uncertainty FROM THE SAME SUBSET

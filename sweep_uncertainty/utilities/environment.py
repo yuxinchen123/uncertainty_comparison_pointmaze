@@ -85,7 +85,7 @@ def generate_synthetic_dataset(n_samples=100000):
     return SimpleDataset(observations)
 
 def extract_positions_from_dataset(dataset, num_samples=None):
-    """Extract positions from dataset with optional sampling"""
+    """Extract position coordinates from dataset with proper random sampling"""
     all_positions = []
     
     # Extract all positions from the dataset
@@ -95,7 +95,7 @@ def extract_positions_from_dataset(dataset, num_samples=None):
             positions = observations['achieved_goal']
         else:
             positions = observations
-            
+        
         # Add all positions from this episode
         for pos in positions:
             all_positions.append(pos[:2])  # Take only x, y coordinates
@@ -103,12 +103,22 @@ def extract_positions_from_dataset(dataset, num_samples=None):
     all_positions = np.array(all_positions)
     print(f"✓ Extracted {len(all_positions)} total positions from dataset")
     
+    # DEBUG: Show position range before sampling
+    print(f"  Position range: X=[{np.min(all_positions[:, 0]):.3f}, {np.max(all_positions[:, 0]):.3f}], Y=[{np.min(all_positions[:, 1]):.3f}, {np.max(all_positions[:, 1]):.3f}]")
+    
     # Handle sampling - only sample if num_samples is specified and less than total
     if num_samples is not None and len(all_positions) > num_samples:
-        # Randomly sample the requested number of positions
+        # Use random sampling with current random state (don't reset seed here)
         indices = np.random.choice(len(all_positions), num_samples, replace=False)
         sampled_positions = all_positions[indices]
+        
         print(f"✓ Randomly sampled {num_samples} positions from {len(all_positions)} total")
+        print(f"  Sampled range: X=[{np.min(sampled_positions[:, 0]):.3f}, {np.max(sampled_positions[:, 0]):.3f}], Y=[{np.min(sampled_positions[:, 1]):.3f}, {np.max(sampled_positions[:, 1]):.3f}]")
+        
+        # DEBUG: Check if the samples are actually different
+        unique_positions = len(np.unique(sampled_positions, axis=0))
+        print(f"  Unique positions in sample: {unique_positions}/{num_samples}")
+        
         return sampled_positions
     else:
         # Return all positions if num_samples is None or >= total positions
@@ -118,16 +128,87 @@ def extract_positions_from_dataset(dataset, num_samples=None):
             print(f"✓ Using all {len(all_positions)} positions (requested {num_samples} >= available)")
         return all_positions
 
-# Add these functions for compatibility
+# Add these functions for compatibility with exact notebook mapping
+def observation_to_grid_notebook_exact(observation, grid_rows=9, grid_cols=12):
+    """
+    EXACT implementation from notebook: Map observation to grid cell using MATRIX-STYLE indexing.
+    Coordinate system: X[-6.0, 6.0], Y[-4.5, 4.5] -> 9×12 grid
+    """
+    # Extract (x, y) coordinates from observation
+    if isinstance(observation, dict) and 'achieved_goal' in observation:
+        x, y = observation['achieved_goal'][0], observation['achieved_goal'][1]
+    elif isinstance(observation, (list, tuple, np.ndarray)) and len(observation) >= 2:
+        x, y = observation[0], observation[1]
+    else:
+        raise ValueError(f"Invalid observation format: {type(observation)}")
+    
+    # Environment boundaries (from notebook)
+    left_edge = -6.0
+    right_edge = 6.0
+    bottom_edge = -4.5
+    top_edge = 4.5
+    total_width = 12.0   # right_edge - left_edge
+    total_height = 9.0   # top_edge - bottom_edge
+    
+    # Calculate cell dimensions
+    cell_width = total_width / grid_cols    # 12.0 / 12 = 1.0m
+    cell_height = total_height / grid_rows  # 9.0 / 9 = 1.0m
+    
+    # X direction (columns): Left to right, 1-based indexing
+    if x < left_edge:  # x < -6.0 edge case
+        col = 1
+    elif x >= right_edge:  # x >= 6.0 edge case  
+        col = grid_cols
+    else:
+        # Standard case: find which column
+        col = int((x - left_edge) / cell_width) + 1
+        
+        # Handle boundary case: boundaries count toward "previous range"
+        if abs(x - (left_edge + (col-1) * cell_width)) < 1e-10 and col > 1:
+            col = col - 1
+            
+        col = max(1, min(col, grid_cols))
+    
+    # Y direction (rows): Top to bottom, 1-based matrix indexing  
+    if y <= bottom_edge:  # y <= -4.5 edge case
+        row = grid_rows
+    elif y > top_edge:   # y > 4.5 edge case
+        row = 1
+    else:
+        # Calculate row based on Y value (top to bottom)
+        y_offset_from_top = top_edge - y  # How far down from top edge
+        row = int(y_offset_from_top / cell_height) + 1
+        
+        # Boundary handling: Y boundaries go to "next" row
+        if abs(y % 1.0 - 0.5) < 1e-10:  # Y ends in .5 (boundary)
+            if row > 1:  # Don't go above Row 1
+                row = row - 1
+            
+        row = max(1, min(row, grid_rows))
+    
+    grid_name = f"g_({row},{col})"
+    return grid_name, (row, col)
+
 def observation_to_grid(observation, grid_rows=9, grid_cols=12):
-    """Convert observation coordinates to grid indices"""
-    x, y = observation[:2]
-    grid_x = int(np.clip(x * grid_cols, 0, grid_cols - 1))
-    grid_y = int(np.clip(y * grid_rows, 0, grid_rows - 1))
-    return grid_x, grid_y
+    """Convert observation coordinates to grid indices using EXACT notebook method"""
+    _, (row, col) = observation_to_grid_notebook_exact(observation, grid_rows, grid_cols)
+    # Convert to 0-based for backward compatibility
+    return col-1, row-1
 
 def grid_to_center_observation(row, col, grid_rows=9, grid_cols=12):
-    """Convert grid indices to center coordinates of the cell"""
-    center_x = (col + 0.5) / grid_cols
-    center_y = (row + 0.5) / grid_rows
+    """Convert grid indices to center coordinates using EXACT notebook method"""
+    # Environment boundaries (same as notebook)
+    left_edge = -6.0
+    top_edge = 4.5
+    cell_width = 12.0 / grid_cols    # 1.0m
+    cell_height = 9.0 / grid_rows    # 1.0m
+    
+    # Convert 0-based indices to 1-based grid coordinates
+    grid_row = row + 1
+    grid_col = col + 1
+    
+    # Calculate center coordinates using exact notebook formula
+    center_x = left_edge + (grid_col - 1 + 0.5) * cell_width
+    center_y = top_edge - (grid_row - 1 + 0.5) * cell_height
+    
     return center_x, center_y

@@ -25,7 +25,7 @@ def get_maze_map():
 
 def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
     """
-    Calculate ground truth uncertainty matching notebook approach EXACTLY
+    Calculate ground truth uncertainty using EXACT notebook method.
     """
     if maze_map is None:
         maze_map = get_maze_map()
@@ -33,7 +33,7 @@ def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
     # Initialize visit count matrix
     visit_counts = np.zeros((grid_rows, grid_cols), dtype=int)
     
-    # Count visits to each grid cell
+    # Count visits to each grid cell using notebook's exact method
     for episode in dataset.iterate_episodes():
         observations = episode.observations
         if isinstance(observations, dict) and 'achieved_goal' in observations:
@@ -42,12 +42,14 @@ def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
             positions = observations
             
         for pos in positions:
-            # Use your coordinate mapping (even if different from notebook)
-            grid_x = int(np.clip(pos[0] * grid_cols / 12.0 + grid_cols/2, 0, grid_cols - 1))
-            grid_y = int(np.clip(-pos[1] * grid_rows / 9.0 + grid_rows/2, 0, grid_rows - 1))
-            visit_counts[grid_y, grid_x] += 1
+            # Use the exact notebook mapping
+            obs = {'achieved_goal': pos}
+            _, (row, col) = observation_to_grid_notebook_exact(obs, grid_rows, grid_cols)
+            
+            # Convert to 0-based indexing for numpy array
+            visit_counts[row-1, col-1] += 1
     
-    # Calculate uncertainty matrix - THIS IS CRITICAL
+    # Calculate uncertainty matrix exactly as notebook
     uncertainty_matrix = np.full((grid_rows, grid_cols), np.nan)
     
     for row in range(grid_rows):
@@ -57,22 +59,74 @@ def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
                 if count > 0:
                     uncertainty_matrix[row, col] = 1.0 / np.sqrt(count)
                 else:
-                    # CRITICAL: Unvisited open cells should be INFINITE, not NaN
-                    uncertainty_matrix[row, col] = np.inf  
+                    uncertainty_matrix[row, col] = np.inf
             # Wall cells remain NaN
-    
-    print(f"Visit count statistics:")
-    print(f"  Total visits: {np.sum(visit_counts)}")
-    print(f"  Visited cells: {np.sum(visit_counts > 0)}")
-    print(f"  Unvisited open cells: {np.sum((maze_map == 0) & (visit_counts == 0))}")
-    print(f"  Infinite uncertainties: {np.sum(np.isinf(uncertainty_matrix))}")
     
     return uncertainty_matrix
 
+def observation_to_grid_notebook_exact(observation, grid_rows=9, grid_cols=12):
+    """
+    EXACT implementation from notebook: Map observation to grid cell using MATRIX-STYLE indexing.
+    Coordinate system: X[-6.0, 6.0], Y[-4.5, 4.5] -> 9×12 grid
+    """
+    # Extract (x, y) coordinates from observation
+    if isinstance(observation, dict) and 'achieved_goal' in observation:
+        x, y = observation['achieved_goal'][0], observation['achieved_goal'][1]
+    elif isinstance(observation, (list, tuple, np.ndarray)) and len(observation) >= 2:
+        x, y = observation[0], observation[1]
+    else:
+        raise ValueError(f"Invalid observation format: {type(observation)}")
+    
+    # Environment boundaries (from notebook)
+    left_edge = -6.0
+    right_edge = 6.0
+    bottom_edge = -4.5
+    top_edge = 4.5
+    total_width = 12.0   # right_edge - left_edge
+    total_height = 9.0   # top_edge - bottom_edge
+    
+    # Calculate cell dimensions
+    cell_width = total_width / grid_cols    # 12.0 / 12 = 1.0m
+    cell_height = total_height / grid_rows  # 9.0 / 9 = 1.0m
+    
+    # X direction (columns): Left to right, 1-based indexing
+    if x < left_edge:  # x < -6.0 edge case
+        col = 1
+    elif x >= right_edge:  # x >= 6.0 edge case  
+        col = grid_cols
+    else:
+        # Standard case: find which column
+        col = int((x - left_edge) / cell_width) + 1
+        
+        # Handle boundary case: boundaries count toward "previous range"
+        if abs(x - (left_edge + (col-1) * cell_width)) < 1e-10 and col > 1:
+            col = col - 1
+            
+        col = max(1, min(col, grid_cols))
+    
+    # Y direction (rows): Top to bottom, 1-based matrix indexing  
+    if y <= bottom_edge:  # y <= -4.5 edge case
+        row = grid_rows
+    elif y > top_edge:   # y > 4.5 edge case
+        row = 1
+    else:
+        # Calculate row based on Y value (top to bottom)
+        y_offset_from_top = top_edge - y  # How far down from top edge
+        row = int(y_offset_from_top / cell_height) + 1
+        
+        # Boundary handling: Y boundaries go to "next" row
+        if abs(y % 1.0 - 0.5) < 1e-10:  # Y ends in .5 (boundary)
+            if row > 1:  # Don't go above Row 1
+                row = row - 1
+            
+        row = max(1, min(row, grid_rows))
+    
+    grid_name = f"g_({row},{col})"
+    return grid_name, (row, col)
+
 def calculate_ground_truth_from_positions(positions, maze_map=None, grid_rows=9, grid_cols=12):
     """
-    Calculate ground truth uncertainty using 1/√N(i) where N(i) is visit count.
-    This version works directly with position arrays instead of full dataset.
+    Calculate ground truth uncertainty using EXACT notebook coordinate mapping.
     """
     if maze_map is None:
         maze_map = get_maze_map()
@@ -80,19 +134,41 @@ def calculate_ground_truth_from_positions(positions, maze_map=None, grid_rows=9,
     # Initialize visit count matrix
     visit_counts = np.zeros((grid_rows, grid_cols), dtype=int)
     
-    # Count visits to each grid cell from the position array
-    for pos in positions:
-        # Convert position to grid indices (0-based)
-        x, y = pos[:2]
-        grid_x = int(np.clip(x * grid_cols, 0, grid_cols - 1))
-        grid_y = int(np.clip(y * grid_rows, 0, grid_rows - 1))
-        
-        # Only count visits to open cells (maze_map[i][j] == 0 means open)
-        if maze_map[grid_y][grid_x] == 0:  # Open cell
-            visit_counts[grid_y, grid_x] += 1
+    # DEBUG: Check position distribution
+    print(f"Position analysis:")
+    print(f"  Total positions: {len(positions)}")
+    print(f"  X range: [{np.min(positions[:, 0]):.3f}, {np.max(positions[:, 0]):.3f}]")
+    print(f"  Y range: [{np.min(positions[:, 1]):.3f}, {np.max(positions[:, 1]):.3f}]")
     
-    # Calculate uncertainty: 1/√N(i)
+    # Count visits using EXACT notebook mapping
+    grid_assignment_counts = {}
+    
+    for pos in positions:
+        # Use the exact notebook mapping function
+        obs = {'achieved_goal': pos}
+        grid_name, (row, col) = observation_to_grid_notebook_exact(obs, grid_rows, grid_cols)
+        
+        # Debug: Track which grid cells are being assigned
+        grid_assignment_counts[grid_name] = grid_assignment_counts.get(grid_name, 0) + 1
+        
+        # Convert to 0-based indexing for numpy array
+        row_idx = row - 1
+        col_idx = col - 1
+        
+        # Only count visits to open cells
+        if maze_map[row_idx][col_idx] == 0:  # Open cell
+            visit_counts[row_idx, col_idx] += 1
+    
+    # DEBUG: Show grid assignment distribution
+    print(f"Grid assignment statistics:")
+    print(f"  Unique grid cells visited: {len(grid_assignment_counts)}")
+    print(f"  Most visited cells: {sorted(grid_assignment_counts.items(), key=lambda x: x[1], reverse=True)[:10]}")
+    
+    # Calculate uncertainty: 1/√N(i) exactly as in notebook
     uncertainty_matrix = np.full((grid_rows, grid_cols), np.nan)
+    
+    visited_open_cells = 0
+    unvisited_open_cells = 0
     
     for row in range(grid_rows):
         for col in range(grid_cols):
@@ -100,40 +176,66 @@ def calculate_ground_truth_from_positions(positions, maze_map=None, grid_rows=9,
                 count = visit_counts[row, col]
                 if count > 0:
                     uncertainty_matrix[row, col] = 1.0 / np.sqrt(count)
+                    visited_open_cells += 1
                 else:
                     uncertainty_matrix[row, col] = np.inf  # Unvisited open cells
+                    unvisited_open_cells += 1
             # Wall cells remain NaN
     
-    print(f"✓ Ground truth calculated from {len(positions)} positions")
-    print(f"  Visit counts range: {np.min(visit_counts[visit_counts > 0])}-{np.max(visit_counts)}")
-    print(f"  Uncertainty range: {np.nanmin(uncertainty_matrix[np.isfinite(uncertainty_matrix)]):.6f}-{np.nanmax(uncertainty_matrix[np.isfinite(uncertainty_matrix)]):.6f}")
+    print(f"✓ Ground truth calculated from {len(positions)} positions using EXACT notebook method")
+    
+    # Debug visit counts and uncertainty values
+    total_visits = np.sum(visit_counts)
+    visited_cells = np.sum(visit_counts > 0)
+    finite_uncertainty = uncertainty_matrix[np.isfinite(uncertainty_matrix)]
+    
+    print(f"  Total visits: {total_visits}")
+    print(f"  Visited cells: {visited_cells}")
+    print(f"  Unvisited open cells: {unvisited_open_cells}")
+    
+    if len(finite_uncertainty) > 0:
+        print(f"  Visit counts range: {np.min(visit_counts[visit_counts > 0])}-{np.max(visit_counts)}")
+        print(f"  Uncertainty range: {np.min(finite_uncertainty):.6f}-{np.max(finite_uncertainty):.6f}")
+    else:
+        print(f"  No finite uncertainty values found")
     
     return uncertainty_matrix
 
 def evaluate_uncertainty_method(method, maze_map=None, grid_rows=9, grid_cols=12, device='cpu'):
     """
-    Evaluate uncertainty method by computing uncertainty for ALL grid cell centers at once.
-    This matches the notebook's batch processing approach.
+    Evaluate uncertainty method on grid centers using EXACT notebook coordinate mapping.
     """
     if maze_map is None:
         maze_map = get_maze_map()
     
     uncertainty_matrix = np.full((grid_rows, grid_cols), np.nan)
     
-    # Create coordinates for all open grid centers
+    # Create coordinates for all open grid centers using EXACT notebook method
     coordinates = []
     valid_indices = []
+    
+    # Environment boundaries (same as notebook)
+    left_edge = -6.0
+    top_edge = 4.5
+    cell_width = 12.0 / grid_cols    # 1.0m
+    cell_height = 9.0 / grid_rows    # 1.0m
     
     for row in range(grid_rows):
         for col in range(grid_cols):
             if maze_map[row][col] == 0:  # Open cell
-                # Grid center coordinates (normalized to [0,1])
-                center_x = (col + 0.5) / grid_cols
-                center_y = (row + 0.5) / grid_rows
+                # Calculate grid center coordinates using EXACT notebook formula
+                # Convert 0-based matrix indices to 1-based grid coordinates first
+                grid_row = row + 1  # Convert to 1-based
+                grid_col = col + 1  # Convert to 1-based
+                
+                center_x = left_edge + (grid_col - 1 + 0.5) * cell_width
+                center_y = top_edge - (grid_row - 1 + 0.5) * cell_height
+                
                 coordinates.append([center_x, center_y])
                 valid_indices.append((row, col))
     
     if len(coordinates) > 0:
+        print(f"✓ Evaluating {len(coordinates)} open grid centers using exact notebook coordinates")
         # Convert to tensor and get uncertainties for all valid cells at once
         coords_tensor = torch.tensor(coordinates, dtype=torch.float32).to(device)
         
