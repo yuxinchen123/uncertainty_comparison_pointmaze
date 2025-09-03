@@ -183,21 +183,10 @@ def calculate_ground_truth_from_positions(positions, maze_map=None, grid_rows=9,
             # Wall cells remain NaN
     
     print(f"✓ Ground truth calculated from {len(positions)} positions using EXACT notebook method")
-    
-    # Debug visit counts and uncertainty values
-    total_visits = np.sum(visit_counts)
-    visited_cells = np.sum(visit_counts > 0)
-    finite_uncertainty = uncertainty_matrix[np.isfinite(uncertainty_matrix)]
-    
-    print(f"  Total visits: {total_visits}")
-    print(f"  Visited cells: {visited_cells}")
+    print(f"  Visit counts range: {np.min(visit_counts[visit_counts > 0])}-{np.max(visit_counts)}")
+    print(f"  Visited open cells: {visited_open_cells}")
     print(f"  Unvisited open cells: {unvisited_open_cells}")
-    
-    if len(finite_uncertainty) > 0:
-        print(f"  Visit counts range: {np.min(visit_counts[visit_counts > 0])}-{np.max(visit_counts)}")
-        print(f"  Uncertainty range: {np.min(finite_uncertainty):.6f}-{np.max(finite_uncertainty):.6f}")
-    else:
-        print(f"  No finite uncertainty values found")
+    print(f"  Uncertainty range: {np.nanmin(uncertainty_matrix[np.isfinite(uncertainty_matrix)]):.6f}-{np.nanmax(uncertainty_matrix[np.isfinite(uncertainty_matrix)]):.6f}")
     
     return uncertainty_matrix
 

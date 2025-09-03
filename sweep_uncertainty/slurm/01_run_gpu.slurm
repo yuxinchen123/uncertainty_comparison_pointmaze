@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Example of running python script with a job array
+# SLURM script for running uncertainty comparison experiments on GPU
 
-#SBATCH --job-name=03
+#SBATCH --job-name=uncertainty_comp
 #SBATCH --partition=gpu
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus-per-node=1
@@ -12,5 +12,5 @@
 #SBATCH --output slurm_output.log            
 #SBATCH --ntasks=4
 
-# Run python script with a command line argument
+# Run wandb agent with the provided sweep ID
 srun wandb agent catresearch/$1
