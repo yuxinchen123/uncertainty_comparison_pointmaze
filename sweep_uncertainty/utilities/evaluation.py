@@ -25,7 +25,7 @@ def get_maze_map():
 
 def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
     """
-    Calculate ground truth uncertainty using 1/√N(i) where N(i) is visit count.
+    Calculate ground truth uncertainty matching notebook approach EXACTLY
     """
     if maze_map is None:
         maze_map = get_maze_map()
@@ -42,16 +42,12 @@ def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
             positions = observations
             
         for pos in positions:
-            # Convert observation to grid indices (0-based)
-            x, y = pos[:2]
-            grid_x = int(np.clip(x * grid_cols, 0, grid_cols - 1))
-            grid_y = int(np.clip(y * grid_rows, 0, grid_rows - 1))
-            
-            # Only count visits to open cells (maze_map[i][j] == 0 means open)
-            if maze_map[grid_y][grid_x] == 0:  # Open cell
-                visit_counts[grid_y, grid_x] += 1
+            # Use your coordinate mapping (even if different from notebook)
+            grid_x = int(np.clip(pos[0] * grid_cols / 12.0 + grid_cols/2, 0, grid_cols - 1))
+            grid_y = int(np.clip(-pos[1] * grid_rows / 9.0 + grid_rows/2, 0, grid_rows - 1))
+            visit_counts[grid_y, grid_x] += 1
     
-    # Calculate uncertainty: 1/√N(i)
+    # Calculate uncertainty matrix - THIS IS CRITICAL
     uncertainty_matrix = np.full((grid_rows, grid_cols), np.nan)
     
     for row in range(grid_rows):
@@ -61,8 +57,15 @@ def calculate_ground_truth(dataset, maze_map=None, grid_rows=9, grid_cols=12):
                 if count > 0:
                     uncertainty_matrix[row, col] = 1.0 / np.sqrt(count)
                 else:
-                    uncertainty_matrix[row, col] = np.inf  # Unvisited open cells
+                    # CRITICAL: Unvisited open cells should be INFINITE, not NaN
+                    uncertainty_matrix[row, col] = np.inf  
             # Wall cells remain NaN
+    
+    print(f"Visit count statistics:")
+    print(f"  Total visits: {np.sum(visit_counts)}")
+    print(f"  Visited cells: {np.sum(visit_counts > 0)}")
+    print(f"  Unvisited open cells: {np.sum((maze_map == 0) & (visit_counts == 0))}")
+    print(f"  Infinite uncertainties: {np.sum(np.isinf(uncertainty_matrix))}")
     
     return uncertainty_matrix
 
@@ -241,7 +244,7 @@ def compute_correlation(gt_matrix, pred_matrix, maze_map=None):
     return correlation if not np.isnan(correlation) else 0.0
 
 def save_heatmap_to_wandb(uncertainty_matrix, title, wandb_switch=True, maze_map=None):
-    """Create heatmap with WHITE walls and proper exclusion"""
+    """Create heatmap with WHITE walls and proper handling of infinite values"""
     if maze_map is None:
         maze_map = get_maze_map()
     
@@ -250,13 +253,24 @@ def save_heatmap_to_wandb(uncertainty_matrix, title, wandb_switch=True, maze_map
     # Create uncertainty matrix excluding walls
     uncertainty_open_only = uncertainty_matrix.copy()
     
-    # Set wall cells to NaN (they'll appear white and be excluded)
+    # Set wall cells to NaN (they'll appear white)
     for row in range(len(maze_map)):
         for col in range(len(maze_map[0])):
             if maze_map[row][col] == 1:  # Wall
                 uncertainty_open_only[row, col] = np.nan
     
-    # Create heatmap - NaN values will be white automatically
+    # CRITICAL FIX: Handle infinite values for visualization
+    # Replace inf with a large finite value for proper colormap display
+    finite_mask = np.isfinite(uncertainty_open_only)
+    if np.any(finite_mask):
+        max_finite = np.nanmax(uncertainty_open_only[finite_mask])
+        # Set infinite values to be 2x the maximum finite value
+        inf_replacement = max_finite * 2 if max_finite > 0 else 1.0
+        uncertainty_open_only[np.isinf(uncertainty_open_only)] = inf_replacement
+        
+        print(f"Debug: Replaced {np.sum(np.isinf(uncertainty_matrix))} infinite values with {inf_replacement:.3f}")
+    
+    # Create heatmap - now inf values will show as highest color
     im = ax.imshow(uncertainty_open_only, cmap='viridis', aspect='equal', 
                    origin='upper', interpolation='nearest')
     
@@ -274,9 +288,15 @@ def save_heatmap_to_wandb(uncertainty_matrix, title, wandb_switch=True, maze_map
     # Add grid
     ax.grid(True, alpha=0.3, color='white', linewidth=0.5)
     
-    # Add colorbar
+    # Add colorbar with better labeling
     cbar = plt.colorbar(im, ax=ax, shrink=0.8)
     cbar.set_label('Uncertainty', rotation=270, labelpad=20, fontsize=12)
+    
+    # Add text showing what highest values represent
+    if np.any(np.isinf(uncertainty_matrix)):
+        ax.text(0.02, 0.02, 'Brightest = Unvisited cells (∞)', 
+                transform=ax.transAxes, fontsize=10, 
+                bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
     
     plt.tight_layout()
     
