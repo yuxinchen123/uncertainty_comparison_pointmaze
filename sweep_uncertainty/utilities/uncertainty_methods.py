@@ -91,55 +91,67 @@ class RNDLinearMethod:
         # Target θ vector (random)
         self.theta = torch.randn(feature_dim).to(device)
         
-        # Predictor: feature_dim -> 1
-        self.predictor = nn.Linear(feature_dim, 1).to(device)
-        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001)
-        self.criterion = nn.MSELoss()
+        # Predictor weights (will be solved via least squares)
+        self.predictor_weights = None
+        self.predictor_bias = None
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
-        """Train predictor to match φ(s)ᵀθ - use all provided positions"""
-        print(f"Training RND-Linear on {len(positions)} positions for {num_epochs} epochs")
+        """Train predictor using least squares to match φ(s)ᵀθ"""
+        print(f"Training RND-Linear on {len(positions)} positions using least squares")
         
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
-        losses = []
         
-        for epoch in range(num_epochs):
-            self.optimizer.zero_grad()
+        with torch.no_grad():
+            # Compute φ(s) features for all positions
+            phi_outputs = self.phi(coords_tensor)  # [N, feature_dim]
             
-            # Target: φ(s)ᵀθ (with noise)
+            # Compute targets: φ(s)ᵀθ (with noise if specified)
+            targets = torch.matmul(phi_outputs, self.theta)  # [N]
+            if gaussian_noise > 0:
+                noise = torch.randn_like(targets) * gaussian_noise
+                targets += noise
+            
+            # Solve least squares: min ||φ(s) @ w + b - targets||²
+            # This is equivalent to: [φ(s), 1] @ [w; b] = targets
+            
+            # Prepare design matrix [φ(s), ones] for intercept
+            N = phi_outputs.shape[0]
+            ones = torch.ones(N, 1).to(self.device)
+            X_aug = torch.hstack([phi_outputs, ones])  # [N, feature_dim + 1]
+            
+            # Solve least squares using torch.linalg.lstsq
+            solution, residuals, rank, s = torch.linalg.lstsq(X_aug, targets.unsqueeze(1), rcond=None)
+            solution = solution.squeeze(1)  # [feature_dim + 1]
+            
+            # Extract weights and bias
+            self.predictor_weights = solution[:-1]  # [feature_dim]
+            self.predictor_bias = solution[-1]      # scalar
+            
+            # Compute final loss for logging
             with torch.no_grad():
-                phi_output = self.phi(coords_tensor)
-                target_output = torch.matmul(phi_output, self.theta)
-                if gaussian_noise > 0:
-                    noise = torch.randn_like(target_output) * gaussian_noise
-                    target_output += noise
+                predictions = torch.matmul(phi_outputs, self.predictor_weights) + self.predictor_bias
+                final_loss = torch.mean((predictions - targets) ** 2).item()
             
-            # Predictor output
-            phi_output = self.phi(coords_tensor)
-            pred_output = self.predictor(phi_output).squeeze()
-            
-            # Loss
-            loss = self.criterion(pred_output, target_output)
-            loss.backward()
-            self.optimizer.step()
-            
-            losses.append(loss.item())
-            
-            if (epoch + 1) % 10 == 0:
-                print(f"  Epoch {epoch+1}/{num_epochs}, Loss: {loss.item():.6f}")
+            print(f"  Least squares solution found")
+            print(f"  Final MSE loss: {final_loss:.6f}")
+            print(f"  Residual norm: {torch.norm(residuals).item():.6f}" if residuals.numel() > 0 else "  Residual: exact solution")
+            print(f"  Matrix rank: {rank.item()}/{X_aug.shape[1]}")
         
-        return losses
+        # Return dummy losses for compatibility (just the final loss repeated)
+        return [final_loss] * num_epochs
     
     def get_uncertainty(self, coordinates):
         """Get uncertainty as |φ(s)ᵀθ - predictor(φ(s))|"""
-        self.predictor.eval()
+        if self.predictor_weights is None:
+            raise RuntimeError("Model must be trained before computing uncertainty")
+            
         with torch.no_grad():
             if isinstance(coordinates, np.ndarray):
                 coordinates = torch.FloatTensor(coordinates).to(self.device)
             
             phi_output = self.phi(coordinates)
             target_output = torch.matmul(phi_output, self.theta)
-            pred_output = self.predictor(phi_output).squeeze()
+            pred_output = torch.matmul(phi_output, self.predictor_weights) + self.predictor_bias
             
             uncertainty = torch.abs(target_output - pred_output)
             return uncertainty.cpu().numpy()
