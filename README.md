@@ -25,6 +25,7 @@ RND/
 │   │   └── debug.py                    # Logging utilities
 │   └── slurm/                          # SLURM batch scripts
 ├── pointmaze_count.ipynb               # Reference validation notebook
+├── D4_maze_offlinedata_study.ipynb     # Study the structure of D4RL dataset
 ├── saved_data/                         # Experimental results
 └── README.md                           # This file
 ```
@@ -109,88 +110,78 @@ python 01_uncertainty_comparison.py \
     --wandb_switch False
 ```
 
-### WandB Sweep Experiments
-To run the program locally
-1. cd /p/rlprojects/RND/sweep_uncertainty && python 01_uncertainty_comparison.py
+### WandB Slurm Sweep Experiments
 
-To run the program with slurm
 
-1. Start sweep
+**1. Start WandB Sweep**
+```bash
 wandb sweep 01_wandb_sweep.yaml
+```
 
-You get return (for example):
-
+You will get output like:
+```
 wandb: Creating sweep from: 01_wandb_sweep.yaml
 wandb: Created sweep with ID: nbkcxcge
 wandb: View sweep at: https://wandb.ai/catresearch/robust/sweeps/nbkcxcge
 wandb: Run sweep agent with: wandb agent catresearch/robust/nbkcxcge
+```
 
+**2. Configure SLURM Script**
 
-2. Setup slurm folder
-copy  
-"robust/nbkcxcge"
+Copy the sweep ID (e.g., `robust/nbkcxcge`) and paste it into line 4 of `slurm/00_batch_slurm.sh`:
 
-to the line 4 of 
-slurm/00_batch_slurm.sh
-
-
-Your script looks like 
-
-------------------------start---------------------------------------
+```bash
 #!/bin/bash
 
-#Define two variables with name job_id and cpu_core
+# Define job_id variable with your sweep ID
 job_id="robust/nbkcxcge"
 
 # for i in $(seq 1 1); do
 #     sbatch slurm/01_run_gpu.slurm $job_id&
 # done
+```
+**3. Submit SLURM Jobs**
 
-------------------------end---------------------------------------
+For initial testing (submit 1 job):
+```bash
+./slurm/00_batch_slurm.sh
+```
 
-
-
-3. Submit job
-
-Run
-./slurm/00_batch_slurm.sh 
-
-
-
-Only run submit 1 job for test, 
-
+Keep the loop commented for testing:
+```bash
 # for i in $(seq 1 1); do
 #     sbatch slurm/01_run_gpu.slurm $job_id&
 # done
+```
 
-If it looks good, modify the script to submit multiple
+**4. Scale Up (After Testing)**
 
+Once verified, modify the script to submit multiple jobs:
 
-------------------------start---------------------------------------
+```bash
+# GPU jobs
 for i in $(seq 1 5); do
     sbatch slurm/01_run_gpu.slurm $job_id&
 done
 
+# CPU jobs (no GPU limit)
 for i in $(seq 1 5); do
     sbatch slurm/02_run_gnolim.slurm $job_id&
 done
 
+# Additional CPU jobs
 for i in $(seq 1 5); do
     sbatch slurm/03_run_cpu.slurm $job_id&
 done
+```
 
-
-------------------------end---------------------------------------
+**5. Monitor Progress**
+```bash
+# Check job status
+squeue -u $USER
 
 ## Configuration Parameters
 
-### Sweep Configuration (`01_wandb_sweep.yaml`)
-- **Methods**: `['rnd', 'rnd_linear', 'elliptical']`
-- **Architecture**: Multiple hidden dimensions and output dimensions
-- **φ(s) Sharing**: Deterministic feature weights for fair comparison
-- **Noise Levels**: Gaussian noise variations (0.0 to 10.0)
-- **Seeds**: Multiple random seeds for robust evaluation
-- **Averaging**: 10 runs per configuration
 
 ### Key Parameters
 - `num_samples`: 10000 (data subset size)
@@ -200,22 +191,15 @@ done
 
 ## Key Features
 
-### Fair Comparison Design
-- ✅ **Identical Data**: All methods use same 10K subset within each run
-- ✅ **Shared Features**: RND-Linear and Elliptical use identical φ(s) weights
-- ✅ **Ground Truth Consistency**: Same data for uncertainty calculation
-- ✅ **Wall Handling**: Proper maze wall exclusion throughout
-
 ### Robust Evaluation
 - ✅ **Statistical Significance**: 10-run averaging with confidence intervals
 - ✅ **Reproducible**: Controlled seeding for all random components
-- ✅ **Validated**: Coordinate mapping verified against reference notebook
 - ✅ **Normalized**: Proper uncertainty matrix normalization before comparison
 
 ### Implementation Improvements
 - ✅ **Least Squares**: RND-Linear uses direct solution (faster, more stable)
 - ✅ **Regularization**: Elliptical method with numerical stability improvements
-- ✅ **Debugging**: Comprehensive error checking and validation
+
 
 ## Requirements
 
@@ -233,28 +217,6 @@ pip install argparse
 ### Performance Characteristics
 - **RND**: Neural network flexibility, requires hyperparameter tuning
 - **RND-Linear**: Fast least squares fitting, fewer parameters
-- **Elliptical**: Analytical solution, no training required
+- **Elliptical**: Analytical solution, no training require
 
-### Typical Metrics
-- **L2 Distance**: 0.5-2.0 (lower is better)
-- **Correlation**: 0.3-0.8 (higher is better)
-- **Runtime**: Elliptical < RND-Linear < RND
 
-## Notes and Limitations
-
-### Design Decisions
-- Uses exact coordinate mapping from validated notebook implementation
-- Excludes gaussian noise from Elliptical method (analytical approach)
-- Implements direct least squares for RND-Linear (no gradient descent)
-- Applies proper regularization for numerical stability
-
-### Known Issues
-- Requires sufficient memory for full dataset loading
-- CUDA setup needed for GPU acceleration
-- WandB account required for sweep experiments
-
-### Future Improvements
-- [ ] Add more uncertainty methods (e.g., MC Dropout)
-- [ ] Extend to other environments beyond PointMaze
-- [ ] Implement online uncertainty estimation
-- [ ] Add uncertainty calibration metrics
