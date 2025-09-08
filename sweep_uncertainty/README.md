@@ -43,7 +43,7 @@ This project systematically compares three uncertainty estimation methods on the
 - **Data Subsets**: 10 different 10K samples (run_index 0-9)
 - **Random Seeds**: 5 seeds for reproducibility
 - **Averaging**: 10 runs per configuration for statistical stability
-- **φ(s) Sharing**: Deterministic seed (42) ensures RND-Linear and Elliptical use identical features
+- **φ(s) Sharing**: 10 seeds shared for RND linear and Elliptical
 
 ### Evaluation Protocol
 - **Ground Truth**: 1/√N(i) where N(i) is visit count per grid cell
@@ -54,14 +54,13 @@ This project systematically compares three uncertainty estimation methods on the
 ## Key Features
 
 ### φ(s) Weight Sharing
-RND-Linear and Elliptical methods share identical φ(s) feature weights using deterministic seeding:
-- Same φ(s) seed (42) across all experiments
+RND-Linear and Elliptical methods share identical φ(s) feature weights using seedings:
 - Enables fair comparison between linear methods
 - WandB logs track φ(s) pairing information
 
 ### Training Strategies
 - **All methods use identical 10K samples** for fair comparison
-- **RND**: Full dataset training with neural networks
+- **RND**:Training with neural networks
 - **RND-Linear**: Full dataset training with linear features  
 - **Elliptical**: Covariance update from full dataset
 - **Averaging**: Each configuration repeated 10 times, results averaged for stability

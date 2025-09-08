@@ -196,7 +196,9 @@ class EllipticalBonusMethod:
                 coordinates = torch.FloatTensor(coordinates).to(self.device)
             
             phi_output = self.phi(coordinates)  # [N, feature_dim]
-            
             # Compute φ(s)ᵀ Σ⁻¹ φ(s) for each point
-            uncertainty = torch.sum(phi_output @ self.covariance_inv * phi_output, dim=1)
+            quadratic_form = torch.sum(phi_output @ self.covariance_inv * phi_output, dim=1)
+
+            # Take square root as per elliptical bonus formula
+            uncertainty = torch.sqrt(torch.clamp(quadratic_form, min=1e-8))
             return uncertainty.cpu().numpy()
