@@ -41,9 +41,9 @@ def main():
     parser = argparse.ArgumentParser(description='Uncertainty Method Comparison on PointMaze')
     
     # Method selection
-    parser.add_argument('--method', type=str, required=True, 
+    parser.add_argument('--method', type=str, required=False, default='rnd',
                        choices=['rnd', 'rnd_linear', 'elliptical'],
-                       help='Uncertainty method to use')
+                       help='Uncertainty method to use (required if not using WandB sweep)')
     
     # Architecture parameters
     parser.add_argument('--output_dim', type=int, default=64,
@@ -55,7 +55,9 @@ def main():
     parser.add_argument('--num_epochs', type=int, default=30,
                        help='Number of training epochs')
     parser.add_argument('--gaussian_noise', type=float, default=0.0,
-                        help='Standard deviation of Gaussian noise to add to targets')    # Data parameters
+                        help='Standard deviation of Gaussian noise to add to targets')
+    
+    # Data parameters
     parser.add_argument('--num_samples', type=int, default=10000,
                        help='Number of samples to extract from dataset')
     parser.add_argument('--run_index', type=int, default=0,
@@ -83,19 +85,45 @@ def main():
     
     args = parser.parse_args()
     
+    # Check if we're running in a WandB sweep
+    if wandb.run is not None:
+        # We're in a WandB sweep, use config values and override args
+        config = wandb.config
+        
+        # Override arguments with WandB config
+        args.method = config.get('method_name', args.method)
+        args.output_dim = config.get('output_dim', args.output_dim)
+        args.hidden_dims = config.get('hidden_dims', args.hidden_dims)
+        args.num_epochs = config.get('num_epochs', args.num_epochs)
+        args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
+        args.num_samples = config.get('num_samples', args.num_samples)
+        args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
+        args.phi_seed = config.get('phi_seed', args.phi_seed)
+        args.phi_dim = config.get('phi_dim', args.phi_dim)
+        args.seed = config.get('seed', args.seed)
+        args.wandb_switch = config.get('wandb_switch', args.wandb_switch)
+        args.grid_rows = config.get('grid_rows', args.grid_rows)
+        args.grid_cols = config.get('grid_cols', args.grid_cols)
+        
+        print("🔄 Running in WandB sweep mode")
+    else:
+        # Initialize WandB if not already initialized
+        if args.wandb_switch:
+            wandb.init(
+                project="uncertainty_comparison_pointmaze",
+                config=vars(args)
+            )
+        
+        # Validate that method is provided when not in sweep mode
+        if not args.method:
+            parser.error("--method is required when not running in WandB sweep mode")
+    
     # Set seed for reproducibility
     set_seed(args.seed)
     
     # Setup device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
-    
-    # Initialize WandB
-    if args.wandb_switch:
-        wandb.init(
-            project="uncertainty_comparison",
-            config=vars(args)
-        )
     
     # Load dataset and maze structure
     print("Loading PointMaze dataset...")
@@ -199,6 +227,10 @@ def main():
         elif args.method == 'elliptical':
             print(f"Initializing Elliptical Bonus method (feature_dim={args.phi_dim})...")
             
+            # Note: Elliptical method doesn't use gaussian_noise (parameter ignored if provided)
+            if args.gaussian_noise > 0:
+                print(f"  Note: Gaussian noise ({args.gaussian_noise}) ignored for Elliptical Bonus method")
+            
             # Create shared φ(s) weights (deterministic across averaging runs)
             phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
             
@@ -210,10 +242,7 @@ def main():
             
             # Update covariance from full 10K dataset
             print("Updating covariance matrix...")
-            method.update_covariance_from_positions(
-                positions,
-                gaussian_noise=args.gaussian_noise
-            )
+            method.update_covariance_from_positions(positions)
             
             training_losses = None  # No training for elliptical method
             method_info = f"Elliptical-{args.phi_dim}dim"

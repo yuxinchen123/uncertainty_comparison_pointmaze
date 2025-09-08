@@ -108,7 +108,7 @@ def extract_positions_from_dataset(dataset, num_samples=None):
     
     # Handle sampling - only sample if num_samples is specified and less than total
     if num_samples is not None and len(all_positions) > num_samples:
-        # Use random sampling with current random state (don't reset seed here)
+        # Use random sampling with current random state (controlled externally)
         indices = np.random.choice(len(all_positions), num_samples, replace=False)
         sampled_positions = all_positions[indices]
         
