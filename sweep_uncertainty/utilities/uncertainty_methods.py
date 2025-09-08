@@ -171,8 +171,9 @@ class EllipticalBonusMethod:
             # Update covariance matrix
             if len(phi_outputs) > 1:
                 self.covariance = torch.cov(phi_outputs.T)
-                # Add regularization for numerical stability
-                self.covariance += torch.eye(self.covariance.shape[0]).to(self.device) * 1e-6
+                # Add stronger regularization for numerical stability
+                regularization = torch.eye(self.covariance.shape[0]).to(self.device) * 1e-3
+                self.covariance += regularization
                 self.covariance_inv = torch.linalg.inv(self.covariance)
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
