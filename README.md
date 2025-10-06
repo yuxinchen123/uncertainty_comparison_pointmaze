@@ -118,8 +118,12 @@ python 01_uncertainty_comparison.py \
 wandb sweep 01_wandb_sweep.yaml
 ```
 or
-```
+```bash
 wandb sweep 02_elliptical_only.yaml
+```
+or
+```bash
+wandb sweep 03_rnd_linear_only.yaml
 ```
 
 You will get output like:

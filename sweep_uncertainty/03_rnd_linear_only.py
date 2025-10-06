@@ -57,7 +57,7 @@ def main():
     # Experiment parameters
     parser.add_argument('--seed', type=int, default=0,
                        help='Random seed for experiment reproducibility')
-    parser.add_argument('--wandb_switch', action='store_true', default=True,
+    parser.add_argument('--wandb_switch', type=bool, default=True,
                        help='Whether to log to WandB')
     
     # Grid parameters
