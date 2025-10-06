@@ -1,0 +1,56 @@
+program: 03_rnd_linear_only.py
+name: rnd_linear_sweep
+project: rnd_linear_pointmaze
+description: Focused sweep of RND Linear method with least squares fitting
+method: grid
+metric:
+  goal: minimize
+  name: avg_l2_distance
+parameters:
+  # Method is fixed to rnd_linear
+  method:
+    value: 'rnd_linear'
+  
+  # Feature dimension sweep - key parameter for RND Linear
+  phi_dim:
+    values: [64, 128, 256, 512, 1024]
+  
+  # φ(s) weight seeds - test robustness to different feature mappings
+  phi_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  
+  # Gaussian noise levels - critical for RND Linear exploration
+  gaussian_noise:
+    values: [0.0, 0.5, 1.0]
+  
+  # # Training parameters
+  # num_epochs:
+  #   values: [10, 20, 30, 50]
+  
+  # Data sampling parameters
+  num_samples:
+    value: 10000  # 10K samples per run
+  
+  # Model initialization seeds
+  seed:
+    values: [0, 1, 2, 3, 4]
+  
+  # Averaging parameters
+  num_averaging_runs:
+    value: 10
+  
+  # Fixed parameters
+  wandb_switch:
+    value: true
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  
+  # # These are not used for rnd_linear but kept for compatibility
+  # output_dim:
+  #   value: 64  # Not used
+  # hidden_dims:
+  #   value: '64,64'  # Not used
+  # regularization:
+  #   value: 1e-6  # Not used

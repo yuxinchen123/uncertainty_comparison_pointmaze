@@ -117,6 +117,10 @@ python 01_uncertainty_comparison.py \
 ```bash
 wandb sweep 01_wandb_sweep.yaml
 ```
+or
+```
+wandb sweep 02_elliptical_only.yaml
+```
 
 You will get output like:
 ```
@@ -143,6 +147,7 @@ job_id="robust/nbkcxcge"
 **3. Submit SLURM Jobs**
 
 For initial testing (submit 1 job):
+Run
 ```bash
 ./slurm/00_batch_slurm.sh
 ```

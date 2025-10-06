@@ -78,72 +78,72 @@ class RNDMethod:
 
 # RND Linear with SGD Training
 # class RNDLinearMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None):
-        self.device = device
-        self.feature_dim = feature_dim
+#     def __init__(self, feature_dim, device='cpu', phi_weights=None):
+#         self.device = device
+#         self.feature_dim = feature_dim
         
-        # Shared φ(s): 2D -> feature_dim
-        self.phi = nn.Linear(2, feature_dim).to(device)
-        if phi_weights is not None:
-            self.phi.load_state_dict(phi_weights)
-        for param in self.phi.parameters():
-            param.requires_grad = False
+#         # Shared φ(s): 2D -> feature_dim
+#         self.phi = nn.Linear(2, feature_dim).to(device)
+#         if phi_weights is not None:
+#             self.phi.load_state_dict(phi_weights)
+#         for param in self.phi.parameters():
+#             param.requires_grad = False
             
-        # Target θ vector (random)
-        self.theta = torch.randn(feature_dim).to(device)
+#         # Target θ vector (random)
+#         self.theta = torch.randn(feature_dim).to(device)
         
-        # Predictor: feature_dim -> 1
-        self.predictor = nn.Linear(feature_dim, 1).to(device)
-        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001)
-        self.criterion = nn.MSELoss()
+#         # Predictor: feature_dim -> 1
+#         self.predictor = nn.Linear(feature_dim, 1).to(device)
+#         self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001)
+#         self.criterion = nn.MSELoss()
     
-    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
-        """Train predictor to match φ(s)ᵀθ - use all provided positions"""
-        print(f"Training RND-Linear on {len(positions)} positions for {num_epochs} epochs")
+#     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
+#         """Train predictor to match φ(s)ᵀθ - use all provided positions"""
+#         print(f"Training RND-Linear on {len(positions)} positions for {num_epochs} epochs")
         
-        coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
-        losses = []
+#         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
+#         losses = []
         
-        for epoch in range(num_epochs):
-            self.optimizer.zero_grad()
+#         for epoch in range(num_epochs):
+#             self.optimizer.zero_grad()
             
-            # Target: φ(s)ᵀθ (with noise)
-            with torch.no_grad():
-                phi_output = self.phi(coords_tensor)
-                target_output = torch.matmul(phi_output, self.theta)
-                if gaussian_noise > 0:
-                    noise = torch.randn_like(target_output) * gaussian_noise
-                    target_output += noise
+#             # Target: φ(s)ᵀθ (with noise)
+#             with torch.no_grad():
+#                 phi_output = self.phi(coords_tensor)
+#                 target_output = torch.matmul(phi_output, self.theta)
+#                 if gaussian_noise > 0:
+#                     noise = torch.randn_like(target_output) * gaussian_noise
+#                     target_output += noise
             
-            # Predictor output
-            phi_output = self.phi(coords_tensor)
-            pred_output = self.predictor(phi_output).squeeze()
+#             # Predictor output
+#             phi_output = self.phi(coords_tensor)
+#             pred_output = self.predictor(phi_output).squeeze()
             
-            # Loss
-            loss = self.criterion(pred_output, target_output)
-            loss.backward()
-            self.optimizer.step()
+#             # Loss
+#             loss = self.criterion(pred_output, target_output)
+#             loss.backward()
+#             self.optimizer.step()
             
-            losses.append(loss.item())
+#             losses.append(loss.item())
             
-            if (epoch + 1) % 10 == 0:
-                print(f"  Epoch {epoch+1}/{num_epochs}, Loss: {loss.item():.6f}")
+#             if (epoch + 1) % 10 == 0:
+#                 print(f"  Epoch {epoch+1}/{num_epochs}, Loss: {loss.item():.6f}")
         
-        return losses
+#         return losses
     
-    def get_uncertainty(self, coordinates):
-        """Get uncertainty as |φ(s)ᵀθ - predictor(φ(s))|"""
-        self.predictor.eval()
-        with torch.no_grad():
-            if isinstance(coordinates, np.ndarray):
-                coordinates = torch.FloatTensor(coordinates).to(self.device)
+#     def get_uncertainty(self, coordinates):
+#         """Get uncertainty as |φ(s)ᵀθ - predictor(φ(s))|"""
+#         self.predictor.eval()
+#         with torch.no_grad():
+#             if isinstance(coordinates, np.ndarray):
+#                 coordinates = torch.FloatTensor(coordinates).to(self.device)
             
-            phi_output = self.phi(coordinates)
-            target_output = torch.matmul(phi_output, self.theta)
-            pred_output = self.predictor(phi_output).squeeze()
+#             phi_output = self.phi(coordinates)
+#             target_output = torch.matmul(phi_output, self.theta)
+#             pred_output = self.predictor(phi_output).squeeze()
             
-            uncertainty = torch.abs(target_output - pred_output)
-            return uncertainty.cpu().numpy()
+#             uncertainty = torch.abs(target_output - pred_output)
+#             return uncertainty.cpu().numpy()
 
 # RND Linear with Least Square Fit
 class RNDLinearMethod:
