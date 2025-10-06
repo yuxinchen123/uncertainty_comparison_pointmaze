@@ -1,4 +1,4 @@
-program: 04_rnd_linear_sgd_sweep.py
+program: 04_rnd_linear_sgd.py
 name: rnd_linear_sgd_hyperparameter_sweep
 project: rnd_linear_sgd_pointmaze
 description: Comprehensive hyperparameter sweep for RND Linear SGD method
@@ -21,7 +21,8 @@ parameters:
   
   # Training hyperparameters - core SGD parameters
   num_epochs:
-    values: [10, 20, 30, 50, 100]
+    value: 30  # Fixed to 30 epochs
+    # values: [10, 20, 30, 50, 100]
   
   
   # Gaussian noise levels - critical for RND Linear exploration
