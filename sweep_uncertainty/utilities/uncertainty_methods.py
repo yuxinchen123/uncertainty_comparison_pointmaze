@@ -76,7 +76,8 @@ class RNDMethod:
             
             return uncertainty.cpu().numpy()
 
-class RNDLinearMethod:
+# RND Linear with SGD Training
+# class RNDLinearMethod:
     def __init__(self, feature_dim, device='cpu', phi_weights=None):
         self.device = device
         self.feature_dim = feature_dim
@@ -144,6 +145,95 @@ class RNDLinearMethod:
             uncertainty = torch.abs(target_output - pred_output)
             return uncertainty.cpu().numpy()
 
+# RND Linear with Least Square Fit
+class RNDLinearMethod:
+    def __init__(self, feature_dim, device='cpu', phi_weights=None):
+        self.device = device
+        self.feature_dim = feature_dim
+        
+        # Shared φ(s): 2D -> feature_dim
+        self.phi = nn.Linear(2, feature_dim).to(device)
+        if phi_weights is not None:
+            self.phi.load_state_dict(phi_weights)
+        for param in self.phi.parameters():
+            param.requires_grad = False
+            
+        # Target θ vector (random)
+        self.theta = torch.randn(feature_dim).to(device)
+        
+        # Predictor weights (will be set via least squares)
+        self.predictor_weights = None
+        self.predictor_intercept = None
+    
+    def least_squares_fit(self, X, y, add_intercept=True):
+        """Direct least squares solution: min ||X_aug w - y||"""
+        if y.ndim == 1:
+            y = y[:, None]
+        if add_intercept:
+            X_aug = np.hstack([np.ones((X.shape[0], 1)), X])
+        else:
+            X_aug = X
+        
+        # Solve min ||X_aug w - y||
+        w, residuals, rank, s = np.linalg.lstsq(X_aug, y, rcond=None)
+        w = w.squeeze()
+        intercept = w[0] if add_intercept else 0.0
+        coefs = w[1:] if add_intercept else w
+        return intercept, coefs, residuals
+    
+    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
+        """Fit predictor to match φ(s)ᵀθ using closed-form least squares"""
+        print(f"Training RND-Linear on {len(positions)} positions (least squares fit)")
+        
+        coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
+        
+        # Compute features and targets
+        with torch.no_grad():
+            phi_output = self.phi(coords_tensor)  # [N, feature_dim]
+            target_output = torch.matmul(phi_output, self.theta)  # [N]
+            
+            if gaussian_noise > 0:
+                noise = torch.randn_like(target_output) * gaussian_noise
+                target_output += noise
+        
+        # Convert to numpy for least squares
+        X = phi_output.cpu().numpy()  # [N, feature_dim]
+        y = target_output.cpu().numpy()  # [N]
+        
+        # Fit: predictor(φ(s)) = intercept + φ(s)ᵀ * weights ≈ φ(s)ᵀθ
+        self.predictor_intercept, self.predictor_weights, residuals = self.least_squares_fit(X, y, add_intercept=True)
+        
+        # Convert back to torch tensors
+        self.predictor_weights = torch.FloatTensor(self.predictor_weights).to(self.device)
+        self.predictor_intercept = torch.FloatTensor([self.predictor_intercept]).to(self.device)
+        
+        # Compute final loss for logging
+        pred_output = torch.matmul(phi_output, self.predictor_weights) + self.predictor_intercept
+        final_loss = torch.mean((pred_output - target_output) ** 2).item()
+        
+        print(f"  Least squares fit complete. Final MSE: {final_loss:.6f}")
+        if residuals is not None and len(residuals) > 0:
+            print(f"  Residual sum of squares: {residuals[0]:.6f}")
+        
+        # Return dummy loss history for compatibility
+        return [final_loss] * num_epochs
+    
+    def get_uncertainty(self, coordinates):
+        """Get uncertainty as |φ(s)ᵀθ - predictor(φ(s))|"""
+        if self.predictor_weights is None:
+            raise ValueError("Model not trained yet. Call train_on_positions first.")
+            
+        with torch.no_grad():
+            if isinstance(coordinates, np.ndarray):
+                coordinates = torch.FloatTensor(coordinates).to(self.device)
+            
+            phi_output = self.phi(coordinates)
+            target_output = torch.matmul(phi_output, self.theta)
+            pred_output = torch.matmul(phi_output, self.predictor_weights) + self.predictor_intercept
+            
+            uncertainty = torch.abs(target_output - pred_output.squeeze())
+            return uncertainty.cpu().numpy()
+        
 class EllipticalBonusMethod:
     def __init__(self, feature_dim, device='cpu', phi_weights=None, regularization=1e-6):
         self.device = device
