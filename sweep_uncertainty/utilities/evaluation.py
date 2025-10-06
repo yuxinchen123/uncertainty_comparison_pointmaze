@@ -302,6 +302,9 @@ def compute_l2_distance(gt_matrix, pred_matrix, maze_map=None):
     # Compute L2 distance
     return np.linalg.norm(gt_norm - pred_norm)
 
+    # # unnormalized version to test Gaussian noise
+    # return np.linalg.norm(gt_clean - pred_clean)
+
 def compute_correlation(gt_matrix, pred_matrix, maze_map=None):
     """
     Compute Pearson correlation between uncertainty matrices (on open cells).

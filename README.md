@@ -6,7 +6,7 @@ This repository contains a systematic comparison of uncertainty estimation metho
 
 A comprehensive evaluation framework comparing three uncertainty estimation methods:
 - **RND**: Neural network-based Random Network Distillation
-- **RND-Linear**: Linear feature-based approach with least squares fitting
+- **RND-Linear**: Linear feature-based approach with SGD training or least squares fitting
 - **Elliptical Bonus**: Covariance-based uncertainty estimation
 
 All methods are evaluated on PointMaze-Large-v2 using identical data subsets and ground truth calculations for fair comparison.
@@ -15,19 +15,26 @@ All methods are evaluated on PointMaze-Large-v2 using identical data subsets and
 
 ```
 RND/
-├── sweep_uncertainty/                  # Main experiment directory
-│   ├── 01_uncertainty_comparison.py    # Main training/evaluation script
-│   ├── 01_wandb_sweep.yaml            # WandB sweep configuration
-│   ├── utilities/                      # Core implementations
-│   │   ├── uncertainty_methods.py      # Method implementations
-│   │   ├── evaluation.py               # Ground truth & metrics
-│   │   ├── environment.py              # Dataset utilities
-│   │   └── debug.py                    # Logging utilities
-│   └── slurm/                          # SLURM batch scripts
-├── pointmaze_count.ipynb               # Reference validation notebook
-├── D4_maze_offlinedata_study.ipynb     # Study the structure of D4RL dataset
-├── saved_data/                         # Experimental results
-└── README.md                           # This file
+├── sweep_uncertainty/                      # Main experiment directory
+│   ├── 01_uncertainty_comparison.py        # Main training/evaluation script
+│   ├── 01_wandb_sweep.yaml                # WandB sweep configuration
+│   ├── 02_elliptical_only.py              # Focused elliptical method evaluation
+│   ├── 02_elliptical_only.yaml            # Elliptical-only sweep configuration
+│   ├── 03_rnd_linear_only.py              # RND-Linear focused evaluation
+│   ├── 03_rnd_linear_only.yaml            # RND-Linear sweep configuration
+│   ├── 04_rnd_linear_sgd_sweep.py         # RND-Linear SGD hyperparameter sweep
+│   ├── 04_rnd_linear_sgd.yaml             # SGD hyperparameter sweep configuration
+│   ├── utilities/                          # Core implementations
+│   │   ├── uncertainty_methods.py          # Method implementations
+│   │   ├── evaluation.py                   # Ground truth & metrics
+│   │   ├── evaluation_unnormalized.py      # Raw uncertainty evaluation
+│   │   ├── environment.py                  # Dataset utilities
+│   │   └── debug.py                        # Logging utilities
+│   └── slurm/                              # SLURM batch scripts
+├── pointmaze_count.ipynb                   # Reference validation notebook
+├── D4_maze_offlinedata_study.ipynb         # Study the structure of D4RL dataset
+├── saved_data/                             # Experimental results
+└── README.md                               # This file
 ```
 
 ## Method Implementations
@@ -47,7 +54,7 @@ RND/
 
 ### 3. Elliptical Bonus
 - **Features**: Same shared φ(s) as RND-Linear
-- **Method**: Covariance matrix estimation from training data
+- **Method**: (Corrected) covariance matrix estimation from training data
 - **Uncertainty**: √(φ(s)ᵀ Σ⁻¹ φ(s)) with regularization
 - **Parameters**: `phi_dim`, `phi_seed`
 - **Note**: No noise parameters (analytical method)
@@ -91,17 +98,19 @@ python 01_uncertainty_comparison.py \
     --num_averaging_runs 10 \
     --wandb_switch False
 
-# Test RND-Linear (with least squares)
-python 01_uncertainty_comparison.py \
+# Test RND-Linear (with SGD)
+python 03_rnd_linear_only.py \
     --method rnd_linear \
     --phi_dim 128 \
     --phi_seed 42 \
+    --num_epochs 20 \
+    --gaussian_noise 0.5 \
     --num_samples 10000 \
     --num_averaging_runs 10 \
     --wandb_switch False
 
-# Test Elliptical Bonus
-python 01_uncertainty_comparison.py \
+# Test Elliptical Bonus (corrected)
+python 02_elliptical_only.py \
     --method elliptical \
     --phi_dim 128 \
     --phi_seed 42 \

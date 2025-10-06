@@ -1,0 +1,51 @@
+program: 05_rnd_linear_sgd_unnormalized.py
+name: rnd_linear_sgd_hyperparameter_sweep_normalized
+project: rnd_linear_sgd_pointmaze_unnormalized
+description: Comprehensive hyperparameter sweep for RND Linear SGD method
+method: grid
+metric:
+  goal: minimize
+  name: avg_l2_distance
+parameters:
+  # Method is fixed to rnd_linear
+  method:
+    value: 'rnd_linear'
+  
+  # Feature dimension sweep - key parameter for RND Linear
+  phi_dim:
+    value: 64
+  
+  # φ(s) weight seeds - test robustness to different feature mappings
+  phi_seed:
+    value: 0
+  
+  # Training hyperparameters - core SGD parameters
+  num_epochs:
+    # value: 30  # Fixed to 30 epochs
+    values: [5,10, 20]
+  
+  
+  # Gaussian noise levels - critical for RND Linear exploration
+  gaussian_noise:
+    values: [0.0, 0.5, 1.0,2.0,5.0,10.0]
+  
+  
+  # Data sampling parameters
+  num_samples:
+    value: 1000  # 10K samples per run
+  
+  # Model initialization seeds
+  seed:
+    value: 0
+  
+  # Averaging parameters
+  num_averaging_runs:
+    value: 10 
+  
+  # Fixed parameters
+  wandb_switch:
+    value: true
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
