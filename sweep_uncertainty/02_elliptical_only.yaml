@@ -1,0 +1,52 @@
+program: 02_elliptical_only.py
+name: elliptical_bonus_sweep
+project: elliptical_bonus_pointmaze
+description: Focused sweep of Elliptical Bonus method with comprehensive parameter exploration
+method: grid
+metric:
+  goal: minimize
+  name: avg_l2_distance
+parameters:
+  # Method is fixed to elliptical
+  method:
+    value: 'elliptical'
+  
+  # Feature dimension sweep - key parameter for Elliptical Bonus
+  phi_dim:
+    values: [64, 128, 256, 512, 1024]
+  
+  # φ(s) weight seeds - test robustness to different feature mappings
+  phi_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  
+  # Regularization parameter - critical for covariance matrix stability
+  regularization:
+    # values: [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2]
+    values: [1e-6, 1e-4, 1e-2]
+  
+  # Data sampling parameters
+  num_samples:
+    value: 10000  # 10K samples per run
+    # values: [1000, 2500, 5000, 7500, 10000]    # Test data efficiency
+  
+  # Model initialization seeds
+  seed:
+    values: [0, 1, 2, 3, 4]
+  
+  # Averaging parameters
+  num_averaging_runs:
+    value: 10
+  
+  # Fixed parameters
+  wandb_switch:
+    value: true
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  
+  # These are ignored for elliptical but kept for compatibility
+  gaussian_noise:
+    value: 0.0
+  num_epochs:
+    value: 1  # Minimal since elliptical doesn't use epochs
