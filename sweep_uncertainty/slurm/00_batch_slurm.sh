@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Define two variables with name job_id and cpu_core
-job_id="uncertainty_comparison_pointmaze/cnt87hy4"
+job_id="uncertainty_comparison_pointmaze/f7hrgc5r"
 
 # for i in $(seq 1 1); do
 #     sbatch slurm/01_run_gpu.slurm $job_id&

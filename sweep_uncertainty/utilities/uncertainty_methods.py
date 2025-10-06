@@ -145,60 +145,102 @@ class RNDLinearMethod:
             return uncertainty.cpu().numpy()
 
 class EllipticalBonusMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, regularization=1e-6):
         self.device = device
         self.feature_dim = feature_dim
-        
-        # Shared φ(s): Same as RND_Linear
+        self.regularization = regularization
+
+        # Shared φ(s): 2D -> feature_dim (frozen)
         self.phi = nn.Linear(2, feature_dim).to(device)
         if phi_weights is not None:
             self.phi.load_state_dict(phi_weights)
         for param in self.phi.parameters():
             param.requires_grad = False
-        
-        # Covariance matrix (will be updated)
-        self.covariance = torch.eye(feature_dim).to(device)
-        self.covariance_inv = torch.eye(feature_dim).to(device)
-    
-    def update_covariance_from_positions(self, positions):
-        """Update covariance matrix from positions"""
-        coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
-        
-        # Compute φ(s) for all coordinates
+
+        # Initialize Λ and its inverse with regularization
+        self.covariance = torch.eye(feature_dim, device=device) * regularization
+        self.covariance_inv = torch.eye(feature_dim, device=device) / regularization
+
+        # Normalization stats (computed from data on first update)
+        self.obs_mean = None
+        self.obs_std = None
+
+    def _normalize_observations(self, observations):
+        if self.obs_mean is None:
+            self.obs_mean = torch.mean(observations, dim=0, keepdim=True)
+            self.obs_std = torch.std(observations, dim=0, keepdim=True) + 1e-8
+        return (observations - self.obs_mean) / self.obs_std
+
+    def _compute_features(self, observations):
+        self.phi.eval()
+        norm_obs = self._normalize_observations(observations)
         with torch.no_grad():
-            phi_outputs = self.phi(coords_tensor)  # [N, feature_dim]
-            
-            # Update covariance matrix
-            if len(phi_outputs) > 1:
-                self.covariance = torch.cov(phi_outputs.T)
-                # Add regularization for numerical stability
-                self.covariance += torch.eye(self.covariance.shape[0]).to(self.device) * 1e-6
-                self.covariance_inv = torch.linalg.inv(self.covariance)
-    
+            return self.phi(norm_obs)
+
+    def update_covariance_from_positions(self, positions):
+        """
+        Correct covariance calculation:
+        Λ = (1/n) Σ φ(s_i) φ(s_i)^T + regularization * I
+        Compute in batches for memory efficiency, then invert (with fallback).
+        """
+        coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
+
+        # compute normalization stats and features in batches
+        features_list = []
+        batch_size = 1000
+        for i in range(0, len(coords_tensor), batch_size):
+            batch = coords_tensor[i:i+batch_size]
+            batch_feats = self._compute_features(batch)
+            features_list.append(batch_feats)
+
+        all_features = torch.cat(features_list, dim=0)  # [n_samples, feature_dim]
+        n_samples = all_features.shape[0]
+        if n_samples == 0:
+            return
+
+        # accumulate sum of outer-products in batches to form (unnormalized) covariance
+        accumulated = torch.zeros(self.feature_dim, self.feature_dim, device=self.device)
+        batch_size_cov = 5000
+        for i in range(0, n_samples, batch_size_cov):
+            batch_feats = all_features[i:i+batch_size_cov]  # [b, d]
+            accumulated += batch_feats.T @ batch_feats  # [d, d]
+
+        # normalize and add regularization
+        Lambda = accumulated / float(n_samples)
+        Lambda += torch.eye(self.feature_dim, device=self.device) * self.regularization
+        self.covariance = Lambda
+
+        # invert with numerical fallback
+        try:
+            self.covariance_inv = torch.linalg.inv(self.covariance)
+        except Exception:
+            self.covariance_inv = torch.pinverse(self.covariance)
+
+        # optional diagnostics (kept minimal)
+        try:
+            eigvals = torch.linalg.eigvals(self.covariance).real
+            cond = (torch.max(eigvals) / torch.min(eigvals)).item()
+            print(f"  Covariance updated (n={n_samples}), condition number: {cond:.2e}")
+        except Exception:
+            print("  Covariance updated (condition number unavailable)")
+
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
-        """Train elliptical bonus method - use all provided positions"""
+        """Train/update covariance from positions (analytical; no optimizer)"""
         print(f"Training Elliptical Bonus on {len(positions)} positions (updating covariance)")
-        
-        # Update covariance from all provided positions
+        # compute normalization from first chunk to stabilise features
+        coords = torch.FloatTensor(positions[:, :2]).to(self.device)
+        _ = self._normalize_observations(coords[:1000])
         self.update_covariance_from_positions(positions)
-        
-        # Simple progress logging
-        for epoch in range(min(5, num_epochs)):  # Only need a few epochs for covariance update
-            if (epoch + 1) % 2 == 0:
-                print(f"  Step {epoch+1}, Covariance matrix updated")
-        
-        return [0.0] * num_epochs  # Dummy losses since this is analytical
-    
+        return [0.0] * num_epochs
+
     def get_uncertainty(self, coordinates):
-        """Get uncertainty as φ(s)ᵀ Σ⁻¹ φ(s)"""
+        """Elliptical bonus: sqrt(φ(s)^T Σ^{-1} φ(s))"""
         with torch.no_grad():
             if isinstance(coordinates, np.ndarray):
                 coordinates = torch.FloatTensor(coordinates).to(self.device)
-            
-            phi_output = self.phi(coordinates)  # [N, feature_dim]
-            # Compute φ(s)ᵀ Σ⁻¹ φ(s) for each point
-            quadratic_form = torch.sum(phi_output @ self.covariance_inv * phi_output, dim=1)
 
-            # Take square root as per elliptical bonus formula
+            phi_output = self._compute_features(coordinates)  # [N, feature_dim]
+            tmp = phi_output @ self.covariance_inv  # [N, feature_dim]
+            quadratic_form = torch.sum(tmp * phi_output, dim=1)
             uncertainty = torch.sqrt(torch.clamp(quadratic_form, min=1e-8))
             return uncertainty.cpu().numpy()

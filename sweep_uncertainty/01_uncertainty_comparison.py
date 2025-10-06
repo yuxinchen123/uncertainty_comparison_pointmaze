@@ -91,7 +91,7 @@ def main():
         config = wandb.config
         
         # Override arguments with WandB config
-        args.method = config.get('method_name', args.method)
+        args.method = config.get('method', args.method)
         args.output_dim = config.get('output_dim', args.output_dim)
         args.hidden_dims = config.get('hidden_dims', args.hidden_dims)
         args.num_epochs = config.get('num_epochs', args.num_epochs)

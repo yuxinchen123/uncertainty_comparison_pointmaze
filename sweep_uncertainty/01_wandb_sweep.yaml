@@ -8,7 +8,7 @@ metric:
   name: l2_distance
 parameters:
   # Method selection
-  method_name:
+  method:
     values: ['rnd', 'rnd_linear', 'elliptical']
   
   # RND architecture parameters (only used for RND method)
@@ -21,13 +21,13 @@ parameters:
   phi_dim:
     values: [64, 128, 256, 512, 1024]
   phi_seed:
-    values: [1,2,3,4,5,6,7,8,9,10] 
-  
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
   # Training parameters
   num_epochs:
     value: 30
-  subset_ratio:
-    value: 1.0  # All methods use full 10K dataset for fairness
+  # subset_ratio:
+  #   value: 1.0  # All methods use full 10K dataset for fairness
   
   # Gaussian noise levels (ignored for elliptical method)
   gaussian_noise:
