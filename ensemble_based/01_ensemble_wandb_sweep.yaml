@@ -1,4 +1,5 @@
 program: 01_ensemble_uncertainty_comparison.py
+project: ensemble-rnd-uncertainty
 method: grid
 metric:
   goal: minimize
@@ -34,7 +35,7 @@ parameters:
     value: 42
   wandb_switch:
     value: "True"
-  project_name:
-    value: "ensemble-rnd-uncertainty"
+  # project_name:
+  #   value: "ensemble-rnd-uncertainty"
 
 

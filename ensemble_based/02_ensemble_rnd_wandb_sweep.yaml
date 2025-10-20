@@ -1,4 +1,5 @@
 program: 02_ensemble_rnd_only.py
+project: ensemble-rnd
 method: grid
 metric:
   goal: minimize
@@ -28,5 +29,5 @@ parameters:
     values: [0, 1, 2, 3, 4]
   wandb_switch:
     value: "True"
-  project_name:
-    value: "ensemble-rnd"
+  # project_name:
+  #   value: "ensemble-rnd"

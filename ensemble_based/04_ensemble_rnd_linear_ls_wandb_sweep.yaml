@@ -1,4 +1,5 @@
 program: 04_ensemble_rnd_linear_ls.py
+project: ensemble-rnd-linear-ls
 method: grid
 metric:
   goal: minimize
@@ -30,6 +31,6 @@ parameters:
     values: [0, 1, 2, 3, 4]
   wandb_switch:
     value: "True"
-  project_name:
-    value: "ensemble-rnd-linear-ls"
+  # project_name:
+  #   value: "ensemble-rnd-linear-ls"
 
