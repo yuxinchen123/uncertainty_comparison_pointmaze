@@ -1,0 +1,32 @@
+program: 03_ensemble_rnd_linear_sgd.py
+method: grid
+metric:
+  goal: minimize
+  name: final_mean_l2
+parameters:
+  K:
+    values: [5, 10, 15, 20]
+  num_samples:
+    value: 10000
+  num_averaging_runs:
+    value: 10
+  phi_dim:
+    values: [128, 256, 512]
+  phi_seed:
+    value: 42
+  num_epochs:
+    value: 30
+  gaussian_noise:
+    values: [0.0, 0.5, 1.0]
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: "cpu"
+  seed:
+    values: [0, 1, 2, 3, 4]
+  wandb_switch:
+    value: "True"
+  project_name:
+    value: "ensemble-rnd-linear-sgd"
