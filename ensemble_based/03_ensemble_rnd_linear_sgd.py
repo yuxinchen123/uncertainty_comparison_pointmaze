@@ -194,6 +194,14 @@ def main():
     print(f"L2 Distance: {mean_l2:.6f} ± {std_l2:.6f}")
     print(f"Individual L2 distances: {[f'{d:.6f}' for d in l2_distances]}")
     
+    # Plot final uncertainty heatmap
+    final_result = results[-1]  # Use last run for visualization
+    save_heatmap_to_wandb(
+        final_result['uncertainty_matrix'],
+        title=f"Ensemble RND-Linear (SGD) (K={args.K}) - Final Run",
+        wandb_switch=(args.wandb_switch.lower() == "true")
+    )
+    
     # Log final results to WandB
     if args.wandb_switch.lower() == "true":
         wandb.log({
@@ -202,14 +210,6 @@ def main():
             "final_l2_distances": l2_distances
         })
         wandb.finish()
-    
-    # Plot final uncertainty heatmap
-    final_result = results[-1]  # Use last run for visualization
-    save_heatmap_to_wandb(
-        final_result['uncertainty_matrix'],
-        title=f"Ensemble RND-Linear (SGD) (K={args.K}) - Final Run",
-        wandb_switch=(args.wandb_switch.lower() == "true")
-    )
     
     print(f"Experiment completed successfully!")
 
