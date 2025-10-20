@@ -9,7 +9,7 @@ parameters:
   num_samples:
     value: 10000
   num_averaging_runs:
-    value: 10
+    value: 1
   output_dim:
     values: [128, 256, 512]
   hidden_dims:

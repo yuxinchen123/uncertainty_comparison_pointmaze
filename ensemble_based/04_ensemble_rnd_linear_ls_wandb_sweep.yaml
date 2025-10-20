@@ -9,11 +9,11 @@ parameters:
   num_samples:
     value: 10000
   num_averaging_runs:
-    value: 10
+    value: 1
   phi_dim:
     values: [128, 256, 512]
   phi_seed:
-    value: 42
+    values: [0, 1, 2, 3, 4]
   regularization:
     values: [1e-8, 1e-6, 1e-4]
   num_epochs:
