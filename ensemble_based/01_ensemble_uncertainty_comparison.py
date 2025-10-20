@@ -35,7 +35,7 @@ from evaluation import (
     save_heatmap_to_wandb,
     get_phi_weights
 )
-from environment import load_dataset, sample_positions_from_dataset
+from environment import load_pointmaze_dataset, extract_positions_from_dataset
 from debug import setup_logging, log_info
 
 def parse_args():
@@ -128,12 +128,11 @@ def run_single_experiment(args, device, run_idx):
     print(f"\n=== Run {run_idx + 1}/{args.num_averaging_runs} ===")
     
     # Load dataset and sample positions
-    dataset = load_dataset()
-    positions = sample_positions_from_dataset(dataset, args.num_samples, seed=args.seed + run_idx)
+    dataset, maze_map = load_pointmaze_dataset()
+    positions = extract_positions_from_dataset(dataset, args.num_samples)
     print(f"Sampled {len(positions)} positions from dataset")
     
     # Calculate ground truth
-    maze_map = get_maze_map()
     ground_truth = calculate_ground_truth(
         dataset, maze_map, args.grid_rows, args.grid_cols
     )

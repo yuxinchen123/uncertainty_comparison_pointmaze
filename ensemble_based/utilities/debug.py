@@ -1,4 +1,16 @@
 import wandb
+import logging
+
+def setup_logging():
+    """Setup basic logging configuration"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+def log_info(message):
+    """Log an info message"""
+    logging.info(message)
 
 def align_print_dic(dic, message):
     """Print dictionary with aligned keys and a header message."""
