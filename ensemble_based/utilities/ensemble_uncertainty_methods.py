@@ -58,7 +58,13 @@ class EnsembleRNDMethod:
         
         # Sample with replacement
         indices = np.random.choice(len(positions), size=sample_size, replace=True)
-        return positions[indices]
+        bootstrap_positions = positions[indices]
+        
+        # Show bootstrap sampling diversity
+        unique_count = len(np.unique(bootstrap_positions, axis=0))
+        print(f"    Bootstrap sample: {unique_count}/{sample_size} unique positions")
+        
+        return bootstrap_positions
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
         """
@@ -66,7 +72,6 @@ class EnsembleRNDMethod:
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
         print(f"Training Ensemble RND with K={self.K} predictors on {len(positions)} positions")
-        print(f"Each predictor will bootstrap sample {len(positions)} positions with replacement")
         
         all_losses = []
         
@@ -184,7 +189,13 @@ class EnsembleRNDLinearSGDMethod:
             sample_size = len(positions)
         
         indices = np.random.choice(len(positions), size=sample_size, replace=True)
-        return positions[indices]
+        bootstrap_positions = positions[indices]
+        
+        # Show bootstrap sampling diversity
+        unique_count = len(np.unique(bootstrap_positions, axis=0))
+        print(f"    Bootstrap sample: {unique_count}/{sample_size} unique positions")
+        
+        return bootstrap_positions
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
         """
@@ -192,7 +203,6 @@ class EnsembleRNDLinearSGDMethod:
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
         print(f"Training Ensemble RND-Linear (SGD) with K={self.K} predictors on {len(positions)} positions")
-        print(f"Each predictor will bootstrap sample {len(positions)} positions with replacement")
         
         all_losses = []
         
@@ -309,7 +319,13 @@ class EnsembleRNDLinearLSMethod:
             sample_size = len(positions)
         
         indices = np.random.choice(len(positions), size=sample_size, replace=True)
-        return positions[indices]
+        bootstrap_positions = positions[indices]
+        
+        # Show bootstrap sampling diversity
+        unique_count = len(np.unique(bootstrap_positions, axis=0))
+        print(f"    Bootstrap sample: {unique_count}/{sample_size} unique positions")
+        
+        return bootstrap_positions
     
     def least_squares_fit(self, X, y, add_intercept=True):
         """Direct least squares solution with regularization."""
@@ -340,7 +356,6 @@ class EnsembleRNDLinearLSMethod:
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
         print(f"Training Ensemble RND-Linear (LS) with K={self.K} predictors on {len(positions)} positions")
-        print(f"Each predictor will bootstrap sample {len(positions)} positions with replacement")
         
         all_losses = []
         
@@ -366,7 +381,7 @@ class EnsembleRNDLinearLSMethod:
             y = target_output.cpu().numpy()  # [N]
             
             # Fit: predictor(φ(s)) = intercept + φ(s)ᵀ * weights ≈ φ(s)ᵀθ̂
-            intercept, weights, _ = self.least_squares_fit(X, y, add_intercept=True)
+            intercept, weights = self.least_squares_fit(X, y, add_intercept=True)
             
             # Store weights
             self.predictor_intercepts[k] = torch.FloatTensor([intercept]).to(self.device)

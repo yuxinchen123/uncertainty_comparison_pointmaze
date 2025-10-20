@@ -103,7 +103,7 @@ def extract_positions_from_dataset(dataset, num_samples=None):
     all_positions = np.array(all_positions)
     print(f"✓ Extracted {len(all_positions)} total positions from dataset")
     
-    # DEBUG: Show position range before sampling
+    # Show position range before sampling
     print(f"  Position range: X=[{np.min(all_positions[:, 0]):.3f}, {np.max(all_positions[:, 0]):.3f}], Y=[{np.min(all_positions[:, 1]):.3f}, {np.max(all_positions[:, 1]):.3f}]")
     
     # Handle sampling - only sample if num_samples is specified and less than total
@@ -113,11 +113,6 @@ def extract_positions_from_dataset(dataset, num_samples=None):
         sampled_positions = all_positions[indices]
         
         print(f"✓ Randomly sampled {num_samples} positions from {len(all_positions)} total")
-        print(f"  Sampled range: X=[{np.min(sampled_positions[:, 0]):.3f}, {np.max(sampled_positions[:, 0]):.3f}], Y=[{np.min(sampled_positions[:, 1]):.3f}, {np.max(sampled_positions[:, 1]):.3f}]")
-        
-        # DEBUG: Check if the samples are actually different
-        unique_positions = len(np.unique(sampled_positions, axis=0))
-        print(f"  Unique positions in sample: {unique_positions}/{num_samples}")
         
         return sampled_positions
     else:

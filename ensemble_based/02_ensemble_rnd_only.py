@@ -22,6 +22,7 @@ from ensemble_uncertainty_methods import EnsembleRNDMethod
 from evaluation import (
     get_maze_map, 
     calculate_ground_truth, 
+    calculate_ground_truth_from_positions,
     compute_l2_distance, 
     save_heatmap_to_wandb
 )
@@ -77,14 +78,17 @@ def run_single_experiment(args, device, run_idx):
     """Run a single experiment with the given parameters"""
     print(f"\n=== Run {run_idx + 1}/{args.num_averaging_runs} ===")
     
-    # Load dataset and sample positions
+    # Load dataset and sample 10k positions (with seed control)
     dataset, maze_map = load_pointmaze_dataset()
-    positions = extract_positions_from_dataset(dataset, args.num_samples)
-    print(f"Sampled {len(positions)} positions from dataset")
     
-    # Calculate ground truth
-    ground_truth = calculate_ground_truth(
-        dataset, maze_map, args.grid_rows, args.grid_cols
+    # Set seed for reproducible 10k sampling (same for all K heads in this run)
+    np.random.seed(args.seed)
+    positions = extract_positions_from_dataset(dataset, args.num_samples)
+    print(f"Sampled {len(positions)} positions from dataset (seed={args.seed})")
+    
+    # Calculate ground truth on the same 10k subset
+    ground_truth = calculate_ground_truth_from_positions(
+        positions, maze_map, args.grid_rows, args.grid_cols
     )
     print(f"Ground truth calculated: {ground_truth.shape}")
     
