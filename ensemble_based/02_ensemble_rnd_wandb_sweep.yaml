@@ -5,6 +5,8 @@ metric:
   goal: minimize
   name: final_mean_l2
 parameters:
+  a_seed:
+      values: [0, 1, 2, 3, 4]
   K:
     values: [5, 10, 15, 20]
   num_samples:
@@ -25,8 +27,6 @@ parameters:
     value: 12
   device:
     value: "cpu"
-  seed:
-    values: [0, 1, 2, 3, 4]
   wandb_switch:
     value: "True"
   # project_name:
