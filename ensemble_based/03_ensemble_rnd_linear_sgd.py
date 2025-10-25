@@ -52,7 +52,7 @@ def parse_args():
     
     # System parameters
     parser.add_argument("--device", type=str, default="cpu", help="Device to use (cpu/cuda)")
-    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--a_seed", type=int, default=42, help="Random seed")
     
     # WandB parameters
     parser.add_argument("--wandb_switch", type=str, default="False", help="Enable WandB logging")
@@ -62,10 +62,10 @@ def parse_args():
 
 def setup_environment(args):
     """Setup random seeds and device"""
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
+    np.random.seed(args.a_seed)
+    torch.manual_seed(args.a_seed)
     import random
-    random.seed(args.seed)
+    random.seed(args.a_seed)
     
     if args.device == "cuda" and torch.cuda.is_available():
         device = "cuda"
@@ -83,9 +83,9 @@ def run_single_experiment(args, device, run_idx):
     dataset, maze_map = load_pointmaze_dataset()
     
     # Set seed for reproducible 10k sampling (same for all K heads in this run)
-    np.random.seed(args.seed)
+    np.random.seed(args.a_seed)
     positions = extract_positions_from_dataset(dataset, args.num_samples)
-    print(f"Sampled {len(positions)} positions from dataset (seed={args.seed})")
+    print(f"Sampled {len(positions)} positions from dataset (seed={args.a_seed})")
     
     # Calculate ground truth on the same 10k subset
     ground_truth = calculate_ground_truth_from_positions(

@@ -27,7 +27,7 @@ parameters:
     value: 12
   device:
     value: "cpu"
-  seed:
+  a_seed:
     values: [0, 1, 2, 3, 4]
   wandb_switch:
     value: "True"
