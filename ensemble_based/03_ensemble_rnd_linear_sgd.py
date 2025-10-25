@@ -196,6 +196,15 @@ def main():
     
     # Plot final uncertainty heatmap
     final_result = results[-1]  # Use last run for visualization
+    
+    # Log ground truth heatmap
+    save_heatmap_to_wandb(
+        final_result['ground_truth'],
+        title=f"Ground Truth Uncertainty - Final Run",
+        wandb_switch=(args.wandb_switch.lower() == "true")
+    )
+    
+    # Log method heatmap
     save_heatmap_to_wandb(
         final_result['uncertainty_matrix'],
         title=f"Ensemble RND-Linear (SGD) (K={args.K}) - Final Run",
