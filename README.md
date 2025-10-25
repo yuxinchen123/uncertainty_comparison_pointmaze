@@ -4,10 +4,17 @@ This repository contains a systematic comparison of uncertainty estimation metho
 
 ## Project Overview
 
-A comprehensive evaluation framework comparing three uncertainty estimation methods:
+A comprehensive evaluation framework comparing uncertainty estimation methods:
+
+**Single-Model Methods:**
 - **RND**: Neural network-based Random Network Distillation
 - **RND-Linear**: Linear feature-based approach with SGD training or least squares fitting
 - **Elliptical Bonus**: Covariance-based uncertainty estimation
+
+**Ensemble-Based Methods:**
+- **Ensemble RND**: Multiple neural network predictors with bootstrap sampling
+- **Ensemble RND-Linear (SGD)**: Multiple linear predictors with SGD training
+- **Ensemble RND-Linear (LS)**: Multiple linear predictors with least squares fitting
 
 All methods are evaluated on PointMaze-Large-v2 using identical data subsets and ground truth calculations for fair comparison.
 
@@ -31,8 +38,22 @@ RND/
 │   │   ├── environment.py                  # Dataset utilities
 │   │   └── debug.py                        # Logging utilities
 │   └── slurm/                              # SLURM batch scripts
-├── pointmaze_count.ipynb                   # Reference validation notebook
-├── D4_maze_offlinedata_study.ipynb         # Study the structure of D4RL dataset
+├── ensemble_based/                         # Ensemble-based RND methods
+│   ├── 01_ensemble_uncertainty_comparison.py  # Main ensemble comparison script
+│   ├── 02_ensemble_rnd_only.py               # Ensemble RND testing
+│   ├── 03_ensemble_rnd_linear_sgd.py          # Ensemble RND-Linear (SGD) testing
+│   ├── 04_ensemble_rnd_linear_ls.py           # Ensemble RND-Linear (LS) testing
+│   ├── 01_ensemble_wandb_sweep.yaml           # WandB sweep config (all methods)
+│   ├── 02_ensemble_rnd_wandb_sweep.yaml       # WandB sweep config (RND only)
+│   ├── 03_ensemble_rnd_linear_sgd_wandb_sweep.yaml  # WandB sweep config (SGD)
+│   ├── 04_ensemble_rnd_linear_ls_wandb_sweep.yaml   # WandB sweep config (LS)
+│   ├── utilities/                          # Core ensemble implementations
+│   │   ├── ensemble_uncertainty_methods.py  # Ensemble method implementations
+│   │   ├── evaluation.py                   # Evaluation utilities (copied)
+│   │   ├── environment.py                  # Dataset utilities (copied)
+│   │   └── debug.py                        # Logging utilities (copied)
+│   ├── slurm/                              # SLURM batch scripts
+│   └── README.md                           # Ensemble methods documentation
 ├── saved_data/                             # Experimental results
 └── README.md                               # This file
 ```
@@ -58,6 +79,35 @@ RND/
 - **Uncertainty**: √(φ(s)ᵀ Σ⁻¹ φ(s)) with regularization
 - **Parameters**: `phi_dim`, `phi_seed`
 - **Note**: No noise parameters (analytical method)
+
+## Ensemble-Based Method Implementations
+
+### 4. Ensemble RND
+- **Architecture**: K neural network predictors + 1 frozen target network
+- **Training**: Bootstrap sampling with replacement for each predictor
+- **Uncertainty**: Standard deviation across K predictors
+- **Key Features**: 
+  - Shared frozen target network across all predictors
+  - Independent predictor networks trained on bootstrap samples
+  - Ensemble uncertainty = Std_{i=1,...,K}[e_i(s)]
+
+### 5. Ensemble RND-Linear (SGD)
+- **Architecture**: K linear predictors + frozen target vector θ̂
+- **Training**: SGD training with bootstrap sampling
+- **Uncertainty**: Standard deviation across K predictors
+- **Key Features**:
+  - Shared frozen φ(s) feature transformation
+  - Shared frozen target vector θ̂
+  - Each predictor trained independently with SGD
+
+### 6. Ensemble RND-Linear (LS)
+- **Architecture**: K linear predictors + frozen target vector θ̂
+- **Training**: Least squares fitting with bootstrap sampling
+- **Uncertainty**: Standard deviation across K predictors
+- **Key Features**:
+  - Shared frozen φ(s) feature transformation
+  - Shared frozen target vector θ̂
+  - Each predictor fitted using least squares
 
 ## Experimental Protocol
 
@@ -119,6 +169,42 @@ python 02_elliptical_only.py \
     --wandb_switch False
 ```
 
+### Ensemble Method Testing
+```bash
+cd ensemble_based
+
+# Test Ensemble RND
+python 02_ensemble_rnd_only.py \
+    --K 10 \
+    --num_samples 10000 \
+    --num_averaging_runs 10 \
+    --output_dim 128 \
+    --hidden_dims "128,128" \
+    --num_epochs 30 \
+    --wandb_switch False
+
+# Test Ensemble RND-Linear (SGD)
+python 03_ensemble_rnd_linear_sgd.py \
+    --K 10 \
+    --num_samples 10000 \
+    --num_averaging_runs 10 \
+    --phi_dim 128 \
+    --phi_seed 42 \
+    --num_epochs 20 \
+    --gaussian_noise 0.5 \
+    --wandb_switch False
+
+# Test Ensemble RND-Linear (LS)
+python 04_ensemble_rnd_linear_ls.py \
+    --K 10 \
+    --num_samples 10000 \
+    --num_averaging_runs 10 \
+    --phi_dim 128 \
+    --phi_seed 42 \
+    --gaussian_noise 0.5 \
+    --wandb_switch False
+```
+
 ### WandB Slurm Sweep Experiments
 
 
@@ -133,6 +219,22 @@ wandb sweep 02_elliptical_only.yaml
 or
 ```bash
 wandb sweep 03_rnd_linear_only.yaml
+```
+or for ensemble methods:
+```bash
+wandb sweep 01_ensemble_wandb_sweep.yaml
+```
+or
+```bash
+wandb sweep 02_ensemble_rnd_wandb_sweep.yaml
+```
+or
+```bash
+wandb sweep 03_ensemble_rnd_linear_sgd_wandb_sweep.yaml
+```
+or
+```bash
+wandb sweep 04_ensemble_rnd_linear_ls_wandb_sweep.yaml
 ```
 
 You will get output like:
