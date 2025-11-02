@@ -36,14 +36,40 @@ class RNDMethod:
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
         losses = []
         
+        # Fix: Assign fixed noise per unique position at training start
+        noise_map = {}
+        if gaussian_noise > 0:
+            # Get unique positions (as tuples for dictionary keys)
+            unique_positions = {}
+            for i, pos in enumerate(positions[:, :2]):
+                pos_tuple = tuple(pos.tolist())
+                if pos_tuple not in unique_positions:
+                    unique_positions[pos_tuple] = i
+            
+            # Get target output for unique positions to determine noise shape
+            unique_indices = list(unique_positions.values())
+            unique_coords = torch.FloatTensor(positions[unique_indices, :2]).to(self.device)
+            with torch.no_grad():
+                unique_target_output = self.target_net(unique_coords)  # [unique_N, output_dim]
+            
+            # Assign fixed noise to each unique position (in the same order as unique_indices)
+            pos_tuple_list = [tuple(positions[i, :2].tolist()) for i in unique_indices]
+            for idx, pos_tuple in enumerate(pos_tuple_list):
+                noise_map[pos_tuple] = torch.randn_like(unique_target_output[idx:idx+1]) * gaussian_noise
+        
         for epoch in range(num_epochs):
             self.optimizer.zero_grad()
             
-            # Target output (with noise)
+            # Target output (with fixed noise per position)
             with torch.no_grad():
                 target_output = self.target_net(coords_tensor)
                 if gaussian_noise > 0:
-                    noise = torch.randn_like(target_output) * gaussian_noise
+                    # Look up fixed noise for each position
+                    noise_values = []
+                    for pos in positions[:, :2]:
+                        pos_tuple = tuple(pos.tolist())
+                        noise_values.append(noise_map[pos_tuple])
+                    noise = torch.cat(noise_values, dim=0)  # [N, output_dim]
                     target_output += noise
             
             # Predictor output
@@ -187,14 +213,32 @@ class RNDLinearMethod:
         
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
         
+        # Fix: Assign fixed noise per unique position at training start
+        noise_map = {}
+        if gaussian_noise > 0:
+            # Get unique positions (as tuples for dictionary keys)
+            unique_positions = {}
+            for i, pos in enumerate(positions[:, :2]):
+                pos_tuple = tuple(pos.tolist())
+                if pos_tuple not in unique_positions:
+                    unique_positions[pos_tuple] = i
+            
+            # Assign fixed scalar noise to each unique position
+            for pos_tuple in unique_positions.keys():
+                noise_map[pos_tuple] = torch.randn(1).item() * gaussian_noise
+        
         # Compute features and targets
         with torch.no_grad():
             phi_output = self.phi(coords_tensor)  # [N, feature_dim]
             target_output = torch.matmul(phi_output, self.theta)  # [N]
             
             if gaussian_noise > 0:
-                noise = torch.randn_like(target_output) * gaussian_noise
-                target_output += noise
+                # Look up fixed noise for each position
+                noise_values = torch.zeros(len(positions), device=self.device)
+                for i, pos in enumerate(positions[:, :2]):
+                    pos_tuple = tuple(pos.tolist())
+                    noise_values[i] = noise_map[pos_tuple]
+                target_output += noise_values
         
         # Convert to numpy for least squares
         X = phi_output.cpu().numpy()  # [N, feature_dim]
