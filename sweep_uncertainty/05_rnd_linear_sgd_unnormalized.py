@@ -10,7 +10,7 @@ import os
 # Fix these imports:
 from utilities.debug import print_or_wandb_log
 from utilities.environment import load_pointmaze_dataset, extract_positions_from_dataset
-from utilities.uncertainty_methods import RNDLinearMethod
+from utilities.uncertainty_methods import RNDLinearSGDMethod
 from utilities.evaluation import (
     calculate_ground_truth_from_positions, evaluate_uncertainty_method, 
     normalize_uncertainty_matrix, compute_l2_distance, 
@@ -145,8 +145,8 @@ def main():
         # Create shared φ(s) weights (same φ_seed across all averaging runs)
         phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
         
-        # Initialize RND Linear with current SGD implementation
-        method = RNDLinearMethod(
+        # Initialize RND Linear (SGD)
+        method = RNDLinearSGDMethod(
             feature_dim=args.phi_dim,
             device=device,
             phi_weights=phi_weights
