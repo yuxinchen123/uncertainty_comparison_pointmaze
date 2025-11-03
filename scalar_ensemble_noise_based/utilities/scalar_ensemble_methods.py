@@ -257,6 +257,13 @@ class ScalarEnsembleRNDLinearSGDMethod:
             # Stack: [K, N]
             scalar_predictions = torch.stack(scalar_predictions, dim=0)
             
+            # Debug: Check if predictions are identical (would cause STD=0)
+            if scalar_predictions.shape[0] > 1:
+                first_pred = scalar_predictions[0]
+                max_diff = torch.max(torch.abs(scalar_predictions - first_pred)).item()
+                if max_diff < 1e-6:
+                    print(f"Warning: All {self.K} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
+            
             # Calculate STD across K predictors
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]
             
@@ -397,6 +404,13 @@ class ScalarEnsembleRNDLinearLSMethod:
             
             # Stack: [K, N]
             scalar_predictions = torch.stack(scalar_predictions, dim=0)
+            
+            # Debug: Check if predictions are identical (would cause STD=0)
+            if scalar_predictions.shape[0] > 1:
+                first_pred = scalar_predictions[0]
+                max_diff = torch.max(torch.abs(scalar_predictions - first_pred)).item()
+                if max_diff < 1e-6:
+                    print(f"Warning: All {self.K} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
             
             # Calculate STD across K predictors
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]

@@ -135,19 +135,22 @@ def run_single_experiment(args, device, run_idx):
     wall_mask = np.array(maze_map) == 1
     uncertainty_matrix[wall_mask] = 0
     
-    # Normalize uncertainty matrix
-    uncertainty_matrix = normalize_uncertainty_matrix(uncertainty_matrix, maze_map)
+    # Keep original (unnormalized) for the 4 new metrics
+    uncertainty_matrix_original = uncertainty_matrix.copy()
     
-    # Normalize ground truth for comparison
+    # Normalize for L2 distance (original metric)
+    uncertainty_matrix_normalized = normalize_uncertainty_matrix(uncertainty_matrix, maze_map)
     ground_truth_normalized = normalize_uncertainty_matrix(ground_truth, maze_map)
     
-    # Calculate metrics (use maze_map)
+    # Calculate metrics
     maze_map_array = np.array(maze_map)
-    l2_distance = compute_l2_distance(ground_truth_normalized, uncertainty_matrix, maze_map_array)
-    min_c_l1_norm_diff = compute_min_c_l1_norm_diff(ground_truth_normalized, uncertainty_matrix, maze_map_array)
-    min_c_l2_norm_diff = compute_min_c_l2_norm_diff(ground_truth_normalized, uncertainty_matrix, maze_map_array)
-    min_c_l1_norm_inv = compute_min_c_l1_norm_inv(ground_truth_normalized, uncertainty_matrix, maze_map_array)
-    min_c_l2_norm_inv = compute_min_c_l2_norm_inv(ground_truth_normalized, uncertainty_matrix, maze_map_array)
+    # L2 distance: use normalized GT and normalized predictions
+    l2_distance = compute_l2_distance(ground_truth_normalized, uncertainty_matrix_normalized, maze_map_array)
+    # The 4 new metrics: use original (unnormalized) GT and predictions
+    min_c_l1_norm_diff = compute_min_c_l1_norm_diff(ground_truth, uncertainty_matrix_original, maze_map_array)
+    min_c_l2_norm_diff = compute_min_c_l2_norm_diff(ground_truth, uncertainty_matrix_original, maze_map_array)
+    min_c_l1_norm_inv = compute_min_c_l1_norm_inv(ground_truth, uncertainty_matrix_original, maze_map_array)
+    min_c_l2_norm_inv = compute_min_c_l2_norm_inv(ground_truth, uncertainty_matrix_original, maze_map_array)
     
     print(f"L2 distance: {l2_distance:.6f}, L1_diff: {min_c_l1_norm_diff:.6f}, L2_diff: {min_c_l2_norm_diff:.6f}, L1_inv: {min_c_l1_norm_inv:.6f}, L2_inv: {min_c_l2_norm_inv:.6f}")
     

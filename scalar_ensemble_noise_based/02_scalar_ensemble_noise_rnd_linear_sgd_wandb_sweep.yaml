@@ -8,7 +8,7 @@ parameters:
   a_seed:
     values: [0, 1, 2, 3, 4]
   K:
-    values: [15, 20]
+    values: [5, 10, 15, 20]
   num_samples:
     value: 10000
   num_averaging_runs:
@@ -20,7 +20,7 @@ parameters:
   num_epochs:
     value: 30
   noise_sigma:
-    value: 0.0
+    values: [0.5, 1.0]
   grid_rows:
     value: 9
   grid_cols:

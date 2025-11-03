@@ -277,7 +277,12 @@ def normalize_uncertainty_matrix(uncertainty_matrix, maze_map=None):
     return normalized
 
 def compute_l2_distance(gt_matrix, pred_matrix, maze_map=None):
-    """Compute L2 distance excluding walls"""
+    """
+    Compute L2 distance excluding walls.
+    
+    NOTE: Expects normalized inputs (both gt_matrix and pred_matrix should be normalized 
+    via normalize_uncertainty_matrix before calling this function).
+    """
     if maze_map is None:
         maze_map = get_maze_map()
     
@@ -295,15 +300,8 @@ def compute_l2_distance(gt_matrix, pred_matrix, maze_map=None):
     if len(gt_clean) == 0:
         return np.nan
     
-    # Normalize each by its own max
-    gt_norm = gt_clean / np.max(gt_clean) if np.max(gt_clean) > 0 else gt_clean
-    pred_norm = pred_clean / np.max(pred_clean) if np.max(pred_clean) > 0 else pred_clean
-    
-    # Compute L2 distance
-    return np.linalg.norm(gt_norm - pred_norm)
-
-    # # unnormalized version to test Gaussian noise
-    # return np.linalg.norm(gt_clean - pred_clean)
+    # Compute L2 distance directly (inputs should already be normalized)
+    return np.linalg.norm(gt_clean - pred_clean)
 
 def _weighted_median(x, y):
     """

@@ -267,11 +267,13 @@ def main():
         pred_normalized = normalize_uncertainty_matrix(pred_uncertainty)
         
         # Compute metrics for this run
+        # L2 distance: use normalized GT and normalized predictions
         l2_distance = compute_l2_distance(gt_normalized, pred_normalized, maze_map)
-        min_c_l1_norm_diff = compute_min_c_l1_norm_diff(gt_normalized, pred_normalized, maze_map)
-        min_c_l2_norm_diff = compute_min_c_l2_norm_diff(gt_normalized, pred_normalized, maze_map)
-        min_c_l1_norm_inv = compute_min_c_l1_norm_inv(gt_normalized, pred_normalized, maze_map)
-        min_c_l2_norm_inv = compute_min_c_l2_norm_inv(gt_normalized, pred_normalized, maze_map)
+        # The 4 new metrics: use original (unnormalized) GT and predictions
+        min_c_l1_norm_diff = compute_min_c_l1_norm_diff(gt_uncertainty, pred_uncertainty, maze_map)
+        min_c_l2_norm_diff = compute_min_c_l2_norm_diff(gt_uncertainty, pred_uncertainty, maze_map)
+        min_c_l1_norm_inv = compute_min_c_l1_norm_inv(gt_uncertainty, pred_uncertainty, maze_map)
+        min_c_l2_norm_inv = compute_min_c_l2_norm_inv(gt_uncertainty, pred_uncertainty, maze_map)
         
         # Store results
         all_l2_distances.append(l2_distance)
