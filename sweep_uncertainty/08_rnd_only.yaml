@@ -1,0 +1,47 @@
+program: 08_rnd_only.py
+name: rnd_sweep
+project: rnd_pointmaze
+description: Focused sweep of RND method with comprehensive parameter exploration
+method: grid
+metric:
+  goal: minimize
+  name: avg_l2_distance
+parameters:
+  # Method is fixed to rnd
+  method:
+    value: 'rnd'
+  
+  # RND architecture parameters
+  output_dim:
+    values: [64, 128, 256, 512, 1024]
+  hidden_dims:
+    values: ['64,64', '128,128', '256,256', '512,512']
+  
+  # Training parameters - epoch sweep for RND
+  num_epochs:
+    values: [10, 30, 50]  # RND epoch sweep
+  
+  # Gaussian noise levels
+  gaussian_noise:
+    values: [0.0, 1.0, 2.0, 5.0, 10.0]
+  
+  # Data sampling parameters
+  num_samples:
+    value: 10000  # 10K samples per run
+  
+  # Data sampling and model initialization seeds
+  a_seed:
+    values: [0, 1, 2, 3, 4]
+  
+  # Averaging parameters
+  num_averaging_runs:
+    value: 10
+  
+  # Fixed parameters
+  wandb_switch:
+    value: true
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+
