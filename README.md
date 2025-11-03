@@ -27,9 +27,9 @@ RND/
 │   ├── 01_wandb_sweep.yaml                # WandB sweep configuration
 │   ├── 02_elliptical_only.py              # Focused elliptical method evaluation
 │   ├── 02_elliptical_only.yaml            # Elliptical-only sweep configuration
-│   ├── 03_rnd_linear_only.py              # RND-Linear focused evaluation
-│   ├── 03_rnd_linear_only.yaml            # RND-Linear sweep configuration
-│   ├── 04_rnd_linear_sgd_sweep.py         # RND-Linear SGD hyperparameter sweep
+│   ├── 03_rnd_linear_ols.py               # RND-Linear (OLS) focused evaluation
+│   ├── 03_rnd_linear_ols.yaml             # RND-Linear (OLS) sweep configuration
+│   ├── 04_rnd_linear_sgd.py                # RND-Linear SGD hyperparameter sweep
 │   ├── 04_rnd_linear_sgd.yaml             # SGD hyperparameter sweep configuration
 │   ├── utilities/                          # Core implementations
 │   │   ├── uncertainty_methods.py          # Method implementations
@@ -123,8 +123,11 @@ RND/
 - **Source**: Same 10K data subset used for method training
 
 ### Evaluation Metrics
-- **Primary**: L2 distance between normalized uncertainty matrices
-- **Secondary**: Pearson correlation coefficient
+- **L2 Distance**: Standard L2 distance between normalized uncertainty matrices
+- **min_c L1 diff**: min_c || GT - c * Pred ||_1 (weighted median optimal scaling)
+- **min_c L2 diff**: min_c || GT - c * Pred ||_2 (closed-form optimal scaling)
+- **min_c L1 inv**: min_c || c * 1 - GT^{-1} * Pred ||_1 (median optimal scaling)
+- **min_c L2 inv**: min_c || c * 1 - GT^{-1} * Pred ||_2 (mean optimal scaling)
 - **Visualization**: Heatmaps with wall masking
 
 ### Averaging Protocol
@@ -148,8 +151,8 @@ python 01_uncertainty_comparison.py \
     --num_averaging_runs 10 \
     --wandb_switch False
 
-# Test RND-Linear (with SGD)
-python 03_rnd_linear_only.py \
+# Test RND-Linear (OLS)
+python 03_rnd_linear_ols.py \
     --method rnd_linear \
     --phi_dim 128 \
     --phi_seed 42 \
@@ -218,7 +221,7 @@ wandb sweep 02_elliptical_only.yaml
 ```
 or
 ```bash
-wandb sweep 03_rnd_linear_only.yaml
+wandb sweep 03_rnd_linear_ols.yaml
 ```
 or for ensemble methods:
 ```bash

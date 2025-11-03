@@ -1,6 +1,6 @@
 program: 02_elliptical_only.py
 name: elliptical_bonus_sweep
-project: elliptical_bonus_pointmaze
+project: elliptical-bonus
 description: Focused sweep of Elliptical Bonus method with comprehensive parameter exploration
 method: grid
 metric:
@@ -13,16 +13,18 @@ parameters:
   
   # Feature dimension sweep - key parameter for Elliptical Bonus
   phi_dim:
-    values: [64, 128, 256, 512, 1024]
+    # values: [64, 128, 256, 512, 1024]
+    values: [64, 128]
   
   # φ(s) weight seeds - test robustness to different feature mappings
   phi_seed:
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    values: [0, 1, 2]
   
   # Regularization parameter - critical for covariance matrix stability
   regularization:
     # values: [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2]
-    values: [1e-6, 1e-4, 1e-2]
+    values: [1e-6, 1e-4]
   
   # Data sampling parameters
   num_samples:

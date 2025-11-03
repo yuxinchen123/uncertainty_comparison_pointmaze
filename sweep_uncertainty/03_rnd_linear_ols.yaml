@@ -1,6 +1,6 @@
-program: 03_rnd_linear_only.py
+program: 03_rnd_linear_ols.py
 name: rnd_linear_sweep
-project: rnd_linear_pointmaze
+project: rnd-linear-ols
 description: Focused sweep of RND Linear method with least squares fitting
 method: grid
 metric:
@@ -13,11 +13,12 @@ parameters:
   
   # Feature dimension sweep - key parameter for RND Linear
   phi_dim:
-    values: [64, 128, 256, 512, 1024]
+    values: [256, 512]
+        # values: [64, 128, 256, 512, 1024]
   
   # φ(s) weight seeds - test robustness to different feature mappings
   phi_seed:
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    values: [0, 1, 2]
   
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:

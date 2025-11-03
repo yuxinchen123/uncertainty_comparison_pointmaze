@@ -1,6 +1,6 @@
 program: 08_rnd_only.py
 name: rnd_sweep
-project: rnd_pointmaze
+project: rnd
 description: Focused sweep of RND method with comprehensive parameter exploration
 method: grid
 metric:
@@ -13,9 +13,11 @@ parameters:
   
   # RND architecture parameters
   output_dim:
-    values: [64, 128, 256, 512, 1024]
+    values: [128, 256]
+    # values: [64, 128, 256, 512, 1024]
   hidden_dims:
-    values: ['64,64', '128,128', '256,256', '512,512']
+    values: ['128,128', '512,512']
+        # values: ['64,64', '128,128', '256,256', '512,512']
   
   # Training parameters - epoch sweep for RND
   num_epochs:
@@ -23,7 +25,7 @@ parameters:
   
   # Gaussian noise levels
   gaussian_noise:
-    values: [0.0, 1.0, 2.0, 5.0, 10.0]
+    values: [0.0, 0.5, 1.0]
   
   # Data sampling parameters
   num_samples:
