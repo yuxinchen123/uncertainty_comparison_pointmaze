@@ -24,10 +24,11 @@ parameters:
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
   # Training parameters
+  # Epoch sweep for RND: [10, 30, 50]
+  # Note: For RND Linear (LS), epochs are ignored (closed-form solution)
+  # Note: For Elliptical, epochs are ignored (no training needed)
   num_epochs:
-    value: 30
-  # subset_ratio:
-  #   value: 1.0  # All methods use full 10K dataset for fairness
+    values: [10, 30, 50]  # RND epoch sweep - only used when method='rnd'
   
   # Gaussian noise levels (ignored for elliptical method)
   gaussian_noise:
@@ -38,8 +39,8 @@ parameters:
     value: 10000  # 10K samples per run
   
   # Experiment parameters
-  seed:
-    values: [0, 1, 2, 3, 4]  # 5 different random seeds for model initialization
+  a_seed:
+    values: [0, 1, 2, 3, 4]  # 5 different random seeds for data sampling and model initialization
   
   # Averaging parameters - this controls the 10 runs per config
   num_averaging_runs:

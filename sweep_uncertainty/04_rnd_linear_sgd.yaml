@@ -20,9 +20,9 @@ parameters:
     values: [0, 1, 2, 3, 4]
   
   # Training hyperparameters - core SGD parameters
+  # RND Linear SGD epoch sweep: [30, 100, 150]
   num_epochs:
-    value: 30  # Fixed to 30 epochs
-    # values: [10, 20, 30, 50, 100]
+    values: [30, 100, 150]
   
   
   # Gaussian noise levels - critical for RND Linear exploration
@@ -34,8 +34,8 @@ parameters:
   num_samples:
     value: 10000  # 10K samples per run
   
-  # Model initialization seeds
-  seed:
+  # Data sampling and model initialization seeds
+  a_seed:
     values: [0, 1, 2, 3, 4]
   
   # Averaging parameters

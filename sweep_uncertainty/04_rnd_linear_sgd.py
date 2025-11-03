@@ -57,8 +57,8 @@ def main():
                        help='Number of runs to average over')
     
     # Experiment parameters
-    parser.add_argument('--seed', type=int, default=0,
-                       help='Random seed for experiment reproducibility')
+    parser.add_argument('--a_seed', type=int, default=0,
+                       help='Random seed for data sampling and model initialization')
     parser.add_argument('--wandb_switch', type=bool, default=True,
                        help='Whether to log to WandB')
     
@@ -77,7 +77,7 @@ def main():
         args.num_epochs = config.get('num_epochs', args.num_epochs)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
-        args.seed = config.get('seed', args.seed)
+        args.a_seed = config.get('a_seed', args.a_seed)
         args.wandb_switch = config.get('wandb_switch', args.wandb_switch)
         args.grid_rows = config.get('grid_rows', args.grid_rows)
         args.grid_cols = config.get('grid_cols', args.grid_cols)
@@ -90,7 +90,7 @@ def main():
             )
     
     # Set seed
-    set_seed(args.seed)
+    set_seed(args.a_seed)
     
     # Setup device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -106,7 +106,7 @@ def main():
     print(f"Total available positions: {total_positions}")
     
     # Sample positions once for all averaging runs
-    np.random.seed(args.seed)
+    np.random.seed(args.a_seed)
     if args.num_samples > total_positions:
         positions = all_positions
     else:
@@ -136,7 +136,7 @@ def main():
         print(f"\n🔄 RUN {avg_run + 1}/{args.num_averaging_runs}")
         
         # Set seed for this run
-        current_seed = args.seed * 1000 + avg_run
+        current_seed = args.a_seed * 1000 + avg_run
         set_seed(current_seed)
         
         # Use same positions for all averaging runs for fair comparison
@@ -250,7 +250,7 @@ def main():
         'avg_convergence_epoch': avg_convergence_epoch,
         'num_samples': args.num_samples,
         'num_averaging_runs': args.num_averaging_runs,
-        'seed': args.seed,
+        'a_seed': args.a_seed,
     }
     
     print_or_wandb_log(args.wandb_switch, results, "RND LINEAR SGD HYPERPARAMETER RESULTS")

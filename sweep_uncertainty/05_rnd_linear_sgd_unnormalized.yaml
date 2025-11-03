@@ -34,8 +34,8 @@ parameters:
   num_samples:
     value: 1000  # 10K samples per run
   
-  # Model initialization seeds
-  seed:
+  # Data sampling and model initialization seeds
+  a_seed:
     value: 0
   
   # Averaging parameters

@@ -72,8 +72,8 @@ def main():
                        help='Dimension of shared φ(s) features (for RND_Linear and Elliptical)')
     
     # Experiment parameters
-    parser.add_argument('--seed', type=int, default=0,
-                       help='Random seed for experiment reproducibility')
+    parser.add_argument('--a_seed', type=int, default=0,
+                       help='Random seed for data sampling and model initialization')
     parser.add_argument('--wandb_switch', type=bool, default=True,
                        help='Whether to log to WandB')
     
@@ -100,7 +100,7 @@ def main():
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
         args.phi_seed = config.get('phi_seed', args.phi_seed)
         args.phi_dim = config.get('phi_dim', args.phi_dim)
-        args.seed = config.get('seed', args.seed)
+        args.a_seed = config.get('a_seed', args.a_seed)
         args.wandb_switch = config.get('wandb_switch', args.wandb_switch)
         args.grid_rows = config.get('grid_rows', args.grid_rows)
         args.grid_cols = config.get('grid_cols', args.grid_cols)
@@ -119,7 +119,7 @@ def main():
             parser.error("--method is required when not running in WandB sweep mode")
     
     # Set seed for reproducibility
-    set_seed(args.seed)
+    set_seed(args.a_seed)
     
     # Setup device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -137,8 +137,7 @@ def main():
     
     # Single sampling step - use same positions for both ground truth and training
     print(f"Creating random subset with {args.num_samples} samples...")
-    current_seed = args.seed + args.run_index  # Different seed for each run_index
-    np.random.seed(current_seed)
+    np.random.seed(args.a_seed)  # Use a_seed for data sampling
     
     if args.num_samples > total_positions:
         print(f"Warning: Requested {args.num_samples} samples but only {total_positions} available")
@@ -149,7 +148,7 @@ def main():
         subset_indices = np.sort(subset_indices)  # Sort for consistent iteration
         positions = all_positions[subset_indices]
     
-    print(f"✓ Selected {len(positions)} positions using seed {current_seed}")
+    print(f"✓ Selected {len(positions)} positions using seed {args.a_seed}")
     print(f"Position range: X=[{np.min(positions[:, 0]):.3f}, {np.max(positions[:, 0]):.3f}], Y=[{np.min(positions[:, 1]):.3f}, {np.max(positions[:, 1]):.3f}]")
     print(f"Will average over {args.num_averaging_runs} training runs with these same {args.num_samples} samples")
     
@@ -178,12 +177,17 @@ def main():
         print("-" * 60)
         
         # Set different seed for each averaging run
-        current_seed = args.seed * 1000 + avg_run
+        current_seed = args.a_seed * 1000 + avg_run
         set_seed(current_seed)
         
         # Initialize method based on type
+        # Set method-specific epochs: RND: [10, 30, 50], RND Linear (LS): N/A, Elliptical: N/A
         if args.method == 'rnd':
-            print(f"Initializing RND method (hidden_dims={hidden_dims}, output_dim={args.output_dim})...")
+            # RND epoch sweep: [10, 30, 50] - use from config if in sweep, otherwise args
+            rnd_epochs = args.num_epochs
+            if wandb.run is not None:
+                rnd_epochs = config.get('num_epochs', args.num_epochs)
+            print(f"Initializing RND method (hidden_dims={hidden_dims}, output_dim={args.output_dim}, epochs={rnd_epochs})...")
             method = RNDMethod(
                 hidden_dims=hidden_dims,
                 output_dim=args.output_dim,
@@ -194,7 +198,7 @@ def main():
             print("Training RND...")
             training_losses = method.train_on_positions(
                 positions, 
-                num_epochs=args.num_epochs,
+                num_epochs=rnd_epochs,
                 subset_ratio=1.0,  # Use full dataset for fairness
                 gaussian_noise=args.gaussian_noise
             )
@@ -320,7 +324,7 @@ def main():
         'run_index': args.run_index,
         'num_averaging_runs': args.num_averaging_runs,
         'phi_seed': args.phi_seed,
-        'seed': args.seed,
+        'a_seed': args.a_seed,
         'max_gt_uncertainty': np.nanmax(gt_uncertainty),
         'max_pred_uncertainty': np.nanmax(pred_uncertainty),
     }

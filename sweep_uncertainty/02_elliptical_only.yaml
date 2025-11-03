@@ -29,8 +29,8 @@ parameters:
     value: 10000  # 10K samples per run
     # values: [1000, 2500, 5000, 7500, 10000]    # Test data efficiency
   
-  # Model initialization seeds
-  seed:
+  # Data sampling and model initialization seeds
+  a_seed:
     values: [0, 1, 2, 3, 4]
   
   # Averaging parameters
