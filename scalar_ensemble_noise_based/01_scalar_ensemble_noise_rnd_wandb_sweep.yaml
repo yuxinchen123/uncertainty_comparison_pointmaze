@@ -1,0 +1,32 @@
+program: 01_scalar_ensemble_noise_rnd_only.py
+project: scalar-ensemble-rnd
+method: grid
+metric:
+  goal: minimize
+  name: final_mean_l2
+parameters:
+  a_seed:
+    values: [0, 1, 2, 3, 4]
+  K:
+    values: [5, 10, 15, 20]
+  num_samples:
+    value: 10000
+  num_averaging_runs:
+    value: 1
+  output_dim:
+    values: [128, 256, 512]
+  hidden_dims:
+    values: ["128,128", "512,512"]
+  num_epochs:
+    value: 30
+  noise_sigma:
+    values: [0.0, 0.5, 1.0]
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: "cpu"
+  wandb_switch:
+    value: "True"
+
