@@ -232,15 +232,10 @@ def main():
     if args.wandb_switch.lower() == "true":
         wandb.log({
             "final_mean_l2": mean_l2,
-            "final_std_l2": std_l2,
             "final_mean_min_c_l1_norm_diff": mean_min_c_l1_norm_diff,
-            "final_std_min_c_l1_norm_diff": std_min_c_l1_norm_diff,
             "final_mean_min_c_l2_norm_diff": mean_min_c_l2_norm_diff,
-            "final_std_min_c_l2_norm_diff": std_min_c_l2_norm_diff,
             "final_mean_min_c_l1_norm_inv": mean_min_c_l1_norm_inv,
-            "final_std_min_c_l1_norm_inv": std_min_c_l1_norm_inv,
-            "final_mean_min_c_l2_norm_inv": mean_min_c_l2_norm_inv,
-            "final_std_min_c_l2_norm_inv": std_min_c_l2_norm_inv
+            "final_mean_min_c_l2_norm_inv": mean_min_c_l2_norm_inv
         })
         wandb.finish()
     
