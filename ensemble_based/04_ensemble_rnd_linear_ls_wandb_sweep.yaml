@@ -12,7 +12,7 @@ parameters:
   num_averaging_runs:
     value: 1
   phi_dim:
-    values: [128, 256, 512]
+    values: [128, 512]
   phi_seed:
     values: [0, 1, 2, 3, 4]
   regularization:

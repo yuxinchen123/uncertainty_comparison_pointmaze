@@ -15,14 +15,14 @@ parameters:
   num_averaging_runs:
     value: 1
   phi_dim:
-    values: [128, 256, 512]
+    values: [128, 512]
   phi_seed:
     values: [0, 1, 2, 3, 4]
   num_epochs:
     value: 30
   gaussian_noise:
-    # values: [0.0, 0.5, 1.0]
-    value: 0.0
+    values: [0.0, 0.5, 1.0]
+    # value: 0.0
   grid_rows:
     value: 9
   grid_cols:
