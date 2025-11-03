@@ -305,37 +305,158 @@ def compute_l2_distance(gt_matrix, pred_matrix, maze_map=None):
     # # unnormalized version to test Gaussian noise
     # return np.linalg.norm(gt_clean - pred_clean)
 
-def compute_correlation(gt_matrix, pred_matrix, maze_map=None):
+def _weighted_median(x, y):
     """
-    Compute Pearson correlation between uncertainty matrices (on open cells).
+    Compute weighted median for solving min_c || x - c * y ||_1
+    Optimal c is weighted median of r_i = x_i / y_i with weights w_i = |y_i|
+    """
+    # Create a mask to exclude elements where y is zero
+    mask = y != 0
+    
+    # If all y elements are zero, any c works (returns 0.0 as a default)
+    if not np.any(mask):
+        return 0.0 
+    
+    # Calculate ratios r_i = x_i / y_i for non-zero y
+    r = x[mask] / y[mask]
+    
+    # Calculate weights w_i = |y_i| for non-zero y
+    w = np.abs(y[mask])
+    
+    # Sort ratios and apply the same order to weights
+    order = np.argsort(r)
+    r, w = r[order], w[order]
+    
+    # Calculate cumulative sum of weights
+    cw = np.cumsum(w)
+    
+    # Find the half-sum of weights
+    half = w.sum() / 2
+    
+    # Find the index where the cumulative sum of weights first exceeds half
+    idx = np.searchsorted(cw, half, side='right')
+    
+    # Return the ratio at that index (which is the weighted median)
+    # Handles edge case where idx might be out of bounds if half is exactly the sum of weights
+    return r[min(idx, len(r)-1)]
+
+def _extract_clean_vectors(gt_matrix, pred_matrix, maze_map=None):
+    """Extract clean vectors from matrices (open cells, finite values)"""
+    if maze_map is None:
+        maze_map = get_maze_map()
+    
+    # Extract only open cell values
+    open_mask = np.array([[maze_map[i][j] == 0 for j in range(12)] for i in range(9)])
+    
+    gt_open = gt_matrix[open_mask]
+    pred_open = pred_matrix[open_mask]
+    
+    # Only use finite values
+    finite_mask = np.isfinite(gt_open) & np.isfinite(pred_open)
+    gt_clean = gt_open[finite_mask]
+    pred_clean = pred_open[finite_mask]
+    
+    return gt_clean, pred_clean
+
+def compute_min_c_l1_norm_diff(gt_matrix, pred_matrix, maze_map=None):
+    """
+    Compute min_c || GT - c * Pred ||_1
+    Optimal c is weighted median of GT_i / Pred_i with weights |Pred_i|
+    """
+    gt_clean, pred_clean = _extract_clean_vectors(gt_matrix, pred_matrix, maze_map)
+    
+    if len(gt_clean) == 0:
+        return np.nan
+    
+    # Compute optimal c (weighted median)
+    c_opt = _weighted_median(gt_clean, pred_clean)
+    
+    # Compute the L1 norm after optimal scaling
+    return np.linalg.norm(gt_clean - c_opt * pred_clean, ord=1)
+
+def compute_min_c_l2_norm_diff(gt_matrix, pred_matrix, maze_map=None):
+    """
+    Compute min_c || GT - c * Pred ||_2
+    Optimal c = <Pred, GT> / ||Pred||_2^2
+    """
+    gt_clean, pred_clean = _extract_clean_vectors(gt_matrix, pred_matrix, maze_map)
+    
+    if len(gt_clean) == 0:
+        return np.nan
+    
+    # Compute optimal c
+    pred_norm_sq = np.dot(pred_clean, pred_clean)
+    if pred_norm_sq == 0:
+        return np.nan
+    
+    c_opt = np.dot(pred_clean, gt_clean) / pred_norm_sq
+    
+    # Compute the L2 norm after optimal scaling
+    return np.linalg.norm(gt_clean - c_opt * pred_clean, ord=2)
+
+def compute_min_c_l1_norm_inv(gt_matrix, pred_matrix, maze_map=None):
+    """
+    Compute min_c || c * 1 - GT^{-1} * Pred ||_1
+    Where GT^{-1} * Pred means element-wise division: Pred / GT
+    Optimal c is median of Pred / GT (skip where GT=0)
     """
     if maze_map is None:
         maze_map = get_maze_map()
     
-    # Extract vectors for open cells only (no normalization needed for correlation)
-    gt_vector = []
-    pred_vector = []
+    # Extract vectors for open cells
+    open_mask = np.array([[maze_map[i][j] == 0 for j in range(12)] for i in range(9)])
+    gt_open = gt_matrix[open_mask]
+    pred_open = pred_matrix[open_mask]
     
-    for row in range(len(maze_map)):
-        for col in range(len(maze_map[0])):
-            if maze_map[row][col] == 0:  # Open cell
-                gt_val = gt_matrix[row, col]
-                pred_val = pred_matrix[row, col]
-                
-                if np.isfinite(gt_val) and np.isfinite(pred_val):
-                    gt_vector.append(gt_val)
-                    pred_vector.append(pred_val)
+    # Only use finite values and where GT != 0 (to avoid division by zero)
+    finite_mask = np.isfinite(gt_open) & np.isfinite(pred_open) & (gt_open != 0)
+    gt_clean = gt_open[finite_mask]
+    pred_clean = pred_open[finite_mask]
     
-    if len(gt_vector) < 2:
+    if len(gt_clean) == 0:
         return np.nan
     
-    gt_vector = np.array(gt_vector)
-    pred_vector = np.array(pred_vector)
+    # Compute GT^{-1} * Pred = Pred / GT
+    ratio = pred_clean / gt_clean
     
-    # Compute correlation
-    correlation = np.corrcoef(gt_vector, pred_vector)[0, 1]
+    # Optimal c is median of ratio
+    c_opt = np.median(ratio)
     
-    return correlation if not np.isnan(correlation) else 0.0
+    # Compute the L1 norm: || c * 1 - ratio ||_1
+    ones = np.ones(len(ratio))
+    return np.linalg.norm(c_opt * ones - ratio, ord=1)
+
+def compute_min_c_l2_norm_inv(gt_matrix, pred_matrix, maze_map=None):
+    """
+    Compute min_c || c * 1 - GT^{-1} * Pred ||_2
+    Where GT^{-1} * Pred means element-wise division: Pred / GT
+    Optimal c is mean of Pred / GT (skip where GT=0)
+    """
+    if maze_map is None:
+        maze_map = get_maze_map()
+    
+    # Extract vectors for open cells
+    open_mask = np.array([[maze_map[i][j] == 0 for j in range(12)] for i in range(9)])
+    gt_open = gt_matrix[open_mask]
+    pred_open = pred_matrix[open_mask]
+    
+    # Only use finite values and where GT != 0 (to avoid division by zero)
+    finite_mask = np.isfinite(gt_open) & np.isfinite(pred_open) & (gt_open != 0)
+    gt_clean = gt_open[finite_mask]
+    pred_clean = pred_open[finite_mask]
+    
+    if len(gt_clean) == 0:
+        return np.nan
+    
+    # Compute GT^{-1} * Pred = Pred / GT
+    ratio = pred_clean / gt_clean
+    
+    # Optimal c is mean of ratio
+    c_opt = np.mean(ratio)
+    
+    # Compute the L2 norm: || c * 1 - ratio ||_2
+    ones = np.ones(len(ratio))
+    return np.linalg.norm(c_opt * ones - ratio, ord=2)
 
 def save_heatmap_to_wandb(uncertainty_matrix, title, wandb_switch=True, maze_map=None):
     """Create heatmap with WHITE walls and proper handling of infinite values"""

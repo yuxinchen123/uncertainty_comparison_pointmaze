@@ -11,8 +11,10 @@ from utilities.environment import load_pointmaze_dataset, extract_positions_from
 from utilities.uncertainty_methods import RNDMethod
 from utilities.evaluation import (
     calculate_ground_truth_from_positions, evaluate_uncertainty_method, 
-    normalize_uncertainty_matrix, compute_l2_distance, 
-    compute_correlation, save_heatmap_to_wandb
+    normalize_uncertainty_matrix, compute_l2_distance,
+    compute_min_c_l1_norm_diff, compute_min_c_l2_norm_diff,
+    compute_min_c_l1_norm_inv, compute_min_c_l2_norm_inv,
+    save_heatmap_to_wandb
 )
 
 def set_seed(seed):
@@ -117,7 +119,10 @@ def main():
     
     # Store results for averaging
     all_l2_distances = []
-    all_correlations = []
+    all_min_c_l1_norm_diff = []
+    all_min_c_l2_norm_diff = []
+    all_min_c_l1_norm_inv = []
+    all_min_c_l2_norm_inv = []
     all_final_losses = []
     
     print(f"\nStarting {args.num_averaging_runs} averaging runs...")
@@ -160,36 +165,42 @@ def main():
         
         # Compute metrics
         l2_distance = compute_l2_distance(gt_normalized, pred_normalized, maze_map)
-        correlation = compute_correlation(gt_normalized, pred_normalized, maze_map)
+        min_c_l1_norm_diff = compute_min_c_l1_norm_diff(gt_normalized, pred_normalized, maze_map)
+        min_c_l2_norm_diff = compute_min_c_l2_norm_diff(gt_normalized, pred_normalized, maze_map)
+        min_c_l1_norm_inv = compute_min_c_l1_norm_inv(gt_normalized, pred_normalized, maze_map)
+        min_c_l2_norm_inv = compute_min_c_l2_norm_inv(gt_normalized, pred_normalized, maze_map)
         
         all_l2_distances.append(l2_distance)
-        all_correlations.append(correlation)
+        all_min_c_l1_norm_diff.append(min_c_l1_norm_diff)
+        all_min_c_l2_norm_diff.append(min_c_l2_norm_diff)
+        all_min_c_l1_norm_inv.append(min_c_l1_norm_inv)
+        all_min_c_l2_norm_inv.append(min_c_l2_norm_inv)
         all_final_losses.append(final_loss)
         
-        print(f"  L2={l2_distance:.6f}, Corr={correlation:.6f}, Final Loss={final_loss:.6f}")
-        
-        # Log individual run
-        if args.wandb_switch:
-            wandb.log({
-                f'run_{avg_run}_l2_distance': l2_distance,
-                f'run_{avg_run}_correlation': correlation,
-                f'run_{avg_run}_final_loss': final_loss,
-                'averaging_run': avg_run
-            })
+        print(f"  L2={l2_distance:.6f}, L1_diff={min_c_l1_norm_diff:.6f}, L2_diff={min_c_l2_norm_diff:.6f}, L1_inv={min_c_l1_norm_inv:.6f}, L2_inv={min_c_l2_norm_inv:.6f}, Loss={final_loss:.6f}")
     
     # Calculate averaged results
-    avg_l2_distance = np.mean(all_l2_distances)
-    std_l2_distance = np.std(all_l2_distances)
-    avg_correlation = np.mean(all_correlations)
-    std_correlation = np.std(all_correlations)
-    avg_final_loss = np.mean(all_final_losses)
-    std_final_loss = np.std(all_final_losses)
+    avg_l2_distance = np.nanmean(all_l2_distances)
+    std_l2_distance = np.nanstd(all_l2_distances)
+    avg_min_c_l1_norm_diff = np.nanmean(all_min_c_l1_norm_diff)
+    std_min_c_l1_norm_diff = np.nanstd(all_min_c_l1_norm_diff)
+    avg_min_c_l2_norm_diff = np.nanmean(all_min_c_l2_norm_diff)
+    std_min_c_l2_norm_diff = np.nanstd(all_min_c_l2_norm_diff)
+    avg_min_c_l1_norm_inv = np.nanmean(all_min_c_l1_norm_inv)
+    std_min_c_l1_norm_inv = np.nanstd(all_min_c_l1_norm_inv)
+    avg_min_c_l2_norm_inv = np.nanmean(all_min_c_l2_norm_inv)
+    std_min_c_l2_norm_inv = np.nanstd(all_min_c_l2_norm_inv)
+    avg_final_loss = np.nanmean(all_final_losses)
+    std_final_loss = np.nanstd(all_final_losses)
     
     print(f"\n📊 AVERAGED RESULTS ({args.num_averaging_runs} runs)")
     print("=" * 80)
-    print(f"L2 Distance: {avg_l2_distance:.6f} ± {std_l2_distance:.6f}")
-    print(f"Correlation: {avg_correlation:.6f} ± {std_correlation:.6f}")
-    print(f"Final Loss:  {avg_final_loss:.6f} ± {std_final_loss:.6f}")
+    print(f"L2 Distance:           {avg_l2_distance:.6f} ± {std_l2_distance:.6f}")
+    print(f"min_c L1 diff:         {avg_min_c_l1_norm_diff:.6f} ± {std_min_c_l1_norm_diff:.6f}")
+    print(f"min_c L2 diff:         {avg_min_c_l2_norm_diff:.6f} ± {std_min_c_l2_norm_diff:.6f}")
+    print(f"min_c L1 inv:          {avg_min_c_l1_norm_inv:.6f} ± {std_min_c_l1_norm_inv:.6f}")
+    print(f"min_c L2 inv:          {avg_min_c_l2_norm_inv:.6f} ± {std_min_c_l2_norm_inv:.6f}")
+    print(f"Final Loss:            {avg_final_loss:.6f} ± {std_final_loss:.6f}")
     
     # Save heatmaps
     save_heatmap_to_wandb(gt_normalized, "Ground Truth (1/√N)", args.wandb_switch, maze_map)
@@ -204,8 +215,14 @@ def main():
         'gaussian_noise': args.gaussian_noise,
         'avg_l2_distance': avg_l2_distance,
         'std_l2_distance': std_l2_distance,
-        'avg_correlation': avg_correlation,
-        'std_correlation': std_correlation,
+        'avg_min_c_l1_norm_diff': avg_min_c_l1_norm_diff,
+        'std_min_c_l1_norm_diff': std_min_c_l1_norm_diff,
+        'avg_min_c_l2_norm_diff': avg_min_c_l2_norm_diff,
+        'std_min_c_l2_norm_diff': std_min_c_l2_norm_diff,
+        'avg_min_c_l1_norm_inv': avg_min_c_l1_norm_inv,
+        'std_min_c_l1_norm_inv': std_min_c_l1_norm_inv,
+        'avg_min_c_l2_norm_inv': avg_min_c_l2_norm_inv,
+        'std_min_c_l2_norm_inv': std_min_c_l2_norm_inv,
         'avg_final_loss': avg_final_loss,
         'std_final_loss': std_final_loss,
         'num_samples': args.num_samples,

@@ -23,7 +23,9 @@ from evaluation import (
     get_maze_map, 
     calculate_ground_truth, 
     calculate_ground_truth_from_positions,
-    compute_l2_distance, 
+    compute_l2_distance,
+    compute_min_c_l1_norm_diff, compute_min_c_l2_norm_diff,
+    compute_min_c_l1_norm_inv, compute_min_c_l2_norm_inv,
     save_heatmap_to_wandb
 )
 from environment import load_pointmaze_dataset, extract_positions_from_dataset
@@ -134,13 +136,22 @@ def run_single_experiment(args, device, run_idx):
     if max_uncertainty > 0:
         uncertainty_matrix = uncertainty_matrix / max_uncertainty
     
-    # Calculate L2 distance
-    l2_distance = compute_l2_distance(ground_truth, uncertainty_matrix, wall_mask)
+    # Calculate metrics (use maze_map instead of wall_mask)
+    maze_map = np.array(maze_map)
+    l2_distance = compute_l2_distance(ground_truth, uncertainty_matrix, maze_map)
+    min_c_l1_norm_diff = compute_min_c_l1_norm_diff(ground_truth, uncertainty_matrix, maze_map)
+    min_c_l2_norm_diff = compute_min_c_l2_norm_diff(ground_truth, uncertainty_matrix, maze_map)
+    min_c_l1_norm_inv = compute_min_c_l1_norm_inv(ground_truth, uncertainty_matrix, maze_map)
+    min_c_l2_norm_inv = compute_min_c_l2_norm_inv(ground_truth, uncertainty_matrix, maze_map)
     
-    print(f"L2 distance: {l2_distance:.6f}")
+    print(f"L2 distance: {l2_distance:.6f}, L1_diff: {min_c_l1_norm_diff:.6f}, L2_diff: {min_c_l2_norm_diff:.6f}, L1_inv: {min_c_l1_norm_inv:.6f}, L2_inv: {min_c_l2_norm_inv:.6f}")
     
     return {
         'l2_distance': l2_distance,
+        'min_c_l1_norm_diff': min_c_l1_norm_diff,
+        'min_c_l2_norm_diff': min_c_l2_norm_diff,
+        'min_c_l1_norm_inv': min_c_l1_norm_inv,
+        'min_c_l2_norm_inv': min_c_l2_norm_inv,
         'uncertainty_matrix': uncertainty_matrix,
         'ground_truth': ground_truth,
         'wall_mask': wall_mask,
@@ -174,22 +185,31 @@ def main():
     for run_idx in range(args.num_averaging_runs):
         result = run_single_experiment(args, device, run_idx)
         results.append(result)
-        
-        # Log to WandB if enabled
-        if args.wandb_switch.lower() == "true":
-            wandb.log({
-                "run": run_idx,
-                "l2_distance": result['l2_distance']
-            })
     
     # Calculate statistics
     l2_distances = [r['l2_distance'] for r in results]
-    mean_l2 = np.mean(l2_distances)
-    std_l2 = np.std(l2_distances)
+    min_c_l1_norm_diff_list = [r['min_c_l1_norm_diff'] for r in results]
+    min_c_l2_norm_diff_list = [r['min_c_l2_norm_diff'] for r in results]
+    min_c_l1_norm_inv_list = [r['min_c_l1_norm_inv'] for r in results]
+    min_c_l2_norm_inv_list = [r['min_c_l2_norm_inv'] for r in results]
+    
+    mean_l2 = np.nanmean(l2_distances)
+    std_l2 = np.nanstd(l2_distances)
+    mean_min_c_l1_norm_diff = np.nanmean(min_c_l1_norm_diff_list)
+    std_min_c_l1_norm_diff = np.nanstd(min_c_l1_norm_diff_list)
+    mean_min_c_l2_norm_diff = np.nanmean(min_c_l2_norm_diff_list)
+    std_min_c_l2_norm_diff = np.nanstd(min_c_l2_norm_diff_list)
+    mean_min_c_l1_norm_inv = np.nanmean(min_c_l1_norm_inv_list)
+    std_min_c_l1_norm_inv = np.nanstd(min_c_l1_norm_inv_list)
+    mean_min_c_l2_norm_inv = np.nanmean(min_c_l2_norm_inv_list)
+    std_min_c_l2_norm_inv = np.nanstd(min_c_l2_norm_inv_list)
     
     print(f"\n=== Final Results ===")
-    print(f"L2 Distance: {mean_l2:.6f} ± {std_l2:.6f}")
-    print(f"Individual L2 distances: {[f'{d:.6f}' for d in l2_distances]}")
+    print(f"L2 Distance:           {mean_l2:.6f} ± {std_l2:.6f}")
+    print(f"min_c L1 diff:         {mean_min_c_l1_norm_diff:.6f} ± {std_min_c_l1_norm_diff:.6f}")
+    print(f"min_c L2 diff:         {mean_min_c_l2_norm_diff:.6f} ± {std_min_c_l2_norm_diff:.6f}")
+    print(f"min_c L1 inv:          {mean_min_c_l1_norm_inv:.6f} ± {std_min_c_l1_norm_inv:.6f}")
+    print(f"min_c L2 inv:          {mean_min_c_l2_norm_inv:.6f} ± {std_min_c_l2_norm_inv:.6f}")
     
     # Plot final uncertainty heatmap
     final_result = results[-1]  # Use last run for visualization
@@ -213,7 +233,14 @@ def main():
         wandb.log({
             "final_mean_l2": mean_l2,
             "final_std_l2": std_l2,
-            "final_l2_distances": l2_distances
+            "final_mean_min_c_l1_norm_diff": mean_min_c_l1_norm_diff,
+            "final_std_min_c_l1_norm_diff": std_min_c_l1_norm_diff,
+            "final_mean_min_c_l2_norm_diff": mean_min_c_l2_norm_diff,
+            "final_std_min_c_l2_norm_diff": std_min_c_l2_norm_diff,
+            "final_mean_min_c_l1_norm_inv": mean_min_c_l1_norm_inv,
+            "final_std_min_c_l1_norm_inv": std_min_c_l1_norm_inv,
+            "final_mean_min_c_l2_norm_inv": mean_min_c_l2_norm_inv,
+            "final_std_min_c_l2_norm_inv": std_min_c_l2_norm_inv
         })
         wandb.finish()
     
