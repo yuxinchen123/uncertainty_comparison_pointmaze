@@ -20,6 +20,10 @@ parameters:
   phi_seed:
     values: [0, 1, 2]
   
+  # θ vector initialization seeds - test robustness to different target vectors
+  theta_seed:
+    values: [42, 123, 456]
+  
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:
     values: [0.0, 0.5, 1.0]

@@ -104,7 +104,7 @@ class RNDMethod:
 
 # RND Linear with SGD Training
 class RNDLinearSGDMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, predictor_seed=None):
         self.device = device
         self.feature_dim = feature_dim
         
@@ -115,15 +115,18 @@ class RNDLinearSGDMethod:
         for param in self.phi.parameters():
             param.requires_grad = False
             
-        # Target θ vector (random)
+        # Target θ vector (deterministic based on seed)
+        torch.manual_seed(theta_seed)
         self.theta = torch.randn(feature_dim).to(device)
         
-        # Predictor: feature_dim -> 1
+        # Predictor: feature_dim -> 1 (seed initialization if provided)
+        if predictor_seed is not None:
+            torch.manual_seed(predictor_seed)
         self.predictor = nn.Linear(feature_dim, 1).to(device)
         self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
     
-    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
+    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0, noise_seed=None):
         """Train predictor to match φ(s)ᵀθ using SGD - use all provided positions"""
         print(f"Training RND-Linear (SGD) on {len(positions)} positions for {num_epochs} epochs")
         
@@ -132,15 +135,24 @@ class RNDLinearSGDMethod:
         # Fix: Assign fixed noise per unique position at training start
         noise_map = {}
         if gaussian_noise > 0:
-            # Get unique positions (as tuples for dictionary keys)
-            unique_positions = {}
+            # Seed noise generation deterministically if seed provided
+            if noise_seed is not None:
+                torch.manual_seed(noise_seed)
+            
+            # Get unique positions (as tuples for dictionary keys) - sort for deterministic order
+            unique_positions_list = []
+            seen = set()
             for i, pos in enumerate(positions[:, :2]):
                 pos_tuple = tuple(pos.tolist())
-                if pos_tuple not in unique_positions:
-                    unique_positions[pos_tuple] = i
+                if pos_tuple not in seen:
+                    unique_positions_list.append(pos_tuple)
+                    seen.add(pos_tuple)
+            
+            # Sort for deterministic iteration order
+            unique_positions_list.sort()
             
             # Assign fixed scalar noise to each unique position
-            for pos_tuple in unique_positions.keys():
+            for pos_tuple in unique_positions_list:
                 noise_map[pos_tuple] = torch.randn(1).item() * gaussian_noise
         
         losses = []
@@ -193,7 +205,7 @@ class RNDLinearSGDMethod:
 
 # RND Linear with Least Square Fit
 class RNDLinearLSMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42):
         self.device = device
         self.feature_dim = feature_dim
         
@@ -204,7 +216,8 @@ class RNDLinearLSMethod:
         for param in self.phi.parameters():
             param.requires_grad = False
             
-        # Target θ vector (random)
+        # Target θ vector (deterministic based on seed)
+        torch.manual_seed(theta_seed)
         self.theta = torch.randn(feature_dim).to(device)
         
         # Predictor weights (will be set via least squares)
@@ -227,7 +240,7 @@ class RNDLinearLSMethod:
         coefs = w[1:] if add_intercept else w
         return intercept, coefs, residuals
     
-    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0):
+    def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0, noise_seed=None):
         """Fit predictor to match φ(s)ᵀθ using closed-form least squares"""
         print(f"Training RND-Linear on {len(positions)} positions (least squares fit)")
         
@@ -236,15 +249,24 @@ class RNDLinearLSMethod:
         # Fix: Assign fixed noise per unique position at training start
         noise_map = {}
         if gaussian_noise > 0:
-            # Get unique positions (as tuples for dictionary keys)
-            unique_positions = {}
+            # Seed noise generation deterministically if seed provided
+            if noise_seed is not None:
+                torch.manual_seed(noise_seed)
+            
+            # Get unique positions (as tuples for dictionary keys) - sort for deterministic order
+            unique_positions_list = []
+            seen = set()
             for i, pos in enumerate(positions[:, :2]):
                 pos_tuple = tuple(pos.tolist())
-                if pos_tuple not in unique_positions:
-                    unique_positions[pos_tuple] = i
+                if pos_tuple not in seen:
+                    unique_positions_list.append(pos_tuple)
+                    seen.add(pos_tuple)
+            
+            # Sort for deterministic iteration order
+            unique_positions_list.sort()
             
             # Assign fixed scalar noise to each unique position
-            for pos_tuple in unique_positions.keys():
+            for pos_tuple in unique_positions_list:
                 noise_map[pos_tuple] = torch.randn(1).item() * gaussian_noise
         
         # Compute features and targets

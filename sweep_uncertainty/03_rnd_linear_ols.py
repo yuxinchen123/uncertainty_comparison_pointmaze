@@ -47,6 +47,8 @@ def main():
                        help='Feature dimension for φ(s) mapping')
     parser.add_argument('--phi_seed', type=int, default=0,
                        help='Seed for generating φ(s) weights')
+    parser.add_argument('--theta_seed', type=int, default=42,
+                       help='Seed for initializing θ vector')
     parser.add_argument('--gaussian_noise', type=float, default=0.0,
                        help='Gaussian noise level for training targets')
     
@@ -73,6 +75,7 @@ def main():
         config = wandb.config
         args.phi_dim = config.get('phi_dim', args.phi_dim)
         args.phi_seed = config.get('phi_seed', args.phi_seed)
+        args.theta_seed = config.get('theta_seed', args.theta_seed)
         args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
@@ -104,22 +107,6 @@ def main():
     total_positions = len(all_positions)
     print(f"Total available positions: {total_positions}")
     
-    # Sample positions once for all averaging runs
-    np.random.seed(args.a_seed)
-    if args.num_samples > total_positions:
-        positions = all_positions
-    else:
-        subset_indices = np.random.choice(total_positions, args.num_samples, replace=False)
-        positions = all_positions[subset_indices]
-    
-    print(f"Selected {len(positions)} positions")
-    
-    # Calculate ground truth once
-    gt_uncertainty = calculate_ground_truth_from_positions(
-        positions, maze_map, args.grid_rows, args.grid_cols
-    )
-    gt_normalized = normalize_uncertainty_matrix(gt_uncertainty)
-    
     # Store results for averaging
     all_l2_distances = []
     all_min_c_l1_norm_diff = []
@@ -136,26 +123,36 @@ def main():
     for avg_run in range(args.num_averaging_runs):
         print(f"\n🔄 RUN {avg_run + 1}/{args.num_averaging_runs}")
         
-        # Set seed for this run
-        current_seed = args.a_seed * 1000 + avg_run
-        set_seed(current_seed)
+        # Single seed for this entire run (controls all randomness: data sampling, noise)
+        run_seed = args.a_seed * 1000 + avg_run
+        set_seed(run_seed)
         
-        # Sample different subset for this averaging run to test robustness
-        np.random.seed(current_seed)
+        # Sample 10k positions WITHOUT replacement from the full 10M pool for this run
+        # Note: Each run samples independently from the full pool (positions are "replaced" between runs)
+        np.random.seed(run_seed)
         if args.num_samples > total_positions:
             current_positions = all_positions
         else:
             subset_indices = np.random.choice(total_positions, args.num_samples, replace=False)
             current_positions = all_positions[subset_indices]
         
-        # Create shared φ(s) weights (same across all averaging runs)
+        print(f"  Sampled {len(current_positions)} positions (run_seed={run_seed})")
+        
+        # Calculate ground truth for this run's unique dataset
+        gt_uncertainty = calculate_ground_truth_from_positions(
+            current_positions, maze_map, args.grid_rows, args.grid_cols
+        )
+        gt_normalized = normalize_uncertainty_matrix(gt_uncertainty)
+        
+        # Create shared φ(s) weights (same across all averaging runs, controlled by phi_seed hyperparameter)
         phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
         
-        # Initialize RND Linear (Least Squares)
+        # Initialize RND Linear (Least Squares) - theta uses hyperparameter seed
         method = RNDLinearLSMethod(
             feature_dim=args.phi_dim,
             device=device,
-            phi_weights=phi_weights
+            phi_weights=phi_weights,
+            theta_seed=args.theta_seed  # Hyperparameter for sweeping
         )
         
         # Train the method (least squares - no epochs needed)
@@ -166,7 +163,8 @@ def main():
                 current_positions,
                 num_epochs=1,  # Ignored
                 subset_ratio=1.0,
-                gaussian_noise=args.gaussian_noise
+                gaussian_noise=args.gaussian_noise,
+                noise_seed=run_seed  # Uses run_seed - noise is fixed per position throughout training
             )
             
             # Extract final MSE (all values should be the same since it's analytical)
@@ -184,7 +182,7 @@ def main():
         )
         pred_normalized = normalize_uncertainty_matrix(pred_uncertainty)
         
-        # Compute metrics
+        # Compute metrics for this run
         # L2 distance: use normalized GT and normalized predictions
         l2_distance = compute_l2_distance(gt_normalized, pred_normalized, maze_map)
         # The 4 new metrics: use original (unnormalized) GT and predictions
@@ -224,7 +222,8 @@ def main():
     print(f"min_c L2 inv:          {avg_min_c_l2_norm_inv:.6f} ± {std_min_c_l2_norm_inv:.6f}")
     print(f"Final MSE:             {avg_final_mse:.6f} ± {std_final_mse:.6f}")
     
-    # Save heatmaps
+    # Save heatmaps from the last run (for visualization)
+    # Note: GT and predictions are from the last run's dataset
     save_heatmap_to_wandb(gt_normalized, "Ground Truth (1/√N)", args.wandb_switch, maze_map)
     save_heatmap_to_wandb(pred_normalized, f"RND-Linear-LS-{args.phi_dim}dim", args.wandb_switch, maze_map)
     
@@ -233,6 +232,7 @@ def main():
         'method': 'rnd_linear_least_squares',
         'phi_dim': args.phi_dim,
         'phi_seed': args.phi_seed,
+        'theta_seed': args.theta_seed,
         'gaussian_noise': args.gaussian_noise,
         'avg_l2_distance': avg_l2_distance,
         'avg_min_c_l1_norm_diff': avg_min_c_l1_norm_diff,
