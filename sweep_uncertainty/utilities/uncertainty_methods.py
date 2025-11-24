@@ -298,8 +298,11 @@ class RNDLinearLSMethod:
         final_loss = torch.mean((pred_output - target_output) ** 2).item()
         
         print(f"  Least squares fit complete. Final MSE: {final_loss:.6f}")
-        if residuals is not None and len(residuals) > 0:
-            print(f"  Residual sum of squares: {residuals[0]:.6f}")
+        if residuals is not None:
+            if isinstance(residuals, (list, tuple, np.ndarray)) and len(residuals) > 0:
+                print(f"  Residual sum of squares: {residuals[0]:.6f}")
+            elif isinstance(residuals, (int, float, np.number)):
+                print(f"  Residual sum of squares: {residuals:.6f}")
         
         # Return dummy loss history for compatibility
         return [final_loss] * num_epochs

@@ -177,7 +177,8 @@ class ScalarEnsembleRNDLinearSGDMethod:
         for k in range(K):
             # Each predictor: feature_dim -> 1 (already scalar)
             predictor_net = nn.Linear(feature_dim, 1).to(device)
-            optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.001)
+            # Use higher learning rate and weight decay for better convergence on ill-conditioned problems
+            optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.01, weight_decay=1e-6)
             self.predictor_nets.append(predictor_net)
             self.optimizers.append(optimizer)
     
