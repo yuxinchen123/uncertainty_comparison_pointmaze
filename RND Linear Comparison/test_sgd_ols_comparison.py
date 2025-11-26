@@ -11,11 +11,54 @@ def create_phi_weights_deterministic(feature_dim, seed):
     phi_net = torch.nn.Linear(2, feature_dim)
     return phi_net.state_dict()
 
-def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num_samples=10000):
-    """Run comparison averaging over num_runs"""
+def ridge_least_squares_fit(X, y, lambda_reg=1e-6, add_intercept=True):
+    """Ridge Regression: min ||X_aug w - y||^2 + λ * ||w||^2"""
+    if y.ndim == 1:
+        y = y[:, None]
+    if add_intercept:
+        X_aug = np.hstack([np.ones((X.shape[0], 1)), X])
+    else:
+        X_aug = X
+    
+    # Ridge Regression: (X^T X + λI) w = X^T y
+    XTX = X_aug.T @ X_aug
+    XTy = X_aug.T @ y
+    
+    # Add regularization: XTX + λI
+    n_features = XTX.shape[0]
+    XTX_reg = XTX + lambda_reg * np.eye(n_features)
+    
+    # Solve: (XTX + λI) w = XTy
+    try:
+        w = np.linalg.solve(XTX_reg, XTy)
+    except np.linalg.LinAlgError:
+        # Fallback to pseudo-inverse if singular
+        w = np.linalg.pinv(XTX_reg) @ XTy
+    
+    w = w.squeeze()
+    intercept = w[0] if add_intercept else 0.0
+    coefs = w[1:] if add_intercept else w
+    
+    # Compute residuals
+    pred = X_aug @ w
+    residuals = np.sum((pred - y.squeeze()) ** 2)
+    
+    return intercept, coefs, residuals
+
+def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num_samples=100, 
+                   regularization=0.0, lambda_reg=1e-6):
+    """
+    Run comparison averaging over num_runs
+    
+    Args:
+        regularization: 0.0 for no regularization, >0.0 to enable
+        lambda_reg: regularization strength (only used if regularization > 0)
+    """
     
     device = 'cpu'
     epochs_list = [50, 100, 500, 1000, 2000]
+    
+    reg_str = f"regularized (λ={lambda_reg})" if regularization > 0 else "unregularized"
     
     # Create shared phi weights
     phi_weights = create_phi_weights_deterministic(feature_dim, phi_seed)
@@ -62,7 +105,7 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
     }
     
     print("=" * 80)
-    print(f"COMPREHENSIVE COMPARISON: SGD vs OLS (averaging over {num_runs} runs)")
+    print(f"COMPREHENSIVE COMPARISON: SGD vs OLS (averaging over {num_runs} runs, {reg_str})")
     print("=" * 80)
     
     for run_idx in range(num_runs):
@@ -98,6 +141,14 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
                 theta_seed=theta_seed,
                 predictor_seed=42 + run_idx
             )
+            
+            # Add weight decay if regularization is enabled
+            if regularization > 0:
+                sgd_method.optimizer = torch.optim.Adam(
+                    sgd_method.predictor.parameters(), 
+                    lr=0.001, 
+                    weight_decay=lambda_reg
+                )
             
             # Train
             losses = sgd_method.train_on_positions(
@@ -163,7 +214,32 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
             theta_seed=theta_seed
         )
         
-        losses = ols_method.train_on_positions(positions, num_epochs=1, gaussian_noise=0.0)
+        # If regularization is enabled, use Ridge Regression instead of OLS
+        if regularization > 0:
+            # Compute features and targets
+            coords_tensor = torch.FloatTensor(positions[:, :2]).to(device)
+            with torch.no_grad():
+                phi_output = ols_method.phi(coords_tensor)  # [N, feature_dim]
+                target_output = torch.matmul(phi_output, ols_method.theta)  # [N]
+            
+            # Convert to numpy for Ridge Regression
+            X = phi_output.cpu().numpy()  # [N, feature_dim]
+            y = target_output.cpu().numpy()  # [N]
+            
+            # Fit using Ridge Regression
+            intercept, coefs, residuals = ridge_least_squares_fit(X, y, lambda_reg=lambda_reg, add_intercept=True)
+            
+            # Store results
+            ols_method.predictor_intercept = torch.FloatTensor([intercept]).to(device)
+            ols_method.predictor_weights = torch.FloatTensor(coefs).to(device)
+            
+            # Compute final loss for logging
+            pred_output = torch.matmul(phi_output, ols_method.predictor_weights) + ols_method.predictor_intercept
+            final_loss = torch.mean((pred_output - target_output) ** 2).item()
+            losses = [final_loss] * 1
+        else:
+            # Regular OLS (no regularization)
+            losses = ols_method.train_on_positions(positions, num_epochs=1, gaussian_noise=0.0)
         final_loss = losses[-1] if losses else float('nan')
         
         # Evaluate on grid
@@ -223,19 +299,21 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
             print(f"\nCompleted {run_idx + 1}/{num_runs} runs...")
     
     # Compute averages and print results
-    print("\n" + "=" * 80)
-    print("RESULTS (Averaged over {} runs)".format(num_runs))
-    print("=" * 80)
+    print("\n" + "=" * 100)
+    print("RESULTS TABLE - SGD vs OLS (Averaged over {} runs) {} samples; {}".format(num_runs, num_samples, reg_str))
+    print("=" * 100)
     
-    print("\n1. TRAINING LOSS (final epoch)")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("1. TRAINING LOSS (Final Epoch)")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Std':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         losses = all_results[method_name]['training_loss']
         print(f"{method_name:<12} {np.mean(losses):<15.10f} {np.std(losses):<15.10f} {np.min(losses):<15.10f} {np.max(losses):<15.10f}")
     
-    print("\n2. TARGET VALUES (should be same for all methods)")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("2. TARGET VALUES (should be same for all methods)")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         means = all_results[method_name]['target_mean']
@@ -243,8 +321,9 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
         maxs = all_results[method_name]['target_max']
         print(f"{method_name:<12} {np.mean(means):<15.6f} {np.mean(mins):<15.6f} {np.mean(maxs):<15.6f}")
     
-    print("\n3. PREDICTION VALUES")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("3. PREDICTION VALUES")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Std':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         means = all_results[method_name]['pred_mean']
@@ -252,8 +331,9 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
         maxs = all_results[method_name]['pred_max']
         print(f"{method_name:<12} {np.mean(means):<15.6f} {np.std(means):<15.6f} {np.mean(mins):<15.6f} {np.mean(maxs):<15.6f}")
     
-    print("\n4. RAW UNCERTAINTY (|target - prediction|)")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("4. RAW UNCERTAINTY (|target - prediction|)")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Std':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         means = all_results[method_name]['uncertainty_mean']
@@ -261,8 +341,9 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
         maxs = all_results[method_name]['uncertainty_max']
         print(f"{method_name:<12} {np.mean(means):<15.10f} {np.std(means):<15.10f} {np.mean(mins):<15.10f} {np.mean(maxs):<15.10f}")
     
-    print("\n5. NORMALIZED UNCERTAINTY")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("5. NORMALIZED UNCERTAINTY (divided by the max value) – starts to differ between converged SGD and OLS")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Std':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         means = all_results[method_name]['norm_unc_mean']
@@ -270,8 +351,9 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
         maxs = all_results[method_name]['norm_unc_max']
         print(f"{method_name:<12} {np.mean(means):<15.6f} {np.std(means):<15.6f} {np.mean(mins):<15.6f} {np.mean(maxs):<15.6f}")
     
-    print("\n6. GROUND TRUTH VALUES (normalized)")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("6. GROUND TRUTH VALUES (normalized)")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         means = all_results[method_name]['gt_mean']
@@ -279,8 +361,9 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
         maxs = all_results[method_name]['gt_max']
         print(f"{method_name:<12} {np.mean(means):<15.6f} {np.mean(mins):<15.6f} {np.mean(maxs):<15.6f}")
     
-    print("\n7. L2 DISTANCE (normalized prediction vs normalized GT)")
-    print("-" * 80)
+    print("\n" + "=" * 100)
+    print("7. L2 DISTANCE (normalized prediction vs normalized GT) – converged SGD are closer to OLS although not the same")
+    print("=" * 100)
     print(f"{'Method':<12} {'Mean':<15} {'Std':<15} {'Min':<15} {'Max':<15}")
     for method_name in ['SGD_50', 'SGD_100', 'SGD_500', 'SGD_1000', 'SGD_2000', 'OLS']:
         l2s = all_results[method_name]['l2_distance']
@@ -343,5 +426,19 @@ def run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num
     return all_results
 
 if __name__ == '__main__':
-    results = run_comparison(num_runs=50, feature_dim=256, phi_seed=42, theta_seed=42, num_samples=10000)
+    # Set regularization: 0.0 = no regularization, >0.0 = enable regularization
+    USE_REGULARIZATION = True  # Set to False to disable regularization
+    LAMBDA_REG = 1e-2  # Regularization strength (only used if USE_REGULARIZATION=True) - CHANGED TO 1e-2
+    
+    regularization = LAMBDA_REG if USE_REGULARIZATION else 0.0
+    
+    results = run_comparison(
+        num_runs=50, 
+        feature_dim=256, 
+        phi_seed=42, 
+        theta_seed=42, 
+        num_samples=100,
+        regularization=regularization,
+        lambda_reg=LAMBDA_REG
+    )
 

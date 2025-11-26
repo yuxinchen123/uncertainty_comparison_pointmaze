@@ -300,7 +300,7 @@ class RNDLinearLSMethod:
         print(f"  Least squares fit complete. Final MSE: {final_loss:.6f}")
         if residuals is not None:
             if isinstance(residuals, (list, tuple, np.ndarray)) and len(residuals) > 0:
-                print(f"  Residual sum of squares: {residuals[0]:.6f}")
+            print(f"  Residual sum of squares: {residuals[0]:.6f}")
             elif isinstance(residuals, (int, float, np.number)):
                 print(f"  Residual sum of squares: {residuals:.6f}")
         

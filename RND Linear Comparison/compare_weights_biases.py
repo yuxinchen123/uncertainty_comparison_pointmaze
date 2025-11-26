@@ -23,9 +23,9 @@ theta_seed = 42
 # Create shared phi weights
 phi_weights = create_phi_weights_deterministic(feature_dim, phi_seed)
 
-# Generate positions
+# Generate positions (100 samples for comparison with test results)
 np.random.seed(42)
-positions = np.random.randn(10000, 2) * 3
+positions = np.random.randn(100, 2) * 3
 
 # Train SGD_1000
 print("\nTraining SGD_1000...")
