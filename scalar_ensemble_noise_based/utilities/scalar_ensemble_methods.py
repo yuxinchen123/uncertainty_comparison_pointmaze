@@ -154,10 +154,11 @@ class ScalarEnsembleRNDLinearSGDMethod:
     - Uncertainty = STD of scalar predictions across K heads
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None):
+    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
         self.K = K
+        self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
         self.phi = nn.Linear(2, feature_dim).to(device)
@@ -178,7 +179,7 @@ class ScalarEnsembleRNDLinearSGDMethod:
             # Each predictor: feature_dim -> 1 (already scalar)
             predictor_net = nn.Linear(feature_dim, 1).to(device)
             # Use higher learning rate and weight decay for better convergence on ill-conditioned problems
-            optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.01, weight_decay=1e-6)
+            optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.01, weight_decay=regularization)
             self.predictor_nets.append(predictor_net)
             self.optimizers.append(optimizer)
     
@@ -284,7 +285,7 @@ class ScalarEnsembleRNDLinearLSMethod:
     - Uncertainty = STD of scalar predictions across K heads
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-6):
+    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
         self.K = K

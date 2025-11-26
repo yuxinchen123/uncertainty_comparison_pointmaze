@@ -28,9 +28,13 @@ parameters:
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
   
-  # # Training parameters
-  # num_epochs:
-  #   values: [10, 20, 30, 50]
+  # Regularization parameter (L2 regularization / weight decay)
+  regularization:
+    values: [1e-2]
+  
+  # Training parameters (not used for OLS but kept for compatibility)
+  num_epochs:
+    value: 1
   
   # Data sampling parameters
   num_samples:

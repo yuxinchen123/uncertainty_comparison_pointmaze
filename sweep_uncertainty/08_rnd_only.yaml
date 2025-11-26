@@ -20,8 +20,9 @@ parameters:
         # values: ['64,64', '128,128', '256,256', '512,512']
   
   # Training parameters - epoch sweep for RND
+  # Analysis shows optimal at 30-50 epochs, 100 epochs shows overfitting (5% worse L2)
   num_epochs:
-    values: [10, 30, 50]  # RND epoch sweep
+    values: [30, 50]  # Optimal range: 30 epochs (near-best), 50 epochs (best L2=1.37)
   
   # Gaussian noise levels
   gaussian_noise:

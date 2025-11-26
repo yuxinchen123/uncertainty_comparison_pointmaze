@@ -19,7 +19,9 @@ parameters:
   phi_seed:
     values: [0, 1, 2, 3, 4]
   num_epochs:
-    value: 30
+    values: [500, 1000]
+  regularization:
+    values: [1e-2]
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
     # value: 0.0

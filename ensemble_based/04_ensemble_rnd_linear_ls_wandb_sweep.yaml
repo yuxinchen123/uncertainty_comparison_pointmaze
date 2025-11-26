@@ -16,9 +16,9 @@ parameters:
   phi_seed:
     values: [0, 1, 2, 3, 4]
   regularization:
-    values: [1e-8, 1e-6, 1e-4]
+    values: [1e-2]
   num_epochs:
-    value: 30
+    value: 1
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
   grid_rows:

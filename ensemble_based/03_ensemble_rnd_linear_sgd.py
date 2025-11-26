@@ -47,6 +47,7 @@ def parse_args():
     
     # Training parameters
     parser.add_argument("--num_epochs", type=int, default=30, help="Number of training epochs")
+    parser.add_argument("--regularization", type=float, default=1e-2, help="Regularization parameter (L2 regularization / weight decay)")
     parser.add_argument("--gaussian_noise", type=float, default=0.0, help="Gaussian noise level")
     
     # Evaluation parameters
@@ -104,7 +105,8 @@ def run_single_experiment(args, device, run_idx):
         feature_dim=args.phi_dim,
         K=args.K,
         device=device,
-        phi_weights=phi_weights
+        phi_weights=phi_weights,
+        regularization=args.regularization
     )
     
     # Train ensemble

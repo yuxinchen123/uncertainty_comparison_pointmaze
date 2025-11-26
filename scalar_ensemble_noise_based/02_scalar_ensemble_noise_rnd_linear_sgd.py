@@ -58,6 +58,7 @@ def parse_args():
     
     # Training parameters
     parser.add_argument("--num_epochs", type=int, default=30, help="Number of training epochs")
+    parser.add_argument("--regularization", type=float, default=1e-2, help="Regularization parameter (L2 regularization / weight decay)")
     parser.add_argument("--noise_sigma", type=float, default=0.0, help="Gaussian noise sigma (noise_sigma^2 variance)")
     
     # Evaluation parameters
@@ -101,7 +102,8 @@ def run_single_experiment(args, device, run_idx):
         feature_dim=args.phi_dim,
         K=args.K,
         device=device,
-        phi_weights=phi_weights
+        phi_weights=phi_weights,
+        regularization=args.regularization
     )
     
     # Train ensemble
@@ -174,6 +176,7 @@ def main():
         args.phi_dim = config.get('phi_dim', args.phi_dim)
         args.phi_seed = config.get('phi_seed', args.phi_seed)
         args.num_epochs = config.get('num_epochs', args.num_epochs)
+        args.regularization = config.get('regularization', args.regularization)
         args.noise_sigma = config.get('noise_sigma', args.noise_sigma)
         args.a_seed = config.get('a_seed', args.a_seed)
         args.wandb_switch = config.get('wandb_switch', args.wandb_switch)

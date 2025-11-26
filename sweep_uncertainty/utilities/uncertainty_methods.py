@@ -104,9 +104,10 @@ class RNDMethod:
 
 # RND Linear with SGD Training
 class RNDLinearSGDMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, predictor_seed=None):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, predictor_seed=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
+        self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim
         self.phi = nn.Linear(2, feature_dim).to(device)
@@ -123,7 +124,7 @@ class RNDLinearSGDMethod:
         if predictor_seed is not None:
             torch.manual_seed(predictor_seed)
         self.predictor = nn.Linear(feature_dim, 1).to(device)
-        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001)
+        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001, weight_decay=regularization)
         self.criterion = nn.MSELoss()
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0, noise_seed=None):
@@ -205,9 +206,10 @@ class RNDLinearSGDMethod:
 
 # RND Linear with Least Square Fit
 class RNDLinearLSMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
+        self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim
         self.phi = nn.Linear(2, feature_dim).to(device)
@@ -225,7 +227,7 @@ class RNDLinearLSMethod:
         self.predictor_intercept = None
     
     def least_squares_fit(self, X, y, add_intercept=True):
-        """Direct least squares solution: min ||X_aug w - y||"""
+        """Ridge regression (regularized least squares): min ||X_aug w - y||^2 + λ||w||^2"""
         if y.ndim == 1:
             y = y[:, None]
         if add_intercept:
@@ -233,11 +235,22 @@ class RNDLinearLSMethod:
         else:
             X_aug = X
         
-        # Solve min ||X_aug w - y||
-        w, residuals, rank, s = np.linalg.lstsq(X_aug, y, rcond=None)
+        # Regularized least squares: (X^T X + λI)^-1 X^T y
+        XTX = X_aug.T @ X_aug
+        XTX += np.eye(XTX.shape[0]) * self.regularization
+        
+        try:
+            w = np.linalg.solve(XTX, X_aug.T @ y)
+        except np.linalg.LinAlgError:
+            w = np.linalg.lstsq(X_aug, y, rcond=None)[0]
+        
         w = w.squeeze()
         intercept = w[0] if add_intercept else 0.0
         coefs = w[1:] if add_intercept else w
+        
+        # Compute residuals for compatibility
+        pred = X_aug @ w
+        residuals = np.sum((y - pred) ** 2)
         return intercept, coefs, residuals
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0, noise_seed=None):
@@ -300,7 +313,7 @@ class RNDLinearLSMethod:
         print(f"  Least squares fit complete. Final MSE: {final_loss:.6f}")
         if residuals is not None:
             if isinstance(residuals, (list, tuple, np.ndarray)) and len(residuals) > 0:
-            print(f"  Residual sum of squares: {residuals[0]:.6f}")
+                print(f"  Residual sum of squares: {residuals[0]:.6f}")
             elif isinstance(residuals, (int, float, np.number)):
                 print(f"  Residual sum of squares: {residuals:.6f}")
         

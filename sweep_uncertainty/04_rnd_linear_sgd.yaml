@@ -24,10 +24,12 @@ parameters:
     values: [42, 123, 456]
   
   # Training hyperparameters - core SGD parameters
-  # RND Linear SGD epoch sweep: [30, 100, 150]
   num_epochs:
-    values: [30, 100, 150]
+    values: [500, 1000]
   
+  # Regularization parameter (L2 regularization / weight decay)
+  regularization:
+    values: [1e-2]
   
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:

@@ -56,7 +56,7 @@ def parse_args():
     # RND-Linear parameters
     parser.add_argument("--phi_dim", type=int, default=128, help="Feature dimension for RND-Linear")
     parser.add_argument("--phi_seed", type=int, default=42, help="Seed for shared φ(s) weights")
-    parser.add_argument("--regularization", type=float, default=1e-6, help="Regularization for least squares")
+    parser.add_argument("--regularization", type=float, default=1e-2, help="Regularization for least squares")
     
     # Training parameters
     parser.add_argument("--num_epochs", type=int, default=1, help="Number of training epochs (not used for LS)")

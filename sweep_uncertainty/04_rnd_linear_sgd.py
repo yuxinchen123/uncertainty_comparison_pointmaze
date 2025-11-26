@@ -53,6 +53,8 @@ def main():
                        help='Gaussian noise level for training targets')
     parser.add_argument('--num_epochs', type=int, default=30,
                        help='Number of training epochs')
+    parser.add_argument('--regularization', type=float, default=1e-2,
+                       help='Regularization parameter (L2 regularization / weight decay)')
     
     # Data parameters
     parser.add_argument('--num_samples', type=int, default=10000,
@@ -80,6 +82,7 @@ def main():
         args.theta_seed = config.get('theta_seed', args.theta_seed)
         args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
         args.num_epochs = config.get('num_epochs', args.num_epochs)
+        args.regularization = config.get('regularization', args.regularization)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
         args.a_seed = config.get('a_seed', args.a_seed)
@@ -157,7 +160,8 @@ def main():
             device=device,
             phi_weights=phi_weights,
             theta_seed=args.theta_seed,  # Hyperparameter for sweeping
-            predictor_seed=run_seed  # Uses run_seed for consistency
+            predictor_seed=run_seed,  # Uses run_seed for consistency
+            regularization=args.regularization
         )
         
         # Train the method using SGD
