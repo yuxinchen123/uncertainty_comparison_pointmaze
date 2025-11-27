@@ -27,10 +27,9 @@ parameters:
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
   
-  
   # Data sampling parameters
   num_samples:
-    value: 10000  # 10K samples per run
+    values: [100, 1000, 10000]   # 10K samples per run
   
   # Data sampling and model initialization seeds
   a_seed:

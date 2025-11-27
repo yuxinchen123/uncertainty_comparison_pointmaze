@@ -16,11 +16,11 @@ class ScalarEnsembleBootstrapRNDMethod:
     - Uncertainty = STD of scalar predictions across K predictors
     """
     
-    def __init__(self, hidden_dims, output_dim, K=10, device='cpu'):
+    def __init__(self, hidden_dims, output_dim, num_heads=10, device='cpu'):
         self.device = device
         self.hidden_dims = hidden_dims
         self.output_dim = output_dim
-        self.K = K
+        self.num_heads = num_heads
         
         # Build base architecture: [2] + hidden_dims + [output_dim]
         architecture = [2] + hidden_dims + [output_dim]
@@ -41,7 +41,7 @@ class ScalarEnsembleBootstrapRNDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             predictor_net = self._build_network(architecture).to(device)
             scalar_proj = nn.Linear(output_dim, 1).to(device)
             # Combine predictor and scalar projection for optimizer
@@ -80,7 +80,7 @@ class ScalarEnsembleBootstrapRNDMethod:
         Train K predictors using bootstrap sampling.
         Each predictor samples its own D_i with replacement from the data pool.
         """
-        print(f"Training Scalar Ensemble Bootstrap RND with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble Bootstrap RND with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -107,8 +107,8 @@ class ScalarEnsembleBootstrapRNDMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -161,7 +161,7 @@ class ScalarEnsembleBootstrapRNDMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_output = self.predictor_nets[k](coordinates)  # [N, output_dim]
                 pred_scalar = self.predictor_scalar_projs[k](pred_output).squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)
@@ -188,10 +188,10 @@ class ScalarEnsembleBootstrapRNDLinearSGDMethod:
     - Uncertainty = STD of scalar predictions across K predictors
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -209,7 +209,7 @@ class ScalarEnsembleBootstrapRNDLinearSGDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             # Each predictor: feature_dim -> 1 (already scalar)
             predictor_net = nn.Linear(feature_dim, 1).to(device)
             optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.01, weight_decay=regularization)
@@ -235,7 +235,7 @@ class ScalarEnsembleBootstrapRNDLinearSGDMethod:
         Train K predictors using bootstrap sampling and SGD.
         Each predictor samples its own D_i with replacement from the data pool.
         """
-        print(f"Training Scalar Ensemble Bootstrap RND-Linear (SGD) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble Bootstrap RND-Linear (SGD) with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -254,8 +254,8 @@ class ScalarEnsembleBootstrapRNDLinearSGDMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -312,7 +312,7 @@ class ScalarEnsembleBootstrapRNDLinearSGDMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_scalar = self.predictor_nets[k](phi_output).squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)
             
@@ -339,10 +339,10 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
     - Uncertainty = STD of scalar predictions across K predictors
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -356,8 +356,8 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
         self.theta_hat = torch.randn(feature_dim).to(device)
         
         # K predictor weights (will be set via least squares)
-        self.predictor_weights = [None] * K
-        self.predictor_intercepts = [None] * K
+        self.predictor_weights = [None] * num_heads
+        self.predictor_intercepts = [None] * num_heads
     
     def _bootstrap_sample(self, positions, sample_size=None):
         """Bootstrap sampling with replacement from the dataset."""
@@ -401,7 +401,7 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
         Train K predictors using bootstrap sampling and least squares.
         Each predictor samples its own D_i with replacement from the data pool.
         """
-        print(f"Training Scalar Ensemble Bootstrap RND-Linear (LS) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble Bootstrap RND-Linear (LS) with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -420,8 +420,8 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -480,7 +480,7 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_scalar = torch.matmul(phi_output, self.predictor_weights[k]) + self.predictor_intercepts[k]
                 pred_scalar = pred_scalar.squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)

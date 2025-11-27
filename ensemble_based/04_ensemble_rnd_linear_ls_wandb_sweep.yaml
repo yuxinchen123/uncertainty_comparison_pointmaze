@@ -5,7 +5,7 @@ metric:
   goal: minimize
   name: final_mean_l2
 parameters:
-  K:
+  num_heads:
     values: [5, 10, 15, 20]
   num_samples:
     value: 10000

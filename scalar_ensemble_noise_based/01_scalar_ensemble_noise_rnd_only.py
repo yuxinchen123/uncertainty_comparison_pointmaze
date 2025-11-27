@@ -47,7 +47,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Scalar Ensemble Noise-Based RND Testing")
     
     # Ensemble parameters
-    parser.add_argument("--K", type=int, default=10, help="Number of predictors in ensemble")
+    parser.add_argument("--num_heads", type=int, default=10, help="Number of predictors (heads) in ensemble")
     parser.add_argument("--num_samples", type=int, default=10000, help="Dataset size (10k)")
     parser.add_argument("--num_averaging_runs", type=int, default=10, help="Number of averaging runs")
     
@@ -97,12 +97,12 @@ def run_single_experiment(args, device, run_idx):
     method = ScalarEnsembleRNDMethod(
         hidden_dims=hidden_dims,
         output_dim=args.output_dim,
-        K=args.K,
+        num_heads=args.num_heads,
         device=device
     )
     
     # Train ensemble
-    print(f"Training Scalar Ensemble RND with K={args.K} predictors...")
+    print(f"Training Scalar Ensemble RND with {args.num_heads} predictors...")
     losses = method.train_on_positions(
         positions, 
         num_epochs=args.num_epochs,
@@ -165,7 +165,7 @@ def main():
     # Handle WandB sweep
     if wandb.run is not None:
         config = wandb.config
-        args.K = config.get('K', args.K)
+        args.num_heads = config.get('num_heads', args.num_heads)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
         args.output_dim = config.get('output_dim', args.output_dim)
@@ -182,7 +182,7 @@ def main():
             wandb.init(
                 project=args.project_name,
                 config=vars(args),
-                name=f"scalar_ensemble_rnd_K{args.K}_noise{args.noise_sigma}"
+                name=f"scalar_ensemble_rnd_num_heads{args.num_heads}_noise{args.noise_sigma}"
             )
     
     # Setup environment
@@ -191,7 +191,7 @@ def main():
     print(f"Using device: {device}")
     
     print(f"Starting Scalar Ensemble Noise-Based RND testing")
-    print(f"K (number of predictors): {args.K}")
+    print(f"num_heads (number of predictors): {args.num_heads}")
     print(f"Dataset size: {args.num_samples}")
     print(f"Noise sigma: {args.noise_sigma}")
     print(f"Number of averaging runs: {args.num_averaging_runs}")
@@ -240,7 +240,7 @@ def main():
     # Log method heatmap
     save_heatmap_to_wandb(
         final_result['uncertainty_matrix'],
-        title=f"Scalar Ensemble RND (K={args.K}, noise_sigma={args.noise_sigma}) - Final Run",
+        title=f"Scalar Ensemble RND (num_heads={args.num_heads}, noise_sigma={args.noise_sigma}) - Final Run",
         wandb_switch=(args.wandb_switch.lower() == "true")
     )
     

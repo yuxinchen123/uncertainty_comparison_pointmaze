@@ -36,7 +36,6 @@ def main():
     # Architecture parameters
     parser.add_argument('--phi_dim', type=int, default=64,
                        help='Feature dimension for RND Linear (φ(s) dimension)')
-                       help='Seed for generating shared φ(s) weights')
     
     # Training parameters
     parser.add_argument('--num_epochs', type=int, default=500,

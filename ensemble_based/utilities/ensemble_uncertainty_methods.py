@@ -9,17 +9,17 @@ class EnsembleRNDMethod:
     Ensemble-Based RND implementation following the project proposal.
     
     Key features:
-    - K=10 predictors (configurable)
+    - num_heads=10 predictors (configurable)
     - Bootstrap sampling with replacement for each predictor
     - Frozen target network shared across all predictors
     - Ensemble uncertainty = std deviation across K predictors
     """
     
-    def __init__(self, hidden_dims, output_dim, K=10, device='cpu'):
+    def __init__(self, hidden_dims, output_dim, num_heads=10, device='cpu'):
         self.device = device
         self.hidden_dims = hidden_dims
         self.output_dim = output_dim
-        self.K = K
+        self.num_heads = num_heads
         
         # Build architecture: [2] + hidden_dims + [output_dim]
         architecture = [2] + hidden_dims + [output_dim]
@@ -34,7 +34,7 @@ class EnsembleRNDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             predictor_net = self._build_network(architecture).to(device)
             optimizer = torch.optim.Adam(predictor_net.parameters(), lr=0.001)
             self.predictor_nets.append(predictor_net)
@@ -71,7 +71,7 @@ class EnsembleRNDMethod:
         Train K predictors using bootstrap sampling.
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
-        print(f"Training Ensemble RND with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Ensemble RND with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -97,8 +97,8 @@ class EnsembleRNDMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -154,7 +154,7 @@ class EnsembleRNDMethod:
             # Calculate per-model errors for each predictor
             per_model_errors = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_output = self.predictor_nets[k](coordinates)  # [N, output_dim]
                 
                 # L1 distance between target and predictor (per sample)
@@ -175,17 +175,17 @@ class EnsembleRNDLinearSGDMethod:
     Ensemble-Based RND-Linear (SGD) implementation.
     
     Key features:
-    - K=10 predictors (configurable)
+    - num_heads=10 predictors (configurable)
     - Bootstrap sampling with replacement for each predictor
     - Frozen target vector θ̂ shared across all predictors
     - SGD training for each predictor
-    - Ensemble uncertainty = std deviation across K predictors
+    - Ensemble uncertainty = std deviation across num_heads predictors
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -203,7 +203,7 @@ class EnsembleRNDLinearSGDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             # Each predictor: feature_dim -> 1
             predictor_net = nn.Linear(feature_dim, 1).to(device)
             # Use higher learning rate and weight decay for better convergence on ill-conditioned problems
@@ -230,7 +230,7 @@ class EnsembleRNDLinearSGDMethod:
         Train K predictors using bootstrap sampling and SGD.
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
-        print(f"Training Ensemble RND-Linear (SGD) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Ensemble RND-Linear (SGD) with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -249,8 +249,8 @@ class EnsembleRNDLinearSGDMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -311,7 +311,7 @@ class EnsembleRNDLinearSGDMethod:
             # Calculate per-model errors for each predictor
             per_model_errors = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_output = self.predictor_nets[k](phi_output).squeeze()  # [N]
                 
                 # Absolute difference between predictor and target
@@ -332,17 +332,17 @@ class EnsembleRNDLinearLSMethod:
     Ensemble-Based RND-Linear (LS) implementation using least squares.
     
     Key features:
-    - K=10 predictors (configurable)
+    - num_heads=10 predictors (configurable)
     - Bootstrap sampling with replacement for each predictor
     - Frozen target vector θ̂ shared across all predictors
     - Least squares fitting for each predictor
-    - Ensemble uncertainty = std deviation across K predictors
+    - Ensemble uncertainty = std deviation across num_heads predictors
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -355,9 +355,9 @@ class EnsembleRNDLinearLSMethod:
         # Frozen target vector θ̂ (randomly initialized and kept frozen)
         self.theta_hat = torch.randn(feature_dim).to(device)
         
-        # K predictor weights (will be set via least squares)
-        self.predictor_weights = [None] * K
-        self.predictor_intercepts = [None] * K
+        # num_heads predictor weights (will be set via least squares)
+        self.predictor_weights = [None] * num_heads
+        self.predictor_intercepts = [None] * num_heads
     
     def _bootstrap_sample(self, positions, sample_size=None):
         """Bootstrap sampling with replacement from the dataset."""
@@ -401,7 +401,7 @@ class EnsembleRNDLinearLSMethod:
         Train K predictors using bootstrap sampling and least squares.
         Each predictor samples its own D_i with replacement from the 10k data pool.
         """
-        print(f"Training Ensemble RND-Linear (LS) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Ensemble RND-Linear (LS) with {self.num_heads} predictors on {len(positions)} positions")
         
         # Fix: Assign fixed noise per unique position at training start (before bootstrap sampling)
         noise_map = {}
@@ -420,8 +420,8 @@ class EnsembleRNDLinearLSMethod:
         all_losses = []
         
         # Train each predictor independently with its own bootstrap sample
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Bootstrap sample for this predictor
             bootstrap_positions = self._bootstrap_sample(positions)
@@ -484,7 +484,7 @@ class EnsembleRNDLinearLSMethod:
             # Calculate per-model errors for each predictor
             per_model_errors = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_output = torch.matmul(phi_output, self.predictor_weights[k]) + self.predictor_intercepts[k]
                 pred_output = pred_output.squeeze()  # [N]
                 

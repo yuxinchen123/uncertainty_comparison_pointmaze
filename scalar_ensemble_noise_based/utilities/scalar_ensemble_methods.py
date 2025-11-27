@@ -16,11 +16,11 @@ class ScalarEnsembleRNDMethod:
     - Uncertainty = STD of scalar predictions across K heads
     """
     
-    def __init__(self, hidden_dims, output_dim, K=10, device='cpu'):
+    def __init__(self, hidden_dims, output_dim, num_heads=10, device='cpu'):
         self.device = device
         self.hidden_dims = hidden_dims
         self.output_dim = output_dim
-        self.K = K
+        self.num_heads = num_heads
         
         # Build base architecture: [2] + hidden_dims + [output_dim]
         architecture = [2] + hidden_dims + [output_dim]
@@ -41,7 +41,7 @@ class ScalarEnsembleRNDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             predictor_net = self._build_network(architecture).to(device)
             scalar_proj = nn.Linear(output_dim, 1).to(device)
             # Combine predictor and scalar projection for optimizer
@@ -67,7 +67,7 @@ class ScalarEnsembleRNDMethod:
         For head i: Sample W_i = {w_t^i ~ N(0, noise_sigma^2)} for each position t
         Training target for head i: scalar_proj(target_net(x_t)) + w_t^i
         """
-        print(f"Training Scalar Ensemble RND with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble RND with {self.num_heads} predictors on {len(positions)} positions")
         print(f"Using same positions for all heads, noise_sigma={noise_sigma}")
         
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
@@ -81,8 +81,8 @@ class ScalarEnsembleRNDMethod:
         all_losses = []
         
         # Train each predictor independently with different noise
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Sample noise for this head: W_k = {w_t^k ~ N(0, noise_sigma^2)}
             if noise_sigma > 0:
@@ -128,7 +128,7 @@ class ScalarEnsembleRNDMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_output = self.predictor_nets[k](coordinates)  # [N, output_dim]
                 pred_scalar = self.predictor_scalar_projs[k](pred_output).squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)
@@ -154,10 +154,10 @@ class ScalarEnsembleRNDLinearSGDMethod:
     - Uncertainty = STD of scalar predictions across K heads
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -175,7 +175,7 @@ class ScalarEnsembleRNDLinearSGDMethod:
         self.optimizers = []
         self.criterion = nn.MSELoss()
         
-        for k in range(K):
+        for k in range(num_heads):
             # Each predictor: feature_dim -> 1 (already scalar)
             predictor_net = nn.Linear(feature_dim, 1).to(device)
             # Use higher learning rate and weight decay for better convergence on ill-conditioned problems
@@ -189,7 +189,7 @@ class ScalarEnsembleRNDLinearSGDMethod:
         For head i: Sample W_i = {w_t^i ~ N(0, noise_sigma^2)} for each position t
         Training target for head i: φ(s)ᵀθ̂ + w_t^i
         """
-        print(f"Training Scalar Ensemble RND-Linear (SGD) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble RND-Linear (SGD) with {self.num_heads} predictors on {len(positions)} positions")
         print(f"Using same positions for all heads, noise_sigma={noise_sigma}")
         
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
@@ -203,8 +203,8 @@ class ScalarEnsembleRNDLinearSGDMethod:
         all_losses = []
         
         # Train each predictor independently with different noise
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Sample noise for this head: W_k = {w_t^k ~ N(0, noise_sigma^2)}
             if noise_sigma > 0:
@@ -252,7 +252,7 @@ class ScalarEnsembleRNDLinearSGDMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_scalar = self.predictor_nets[k](phi_output).squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)
             
@@ -264,7 +264,7 @@ class ScalarEnsembleRNDLinearSGDMethod:
                 first_pred = scalar_predictions[0]
                 max_diff = torch.max(torch.abs(scalar_predictions - first_pred)).item()
                 if max_diff < 1e-6:
-                    print(f"Warning: All {self.K} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
+                    print(f"Warning: All {self.num_heads} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
             
             # Calculate STD across K predictors
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]
@@ -285,10 +285,10 @@ class ScalarEnsembleRNDLinearLSMethod:
     - Uncertainty = STD of scalar predictions across K heads
     """
     
-    def __init__(self, feature_dim, K=10, device='cpu', phi_weights=None, regularization=1e-2):
+    def __init__(self, feature_dim, num_heads=10, device='cpu', phi_weights=None, regularization=1e-2):
         self.device = device
         self.feature_dim = feature_dim
-        self.K = K
+        self.num_heads = num_heads
         self.regularization = regularization
         
         # Shared φ(s): 2D -> feature_dim (frozen)
@@ -302,8 +302,8 @@ class ScalarEnsembleRNDLinearLSMethod:
         self.theta_hat = torch.randn(feature_dim).to(device)
         
         # K predictor weights (will be set via least squares)
-        self.predictor_weights = [None] * K
-        self.predictor_intercepts = [None] * K
+        self.predictor_weights = [None] * num_heads
+        self.predictor_intercepts = [None] * num_heads
     
     def least_squares_fit(self, X, y, add_intercept=True):
         """Direct least squares solution with regularization."""
@@ -334,7 +334,7 @@ class ScalarEnsembleRNDLinearLSMethod:
         For head i: Sample W_i = {w_t^i ~ N(0, noise_sigma^2)} for each position t
         Training target for head i: φ(s)ᵀθ̂ + w_t^i
         """
-        print(f"Training Scalar Ensemble RND-Linear (LS) with K={self.K} predictors on {len(positions)} positions")
+        print(f"Training Scalar Ensemble RND-Linear (LS) with {self.num_heads} predictors on {len(positions)} positions")
         print(f"Using same positions for all heads, noise_sigma={noise_sigma}")
         
         coords_tensor = torch.FloatTensor(positions[:, :2]).to(self.device)
@@ -351,8 +351,8 @@ class ScalarEnsembleRNDLinearLSMethod:
         all_losses = []
         
         # Train each predictor independently with different noise
-        for k in range(self.K):
-            print(f"Training predictor {k+1}/{self.K}")
+        for k in range(self.num_heads):
+            print(f"Training predictor {k+1}/{self.num_heads}")
             
             # Sample noise for this head: W_k = {w_t^k ~ N(0, noise_sigma^2)}
             if noise_sigma > 0:
@@ -399,7 +399,7 @@ class ScalarEnsembleRNDLinearLSMethod:
             # Get scalar predictions from all K predictors
             scalar_predictions = []
             
-            for k in range(self.K):
+            for k in range(self.num_heads):
                 pred_scalar = torch.matmul(phi_output, self.predictor_weights[k]) + self.predictor_intercepts[k]
                 pred_scalar = pred_scalar.squeeze()  # [N]
                 scalar_predictions.append(pred_scalar)
@@ -412,7 +412,7 @@ class ScalarEnsembleRNDLinearLSMethod:
                 first_pred = scalar_predictions[0]
                 max_diff = torch.max(torch.abs(scalar_predictions - first_pred)).item()
                 if max_diff < 1e-6:
-                    print(f"Warning: All {self.K} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
+                    print(f"Warning: All {self.num_heads} predictors produce nearly identical predictions (max_diff={max_diff:.2e}). STD will be ~0.")
             
             # Calculate STD across K predictors
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]

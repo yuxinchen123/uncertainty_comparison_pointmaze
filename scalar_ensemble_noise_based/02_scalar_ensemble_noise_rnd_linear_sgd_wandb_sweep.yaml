@@ -7,7 +7,7 @@ metric:
 parameters:
   a_seed:
     values: [0, 1, 2, 3, 4]
-  K:
+  num_heads:
     values: [5, 10, 15, 20]
   num_samples:
     value: 10000

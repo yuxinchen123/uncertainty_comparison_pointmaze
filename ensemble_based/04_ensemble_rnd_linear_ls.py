@@ -37,7 +37,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Ensemble RND-Linear (LS) Testing")
     
     # Ensemble parameters
-    parser.add_argument("--K", type=int, default=10, help="Number of predictors in ensemble")
+    parser.add_argument("--num_heads", type=int, default=10, help="Number of predictors (heads) in ensemble")
     parser.add_argument("--num_samples", type=int, default=10000, help="Dataset size (10k)")
     parser.add_argument("--num_averaging_runs", type=int, default=10, help="Number of averaging runs")
     
@@ -85,7 +85,7 @@ def run_single_experiment(args, device, run_idx):
     # Load dataset and sample 10k positions (with seed control)
     dataset, maze_map = load_pointmaze_dataset()
     
-    # Set seed for reproducible 10k sampling (same for all K heads in this run)
+    # Set seed for reproducible 10k sampling (same for all num_heads heads in this run)
     np.random.seed(args.a_seed)
     positions = extract_positions_from_dataset(dataset, args.num_samples)
     print(f"Sampled {len(positions)} positions from dataset (seed={args.a_seed})")
@@ -102,14 +102,14 @@ def run_single_experiment(args, device, run_idx):
     # Create ensemble RND-Linear (LS) method
     method = EnsembleRNDLinearLSMethod(
         feature_dim=args.phi_dim,
-        K=args.K,
+        num_heads=args.num_heads,
         device=device,
         phi_weights=phi_weights,
         regularization=args.regularization
     )
     
     # Train ensemble
-    print(f"Training Ensemble RND-Linear (LS) with K={args.K} predictors...")
+    print(f"Training Ensemble RND-Linear (LS) with {args.num_heads} predictors...")
     losses = method.train_on_positions(
         positions, 
         num_epochs=args.num_epochs,
@@ -181,11 +181,11 @@ def main():
         wandb.init(
             project=args.project_name,
             config=vars(args),
-            name=f"ensemble_rnd_linear_ls_K{args.K}_samples{args.num_samples}"
+            name=f"ensemble_rnd_linear_ls_num_heads{args.num_heads}_samples{args.num_samples}"
         )
     
     print(f"Starting Ensemble RND-Linear (LS) testing")
-    print(f"K (number of predictors): {args.K}")
+    print(f"num_heads (number of predictors): {args.num_heads}")
     print(f"Dataset size: {args.num_samples}")
     print(f"Number of averaging runs: {args.num_averaging_runs}")
     
@@ -233,7 +233,7 @@ def main():
     # Log method heatmap
     save_heatmap_to_wandb(
         final_result['uncertainty_matrix'],
-        title=f"Ensemble RND-Linear (LS) (K={args.K}) - Final Run",
+        title=f"Ensemble RND-Linear (LS) (num_heads={args.num_heads}) - Final Run",
         wandb_switch=(args.wandb_switch.lower() == "true")
     )
     
