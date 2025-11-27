@@ -14,28 +14,21 @@ parameters:
   # Feature dimension sweep - key parameter for RND Linear
   phi_dim:
     values: [256, 512]
-        # values: [64, 128, 256, 512, 1024]
-  
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
-  
   # Regularization parameter (L2 regularization / weight decay)
   regularization:
     values: [1e-2]
-  
   # Training parameters (not used for OLS but kept for compatibility)
   num_epochs:
     value: 1
-  
   # Data sampling parameters
   num_samples:
-    values: [100, 1000, 10000]  # 10K samples per run
-  
+    values: [100, 1000, 10000]
   # Data sampling and model initialization seeds
   a_seed:
     values: [0, 1, 2, 3, 4]
-  
   # Averaging parameters
   num_averaging_runs:
     value: 10

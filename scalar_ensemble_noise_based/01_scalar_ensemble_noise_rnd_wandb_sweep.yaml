@@ -8,9 +8,9 @@ parameters:
   a_seed:
     values: [0, 1, 2, 3, 4]
   num_heads:
-    values: [5, 10, 15, 20]
+    values: [5, 10, 50, 100]
   num_samples:
-    value: 10000
+    values: [100, 1000, 10000]
   num_averaging_runs:
     value: 1
   output_dim:
@@ -18,9 +18,9 @@ parameters:
   hidden_dims:
     values: ["128,128", "512,512"]
   num_epochs:
-    value: 30
+    value: 30 # 30 epochs is enough for convergence
   noise_sigma:
-    values: [0.0, 0.5, 1.0]
+    values: [0.5, 1.0, 2.0]
   grid_rows:
     value: 9
   grid_cols:

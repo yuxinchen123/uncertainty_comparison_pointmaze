@@ -5,17 +5,21 @@ metric:
   goal: minimize
   name: final_mean_l2
 parameters:
+  a_seed:
+    values: [0, 1, 2, 3, 4]
   num_heads:
-    values: [5, 10, 15, 20]
+    values: [5, 10, 50, 100]
   num_samples:
-    value: 10000
+    values: [100, 1000, 10000]
   num_averaging_runs:
+  # not used for ensemble-based methods
     value: 1
   phi_dim:
     values: [128, 512]
   regularization:
     values: [1e-2]
   num_epochs:
+    # not used for OLS
     value: 1
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
@@ -25,8 +29,6 @@ parameters:
     value: 12
   device:
     value: "cpu"
-  a_seed:
-    values: [0, 1, 2, 3, 4]
   wandb_switch:
     value: "True"
   # project_name:
