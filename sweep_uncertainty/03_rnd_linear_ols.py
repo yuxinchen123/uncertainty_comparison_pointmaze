@@ -45,8 +45,6 @@ def main():
     # Core RND Linear parameters
     parser.add_argument('--phi_dim', type=int, default=64,
                        help='Feature dimension for φ(s) mapping')
-    parser.add_argument('--theta_seed', type=int, default=42,
-                       help='Seed for initializing θ vector')
     parser.add_argument('--gaussian_noise', type=float, default=0.0,
                        help='Gaussian noise level for training targets')
     parser.add_argument('--regularization', type=float, default=1e-2,
@@ -74,7 +72,6 @@ def main():
     if wandb.run is not None:
         config = wandb.config
         args.phi_dim = config.get('phi_dim', args.phi_dim)
-        args.theta_seed = config.get('theta_seed', args.theta_seed)
         args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
         args.regularization = config.get('regularization', args.regularization)
         args.num_samples = config.get('num_samples', args.num_samples)
@@ -152,7 +149,7 @@ def main():
             feature_dim=args.phi_dim,
             device=device,
             phi_weights=phi_weights,
-            theta_seed=args.theta_seed,  # Hyperparameter for sweeping
+            theta_seed=args.a_seed,
             regularization=args.regularization
         )
         
@@ -232,7 +229,6 @@ def main():
     results = {
         'method': 'rnd_linear_least_squares',
         'phi_dim': args.phi_dim,
-        'theta_seed': args.theta_seed,
         'gaussian_noise': args.gaussian_noise,
         'avg_l2_distance': avg_l2_distance,
         'avg_min_c_l1_norm_diff': avg_min_c_l1_norm_diff,

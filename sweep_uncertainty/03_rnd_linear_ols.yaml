@@ -16,10 +16,6 @@ parameters:
     values: [256, 512]
         # values: [64, 128, 256, 512, 1024]
   
-  # θ vector initialization seeds - test robustness to different target vectors
-  theta_seed:
-    values: [42, 123, 456]
-  
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:
     values: [0.0, 0.5, 1.0]
