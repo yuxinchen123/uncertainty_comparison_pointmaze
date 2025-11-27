@@ -16,10 +16,6 @@ parameters:
     values: [256, 512]
         # values: [64, 128, 256, 512, 1024]
   
-  # φ(s) weight seeds - test robustness to different feature mappings
-  phi_seed:
-    values: [0, 1, 2]
-  
   # θ vector initialization seeds - test robustness to different target vectors
   theta_seed:
     values: [42, 123, 456]

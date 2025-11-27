@@ -68,8 +68,6 @@ def main():
                        help='Number of runs to average over for each sample subset')
     
     # φ(s) sharing parameters
-    parser.add_argument('--phi_seed', type=int, default=42,
-                       help='Seed for generating shared φ(s) weights')
     parser.add_argument('--phi_dim', type=int, default=64,
                        help='Dimension of shared φ(s) features (for RND_Linear and Elliptical)')
     
@@ -100,7 +98,6 @@ def main():
         args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
-        args.phi_seed = config.get('phi_seed', args.phi_seed)
         args.phi_dim = config.get('phi_dim', args.phi_dim)
         args.a_seed = config.get('a_seed', args.a_seed)
         args.wandb_switch = config.get('wandb_switch', args.wandb_switch)
@@ -214,7 +211,7 @@ def main():
             print(f"Initializing RND-Linear method (feature_dim={args.phi_dim})...")
             
             # Create shared φ(s) weights (deterministic across averaging runs)
-            phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
+            phi_weights = create_phi_weights_deterministic(args.phi_dim, args.a_seed)
             
             method = RNDLinearMethod(
                 feature_dim=args.phi_dim,
@@ -241,7 +238,7 @@ def main():
                 print(f"  Note: Gaussian noise ({args.gaussian_noise}) ignored for Elliptical Bonus method")
             
             # Create shared φ(s) weights (deterministic across averaging runs)
-            phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
+            phi_weights = create_phi_weights_deterministic(args.phi_dim, args.a_seed)
             
             method = EllipticalBonusMethod(
                 feature_dim=args.phi_dim,
@@ -316,7 +313,7 @@ def main():
     save_heatmap_to_wandb(pred_normalized, f"{method_info} Uncertainty (Final)", args.wandb_switch, maze_map)
     
     # Log results
-    phi_info = "N/A (full neural network)" if args.method == 'rnd' else f"φ(s) seed={args.phi_seed}, dim={args.phi_dim}"
+    phi_info = "N/A (full neural network)" if args.method == 'rnd' else f"φ(s) seed={args.a_seed}, dim={args.phi_dim}"
     
     results = {
         'method': args.method,
@@ -336,7 +333,6 @@ def main():
         'num_samples': args.num_samples,
         'run_index': args.run_index,
         'num_averaging_runs': args.num_averaging_runs,
-        'phi_seed': args.phi_seed,
         'a_seed': args.a_seed,
         'max_gt_uncertainty': np.nanmax(gt_uncertainty),
         'max_pred_uncertainty': np.nanmax(pred_uncertainty),

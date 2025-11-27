@@ -15,10 +15,6 @@ parameters:
   phi_dim:
     values: [256, 512]
   
-  # φ(s) weight seeds - test robustness to different feature mappings
-  phi_seed:
-    values: [0, 1, 2]
-  
   # θ vector initialization seeds - test robustness to different target vectors
   theta_seed:
     values: [42, 123, 456]
@@ -42,7 +38,7 @@ parameters:
   
   # Data sampling and model initialization seeds
   a_seed:
-    values: [0, 1, 2, 3, 4]
+    values: [0, 1]
   
   # Averaging parameters
   num_averaging_runs:

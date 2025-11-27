@@ -45,8 +45,6 @@ def main():
     # Core Elliptical Bonus parameters
     parser.add_argument('--phi_dim', type=int, default=64,
                        help='Feature dimension for φ(s) mapping')
-    parser.add_argument('--phi_seed', type=int, default=0,
-                       help='Seed for generating φ(s) weights')
     parser.add_argument('--regularization', type=float, default=1e-6,
                        help='Regularization parameter for covariance matrix')
     
@@ -78,7 +76,6 @@ def main():
     if wandb.run is not None:
         config = wandb.config
         args.phi_dim = config.get('phi_dim', args.phi_dim)
-        args.phi_seed = config.get('phi_seed', args.phi_seed)
         args.regularization = config.get('regularization', args.regularization)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
@@ -136,7 +133,7 @@ def main():
     all_covariance_traces = []
     
     print(f"\nStarting {args.num_averaging_runs} averaging runs...")
-    print(f"Elliptical Bonus: φ_dim={args.phi_dim}, φ_seed={args.phi_seed}, reg={args.regularization}")
+    print(f"Elliptical Bonus: φ_dim={args.phi_dim}, a_seed={args.a_seed}, reg={args.regularization}")
     print("=" * 80)
     
     for avg_run in range(args.num_averaging_runs):
@@ -147,7 +144,7 @@ def main():
         set_seed(current_seed)
         
         # Create shared φ(s) weights (same across all averaging runs)
-        phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
+        phi_weights = create_phi_weights_deterministic(args.phi_dim, args.a_seed)
         
         # Initialize Elliptical Bonus
         method = EllipticalBonusMethod(
@@ -229,7 +226,6 @@ def main():
     results = {
         'method': 'elliptical',
         'phi_dim': args.phi_dim,
-        'phi_seed': args.phi_seed,
         'regularization': args.regularization,
         'avg_l2_distance': avg_l2_distance,
         'avg_min_c_l1_norm_diff': avg_min_c_l1_norm_diff,

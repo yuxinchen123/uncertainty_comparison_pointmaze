@@ -36,7 +36,6 @@ def main():
     # Architecture parameters
     parser.add_argument('--phi_dim', type=int, default=64,
                        help='Feature dimension for RND Linear (φ(s) dimension)')
-    parser.add_argument('--phi_seed', type=int, default=42,
                        help='Seed for generating shared φ(s) weights')
     
     # Training parameters
@@ -106,7 +105,7 @@ def main():
             args.output_file = os.path.join(results_dir, args.output_file)
     
     # Create shared φ(s) weights (deterministic)
-    phi_weights = create_phi_weights_deterministic(args.phi_dim, args.phi_seed)
+    phi_weights = create_phi_weights_deterministic(args.phi_dim, args.seed)
     
     print(f"\n{'='*80}")
     print("Training RND Linear SGD with Gaussian Noise = 0.0")

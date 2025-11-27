@@ -43,7 +43,6 @@ def parse_args():
     
     # RND-Linear parameters
     parser.add_argument("--phi_dim", type=int, default=128, help="Feature dimension for RND-Linear")
-    parser.add_argument("--phi_seed", type=int, default=42, help="Seed for shared φ(s) weights")
     parser.add_argument("--regularization", type=float, default=1e-2, help="Regularization for least squares")
     
     # Training parameters
@@ -98,7 +97,7 @@ def run_single_experiment(args, device, run_idx):
     print(f"Ground truth calculated: {ground_truth.shape}")
     
     # Get shared φ(s) weights for consistency
-    phi_weights = get_phi_weights(args.phi_dim, args.phi_seed)
+    phi_weights = get_phi_weights(args.phi_dim, args.a_seed)
     
     # Create ensemble RND-Linear (LS) method
     method = EnsembleRNDLinearLSMethod(
