@@ -13,10 +13,10 @@ parameters:
   
   # RND architecture parameters
   output_dim:
-    values: [128, 256]
+    values: [128, 512]
     # values: [64, 128, 256, 512, 1024]
   hidden_dims:
-    values: ['128,128', '512,512']
+    value: '128,128'
         # values: ['64,64', '128,128', '256,256', '512,512']
   
   # Training parameters - epoch sweep for RND
@@ -26,7 +26,7 @@ parameters:
   
   # Gaussian noise levels
   gaussian_noise:
-    values: [0.0, 0.5, 1.0]
+    values: [0.0, 0.5]
   
   # Data sampling parameters
   num_samples:

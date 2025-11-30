@@ -13,7 +13,7 @@ parameters:
   
   # Feature dimension sweep - key parameter for RND Linear
   phi_dim:
-    values: [256, 512]
+    values: [128, 512]
   
   # Training hyperparameters - core SGD parameters
   num_epochs:
@@ -21,11 +21,11 @@ parameters:
   
   # Regularization parameter (L2 regularization / weight decay)
   regularization:
-    values: [1e-2]
+    values: [0.01, 0.1, 1.0]
   
   # Gaussian noise levels - critical for RND Linear exploration
   gaussian_noise:
-    values: [0.0, 0.5, 1.0]
+    values: [0.0, 0.5]
   
   # Data sampling parameters
   num_samples:
@@ -33,7 +33,7 @@ parameters:
   
   # Data sampling and model initialization seeds
   a_seed:
-    values: [0, 1]
+    values: [0, 1, 2, 3, 4]
   
   # Averaging parameters
   num_averaging_runs:

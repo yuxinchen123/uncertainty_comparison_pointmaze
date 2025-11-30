@@ -8,19 +8,19 @@ parameters:
   a_seed:
     values: [0, 1, 2, 3, 4]
   num_heads:
-    values: [5, 10, 50, 100]
+    values: [10, 100]
   num_samples:
     values: [100, 1000, 10000]
   num_averaging_runs:
     value: 1
   phi_dim:
-    values: [128, 256, 512]
+    values: [128, 512]
   regularization:
-    values: [1e-2]
+    values: [0.01, 0.1, 1.0]
   num_epochs:
     value: 1
   gaussian_noise:
-    values: [0.0, 0.5, 1.0]
+    values: [0.0, 0.5]
   grid_rows:
     value: 9
   grid_cols:

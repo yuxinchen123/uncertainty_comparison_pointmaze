@@ -1,0 +1,41 @@
+program: 01_ensemble_uncertainty_comparison.py
+project: ensemble-rnd-uncertainty
+method: grid
+metric:
+  goal: minimize
+  name: final_mean_l2
+parameters:
+  method:
+    values: ["ensemble_rnd", "ensemble_rnd_linear_sgd", "ensemble_rnd_linear_ls"]
+  K:
+    values: [5, 10, 15]
+  num_samples:
+    value: 10000
+  num_averaging_runs:
+    value: 1
+  output_dim:
+    values: [64, 128, 256]
+  hidden_dims:
+    values: ["64,64", "128,128", "256,256"]
+  phi_dim:
+    values: [64, 128, 256]
+  phi_seed:
+    value: 42
+  num_epochs:
+    values: [20, 30, 50]
+  gaussian_noise:
+    values: [0.0, 0.1, 0.5]
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: "cpu"
+  seed:
+    value: 42
+  wandb_switch:
+    value: "True"
+  # project_name:
+  #   value: "ensemble-rnd-uncertainty"
+
+
