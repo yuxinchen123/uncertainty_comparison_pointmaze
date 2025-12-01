@@ -104,10 +104,12 @@ class RNDMethod:
 
 # RND Linear with SGD Training
 class RNDLinearSGDMethod:
-    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, predictor_seed=None, regularization=1e-2):
+    def __init__(self, feature_dim, device='cpu', phi_weights=None, theta_seed=42, predictor_seed=None, regularization=1e-2, lr_decay_step_size=250, lr_decay_gamma=0.5):
         self.device = device
         self.feature_dim = feature_dim
         self.regularization = regularization
+        self.lr_decay_step_size = lr_decay_step_size
+        self.lr_decay_gamma = lr_decay_gamma
         
         # Shared φ(s): 2D -> feature_dim
         self.phi = nn.Linear(2, feature_dim).to(device)
@@ -124,7 +126,9 @@ class RNDLinearSGDMethod:
         if predictor_seed is not None:
             torch.manual_seed(predictor_seed)
         self.predictor = nn.Linear(feature_dim, 1).to(device)
-        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.001, weight_decay=regularization)
+        self.optimizer = torch.optim.Adam(self.predictor.parameters(), lr=0.01, weight_decay=regularization)
+        # Learning rate scheduler: decay by gamma every step_size epochs
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=lr_decay_step_size, gamma=lr_decay_gamma)
         self.criterion = nn.MSELoss()
     
     def train_on_positions(self, positions, num_epochs=30, subset_ratio=1.0, gaussian_noise=0.0, noise_seed=None):
@@ -182,11 +186,14 @@ class RNDLinearSGDMethod:
             loss = self.criterion(pred_output, target_output)
             loss.backward()
             self.optimizer.step()
+            # Step learning rate scheduler
+            self.scheduler.step()
             
             losses.append(loss.item())
             
             if (epoch + 1) % 10 == 0:
-                print(f"  Epoch {epoch+1}/{num_epochs}, Loss: {loss.item():.6f}")
+                current_lr = self.optimizer.param_groups[0]['lr']
+                print(f"  Epoch {epoch+1}/{num_epochs}, Loss: {loss.item():.6f}, LR: {current_lr:.6f}")
         
         return losses
     
