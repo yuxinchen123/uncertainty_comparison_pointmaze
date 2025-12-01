@@ -149,7 +149,39 @@ class ScalarEnsembleBootstrapRNDMethod:
         
         return all_losses
     
-    def get_uncertainty(self, coordinates):
+    def get_uncertainty_errors(self, coordinates):
+        """
+        Calculate ensemble uncertainty as STD of errors across K predictors.
+        Uncertainty = Std[|target - pred_1|, |target - pred_2|, ..., |target - pred_K|]
+        """
+        if isinstance(coordinates, np.ndarray):
+            coordinates = torch.FloatTensor(coordinates).to(self.device)
+        
+        with torch.no_grad():
+            # Compute target output
+            target_output = self.target_net(coordinates)  # [N, output_dim]
+            target_scalar = self.target_scalar_proj(target_output).squeeze()  # [N]
+            
+            # Calculate per-model errors for each predictor
+            per_model_errors = []
+            
+            for k in range(self.num_heads):
+                pred_output = self.predictor_nets[k](coordinates)  # [N, output_dim]
+                pred_scalar = self.predictor_scalar_projs[k](pred_output).squeeze()  # [N]
+                
+                # Absolute difference between predictor and target
+                error = torch.abs(target_scalar - pred_scalar)  # [N]
+                per_model_errors.append(error)
+            
+            # Stack errors: [K, N]
+            per_model_errors = torch.stack(per_model_errors, dim=0)
+            
+            # Calculate ensemble uncertainty as standard deviation across K predictors
+            ensemble_uncertainty = torch.std(per_model_errors, dim=0)  # [N]
+            
+            return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty_predictions(self, coordinates):
         """
         Calculate ensemble uncertainty as STD of scalar predictions across K predictors.
         Uncertainty = Std[pred_1(s), pred_2(s), ..., pred_K(s)]
@@ -173,6 +205,12 @@ class ScalarEnsembleBootstrapRNDMethod:
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]
             
             return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty(self, coordinates):
+        """
+        Backward compatibility: alias for get_uncertainty_predictions
+        """
+        return self.get_uncertainty_predictions(coordinates)
 
 
 class ScalarEnsembleBootstrapRNDLinearSGDMethod:
