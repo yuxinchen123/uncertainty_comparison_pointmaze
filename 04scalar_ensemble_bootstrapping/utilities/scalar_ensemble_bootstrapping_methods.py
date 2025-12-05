@@ -500,7 +500,44 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
         
         return all_losses
     
-    def get_uncertainty(self, coordinates):
+    def get_uncertainty_errors(self, coordinates):
+        """
+        Calculate ensemble uncertainty as STD of errors across K predictors.
+        Uncertainty = Std[|target - pred_1|, |target - pred_2|, ..., |target - pred_K|]
+        """
+        if any(w is None for w in self.predictor_weights):
+            raise ValueError("Model not trained yet. Call train_on_positions first.")
+        
+        if isinstance(coordinates, np.ndarray):
+            coordinates = torch.FloatTensor(coordinates).to(self.device)
+        
+        with torch.no_grad():
+            # Compute features φ(s)
+            phi_output = self.phi(coordinates)  # [N, feature_dim]
+            
+            # Compute target output
+            target_scalar = torch.matmul(phi_output, self.theta_hat)  # [N]
+            
+            # Calculate per-model errors for each predictor
+            per_model_errors = []
+            
+            for k in range(self.num_heads):
+                pred_scalar = torch.matmul(phi_output, self.predictor_weights[k]) + self.predictor_intercepts[k]
+                pred_scalar = pred_scalar.squeeze()  # [N]
+                
+                # Absolute difference between predictor and target
+                error = torch.abs(target_scalar - pred_scalar)  # [N]
+                per_model_errors.append(error)
+            
+            # Stack errors: [K, N]
+            per_model_errors = torch.stack(per_model_errors, dim=0)
+            
+            # Calculate ensemble uncertainty as standard deviation across K predictors
+            ensemble_uncertainty = torch.std(per_model_errors, dim=0)  # [N]
+            
+            return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty_predictions(self, coordinates):
         """
         Calculate ensemble uncertainty as STD of scalar predictions across K predictors.
         Uncertainty = Std[pred_1(s), pred_2(s), ..., pred_K(s)]
@@ -530,4 +567,10 @@ class ScalarEnsembleBootstrapRNDLinearLSMethod:
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]
             
             return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty(self, coordinates):
+        """
+        Backward compatibility: alias for get_uncertainty_predictions
+        """
+        return self.get_uncertainty_predictions(coordinates)
 

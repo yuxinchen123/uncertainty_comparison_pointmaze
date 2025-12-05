@@ -126,41 +126,65 @@ def run_single_experiment(args, device, run_idx):
             grid_coords.append([x, y])
     
     grid_coords = np.array(grid_coords)
-    uncertainty_values = method.get_uncertainty(grid_coords)
+    
+    # Get both uncertainty types
+    uncertainty_values_errors = method.get_uncertainty_errors(grid_coords)
+    uncertainty_values_predictions = method.get_uncertainty_predictions(grid_coords)
     
     # Reshape to grid
-    uncertainty_matrix = uncertainty_values.reshape(args.grid_rows, args.grid_cols)
+    uncertainty_matrix_errors = uncertainty_values_errors.reshape(args.grid_rows, args.grid_cols)
+    uncertainty_matrix_predictions = uncertainty_values_predictions.reshape(args.grid_rows, args.grid_cols)
     
     # Apply wall mask
     wall_mask = np.array(maze_map) == 1
-    uncertainty_matrix[wall_mask] = 0
+    uncertainty_matrix_errors[wall_mask] = 0
+    uncertainty_matrix_predictions[wall_mask] = 0
     
     # Keep original (unnormalized) for the 4 new metrics
-    uncertainty_matrix_original = uncertainty_matrix.copy()
+    uncertainty_matrix_errors_original = uncertainty_matrix_errors.copy()
+    uncertainty_matrix_predictions_original = uncertainty_matrix_predictions.copy()
     
     # Normalize for L2 distance (original metric)
-    uncertainty_matrix_normalized = normalize_uncertainty_matrix(uncertainty_matrix, maze_map)
+    uncertainty_matrix_errors_normalized = normalize_uncertainty_matrix(uncertainty_matrix_errors, maze_map)
+    uncertainty_matrix_predictions_normalized = normalize_uncertainty_matrix(uncertainty_matrix_predictions, maze_map)
     ground_truth_normalized = normalize_uncertainty_matrix(ground_truth, maze_map)
     
     # Calculate metrics
     maze_map_array = np.array(maze_map)
-    # L2 distance: use normalized GT and normalized predictions
-    l2_distance = compute_l2_distance(ground_truth_normalized, uncertainty_matrix_normalized, maze_map_array)
-    # The 4 new metrics: use original (unnormalized) GT and predictions
-    min_c_l1_norm_diff = compute_min_c_l1_norm_diff(ground_truth, uncertainty_matrix_original, maze_map_array)
-    min_c_l2_norm_diff = compute_min_c_l2_norm_diff(ground_truth, uncertainty_matrix_original, maze_map_array)
-    min_c_l1_norm_inv = compute_min_c_l1_norm_inv(ground_truth, uncertainty_matrix_original, maze_map_array)
-    min_c_l2_norm_inv = compute_min_c_l2_norm_inv(ground_truth, uncertainty_matrix_original, maze_map_array)
     
-    print(f"L2 distance: {l2_distance:.6f}, L1_diff: {min_c_l1_norm_diff:.6f}, L2_diff: {min_c_l2_norm_diff:.6f}, L1_inv: {min_c_l1_norm_inv:.6f}, L2_inv: {min_c_l2_norm_inv:.6f}")
+    # Error-based metrics (5 metrics)
+    l2_distance_errors = compute_l2_distance(ground_truth_normalized, uncertainty_matrix_errors_normalized, maze_map_array)
+    min_c_l1_norm_diff_errors = compute_min_c_l1_norm_diff(ground_truth, uncertainty_matrix_errors_original, maze_map_array)
+    min_c_l2_norm_diff_errors = compute_min_c_l2_norm_diff(ground_truth, uncertainty_matrix_errors_original, maze_map_array)
+    min_c_l1_norm_inv_errors = compute_min_c_l1_norm_inv(ground_truth, uncertainty_matrix_errors_original, maze_map_array)
+    min_c_l2_norm_inv_errors = compute_min_c_l2_norm_inv(ground_truth, uncertainty_matrix_errors_original, maze_map_array)
+    
+    # Prediction-based metrics (5 metrics)
+    l2_distance_predictions = compute_l2_distance(ground_truth_normalized, uncertainty_matrix_predictions_normalized, maze_map_array)
+    min_c_l1_norm_diff_predictions = compute_min_c_l1_norm_diff(ground_truth, uncertainty_matrix_predictions_original, maze_map_array)
+    min_c_l2_norm_diff_predictions = compute_min_c_l2_norm_diff(ground_truth, uncertainty_matrix_predictions_original, maze_map_array)
+    min_c_l1_norm_inv_predictions = compute_min_c_l1_norm_inv(ground_truth, uncertainty_matrix_predictions_original, maze_map_array)
+    min_c_l2_norm_inv_predictions = compute_min_c_l2_norm_inv(ground_truth, uncertainty_matrix_predictions_original, maze_map_array)
+    
+    print(f"Errors - L2: {l2_distance_errors:.6f}, L1_diff: {min_c_l1_norm_diff_errors:.6f}, L2_diff: {min_c_l2_norm_diff_errors:.6f}, L1_inv: {min_c_l1_norm_inv_errors:.6f}, L2_inv: {min_c_l2_norm_inv_errors:.6f}")
+    print(f"Predictions - L2: {l2_distance_predictions:.6f}, L1_diff: {min_c_l1_norm_diff_predictions:.6f}, L2_diff: {min_c_l2_norm_diff_predictions:.6f}, L1_inv: {min_c_l1_norm_inv_predictions:.6f}, L2_inv: {min_c_l2_norm_inv_predictions:.6f}")
     
     return {
-        'l2_distance': l2_distance,
-        'min_c_l1_norm_diff': min_c_l1_norm_diff,
-        'min_c_l2_norm_diff': min_c_l2_norm_diff,
-        'min_c_l1_norm_inv': min_c_l1_norm_inv,
-        'min_c_l2_norm_inv': min_c_l2_norm_inv,
-        'uncertainty_matrix': uncertainty_matrix,
+        # Error-based metrics
+        'l2_distance_errors': l2_distance_errors,
+        'min_c_l1_norm_diff_errors': min_c_l1_norm_diff_errors,
+        'min_c_l2_norm_diff_errors': min_c_l2_norm_diff_errors,
+        'min_c_l1_norm_inv_errors': min_c_l1_norm_inv_errors,
+        'min_c_l2_norm_inv_errors': min_c_l2_norm_inv_errors,
+        # Prediction-based metrics
+        'l2_distance_predictions': l2_distance_predictions,
+        'min_c_l1_norm_diff_predictions': min_c_l1_norm_diff_predictions,
+        'min_c_l2_norm_diff_predictions': min_c_l2_norm_diff_predictions,
+        'min_c_l1_norm_inv_predictions': min_c_l1_norm_inv_predictions,
+        'min_c_l2_norm_inv_predictions': min_c_l2_norm_inv_predictions,
+        # Uncertainty matrices
+        'uncertainty_matrix_errors': uncertainty_matrix_errors,
+        'uncertainty_matrix_predictions': uncertainty_matrix_predictions,
         'ground_truth': ground_truth_normalized,
         'losses': losses
     }
@@ -210,30 +234,57 @@ def main():
         result = run_single_experiment(args, device, run_idx)
         results.append(result)
     
-    # Calculate statistics
-    l2_distances = [r['l2_distance'] for r in results]
-    min_c_l1_norm_diff_list = [r['min_c_l1_norm_diff'] for r in results]
-    min_c_l2_norm_diff_list = [r['min_c_l2_norm_diff'] for r in results]
-    min_c_l1_norm_inv_list = [r['min_c_l1_norm_inv'] for r in results]
-    min_c_l2_norm_inv_list = [r['min_c_l2_norm_inv'] for r in results]
+    # Calculate statistics for all 10 metrics
+    # Error-based metrics
+    l2_distances_errors = [r['l2_distance_errors'] for r in results]
+    min_c_l1_norm_diff_errors_list = [r['min_c_l1_norm_diff_errors'] for r in results]
+    min_c_l2_norm_diff_errors_list = [r['min_c_l2_norm_diff_errors'] for r in results]
+    min_c_l1_norm_inv_errors_list = [r['min_c_l1_norm_inv_errors'] for r in results]
+    min_c_l2_norm_inv_errors_list = [r['min_c_l2_norm_inv_errors'] for r in results]
     
-    mean_l2 = np.nanmean(l2_distances)
-    std_l2 = np.nanstd(l2_distances)
-    mean_min_c_l1_norm_diff = np.nanmean(min_c_l1_norm_diff_list)
-    std_min_c_l1_norm_diff = np.nanstd(min_c_l1_norm_diff_list)
-    mean_min_c_l2_norm_diff = np.nanmean(min_c_l2_norm_diff_list)
-    std_min_c_l2_norm_diff = np.nanstd(min_c_l2_norm_diff_list)
-    mean_min_c_l1_norm_inv = np.nanmean(min_c_l1_norm_inv_list)
-    std_min_c_l1_norm_inv = np.nanstd(min_c_l1_norm_inv_list)
-    mean_min_c_l2_norm_inv = np.nanmean(min_c_l2_norm_inv_list)
-    std_min_c_l2_norm_inv = np.nanstd(min_c_l2_norm_inv_list)
+    # Prediction-based metrics
+    l2_distances_predictions = [r['l2_distance_predictions'] for r in results]
+    min_c_l1_norm_diff_predictions_list = [r['min_c_l1_norm_diff_predictions'] for r in results]
+    min_c_l2_norm_diff_predictions_list = [r['min_c_l2_norm_diff_predictions'] for r in results]
+    min_c_l1_norm_inv_predictions_list = [r['min_c_l1_norm_inv_predictions'] for r in results]
+    min_c_l2_norm_inv_predictions_list = [r['min_c_l2_norm_inv_predictions'] for r in results]
     
-    print(f"\n=== Final Results ===")
-    print(f"L2 Distance:           {mean_l2:.6f} ± {std_l2:.6f}")
-    print(f"min_c L1 diff:         {mean_min_c_l1_norm_diff:.6f} ± {std_min_c_l1_norm_diff:.6f}")
-    print(f"min_c L2 diff:         {mean_min_c_l2_norm_diff:.6f} ± {std_min_c_l2_norm_diff:.6f}")
-    print(f"min_c L1 inv:          {mean_min_c_l1_norm_inv:.6f} ± {std_min_c_l1_norm_inv:.6f}")
-    print(f"min_c L2 inv:          {mean_min_c_l2_norm_inv:.6f} ± {std_min_c_l2_norm_inv:.6f}")
+    # Compute means and stds
+    mean_l2_errors = np.nanmean(l2_distances_errors)
+    std_l2_errors = np.nanstd(l2_distances_errors)
+    mean_min_c_l1_norm_diff_errors = np.nanmean(min_c_l1_norm_diff_errors_list)
+    std_min_c_l1_norm_diff_errors = np.nanstd(min_c_l1_norm_diff_errors_list)
+    mean_min_c_l2_norm_diff_errors = np.nanmean(min_c_l2_norm_diff_errors_list)
+    std_min_c_l2_norm_diff_errors = np.nanstd(min_c_l2_norm_diff_errors_list)
+    mean_min_c_l1_norm_inv_errors = np.nanmean(min_c_l1_norm_inv_errors_list)
+    std_min_c_l1_norm_inv_errors = np.nanstd(min_c_l1_norm_inv_errors_list)
+    mean_min_c_l2_norm_inv_errors = np.nanmean(min_c_l2_norm_inv_errors_list)
+    std_min_c_l2_norm_inv_errors = np.nanstd(min_c_l2_norm_inv_errors_list)
+    
+    mean_l2_predictions = np.nanmean(l2_distances_predictions)
+    std_l2_predictions = np.nanstd(l2_distances_predictions)
+    mean_min_c_l1_norm_diff_predictions = np.nanmean(min_c_l1_norm_diff_predictions_list)
+    std_min_c_l1_norm_diff_predictions = np.nanstd(min_c_l1_norm_diff_predictions_list)
+    mean_min_c_l2_norm_diff_predictions = np.nanmean(min_c_l2_norm_diff_predictions_list)
+    std_min_c_l2_norm_diff_predictions = np.nanstd(min_c_l2_norm_diff_predictions_list)
+    mean_min_c_l1_norm_inv_predictions = np.nanmean(min_c_l1_norm_inv_predictions_list)
+    std_min_c_l1_norm_inv_predictions = np.nanstd(min_c_l1_norm_inv_predictions_list)
+    mean_min_c_l2_norm_inv_predictions = np.nanmean(min_c_l2_norm_inv_predictions_list)
+    std_min_c_l2_norm_inv_predictions = np.nanstd(min_c_l2_norm_inv_predictions_list)
+    
+    print(f"\n=== Final Results (Error-based) ===")
+    print(f"L2 Distance:           {mean_l2_errors:.6f} ± {std_l2_errors:.6f}")
+    print(f"min_c L1 diff:         {mean_min_c_l1_norm_diff_errors:.6f} ± {std_min_c_l1_norm_diff_errors:.6f}")
+    print(f"min_c L2 diff:         {mean_min_c_l2_norm_diff_errors:.6f} ± {std_min_c_l2_norm_diff_errors:.6f}")
+    print(f"min_c L1 inv:          {mean_min_c_l1_norm_inv_errors:.6f} ± {std_min_c_l1_norm_inv_errors:.6f}")
+    print(f"min_c L2 inv:          {mean_min_c_l2_norm_inv_errors:.6f} ± {std_min_c_l2_norm_inv_errors:.6f}")
+    
+    print(f"\n=== Final Results (Prediction-based) ===")
+    print(f"L2 Distance:           {mean_l2_predictions:.6f} ± {std_l2_predictions:.6f}")
+    print(f"min_c L1 diff:         {mean_min_c_l1_norm_diff_predictions:.6f} ± {std_min_c_l1_norm_diff_predictions:.6f}")
+    print(f"min_c L2 diff:         {mean_min_c_l2_norm_diff_predictions:.6f} ± {std_min_c_l2_norm_diff_predictions:.6f}")
+    print(f"min_c L1 inv:          {mean_min_c_l1_norm_inv_predictions:.6f} ± {std_min_c_l1_norm_inv_predictions:.6f}")
+    print(f"min_c L2 inv:          {mean_min_c_l2_norm_inv_predictions:.6f} ± {std_min_c_l2_norm_inv_predictions:.6f}")
     
     # Plot final uncertainty heatmap
     final_result = results[-1]  # Use last run for visualization
@@ -245,21 +296,34 @@ def main():
         wandb_switch=(args.wandb_switch.lower() == "true")
     )
     
-    # Log method heatmap
+    # Log method heatmaps
     save_heatmap_to_wandb(
-        final_result['uncertainty_matrix'],
-        title=f"Scalar Ensemble Bootstrap RND-Linear (LS) (num_heads={args.num_heads}, gaussian_noise={args.gaussian_noise}) - Final Run",
+        final_result['uncertainty_matrix_errors'],
+        title=f"Scalar Ensemble Bootstrap RND-Linear (LS) (Errors) (num_heads={args.num_heads}, gaussian_noise={args.gaussian_noise}) - Final Run",
+        wandb_switch=(args.wandb_switch.lower() == "true")
+    )
+    
+    save_heatmap_to_wandb(
+        final_result['uncertainty_matrix_predictions'],
+        title=f"Scalar Ensemble Bootstrap RND-Linear (LS) (Predictions) (num_heads={args.num_heads}, gaussian_noise={args.gaussian_noise}) - Final Run",
         wandb_switch=(args.wandb_switch.lower() == "true")
     )
     
     # Log final results to WandB
     if args.wandb_switch.lower() == "true":
         wandb.log({
-            "final_mean_l2": mean_l2,
-            "final_mean_min_c_l1_norm_diff": mean_min_c_l1_norm_diff,
-            "final_mean_min_c_l2_norm_diff": mean_min_c_l2_norm_diff,
-            "final_mean_min_c_l1_norm_inv": mean_min_c_l1_norm_inv,
-            "final_mean_min_c_l2_norm_inv": mean_min_c_l2_norm_inv
+            # Error-based metrics
+            "final_mean_l2_errors": mean_l2_errors,
+            "final_mean_min_c_l1_norm_diff_errors": mean_min_c_l1_norm_diff_errors,
+            "final_mean_min_c_l2_norm_diff_errors": mean_min_c_l2_norm_diff_errors,
+            "final_mean_min_c_l1_norm_inv_errors": mean_min_c_l1_norm_inv_errors,
+            "final_mean_min_c_l2_norm_inv_errors": mean_min_c_l2_norm_inv_errors,
+            # Prediction-based metrics
+            "final_mean_l2_predictions": mean_l2_predictions,
+            "final_mean_min_c_l1_norm_diff_predictions": mean_min_c_l1_norm_diff_predictions,
+            "final_mean_min_c_l2_norm_diff_predictions": mean_min_c_l2_norm_diff_predictions,
+            "final_mean_min_c_l1_norm_inv_predictions": mean_min_c_l1_norm_inv_predictions,
+            "final_mean_min_c_l2_norm_inv_predictions": mean_min_c_l2_norm_inv_predictions
         })
         wandb.finish()
     
