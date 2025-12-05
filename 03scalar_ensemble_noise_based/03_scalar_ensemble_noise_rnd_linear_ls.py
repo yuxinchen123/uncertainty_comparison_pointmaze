@@ -181,6 +181,7 @@ def main():
         args.wandb_switch = config.get('wandb_switch', args.wandb_switch)
         args.grid_rows = config.get('grid_rows', args.grid_rows)
         args.grid_cols = config.get('grid_cols', args.grid_cols)
+        args.device = config.get('device', args.device)
         print("🔄 Running in WandB sweep mode - Scalar Ensemble RND-Linear (LS)")
     else:
         if args.wandb_switch.lower() == "true":

@@ -50,6 +50,10 @@ def main():
     parser.add_argument('--regularization', type=float, default=1e-2,
                        help='Regularization parameter (L2 regularization for ridge regression)')
     
+    # Training parameters (not used for OLS but kept for compatibility with sweep configs)
+    parser.add_argument('--num_epochs', type=int, default=1,
+                       help='Number of training epochs (not used for OLS, kept for compatibility)')
+    
     # Data parameters
     parser.add_argument('--num_samples', type=int, default=10000,
                        help='Number of samples to extract from dataset')
@@ -74,6 +78,7 @@ def main():
         args.phi_dim = config.get('phi_dim', args.phi_dim)
         args.gaussian_noise = config.get('gaussian_noise', args.gaussian_noise)
         args.regularization = config.get('regularization', args.regularization)
+        args.num_epochs = config.get('num_epochs', args.num_epochs)
         args.num_samples = config.get('num_samples', args.num_samples)
         args.num_averaging_runs = config.get('num_averaging_runs', args.num_averaging_runs)
         args.a_seed = config.get('a_seed', args.a_seed)

@@ -21,8 +21,8 @@ parameters:
   regularization:
     values: [0.01, 0.1, 1.0]
   # Training parameters (not used for OLS but kept for compatibility)
-  num_epochs:
-    value: 1
+  # num_epochs:
+  #   value: 1
   # Data sampling parameters
   num_samples:
     values: [100, 1000, 10000]
