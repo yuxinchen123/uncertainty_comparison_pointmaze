@@ -419,7 +419,34 @@ class ScalarEnsembleRNDLinearLSMethod:
         
         return all_losses
     
-    def get_uncertainty(self, coordinates):
+    def get_uncertainty_errors(self, coordinates):
+        """
+        Calculate ensemble uncertainty as standard deviation across K predictors' errors.
+        Uncertainty = Std[|target - pred_1(s)|, ..., |target - pred_K(s)|]
+        """
+        if any(w is None for w in self.predictor_weights):
+            raise ValueError("Model not trained yet. Call train_on_positions first.")
+        
+        if isinstance(coordinates, np.ndarray):
+            coordinates = torch.FloatTensor(coordinates).to(self.device)
+        
+        with torch.no_grad():
+            phi_output = self.phi(coordinates)  # [N, feature_dim]
+            target_output = torch.matmul(phi_output, self.theta_hat)  # [N]
+            
+            per_model_errors = []
+            for k in range(self.num_heads):
+                pred_output = torch.matmul(phi_output, self.predictor_weights[k]) + self.predictor_intercepts[k]
+                pred_output = pred_output.squeeze()  # [N]
+                error = torch.abs(target_output - pred_output)  # [N]
+                per_model_errors.append(error)
+            
+            per_model_errors = torch.stack(per_model_errors, dim=0)  # [K, N]
+            ensemble_uncertainty = torch.std(per_model_errors, dim=0)  # [N]
+            
+            return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty_predictions(self, coordinates):
         """
         Calculate ensemble uncertainty as STD of scalar predictions across K predictors.
         Uncertainty = Std[pred_1(s), pred_2(s), ..., pred_K(s)]
@@ -456,4 +483,10 @@ class ScalarEnsembleRNDLinearLSMethod:
             ensemble_uncertainty = torch.std(scalar_predictions, dim=0)  # [N]
             
             return ensemble_uncertainty.cpu().numpy()
+    
+    def get_uncertainty(self, coordinates):
+        """
+        Backward compatibility: alias for get_uncertainty_predictions
+        """
+        return self.get_uncertainty_predictions(coordinates)
 
