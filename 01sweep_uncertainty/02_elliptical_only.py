@@ -163,8 +163,14 @@ def main():
             eigenvals = torch.linalg.eigvals(method.covariance).real
             condition_number = (torch.max(eigenvals) / torch.min(eigenvals)).item()
             covariance_trace = torch.trace(method.covariance).item()
+            # Verify regularization is applied: check diagonal values
+            diag_values = torch.diag(method.covariance)
+            min_diag = diag_values.min().item()
+            max_diag = diag_values.max().item()
+            mean_diag = diag_values.mean().item()
             all_condition_numbers.append(condition_number)
             all_covariance_traces.append(covariance_trace)
+            print(f"  Regularization check: reg={args.regularization}, diag_range=[{min_diag:.4f}, {max_diag:.4f}], mean={mean_diag:.4f}")
         except:
             condition_number = float('inf')
             covariance_trace = float('nan')

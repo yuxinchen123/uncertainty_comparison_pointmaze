@@ -3,7 +3,7 @@ project: scalar-ensemble-rnd-linear-ls
 method: grid
 metric:
   goal: minimize
-  name: final_mean_l2
+  name: final_mean_l2_predictions
 parameters:
   num_heads:
     values: [10, 100]

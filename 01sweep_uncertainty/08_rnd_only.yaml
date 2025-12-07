@@ -14,10 +14,9 @@ parameters:
   # RND architecture parameters
   output_dim:
     values: [128, 512]
-    # values: [64, 128, 256, 512, 1024]
+
   hidden_dims:
     value: '128,128'
-        # values: ['64,64', '128,128', '256,256', '512,512']
   
   # Training parameters - epoch sweep for RND
   # Analysis shows optimal at 30-50 epochs, 100 epochs shows overfitting (5% worse L2)
