@@ -1,0 +1,83 @@
+program: train_rl.py
+name: rl_intrinsic_reward_sweep
+project: rl-rnd-integration
+description: Hyperparameter sweep for RL training with intrinsic rewards from uncertainty methods
+method: grid
+metric:
+  goal: maximize
+  name: eval/mean_reward  # SB3 evaluation metric
+parameters:
+  # Algorithm selection
+  algorithm:
+    values: ['sac', 'ppo']
+  
+  # Uncertainty method selection
+  uncertainty_method:
+    values: ['rnd', 'rnd_linear_ls', 'rnd_linear_sgd', 'elliptical']
+  
+  # RND-specific hyperparameters (only used for 'rnd' method)
+  rnd_output_dim:
+    values: [128, 256, 512]
+  rnd_hidden_dims:
+    values: ['128,128', '256,256']
+  
+  # RND-Linear and Elliptical hyperparameters
+  feature_dim:
+    values: [128, 256, 512]
+  regularization:
+    values: [0.01, 0.1, 1.0]
+  
+  # Ensemble methods (if using ensemble methods)
+  num_heads:
+    values: [5, 10]
+  
+  # Online learning hyperparameters
+  update_frequency:
+    values: [1, 5, 10]  # Update every N steps
+  num_epochs_per_update:
+    values: [1, 5, 10]  # Training epochs per update
+  
+  # Intrinsic reward scaling
+  beta:
+    values: [0.1, 0.5, 1.0, 2.0, 5.0]
+  
+  # RL algorithm hyperparameters
+  learning_rate:
+    values: [1e-4, 3e-4, 1e-3]
+  batch_size:
+    values: [128, 256, 512]
+  
+  # SAC-specific (only used when algorithm='sac')
+  sac_tau:
+    values: [0.005, 0.01]
+  sac_gamma:
+    values: [0.99, 0.995]
+  
+  # PPO-specific (only used when algorithm='ppo')
+  ppo_n_steps:
+    values: [1024, 2048]
+  ppo_clip_range:
+    values: [0.1, 0.2]
+  
+  # Training duration
+  total_timesteps:
+    value: 100000
+  
+  # Evaluation
+  eval_freq:
+    value: 5000
+  n_eval_episodes:
+    value: 10
+  
+  # Fixed parameters
+  env_name:
+    value: 'PointMaze_Large-v3'
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: 'cpu'
+  seed:
+    values: [42, 123, 456, 789, 1000]  # Multiple seeds for statistical significance
+
