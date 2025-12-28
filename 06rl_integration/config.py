@@ -43,7 +43,7 @@ class RLConfig:
         'gamma': 0.99,  # Discount factor
         'train_freq': 1,  # Train every N steps
         'gradient_steps': 1,  # Gradient steps per update
-        'learning_starts': 1000,  # Steps before learning starts
+        'learning_starts': 100,  # Steps before learning starts (SB3 default)
     })
     
     # PPO-specific (if algorithm == 'ppo')
@@ -54,7 +54,7 @@ class RLConfig:
         'gamma': 0.99,  # Discount factor
         'gae_lambda': 0.95,  # GAE lambda
         'clip_range': 0.2,  # PPO clip range
-        'ent_coef': 0.01,  # Entropy coefficient
+        'ent_coef': 0.0,  # Entropy coefficient (SB3 default)
     })
     
     # Evaluation
