@@ -154,27 +154,30 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         else:
             state = None
         
-        # Get intrinsic reward
-        intrinsic_reward = self._get_uncertainty(obs)
-        
-        # Update uncertainty method if it supports online updates
-        # This happens every step (update_frequency is handled by the adapter)
-        if state is not None:
-            # Check if it's an adapter (has .method attribute) or direct method
-            if hasattr(self.uncertainty_method, 'update_with_batch'):
-                self.uncertainty_method.update_with_batch(np.array([state]))
-            elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'train_on_positions'):
-                # Direct method that supports training
-                # For now, we'll let the adapter handle this, but if called directly,
-                # we could train here. However, adapters are preferred.
-                pass
-        
-        # If using GT method, update its visit counts
-        if hasattr(self.uncertainty_method, 'update_visit_counts'):
-            self.uncertainty_method.update_visit_counts(self.visit_counts)
-        elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
-            # If wrapped in adapter, update the underlying method
-            self.uncertainty_method.method.update_visit_counts(self.visit_counts)
+        # Get intrinsic reward (skip if beta=0 since it will be multiplied by 0 anyway)
+        if self.beta == 0.0:
+            intrinsic_reward = 0.0
+        else:
+            intrinsic_reward = self._get_uncertainty(obs)
+            
+            # Update uncertainty method if it supports online updates
+            # This happens every step (update_frequency is handled by the adapter)
+            if state is not None:
+                # Check if it's an adapter (has .method attribute) or direct method
+                if hasattr(self.uncertainty_method, 'update_with_batch'):
+                    self.uncertainty_method.update_with_batch(np.array([state]))
+                elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'train_on_positions'):
+                    # Direct method that supports training
+                    # For now, we'll let the adapter handle this, but if called directly,
+                    # we could train here. However, adapters are preferred.
+                    pass
+            
+            # If using GT method, update its visit counts
+            if hasattr(self.uncertainty_method, 'update_visit_counts'):
+                self.uncertainty_method.update_visit_counts(self.visit_counts)
+            elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
+                # If wrapped in adapter, update the underlying method
+                self.uncertainty_method.method.update_visit_counts(self.visit_counts)
         
         # Combine rewards: r_total = r_extrinsic + beta * r_intrinsic
         reward_total = reward_extrinsic + self.beta * intrinsic_reward
