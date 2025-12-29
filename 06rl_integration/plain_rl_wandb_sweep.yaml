@@ -1,6 +1,6 @@
 program: train_rl.py
 name: plain_rl_baseline_comparison
-project: rl-rnd-integration
+project: rl_integration
 description: Plain RL baseline comparison (SAC vs PPO) without intrinsic rewards, using SB3 defaults
 method: grid
 metric:

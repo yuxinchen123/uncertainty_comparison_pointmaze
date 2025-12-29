@@ -123,13 +123,19 @@ class WandBLoggingCallback(BaseCallback):
                                 metrics_to_log[name] = value
         
         # Also check evaluation metrics from EvalCallback
+        # Note: EvalCallback only has last_mean_reward, not last_mean_ep_length
+        # Evaluation metrics should also be in the logger, but we check EvalCallback as backup
         if hasattr(self.eval_callback, 'last_mean_reward'):
             # Check if a new evaluation happened (step changed and reward is available)
             if (current_step != self.last_eval_step and 
                 self.eval_callback.last_mean_reward is not None):
                 # Log evaluation metrics (these might not be in logger yet)
                 metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
-                metrics_to_log['eval/mean_ep_length'] = self.eval_callback.last_mean_ep_length
+                # last_mean_ep_length is not available in EvalCallback, get from logger if available
+                if hasattr(self, 'model') and hasattr(self.model, 'logger'):
+                    logger = self.model.logger
+                    if hasattr(logger, 'name_to_value') and 'eval/mean_ep_length' in logger.name_to_value:
+                        metrics_to_log['eval/mean_ep_length'] = logger.name_to_value['eval/mean_ep_length']
                 self.last_eval_step = current_step
                 logger_updated = True
         
@@ -488,8 +494,8 @@ def main():
         # The WandbCallback needs this to sync metrics from TensorBoard logs
         try:
             # Use wandb.tensorboard.patch() to enable TensorBoard syncing
-            import wandb.tensorboard
-            wandb.tensorboard.patch(save=False)
+            from wandb import tensorboard as wandb_tensorboard
+            wandb_tensorboard.patch(save=False)
             print("✓ Enabled TensorBoard syncing for WandB (required for WandbCallback)")
         except Exception as e:
             print(f"⚠️  Could not enable TensorBoard syncing: {e}")
@@ -518,7 +524,7 @@ def main():
         # Determine TensorBoard log directory (will be set in train function)
         tensorboard_log_dir = os.path.join(args.log_dir, 'tensorboard')
         wandb.init(
-            project="rl-rnd-integration",
+            project="rl_integration",
             name=f"{args.algorithm}_plain_rl_seed{args.a_seed}",
             config=vars(args),
             tags=["plain_rl", args.algorithm],
