@@ -8,16 +8,17 @@ import numpy as np
 import torch
 import wandb
 from stable_baselines3 import SAC, PPO
-from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, BaseCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 
-# Try to import WandbCallback (available in sb3-contrib or newer versions)
+# Try to import WandbCallback (from wandb.integration.sb3)
 try:
-    from stable_baselines3.common.callbacks import WandbCallback
+    from wandb.integration.sb3 import WandbCallback
     WANDB_CALLBACK_AVAILABLE = True
 except ImportError:
     try:
+        # Fallback: try sb3-contrib (older versions)
         from sb3_contrib.common.callbacks import WandbCallback
         WANDB_CALLBACK_AVAILABLE = True
     except ImportError:
@@ -70,6 +71,56 @@ class IntrinsicRewardCallback:
                     # If wrapped in adapter
                     if hasattr(self.wrapper.uncertainty_method, 'update_with_batch'):
                         self.wrapper.uncertainty_method.update_with_batch(visited_states)
+        
+        return True
+
+
+class WandBLoggingCallback(BaseCallback):
+    """
+    Custom callback to log evaluation and training metrics to WandB when WandbCallback is not available.
+    """
+    
+    def __init__(self, eval_callback, verbose=0):
+        """
+        Args:
+            eval_callback: EvalCallback instance to monitor
+            verbose: Verbosity level
+        """
+        super().__init__(verbose)
+        self.eval_callback = eval_callback
+        self.last_eval_step = -1
+    
+    def _on_step(self) -> bool:
+        """Called at each step during training"""
+        if wandb.run is None:
+            return True
+        
+        # Check if evaluation happened (EvalCallback updates last_mean_reward)
+        if hasattr(self.eval_callback, 'last_mean_reward'):
+            current_step = self.num_timesteps
+            
+            # Check if a new evaluation happened (step changed and reward is available)
+            if (current_step != self.last_eval_step and 
+                self.eval_callback.last_mean_reward is not None):
+                # Log evaluation metrics
+                metrics = {
+                    'eval/mean_reward': self.eval_callback.last_mean_reward,
+                    'eval/mean_ep_length': self.eval_callback.last_mean_ep_length,
+                }
+                wandb.log(metrics, step=current_step)
+                self.last_eval_step = current_step
+        
+        # Log training metrics from infos when episodes complete
+        if hasattr(self, 'locals') and self.locals is not None:
+            infos = self.locals.get('infos', [])
+            if len(infos) > 0:
+                for info in infos:
+                    if 'episode' in info:
+                        metrics = {
+                            'rollout/ep_rew_mean': info['episode']['r'],
+                            'rollout/ep_len_mean': info['episode']['l'],
+                        }
+                        wandb.log(metrics, step=self.num_timesteps)
         
         return True
 
@@ -247,7 +298,26 @@ def train(config: RLConfig):
         deterministic=True,
         render=False,
     )
+    
+    # Add eval callback
     callbacks.append(eval_callback)
+    
+    # WandB callback (if enabled and available)
+    if config.wandb_switch and wandb.run is not None:
+        if WANDB_CALLBACK_AVAILABLE:
+            # Use official WandbCallback from wandb.integration.sb3
+            wandb_callback = WandbCallback(
+                gradient_save_freq=0,  # Don't save gradients (saves space)
+                model_save_freq=0,      # Don't save models (saves space)
+                verbose=1,
+            )
+            callbacks.append(wandb_callback)
+            print("✓ Using official WandbCallback from wandb.integration.sb3")
+        else:
+            # Use custom WandB logging callback as fallback
+            print("ℹ️  Using manual WandB logging (WandbCallback not available)")
+            wandb_logging_callback = WandBLoggingCallback(eval_callback, verbose=1)
+            callbacks.append(wandb_logging_callback)
     
     # Checkpoint callback
     checkpoint_callback = CheckpointCallback(
@@ -256,19 +326,6 @@ def train(config: RLConfig):
         name_prefix='rl_model',
     )
     callbacks.append(checkpoint_callback)
-    
-    # WandB callback (if enabled and available)
-    if config.wandb_switch and wandb.run is not None:
-        if WANDB_CALLBACK_AVAILABLE:
-            wandb_callback = WandbCallback(
-                gradient_save_freq=0,  # Don't save gradients (saves space)
-                model_save_freq=0,      # Don't save models (saves space)
-                verbose=1,
-            )
-            callbacks.append(wandb_callback)
-        else:
-            # WandB logging will happen through Monitor wrapper and manual logging
-            print("ℹ️  Using manual WandB logging (WandbCallback not available)")
     
     # Note: Uncertainty model updates happen in the wrapper's step method
     # The wrapper calls update_with_batch every step, and the adapter handles
