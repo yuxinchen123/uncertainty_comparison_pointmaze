@@ -58,8 +58,18 @@ slurm_output.log
 squeue*.log
 sweep_info.log
 logs/
+test_logs/
 outputs/
 wandb/
+# SB3 Monitor CSV files
+*.monitor.csv
+monitor.csv
+eval.monitor.csv
+# Model checkpoints and saved models
+checkpoints/
+best_model/
+final_model/
+*.zip
 
 # Temporary files
 *.tmp

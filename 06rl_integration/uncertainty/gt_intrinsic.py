@@ -7,8 +7,18 @@ import sys
 import os
 
 # Add parent directories to path to import utilities
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities'))
-from evaluation import observation_to_grid_notebook_exact
+utilities_path = os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities')
+sys.path.insert(0, utilities_path)
+
+# Import from utilities/evaluation.py (not the local evaluation package)
+# Use importlib to avoid naming conflicts with local evaluation package
+import importlib.util
+spec = importlib.util.spec_from_file_location("utilities_evaluation", 
+                                               os.path.join(utilities_path, "evaluation.py"))
+utilities_evaluation = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(utilities_evaluation)
+
+observation_to_grid_notebook_exact = utilities_evaluation.observation_to_grid_notebook_exact
 
 
 class GTIntrinsicReward:

@@ -8,20 +8,35 @@ import numpy as np
 import torch
 import wandb
 from stable_baselines3 import SAC, PPO
-from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, WandbCallback
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 
-# Add paths
-sys.path.insert(0, os.path.dirname(__file__))
+# Try to import WandbCallback (available in sb3-contrib or newer versions)
+try:
+    from stable_baselines3.common.callbacks import WandbCallback
+    WANDB_CALLBACK_AVAILABLE = True
+except ImportError:
+    try:
+        from sb3_contrib.common.callbacks import WandbCallback
+        WANDB_CALLBACK_AVAILABLE = True
+    except ImportError:
+        WANDB_CALLBACK_AVAILABLE = False
+        print("⚠️  WandbCallback not available. WandB logging will use manual logging instead.")
 
+# Add paths - IMPORTANT: Add current directory first to prioritize local packages
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+
+# Import local packages BEFORE any modules that add 01sweep_uncertainty/utilities to path
+# This prevents naming conflicts with evaluation.py in utilities
 from config import RLConfig, get_default_config, update_config_from_dict
-from wrappers.intrinsic_reward_wrapper import IntrinsicRewardWrapper
-from uncertainty.integration import create_uncertainty_method
-from uncertainty.gt_intrinsic import GTIntrinsicReward
 from evaluation.gt_tracker import GroundTruthTracker
 from evaluation.metrics import RLPerformanceMetrics
 from utils.env_utils import make_pointmaze_env, get_env_info
+from wrappers.intrinsic_reward_wrapper import IntrinsicRewardWrapper
+from uncertainty.integration import create_uncertainty_method
+from uncertainty.gt_intrinsic import GTIntrinsicReward
 
 
 class IntrinsicRewardCallback:
@@ -179,9 +194,10 @@ def train(config: RLConfig):
     
     # Create RL agent
     print(f"\nCreating {config.algorithm.upper()} agent...")
+    # PointMaze uses Dict observation space, so we need MultiInputPolicy
     if config.algorithm.lower() == 'sac':
         model = SAC(
-            'MlpPolicy',
+            'MultiInputPolicy',
             train_env,
             learning_rate=config.learning_rate,
             buffer_size=config.buffer_size,
@@ -198,7 +214,7 @@ def train(config: RLConfig):
         )
     elif config.algorithm.lower() == 'ppo':
         model = PPO(
-            'MlpPolicy',
+            'MultiInputPolicy',
             train_env,
             learning_rate=config.learning_rate,
             n_steps=config.ppo_config['n_steps'],
@@ -241,14 +257,18 @@ def train(config: RLConfig):
     )
     callbacks.append(checkpoint_callback)
     
-    # WandB callback (if enabled)
+    # WandB callback (if enabled and available)
     if config.wandb_switch and wandb.run is not None:
-        wandb_callback = WandbCallback(
-            gradient_save_freq=0,  # Don't save gradients (saves space)
-            model_save_freq=0,      # Don't save models (saves space)
-            verbose=1,
-        )
-        callbacks.append(wandb_callback)
+        if WANDB_CALLBACK_AVAILABLE:
+            wandb_callback = WandbCallback(
+                gradient_save_freq=0,  # Don't save gradients (saves space)
+                model_save_freq=0,      # Don't save models (saves space)
+                verbose=1,
+            )
+            callbacks.append(wandb_callback)
+        else:
+            # WandB logging will happen through Monitor wrapper and manual logging
+            print("ℹ️  Using manual WandB logging (WandbCallback not available)")
     
     # Note: Uncertainty model updates happen in the wrapper's step method
     # The wrapper calls update_with_batch every step, and the adapter handles
