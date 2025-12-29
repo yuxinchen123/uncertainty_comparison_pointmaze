@@ -399,6 +399,15 @@ def main():
     config.device = args.device
     config.seed = args.seed
     config.wandb_switch = wandb_switch
+    # Environment parameters (if provided in WandB sweep config)
+    if wandb.run is not None:
+        sweep_config = wandb.config
+        if 'env_name' in sweep_config:
+            config.env_name = sweep_config.get('env_name')
+        if 'grid_rows' in sweep_config:
+            config.grid_rows = sweep_config.get('grid_rows')
+        if 'grid_cols' in sweep_config:
+            config.grid_cols = sweep_config.get('grid_cols')
     
     # Update uncertainty config
     config.uncertainty_config.update({
