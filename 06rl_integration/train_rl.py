@@ -77,18 +77,21 @@ class IntrinsicRewardCallback:
 
 class WandBLoggingCallback(BaseCallback):
     """
-    Custom callback to log evaluation and training metrics to WandB when WandbCallback is not available.
+    Custom callback to log all SB3 metrics directly to WandB.
+    Reads from SB3's logger to capture all training, evaluation, rollout, and time metrics.
+    This bypasses TensorBoard syncing issues and works reliably in sweep mode.
     """
     
     def __init__(self, eval_callback, verbose=0):
         """
         Args:
-            eval_callback: EvalCallback instance to monitor
+            eval_callback: EvalCallback instance to monitor for evaluation metrics
             verbose: Verbosity level
         """
         super().__init__(verbose)
         self.eval_callback = eval_callback
         self.last_eval_step = -1
+        self.last_logger_state = {}  # Track logger state to detect updates
     
     def _on_step(self) -> bool:
         """Called at each step during training"""
@@ -97,42 +100,53 @@ class WandBLoggingCallback(BaseCallback):
         
         current_step = self.num_timesteps
         metrics_to_log = {}
+        logger_updated = False
         
-        # Check if evaluation happened (EvalCallback updates last_mean_reward)
+        # Read all metrics from SB3's logger (the source of truth for all metrics)
+        if hasattr(self, 'model') and self.model is not None:
+            if hasattr(self.model, 'logger') and self.model.logger is not None:
+                logger = self.model.logger
+                
+                # Check if logger has name_to_value (contains all logged metrics)
+                if hasattr(logger, 'name_to_value'):
+                    current_logger_state = logger.name_to_value.copy()
+                    
+                    # Check if logger has been updated (new metrics or changed values)
+                    if current_logger_state != self.last_logger_state:
+                        logger_updated = True
+                        self.last_logger_state = current_logger_state.copy()
+                        
+                        # Log all metrics from logger (train/*, rollout/*, time/*, etc.)
+                        for name, value in current_logger_state.items():
+                            # Filter out non-scalar values and ensure valid metric names
+                            if isinstance(value, (int, float)) and not (isinstance(value, float) and (value != value or value == float('inf') or value == float('-inf'))):
+                                metrics_to_log[name] = value
+        
+        # Also check evaluation metrics from EvalCallback
         if hasattr(self.eval_callback, 'last_mean_reward'):
             # Check if a new evaluation happened (step changed and reward is available)
             if (current_step != self.last_eval_step and 
                 self.eval_callback.last_mean_reward is not None):
-                # Log evaluation metrics
-                metrics_to_log.update({
-                    'eval/mean_reward': self.eval_callback.last_mean_reward,
-                    'eval/mean_ep_length': self.eval_callback.last_mean_ep_length,
-                })
+                # Log evaluation metrics (these might not be in logger yet)
+                metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
+                metrics_to_log['eval/mean_ep_length'] = self.eval_callback.last_mean_ep_length
                 self.last_eval_step = current_step
+                logger_updated = True
         
-        # Log training metrics from infos when episodes complete
-        if hasattr(self, 'locals') and self.locals is not None:
-            infos = self.locals.get('infos', [])
-            if len(infos) > 0:
-                for info in infos:
-                    if 'episode' in info:
-                        metrics_to_log.update({
-                            'rollout/ep_rew_mean': info['episode']['r'],
-                            'rollout/ep_len_mean': info['episode']['l'],
-                        })
-        
-        # Log training metrics from logger (if available)
-        # SB3 logs training metrics to its logger, which we can access
-        if hasattr(self, 'logger') and self.logger is not None:
-            # Try to get training metrics from logger
-            if hasattr(self.logger, 'name_to_value'):
-                for name, value in self.logger.name_to_value.items():
-                    if name.startswith('train/') or name.startswith('time/'):
-                        metrics_to_log[name] = value
-        
-        # Log all collected metrics at once
+        # Log all collected metrics at once with commit=True and force sync
         if metrics_to_log:
-            wandb.log(metrics_to_log, step=current_step)
+            try:
+                # Log with commit=True to ensure immediate sync (as per GitHub issue solution)
+                wandb.log(metrics_to_log, step=current_step, commit=True)
+                
+                # Force sync by updating summary (as suggested in GitHub comment)
+                # This ensures metrics are synced even if there are sync issues
+                if logger_updated:
+                    wandb.run.summary.update({})
+            except Exception as e:
+                # Don't crash training if logging fails
+                if self.verbose > 0:
+                    print(f"⚠️  WandB logging error: {e}")
         
         return True
 
@@ -324,20 +338,24 @@ def train(config: RLConfig):
     
     # WandB callback (if enabled and available)
     if config.wandb_switch and wandb.run is not None:
+        # Always use custom callback for reliable direct logging (works in sweep mode)
+        # This reads directly from SB3's logger and logs all metrics
+        print("✓ Using custom WandB logging callback (reads directly from SB3 logger)")
+        wandb_logging_callback = WandBLoggingCallback(eval_callback, verbose=1)
+        callbacks.append(wandb_logging_callback)
+        
+        # Optionally also add official callback (may not work in sweep mode due to sync_tensorboard issue)
         if WANDB_CALLBACK_AVAILABLE:
-            # Use official WandbCallback from wandb.integration.sb3
-            wandb_callback = WandbCallback(
-                gradient_save_freq=0,  # Don't save gradients (saves space)
-                model_save_freq=0,      # Don't save models (saves space)
-                verbose=1,
-            )
-            callbacks.append(wandb_callback)
-            print("✓ Using official WandbCallback from wandb.integration.sb3")
-        else:
-            # Use custom WandB logging callback as fallback
-            print("ℹ️  Using manual WandB logging (WandbCallback not available)")
-            wandb_logging_callback = WandBLoggingCallback(eval_callback, verbose=1)
-            callbacks.append(wandb_logging_callback)
+            try:
+                wandb_callback = WandbCallback(
+                    gradient_save_freq=0,  # Don't save gradients (saves space)
+                    model_save_freq=0,      # Don't save models (saves space)
+                    verbose=0,  # Less verbose since we have custom callback
+                )
+                callbacks.append(wandb_callback)
+                print("  (Also using official WandbCallback as backup)")
+            except Exception as e:
+                print(f"  (Official WandbCallback failed: {e}, using custom only)")
     
     # Checkpoint callback
     checkpoint_callback = CheckpointCallback(
