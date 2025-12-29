@@ -65,6 +65,7 @@ class RLConfig:
     log_dir: str = './logs'
     tensorboard_log: Optional[str] = None
     verbose: int = 1
+    wandb_switch: bool = True  # Enable WandB logging
     
     # Device
     device: str = 'cpu'  # 'cpu' or 'cuda'

@@ -6,8 +6,9 @@ import sys
 import argparse
 import numpy as np
 import torch
+import wandb
 from stable_baselines3 import SAC, PPO
-from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, WandbCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 
@@ -240,6 +241,15 @@ def train(config: RLConfig):
     )
     callbacks.append(checkpoint_callback)
     
+    # WandB callback (if enabled)
+    if config.wandb_switch and wandb.run is not None:
+        wandb_callback = WandbCallback(
+            gradient_save_freq=0,  # Don't save gradients (saves space)
+            model_save_freq=0,      # Don't save models (saves space)
+            verbose=1,
+        )
+        callbacks.append(wandb_callback)
+    
     # Note: Uncertainty model updates happen in the wrapper's step method
     # The wrapper calls update_with_batch every step, and the adapter handles
     # the update frequency internally
@@ -278,6 +288,13 @@ def train(config: RLConfig):
         print("\nGround truth statistics:")
         for key, value in gt_stats.items():
             print(f"  {key}: {value}")
+        
+        # Log final statistics to WandB if enabled
+        if config.wandb_switch and wandb.run is not None:
+            wandb.log({
+                "final_stats": stats,
+                "final_gt_stats": gt_stats
+            })
     
     return model, gt_tracker
 
@@ -324,6 +341,10 @@ def main():
     parser.add_argument('--seed', type=int, default=42,
                        help='Random seed')
     
+    # WandB logging
+    parser.add_argument('--wandb_switch', type=str, default='true', choices=['true', 'false'],
+                       help='Enable WandB logging (true/false)')
+    
     # Uncertainty config (as JSON string or individual args)
     parser.add_argument('--feature_dim', type=int, default=128,
                        help='Feature dimension for linear methods')
@@ -333,6 +354,35 @@ def main():
                        help='Number of epochs per uncertainty model update')
     
     args = parser.parse_args()
+    
+    # Handle WandB sweep mode (if running in a sweep, wandb.run is already initialized)
+    if wandb.run is not None:
+        # We're in a WandB sweep, use config values and override args
+        sweep_config = wandb.config
+        print("🔄 Running in WandB sweep mode")
+        
+        # Override arguments with WandB config
+        args.algorithm = sweep_config.get('algorithm', args.algorithm)
+        args.beta = sweep_config.get('beta', args.beta)
+        args.seed = sweep_config.get('seed', args.seed)
+        args.total_timesteps = sweep_config.get('total_timesteps', args.total_timesteps)
+        args.eval_freq = sweep_config.get('eval_freq', args.eval_freq)
+        args.n_eval_episodes = sweep_config.get('n_eval_episodes', args.n_eval_episodes)
+        args.log_dir = sweep_config.get('log_dir', args.log_dir)
+        args.device = sweep_config.get('device', args.device)
+        args.wandb_switch = sweep_config.get('wandb_switch', args.wandb_switch)
+        # Note: uncertainty_method is set but not used when beta=0
+        args.uncertainty_method = sweep_config.get('uncertainty_method', args.uncertainty_method)
+    
+    # Initialize WandB if not in sweep and wandb_switch is enabled
+    wandb_switch = args.wandb_switch.lower() == 'true'
+    if wandb_switch and wandb.run is None:
+        wandb.init(
+            project="rl-rnd-integration",
+            name=f"{args.algorithm}_plain_rl_seed{args.seed}",
+            config=vars(args),
+            tags=["plain_rl", args.algorithm]
+        )
     
     # Create config
     config = get_default_config()
@@ -348,6 +398,7 @@ def main():
     config.tensorboard_log = args.tensorboard_log
     config.device = args.device
     config.seed = args.seed
+    config.wandb_switch = wandb_switch
     
     # Update uncertainty config
     config.uncertainty_config.update({

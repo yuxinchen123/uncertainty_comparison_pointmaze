@@ -1,0 +1,49 @@
+program: train_rl.py
+name: plain_rl_baseline_comparison
+project: rl-rnd-integration
+description: Plain RL baseline comparison (SAC vs PPO) without intrinsic rewards, using SB3 defaults
+method: grid
+metric:
+  goal: maximize
+  name: eval/mean_reward  # SB3 evaluation metric
+parameters:
+  # Algorithm selection - both SAC and PPO
+  algorithm:
+    values: ['sac', 'ppo']
+  
+  # Disable intrinsic rewards (plain RL)
+  beta:
+    value: 0.0  # No intrinsic reward
+  
+  # Use default uncertainty method (won't be used since beta=0)
+  uncertainty_method:
+    value: 'rnd_linear_ls'  # Dummy value, not used when beta=0
+  
+  # Training duration
+  total_timesteps:
+    value: 100000
+  
+  # Evaluation
+  eval_freq:
+    value: 5000
+  n_eval_episodes:
+    value: 10
+  
+  # Fixed parameters
+  env_name:
+    value: 'PointMaze_Large-v3'
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: 'cpu'
+  
+  # WandB logging (always enabled for sweep)
+  wandb_switch:
+    value: 'true'
+  
+  # Multiple seeds for statistical significance
+  seed:
+    values: [0, 1, 2, 3, 4]
+
