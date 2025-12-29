@@ -71,7 +71,7 @@ class RLConfig:
     device: str = 'cpu'  # 'cpu' or 'cuda'
     
     # Seed
-    seed: int = 42
+    a_seed: int = 42
 
 
 def get_default_config():

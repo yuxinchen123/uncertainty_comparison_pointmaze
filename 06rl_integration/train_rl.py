@@ -87,7 +87,7 @@ def create_env(config, uncertainty_method, gt_tracker=None):
         env: Wrapped environment
     """
     # Create base environment
-    env = make_pointmaze_env(config.env_name, seed=config.seed)
+    env = make_pointmaze_env(config.env_name, seed=config.a_seed)
     
     # Get maze map
     import sys
@@ -152,10 +152,10 @@ def train(config: RLConfig):
     print("=" * 60)
     
     # Set seeds
-    np.random.seed(config.seed)
-    torch.manual_seed(config.seed)
+    np.random.seed(config.a_seed)
+    torch.manual_seed(config.a_seed)
     if torch.cuda.is_available() and config.device == 'cuda':
-        torch.cuda.manual_seed(config.seed)
+        torch.cuda.manual_seed(config.a_seed)
     
     # Create uncertainty method (if not using GT baseline)
     uncertainty_method = None
@@ -210,7 +210,7 @@ def train(config: RLConfig):
             tensorboard_log=config.tensorboard_log,
             verbose=config.verbose,
             device=config.device,
-            seed=config.seed,
+            seed=config.a_seed,
         )
     elif config.algorithm.lower() == 'ppo':
         model = PPO(
@@ -227,7 +227,7 @@ def train(config: RLConfig):
             tensorboard_log=config.tensorboard_log,
             verbose=config.verbose,
             device=config.device,
-            seed=config.seed,
+            seed=config.a_seed,
         )
     else:
         raise ValueError(f"Unknown algorithm: {config.algorithm}")
@@ -358,8 +358,16 @@ def main():
     # Device and seed
     parser.add_argument('--device', type=str, default='cpu', choices=['cpu', 'cuda'],
                        help='Device for computation')
-    parser.add_argument('--seed', type=int, default=42,
-                       help='Random seed')
+    parser.add_argument('--a_seed', type=int, default=42,
+                       help='Random seed for data sampling and model initialization (consistent with 01-05 folders)')
+    
+    # Environment parameters
+    parser.add_argument('--env_name', type=str, default='PointMaze_Large-v3',
+                       help='Environment name')
+    parser.add_argument('--grid_rows', type=int, default=9,
+                       help='Number of grid rows')
+    parser.add_argument('--grid_cols', type=int, default=12,
+                       help='Number of grid columns')
     
     # WandB logging
     parser.add_argument('--wandb_switch', type=str, default='true', choices=['true', 'false'],
@@ -384,7 +392,7 @@ def main():
         # Override arguments with WandB config
         args.algorithm = sweep_config.get('algorithm', args.algorithm)
         args.beta = sweep_config.get('beta', args.beta)
-        args.seed = sweep_config.get('seed', args.seed)
+        args.a_seed = sweep_config.get('a_seed', args.a_seed)
         args.total_timesteps = sweep_config.get('total_timesteps', args.total_timesteps)
         args.eval_freq = sweep_config.get('eval_freq', args.eval_freq)
         args.n_eval_episodes = sweep_config.get('n_eval_episodes', args.n_eval_episodes)
@@ -393,13 +401,17 @@ def main():
         args.wandb_switch = sweep_config.get('wandb_switch', args.wandb_switch)
         # Note: uncertainty_method is set but not used when beta=0
         args.uncertainty_method = sweep_config.get('uncertainty_method', args.uncertainty_method)
+        # Environment parameters
+        args.env_name = sweep_config.get('env_name', args.env_name)
+        args.grid_rows = sweep_config.get('grid_rows', args.grid_rows)
+        args.grid_cols = sweep_config.get('grid_cols', args.grid_cols)
     
     # Initialize WandB if not in sweep and wandb_switch is enabled
     wandb_switch = args.wandb_switch.lower() == 'true'
     if wandb_switch and wandb.run is None:
         wandb.init(
             project="rl-rnd-integration",
-            name=f"{args.algorithm}_plain_rl_seed{args.seed}",
+            name=f"{args.algorithm}_plain_rl_seed{args.a_seed}",
             config=vars(args),
             tags=["plain_rl", args.algorithm]
         )
@@ -417,17 +429,12 @@ def main():
     config.log_dir = args.log_dir
     config.tensorboard_log = args.tensorboard_log
     config.device = args.device
-    config.seed = args.seed
+    config.a_seed = args.a_seed
     config.wandb_switch = wandb_switch
-    # Environment parameters (if provided in WandB sweep config)
-    if wandb.run is not None:
-        sweep_config = wandb.config
-        if 'env_name' in sweep_config:
-            config.env_name = sweep_config.get('env_name')
-        if 'grid_rows' in sweep_config:
-            config.grid_rows = sweep_config.get('grid_rows')
-        if 'grid_cols' in sweep_config:
-            config.grid_cols = sweep_config.get('grid_cols')
+    # Environment parameters (from args, which are set from wandb.config in sweep mode)
+    config.env_name = args.env_name
+    config.grid_rows = args.grid_rows
+    config.grid_cols = args.grid_cols
     
     # Update uncertainty config
     config.uncertainty_config.update({
