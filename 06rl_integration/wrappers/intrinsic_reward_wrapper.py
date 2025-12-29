@@ -56,6 +56,10 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         else:
             self.maze_map = maze_map
         
+        # Ensure maze_map is a numpy array (convert from list if needed)
+        if not isinstance(self.maze_map, np.ndarray):
+            self.maze_map = np.array(self.maze_map)
+        
         # Visit count matrix for GT calculation (0-based indexing)
         self.visit_counts = np.zeros((grid_rows, grid_cols), dtype=int)
         
@@ -71,7 +75,11 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         """Extract maze map from environment"""
         unwrapped_env = self.env.unwrapped
         if hasattr(unwrapped_env, 'maze') and hasattr(unwrapped_env.maze, 'maze_map'):
-            return unwrapped_env.maze.maze_map
+            maze_map = unwrapped_env.maze.maze_map
+            # Convert to numpy array if it's a list
+            if not isinstance(maze_map, np.ndarray):
+                maze_map = np.array(maze_map)
+            return maze_map
         else:
             # Fallback: create default map (all open)
             return np.zeros((self.grid_rows, self.grid_cols), dtype=int)

@@ -43,6 +43,10 @@ class GroundTruthTracker:
         else:
             self.maze_map = maze_map
         
+        # Ensure maze_map is a numpy array (convert from list if needed)
+        if not isinstance(self.maze_map, np.ndarray):
+            self.maze_map = np.array(self.maze_map)
+        
         # Visit count matrix (0-based indexing)
         self.visit_counts = np.zeros((grid_rows, grid_cols), dtype=int)
     
