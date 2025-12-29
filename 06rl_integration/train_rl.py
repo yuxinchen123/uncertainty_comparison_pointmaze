@@ -95,19 +95,19 @@ class WandBLoggingCallback(BaseCallback):
         if wandb.run is None:
             return True
         
+        current_step = self.num_timesteps
+        metrics_to_log = {}
+        
         # Check if evaluation happened (EvalCallback updates last_mean_reward)
         if hasattr(self.eval_callback, 'last_mean_reward'):
-            current_step = self.num_timesteps
-            
             # Check if a new evaluation happened (step changed and reward is available)
             if (current_step != self.last_eval_step and 
                 self.eval_callback.last_mean_reward is not None):
                 # Log evaluation metrics
-                metrics = {
+                metrics_to_log.update({
                     'eval/mean_reward': self.eval_callback.last_mean_reward,
                     'eval/mean_ep_length': self.eval_callback.last_mean_ep_length,
-                }
-                wandb.log(metrics, step=current_step)
+                })
                 self.last_eval_step = current_step
         
         # Log training metrics from infos when episodes complete
@@ -116,11 +116,23 @@ class WandBLoggingCallback(BaseCallback):
             if len(infos) > 0:
                 for info in infos:
                     if 'episode' in info:
-                        metrics = {
+                        metrics_to_log.update({
                             'rollout/ep_rew_mean': info['episode']['r'],
                             'rollout/ep_len_mean': info['episode']['l'],
-                        }
-                        wandb.log(metrics, step=self.num_timesteps)
+                        })
+        
+        # Log training metrics from logger (if available)
+        # SB3 logs training metrics to its logger, which we can access
+        if hasattr(self, 'logger') and self.logger is not None:
+            # Try to get training metrics from logger
+            if hasattr(self.logger, 'name_to_value'):
+                for name, value in self.logger.name_to_value.items():
+                    if name.startswith('train/') or name.startswith('time/'):
+                        metrics_to_log[name] = value
+        
+        # Log all collected metrics at once
+        if metrics_to_log:
+            wandb.log(metrics_to_log, step=current_step)
         
         return True
 
@@ -246,6 +258,14 @@ def train(config: RLConfig):
     # Create RL agent
     print(f"\nCreating {config.algorithm.upper()} agent...")
     # PointMaze uses Dict observation space, so we need MultiInputPolicy
+    
+    # Enable TensorBoard logging if WandB is enabled (WandbCallback needs it)
+    tensorboard_log_dir = config.tensorboard_log
+    if config.wandb_switch and wandb.run is not None and WANDB_CALLBACK_AVAILABLE:
+        if tensorboard_log_dir is None:
+            tensorboard_log_dir = os.path.join(config.log_dir, 'tensorboard')
+            os.makedirs(tensorboard_log_dir, exist_ok=True)
+    
     if config.algorithm.lower() == 'sac':
         model = SAC(
             'MultiInputPolicy',
@@ -258,7 +278,7 @@ def train(config: RLConfig):
             train_freq=config.sac_config['train_freq'],
             gradient_steps=config.sac_config['gradient_steps'],
             learning_starts=config.sac_config['learning_starts'],
-            tensorboard_log=config.tensorboard_log,
+            tensorboard_log=tensorboard_log_dir,
             verbose=config.verbose,
             device=config.device,
             seed=config.a_seed,
@@ -275,7 +295,7 @@ def train(config: RLConfig):
             gae_lambda=config.ppo_config['gae_lambda'],
             clip_range=config.ppo_config['clip_range'],
             ent_coef=config.ppo_config['ent_coef'],
-            tensorboard_log=config.tensorboard_log,
+            tensorboard_log=tensorboard_log_dir,
             verbose=config.verbose,
             device=config.device,
             seed=config.a_seed,
@@ -446,6 +466,17 @@ def main():
         sweep_config = wandb.config
         print("🔄 Running in WandB sweep mode")
         
+        # Enable TensorBoard syncing for sweeps (wandb.init was called by agent)
+        # The WandbCallback needs this to sync metrics from TensorBoard logs
+        try:
+            # Use wandb.tensorboard.patch() to enable TensorBoard syncing
+            import wandb.tensorboard
+            wandb.tensorboard.patch(save=False)
+            print("✓ Enabled TensorBoard syncing for WandB (required for WandbCallback)")
+        except Exception as e:
+            print(f"⚠️  Could not enable TensorBoard syncing: {e}")
+            print("   WandbCallback may not sync metrics - consider using custom callback")
+        
         # Override arguments with WandB config
         args.algorithm = sweep_config.get('algorithm', args.algorithm)
         args.beta = sweep_config.get('beta', args.beta)
@@ -466,11 +497,14 @@ def main():
     # Initialize WandB if not in sweep and wandb_switch is enabled
     wandb_switch = args.wandb_switch.lower() == 'true'
     if wandb_switch and wandb.run is None:
+        # Determine TensorBoard log directory (will be set in train function)
+        tensorboard_log_dir = os.path.join(args.log_dir, 'tensorboard')
         wandb.init(
             project="rl-rnd-integration",
             name=f"{args.algorithm}_plain_rl_seed{args.a_seed}",
             config=vars(args),
-            tags=["plain_rl", args.algorithm]
+            tags=["plain_rl", args.algorithm],
+            sync_tensorboard=True,  # Enable TensorBoard syncing
         )
     
     # Create config
