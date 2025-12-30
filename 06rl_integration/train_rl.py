@@ -96,6 +96,7 @@ class WandBLoggingCallback(BaseCallback):
         self.train_env = train_env
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
+        self._logged_eval_count = 0  # Track how many evaluations we've logged (for step alignment)
         
         # Track episode statistics from Monitor
         self.last_episode_count = 0
@@ -182,27 +183,50 @@ class WandBLoggingCallback(BaseCallback):
             logger_updated = True
         
         # Enhanced evaluation metrics (mean, std, min, max) - like MRQ does
-        if hasattr(self.eval_callback, 'last_mean_reward'):
-            # Check if a new evaluation happened (step changed and reward is available)
+        # Use exact evaluation timesteps from EvalCallback for perfect step alignment across runs
+        eval_step_to_log = None  # Will be set if we have a new evaluation
+        if hasattr(self.eval_callback, 'evaluations_timesteps') and hasattr(self.eval_callback, 'evaluations_results'):
+            eval_timesteps = getattr(self.eval_callback, 'evaluations_timesteps', [])
+            eval_results = getattr(self.eval_callback, 'evaluations_results', [])
+            
+            # Check if a new evaluation happened (more evaluations than we've logged)
+            if len(eval_timesteps) > self._logged_eval_count:
+                # Get the latest evaluation (most recent one)
+                eval_step_to_log = eval_timesteps[-1]
+                latest_eval_rewards = eval_results[-1] if len(eval_results) > 0 else []
+                
+                if len(latest_eval_rewards) > 0:
+                    # Compute statistics like MRQ does
+                    metrics_to_log['eval/mean_reward'] = float(np.mean(latest_eval_rewards))
+                    metrics_to_log['eval/std_reward'] = float(np.std(latest_eval_rewards))
+                    metrics_to_log['eval/max_reward'] = float(np.max(latest_eval_rewards))
+                    metrics_to_log['eval/min_reward'] = float(np.min(latest_eval_rewards))
+                    
+                    # Get episode length if available
+                    eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
+                    if len(eval_lengths) > 0 and len(eval_lengths[-1]) > 0:
+                        metrics_to_log['eval/mean_ep_length'] = float(np.mean(eval_lengths[-1]))
+                    
+                    logger_updated = True
+                    # Track how many evaluations we've logged
+                    self._logged_eval_count = len(eval_timesteps)
+                    
+        # Fallback: use last_mean_reward if evaluations_timesteps not available (older SB3 versions)
+        elif hasattr(self.eval_callback, 'last_mean_reward'):
             if (current_step != self.last_eval_step and 
                 self.eval_callback.last_mean_reward is not None):
                 
-                # Get evaluation results from EvalCallback
                 eval_results = getattr(self.eval_callback, 'evaluations_results', [])
                 if len(eval_results) > 0:
-                    # Get the latest evaluation results (array of episode rewards)
                     latest_eval_rewards = eval_results[-1]
                     if len(latest_eval_rewards) > 0:
-                        # Compute statistics like MRQ does
                         metrics_to_log['eval/mean_reward'] = float(np.mean(latest_eval_rewards))
                         metrics_to_log['eval/std_reward'] = float(np.std(latest_eval_rewards))
                         metrics_to_log['eval/max_reward'] = float(np.max(latest_eval_rewards))
                         metrics_to_log['eval/min_reward'] = float(np.min(latest_eval_rewards))
                 else:
-                    # Fallback: use last_mean_reward if evaluations_results not available
                     metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
                 
-                # Get episode length from logger if available
                 if hasattr(self, 'model') and hasattr(self.model, 'logger'):
                     logger = self.model.logger
                     if hasattr(logger, 'name_to_value'):
@@ -215,12 +239,17 @@ class WandBLoggingCallback(BaseCallback):
         # Log all collected metrics at once with commit=True and force sync
         if metrics_to_log:
             try:
+                # For eval metrics, use the exact evaluation timestep for perfect alignment across runs
+                # This ensures all runs log eval metrics at exactly 5000, 10000, 15000, etc.
+                # For other metrics (train/*, episode/*), use current_step
+                log_step = eval_step_to_log if eval_step_to_log is not None else current_step
+                
                 # Log metrics to WandB
                 # Note: When TensorBoard syncing is active, setting step parameter causes a warning,
                 # but it's non-fatal. We set step for episode metrics (which aren't in TensorBoard)
                 # and other metrics. The warning can be ignored as metrics still log correctly.
                 # TensorBoard synced metrics will use TensorBoard's step values automatically.
-                wandb.log(metrics_to_log, step=current_step, commit=True)
+                wandb.log(metrics_to_log, step=log_step, commit=True)
                 
                 # Force sync by updating summary (as suggested in GitHub comment)
                 # This ensures metrics are synced even if there are sync issues
