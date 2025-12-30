@@ -9,8 +9,8 @@ metric:
 parameters:
   # Algorithm selection - both SAC and PPO
   algorithm:
-    # value: 'sac'
-    values: ['sac', 'ppo']
+    value: 'sac'
+    # values: ['sac', 'ppo']
   
   # Disable intrinsic rewards (plain RL)
   beta:

@@ -147,44 +147,18 @@ class WandBLoggingCallback(BaseCallback):
         return None
     
     def _on_step(self) -> bool:
-        """Called at each step during training"""
+        """
+        Called at each step during training.
+        Following MRQ's approach: only log when events happen (evaluations, episode completions),
+        not continuously. This ensures perfect step alignment across runs for smoother graphs.
+        """
         if wandb.run is None:
             return True
         
         current_step = self.num_timesteps
-        metrics_to_log = {}
-        logger_updated = False
         
-        # Read all metrics from SB3's logger (the source of truth for all metrics)
-        if hasattr(self, 'model') and self.model is not None:
-            if hasattr(self.model, 'logger') and self.model.logger is not None:
-                logger = self.model.logger
-                
-                # Check if logger has name_to_value (contains all logged metrics)
-                if hasattr(logger, 'name_to_value'):
-                    current_logger_state = logger.name_to_value.copy()
-                    
-                    # Check if logger has been updated (new metrics or changed values)
-                    if current_logger_state != self.last_logger_state:
-                        logger_updated = True
-                        self.last_logger_state = current_logger_state.copy()
-                        
-                        # Log all metrics from logger (train/*, rollout/*, time/*, etc.)
-                        for name, value in current_logger_state.items():
-                            # Filter out non-scalar values and ensure valid metric names
-                            if isinstance(value, (int, float)) and not (isinstance(value, float) and (value != value or value == float('inf') or value == float('-inf'))):
-                                metrics_to_log[name] = value
-        
-        # Track episode metrics from Monitor wrapper (like MRQ does)
-        episode_stats = self._get_monitor_stats()
-        if episode_stats:
-            metrics_to_log.update(episode_stats)
-            metrics_to_log['episode/current_t'] = current_step
-            logger_updated = True
-        
-        # Enhanced evaluation metrics (mean, std, min, max) - like MRQ does
-        # Use exact evaluation timesteps from EvalCallback for perfect step alignment across runs
-        eval_step_to_log = None  # Will be set if we have a new evaluation
+        # 1. Check for new evaluation (like MRQ does in maybe_evaluate)
+        # Log eval metrics at EXACT evaluation timesteps for perfect alignment
         if hasattr(self.eval_callback, 'evaluations_timesteps') and hasattr(self.eval_callback, 'evaluations_results'):
             eval_timesteps = getattr(self.eval_callback, 'evaluations_timesteps', [])
             eval_results = getattr(self.eval_callback, 'evaluations_results', [])
@@ -192,25 +166,32 @@ class WandBLoggingCallback(BaseCallback):
             # Check if a new evaluation happened (more evaluations than we've logged)
             if len(eval_timesteps) > self._logged_eval_count:
                 # Get the latest evaluation (most recent one)
-                eval_step_to_log = eval_timesteps[-1]
+                eval_step = eval_timesteps[-1]
                 latest_eval_rewards = eval_results[-1] if len(eval_results) > 0 else []
                 
                 if len(latest_eval_rewards) > 0:
-                    # Compute statistics like MRQ does
-                    metrics_to_log['eval/mean_reward'] = float(np.mean(latest_eval_rewards))
-                    metrics_to_log['eval/std_reward'] = float(np.std(latest_eval_rewards))
-                    metrics_to_log['eval/max_reward'] = float(np.max(latest_eval_rewards))
-                    metrics_to_log['eval/min_reward'] = float(np.min(latest_eval_rewards))
+                    # Log each eval metric separately at the exact evaluation timestep (like MRQ)
+                    # This ensures all runs log at exactly the same steps (5000, 10000, 15000, etc.)
+                    try:
+                        wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/min_reward': float(np.min(latest_eval_rewards))}, step=eval_step, commit=False)
+                        
+                        # Get episode length if available
+                        eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
+                        if len(eval_lengths) > 0 and len(eval_lengths[-1]) > 0:
+                            wandb.log({'eval/mean_ep_length': float(np.mean(eval_lengths[-1]))}, step=eval_step, commit=False)
+                        
+                        # Commit all eval metrics together
+                        wandb.log({}, step=eval_step, commit=True)
+                    except Exception as e:
+                        if self.verbose > 0:
+                            print(f"⚠️  WandB eval logging error: {e}")
                     
-                    # Get episode length if available
-                    eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
-                    if len(eval_lengths) > 0 and len(eval_lengths[-1]) > 0:
-                        metrics_to_log['eval/mean_ep_length'] = float(np.mean(eval_lengths[-1]))
-                    
-                    logger_updated = True
                     # Track how many evaluations we've logged
                     self._logged_eval_count = len(eval_timesteps)
-                    
+        
         # Fallback: use last_mean_reward if evaluations_timesteps not available (older SB3 versions)
         elif hasattr(self.eval_callback, 'last_mean_reward'):
             if (current_step != self.last_eval_step and 
@@ -220,45 +201,38 @@ class WandBLoggingCallback(BaseCallback):
                 if len(eval_results) > 0:
                     latest_eval_rewards = eval_results[-1]
                     if len(latest_eval_rewards) > 0:
-                        metrics_to_log['eval/mean_reward'] = float(np.mean(latest_eval_rewards))
-                        metrics_to_log['eval/std_reward'] = float(np.std(latest_eval_rewards))
-                        metrics_to_log['eval/max_reward'] = float(np.max(latest_eval_rewards))
-                        metrics_to_log['eval/min_reward'] = float(np.min(latest_eval_rewards))
+                        try:
+                            wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/min_reward': float(np.min(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({}, step=current_step, commit=True)
+                        except Exception as e:
+                            if self.verbose > 0:
+                                print(f"⚠️  WandB eval logging error: {e}")
                 else:
-                    metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
-                
-                if hasattr(self, 'model') and hasattr(self.model, 'logger'):
-                    logger = self.model.logger
-                    if hasattr(logger, 'name_to_value'):
-                        if 'eval/mean_ep_length' in logger.name_to_value:
-                            metrics_to_log['eval/mean_ep_length'] = logger.name_to_value['eval/mean_ep_length']
+                    try:
+                        wandb.log({'eval/mean_reward': self.eval_callback.last_mean_reward}, step=current_step, commit=True)
+                    except Exception as e:
+                        if self.verbose > 0:
+                            print(f"⚠️  WandB eval logging error: {e}")
                 
                 self.last_eval_step = current_step
-                logger_updated = True
         
-        # Log all collected metrics at once with commit=True and force sync
-        if metrics_to_log:
+        # 2. Log episode metrics when episodes complete (like MRQ does when episodes end)
+        # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
+        episode_stats = self._get_monitor_stats()
+        if episode_stats:
+            # Log each episode metric separately at the exact timestep when episode ended
+            # This matches MRQ's approach: log_metric('episode/reward', ..., step=self.t)
             try:
-                # For eval metrics, use the exact evaluation timestep for perfect alignment across runs
-                # This ensures all runs log eval metrics at exactly 5000, 10000, 15000, etc.
-                # For other metrics (train/*, episode/*), use current_step
-                log_step = eval_step_to_log if eval_step_to_log is not None else current_step
-                
-                # Log metrics to WandB
-                # Note: When TensorBoard syncing is active, setting step parameter causes a warning,
-                # but it's non-fatal. We set step for episode metrics (which aren't in TensorBoard)
-                # and other metrics. The warning can be ignored as metrics still log correctly.
-                # TensorBoard synced metrics will use TensorBoard's step values automatically.
-                wandb.log(metrics_to_log, step=log_step, commit=True)
-                
-                # Force sync by updating summary (as suggested in GitHub comment)
-                # This ensures metrics are synced even if there are sync issues
-                if logger_updated:
-                    wandb.run.summary.update({})
+                wandb.log({'episode/reward': episode_stats['episode/reward']}, step=current_step, commit=False)
+                wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
+                wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
+                wandb.log({'episode/current_t': current_step}, step=current_step, commit=True)
             except Exception as e:
-                # Don't crash training if logging fails
                 if self.verbose > 0:
-                    print(f"⚠️  WandB logging error: {e}")
+                    print(f"⚠️  WandB episode logging error: {e}")
         
         return True
 
