@@ -77,21 +77,73 @@ class IntrinsicRewardCallback:
 
 class WandBLoggingCallback(BaseCallback):
     """
-    Custom callback to log all SB3 metrics directly to WandB.
+    Comprehensive callback to log all SB3 metrics directly to WandB.
     Reads from SB3's logger to capture all training, evaluation, rollout, and time metrics.
+    Also tracks episode metrics from Monitor wrapper (episode/reward, episode/length, etc.)
+    and enhanced evaluation metrics (mean, std, min, max).
     This bypasses TensorBoard syncing issues and works reliably in sweep mode.
     """
     
-    def __init__(self, eval_callback, verbose=0):
+    def __init__(self, eval_callback, train_env, verbose=0):
         """
         Args:
             eval_callback: EvalCallback instance to monitor for evaluation metrics
+            train_env: Training environment (DummyVecEnv) to access Monitor wrapper
             verbose: Verbosity level
         """
         super().__init__(verbose)
         self.eval_callback = eval_callback
+        self.train_env = train_env
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
+        
+        # Track episode statistics from Monitor
+        self.last_episode_count = 0
+        self.last_episode_rewards = []
+        self.last_episode_lengths = []
+        
+        # Get Monitor wrapper from environment
+        self.monitor = None
+        if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
+            # Unwrap to get Monitor: DummyVecEnv -> Monitor -> IntrinsicRewardWrapper -> env
+            env = train_env.envs[0]
+            while hasattr(env, 'env'):
+                if isinstance(env, Monitor):
+                    self.monitor = env
+                    break
+                env = env.env
+            if self.monitor is None and self.verbose > 0:
+                print("⚠️  Could not find Monitor wrapper in environment")
+    
+    def _get_monitor_stats(self):
+        """Get episode statistics from Monitor wrapper"""
+        if self.monitor is None:
+            return None
+        
+        try:
+            # Monitor stores episode data in these attributes
+            # Use get_episode_rewards() and get_episode_lengths() methods for reliable access
+            episode_rewards = self.monitor.get_episode_rewards() if hasattr(self.monitor, 'get_episode_rewards') else getattr(self.monitor, 'episode_returns', [])
+            episode_lengths = self.monitor.get_episode_lengths() if hasattr(self.monitor, 'get_episode_lengths') else getattr(self.monitor, 'episode_lengths', [])
+            episode_count = len(episode_rewards)
+            
+            # Check if a new episode completed
+            if episode_count > self.last_episode_count:
+                # Get the latest episode data
+                latest_reward = episode_rewards[-1] if len(episode_rewards) > 0 else 0.0
+                latest_length = episode_lengths[-1] if len(episode_lengths) > 0 else 0
+                
+                self.last_episode_count = episode_count
+                return {
+                    'episode/reward': float(latest_reward),
+                    'episode/length': int(latest_length),
+                    'episode/number': episode_count,
+                }
+        except Exception as e:
+            if self.verbose > 0:
+                print(f"⚠️  Error reading Monitor stats: {e}")
+        
+        return None
     
     def _on_step(self) -> bool:
         """Called at each step during training"""
@@ -122,27 +174,52 @@ class WandBLoggingCallback(BaseCallback):
                             if isinstance(value, (int, float)) and not (isinstance(value, float) and (value != value or value == float('inf') or value == float('-inf'))):
                                 metrics_to_log[name] = value
         
-        # Also check evaluation metrics from EvalCallback
-        # Note: EvalCallback only has last_mean_reward, not last_mean_ep_length
-        # Evaluation metrics should also be in the logger, but we check EvalCallback as backup
+        # Track episode metrics from Monitor wrapper (like MRQ does)
+        episode_stats = self._get_monitor_stats()
+        if episode_stats:
+            metrics_to_log.update(episode_stats)
+            metrics_to_log['episode/current_t'] = current_step
+            logger_updated = True
+        
+        # Enhanced evaluation metrics (mean, std, min, max) - like MRQ does
         if hasattr(self.eval_callback, 'last_mean_reward'):
             # Check if a new evaluation happened (step changed and reward is available)
             if (current_step != self.last_eval_step and 
                 self.eval_callback.last_mean_reward is not None):
-                # Log evaluation metrics (these might not be in logger yet)
-                metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
-                # last_mean_ep_length is not available in EvalCallback, get from logger if available
+                
+                # Get evaluation results from EvalCallback
+                eval_results = getattr(self.eval_callback, 'evaluations_results', [])
+                if len(eval_results) > 0:
+                    # Get the latest evaluation results (array of episode rewards)
+                    latest_eval_rewards = eval_results[-1]
+                    if len(latest_eval_rewards) > 0:
+                        # Compute statistics like MRQ does
+                        metrics_to_log['eval/mean_reward'] = float(np.mean(latest_eval_rewards))
+                        metrics_to_log['eval/std_reward'] = float(np.std(latest_eval_rewards))
+                        metrics_to_log['eval/max_reward'] = float(np.max(latest_eval_rewards))
+                        metrics_to_log['eval/min_reward'] = float(np.min(latest_eval_rewards))
+                else:
+                    # Fallback: use last_mean_reward if evaluations_results not available
+                    metrics_to_log['eval/mean_reward'] = self.eval_callback.last_mean_reward
+                
+                # Get episode length from logger if available
                 if hasattr(self, 'model') and hasattr(self.model, 'logger'):
                     logger = self.model.logger
-                    if hasattr(logger, 'name_to_value') and 'eval/mean_ep_length' in logger.name_to_value:
-                        metrics_to_log['eval/mean_ep_length'] = logger.name_to_value['eval/mean_ep_length']
+                    if hasattr(logger, 'name_to_value'):
+                        if 'eval/mean_ep_length' in logger.name_to_value:
+                            metrics_to_log['eval/mean_ep_length'] = logger.name_to_value['eval/mean_ep_length']
+                
                 self.last_eval_step = current_step
                 logger_updated = True
         
         # Log all collected metrics at once with commit=True and force sync
         if metrics_to_log:
             try:
-                # Log with commit=True to ensure immediate sync (as per GitHub issue solution)
+                # Log metrics to WandB
+                # Note: When TensorBoard syncing is active, setting step parameter causes a warning,
+                # but it's non-fatal. We set step for episode metrics (which aren't in TensorBoard)
+                # and other metrics. The warning can be ignored as metrics still log correctly.
+                # TensorBoard synced metrics will use TensorBoard's step values automatically.
                 wandb.log(metrics_to_log, step=current_step, commit=True)
                 
                 # Force sync by updating summary (as suggested in GitHub comment)
@@ -346,8 +423,9 @@ def train(config: RLConfig):
     if config.wandb_switch and wandb.run is not None:
         # Always use custom callback for reliable direct logging (works in sweep mode)
         # This reads directly from SB3's logger and logs all metrics
-        print("✓ Using custom WandB logging callback (reads directly from SB3 logger)")
-        wandb_logging_callback = WandBLoggingCallback(eval_callback, verbose=1)
+        # Also tracks episode metrics from Monitor and enhanced evaluation metrics
+        print("✓ Using custom WandB logging callback (reads directly from SB3 logger + Monitor episode stats)")
+        wandb_logging_callback = WandBLoggingCallback(eval_callback, train_env, verbose=1)
         callbacks.append(wandb_logging_callback)
         
         # Optionally also add official callback (may not work in sweep mode due to sync_tensorboard issue)

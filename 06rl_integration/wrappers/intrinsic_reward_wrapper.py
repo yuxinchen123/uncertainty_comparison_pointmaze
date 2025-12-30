@@ -60,8 +60,20 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         if not isinstance(self.maze_map, np.ndarray):
             self.maze_map = np.array(self.maze_map)
         
+        # Auto-detect grid dimensions from maze map (more reliable than config)
+        actual_rows, actual_cols = self.maze_map.shape
+        if actual_rows != grid_rows or actual_cols != grid_cols:
+            if grid_rows != 9 or grid_cols != 12:  # Only warn if not default
+                print(f"⚠️  Grid dimensions mismatch: config says {grid_rows}×{grid_cols}, "
+                      f"but maze map is {actual_rows}×{actual_cols}. Using maze map dimensions.")
+            self.grid_rows = actual_rows
+            self.grid_cols = actual_cols
+        else:
+            self.grid_rows = grid_rows
+            self.grid_cols = grid_cols
+        
         # Visit count matrix for GT calculation (0-based indexing)
-        self.visit_counts = np.zeros((grid_rows, grid_cols), dtype=int)
+        self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
         
         # Track states for uncertainty model training (online updates)
         self.visited_states = []
