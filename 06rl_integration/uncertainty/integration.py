@@ -37,20 +37,36 @@ except ImportError:
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../04scalar_ensemble_bootstrapping/utilities'))
 try:
-    from scalar_ensemble_bootstrapping_methods import (
-        ScalarEnsembleBootstrapRNDMethod,
-        ScalarEnsembleBootstrapRNDLinearSGDMethod,
-        ScalarEnsembleBootstrapRNDLinearLSMethod
-    )
-except ImportError:
+    import importlib.util
+    bootstrap_path = os.path.join(os.path.dirname(__file__), '../../04scalar_ensemble_bootstrapping/utilities/scalar_ensemble_bootstrapping_methods.py')
+    if os.path.exists(bootstrap_path):
+        spec = importlib.util.spec_from_file_location("scalar_ensemble_bootstrapping_methods", bootstrap_path)
+        bootstrap_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(bootstrap_module)
+        ScalarEnsembleBootstrapRNDMethod = getattr(bootstrap_module, 'ScalarEnsembleBootstrapRNDMethod', None)
+        ScalarEnsembleBootstrapRNDLinearSGDMethod = getattr(bootstrap_module, 'ScalarEnsembleBootstrapRNDLinearSGDMethod', None)
+        ScalarEnsembleBootstrapRNDLinearLSMethod = getattr(bootstrap_module, 'ScalarEnsembleBootstrapRNDLinearLSMethod', None)
+    else:
+        ScalarEnsembleBootstrapRNDMethod = None
+        ScalarEnsembleBootstrapRNDLinearSGDMethod = None
+        ScalarEnsembleBootstrapRNDLinearLSMethod = None
+except (ImportError, Exception) as e:
     ScalarEnsembleBootstrapRNDMethod = None
     ScalarEnsembleBootstrapRNDLinearSGDMethod = None
     ScalarEnsembleBootstrapRNDLinearLSMethod = None
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../05scalar_ensemble_random_init/utilities'))
 try:
-    from scalar_ensemble_random_init_methods import ScalarEnsembleRandomInitRNDMethod
-except ImportError:
+    import importlib.util
+    random_init_path = os.path.join(os.path.dirname(__file__), '../../05scalar_ensemble_random_init/utilities/scalar_ensemble_random_init_methods.py')
+    if os.path.exists(random_init_path):
+        spec = importlib.util.spec_from_file_location("scalar_ensemble_random_init_methods", random_init_path)
+        random_init_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(random_init_module)
+        ScalarEnsembleRandomInitRNDMethod = getattr(random_init_module, 'ScalarEnsembleRandomInitRNDMethod', None)
+    else:
+        ScalarEnsembleRandomInitRNDMethod = None
+except (ImportError, Exception) as e:
     ScalarEnsembleRandomInitRNDMethod = None
 
 

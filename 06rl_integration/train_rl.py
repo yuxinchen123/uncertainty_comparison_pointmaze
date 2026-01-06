@@ -97,6 +97,8 @@ class WandBLoggingCallback(BaseCallback):
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
         self._logged_eval_count = 0  # Track how many evaluations we've logged (for step alignment)
+        self.last_global_step_logged = -1  # Track last global_step we logged (for smooth plotting)
+        self.global_step_log_interval = 1000  # Log global_step every N steps for smooth plots
         
         # Track episode statistics from Monitor
         self.last_episode_count = 0
@@ -157,6 +159,16 @@ class WandBLoggingCallback(BaseCallback):
         
         current_step = self.num_timesteps
         
+        # 0. Log global_step at regular intervals for smooth plotting (independent of events)
+        # This ensures the x-axis represents actual training steps and the line is smooth
+        if current_step - self.last_global_step_logged >= self.global_step_log_interval:
+            try:
+                wandb.log({'global_step': current_step}, step=current_step, commit=True)
+                self.last_global_step_logged = current_step
+            except Exception as e:
+                if self.verbose > 0:
+                    print(f"⚠️  WandB global_step logging error: {e}")
+        
         # 1. Check for new evaluation (like MRQ does in maybe_evaluate)
         # Log eval metrics at EXACT evaluation timesteps for perfect alignment
         if hasattr(self.eval_callback, 'evaluations_timesteps') and hasattr(self.eval_callback, 'evaluations_results'):
@@ -173,6 +185,8 @@ class WandBLoggingCallback(BaseCallback):
                     # Log each eval metric separately at the exact evaluation timestep (like MRQ)
                     # This ensures all runs log at exactly the same steps (5000, 10000, 15000, etc.)
                     try:
+                        # Log global_step first to ensure x-axis represents actual training step
+                        wandb.log({'global_step': eval_step}, step=eval_step, commit=False)
                         wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=eval_step, commit=False)
                         wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=eval_step, commit=False)
                         wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=eval_step, commit=False)
@@ -202,6 +216,8 @@ class WandBLoggingCallback(BaseCallback):
                     latest_eval_rewards = eval_results[-1]
                     if len(latest_eval_rewards) > 0:
                         try:
+                            # Log global_step first to ensure x-axis represents actual training step
+                            wandb.log({'global_step': current_step}, step=current_step, commit=False)
                             wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=current_step, commit=False)
                             wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=current_step, commit=False)
                             wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=current_step, commit=False)
@@ -212,6 +228,8 @@ class WandBLoggingCallback(BaseCallback):
                                 print(f"⚠️  WandB eval logging error: {e}")
                 else:
                     try:
+                        # Log global_step first to ensure x-axis represents actual training step
+                        wandb.log({'global_step': current_step}, step=current_step, commit=False)
                         wandb.log({'eval/mean_reward': self.eval_callback.last_mean_reward}, step=current_step, commit=True)
                     except Exception as e:
                         if self.verbose > 0:
@@ -226,6 +244,8 @@ class WandBLoggingCallback(BaseCallback):
             # Log each episode metric separately at the exact timestep when episode ended
             # This matches MRQ's approach: log_metric('episode/reward', ..., step=self.t)
             try:
+                # Log global_step first to ensure x-axis represents actual training step
+                wandb.log({'global_step': current_step}, step=current_step, commit=False)
                 wandb.log({'episode/reward': episode_stats['episode/reward']}, step=current_step, commit=False)
                 wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
                 wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
@@ -431,18 +451,15 @@ def train(config: RLConfig):
         wandb_logging_callback = WandBLoggingCallback(eval_callback, train_env, verbose=1)
         callbacks.append(wandb_logging_callback)
         
-        # Optionally also add official callback (may not work in sweep mode due to sync_tensorboard issue)
-        if WANDB_CALLBACK_AVAILABLE:
-            try:
-                wandb_callback = WandbCallback(
-                    gradient_save_freq=0,  # Don't save gradients (saves space)
-                    model_save_freq=0,      # Don't save models (saves space)
-                    verbose=0,  # Less verbose since we have custom callback
-                )
-                callbacks.append(wandb_callback)
-                print("  (Also using official WandbCallback as backup)")
-            except Exception as e:
-                print(f"  (Official WandbCallback failed: {e}, using custom only)")
+        # Don't use official WandbCallback - it conflicts with explicit step logging
+        # The official callback uses TensorBoard syncing which doesn't allow explicit step values
+        # Our custom callback handles all logging with proper step alignment
+        # if WANDB_CALLBACK_AVAILABLE:
+        #     try:
+        #         wandb_callback = WandbCallback(...)
+        #         callbacks.append(wandb_callback)
+        #     except Exception as e:
+        #         pass
     
     # Checkpoint callback
     checkpoint_callback = CheckpointCallback(
@@ -571,16 +588,14 @@ def main():
         sweep_config = wandb.config
         print("🔄 Running in WandB sweep mode")
         
-        # Enable TensorBoard syncing for sweeps (wandb.init was called by agent)
-        # The WandbCallback needs this to sync metrics from TensorBoard logs
-        try:
-            # Use wandb.tensorboard.patch() to enable TensorBoard syncing
-            from wandb import tensorboard as wandb_tensorboard
-            wandb_tensorboard.patch(save=False)
-            print("✓ Enabled TensorBoard syncing for WandB (required for WandbCallback)")
-        except Exception as e:
-            print(f"⚠️  Could not enable TensorBoard syncing: {e}")
-            print("   WandbCallback may not sync metrics - consider using custom callback")
+        # Don't enable TensorBoard syncing - we use custom callback with explicit step logging
+        # TensorBoard syncing conflicts with explicit step values in wandb.log()
+        # Our custom callback handles all logging directly with proper step alignment
+        # try:
+        #     from wandb import tensorboard as wandb_tensorboard
+        #     wandb_tensorboard.patch(save=False)
+        # except Exception as e:
+        #     pass
         
         # Override arguments with WandB config
         args.algorithm = sweep_config.get('algorithm', args.algorithm)
@@ -604,12 +619,13 @@ def main():
     if wandb_switch and wandb.run is None:
         # Determine TensorBoard log directory (will be set in train function)
         tensorboard_log_dir = os.path.join(args.log_dir, 'tensorboard')
+        # Don't sync TensorBoard - we use custom callback for direct logging with explicit steps
         wandb.init(
             project="rl_integration",
             name=f"{args.algorithm}_plain_rl_seed{args.a_seed}",
             config=vars(args),
             tags=["plain_rl", args.algorithm],
-            sync_tensorboard=True,  # Enable TensorBoard syncing
+            sync_tensorboard=False,  # Disable TensorBoard syncing - we use custom callback with explicit steps
         )
     
     # Create config
