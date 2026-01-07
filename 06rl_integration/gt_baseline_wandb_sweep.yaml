@@ -1,0 +1,55 @@
+program: train_rl.py
+name: gt_baseline_exploration_bonus
+project: rl_integration_gt_baseline
+description: GT baseline exploration bonus sweep - sweeping over beta values with Ground Truth intrinsic rewards, using SAC on PointMaze_Large-v3
+method: grid
+metric:
+  goal: maximize
+  name: eval/mean_reward  # SB3 evaluation metric
+parameters:
+  # Algorithm - only SAC
+  algorithm:
+    value: 'sac'
+  
+  # GT baseline - always enabled
+  use_gt_baseline:
+    value: true
+  
+  # Sweep over beta (intrinsic reward coefficient)
+  # Range from 0.0 (plain RL) to 20.0 (strong exploration bonus)
+  beta:
+    values: [0.0, 0.0001, 0.001,0.01, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
+  
+  # Uncertainty method (not used when use_gt_baseline=true, but required parameter)
+  uncertainty_method:
+    value: 'rnd_linear_ls'  # Dummy value, not used when use_gt_baseline=true
+  
+  # Training duration
+  total_timesteps:
+    value: 100000
+  
+  # Evaluation
+  eval_freq:
+    value: 5000
+  n_eval_episodes:
+    value: 100
+  
+  # Fixed parameters - only PointMaze_Large-v3
+  env_name:
+    value: 'PointMaze_Large-v3'
+  # Grid dimensions are auto-detected from maze map (9×12 for Large)
+  grid_rows:
+    value: 9
+  grid_cols:
+    value: 12
+  device:
+    value: 'cpu'
+  
+  # WandB logging (always enabled for sweep)
+  wandb_switch:
+    value: 'true'
+  
+  # Multiple seeds for statistical significance (100 seeds)
+  a_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+

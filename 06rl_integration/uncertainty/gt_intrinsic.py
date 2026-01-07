@@ -94,7 +94,9 @@ class GTIntrinsicReward:
                     if count > 0:
                         uncertainty = 1.0 / np.sqrt(count)
                     else:
-                        uncertainty = np.inf  # Unvisited cell
+                        # Unvisited cell: use large but finite value to avoid infinite rewards
+                        # This gives maximum exploration bonus without causing numerical issues
+                        uncertainty = 100.0  # Large finite value for unvisited cells
                 else:
                     uncertainty = np.nan  # Wall cell
             else:

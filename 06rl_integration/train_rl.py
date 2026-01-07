@@ -529,8 +529,9 @@ def main():
     # Uncertainty method
     parser.add_argument('--uncertainty_method', type=str, default='rnd_linear_ls',
                        help='Uncertainty method name')
-    parser.add_argument('--use_gt_baseline', action='store_true',
-                       help='Use GT as intrinsic reward baseline')
+    parser.add_argument('--use_gt_baseline', type=lambda x: str(x).lower() in ('true', '1', 'yes'),
+                       default=False, nargs='?', const=True,
+                       help='Use GT as intrinsic reward baseline (accepts True/False or flag)')
     
     # Intrinsic reward
     parser.add_argument('--beta', type=float, default=1.0,
@@ -607,7 +608,9 @@ def main():
         args.log_dir = sweep_config.get('log_dir', args.log_dir)
         args.device = sweep_config.get('device', args.device)
         args.wandb_switch = sweep_config.get('wandb_switch', args.wandb_switch)
-        # Note: uncertainty_method is set but not used when beta=0
+        # GT baseline flag
+        args.use_gt_baseline = sweep_config.get('use_gt_baseline', args.use_gt_baseline)
+        # Note: uncertainty_method is set but not used when beta=0 or use_gt_baseline=true
         args.uncertainty_method = sweep_config.get('uncertainty_method', args.uncertainty_method)
         # Environment parameters
         args.env_name = sweep_config.get('env_name', args.env_name)
@@ -620,11 +623,20 @@ def main():
         # Determine TensorBoard log directory (will be set in train function)
         tensorboard_log_dir = os.path.join(args.log_dir, 'tensorboard')
         # Don't sync TensorBoard - we use custom callback for direct logging with explicit steps
+        
+        # Determine run name based on whether GT baseline is used
+        if args.use_gt_baseline:
+            run_name = f"{args.algorithm}_gt_beta{args.beta}_seed{args.a_seed}"
+            tags = ["gt_baseline", args.algorithm]
+        else:
+            run_name = f"{args.algorithm}_plain_rl_seed{args.a_seed}"
+            tags = ["plain_rl", args.algorithm]
+        
         wandb.init(
             project="rl_integration",
-            name=f"{args.algorithm}_plain_rl_seed{args.a_seed}",
+            name=run_name,
             config=vars(args),
-            tags=["plain_rl", args.algorithm],
+            tags=tags,
             sync_tensorboard=False,  # Disable TensorBoard syncing - we use custom callback with explicit steps
         )
     

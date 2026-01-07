@@ -136,10 +136,17 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         position_array = np.array([position]).reshape(1, -1)
         uncertainty = self.uncertainty_method.get_uncertainty(position_array)
         
-        # Return scalar
+        # Return scalar, handling NaN and inf values
         if isinstance(uncertainty, np.ndarray):
-            return float(uncertainty[0] if len(uncertainty) > 0 else 0.0)
-        return float(uncertainty)
+            uncertainty_val = float(uncertainty[0] if len(uncertainty) > 0 else 0.0)
+        else:
+            uncertainty_val = float(uncertainty)
+        
+        # Handle NaN and inf values (e.g., from walls or out-of-bounds)
+        if np.isnan(uncertainty_val) or np.isinf(uncertainty_val):
+            return 0.0  # No intrinsic reward for invalid cells
+        
+        return uncertainty_val
     
     def step(self, action):
         """
