@@ -97,6 +97,7 @@ class WandBLoggingCallback(BaseCallback):
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
         self._logged_eval_count = 0  # Track how many evaluations we've logged (for step alignment)
+        self._logged_eval_steps = set()  # Track which evaluation steps we've already logged (to prevent duplicates)
         self.last_global_step_logged = -1  # Track last global_step we logged (for smooth plotting)
         self.global_step_log_interval = 1000  # Log global_step every N steps for smooth plots
         
@@ -109,6 +110,7 @@ class WandBLoggingCallback(BaseCallback):
         # Monitor tracks reward_total (extrinsic + intrinsic), but we want extrinsic only
         self.last_episode_extrinsic_rewards = []  # Track extrinsic rewards per episode
         self.last_seen_episode_extrinsic = 0.0  # Track last seen episode extrinsic reward (before reset)
+        self.last_seen_episode_intrinsic = 0.0  # Track last seen episode intrinsic reward (before reset)
         
         # Get Monitor wrapper and IntrinsicRewardWrapper from environment
         self.monitor = None
@@ -132,7 +134,7 @@ class WandBLoggingCallback(BaseCallback):
     def _get_monitor_stats(self):
         """
         Get episode statistics from Monitor wrapper.
-        Returns extrinsic reward only (not total reward which includes intrinsic).
+        Returns both extrinsic-only metrics (episode/...) and extrinsic+intrinsic metrics (episode_extrinsic_intrinsic/...).
         """
         if self.monitor is None:
             return None
@@ -149,7 +151,7 @@ class WandBLoggingCallback(BaseCallback):
                 # Get the latest episode data
                 latest_length = episode_lengths[-1] if len(episode_lengths) > 0 else 0
                 
-                # Get extrinsic reward from IntrinsicRewardWrapper
+                # Get extrinsic and intrinsic rewards from IntrinsicRewardWrapper
                 # Note: When an episode completes, Monitor records it, but the wrapper might have
                 # already been reset. However, Monitor records the episode BEFORE reset, so we check
                 # the wrapper's current episode stats. If it's been reset (value is 0), we use the
@@ -157,28 +159,39 @@ class WandBLoggingCallback(BaseCallback):
                 if self.intrinsic_wrapper is not None:
                     episode_stats = self.intrinsic_wrapper.get_episode_statistics()
                     current_episode_extrinsic = episode_stats.get('episode_extrinsic_reward', 0.0)
+                    current_episode_intrinsic = episode_stats.get('episode_intrinsic_reward', 0.0)
                     
                     # If the wrapper has been reset (current value is 0 or very small), use the last seen value
                     # Otherwise, use the current value (episode just completed, wrapper not reset yet)
                     if current_episode_extrinsic > 0.01:  # Episode not reset yet
                         latest_extrinsic_reward = current_episode_extrinsic
+                        latest_intrinsic_reward = current_episode_intrinsic
                         self.last_seen_episode_extrinsic = current_episode_extrinsic
+                        self.last_seen_episode_intrinsic = current_episode_intrinsic
                     else:  # Wrapper has been reset, use last seen value
                         latest_extrinsic_reward = self.last_seen_episode_extrinsic
+                        latest_intrinsic_reward = self.last_seen_episode_intrinsic
                     
                     # Store for reference
                     self.last_episode_extrinsic_rewards.append(latest_extrinsic_reward)
                 else:
                     # Fallback: if we can't access wrapper, use 0
                     latest_extrinsic_reward = 0.0
+                    latest_intrinsic_reward = 0.0
                     if self.verbose > 0:
                         print(f"⚠️  Warning: No IntrinsicRewardWrapper found, using 0.0 for extrinsic reward")
+                
+                # Calculate extrinsic + intrinsic for the new metric group
+                latest_total_reward = latest_extrinsic_reward + latest_intrinsic_reward
                 
                 self.last_episode_count = episode_count
                 return {
                     'episode/reward': float(latest_extrinsic_reward),  # Extrinsic only!
                     'episode/length': int(latest_length),
                     'episode/number': episode_count,
+                    'episode_extrinsic_intrinsic/reward': float(latest_total_reward),  # Extrinsic + intrinsic
+                    'episode_extrinsic_intrinsic/length': int(latest_length),
+                    'episode_extrinsic_intrinsic/number': episode_count,
                 }
         except Exception as e:
             if self.verbose > 0:
@@ -213,11 +226,17 @@ class WandBLoggingCallback(BaseCallback):
             eval_timesteps = getattr(self.eval_callback, 'evaluations_timesteps', [])
             eval_results = getattr(self.eval_callback, 'evaluations_results', [])
             
-            # Check if a new evaluation happened (more evaluations than we've logged)
-            if len(eval_timesteps) > self._logged_eval_count:
-                # Get the latest evaluation (most recent one)
-                eval_step = eval_timesteps[-1]
-                latest_eval_rewards = eval_results[-1] if len(eval_results) > 0 else []
+            # Check for any new evaluations we haven't logged yet
+            # Process all new evaluations (in case multiple happened)
+            # We iterate through all evaluations and use the set to prevent duplicates
+            for i in range(len(eval_timesteps)):
+                eval_step = eval_timesteps[i]
+                
+                # Skip if we've already logged this evaluation step
+                if eval_step in self._logged_eval_steps:
+                    continue
+                
+                latest_eval_rewards = eval_results[i] if i < len(eval_results) else []
                 
                 if len(latest_eval_rewards) > 0:
                     # Log each eval metric separately at the exact evaluation timestep (like MRQ)
@@ -232,17 +251,18 @@ class WandBLoggingCallback(BaseCallback):
                         
                         # Get episode length if available
                         eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
-                        if len(eval_lengths) > 0 and len(eval_lengths[-1]) > 0:
-                            wandb.log({'eval/mean_ep_length': float(np.mean(eval_lengths[-1]))}, step=eval_step, commit=False)
+                        if len(eval_lengths) > i and len(eval_lengths[i]) > 0:
+                            wandb.log({'eval/mean_ep_length': float(np.mean(eval_lengths[i]))}, step=eval_step, commit=False)
                         
                         # Commit all eval metrics together
                         wandb.log({}, step=eval_step, commit=True)
+                        
+                        # Mark this evaluation step as logged (only after successful logging)
+                        self._logged_eval_steps.add(eval_step)
                     except Exception as e:
                         if self.verbose > 0:
                             print(f"⚠️  WandB eval logging error: {e}")
-                    
-                    # Track how many evaluations we've logged
-                    self._logged_eval_count = len(eval_timesteps)
+                        # If logging fails, don't add to set, so we'll retry on next call
         
         # Fallback: use last_mean_reward if evaluations_timesteps not available (older SB3 versions)
         elif hasattr(self.eval_callback, 'last_mean_reward'):
@@ -277,12 +297,14 @@ class WandBLoggingCallback(BaseCallback):
         
         # 2. Log episode metrics when episodes complete (like MRQ does when episodes end)
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
-        # Track episode extrinsic reward before checking monitor stats (in case wrapper gets reset)
+        # Track episode extrinsic and intrinsic rewards before checking monitor stats (in case wrapper gets reset)
         if self.intrinsic_wrapper is not None:
             episode_stats_temp = self.intrinsic_wrapper.get_episode_statistics()
             current_ep_extrinsic = episode_stats_temp.get('episode_extrinsic_reward', 0.0)
+            current_ep_intrinsic = episode_stats_temp.get('episode_intrinsic_reward', 0.0)
             if current_ep_extrinsic > 0.01:  # Only update if episode not reset yet
                 self.last_seen_episode_extrinsic = current_ep_extrinsic
+                self.last_seen_episode_intrinsic = current_ep_intrinsic
         
         episode_stats = self._get_monitor_stats()
         if episode_stats:
@@ -291,9 +313,17 @@ class WandBLoggingCallback(BaseCallback):
             try:
                 # Log global_step first to ensure x-axis represents actual training step
                 wandb.log({'global_step': current_step}, step=current_step, commit=False)
+                
+                # Log extrinsic-only metrics (existing group)
                 wandb.log({'episode/reward': episode_stats['episode/reward']}, step=current_step, commit=False)
                 wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
                 wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
+                
+                # Log extrinsic + intrinsic metrics (new group)
+                wandb.log({'episode_extrinsic_intrinsic/reward': episode_stats['episode_extrinsic_intrinsic/reward']}, step=current_step, commit=False)
+                wandb.log({'episode_extrinsic_intrinsic/length': episode_stats['episode_extrinsic_intrinsic/length']}, step=current_step, commit=False)
+                wandb.log({'episode_extrinsic_intrinsic/number': episode_stats['episode_extrinsic_intrinsic/number']}, step=current_step, commit=False)
+                
                 wandb.log({'episode/current_t': current_step}, step=current_step, commit=True)
             except Exception as e:
                 if self.verbose > 0:
@@ -317,7 +347,8 @@ def create_env(config, uncertainty_method, gt_tracker=None):
         gt_tracker: GroundTruthTracker (may be created if None)
     """
     # Create base environment
-    env = make_pointmaze_env(config.env_name, seed=config.a_seed)
+    # Set continuing_task=False so episodes terminate when goal is reached
+    env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=False)
     
     # Get maze map
     import sys
@@ -377,7 +408,8 @@ def create_eval_env(config):
         env: Base environment (no IntrinsicRewardWrapper)
     """
     # Create base environment only (no intrinsic reward wrapper)
-    env = make_pointmaze_env(config.env_name, seed=config.a_seed)
+    # Set continuing_task=False so episodes terminate when goal is reached
+    env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=False)
     return env
 
 
