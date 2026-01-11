@@ -60,6 +60,7 @@ class RLConfig:
     # Evaluation
     eval_freq: int = 5000  # Evaluate every N steps
     n_eval_episodes: int = 10  # Number of episodes for evaluation
+    dual_eval: bool = True  # If True, evaluate on both single-goal and continuation settings
     
     # Logging
     log_dir: str = './logs'

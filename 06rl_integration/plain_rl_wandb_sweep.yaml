@@ -4,8 +4,11 @@ project: rl_integration
 description: Plain RL baseline comparison (SAC vs PPO) without intrinsic rewards, using SB3 defaults
 method: grid
 metric:
-  goal: maximize
-  name: eval/mean_reward  # SB3 evaluation metric
+  goal: minimize
+  name: eval_single_goal/mean_ep_length  # Primary metric: episode length (time to reach goal)
+  # Alternative metrics available:
+  # - eval_single_goal/mean_ep_length (minimize - faster is better)
+  # - eval_continuation/mean_reward (maximize - higher cumulative reward is better)
 parameters:
   # Algorithm selection - both SAC and PPO
   algorithm:
@@ -29,6 +32,9 @@ parameters:
     value: 5000
   n_eval_episodes:
     value: 100
+  # Dual evaluation: evaluate on both single-goal and continuation settings
+  dual_eval:
+    value: true
   
   # Fixed parameters
   env_name:

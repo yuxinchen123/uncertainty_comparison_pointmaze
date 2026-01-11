@@ -75,6 +75,106 @@ class IntrinsicRewardCallback:
         return True
 
 
+class DualEvalCallback(BaseCallback):
+    """
+    Custom callback that evaluates on both single-goal and continuation settings.
+    Logs metrics separately for each evaluation type.
+    """
+    
+    def __init__(self, eval_env_single_goal, eval_env_continuation, n_eval_episodes=10, 
+                 eval_freq=5000, verbose=0):
+        """
+        Args:
+            eval_env_single_goal: Evaluation environment with continuing_task=False
+            eval_env_continuation: Evaluation environment with continuing_task=True
+            n_eval_episodes: Number of episodes per evaluation
+            eval_freq: Evaluate every N steps
+            verbose: Verbosity level
+        """
+        super().__init__(verbose)
+        self.eval_env_single_goal = eval_env_single_goal
+        self.eval_env_continuation = eval_env_continuation
+        self.n_eval_episodes = n_eval_episodes
+        self.eval_freq = eval_freq
+        
+        # Track evaluation results
+        self.eval_results_single_goal = []  # List of (step, rewards, lengths)
+        self.eval_results_continuation = []  # List of (step, rewards, lengths)
+        self.last_eval_step = -1
+    
+    def _on_step(self) -> bool:
+        """Called at each step during training"""
+        if self.num_timesteps % self.eval_freq != 0:
+            return True
+        
+        if self.num_timesteps == self.last_eval_step:
+            return True
+        
+        self.last_eval_step = self.num_timesteps
+        
+        # Evaluate on single-goal setting
+        if self.verbose > 0:
+            print(f"\nEvaluating on single-goal setting (step {self.num_timesteps})...")
+        
+        mean_reward_single, std_reward_single, episode_lengths_single = self._evaluate(
+            self.eval_env_single_goal, 
+            prefix="eval_single_goal"
+        )
+        
+        self.eval_results_single_goal.append({
+            'step': self.num_timesteps,
+            'mean_reward': mean_reward_single,
+            'std_reward': std_reward_single,
+            'episode_lengths': episode_lengths_single,
+        })
+        
+        # Evaluate on continuation setting
+        if self.verbose > 0:
+            print(f"Evaluating on continuation setting (step {self.num_timesteps})...")
+        
+        mean_reward_cont, std_reward_cont, episode_lengths_cont = self._evaluate(
+            self.eval_env_continuation,
+            prefix="eval_continuation"
+        )
+        
+        self.eval_results_continuation.append({
+            'step': self.num_timesteps,
+            'mean_reward': mean_reward_cont,
+            'std_reward': std_reward_cont,
+            'episode_lengths': episode_lengths_cont,
+        })
+        
+        return True
+    
+    def _evaluate(self, eval_env, prefix=""):
+        """
+        Evaluate the current policy on the given environment.
+        
+        Returns:
+            mean_reward: Mean episode reward
+            std_reward: Std of episode rewards
+            episode_lengths: List of episode lengths
+        """
+        from stable_baselines3.common.evaluation import evaluate_policy
+        
+        episode_rewards, episode_lengths = evaluate_policy(
+            self.model,
+            eval_env,
+            n_eval_episodes=self.n_eval_episodes,
+            deterministic=True,
+            return_episode_rewards=True,
+        )
+        
+        mean_reward = float(np.mean(episode_rewards))
+        std_reward = float(np.std(episode_rewards))
+        
+        if self.verbose > 0:
+            print(f"  {prefix}: mean_reward={mean_reward:.4f} ± {std_reward:.4f}, "
+                  f"mean_length={np.mean(episode_lengths):.2f}")
+        
+        return mean_reward, std_reward, episode_lengths
+
+
 class WandBLoggingCallback(BaseCallback):
     """
     Comprehensive callback to log all SB3 metrics directly to WandB.
@@ -84,15 +184,17 @@ class WandBLoggingCallback(BaseCallback):
     This bypasses TensorBoard syncing issues and works reliably in sweep mode.
     """
     
-    def __init__(self, eval_callback, train_env, verbose=0):
+    def __init__(self, eval_callback, train_env, dual_eval_callback=None, verbose=0):
         """
         Args:
-            eval_callback: EvalCallback instance to monitor for evaluation metrics
+            eval_callback: EvalCallback instance to monitor for evaluation metrics (or None if using dual eval)
             train_env: Training environment (DummyVecEnv) to access Monitor wrapper
+            dual_eval_callback: DualEvalCallback instance (if using dual evaluation)
             verbose: Verbosity level
         """
         super().__init__(verbose)
         self.eval_callback = eval_callback
+        self.dual_eval_callback = dual_eval_callback
         self.train_env = train_env
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
@@ -220,9 +322,46 @@ class WandBLoggingCallback(BaseCallback):
                 if self.verbose > 0:
                     print(f"⚠️  WandB global_step logging error: {e}")
         
-        # 1. Check for new evaluation (like MRQ does in maybe_evaluate)
-        # Log eval metrics at EXACT evaluation timesteps for perfect alignment
-        if hasattr(self.eval_callback, 'evaluations_timesteps') and hasattr(self.eval_callback, 'evaluations_results'):
+        # 1. Check for dual evaluation results (if using dual eval)
+        if self.dual_eval_callback is not None:
+            # Check for new dual evaluation results
+            if len(self.dual_eval_callback.eval_results_single_goal) > 0:
+                latest_single = self.dual_eval_callback.eval_results_single_goal[-1]
+                if latest_single['step'] == current_step:
+                    # Log single-goal evaluation metrics
+                    try:
+                        wandb.log({'global_step': current_step}, step=current_step, commit=False)
+                        wandb.log({'eval_single_goal/mean_reward': latest_single['mean_reward']}, step=current_step, commit=False)
+                        wandb.log({'eval_single_goal/std_reward': latest_single['std_reward']}, step=current_step, commit=False)
+                        if len(latest_single['episode_lengths']) > 0:
+                            wandb.log({'eval_single_goal/mean_ep_length': float(np.mean(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/std_ep_length': float(np.std(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/min_ep_length': float(np.min(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/max_ep_length': float(np.max(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                    except Exception as e:
+                        if self.verbose > 0:
+                            print(f"⚠️  WandB single-goal eval logging error: {e}")
+            
+            if len(self.dual_eval_callback.eval_results_continuation) > 0:
+                latest_cont = self.dual_eval_callback.eval_results_continuation[-1]
+                if latest_cont['step'] == current_step:
+                    # Log continuation evaluation metrics
+                    try:
+                        wandb.log({'global_step': current_step}, step=current_step, commit=False)
+                        wandb.log({'eval_continuation/mean_reward': latest_cont['mean_reward']}, step=current_step, commit=False)
+                        wandb.log({'eval_continuation/std_reward': latest_cont['std_reward']}, step=current_step, commit=False)
+                        # Note: For continuation, we track rewards (not lengths) as the main metric
+                        # Episode lengths are still useful but rewards show cumulative performance
+                        if len(latest_cont['episode_lengths']) > 0:
+                            wandb.log({'eval_continuation/mean_ep_length': float(np.mean(latest_cont['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_continuation/std_ep_length': float(np.std(latest_cont['episode_lengths']))}, step=current_step, commit=False)
+                        wandb.log({}, step=current_step, commit=True)
+                    except Exception as e:
+                        if self.verbose > 0:
+                            print(f"⚠️  WandB continuation eval logging error: {e}")
+        
+        # 2. Check for standard evaluation (if not using dual eval)
+        elif self.eval_callback is not None and hasattr(self.eval_callback, 'evaluations_timesteps') and hasattr(self.eval_callback, 'evaluations_results'):
             eval_timesteps = getattr(self.eval_callback, 'evaluations_timesteps', [])
             eval_results = getattr(self.eval_callback, 'evaluations_results', [])
             
@@ -295,7 +434,7 @@ class WandBLoggingCallback(BaseCallback):
                 
                 self.last_eval_step = current_step
         
-        # 2. Log episode metrics when episodes complete (like MRQ does when episodes end)
+        # 3. Log episode metrics when episodes complete (like MRQ does when episodes end)
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
         # Track episode extrinsic and intrinsic rewards before checking monitor stats (in case wrapper gets reset)
         if self.intrinsic_wrapper is not None:
@@ -396,20 +535,21 @@ def create_env(config, uncertainty_method, gt_tracker=None):
     return env, gt_tracker
 
 
-def create_eval_env(config):
+def create_eval_env(config, continuing_task=False):
     """
     Create evaluation environment WITHOUT intrinsic rewards.
     Evaluation metrics should only reflect extrinsic (task) performance.
     
     Args:
         config: RLConfig object
+        continuing_task: If True, episode continues after reaching goal (new goal generated).
+                        If False, episode terminates when goal is reached.
         
     Returns:
         env: Base environment (no IntrinsicRewardWrapper)
     """
     # Create base environment only (no intrinsic reward wrapper)
-    # Set continuing_task=False so episodes terminate when goal is reached
-    env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=False)
+    env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=continuing_task)
     return env
 
 
@@ -458,11 +598,28 @@ def train(config: RLConfig):
     train_env = Monitor(train_env, config.log_dir)
     train_env = DummyVecEnv([lambda: train_env])
     
-    # Create evaluation environment (WITHOUT intrinsic rewards for pure task performance metrics)
-    print("Creating evaluation environment (extrinsic rewards only)...")
-    eval_env = create_eval_env(config)
-    eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
-    eval_env = DummyVecEnv([lambda: eval_env])
+    # Create evaluation environments (WITHOUT intrinsic rewards for pure task performance metrics)
+    print("Creating evaluation environments (extrinsic rewards only)...")
+    if config.dual_eval:
+        # Create two eval environments: single-goal and continuation
+        print("  Creating single-goal evaluation environment...")
+        eval_env_single = create_eval_env(config, continuing_task=False)
+        eval_env_single = Monitor(eval_env_single, os.path.join(config.log_dir, 'eval_single_goal'))
+        eval_env_single = DummyVecEnv([lambda: eval_env_single])
+        
+        print("  Creating continuation evaluation environment...")
+        eval_env_cont = create_eval_env(config, continuing_task=True)
+        eval_env_cont = Monitor(eval_env_cont, os.path.join(config.log_dir, 'eval_continuation'))
+        eval_env_cont = DummyVecEnv([lambda: eval_env_cont])
+        
+        eval_env = eval_env_single  # Keep for backward compatibility
+    else:
+        # Single evaluation environment (backward compatibility)
+        eval_env = create_eval_env(config, continuing_task=False)
+        eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
+        eval_env = DummyVecEnv([lambda: eval_env])
+        eval_env_single = None
+        eval_env_cont = None
     
     # Get environment info
     env_info = get_env_info(train_env.envs[0].env.env)
@@ -523,19 +680,35 @@ def train(config: RLConfig):
     # Create callbacks
     callbacks = []
     
-    # Evaluation callback
-    eval_callback = EvalCallback(
-        eval_env,
-        best_model_save_path=os.path.join(config.log_dir, 'best_model'),
-        log_path=os.path.join(config.log_dir, 'eval'),
-        eval_freq=config.eval_freq,
-        n_eval_episodes=config.n_eval_episodes,
-        deterministic=True,
-        render=False,
-    )
+    # Evaluation callback(s)
+    eval_callback = None
+    dual_eval_callback = None
     
-    # Add eval callback
-    callbacks.append(eval_callback)
+    if config.dual_eval:
+        # Use dual evaluation callback
+        print("✓ Using dual evaluation (single-goal + continuation)")
+        dual_eval_callback = DualEvalCallback(
+            eval_env_single,
+            eval_env_cont,
+            n_eval_episodes=config.n_eval_episodes,
+            eval_freq=config.eval_freq,
+            verbose=config.verbose,
+        )
+        # Set model reference for evaluation
+        # We'll set this after model creation
+        callbacks.append(dual_eval_callback)
+    else:
+        # Use standard evaluation callback
+        eval_callback = EvalCallback(
+            eval_env,
+            best_model_save_path=os.path.join(config.log_dir, 'best_model'),
+            log_path=os.path.join(config.log_dir, 'eval'),
+            eval_freq=config.eval_freq,
+            n_eval_episodes=config.n_eval_episodes,
+            deterministic=True,
+            render=False,
+        )
+        callbacks.append(eval_callback)
     
     # WandB callback (if enabled and available)
     if config.wandb_switch and wandb.run is not None:
@@ -543,7 +716,12 @@ def train(config: RLConfig):
         # This reads directly from SB3's logger and logs all metrics
         # Also tracks episode metrics from Monitor and enhanced evaluation metrics
         print("✓ Using custom WandB logging callback (reads directly from SB3 logger + Monitor episode stats)")
-        wandb_logging_callback = WandBLoggingCallback(eval_callback, train_env, verbose=1)
+        wandb_logging_callback = WandBLoggingCallback(
+            eval_callback, 
+            train_env, 
+            dual_eval_callback=dual_eval_callback,
+            verbose=1
+        )
         callbacks.append(wandb_logging_callback)
         
         # Don't use official WandbCallback - it conflicts with explicit step logging
@@ -567,6 +745,14 @@ def train(config: RLConfig):
     # Note: Uncertainty model updates happen in the wrapper's step method
     # The wrapper calls update_with_batch every step, and the adapter handles
     # the update frequency internally
+    
+    # Set model reference for dual eval callback (if using dual eval)
+    if dual_eval_callback is not None:
+        dual_eval_callback.model = model
+    
+    # Set model reference for dual eval callback (if using dual eval)
+    if dual_eval_callback is not None:
+        dual_eval_callback.model = model
     
     # Train
     print(f"\nStarting training for {config.total_timesteps} steps...")
@@ -643,6 +829,9 @@ def main():
                        help='Evaluation frequency (steps)')
     parser.add_argument('--n_eval_episodes', type=int, default=10,
                        help='Number of evaluation episodes')
+    parser.add_argument('--dual_eval', type=lambda x: str(x).lower() in ('true', '1', 'yes'),
+                       default=True, nargs='?', const=True,
+                       help='Enable dual evaluation (single-goal + continuation). Default: True')
     
     # Logging
     parser.add_argument('--log_dir', type=str, default='./logs',
@@ -700,6 +889,7 @@ def main():
         args.total_timesteps = sweep_config.get('total_timesteps', args.total_timesteps)
         args.eval_freq = sweep_config.get('eval_freq', args.eval_freq)
         args.n_eval_episodes = sweep_config.get('n_eval_episodes', args.n_eval_episodes)
+        args.dual_eval = sweep_config.get('dual_eval', args.dual_eval)
         args.log_dir = sweep_config.get('log_dir', args.log_dir)
         args.device = sweep_config.get('device', args.device)
         args.wandb_switch = sweep_config.get('wandb_switch', args.wandb_switch)
@@ -745,6 +935,7 @@ def main():
     config.learning_rate = args.learning_rate
     config.eval_freq = args.eval_freq
     config.n_eval_episodes = args.n_eval_episodes
+    config.dual_eval = args.dual_eval
     config.log_dir = args.log_dir
     config.tensorboard_log = args.tensorboard_log
     config.device = args.device
