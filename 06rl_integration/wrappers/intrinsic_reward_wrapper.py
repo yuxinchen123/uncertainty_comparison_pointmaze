@@ -78,10 +78,14 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         # Track states for uncertainty model training (online updates)
         self.visited_states = []
         
-        # Statistics tracking
+        # Statistics tracking (cumulative across all episodes)
         self.total_intrinsic_reward = 0.0
         self.total_extrinsic_reward = 0.0
         self.step_count = 0
+        
+        # Per-episode reward tracking (reset on each episode)
+        self.episode_extrinsic_reward = 0.0
+        self.episode_intrinsic_reward = 0.0
         
     def _get_maze_map(self):
         """Extract maze map from environment"""
@@ -201,9 +205,11 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         # Combine rewards: r_total = r_extrinsic + beta * r_intrinsic
         reward_total = reward_extrinsic + self.beta * intrinsic_reward
         
-        # Update statistics
+        # Update statistics (cumulative and per-episode)
         self.total_extrinsic_reward += reward_extrinsic
         self.total_intrinsic_reward += intrinsic_reward
+        self.episode_extrinsic_reward += reward_extrinsic
+        self.episode_intrinsic_reward += intrinsic_reward
         self.step_count += 1
         
         # Add info about rewards
@@ -219,6 +225,8 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         
         # Clear episode-specific tracking (but keep visit counts for GT)
         self.visited_states = []
+        self.episode_extrinsic_reward = 0.0
+        self.episode_intrinsic_reward = 0.0
         
         return obs, info
     
@@ -231,12 +239,19 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         return self.visit_counts.copy()
     
     def get_statistics(self):
-        """Get reward statistics"""
+        """Get reward statistics (cumulative across all episodes)"""
         return {
             'total_extrinsic_reward': self.total_extrinsic_reward,
             'total_intrinsic_reward': self.total_intrinsic_reward,
             'step_count': self.step_count,
             'avg_intrinsic_reward': self.total_intrinsic_reward / max(self.step_count, 1),
             'avg_extrinsic_reward': self.total_extrinsic_reward / max(self.step_count, 1),
+        }
+    
+    def get_episode_statistics(self):
+        """Get reward statistics for current episode only"""
+        return {
+            'episode_extrinsic_reward': self.episode_extrinsic_reward,
+            'episode_intrinsic_reward': self.episode_intrinsic_reward,
         }
 

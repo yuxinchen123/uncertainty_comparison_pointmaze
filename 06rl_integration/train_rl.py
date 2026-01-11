@@ -105,21 +105,35 @@ class WandBLoggingCallback(BaseCallback):
         self.last_episode_rewards = []
         self.last_episode_lengths = []
         
-        # Get Monitor wrapper from environment
+        # Track extrinsic rewards separately (for logging episode/reward as extrinsic-only)
+        # Monitor tracks reward_total (extrinsic + intrinsic), but we want extrinsic only
+        self.last_episode_extrinsic_rewards = []  # Track extrinsic rewards per episode
+        self.last_seen_episode_extrinsic = 0.0  # Track last seen episode extrinsic reward (before reset)
+        
+        # Get Monitor wrapper and IntrinsicRewardWrapper from environment
         self.monitor = None
+        self.intrinsic_wrapper = None
         if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
-            # Unwrap to get Monitor: DummyVecEnv -> Monitor -> IntrinsicRewardWrapper -> env
+            # Unwrap to get Monitor and IntrinsicRewardWrapper
+            # DummyVecEnv -> Monitor -> IntrinsicRewardWrapper -> env
             env = train_env.envs[0]
             while hasattr(env, 'env'):
                 if isinstance(env, Monitor):
                     self.monitor = env
-                    break
+                # Check if this is IntrinsicRewardWrapper
+                if isinstance(env, IntrinsicRewardWrapper):
+                    self.intrinsic_wrapper = env
                 env = env.env
             if self.monitor is None and self.verbose > 0:
                 print("⚠️  Could not find Monitor wrapper in environment")
+            if self.intrinsic_wrapper is None and self.verbose > 0:
+                print("⚠️  Could not find IntrinsicRewardWrapper in environment")
     
     def _get_monitor_stats(self):
-        """Get episode statistics from Monitor wrapper"""
+        """
+        Get episode statistics from Monitor wrapper.
+        Returns extrinsic reward only (not total reward which includes intrinsic).
+        """
         if self.monitor is None:
             return None
         
@@ -133,12 +147,36 @@ class WandBLoggingCallback(BaseCallback):
             # Check if a new episode completed
             if episode_count > self.last_episode_count:
                 # Get the latest episode data
-                latest_reward = episode_rewards[-1] if len(episode_rewards) > 0 else 0.0
                 latest_length = episode_lengths[-1] if len(episode_lengths) > 0 else 0
+                
+                # Get extrinsic reward from IntrinsicRewardWrapper
+                # Note: When an episode completes, Monitor records it, but the wrapper might have
+                # already been reset. However, Monitor records the episode BEFORE reset, so we check
+                # the wrapper's current episode stats. If it's been reset (value is 0), we use the
+                # last value we saw. Otherwise, we use the current value.
+                if self.intrinsic_wrapper is not None:
+                    episode_stats = self.intrinsic_wrapper.get_episode_statistics()
+                    current_episode_extrinsic = episode_stats.get('episode_extrinsic_reward', 0.0)
+                    
+                    # If the wrapper has been reset (current value is 0 or very small), use the last seen value
+                    # Otherwise, use the current value (episode just completed, wrapper not reset yet)
+                    if current_episode_extrinsic > 0.01:  # Episode not reset yet
+                        latest_extrinsic_reward = current_episode_extrinsic
+                        self.last_seen_episode_extrinsic = current_episode_extrinsic
+                    else:  # Wrapper has been reset, use last seen value
+                        latest_extrinsic_reward = self.last_seen_episode_extrinsic
+                    
+                    # Store for reference
+                    self.last_episode_extrinsic_rewards.append(latest_extrinsic_reward)
+                else:
+                    # Fallback: if we can't access wrapper, use 0
+                    latest_extrinsic_reward = 0.0
+                    if self.verbose > 0:
+                        print(f"⚠️  Warning: No IntrinsicRewardWrapper found, using 0.0 for extrinsic reward")
                 
                 self.last_episode_count = episode_count
                 return {
-                    'episode/reward': float(latest_reward),
+                    'episode/reward': float(latest_extrinsic_reward),  # Extrinsic only!
                     'episode/length': int(latest_length),
                     'episode/number': episode_count,
                 }
@@ -239,6 +277,13 @@ class WandBLoggingCallback(BaseCallback):
         
         # 2. Log episode metrics when episodes complete (like MRQ does when episodes end)
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
+        # Track episode extrinsic reward before checking monitor stats (in case wrapper gets reset)
+        if self.intrinsic_wrapper is not None:
+            episode_stats_temp = self.intrinsic_wrapper.get_episode_statistics()
+            current_ep_extrinsic = episode_stats_temp.get('episode_extrinsic_reward', 0.0)
+            if current_ep_extrinsic > 0.01:  # Only update if episode not reset yet
+                self.last_seen_episode_extrinsic = current_ep_extrinsic
+        
         episode_stats = self._get_monitor_stats()
         if episode_stats:
             # Log each episode metric separately at the exact timestep when episode ended
@@ -260,6 +305,7 @@ class WandBLoggingCallback(BaseCallback):
 def create_env(config, uncertainty_method, gt_tracker=None):
     """
     Create and wrap environment with intrinsic rewards.
+    Used for training environment where intrinsic rewards are needed.
     
     Args:
         config: RLConfig object
@@ -267,7 +313,8 @@ def create_env(config, uncertainty_method, gt_tracker=None):
         gt_tracker: GroundTruthTracker (optional, for GT baseline)
         
     Returns:
-        env: Wrapped environment
+        env: Wrapped environment with IntrinsicRewardWrapper
+        gt_tracker: GroundTruthTracker (may be created if None)
     """
     # Create base environment
     env = make_pointmaze_env(config.env_name, seed=config.a_seed)
@@ -318,6 +365,22 @@ def create_env(config, uncertainty_method, gt_tracker=None):
     return env, gt_tracker
 
 
+def create_eval_env(config):
+    """
+    Create evaluation environment WITHOUT intrinsic rewards.
+    Evaluation metrics should only reflect extrinsic (task) performance.
+    
+    Args:
+        config: RLConfig object
+        
+    Returns:
+        env: Base environment (no IntrinsicRewardWrapper)
+    """
+    # Create base environment only (no intrinsic reward wrapper)
+    env = make_pointmaze_env(config.env_name, seed=config.a_seed)
+    return env
+
+
 def train(config: RLConfig):
     """
     Main training function.
@@ -363,9 +426,9 @@ def train(config: RLConfig):
     train_env = Monitor(train_env, config.log_dir)
     train_env = DummyVecEnv([lambda: train_env])
     
-    # Create evaluation environment
-    print("Creating evaluation environment...")
-    eval_env, _ = create_env(config, uncertainty_method, gt_tracker)
+    # Create evaluation environment (WITHOUT intrinsic rewards for pure task performance metrics)
+    print("Creating evaluation environment (extrinsic rewards only)...")
+    eval_env = create_eval_env(config)
     eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
     eval_env = DummyVecEnv([lambda: eval_env])
     
