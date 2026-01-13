@@ -34,21 +34,26 @@ class IntrinsicRewardWrapper(gym.Wrapper):
     - Tracks states for uncertainty model training
     """
     
-    def __init__(self, env, uncertainty_method, beta=1.0, grid_rows=9, grid_cols=12, maze_map=None):
+    def __init__(self, env, uncertainty_method, beta=1.0, grid_rows=9, grid_cols=12, maze_map=None,
+                 goal_mode='single', num_goals=None):
         """
         Args:
-            env: PointMaze environment
+            env: PointMaze environment (should be wrapped with GoalWrapper)
             uncertainty_method: Object with get_uncertainty(state) method
             beta: Intrinsic reward coefficient (r_total = r_extrinsic + beta * r_intrinsic)
             grid_rows: Number of grid rows (default 9)
             grid_cols: Number of grid columns (default 12)
             maze_map: Maze map array (if None, will be extracted from env)
+            goal_mode: 'single' or 'multi' - determines visit count structure
+            num_goals: Number of goals for multi-goal mode (required if goal_mode='multi')
         """
         super().__init__(env)
         self.uncertainty_method = uncertainty_method
         self.beta = beta
         self.grid_rows = grid_rows
         self.grid_cols = grid_cols
+        self.goal_mode = goal_mode
+        self.num_goals = num_goals
         
         # Get maze map if not provided
         if maze_map is None:
@@ -73,7 +78,14 @@ class IntrinsicRewardWrapper(gym.Wrapper):
             self.grid_cols = grid_cols
         
         # Visit count matrix for GT calculation (0-based indexing)
-        self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
+        # For single-goal: (grid_rows, grid_cols)
+        # For multi-goal: (num_goals, grid_rows, grid_cols)
+        if goal_mode == 'multi':
+            if num_goals is None:
+                raise ValueError("num_goals must be provided for multi-goal mode")
+            self.visit_counts = np.zeros((num_goals, self.grid_rows, self.grid_cols), dtype=int)
+        else:
+            self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
         
         # Track states for uncertainty model training (online updates)
         self.visited_states = []
@@ -99,6 +111,13 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         else:
             # Fallback: create default map (all open)
             return np.zeros((self.grid_rows, self.grid_cols), dtype=int)
+    
+    def _get_current_goal_idx(self):
+        """Get current goal index from GoalWrapper (for multi-goal mode)"""
+        # GoalWrapper should be wrapping the environment
+        if hasattr(self.env, 'get_current_goal_idx'):
+            return self.env.get_current_goal_idx()
+        return None
     
     def _state_to_grid(self, observation):
         """
@@ -165,7 +184,14 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         row, col = self._state_to_grid(obs)
         if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:  # Only count open cells
-                self.visit_counts[row, col] += 1
+                if self.goal_mode == 'multi':
+                    # Get current goal index from GoalWrapper
+                    goal_idx = self._get_current_goal_idx()
+                    if goal_idx is not None:
+                        self.visit_counts[goal_idx, row, col] += 1
+                else:
+                    # Single-goal mode: single visit count matrix
+                    self.visit_counts[row, col] += 1
         
         # Track state for uncertainty model training (before getting uncertainty)
         if isinstance(obs, dict) and 'achieved_goal' in obs:
@@ -196,11 +222,18 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                     pass
             
             # If using GT method, update its visit counts
+            # For multi-goal mode, pass the visit counts for the current goal
+            visit_counts_to_update = self.visit_counts
+            if self.goal_mode == 'multi':
+                goal_idx = self._get_current_goal_idx()
+                if goal_idx is not None:
+                    visit_counts_to_update = self.visit_counts[goal_idx]
+            
             if hasattr(self.uncertainty_method, 'update_visit_counts'):
-                self.uncertainty_method.update_visit_counts(self.visit_counts)
+                self.uncertainty_method.update_visit_counts(visit_counts_to_update)
             elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
                 # If wrapped in adapter, update the underlying method
-                self.uncertainty_method.method.update_visit_counts(self.visit_counts)
+                self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
         
         # Combine rewards: r_total = r_extrinsic + beta * r_intrinsic
         reward_total = reward_extrinsic + self.beta * intrinsic_reward
@@ -219,8 +252,14 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         
         return obs, reward_total, terminated, truncated, info
     
-    def reset(self, **kwargs):
+    def reset(self, seed=None, options=None, **kwargs):
         """Reset environment and clear episode statistics"""
+        # Merge options with kwargs for backward compatibility
+        if options is not None:
+            kwargs['options'] = options
+        if seed is not None:
+            kwargs['seed'] = seed
+            
         obs, info = self.env.reset(**kwargs)
         
         # Clear episode-specific tracking (but keep visit counts for GT)
@@ -235,8 +274,30 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         return np.array(self.visited_states) if len(self.visited_states) > 0 else np.array([]).reshape(0, 2)
     
     def get_visit_counts(self):
-        """Get current visit count matrix"""
+        """
+        Get current visit count matrix.
+        
+        Returns:
+            For single-goal: (grid_rows, grid_cols) array
+            For multi-goal: (num_goals, grid_rows, grid_cols) array
+        """
         return self.visit_counts.copy()
+    
+    def get_visit_counts_for_goal(self, goal_idx):
+        """
+        Get visit counts for a specific goal (multi-goal mode only).
+        
+        Args:
+            goal_idx: Goal index (0-based)
+            
+        Returns:
+            (grid_rows, grid_cols) visit count array for the specified goal
+        """
+        if self.goal_mode != 'multi':
+            raise ValueError("get_visit_counts_for_goal() only available in multi-goal mode")
+        if goal_idx < 0 or goal_idx >= self.num_goals:
+            raise ValueError(f"Invalid goal_idx: {goal_idx}. Must be in [0, {self.num_goals})")
+        return self.visit_counts[goal_idx].copy()
     
     def get_statistics(self):
         """Get reward statistics (cumulative across all episodes)"""

@@ -35,7 +35,9 @@ from config import RLConfig, get_default_config, update_config_from_dict
 from evaluation.gt_tracker import GroundTruthTracker
 from evaluation.metrics import RLPerformanceMetrics
 from utils.env_utils import make_pointmaze_env, get_env_info
+from utils.goal_utils import select_fixed_goal, select_diverse_goals
 from wrappers.intrinsic_reward_wrapper import IntrinsicRewardWrapper
+from wrappers.goal_wrapper import GoalWrapper
 from uncertainty.integration import create_uncertainty_method
 from uncertainty.gt_intrinsic import GTIntrinsicReward
 
@@ -482,7 +484,7 @@ def create_env(config, uncertainty_method, gt_tracker=None):
         gt_tracker: GroundTruthTracker (optional, for GT baseline)
         
     Returns:
-        env: Wrapped environment with IntrinsicRewardWrapper
+        env: Wrapped environment with GoalWrapper and IntrinsicRewardWrapper
         gt_tracker: GroundTruthTracker (may be created if None)
     """
     # Create base environment
@@ -498,6 +500,33 @@ def create_env(config, uncertainty_method, gt_tracker=None):
         maze_map = get_maze_map()
     except:
         maze_map = None
+    
+    # Select goals based on goal_mode
+    print(f"  Goal mode: {config.goal_mode}")
+    if config.goal_mode == 'single':
+        # Single-goal mode: select fixed goal
+        fixed_goal_cell = select_fixed_goal(env, config.a_seed, config.fixed_goal_cell, maze_map)
+        print(f"  Selected fixed goal cell: {fixed_goal_cell}")
+        goal_cells = None
+        num_goals = None
+    elif config.goal_mode == 'multi':
+        # Multi-goal mode: select diverse goals
+        goal_cells = select_diverse_goals(env, config.num_goals, config.a_seed, maze_map)
+        print(f"  Selected {len(goal_cells)} diverse goals: {goal_cells}")
+        fixed_goal_cell = None
+        num_goals = len(goal_cells)
+    else:
+        raise ValueError(f"Invalid goal_mode: {config.goal_mode}. Must be 'single' or 'multi'")
+    
+    # Wrap with GoalWrapper (before IntrinsicRewardWrapper)
+    env = GoalWrapper(
+        env,
+        goal_mode=config.goal_mode,
+        fixed_goal_cell=fixed_goal_cell,
+        goal_cells=goal_cells,
+        grid_rows=config.grid_rows,
+        grid_cols=config.grid_cols
+    )
     
     # Wrap with intrinsic rewards
     if config.use_gt_baseline:
@@ -519,7 +548,9 @@ def create_env(config, uncertainty_method, gt_tracker=None):
             beta=config.beta,
             grid_rows=config.grid_rows,
             grid_cols=config.grid_cols,
-            maze_map=maze_map
+            maze_map=maze_map,
+            goal_mode=config.goal_mode,
+            num_goals=num_goals
         )
     else:
         # Use uncertainty method
@@ -529,7 +560,9 @@ def create_env(config, uncertainty_method, gt_tracker=None):
             beta=config.beta,
             grid_rows=config.grid_rows,
             grid_cols=config.grid_cols,
-            maze_map=maze_map
+            maze_map=maze_map,
+            goal_mode=config.goal_mode,
+            num_goals=num_goals
         )
     
     return env, gt_tracker
@@ -539,6 +572,7 @@ def create_eval_env(config, continuing_task=False):
     """
     Create evaluation environment WITHOUT intrinsic rewards.
     Evaluation metrics should only reflect extrinsic (task) performance.
+    Uses the same goal selection as training (fixed goal for single, same N goals for multi).
     
     Args:
         config: RLConfig object
@@ -546,10 +580,41 @@ def create_eval_env(config, continuing_task=False):
                         If False, episode terminates when goal is reached.
         
     Returns:
-        env: Base environment (no IntrinsicRewardWrapper)
+        env: Base environment with GoalWrapper (no IntrinsicRewardWrapper)
     """
-    # Create base environment only (no intrinsic reward wrapper)
+    # Create base environment
     env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=continuing_task)
+    
+    # Get maze map
+    import sys
+    import os
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities'))
+    from environment import get_maze_map
+    try:
+        maze_map = get_maze_map()
+    except:
+        maze_map = None
+    
+    # Select goals using same logic as training (same seed ensures same goals)
+    if config.goal_mode == 'single':
+        fixed_goal_cell = select_fixed_goal(env, config.a_seed, config.fixed_goal_cell, maze_map)
+        goal_cells = None
+    elif config.goal_mode == 'multi':
+        goal_cells = select_diverse_goals(env, config.num_goals, config.a_seed, maze_map)
+        fixed_goal_cell = None
+    else:
+        raise ValueError(f"Invalid goal_mode: {config.goal_mode}. Must be 'single' or 'multi'")
+    
+    # Wrap with GoalWrapper (no intrinsic rewards for evaluation)
+    env = GoalWrapper(
+        env,
+        goal_mode=config.goal_mode,
+        fixed_goal_cell=fixed_goal_cell,
+        goal_cells=goal_cells,
+        grid_rows=config.grid_rows,
+        grid_cols=config.grid_cols
+    )
+    
     return env
 
 
@@ -600,26 +665,14 @@ def train(config: RLConfig):
     
     # Create evaluation environments (WITHOUT intrinsic rewards for pure task performance metrics)
     print("Creating evaluation environments (extrinsic rewards only)...")
-    if config.dual_eval:
-        # Create two eval environments: single-goal and continuation
-        print("  Creating single-goal evaluation environment...")
-        eval_env_single = create_eval_env(config, continuing_task=False)
-        eval_env_single = Monitor(eval_env_single, os.path.join(config.log_dir, 'eval_single_goal'))
-        eval_env_single = DummyVecEnv([lambda: eval_env_single])
-        
-        print("  Creating continuation evaluation environment...")
-        eval_env_cont = create_eval_env(config, continuing_task=True)
-        eval_env_cont = Monitor(eval_env_cont, os.path.join(config.log_dir, 'eval_continuation'))
-        eval_env_cont = DummyVecEnv([lambda: eval_env_cont])
-        
-        eval_env = eval_env_single  # Keep for backward compatibility
-    else:
-        # Single evaluation environment (backward compatibility)
-        eval_env = create_eval_env(config, continuing_task=False)
-        eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
-        eval_env = DummyVecEnv([lambda: eval_env])
-        eval_env_single = None
-        eval_env_cont = None
+    print(f"  Goal mode: {config.goal_mode}")
+    eval_env = create_eval_env(config, continuing_task=False)
+    eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
+    eval_env = DummyVecEnv([lambda: eval_env])
+    
+    # For multi-goal mode, we'll evaluate on all goals (handled in callback)
+    eval_env_single = None
+    eval_env_cont = None
     
     # Get environment info
     env_info = get_env_info(train_env.envs[0].env.env)
@@ -627,9 +680,20 @@ def train(config: RLConfig):
     print(f"  Observation space: {env_info['observation_space']}")
     print(f"  Action space: {env_info['action_space']}")
     
+    # Detect observation space structure to determine policy type
+    obs_space = train_env.observation_space
+    if hasattr(obs_space, 'spaces') and isinstance(obs_space.spaces, dict):
+        # Dict observation space - use MultiInputPolicy
+        policy_type = 'MultiInputPolicy'
+        obs_keys = list(obs_space.spaces.keys())
+        print(f"  Using MultiInputPolicy with observation keys: {obs_keys}")
+    else:
+        # Non-dict observation space - use MlpPolicy
+        policy_type = 'MlpPolicy'
+        print(f"  Using MlpPolicy")
+    
     # Create RL agent
     print(f"\nCreating {config.algorithm.upper()} agent...")
-    # PointMaze uses Dict observation space, so we need MultiInputPolicy
     
     # Enable TensorBoard logging if WandB is enabled (WandbCallback needs it)
     tensorboard_log_dir = config.tensorboard_log
@@ -640,7 +704,7 @@ def train(config: RLConfig):
     
     if config.algorithm.lower() == 'sac':
         model = SAC(
-            'MultiInputPolicy',
+            policy_type,
             train_env,
             learning_rate=config.learning_rate,
             buffer_size=config.buffer_size,
@@ -657,7 +721,7 @@ def train(config: RLConfig):
         )
     elif config.algorithm.lower() == 'ppo':
         model = PPO(
-            'MultiInputPolicy',
+            policy_type,
             train_env,
             learning_rate=config.learning_rate,
             n_steps=config.ppo_config['n_steps'],
@@ -680,35 +744,20 @@ def train(config: RLConfig):
     # Create callbacks
     callbacks = []
     
-    # Evaluation callback(s)
-    eval_callback = None
-    dual_eval_callback = None
-    
-    if config.dual_eval:
-        # Use dual evaluation callback
-        print("✓ Using dual evaluation (single-goal + continuation)")
-        dual_eval_callback = DualEvalCallback(
-            eval_env_single,
-            eval_env_cont,
-            n_eval_episodes=config.n_eval_episodes,
-            eval_freq=config.eval_freq,
-            verbose=config.verbose,
-        )
-        # Set model reference for evaluation
-        # We'll set this after model creation
-        callbacks.append(dual_eval_callback)
-    else:
-        # Use standard evaluation callback
-        eval_callback = EvalCallback(
-            eval_env,
-            best_model_save_path=os.path.join(config.log_dir, 'best_model'),
-            log_path=os.path.join(config.log_dir, 'eval'),
-            eval_freq=config.eval_freq,
-            n_eval_episodes=config.n_eval_episodes,
-            deterministic=True,
-            render=False,
-        )
-        callbacks.append(eval_callback)
+    # Evaluation callback
+    # Use standard evaluation callback (works for both single and multi-goal modes)
+    print(f"✓ Using evaluation callback (goal_mode: {config.goal_mode})")
+    eval_callback = EvalCallback(
+        eval_env,
+        best_model_save_path=os.path.join(config.log_dir, 'best_model'),
+        log_path=os.path.join(config.log_dir, 'eval'),
+        eval_freq=config.eval_freq,
+        n_eval_episodes=config.n_eval_episodes,
+        deterministic=True,
+        render=False,
+    )
+    callbacks.append(eval_callback)
+    dual_eval_callback = None  # No longer used
     
     # WandB callback (if enabled and available)
     if config.wandb_switch and wandb.run is not None:
@@ -719,7 +768,7 @@ def train(config: RLConfig):
         wandb_logging_callback = WandBLoggingCallback(
             eval_callback, 
             train_env, 
-            dual_eval_callback=dual_eval_callback,
+            dual_eval_callback=None,  # No longer used
             verbose=1
         )
         callbacks.append(wandb_logging_callback)

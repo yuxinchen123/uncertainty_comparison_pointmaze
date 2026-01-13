@@ -2,7 +2,7 @@
 Configuration system for RL training with intrinsic rewards.
 """
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 
 
 @dataclass
@@ -16,6 +16,11 @@ class RLConfig:
     env_name: str = 'PointMaze_Large-v3'
     grid_rows: int = 9
     grid_cols: int = 12
+    
+    # Goal mode configuration
+    goal_mode: str = 'single'  # 'single' or 'multi'
+    num_goals: int = 5  # Number of goals for multi-goal mode (sweepable)
+    fixed_goal_cell: Optional[Tuple[int, int]] = None  # Optional override for single-goal mode (row, col) 0-based
     
     # Uncertainty method
     uncertainty_method: str = 'rnd_linear_ls'  # Method name
