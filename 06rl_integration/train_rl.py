@@ -177,6 +177,215 @@ class DualEvalCallback(BaseCallback):
         return mean_reward, std_reward, episode_lengths
 
 
+class EnhancedEvalCallback(EvalCallback):
+    """
+    Enhanced evaluation callback that tracks both extrinsic and intrinsic+extrinsic rewards.
+    Computes intrinsic rewards during evaluation to see if policy is maximizing total reward.
+    """
+    
+    def __init__(self, eval_env, uncertainty_method=None, beta=1.0, 
+                 grid_rows=9, grid_cols=12, maze_map=None, goal_mode='single',
+                 num_goals=None, training_wrapper=None, *args, **kwargs):
+        """
+        Args:
+            eval_env: Evaluation environment
+            uncertainty_method: Uncertainty method for computing intrinsic rewards
+            beta: Intrinsic reward coefficient
+            grid_rows: Number of grid rows
+            grid_cols: Number of grid columns
+            maze_map: Maze map array
+            goal_mode: 'single' or 'multi'
+            num_goals: Number of goals for multi-goal mode
+            training_wrapper: IntrinsicRewardWrapper from training env (for training visit counts)
+            *args, **kwargs: Additional arguments for EvalCallback
+        """
+        super().__init__(eval_env, *args, **kwargs)
+        self.uncertainty_method = uncertainty_method
+        self.beta = beta
+        self.grid_rows = grid_rows
+        self.grid_cols = grid_cols
+        self.maze_map = maze_map
+        self.goal_mode = goal_mode
+        self.num_goals = num_goals
+        self.training_wrapper = training_wrapper  # For accessing training visit counts
+        
+        # Track intrinsic rewards per evaluation
+        self.evaluations_intrinsic_rewards = []  # List of lists (one per evaluation)
+        self.evaluations_extrinsic_rewards = []  # List of lists (one per evaluation)
+        self.evaluations_total_rewards = []  # List of lists (intrinsic + extrinsic)
+        self.evaluations_length = []  # List of lists (episode lengths per evaluation)
+        
+        # Ensure evaluations_results is initialized (base callback may not initialize it immediately)
+        if not hasattr(self, 'evaluations_results'):
+            self.evaluations_results = []
+        
+        # Track last evaluation step to avoid duplicate evaluations
+        self.last_eval_step = -1
+        
+        # Import utility for state to grid conversion
+        import sys
+        import os
+        utilities_path = os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities')
+        sys.path.insert(0, utilities_path)
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("utilities_evaluation", 
+                                                       os.path.join(utilities_path, "evaluation.py"))
+        utilities_evaluation = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(utilities_evaluation)
+        self.observation_to_grid = utilities_evaluation.observation_to_grid_notebook_exact
+    
+    def _state_to_grid(self, observation):
+        """Map observation to grid cell (0-based)"""
+        _, (row, col) = self.observation_to_grid(
+            observation,
+            grid_rows=self.grid_rows,
+            grid_cols=self.grid_cols
+        )
+        return row - 1, col - 1
+    
+    def _get_uncertainty(self, observation, goal_idx=None):
+        """
+        Get intrinsic reward (uncertainty) for an observation.
+        Uses training visit counts to reflect what the agent was trained on.
+        
+        Args:
+            observation: Current observation
+            goal_idx: Current goal index (for multi-goal mode)
+        """
+        if self.uncertainty_method is None or self.beta == 0.0:
+            return 0.0
+        
+        # Update GT method with training visit counts (for this goal if multi-goal)
+        # This reflects the exploration state during training, which is what the agent learned
+        if hasattr(self.uncertainty_method, 'update_visit_counts') and self.training_wrapper is not None:
+            training_visit_counts = self.training_wrapper.get_visit_counts()
+            if self.goal_mode == 'multi' and goal_idx is not None:
+                # Multi-goal: use training visit counts for this goal
+                if len(training_visit_counts.shape) == 3:
+                    goal_visit_counts = training_visit_counts[goal_idx]
+                    self.uncertainty_method.update_visit_counts(goal_visit_counts)
+                else:
+                    # Fallback: if shape is wrong, use all visit counts
+                    self.uncertainty_method.update_visit_counts(training_visit_counts)
+            else:
+                # Single-goal: use training visit counts directly
+                if len(training_visit_counts.shape) == 2:
+                    self.uncertainty_method.update_visit_counts(training_visit_counts)
+                else:
+                    # Fallback: if shape is wrong, use first goal's counts or all
+                    if len(training_visit_counts.shape) == 3:
+                        self.uncertainty_method.update_visit_counts(training_visit_counts[0])
+                    else:
+                        self.uncertainty_method.update_visit_counts(training_visit_counts)
+        
+        # Extract position from observation
+        if isinstance(observation, dict) and 'achieved_goal' in observation:
+            position = observation['achieved_goal'][:2]  # Take only x, y
+        elif isinstance(observation, np.ndarray):
+            position = observation[:2] if len(observation) >= 2 else observation
+        else:
+            return 0.0
+        
+        # Get uncertainty from method
+        position_array = np.array([position]).reshape(1, -1)
+        try:
+            uncertainty = self.uncertainty_method.get_uncertainty(position_array)
+            if isinstance(uncertainty, np.ndarray):
+                uncertainty_val = float(uncertainty[0] if len(uncertainty) > 0 else 0.0)
+            else:
+                uncertainty_val = float(uncertainty)
+            
+            # Handle NaN and inf values
+            if np.isnan(uncertainty_val) or np.isinf(uncertainty_val):
+                return 0.0
+            
+            return uncertainty_val
+        except:
+            return 0.0
+    
+    def _on_step(self) -> bool:
+        """
+        Override to run evaluation once and collect all necessary information
+        (extrinsic rewards, intrinsic rewards, episode lengths, total rewards).
+        """
+        # Check if it's time to evaluate (same logic as base EvalCallback)
+        # Use num_timesteps for consistency with other callbacks in this codebase
+        if (self.eval_freq > 0 and self.num_timesteps % self.eval_freq == 0 and 
+            self.num_timesteps != self.last_eval_step):
+            # Run evaluation once and collect all information
+            episode_extrinsic_rewards = []
+            episode_intrinsic_rewards = []
+            episode_total_rewards = []
+            episode_lengths = []
+            
+            for episode_idx in range(self.n_eval_episodes):
+                obs, info = self.eval_env.reset()
+                done = False
+                episode_extrinsic = 0.0
+                episode_intrinsic = 0.0
+                episode_length = 0
+                
+                # Get current goal index (for multi-goal mode)
+                goal_idx = None
+                if self.goal_mode == 'multi':
+                    if hasattr(self.eval_env, 'envs') and len(self.eval_env.envs) > 0:
+                        env = self.eval_env.envs[0]
+                        while hasattr(env, 'env'):
+                            if hasattr(env, 'get_current_goal_idx'):
+                                goal_idx = env.get_current_goal_idx()
+                                break
+                            env = env.env
+                
+                while not done:
+                    action, _ = self.model.predict(obs, deterministic=True)
+                    obs, reward, terminated, truncated, info = self.eval_env.step(action)
+                    done = terminated or truncated
+                    
+                    episode_extrinsic += reward
+                    episode_length += 1
+                    
+                    # Compute intrinsic reward using training visit counts
+                    # This reflects what the agent was trained on
+                    if self.uncertainty_method is not None and self.beta != 0.0:
+                        intrinsic_reward = self._get_uncertainty(obs, goal_idx=goal_idx)
+                        episode_intrinsic += intrinsic_reward * self.beta
+                
+                episode_extrinsic_rewards.append(episode_extrinsic)
+                episode_intrinsic_rewards.append(episode_intrinsic)
+                episode_total_rewards.append(episode_extrinsic + episode_intrinsic)
+                episode_lengths.append(episode_length)
+            
+            # Store results (compatible with base EvalCallback interface)
+            mean_reward = float(np.mean(episode_extrinsic_rewards))
+            self.evaluations_results.append(episode_extrinsic_rewards)
+            
+            # Store our additional metrics
+            self.evaluations_extrinsic_rewards.append(episode_extrinsic_rewards)
+            self.evaluations_intrinsic_rewards.append(episode_intrinsic_rewards)
+            self.evaluations_total_rewards.append(episode_total_rewards)
+            self.evaluations_length.append(episode_lengths)
+            
+            # Update best model if needed (same logic as base EvalCallback)
+            if self.best_mean_reward is None or mean_reward > self.best_mean_reward:
+                self.best_mean_reward = mean_reward
+                if self.best_model_save_path is not None:
+                    self.model.save(os.path.join(self.best_model_save_path, 'best_model'))
+            
+            # Log to logger if available
+            if self.logger is not None:
+                self.logger.record("eval/mean_reward", mean_reward)
+                self.logger.record("eval/mean_ep_length", float(np.mean(episode_lengths)))
+                if self.verbose > 0:
+                    print(f"Eval num_timesteps={self.num_timesteps}, "
+                          f"episode_reward={mean_reward:.2f} +/- {np.std(episode_extrinsic_rewards):.2f}, "
+                          f"episode_length={np.mean(episode_lengths):.2f} +/- {np.std(episode_lengths):.2f}")
+            
+            # Mark this step as evaluated
+            self.last_eval_step = self.num_timesteps
+        
+        return True
+
+
 class WandBLoggingCallback(BaseCallback):
     """
     Comprehensive callback to log all SB3 metrics directly to WandB.
@@ -291,6 +500,7 @@ class WandBLoggingCallback(BaseCallback):
                 self.last_episode_count = episode_count
                 return {
                     'episode/reward': float(latest_extrinsic_reward),  # Extrinsic only!
+                    'episode/intrinsic_reward': float(latest_intrinsic_reward),  # Intrinsic only!
                     'episode/length': int(latest_length),
                     'episode/number': episode_count,
                     'episode_extrinsic_intrinsic/reward': float(latest_total_reward),  # Extrinsic + intrinsic
@@ -385,10 +595,27 @@ class WandBLoggingCallback(BaseCallback):
                     try:
                         # Log global_step first to ensure x-axis represents actual training step
                         wandb.log({'global_step': eval_step}, step=eval_step, commit=False)
+                        # Log extrinsic rewards (from environment)
                         wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=eval_step, commit=False)
                         wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=eval_step, commit=False)
                         wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=eval_step, commit=False)
                         wandb.log({'eval/min_reward': float(np.min(latest_eval_rewards))}, step=eval_step, commit=False)
+                        
+                        # Log intrinsic+extrinsic rewards if available (from EnhancedEvalCallback)
+                        if isinstance(self.eval_callback, EnhancedEvalCallback):
+                            if len(self.eval_callback.evaluations_total_rewards) > i:
+                                total_rewards = self.eval_callback.evaluations_total_rewards[i]
+                                if len(total_rewards) > 0:
+                                    wandb.log({'eval_extrinsic_intrinsic/mean_reward': float(np.mean(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval_extrinsic_intrinsic/std_reward': float(np.std(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval_extrinsic_intrinsic/max_reward': float(np.max(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval_extrinsic_intrinsic/min_reward': float(np.min(total_rewards))}, step=eval_step, commit=False)
+                                
+                                # Also log intrinsic rewards separately
+                                if len(self.eval_callback.evaluations_intrinsic_rewards) > i:
+                                    intrinsic_rewards = self.eval_callback.evaluations_intrinsic_rewards[i]
+                                    if len(intrinsic_rewards) > 0:
+                                        wandb.log({'eval/mean_intrinsic_reward': float(np.mean(intrinsic_rewards))}, step=eval_step, commit=False)
                         
                         # Get episode length if available
                         eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
@@ -457,6 +684,7 @@ class WandBLoggingCallback(BaseCallback):
                 
                 # Log extrinsic-only metrics (existing group)
                 wandb.log({'episode/reward': episode_stats['episode/reward']}, step=current_step, commit=False)
+                wandb.log({'episode/intrinsic_reward': episode_stats['episode/intrinsic_reward']}, step=current_step, commit=False)
                 wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
                 wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
                 
@@ -663,6 +891,16 @@ def train(config: RLConfig):
     train_env = Monitor(train_env, config.log_dir)
     train_env = DummyVecEnv([lambda: train_env])
     
+    # Get maze map for evaluation callback
+    import sys
+    import os
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities'))
+    from environment import get_maze_map
+    try:
+        maze_map = get_maze_map()
+    except:
+        maze_map = None
+    
     # Create evaluation environments (WITHOUT intrinsic rewards for pure task performance metrics)
     print("Creating evaluation environments (extrinsic rewards only)...")
     print(f"  Goal mode: {config.goal_mode}")
@@ -745,10 +983,36 @@ def train(config: RLConfig):
     callbacks = []
     
     # Evaluation callback
-    # Use standard evaluation callback (works for both single and multi-goal modes)
-    print(f"✓ Using evaluation callback (goal_mode: {config.goal_mode})")
-    eval_callback = EvalCallback(
+    # Use enhanced evaluation callback that tracks intrinsic+extrinsic rewards
+    print(f"✓ Using enhanced evaluation callback (goal_mode: {config.goal_mode})")
+    
+    # Get uncertainty method, beta, and training wrapper from training environment
+    # Training wrapper provides visit counts that reflect what the agent was trained on
+    uncertainty_method_for_eval = None
+    beta_for_eval = 0.0
+    num_goals_for_eval = None
+    training_wrapper_for_eval = None
+    if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
+        env = train_env.envs[0]
+        while hasattr(env, 'env'):
+            if isinstance(env, IntrinsicRewardWrapper):
+                uncertainty_method_for_eval = env.uncertainty_method
+                beta_for_eval = env.beta
+                num_goals_for_eval = env.num_goals if env.goal_mode == 'multi' else None
+                training_wrapper_for_eval = env  # Keep reference for training visit counts
+                break
+            env = env.env
+    
+    eval_callback = EnhancedEvalCallback(
         eval_env,
+        uncertainty_method=uncertainty_method_for_eval,
+        beta=beta_for_eval,
+        grid_rows=config.grid_rows,
+        grid_cols=config.grid_cols,
+        maze_map=maze_map,
+        goal_mode=config.goal_mode,
+        num_goals=num_goals_for_eval,
+        training_wrapper=training_wrapper_for_eval,  # Pass training wrapper for training visit counts
         best_model_save_path=os.path.join(config.log_dir, 'best_model'),
         log_path=os.path.join(config.log_dir, 'eval'),
         eval_freq=config.eval_freq,

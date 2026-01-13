@@ -85,7 +85,7 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                 raise ValueError("num_goals must be provided for multi-goal mode")
             self.visit_counts = np.zeros((num_goals, self.grid_rows, self.grid_cols), dtype=int)
         else:
-            self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
+        self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
         
         # Track states for uncertainty model training (online updates)
         self.visited_states = []
@@ -191,7 +191,7 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                         self.visit_counts[goal_idx, row, col] += 1
                 else:
                     # Single-goal mode: single visit count matrix
-                    self.visit_counts[row, col] += 1
+                self.visit_counts[row, col] += 1
         
         # Track state for uncertainty model training (before getting uncertainty)
         if isinstance(obs, dict) and 'achieved_goal' in obs:
