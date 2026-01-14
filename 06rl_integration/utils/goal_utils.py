@@ -14,33 +14,51 @@ from environment import get_maze_map
 def get_valid_cells(env, maze_map=None):
     """
     Get all valid (non-wall) cell indices from the maze.
+    Uses the environment's actual maze_map to ensure consistency.
     
     Args:
-        env: PointMaze environment
+        env: PointMaze environment (or wrapped environment)
         maze_map: Optional maze map array. If None, extracted from env.
         
     Returns:
         valid_cells: List of (row, col) tuples for valid cells (0-based indexing)
     """
     if maze_map is None:
-        # Extract maze map from environment
-        unwrapped_env = env.unwrapped
+        # Extract maze map directly from environment instance
+        # Unwrap to get the base environment
+        unwrapped_env = env
+        while hasattr(unwrapped_env, 'env'):
+            unwrapped_env = unwrapped_env.env
+        unwrapped_env = unwrapped_env.unwrapped
+        
         if hasattr(unwrapped_env, 'maze') and hasattr(unwrapped_env.maze, 'maze_map'):
             maze_map = unwrapped_env.maze.maze_map
-            if not isinstance(maze_map, np.ndarray):
-                maze_map = np.array(maze_map)
         else:
             # Fallback: try to get from utilities
             maze_map = get_maze_map()
-            if not isinstance(maze_map, np.ndarray):
-                maze_map = np.array(maze_map)
     
+    # According to documentation, maze_map is list[list] where maze_map[i][j] is row i, col j
+    # Keep it as list of lists to match environment's internal format
+    # Get valid cells (where value is 0, meaning open cell)
+    # Documentation: 0 = open cell, 1 = wall
     valid_cells = []
-    rows, cols = maze_map.shape
-    for row in range(rows):
-        for col in range(cols):
-            if maze_map[row, col] == 0:  # Open cell
-                valid_cells.append((row, col))
+    if isinstance(maze_map, list):
+        # Handle list of lists (environment's native format)
+        for row in range(len(maze_map)):
+            for col in range(len(maze_map[row])):
+                # Check if cell is open (value is 0 or can be goal)
+                cell_value = maze_map[row][col]
+                if cell_value == 0 or cell_value == 'g' or cell_value == 'c':
+                    valid_cells.append((row, col))
+    else:
+        # Handle numpy array (fallback)
+        maze_map_array = np.array(maze_map) if not isinstance(maze_map, np.ndarray) else maze_map
+        rows, cols = maze_map_array.shape
+        for row in range(rows):
+            for col in range(cols):
+                cell_value = maze_map_array[row, col]
+                if cell_value == 0 or cell_value == 'g' or cell_value == 'c':
+                    valid_cells.append((row, col))
     
     return valid_cells
 
@@ -104,8 +122,10 @@ def select_fixed_goal(env, seed: int, goal_cell: Optional[Tuple[int, int]] = Non
         raise ValueError("No valid cells found in maze")
     
     # Use seed to deterministically select a goal
+    # Sort valid cells for reproducibility
+    valid_cells_sorted = sorted(valid_cells)
     rng = np.random.RandomState(seed)
-    goal_cell = valid_cells[rng.randint(len(valid_cells))]
+    goal_cell = valid_cells_sorted[rng.randint(len(valid_cells_sorted))]
     
     return goal_cell
 
@@ -143,12 +163,12 @@ def select_diverse_goals(env, n_goals: int, seed: int, maze_map=None) -> List[Tu
         unwrapped_env = env.unwrapped
         if hasattr(unwrapped_env, 'maze') and hasattr(unwrapped_env.maze, 'maze_map'):
             maze_map = unwrapped_env.maze.maze_map
-            if not isinstance(maze_map, np.ndarray):
-                maze_map = np.array(maze_map)
         else:
             maze_map = get_maze_map()
-            if not isinstance(maze_map, np.ndarray):
-                maze_map = np.array(maze_map)
+    
+    # Ensure maze_map is a numpy array (convert from list if needed)
+    if not isinstance(maze_map, np.ndarray):
+        maze_map = np.array(maze_map)
     
     grid_rows, grid_cols = maze_map.shape
     

@@ -100,8 +100,12 @@ class GoalWrapper(gym.Wrapper):
         if self.goal_mode == 'single':
             # Single-goal: always use fixed goal
             goal_coords = self._cell_to_goal_coords(self.fixed_goal_cell)
-            # Convert to 1-based indexing for goal_cell (PointMaze expects 1-based)
-            reset_options['goal_cell'] = np.array([self.fixed_goal_cell[0] + 1, self.fixed_goal_cell[1] + 1], dtype=int)
+            # PointMaze expects goal_cell as [i, j]
+            # Documentation says numpy.ndarray, but actual implementation accepts Python list
+            # The environment uses 0-based indexing: maze_map[i][j] where i=row, j=col
+            # Our fixed_goal_cell is already 0-based (row, col)
+            # Use Python list format (tested to work with environment)
+            reset_options['goal_cell'] = [int(self.fixed_goal_cell[0]), int(self.fixed_goal_cell[1])]
             self.current_goal_cell = self.fixed_goal_cell
         else:
             # Multi-goal: sample a goal uniformly (use environment's RNG for randomness)
@@ -110,8 +114,12 @@ class GoalWrapper(gym.Wrapper):
             self.current_goal_idx = np.random.randint(len(self.goal_cells))
             self.current_goal_cell = self.goal_cells[self.current_goal_idx]
             goal_coords = self._cell_to_goal_coords(self.current_goal_cell)
-            # Convert to 1-based indexing for goal_cell (PointMaze expects 1-based)
-            reset_options['goal_cell'] = np.array([self.current_goal_cell[0] + 1, self.current_goal_cell[1] + 1], dtype=int)
+            # PointMaze expects goal_cell as [i, j]
+            # Documentation says numpy.ndarray, but actual implementation accepts Python list
+            # The environment uses 0-based indexing: maze_map[i][j] where i=row, j=col
+            # Our current_goal_cell is already 0-based (row, col)
+            # Use Python list format (tested to work with environment)
+            reset_options['goal_cell'] = [int(self.current_goal_cell[0]), int(self.current_goal_cell[1])]
         
         # Reset environment with goal
         obs, info = self.env.reset(seed=seed, options=reset_options)

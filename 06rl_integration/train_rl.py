@@ -225,23 +225,47 @@ class EnhancedEvalCallback(EvalCallback):
         # Import utility for state to grid conversion
         import sys
         import os
-        utilities_path = os.path.join(os.path.dirname(__file__), '../../01sweep_uncertainty/utilities')
-        sys.path.insert(0, utilities_path)
         import importlib.util
-        spec = importlib.util.spec_from_file_location("utilities_evaluation", 
-                                                       os.path.join(utilities_path, "evaluation.py"))
-        utilities_evaluation = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(utilities_evaluation)
-        self.observation_to_grid = utilities_evaluation.observation_to_grid_notebook_exact
+        # Path from 06rl_integration to 01sweep_uncertainty/utilities
+        # Use absolute path resolution
+        current_file_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_file_dir))  # Go up to RND
+        utilities_path = os.path.join(project_root, '01sweep_uncertainty', 'utilities')
+        evaluation_file = os.path.join(utilities_path, 'evaluation.py')
+        if os.path.exists(evaluation_file):
+            try:
+                spec = importlib.util.spec_from_file_location("utilities_evaluation", evaluation_file)
+                utilities_evaluation = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(utilities_evaluation)
+                self.observation_to_grid = utilities_evaluation.observation_to_grid_notebook_exact
+            except Exception as e:
+                print(f"Warning: Could not import observation_to_grid_notebook_exact: {e}")
+                self.observation_to_grid = None
+        else:
+            print(f"Warning: evaluation.py not found at {evaluation_file}")
+            self.observation_to_grid = None
     
     def _state_to_grid(self, observation):
         """Map observation to grid cell (0-based)"""
-        _, (row, col) = self.observation_to_grid(
-            observation,
-            grid_rows=self.grid_rows,
-            grid_cols=self.grid_cols
-        )
-        return row - 1, col - 1
+        if self.observation_to_grid is not None:
+            _, (row, col) = self.observation_to_grid(
+                observation,
+                grid_rows=self.grid_rows,
+                grid_cols=self.grid_cols
+            )
+            return row - 1, col - 1
+        else:
+            # Fallback: simple extraction (not used in current implementation)
+            if isinstance(observation, dict) and 'achieved_goal' in observation:
+                x, y = observation['achieved_goal'][0], observation['achieved_goal'][1]
+            elif isinstance(observation, np.ndarray):
+                x, y = observation[0], observation[1]
+            else:
+                return 0, 0
+            # Simple grid mapping (approximate)
+            col = int((x + 6.0) / (12.0 / self.grid_cols))
+            row = int((4.5 - y) / (9.0 / self.grid_rows))
+            return max(0, min(row, self.grid_rows - 1)), max(0, min(col, self.grid_cols - 1))
     
     def _get_uncertainty(self, observation, goal_idx=None):
         """
@@ -279,10 +303,22 @@ class EnhancedEvalCallback(EvalCallback):
                         self.uncertainty_method.update_visit_counts(training_visit_counts)
         
         # Extract position from observation
+        # VecEnv returns batched observations, so we need to handle both batched and non-batched
         if isinstance(observation, dict) and 'achieved_goal' in observation:
-            position = observation['achieved_goal'][:2]  # Take only x, y
+            achieved_goal = observation['achieved_goal']
+            # Handle batched (VecEnv) and non-batched observations
+            if isinstance(achieved_goal, np.ndarray) and len(achieved_goal.shape) > 1:
+                # Batched: shape (1, 2) or (batch_size, 2) - take first element
+                position = achieved_goal[0, :2] if achieved_goal.shape[1] >= 2 else achieved_goal[0]
+            else:
+                # Non-batched: shape (2,) - take first 2 elements
+                position = achieved_goal[:2] if len(achieved_goal) >= 2 else achieved_goal
         elif isinstance(observation, np.ndarray):
-            position = observation[:2] if len(observation) >= 2 else observation
+            # Handle batched and non-batched
+            if len(observation.shape) > 1:
+                position = observation[0, :2] if observation.shape[1] >= 2 else observation[0]
+            else:
+                position = observation[:2] if len(observation) >= 2 else observation
         else:
             return 0.0
         
@@ -319,7 +355,8 @@ class EnhancedEvalCallback(EvalCallback):
             episode_lengths = []
             
             for episode_idx in range(self.n_eval_episodes):
-                obs, info = self.eval_env.reset()
+                # VecEnv.reset() returns just the observation, not (obs, info)
+                obs = self.eval_env.reset()
                 done = False
                 episode_extrinsic = 0.0
                 episode_intrinsic = 0.0
@@ -338,8 +375,12 @@ class EnhancedEvalCallback(EvalCallback):
                 
                 while not done:
                     action, _ = self.model.predict(obs, deterministic=True)
-                    obs, reward, terminated, truncated, info = self.eval_env.step(action)
-                    done = terminated or truncated
+                    # VecEnv.step() returns (obs, rewards, dones, infos)
+                    # where rewards and dones are arrays, infos is a list of dicts
+                    obs, rewards, dones, infos = self.eval_env.step(action)
+                    done = dones[0] if isinstance(dones, (list, np.ndarray)) else dones
+                    reward = rewards[0] if isinstance(rewards, (list, np.ndarray)) else rewards
+                    info = infos[0] if isinstance(infos, list) and len(infos) > 0 else {}
                     
                     episode_extrinsic += reward
                     episode_length += 1
@@ -1004,7 +1045,7 @@ def train(config: RLConfig):
             env = env.env
     
     eval_callback = EnhancedEvalCallback(
-        eval_env,
+            eval_env,
         uncertainty_method=uncertainty_method_for_eval,
         beta=beta_for_eval,
         grid_rows=config.grid_rows,
@@ -1013,13 +1054,13 @@ def train(config: RLConfig):
         goal_mode=config.goal_mode,
         num_goals=num_goals_for_eval,
         training_wrapper=training_wrapper_for_eval,  # Pass training wrapper for training visit counts
-        best_model_save_path=os.path.join(config.log_dir, 'best_model'),
-        log_path=os.path.join(config.log_dir, 'eval'),
-        eval_freq=config.eval_freq,
-        n_eval_episodes=config.n_eval_episodes,
-        deterministic=True,
-        render=False,
-    )
+            best_model_save_path=os.path.join(config.log_dir, 'best_model'),
+            log_path=os.path.join(config.log_dir, 'eval'),
+            eval_freq=config.eval_freq,
+            n_eval_episodes=config.n_eval_episodes,
+            deterministic=True,
+            render=False,
+        )
     callbacks.append(eval_callback)
     dual_eval_callback = None  # No longer used
     
