@@ -1207,6 +1207,14 @@ def main():
     parser.add_argument('--grid_cols', type=int, default=12,
                        help='Number of grid columns')
     
+    # Goal mode parameters
+    parser.add_argument('--goal_mode', type=str, default='single', choices=['single', 'multi'],
+                       help='Goal mode: single (fixed goal) or multi (N diverse goals)')
+    parser.add_argument('--num_goals', type=int, default=5,
+                       help='Number of goals for multi-goal mode (ignored for single-goal)')
+    parser.add_argument('--fixed_goal_cell', type=str, default=None,
+                       help='Fixed goal cell for single-goal mode as "row,col" (optional, 0-based)')
+    
     # WandB logging
     parser.add_argument('--wandb_switch', type=str, default='true', choices=['true', 'false'],
                        help='Enable WandB logging (true/false)')
@@ -1255,6 +1263,11 @@ def main():
         args.env_name = sweep_config.get('env_name', args.env_name)
         args.grid_rows = sweep_config.get('grid_rows', args.grid_rows)
         args.grid_cols = sweep_config.get('grid_cols', args.grid_cols)
+        
+        # Goal mode parameters
+        args.goal_mode = sweep_config.get('goal_mode', args.goal_mode)
+        args.num_goals = sweep_config.get('num_goals', args.num_goals)
+        args.fixed_goal_cell = sweep_config.get('fixed_goal_cell', args.fixed_goal_cell)
     
     # Initialize WandB if not in sweep and wandb_switch is enabled
     wandb_switch = args.wandb_switch.lower() == 'true'
@@ -1299,6 +1312,20 @@ def main():
     config.env_name = args.env_name
     config.grid_rows = args.grid_rows
     config.grid_cols = args.grid_cols
+    
+    # Goal mode parameters
+    config.goal_mode = args.goal_mode
+    config.num_goals = args.num_goals
+    # Parse fixed_goal_cell if provided (format: "row,col")
+    if args.fixed_goal_cell is not None and args.fixed_goal_cell != '':
+        try:
+            row, col = map(int, args.fixed_goal_cell.split(','))
+            config.fixed_goal_cell = (row, col)
+        except ValueError:
+            print(f"⚠️  Warning: Invalid fixed_goal_cell format '{args.fixed_goal_cell}'. Expected 'row,col'. Ignoring.")
+            config.fixed_goal_cell = None
+    else:
+        config.fixed_goal_cell = None
     
     # Update uncertainty config
     config.uncertainty_config.update({
