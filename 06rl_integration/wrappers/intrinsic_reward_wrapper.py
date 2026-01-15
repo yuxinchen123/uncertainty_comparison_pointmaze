@@ -142,16 +142,28 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         Get uncertainty for a given observation.
         
         Args:
-            observation: Gymnasium observation
+            observation: Gymnasium observation (can be dict or VecEnv batched dict)
             
         Returns:
             uncertainty: Scalar uncertainty value
         """
         # Extract position from observation
+        # Handle both regular and VecEnv batched observations
         if isinstance(observation, dict) and 'achieved_goal' in observation:
-            position = observation['achieved_goal'][:2]  # Take only x, y
+            achieved_goal = observation['achieved_goal']
+            # Handle batched (VecEnv) and non-batched observations
+            if isinstance(achieved_goal, np.ndarray) and len(achieved_goal.shape) > 1:
+                # Batched: shape (1, 2) or (batch_size, 2) - take first element
+                position = achieved_goal[0, :2] if achieved_goal.shape[1] >= 2 else achieved_goal[0]
+            else:
+                # Non-batched: shape (2,) - take first 2 elements
+                position = achieved_goal[:2] if len(achieved_goal) >= 2 else achieved_goal
         elif isinstance(observation, np.ndarray):
-            position = observation[:2] if len(observation) >= 2 else observation
+            # Handle batched and non-batched
+            if len(observation.shape) > 1:
+                position = observation[0, :2] if observation.shape[1] >= 2 else observation[0]
+            else:
+                position = observation[:2] if len(observation) >= 2 else observation
         else:
             raise ValueError(f"Invalid observation format: {type(observation)}")
         
@@ -161,7 +173,9 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         
         # Return scalar, handling NaN and inf values
         if isinstance(uncertainty, np.ndarray):
-            uncertainty_val = float(uncertainty[0] if len(uncertainty) > 0 else 0.0)
+            if len(uncertainty) == 0:
+                return 0.0
+            uncertainty_val = float(uncertainty[0])
         else:
             uncertainty_val = float(uncertainty)
         
@@ -203,6 +217,21 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         else:
             state = None
         
+        # CRITICAL: Update GT method's visit counts BEFORE getting uncertainty
+        # This ensures GT method uses current visit counts, not stale ones
+        # For multi-goal mode, pass the visit counts for the current goal
+        visit_counts_to_update = self.visit_counts
+        if self.goal_mode == 'multi':
+            goal_idx = self._get_current_goal_idx()
+            if goal_idx is not None:
+                visit_counts_to_update = self.visit_counts[goal_idx]
+        
+        if hasattr(self.uncertainty_method, 'update_visit_counts'):
+            self.uncertainty_method.update_visit_counts(visit_counts_to_update)
+        elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
+            # If wrapped in adapter, update the underlying method
+            self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
+        
         # Get intrinsic reward (skip if beta=0 since it will be multiplied by 0 anyway)
         if self.beta == 0.0:
             intrinsic_reward = 0.0
@@ -220,20 +249,6 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                     # For now, we'll let the adapter handle this, but if called directly,
                     # we could train here. However, adapters are preferred.
                     pass
-            
-            # If using GT method, update its visit counts
-            # For multi-goal mode, pass the visit counts for the current goal
-            visit_counts_to_update = self.visit_counts
-            if self.goal_mode == 'multi':
-                goal_idx = self._get_current_goal_idx()
-                if goal_idx is not None:
-                    visit_counts_to_update = self.visit_counts[goal_idx]
-            
-            if hasattr(self.uncertainty_method, 'update_visit_counts'):
-                self.uncertainty_method.update_visit_counts(visit_counts_to_update)
-            elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
-                # If wrapped in adapter, update the underlying method
-                self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
         
         # Combine rewards: r_total = r_extrinsic + beta * r_intrinsic
         reward_total = reward_extrinsic + self.beta * intrinsic_reward

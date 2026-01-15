@@ -219,6 +219,10 @@ class EnhancedEvalCallback(EvalCallback):
         if not hasattr(self, 'evaluations_results'):
             self.evaluations_results = []
         
+        # Ensure evaluations_timesteps is initialized (needed for WandB logging)
+        if not hasattr(self, 'evaluations_timesteps'):
+            self.evaluations_timesteps = []
+        
         # Track last evaluation step to avoid duplicate evaluations
         self.last_eval_step = -1
         
@@ -399,6 +403,8 @@ class EnhancedEvalCallback(EvalCallback):
             # Store results (compatible with base EvalCallback interface)
             mean_reward = float(np.mean(episode_extrinsic_rewards))
             self.evaluations_results.append(episode_extrinsic_rewards)
+            # CRITICAL: Set evaluations_timesteps so WandB logging callback can find evaluations
+            self.evaluations_timesteps.append(self.num_timesteps)
             
             # Store our additional metrics
             self.evaluations_extrinsic_rewards.append(episode_extrinsic_rewards)
@@ -507,24 +513,29 @@ class WandBLoggingCallback(BaseCallback):
                 
                 # Get extrinsic and intrinsic rewards from IntrinsicRewardWrapper
                 # Note: When an episode completes, Monitor records it, but the wrapper might have
-                # already been reset. However, Monitor records the episode BEFORE reset, so we check
-                # the wrapper's current episode stats. If it's been reset (value is 0), we use the
-                # last value we saw. Otherwise, we use the current value.
+                # already been reset. We need to capture episode stats BEFORE the reset happens.
+                # Strategy: Use the continuously tracked values from _on_step(), which are updated
+                # every step during the episode. These values are captured BEFORE wrapper reset.
                 if self.intrinsic_wrapper is not None:
-                    episode_stats = self.intrinsic_wrapper.get_episode_statistics()
-                    current_episode_extrinsic = episode_stats.get('episode_extrinsic_reward', 0.0)
-                    current_episode_intrinsic = episode_stats.get('episode_intrinsic_reward', 0.0)
+                    # Always use the continuously tracked values first (most reliable)
+                    # These are updated every step in _on_step() and capture values before reset
+                    latest_extrinsic_reward = self.last_seen_episode_extrinsic
+                    latest_intrinsic_reward = self.last_seen_episode_intrinsic
                     
-                    # If the wrapper has been reset (current value is 0 or very small), use the last seen value
-                    # Otherwise, use the current value (episode just completed, wrapper not reset yet)
-                    if current_episode_extrinsic > 0.01:  # Episode not reset yet
-                        latest_extrinsic_reward = current_episode_extrinsic
-                        latest_intrinsic_reward = current_episode_intrinsic
-                        self.last_seen_episode_extrinsic = current_episode_extrinsic
-                        self.last_seen_episode_intrinsic = current_episode_intrinsic
-                    else:  # Wrapper has been reset, use last seen value
-                        latest_extrinsic_reward = self.last_seen_episode_extrinsic
-                        latest_intrinsic_reward = self.last_seen_episode_intrinsic
+                    # Fallback: If tracked values are both 0, try to get from wrapper
+                    # (This handles edge cases where tracking might have failed)
+                    if latest_extrinsic_reward == 0.0 and latest_intrinsic_reward == 0.0:
+                        episode_stats = self.intrinsic_wrapper.get_episode_statistics()
+                        current_episode_extrinsic = episode_stats.get('episode_extrinsic_reward', 0.0)
+                        current_episode_intrinsic = episode_stats.get('episode_intrinsic_reward', 0.0)
+                        
+                        # If wrapper hasn't been reset yet, use current values
+                        if current_episode_extrinsic > 0.0 or current_episode_intrinsic > 0.0:
+                            latest_extrinsic_reward = current_episode_extrinsic
+                            latest_intrinsic_reward = current_episode_intrinsic
+                            # Update tracked values for next time
+                            self.last_seen_episode_extrinsic = current_episode_extrinsic
+                            self.last_seen_episode_intrinsic = current_episode_intrinsic
                     
                     # Store for reference
                     self.last_episode_extrinsic_rewards.append(latest_extrinsic_reward)
@@ -539,14 +550,21 @@ class WandBLoggingCallback(BaseCallback):
                 latest_total_reward = latest_extrinsic_reward + latest_intrinsic_reward
                 
                 self.last_episode_count = episode_count
+                
+                # CRITICAL: Reset tracked values after logging to prevent stale values from carrying over
+                # to the next episode. The next episode will start fresh and track its own values.
+                # We reset AFTER capturing the values for this episode, but BEFORE the next episode starts.
+                # Note: The wrapper has already been reset (episode stats = 0), so we reset our tracking too.
+                self.last_seen_episode_extrinsic = 0.0
+                self.last_seen_episode_intrinsic = 0.0
+                
                 return {
                     'episode/reward': float(latest_extrinsic_reward),  # Extrinsic only!
                     'episode/intrinsic_reward': float(latest_intrinsic_reward),  # Intrinsic only!
                     'episode/length': int(latest_length),
                     'episode/number': episode_count,
                     'episode_extrinsic_intrinsic/reward': float(latest_total_reward),  # Extrinsic + intrinsic
-                    'episode_extrinsic_intrinsic/length': int(latest_length),
-                    'episode_extrinsic_intrinsic/number': episode_count,
+                    # NOTE: length and number are the same regardless of reward type, so only log reward here
                 }
         except Exception as e:
             if self.verbose > 0:
@@ -706,14 +724,20 @@ class WandBLoggingCallback(BaseCallback):
         
         # 3. Log episode metrics when episodes complete (like MRQ does when episodes end)
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
-        # Track episode extrinsic and intrinsic rewards before checking monitor stats (in case wrapper gets reset)
+        # CRITICAL: Track episode extrinsic and intrinsic rewards continuously during the episode
+        # This must happen BEFORE wrapper reset, so we capture values even when extrinsic reward is 0
         if self.intrinsic_wrapper is not None:
             episode_stats_temp = self.intrinsic_wrapper.get_episode_statistics()
             current_ep_extrinsic = episode_stats_temp.get('episode_extrinsic_reward', 0.0)
             current_ep_intrinsic = episode_stats_temp.get('episode_intrinsic_reward', 0.0)
-            if current_ep_extrinsic > 0.01:  # Only update if episode not reset yet
+            
+            # Update tracked values whenever we see non-zero rewards OR when we're in an active episode
+            # This ensures we capture intrinsic rewards even when extrinsic is 0 (agent exploring but not reaching goal)
+            if current_ep_extrinsic > 0.0 or current_ep_intrinsic > 0.0:
+                # Episode is active and accumulating rewards - update tracked values
                 self.last_seen_episode_extrinsic = current_ep_extrinsic
                 self.last_seen_episode_intrinsic = current_ep_intrinsic
+            # Note: If both are 0, the wrapper might have been reset, so we keep the last seen values
         
         episode_stats = self._get_monitor_stats()
         if episode_stats:
@@ -729,10 +753,8 @@ class WandBLoggingCallback(BaseCallback):
                 wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
                 wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
                 
-                # Log extrinsic + intrinsic metrics (new group)
+                # Log extrinsic + intrinsic metrics (only reward - length/number are the same regardless of reward type)
                 wandb.log({'episode_extrinsic_intrinsic/reward': episode_stats['episode_extrinsic_intrinsic/reward']}, step=current_step, commit=False)
-                wandb.log({'episode_extrinsic_intrinsic/length': episode_stats['episode_extrinsic_intrinsic/length']}, step=current_step, commit=False)
-                wandb.log({'episode_extrinsic_intrinsic/number': episode_stats['episode_extrinsic_intrinsic/number']}, step=current_step, commit=False)
                 
                 wandb.log({'episode/current_t': current_step}, step=current_step, commit=True)
             except Exception as e:

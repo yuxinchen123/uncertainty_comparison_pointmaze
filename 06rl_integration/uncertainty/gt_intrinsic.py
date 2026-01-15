@@ -101,6 +101,9 @@ class GTIntrinsicReward:
                     uncertainty = np.nan  # Wall cell
             else:
                 uncertainty = np.nan  # Out of bounds
+            
+            # Append uncertainty to list
+            uncertainties.append(uncertainty)
         
         return np.array(uncertainties)
 
