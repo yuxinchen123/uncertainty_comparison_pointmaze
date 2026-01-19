@@ -40,6 +40,10 @@ parameters:
   n_eval_episodes:
     value: 100
   
+  # Visualization
+  heatmap_log_freq:
+    value: 10000  # Log visit count heatmap every 10k steps (0 to disable)
+  
   # Fixed parameters
   env_name:
     value: 'PointMaze_Large-v3'

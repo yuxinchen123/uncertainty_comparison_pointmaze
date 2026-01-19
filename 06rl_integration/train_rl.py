@@ -42,6 +42,7 @@ from uncertainty.integration import create_uncertainty_method
 from uncertainty.gt_intrinsic import GTIntrinsicReward
 from buffers.intrinsic_replay_buffer import IntrinsicReplayBuffer
 from buffers.dict_intrinsic_replay_buffer import DictIntrinsicReplayBuffer
+from callbacks.visit_count_heatmap_callback import VisitCountHeatmapCallback
 
 
 class IntrinsicRewardCallback:
@@ -276,7 +277,11 @@ class EnhancedEvalCallback(EvalCallback):
     def _get_uncertainty(self, observation, goal_idx=None):
         """
         Get intrinsic reward (uncertainty) for an observation.
-        Uses training visit counts to reflect what the agent was trained on.
+        Uses TRAINING visit counts to reflect what the agent was trained on.
+        
+        IMPORTANT: This uses training visit counts, NOT evaluation visit counts.
+        This ensures evaluation intrinsic rewards reflect the exploration state
+        that the agent learned from during training.
         
         Args:
             observation: Current observation
@@ -877,9 +882,9 @@ def create_env(config, uncertainty_method, gt_tracker=None):
     return env, gt_tracker
 
 
-def create_eval_env(config, continuing_task=False):
+def create_eval_env(config, continuing_task=False, track_visit_counts=False):
     """
-    Create evaluation environment WITHOUT intrinsic rewards.
+    Create evaluation environment.
     Evaluation metrics should only reflect extrinsic (task) performance.
     Uses the same goal selection as training (fixed goal for single, same N goals for multi).
     
@@ -887,9 +892,11 @@ def create_eval_env(config, continuing_task=False):
         config: RLConfig object
         continuing_task: If True, episode continues after reaching goal (new goal generated).
                         If False, episode terminates when goal is reached.
+        track_visit_counts: If True, add IntrinsicRewardWrapper with beta=0 to track visit counts
+                           for heatmap visualization (doesn't affect rewards)
         
     Returns:
-        env: Base environment with GoalWrapper (no IntrinsicRewardWrapper)
+        env: Base environment with GoalWrapper (optionally with IntrinsicRewardWrapper for tracking)
     """
     # Create base environment
     env = make_pointmaze_env(config.env_name, seed=config.a_seed, continuing_task=continuing_task)
@@ -914,7 +921,7 @@ def create_eval_env(config, continuing_task=False):
     else:
         raise ValueError(f"Invalid goal_mode: {config.goal_mode}. Must be 'single' or 'multi'")
     
-    # Wrap with GoalWrapper (no intrinsic rewards for evaluation)
+    # Wrap with GoalWrapper
     env = GoalWrapper(
         env,
         goal_mode=config.goal_mode,
@@ -923,6 +930,34 @@ def create_eval_env(config, continuing_task=False):
         grid_rows=config.grid_rows,
         grid_cols=config.grid_cols
     )
+    
+    # Optionally add IntrinsicRewardWrapper for visit count tracking (with beta=0)
+    # This allows heatmap visualization without affecting evaluation rewards
+    # IMPORTANT: The visit counts tracked here are ONLY for heatmap visualization.
+    # Evaluation intrinsic rewards are computed using TRAINING visit counts (passed to
+    # EnhancedEvalCallback via training_wrapper), NOT these evaluation visit counts.
+    # This ensures evaluation intrinsic rewards reflect what the agent was trained on.
+    if track_visit_counts:
+        # Create a dummy GT method for tracking (won't be used for rewards since beta=0)
+        # The visit counts from this wrapper are separate from training visit counts
+        # and are only used for heatmap visualization
+        gt_method = GTIntrinsicReward(
+            grid_rows=config.grid_rows,
+            grid_cols=config.grid_cols,
+            maze_map=maze_map
+        )
+        num_goals = len(goal_cells) if goal_cells else None
+        env = IntrinsicRewardWrapper(
+            env,
+            uncertainty_method=gt_method,
+            beta=0.0,  # beta=0 means intrinsic rewards are computed but NOT added to reward signal
+            # Visit counts tracked here are ONLY for heatmap visualization, not for intrinsic reward calculation
+            grid_rows=config.grid_rows,
+            grid_cols=config.grid_cols,
+            maze_map=maze_map,
+            goal_mode=config.goal_mode,
+            num_goals=num_goals
+        )
     
     return env
 
@@ -982,10 +1017,13 @@ def train(config: RLConfig):
     except:
         maze_map = None
     
-    # Create evaluation environments (WITHOUT intrinsic rewards for pure task performance metrics)
-    print("Creating evaluation environments (extrinsic rewards only)...")
+    # Create evaluation environments
+    # track_visit_counts=True adds IntrinsicRewardWrapper with beta=0 for heatmap visualization
+    # (intrinsic rewards computed but not added, so evaluation metrics remain pure task performance)
+    print("Creating evaluation environments...")
     print(f"  Goal mode: {config.goal_mode}")
-    eval_env = create_eval_env(config, continuing_task=False)
+    track_eval_visits = config.heatmap_log_freq > 0 and config.wandb_switch  # Track if heatmaps enabled
+    eval_env = create_eval_env(config, continuing_task=False, track_visit_counts=track_eval_visits)
     eval_env = Monitor(eval_env, os.path.join(config.log_dir, 'eval'))
     eval_env = DummyVecEnv([lambda: eval_env])
     
@@ -1240,6 +1278,46 @@ def train(config: RLConfig):
         name_prefix='rl_model',
     )
     callbacks.append(checkpoint_callback)
+    
+    # Visit count heatmap callback (if enabled and WandB is active)
+    if config.heatmap_log_freq > 0 and config.wandb_switch and wandb.run is not None:
+        # Get goal cells for visualization
+        goal_cells_for_heatmap = None
+        if config.goal_mode == 'single':
+            # Get fixed goal from training environment
+            if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
+                env = train_env.envs[0]
+                while hasattr(env, 'env'):
+                    if hasattr(env, 'fixed_goal_cell'):
+                        goal_cells_for_heatmap = [env.fixed_goal_cell]
+                        break
+                    env = env.env
+        elif config.goal_mode == 'multi':
+            # Get goal cells from training environment
+            if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
+                env = train_env.envs[0]
+                while hasattr(env, 'env'):
+                    if hasattr(env, 'goal_cells'):
+                        goal_cells_for_heatmap = env.goal_cells
+                        break
+                    env = env.env
+        
+        # Get start cell if available (PointMaze typically starts at a fixed location)
+        # For PointMaze_Large-v3, start is typically at (0, 0) in continuous space
+        # which maps to approximately row=8, col=0 in grid space (bottom-left)
+        start_cell = None  # Can be set if start location is known
+        
+        print(f"✓ Adding visit count heatmap callback (logs every {config.heatmap_log_freq} steps)")
+        heatmap_callback = VisitCountHeatmapCallback(
+            train_env=train_env,
+            eval_env=eval_env,
+            log_freq=config.heatmap_log_freq,
+            maze_map=maze_map,
+            goal_cells=goal_cells_for_heatmap,
+            start_cell=start_cell,
+            verbose=1
+        )
+        callbacks.append(heatmap_callback)
     
     # Note: Uncertainty model updates happen in the wrapper's step method
     # The wrapper calls update_with_batch every step, and the adapter handles
