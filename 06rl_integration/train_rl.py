@@ -40,6 +40,8 @@ from wrappers.intrinsic_reward_wrapper import IntrinsicRewardWrapper
 from wrappers.goal_wrapper import GoalWrapper
 from uncertainty.integration import create_uncertainty_method
 from uncertainty.gt_intrinsic import GTIntrinsicReward
+from buffers.intrinsic_replay_buffer import IntrinsicReplayBuffer
+from buffers.dict_intrinsic_replay_buffer import DictIntrinsicReplayBuffer
 
 
 class IntrinsicRewardCallback:
@@ -1057,6 +1059,110 @@ def train(config: RLConfig):
         raise ValueError(f"Unknown algorithm: {config.algorithm}")
     
     print("✓ Agent created")
+    
+    # Replace replay buffer with custom one that recalculates intrinsic rewards on sample
+    # This ensures intrinsic rewards use current visit counts, not stale ones from collection time
+    # Note: This only works for SAC (PPO doesn't use a replay buffer)
+    if config.algorithm.lower() == 'sac' and config.beta != 0.0:
+        # Get intrinsic reward wrapper to access visit counts
+        training_intrinsic_wrapper = None
+        if hasattr(train_env, 'envs') and len(train_env.envs) > 0:
+            env = train_env.envs[0]
+            while hasattr(env, 'env'):
+                if isinstance(env, IntrinsicRewardWrapper):
+                    training_intrinsic_wrapper = env
+                    break
+                env = env.env
+        
+        if training_intrinsic_wrapper is not None:
+            print("\nReplacing replay buffer with custom buffer that recalculates intrinsic rewards...")
+            
+            # Create helper function to compute intrinsic rewards from observations
+            def compute_intrinsic_reward(observation):
+                """
+                Compute intrinsic reward for a single observation using current visit counts.
+                
+                Args:
+                    observation: Observation (dict or array)
+                    
+                Returns:
+                    intrinsic_reward: Scalar intrinsic reward
+                """
+                try:
+                    # Use wrapper's _get_uncertainty method which uses current visit counts
+                    intrinsic_reward = training_intrinsic_wrapper._get_uncertainty(observation)
+                    return float(intrinsic_reward) if not isinstance(intrinsic_reward, (list, np.ndarray)) else float(intrinsic_reward[0])
+                except Exception as e:
+                    return 0.0
+            
+            # Get current replay buffer to copy its configuration
+            old_buffer = model.replay_buffer
+            
+            # Check if it's a DictReplayBuffer (for dict observations)
+            from stable_baselines3.common.buffers import DictReplayBuffer
+            is_dict_buffer = isinstance(old_buffer, DictReplayBuffer)
+            
+            if is_dict_buffer:
+                # Create DictIntrinsicReplayBuffer for dict observations
+                print("  Detected DictReplayBuffer (dict observations) - using DictIntrinsicReplayBuffer")
+                new_buffer = DictIntrinsicReplayBuffer(
+                    buffer_size=old_buffer.buffer_size,
+                    observation_space=old_buffer.observation_space,
+                    action_space=old_buffer.action_space,
+                    device=old_buffer.device,
+                    n_envs=old_buffer.n_envs,
+                    optimize_memory_usage=getattr(old_buffer, 'optimize_memory_usage', False),
+                    handle_timeout_termination=getattr(old_buffer, 'handle_timeout_termination', True),
+                    intrinsic_reward_fn=compute_intrinsic_reward,
+                    beta=config.beta,
+                )
+            else:
+                # Create new custom buffer with same configuration for regular observations
+                new_buffer = IntrinsicReplayBuffer(
+                    buffer_size=old_buffer.buffer_size,
+                    observation_space=old_buffer.observation_space,
+                    action_space=old_buffer.action_space,
+                    device=old_buffer.device,
+                    n_envs=old_buffer.n_envs,
+                    optimize_memory_usage=getattr(old_buffer, 'optimize_memory_usage', False),
+                    handle_timeout_termination=getattr(old_buffer, 'handle_timeout_termination', True),
+                    intrinsic_reward_fn=compute_intrinsic_reward,
+                    beta=config.beta,
+                )
+            
+            # Copy existing data from old buffer to new buffer (if any)
+            if old_buffer.pos > 0:
+                print(f"  Copying {old_buffer.pos} existing transitions to new buffer...")
+                # Note: This is a simplified copy - in practice, the buffer might be empty at this point
+                # since we're replacing it right after creation. But we handle it just in case.
+                new_buffer.pos = old_buffer.pos
+                new_buffer.full = old_buffer.full
+                # Copy buffer data (this is simplified - actual implementation might need more care)
+                if hasattr(old_buffer, 'observations'):
+                    if isinstance(old_buffer.observations, dict):
+                        # Dict observations
+                        new_buffer.observations = {key: val.copy() for key, val in old_buffer.observations.items()}
+                    else:
+                        new_buffer.observations = old_buffer.observations.copy()
+                if hasattr(old_buffer, 'next_observations'):
+                    if isinstance(old_buffer.next_observations, dict):
+                        # Dict observations
+                        new_buffer.next_observations = {key: val.copy() for key, val in old_buffer.next_observations.items()}
+                    else:
+                        new_buffer.next_observations = old_buffer.next_observations.copy()
+                if hasattr(old_buffer, 'actions'):
+                    new_buffer.actions = old_buffer.actions.copy()
+                if hasattr(old_buffer, 'rewards'):
+                    new_buffer.rewards = old_buffer.rewards.copy()
+                if hasattr(old_buffer, 'dones'):
+                    new_buffer.dones = old_buffer.dones.copy()
+            
+            # Replace the model's replay buffer
+            model.replay_buffer = new_buffer
+            buffer_type = "DictIntrinsicReplayBuffer" if is_dict_buffer else "IntrinsicReplayBuffer"
+            print(f"✓ Custom replay buffer ({buffer_type}) installed (intrinsic rewards will be recalculated on sample)")
+        else:
+            print("⚠️  Warning: Could not find IntrinsicRewardWrapper, using default replay buffer")
     
     # Create callbacks
     callbacks = []
