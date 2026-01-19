@@ -391,13 +391,19 @@ class EnhancedEvalCallback(EvalCallback):
                     
                     # Compute intrinsic reward using training visit counts
                     # This reflects what the agent was trained on
+                    # NOTE: We log the RAW intrinsic reward (1/√n), not multiplied by beta
+                    # This allows comparison across different beta values
                     if self.uncertainty_method is not None and self.beta != 0.0:
                         intrinsic_reward = self._get_uncertainty(obs, goal_idx=goal_idx)
-                        episode_intrinsic += intrinsic_reward * self.beta
+                        # Store raw intrinsic reward for logging (consistent with training logs)
+                        episode_intrinsic += intrinsic_reward
+                        # Note: The actual reward used for agent learning is beta * intrinsic_reward,
+                        # but we log the raw value to match training logs
                 
                 episode_extrinsic_rewards.append(episode_extrinsic)
                 episode_intrinsic_rewards.append(episode_intrinsic)
-                episode_total_rewards.append(episode_extrinsic + episode_intrinsic)
+                # Total reward = extrinsic + beta * intrinsic (what agent actually receives)
+                episode_total_rewards.append(episode_extrinsic + self.beta * episode_intrinsic)
                 episode_lengths.append(episode_length)
             
             # Store results (compatible with base EvalCallback interface)
@@ -442,18 +448,20 @@ class WandBLoggingCallback(BaseCallback):
     This bypasses TensorBoard syncing issues and works reliably in sweep mode.
     """
     
-    def __init__(self, eval_callback, train_env, dual_eval_callback=None, verbose=0):
+    def __init__(self, eval_callback, train_env, dual_eval_callback=None, beta=1.0, verbose=0):
         """
         Args:
             eval_callback: EvalCallback instance to monitor for evaluation metrics (or None if using dual eval)
             train_env: Training environment (DummyVecEnv) to access Monitor wrapper
             dual_eval_callback: DualEvalCallback instance (if using dual evaluation)
+            beta: Intrinsic reward coefficient (for calculating total reward = extrinsic + beta * intrinsic)
             verbose: Verbosity level
         """
         super().__init__(verbose)
         self.eval_callback = eval_callback
         self.dual_eval_callback = dual_eval_callback
         self.train_env = train_env
+        self.beta = beta
         self.last_eval_step = -1
         self.last_logger_state = {}  # Track logger state to detect updates
         self._logged_eval_count = 0  # Track how many evaluations we've logged (for step alignment)
@@ -547,7 +555,8 @@ class WandBLoggingCallback(BaseCallback):
                         print(f"⚠️  Warning: No IntrinsicRewardWrapper found, using 0.0 for extrinsic reward")
                 
                 # Calculate extrinsic + intrinsic for the new metric group
-                latest_total_reward = latest_extrinsic_reward + latest_intrinsic_reward
+                # Total reward = extrinsic + beta * intrinsic (what agent actually receives)
+                latest_total_reward = latest_extrinsic_reward + self.beta * latest_intrinsic_reward
                 
                 self.last_episode_count = episode_count
                 
@@ -559,12 +568,11 @@ class WandBLoggingCallback(BaseCallback):
                 self.last_seen_episode_intrinsic = 0.0
                 
                 return {
-                    'episode/reward': float(latest_extrinsic_reward),  # Extrinsic only!
-                    'episode/intrinsic_reward': float(latest_intrinsic_reward),  # Intrinsic only!
-                    'episode/length': int(latest_length),
-                    'episode/number': episode_count,
-                    'episode_extrinsic_intrinsic/reward': float(latest_total_reward),  # Extrinsic + intrinsic
-                    # NOTE: length and number are the same regardless of reward type, so only log reward here
+                    'train/extrinsic_reward': float(latest_extrinsic_reward),  # Extrinsic only
+                    'train/intrinsic_reward': float(latest_intrinsic_reward),  # Raw intrinsic (not beta-scaled)
+                    'train/total_reward': float(latest_total_reward),  # Extrinsic + beta * raw intrinsic
+                    'train/episode_length': int(latest_length),
+                    'train/episode_number': episode_count,
                 }
         except Exception as e:
             if self.verbose > 0:
@@ -602,13 +610,14 @@ class WandBLoggingCallback(BaseCallback):
                     # Log single-goal evaluation metrics
                     try:
                         wandb.log({'global_step': current_step}, step=current_step, commit=False)
-                        wandb.log({'eval_single_goal/mean_reward': latest_single['mean_reward']}, step=current_step, commit=False)
-                        wandb.log({'eval_single_goal/std_reward': latest_single['std_reward']}, step=current_step, commit=False)
+                        # Log standardized evaluation metrics for single-goal
+                        wandb.log({'eval_single_goal/extrinsic_reward': latest_single['mean_reward']}, step=current_step, commit=False)
+                        wandb.log({'eval_single_goal/extrinsic_reward_std': latest_single['std_reward']}, step=current_step, commit=False)
                         if len(latest_single['episode_lengths']) > 0:
-                            wandb.log({'eval_single_goal/mean_ep_length': float(np.mean(latest_single['episode_lengths']))}, step=current_step, commit=False)
-                            wandb.log({'eval_single_goal/std_ep_length': float(np.std(latest_single['episode_lengths']))}, step=current_step, commit=False)
-                            wandb.log({'eval_single_goal/min_ep_length': float(np.min(latest_single['episode_lengths']))}, step=current_step, commit=False)
-                            wandb.log({'eval_single_goal/max_ep_length': float(np.max(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/episode_length': float(np.mean(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/episode_length_std': float(np.std(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/episode_length_min': float(np.min(latest_single['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_single_goal/episode_length_max': float(np.max(latest_single['episode_lengths']))}, step=current_step, commit=False)
                     except Exception as e:
                         if self.verbose > 0:
                             print(f"⚠️  WandB single-goal eval logging error: {e}")
@@ -619,13 +628,14 @@ class WandBLoggingCallback(BaseCallback):
                     # Log continuation evaluation metrics
                     try:
                         wandb.log({'global_step': current_step}, step=current_step, commit=False)
-                        wandb.log({'eval_continuation/mean_reward': latest_cont['mean_reward']}, step=current_step, commit=False)
-                        wandb.log({'eval_continuation/std_reward': latest_cont['std_reward']}, step=current_step, commit=False)
+                        # Log standardized evaluation metrics for continuation
+                        wandb.log({'eval_continuation/extrinsic_reward': latest_cont['mean_reward']}, step=current_step, commit=False)
+                        wandb.log({'eval_continuation/extrinsic_reward_std': latest_cont['std_reward']}, step=current_step, commit=False)
                         # Note: For continuation, we track rewards (not lengths) as the main metric
                         # Episode lengths are still useful but rewards show cumulative performance
                         if len(latest_cont['episode_lengths']) > 0:
-                            wandb.log({'eval_continuation/mean_ep_length': float(np.mean(latest_cont['episode_lengths']))}, step=current_step, commit=False)
-                            wandb.log({'eval_continuation/std_ep_length': float(np.std(latest_cont['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_continuation/episode_length': float(np.mean(latest_cont['episode_lengths']))}, step=current_step, commit=False)
+                            wandb.log({'eval_continuation/episode_length_std': float(np.std(latest_cont['episode_lengths']))}, step=current_step, commit=False)
                         wandb.log({}, step=current_step, commit=True)
                     except Exception as e:
                         if self.verbose > 0:
@@ -654,32 +664,38 @@ class WandBLoggingCallback(BaseCallback):
                     try:
                         # Log global_step first to ensure x-axis represents actual training step
                         wandb.log({'global_step': eval_step}, step=eval_step, commit=False)
-                        # Log extrinsic rewards (from environment)
-                        wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=eval_step, commit=False)
-                        wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=eval_step, commit=False)
-                        wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=eval_step, commit=False)
-                        wandb.log({'eval/min_reward': float(np.min(latest_eval_rewards))}, step=eval_step, commit=False)
                         
-                        # Log intrinsic+extrinsic rewards if available (from EnhancedEvalCallback)
+                        # Log standardized evaluation metrics: extrinsic only
+                        wandb.log({'eval/extrinsic_reward': float(np.mean(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/extrinsic_reward_std': float(np.std(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/extrinsic_reward_max': float(np.max(latest_eval_rewards))}, step=eval_step, commit=False)
+                        wandb.log({'eval/extrinsic_reward_min': float(np.min(latest_eval_rewards))}, step=eval_step, commit=False)
+                        
+                        # Log intrinsic and total rewards if available (from EnhancedEvalCallback)
                         if isinstance(self.eval_callback, EnhancedEvalCallback):
+                            # Log raw intrinsic rewards (not beta-scaled)
+                            if len(self.eval_callback.evaluations_intrinsic_rewards) > i:
+                                intrinsic_rewards = self.eval_callback.evaluations_intrinsic_rewards[i]
+                                if len(intrinsic_rewards) > 0:
+                                    wandb.log({'eval/intrinsic_reward': float(np.mean(intrinsic_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/intrinsic_reward_std': float(np.std(intrinsic_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/intrinsic_reward_max': float(np.max(intrinsic_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/intrinsic_reward_min': float(np.min(intrinsic_rewards))}, step=eval_step, commit=False)
+                            
+                            # Log total rewards (extrinsic + beta * raw intrinsic)
                             if len(self.eval_callback.evaluations_total_rewards) > i:
                                 total_rewards = self.eval_callback.evaluations_total_rewards[i]
                                 if len(total_rewards) > 0:
-                                    wandb.log({'eval_extrinsic_intrinsic/mean_reward': float(np.mean(total_rewards))}, step=eval_step, commit=False)
-                                    wandb.log({'eval_extrinsic_intrinsic/std_reward': float(np.std(total_rewards))}, step=eval_step, commit=False)
-                                    wandb.log({'eval_extrinsic_intrinsic/max_reward': float(np.max(total_rewards))}, step=eval_step, commit=False)
-                                    wandb.log({'eval_extrinsic_intrinsic/min_reward': float(np.min(total_rewards))}, step=eval_step, commit=False)
-                                
-                                # Also log intrinsic rewards separately
-                                if len(self.eval_callback.evaluations_intrinsic_rewards) > i:
-                                    intrinsic_rewards = self.eval_callback.evaluations_intrinsic_rewards[i]
-                                    if len(intrinsic_rewards) > 0:
-                                        wandb.log({'eval/mean_intrinsic_reward': float(np.mean(intrinsic_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/total_reward': float(np.mean(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/total_reward_std': float(np.std(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/total_reward_max': float(np.max(total_rewards))}, step=eval_step, commit=False)
+                                    wandb.log({'eval/total_reward_min': float(np.min(total_rewards))}, step=eval_step, commit=False)
                         
                         # Get episode length if available
                         eval_lengths = getattr(self.eval_callback, 'evaluations_length', [])
                         if len(eval_lengths) > i and len(eval_lengths[i]) > 0:
-                            wandb.log({'eval/mean_ep_length': float(np.mean(eval_lengths[i]))}, step=eval_step, commit=False)
+                            wandb.log({'eval/episode_length': float(np.mean(eval_lengths[i]))}, step=eval_step, commit=False)
+                            wandb.log({'eval/episode_length_std': float(np.std(eval_lengths[i]))}, step=eval_step, commit=False)
                         
                         # Commit all eval metrics together
                         wandb.log({}, step=eval_step, commit=True)
@@ -703,10 +719,11 @@ class WandBLoggingCallback(BaseCallback):
                         try:
                             # Log global_step first to ensure x-axis represents actual training step
                             wandb.log({'global_step': current_step}, step=current_step, commit=False)
-                            wandb.log({'eval/mean_reward': float(np.mean(latest_eval_rewards))}, step=current_step, commit=False)
-                            wandb.log({'eval/std_reward': float(np.std(latest_eval_rewards))}, step=current_step, commit=False)
-                            wandb.log({'eval/max_reward': float(np.max(latest_eval_rewards))}, step=current_step, commit=False)
-                            wandb.log({'eval/min_reward': float(np.min(latest_eval_rewards))}, step=current_step, commit=False)
+                            # Log standardized evaluation metrics: extrinsic only
+                            wandb.log({'eval/extrinsic_reward': float(np.mean(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/extrinsic_reward_std': float(np.std(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/extrinsic_reward_max': float(np.max(latest_eval_rewards))}, step=current_step, commit=False)
+                            wandb.log({'eval/extrinsic_reward_min': float(np.min(latest_eval_rewards))}, step=current_step, commit=False)
                             wandb.log({}, step=current_step, commit=True)
                         except Exception as e:
                             if self.verbose > 0:
@@ -715,7 +732,8 @@ class WandBLoggingCallback(BaseCallback):
                     try:
                         # Log global_step first to ensure x-axis represents actual training step
                         wandb.log({'global_step': current_step}, step=current_step, commit=False)
-                        wandb.log({'eval/mean_reward': self.eval_callback.last_mean_reward}, step=current_step, commit=True)
+                        # Log standardized evaluation metrics: extrinsic only
+                        wandb.log({'eval/extrinsic_reward': self.eval_callback.last_mean_reward}, step=current_step, commit=True)
                     except Exception as e:
                         if self.verbose > 0:
                             print(f"⚠️  WandB eval logging error: {e}")
@@ -726,18 +744,20 @@ class WandBLoggingCallback(BaseCallback):
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
         # CRITICAL: Track episode extrinsic and intrinsic rewards continuously during the episode
         # This must happen BEFORE wrapper reset, so we capture values even when extrinsic reward is 0
+        # We update on EVERY step to ensure we capture the final reward before reset
         if self.intrinsic_wrapper is not None:
             episode_stats_temp = self.intrinsic_wrapper.get_episode_statistics()
             current_ep_extrinsic = episode_stats_temp.get('episode_extrinsic_reward', 0.0)
             current_ep_intrinsic = episode_stats_temp.get('episode_intrinsic_reward', 0.0)
             
-            # Update tracked values whenever we see non-zero rewards OR when we're in an active episode
-            # This ensures we capture intrinsic rewards even when extrinsic is 0 (agent exploring but not reaching goal)
-            if current_ep_extrinsic > 0.0 or current_ep_intrinsic > 0.0:
-                # Episode is active and accumulating rewards - update tracked values
-                self.last_seen_episode_extrinsic = current_ep_extrinsic
-                self.last_seen_episode_intrinsic = current_ep_intrinsic
-            # Note: If both are 0, the wrapper might have been reset, so we keep the last seen values
+            # ALWAYS update tracked values (not just when > 0) to capture final reward before reset
+            # This ensures we capture the goal reward even if it's the only non-zero reward in the episode
+            # The wrapper accumulates rewards during the episode, so current values are always the latest
+            self.last_seen_episode_extrinsic = current_ep_extrinsic
+            self.last_seen_episode_intrinsic = current_ep_intrinsic
+            # Note: If both are 0, it means either:
+            # 1. Episode just started (no rewards yet) - this is fine, will update on next step
+            # 2. Wrapper was reset (episode ended) - we keep last seen values which were captured before reset
         
         episode_stats = self._get_monitor_stats()
         if episode_stats:
@@ -747,16 +767,12 @@ class WandBLoggingCallback(BaseCallback):
                 # Log global_step first to ensure x-axis represents actual training step
                 wandb.log({'global_step': current_step}, step=current_step, commit=False)
                 
-                # Log extrinsic-only metrics (existing group)
-                wandb.log({'episode/reward': episode_stats['episode/reward']}, step=current_step, commit=False)
-                wandb.log({'episode/intrinsic_reward': episode_stats['episode/intrinsic_reward']}, step=current_step, commit=False)
-                wandb.log({'episode/length': episode_stats['episode/length']}, step=current_step, commit=False)
-                wandb.log({'episode/number': episode_stats['episode/number']}, step=current_step, commit=False)
-                
-                # Log extrinsic + intrinsic metrics (only reward - length/number are the same regardless of reward type)
-                wandb.log({'episode_extrinsic_intrinsic/reward': episode_stats['episode_extrinsic_intrinsic/reward']}, step=current_step, commit=False)
-                
-                wandb.log({'episode/current_t': current_step}, step=current_step, commit=True)
+                # Log standardized training metrics
+                wandb.log({'train/extrinsic_reward': episode_stats['train/extrinsic_reward']}, step=current_step, commit=False)
+                wandb.log({'train/intrinsic_reward': episode_stats['train/intrinsic_reward']}, step=current_step, commit=False)
+                wandb.log({'train/total_reward': episode_stats['train/total_reward']}, step=current_step, commit=False)
+                wandb.log({'train/episode_length': episode_stats['train/episode_length']}, step=current_step, commit=False)
+                wandb.log({'train/episode_number': episode_stats['train/episode_number']}, step=current_step, commit=True)
             except Exception as e:
                 if self.verbose > 0:
                     print(f"⚠️  WandB episode logging error: {e}")
@@ -1096,6 +1112,7 @@ def train(config: RLConfig):
             eval_callback, 
             train_env, 
             dual_eval_callback=None,  # No longer used
+            beta=config.beta,  # Pass beta for calculating total reward = extrinsic + beta * intrinsic
             verbose=1
         )
         callbacks.append(wandb_logging_callback)
