@@ -1315,6 +1315,7 @@ def train(config: RLConfig):
             maze_map=maze_map,
             goal_cells=goal_cells_for_heatmap,
             start_cell=start_cell,
+            beta=config.beta,  # Pass beta so it appears in heatmap titles
             verbose=1
         )
         callbacks.append(heatmap_callback)

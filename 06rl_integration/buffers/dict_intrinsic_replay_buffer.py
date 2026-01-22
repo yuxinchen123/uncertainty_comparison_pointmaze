@@ -105,15 +105,18 @@ class DictIntrinsicReplayBuffer(DictReplayBuffer):
         Uses current visit counts to compute fresh intrinsic rewards,
         then combines with stored extrinsic rewards.
         """
-        # Call parent's _get_samples to get both batch and indices
-        # This is the internal method that actually does the sampling
-        if hasattr(super(), '_get_samples'):
-            # Use parent's _get_samples which returns (batch, indices)
-            batch, indices = super()._get_samples(batch_size, env)
-        else:
-            # Fallback: use parent's sample and try to infer indices
-            batch = super().sample(batch_size, env)
-            indices = None
+        # Get batch indices first (needed to access stored extrinsic rewards)
+        # SB3's ReplayBuffer.sample() generates indices internally
+        # We need to replicate that logic to get the indices
+        upper_bound = self.buffer_size if self.full else self.pos
+        batch_inds = np.random.randint(0, upper_bound, size=batch_size)
+        
+        # Call parent's _get_samples with the batch indices
+        # This returns the batch (not indices, since we already have them)
+        batch = super()._get_samples(batch_inds, env)
+        
+        # We now have both batch and indices
+        indices = batch_inds
         
         # If no intrinsic reward function, return as-is
         if self.intrinsic_reward_fn is None or self.beta == 0.0:

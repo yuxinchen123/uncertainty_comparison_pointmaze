@@ -43,6 +43,9 @@ def create_visit_count_heatmap(
     
     # Mask walls if maze_map is provided
     if maze_map is not None:
+        # Ensure maze_map is a numpy array
+        if not isinstance(maze_map, np.ndarray):
+            maze_map = np.array(maze_map)
         # Set walls to NaN so they appear as white/empty in the heatmap
         vis_counts[maze_map == 1] = np.nan
     
@@ -135,7 +138,11 @@ def create_multi_goal_heatmap(
     
     for goal_idx in range(num_goals):
         goal_visit_counts = visit_counts[goal_idx]
-        goal_cell = goal_cells[goal_idx] if goal_cells and goal_idx < len(goal_cells) else None
+        # Handle goal_cells - it should be a list of tuples or None
+        if goal_cells is not None and isinstance(goal_cells, list) and goal_idx < len(goal_cells):
+            goal_cell = goal_cells[goal_idx]
+        else:
+            goal_cell = None
         
         title = f"{title_prefix} - Goal {goal_idx + 1}"
         fig = create_visit_count_heatmap(
