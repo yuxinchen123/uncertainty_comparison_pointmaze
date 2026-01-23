@@ -118,17 +118,20 @@ class VisitCountHeatmapCallback(BaseCallback):
                     title_prefix=f"{prefix.capitalize()} Visit Count (β={self.beta})",
                 )
                 
-                # Log each goal's heatmap under media/ namespace
+                # Log each goal's heatmap
                 # Log all goals in a single wandb.log call to ensure they all appear in WandB UI
                 log_dict = {}
                 for goal_idx, fig in enumerate(figures):
+                    # Use simpler key name that's easier to find in WandB UI
+                    log_dict[f"{prefix}_visit_count_heatmap_goal_{goal_idx + 1}"] = wandb.Image(fig)
+                    # Also log under media/ for organization
                     log_dict[f"media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1}"] = wandb.Image(fig)
                 
                 try:
                     wandb.log(log_dict, step=step, commit=True)  # Log all goals at once
                     if self.verbose > 0:
                         for goal_idx in range(len(figures)):
-                            print(f"    ✓ Logged media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1} to WandB at step {step}")
+                            print(f"    ✓ Logged {prefix}_visit_count_heatmap_goal_{goal_idx + 1} and media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1} to WandB at step {step}")
                 except Exception as e:
                     if self.verbose > 0:
                         print(f"    ⚠️  Error logging heatmaps: {e}")
@@ -171,13 +174,16 @@ class VisitCountHeatmapCallback(BaseCallback):
                     start_cell=self.start_cell,
                 )
                 
-                # Log heatmap image to WandB under media/ namespace
+                # Log heatmap image to WandB
+                # Use simpler key name that's easier to find in WandB UI
                 try:
                     wandb.log({
+                        f"{prefix}_visit_count_heatmap": wandb.Image(fig),
+                        # Also log under media/ for organization
                         f"media/{prefix}/visit_count_heatmap": wandb.Image(fig)
                     }, step=step, commit=True)  # Explicitly commit images
                     if self.verbose > 0:
-                        print(f"    ✓ Logged media/{prefix}/visit_count_heatmap to WandB at step {step}")
+                        print(f"    ✓ Logged {prefix}_visit_count_heatmap and media/{prefix}/visit_count_heatmap to WandB at step {step}")
                 except Exception as e:
                     if self.verbose > 0:
                         print(f"    ⚠️  Error logging media/{prefix}/visit_count_heatmap: {e}")
@@ -203,6 +209,11 @@ class VisitCountHeatmapCallback(BaseCallback):
         
         # Check if it's time to log
         if current_step - self.last_log_step >= self.log_freq:
+            if self.verbose > 0:
+                print(f"  [HeatmapCallback] Step {current_step}: Checking for heatmap logging (log_freq={self.log_freq}, last_log={self.last_log_step})")
+            if self.train_wrapper is None:
+                if self.verbose > 0:
+                    print(f"  [HeatmapCallback] WARNING: train_wrapper is None! Cannot log training heatmap.")
             # Log training visit counts
             if self.train_wrapper is not None:
                 train_visit_counts = self.train_wrapper.get_visit_counts()
@@ -212,10 +223,16 @@ class VisitCountHeatmapCallback(BaseCallback):
                         max_visits = np.max(train_visit_counts)
                         mean_visits = np.mean(train_visit_counts[train_visit_counts > 0]) if np.any(train_visit_counts > 0) else 0
                         if self.verbose > 0:
-                            print(f"  Logging training heatmap at step {current_step} (max visits: {max_visits}, mean non-zero: {mean_visits:.2f})")
+                            print(f"  [HeatmapCallback] Logging training heatmap at step {current_step} (max visits: {max_visits}, mean non-zero: {mean_visits:.2f})")
                         self._log_heatmap(train_visit_counts, "train", current_step)
-                    elif self.verbose > 0:
-                        print(f"  Skipping training heatmap at step {current_step} (all visit counts are zero)")
+                    else:
+                        # Always print warning if visit counts are zero (even if verbose=0 for this critical issue)
+                        print(f"  [HeatmapCallback] WARNING: Skipping training heatmap at step {current_step} (all visit counts are zero)")
+                        print(f"    Visit counts shape: {train_visit_counts.shape}, sum: {np.sum(train_visit_counts)}, max: {np.max(train_visit_counts)}")
+                else:
+                    print(f"  [HeatmapCallback] WARNING: train_wrapper.get_visit_counts() returned None at step {current_step}")
+            else:
+                print(f"  [HeatmapCallback] WARNING: train_wrapper is None at step {current_step}")
             
             # Log evaluation visit counts (if available)
             # Note: Eval visit counts accumulate across all evaluation episodes

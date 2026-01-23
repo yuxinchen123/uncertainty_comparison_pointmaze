@@ -426,7 +426,14 @@ class EnhancedEvalCallback(EvalCallback):
                     reward = rewards[0] if isinstance(rewards, (list, np.ndarray)) else rewards
                     info = infos[0] if isinstance(infos, list) and len(infos) > 0 else {}
                     
-                    episode_extrinsic += reward
+                    # Extract extrinsic reward from info if available (wrapper puts it there)
+                    # Otherwise use the returned reward (which should be extrinsic if no wrapper)
+                    if 'extrinsic_reward' in info:
+                        extrinsic_reward = info['extrinsic_reward']
+                    else:
+                        extrinsic_reward = reward
+                    
+                    episode_extrinsic += extrinsic_reward
                     episode_length += 1
                     
                     # Compute intrinsic reward using training visit counts
@@ -560,30 +567,25 @@ class WandBLoggingCallback(BaseCallback):
                 latest_length = episode_lengths[-1] if len(episode_lengths) > 0 else 0
                 
                 # Get extrinsic and intrinsic rewards from IntrinsicRewardWrapper
-                # Note: When an episode completes, Monitor records it, but the wrapper might have
-                # already been reset. We need to capture episode stats BEFORE the reset happens.
-                # Strategy: Use the continuously tracked values from _on_step(), which are updated
-                # every step during the episode. These values are captured BEFORE wrapper reset.
+                # CRITICAL: When an episode completes, the wrapper has already been reset (stats = 0).
+                # We need to use the tracked values that were captured BEFORE the reset.
+                # These are updated continuously in _on_step() during the episode.
                 if self.intrinsic_wrapper is not None:
-                    # Always use the continuously tracked values first (most reliable)
-                    # These are updated every step in _on_step() and capture values before reset
+                    # Use the continuously tracked values (captured before wrapper reset)
                     latest_extrinsic_reward = self.last_seen_episode_extrinsic
                     latest_intrinsic_reward = self.last_seen_episode_intrinsic
                     
-                    # Fallback: If tracked values are both 0, try to get from wrapper
-                    # (This handles edge cases where tracking might have failed)
+                    # Debug: If both are 0, this might indicate the agent didn't reach the goal
+                    # or there was a tracking issue. Try to verify from Monitor's total reward.
                     if latest_extrinsic_reward == 0.0 and latest_intrinsic_reward == 0.0:
-                        episode_stats = self.intrinsic_wrapper.get_episode_statistics()
-                        current_episode_extrinsic = episode_stats.get('episode_extrinsic_reward', 0.0)
-                        current_episode_intrinsic = episode_stats.get('episode_intrinsic_reward', 0.0)
-                        
-                        # If wrapper hasn't been reset yet, use current values
-                        if current_episode_extrinsic > 0.0 or current_episode_intrinsic > 0.0:
-                            latest_extrinsic_reward = current_episode_extrinsic
-                            latest_intrinsic_reward = current_episode_intrinsic
-                            # Update tracked values for next time
-                            self.last_seen_episode_extrinsic = current_episode_extrinsic
-                            self.last_seen_episode_intrinsic = current_episode_intrinsic
+                        # Fallback: Check if Monitor recorded a non-zero reward
+                        # Monitor stores total reward (extrinsic + beta * intrinsic)
+                        latest_total_from_monitor = episode_rewards[-1] if len(episode_rewards) > 0 else 0.0
+                        if latest_total_from_monitor > 0.0:
+                            # There was some reward, but we didn't capture it
+                            # This shouldn't happen if tracking is working correctly
+                            if self.verbose > 0:
+                                print(f"⚠️  Warning: Tracked rewards are 0 but Monitor recorded total reward {latest_total_from_monitor}")
                     
                     # Store for reference
                     self.last_episode_extrinsic_rewards.append(latest_extrinsic_reward)
@@ -783,21 +785,49 @@ class WandBLoggingCallback(BaseCallback):
         # 3. Log episode metrics when episodes complete (like MRQ does when episodes end)
         # This ensures episode metrics are logged at consistent timesteps (when episodes actually end)
         # CRITICAL: Track episode extrinsic and intrinsic rewards continuously during the episode
-        # This must happen BEFORE wrapper reset, so we capture values even when extrinsic reward is 0
-        # We update on EVERY step to ensure we capture the final reward before reset
+        # We need to capture values BEFORE wrapper reset happens
+        # Strategy: Check if Monitor detected a new episode. If not, update tracked values.
+        # If yes, DON'T update (wrapper was reset, but we already have final values from previous step)
         if self.intrinsic_wrapper is not None:
+            # Check if a new episode was just detected (before updating tracked values)
+            episode_just_ended = False
+            if self.monitor is not None:
+                try:
+                    episode_rewards = self.monitor.get_episode_rewards() if hasattr(self.monitor, 'get_episode_rewards') else getattr(self.monitor, 'episode_returns', [])
+                    current_episode_count = len(episode_rewards)
+                    if current_episode_count > self.last_episode_count:
+                        episode_just_ended = True
+                except:
+                    pass
+            
             episode_stats_temp = self.intrinsic_wrapper.get_episode_statistics()
             current_ep_extrinsic = episode_stats_temp.get('episode_extrinsic_reward', 0.0)
             current_ep_intrinsic = episode_stats_temp.get('episode_intrinsic_reward', 0.0)
             
-            # ALWAYS update tracked values (not just when > 0) to capture final reward before reset
-            # This ensures we capture the goal reward even if it's the only non-zero reward in the episode
-            # The wrapper accumulates rewards during the episode, so current values are always the latest
-            self.last_seen_episode_extrinsic = current_ep_extrinsic
-            self.last_seen_episode_intrinsic = current_ep_intrinsic
-            # Note: If both are 0, it means either:
-            # 1. Episode just started (no rewards yet) - this is fine, will update on next step
-            # 2. Wrapper was reset (episode ended) - we keep last seen values which were captured before reset
+            # CRITICAL: Capture episode rewards before wrapper reset
+            # The order of operations when an episode ends:
+            #   1. Last step: env.step() → reward_extrinsic=1, wrapper accumulates it
+            #   2. Monitor detects episode end (episode_count increases)
+            #   3. Environment resets → wrapper.reset() → episode stats = 0
+            #   4. Callback _on_step() is called → wrapper stats are already 0
+            # 
+            # Solution: On the step where episode ends, Monitor detects it BEFORE wrapper resets.
+            # So we check Monitor FIRST, and if episode just ended, we capture the value from wrapper
+            # BEFORE it gets reset. But actually, by the time callback runs, reset already happened.
+            #
+            # Better solution: Always update tracked values when they're non-zero.
+            # On the step where episode ends, the wrapper hasn't reset yet when we check,
+            # so we capture the final reward. Then on next step, wrapper is reset but we
+            # already have the value stored.
+            if current_ep_extrinsic > 0.0 or current_ep_intrinsic > 0.0:
+                # Update tracked values whenever we see non-zero values
+                # This captures the final reward on the step where episode ends (before reset)
+                self.last_seen_episode_extrinsic = current_ep_extrinsic
+                self.last_seen_episode_intrinsic = current_ep_intrinsic
+            # If both are 0:
+            #   - Episode just started (fine, will update on next step)
+            #   - Episode just ended and wrapper was reset (we already have final values from previous step)
+            # In both cases, we keep the last tracked values
         
         episode_stats = self._get_monitor_stats()
         if episode_stats:
@@ -1445,6 +1475,10 @@ def main():
                        default=True, nargs='?', const=True,
                        help='Enable dual evaluation (single-goal + continuation). Default: True')
     
+    # Visualization
+    parser.add_argument('--heatmap_log_freq', type=int, default=10000,
+                       help='Log visit count heatmap every N steps (0 to disable)')
+    
     # Logging
     parser.add_argument('--log_dir', type=str, default='./logs',
                        help='Log directory')
@@ -1526,6 +1560,14 @@ def main():
         args.goal_mode = sweep_config.get('goal_mode', args.goal_mode)
         args.num_goals = sweep_config.get('num_goals', args.num_goals)
         args.fixed_goal_cell = sweep_config.get('fixed_goal_cell', args.fixed_goal_cell)
+        
+        # Heatmap logging frequency
+        if 'heatmap_log_freq' in sweep_config:
+            # Add as attribute if not already in args
+            if not hasattr(args, 'heatmap_log_freq'):
+                args.heatmap_log_freq = sweep_config.get('heatmap_log_freq')
+            else:
+                args.heatmap_log_freq = sweep_config.get('heatmap_log_freq', args.heatmap_log_freq)
     
     # Initialize WandB if not in sweep and wandb_switch is enabled
     wandb_switch = args.wandb_switch.lower() == 'true'
@@ -1584,6 +1626,9 @@ def main():
             config.fixed_goal_cell = None
     else:
         config.fixed_goal_cell = None
+    
+    # Heatmap logging frequency (from args parser, which gets it from sweep config)
+    config.heatmap_log_freq = args.heatmap_log_freq
     
     # Update uncertainty config
     config.uncertainty_config.update({

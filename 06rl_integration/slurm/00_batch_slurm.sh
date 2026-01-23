@@ -1,24 +1,24 @@
 #!/bin/bash
 
 #Define two variables with name job_id and cpu_core
-job_id="rl_integration_gt_baseline/5kkd7980"
+job_id="rl_integration_gt_baseline/oxzwtoc4"
 
-# for i in $(seq 1 1); do
-#     sbatch slurm/01_run_gpu.slurm $job_id&
-# done
+for i in $(seq 1 1); do
+    sbatch slurm/01_run_gpu.slurm $job_id&
+done
 
 
 # for i in $(seq 1 5); do
 #     sbatch slurm/01_run_gpu.slurm $job_id&
 # done
 
-for i in $(seq 1 5); do
-    sbatch slurm/02_run_gnolim.slurm $job_id&
-done
+# for i in $(seq 1 5); do
+#     sbatch slurm/02_run_gnolim.slurm $job_id&
+# done
 
-for i in $(seq 1 5); do
-    sbatch slurm/03_run_cpu.slurm $job_id&
-done
+# for i in $(seq 1 5); do
+#     sbatch slurm/03_run_cpu.slurm $job_id&
+# done
 
 
 
