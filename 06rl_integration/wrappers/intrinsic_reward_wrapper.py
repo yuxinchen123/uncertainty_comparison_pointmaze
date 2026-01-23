@@ -203,6 +203,9 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                     goal_idx = self._get_current_goal_idx()
                     if goal_idx is not None:
                         self.visit_counts[goal_idx, row, col] += 1
+                    # Debug: warn if goal_idx is None (shouldn't happen in multi-goal mode)
+                    # elif self.step_count % 1000 == 0:  # Only print occasionally
+                    #     print(f"WARNING: goal_idx is None in multi-goal mode at step {self.step_count}")
                 else:
                     # Single-goal mode: single visit count matrix
                     self.visit_counts[row, col] += 1

@@ -188,7 +188,7 @@ class EnhancedEvalCallback(EvalCallback):
     
     def __init__(self, eval_env, uncertainty_method=None, beta=1.0, 
                  grid_rows=9, grid_cols=12, maze_map=None, goal_mode='single',
-                 num_goals=None, training_wrapper=None, *args, **kwargs):
+                 num_goals=None, training_wrapper=None, eval_seed_base=None, *args, **kwargs):
         """
         Args:
             eval_env: Evaluation environment
@@ -200,6 +200,9 @@ class EnhancedEvalCallback(EvalCallback):
             goal_mode: 'single' or 'multi'
             num_goals: Number of goals for multi-goal mode
             training_wrapper: IntrinsicRewardWrapper from training env (for training visit counts)
+            eval_seed_base: Base seed for deterministic evaluation starting positions.
+                           If None, uses random starting positions (current behavior).
+                           If set, uses seed = eval_seed_base + episode_idx for each episode.
             *args, **kwargs: Additional arguments for EvalCallback
         """
         super().__init__(eval_env, *args, **kwargs)
@@ -210,6 +213,7 @@ class EnhancedEvalCallback(EvalCallback):
         self.maze_map = maze_map
         self.goal_mode = goal_mode
         self.num_goals = num_goals
+        self.eval_seed_base = eval_seed_base  # For deterministic evaluation starting positions
         self.training_wrapper = training_wrapper  # For accessing training visit counts
         
         # Track intrinsic rewards per evaluation
@@ -366,8 +370,37 @@ class EnhancedEvalCallback(EvalCallback):
             episode_lengths = []
             
             for episode_idx in range(self.n_eval_episodes):
-                # VecEnv.reset() returns just the observation, not (obs, info)
-                obs = self.eval_env.reset()
+                # Reset with deterministic seed for reproducible evaluation
+                # If eval_seed_base is set, use seed = eval_seed_base + episode_idx
+                # This ensures deterministic starting positions while still varying across episodes
+                if self.eval_seed_base is not None:
+                    # Access underlying environment to reset with seed
+                    # VecEnv wraps a single environment in envs[0]
+                    if hasattr(self.eval_env, 'envs') and len(self.eval_env.envs) > 0:
+                        underlying_env = self.eval_env.envs[0]
+                        # Reset with deterministic seed: base + episode_idx
+                        eval_seed = self.eval_seed_base + episode_idx
+                        obs_tuple = underlying_env.reset(seed=eval_seed)
+                        # Handle both (obs, info) tuple and just obs
+                        if isinstance(obs_tuple, tuple):
+                            obs_raw, info = obs_tuple
+                        else:
+                            obs_raw = obs_tuple
+                            info = {}
+                        
+                        # VecEnv expects observations in a specific format
+                        # For dict observations, VecEnv expects dict of arrays with batch dimension
+                        if isinstance(obs_raw, dict):
+                            obs = {k: np.array([v]) for k, v in obs_raw.items()}
+                        else:
+                            obs = np.array([obs_raw])
+                    else:
+                        # Fallback: use VecEnv.reset() without seed
+                        obs = self.eval_env.reset()
+                else:
+                    # Random starting positions (original behavior)
+                    # VecEnv.reset() returns just the observation, not (obs, info)
+                    obs = self.eval_env.reset()
                 done = False
                 episode_extrinsic = 0.0
                 episode_intrinsic = 0.0
@@ -1236,6 +1269,7 @@ def train(config: RLConfig):
         goal_mode=config.goal_mode,
         num_goals=num_goals_for_eval,
         training_wrapper=training_wrapper_for_eval,  # Pass training wrapper for training visit counts
+        eval_seed_base=config.a_seed,  # Use config seed for deterministic evaluation starting positions
             best_model_save_path=os.path.join(config.log_dir, 'best_model'),
             log_path=os.path.join(config.log_dir, 'eval'),
             eval_freq=config.eval_freq,

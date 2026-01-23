@@ -38,6 +38,10 @@ def create_visit_count_heatmap(
     """
     fig, ax = plt.subplots(figsize=figsize)
     
+    # Debug: Check input visit counts
+    # print(f"DEBUG: Input visit_counts shape: {visit_counts.shape}, dtype: {visit_counts.dtype}")
+    # print(f"DEBUG: Input visit_counts min: {np.min(visit_counts)}, max: {np.max(visit_counts)}, sum: {np.sum(visit_counts)}")
+    
     # Create a copy for visualization (we'll mask walls)
     vis_counts = visit_counts.copy().astype(float)
     
@@ -47,7 +51,11 @@ def create_visit_count_heatmap(
         if not isinstance(maze_map, np.ndarray):
             maze_map = np.array(maze_map)
         # Set walls to NaN so they appear as white/empty in the heatmap
-        vis_counts[maze_map == 1] = np.nan
+        # Only mask walls, keep visit counts for open cells
+        wall_mask = (maze_map == 1)
+        vis_counts[wall_mask] = np.nan
+        # Debug: Check after masking
+        # print(f"DEBUG: After masking - non-NaN cells: {np.sum(~np.isnan(vis_counts))}, max: {np.nanmax(vis_counts) if not np.isnan(vis_counts).all() else 0}")
     
     # Create heatmap
     if vmin is None:
@@ -56,6 +64,10 @@ def create_visit_count_heatmap(
         # Use max of non-NaN values, or 1 if all are NaN
         valid_max = np.nanmax(vis_counts) if not np.isnan(vis_counts).all() else 1.0
         vmax = max(valid_max, 1.0)
+    
+    # Ensure vmax is at least 1 to avoid normalization issues
+    if vmax < 1.0:
+        vmax = 1.0
     
     im = ax.imshow(
         vis_counts,
@@ -66,9 +78,41 @@ def create_visit_count_heatmap(
         aspect='auto'
     )
     
-    # Add colorbar
+    # Add colorbar with proper formatting - ensure it shows actual data range
     cbar = plt.colorbar(im, ax=ax)
     cbar.set_label('Visit Count', rotation=270, labelpad=20)
+    
+    # Format colorbar to show actual integer values (not normalized 0-1)
+    # The colorbar should reflect vmin to vmax range
+    if vmax <= 10:
+        # For small ranges, show all integer ticks
+        ticks = np.arange(0, int(vmax) + 1, 1)
+    elif vmax <= 50:
+        # For medium ranges, show every 5
+        step = 5
+        ticks = np.arange(0, int(vmax) + step, step)
+    elif vmax <= 100:
+        # For larger ranges, show every 10
+        step = 10
+        ticks = np.arange(0, int(vmax) + step, step)
+    elif vmax <= 500:
+        # For large ranges, show every 50
+        step = 50
+        ticks = np.arange(0, int(vmax) + step, step)
+    else:
+        # For very large ranges, show every 100
+        step = 100
+        ticks = np.arange(0, int(vmax) + step, step)
+    
+    # Ensure we have at least 2 ticks and at most 8
+    if len(ticks) > 8:
+        # Reduce to 6 ticks
+        ticks = np.linspace(0, vmax, 6).astype(int)
+    if len(ticks) < 2:
+        ticks = np.array([0, int(vmax)])
+    
+    cbar.set_ticks(ticks)
+    cbar.set_ticklabels([str(int(t)) for t in ticks])
     
     # Mark goal location if provided
     if goal_cell is not None:

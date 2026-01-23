@@ -97,6 +97,20 @@ class VisitCountHeatmapCallback(BaseCallback):
                 else:
                     goal_cells = [None] * visit_counts.shape[0]
                 
+                # Debug: print visit count stats for multi-goal
+                if self.verbose > 0:
+                    print(f"      Multi-goal visit counts shape: {visit_counts.shape}, dtype: {visit_counts.dtype}")
+                    for goal_idx in range(visit_counts.shape[0]):
+                        goal_counts = visit_counts[goal_idx]
+                        non_zero = goal_counts[goal_counts > 0]
+                        print(f"      Goal {goal_idx + 1}: Total cells: {goal_counts.size}, Non-zero: {len(non_zero)}")
+                        if len(non_zero) > 0:
+                            print(f"        Stats: min={np.min(non_zero)}, max={np.max(goal_counts)}, mean={np.mean(non_zero):.2f}")
+                            sample = non_zero[:3] if len(non_zero) >= 3 else non_zero
+                            print(f"        Sample non-zero values: {sample}")
+                        else:
+                            print(f"        WARNING: All zeros! Sum: {np.sum(goal_counts)}, Max: {np.max(goal_counts)}")
+                
                 figures = create_multi_goal_heatmap(
                     visit_counts,
                     maze_map=self.maze_map,
@@ -105,17 +119,25 @@ class VisitCountHeatmapCallback(BaseCallback):
                 )
                 
                 # Log each goal's heatmap under media/ namespace
+                # Log all goals in a single wandb.log call to ensure they all appear in WandB UI
+                log_dict = {}
                 for goal_idx, fig in enumerate(figures):
-                    try:
-                        wandb.log({
-                            f"media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1}": wandb.Image(fig)
-                        }, step=step, commit=True)  # Explicitly commit images
-                        if self.verbose > 0:
+                    log_dict[f"media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1}"] = wandb.Image(fig)
+                
+                try:
+                    wandb.log(log_dict, step=step, commit=True)  # Log all goals at once
+                    if self.verbose > 0:
+                        for goal_idx in range(len(figures)):
                             print(f"    ✓ Logged media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1} to WandB at step {step}")
-                    except Exception as e:
-                        if self.verbose > 0:
-                            print(f"    ⚠️  Error logging media/{prefix}/visit_count_heatmap/goal_{goal_idx + 1}: {e}")
-                    import matplotlib.pyplot as plt
+                except Exception as e:
+                    if self.verbose > 0:
+                        print(f"    ⚠️  Error logging heatmaps: {e}")
+                        import traceback
+                        traceback.print_exc()
+                
+                # Close all figures
+                import matplotlib.pyplot as plt
+                for fig in figures:
                     plt.close(fig)
             
             # Handle single-goal mode (2D array)
@@ -126,6 +148,20 @@ class VisitCountHeatmapCallback(BaseCallback):
                     goal_cell = self.goal_cells[0] if goal_idx is None else (
                         self.goal_cells[goal_idx] if goal_idx < len(self.goal_cells) else None
                     )
+                
+                # Debug: print visit count stats before creating heatmap
+                if self.verbose > 0:
+                    non_zero = visit_counts[visit_counts > 0]
+                    print(f"      Visit count array shape: {visit_counts.shape}, dtype: {visit_counts.dtype}")
+                    print(f"      Total cells: {visit_counts.size}, Non-zero cells: {len(non_zero)}")
+                    if len(non_zero) > 0:
+                        print(f"      Visit count stats: min={np.min(non_zero)}, max={np.max(visit_counts)}, mean={np.mean(non_zero):.2f}")
+                        # Show sample of non-zero values
+                        sample = non_zero[:5] if len(non_zero) >= 5 else non_zero
+                        print(f"      Sample non-zero values: {sample}")
+                    else:
+                        print(f"      WARNING: All visit counts are zero!")
+                        print(f"      Array sum: {np.sum(visit_counts)}, Array min: {np.min(visit_counts)}, Array max: {np.max(visit_counts)}")
                 
                 fig = create_visit_count_heatmap(
                     visit_counts,
@@ -173,8 +209,10 @@ class VisitCountHeatmapCallback(BaseCallback):
                 if train_visit_counts is not None:
                     # Check if there are any non-zero visit counts
                     if np.any(train_visit_counts > 0):
+                        max_visits = np.max(train_visit_counts)
+                        mean_visits = np.mean(train_visit_counts[train_visit_counts > 0]) if np.any(train_visit_counts > 0) else 0
                         if self.verbose > 0:
-                            print(f"  Logging training heatmap at step {current_step} (max visits: {np.max(train_visit_counts)})")
+                            print(f"  Logging training heatmap at step {current_step} (max visits: {max_visits}, mean non-zero: {mean_visits:.2f})")
                         self._log_heatmap(train_visit_counts, "train", current_step)
                     elif self.verbose > 0:
                         print(f"  Skipping training heatmap at step {current_step} (all visit counts are zero)")
@@ -187,8 +225,10 @@ class VisitCountHeatmapCallback(BaseCallback):
                 if eval_visit_counts is not None:
                     # Check if there are any non-zero visit counts
                     if np.any(eval_visit_counts > 0):
+                        max_visits = np.max(eval_visit_counts)
+                        mean_visits = np.mean(eval_visit_counts[eval_visit_counts > 0]) if np.any(eval_visit_counts > 0) else 0
                         if self.verbose > 0:
-                            print(f"  Logging evaluation heatmap at step {current_step} (max visits: {np.max(eval_visit_counts)})")
+                            print(f"  Logging evaluation heatmap at step {current_step} (max visits: {max_visits}, mean non-zero: {mean_visits:.2f})")
                         self._log_heatmap(eval_visit_counts, "eval", current_step)
                     elif self.verbose > 0:
                         print(f"  Skipping evaluation heatmap at step {current_step} (all visit counts are zero)")
