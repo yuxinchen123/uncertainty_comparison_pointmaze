@@ -17,8 +17,10 @@ parameters:
   
   # Sweep over beta (intrinsic reward coefficient)
   beta:
-    values: [0.0, 0.1, 1.0, 10.0]
-  
+    # values: [0.0, 0.1, 1.0, 10.0]
+      # values: [0.0, 0.1, 1.0, 10.0]
+    values: [0.001, 0.01]
+
   # Uncertainty method (not used when use_gt_baseline=true, but required parameter)
   uncertainty_method:
     value: 'rnd_linear_ls'

@@ -99,6 +99,10 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         self.episode_extrinsic_reward = 0.0
         self.episode_intrinsic_reward = 0.0
         
+        # Store final episode rewards before reset (for callbacks to retrieve after reset)
+        self.last_episode_extrinsic_reward = 0.0
+        self.last_episode_intrinsic_reward = 0.0
+        
     def _get_maze_map(self):
         """Extract maze map from environment"""
         unwrapped_env = self.env.unwrapped
@@ -147,6 +151,52 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         Returns:
             uncertainty: Scalar uncertainty value
         """
+        # CRITICAL: Update GT method's visit counts BEFORE getting uncertainty
+        # This ensures that when replay buffer recalculates bonuses, it uses current visit counts
+        # For multi-goal mode, determine which goal this observation belongs to
+        visit_counts_to_update = self.visit_counts
+        if self.goal_mode == 'multi':
+            # Try to get goal index from observation (for replay buffer recalculation)
+            # or from current goal (for normal step())
+            goal_idx = None
+            
+            # First, try to extract goal from observation (for replay buffer)
+            if isinstance(observation, dict) and 'desired_goal' in observation:
+                desired_goal = observation['desired_goal']
+                # Handle batched observations
+                if isinstance(desired_goal, np.ndarray) and len(desired_goal.shape) > 1:
+                    desired_goal = desired_goal[0]
+                
+                # Try to find which goal this corresponds to by checking GoalWrapper
+                if hasattr(self.env, 'get_all_goals'):
+                    goal_cells = self.env.get_all_goals()
+                    # Map desired_goal coordinates to goal index
+                    # We need to convert continuous coords to cell, then find matching goal
+                    import sys
+                    import os
+                    utils_path = os.path.join(os.path.dirname(__file__), '../utils')
+                    sys.path.insert(0, utils_path)
+                    from goal_utils import cell_to_continuous_coords
+                    for idx, goal_cell in enumerate(goal_cells):
+                        goal_coords = cell_to_continuous_coords(goal_cell, self.grid_rows, self.grid_cols)
+                        # Check if desired_goal matches this goal (with small tolerance for floating point)
+                        if np.allclose(desired_goal[:2], goal_coords, atol=0.1):
+                            goal_idx = idx
+                            break
+            
+            # Fallback: use current goal index (for normal step() calls)
+            if goal_idx is None:
+                goal_idx = self._get_current_goal_idx()
+            
+            if goal_idx is not None:
+                visit_counts_to_update = self.visit_counts[goal_idx]
+        
+        if hasattr(self.uncertainty_method, 'update_visit_counts'):
+            self.uncertainty_method.update_visit_counts(visit_counts_to_update)
+        elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
+            # If wrapped in adapter, update the underlying method
+            self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
+        
         # Extract position from observation
         # Handle both regular and VecEnv batched observations
         if isinstance(observation, dict) and 'achieved_goal' in observation:
@@ -194,8 +244,43 @@ class IntrinsicRewardWrapper(gym.Wrapper):
         """
         obs, reward_extrinsic, terminated, truncated, info = self.env.step(action)
         
-        # Update visit counts
+        # Get grid cell for the new state
         row, col = self._state_to_grid(obs)
+        
+        # Track state for uncertainty model training (before getting uncertainty)
+        if isinstance(obs, dict) and 'achieved_goal' in obs:
+            state = obs['achieved_goal'][:2].copy()
+            self.visited_states.append(state)
+        elif isinstance(obs, np.ndarray):
+            state = obs[:2].copy() if len(obs) >= 2 else obs.copy()
+            self.visited_states.append(state)
+        else:
+            state = None
+        
+        # CRITICAL: Calculate uncertainty BEFORE incrementing visit counts
+        # The exploration bonus should be based on how many times we've visited this state BEFORE this visit
+        # For multi-goal mode, pass the visit counts for the current goal
+        visit_counts_to_update = self.visit_counts
+        if self.goal_mode == 'multi':
+            goal_idx = self._get_current_goal_idx()
+            if goal_idx is not None:
+                visit_counts_to_update = self.visit_counts[goal_idx]
+        
+        if hasattr(self.uncertainty_method, 'update_visit_counts'):
+            self.uncertainty_method.update_visit_counts(visit_counts_to_update)
+        elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
+            # If wrapped in adapter, update the underlying method
+            self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
+        
+        # Get intrinsic reward BEFORE incrementing visit counts
+        # This ensures the bonus is based on the visit count BEFORE this visit
+        if self.beta == 0.0:
+            intrinsic_reward = 0.0
+        else:
+            intrinsic_reward = self._get_uncertainty(obs)
+        
+        # NOW update visit counts AFTER calculating the bonus
+        # This ensures the next time we visit this state, the count will be higher
         if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:  # Only count open cells
                 if self.goal_mode == 'multi':
@@ -210,48 +295,17 @@ class IntrinsicRewardWrapper(gym.Wrapper):
                     # Single-goal mode: single visit count matrix
                     self.visit_counts[row, col] += 1
         
-        # Track state for uncertainty model training (before getting uncertainty)
-        if isinstance(obs, dict) and 'achieved_goal' in obs:
-            state = obs['achieved_goal'][:2].copy()
-            self.visited_states.append(state)
-        elif isinstance(obs, np.ndarray):
-            state = obs[:2].copy() if len(obs) >= 2 else obs.copy()
-            self.visited_states.append(state)
-        else:
-            state = None
-        
-        # CRITICAL: Update GT method's visit counts BEFORE getting uncertainty
-        # This ensures GT method uses current visit counts, not stale ones
-        # For multi-goal mode, pass the visit counts for the current goal
-        visit_counts_to_update = self.visit_counts
-        if self.goal_mode == 'multi':
-            goal_idx = self._get_current_goal_idx()
-            if goal_idx is not None:
-                visit_counts_to_update = self.visit_counts[goal_idx]
-        
-        if hasattr(self.uncertainty_method, 'update_visit_counts'):
-            self.uncertainty_method.update_visit_counts(visit_counts_to_update)
-        elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'update_visit_counts'):
-            # If wrapped in adapter, update the underlying method
-            self.uncertainty_method.method.update_visit_counts(visit_counts_to_update)
-        
-        # Get intrinsic reward (skip if beta=0 since it will be multiplied by 0 anyway)
-        if self.beta == 0.0:
-            intrinsic_reward = 0.0
-        else:
-            intrinsic_reward = self._get_uncertainty(obs)
-            
-            # Update uncertainty method if it supports online updates
-            # This happens every step (update_frequency is handled by the adapter)
-            if state is not None:
-                # Check if it's an adapter (has .method attribute) or direct method
-                if hasattr(self.uncertainty_method, 'update_with_batch'):
-                    self.uncertainty_method.update_with_batch(np.array([state]))
-                elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'train_on_positions'):
-                    # Direct method that supports training
-                    # For now, we'll let the adapter handle this, but if called directly,
-                    # we could train here. However, adapters are preferred.
-                    pass
+        # Update uncertainty method if it supports online updates
+        # This happens every step (update_frequency is handled by the adapter)
+        if state is not None:
+            # Check if it's an adapter (has .method attribute) or direct method
+            if hasattr(self.uncertainty_method, 'update_with_batch'):
+                self.uncertainty_method.update_with_batch(np.array([state]))
+            elif hasattr(self.uncertainty_method, 'method') and hasattr(self.uncertainty_method.method, 'train_on_positions'):
+                # Direct method that supports training
+                # For now, we'll let the adapter handle this, but if called directly,
+                # we could train here. However, adapters are preferred.
+                pass
         
         # Combine rewards: r_total = r_extrinsic + beta * r_intrinsic
         reward_total = reward_extrinsic + self.beta * intrinsic_reward
@@ -277,6 +331,11 @@ class IntrinsicRewardWrapper(gym.Wrapper):
             kwargs['options'] = options
         if seed is not None:
             kwargs['seed'] = seed
+        
+        # CRITICAL: Store final episode rewards BEFORE clearing them
+        # This allows callbacks to retrieve the final rewards even after reset
+        self.last_episode_extrinsic_reward = self.episode_extrinsic_reward
+        self.last_episode_intrinsic_reward = self.episode_intrinsic_reward
             
         obs, info = self.env.reset(**kwargs)
         
@@ -329,8 +388,17 @@ class IntrinsicRewardWrapper(gym.Wrapper):
     
     def get_episode_statistics(self):
         """Get reward statistics for current episode only"""
-        return {
-            'episode_extrinsic_reward': self.episode_extrinsic_reward,
-            'episode_intrinsic_reward': self.episode_intrinsic_reward,
-        }
+        # If current episode stats are 0 (episode just ended and reset), use last episode stats
+        if self.episode_extrinsic_reward == 0.0 and self.episode_intrinsic_reward == 0.0:
+            # Episode just ended - return the final values from before reset
+            return {
+                'episode_extrinsic_reward': self.last_episode_extrinsic_reward,
+                'episode_intrinsic_reward': self.last_episode_intrinsic_reward,
+            }
+        else:
+            # Episode is ongoing - return current values
+            return {
+                'episode_extrinsic_reward': self.episode_extrinsic_reward,
+                'episode_intrinsic_reward': self.episode_intrinsic_reward,
+            }
 

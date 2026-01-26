@@ -567,25 +567,27 @@ class WandBLoggingCallback(BaseCallback):
                 latest_length = episode_lengths[-1] if len(episode_lengths) > 0 else 0
                 
                 # Get extrinsic and intrinsic rewards from IntrinsicRewardWrapper
-                # CRITICAL: When an episode completes, the wrapper has already been reset (stats = 0).
-                # We need to use the tracked values that were captured BEFORE the reset.
-                # These are updated continuously in _on_step() during the episode.
+                # CRITICAL: When an episode completes, the callback is called AFTER the wrapper reset.
+                # So wrapper stats are already 0. We need to use the tracked values that were
+                # captured DURING the episode, before the reset.
                 if self.intrinsic_wrapper is not None:
-                    # Use the continuously tracked values (captured before wrapper reset)
+                    # Use the continuously tracked values (captured during episode, before reset)
                     latest_extrinsic_reward = self.last_seen_episode_extrinsic
                     latest_intrinsic_reward = self.last_seen_episode_intrinsic
                     
-                    # Debug: If both are 0, this might indicate the agent didn't reach the goal
-                    # or there was a tracking issue. Try to verify from Monitor's total reward.
-                    if latest_extrinsic_reward == 0.0 and latest_intrinsic_reward == 0.0:
-                        # Fallback: Check if Monitor recorded a non-zero reward
-                        # Monitor stores total reward (extrinsic + beta * intrinsic)
-                        latest_total_from_monitor = episode_rewards[-1] if len(episode_rewards) > 0 else 0.0
-                        if latest_total_from_monitor > 0.0:
-                            # There was some reward, but we didn't capture it
-                            # This shouldn't happen if tracking is working correctly
+                    # FALLBACK: If we failed to capture extrinsic (it's 0), but Monitor recorded
+                    # a non-zero total reward, compute extrinsic from Monitor's total reward.
+                    # Monitor stores: total = extrinsic + beta * intrinsic
+                    # So: extrinsic = total - beta * intrinsic
+                    latest_total_from_monitor = episode_rewards[-1] if len(episode_rewards) > 0 else 0.0
+                    if latest_extrinsic_reward == 0.0 and latest_total_from_monitor > 0.0 and latest_intrinsic_reward > 0.0:
+                        # Compute extrinsic from Monitor's total and our tracked intrinsic
+                        computed_extrinsic = latest_total_from_monitor - self.beta * latest_intrinsic_reward
+                        if computed_extrinsic > 0.0:
+                            # Use computed extrinsic (should be 1.0 when goal is reached)
+                            latest_extrinsic_reward = computed_extrinsic
                             if self.verbose > 0:
-                                print(f"⚠️  Warning: Tracked rewards are 0 but Monitor recorded total reward {latest_total_from_monitor}")
+                                print(f"  ✓ Computed extrinsic={computed_extrinsic:.3f} from Monitor (total={latest_total_from_monitor:.3f}, intrinsic={latest_intrinsic_reward:.3f}, beta={self.beta})")
                     
                     # Store for reference
                     self.last_episode_extrinsic_rewards.append(latest_extrinsic_reward)
