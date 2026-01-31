@@ -2,7 +2,7 @@
 
 # Example of running python script with a job array
 
-#SBATCH --job-name=03
+#SBATCH --job-name=exploration_gt_gnolim
 #SBATCH --partition=gnolim
 #SBATCH --cpus-per-task=2
 #SBATCH --gpus-per-node=1

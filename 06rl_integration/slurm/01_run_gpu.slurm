@@ -2,7 +2,7 @@
 
 # SLURM script for running uncertainty comparison experiments on GPU
 
-#SBATCH --job-name=uncertainty_comp
+#SBATCH --job-name=exploration_gt_gpu
 #SBATCH --partition=gpu
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus-per-node=1

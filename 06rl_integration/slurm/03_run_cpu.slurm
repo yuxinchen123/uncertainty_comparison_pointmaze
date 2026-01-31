@@ -2,7 +2,7 @@
 
 # Example of running python script with a job array
 
-#SBATCH --job-name=03
+#SBATCH --job-name=exploration_gt_cpu
 #SBATCH --partition=cpu
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus-per-node=0
