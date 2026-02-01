@@ -4,7 +4,6 @@ Self-contained training script: SAC on PointMaze.
 This folder (07_reconstruction) is independent of all other project folders.
 No imports from 01-06; all logic is local or from standard packages.
 
-No files or folders are written; results are printed to the CLI.
 """
 import argparse
 import collections
@@ -19,6 +18,56 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
+from utilities.env_utils import observation_to_grid, get_maze_map
+
+
+class VisitCountWrapper(gym.Wrapper):
+    """
+    Wraps PointMaze to track visit counts per grid cell.
+    Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
+    Optional: add intrinsic reward 1/sqrt(count) when beta > 0.
+    """
+
+    def __init__(self, env, beta=0.0):
+        super().__init__(env)
+        self.beta = beta
+        self.maze_map = get_maze_map(env)
+        if self.maze_map is None:
+            raise ValueError("Could not extract maze_map from environment")
+        self.grid_rows, self.grid_cols = self.maze_map.shape
+        self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
+
+    def _state_to_grid(self, obs):
+        """Map observation to 0-based (row, col)."""
+        return observation_to_grid(obs, self.grid_rows, self.grid_cols)
+
+    def _get_intrinsic_reward(self, row, col):
+        """Intrinsic reward = 1/sqrt(visit_count) before this visit; capped at 1.0 for unvisited."""
+        if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
+            return 0.0
+        if self.maze_map[row, col] != 0:
+            return 0.0
+        count = self.visit_counts[row, col]
+        if count <= 0:
+            return 1.0
+        return min(1.0, 1.0 / np.sqrt(count))
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        row, col = self._state_to_grid(obs)
+        intrinsic = 0.0
+        if self.beta != 0.0:
+            intrinsic = self._get_intrinsic_reward(row, col)
+        if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
+            if self.maze_map[row, col] == 0:
+                self.visit_counts[row, col] += 1
+        total_reward = reward + self.beta * intrinsic
+        info["intrinsic_reward"] = intrinsic
+        info["extrinsic_reward"] = reward
+        return obs, total_reward, terminated, truncated, info
+
+    def get_visit_counts(self):
+        return self.visit_counts.copy()
 
 
 class WandbEvalLoggingCallback(BaseCallback):
@@ -77,14 +126,16 @@ def main():
     parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"])
     parser.add_argument("--continuing_task", type=lambda x: x.lower() in ("true", "1", "yes"), default=False, nargs="?", const=True, help="If True, episode continues after reaching goal")
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
+    parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient (1/sqrt(visit_count)); 0 = tracking only")
     args = parser.parse_args()
 
     gym.register_envs(gymnasium_robotics)
 
-    env = gym.make(args.env_name, continuing_task=args.continuing_task)
-    env.reset(seed=args.seed)
-    env = Monitor(env, filename=None)
-    env = DummyVecEnv([lambda: env])
+    base_env = gym.make(args.env_name, continuing_task=args.continuing_task)
+    base_env.reset(seed=args.seed)
+    visit_wrapper = VisitCountWrapper(base_env, beta=args.beta)
+    monitored_env = Monitor(visit_wrapper, filename=None)
+    env = DummyVecEnv([lambda: monitored_env])
 
     model = SAC(
         "MultiInputPolicy",
@@ -134,6 +185,18 @@ def main():
     ])
 
     print_or_wandb_log(args.use_wandb, comparison_summary, "Results (final evaluation)")
+
+    visit_counts = visit_wrapper.get_visit_counts()
+    open_cells = (visit_wrapper.maze_map == 0).sum()
+    visited_cells = (visit_counts > 0).sum()
+    total_visits = int(visit_counts.sum())
+    visit_summary = collections.OrderedDict([
+        ("visit_counts/total_visits", total_visits),
+        ("visit_counts/cells_visited", int(visited_cells)),
+        ("visit_counts/open_cells", int(open_cells)),
+        ("visit_counts/coverage_pct", 100.0 * visited_cells / max(1, open_cells)),
+    ])
+    print_or_wandb_log(args.use_wandb, visit_summary, "Visit counts")
 
     if not args.use_wandb:
         print("-------------Program Finished-------------")
