@@ -24,7 +24,13 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
-from utilities.env_utils import observation_to_grid, get_maze_map, select_fixed_goal, select_fixed_goal_top_left, select_fixed_start
+from utilities.env_utils import (
+    observation_to_grid,
+    get_maze_map,
+    select_fixed_cell,
+    select_fixed_goal_top_left,
+    select_fixed_goal_bottom_right,
+)
 from utilities.heatmap_utils import create_visit_count_heatmap
 from utilities.intrinsic_replay_buffer import DictIntrinsicReplayBuffer
 
@@ -143,6 +149,7 @@ def _args_to_run_name(args) -> str:
     parts = [
         getattr(args, "env_name", "env").replace("/", "-"),
         f"seed{getattr(args, 'a_seed', 0)}",
+        f"goal{getattr(args, 'goal_position', 'top_left')}",
         f"beta{getattr(args, 'beta', 0)}",
         # f"eval{getattr(args, 'eval_freq', 0)}",
         # f"tot{getattr(args, 'total_timesteps', 0)}",
@@ -233,6 +240,7 @@ def main():
     parser.add_argument("--continuing_task", type=lambda x: x.lower() in ("true", "1", "yes"), default=False, nargs="?", const=True, help="If True, episode continues after reaching goal")
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
     parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient (1/sqrt(visit_count)); 0 = tracking only")
+    parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner: top_left or bottom_right or random")
     args = parser.parse_args()
 
     if args.use_wandb:
@@ -249,10 +257,13 @@ def main():
     gym.register_envs(gymnasium_robotics)
 
     base_env = gym.make(args.env_name, continuing_task=args.continuing_task)
-    fixed_goal_cell = select_fixed_goal_top_left(base_env)
-    # generate a random goal cell
-    # fixed_goal_cell = select_fixed_goal(base_env, seed)
-    fixed_start_cell = select_fixed_start(base_env, seed, goal_cell=fixed_goal_cell)
+    if args.goal_position == "top_left":
+        fixed_goal_cell = select_fixed_goal_top_left(base_env)
+    elif args.goal_position == "bottom_right":
+        fixed_goal_cell = select_fixed_goal_bottom_right(base_env)
+    else:
+        fixed_goal_cell = select_fixed_cell(base_env, seed)
+    fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
     print_or_wandb_log(
         args.use_wandb,

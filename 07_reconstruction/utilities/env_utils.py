@@ -86,33 +86,37 @@ def select_fixed_goal_top_left(env, maze_map=None):
     return max(valid, key=lambda c: (c[0], -c[1]))
 
 
-def select_fixed_goal(env, seed: int, goal_cell=None, maze_map=None):
+def select_fixed_goal_bottom_right(env, maze_map=None):
     """
-    Select a fixed goal cell deterministically.
-    Uses seed to pick from valid cells. Returns (row, col) 0-based.
+    Return the visual bottom-right valid (open) cell as the fixed goal.
+    Heatmap uses invert_yaxis(), so low row = visual bottom. Bottom-right = min row, max col.
+    Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
     if not valid:
         raise ValueError("No valid cells in maze")
-    if goal_cell is not None:
-        if goal_cell not in valid:
-            raise ValueError(f"goal_cell {goal_cell} not in valid cells")
-        return goal_cell
-    valid_sorted = sorted(valid)
-    rng = np.random.RandomState(seed)
-    return valid_sorted[rng.randint(len(valid_sorted))]
+    return min(valid, key=lambda c: (c[0], -c[1]))
 
 
-def select_fixed_start(env, seed: int, goal_cell=None, maze_map=None):
+def select_fixed_cell(env, seed: int, exclude_cells=None, force_cell=None, maze_map=None):
     """
-    Select a fixed start cell deterministically (each seed corresponds to one fixed start).
-    Uses seed to pick from valid cells, excluding goal_cell. Returns (row, col) 0-based.
+    Select a fixed cell deterministically from valid cells (by seed).
+    exclude_cells: iterable of (row,col) to exclude (e.g. goal when picking start).
+    force_cell: if provided, return it (after validation).
+    Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
-    if goal_cell is not None:
-        valid = [c for c in valid if c != goal_cell]
     if not valid:
-        raise ValueError("No valid start cells (all cells are goal or walls)")
+        raise ValueError("No valid cells in maze")
+    if force_cell is not None:
+        if force_cell not in valid:
+            raise ValueError(f"force_cell {force_cell} not in valid cells")
+        return force_cell
+    if exclude_cells:
+        exclude_set = set(exclude_cells)
+        valid = [c for c in valid if c not in exclude_set]
+    if not valid:
+        raise ValueError("No valid cells after exclusion")
     valid_sorted = sorted(valid)
     rng = np.random.RandomState(seed)
     return valid_sorted[rng.randint(len(valid_sorted))]
