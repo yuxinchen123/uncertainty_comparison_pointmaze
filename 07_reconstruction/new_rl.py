@@ -19,6 +19,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
 from utilities.env_utils import observation_to_grid, get_maze_map
+from utilities.intrinsic_replay_buffer import DictIntrinsicReplayBuffer
 
 
 class VisitCountWrapper(gym.Wrapper):
@@ -68,6 +69,11 @@ class VisitCountWrapper(gym.Wrapper):
 
     def get_visit_counts(self):
         return self.visit_counts.copy()
+
+    def compute_intrinsic_reward(self, obs):
+        """Compute intrinsic reward for obs using current visit counts. For replay buffer sample-time recomputation."""
+        row, col = self._state_to_grid(obs)
+        return self._get_intrinsic_reward(row, col)
 
 
 class WandbEvalLoggingCallback(BaseCallback):
@@ -137,6 +143,13 @@ def main():
     monitored_env = Monitor(visit_wrapper, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
 
+    replay_buffer_class = DictIntrinsicReplayBuffer if args.beta > 0 else None
+    replay_buffer_kwargs = (
+        {"intrinsic_reward_fn": visit_wrapper.compute_intrinsic_reward, "beta": args.beta}
+        if args.beta > 0
+        else None
+    )
+
     model = SAC(
         "MultiInputPolicy",
         env,
@@ -144,6 +157,8 @@ def main():
         seed=args.seed,
         device=args.device,
         tensorboard_log=None,
+        replay_buffer_class=replay_buffer_class,
+        replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
     eval_env = gym.make(args.env_name, continuing_task=args.continuing_task)
