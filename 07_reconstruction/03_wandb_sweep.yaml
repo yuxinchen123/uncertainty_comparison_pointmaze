@@ -1,0 +1,52 @@
+program: 03_transition_gradient.py
+name: transition_gradient_GARNET
+project: transition_gradient
+description: Transition Gradient evaluation comparison
+method: grid
+metric:
+  goal: minimize
+  name: D_ratio
+parameters:
+  a_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]
+  env_name:
+    values: ["GARNET"]
+  # GridWorld specific
+  # x_size: 
+  #   values: [3]
+  # y_size:
+  #   values: [3]
+  # GARNET specific
+  state_size:
+    values: [3, 10, 30]
+  action_size:
+    values: [2, 10]
+  branch_ratio:
+    values: [0.2, 0.5, 1]
+  max_time_step:
+    values: [3, 10]
+  # Determine env and policy nn_init_scale
+  env_init_scale:
+    values: [0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 20.0]
+  policy_init_scale:
+    values: [0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 20.0]
+  # Reward
+  # reward_type:
+  #   values: ["linear_reward", "linear_action_reward"]
+  # reward_random_scale:
+  #   values: [0, 1, 2, 4, 8, 16, 32, 64, 128]
+  # Training
+  num_episodes:
+    # values: [10000, 100000, 1000000]
+    values: [10000, 100000]
+    # values: [100000]
+  # Feature
+  feature_type:
+    values: ["one_hot_state_t"]
+
+  use_wandb:
+    value: true
+
+
+
+
