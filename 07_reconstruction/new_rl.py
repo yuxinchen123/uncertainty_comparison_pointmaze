@@ -6,11 +6,17 @@ No imports from 01-06; all logic is local or from standard packages.
 
 """
 import argparse
+import os
 import collections
+import random
+import wandb
 
 import numpy as np
+import torch
 import gymnasium as gym
 import gymnasium_robotics
+from gymnasium import spaces
+
 from stable_baselines3 import SAC
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
@@ -18,8 +24,51 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
-from utilities.env_utils import observation_to_grid, get_maze_map
+from utilities.env_utils import observation_to_grid, get_maze_map, select_fixed_goal
+from utilities.heatmap_utils import create_visit_count_heatmap
 from utilities.intrinsic_replay_buffer import DictIntrinsicReplayBuffer
+
+
+class FixedGoalWrapper(gym.Wrapper):
+    """Wraps PointMaze to use a fixed goal on every reset, selected deterministically by seed."""
+
+    def __init__(self, env, goal_cell):
+        super().__init__(env)
+        self.goal_cell = goal_cell  # (row, col) 0-based
+
+    def reset(self, seed=None, options=None, **kwargs):
+        opts = dict(options) if options else {}
+        opts["goal_cell"] = [int(self.goal_cell[0]), int(self.goal_cell[1])]
+        return self.env.reset(seed=seed, options=opts, **kwargs)
+
+
+class RemoveGoalWrapper(gym.Wrapper):
+    """Removes desired_goal (and achieved_goal) from observation. Use when goal is fixed."""
+
+    def __init__(self, env, remove_keys=None):
+        super().__init__(env)
+        self.remove_keys = remove_keys or ["desired_goal", "achieved_goal"]
+        if isinstance(env.observation_space, spaces.Dict):
+            new_spaces = {
+                k: v for k, v in env.observation_space.spaces.items()
+                if k not in self.remove_keys
+            }
+            self.observation_space = spaces.Dict(new_spaces)
+        else:
+            self.observation_space = env.observation_space
+
+    def _filter_obs(self, obs):
+        if isinstance(obs, dict):
+            return {k: v for k, v in obs.items() if k not in self.remove_keys}
+        return obs
+
+    def reset(self, seed=None, options=None, **kwargs):
+        obs, info = self.env.reset(seed=seed, options=options, **kwargs)
+        return self._filter_obs(obs), info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        return self._filter_obs(obs), reward, terminated, truncated, info
 
 
 class VisitCountWrapper(gym.Wrapper):
@@ -76,26 +125,59 @@ class VisitCountWrapper(gym.Wrapper):
         return self._get_intrinsic_reward(row, col)
 
 
-class WandbEvalLoggingCallback(BaseCallback):
-    """Run evaluate_policy at eval_freq and log results to WandB when use_wandb is True."""
+def _args_to_run_name(args) -> str:
+    """Sanitized string from args for folder/image naming."""
+    parts = [
+        getattr(args, "env_name", "env").replace("/", "-"),
+        f"seed{getattr(args, 'a_seed', 0)}",
+        f"beta{getattr(args, 'beta', 0)}",
+        f"eval{getattr(args, 'eval_freq', 0)}",
+        f"tot{getattr(args, 'total_timesteps', 0)}",
+        f"n_eval{getattr(args, 'n_eval_episodes', 0)}",
+        getattr(args, "device", "cpu"),
+        f"cont{getattr(args, 'continuing_task', False)}",
+    ]
+    return "_".join(str(p) for p in parts)
 
-    def __init__(
-        self,
-        eval_env,
-        eval_freq: int,
-        n_eval_episodes: int,
-        use_wandb: bool,
-        verbose: int = 0,
-    ):
+
+class WandbEvalLoggingCallback(BaseCallback):
+    """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
+
+    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, run_name: str = "", verbose: int = 0):
         super().__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
         self.use_wandb = use_wandb
+        self.visit_count_env = visit_count_env
+        self.goal_cell = goal_cell
+        self.run_name = run_name
 
     def _on_step(self) -> bool:
         if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
             return True
+        # Heatmap at eval freq
+        if self.visit_count_env is not None:
+            try:
+                import matplotlib.pyplot as plt
+                step = self.num_timesteps
+                name = f"{self.run_name}_step{step}"
+                fig = create_visit_count_heatmap(
+                    self.visit_count_env.get_visit_counts(),
+                    maze_map=self.visit_count_env.maze_map,
+                    title=f"Train Visit Count ({name})",
+                    goal_cell=self.goal_cell,
+                )
+                if self.use_wandb and wandb.run:
+                    wandb.log({f"train_visit_count_heatmap/{name}": wandb.Image(fig)}, step=step, commit=True)
+                else:
+                    img_dir = os.path.join("image", self.run_name)
+                    os.makedirs(img_dir, exist_ok=True)
+                    fig.savefig(os.path.join(img_dir, f"heatmap_step{step}.png"))
+                plt.close(fig)
+            except Exception as e:
+                if self.verbose > 0:
+                    print(f"  Heatmap: {e}")
         episode_rewards, episode_lengths = evaluate_policy(
             self.model,
             self.eval_env,
@@ -125,7 +207,7 @@ class WandbEvalLoggingCallback(BaseCallback):
 def main():
     parser = argparse.ArgumentParser(description="Train SAC on PointMaze (07_reconstruction, self-contained)")
     parser.add_argument("--env_name", type=str, default="PointMaze_Large-v3", help="PointMaze env id")
-    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--a_seed", type=int, default=42, help="Random seed")
     parser.add_argument("--total_timesteps", type=int, default=100_0, help="Training steps")
     parser.add_argument("--eval_freq", type=int, default=5_0, help="Evaluate every N steps")
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
@@ -135,17 +217,34 @@ def main():
     parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient (1/sqrt(visit_count)); 0 = tracking only")
     args = parser.parse_args()
 
+    if args.use_wandb:
+        wandb.init(config=vars(args))
+    seed = args.a_seed
+
+    # Fix random generators for reproducibility
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available() and args.device == "cuda":
+        torch.cuda.manual_seed_all(seed)
+
     gym.register_envs(gymnasium_robotics)
 
     base_env = gym.make(args.env_name, continuing_task=args.continuing_task)
-    base_env.reset(seed=args.seed)
-    visit_wrapper = VisitCountWrapper(base_env, beta=args.beta)
-    monitored_env = Monitor(visit_wrapper, filename=None)
+    fixed_goal_cell = select_fixed_goal(base_env, seed)
+    print(f"Fixed goal cell (a_seed={seed}): {fixed_goal_cell}")
+
+    goal_env = FixedGoalWrapper(base_env, fixed_goal_cell)
+    no_goal_env = RemoveGoalWrapper(goal_env)
+    visit_count_env = VisitCountWrapper(no_goal_env, beta=args.beta)
+    monitored_env = Monitor(visit_count_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
+    env.seed(seed)
+    env.reset()
 
     replay_buffer_class = DictIntrinsicReplayBuffer if args.beta > 0 else None
     replay_buffer_kwargs = (
-        {"intrinsic_reward_fn": visit_wrapper.compute_intrinsic_reward, "beta": args.beta}
+        {"intrinsic_reward_fn": visit_count_env.compute_intrinsic_reward, "beta": args.beta}
         if args.beta > 0
         else None
     )
@@ -154,23 +253,26 @@ def main():
         "MultiInputPolicy",
         env,
         verbose=1,
-        seed=args.seed,
+        seed=seed,
         device=args.device,
         tensorboard_log=None,
         replay_buffer_class=replay_buffer_class,
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
-    eval_env = gym.make(args.env_name, continuing_task=args.continuing_task)
-    eval_env.reset(seed=args.seed + 1)
-    eval_env = Monitor(eval_env, filename=None)
+    # Eval env: no VisitCountWrapper, so rewards are purely extrinsic (no intrinsic)
+    eval_base = gym.make(args.env_name, continuing_task=args.continuing_task)
+    eval_goal_env = FixedGoalWrapper(eval_base, fixed_goal_cell)
+    eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
+    eval_env = Monitor(eval_no_goal_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
+    eval_env.seed(seed)
+    eval_env.reset()
 
+    run_name = _args_to_run_name(args)
     wandb_eval_callback = WandbEvalLoggingCallback(
-        eval_env,
-        eval_freq=args.eval_freq,
-        n_eval_episodes=args.n_eval_episodes,
-        use_wandb=args.use_wandb,
+        eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
+        visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, run_name=run_name,
     )
 
     model.learn(
@@ -178,31 +280,8 @@ def main():
         callback=wandb_eval_callback,
     )
 
-    episode_rewards, episode_lengths = evaluate_policy(
-        model,
-        eval_env,
-        n_eval_episodes=args.n_eval_episodes,
-        deterministic=True,
-        return_episode_rewards=True,
-    )
-    mean_reward = float(np.mean(episode_rewards))
-    std_reward = float(np.std(episode_rewards))
-    mean_length = float(np.mean(episode_lengths))
-    std_length = float(np.std(episode_lengths))
-
-    comparison_summary = collections.OrderedDict([
-        ("eval_mean_reward", mean_reward),
-        ("eval_std_reward", std_reward),
-        ("eval_mean_length", mean_length),
-        ("eval_std_length", std_length),
-        ("eval_episodes", args.n_eval_episodes),
-        ("total_timesteps", args.total_timesteps),
-    ])
-
-    print_or_wandb_log(args.use_wandb, comparison_summary, "Results (final evaluation)")
-
-    visit_counts = visit_wrapper.get_visit_counts()
-    open_cells = (visit_wrapper.maze_map == 0).sum()
+    visit_counts = visit_count_env.get_visit_counts()
+    open_cells = (visit_count_env.maze_map == 0).sum()
     visited_cells = (visit_counts > 0).sum()
     total_visits = int(visit_counts.sum())
     visit_summary = collections.OrderedDict([
@@ -216,7 +295,6 @@ def main():
     if not args.use_wandb:
         print("-------------Program Finished-------------")
     else:
-        import wandb
         wandb.finish()
 
 

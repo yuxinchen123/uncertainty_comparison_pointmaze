@@ -58,3 +58,34 @@ def observation_to_grid(observation, grid_rows=9, grid_cols=12):
     return row, col
 
 
+def get_valid_cells(env, maze_map=None):
+    """Get all open (non-wall) cells. Returns list of (row, col) 0-based tuples."""
+    if maze_map is None:
+        maze_map = get_maze_map(env)
+    if maze_map is None:
+        return []
+    m = np.array(maze_map)
+    valid = []
+    for row in range(m.shape[0]):
+        for col in range(m.shape[1]):
+            v = m[row, col]
+            if v == 0 or v == "g" or v == "c":
+                valid.append((row, col))
+    return valid
+
+
+def select_fixed_goal(env, seed: int, goal_cell=None, maze_map=None):
+    """
+    Select a fixed goal cell deterministically.
+    Uses seed to pick from valid cells. Returns (row, col) 0-based.
+    """
+    valid = get_valid_cells(env, maze_map)
+    if not valid:
+        raise ValueError("No valid cells in maze")
+    if goal_cell is not None:
+        if goal_cell not in valid:
+            raise ValueError(f"goal_cell {goal_cell} not in valid cells")
+        return goal_cell
+    valid_sorted = sorted(valid)
+    rng = np.random.RandomState(seed)
+    return valid_sorted[rng.randint(len(valid_sorted))]
