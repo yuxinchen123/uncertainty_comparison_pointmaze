@@ -24,7 +24,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
-from utilities.env_utils import observation_to_grid, get_maze_map, select_fixed_goal
+from utilities.env_utils import observation_to_grid, get_maze_map, select_fixed_goal, select_fixed_goal_top_left, select_fixed_start
 from utilities.heatmap_utils import create_visit_count_heatmap
 from utilities.intrinsic_replay_buffer import DictIntrinsicReplayBuffer
 
@@ -39,6 +39,19 @@ class FixedGoalWrapper(gym.Wrapper):
     def reset(self, seed=None, options=None, **kwargs):
         opts = dict(options) if options else {}
         opts["goal_cell"] = [int(self.goal_cell[0]), int(self.goal_cell[1])]
+        return self.env.reset(seed=seed, options=opts, **kwargs)
+
+
+class FixedStartWrapper(gym.Wrapper):
+    """Wraps PointMaze to use a fixed start cell on every reset (each seed corresponds to one fixed start)."""
+
+    def __init__(self, env, start_cell):
+        super().__init__(env)
+        self.start_cell = start_cell  # (row, col) 0-based
+
+    def reset(self, seed=None, options=None, **kwargs):
+        opts = dict(options) if options else {}
+        opts["reset_cell"] = [int(self.start_cell[0]), int(self.start_cell[1])]
         return self.env.reset(seed=seed, options=opts, **kwargs)
 
 
@@ -131,11 +144,11 @@ def _args_to_run_name(args) -> str:
         getattr(args, "env_name", "env").replace("/", "-"),
         f"seed{getattr(args, 'a_seed', 0)}",
         f"beta{getattr(args, 'beta', 0)}",
-        f"eval{getattr(args, 'eval_freq', 0)}",
-        f"tot{getattr(args, 'total_timesteps', 0)}",
-        f"n_eval{getattr(args, 'n_eval_episodes', 0)}",
-        getattr(args, "device", "cpu"),
-        f"cont{getattr(args, 'continuing_task', False)}",
+        # f"eval{getattr(args, 'eval_freq', 0)}",
+        # f"tot{getattr(args, 'total_timesteps', 0)}",
+        # f"n_eval{getattr(args, 'n_eval_episodes', 0)}",
+        # getattr(args, "device", "cpu"),
+        # f"cont{getattr(args, 'continuing_task', False)}",
     ]
     return "_".join(str(p) for p in parts)
 
@@ -143,7 +156,7 @@ def _args_to_run_name(args) -> str:
 class WandbEvalLoggingCallback(BaseCallback):
     """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
 
-    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, run_name: str = "", verbose: int = 0):
+    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", verbose: int = 0):
         super().__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
@@ -151,6 +164,7 @@ class WandbEvalLoggingCallback(BaseCallback):
         self.use_wandb = use_wandb
         self.visit_count_env = visit_count_env
         self.goal_cell = goal_cell
+        self.start_cell = start_cell
         self.run_name = run_name
 
     def _on_step(self) -> bool:
@@ -161,19 +175,23 @@ class WandbEvalLoggingCallback(BaseCallback):
             try:
                 import matplotlib.pyplot as plt
                 step = self.num_timesteps
-                name = f"{self.run_name}_step{step}"
+                name = f"{self.run_name}_step{step:07d}"
                 fig = create_visit_count_heatmap(
                     self.visit_count_env.get_visit_counts(),
                     maze_map=self.visit_count_env.maze_map,
                     title=f"Train Visit Count ({name})",
                     goal_cell=self.goal_cell,
+                    start_cell=self.start_cell,
                 )
                 if self.use_wandb and wandb.run:
-                    wandb.log({f"train_visit_count_heatmap/{name}": wandb.Image(fig)}, step=step, commit=True)
+                    wandb.log({
+                        f"train_visit_count_heatmap/{name}": wandb.Image(fig),
+                        "media/heatmap_latest": wandb.Image(fig),
+                    }, step=step, commit=True)
                 else:
                     img_dir = os.path.join("image", self.run_name)
                     os.makedirs(img_dir, exist_ok=True)
-                    fig.savefig(os.path.join(img_dir, f"heatmap_step{step}.png"))
+                    fig.savefig(os.path.join(img_dir, f"heatmap_step{step:07d}.png"))
                 plt.close(fig)
             except Exception as e:
                 if self.verbose > 0:
@@ -207,7 +225,7 @@ class WandbEvalLoggingCallback(BaseCallback):
 def main():
     parser = argparse.ArgumentParser(description="Train SAC on PointMaze (07_reconstruction, self-contained)")
     parser.add_argument("--env_name", type=str, default="PointMaze_Large-v3", help="PointMaze env id")
-    parser.add_argument("--a_seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--a_seed", type=int, default=1, help="Random seed")
     parser.add_argument("--total_timesteps", type=int, default=100_0, help="Training steps")
     parser.add_argument("--eval_freq", type=int, default=5_0, help="Evaluate every N steps")
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
@@ -231,10 +249,23 @@ def main():
     gym.register_envs(gymnasium_robotics)
 
     base_env = gym.make(args.env_name, continuing_task=args.continuing_task)
-    fixed_goal_cell = select_fixed_goal(base_env, seed)
+    fixed_goal_cell = select_fixed_goal_top_left(base_env)
+    # generate a random goal cell
+    # fixed_goal_cell = select_fixed_goal(base_env, seed)
+    fixed_start_cell = select_fixed_start(base_env, seed, goal_cell=fixed_goal_cell)
+    manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
+    print_or_wandb_log(
+        args.use_wandb,
+        collections.OrderedDict([
+            ("start_goal/manhattan_distance", manhattan_dist),
+        ]),
+        "Start–goal Manhattan distance",
+    )
     print(f"Fixed goal cell (a_seed={seed}): {fixed_goal_cell}")
+    print(f"Fixed start cell (a_seed={seed}): {fixed_start_cell}")
 
-    goal_env = FixedGoalWrapper(base_env, fixed_goal_cell)
+    start_env = FixedStartWrapper(base_env, fixed_start_cell)
+    goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
     visit_count_env = VisitCountWrapper(no_goal_env, beta=args.beta)
     monitored_env = Monitor(visit_count_env, filename=None)
@@ -262,7 +293,8 @@ def main():
 
     # Eval env: no VisitCountWrapper, so rewards are purely extrinsic (no intrinsic)
     eval_base = gym.make(args.env_name, continuing_task=args.continuing_task)
-    eval_goal_env = FixedGoalWrapper(eval_base, fixed_goal_cell)
+    eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
+    eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
     eval_env = Monitor(eval_no_goal_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
@@ -272,7 +304,7 @@ def main():
     run_name = _args_to_run_name(args)
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
-        visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, run_name=run_name,
+        visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
     )
 
     model.learn(

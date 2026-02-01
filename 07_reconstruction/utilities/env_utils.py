@@ -69,9 +69,21 @@ def get_valid_cells(env, maze_map=None):
     for row in range(m.shape[0]):
         for col in range(m.shape[1]):
             v = m[row, col]
-            if v == 0 or v == "g" or v == "c":
+            if v == 0 or v == "g" or v == "r" or v == "c":
                 valid.append((row, col))
     return valid
+
+
+def select_fixed_goal_top_left(env, maze_map=None):
+    """
+    Return the visual top-left valid (open) cell as the fixed goal.
+    Heatmap uses invert_yaxis(), so high row = visual top. Top-left = max row, min col.
+    Returns (row, col) 0-based.
+    """
+    valid = get_valid_cells(env, maze_map)
+    if not valid:
+        raise ValueError("No valid cells in maze")
+    return max(valid, key=lambda c: (c[0], -c[1]))
 
 
 def select_fixed_goal(env, seed: int, goal_cell=None, maze_map=None):
@@ -86,6 +98,21 @@ def select_fixed_goal(env, seed: int, goal_cell=None, maze_map=None):
         if goal_cell not in valid:
             raise ValueError(f"goal_cell {goal_cell} not in valid cells")
         return goal_cell
+    valid_sorted = sorted(valid)
+    rng = np.random.RandomState(seed)
+    return valid_sorted[rng.randint(len(valid_sorted))]
+
+
+def select_fixed_start(env, seed: int, goal_cell=None, maze_map=None):
+    """
+    Select a fixed start cell deterministically (each seed corresponds to one fixed start).
+    Uses seed to pick from valid cells, excluding goal_cell. Returns (row, col) 0-based.
+    """
+    valid = get_valid_cells(env, maze_map)
+    if goal_cell is not None:
+        valid = [c for c in valid if c != goal_cell]
+    if not valid:
+        raise ValueError("No valid start cells (all cells are goal or walls)")
     valid_sorted = sorted(valid)
     rng = np.random.RandomState(seed)
     return valid_sorted[rng.randint(len(valid_sorted))]

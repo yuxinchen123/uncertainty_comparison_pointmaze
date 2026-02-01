@@ -20,8 +20,8 @@ def create_visit_count_heatmap(
     start_cell: Optional[Tuple[int, int]] = None,
 ) -> plt.Figure:
     """
-    Create a heatmap of visit counts (same format as 06rl_integration).
-    Walls masked, goal (green star), start (blue square), colorbar with integer ticks, cell annotations.
+    Create a heatmap of visit counts.
+    Walls masked, G/S text labels with visit counts in cells, colorbar with integer ticks.
     """
     fig, ax = plt.subplots(figsize=figsize)
     vis_counts = visit_counts.copy().astype(float)
@@ -68,31 +68,30 @@ def create_visit_count_heatmap(
     cbar.set_ticks(ticks)
     cbar.set_ticklabels([str(int(t)) for t in ticks])
 
-    if goal_cell is not None:
-        row, col = goal_cell
-        if 0 <= row < visit_counts.shape[0] and 0 <= col < visit_counts.shape[1]:
-            ax.scatter(col, row, c="green", marker="*", s=500, edgecolors="black", linewidths=2, label="Goal", zorder=10)
-    if start_cell is not None:
-        row, col = start_cell
-        if 0 <= row < visit_counts.shape[0] and 0 <= col < visit_counts.shape[1]:
-            ax.scatter(col, row, c="blue", marker="s", s=300, edgecolors="black", linewidths=2, label="Start", zorder=10)
-
-    # Text annotations for visit counts (grids <= 200 cells, same as 06)
+    # Text annotations: G/S labels and visit counts (grids <= 200 cells)
+    is_goal = (goal_cell[0], goal_cell[1]) if goal_cell else (None, None)
+    is_start = (start_cell[0], start_cell[1]) if start_cell else (None, None)
     if visit_counts.shape[0] * visit_counts.shape[1] <= 200:
         for i in range(visit_counts.shape[0]):
             for j in range(visit_counts.shape[1]):
-                if maze_map is None or maze_map[i, j] == 0:
-                    count = visit_counts[i, j]
-                    if count > 0:
-                        ax.text(j, i, str(count), ha="center", va="center",
-                               color="black" if vis_counts[i, j] < vmax * 0.5 else "white",
-                               fontsize=8, fontweight="bold")
+                if maze_map is not None and maze_map[i, j] == 1:
+                    continue
+                count = visit_counts[i, j]
+                label_parts = []
+                if (i, j) == is_goal:
+                    label_parts.append("Goal")
+                if (i, j) == is_start:
+                    label_parts.append("Start")
+                if count > 0:
+                    label_parts.append(str(count))
+                if label_parts:
+                    label = "\n".join(label_parts)
+                    txt_color = "black" if vis_counts[i, j] < vmax * 0.5 else "white"
+                    ax.text(j, i, label, ha="center", va="center", fontsize=8, fontweight="bold", color=txt_color)
 
-    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.set_title(title, fontsize=10, fontweight="bold")
     ax.set_xlabel("Column", fontsize=12)
     ax.set_ylabel("Row", fontsize=12)
     ax.invert_yaxis()
-    if goal_cell is not None or start_cell is not None:
-        ax.legend(loc="upper right")
     plt.tight_layout()
     return fig

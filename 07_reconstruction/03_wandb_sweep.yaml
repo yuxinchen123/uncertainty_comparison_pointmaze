@@ -16,7 +16,9 @@ parameters:
     values: [500000]
   eval_freq:
     value: 5000
+    # value: 50
   n_eval_episodes:
+    # value: 10
     value: 1000
   device:
     value: "cpu"
