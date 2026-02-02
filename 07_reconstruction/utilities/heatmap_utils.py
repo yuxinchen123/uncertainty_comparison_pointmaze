@@ -1,4 +1,5 @@
 """Visit count heatmap visualization (07_reconstruction, same format as 06rl_integration)."""
+import textwrap
 from typing import Optional, Tuple
 
 import numpy as np
@@ -68,7 +69,8 @@ def create_visit_count_heatmap(
     cbar.set_ticks(ticks)
     cbar.set_ticklabels([str(int(t)) for t in ticks])
 
-    # Text annotations: G/S labels and visit counts (grids <= 200 cells)
+    # Text annotations: G/S labels, visit ratio, and visit counts (grids <= 200 cells)
+    total_visits = int(visit_counts.sum())
     is_goal = (goal_cell[0], goal_cell[1]) if goal_cell else (None, None)
     is_start = (start_cell[0], start_cell[1]) if start_cell else (None, None)
     if visit_counts.shape[0] * visit_counts.shape[1] <= 200:
@@ -79,9 +81,12 @@ def create_visit_count_heatmap(
                 count = visit_counts[i, j]
                 label_parts = []
                 if (i, j) == is_goal:
-                    label_parts.append("Goal")
+                    label_parts.append("G")
                 if (i, j) == is_start:
-                    label_parts.append("Start")
+                    label_parts.append("S")
+                if count > 0 and total_visits > 0:
+                    ratio = count / total_visits
+                    label_parts.append(f"{ratio:.2f}")
                 if count > 0:
                     label_parts.append(str(count))
                 if label_parts:
@@ -89,7 +94,8 @@ def create_visit_count_heatmap(
                     txt_color = "black" if vis_counts[i, j] < vmax * 0.5 else "white"
                     ax.text(j, i, label, ha="center", va="center", fontsize=8, fontweight="bold", color=txt_color)
 
-    ax.set_title(title, fontsize=10, fontweight="bold")
+    wrapped_title = "\n".join(textwrap.wrap(title, width=50))
+    ax.set_title(wrapped_title, fontsize=10, fontweight="bold")
     ax.set_xlabel("Column", fontsize=12)
     ax.set_ylabel("Row", fontsize=12)
     ax.invert_yaxis()

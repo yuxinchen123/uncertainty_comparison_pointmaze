@@ -94,12 +94,13 @@ class VisitCountWrapper(gym.Wrapper):
     """
     Wraps PointMaze to track visit counts per grid cell.
     Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
-    Optional: add intrinsic reward 1/sqrt(count) when beta > 0.
+    Optional: add intrinsic reward when beta > 0. Decay: intrinsic_decay_rate -2 = 1/sqrt(n), -1 = 1/n.
     """
 
-    def __init__(self, env, beta=0.0):
+    def __init__(self, env, beta=0.0, intrinsic_decay_rate=-0.5):
         super().__init__(env)
         self.beta = beta
+        self.intrinsic_decay_rate = intrinsic_decay_rate
         self.maze_map = get_maze_map(env)
         if self.maze_map is None:
             raise ValueError("Could not extract maze_map from environment")
@@ -111,7 +112,7 @@ class VisitCountWrapper(gym.Wrapper):
         return observation_to_grid(obs, self.grid_rows, self.grid_cols)
 
     def _get_intrinsic_reward(self, row, col):
-        """Intrinsic reward = 1/sqrt(visit_count) before this visit; capped at 1.0 for unvisited."""
+        """Intrinsic reward = 1/n^exponent before this visit; exponent = -decay_rate. Capped at 1.0 for unvisited."""
         if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
             return 0.0
         if self.maze_map[row, col] != 0:
@@ -119,7 +120,7 @@ class VisitCountWrapper(gym.Wrapper):
         count = self.visit_counts[row, col]
         if count <= 0:
             return 1.0
-        return min(1.0, 1.0 / np.sqrt(count))
+        return min(1.0, pow(count, self.intrinsic_decay_rate))
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -148,16 +149,19 @@ def _args_to_run_name(args) -> str:
     """Sanitized string from args for folder/image naming."""
     parts = [
         getattr(args, "env_name", "env").replace("/", "-"),
-        f"seed{getattr(args, 'a_seed', 0)}",
-        f"goal{getattr(args, 'goal_position', 'top_left')}",
-        f"beta{getattr(args, 'beta', 0)}",
+        f"seed={getattr(args, 'a_seed', 0)}",
+        f"goal={getattr(args, 'goal_position', 'top_left')}",
+        f"beta={getattr(args, 'beta', 0)}",
+        f"decay={getattr(args, 'intrinsic_decay_rate', -0.5)}",
+        f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
+        f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
         # f"eval{getattr(args, 'eval_freq', 0)}",
         # f"tot{getattr(args, 'total_timesteps', 0)}",
         # f"n_eval{getattr(args, 'n_eval_episodes', 0)}",
         # getattr(args, "device", "cpu"),
         # f"cont{getattr(args, 'continuing_task', False)}",
     ]
-    return "_".join(str(p) for p in parts)
+    return "|".join(str(p) for p in parts)
 
 
 class WandbEvalLoggingCallback(BaseCallback):
@@ -182,7 +186,7 @@ class WandbEvalLoggingCallback(BaseCallback):
             try:
                 import matplotlib.pyplot as plt
                 step = self.num_timesteps
-                name = f"{self.run_name}_step{step:07d}"
+                name = f"{self.run_name}|step{step:07d}"
                 fig = create_visit_count_heatmap(
                     self.visit_count_env.get_visit_counts(),
                     maze_map=self.visit_count_env.maze_map,
@@ -221,6 +225,15 @@ class WandbEvalLoggingCallback(BaseCallback):
             ("eval/mean_ep_length", mean_length),
             ("eval/std_ep_length", std_length),
         ])
+        if self.visit_count_env is not None:
+            visit_counts = self.visit_count_env.get_visit_counts()
+            open_cells = (self.visit_count_env.maze_map == 0).sum()
+            visited_cells = (visit_counts > 0).sum()
+            total_visits = int(visit_counts.sum())
+            summary["visit_counts/total_visits"] = total_visits
+            summary["visit_counts/cells_visited"] = int(visited_cells)
+            summary["visit_counts/open_cells"] = int(open_cells)
+            summary["visit_counts/coverage_pct"] = 100.0 * visited_cells / max(1, open_cells)
         print_or_wandb_log(
             self.use_wandb,
             summary,
@@ -239,12 +252,18 @@ def main():
     parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"])
     parser.add_argument("--continuing_task", type=lambda x: x.lower() in ("true", "1", "yes"), default=False, nargs="?", const=True, help="If True, episode continues after reaching goal")
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
-    parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient (1/sqrt(visit_count)); 0 = tracking only")
+    parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient; 0 = tracking only")
+    parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
+    parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
+    parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner: top_left or bottom_right or random")
     args = parser.parse_args()
 
     if args.use_wandb:
         wandb.init(config=vars(args))
+        for key in vars(args):
+            if key in wandb.config:
+                setattr(args, key, wandb.config[key])
     seed = args.a_seed
 
     # Fix random generators for reproducibility
@@ -256,14 +275,16 @@ def main():
 
     gym.register_envs(gymnasium_robotics)
 
-    base_env = gym.make(args.env_name, continuing_task=args.continuing_task)
+    base_env = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
     if args.goal_position == "top_left":
         fixed_goal_cell = select_fixed_goal_top_left(base_env)
+        fixed_start_cell = select_fixed_goal_bottom_right(base_env)
     elif args.goal_position == "bottom_right":
         fixed_goal_cell = select_fixed_goal_bottom_right(base_env)
+        fixed_start_cell = select_fixed_goal_top_left(base_env)
     else:
         fixed_goal_cell = select_fixed_cell(base_env, seed)
-    fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
+        fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
     print_or_wandb_log(
         args.use_wandb,
@@ -278,7 +299,7 @@ def main():
     start_env = FixedStartWrapper(base_env, fixed_start_cell)
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    visit_count_env = VisitCountWrapper(no_goal_env, beta=args.beta)
+    visit_count_env = VisitCountWrapper(no_goal_env, beta=args.beta, intrinsic_decay_rate=args.intrinsic_decay_rate)
     monitored_env = Monitor(visit_count_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
     env.seed(seed)
@@ -294,16 +315,17 @@ def main():
     model = SAC(
         "MultiInputPolicy",
         env,
-        verbose=1,
+        verbose=0 if args.use_wandb else 1,
         seed=seed,
         device=args.device,
+        gamma=args.discount_factor,
         tensorboard_log=None,
         replay_buffer_class=replay_buffer_class,
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
     # Eval env: no VisitCountWrapper, so rewards are purely extrinsic (no intrinsic)
-    eval_base = gym.make(args.env_name, continuing_task=args.continuing_task)
+    eval_base = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
@@ -322,18 +344,6 @@ def main():
         total_timesteps=args.total_timesteps,
         callback=wandb_eval_callback,
     )
-
-    visit_counts = visit_count_env.get_visit_counts()
-    open_cells = (visit_count_env.maze_map == 0).sum()
-    visited_cells = (visit_counts > 0).sum()
-    total_visits = int(visit_counts.sum())
-    visit_summary = collections.OrderedDict([
-        ("visit_counts/total_visits", total_visits),
-        ("visit_counts/cells_visited", int(visited_cells)),
-        ("visit_counts/open_cells", int(open_cells)),
-        ("visit_counts/coverage_pct", 100.0 * visited_cells / max(1, open_cells)),
-    ])
-    print_or_wandb_log(args.use_wandb, visit_summary, "Visit counts")
 
     if not args.use_wandb:
         print("-------------Program Finished-------------")
