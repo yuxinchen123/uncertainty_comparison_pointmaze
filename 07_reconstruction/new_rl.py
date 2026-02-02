@@ -21,7 +21,6 @@ from stable_baselines3 import SAC
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.evaluation import evaluate_policy
 
 from utilities.debug import print_or_wandb_log
 from utilities.env_utils import (
@@ -120,7 +119,7 @@ class VisitCountWrapper(gym.Wrapper):
         count = self.visit_counts[row, col]
         if count <= 0:
             return 1.0
-        return min(1.0, pow(count, self.intrinsic_decay_rate))
+        return min(1.0, pow(float(count), self.intrinsic_decay_rate))
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
@@ -207,23 +206,50 @@ class WandbEvalLoggingCallback(BaseCallback):
             except Exception as e:
                 if self.verbose > 0:
                     print(f"  Heatmap: {e}")
-        episode_rewards, episode_lengths = evaluate_policy(
-            self.model,
-            self.eval_env,
-            n_eval_episodes=self.n_eval_episodes,
-            deterministic=True,
-            return_episode_rewards=True,
-        )
-        mean_reward = float(np.mean(episode_rewards))
-        std_reward = float(np.std(episode_rewards))
+        # Custom eval loop to collect extrinsic, intrinsic, and total per episode
+        episode_extrinsic = []
+        episode_intrinsic = []
+        episode_total = []
+        episode_lengths = []
+        for _ in range(self.n_eval_episodes):
+            reset_out = self.eval_env.reset()
+            obs = reset_out[0] if isinstance(reset_out, (list, tuple)) else reset_out
+            done = False
+            ep_ext, ep_int, ep_tot = 0.0, 0.0, 0.0
+            ep_len = 0
+            while not done:
+                action, _ = self.model.predict(obs, deterministic=True)
+                obs, rewards, dones, infos = self.eval_env.step(action)
+                ep_tot += float(rewards[0])
+                ep_len += 1
+                info = infos[0] if isinstance(infos, (list, tuple)) else infos
+                beta = getattr(self.visit_count_env, "beta", 1.0) if self.visit_count_env is not None else 1.0
+                if beta != 0:
+                    if "extrinsic_reward" not in info:
+                        raise KeyError("eval env step info must contain 'extrinsic_reward' when beta != 0")
+                    if "intrinsic_reward" not in info:
+                        raise KeyError("eval env step info must contain 'intrinsic_reward' when beta != 0")
+                # When beta=0, info may be empty (no VisitCountWrapper): extrinsic = step reward, intrinsic = 0
+                extrinsic = float(info.get("extrinsic_reward", rewards[0]))
+                intrinsic = float(info.get("intrinsic_reward", 0.0))
+                ep_ext += extrinsic
+                ep_int += beta * intrinsic
+                done = bool(dones[0])
+            episode_extrinsic.append(ep_ext)
+            episode_intrinsic.append(ep_int)
+            episode_total.append(ep_tot)
+            episode_lengths.append(ep_len)
+
+        mean_extrinsic = float(np.mean(episode_extrinsic))
+        mean_intrinsic = float(np.mean(episode_intrinsic))
+        mean_total = float(np.mean(episode_total))
         mean_length = float(np.mean(episode_lengths))
-        std_length = float(np.std(episode_lengths))
         summary = collections.OrderedDict([
             ("step", self.num_timesteps),
-            ("eval/mean_reward", mean_reward),
-            ("eval/std_reward", std_reward),
+            ("eval/mean_extrinsic_reward", mean_extrinsic),
+            ("eval/mean_intrinsic_reward", mean_intrinsic),
+            ("eval/mean_total_reward", mean_total),
             ("eval/mean_ep_length", mean_length),
-            ("eval/std_ep_length", std_length),
         ])
         if self.visit_count_env is not None:
             visit_counts = self.visit_count_env.get_visit_counts()
@@ -249,10 +275,10 @@ def main():
     parser.add_argument("--total_timesteps", type=int, default=100_0, help="Training steps")
     parser.add_argument("--eval_freq", type=int, default=5_0, help="Evaluate every N steps")
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
-    parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"])
+    parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
     parser.add_argument("--continuing_task", type=lambda x: x.lower() in ("true", "1", "yes"), default=False, nargs="?", const=True, help="If True, episode continues after reaching goal")
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
-    parser.add_argument("--beta", type=float, default=0.0, help="Intrinsic reward coefficient; 0 = tracking only")
+    parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient; 0 = tracking only")
     parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
@@ -265,6 +291,15 @@ def main():
             if key in wandb.config:
                 setattr(args, key, wandb.config[key])
     seed = args.a_seed
+
+    if args.device == "cuda":
+        if torch.cuda.is_available():
+            actual_device = torch.cuda.get_device_name(0) if torch.cuda.device_count() > 0 else "cuda"
+        else:
+            actual_device = "cpu (cuda requested but not available)"
+            args.device = "cpu"
+    else:
+        actual_device = "cpu"
 
     # Fix random generators for reproducibility
     random.seed(seed)
@@ -286,12 +321,15 @@ def main():
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
+    device_type = "gpu" if args.device == "cuda" else "cpu"
     print_or_wandb_log(
         args.use_wandb,
         collections.OrderedDict([
+            ("device_type", device_type),
+            ("actual_device", actual_device),
             ("start_goal/manhattan_distance", manhattan_dist),
         ]),
-        "Start–goal Manhattan distance",
+        "Setup (device and start–goal)",
     )
     print(f"Fixed goal cell (a_seed={seed}): {fixed_goal_cell}")
     print(f"Fixed start cell (a_seed={seed}): {fixed_start_cell}")
@@ -324,12 +362,13 @@ def main():
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
-    # Eval env: no VisitCountWrapper, so rewards are purely extrinsic (no intrinsic)
+    # Eval env: same stack as train including VisitCountWrapper so we can log extrinsic, intrinsic, and total
     eval_base = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
-    eval_env = Monitor(eval_no_goal_env, filename=None)
+    eval_visit_count_env = VisitCountWrapper(eval_no_goal_env, beta=args.beta, intrinsic_decay_rate=args.intrinsic_decay_rate)
+    eval_env = Monitor(eval_visit_count_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
     eval_env.seed(seed)
     eval_env.reset()

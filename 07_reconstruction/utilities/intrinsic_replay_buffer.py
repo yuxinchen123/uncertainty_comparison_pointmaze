@@ -91,6 +91,8 @@ class DictIntrinsicReplayBuffer(DictReplayBuffer):
         intrinsic_rewards = np.array(intrinsic_rewards, dtype=np.float32)
         extrinsic_rewards = self.extrinsic_rewards[batch_inds, 0]
         total_rewards = extrinsic_rewards + self.beta * intrinsic_rewards
+        # SB3 expects rewards shape (batch_size, 1); (batch_size,) can cause critic MSE shape mismatch
+        total_rewards = total_rewards.reshape(-1, 1)
 
         if hasattr(batch.rewards, "device"):
             total_rewards = torch.from_numpy(total_rewards).float().to(batch.rewards.device)

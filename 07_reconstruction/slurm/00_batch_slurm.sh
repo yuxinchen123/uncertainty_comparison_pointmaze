@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #Define two variables with name job_id and cpu_core
-job_id="catresearch/rnd_07_reconstruction/xbevoosz"
+job_id="catresearch/rnd_07_reconstruction/cibi9y11"
 
 # for i in $(seq 1 1); do
 #     sbatch slurm/01_run_gpu.slurm $job_id&
 # done
 
 
-for i in $(seq 1 15); do
+for i in $(seq 1 30); do
     sbatch slurm/01_run_gpu.slurm $job_id&
 done
 
@@ -19,11 +19,11 @@ done
 # sleep 20
 
 
-for i in $(seq 1 26); do
+for i in $(seq 1 20); do
     sbatch slurm/03_run_cpu.slurm $job_id&
 done
 
-for i in $(seq 1 26); do
+for i in $(seq 1 20); do
     sbatch slurm/03_run_nolim.slurm $job_id&
 done
 
@@ -71,8 +71,8 @@ do
         fi
     fi
 
-if [ $count -ge 64 ]; then
-    scancel -u sl5nw -t PD
-fi 
+# if [ $count -ge 64 ]; then
+#     scancel -u sl5nw -t PD
+# fi 
 
 done < squeue.log
