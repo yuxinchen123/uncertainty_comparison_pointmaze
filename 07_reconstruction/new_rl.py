@@ -169,6 +169,93 @@ def _args_to_run_name(args) -> str:
     return "|".join(str(p) for p in parts)
 
 
+class TrainEpisodeStatsCallback(BaseCallback):
+    """
+    Logs average episode reward (extrinsic, intrinsic, total) and episode length
+    from the training env at the same frequency as eval.
+    Uses only the past n_eval_episodes training episodes for each log.
+    Assumes Monitor wrapper is present. Tracks extrinsic/intrinsic from info dict.
+    """
+
+    def __init__(self, train_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, beta: float = 0.0, verbose: int = 0):
+        super().__init__(verbose)
+        self.train_env = train_env
+        self.eval_freq = eval_freq
+        self.n_eval_episodes = n_eval_episodes
+        self.use_wandb = use_wandb
+        self.beta = beta
+        self._monitor = None
+        self._ep_extrinsic = 0.0
+        self._ep_intrinsic = 0.0
+        self._episode_extrinsics = []
+        self._episode_intrinsics = []
+
+    def _get_monitor(self):
+        """Locate Monitor wrapper (assumed to exist)."""
+        if self._monitor is not None:
+            return self._monitor
+        env = self.train_env.envs[0]
+        while hasattr(env, "env"):
+            if isinstance(env, Monitor):
+                self._monitor = env
+                return self._monitor
+            env = env.env
+        raise RuntimeError("Monitor wrapper not found in training env")
+
+    def _on_step(self) -> bool:
+        # Accumulate extrinsic and intrinsic from info on every step
+        infos = self.locals.get("infos", [])
+        dones = self.locals.get("dones", [False])
+        if len(infos) > 0:
+            info = infos[0]
+            ext = float(info.get("extrinsic_reward", 0.0))
+            intr_raw = float(info.get("intrinsic_reward", 0.0))
+            intr = self.beta * intr_raw
+            self._ep_extrinsic += ext
+            self._ep_intrinsic += intr
+            if dones[0]:
+                self._episode_extrinsics.append(self._ep_extrinsic)
+                self._episode_intrinsics.append(self._ep_intrinsic)
+                self._ep_extrinsic = 0.0
+                self._ep_intrinsic = 0.0
+
+        if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
+            return True
+
+        monitor = self._get_monitor()
+        rewards = monitor.get_episode_rewards()
+        lengths = monitor.get_episode_lengths()
+        n_completed = len(rewards)
+        if n_completed == 0:
+            return True
+
+        n_window = min(self.n_eval_episodes, n_completed)
+        window_rewards = rewards[-n_window:]
+        window_lengths = lengths[-n_window:]
+        window_extrinsics = self._episode_extrinsics[-n_window:]
+        window_intrinsics = self._episode_intrinsics[-n_window:]
+
+        mean_total = float(np.mean(window_rewards))
+        mean_extrinsic = float(np.mean(window_extrinsics)) if window_extrinsics else 0.0
+        mean_intrinsic = float(np.mean(window_intrinsics)) if window_intrinsics else 0.0
+        mean_length = float(np.mean(window_lengths))
+
+        summary = collections.OrderedDict([
+            ("step", self.num_timesteps),
+            ("train/mean_extrinsic_reward", mean_extrinsic),
+            ("train/mean_intrinsic_reward", mean_intrinsic),
+            ("train/mean_total_reward", mean_total),
+            ("train/mean_episode_length", mean_length),
+            ("train/n_episodes_averaged", n_window),
+        ])
+        print_or_wandb_log(
+            self.use_wandb,
+            summary,
+            f"Train episode stats (step {self.num_timesteps})",
+        )
+        return True
+
+
 class WandbEvalLoggingCallback(BaseCallback):
     """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
 
@@ -282,9 +369,8 @@ def main():
     parser.add_argument("--eval_freq", type=int, default=5_0, help="Evaluate every N steps")
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
     parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
-    parser.add_argument("--continuing_task", type=lambda x: x.lower() in ("true", "1", "yes"), default=False, nargs="?", const=True, help="If True, episode continues after reaching goal")
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
-    parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient; 0 = tracking only")
+    parser.add_argument("--beta", type=float, default=0, help="Intrinsic reward coefficient; 0 = tracking only")
     parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
@@ -316,7 +402,12 @@ def main():
 
     gym.register_envs(gymnasium_robotics)
 
-    base_env = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
+    base_env = gym.make(
+        args.env_name,
+        continuing_task=True,
+        reset_target=False,
+        max_episode_steps=args.env_max_episode,
+    )
     if args.goal_position == "top_left":
         fixed_goal_cell = select_fixed_goal_top_left(base_env)
         fixed_start_cell = select_fixed_goal_bottom_right(base_env)
@@ -369,7 +460,12 @@ def main():
     )
 
     # Eval env: same stack as train; reuse train count map for intrinsic reward but do not increment during eval
-    eval_base = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
+    eval_base = gym.make(
+        args.env_name,
+        continuing_task=True,
+        reset_target=False,
+        max_episode_steps=args.env_max_episode,
+    )
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
@@ -390,10 +486,14 @@ def main():
         eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
         visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
     )
+    train_stats_callback = TrainEpisodeStatsCallback(
+        train_env=env, eval_freq=args.eval_freq, n_eval_episodes=args.n_eval_episodes,
+        use_wandb=args.use_wandb, beta=args.beta,
+    )
 
     model.learn(
         total_timesteps=args.total_timesteps,
-        callback=wandb_eval_callback,
+        callback=[wandb_eval_callback, train_stats_callback],
     )
 
     if not args.use_wandb:

@@ -26,8 +26,6 @@ parameters:
     value: 100
   device:
     value: "cuda"
-  continuing_task:
-    value: false
   use_wandb:
     value: true
   beta:
