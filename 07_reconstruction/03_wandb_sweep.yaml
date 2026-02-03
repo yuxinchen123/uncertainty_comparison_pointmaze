@@ -1,5 +1,5 @@
 program: new_rl.py
-name: sweep02
+name: sweep03
 project: rnd_07_reconstruction
 description: SAC on PointMaze with visit counts and optional intrinsic reward
 method: grid
@@ -37,7 +37,8 @@ parameters:
     values: [-0.5, -1]
   discount_factor:
     # values: [0.999, 0.99]
-    values: [1]
+    values: [0.999]
+    # values: [1]
   env_max_episode:
     # values: [200, 300, 400]
     values: [400]

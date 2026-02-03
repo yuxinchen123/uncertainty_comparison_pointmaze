@@ -94,17 +94,23 @@ class VisitCountWrapper(gym.Wrapper):
     Wraps PointMaze to track visit counts per grid cell.
     Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
     Optional: add intrinsic reward when beta > 0. Decay: intrinsic_decay_rate -2 = 1/sqrt(n), -1 = 1/n.
+    For eval: pass count_map_ref=train_env.visit_counts and update_counts=False to reuse train counts
+    without modifying them.
     """
 
-    def __init__(self, env, beta=0.0, intrinsic_decay_rate=-0.5):
+    def __init__(self, env, beta=0.0, intrinsic_decay_rate=-0.5, count_map_ref=None, update_counts=True):
         super().__init__(env)
         self.beta = beta
         self.intrinsic_decay_rate = intrinsic_decay_rate
+        self.update_counts = update_counts
         self.maze_map = get_maze_map(env)
         if self.maze_map is None:
             raise ValueError("Could not extract maze_map from environment")
         self.grid_rows, self.grid_cols = self.maze_map.shape
-        self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
+        if count_map_ref is not None:
+            self.visit_counts = count_map_ref
+        else:
+            self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
 
     def _state_to_grid(self, obs):
         """Map observation to 0-based (row, col)."""
@@ -127,7 +133,7 @@ class VisitCountWrapper(gym.Wrapper):
         intrinsic = 0.0
         if self.beta != 0.0:
             intrinsic = self._get_intrinsic_reward(row, col)
-        if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
+        if self.update_counts and 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:
                 self.visit_counts[row, col] += 1
         total_reward = reward + self.beta * intrinsic
@@ -362,12 +368,18 @@ def main():
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
-    # Eval env: same stack as train including VisitCountWrapper so we can log extrinsic, intrinsic, and total
+    # Eval env: same stack as train; reuse train count map for intrinsic reward but do not increment during eval
     eval_base = gym.make(args.env_name, continuing_task=args.continuing_task, max_episode_steps=args.env_max_episode)
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
-    eval_visit_count_env = VisitCountWrapper(eval_no_goal_env, beta=args.beta, intrinsic_decay_rate=args.intrinsic_decay_rate)
+    eval_visit_count_env = VisitCountWrapper(
+        eval_no_goal_env,
+        beta=args.beta,
+        intrinsic_decay_rate=args.intrinsic_decay_rate,
+        count_map_ref=visit_count_env.visit_counts,
+        update_counts=False,
+    )
     eval_env = Monitor(eval_visit_count_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
     eval_env.seed(seed)
