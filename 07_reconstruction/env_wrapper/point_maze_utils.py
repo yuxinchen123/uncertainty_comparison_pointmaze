@@ -1,4 +1,4 @@
-"""Environment utilities for PointMaze (07_reconstruction, self-contained)."""
+"""PointMaze environment utilities (07_reconstruction, self-contained)."""
 import numpy as np
 
 
