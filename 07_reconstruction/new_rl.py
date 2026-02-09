@@ -19,16 +19,15 @@ import gymnasium_robotics
 from stable_baselines3 import SAC
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.callbacks import BaseCallback
 
 from utilities.debug import print_or_wandb_log
+from utilities.callbacks import TrainEpisodeStatsCallback, WandbEvalLoggingCallback
 from env_wrapper.point_maze_utils import (
     select_fixed_cell,
     select_fixed_goal_top_left,
     select_fixed_goal_bottom_right,
 )
-from utilities.heatmap_utils import create_visit_count_heatmap
-from utilities.intrinsic_replay_buffer import DictIntrinsicReplayBuffer
+from intrinsic.intrinsic_replay_buffer import IntrinsicReplayBuffer
 
 from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
@@ -55,198 +54,6 @@ def _args_to_run_name(args) -> str:
         # f"cont{getattr(args, 'continuing_task', False)}",
     ]
     return "|".join(str(p) for p in parts)
-
-
-class TrainEpisodeStatsCallback(BaseCallback):
-    """
-    Logs average episode reward (extrinsic, intrinsic, total) and episode length
-    from the training env at the same frequency as eval.
-    Uses only the past n_eval_episodes training episodes for each log.
-    Assumes Monitor wrapper is present. Tracks extrinsic/intrinsic from info dict.
-    """
-
-    def __init__(self, train_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, beta: float = 0.0, verbose: int = 0):
-        super().__init__(verbose)
-        self.train_env = train_env
-        self.eval_freq = eval_freq
-        self.n_eval_episodes = n_eval_episodes
-        self.use_wandb = use_wandb
-        self.beta = beta
-        self._monitor = None
-        self._ep_extrinsic = 0.0
-        self._ep_intrinsic = 0.0
-        self._episode_extrinsics = []
-        self._episode_intrinsics = []
-
-    def _get_monitor(self):
-        """Locate Monitor wrapper (assumed to exist)."""
-        if self._monitor is not None:
-            return self._monitor
-        env = self.train_env.envs[0]
-        while hasattr(env, "env"):
-            if isinstance(env, Monitor):
-                self._monitor = env
-                return self._monitor
-            env = env.env
-        raise RuntimeError("Monitor wrapper not found in training env")
-
-    def _on_step(self) -> bool:
-        # Accumulate extrinsic and intrinsic from info on every step
-        infos = self.locals.get("infos", [])
-        dones = self.locals.get("dones", [False])
-        if len(infos) > 0:
-            info = infos[0]
-            ext = float(info.get("extrinsic_reward", 0.0))
-            intr_raw = float(info.get("intrinsic_reward", 0.0))
-            intr = self.beta * intr_raw
-            self._ep_extrinsic += ext
-            self._ep_intrinsic += intr
-            if dones[0]:
-                self._episode_extrinsics.append(self._ep_extrinsic)
-                self._episode_intrinsics.append(self._ep_intrinsic)
-                self._ep_extrinsic = 0.0
-                self._ep_intrinsic = 0.0
-
-        if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
-            return True
-
-        monitor = self._get_monitor()
-        rewards = monitor.get_episode_rewards()
-        lengths = monitor.get_episode_lengths()
-        n_completed = len(rewards)
-        if n_completed == 0:
-            return True
-
-        n_window = min(self.n_eval_episodes, n_completed)
-        window_rewards = rewards[-n_window:]
-        window_lengths = lengths[-n_window:]
-        window_extrinsics = self._episode_extrinsics[-n_window:]
-        window_intrinsics = self._episode_intrinsics[-n_window:]
-
-        mean_total = float(np.mean(window_rewards))
-        mean_extrinsic = float(np.mean(window_extrinsics)) if window_extrinsics else 0.0
-        mean_intrinsic = float(np.mean(window_intrinsics)) if window_intrinsics else 0.0
-        mean_length = float(np.mean(window_lengths))
-
-        summary = collections.OrderedDict([
-            ("step", self.num_timesteps),
-            ("train/mean_extrinsic_reward", mean_extrinsic),
-            ("train/mean_intrinsic_reward", mean_intrinsic),
-            ("train/mean_total_reward", mean_total),
-            ("train/mean_episode_length", mean_length),
-            ("train/n_episodes_averaged", n_window),
-        ])
-        print_or_wandb_log(
-            self.use_wandb,
-            summary,
-            f"Train episode stats (step {self.num_timesteps})",
-        )
-        return True
-
-
-class WandbEvalLoggingCallback(BaseCallback):
-    """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
-
-    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", verbose: int = 0):
-        super().__init__(verbose)
-        self.eval_env = eval_env
-        self.eval_freq = eval_freq
-        self.n_eval_episodes = n_eval_episodes
-        self.use_wandb = use_wandb
-        self.visit_count_env = visit_count_env
-        self.goal_cell = goal_cell
-        self.start_cell = start_cell
-        self.run_name = run_name
-
-    def _on_step(self) -> bool:
-        if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
-            return True
-        # Heatmap at eval freq
-        if self.visit_count_env is not None:
-            try:
-                import matplotlib.pyplot as plt
-                step = self.num_timesteps
-                name = f"{self.run_name}|step{step:07d}"
-                fig = create_visit_count_heatmap(
-                    self.visit_count_env.get_visit_counts(),
-                    maze_map=self.visit_count_env.maze_map,
-                    title=f"Train Visit Count ({name})",
-                    goal_cell=self.goal_cell,
-                    start_cell=self.start_cell,
-                )
-                if self.use_wandb and wandb.run:
-                    wandb.log({
-                        f"train_visit_count_heatmap/{name}": wandb.Image(fig),
-                        "media/heatmap_latest": wandb.Image(fig),
-                    }, step=step, commit=True)
-                else:
-                    img_dir = os.path.join("image", self.run_name)
-                    os.makedirs(img_dir, exist_ok=True)
-                    fig.savefig(os.path.join(img_dir, f"heatmap_step{step:07d}.png"))
-                plt.close(fig)
-            except Exception as e:
-                if self.verbose > 0:
-                    print(f"  Heatmap: {e}")
-        # Custom eval loop to collect extrinsic, intrinsic, and total per episode
-        episode_extrinsic = []
-        episode_intrinsic = []
-        episode_total = []
-        episode_lengths = []
-        for _ in range(self.n_eval_episodes):
-            reset_out = self.eval_env.reset()
-            obs = reset_out[0] if isinstance(reset_out, (list, tuple)) else reset_out
-            done = False
-            ep_ext, ep_int, ep_tot = 0.0, 0.0, 0.0
-            ep_len = 0
-            while not done:
-                action, _ = self.model.predict(obs, deterministic=True)
-                obs, rewards, dones, infos = self.eval_env.step(action)
-                ep_tot += float(rewards[0])
-                ep_len += 1
-                info = infos[0] if isinstance(infos, (list, tuple)) else infos
-                beta = getattr(self.visit_count_env, "beta", 1.0) if self.visit_count_env is not None else 1.0
-                if beta != 0:
-                    if "extrinsic_reward" not in info:
-                        raise KeyError("eval env step info must contain 'extrinsic_reward' when beta != 0")
-                    if "intrinsic_reward" not in info:
-                        raise KeyError("eval env step info must contain 'intrinsic_reward' when beta != 0")
-                # When beta=0, info may be empty (no VisitCountWrapper): extrinsic = step reward, intrinsic = 0
-                extrinsic = float(info.get("extrinsic_reward", rewards[0]))
-                intrinsic = float(info.get("intrinsic_reward", 0.0))
-                ep_ext += extrinsic
-                ep_int += beta * intrinsic
-                done = bool(dones[0])
-            episode_extrinsic.append(ep_ext)
-            episode_intrinsic.append(ep_int)
-            episode_total.append(ep_tot)
-            episode_lengths.append(ep_len)
-
-        mean_extrinsic = float(np.mean(episode_extrinsic))
-        mean_intrinsic = float(np.mean(episode_intrinsic))
-        mean_total = float(np.mean(episode_total))
-        mean_length = float(np.mean(episode_lengths))
-        summary = collections.OrderedDict([
-            ("step", self.num_timesteps),
-            ("eval/mean_extrinsic_reward", mean_extrinsic),
-            ("eval/mean_intrinsic_reward", mean_intrinsic),
-            ("eval/mean_total_reward", mean_total),
-            ("eval/mean_ep_length", mean_length),
-        ])
-        if self.visit_count_env is not None:
-            visit_counts = self.visit_count_env.get_visit_counts()
-            open_cells = (self.visit_count_env.maze_map == 0).sum()
-            visited_cells = (visit_counts > 0).sum()
-            total_visits = int(visit_counts.sum())
-            summary["visit_counts/total_visits"] = total_visits
-            summary["visit_counts/cells_visited"] = int(visited_cells)
-            summary["visit_counts/open_cells"] = int(open_cells)
-            summary["visit_counts/coverage_pct"] = 100.0 * visited_cells / max(1, open_cells)
-        print_or_wandb_log(
-            self.use_wandb,
-            summary,
-            f"Eval (step {self.num_timesteps})",
-        )
-        return True
 
 
 def main():
@@ -328,7 +135,7 @@ def main():
     env.seed(seed)
     env.reset()
 
-    replay_buffer_class = DictIntrinsicReplayBuffer if args.beta > 0 else None
+    replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
     replay_buffer_kwargs = (
         {"intrinsic_reward_fn": visit_count_env.compute_intrinsic_reward, "beta": args.beta}
         if args.beta > 0

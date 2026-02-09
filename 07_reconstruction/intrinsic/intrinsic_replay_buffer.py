@@ -10,7 +10,7 @@ from stable_baselines3.common.buffers import DictReplayBuffer
 from stable_baselines3.common.type_aliases import DictReplayBufferSamples
 
 
-class DictIntrinsicReplayBuffer(DictReplayBuffer):
+class IntrinsicReplayBuffer(DictReplayBuffer):
     """
     DictReplayBuffer that recomputes intrinsic rewards when sampling.
 
