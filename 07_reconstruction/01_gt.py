@@ -34,7 +34,9 @@ from env_wrapper.point_maze_wrappers import (
     FixedStartWrapper,
     RemoveGoalWrapper,
     VisitCountWrapper,
+    ComputeIntrinsicRewardWrapper,
 )
+from intrinsic.visit_count_bonus import make_visit_count_intrinsic_reward_fn
 
 
 def _args_to_run_name(args) -> str:
@@ -129,15 +131,21 @@ def main():
     start_env = FixedStartWrapper(base_env, fixed_start_cell)
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    visit_count_env = VisitCountWrapper(no_goal_env, beta=args.beta, intrinsic_decay_rate=args.intrinsic_decay_rate)
-    monitored_env = Monitor(visit_count_env, filename=None)
+    visit_count_env = VisitCountWrapper(no_goal_env)
+    intrinsic_reward_fn = make_visit_count_intrinsic_reward_fn(
+        visit_count_env, args.intrinsic_decay_rate
+    )
+    intrinsic_env = ComputeIntrinsicRewardWrapper(
+        visit_count_env, beta=args.beta, intrinsic_reward_method=intrinsic_reward_fn
+    )
+    monitored_env = Monitor(intrinsic_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
     env.seed(seed)
     env.reset()
 
     replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
     replay_buffer_kwargs = (
-        {"intrinsic_reward_fn": visit_count_env.compute_intrinsic_reward, "beta": args.beta}
+        {"intrinsic_reward_fn": intrinsic_reward_fn, "beta": args.beta}
         if args.beta > 0
         else None
     )
@@ -166,12 +174,13 @@ def main():
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
     eval_visit_count_env = VisitCountWrapper(
         eval_no_goal_env,
-        beta=args.beta,
-        intrinsic_decay_rate=args.intrinsic_decay_rate,
         count_map_ref=visit_count_env.visit_counts,
         update_counts=False,
     )
-    eval_env = Monitor(eval_visit_count_env, filename=None)
+    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
+        eval_visit_count_env, beta=args.beta, intrinsic_reward_method=intrinsic_reward_fn
+    )
+    eval_env = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
     eval_env.seed(seed)
     eval_env.reset()
@@ -180,6 +189,7 @@ def main():
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
         visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
+        beta=args.beta,
     )
     train_stats_callback = TrainEpisodeStatsCallback(
         train_env=env, eval_freq=args.eval_freq, n_eval_episodes=args.n_eval_episodes,

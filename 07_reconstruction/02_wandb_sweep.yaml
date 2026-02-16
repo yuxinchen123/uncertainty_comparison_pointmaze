@@ -1,0 +1,41 @@
+program: 02_rnd_rlexplore.py
+name: sweep04
+project: rnd_07_reconstruction
+description: SAC on PointMaze with visit counts and optional intrinsic reward
+method: grid
+metric:
+  goal: maximize
+  name: eval_mean_reward
+parameters:
+  goal_position:
+    # values: ["top_left", "bottom_right"]
+    values: ["bottom_right"]
+  a_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+  env_name:
+    value: "PointMaze_Large-v3"
+  total_timesteps:
+    values: [2000000]
+    # values: [500000]
+  eval_freq:
+    # value: 5000
+    value: 50000
+    # value: 50
+  n_eval_episodes:
+    value: 100
+  device:
+    value: "cpu"
+  use_wandb:
+    value: true
+  beta:
+    # 0 and 2^-10 to 2^10, interval 2^2 (exponents: -10,-8,-6,-4,-2,0,2,4,6,8,10)
+    values: [0.0, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000]
+  intrinsic_method:
+    values: ["rnd"]
+  discount_factor:
+    # values: [0.999, 0.99]
+    values: [0.999]
+    # values: [1]
+  env_max_episode:
+    # values: [200, 300, 400]
+    values: [400]

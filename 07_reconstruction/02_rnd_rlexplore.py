@@ -34,6 +34,7 @@ from env_wrapper.point_maze_wrappers import (
     FixedStartWrapper,
     RemoveGoalWrapper,
     VisitCountWrapper,
+    ComputeIntrinsicRewardWrapper,
 )
 
 # RND from rllte: uses predictor vs target network distillation for intrinsic reward
@@ -52,7 +53,8 @@ def _args_to_run_name(args) -> str:
         f"seed={getattr(args, 'a_seed', 0)}",
         f"goal={getattr(args, 'goal_position', 'top_left')}",
         f"beta={getattr(args, 'beta', 0)}",
-        f"decay={getattr(args, 'intrinsic_decay_rate', -0.5)}",
+        # f"decay={getattr(args, 'intrinsic_decay_rate', -0.5)}",
+        f"intrinsic_method={getattr(args, 'intrinsic_method', 'rnd')}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
         # f"eval{getattr(args, 'eval_freq', 0)}",
@@ -73,8 +75,9 @@ def main():
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
     parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
-    parser.add_argument("--beta", type=float, default=0, help="Intrinsic reward coefficient; 0 = tracking only")
-    parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
+    parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
+    parser.add_argument("--intrinsic_method", default=0, help="intrinsic_method")
+    # parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner: top_left or bottom_right or random")
@@ -95,6 +98,7 @@ def main():
             args.device = "cpu"
     else:
         actual_device = "cpu"
+    device_type = "gpu" if args.device == "cuda" else "cpu"
 
     # Fix random generators for reproducibility
     random.seed(seed)
@@ -121,7 +125,6 @@ def main():
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
-    device_type = "gpu" if args.device == "cuda" else "cpu"
     print_or_wandb_log(
         args.use_wandb,
         collections.OrderedDict([
@@ -137,14 +140,10 @@ def main():
     start_env = FixedStartWrapper(base_env, fixed_start_cell)
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    # When using RND for intrinsic reward, env only tracks visits (beta=0); buffer adds beta * rnd.compute at sample time
-    visit_count_env = VisitCountWrapper(no_goal_env, beta=0.0, intrinsic_decay_rate=args.intrinsic_decay_rate)
-    monitored_env = Monitor(visit_count_env, filename=None)
-    env = DummyVecEnv([lambda: monitored_env])
-    env.seed(seed)
-    env.reset()
+    visit_count_env = VisitCountWrapper(no_goal_env)
 
     replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
+    rnd_intrinsic_for_wrapper = None
     if args.beta > 0:
         fake_vec_env = make_fake_vec_env_for_rnd(
             no_goal_env.observation_space,
@@ -158,8 +157,8 @@ def main():
             beta=1.0,
             kappa=0.0,
             gamma=None,
-            rwd_norm_type="rms",
-            obs_norm_type="rms",
+            rwd_norm_type="none",
+            obs_norm_type="none",
             latent_dim=128,
             lr=0.001,
             batch_size=256,
@@ -168,6 +167,28 @@ def main():
             weight_init="orthogonal",
         )
         intrinsic_reward_fn = make_rnd_intrinsic_reward_fn(rnd_module, args.device)
+        action_size = np.array(no_goal_env.action_space.sample()).shape
+
+        def rnd_intrinsic_for_wrapper(obs):
+            """Single obs -> batch of 1 for RND -> float."""
+            if isinstance(obs, dict):
+                next_obs_batch = {
+                    k: np.expand_dims(np.asarray(v, dtype=np.float32), 0)
+                    for k, v in obs.items()
+                }
+            else:
+                next_obs_batch = np.expand_dims(
+                    np.asarray(obs, dtype=np.float32), 0
+                )
+            batch = {
+                "observations": next_obs_batch,
+                "next_observations": next_obs_batch,
+                "actions": np.zeros((1,) + action_size, dtype=np.float32),
+                "dones": np.zeros(1, dtype=np.float32),
+            }
+            r = intrinsic_reward_fn(batch)
+            return float(r[0]) if r is not None and len(r) else 0.0
+
         replay_buffer_kwargs = {
             "intrinsic_reward_fn": intrinsic_reward_fn,
             "beta": args.beta,
@@ -175,6 +196,14 @@ def main():
         }
     else:
         replay_buffer_kwargs = None
+
+    intrinsic_env = ComputeIntrinsicRewardWrapper(
+        visit_count_env, beta=args.beta, intrinsic_reward_method=rnd_intrinsic_for_wrapper
+    )
+    monitored_env = Monitor(intrinsic_env, filename=None)
+    env = DummyVecEnv([lambda: monitored_env])
+    env.seed(seed)
+    env.reset()
 
     model = SAC(
         "MultiInputPolicy",
@@ -200,12 +229,13 @@ def main():
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
     eval_visit_count_env = VisitCountWrapper(
         eval_no_goal_env,
-        beta=args.beta,
-        intrinsic_decay_rate=args.intrinsic_decay_rate,
         count_map_ref=visit_count_env.visit_counts,
         update_counts=False,
     )
-    eval_env = Monitor(eval_visit_count_env, filename=None)
+    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
+        eval_visit_count_env, beta=args.beta, intrinsic_reward_method=rnd_intrinsic_for_wrapper
+    )
+    eval_env = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])
     eval_env.seed(seed)
     eval_env.reset()
@@ -214,6 +244,7 @@ def main():
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
         visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
+        beta=args.beta,
     )
     train_stats_callback = TrainEpisodeStatsCallback(
         train_env=env, eval_freq=args.eval_freq, n_eval_episodes=args.n_eval_episodes,

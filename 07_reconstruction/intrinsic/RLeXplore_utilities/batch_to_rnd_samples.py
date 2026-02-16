@@ -2,6 +2,7 @@
 Convert a sampled batch (SB3 replay buffer / DictReplayBufferSamples style) into the samples dict
 expected by rllte RND.compute(), and optionally compute intrinsic rewards.
 """
+import numpy as np
 import torch
 from typing import Any, Dict, Optional, Union
 
@@ -38,8 +39,8 @@ def build_rnd_samples_from_batch(
     obs_t = obs_dict["observation"] if isinstance(obs_dict, dict) else obs_dict
     next_obs_t = next_obs_dict["observation"] if isinstance(next_obs_dict, dict) else next_obs_dict
     if hasattr(obs_t, "to"):
-        obs_t = obs_t.to(device)
-        next_obs_t = next_obs_t.to(device)
+        obs_t = obs_t.to(device).float()
+        next_obs_t = next_obs_t.to(device).float()
     else:
         obs_t = torch.as_tensor(obs_t, dtype=torch.float32, device=device)
         next_obs_t = torch.as_tensor(next_obs_t, dtype=torch.float32, device=device)

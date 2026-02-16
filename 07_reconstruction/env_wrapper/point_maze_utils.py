@@ -30,30 +30,24 @@ def observation_to_grid(observation, grid_rows=9, grid_cols=12):
     cell_width = total_width / grid_cols
     cell_height = total_height / grid_rows
 
-    # X -> col (1-based in notebook, convert to 0-based)
+    # X -> col (0-based)
     if x < left_edge:
-        col_1 = 1
+        col = 0
     elif x >= right_edge:
-        col_1 = grid_cols
+        col = grid_cols - 1
     else:
-        col_1 = int((x - left_edge) / cell_width) + 1
-        if abs(x - (left_edge + (col_1 - 1) * cell_width)) < 1e-10 and col_1 > 1:
-            col_1 = col_1 - 1
-        col_1 = max(1, min(col_1, grid_cols))
-    col = col_1 - 1
+        col = int((x - left_edge) / cell_width)
+        col = min(col, grid_cols - 1)
 
-    # Y -> row (1-based in notebook, top=1; convert to 0-based)
+    # Y -> row (0-based; row 0 = top, row grid_rows-1 = bottom, matches maze_map indexing)
     if y <= bottom_edge:
-        row_1 = grid_rows
+        row = grid_rows - 1
     elif y > top_edge:
-        row_1 = 1
+        row = 0
     else:
         y_offset_from_top = top_edge - y
-        row_1 = int(y_offset_from_top / cell_height) + 1
-        if abs(y % 1.0 - 0.5) < 1e-10 and row_1 > 1:
-            row_1 = row_1 - 1
-        row_1 = max(1, min(row_1, grid_rows))
-    row = row_1 - 1
+        row = int(y_offset_from_top / cell_height)
+        row = min(row, grid_rows - 1)
 
     return row, col
 

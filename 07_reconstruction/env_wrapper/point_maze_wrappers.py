@@ -67,17 +67,14 @@ class RemoveGoalWrapper(gym.Wrapper):
 
 class VisitCountWrapper(gym.Wrapper):
     """
-    Wraps PointMaze to track visit counts per grid cell.
+    Wraps PointMaze to track visit counts per grid cell only.
     Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
-    Optional: add intrinsic reward when beta > 0. Decay: intrinsic_decay_rate -2 = 1/sqrt(n), -1 = 1/n.
-    For eval: pass count_map_ref=train_env.visit_counts and update_counts=False to reuse train counts
-    without modifying them.
+    Does not compute or add intrinsic reward; use ComputeIntrinsicRewardWrapper for that.
+    For eval: pass count_map_ref=train_env.visit_counts and update_counts=False to reuse train counts.
     """
 
-    def __init__(self, env, beta=0.0, intrinsic_decay_rate=-0.5, count_map_ref=None, update_counts=True):
+    def __init__(self, env, count_map_ref=None, update_counts=True):
         super().__init__(env)
-        self.beta = beta
-        self.intrinsic_decay_rate = intrinsic_decay_rate
         self.update_counts = update_counts
         self.maze_map = get_maze_map(env)
         if self.maze_map is None:
@@ -92,35 +89,36 @@ class VisitCountWrapper(gym.Wrapper):
         """Map observation to 0-based (row, col)."""
         return observation_to_grid(obs, self.grid_rows, self.grid_cols)
 
-    def _get_intrinsic_reward(self, row, col):
-        """Intrinsic reward = 1/n^exponent before this visit; exponent = -decay_rate. Capped at 1.0 for unvisited."""
-        if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
-            return 0.0
-        if self.maze_map[row, col] != 0:
-            return 0.0
-        count = self.visit_counts[row, col]
-        if count <= 0:
-            return 1.0
-        return min(1.0, pow(float(count), self.intrinsic_decay_rate))
-
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         row, col = self._state_to_grid(obs)
-        intrinsic = 0.0
-        if self.beta != 0.0:
-            intrinsic = self._get_intrinsic_reward(row, col)
         if self.update_counts and 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:
                 self.visit_counts[row, col] += 1
-        total_reward = reward + self.beta * intrinsic
-        info["intrinsic_reward"] = intrinsic
-        info["extrinsic_reward"] = reward
-        return obs, total_reward, terminated, truncated, info
+        return obs, reward, terminated, truncated, info
 
     def get_visit_counts(self):
         return self.visit_counts.copy()
 
-    def compute_intrinsic_reward(self, obs):
-        """Compute intrinsic reward for obs using current visit counts. For replay buffer sample-time recomputation."""
-        row, col = self._state_to_grid(obs)
-        return self._get_intrinsic_reward(row, col)
+
+class ComputeIntrinsicRewardWrapper(gym.Wrapper):
+    """
+    Wraps an env to compute intrinsic reward via a callable and fill step info.
+    Does not change the step reward (stays extrinsic); sets info['intrinsic_reward'] and
+    info['extrinsic_reward'] for logging and for IntrinsicReplayBuffer.
+    """
+
+    def __init__(self, env, beta=0.0, intrinsic_reward_method=None):
+        super().__init__(env)
+        self.beta = beta
+        self.intrinsic_reward_method = intrinsic_reward_method
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        intrinsic = 0.0
+        if self.intrinsic_reward_method is not None and self.beta != 0.0:
+            r = self.intrinsic_reward_method(obs)
+            intrinsic = float(r) if not isinstance(r, (list, np.ndarray)) else float(np.asarray(r).ravel()[0])
+        info["intrinsic_reward"] = intrinsic
+        info["extrinsic_reward"] = reward
+        return obs, reward, terminated, truncated, info

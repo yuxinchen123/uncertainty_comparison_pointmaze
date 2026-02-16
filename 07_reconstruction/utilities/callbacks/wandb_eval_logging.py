@@ -14,7 +14,7 @@ from utilities.heatmap_utils import create_visit_count_heatmap
 class WandbEvalLoggingCallback(BaseCallback):
     """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
 
-    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", verbose: int = 0):
+    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", beta: float = 0.0, verbose: int = 0):
         super().__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
@@ -24,6 +24,7 @@ class WandbEvalLoggingCallback(BaseCallback):
         self.goal_cell = goal_cell
         self.start_cell = start_cell
         self.run_name = run_name
+        self.beta = beta
 
     def _on_step(self) -> bool:
         if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
@@ -71,8 +72,7 @@ class WandbEvalLoggingCallback(BaseCallback):
                 ep_tot += float(rewards[0])
                 ep_len += 1
                 info = infos[0] if isinstance(infos, (list, tuple)) else infos
-                beta = getattr(self.visit_count_env, "beta", 1.0) if self.visit_count_env is not None else 1.0
-                if beta != 0:
+                if self.beta != 0:
                     if "extrinsic_reward" not in info:
                         raise KeyError("eval env step info must contain 'extrinsic_reward' when beta != 0")
                     if "intrinsic_reward" not in info:
@@ -81,7 +81,7 @@ class WandbEvalLoggingCallback(BaseCallback):
                 extrinsic = float(info.get("extrinsic_reward", rewards[0]))
                 intrinsic = float(info.get("intrinsic_reward", 0.0))
                 ep_ext += extrinsic
-                ep_int += beta * intrinsic
+                ep_int += self.beta * intrinsic
                 done = bool(dones[0])
             episode_extrinsic.append(ep_ext)
             episode_intrinsic.append(ep_int)

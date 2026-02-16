@@ -4,6 +4,7 @@ from .point_maze_wrappers import (
     FixedStartWrapper,
     RemoveGoalWrapper,
     VisitCountWrapper,
+    ComputeIntrinsicRewardWrapper,
 )
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "FixedStartWrapper",
     "RemoveGoalWrapper",
     "VisitCountWrapper",
+    "ComputeIntrinsicRewardWrapper",
 ]
