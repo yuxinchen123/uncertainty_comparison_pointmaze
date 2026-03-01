@@ -1,4 +1,4 @@
-# 07_reconstruction — quick notes & code snippets
+# Daniel's Coding Note
 
 ---
 
@@ -193,6 +193,146 @@ observations = {
 
 ---
 
+## Replay buffer
+
+Data structures for **add** and **sample**. Two cases: **DictReplayBuffer** (Dict observation, MultiInputPolicy) and **ReplayBuffer** (Box observation, MlpPolicy). Example shapes: `n_envs=1`, `state_dim=4`, `action_dim=2`, `batch_size=256`.
+
+### DictReplayBuffer
+
+**add(obs, next_obs, action, reward, done, infos)**
+
+```python
+# obs, next_obs: dict of np.ndarray, each value shape (n_envs, *subspace_shape)
+obs = {
+    "observation": np.ndarray,   # (1, 4), float32
+}
+next_obs = { "observation": np.ndarray }   # (1, 4)
+action = np.ndarray   # (1, 2), float32
+reward = np.ndarray   # (1,), float32
+done = np.ndarray     # (1,), float32 or bool
+infos = [dict]        # length n_envs
+```
+
+**sample(batch_size)** → `DictReplayBufferSamples` (NamedTuple)
+
+```python
+batch = replay_buffer.sample(256)
+# batch.observations, batch.next_observations: dict of torch.Tensor, batch dim first
+batch.observations = {
+    "observation": torch.Tensor,   # (256, 4)
+}
+batch.next_observations = { "observation": torch.Tensor }   # (256, 4)
+batch.actions    # Tensor (256, 2)
+batch.dones      # Tensor (256, 1) or (256,)
+batch.rewards    # Tensor (256, 1)
+```
+
+### ReplayBuffer
+
+**add(obs, next_obs, action, reward, done, infos)**
+
+```python
+# obs, next_obs: single np.ndarray, shape (n_envs, obs_dim)
+obs = np.ndarray       # (1, 4), float32
+next_obs = np.ndarray  # (1, 4)
+action = np.ndarray    # (1, 2), float32
+reward = np.ndarray    # (1,), float32
+done = np.ndarray      # (1,), float32 or bool
+infos = [dict]         # length n_envs
+```
+
+**sample(batch_size)** → `ReplayBufferSamples` (NamedTuple)
+
+```python
+batch = replay_buffer.sample(256)
+# batch.observations, batch.next_observations: single Tensor, shape (batch_size, obs_dim)
+batch.observations      # Tensor (256, 4)
+batch.next_observations  # Tensor (256, 4)
+batch.actions   # Tensor (256, 2)
+batch.dones     # Tensor (256, 1) or (256,)
+batch.rewards   # Tensor (256, 1)
+```
+
+**How `n_envs` is handled (ReplayBuffer / DictReplayBuffer):**
+
+- The buffer does **not** flatten `n_envs` when you call `add()`. Inputs have shape `(n_envs, *subspace_shape)`; the buffer stores them as one row at index `self.pos`, so internal storage is `(N, n_envs, *subspace_shape)` where `N` is the internal first dimension (see below). Each `add()` stores one such row and advances `pos` by 1.
+- **`buffer_size` you pass vs internal size:** You pass a **total transition capacity** (e.g. 100_000). The implementation does `self.buffer_size = max(buffer_size // n_envs, 1)`. So the first dimension of the arrays is “number of steps” (rows), not total transitions. Each row holds `n_envs` transitions (one per env). That way:
+  - **Total transitions stored** = (internal first dim) × n_envs = `(buffer_size // n_envs) × n_envs` ≈ the `buffer_size` you asked for (exactly if divisible).
+  - Example: `buffer_size=100_000`, `n_envs=4` → internal first dim = 25_000. Arrays are `(25000, 4, *subspace_shape)`. You call `add()` once per env step (with 4 transitions); after 25_000 such steps the buffer is full and you have 100_000 transitions. So “buffer_size” in the API means “how many transitions I want,” and the buffer uses fewer rows by packing n_envs per row.
+- When you **sample**, the buffer “opens” the `n_envs` dimension: for each sampled row index it draws a random env index and returns `data[batch_inds, env_indices, :]`, so you get `batch_size` transitions (one per sampled row, env chosen at random per row). The `n_envs` dimension is resolved at sample time, not at add time.
+
+### Exploration with RND: sample → intrinsic reward → update RND → SAC
+
+For exploration, use the **same batch** for intrinsic reward, RND update, and policy update. You do **not** update the buffer's stored rewards—only return a **copy** of the batch with `rewards` set to the new total (extrinsic + β × intrinsic). In `add()`, pass **extrinsic** reward to the parent so the buffer stores it: `super().add(..., reward=extrinsic_reward, ...)`.
+
+
+```python
+def sample(self, batch_size, env=None):
+    batch = super().sample(batch_size, env)   # batch.rewards = extrinsic (stored in buffer)
+    # this batch is in (batch_size, observation_size)
+    if self.rnd_module is None or self.beta <= 0:
+        return batch
+
+    samples = build_rnd_samples_from_batch(batch, device)
+    intrinsic_rewards = self.rnd_module.compute(samples, sync=True)
+    self.rnd_module.update(samples)
+
+    total_rewards = batch.rewards + self.beta * intrinsic_rewards
+    
+    return ReplayBufferSamples(
+        observations=batch.observations,
+        actions=batch.actions,
+        next_observations=batch.next_observations,
+        dones=batch.dones,
+        rewards=total_rewards,
+    )
+    ### If DictReplayBufferSamples
+    # return DictReplayBufferSamples(
+    #     observations=batch.observations,
+    #     actions=batch.actions,
+    #     next_observations=batch.next_observations,
+    #     dones=batch.dones,
+    #     rewards=total_rewards,
+    # )
+# SAC then uses this batch for its gradient step.
+```
+
+
+
+
+Do **not** update RND in `add()` when using this flow.
+
+---
+
+# Exploration
+
+## Paper:
+EXPLORE: Accelerating Exploration with Unlabeled Prior Data, NeurIPS 2023
+
+
+RLEXPLORE: Accelerating Research in Intrinsically-Motivated Reinforcement Learning, TMLR 2025
+
+## Update proportion
+The impact is marginal and mixed, sometimes positive and sometimes negative according to "RLEXPLORE".
+
+## Initialization
+EXPLORE: All Dense layers Xavier uniform   
+CleanRL: Orthogonal. CleanRL thinks orthogonal is better for RL.
+
+```python
+self.critic_ext = layer_init(nn.Linear(448, 1), std=0.01)
+self.critic_int = layer_init(nn.Linear(448, 1), std=0.01)
+def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
+    torch.nn.init.orthogonal_(layer.weight, std)
+    torch.nn.init.constant_(layer.bias, bias_const)
+    return layer
+```
+RLEXPLORE: The default uniform and the Orthogonal are basically the same.
+
+
+
+
+
 ## Obs Normalization
 RL explore Normalization
 
@@ -225,11 +365,40 @@ from gym.wrappers.normalize import RunningMeanStd
             next_ob = []
     print("End to initialize...")
 ```
+```
+rnd_next_obs = (
+    (
+        (next_obs[:, 3, :, :].reshape(args.num_envs, 1, 84, 84) - torch.from_numpy(obs_rms.mean).to(device))
+        / torch.sqrt(torch.from_numpy(obs_rms.var).to(device))
+    ).clip(-5, 5)
+).float()
+```
+
+## Neural Network Architecture
+EXPLORE:
+[obs; action] → Dense(256) → ReLU → Dense(256) → ReLU → Dense(256) → ReLU → Dense(256) → feature
+RND always uses current observation and action
+
+ClEANRL:   
+RND reward is computed based on next observation
 
 
+## Reward Normalization   
+Don't use reward normalization   
+RLEXPLORE shows reward normalization has on mixed effect for RMS and min-max.    Vanilla reward outperforms RMS most of the time and is the most stable one.
+Sometimes, using min-max normalization makes the algorithms stop working.
 
-## Reward Normalization
-RL explore Normalization
+
+## Output
+L1 norm (take average)
+L2 norm (take average)
+
+<!-- RL explore Normalization -->
+
+
+## Plasticity
+reset the network
+
 
 ```python
 

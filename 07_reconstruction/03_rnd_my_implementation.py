@@ -1,12 +1,9 @@
 """
-Self-contained training script: SAC on PointMaze.
-
-This folder (07_reconstruction) is independent of all other project folders.
-No imports from 01-06; all logic is local or from standard packages.
-
+Self-contained training script: SAC on PointMaze with custom MyRND and VectorIntrinsicReplayBuffer.
+Same overall tasks as 02_rnd_rlexplore.py; FlattenObservation is applied after VisitCountWrapper.
+Uses MlpPolicy (Box obs) and ReplayBuffer-based VectorIntrinsicReplayBuffer.
 """
 import argparse
-import os
 import collections
 import random
 import wandb
@@ -15,6 +12,7 @@ import numpy as np
 import torch
 import gymnasium as gym
 import gymnasium_robotics
+from gymnasium.wrappers import FlattenObservation
 
 from stable_baselines3 import SAC
 from stable_baselines3.common.monitor import Monitor
@@ -27,8 +25,6 @@ from env_wrapper.point_maze_utils import (
     select_fixed_goal_top_left,
     select_fixed_goal_bottom_right,
 )
-from intrinsic.intrinsic_replay_buffer import IntrinsicReplayBuffer
-
 from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
     FixedStartWrapper,
@@ -36,20 +32,11 @@ from env_wrapper.point_maze_wrappers import (
     VisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
-from intrinsic.visit_count_bonus import make_visit_count_intrinsic_reward_fn
+from intrinsic.vector_intrinsic_replay_buffer import VectorIntrinsicReplayBuffer
+from intrinsic.my_rnd import MyRND
 
-
-class _CallableAsRND:
-    """Adapts (obs -> float) to the rnd_module interface: compute(samples) -> array of shape (batch_size,)."""
-
-    def __init__(self, fn):
-        self.fn = fn
-
-    def compute(self, samples):
-        next_obs = np.asarray(samples["next_observations"])
-        if next_obs.ndim == 1:
-            next_obs = next_obs.reshape(1, -1)
-        return np.array([float(self.fn(o)) for o in next_obs], dtype=np.float32)
+# PointMaze flat obs after RemoveGoal + Flatten: (4,) = [x, y, vx, vy]. RND uses position only.
+RND_POS_DIM = 2
 
 
 def _args_to_run_name(args) -> str:
@@ -59,20 +46,18 @@ def _args_to_run_name(args) -> str:
         f"seed={getattr(args, 'a_seed', 0)}",
         f"goal={getattr(args, 'goal_position', 'top_left')}",
         f"beta={getattr(args, 'beta', 0)}",
-        f"decay={getattr(args, 'intrinsic_decay_rate', -0.5)}",
+        f"rnd_obs_norm={getattr(args, 'rnd_obs_norm', False)}",
+        f"rnd_distance={getattr(args, 'rnd_distance', 'mse')}",
+        f"rnd_input={getattr(args, 'rnd_input', 'position')}",
+        f"intrinsic_method={getattr(args, 'intrinsic_method', 'rnd')}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
-        # f"eval{getattr(args, 'eval_freq', 0)}",
-        # f"tot{getattr(args, 'total_timesteps', 0)}",
-        # f"n_eval{getattr(args, 'n_eval_episodes', 0)}",
-        # getattr(args, "device", "cpu"),
-        # f"cont{getattr(args, 'continuing_task', False)}",
     ]
     return "|".join(str(p) for p in parts)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train SAC on PointMaze (07_reconstruction, self-contained)")
+    parser = argparse.ArgumentParser(description="Train SAC on PointMaze (07_reconstruction, my RND)")
     parser.add_argument("--env_name", type=str, default="PointMaze_Large-v3", help="PointMaze env id")
     parser.add_argument("--a_seed", type=int, default=1, help="Random seed")
     parser.add_argument("--total_timesteps", type=int, default=100_0, help="Training steps")
@@ -80,11 +65,14 @@ def main():
     parser.add_argument("--n_eval_episodes", type=int, default=10, help="Episodes per evaluation")
     parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
-    parser.add_argument("--beta", type=float, default=0, help="Intrinsic reward coefficient; 0 = tracking only")
-    parser.add_argument("--intrinsic_decay_rate", type=float, default=-0.5, help="Intrinsic decay: -0.5 = 1/sqrt(n), -1 = 1/n")
+    parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
+    parser.add_argument("--intrinsic_method", default=0, help="intrinsic_method")
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
-    parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner: top_left or bottom_right or random")
+    parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner")
+    parser.add_argument("--rnd_obs_norm", default=False, type=lambda x: x.lower() in ["true", "1", "yes"], help="Use RunningMeanStd observation normalization for RND")
+    parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"], help="Distance metric for RND (intrinsic + predictor loss)")
+    parser.add_argument("--rnd_input", type=str, default="position", choices=["position", "all"], help="RND input: 'position' (pos only) or 'all' (full obs)")
     args = parser.parse_args()
 
     if args.use_wandb:
@@ -102,8 +90,8 @@ def main():
             args.device = "cpu"
     else:
         actual_device = "cpu"
+    device_type = "gpu" if args.device == "cuda" else "cpu"
 
-    # Fix random generators for reproducibility
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -128,7 +116,6 @@ def main():
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
-    device_type = "gpu" if args.device == "cuda" else "cpu"
     print_or_wandb_log(
         args.use_wandb,
         collections.OrderedDict([
@@ -145,27 +132,54 @@ def main():
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
     visit_count_env = VisitCountWrapper(no_goal_env)
-    intrinsic_reward_fn = make_visit_count_intrinsic_reward_fn(
-        visit_count_env, args.intrinsic_decay_rate
-    )
-    visit_count_rnd = _CallableAsRND(intrinsic_reward_fn) if args.beta > 0 else None
-    intrinsic_env = ComputeIntrinsicRewardWrapper(
-        visit_count_env, beta=args.beta, rnd_module=visit_count_rnd
-    )
+    flat_env = FlattenObservation(visit_count_env)
+
+    replay_buffer_class = VectorIntrinsicReplayBuffer if args.beta > 0 else None
+    my_rnd = None
+    if args.beta > 0:
+        full_obs_dim = int(np.prod(flat_env.observation_space.shape))
+        obs_shape = (full_obs_dim,)
+        rnd_obs_slice = (0, RND_POS_DIM) if args.rnd_input == "position" else None
+        my_rnd = MyRND(
+            obs_shape=obs_shape,
+            output_dim=128,
+            lr=0.001,
+            batch_size=256,
+            device=args.device,
+            use_obs_norm=args.rnd_obs_norm,
+            distance=args.rnd_distance,
+            obs_slice=rnd_obs_slice,
+        )
+        # Pre-init for RND observation normalization using random samples (position only when obs_slice is set)
+        if args.rnd_obs_norm and getattr(my_rnd, "obs_rms", None) is not None:
+            n_init = 200  # small number of batches for RMS initialization
+            obs_buf = []
+            for _ in range(n_init):
+                sample = flat_env.observation_space.sample()
+                obs_buf.append(np.asarray(sample, dtype=np.float32))
+            obs_arr = np.stack(obs_buf, axis=0)
+            if my_rnd.obs_slice is not None:
+                start, end = my_rnd.obs_slice
+                obs_arr = obs_arr[..., start:end]
+            my_rnd.obs_rms.update(obs_arr)
+
+        replay_buffer_kwargs = {
+            "beta": args.beta,
+            "rnd_module": my_rnd,
+        }
+    else:
+        replay_buffer_kwargs = None
+
+    intrinsic_env = ComputeIntrinsicRewardWrapper(flat_env, beta=args.beta, rnd_module=my_rnd)
     monitored_env = Monitor(intrinsic_env, filename=None)
+    # Training environment (wrapped and vectorized) used by SAC for learning
     env = DummyVecEnv([lambda: monitored_env])
+    # SB3 VecEnv.seed() stores seeds applied at the next reset() (Gymnasium 0.26+); order is correct.
     env.seed(seed)
     env.reset()
 
-    replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
-    replay_buffer_kwargs = (
-        {"intrinsic_reward_fn": intrinsic_reward_fn, "beta": args.beta}
-        if args.beta > 0
-        else None
-    )
-
     model = SAC(
-        "MultiInputPolicy",
+        "MlpPolicy",
         env,
         verbose=0 if args.use_wandb else 1,
         seed=seed,
@@ -176,7 +190,7 @@ def main():
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
-    # Eval env: same stack as train; reuse train count map for intrinsic reward but do not increment during eval
+    # Separate evaluation environment (wrapped and vectorized) used only for periodic evaluation
     eval_base = gym.make(
         args.env_name,
         continuing_task=True,
@@ -191,11 +205,11 @@ def main():
         count_map_ref=visit_count_env.visit_counts,
         update_counts=False,
     )
-    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
-        eval_visit_count_env, beta=args.beta, rnd_module=visit_count_rnd
-    )
-    eval_env = Monitor(eval_intrinsic_env, filename=None)
-    eval_env = DummyVecEnv([lambda: eval_env])
+    eval_flat_env = FlattenObservation(eval_visit_count_env)
+    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(eval_flat_env, beta=args.beta, rnd_module=my_rnd)
+    eval_monitored = Monitor(eval_intrinsic_env, filename=None)
+    eval_env = DummyVecEnv([lambda: eval_monitored])
+    # SB3 VecEnv: seed stored and applied at next reset.
     eval_env.seed(seed)
     eval_env.reset()
 

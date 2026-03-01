@@ -46,6 +46,27 @@ from intrinsic.RLeXplore_utilities import (
 )
 
 
+class _BatchCallableAsRND:
+    """Adapts (batch_dict -> array) to rnd_module interface: compute(samples) -> array of shape (batch_size,)."""
+
+    def __init__(self, fn, action_size):
+        self.fn = fn
+        self.action_size = action_size
+
+    def compute(self, samples):
+        next_obs = samples["next_observations"]
+        obs = samples.get("observations", next_obs)
+        n = obs.shape[0] if hasattr(obs, "shape") else len(obs)
+        batch = {
+            "observations": obs,
+            "next_observations": next_obs,
+            "actions": np.zeros((n,) + self.action_size, dtype=np.float32),
+            "dones": np.zeros(n, dtype=np.float32),
+        }
+        r = self.fn(batch)
+        return np.asarray(r, dtype=np.float32).ravel()
+
+
 def _args_to_run_name(args) -> str:
     """Sanitized string from args for folder/image naming."""
     parts = [
@@ -143,7 +164,7 @@ def main():
     visit_count_env = VisitCountWrapper(no_goal_env)
 
     replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
-    rnd_intrinsic_for_wrapper = None
+    wrapper_rnd = None
     if args.beta > 0:
         fake_vec_env = make_fake_vec_env_for_rnd(
             no_goal_env.observation_space,
@@ -168,26 +189,7 @@ def main():
         )
         intrinsic_reward_fn = make_rnd_intrinsic_reward_fn(rnd_module, args.device)
         action_size = np.array(no_goal_env.action_space.sample()).shape
-
-        def rnd_intrinsic_for_wrapper(obs):
-            """Single obs -> batch of 1 for RND -> float."""
-            if isinstance(obs, dict):
-                next_obs_batch = {
-                    k: np.expand_dims(np.asarray(v, dtype=np.float32), 0)
-                    for k, v in obs.items()
-                }
-            else:
-                next_obs_batch = np.expand_dims(
-                    np.asarray(obs, dtype=np.float32), 0
-                )
-            batch = {
-                "observations": next_obs_batch,
-                "next_observations": next_obs_batch,
-                "actions": np.zeros((1,) + action_size, dtype=np.float32),
-                "dones": np.zeros(1, dtype=np.float32),
-            }
-            r = intrinsic_reward_fn(batch)
-            return float(r[0]) if r is not None and len(r) else 0.0
+        wrapper_rnd = _BatchCallableAsRND(intrinsic_reward_fn, action_size)
 
         replay_buffer_kwargs = {
             "intrinsic_reward_fn": intrinsic_reward_fn,
@@ -198,7 +200,7 @@ def main():
         replay_buffer_kwargs = None
 
     intrinsic_env = ComputeIntrinsicRewardWrapper(
-        visit_count_env, beta=args.beta, intrinsic_reward_method=rnd_intrinsic_for_wrapper
+        visit_count_env, beta=args.beta, rnd_module=wrapper_rnd
     )
     monitored_env = Monitor(intrinsic_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
@@ -233,7 +235,7 @@ def main():
         update_counts=False,
     )
     eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
-        eval_visit_count_env, beta=args.beta, intrinsic_reward_method=rnd_intrinsic_for_wrapper
+        eval_visit_count_env, beta=args.beta, rnd_module=wrapper_rnd
     )
     eval_env = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])

@@ -3,6 +3,8 @@ Gymnasium wrappers for PointMaze: fixed goal/start, goal removal, visit counting
 
 Used by the training script and tests. Self-contained within 07_reconstruction.
 """
+from typing import Any, Optional
+
 import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
@@ -103,22 +105,31 @@ class VisitCountWrapper(gym.Wrapper):
 
 class ComputeIntrinsicRewardWrapper(gym.Wrapper):
     """
-    Wraps an env to compute intrinsic reward via a callable and fill step info.
+    Wraps an env to compute intrinsic reward via rnd_module in step() and fill step info.
     Does not change the step reward (stays extrinsic); sets info['intrinsic_reward'] and
-    info['extrinsic_reward'] for logging and for IntrinsicReplayBuffer.
+    info['extrinsic_reward'] for logging.
+
+    rnd_module must implement compute(samples) returning a 1D tensor (or array);
+    samples is a dict with "next_observations" of shape (batch_size, obs_dim).
     """
 
-    def __init__(self, env, beta=0.0, intrinsic_reward_method=None):
+    def __init__(self, env, beta: float = 0.0, rnd_module: Optional[Any] = None):
         super().__init__(env)
         self.beta = beta
-        self.intrinsic_reward_method = intrinsic_reward_method
+        self.rnd_module = rnd_module
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         intrinsic = 0.0
-        if self.intrinsic_reward_method is not None and self.beta != 0.0:
-            r = self.intrinsic_reward_method(obs)
-            intrinsic = float(r) if not isinstance(r, (list, np.ndarray)) else float(np.asarray(r).ravel()[0])
+        if self.beta != 0.0 and self.rnd_module is not None:
+            # Ensure (batch_size, obs_dim): e.g. obs shape (4,) -> (1, 4) for a single step
+            obs_arr = np.atleast_2d(np.asarray(obs, dtype=np.float32))
+            samples = {"next_observations": obs_arr}
+            r = self.rnd_module.compute(samples)
+            # compute() may return a tensor (e.g. MyRND) or array (e.g. _CallableAsRND); normalize to float.
+            # asarray(r): ensure ndarray so we can call .ravel(); ravel(): flatten to 1D, then [0] = single scalar.
+            # E.g. r shape (1,) or (1, 1) -> ravel() is [x], [0] is x.
+            intrinsic = float(r.item()) if hasattr(r, "item") else float(np.asarray(r).ravel()[0])
         info["intrinsic_reward"] = intrinsic
         info["extrinsic_reward"] = reward
         return obs, reward, terminated, truncated, info
