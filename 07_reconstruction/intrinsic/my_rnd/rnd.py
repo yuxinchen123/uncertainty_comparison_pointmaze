@@ -35,6 +35,41 @@ class ObservationEncoder(nn.Module):
         return self.network(obs)
 
 
+class EnsembleObservationEncoder(nn.Module):
+    """
+    n independent MLP encoders in one module; single batched forward to (batch_size, n, output_dim).
+    Weights stored as (n, ...) and applied with einsum for parallelism (no Python loop over n).
+    """
+
+    def __init__(self, obs_shape: Tuple[int, ...], output_dim: int, n_predictors: int = 5):
+        super().__init__()
+        self.n_predictors = n_predictors
+        obs_dim = obs_shape[0] if isinstance(obs_shape, (tuple, list)) else int(obs_shape)
+        # Batched weights: (n, obs_dim, 256), (n, 256), (n, 256, output_dim), (n, output_dim)
+        w1 = torch.empty(n_predictors, obs_dim, 256)
+        b1 = torch.empty(n_predictors, 256)
+        w2 = torch.empty(n_predictors, 256, output_dim)
+        b2 = torch.empty(n_predictors, output_dim)
+        for i in range(n_predictors):
+            l1 = layer_init(nn.Linear(obs_dim, 256))
+            l2 = layer_init(nn.Linear(256, output_dim))
+            w1[i] = l1.weight.T
+            b1[i] = l1.bias
+            w2[i] = l2.weight.T
+            b2[i] = l2.bias
+        self.w1 = nn.Parameter(w1)
+        self.b1 = nn.Parameter(b1)
+        self.w2 = nn.Parameter(w2)
+        self.b2 = nn.Parameter(b2)
+
+    def forward(self, obs: torch.Tensor) -> torch.Tensor:
+        # obs (B, obs_dim) -> (B, n, 256) -> ReLU -> (B, n, output_dim)
+        h = torch.einsum("bd,qdi->bqi", obs, self.w1) + self.b1
+        h = h.relu()
+        out = torch.einsum("bqi,qio->bqo", h, self.w2) + self.b2
+        return out
+
+
 class MyRND:
     """
     RND that acts directly on batch-shaped data (batch_size, obs_dim).
@@ -52,6 +87,8 @@ class MyRND:
         use_obs_norm: bool = False,
         distance: str = "mse",
         obs_slice: Optional[Tuple[int, int]] = None,
+        n_predictors: int = 5,
+        beta_std: float = 0.0,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         self.obs_slice = obs_slice
@@ -73,7 +110,12 @@ class MyRND:
         if self.distance not in {"mse", "abs"}:
             raise ValueError("distance must be one of: 'mse', 'abs'")
 
-        self.predictor = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
+        self.n_predictors = n_predictors
+        self.beta_std = beta_std
+
+        self.predictor = EnsembleObservationEncoder(
+            self._rnd_obs_shape, output_dim, n_predictors=n_predictors
+        ).to(self.device)
         self.target = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
         for p in self.target.parameters():
             p.requires_grad = False
@@ -104,6 +146,16 @@ class MyRND:
         # abs / l1
         return (tgt - src).abs().sum(dim=1)
 
+    def _dist_ensemble(
+        self, src: torch.Tensor, tgt: torch.Tensor
+    ) -> torch.Tensor:
+        """Per-sample, per-predictor distances. src (B, n_predictors, out_dim), tgt (B, out_dim) -> (B, n_predictors)."""
+        if self.distance == "mse":
+            diff = tgt.unsqueeze(1) - src
+            return 0.5 * diff.pow(2).sum(dim=2)
+        diff = (tgt.unsqueeze(1) - src).abs()
+        return diff.sum(dim=2)
+
     def compute(self, samples: Dict[str, Any]) -> torch.Tensor:
         """
         Intrinsic reward from next_observations. Only "next_observations" is used.
@@ -126,8 +178,13 @@ class MyRND:
         with torch.no_grad():
             src = self.predictor(next_obs)
             tgt = self.target(next_obs)
-            dist = self._dist(src, tgt)
-        return dist
+            distances = self._dist_ensemble(src, tgt)
+        mean_dist = distances.mean(dim=1)
+        if self.n_predictors == 1:
+            std_dist = torch.zeros_like(mean_dist, device=mean_dist.device, dtype=mean_dist.dtype)
+        else:
+            std_dist = distances.std(dim=1, unbiased=True)
+        return mean_dist + self.beta_std * std_dist
 
     def update(self, samples: Dict[str, torch.Tensor]) -> None:
         """Train predictor on observations. samples["observations"]: (batch_size, obs_dim)."""
@@ -144,7 +201,7 @@ class MyRND:
             src = self.predictor(o)
             with torch.no_grad():
                 tgt = self.target(o)
-            per = self._dist(src, tgt)
-            loss = per.mean()
+            distances = self._dist_ensemble(src, tgt)
+            loss = distances.mean()
             loss.backward()
             self.opt.step()

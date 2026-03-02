@@ -46,9 +46,12 @@ def _args_to_run_name(args) -> str:
         f"seed={getattr(args, 'a_seed', 0)}",
         f"goal={getattr(args, 'goal_position', 'top_left')}",
         f"beta={getattr(args, 'beta', 0)}",
+        f"n_predictors={getattr(args, 'n_predictors', 5)}",
+        f"beta_std={getattr(args, 'beta_std', 0)}",
         f"rnd_obs_norm={getattr(args, 'rnd_obs_norm', False)}",
         f"rnd_distance={getattr(args, 'rnd_distance', 'mse')}",
         f"rnd_input={getattr(args, 'rnd_input', 'position')}",
+        f"rnd_output_dim={getattr(args, 'rnd_output_dim', 128)}",
         f"intrinsic_method={getattr(args, 'intrinsic_method', 'rnd')}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
@@ -70,9 +73,12 @@ def main():
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner")
-    parser.add_argument("--rnd_obs_norm", default=False, type=lambda x: x.lower() in ["true", "1", "yes"], help="Use RunningMeanStd observation normalization for RND")
+    parser.add_argument("--rnd_obs_norm", default=True, type=lambda x: x.lower() in ["true", "1", "yes"], help="Use RunningMeanStd observation normalization for RND")
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"], help="Distance metric for RND (intrinsic + predictor loss)")
     parser.add_argument("--rnd_input", type=str, default="position", choices=["position", "all"], help="RND input: 'position' (pos only) or 'all' (full obs)")
+    parser.add_argument("--rnd_output_dim", type=int, default=128, help="RND predictor/target output dimension")
+    parser.add_argument("--n_predictors", type=int, default=5, help="Number of ensemble predictor networks in MyRND")
+    parser.add_argument("--beta_std", type=float, default=0.0, help="Scale for std-of-ensemble-distances term in intrinsic reward")
     args = parser.parse_args()
 
     if args.use_wandb:
@@ -142,13 +148,15 @@ def main():
         rnd_obs_slice = (0, RND_POS_DIM) if args.rnd_input == "position" else None
         my_rnd = MyRND(
             obs_shape=obs_shape,
-            output_dim=128,
+            output_dim=args.rnd_output_dim,
             lr=0.001,
             batch_size=256,
             device=args.device,
             use_obs_norm=args.rnd_obs_norm,
             distance=args.rnd_distance,
             obs_slice=rnd_obs_slice,
+            n_predictors=args.n_predictors,
+            beta_std=args.beta_std,
         )
         # Pre-init for RND observation normalization using random samples (position only when obs_slice is set)
         if args.rnd_obs_norm and getattr(my_rnd, "obs_rms", None) is not None:
