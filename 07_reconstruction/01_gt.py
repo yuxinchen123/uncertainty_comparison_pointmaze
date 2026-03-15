@@ -33,7 +33,7 @@ from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
     FixedStartWrapper,
     RemoveGoalWrapper,
-    VisitCountWrapper,
+    PositionVisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
 from intrinsic.intrinsic_method import VisitCount
@@ -131,7 +131,7 @@ def main():
     start_env = FixedStartWrapper(base_env, fixed_start_cell)
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    visit_count_env = VisitCountWrapper(no_goal_env)
+    visit_count_env = PositionVisitCountWrapper(no_goal_env)
     visit_count_model = VisitCount(visit_count_env, args.intrinsic_decay_rate) if args.beta > 0 else None
     intrinsic_env = ComputeIntrinsicRewardWrapper(
         visit_count_env, beta=args.beta, intrinsic_reward_model=visit_count_model
@@ -170,7 +170,7 @@ def main():
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
-    eval_visit_count_env = VisitCountWrapper(
+    eval_visit_count_env = PositionVisitCountWrapper(
         eval_no_goal_env,
         count_map_ref=visit_count_env.visit_counts,
         update_counts=False,

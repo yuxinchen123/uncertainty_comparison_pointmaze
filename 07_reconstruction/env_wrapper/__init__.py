@@ -4,7 +4,8 @@ from .point_maze_wrappers import (
     FixedStartWrapper,
     RemoveGoalWrapper,
     TerminateOnTimeLimitWrapper,
-    VisitCountWrapper,
+    PositionVisitCountWrapper,
+    PositionVelocityVisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
 
@@ -13,6 +14,7 @@ __all__ = [
     "FixedStartWrapper",
     "RemoveGoalWrapper",
     "TerminateOnTimeLimitWrapper",
-    "VisitCountWrapper",
+    "PositionVisitCountWrapper",
+    "PositionVelocityVisitCountWrapper",
     "ComputeIntrinsicRewardWrapper",
 ]

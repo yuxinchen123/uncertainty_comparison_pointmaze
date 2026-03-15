@@ -52,6 +52,25 @@ def observation_to_grid(observation, grid_rows=9, grid_cols=12):
     return row, col
 
 
+def velocity_to_grid(observation, n_bins=10):
+    """
+    Map continuous (vx, vy) velocity to grid bins (vx_bin, vy_bin).
+    PointMaze (Gymnasium-Robotics) clips velocity to [-5, 5] m/s; vx, vy are clamped to [-5.0, 5.0] inside this function.
+    observation can be dict with 'observation' key or flat array; velocity is taken from indices 2:4 (vx, vy).
+    Returns 0-based (vx_bin, vy_bin) in [0, n_bins-1].
+    """
+    v_min, v_max = -5.0, 5.0
+    arr = observation["observation"][2:4] if isinstance(observation, dict) else observation[2:4]
+    vx = np.clip(float(arr[0]), v_min, v_max)
+    vy = np.clip(float(arr[1]), v_min, v_max)
+    span = v_max - v_min
+    vx_bin = int((vx - v_min) / span * n_bins)
+    vy_bin = int((vy - v_min) / span * n_bins)
+    vx_bin = min(vx_bin, n_bins - 1)
+    vy_bin = min(vy_bin, n_bins - 1)
+    return vx_bin, vy_bin
+
+
 def get_valid_cells(env, maze_map=None):
     """Get all open (non-wall) cells. Returns list of (row, col) 0-based tuples."""
     if maze_map is None:

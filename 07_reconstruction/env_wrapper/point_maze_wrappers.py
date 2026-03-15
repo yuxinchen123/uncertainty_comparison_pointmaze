@@ -9,7 +9,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 
-from .point_maze_utils import get_maze_map, observation_to_grid
+from .point_maze_utils import get_maze_map, observation_to_grid, velocity_to_grid
 
 
 class FixedGoalWrapper(gym.Wrapper):
@@ -67,9 +67,9 @@ class RemoveGoalWrapper(gym.Wrapper):
         return self._filter_obs(obs), reward, terminated, truncated, info
 
 
-class VisitCountWrapper(gym.Wrapper):
+class PositionVisitCountWrapper(gym.Wrapper):
     """
-    Wraps PointMaze to track visit counts per grid cell only.
+    Wraps PointMaze to track visit counts per position grid cell only.
     Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
     Does not compute or add intrinsic reward; use ComputeIntrinsicRewardWrapper for that.
     For eval: pass count_map_ref=train_env.visit_counts and update_counts=False to reuse train counts.
@@ -87,19 +87,68 @@ class VisitCountWrapper(gym.Wrapper):
         else:
             self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
 
-    def _state_to_grid(self, obs):
-        """Map observation to 0-based (row, col)."""
-        return observation_to_grid(obs, self.grid_rows, self.grid_cols)
+    def observation_to_count(self, obs) -> int:
+        """Map observation to grid cell and return visit count for that cell. Raises ValueError if out-of-bounds or wall."""
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+        if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
+            raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
+        if self.maze_map[row, col] != 0:
+            raise ValueError(f"observation maps to wall cell (row={row}, col={col})")
+        return int(self.visit_counts[row, col])
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
-        row, col = self._state_to_grid(obs)
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
         if self.update_counts and 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:
                 self.visit_counts[row, col] += 1
         return obs, reward, terminated, truncated, info
 
     def get_visit_counts(self):
+        return self.visit_counts.copy()
+
+
+class PositionVelocityVisitCountWrapper(gym.Wrapper):
+    """
+    Tracks visit count per (position, velocity) cell: one count per (row, col, vx_bin, vy_bin).
+    Velocity is discretized via velocity_to_grid (vx, vy in [-5, 5] m/s -> 10 bins each).
+    observation_to_count(obs) returns a single int (visit count for that combined state).
+    """
+
+    VELOCITY_N_BINS = 10
+
+    def __init__(self, env, count_map_ref=None, update_counts=True):
+        super().__init__(env)
+        self.update_counts = update_counts
+        self.maze_map = get_maze_map(env)
+        self.grid_rows, self.grid_cols = self.maze_map.shape
+        n = self.VELOCITY_N_BINS
+        if count_map_ref is not None:
+            self.visit_counts = np.asarray(count_map_ref)
+        else:
+            self.visit_counts = np.zeros((self.grid_rows, self.grid_cols, n, n), dtype=int)
+
+    def observation_to_count(self, obs) -> int:
+        """Return visit count for the (position, velocity) cell. Raises ValueError if position is out-of-bounds or wall."""
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+        if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
+            raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
+        if self.maze_map[row, col] != 0:
+            raise ValueError(f"observation maps to wall cell (row={row}, col={col})")
+        vx_bin, vy_bin = velocity_to_grid(obs, n_bins=self.VELOCITY_N_BINS)
+        return int(self.visit_counts[row, col, vx_bin, vy_bin])
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        if self.update_counts:
+            row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+            if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols and self.maze_map[row, col] == 0:
+                vx_bin, vy_bin = velocity_to_grid(obs, n_bins=self.VELOCITY_N_BINS)
+                self.visit_counts[row, col, vx_bin, vy_bin] += 1
+        return obs, reward, terminated, truncated, info
+
+    def get_visit_counts(self):
+        """Return visit count array (grid_rows, grid_cols, 10, 10) for eval reuse."""
         return self.visit_counts.copy()
 
 

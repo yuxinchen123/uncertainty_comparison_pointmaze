@@ -77,7 +77,7 @@ class WandbEvalLoggingCallback(BaseCallback):
                         raise KeyError("eval env step info must contain 'extrinsic_reward' when beta != 0")
                     if "intrinsic_reward" not in info:
                         raise KeyError("eval env step info must contain 'intrinsic_reward' when beta != 0")
-                # When beta=0, info may be empty (no VisitCountWrapper): extrinsic = step reward, intrinsic = 0
+                # When beta=0, info may be empty (no visit-count wrapper): extrinsic = step reward, intrinsic = 0
                 extrinsic = float(info.get("extrinsic_reward", rewards[0]))
                 intrinsic = float(info.get("intrinsic_reward", 0.0))
                 ep_ext += extrinsic
