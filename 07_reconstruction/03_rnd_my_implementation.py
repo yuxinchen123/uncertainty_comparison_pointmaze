@@ -53,6 +53,7 @@ def _args_to_run_name(args) -> str:
         f"rnd_distance={getattr(args, 'rnd_distance', 'mse')}",
         f"rnd_input={getattr(args, 'rnd_input', 'position')}",
         f"rnd_output_dim={getattr(args, 'rnd_output_dim', 128)}",
+        f"linear_rnd={getattr(args, 'linear_rnd', False)}",
         f"intrinsic_method={getattr(args, 'intrinsic_method', 'rnd')}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
@@ -80,6 +81,7 @@ def main():
     parser.add_argument("--rnd_output_dim", type=int, default=128, help="RND predictor/target output dimension")
     parser.add_argument("--n_predictors", type=int, default=5, help="Number of ensemble predictor networks in RND")
     parser.add_argument("--beta_std", type=float, default=0.0, help="Scale for std-of-ensemble-distances term in intrinsic reward")
+    parser.add_argument("--linear_rnd", default=False, type=lambda x: x.lower() in ["true", "1", "yes"], help="Use RND-Linear: freeze phi(s) and theta, train only hat_theta")
     args = parser.parse_args()
 
     if args.use_wandb:
@@ -159,6 +161,7 @@ def main():
             obs_slice=rnd_obs_slice,
             n_predictors=args.n_predictors,
             beta_std=args.beta_std,
+            linear_rnd=args.linear_rnd,
         )
         # Pre-init for RND observation normalization using random samples (position only when obs_slice is set)
         if args.rnd_obs_norm and getattr(intrinsic_model, "obs_rms", None) is not None:

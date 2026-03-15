@@ -25,15 +25,56 @@ def layer_init(layer: nn.Module, std: float = np.sqrt(2), bias_const: float = 0.
 
 
 class ObservationEncoder(nn.Module):
-    """MLP encoder for flat observations: (batch_size, obs_dim) -> (batch_size, output_dim)."""
+    """
+    MLP encoder for flat observations: (batch_size, obs_dim) -> (batch_size, output_dim).
+    When linear_rnd=True (RND-Linear): body phi(s) and target head theta are frozen;
+    only the predictor head hat_theta is trainable. f_theta(s)=<phi(s),theta>, f_hat_theta(s)=<phi(s),hat_theta>.
+    """
 
-    def __init__(self, obs_shape: Tuple[int, ...], output_dim: int):
+    def __init__(
+        self,
+        obs_shape: Tuple[int, ...],
+        output_dim: int,
+        linear_rnd: bool = False,
+    ):
         super().__init__()
         obs_dim = obs_shape[0] if isinstance(obs_shape, (tuple, list)) else int(obs_shape)
-        self.network = nn.Sequential(layer_init(nn.Linear(obs_dim, 256)), nn.ReLU(), layer_init(nn.Linear(256, output_dim)))
+        self.linear_rnd = linear_rnd
+        if linear_rnd:
+            self.body = nn.Sequential(
+                layer_init(nn.Linear(obs_dim, 256)),
+                nn.ReLU(),
+            )
+            self.head_target = layer_init(nn.Linear(256, output_dim))
+            self.head_predictor = layer_init(nn.Linear(256, output_dim))
+            with torch.no_grad():
+                self.head_predictor.weight.copy_(self.head_target.weight)
+                self.head_predictor.bias.copy_(self.head_target.bias)
+            for p in self.body.parameters():
+                p.requires_grad = False
+            for p in self.head_target.parameters():
+                p.requires_grad = False
+            self.network = None
+        else:
+            self.network = nn.Sequential(
+                layer_init(nn.Linear(obs_dim, 256)),
+                nn.ReLU(),
+                layer_init(nn.Linear(256, output_dim)),
+            )
+            self.body = self.head_target = self.head_predictor = None
 
     def forward(self, obs: torch.Tensor) -> torch.Tensor:
+        if self.linear_rnd:
+            return self.head_target(self.body(obs))
         return self.network(obs)
+
+    def forward_target(self, obs: torch.Tensor) -> torch.Tensor:
+        """f_theta(s) = <phi(s), theta>. Only when linear_rnd=True."""
+        return self.head_target(self.body(obs))
+
+    def forward_predictor(self, obs: torch.Tensor) -> torch.Tensor:
+        """f_hat_theta(s) = <phi(s), hat_theta>. Only when linear_rnd=True."""
+        return self.head_predictor(self.body(obs))
 
 
 class EnsembleObservationEncoder(nn.Module):
@@ -95,10 +136,13 @@ class RND(IntrinsicRewardModel):
         beta_std: float = 0.0,
         feature: str = "next_state",
         action_dim: Optional[int] = None,
+        linear_rnd: bool = False,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         self.obs_slice = obs_slice
+        self.feature = feature
         self.action_dim = int(action_dim) if action_dim is not None else 0
+        self.linear_rnd = bool(linear_rnd)
 
         obs_dim = self.obs_shape[0]
         if self.feature == "next_state":
@@ -125,16 +169,28 @@ class RND(IntrinsicRewardModel):
         if self.distance not in {"mse", "abs"}:
             raise ValueError("distance must be one of: 'mse', 'abs'")
 
-        self.n_predictors = n_predictors
+        self.n_predictors = 1 if self.linear_rnd else n_predictors
         self.beta_std = beta_std
 
-        self.predictor = EnsembleObservationEncoder(
-            self._rnd_obs_shape, output_dim, n_predictors=n_predictors
-        ).to(self.device)
-        self.target = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
-        for p in self.target.parameters():
-            p.requires_grad = False
-        self.opt = torch.optim.Adam(self.predictor.parameters(), lr=lr)
+        if self.linear_rnd:
+            self.target = ObservationEncoder(
+                self._rnd_obs_shape, output_dim, linear_rnd=True
+            ).to(self.device)
+            self.predictor = None
+            self.opt = torch.optim.Adam(
+                self.target.head_predictor.parameters(), lr=lr
+            )
+        else:
+            if n_predictors == 1:
+                self.predictor = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
+            else:
+                self.predictor = EnsembleObservationEncoder(
+                    self._rnd_obs_shape, output_dim, n_predictors=n_predictors
+                ).to(self.device)
+            self.target = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
+            for p in self.target.parameters():
+                p.requires_grad = False
+            self.opt = torch.optim.Adam(self.predictor.parameters(), lr=lr)
         self.obs_rms: Optional[object] = None
         if self.use_obs_norm:
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
@@ -185,12 +241,24 @@ class RND(IntrinsicRewardModel):
         diff = (tgt.unsqueeze(1) - src).abs()
         return diff.sum(dim=2)
 
+    def _compute_linear_rnd(self, x: torch.Tensor) -> torch.Tensor:
+        """RND-Linear reward: i_t = || f_hat_theta(s) - f_theta(s) || (L2)."""
+        with torch.no_grad():
+            tgt = self.target.forward_target(x)
+            pred = self.target.forward_predictor(x)
+        diff = pred - tgt
+        return diff.pow(2).sum(dim=1).clamp(min=1e-8).sqrt()
+
     def compute(self, samples: Dict[str, Any]) -> torch.Tensor:
         """Intrinsic reward from feature built from samples. Returns shape (batch_size,)."""
         x = self._get_feature_tensor(samples)
         x = self._normalize_obs(x)
+        if self.linear_rnd:
+            return self._compute_linear_rnd(x)
         with torch.no_grad():
             src = self.predictor(x)
+            if self.n_predictors == 1:
+                src = src.unsqueeze(1)
             tgt = self.target(x)
             distances = self._dist_ensemble(src, tgt)
         mean_dist = distances.mean(dim=1)
@@ -207,9 +275,16 @@ class RND(IntrinsicRewardModel):
             self.obs_rms.update(x.detach().cpu().numpy())
         x = self._normalize_obs(x)
         self.opt.zero_grad()
-        src = self.predictor(x)
-        with torch.no_grad():
-            tgt = self.target(x)
-        loss = self._dist_ensemble(src, tgt).mean()
+        if self.linear_rnd:
+            tgt = self.target.forward_target(x).detach()
+            pred = self.target.forward_predictor(x)
+            loss = (pred - tgt).pow(2).mean()
+        else:
+            src = self.predictor(x)
+            if self.n_predictors == 1:
+                src = src.unsqueeze(1)
+            with torch.no_grad():
+                tgt = self.target(x)
+            loss = self._dist_ensemble(src, tgt).mean()
         loss.backward()
         self.opt.step()
