@@ -1,8 +1,6 @@
 """
-Elliptical episodic bonus (E3B-style) intrinsic reward model.
-Bonus = sqrt(φ(s)^T Λ^{-1} φ(s)) — Mahalanobis distance in embedding space;
-encourages visiting states whose embedding lies outside the fitted ellipse.
-Λ is updated from batches (running covariance of φ(s)); φ(s) is always frozen (not trainable).
+Elliptical/UCB bonus: intrinsic reward = sqrt(φ(s,a)^T Λ^{-1} φ(s,a)) — Mahalanobis norm in (s,a) feature space.
+Uses current state s and current action a; φ(s, a) is always frozen. Λ is updated from batches.
 Implements IntrinsicRewardModel for VectorIntrinsicReplayBuffer.
 """
 from typing import Any, Dict, Tuple
@@ -25,12 +23,12 @@ def _layer_init(layer: nn.Module, std: float = np.sqrt(2), bias_const: float = 0
 
 
 class PhiEncoder(nn.Module):
-    """MLP mapping obs -> feature_dim (φ(s)). Always frozen, not trainable."""
+    """MLP mapping (s, a) -> feature_dim, i.e. input dim = obs_dim + action_dim. Always frozen."""
 
-    def __init__(self, obs_dim: int, feature_dim: int):
+    def __init__(self, input_dim: int, feature_dim: int):
         super().__init__()
         self.network = nn.Sequential(
-            _layer_init(nn.Linear(obs_dim, 256)),
+            _layer_init(nn.Linear(input_dim, 256)),
             nn.ReLU(),
             _layer_init(nn.Linear(256, feature_dim)),
         )
@@ -41,22 +39,22 @@ class PhiEncoder(nn.Module):
 
 class EllipticalBonus(IntrinsicRewardModel):
     """
-    Elliptical bonus: intrinsic reward = sqrt(φ(s)^T Λ^{-1} φ(s)).
-    Λ is a running covariance of φ over seen states; φ is always frozen.
-    Higher reward for states whose embedding is far from the visited distribution (outside ellipse).
-    Uses full observation (no obs_slice).
+    Elliptical/UCB bonus: intrinsic reward = sqrt(φ(s,a)^T Λ^{-1} φ(s,a)).
+    Uses current state s and current action a. Λ is covariance of φ(s,a) over seen (s,a); φ is frozen.
     """
 
     def __init__(
         self,
         obs_shape: Tuple[int, ...],
+        action_dim: int,
         feature_dim: int = 128,
         device: str = "cpu",
         regularization: float = 1e-6,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         obs_dim = self.obs_shape[0]
-        self._input_dim = obs_dim
+        self.action_dim = int(action_dim)
+        self._input_dim = obs_dim + self.action_dim
 
         self.feature_dim = feature_dim
         self.device = torch.device(device)
@@ -66,30 +64,32 @@ class EllipticalBonus(IntrinsicRewardModel):
         for p in self.phi.parameters():
             p.requires_grad = False
 
-        # Λ = covariance, Λ_inv = its inverse. Start with regularized identity.
         self._cov = torch.eye(feature_dim, device=self.device, dtype=torch.float32) * self.regularization
         self._cov_inv = torch.eye(feature_dim, device=self.device, dtype=torch.float32) / self.regularization
 
     def _samples_to_features(self, samples: Dict[str, Any]) -> torch.Tensor:
-        """Extract next_observations from samples and return φ(s) (batch, feature_dim). Phi is frozen."""
-        x = to_tensor(samples["next_observations"], self.device).float()
-        if x.dim() == 1:
-            x = x.unsqueeze(0)
+        """Build (s, a) from observations and actions; return φ(s, a) (batch, feature_dim)."""
+        s = to_tensor(samples["observations"], self.device).float()
+        a = to_tensor(samples["actions"], self.device).float()
+        if s.dim() == 1:
+            s = s.unsqueeze(0)
+            a = a.unsqueeze(0)
+        if a.dim() == 1:
+            a = a.unsqueeze(-1)
+        x = torch.cat([s, a], dim=-1)
         self.phi.eval()
         with torch.no_grad():
             return self.phi(x)
 
     def compute(self, samples: Dict[str, Any]) -> torch.Tensor:
-        """Return elliptical bonus per sample: sqrt(φ(s)^T Λ^{-1} φ(s)). Shape (batch_size,)."""
+        """Return bonus per sample: sqrt(φ(s,a)^T Λ^{-1} φ(s,a)). Shape (batch_size,)."""
         phi = self._samples_to_features(samples)
-        # quadratic = φ^T Λ^{-1} φ = (φ Λ^{-1}) · φ
         tmp = phi @ self._cov_inv
         quadratic = (tmp * phi).sum(dim=1).clamp(min=1e-8)
-        bonus = torch.sqrt(quadratic)
-        return bonus
+        return torch.sqrt(quadratic)
 
     def update(self, samples: Dict[str, Any]) -> None:
-        """Update Λ from batch: Λ = (1/n) φ^T φ + reg*I, then set Λ_inv."""
+        """Update Λ from batch (s,a): Λ = (1/n) φ(s,a)^T φ(s,a) + reg*I, then set Λ_inv."""
         phi = self._samples_to_features(samples)
         n = phi.shape[0]
         if n == 0:

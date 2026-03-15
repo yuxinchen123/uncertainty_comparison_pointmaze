@@ -193,8 +193,10 @@ def main():
         elif args.intrinsic_method == "visit_count":
             intrinsic_model = VisitCount(visit_count_env, args.intrinsic_decay_rate)
         elif args.intrinsic_method == "elliptical":
+            action_dim = int(np.prod(flat_env.action_space.shape))
             intrinsic_model = EllipticalBonus(
                 obs_shape=obs_shape,
+                action_dim=action_dim,
                 feature_dim=args.elliptical_feature_dim,
                 device=args.device,
                 regularization=args.elliptical_regularization,

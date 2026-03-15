@@ -166,28 +166,40 @@ class TerminateOnTimeLimitWrapper(gym.Wrapper):
 
 class ComputeIntrinsicRewardWrapper(gym.Wrapper):
     """
-    This class for logging.
     Wraps an env to compute intrinsic reward via intrinsic_reward_model.compute() in step() and fill step info.
     Does not change the step reward (stays extrinsic); sets info['intrinsic_reward'] and
     info['extrinsic_reward'] for logging.
 
-    intrinsic_reward_model must implement compute(samples) returning a 1D tensor or array;
-    samples is a dict with "next_observations" of shape (batch_size, obs_dim).
+    intrinsic_reward_model must implement compute(samples) returning a 1D tensor or array.
+    samples always has "next_observations"; for models that use (s,a) it also has "observations" and "actions".
     """
 
     def __init__(self, env, beta: float = 0.0, intrinsic_reward_model: Optional[Any] = None):
         super().__init__(env)
         self.beta = beta
         self.intrinsic_reward_model = intrinsic_reward_model
+        self._last_obs = None
+
+    def reset(self, seed=None, options=None, **kwargs):
+        obs, info = self.env.reset(seed=seed, options=options, **kwargs)
+        self._last_obs = np.asarray(obs, dtype=np.float32)
+        return obs, info
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         intrinsic = 0.0
         if self.beta != 0.0 and self.intrinsic_reward_model is not None:
-            obs_arr = np.atleast_2d(np.asarray(obs, dtype=np.float32))
-            samples = {"next_observations": obs_arr}
+            next_arr = np.atleast_2d(np.asarray(obs, dtype=np.float32))
+            last_arr = np.atleast_2d(self._last_obs)
+            act_arr = np.atleast_2d(np.asarray(action, dtype=np.float32))
+            samples = {
+                "observations": last_arr,
+                "actions": act_arr,
+                "next_observations": next_arr,
+            }
             r = self.intrinsic_reward_model.compute(samples)
             intrinsic = float(r.item()) if hasattr(r, "item") else float(np.asarray(r).ravel()[0])
+        self._last_obs = np.asarray(obs, dtype=np.float32)
         info["intrinsic_reward"] = intrinsic
         info["extrinsic_reward"] = reward
         return obs, reward, terminated, truncated, info
