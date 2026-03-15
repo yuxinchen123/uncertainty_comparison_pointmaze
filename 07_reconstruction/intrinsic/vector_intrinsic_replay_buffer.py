@@ -1,8 +1,7 @@
 """
 VectorIntrinsicReplayBuffer: ReplayBuffer (Box obs) that recomputes intrinsic rewards on sample.
-On sample(), uses the sampled batch directly to build RND inputs, calls
-rnd_module.compute(samples) and rnd_module.update(samples), and returns a batch with
-rewards = extrinsic + beta * intrinsic. All MyRND data comes from sample() only.
+On sample(), uses the sampled batch to call intrinsic_reward_model.compute(samples) and
+intrinsic_reward_model.update(samples), then returns a batch with rewards = extrinsic + beta * intrinsic.
 """
 import numpy as np
 import torch
@@ -28,7 +27,7 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         handle_timeout_termination: bool = True,
         intrinsic_reward_fn: Optional[Callable] = None,
         beta: float = 1.0,
-        rnd_module: Optional[Any] = None,
+        intrinsic_reward_model: Optional[Any] = None,
     ):
         super().__init__(
             buffer_size=buffer_size,
@@ -41,7 +40,7 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         )
         self.intrinsic_reward_fn = intrinsic_reward_fn
         self.beta = beta
-        self.rnd_module = rnd_module
+        self.intrinsic_reward_model = intrinsic_reward_model
 
     def add(
         self,
@@ -65,7 +64,7 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         batch_inds = np.random.randint(0, upper_bound, size=batch_size)
         batch = super()._get_samples(batch_inds, env)
 
-        if self.rnd_module is None or self.beta <= 0.0:
+        if self.intrinsic_reward_model is None or self.beta <= 0.0:
             return batch
 
         # Build minimal samples dict directly from the sampled batch
@@ -75,8 +74,8 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
             "observations": obs,
             "next_observations": next_obs,
         }
-        intrinsic_rewards = self.rnd_module.compute(samples)
-        self.rnd_module.update(samples)
+        intrinsic_rewards = self.intrinsic_reward_model.compute(samples)
+        self.intrinsic_reward_model.update(samples)
         intrinsic = to_numpy_flat(intrinsic_rewards)
         extrinsic = to_numpy_flat(batch.rewards)
         # SB3 expects rewards shape (batch_size, 1); (batch_size,) can cause critic MSE shape mismatch

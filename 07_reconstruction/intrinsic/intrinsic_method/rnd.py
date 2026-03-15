@@ -1,16 +1,18 @@
 """
-RND (Random Network Distillation) for flat observations from ReplayBuffer.sample()
-and for single-step intrinsic reward queries from env wrappers.
+RND (Random Network Distillation) intrinsic reward model.
 Predictor vs frozen target; intrinsic reward = distance(predictor(obs), target(obs)).
-No update_proportion, kappa, or reward normalization. All learning data comes from buffer sample().
+All learning data comes from VectorIntrinsicReplayBuffer sample().
 """
-from typing import Any, Dict, Tuple, Optional, Union
+from typing import Any, Dict, Tuple, Optional
 
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 from gymnasium.wrappers.utils import RunningMeanStd
+
 from utilities.format import to_tensor
+
+from .base import IntrinsicRewardModel
 
 
 def layer_init(layer: nn.Module, std: float = np.sqrt(2), bias_const: float = 0.0) -> nn.Module:
@@ -44,7 +46,6 @@ class EnsembleObservationEncoder(nn.Module):
         super().__init__()
         self.n_predictors = n_predictors
         obs_dim = obs_shape[0] if isinstance(obs_shape, (tuple, list)) else int(obs_shape)
-        # Batched weights: (n, obs_dim, 256), (n, 256), (n, 256, output_dim), (n, output_dim)
         w1 = torch.empty(n_predictors, obs_dim, 256)
         b1 = torch.empty(n_predictors, 256)
         w2 = torch.empty(n_predictors, 256, output_dim)
@@ -62,18 +63,16 @@ class EnsembleObservationEncoder(nn.Module):
         self.b2 = nn.Parameter(b2)
 
     def forward(self, obs: torch.Tensor) -> torch.Tensor:
-        # obs (B, obs_dim) -> (B, n, 256) -> ReLU -> (B, n, output_dim)
         h = torch.einsum("bd,qdi->bqi", obs, self.w1) + self.b1
         h = h.relu()
         out = torch.einsum("bqi,qio->bqo", h, self.w2) + self.b2
         return out
 
 
-class MyRND:
+class RND(IntrinsicRewardModel):
     """
-    RND that acts directly on batch-shaped data (batch_size, obs_dim).
-    All inputs come from replay buffer sample(); no update in add().
-    If obs_slice is set, only obs[..., start:end] is used for intrinsic reward and predictor training.
+    RND intrinsic reward model: batch-shaped (batch_size, obs_dim).
+    If obs_slice is set, only obs[..., start:end] is used for reward and predictor training.
     """
 
     def __init__(
@@ -124,7 +123,6 @@ class MyRND:
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
 
     def _slice_obs(self, x: torch.Tensor) -> torch.Tensor:
-        """If obs_slice is set, return x[..., start:end]; else return x."""
         if self.obs_slice is None:
             return x
         start, end = self.obs_slice
@@ -138,17 +136,9 @@ class MyRND:
         x = (x - mean) / torch.sqrt(var + 1e-8)
         return x.clamp(-5.0, 5.0)
 
-    def _dist(self, src: torch.Tensor, tgt: torch.Tensor) -> torch.Tensor:
-        """Per-sample distance vector of shape (batch_size,)."""
-        if self.distance == "mse":
-            return 0.5 * (tgt - src).pow(2).sum(dim=1)
-        # abs / l1
-        return (tgt - src).abs().sum(dim=1)
-
     def _dist_ensemble(
         self, src: torch.Tensor, tgt: torch.Tensor
     ) -> torch.Tensor:
-        """Per-sample, per-predictor distances. src (B, n_predictors, out_dim), tgt (B, out_dim) -> (B, n_predictors)."""
         if self.distance == "mse":
             diff = tgt.unsqueeze(1) - src
             return 0.5 * diff.pow(2).sum(dim=2)
@@ -156,17 +146,7 @@ class MyRND:
         return diff.sum(dim=2)
 
     def compute(self, samples: Dict[str, Any]) -> torch.Tensor:
-        """
-        Intrinsic reward from next_observations. Only "next_observations" is used.
-
-        Expected input:
-
-            samples = {
-                "next_observations": torch.Tensor or np.ndarray of shape (batch_size, obs_dim),
-            }
-
-        Returns a 1D tensor of shape (batch_size,).
-        """
+        """Intrinsic reward from next_observations. Returns shape (batch_size,)."""
         if not isinstance(samples, dict) or "next_observations" not in samples:
             raise TypeError("samples must be a dict with 'next_observations' key")
 

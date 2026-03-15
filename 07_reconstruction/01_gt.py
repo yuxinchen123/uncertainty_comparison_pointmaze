@@ -36,18 +36,7 @@ from env_wrapper.point_maze_wrappers import (
     VisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
-from intrinsic.visit_count_bonus import make_visit_count_intrinsic_reward_fn
-
-
-class _CallableAsRND:
-    """Adapts intrinsic_reward_fn(samples) -> (N,) to the rnd_module interface: compute(samples) -> (batch_size,)."""
-
-    def __init__(self, fn):
-        self.fn = fn
-
-    def compute(self, samples):
-        out = self.fn(samples)
-        return np.asarray(out, dtype=np.float32).ravel()
+from intrinsic.intrinsic_method import VisitCount
 
 
 def _args_to_run_name(args) -> str:
@@ -143,12 +132,9 @@ def main():
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
     visit_count_env = VisitCountWrapper(no_goal_env)
-    intrinsic_reward_fn = make_visit_count_intrinsic_reward_fn(
-        visit_count_env, args.intrinsic_decay_rate
-    )
-    visit_count_rnd = _CallableAsRND(intrinsic_reward_fn) if args.beta > 0 else None
+    visit_count_model = VisitCount(visit_count_env, args.intrinsic_decay_rate) if args.beta > 0 else None
     intrinsic_env = ComputeIntrinsicRewardWrapper(
-        visit_count_env, beta=args.beta, rnd_module=visit_count_rnd
+        visit_count_env, beta=args.beta, intrinsic_reward_model=visit_count_model
     )
     monitored_env = Monitor(intrinsic_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
@@ -157,7 +143,7 @@ def main():
 
     replay_buffer_class = IntrinsicReplayBuffer if args.beta > 0 else None
     replay_buffer_kwargs = (
-        {"intrinsic_reward_fn": intrinsic_reward_fn, "beta": args.beta}
+        {"intrinsic_reward_fn": visit_count_model.compute, "beta": args.beta}
         if args.beta > 0
         else None
     )
@@ -190,7 +176,7 @@ def main():
         update_counts=False,
     )
     eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
-        eval_visit_count_env, beta=args.beta, rnd_module=visit_count_rnd
+        eval_visit_count_env, beta=args.beta, intrinsic_reward_model=visit_count_model
     )
     eval_env = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])

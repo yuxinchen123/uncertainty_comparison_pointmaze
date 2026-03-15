@@ -1,3 +1,3 @@
-from .visit_count_bonus import make_visit_count_intrinsic_reward_fn
+from .intrinsic_method import IntrinsicRewardModel, RND, VisitCount
 
-__all__ = ["make_visit_count_intrinsic_reward_fn"]
+__all__ = ["IntrinsicRewardModel", "RND", "VisitCount"]

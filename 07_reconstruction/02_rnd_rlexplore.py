@@ -200,7 +200,7 @@ def main():
         replay_buffer_kwargs = None
 
     intrinsic_env = ComputeIntrinsicRewardWrapper(
-        visit_count_env, beta=args.beta, rnd_module=wrapper_rnd
+        visit_count_env, beta=args.beta, intrinsic_reward_model=wrapper_rnd
     )
     monitored_env = Monitor(intrinsic_env, filename=None)
     env = DummyVecEnv([lambda: monitored_env])
@@ -235,7 +235,7 @@ def main():
         update_counts=False,
     )
     eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
-        eval_visit_count_env, beta=args.beta, rnd_module=wrapper_rnd
+        eval_visit_count_env, beta=args.beta, intrinsic_reward_model=wrapper_rnd
     )
     eval_env = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_env])

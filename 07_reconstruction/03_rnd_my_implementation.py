@@ -1,5 +1,5 @@
 """
-Self-contained training script: SAC on PointMaze with custom MyRND and VectorIntrinsicReplayBuffer.
+Self-contained training script: SAC on PointMaze with RND intrinsic reward model and VectorIntrinsicReplayBuffer.
 Same overall tasks as 02_rnd_rlexplore.py; FlattenObservation is applied after VisitCountWrapper.
 Uses MlpPolicy (Box obs) and ReplayBuffer-based VectorIntrinsicReplayBuffer.
 """
@@ -34,7 +34,7 @@ from env_wrapper.point_maze_wrappers import (
     ComputeIntrinsicRewardWrapper,
 )
 from intrinsic.vector_intrinsic_replay_buffer import VectorIntrinsicReplayBuffer
-from intrinsic.my_rnd import MyRND
+from intrinsic.intrinsic_method import RND
 
 # PointMaze flat obs after RemoveGoal + Flatten: (4,) = [x, y, vx, vy]. RND uses position only.
 RND_POS_DIM = 2
@@ -78,7 +78,7 @@ def main():
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"], help="Distance metric for RND (intrinsic + predictor loss)")
     parser.add_argument("--rnd_input", type=str, default="position", choices=["position", "all"], help="RND input: 'position' (pos only) or 'all' (full obs)")
     parser.add_argument("--rnd_output_dim", type=int, default=128, help="RND predictor/target output dimension")
-    parser.add_argument("--n_predictors", type=int, default=5, help="Number of ensemble predictor networks in MyRND")
+    parser.add_argument("--n_predictors", type=int, default=5, help="Number of ensemble predictor networks in RND")
     parser.add_argument("--beta_std", type=float, default=0.0, help="Scale for std-of-ensemble-distances term in intrinsic reward")
     args = parser.parse_args()
 
@@ -143,12 +143,12 @@ def main():
     flat_env = FlattenObservation(visit_count_env)
 
     replay_buffer_class = VectorIntrinsicReplayBuffer if args.beta > 0 else None
-    my_rnd = None
+    intrinsic_model = None
     if args.beta > 0:
         full_obs_dim = int(np.prod(flat_env.observation_space.shape))
         obs_shape = (full_obs_dim,)
         rnd_obs_slice = (0, RND_POS_DIM) if args.rnd_input == "position" else None
-        my_rnd = MyRND(
+        intrinsic_model = RND(
             obs_shape=obs_shape,
             output_dim=args.rnd_output_dim,
             lr=0.001,
@@ -161,26 +161,26 @@ def main():
             beta_std=args.beta_std,
         )
         # Pre-init for RND observation normalization using random samples (position only when obs_slice is set)
-        if args.rnd_obs_norm and getattr(my_rnd, "obs_rms", None) is not None:
+        if args.rnd_obs_norm and getattr(intrinsic_model, "obs_rms", None) is not None:
             n_init = 200  # small number of batches for RMS initialization
             obs_buf = []
             for _ in range(n_init):
                 sample = flat_env.observation_space.sample()
                 obs_buf.append(np.asarray(sample, dtype=np.float32))
             obs_arr = np.stack(obs_buf, axis=0)
-            if my_rnd.obs_slice is not None:
-                start, end = my_rnd.obs_slice
+            if intrinsic_model.obs_slice is not None:
+                start, end = intrinsic_model.obs_slice
                 obs_arr = obs_arr[..., start:end]
-            my_rnd.obs_rms.update(obs_arr)
+            intrinsic_model.obs_rms.update(obs_arr)
 
         replay_buffer_kwargs = {
             "beta": args.beta,
-            "rnd_module": my_rnd,
+            "intrinsic_reward_model": intrinsic_model,
         }
     else:
         replay_buffer_kwargs = None
 
-    intrinsic_env = ComputeIntrinsicRewardWrapper(flat_env, beta=args.beta, rnd_module=my_rnd)
+    intrinsic_env = ComputeIntrinsicRewardWrapper(flat_env, beta=args.beta, intrinsic_reward_model=intrinsic_model)
     monitored_env = Monitor(intrinsic_env, filename=None)
     # Training environment (wrapped and vectorized) used by SAC for learning
     env = DummyVecEnv([lambda: monitored_env])
@@ -217,7 +217,7 @@ def main():
         update_counts=False,
     )
     eval_flat_env = FlattenObservation(eval_visit_count_env)
-    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(eval_flat_env, beta=args.beta, rnd_module=my_rnd)
+    eval_intrinsic_env = ComputeIntrinsicRewardWrapper(eval_flat_env, beta=args.beta, intrinsic_reward_model=intrinsic_model)
     eval_monitored = Monitor(eval_intrinsic_env, filename=None)
     eval_env = DummyVecEnv([lambda: eval_monitored])
     # SB3 VecEnv: seed stored and applied at next reset.
