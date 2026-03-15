@@ -29,6 +29,7 @@ from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
     FixedStartWrapper,
     RemoveGoalWrapper,
+    TerminateOnTimeLimitWrapper,
     VisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
@@ -112,6 +113,7 @@ def main():
         reset_target=False,
         max_episode_steps=args.env_max_episode,
     )
+    base_env = TerminateOnTimeLimitWrapper(base_env)
     if args.goal_position == "top_left":
         fixed_goal_cell = select_fixed_goal_top_left(base_env)
         fixed_start_cell = select_fixed_goal_bottom_right(base_env)
@@ -205,6 +207,7 @@ def main():
         reset_target=False,
         max_episode_steps=args.env_max_episode,
     )
+    eval_base = TerminateOnTimeLimitWrapper(eval_base)
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)

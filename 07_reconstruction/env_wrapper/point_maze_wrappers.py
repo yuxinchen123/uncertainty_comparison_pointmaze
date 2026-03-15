@@ -103,6 +103,18 @@ class VisitCountWrapper(gym.Wrapper):
         return self.visit_counts.copy()
 
 
+class TerminateOnTimeLimitWrapper(gym.Wrapper):
+    """Convert time-limit truncation to termination: when inner env returns truncated=True
+    (e.g. max_episode_steps reached), return terminated=True, truncated=False instead.
+    So the episode ends as a full termination, not a timeout."""
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        if truncated and not terminated:
+            return obs, reward, True, False, info
+        return obs, reward, terminated, truncated, info
+
+
 class ComputeIntrinsicRewardWrapper(gym.Wrapper):
     """
     Wraps an env to compute intrinsic reward via rnd_module in step() and fill step info.

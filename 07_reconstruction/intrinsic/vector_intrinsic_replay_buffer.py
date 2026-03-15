@@ -11,6 +11,8 @@ from typing import Any, Callable, Optional, Union
 from stable_baselines3.common.buffers import ReplayBuffer
 from stable_baselines3.common.type_aliases import ReplayBufferSamples
 
+from utilities.format import to_numpy_flat, to_tensor
+
 
 class VectorIntrinsicReplayBuffer(ReplayBuffer):
     """ReplayBuffer (Box observation) that recomputes intrinsic rewards on sample()."""
@@ -67,38 +69,19 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
             return batch
 
         # Build minimal samples dict directly from the sampled batch
-        rnd_device = getattr(self.rnd_module, "device", self.device)
-        if not hasattr(rnd_device, "type"):
-            rnd_device = torch.device(rnd_device)
-        obs = batch.observations.to(rnd_device).float() if hasattr(batch.observations, "to") else torch.as_tensor(
-            batch.observations, dtype=torch.float32, device=rnd_device
-        )
-        next_obs = (
-            batch.next_observations.to(rnd_device).float()
-            if hasattr(batch.next_observations, "to")
-            else torch.as_tensor(batch.next_observations, dtype=torch.float32, device=rnd_device)
-        )
+        obs = to_tensor(batch.observations, self.device)
+        next_obs = to_tensor(batch.next_observations, self.device)
         samples = {
             "observations": obs,
             "next_observations": next_obs,
         }
         intrinsic_rewards = self.rnd_module.compute(samples)
         self.rnd_module.update(samples)
-        if hasattr(intrinsic_rewards, "cpu"):
-            intrinsic = intrinsic_rewards.cpu().numpy().ravel()
-        else:
-            intrinsic = np.asarray(intrinsic_rewards, dtype=np.float32).ravel()
-
-        # Use the stored rewards as extrinsic
-        if hasattr(batch.rewards, "cpu"):
-            extrinsic = batch.rewards.cpu().numpy().reshape(-1)
-        else:
-            extrinsic = np.asarray(batch.rewards, dtype=np.float32).reshape(-1)
-
-        total = extrinsic + self.beta * intrinsic
-        total = total.reshape(-1, 1)
-        if hasattr(batch.rewards, "device"):
-            total = torch.from_numpy(total).float().to(batch.rewards.device)
+        intrinsic = to_numpy_flat(intrinsic_rewards)
+        extrinsic = to_numpy_flat(batch.rewards)
+        # SB3 expects rewards shape (batch_size, 1); (batch_size,) can cause critic MSE shape mismatch
+        total = (extrinsic + self.beta * intrinsic).reshape(-1, 1)
+        total = to_tensor(total, self.device)
 
         return ReplayBufferSamples(
             observations=batch.observations,

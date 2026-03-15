@@ -8,7 +8,6 @@ from typing import Any, Dict, Tuple, Optional, Union
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 from gymnasium.wrappers.utils import RunningMeanStd
 from utilities.format import to_tensor
@@ -193,15 +192,10 @@ class MyRND:
         if self.use_obs_norm and self.obs_rms is not None:
             self.obs_rms.update(obs.detach().cpu().numpy())
         obs = self._normalize_obs(obs)
-        dataset = TensorDataset(obs)
-        loader = DataLoader(dataset=dataset, batch_size=self.batch_size, shuffle=True)
-        for batch in loader:
-            o = batch[0]
-            self.opt.zero_grad()
-            src = self.predictor(o)
-            with torch.no_grad():
-                tgt = self.target(o)
-            distances = self._dist_ensemble(src, tgt)
-            loss = distances.mean()
-            loss.backward()
-            self.opt.step()
+        self.opt.zero_grad()
+        src = self.predictor(obs)
+        with torch.no_grad():
+            tgt = self.target(obs)
+        loss = self._dist_ensemble(src, tgt).mean()
+        loss.backward()
+        self.opt.step()

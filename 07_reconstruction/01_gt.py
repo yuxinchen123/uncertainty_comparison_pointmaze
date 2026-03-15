@@ -40,16 +40,14 @@ from intrinsic.visit_count_bonus import make_visit_count_intrinsic_reward_fn
 
 
 class _CallableAsRND:
-    """Adapts (obs -> float) to the rnd_module interface: compute(samples) -> array of shape (batch_size,)."""
+    """Adapts intrinsic_reward_fn(samples) -> (N,) to the rnd_module interface: compute(samples) -> (batch_size,)."""
 
     def __init__(self, fn):
         self.fn = fn
 
     def compute(self, samples):
-        next_obs = np.asarray(samples["next_observations"])
-        if next_obs.ndim == 1:
-            next_obs = next_obs.reshape(1, -1)
-        return np.array([float(self.fn(o)) for o in next_obs], dtype=np.float32)
+        out = self.fn(samples)
+        return np.asarray(out, dtype=np.float32).ravel()
 
 
 def _args_to_run_name(args) -> str:
