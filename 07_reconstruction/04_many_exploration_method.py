@@ -167,7 +167,7 @@ def main():
 
     if args.beta > 0:
         if args.intrinsic_method == "rnd":
-            rnd_obs_slice = (0, RND_POS_DIM) if args.rnd_input == "position" else None
+            rnd_feature = "rnd_next_state_position_only" if args.rnd_input == "position" else "rnd_next_state"
             intrinsic_model = RND(
                 obs_shape=obs_shape,
                 output_dim=args.rnd_output_dim,
@@ -176,19 +176,18 @@ def main():
                 device=args.device,
                 use_obs_norm=args.rnd_obs_norm,
                 distance=args.rnd_distance,
-                obs_slice=rnd_obs_slice,
                 n_predictors=args.n_predictors,
                 beta_std=args.beta_std,
                 linear_rnd=args.linear_rnd,
+                feature=rnd_feature,
             )
             if args.rnd_obs_norm and getattr(intrinsic_model, "obs_rms", None) is not None:
                 obs_buf = []
                 for _ in range(200):
                     obs_buf.append(np.asarray(flat_env.observation_space.sample(), dtype=np.float32))
                 obs_arr = np.stack(obs_buf, axis=0)
-                if intrinsic_model.obs_slice is not None:
-                    start, end = intrinsic_model.obs_slice
-                    obs_arr = obs_arr[..., start:end]
+                if intrinsic_model.feature == "rnd_next_state_position_only":
+                    obs_arr = obs_arr[..., 0:2]
                 intrinsic_model.obs_rms.update(obs_arr)
         elif args.intrinsic_method == "visit_count":
             intrinsic_model = VisitCount(visit_count_env, args.intrinsic_decay_rate)

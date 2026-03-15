@@ -149,7 +149,7 @@ def main():
     if args.beta > 0:
         full_obs_dim = int(np.prod(flat_env.observation_space.shape))
         obs_shape = (full_obs_dim,)
-        rnd_obs_slice = (0, RND_POS_DIM) if args.rnd_input == "position" else None
+        rnd_feature = "rnd_next_state_position_only" if args.rnd_input == "position" else "rnd_next_state"
         intrinsic_model = RND(
             obs_shape=obs_shape,
             output_dim=args.rnd_output_dim,
@@ -158,12 +158,12 @@ def main():
             device=args.device,
             use_obs_norm=args.rnd_obs_norm,
             distance=args.rnd_distance,
-            obs_slice=rnd_obs_slice,
             n_predictors=args.n_predictors,
             beta_std=args.beta_std,
             linear_rnd=args.linear_rnd,
+            feature=rnd_feature,
         )
-        # Pre-init for RND observation normalization using random samples (position only when obs_slice is set)
+        # Pre-init for RND observation normalization using random samples (first 2 dims when position_only)
         if args.rnd_obs_norm and getattr(intrinsic_model, "obs_rms", None) is not None:
             n_init = 200  # small number of batches for RMS initialization
             obs_buf = []
@@ -171,9 +171,8 @@ def main():
                 sample = flat_env.observation_space.sample()
                 obs_buf.append(np.asarray(sample, dtype=np.float32))
             obs_arr = np.stack(obs_buf, axis=0)
-            if intrinsic_model.obs_slice is not None:
-                start, end = intrinsic_model.obs_slice
-                obs_arr = obs_arr[..., start:end]
+            if intrinsic_model.feature == "rnd_next_state_position_only":
+                obs_arr = obs_arr[..., 0:2]
             intrinsic_model.obs_rms.update(obs_arr)
 
         replay_buffer_kwargs = {

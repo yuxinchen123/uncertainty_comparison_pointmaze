@@ -110,16 +110,23 @@ class EnsembleObservationEncoder(nn.Module):
         return out
 
 
-FEATURE_CHOICES = ("next_state", "state", "state_action", "state_action_next_state")
+FEATURE_CHOICES = (
+    "rnd_next_state",                  # next_state
+    "rnd_next_state_position_only",    # next_state with position only (fixed slice)
+    "rnd_state",                       # state
+    "rnd_state_action",                # state + action
+    "rnd_state_action_next_state",      # state + action + next_state
+)
 
 
 class RND(IntrinsicRewardModel):
     """
     RND intrinsic reward model. Input is built from samples according to feature:
-    - next_state: next_observations only (obs_slice applied only here to next state).
-    - state: observations only.
-    - state_action: concat(observations, actions).
-    - state_action_next_state: concat(observations, actions, next_observations).
+    - rnd_next_state: next_observations only (full).
+    - rnd_next_state_position_only: first 2 dims of next_observations only.
+    - rnd_state: observations only.
+    - rnd_state_action: concat(observations, actions).
+    - rnd_state_action_next_state: concat(observations, actions, next_observations).
     """
 
     def __init__(
@@ -131,34 +138,30 @@ class RND(IntrinsicRewardModel):
         device: str = "cpu",
         use_obs_norm: bool = False,
         distance: str = "mse",
-        obs_slice: Optional[Tuple[int, int]] = None,
         n_predictors: int = 5,
         beta_std: float = 0.0,
-        feature: str = "next_state",
+        feature: str = "rnd_next_state",
         action_dim: Optional[int] = None,
         linear_rnd: bool = False,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
-        self.obs_slice = obs_slice
         self.feature = feature
         self.action_dim = int(action_dim) if action_dim is not None else 0
         self.linear_rnd = bool(linear_rnd)
 
         obs_dim = self.obs_shape[0]
-        if self.feature == "next_state":
-            if obs_slice is not None:
-                start, end = obs_slice
-                if start < 0 or end > obs_dim or start >= end:
-                    raise ValueError(f"obs_slice must be (start, end) with 0 <= start < end <= obs_dim; got {obs_slice}")
-                self._rnd_input_dim = end - start
-            else:
-                self._rnd_input_dim = obs_dim
-        elif self.feature == "state":
+        if self.feature == "rnd_next_state":
             self._rnd_input_dim = obs_dim
-        elif self.feature == "state_action":
+        elif self.feature == "rnd_next_state_position_only":
+            self._rnd_input_dim = 2
+        elif self.feature == "rnd_state":
+            self._rnd_input_dim = obs_dim
+        elif self.feature == "rnd_state_action":
             self._rnd_input_dim = obs_dim + self.action_dim
-        else:
+        elif self.feature == "rnd_state_action_next_state":
             self._rnd_input_dim = obs_dim + self.action_dim + obs_dim
+        else:
+            raise ValueError(f"feature must be one of {FEATURE_CHOICES}; got {self.feature!r}")
         self._rnd_obs_shape = (self._rnd_input_dim,)
 
         self.output_dim = output_dim
@@ -195,27 +198,23 @@ class RND(IntrinsicRewardModel):
         if self.use_obs_norm:
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
 
-    def _slice_obs(self, x: torch.Tensor) -> torch.Tensor:
-        """Apply obs_slice only when used for next_state (feature='next_state')."""
-        if self.obs_slice is None:
-            return x
-        start, end = self.obs_slice
-        return x[..., start:end]
-
     def _get_feature_tensor(self, samples: Dict[str, Any]) -> torch.Tensor:
-        """Build input tensor (batch_size, _rnd_input_dim) from samples. obs_slice only for next_state when feature='next_state'."""
-        if self.feature == "next_state":
+        """Build input tensor (batch_size, _rnd_input_dim) from samples."""
+        if self.feature == "rnd_next_state":
             next_obs = to_tensor(samples["next_observations"], self.device).float()
-            return self._slice_obs(next_obs)
-        if self.feature == "state":
+            return next_obs
+        if self.feature == "rnd_next_state_position_only":
+            next_obs = to_tensor(samples["next_observations"], self.device).float()
+            return next_obs[..., 0:2]
+        if self.feature == "rnd_state":
             return to_tensor(samples["observations"], self.device).float()
-        if self.feature == "state_action":
+        if self.feature == "rnd_state_action":
             obs = to_tensor(samples["observations"], self.device).float()
             actions = to_tensor(samples["actions"], self.device).float()
             if actions.dim() == 1:
                 actions = actions.unsqueeze(1)
             return torch.cat([obs, actions], dim=-1)
-        if self.feature == "state_action_next_state":
+        if self.feature == "rnd_state_action_next_state":
             obs = to_tensor(samples["observations"], self.device).float()
             actions = to_tensor(samples["actions"], self.device).float()
             next_obs = to_tensor(samples["next_observations"], self.device).float()
