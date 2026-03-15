@@ -117,6 +117,7 @@ class TerminateOnTimeLimitWrapper(gym.Wrapper):
 
 class ComputeIntrinsicRewardWrapper(gym.Wrapper):
     """
+    This class for logging.
     Wraps an env to compute intrinsic reward via intrinsic_reward_model.compute() in step() and fill step info.
     Does not change the step reward (stays extrinsic); sets info['intrinsic_reward'] and
     info['extrinsic_reward'] for logging.

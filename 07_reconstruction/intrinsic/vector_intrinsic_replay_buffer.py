@@ -70,9 +70,11 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         # Build minimal samples dict directly from the sampled batch
         obs = to_tensor(batch.observations, self.device)
         next_obs = to_tensor(batch.next_observations, self.device)
+        actions = to_tensor(batch.actions, self.device)
         samples = {
             "observations": obs,
             "next_observations": next_obs,
+            "actions": actions,
         }
         intrinsic_rewards = self.intrinsic_reward_model.compute(samples)
         self.intrinsic_reward_model.update(samples)

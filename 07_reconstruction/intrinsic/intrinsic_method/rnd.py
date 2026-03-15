@@ -69,10 +69,16 @@ class EnsembleObservationEncoder(nn.Module):
         return out
 
 
+FEATURE_CHOICES = ("next_state", "state", "state_action", "state_action_next_state")
+
+
 class RND(IntrinsicRewardModel):
     """
-    RND intrinsic reward model: batch-shaped (batch_size, obs_dim).
-    If obs_slice is set, only obs[..., start:end] is used for reward and predictor training.
+    RND intrinsic reward model. Input is built from samples according to feature:
+    - next_state: next_observations only (obs_slice applied only here to next state).
+    - state: observations only.
+    - state_action: concat(observations, actions).
+    - state_action_next_state: concat(observations, actions, next_observations).
     """
 
     def __init__(
@@ -87,18 +93,29 @@ class RND(IntrinsicRewardModel):
         obs_slice: Optional[Tuple[int, int]] = None,
         n_predictors: int = 5,
         beta_std: float = 0.0,
+        feature: str = "next_state",
+        action_dim: Optional[int] = None,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         self.obs_slice = obs_slice
-        if obs_slice is not None:
-            start, end = obs_slice
-            if start < 0 or end > self.obs_shape[0] or start >= end:
-                raise ValueError(f"obs_slice must be (start, end) with 0 <= start < end <= obs_dim; got {obs_slice}")
-            self._rnd_input_dim = end - start
-            self._rnd_obs_shape = (self._rnd_input_dim,)
+        self.action_dim = int(action_dim) if action_dim is not None else 0
+
+        obs_dim = self.obs_shape[0]
+        if self.feature == "next_state":
+            if obs_slice is not None:
+                start, end = obs_slice
+                if start < 0 or end > obs_dim or start >= end:
+                    raise ValueError(f"obs_slice must be (start, end) with 0 <= start < end <= obs_dim; got {obs_slice}")
+                self._rnd_input_dim = end - start
+            else:
+                self._rnd_input_dim = obs_dim
+        elif self.feature == "state":
+            self._rnd_input_dim = obs_dim
+        elif self.feature == "state_action":
+            self._rnd_input_dim = obs_dim + self.action_dim
         else:
-            self._rnd_input_dim = self.obs_shape[0]
-            self._rnd_obs_shape = self.obs_shape
+            self._rnd_input_dim = obs_dim + self.action_dim + obs_dim
+        self._rnd_obs_shape = (self._rnd_input_dim,)
 
         self.output_dim = output_dim
         self.batch_size = batch_size
@@ -123,10 +140,33 @@ class RND(IntrinsicRewardModel):
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
 
     def _slice_obs(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply obs_slice only when used for next_state (feature='next_state')."""
         if self.obs_slice is None:
             return x
         start, end = self.obs_slice
         return x[..., start:end]
+
+    def _get_feature_tensor(self, samples: Dict[str, Any]) -> torch.Tensor:
+        """Build input tensor (batch_size, _rnd_input_dim) from samples. obs_slice only for next_state when feature='next_state'."""
+        if self.feature == "next_state":
+            next_obs = to_tensor(samples["next_observations"], self.device).float()
+            return self._slice_obs(next_obs)
+        if self.feature == "state":
+            return to_tensor(samples["observations"], self.device).float()
+        if self.feature == "state_action":
+            obs = to_tensor(samples["observations"], self.device).float()
+            actions = to_tensor(samples["actions"], self.device).float()
+            if actions.dim() == 1:
+                actions = actions.unsqueeze(1)
+            return torch.cat([obs, actions], dim=-1)
+        if self.feature == "state_action_next_state":
+            obs = to_tensor(samples["observations"], self.device).float()
+            actions = to_tensor(samples["actions"], self.device).float()
+            next_obs = to_tensor(samples["next_observations"], self.device).float()
+            if actions.dim() == 1:
+                actions = actions.unsqueeze(1)
+            return torch.cat([obs, actions, next_obs], dim=-1)
+        raise ValueError(f"feature must be one of {FEATURE_CHOICES}; got {self.feature!r}")
 
     def _normalize_obs(self, x: torch.Tensor) -> torch.Tensor:
         if not self.use_obs_norm or self.obs_rms is None:
@@ -146,17 +186,12 @@ class RND(IntrinsicRewardModel):
         return diff.sum(dim=2)
 
     def compute(self, samples: Dict[str, Any]) -> torch.Tensor:
-        """Intrinsic reward from next_observations. Returns shape (batch_size,)."""
-        if not isinstance(samples, dict) or "next_observations" not in samples:
-            raise TypeError("samples must be a dict with 'next_observations' key")
-
-        next_obs_raw = samples["next_observations"]
-        next_obs = to_tensor(next_obs_raw, self.device)
-        next_obs = self._slice_obs(next_obs)
-        next_obs = self._normalize_obs(next_obs)
+        """Intrinsic reward from feature built from samples. Returns shape (batch_size,)."""
+        x = self._get_feature_tensor(samples)
+        x = self._normalize_obs(x)
         with torch.no_grad():
-            src = self.predictor(next_obs)
-            tgt = self.target(next_obs)
+            src = self.predictor(x)
+            tgt = self.target(x)
             distances = self._dist_ensemble(src, tgt)
         mean_dist = distances.mean(dim=1)
         if self.n_predictors == 1:
@@ -165,17 +200,16 @@ class RND(IntrinsicRewardModel):
             std_dist = distances.std(dim=1, unbiased=True)
         return mean_dist + self.beta_std * std_dist
 
-    def update(self, samples: Dict[str, torch.Tensor]) -> None:
-        """Train predictor on observations. samples["observations"]: (batch_size, obs_dim)."""
-        obs = samples["observations"].to(self.device).float()
-        obs = self._slice_obs(obs)
+    def update(self, samples: Dict[str, Any]) -> None:
+        """Train predictor on feature built from samples."""
+        x = self._get_feature_tensor(samples)
         if self.use_obs_norm and self.obs_rms is not None:
-            self.obs_rms.update(obs.detach().cpu().numpy())
-        obs = self._normalize_obs(obs)
+            self.obs_rms.update(x.detach().cpu().numpy())
+        x = self._normalize_obs(x)
         self.opt.zero_grad()
-        src = self.predictor(obs)
+        src = self.predictor(x)
         with torch.no_grad():
-            tgt = self.target(obs)
+            tgt = self.target(x)
         loss = self._dist_ensemble(src, tgt).mean()
         loss.backward()
         self.opt.step()
