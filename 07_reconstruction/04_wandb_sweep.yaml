@@ -1,0 +1,39 @@
+program: 04_many_exploration_method.py
+name: sweep_my_rnd
+project: rnd_07_reconstruction
+description: test many exploration algorithms
+method: grid
+metric:
+  name: eval/mean_extrinsic_reward
+  goal: maximize
+parameters:
+  goal_position:
+    values: ["bottom_right"]
+  a_seed:
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+  env_name:
+    value: "PointMaze_Large-v3"
+  total_timesteps:
+    values: [2000000]
+  eval_freq:
+    value: 50000
+  n_eval_episodes:
+    value: 100
+  device:
+    value: "cuda"
+  use_wandb:
+    value: true
+  beta:
+    values: [0.1, 1, 10, 100]
+  discount_factor:
+    values: [0.999]
+  env_max_episode:
+    values: [400]
+  rnd_obs_norm:
+    values: [true]
+  rnd_distance:
+    values: ["mse"]
+  rnd_output_dim:
+    values: [128]
+  algorithm:
+    values: [no_exploration, gt_position, gt_position_velocity, rnd_next_state, rnd_next_state_position_only, rnd_state, rnd_state_action, rnd_state_action_next_state, rnd_linear_next_state, rnd_elliptical]

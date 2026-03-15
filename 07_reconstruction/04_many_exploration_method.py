@@ -1,6 +1,6 @@
 """
 SAC on PointMaze with switchable intrinsic reward: RND, VisitCount, or EllipticalBonus.
-Same env and training setup as 03_rnd_my_implementation.py; choice of method via --intrinsic_method.
+Same env and training setup as 03_rnd_my_implementation.py; choice of exploration via --algorithm.
 """
 import argparse
 import collections
@@ -18,7 +18,7 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from utilities.debug import print_or_wandb_log
-from utilities.callbacks import TrainEpisodeStatsCallback, WandbEvalLoggingCallback
+from utilities.callbacks import TrainEpisodeStatsCallback, WandbEvalLoggingCallback, DistanceLoggingCallback
 from env_wrapper.point_maze_utils import (
     select_fixed_cell,
     select_fixed_goal_top_left,
@@ -30,14 +30,44 @@ from env_wrapper.point_maze_wrappers import (
     RemoveGoalWrapper,
     TerminateOnTimeLimitWrapper,
     PositionVisitCountWrapper,
+    PositionVelocityVisitCountWrapper,
     ComputeIntrinsicRewardWrapper,
 )
 from intrinsic.vector_intrinsic_replay_buffer import VectorIntrinsicReplayBuffer
 from intrinsic.intrinsic_method import RND, VisitCount, EllipticalBonus
+from distance_to_GT.algorithm_vector import ALGORITHM_NAMES
 
 # PointMaze flat obs after RemoveGoal + Flatten: (4,) = [x, y, vx, vy]
 RND_POS_DIM = 2
-INTRINSIC_METHODS = ("rnd", "visit_count", "elliptical")
+
+
+def _algorithm_to_config(algorithm: str):
+    """
+    Map ALGORITHM_NAME to (intrinsic_method, rnd_feature, linear_rnd, visit_wrapper).
+    visit_wrapper: "position" | "position_velocity" (for VisitCount only).
+    no_exploration: beta=0, no intrinsic model.
+    """
+    if algorithm == "no_exploration":
+        return ("none", None, False, "position")
+    if algorithm == "gt_position":
+        return ("visit_count", None, False, "position")
+    if algorithm == "gt_position_velocity":
+        return ("visit_count", None, False, "position_velocity")
+    if algorithm == "rnd_next_state":
+        return ("rnd", "rnd_next_state", False, "position")
+    if algorithm == "rnd_next_state_position_only":
+        return ("rnd", "rnd_next_state_position_only", False, "position")
+    if algorithm == "rnd_state":
+        return ("rnd", "rnd_state", False, "position")
+    if algorithm == "rnd_state_action":
+        return ("rnd", "rnd_state_action", False, "position")
+    if algorithm == "rnd_state_action_next_state":
+        return ("rnd", "rnd_state_action_next_state", False, "position")
+    if algorithm == "rnd_linear_next_state":
+        return ("rnd", "rnd_next_state", True, "position")
+    if algorithm == "rnd_elliptical":
+        return ("elliptical", None, False, "position")
+    raise ValueError(f"algorithm must be one of {ALGORITHM_NAMES}; got {algorithm!r}")
 
 
 def _args_to_run_name(args) -> str:
@@ -46,22 +76,10 @@ def _args_to_run_name(args) -> str:
         f"seed={getattr(args, 'a_seed', 0)}",
         f"goal={getattr(args, 'goal_position', 'top_left')}",
         f"beta={getattr(args, 'beta', 0)}",
-        f"method={getattr(args, 'intrinsic_method', 'rnd')}",
+        f"algorithm={args.algorithm}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
     ]
-    if getattr(args, "intrinsic_method", None) == "rnd":
-        parts.extend([
-            f"n_predictors={getattr(args, 'n_predictors', 5)}",
-            f"linear_rnd={getattr(args, 'linear_rnd', False)}",
-        ])
-    elif getattr(args, "intrinsic_method", None) == "visit_count":
-        parts.append(f"decay={getattr(args, 'intrinsic_decay_rate', -0.5)}")
-    elif getattr(args, "intrinsic_method", None) == "elliptical":
-        parts.extend([
-            f"elliptical_feature_dim={getattr(args, 'elliptical_feature_dim', 128)}",
-            f"elliptical_reg={getattr(args, 'elliptical_regularization', 1e-6)}",
-        ])
     return "|".join(str(p) for p in parts)
 
 
@@ -78,11 +96,11 @@ def main():
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
     parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
     parser.add_argument(
-        "--intrinsic_method",
+        "--algorithm",
         type=str,
-        default="elliptical",
-        choices=INTRINSIC_METHODS,
-        help="Intrinsic reward model: rnd, visit_count, or elliptical",
+        default="rnd_next_state_position_only",
+        choices=list(ALGORITHM_NAMES),
+        help="Exploration algorithm (ALGORITHM_NAMES).",
     )
     parser.add_argument("--discount_factor", type=float, default=0.99)
     parser.add_argument("--env_max_episode", type=int, default=300)
@@ -111,6 +129,14 @@ def main():
         for key in vars(args):
             if key in wandb.config:
                 setattr(args, key, wandb.config[key])
+
+    method, rnd_feature, linear_rnd, visit_wrapper = _algorithm_to_config(args.algorithm)
+    args.intrinsic_method = method  # internal use only (rnd / visit_count / elliptical / none)
+    args._rnd_feature = rnd_feature
+    args._linear_rnd = linear_rnd
+    args._visit_wrapper = visit_wrapper
+    if args.algorithm == "no_exploration":
+        args.beta = 0
     seed = args.a_seed
 
     if args.device == "cuda" and not torch.cuda.is_available():
@@ -142,23 +168,24 @@ def main():
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])
     manhattan_dist = abs(fixed_goal_cell[0] - fixed_start_cell[0]) + abs(fixed_goal_cell[1] - fixed_start_cell[1])
-    print_or_wandb_log(
-        args.use_wandb,
-        collections.OrderedDict([
-            ("device_type", device_type),
-            ("start_goal/manhattan_distance", manhattan_dist),
-            ("intrinsic_method", args.intrinsic_method),
-        ]),
-        "Setup",
-    )
+    log_dict = collections.OrderedDict([
+        ("device_type", device_type),
+        ("start_goal/manhattan_distance", manhattan_dist),
+        ("algorithm", args.algorithm),
+    ])
+    print_or_wandb_log(args.use_wandb, log_dict, "Setup")
     print(f"Fixed goal cell: {fixed_goal_cell}, start cell: {fixed_start_cell}")
-    print(f"Intrinsic method: {args.intrinsic_method}")
+    print(f"algorithm={args.algorithm}")
 
     start_env = FixedStartWrapper(base_env, fixed_start_cell)
     goal_env = FixedGoalWrapper(start_env, fixed_goal_cell)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    visit_count_env = PositionVisitCountWrapper(no_goal_env)
-    flat_env = FlattenObservation(visit_count_env)
+    # Always use both wrappers: position for heatmap, position_velocity for distance-to-GT (GT = gt_position_velocity visit count vector).
+    visit_count_env_position = PositionVisitCountWrapper(no_goal_env)
+    visit_count_env_position_velocity = PositionVelocityVisitCountWrapper(visit_count_env_position)
+    # Intrinsic reward uses one of them depending on algorithm; heatmap always uses position.
+    visit_count_env_for_intrinsic = visit_count_env_position_velocity if args._visit_wrapper == "position_velocity" else visit_count_env_position
+    flat_env = FlattenObservation(visit_count_env_position_velocity)
 
     full_obs_dim = int(np.prod(flat_env.observation_space.shape))
     obs_shape = (full_obs_dim,)
@@ -167,7 +194,7 @@ def main():
 
     if args.beta > 0:
         if args.intrinsic_method == "rnd":
-            rnd_feature = "rnd_next_state_position_only" if args.rnd_input == "position" else "rnd_next_state"
+            action_dim = int(np.prod(flat_env.action_space.shape))
             intrinsic_model = RND(
                 obs_shape=obs_shape,
                 output_dim=args.rnd_output_dim,
@@ -178,19 +205,31 @@ def main():
                 distance=args.rnd_distance,
                 n_predictors=args.n_predictors,
                 beta_std=args.beta_std,
-                linear_rnd=args.linear_rnd,
-                feature=rnd_feature,
+                linear_rnd=args._linear_rnd,
+                feature=args._rnd_feature,
+                action_dim=action_dim,
             )
             if args.rnd_obs_norm and getattr(intrinsic_model, "obs_rms", None) is not None:
+                # Init obs_rms with RND input shape (obs only, or obs+action, or obs+action+next_obs)
                 obs_buf = []
+                next_buf = []
+                act_buf = []
                 for _ in range(200):
-                    obs_buf.append(np.asarray(flat_env.observation_space.sample(), dtype=np.float32))
-                obs_arr = np.stack(obs_buf, axis=0)
-                if intrinsic_model.feature == "rnd_next_state_position_only":
-                    obs_arr = obs_arr[..., 0:2]
-                intrinsic_model.obs_rms.update(obs_arr)
+                    obs = np.asarray(flat_env.observation_space.sample(), dtype=np.float32)
+                    next_obs = np.asarray(flat_env.observation_space.sample(), dtype=np.float32)
+                    action = np.asarray(flat_env.action_space.sample(), dtype=np.float32)
+                    obs_buf.append(obs)
+                    next_buf.append(next_obs)
+                    act_buf.append(action)
+                samples = {
+                    "observations": np.stack(obs_buf, axis=0),
+                    "next_observations": np.stack(next_buf, axis=0),
+                    "actions": np.stack(act_buf, axis=0),
+                }
+                x = intrinsic_model._get_feature_tensor(samples)
+                intrinsic_model.obs_rms.update(x.detach().cpu().numpy())
         elif args.intrinsic_method == "visit_count":
-            intrinsic_model = VisitCount(visit_count_env, args.intrinsic_decay_rate)
+            intrinsic_model = VisitCount(visit_count_env_for_intrinsic, args.intrinsic_decay_rate)
         elif args.intrinsic_method == "elliptical":
             action_dim = int(np.prod(flat_env.action_space.shape))
             intrinsic_model = EllipticalBonus(
@@ -201,7 +240,7 @@ def main():
                 regularization=args.elliptical_regularization,
             )
         else:
-            raise ValueError(f"intrinsic_method must be one of {INTRINSIC_METHODS}; got {args.intrinsic_method!r}")
+            raise ValueError(f"unexpected algorithm {args.algorithm!r}")
 
         replay_buffer_kwargs = {
             "beta": args.beta,
@@ -238,12 +277,17 @@ def main():
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)
-    eval_visit_count_env = PositionVisitCountWrapper(
+    eval_visit_count_position = PositionVisitCountWrapper(
         eval_no_goal_env,
-        count_map_ref=visit_count_env.visit_counts,
+        count_map_ref=visit_count_env_position.visit_counts,
         update_counts=False,
     )
-    eval_flat_env = FlattenObservation(eval_visit_count_env)
+    eval_visit_count_position_velocity = PositionVelocityVisitCountWrapper(
+        eval_visit_count_position,
+        count_map_ref=visit_count_env_position_velocity.visit_counts,
+        update_counts=False,
+    )
+    eval_flat_env = FlattenObservation(eval_visit_count_position_velocity)
     eval_intrinsic_env = ComputeIntrinsicRewardWrapper(
         eval_flat_env, beta=args.beta, intrinsic_reward_model=intrinsic_model
     )
@@ -255,17 +299,24 @@ def main():
     run_name = _args_to_run_name(args)
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_env, args.eval_freq, args.n_eval_episodes, args.use_wandb,
-        visit_count_env=visit_count_env, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
+        visit_count_env=visit_count_env_position, goal_cell=fixed_goal_cell, start_cell=fixed_start_cell, run_name=run_name,
         beta=args.beta,
     )
     train_stats_callback = TrainEpisodeStatsCallback(
         train_env=env, eval_freq=args.eval_freq, n_eval_episodes=args.n_eval_episodes,
         use_wandb=args.use_wandb, beta=args.beta,
     )
+    distance_logging_callback = DistanceLoggingCallback(
+        algorithm=args.algorithm,
+        intrinsic_reward_model=intrinsic_model,
+        visit_count_env_position_velocity=visit_count_env_position_velocity,
+        eval_freq=args.eval_freq,
+        use_wandb=args.use_wandb,
+    )
 
     model.learn(
         total_timesteps=args.total_timesteps,
-        callback=[wandb_eval_callback, train_stats_callback],
+        callback=[wandb_eval_callback, train_stats_callback, distance_logging_callback],
     )
 
     if not args.use_wandb:
