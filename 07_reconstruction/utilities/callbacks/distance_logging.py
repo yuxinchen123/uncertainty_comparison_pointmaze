@@ -1,4 +1,6 @@
 """Callback to log distance between current algorithm intrinsic vector and GT (position_velocity visit counts)."""
+from typing import Any
+
 import wandb
 
 from stable_baselines3.common.callbacks import BaseCallback
@@ -8,13 +10,18 @@ from distance_to_GT.algorithm_vector import compute_intrinsic_vector_distance
 
 
 class DistanceLoggingCallback(BaseCallback):
-    """At eval_freq, compute distance-to-GT for algorithms that don't need action; log as dict."""
+    """
+    At eval_freq, compute distance between the current algorithm's intrinsic vector
+    and GT (position_velocity visit counts). Logs metrics for algorithms in
+    ALGORITHMS_NO_ACTION (no_exploration, gt_position, gt_position_velocity, RND state/next_state, etc.).
+    Logs to wandb or prints via align_print_dic.
+    """
 
     def __init__(
         self,
         algorithm: str,
-        intrinsic_reward_model,
-        visit_count_env_position_velocity,
+        intrinsic_reward_model: Any,
+        visit_count_env_position_velocity: Any,
         eval_freq: int,
         use_wandb: bool,
         verbose: int = 0,

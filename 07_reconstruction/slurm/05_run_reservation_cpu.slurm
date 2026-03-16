@@ -9,7 +9,7 @@
 #SBATCH --reservation=sl5nw_99
 #SBATCH --qos=csresnolim
 #SBATCH --mem=20G
-#SBATCH --time=3-00:00:00
+#SBATCH --time=4-00:00:00
 #SBATCH --output slurm_output.log            
 #SBATCH --ntasks=8
 

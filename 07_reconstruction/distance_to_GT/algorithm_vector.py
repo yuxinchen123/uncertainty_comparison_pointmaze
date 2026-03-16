@@ -9,6 +9,7 @@ import numpy as np
 from .full_observation_list import full_observation_list
 from . import vector_distance
 from env_wrapper.point_maze_utils import observation_to_grid, velocity_to_grid
+from utilities.format import to_numpy
 
 
 ALGORITHM_NAMES = [
@@ -115,7 +116,5 @@ def full_intrinsic_vector(
     obs_arr = np.stack(obs_list).astype(np.float32)
     samples = {"observations": obs_arr, "next_observations": obs_arr}
     result = intrinsic_reward_model.compute(samples)
-    if hasattr(result, "cpu"):
-        result = result.cpu().numpy()
-    result = np.asarray(result).reshape(-1)
+    result = to_numpy(result).reshape(-1)
     return result.astype(np.float64)

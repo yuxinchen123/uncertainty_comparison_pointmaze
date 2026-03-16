@@ -1,12 +1,13 @@
 """
 Visit-count-based intrinsic reward model.
 Implements IntrinsicRewardModel; update() is a no-op (counts are updated by the visit-count wrapper).
-Decay: intrinsic_decay_rate -0.5 => 1/sqrt(n), -1 => 1/n.
+Decay: intrinsic_decay_rate (default 0.5). -0.5 => 1/sqrt(n), -1 => 1/n.
 Works with PositionVisitCountWrapper or PositionVelocityVisitCountWrapper; both expose observation_to_count(obs) -> int.
 """
 import numpy as np
 from typing import Any, Dict
 
+from utilities.format import to_numpy
 from .base import IntrinsicRewardModel
 
 
@@ -16,7 +17,7 @@ class VisitCount(IntrinsicRewardModel):
     compute(samples) returns bonus array; update(samples) is no-op.
     """
 
-    def __init__(self, visit_count_wrapper, intrinsic_decay_rate: float):
+    def __init__(self, visit_count_wrapper, intrinsic_decay_rate: float = 0.5):
         self.visit_count_wrapper = visit_count_wrapper
         self.intrinsic_decay_rate = intrinsic_decay_rate
 
@@ -25,8 +26,8 @@ class VisitCount(IntrinsicRewardModel):
         return 1.0 if count <= 0 else min(1.0, pow(float(count), self.intrinsic_decay_rate))
 
     def compute(self, samples: Dict[str, Any]) -> np.ndarray:
-        """samples["next_observations"] shape (N, obs_dim) -> (N,) bonus array."""
-        next_obs = np.asarray(samples["next_observations"])
+        """samples["next_observations"] shape (N, obs_dim) -> (N,) bonus array. Handles torch tensors on GPU."""
+        next_obs = to_numpy(samples["next_observations"])
         if next_obs.ndim == 1:
             next_obs = next_obs.reshape(1, -1)
         batch_size = next_obs.shape[0]

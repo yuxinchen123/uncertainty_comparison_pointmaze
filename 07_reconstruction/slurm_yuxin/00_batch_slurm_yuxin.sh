@@ -2,46 +2,47 @@
 
 #Define two variables with name job_id and cpu_core
 job_id="catresearch/rnd_07_reconstruction/hpkzqyev"
+job_name="rl"
 
 # for i in $(seq 1 1); do
-#     sbatch slurm/01_run_gpu.slurm $job_id&
+#     sbatch --job-name="$job_name" slurm_yuxin/01_run_gpu.slurm $job_id &
 # done
 
 
 for i in $(seq 1 15); do
-    sbatch slurm/01_run_gpu.slurm $job_id&
+    sbatch --job-name="$job_name" slurm_yuxin/01_run_gpu.slurm $job_id &
 done
 
-for i in $(seq 1 10); do
-    sbatch slurm/02_run_gnolim.slurm $job_id&
+for i in $(seq 1 15); do
+    sbatch --job-name="$job_name" slurm_yuxin/02_run_gnolim.slurm $job_id &
 done
 
 # # sleep 20
 
 
-for i in $(seq 1 20); do
-    sbatch slurm/03_run_cpu.slurm $job_id&
+for i in $(seq 1 26); do
+    sbatch --job-name="$job_name" slurm_yuxin/03_run_cpu.slurm $job_id &
 done
 
-for i in $(seq 1 20); do
-    sbatch slurm/03_run_nolim.slurm $job_id&
+for i in $(seq 1 26); do
+    sbatch --job-name="$job_name" slurm_yuxin/03_run_nolim.slurm $job_id &
 done
 
 
 # # sleep 20
 
 # for i in $(seq 1 4); do
-#     sbatch slurm/04_run_reservation_gpu.slurm $job_id&
+#     sbatch --job-name="$job_name" slurm/04_run_reservation_gpu.slurm $job_id &
 # done
 
 
 # for i in $(seq 1 10); do
-#     sbatch slurm/05_run_reservation_cpu.slurm $job_id&
+#     sbatch --job-name="$job_name" slurm/05_run_reservation_cpu.slurm $job_id &
 # done
 
 #wait 180 seconds
 sleep 60
-squeue -u sl5nw > squeue.log
+squeue -u yuxinchen > squeue.log
 
 
 #read and print each line from squeue.log
@@ -64,15 +65,15 @@ while IFS= read -r line
 do
     IFS=' ' read -r -a array <<< "$line"
     if [[ ${array[-2]} =~ ^[0-9]+$ ]]; then
-        if [ ${array[-2]} -gt 3 ]; then
+        if [ ${array[-2]} -gt 2 ]; then
             echo $line
             job_id=${array[0]}
             scancel $job_id
         fi
     fi
 
-# if [ $count -ge 64 ]; then
-#     scancel -u sl5nw -t PD
-# fi 
+if [ $count -ge 64 ]; then
+    scancel -u yuxinchen -t PD
+fi 
 
 done < squeue.log

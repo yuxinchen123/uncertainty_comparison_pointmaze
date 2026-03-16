@@ -2,12 +2,11 @@
 
 # Example of running python script with a job array
 
-#SBATCH --job-name=03
 #SBATCH --partition=nolim
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus-per-node=0
 #SBATCH --mem=20G
-#SBATCH --time=20-00:00:00
+#SBATCH --time=10-00:00:00
 #SBATCH --output slurm_output.log            
 #SBATCH --ntasks=4
 

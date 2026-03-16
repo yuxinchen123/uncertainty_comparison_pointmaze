@@ -56,7 +56,7 @@ def test_04_runs_with_algorithm(algorithm):
         env=env,
         capture_output=True,
         text=True,
-        timeout=120,
+        timeout=180,
     )
     assert result.returncode == 0, (
         f"algorithm={algorithm} failed (exit {result.returncode}). "

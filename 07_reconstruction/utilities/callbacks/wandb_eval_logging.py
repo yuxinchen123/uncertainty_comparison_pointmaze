@@ -14,11 +14,13 @@ from utilities.heatmap_utils import create_visit_count_heatmap
 class WandbEvalLoggingCallback(BaseCallback):
     """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
 
-    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", beta: float = 0.0, verbose: int = 0):
+    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", beta: float = 0.0, total_timesteps: int = None, n_eval_episodes_final: int = 100, verbose: int = 0):
         super().__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
+        self.total_timesteps = total_timesteps
+        self.n_eval_episodes_final = n_eval_episodes_final
         self.use_wandb = use_wandb
         self.visit_count_env = visit_count_env
         self.goal_cell = goal_cell
@@ -56,11 +58,12 @@ class WandbEvalLoggingCallback(BaseCallback):
                 if self.verbose > 0:
                     print(f"  Heatmap: {e}")
         # Custom eval loop to collect extrinsic, intrinsic, and total per episode
+        n_ep = self.n_eval_episodes_final if (self.total_timesteps is not None and self.num_timesteps >= self.total_timesteps) else self.n_eval_episodes
         episode_extrinsic = []
         episode_intrinsic = []
         episode_total = []
         episode_lengths = []
-        for _ in range(self.n_eval_episodes):
+        for _ in range(n_ep):
             reset_out = self.eval_env.reset()
             obs = reset_out[0] if isinstance(reset_out, (list, tuple)) else reset_out
             done = False
@@ -94,6 +97,7 @@ class WandbEvalLoggingCallback(BaseCallback):
         mean_length = float(np.mean(episode_lengths))
         summary = collections.OrderedDict([
             ("step", self.num_timesteps),
+            ("eval/n_eval_episodes", n_ep),
             ("eval/mean_extrinsic_reward", mean_extrinsic),
             ("eval/mean_intrinsic_reward", mean_intrinsic),
             ("eval/mean_total_reward", mean_total),

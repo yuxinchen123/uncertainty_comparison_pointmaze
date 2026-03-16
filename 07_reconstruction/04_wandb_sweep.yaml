@@ -19,8 +19,10 @@ parameters:
     value: 50000
   n_eval_episodes:
     value: 100
+  n_eval_episodes_final:
+    value: 10000
   device:
-    value: "cuda"
+    value: "cpu"
   use_wandb:
     value: true
   beta:
@@ -35,5 +37,7 @@ parameters:
     values: ["mse"]
   rnd_output_dim:
     values: [128]
+  n_predictors:
+    value: 1
   algorithm:
     values: [no_exploration, gt_position, gt_position_velocity, rnd_next_state, rnd_next_state_position_only, rnd_state, rnd_state_action, rnd_state_action_next_state, rnd_linear_next_state, rnd_elliptical]

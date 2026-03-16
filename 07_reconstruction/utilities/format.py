@@ -1,6 +1,13 @@
 import numpy as np
 import torch
-from typing import Union
+from typing import Any, Union
+
+
+def to_numpy(x: Union[np.ndarray, torch.Tensor, Any]) -> np.ndarray:
+    """Convert to numpy array; if torch tensor (possibly on GPU), use .cpu().numpy()."""
+    if isinstance(x, torch.Tensor):
+        return x.cpu().numpy()
+    return np.asarray(x)
 
 
 def to_tensor(x: Union[np.ndarray, torch.Tensor], device: torch.device) -> torch.Tensor:
@@ -8,6 +15,8 @@ def to_tensor(x: Union[np.ndarray, torch.Tensor], device: torch.device) -> torch
     if isinstance(x, torch.Tensor):
         return x.to(device).float()
     return torch.as_tensor(x, dtype=torch.float32, device=device)
+
+
 
 
 def to_numpy_flat(x: Union[np.ndarray, torch.Tensor]) -> np.ndarray:
