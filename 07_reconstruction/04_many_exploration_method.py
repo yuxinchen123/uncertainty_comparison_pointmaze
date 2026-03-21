@@ -97,7 +97,7 @@ def main():
     parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
     parser.add_argument("--algorithm", type=str, default="gt_position_velocity", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
     parser.add_argument("--discount_factor", type=float, default=0.99)
-    parser.add_argument("--env_max_episode", type=int, default=300)
+    parser.add_argument("--env_max_episode", type=int, default=400)
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"])
 
     # RND (only args used in 04_wandb_sweep or not class-default)
