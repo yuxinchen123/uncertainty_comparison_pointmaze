@@ -5,7 +5,7 @@ import wandb
 
 from stable_baselines3.common.callbacks import BaseCallback
 
-from utilities.debug import align_print_dic
+from utilities.debug import print_or_wandb_log
 from distance_to_GT.algorithm_vector import compute_intrinsic_vector_distance
 
 
@@ -32,6 +32,9 @@ class DistanceLoggingCallback(BaseCallback):
         self.visit_count_env_position_velocity = visit_count_env_position_velocity
         self.eval_freq = eval_freq
         self.use_wandb = use_wandb
+        if self.use_wandb and wandb.run is not None:
+            wandb.define_metric("step")
+            wandb.define_metric("distance_to_gt/*", step_metric="step")
 
     def _on_step(self) -> bool:
         if self.eval_freq <= 0 or self.num_timesteps % self.eval_freq != 0:
@@ -45,8 +48,10 @@ class DistanceLoggingCallback(BaseCallback):
         )
         if metrics is None:
             return True
-        if self.use_wandb:
-            wandb.log(metrics, step=self.num_timesteps)
-        else:
-            align_print_dic(metrics, "Distance To Ground Truth")
+        metrics["step"] = self.num_timesteps
+        print_or_wandb_log(
+            self.use_wandb,
+            metrics,
+            "Distance To Ground Truth"
+        )
         return True

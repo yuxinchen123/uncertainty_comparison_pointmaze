@@ -1,6 +1,7 @@
 """
 Intrinsic reward vector for each observation in full_observation_list (discretized valid cells),
 using a given IntrinsicRewardModel. Distance-to-GT for algorithms that do not need action.
+GT = intrinsic (bonus) vector of gt_position_velocity, so distance is 0 when algorithm is gt_position_velocity.
 """
 from typing import Any, Dict, Optional
 
@@ -8,8 +9,8 @@ import numpy as np
 
 from .full_observation_list import full_observation_list
 from . import vector_distance
-from env_wrapper.point_maze_utils import observation_to_grid, velocity_to_grid
 from utilities.format import to_numpy
+from intrinsic.intrinsic_method.visit_count import VisitCount
 
 
 ALGORITHM_NAMES = [
@@ -54,29 +55,29 @@ def compute_intrinsic_vector_distance(
     position_velocity_visit_count_wrapper: Any,
 ) -> Optional[Dict[str, float]]:
     """
-    Compute distance between the algorithm's intrinsic vector and GT (position_velocity visit counts).
-    Only runs when algorithm is in ALGORITHMS_NO_ACTION.
-    For no_exploration, pred is a zero vector.
+    Compute distance between the algorithm's intrinsic vector and GT.
+    GT = intrinsic (bonus) vector of gt_position_velocity (VisitCount on position_velocity wrapper).
+    Only runs when algorithm is in ALGORITHMS_NO_ACTION. For no_exploration, pred is a zero vector.
     Returns a dict of metric name -> value for all VALID_DISTANCE_ALGORITHMS, or None if skipped.
-    Caller should log the dict (e.g. print_or_wandb_log or wandb.log with step).
     """
     if algorithm not in ALGORITHMS_NO_ACTION:
         return None
 
-    # Same data manipulation as full_intrinsic_vector: obs_list -> np.stack(obs_list).astype(np.float32).
     maze_map = np.asarray(maze_map)
-    grid_rows, grid_cols = maze_map.shape
-    visit_counts = position_velocity_visit_count_wrapper.visit_counts
-    obs_list = full_observation_list(maze_map)
-    obs_arr = np.stack(obs_list).astype(np.float32)
-    gt_list = []
-    for obs in obs_arr:
-        row, col = observation_to_grid(obs, grid_rows, grid_cols)
-        vx_bin, vy_bin = velocity_to_grid(obs, n_bins=10)
-        gt_list.append(visit_counts[row, col, vx_bin, vy_bin])
-    gt = np.array(gt_list, dtype=np.float64)
+    # Previous count-based GT (raw visit counts per (row, col, vx_bin, vy_bin)):
+    # from env_wrapper.point_maze_utils import observation_to_grid, velocity_to_grid
+    # visit_counts = position_velocity_visit_count_wrapper.visit_counts
+    # obs_list = full_observation_list(maze_map)
+    # obs_arr = np.stack(obs_list).astype(np.float32)
+    # gt_list = []
+    # for obs in obs_arr:
+    #     row, col = observation_to_grid(obs, maze_map.shape[0], maze_map.shape[1])
+    #     vx_bin, vy_bin = velocity_to_grid(obs, n_bins=10)
+    #     gt_list.append(visit_counts[row, col, vx_bin, vy_bin])
+    # gt = np.array(gt_list, dtype=np.float64)
+    gt_model = VisitCount(position_velocity_visit_count_wrapper)
+    gt = full_intrinsic_vector(maze_map, gt_model)
 
-    # pred is the intrinsic vector for the algorithm
     if algorithm == "no_exploration":
         pred = np.zeros_like(gt, dtype=np.float64)
     else:
@@ -97,7 +98,7 @@ def full_intrinsic_vector(
     using the provided IntrinsicRewardModel. Works for algorithms that do not need action:
     state-only, next_state-only, or both (observations and next_observations are the same grid).
     Not for state+action or state+action+next_state (e.g. rnd_state_action, rnd_elliptical).
-    Distance to GT is only computed for such algorithms; GT is the visit count vector from gt_position_velocity.
+    Distance to GT is only computed for such algorithms; GT is the intrinsic (bonus) vector of gt_position_velocity.
 
     Parameters
     ----------

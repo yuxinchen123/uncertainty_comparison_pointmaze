@@ -95,7 +95,7 @@ def main():
     parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
     parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
-    parser.add_argument("--algorithm", type=str, default="rnd_elliptical", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
+    parser.add_argument("--algorithm", type=str, default="gt_position_velocity", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
     parser.add_argument("--discount_factor", type=float, default=0.99)
     parser.add_argument("--env_max_episode", type=int, default=300)
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"])
