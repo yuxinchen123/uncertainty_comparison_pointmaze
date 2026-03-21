@@ -78,6 +78,7 @@ def _args_to_run_name(args) -> str:
         f"beta={getattr(args, 'beta', 0)}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
+        f"apply_termination_wrapper={getattr(args, 'apply_termination_wrapper', False)}",
     ]
     return "|".join(str(p) for p in parts)
 
@@ -95,7 +96,7 @@ def main():
     parser.add_argument("--device", type=str, default="cuda", choices=["cpu", "cuda"])
     parser.add_argument("--use_wandb", default=False, type=lambda x: x.lower() in ["true", "1", "yes"])
     parser.add_argument("--beta", type=float, default=0.01, help="Intrinsic reward coefficient")
-    parser.add_argument("--algorithm", type=str, default="gt_position_velocity", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
+    parser.add_argument("--algorithm", type=str, default="rnd_linear_next_state", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
     parser.add_argument("--discount_factor", type=float, default=0.99)
     parser.add_argument("--env_max_episode", type=int, default=400)
     parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"])
@@ -105,6 +106,12 @@ def main():
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"])
     parser.add_argument("--rnd_output_dim", type=int, default=128)
     parser.add_argument("--n_predictors", type=int, default=1)
+    parser.add_argument(
+        "--apply_termination_wrapper",
+        default=False,
+        type=lambda x: x.lower() in ["true", "1", "yes"],
+        help="If true, wrap env with TerminateOnTimeLimitWrapper (truncation -> termination). Default false for SB3 timeout handling.",
+    )
 
     args = parser.parse_args()
 
@@ -140,7 +147,8 @@ def main():
         reset_target=False,
         max_episode_steps=args.env_max_episode,
     )
-    base_env = TerminateOnTimeLimitWrapper(base_env)
+    if args.apply_termination_wrapper:
+        base_env = TerminateOnTimeLimitWrapper(base_env)
     if args.goal_position == "top_left":
         fixed_goal_cell = select_fixed_goal_top_left(base_env)
         fixed_start_cell = select_fixed_goal_bottom_right(base_env)
@@ -155,6 +163,7 @@ def main():
         ("device_type", device_type),
         ("start_goal/manhattan_distance", manhattan_dist),
         ("algorithm", args.algorithm),
+        ("apply_termination_wrapper", args.apply_termination_wrapper),
     ])
     print_or_wandb_log(args.use_wandb, log_dict, "Setup")
     print(f"Fixed goal cell: {fixed_goal_cell}, start cell: {fixed_start_cell}")
@@ -257,7 +266,8 @@ def main():
         reset_target=False,
         max_episode_steps=args.env_max_episode,
     )
-    eval_base = TerminateOnTimeLimitWrapper(eval_base)
+    if args.apply_termination_wrapper:
+        eval_base = TerminateOnTimeLimitWrapper(eval_base)
     eval_start_env = FixedStartWrapper(eval_base, fixed_start_cell)
     eval_goal_env = FixedGoalWrapper(eval_start_env, fixed_goal_cell)
     eval_no_goal_env = RemoveGoalWrapper(eval_goal_env)

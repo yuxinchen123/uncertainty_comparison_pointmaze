@@ -31,6 +31,8 @@ parameters:
     values: [0.999]
   env_max_episode:
     values: [400]
+  apply_termination_wrapper:
+    value: false
   rnd_obs_norm:
     values: [true]
   rnd_distance:
