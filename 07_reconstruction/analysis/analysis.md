@@ -382,7 +382,7 @@ If $\mathrm{pred} = 0$, the distance is $\|\mathrm{gt}\|_2$.
 Let $\mathrm{gt}^{\circ}$ be **element-wise inverse** of a **regularized** `gt`: each component is clipped so $|\mathrm{gt}_i| \ge \varepsilon$ with $\varepsilon = 10^{-8}$ before taking $1/\mathrm{gt}_i$. Define $z = \mathrm{gt}^{\circ} \odot \mathrm{pred}$ (element-wise product). Then:
 
 $$
-c^\ast = \operatorname{median}(z), \qquad
+c^\ast = \mathrm{median}(z), \qquad
 \mathrm{distance} = \sum_i \bigl| c^\ast - z_i \bigr|
 = \bigl\| c^\ast \mathbf{1} - z \bigr\|_1.
 $$
@@ -413,7 +413,7 @@ Unit directions in **L2**, then **angle in radians** in $[0, \pi]$:
 $$
 \mathbf{u}_{\mathrm{gt}} = \frac{\mathrm{gt}}{\|\mathrm{gt}\|_2 + \varepsilon}, \quad
 \mathbf{u}_{\mathrm{pred}} = \frac{\mathrm{pred}}{\|\mathrm{pred}\|_2 + \varepsilon}, \quad
-\cos\theta = \operatorname{clip}(\mathbf{u}_{\mathrm{gt}} \cdot \mathbf{u}_{\mathrm{pred}}, -1, 1), \quad
+\cos\theta = \max\!\left(-1,\ \min\!\left(1,\ \mathbf{u}_{\mathrm{gt}} \cdot \mathbf{u}_{\mathrm{pred}}\right)\right), \quad
 \mathrm{distance} = \arccos(\cos\theta).
 $$
 
