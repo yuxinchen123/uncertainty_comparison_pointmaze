@@ -248,9 +248,9 @@ def best_with_distances_markdown(best: pd.DataFrame) -> str:
         vals = []
         for c in cols:
             v = r[c]
-            vals.append("" if pd.isna(v) else f"{v:.6f}")
+            vals.append("" if pd.isna(v) else f"{v:.2f}")
         lines.append(
-            f"| {r[COL_ALGO]} | {r['mean_reward']:.6f} | "
+            f"| {r[COL_ALGO]} | {r['mean_reward']:.2f} | "
             + " | ".join(vals)
             + " |"
         )

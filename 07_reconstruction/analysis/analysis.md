@@ -440,16 +440,16 @@ Each row is the best-β cell per algorithm (same as the ranked best table), now 
 
 | algorithm | eval/mean_extrinsic_reward | min_c_l1_diff | min_c_l2_diff | min_c_l1_inv | min_c_l2_inv | normalized_l2 | normalized_angle_rad |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| gt_position_velocity | 77.155059 | 0.001086 | 0.000000 | 0.000000 | 0.000000 | 0.000000 | 0.000003 |
-| rnd_elliptical | 71.691462 |  |  |  |  |  |  |
-| rnd_next_state | 67.713495 | 2144.310948 | 38.923775 | 34.370505 | 1.547113 | 46.929082 | 0.776392 |
-| rnd_state_action_next_state | 59.936453 |  |  |  |  |  |  |
-| rnd_state | 58.883690 | 2017.037632 | 37.400411 | 9.341413 | 0.435579 | 46.542785 | 0.749897 |
-| rnd_state_action | 55.991807 |  |  |  |  |  |  |
-| gt_position | 54.808591 | 2325.620558 | 45.340844 | 1129.029494 | 25.128854 | 45.438079 | 0.939963 |
-| rnd_next_state_position_only | 35.070305 | 2565.551212 | 45.020946 | 0.454866 | 0.020841 | 49.278287 | 0.883809 |
-| rnd_linear_next_state | 30.628418 | 1439.169320 | 25.795256 | 134.767299 | 7.671494 | 30.752477 | 0.464939 |
-| no_exploration | 22.276429 | 3786.293062 | 60.424857 | 0.000000 | 0.000000 | 60.424857 | 1.570796 |
+| gt_position_velocity | 77.16 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| rnd_elliptical | 71.69 |  |  |  |  |  |  |
+| rnd_next_state | 67.71 | 2144.31 | 38.92 | 34.37 | 1.55 | 46.93 | 0.78 |
+| rnd_state_action_next_state | 59.94 |  |  |  |  |  |  |
+| rnd_state | 58.88 | 2017.04 | 37.40 | 9.34 | 0.44 | 46.54 | 0.75 |
+| rnd_state_action | 55.99 |  |  |  |  |  |  |
+| gt_position | 54.81 | 2325.62 | 45.34 | 1129.03 | 25.13 | 45.44 | 0.94 |
+| rnd_next_state_position_only | 35.07 | 2565.55 | 45.02 | 0.45 | 0.02 | 49.28 | 0.88 |
+| rnd_linear_next_state | 30.63 | 1439.17 | 25.80 | 134.77 | 7.67 | 30.75 | 0.46 |
+| no_exploration | 22.28 | 3786.29 | 60.42 | 0.00 | 0.00 | 60.42 | 1.57 |
 
 ### Why some algorithms have missing distance values
 
