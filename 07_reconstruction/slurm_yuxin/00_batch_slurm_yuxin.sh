@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Define two variables with name job_id and cpu_core
-job_id="catresearch/rnd_07_reconstruction/ctccd8lp"
+job_id="catresearch/rnd_07_reconstruction/y24vyh06"
 job_name="rl"
 
 # for i in $(seq 1 1); do

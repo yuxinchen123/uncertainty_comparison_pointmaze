@@ -52,6 +52,9 @@ venv.bak/
 *.npz
 saved_data/
 
+# W&B exports / combined runs tables (large, regenerable)
+07_reconstruction/analysis/data/
+
 # Logs and outputs
 image/
 *.log

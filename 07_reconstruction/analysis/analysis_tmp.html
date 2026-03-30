@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>analysis.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/*
+
+Atom One Light by Daniel Gamage
+Original One Light Syntax theme from https://github.com/atom/one-light-syntax
+
+base:    #fafafa
+mono-1:  #383a42
+mono-2:  #686b77
+mono-3:  #a0a1a7
+hue-1:   #0184bb
+hue-2:   #4078f2
+hue-3:   #a626a4
+hue-4:   #50a14f
+hue-5:   #e45649
+hue-5-2: #c91243
+hue-6:   #986801
+hue-6-2: #c18401
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #383a42;
+  background: #fafafa;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #a0a1a7;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #a626a4;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e45649;
+}
+
+.hljs-literal {
+  color: #0184bb;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta-string {
+  color: #50a14f;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #c18401;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #986801;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #4078f2;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
+
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="analysis--wb-sweep-results">Analysis — W&amp;B sweep results</h1>
+<p>Everything in this document is written for <strong>finished</strong> W&amp;B runs only (<code>state == finished</code>). Incomplete or crashed jobs are excluded from aggregated tables unless explicitly stated.</p>
+<p>Working write-up for <strong><code>04_wandb_sweep.yaml</code></strong>. Offline exports live under <strong><code>analysis/data/</code></strong> (this folder is gitignored; you obtain it by downloading from W&amp;B or copying an existing export).</p>
+<p><strong>Audience.</strong> This file is meant to be <strong>self-contained</strong> for someone who has <strong>not</strong> read the training code. Below: what experiment produced the numbers, how tables were built, and what each metric means. Replication detail and a longer checklist live in <strong><code>note.md</code></strong> at the same path as this file.</p>
+<p><strong>How this document is organized</strong></p>
+<ol>
+<li><strong>Background (this section)</strong> — experiment, metrics, files.</li>
+<li><strong>Data sources</strong> — the two sweeps, merged CSV, loading tips.</li>
+<li><strong>Run status</strong> — snapshot counts by W&amp;B <code>state</code> (your export may differ).</li>
+<li><strong>Results</strong> — reward grids, best-β table, bar chart.</li>
+<li><strong>Correlation</strong> — extrinsic reward vs <code>distance_to_gt/*</code>, notation, formulas, figures.</li>
+</ol>
+<hr>
+<h2 id="background-experiment-and-pipeline-read-this-first">Background: experiment and pipeline (read this first)</h2>
+<h3 id="what-question-this-sweep-asks">What question this sweep asks</h3>
+<p>We compare <strong>exploration bonuses</strong> on the <strong>same RL setup</strong> (same environment, seeds, horizon, optimizer). The <strong>policy</strong> is <strong>SAC</strong> from Stable-Baselines3. The <strong>environment</strong> is <strong><code>PointMaze_Large-v3</code></strong> (Gymnasium / <code>gymnasium-robotics</code>) with a fixed <strong><code>bottom_right</code></strong> goal. The sweep varies:</p>
+<ul>
+<li><strong><code>algorithm</code></strong> — how intrinsic reward is defined (visit counts, several RND variants, etc.).</li>
+<li><strong><code>beta</code></strong> — scalar weight on <strong>intrinsic</strong> reward during <strong>training</strong> (grid: <code>0.0001</code> … <code>1000</code>; eight values). <strong><code>no_exploration</code></strong> forces intrinsic off in code regardless of <code>beta</code>.</li>
+<li><strong><code>a_seed</code></strong> — 100 independent runs per <code>(algorithm, beta)</code> cell in principle (seeds <code>0</code>–<code>99</code> in the YAML).</li>
+</ul>
+<p><strong>Primary outcome</strong> we report is <strong><code>eval/mean_extrinsic_reward</code></strong>: mean <strong>environment (extrinsic) return</strong> over many evaluation episodes at logging time, <strong>not</strong> intrinsic reward. The W&amp;B sweep’s optimization metric is also “maximize <code>eval/mean_extrinsic_reward</code>.”</p>
+<p><strong>Algorithms</strong> (value of <code>config.algorithm</code> in data; full wiring is in <code>04_many_exploration_method.py</code>):</p>
+<table>
+<thead>
+<tr>
+<th><code>config.algorithm</code></th>
+<th>Role (one line)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>no_exploration</code></td>
+<td>Baseline: intrinsic turned off in code (ignore <code>beta</code> for the bonus).</td>
+</tr>
+<tr>
+<td><code>gt_position</code></td>
+<td>Visit-frequency–style bonus on <strong>position</strong> visit counts (oracle / hand-designed).</td>
+</tr>
+<tr>
+<td><code>gt_position_velocity</code></td>
+<td>Same idea on <strong>position + velocity</strong> discretization; used as <strong>reference</strong> for <code>distance_to_gt</code>.</td>
+</tr>
+<tr>
+<td><code>rnd_next_state</code></td>
+<td>RND-style predictor on <strong>next-state</strong> features.</td>
+</tr>
+<tr>
+<td><code>rnd_next_state_position_only</code></td>
+<td>RND on next state but <strong>position-only</strong> part of the observation.</td>
+</tr>
+<tr>
+<td><code>rnd_state</code></td>
+<td>RND on <strong>current state</strong> features.</td>
+</tr>
+<tr>
+<td><code>rnd_state_action</code></td>
+<td>RND on <strong>state and action</strong> (needs actions — no distance vector in current pipeline).</td>
+</tr>
+<tr>
+<td><code>rnd_state_action_next_state</code></td>
+<td>RND on <strong>state, action, next state</strong> (needs actions — no distance vector).</td>
+</tr>
+<tr>
+<td><code>rnd_linear_next_state</code></td>
+<td>“Linear RND”: shared frozen trunk, trainable linear predictor vs target.</td>
+</tr>
+<tr>
+<td><code>rnd_elliptical</code></td>
+<td>Elliptical / non-isotropic exploration bonus variant (needs action path for full model — <strong>distance not logged</strong> here).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="training-and-evaluation-high-level">Training and evaluation (high level)</h3>
+<ul>
+<li><strong>Steps:</strong> <strong><code>total_timesteps</code> = 2 000 000</strong> per run.</li>
+<li><strong>Discount</strong> <strong><code>discount_factor</code> = 0.999</strong>; <strong>max steps per episode</strong> <strong><code>env_max_episode</code> = 400</strong>.</li>
+<li><strong>Eval:</strong> every <strong><code>eval_freq</code> = 50 000</strong> environment steps: <strong><code>n_eval_episodes</code> = 100</strong> mid-training; <strong><code>n_eval_episodes_final</code> = 10 000</strong> on the <strong>last</strong> eval (end of training). Reported summary metrics are the <strong>final</strong> W&amp;B summary scalars (end of run).</li>
+<li><strong>Device:</strong> YAML default <strong><code>cpu</code></strong> (cluster jobs may differ).</li>
+<li><strong>Termination wrapper:</strong> <strong><code>apply_termination_wrapper: false</code></strong> — timeouts are treated as truncation for RL (see <code>note.md</code> if you need the rationale).</li>
+<li><strong>RND knobs</strong> fixed in the sweep: <code>rnd_obs_norm: true</code>, <code>rnd_distance: mse</code>, <code>rnd_output_dim: 128</code>, <code>n_predictors: 1</code>.</li>
+</ul>
+<h3 id="where-the-code-lives-so-you-can-verify-one-detail">Where the code lives (so you can verify one detail)</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Location under <code>07_reconstruction/</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sweep definition</td>
+<td><code>04_wandb_sweep.yaml</code></td>
+</tr>
+<tr>
+<td>Training entrypoint</td>
+<td><code>04_many_exploration_method.py</code></td>
+</tr>
+<tr>
+<td>Algorithm dispatch / config</td>
+<td>Same file (<code>_algorithm_to_config</code> and args)</td>
+</tr>
+<tr>
+<td>Eval logging (<code>eval/mean_extrinsic_reward</code>, etc.)</td>
+<td><code>utilities/callbacks/wandb_eval_logging.py</code></td>
+</tr>
+<tr>
+<td><code>distance_to_gt/*</code> logging</td>
+<td><code>utilities/callbacks/distance_logging.py</code> + <code>distance_to_GT/algorithm_vector.py</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-offline-data-were-produced">How offline data were produced</h3>
+<ol>
+<li><strong>Download</strong> from Weights &amp; Biases: <code>analysis/script/download_wandb_sweeps.py</code> writes <code>analysis/data/&lt;sweep_id&gt;/runs_index.csv</code> (one row per run, flattened <code>config</code> + <code>summary</code>) and per-run JSON under <code>runs/&lt;run_id&gt;/</code>.</li>
+<li><strong>Merge</strong> both sweeps: <code>analysis/script/combine_sweep_runs.py</code> → <strong><code>analysis/data/combined_runs_index.csv</code></strong>, prepending column <strong><code>sweep_id</code></strong> so you know which launch cohort a row came from.</li>
+<li><strong>Analysis scripts</strong> (same <code>analysis/script/</code> folder): group tables, plots, correlations — all documented in the sections below.</li>
+</ol>
+<p>You do <strong>not</strong> need the raw <code>runs/</code> trees for the tables in this document; the <strong>combined CSV</strong> (or Parquet cache) is enough.</p>
+<h3 id="wb-%E2%86%92-csv-column-names">W&amp;B → CSV column names</h3>
+<p>The export flattens nested dicts with dots and slashes:</p>
+<table>
+<thead>
+<tr>
+<th>W&amp;B concept</th>
+<th>Typical column in <code>runs_index.csv</code> / <code>combined_runs_index.csv</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Run config field</td>
+<td><code>config.&lt;name&gt;</code> e.g. <code>config.algorithm</code>, <code>config.beta</code></td>
+</tr>
+<tr>
+<td>Summary (last logged) scalar</td>
+<td><code>summary.&lt;key&gt;</code> with slashes, e.g. <code>summary.eval/mean_extrinsic_reward</code>, <code>summary.distance_to_gt/min_c_l1_diff</code></td>
+</tr>
+<tr>
+<td>Run state</td>
+<td><code>state</code> — <code>finished</code>, <code>running</code>, <code>crashed</code>, …</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>summary.step</code></strong> is the W&amp;B training step associated with the summary (here usually <strong>2 000 000</strong> when training completed). It is <strong>not</strong> the same thing as “β” or “algorithm”.</p>
+<h3 id="why-two-sweep-ids-appear">Why two sweep IDs appear</h3>
+<p>The same <strong>project</strong> and sweep <strong>name</strong> were started twice; IDs <strong><code>y24vyh06</code></strong> and <strong><code>j40bkl6y</code></strong> label two <strong>cohorts</strong> of runs. <strong>Always pool both</strong> when reproducing the numbers in this write-up unless you explicitly study cohort effects — the merged file includes <strong><code>sweep_id</code></strong> for stratification.</p>
+<h3 id="what-best-%CE%B2-means-in-the-tables">What “best β” means in the tables</h3>
+<p>For each <strong><code>config.algorithm</code></strong>, we look at <strong>finished</strong> runs only and find the <strong><code>config.beta</code></strong> value whose <strong>mean</strong> <code>eval/mean_extrinsic_reward</code> (over runs in that cell) is <strong>largest</strong>. That pair <strong>(algorithm, β*)</strong> is the “best β” row for that algorithm. Ties are broken by the implementation’s sort order (first wins); cells with few seeds are noisier.</p>
+<h3 id="what-distancetogt-is-intuition">What <code>distance_to_gt/*</code> is (intuition)</h3>
+<p>Roughly: build a long vector of <strong>intrinsic bonus</strong> values on a <strong>fixed grid</strong> of maze observations. The <strong>reference (“ground truth”)</strong> vector is the bonus field of <strong><code>gt_position_velocity</code></strong> (visit counts in position–velocity space). Each logged scalar compares the <strong>current algorithm’s</strong> bonus vector to that reference (different formulas for L1/L2 scale, inverses, normalization, angle — see <strong>Correlation → Formulas</strong>). <strong>Not every algorithm</strong> defines a comparable vector without <strong>actions</strong>; those runs have <strong>missing</strong> distance columns (explained again in <strong>Correlation</strong>).</p>
+<h3 id="glossary-quick-reference">Glossary (quick reference)</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Finished</strong></td>
+<td>W&amp;B <code>state == finished</code>. We drop <code>running</code> / <code>crashed</code> from aggregates here.</td>
+</tr>
+<tr>
+<td><strong>Extrinsic reward</strong></td>
+<td>Environment reward; accumulated in eval as <code>extrinsic_reward</code> in <code>info</code> when wrappers expose it; reported as <code>eval/mean_extrinsic_reward</code>.</td>
+</tr>
+<tr>
+<td><strong>Intrinsic reward</strong></td>
+<td>Exploration bonus; scaled by <strong><code>beta</code></strong> during training. Eval also logs intrinsic contribution for diagnostics.</td>
+</tr>
+<tr>
+<td><strong>β (beta)</strong></td>
+<td><code>config.beta</code> — training weight on intrinsic signal.</td>
+</tr>
+<tr>
+<td><strong>Algorithm</strong></td>
+<td><code>config.algorithm</code> — string naming the exploration method (see <strong><code>note.md</code></strong> or <code>_algorithm_to_config</code> in code for exact definitions).</td>
+</tr>
+<tr>
+<td><strong><code>distance_to_gt/*</code></strong></td>
+<td>Summary metrics from distance between intrinsic vector and GT vector (see Correlation section).</td>
+</tr>
+<tr>
+<td><strong><code>runs_index.csv</code></strong></td>
+<td>Per-sweep flat table of all runs.</td>
+</tr>
+<tr>
+<td><strong><code>combined_runs_index.csv</code></strong></td>
+<td>Vertical concat of sweep tables + <code>sweep_id</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="data-sources-always-combine">Data sources (always combine)</h2>
+<p>Use <strong>both</strong> sweeps together for any analysis. They share the same W&amp;B project and sweep name but different launch cohorts:</p>
+<table>
+<thead>
+<tr>
+<th>Sweep ID</th>
+<th>Folder under <code>data/</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y24vyh06</code></td>
+<td><code>data/y24vyh06/</code></td>
+</tr>
+<tr>
+<td><code>j40bkl6y</code></td>
+<td><code>data/j40bkl6y/</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Project:</strong> <code>rnd_07_reconstruction</code> · <strong>Entity (API):</strong> <code>catresearch</code></li>
+<li><strong>Merged table:</strong> run <code>python combine_sweep_runs.py</code> from <code>analysis/script/</code> → <strong><code>data/combined_runs_index.csv</code></strong> (+ extra column <strong><code>sweep_id</code></strong>).</li>
+</ul>
+<h3 id="loading-speed-important">Loading speed (important)</h3>
+<p>The combined table is <strong>very wide</strong> (~63k columns from flattened W&amp;B <code>summary</code> / <code>config</code>), <strong>~239 MB</strong> CSV, <strong>~3k rows</strong>.</p>
+<p>On one reference machine:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Approx. time</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pandas.read_csv</code> (full file)</td>
+<td><strong>~500 s</strong>, <strong>~6 GB RAM</strong></td>
+<td>Parses all columns as text first — painful.</td>
+</tr>
+<tr>
+<td><code>pandas.read_csv(..., usecols=[...])</code></td>
+<td><strong>~2 s</strong> if you only need ~7 columns</td>
+<td>Best quick fix <strong>without</strong> changing format.</td>
+</tr>
+<tr>
+<td><code>pandas.read_parquet</code> (full)</td>
+<td><strong>~10 s</strong>, file ~<strong>262 MB</strong></td>
+<td>After one-time conversion; needs <code>pyarrow</code>.</td>
+</tr>
+<tr>
+<td><code>pandas.read_parquet</code> (<strong>slim</strong>)</td>
+<td><strong>under 1 s</strong>, file ~<strong>0.14 MB</strong></td>
+<td>16 core columns only — best for routine plots/tables.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended:</strong> after refreshing the CSV, build Parquet caches:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">cd</span> /p/rlprojects/RND/07_reconstruction/analysis/script
+python combined_to_parquet.py --slim   <span class="hljs-comment"># full + combined_runs_index.slim.parquet</span>
+</div></code></pre>
+<p>Then in Python: <code>pd.read_parquet(&quot;data/combined_runs_index.slim.parquet&quot;)</code> for most analysis, or the full <code>.parquet</code> when you need rare summary keys.</p>
+<p>Refresh exports and replication: <strong><code>note.md</code></strong>.</p>
+<h2 id="run-status-local-export">Run status (local export)</h2>
+<p>Counts from <strong><code>runs_index.csv</code></strong> in each sweep folder (W&amp;B <code>state</code> field). <em>Recorded for the export present in this repo; re-run the downloader and this section may change.</em></p>
+<h3 id="per-sweep">Per sweep</h3>
+<table>
+<thead>
+<tr>
+<th>Sweep ID</th>
+<th style="text-align:right">finished</th>
+<th style="text-align:right">running</th>
+<th style="text-align:right">crashed</th>
+<th style="text-align:right">failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y24vyh06</code></td>
+<td style="text-align:right">1521</td>
+<td style="text-align:right">82</td>
+<td style="text-align:right">326</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td><code>j40bkl6y</code></td>
+<td style="text-align:right">813</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">320</td>
+<td style="text-align:right">0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="combined-both-sweeps">Combined (both sweeps)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">finished</th>
+<th style="text-align:right">running</th>
+<th style="text-align:right">crashed</th>
+<th style="text-align:right">failed</th>
+<th style="text-align:right"><strong>total</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">2334</td>
+<td style="text-align:right">82</td>
+<td style="text-align:right">646</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right"><strong>3062</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No runs used W&amp;B state <strong><code>failed</code></strong> in this snapshot (only <code>finished</code> / <code>running</code> / <code>crashed</code>). Treat <strong><code>running</code></strong> as incomplete if you need strictly final metrics.</p>
+<p>Primary sweep metric: <strong><code>eval/mean_extrinsic_reward</code></strong> (maximize).</p>
+<h2 id="results">Results</h2>
+<h3 id="summary">Summary</h3>
+<p>Aggregates use <strong><code>data/combined_runs_index.csv</code></strong> (both sweeps). Regenerate tables:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">cd</span> /p/rlprojects/RND/07_reconstruction/analysis/script
+python grouped_finished_results.py --markdown          <span class="hljs-comment"># full grid</span>
+python grouped_finished_results.py --markdown-best    <span class="hljs-comment"># best β per algorithm + SE</span>
+python plot_best_per_algorithm.py                     <span class="hljs-comment"># figure → ../plot/</span>
+</div></code></pre>
+<h3 id="tables">Tables</h3>
+<p><strong>Mean <code>eval/mean_extrinsic_reward</code> and mean W&amp;B <code>summary.step</code> by (<code>config.algorithm</code>, <code>config.beta</code>),</strong> over <strong>finished</strong> runs only. <code>n_runs</code> is how many finished runs fell in each group.</p>
+<table>
+<thead>
+<tr>
+<th>algorithm</th>
+<th style="text-align:right">beta</th>
+<th style="text-align:right">eval/mean_extrinsic_reward</th>
+<th style="text-align:right">step</th>
+<th style="text-align:right">n_runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">10.232800</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">17.266533</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">22.625435</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">54.690015</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">50.191981</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">42</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">54.808591</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">44</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">11.557034</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">3.848676</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">1.533171</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">28.376295</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">44.015821</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">62.585261</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">77.155059</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">9.454530</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">37</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">2.148795</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">2.128718</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">15.183805</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">22</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">12.672047</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">7.598371</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">14.463270</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">22.276429</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">19.889490</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">42</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">13.616741</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">44</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">8.643105</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">57.288980</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">60.956657</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">71.691462</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">3.947105</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">1.373316</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">37</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">0.384088</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">0.106673</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">0.701547</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">9.743284</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">16.177805</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">19.056980</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">22.947220</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">16.564503</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">30.628418</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">23.973888</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">0.301175</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">10.695969</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">14.896835</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">16.732576</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">17.780437</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">38.851319</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">37</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">49.775205</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">67.713495</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">59.090042</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">11.989982</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">12.347988</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">24.692822</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">18</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">21.043258</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">19.192695</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">37</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">14.686330</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">22.514817</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">42</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">35.070305</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">10.581486</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">27.175944</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">17.881515</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">20.348906</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">35</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">21.621166</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">46.930188</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">57.773376</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">58.883690</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">25.763482</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">17</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">8.441858</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">12.374844</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">18</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">24.015332</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">30.544603</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">55.991807</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">55.287069</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">48.231789</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">18</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">0.0001</td>
+<td style="text-align:right">10.906933</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">18</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">0.001</td>
+<td style="text-align:right">20.412800</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">18</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">6.923938</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">0.1</td>
+<td style="text-align:right">14.004308</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">47.743575</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">40</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">55.137278</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">36</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">59.936453</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">18.336725</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">16</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best <code>config.beta</code> per algorithm</strong> (largest mean <code>eval/mean_extrinsic_reward</code> among finished runs), <strong>rows sorted by that mean descending</strong>. <strong>SE</strong> is the standard error of the mean across runs in that algorithm–β group (pandas <code>sem</code>, $(n-1)$ denominator).</p>
+<p><img src="file:///p/rlprojects/RND/07_reconstruction/analysis/plot/best_per_algorithm_extrinsic_reward.png" alt="Best beta per algorithm: mean eval extrinsic reward +/- SE (finished runs)"></p>
+<table>
+<thead>
+<tr>
+<th>algorithm</th>
+<th style="text-align:right">beta</th>
+<th style="text-align:right">eval/mean_extrinsic_reward</th>
+<th style="text-align:right">SE</th>
+<th style="text-align:right">step</th>
+<th style="text-align:right">n_runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">77.155059</td>
+<td style="text-align:right">4.975651</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">71.691462</td>
+<td style="text-align:right">8.513950</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">67.713495</td>
+<td style="text-align:right">4.859290</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">100</td>
+<td style="text-align:right">59.936453</td>
+<td style="text-align:right">5.813135</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">38</td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">58.883690</td>
+<td style="text-align:right">7.592515</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">21</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">55.991807</td>
+<td style="text-align:right">4.483430</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">54.808591</td>
+<td style="text-align:right">5.238514</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">44</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">1000</td>
+<td style="text-align:right">35.070305</td>
+<td style="text-align:right">9.154459</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">19</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">10</td>
+<td style="text-align:right">30.628418</td>
+<td style="text-align:right">5.838503</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">39</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">22.276429</td>
+<td style="text-align:right">6.076313</td>
+<td style="text-align:right">2000000</td>
+<td style="text-align:right">41</td>
+</tr>
+</tbody>
+</table>
+<h2 id="correlation">Correlation</h2>
+<p>Reward vs <strong><code>distance_to_gt/*</code></strong> (final summary scalars) at the <strong>optimal β</strong> per algorithm (same rule as the ranked “best β” table).</p>
+<h3 id="notation-and-formulas">Notation and formulas</h3>
+<p><em>(Math uses <code>$...$</code> / <code>$$...$$</code> so previews that support KaTeX or similar will render. Plain GitHub.com may still show raw TeX.)</em></p>
+<h4 id="pearson-correlation-r">Pearson correlation <em>r</em></h4>
+<p>For paired samples $(x_i, y_i)$, $i=1,\ldots,n$, with sample means $\bar{x} = \frac{1}{n}\sum_i x_i$ and $\bar{y} = \frac{1}{n}\sum_i y_i$:</p>
+<p>$$
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2},\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}} = \frac{\mathrm{cov}_{\mathrm{sample}}(x,y)}{s_x,s_y}
+$$</p>
+<p>where $s_x$ and $s_y$ are the (sample) standard deviations. Thus $-1 \le r \le 1$: it measures <strong>linear</strong> association (direction and strength of a best straight-line fit).</p>
+<p>Under bivariate normality with <strong>population</strong> correlation $\rho = 0$, a common test uses</p>
+<p>$$
+t = r\sqrt{\frac{n-2}{1-r^2}}
+$$</p>
+<p>which under $H_0:\rho=0$ is referred to a <strong>Student $t$</strong> distribution with $n-2$ degrees of freedom (two-sided <em>p</em>-value matches <code>scipy.stats.pearsonr</code>).</p>
+<h4 id="spearman-rank-correlation-rho-often-written-rhos-or-spearmans-rho">Spearman rank correlation $\rho$ (often written $\rho_s$ or “Spearman’s rho”)</h4>
+<p>Let $R_i = \mathrm{rank}(x_i)$ and $Q_i = \mathrm{rank}(y_i)$ (average ranks for ties). Spearman’s $\rho$ is <strong>Pearson’s <em>r</em> computed on the ranks</strong>:</p>
+<p>$$
+\rho = \frac{\sum_{i=1}^{n}(R_i - \bar{R})(Q_i - \bar{Q})}{\sqrt{\sum_{i=1}^{n}(R_i - \bar{R})^2},\sqrt{\sum_{i=1}^{n}(Q_i - \bar{Q})^2}}.
+$$</p>
+<p>Same bounds $[-1,1]$, but it captures <strong>monotonic</strong> (consistently up or down) rather than strictly linear trends; it is less sensitive to outliers in the original scale.</p>
+<h4 id="p-value-for-these-correlation-tests"><em>p</em>-value (for these correlation tests)</h4>
+<p>The reported <strong>two-sided <em>p</em>-value</strong> is the probability, <strong>if the null hypothesis “no correlation” were true</strong> (Pearson: $\rho=0$ in the classical normal theory setup; Spearman: analogous permutation / rank-based null), of observing a sample correlation <strong>at least as extreme</strong> as the one computed. <strong>Small <em>p</em></strong> is often taken (e.g. $\alpha = 0.05$) as evidence against that null; <strong>large <em>p</em></strong> means the estimate is <strong>compatible with</strong> no correlation under the test’s assumptions.</p>
+<p><strong>Caveats:</strong> <em>p</em>-values assume a correct sampling model. With <strong>$n=7$</strong> algorithm-level means, power is low. With <strong>pooled runs</strong>, observations <strong>nest</strong> within algorithms and sweeps, so marginal <em>p</em>-values are <strong>easy to over-interpret</strong> without hierarchical models.</p>
+<h4 id="algo-means-vs-pooled-runs-in-the-correlation-table">“Algo means” vs “pooled runs” in the correlation table</h4>
+<ul>
+<li>
+<p><strong>Algo means:</strong> For each <strong>algorithm</strong>, take the $\beta$ that maximizes mean <code>eval/mean_extrinsic_reward</code> among finished runs. For that cell $(\text{algorithm},\beta^\ast)$, use one pair $(\bar{R}, \bar{D})$ where $\bar{R}$ is the <strong>mean reward</strong> and $\bar{D}$ the <strong>mean</strong> of the chosen <code>distance_to_gt/*</code> summary over finished runs in that cell. Correlation is over <strong>one point per algorithm</strong> ($n=7$ for algorithms that log distances).</p>
+</li>
+<li>
+<p><strong>Pooled runs:</strong> Every <strong>finished run</strong> in those optimal $(\text{algorithm},\beta^\ast)$ cells contributes its own <code>(reward, distance)</code>; correlation uses all such runs ($n \approx 242$ when distance is non-missing). Runs are <strong>not independent</strong> across seeds and algorithms.</p>
+</li>
+</ul>
+<h3 id="figures">Figures</h3>
+<p><img src="file:///p/rlprojects/RND/07_reconstruction/analysis/plot/corr_reward_vs_distance_algorithm_means.png" alt="Mean eval extrinsic reward vs distance-to-GT metrics — algorithm-level (n=7 algorithms that log distances; one point = mean over finished runs at optimal β)"></p>
+<p><img src="file:///p/rlprojects/RND/07_reconstruction/analysis/plot/corr_reward_vs_distance_pooled_runs.png" alt="Same metrics — pooled finished runs at optimal β only (n=242 with non-missing distance; open circles = cell means). Runs nest within algorithm — treat marginal p-values as exploratory."></p>
+<h3 id="abbreviations-used-in-the-two-correlation-graphs">Abbreviations used in the two correlation graphs</h3>
+<ul>
+<li><code>gt_pv</code>: <code>gt_position_velocity</code></li>
+<li><code>gt_p</code>: <code>gt_position</code></li>
+<li><code>rnd_ns</code>: <code>rnd_next_state</code></li>
+<li><code>rnd_sans</code>: <code>rnd_state_action_next_state</code></li>
+<li><code>rnd_s</code>: <code>rnd_state</code></li>
+<li><code>rnd_sa</code>: <code>rnd_state_action</code></li>
+<li><code>rnd_e</code>: <code>rnd_elliptical</code></li>
+<li><code>rnd_nspo</code>: <code>rnd_next_state_position_only</code></li>
+<li><code>rnd_lns</code>: <code>rnd_linear_next_state</code></li>
+<li><code>no_exp</code>: <code>no_exploration</code></li>
+</ul>
+<h3 id="formulas-for-each-distancetogt-metric">Formulas for each <code>distance_to_gt/*</code> metric</h3>
+<p>In training, <strong><code>gt</code></strong> and <strong><code>pred</code></strong> are <strong>1D vectors</strong> (same length): intrinsic bonus over the full discretized observation list. <strong><code>gt</code></strong> is the intrinsic vector of <strong><code>gt_position_velocity</code></strong> (visit-count model on the position–velocity wrapper); <strong><code>pred</code></strong> is the current algorithm’s intrinsic vector (or all zeros for <strong><code>no_exploration</code></strong>). Implementations: <code>07_reconstruction/distance_to_GT/vector_distance.py</code>.</p>
+<h4 id="mincl1diff"><code>min_c_l1_diff</code></h4>
+<p>Optimize a global scale $c$ to align <code>pred</code> to <code>gt</code> in <strong>L1</strong>, then return the minimum value:</p>
+<p>$$
+\min_{c \in \mathbb{R}} \ | \mathrm{gt} - c,\mathrm{pred} |<em>1
+= \min</em>{c} \sum_i \bigl| \mathrm{gt}_i - c,\mathrm{pred}_i \bigr|.
+$$</p>
+<p>If <strong>every</strong> $\mathrm{pred}_i = 0$, the code returns $\sum_i |\mathrm{gt}_i|$ (equivalent to no free scale). Otherwise $c$ is found with <strong>bounded scalar optimization</strong> (<code>scipy.optimize.minimize_scalar</code>).</p>
+<h4 id="mincl2diff"><code>min_c_l2_diff</code></h4>
+<p>Same idea in <strong>L2</strong>, with a <strong>closed-form</strong> optimal scale:</p>
+<p>$$
+c^\ast = \frac{\mathrm{gt} \cdot \mathrm{pred}}{\mathrm{pred} \cdot \mathrm{pred}}
+\quad (\text{if } |\mathrm{pred}|_2^2 &gt; 0), \qquad
+\mathrm{distance} = \bigl| \mathrm{gt} - c^\ast \mathrm{pred} \bigr|_2.
+$$</p>
+<p>If $\mathrm{pred} = 0$, the distance is $|\mathrm{gt}|_2$.</p>
+<h4 id="mincl1inv-regularized"><code>min_c_l1_inv</code> (regularized)</h4>
+<p>Let $\mathrm{gt}^{\circ}$ be <strong>element-wise inverse</strong> of a <strong>regularized</strong> <code>gt</code>: each component is clipped so $|\mathrm{gt}_i| \ge \varepsilon$ with $\varepsilon = 10^{-8}$ before taking $1/\mathrm{gt}_i$. Define $z = \mathrm{gt}^{\circ} \odot \mathrm{pred}$ (element-wise product). Then:</p>
+<p>$$
+c^\ast = \operatorname{median}(z), \qquad
+\mathrm{distance} = \sum_i \bigl| c^\ast - z_i \bigr|
+= \bigl| c^\ast \mathbf{1} - z \bigr|_1.
+$$</p>
+<h4 id="mincl2inv-regularized"><code>min_c_l2_inv</code> (regularized)</h4>
+<p>Same $z$ as above, but <strong>L2</strong> closure around the <strong>mean</strong> scale:</p>
+<p>$$
+c^\ast = \frac{1}{n}\sum_i z_i, \qquad
+\mathrm{distance} = \bigl| c^\ast \mathbf{1} - z \bigr|_2.
+$$</p>
+<h4 id="normalizedl2"><code>normalized_l2</code></h4>
+<p>Rescale each vector by its <strong>max absolute entry</strong> (with $\varepsilon = 10^{-10}$), then Euclidean distance:</p>
+<p>$$
+\widehat{\mathrm{gt}}_i = \frac{\mathrm{gt}_i}{\max_j |\mathrm{gt}_j| + \varepsilon}, \quad
+\widehat{\mathrm{pred}}_i = \frac{\mathrm{pred}_i}{\max_j |\mathrm{pred}_j| + \varepsilon}, \quad
+\mathrm{distance} = \bigl| \widehat{\mathrm{gt}} - \widehat{\mathrm{pred}} \bigr|_2.
+$$</p>
+<h4 id="normalizedanglerad"><code>normalized_angle_rad</code></h4>
+<p>Unit directions in <strong>L2</strong>, then <strong>angle in radians</strong> in $[0, \pi]$:</p>
+<p>$$
+\mathbf{u}<em>{\mathrm{gt}} = \frac{\mathrm{gt}}{|\mathrm{gt}|<em>2 + \varepsilon}, \quad
+\mathbf{u}</em>{\mathrm{pred}} = \frac{\mathrm{pred}}{|\mathrm{pred}|<em>2 + \varepsilon}, \quad
+\cos\theta = \operatorname{clip}(\mathbf{u}</em>{\mathrm{gt}} \cdot \mathbf{u}</em>{\mathrm{pred}}, -1, 1), \quad
+\mathrm{distance} = \arccos(\cos\theta).
+$$</p>
+<h3 id="extrinsic-reward-vs-distancetogt-finished-runs">Extrinsic reward vs <code>distance_to_gt/*</code> (finished runs)</h3>
+<p><strong>Setup.</strong> For each algorithm we take the β that maximizes mean <strong><code>eval/mean_extrinsic_reward</code></strong> (same rule as the ranked “best β” table). We then correlate that performance with <strong>final summary</strong> distance scalars logged during training (vector distance between the algorithm’s intrinsic bonus field and the <code>gt_position_velocity</code> reference). <strong>Only seven algorithms</strong> contribute: <code>rnd_state_action</code>, <code>rnd_state_action_next_state</code>, and <code>rnd_elliptical</code> <strong>do not</strong> log these distances (action-conditioned predictors), so they are omitted from <em>n</em> = 7 panels.</p>
+<p><strong>Algorithm-level inference (<em>n</em> = 7).</strong> Pearson and Spearman are computed on <strong>one point per algorithm</strong> (cell mean reward vs cell mean distance at optimal β). That <em>n</em> is small; treat classical <em>p</em>-values as illustrative. The <strong>L1/L2 mismatch</strong> metrics (<code>min_c_l1_diff</code>, <code>min_c_l2_diff</code>) and the <strong>normalized geometry</strong> metrics (<code>normalized_l2</code>, <code>normalized_angle_rad</code>) all show <strong>negative</strong> <em>r</em>: higher reward lines up with <strong>lower</strong> distance-to-GT in this slice. <strong><code>min_c_l1_inv</code></strong> and <strong><code>min_c_l2_inv</code></strong> are essentially <strong>uncorrelated</strong> with reward here (|<em>r</em>| ≪ 0.1, <em>p</em> ≫ 0.5). None of the algorithm-level Pearson <em>p</em>’s pass a conventional α = 0.05 threshold.</p>
+<p><strong>Pooled runs (<em>n</em> = 242).</strong> All <strong>finished</strong> runs whose (algorithm, β) equals the optimal cell are stacked; correlation is <strong>much “stronger”</strong> and <strong>significant</strong> because variance <strong>between</strong> algorithms and repeated seeds <strong>within</strong> cells both enter the regression. <strong>Runs are not independent</strong> (clustered by algorithm and sweep). Use this panel only as a <strong>marginal / exploratory</strong> check; prefer hierarchical or mixed models for formal claims.</p>
+<table>
+<thead>
+<tr>
+<th>distance (summary key)</th>
+<th style="text-align:right">algo means: Pearson <em>r</em></th>
+<th style="text-align:right"><em>p</em></th>
+<th style="text-align:right">Spearman ρ</th>
+<th style="text-align:right"><em>n</em> algos</th>
+<th style="text-align:right">pooled runs: Pearson <em>r</em></th>
+<th style="text-align:right"><em>p</em></th>
+<th style="text-align:right"><em>n</em> runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>distance_to_gt/min_c_l1_diff</code></td>
+<td style="text-align:right">-0.686</td>
+<td style="text-align:right">0.089</td>
+<td style="text-align:right">-0.607</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">-0.321</td>
+<td style="text-align:right">3.28e-07</td>
+<td style="text-align:right">242</td>
+</tr>
+<tr>
+<td><code>distance_to_gt/min_c_l2_diff</code></td>
+<td style="text-align:right">-0.633</td>
+<td style="text-align:right">0.127</td>
+<td style="text-align:right">-0.571</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">-0.296</td>
+<td style="text-align:right">2.82e-06</td>
+<td style="text-align:right">242</td>
+</tr>
+<tr>
+<td><code>distance_to_gt/min_c_l1_inv</code></td>
+<td style="text-align:right">0.081</td>
+<td style="text-align:right">0.863</td>
+<td style="text-align:right">0.071</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">0.094</td>
+<td style="text-align:right">1.44e-01</td>
+<td style="text-align:right">242</td>
+</tr>
+<tr>
+<td><code>distance_to_gt/min_c_l2_inv</code></td>
+<td style="text-align:right">0.018</td>
+<td style="text-align:right">0.970</td>
+<td style="text-align:right">0.071</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">0.035</td>
+<td style="text-align:right">5.87e-01</td>
+<td style="text-align:right">242</td>
+</tr>
+<tr>
+<td><code>distance_to_gt/normalized_l2</code></td>
+<td style="text-align:right">-0.583</td>
+<td style="text-align:right">0.170</td>
+<td style="text-align:right">-0.500</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">-0.288</td>
+<td style="text-align:right">5.26e-06</td>
+<td style="text-align:right">242</td>
+</tr>
+<tr>
+<td><code>distance_to_gt/normalized_angle_rad</code></td>
+<td style="text-align:right">-0.650</td>
+<td style="text-align:right">0.114</td>
+<td style="text-align:right">-0.571</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">-0.317</td>
+<td style="text-align:right">4.63e-07</td>
+<td style="text-align:right">242</td>
+</tr>
+</tbody>
+</table>
+<h3 id="best-%CE%B2-reward-table-with-all-six-distance-columns">Best-β reward table with all six distance columns</h3>
+<p>Each row is the best-β cell per algorithm (same as the ranked best table), now augmented with the six <code>distance_to_gt/*</code> means from that cell.</p>
+<table>
+<thead>
+<tr>
+<th>algorithm</th>
+<th style="text-align:right">eval/mean_extrinsic_reward</th>
+<th style="text-align:right">min_c_l1_diff</th>
+<th style="text-align:right">min_c_l2_diff</th>
+<th style="text-align:right">min_c_l1_inv</th>
+<th style="text-align:right">min_c_l2_inv</th>
+<th style="text-align:right">normalized_l2</th>
+<th style="text-align:right">normalized_angle_rad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gt_position_velocity</td>
+<td style="text-align:right">77.155059</td>
+<td style="text-align:right">0.001086</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">0.000003</td>
+</tr>
+<tr>
+<td>rnd_elliptical</td>
+<td style="text-align:right">71.691462</td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+</tr>
+<tr>
+<td>rnd_next_state</td>
+<td style="text-align:right">67.713495</td>
+<td style="text-align:right">2144.310948</td>
+<td style="text-align:right">38.923775</td>
+<td style="text-align:right">34.370505</td>
+<td style="text-align:right">1.547113</td>
+<td style="text-align:right">46.929082</td>
+<td style="text-align:right">0.776392</td>
+</tr>
+<tr>
+<td>rnd_state_action_next_state</td>
+<td style="text-align:right">59.936453</td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+</tr>
+<tr>
+<td>rnd_state</td>
+<td style="text-align:right">58.883690</td>
+<td style="text-align:right">2017.037632</td>
+<td style="text-align:right">37.400411</td>
+<td style="text-align:right">9.341413</td>
+<td style="text-align:right">0.435579</td>
+<td style="text-align:right">46.542785</td>
+<td style="text-align:right">0.749897</td>
+</tr>
+<tr>
+<td>rnd_state_action</td>
+<td style="text-align:right">55.991807</td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+<td style="text-align:right"></td>
+</tr>
+<tr>
+<td>gt_position</td>
+<td style="text-align:right">54.808591</td>
+<td style="text-align:right">2325.620558</td>
+<td style="text-align:right">45.340844</td>
+<td style="text-align:right">1129.029494</td>
+<td style="text-align:right">25.128854</td>
+<td style="text-align:right">45.438079</td>
+<td style="text-align:right">0.939963</td>
+</tr>
+<tr>
+<td>rnd_next_state_position_only</td>
+<td style="text-align:right">35.070305</td>
+<td style="text-align:right">2565.551212</td>
+<td style="text-align:right">45.020946</td>
+<td style="text-align:right">0.454866</td>
+<td style="text-align:right">0.020841</td>
+<td style="text-align:right">49.278287</td>
+<td style="text-align:right">0.883809</td>
+</tr>
+<tr>
+<td>rnd_linear_next_state</td>
+<td style="text-align:right">30.628418</td>
+<td style="text-align:right">1439.169320</td>
+<td style="text-align:right">25.795256</td>
+<td style="text-align:right">134.767299</td>
+<td style="text-align:right">7.671494</td>
+<td style="text-align:right">30.752477</td>
+<td style="text-align:right">0.464939</td>
+</tr>
+<tr>
+<td>no_exploration</td>
+<td style="text-align:right">22.276429</td>
+<td style="text-align:right">3786.293062</td>
+<td style="text-align:right">60.424857</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">60.424857</td>
+<td style="text-align:right">1.570796</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-some-algorithms-have-missing-distance-values">Why some algorithms have missing distance values</h3>
+<p>Distance is logged by <code>DistanceLoggingCallback</code> only when <code>compute_intrinsic_vector_distance()</code> can build a full intrinsic vector <strong>without actions</strong>. In code, this is restricted to <code>ALGORITHMS_NO_ACTION</code>:</p>
+<ul>
+<li>Logged: <code>no_exploration</code>, <code>gt_position</code>, <code>gt_position_velocity</code>, <code>rnd_next_state</code>, <code>rnd_next_state_position_only</code>, <code>rnd_state</code>, <code>rnd_linear_next_state</code></li>
+<li>Not logged (thus blank distance columns): <code>rnd_state_action</code>, <code>rnd_state_action_next_state</code>, <code>rnd_elliptical</code></li>
+</ul>
+<p>Reason: those three require action-conditioned inputs (<code>state+action</code> or <code>state+action+next_state</code>) and the current distance evaluator uses full-grid observation vectors without action samples.</p>
+<p><strong>Bottom line.</strong> The hypothesis that <strong>better extrinsic reward coexists with smaller distance-to-GT</strong> is <strong>directionally supported</strong> for the <strong>difference / normalized</strong> metrics on the available algorithms, but <strong>not statistically decisive</strong> at the algorithm level with <em>n</em> = 7. The <strong>inverse-family</strong> metrics (<code>*_inv</code>) do not line up with reward in this aggregate. For a paper-quality test, extend logging to all algorithms or model <strong>run-level</strong> data with <strong>algorithm random effects</strong> and pre-register one primary distance definition.</p>
+<h3 id="handoff-what-your-collaborator-should-know-without-asking-you">Handoff: what your collaborator should know without asking you</h3>
+<ul>
+<li><strong>Numbers are from a local export</strong>, not live W&amp;B. tables and figures match <strong><code>combined_runs_index.csv</code></strong> at the time someone last ran the scripts. If they refresh data, re-run <strong><code>combine_sweep_runs.py</code></strong>, then the aggregation/plot scripts under <strong><code>analysis/script/</code></strong>, and replace any pasted tables if values move.</li>
+<li><strong>All aggregates in Results + Correlation use finished runs only</strong> unless stated. “3062 total runs” in Run status includes non-finished; reward tables use the <strong>2334</strong> finished subset for the snapshot baked into this file when it was generated.</li>
+<li><strong>Extrinsic vs intrinsic:</strong> headline metric is <strong>extrinsic return in evaluation</strong>. Intrinsic bonuses drive <strong>exploration during training</strong>; they are not the optimization target in the sweep metric.</li>
+<li><strong>Correlations use “best β” per algorithm</strong> for fair-ish comparison across methods that need different <code>beta</code> scales; pooled-run <em>p</em>-values are <strong>not</strong> from an i.i.d. sample (runs cluster by algorithm and seed).</li>
+<li><strong>Figures</strong> live in <strong><code>analysis/plot/</code></strong> next to this file; regeneration is via the same Python scripts referenced in <strong>Results → Summary</strong> and <strong><code>correlate_reward_distance_to_gt.py</code></strong> for correlation plots.</li>
+<li><strong>Exact training hyperparameters and replication</strong> (git SHA, env, Slurm, W&amp;B URLs) belong in <strong><code>note.md</code></strong> — send that file along with this one for a full paper trail.</li>
+</ul>
+<hr>
+<p>See <strong><code>note.md</code></strong> for sweep background, W&amp;B entity/sweep URLs, and a longer replication checklist (dependencies, commit pins, job orchestration).</p>
+
+</body>
+</html>
