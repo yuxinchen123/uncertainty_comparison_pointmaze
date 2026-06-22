@@ -1,0 +1,87 @@
+\documentclass{article}
+
+% Pass the round citation option to natbib BEFORE the NeurIPS style auto-loads it.
+% The style loads natbib itself, so a second \usepackage[round]{natbib} would cause
+% an "Option clash for package natbib" error; passing the option here avoids it.
+\PassOptionsToPackage{round}{natbib}
+
+% Keep the same paper style when the NeurIPS style file is available.
+\IfFileExists{neurips_2026.sty}{\usepackage[preprint]{neurips_2026}}{}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{longtable}
+% natbib is loaded by the NeurIPS style above (with the round option passed via
+% \PassOptionsToPackage near \documentclass); do not load it again here.
+\usepackage[hidelinks,colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+\usepackage[most]{tcolorbox}
+\usepackage[normalem]{ulem}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+% Claude-edit review markup (claude-edit-latex skill); ulem + xcolor already loaded above.
+\definecolor{claude-brown}{RGB}{133,45,15}
+\definecolor{claude-green}{RGB}{0,100,0}
+\newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
+\newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
+
+\mathtoolsset{showonlyrefs}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{TITLE}
+
+\author{%
+  Anonymous Author(s)\\
+  Affiliation\\
+  \texttt{email}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+\label{sec:intro}
+
+\bibliographystyle{plainnat}
+\bibliography{bibliography}
+
+\appendix
+
+\end{document}

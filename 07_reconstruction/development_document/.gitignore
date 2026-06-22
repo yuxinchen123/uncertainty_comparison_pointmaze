@@ -1,0 +1,38 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.bcf
+*.run.xml
+*.xdv
+_minted-*/
+
+# Editor / OS junk
+.DS_Store
+.vscode/
+*.swp
+*~
+
+# Python bytecode (analysis scripts)
+*.pyc
+**/__pycache__/
+
+*.pdf
+
+# Local backup copies of the paper source
+backup/
