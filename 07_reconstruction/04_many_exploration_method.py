@@ -21,8 +21,8 @@ from utilities.debug import print_or_wandb_log
 from utilities.callbacks import TrainEpisodeStatsCallback, WandbEvalLoggingCallback, DistanceLoggingCallback
 from env_wrapper.point_maze_utils import (
     select_fixed_cell,
-    select_fixed_goal_top_left,
-    select_fixed_goal_bottom_right,
+    select_fixed_goal_bottom_left,
+    select_fixed_goal_top_right,
 )
 from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
@@ -74,7 +74,7 @@ def _args_to_run_name(args) -> str:
         f"algorithm={args.algorithm}",
         getattr(args, "env_name", "env").replace("/", "-"),
         f"seed={getattr(args, 'a_seed', 0)}",
-        f"goal={getattr(args, 'goal_position', 'top_left')}",
+        f"goal={getattr(args, 'goal_position', 'bottom_left')}",
         f"beta={getattr(args, 'beta', 0)}",
         f"discount_factor={getattr(args, 'discount_factor', 0.99)}",
         f"env_max_episode={getattr(args, 'env_max_episode', 300)}",
@@ -99,7 +99,7 @@ def main():
     parser.add_argument("--algorithm", type=str, default="rnd_linear_next_state", choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
     parser.add_argument("--discount_factor", type=float, default=0.99)
     parser.add_argument("--env_max_episode", type=int, default=400)
-    parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"])
+    parser.add_argument("--goal_position", type=str, default="bottom_left", choices=["bottom_left", "top_right", "random"])
 
     # RND (only args used in 04_wandb_sweep or not class-default)
     parser.add_argument("--rnd_obs_norm", default=True, type=lambda x: x.lower() in ["true", "1", "yes"])
@@ -149,12 +149,12 @@ def main():
     )
     if args.apply_termination_wrapper:
         base_env = TerminateOnTimeLimitWrapper(base_env)
-    if args.goal_position == "top_left":
-        fixed_goal_cell = select_fixed_goal_top_left(base_env)
-        fixed_start_cell = select_fixed_goal_bottom_right(base_env)
-    elif args.goal_position == "bottom_right":
-        fixed_goal_cell = select_fixed_goal_bottom_right(base_env)
-        fixed_start_cell = select_fixed_goal_top_left(base_env)
+    if args.goal_position == "bottom_left":
+        fixed_goal_cell = select_fixed_goal_bottom_left(base_env)
+        fixed_start_cell = select_fixed_goal_top_right(base_env)
+    elif args.goal_position == "top_right":
+        fixed_goal_cell = select_fixed_goal_top_right(base_env)
+        fixed_start_cell = select_fixed_goal_bottom_left(base_env)
     else:
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])

@@ -54,6 +54,12 @@ saved_data/
 
 # W&B exports / combined runs tables (large, regenerable)
 07_reconstruction/analysis/data/
+# Local pandoc binary tree (see script/build_analysis_pdfs.sh)
+07_reconstruction/analysis/.tools/
+
+# PDF and HTML documents (generated analysis artifacts and reference papers)
+*.pdf
+*.html
 
 # Logs and outputs
 image/
@@ -109,3 +115,5 @@ sweep_uncertainty/results/
 # Results folder (plots, tables, and plotting scripts)
 results/
 debug/
+# Claude Code personal settings (.claude/CLAUDE.md and .claude/rules/ ARE shared; this file is personal)
+.claude/settings.local.json

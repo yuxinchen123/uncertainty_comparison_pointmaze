@@ -22,8 +22,8 @@ from utilities.debug import print_or_wandb_log
 from utilities.callbacks import TrainEpisodeStatsCallback, WandbEvalLoggingCallback
 from env_wrapper.point_maze_utils import (
     select_fixed_cell,
-    select_fixed_goal_top_left,
-    select_fixed_goal_bottom_right,
+    select_fixed_goal_bottom_left,
+    select_fixed_goal_top_right,
 )
 from env_wrapper.point_maze_wrappers import (
     FixedGoalWrapper,
@@ -45,7 +45,7 @@ def _args_to_run_name(args) -> str:
     parts = [
         getattr(args, "env_name", "env").replace("/", "-"),
         f"seed={getattr(args, 'a_seed', 0)}",
-        f"goal={getattr(args, 'goal_position', 'top_left')}",
+        f"goal={getattr(args, 'goal_position', 'bottom_left')}",
         f"beta={getattr(args, 'beta', 0)}",
         f"n_predictors={getattr(args, 'n_predictors', 5)}",
         f"beta_std={getattr(args, 'beta_std', 0)}",
@@ -74,7 +74,7 @@ def main():
     parser.add_argument("--intrinsic_method", default=0, help="intrinsic_method")
     parser.add_argument("--discount_factor", type=float, default=0.99, help="Discount factor (gamma)")
     parser.add_argument("--env_max_episode", type=int, default=300, help="Max episode length (steps)")
-    parser.add_argument("--goal_position", type=str, default="top_left", choices=["top_left", "bottom_right", "random"], help="Fixed goal corner")
+    parser.add_argument("--goal_position", type=str, default="bottom_left", choices=["bottom_left", "top_right", "random"], help="Fixed goal corner")
     parser.add_argument("--rnd_obs_norm", default=True, type=lambda x: x.lower() in ["true", "1", "yes"], help="Use RunningMeanStd observation normalization for RND")
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"], help="Distance metric for RND (intrinsic + predictor loss)")
     parser.add_argument("--rnd_input", type=str, default="position", choices=["position", "all"], help="RND input: 'position' (pos only) or 'all' (full obs)")
@@ -116,12 +116,12 @@ def main():
         max_episode_steps=args.env_max_episode,
     )
     base_env = TerminateOnTimeLimitWrapper(base_env)
-    if args.goal_position == "top_left":
-        fixed_goal_cell = select_fixed_goal_top_left(base_env)
-        fixed_start_cell = select_fixed_goal_bottom_right(base_env)
-    elif args.goal_position == "bottom_right":
-        fixed_goal_cell = select_fixed_goal_bottom_right(base_env)
-        fixed_start_cell = select_fixed_goal_top_left(base_env)
+    if args.goal_position == "bottom_left":
+        fixed_goal_cell = select_fixed_goal_bottom_left(base_env)
+        fixed_start_cell = select_fixed_goal_top_right(base_env)
+    elif args.goal_position == "top_right":
+        fixed_goal_cell = select_fixed_goal_top_right(base_env)
+        fixed_start_cell = select_fixed_goal_bottom_left(base_env)
     else:
         fixed_goal_cell = select_fixed_cell(base_env, seed)
         fixed_start_cell = select_fixed_cell(base_env, seed, exclude_cells=[fixed_goal_cell])

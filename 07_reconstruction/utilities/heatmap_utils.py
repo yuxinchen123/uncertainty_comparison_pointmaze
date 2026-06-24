@@ -98,6 +98,8 @@ def create_visit_count_heatmap(
     ax.set_title(wrapped_title, fontsize=10, fontweight="bold")
     ax.set_xlabel("Column", fontsize=12)
     ax.set_ylabel("Row", fontsize=12)
-    ax.invert_yaxis()
+    # keep row 0 at the top (imshow default, no invert_yaxis): this matches world coordinates
+    # (world top = row 0, y increasing upward) and the development-document maze figure. An
+    # inverted y-axis would put row 0 at the bottom and render the maze upside-down vs the simulator.
     plt.tight_layout()
     return fig

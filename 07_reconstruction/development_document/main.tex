@@ -25,6 +25,7 @@
 \usepackage{float}
 \usepackage{enumitem}
 \usepackage{longtable}
+\usepackage{multirow}
 % natbib is loaded by the NeurIPS style above (with the round option passed via
 % \PassOptionsToPackage near \documentclass); do not load it again here.
 \usepackage[hidelinks,colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
@@ -58,7 +59,7 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{TITLE}
+\title{Exploration Bonuses on PointMaze:\\ Method and Environment Development Document}
 
 \author{%
   Anonymous Author(s)\\
@@ -70,18 +71,798 @@
 
 \maketitle
 
-\begin{abstract}
-\end{abstract}
-
 \tableofcontents
 \clearpage
 
-\section{Introduction}
-\label{sec:intro}
+%==============================================================================
+\section{Notation}
+\label{sec:notation}
+%==============================================================================
 
+Table~\ref{tab:notation} lists every symbol used in this document. In
+\texttt{PointMaze\_Large-v3} an observation is the flattened vector
+$s = (x, y, v_x, v_y) \in \mathbb{R}^4$ (position and velocity) after the goal is
+removed; the action is a continuous 2-D force $a \in [-1, 1]^2$.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{2.9cm}@{}}
+\caption{Notation used throughout this document.}\label{tab:notation}\\
+\toprule
+\textbf{Name} & \textbf{Symbol} & \textbf{What it is} & \textbf{Where used} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Name} & \textbf{Symbol} & \textbf{What it is} & \textbf{Where used} \\
+\midrule
+\endhead
+State / observation & $s$ & Current observation $(x,y,v_x,v_y)\in\mathbb{R}^4$ & RND, elliptical, count lookup \\
+Next state & $s'$ & Observation after one step & RND next-state, count bonus \\
+Action & $a$ & Continuous 2-D force $\in[-1,1]^2$ & RND state-action, elliptical \\
+Position & $(x,y)$ & Agent coordinates, $x\in[-6,6]$, $y\in[-4.5,4.5]$ & Discretization, position-only RND \\
+Velocity & $(v_x,v_y)$ & Agent velocity, clipped to $[-5,5]$ & Pos+vel count, discretization \\
+Extrinsic reward & $r^{\mathrm{ext}}$ & Environment reward & Total reward, eval metric \\
+Intrinsic bonus & $r^{\mathrm{int}}$ & Exploration bonus & All bonus methods \\
+Intrinsic coefficient & $\beta$ & Weight on the bonus in training & Replay buffer, sweep axis \\
+Total reward & $r$ & $r = r^{\mathrm{ext}} + \beta\,r^{\mathrm{int}}$ & SAC training target \\
+Visit count & $n$ & Visits to a discretized cell & Count-based bonus \\
+Decay exponent & $\alpha$ & Count$\to$bonus exponent (default $-0.5$) & Count-based bonus \\
+Target network & $f_\theta$ & Frozen random MLP & RND \\
+Predictor network & $g_\phi$ & Trainable MLP fit to $f_\theta$ & RND \\
+Feature encoder & $\varphi$ & Frozen random MLP $(s,a)\mapsto\mathbb{R}^{d_\varphi}$ & Elliptical bonus \\
+Normalized input & $\tilde{x}$ & Standardized, clipped RND input (clip to $\pm5$) & RND input normalization \\
+Running mean / var & $\mu,\sigma^2$ & RunningMeanStd of the RND input & RND obs-norm \\
+Output dimension & $m$ & RND output size (default $128$) & RND \\
+Feature dimension & $d_\varphi$ & Elliptical feature size (default $128$) & Elliptical bonus \\
+Ensemble size & $N$ & Number of predictors (default $1$) & RND ensemble \\
+Disagreement weight & $\beta_{\mathrm{std}}$ & Weight on ensemble std (default $0$) & RND ensemble \\
+Feature covariance & $\Lambda$ & $\tfrac1n\Phi^\top\Phi+\lambda I$ over a batch & Elliptical bonus \\
+Regularizer & $\lambda$ & Diagonal load on $\Lambda$ (default $10^{-6}$) & Elliptical bonus \\
+Ground-truth field & $g$ & Oracle bonus vector over the grid (gt\_position\_velocity counts) & Distance to GT \\
+Prediction field & $p$ & A method's bonus vector over the grid & Distance to GT \\
+Free scale & $c$ & Scalar aligning $p$ to $g$ & Distance metrics \\
+Ratio vector & $z$ & $z = p \oslash g$ (element-wise) & Inverse-ratio distances \\
+Ones vector & $\mathbf{1}$ & All-ones vector & Inverse-ratio distances \\
+Norms & $\lVert\cdot\rVert$ & $L_1$ / $L_2$ norm & Distance metrics \\
+Grid & $G$ & Discretized observation list (valid cells $\times$ velocity bins) & Distance to GT \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+%==============================================================================
+\section{Methods}
+\label{sec:methods}
+%==============================================================================
+
+Two groups of methods are developed. \emph{Intrinsic exploration bonuses} (count-based,
+RND, elliptical) define $r^{\mathrm{int}}$ added to the SAC reward on every replay
+sample as $r = r^{\mathrm{ext}} + \beta\,r^{\mathrm{int}}$. \emph{Distance-to-ground-truth
+metrics} score how close a method's bonus field $p$ (evaluated on the full grid $G$) is
+to the oracle field $g$ of \texttt{gt\_position\_velocity}.
+
+\subsection{Method table}
+\label{sec:method-table}
+
+Table~\ref{tab:methods} lists every intrinsic-bonus method, its category, a compact
+formula, and a one-line description; the distance-to-ground-truth metrics that score
+these bonus fields are cataloged separately in Table~\ref{tab:metrics}
+(Section~\ref{sec:metrics}). The per-output RND distance is written $d(x)$ and defined in
+Section~\ref{sec:rnd}.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{3.7cm}@{}}
+\caption{Catalog of intrinsic-bonus methods developed in \texttt{07\_reconstruction}.}\label{tab:methods}\\
+\toprule
+\textbf{Category} & \textbf{Method} & \textbf{Formula} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Category} & \textbf{Method} & \textbf{Formula} & \textbf{Description} \\
+\midrule
+\endhead
+Baseline & \texttt{no\_exploration} & $r^{\mathrm{int}}=0$ & Intrinsic reward disabled ($\beta$ forced to $0$). \\
+\midrule
+\multirow{2}{1.9cm}{Count-based bonus} & \texttt{gt\_position} & $r^{\mathrm{int}}=\min(1,n^{\alpha})$ & Visit-count bonus on the position cell ($9\times12$). \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak velocity} & $r^{\mathrm{int}}=\min(1,n^{\alpha})$ & Visit-count bonus on the (position,\,velocity) cell; oracle GT. \\
+\midrule
+\multirow{7}{1.9cm}{RND (prediction error)} & \texttt{rnd\_next\_state} & $d(s')$ & Predictor-vs-target distance on the next state. \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state\_\allowbreak position\_\allowbreak only} & $d(s'_{1:2})$ & Same, on the next-state position only. \\
+ & \texttt{rnd\_state} & $d(s)$ & Same, on the current state. \\
+ & \texttt{rnd\_state\_action} & $d([s\,;a])$ & Same, on state and action (needs $a$). \\
+ & \texttt{rnd\_\allowbreak state\_\allowbreak action\_\allowbreak next\_\allowbreak state} & $d([s\,;a\,;s'])$ & Same, on state, action, and next state. \\
+ & \texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state} & $\lVert g_\phi(s')-f_\theta(s')\rVert_2$ & Shared frozen trunk, trainable linear head. \\
+ & RND ensemble ($N>1$) & $\bar{d}+\beta_{\mathrm{std}}\,s_d$ & Mean distance $+$ disagreement std over $N$ predictors. \\
+\midrule
+Elliptical bonus & \texttt{rnd\_elliptical} & $\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ & Mahalanobis norm of the frozen $(s,a)$ feature (needs $a$). \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{Intrinsic bonus methods}
+\label{sec:method-descriptions}
+
+\subsubsection{Baseline: no exploration}
+\label{sec:no-exploration}
+
+\paragraph{Category.}
+The control condition: no intrinsic bonus. The replay buffer returns the unmodified
+environment reward, so $r = r^{\mathrm{ext}}$ and $\beta$ is forced to $0$ in code.
+
+\paragraph{\texttt{no\_exploration}.}
+Plain SAC with extrinsic reward only:
+\begin{align}
+r^{\mathrm{int}} = 0.
+\end{align}
+
+\subsubsection{Count-based bonuses (oracle)}
+\label{sec:count-based}
+
+\paragraph{Category.}
+Discretize the state to a grid cell, count how often each cell has been visited, and
+make the bonus shrink with the count. The common formula is
+$r^{\mathrm{int}}(n) = \min(1,\, n^{\alpha})$ for $n>0$, and $r^{\mathrm{int}}=1$ for $n\le0$ (unvisited cell gets the
+maximum bonus). The default exponent $\alpha=-0.5$ gives $r^{\mathrm{int}} = \min(1,\,1/\sqrt{n})$.
+Counts are maintained by the environment wrapper during stepping; the model's
+\texttt{update()} is a no-op. These bonuses use the (oracle) true visit statistics, so
+they serve as the reference against which learned bonuses are compared.
+
+\paragraph{\texttt{gt\_position}.}
+$n$ is the visit count of the position cell containing the next state, on the $9\times12$
+position grid.
+\begin{align}
+r^{\mathrm{int}} = \min(1,\, n^{\alpha}).
+\end{align}
+
+\paragraph{\texttt{gt\_position\_velocity}.}
+$n$ is the visit count of the joint (position, velocity) cell, on the
+$9\times12\times10\times10$ grid (10 velocity bins per axis).
+\begin{align}
+r^{\mathrm{int}} = \min(1,\, n^{\alpha}).
+\end{align}
+The bonus field of this method over the full grid $G$ is the \emph{ground-truth field}
+$g$ used by every distance metric.
+
+\subsubsection{Random Network Distillation bonuses}
+\label{sec:rnd}
+
+\paragraph{Category.}
+A frozen random target network $f_\theta$ and a trainable predictor $g_\phi$ both map an
+input feature $x$ to $\mathbb{R}^m$ ($m=128$). The input is first standardized,
+$\tilde{x} = \mathrm{clip}\!\big((x-\mu)/\sqrt{\sigma^2+10^{-8}},\,-5,\,5\big)$, using a
+running mean/variance updated on the raw input. The per-output distance is
+\begin{align}
+d(x) \;=\;
+\begin{cases}
+\tfrac{1}{2}\sum_{k=1}^{m}\big(f_\theta(\tilde{x})_k - g_\phi(\tilde{x})_k\big)^2 & \text{(mse, default)}\\[4pt]
+\sum_{k=1}^{m}\big|f_\theta(\tilde{x})_k - g_\phi(\tilde{x})_k\big| & \text{(abs).}
+\end{cases}
+\end{align}
+The predictor is trained to minimize the mean of $d$ over the batch; the bonus is $d$
+evaluated on the current sample. Variants differ only in the input feature $x$.
+
+\paragraph{\texttt{rnd\_next\_state}.}
+$x = s'$ (the full next state).
+\begin{align}
+r^{\mathrm{int}} = d(s').
+\end{align}
+
+\paragraph{\texttt{rnd\_next\_state\_position\_only}.}
+$x = s'_{1:2}$ (the first two coordinates of the next state, i.e.\ position only).
+\begin{align}
+r^{\mathrm{int}} = d(s'_{1:2}).
+\end{align}
+
+\paragraph{\texttt{rnd\_state}.}
+$x = s$ (the current state).
+\begin{align}
+r^{\mathrm{int}} = d(s).
+\end{align}
+
+\paragraph{\texttt{rnd\_state\_action}.}
+$x = [\,s\,;a\,]$ (state concatenated with action); action-conditioned, so no
+distance-to-GT vector is logged.
+\begin{align}
+r^{\mathrm{int}} = d([\,s\,;a\,]).
+\end{align}
+
+\paragraph{\texttt{rnd\_state\_action\_next\_state}.}
+$x = [\,s\,;a\,;s'\,]$ (state, action, next state); action-conditioned, no
+distance-to-GT vector.
+\begin{align}
+r^{\mathrm{int}} = d([\,s\,;a\,;s'\,]).
+\end{align}
+
+\paragraph{\texttt{rnd\_linear\_next\_state} (linear RND).}
+Both networks first apply one\emph{shared, frozen} random trunk---a fixed feature map $\varphi=\mathrm{ReLU}(W_1\tilde{x}+b_1)\in\mathbb{R}^{256}$ whose weights are copied from the target into the predictor and held fixed. The target then applies a frozen random linear head, $f_\theta=W_\theta\,\varphi$; the predictor's linear head $g_\phi=W_\phi\,\varphi$ is the \emph{only} trained part, fit by least squares (the same squared-error objective the other RND variants use) to match the random target over visited inputs---i.e.\ a linear regression onto $f_\theta$ in the fixed feature space $\varphi$. The input is $x=s'$. The bonus is the true
+Euclidean norm
+\begin{align}
+r^{\mathrm{int}} = \lVert g_\phi(\tilde{x}) - f_\theta(\tilde{x})\rVert_2
+= \sqrt{\max\Big(\textstyle\sum_{k=1}^{m}(g_\phi(\tilde{x})_k - f_\theta(\tilde{x})_k)^2,\,10^{-8}\Big)}.
+\end{align}
+\smallskip\noindent\textbf{Why the Euclidean norm, not the shared $d$?} The other RND variants read out the squared-error distance $d$ of Section~\ref{sec:rnd} as the bonus; linear RND reads out the true norm $\lVert e\rVert_2$ (with $e=g_\phi(\tilde{x})-f_\theta(\tilde{x})$) instead, and the difference is deliberate. The count oracle decays as $1/\sqrt{n}$---a standard error (Section~\ref{sec:opt-sqrtn}), i.e.\ a standard-deviation--scale quantity. The norm $\lVert e\rVert_2$ lives on that scale and \emph{can} decay as $1/\sqrt{n}$, whereas the squared distance $d=\tfrac12\lVert e\rVert_2^2$ is variance-scale and decays as $1/n$. The linear head sharpens the link: fitting a linear map onto the fixed feature $\varphi$ gives a converged residual $\propto\sqrt{\varphi^\top\Lambda^{-1}\varphi}$, the elliptical/Mahalanobis bonus (Section~\ref{sec:elliptical}), under the cumulative-ridge idealization of Section~\ref{sec:opt-sqrtn}. So the norm---not $d$---is the read-out that keeps this variant on the same $1/\sqrt{n}$ scale as the count oracle and the elliptical bonus; reusing $d(x)$ would put it back on the $1/n$ scale and break that correspondence. Two caveats, both from Section~\ref{sec:opt-sqrtn}: only the bonus read-out changes---the training loss is the same squared error as the other variants; and as shipped the predictor head is trained with constant-rate Adam, which accumulates no count, so the realized bonus saturates rather than actually reaching $1/\sqrt{n}$ (the norm read-out is necessary for that scaling, not by itself sufficient).
+
+\paragraph{RND ensemble ($N>1$).}
+$N$ independent predictors share one target, with per-predictor distances $d_q$. The
+bonus adds the disagreement spread:
+\begin{align}
+r^{\mathrm{int}} &= \bar{d} + \beta_{\mathrm{std}}\,s_d, \\
+\bar{d} &= \tfrac1N\sum_{q=1}^N d_q, \qquad
+s_d = \sqrt{\tfrac{1}{N-1}\sum_{q=1}^N (d_q-\bar{d})^2}.
+\end{align}
+With the default $N=1$, $s_d\equiv0$ and the bonus is the single distance.
+
+\subsubsection{Elliptical (Mahalanobis) bonus}
+\label{sec:elliptical}
+
+\paragraph{Category.}
+A non-isotropic, count-like bonus in a fixed feature space. A frozen random encoder
+maps $(s,a)$ to $\varphi(s,a)\in\mathbb{R}^{d_\varphi}$. A running feature covariance is
+recomputed from each batch as $\Lambda = \tfrac1n\Phi^\top\Phi + \lambda I$ (with
+$\lambda=10^{-6}$ and $\Phi$ the stacked batch features), and the bonus is the
+Mahalanobis norm of the current feature.
+
+\paragraph{\texttt{rnd\_elliptical}.}
+\begin{align}
+r^{\mathrm{int}}(s,a) = \sqrt{\max\big(\varphi(s,a)^\top \Lambda^{-1} \varphi(s,a),\, 10^{-8}\big)}.
+\end{align}
+Large bonus for $(s,a)$ directions seen rarely (small variance) in feature space.
+Action-conditioned, so no distance-to-GT vector is logged.
+
+%==============================================================================
+\section{Environments}
+\label{sec:environments}
+%==============================================================================
+
+Every script trains on the same base task, \texttt{PointMaze\_Large-v3}, wrapped by a
+fixed stack. The wrappers are applied bottom-up in this order:
+
+\begin{flushleft}
+\small
+\texttt{base} $\to$ \texttt{TerminateOnTimeLimit} (optional) $\to$ \texttt{FixedStart}
+$\to$ \texttt{FixedGoal} $\to$ \texttt{RemoveGoal} $\to$ \texttt{PositionVisitCount}
+$\to$ \texttt{PositionVelocityVisitCount} $\to$ \texttt{Flatten}
+$\to$ \texttt{ComputeIntrinsicReward}.
+\end{flushleft}
+
+The evaluation environment uses the identical stack but with frozen visit counts
+(\texttt{update\_counts}$=$False) that reference the training counts, so evaluation never
+alters the count statistics. Each environment type and its hyperparameters follow;
+default values are the code defaults, with the sweep value (\texttt{04\_wandb\_sweep.yaml})
+noted where it differs.
+
+\subsection{Wrapper stack overview}
+\label{sec:env-wrapper-table}
+
+Table~\ref{tab:wrappers} catalogs every wrapper in the stack---its constructor parameter, what
+it is for, and how it is used in the training and evaluation environment builds---in the order
+the wrappers are applied (bottom-up, matching the pipeline above). The same stack is built for
+both environments; they differ only in the two visit-count wrappers, where evaluation reuses the
+training counts and does not update them. \texttt{Flatten} is the Gymnasium built-in
+\texttt{FlattenObservation}; the other wrappers are defined in this project. The table mirrors
+the per-wrapper subsections that follow.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{3.9cm}@{}}
+\caption{Environment wrappers for \texttt{PointMaze\_Large-v3}: the constructor parameter, what
+it is for, and how each is used in the training and evaluation environment builds. The same stack
+is built for both; the two visit-count wrappers are the only ones that differ between them
+(evaluation reuses the training counts with \texttt{update\_counts}$=$False, so it never alters
+them).}
+\label{tab:wrappers}\\
+\toprule
+\textbf{Wrapper} & \textbf{Parameter(s)} & \textbf{What it is for} & \textbf{Use in train / eval} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Wrapper} & \textbf{Parameter(s)} & \textbf{What it is for} & \textbf{Use in train / eval} \\
+\midrule
+\endhead
+\texttt{Terminate\allowbreak OnTimeLimit\allowbreak Wrapper} (optional) &
+none (wraps \texttt{env} only) &
+Convert a time-limit truncation into a termination (\texttt{truncated}$\to$\texttt{terminated}), so a timeout ends the episode as a full termination. &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval: applied only when \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} is set; off by default (and in the sweep).
+\end{itemize} \\
+\midrule
+\texttt{FixedStart\allowbreak Wrapper} &
+\texttt{start\_cell} --- (row, col) of the fixed start &
+Force the same start cell on every reset (via reset option \texttt{reset\_cell}). &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval (identical): \texttt{start\_\allowbreak cell}$=$ the fixed start cell (opposite corner; seed-chosen when \texttt{goal\_\allowbreak position}$=$\texttt{random}).
+\end{itemize} \\
+\midrule
+\texttt{FixedGoal\allowbreak Wrapper} &
+\texttt{goal\_cell} --- (row, col) of the fixed goal &
+Force a fixed goal cell on every reset (via reset option \texttt{goal\_cell}). &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval (identical): \texttt{goal\_\allowbreak cell}$=$ the fixed goal cell (from \texttt{goal\_\allowbreak position}, e.g.\ \texttt{top\_\allowbreak right}).
+\end{itemize} \\
+\midrule
+\texttt{RemoveGoal\allowbreak Wrapper} &
+\texttt{remove\_keys} --- default \{\texttt{desired\_goal}, \texttt{achieved\_goal}\} &
+Drop the goal keys from the Dict observation, since the goal is fixed. &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval (identical): default \texttt{remove\_\allowbreak keys}.
+\end{itemize} \\
+\midrule
+\texttt{Position\allowbreak VisitCount\allowbreak Wrapper} &
+\texttt{count\_map\_ref} (default None), \texttt{update\_counts} (default True) &
+Count visits per position cell ($9\times12$); supplies $n$ for \texttt{gt\_position} and the position-only field. &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train: defaults (\texttt{update\_\allowbreak counts}$=$True), fresh count array; counts increment as the agent moves.
+\item Eval: \texttt{count\_\allowbreak map\_\allowbreak ref}$=$ the train counts, \texttt{update\_\allowbreak counts}$=$False; counts frozen, so evaluation never alters the training statistics.
+\end{itemize} \\
+\midrule
+\texttt{Position\allowbreak Velocity\allowbreak VisitCount\allowbreak Wrapper} &
+\texttt{count\_map\_ref} (default None), \texttt{update\_counts} (default True) &
+Count visits per (position, velocity) cell ($9\times12\times10\times10$); the oracle ground-truth field $g$. &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train: defaults; the incremented array is the ground-truth field $g$.
+\item Eval: \texttt{count\_\allowbreak map\_\allowbreak ref}$=$ the train counts, \texttt{update\_\allowbreak counts}$=$False; counts frozen.
+\end{itemize} \\
+\midrule
+\texttt{Flatten} (Gymnasium \texttt{Flatten\allowbreak Observation}) &
+none &
+Flatten the remaining Dict observation to the vector $(x,y,v_x,v_y)\in\mathbb{R}^4$ that SAC's \texttt{MlpPolicy} consumes. &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval (identical): applied after the visit-count wrappers, producing the flat $(x,y,v_x,v_y)$ observation.
+\end{itemize} \\
+\midrule
+\texttt{Compute\allowbreak Intrinsic\allowbreak Reward\allowbreak Wrapper} &
+\texttt{beta} ($\beta$, default 0), \texttt{intrinsic\_\allowbreak reward\_\allowbreak model} (default None) &
+Each step, compute the bonus via the model and record \texttt{info[\allowbreak'intrinsic\_\allowbreak reward']} / \texttt{info[\allowbreak'extrinsic\_\allowbreak reward']}; the step reward is unchanged (the bonus is added later in the replay buffer). &
+\begin{itemize}[nosep,leftmargin=1.1em]
+\item Train and eval (identical), outermost wrapper: \texttt{beta}$=$ the run's $\beta$, \texttt{intrinsic\_\allowbreak reward\_\allowbreak model}$=$ the run's chosen intrinsic method (Table~\ref{tab:methods}).
+\end{itemize} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\setlength{\tabcolsep}{4pt}
+
+\subsection{Base task: \texttt{PointMaze\_Large-v3}}
+\label{sec:env-base}
+
+A point mass navigates a fixed large maze to a goal. With \texttt{continuing\_task}$=$True
+and \texttt{reset\_target}$=$False the goal is fixed and the agent is not reset on reaching it.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{env\_name} & \texttt{PointMaze\_Large-v3} & Gymnasium-Robotics maze id. \\
+\texttt{continuing\_task} & True & Agent keeps acting after reaching the goal. \\
+\texttt{reset\_target} & False & Goal stays fixed across resets. \\
+\texttt{max\_episode\_steps} & 400 (sweep); 300 (scripts 01--03) & Episode horizon, via \texttt{env\_max\_episode}. \\
+Position grid & $9\times12$ cells & Maze rows $\times$ columns; each cell $1.0\times1.0$. \\
+Position range & $x\in[-6,6]$, $y\in[-4.5,4.5]$ & Continuous coordinate bounds. \\
+Velocity range & $v_x,v_y\in[-5,5]$ & Clipped before binning. \\
+Observation & Dict$\{$obs $\mathbb{R}^4$, goals $\mathbb{R}^2\}$ & Before goal removal / flatten. \\
+Action & $a\in[-1,1]^2$ & Continuous 2-D force. \\
+\bottomrule
+\end{tabular}
+\caption{Base PointMaze task hyperparameters.}
+\label{tab:env-base}
+\end{table}
+
+Figure~\ref{fig:pointmaze-discretization} shows the maze and the two discretizations
+used by the count-based bonuses and the distance-to-ground-truth grid $G$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{code/2026-06-23-pointmaze-discretation/pointmaze_discretization.pdf}
+\caption{The \texttt{PointMaze\_Large-v3} task and its discretization.
+\textbf{(a)} The maze in world coordinates ($x\in[-6,6]$, $y\in[-4.5,4.5]$): gray cells
+are walls, white cells are open. The $9\times12$ position grid (cell boundaries drawn at
+every $1.0$ unit; each cell is $1.0\times1.0$) is the discretization used by
+\texttt{gt\_position}. Visit counts increment only on the $46$ open cells. The sweep sets
+\texttt{goal\_position}$=$\texttt{top\_right}, which selects the goal cell (row~1,
+col~10) at world $(x,y)=(4.5,3.0)$; the start is the opposite corner, cell (row~7, col~1)
+at $(-4.5,-3.0)$. Row~0 is the top of the maze and $y$ increases upward (the same convention as
+the visit-count heatmap), so the goal sits at the upper right and the start at the lower left.
+\textbf{(b)} The $10\times10$ velocity binning over $(v_x,v_y)\in[-5,5]^2$ (each bin
+$1.0\times1.0$, clipped before binning); the faint checkerboard marks bin boundaries.
+The joint (position, velocity) cell of \texttt{gt\_position\_velocity}---the ground-truth
+field $g$---is the product of (a) and (b), of shape $(9,12,10,10)$.}
+\label{fig:pointmaze-discretization}
+\end{figure}
+
+\subsection{Fixed start/goal navigation wrappers}
+\label{sec:env-nav}
+
+\texttt{FixedStartWrapper}, \texttt{FixedGoalWrapper}, and \texttt{RemoveGoalWrapper} turn the
+maze into a deterministic point-to-point task: a fixed start corner, a fixed goal corner,
+and the goal removed from the observation.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{goal\_position} & \texttt{top\_right} (sweep); \texttt{bottom\_left} (script default) & Which corner is the goal: \texttt{bottom\_left} / \texttt{top\_right} / \texttt{random}. \\
+\texttt{goal\_cell} & corner cell (row, col) & Goal cell, selected from \texttt{goal\_position}. \\
+\texttt{start\_cell} & opposite corner (or seeded) & Fixed start; opposite corner, or seed-chosen when \texttt{random}. \\
+\texttt{a\_seed} & $0$--$99$ (sweep) & RNG seed; also picks start/goal when \texttt{random}. \\
+\texttt{remove\_keys} & \{desired\_goal, achieved\_goal\} & Observation keys dropped by \texttt{RemoveGoalWrapper}. \\
+\bottomrule
+\end{tabular}
+\caption{Fixed start/goal navigation hyperparameters.}
+\label{tab:env-nav}
+\end{table}
+
+\subsection{Visit-count instrumentation wrappers}
+\label{sec:env-count}
+
+\texttt{PositionVisitCountWrapper} and \texttt{PositionVelocityVisitCountWrapper} track how
+often each discretized cell is visited. They supply the counts for the count-based bonuses
+and the ground-truth field for the distance metrics.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+Position grid & $9\times12$ & Cells for position-only counts. \\
+Velocity bins & $10$ per axis & $(v_x,v_y)$ binning over $[-5,5]$. \\
+Position count shape & $(9,12)$ & \texttt{gt\_position} count array. \\
+Pos+vel count shape & $(9,12,10,10)$ & \texttt{gt\_position\_velocity} count array (the GT). \\
+\texttt{update\_counts} & True (train) / False (eval) & Whether stepping increments counts. \\
+\texttt{count\_map\_ref} & None (train) / train counts (eval) & Eval reuses the training count array. \\
+\bottomrule
+\end{tabular}
+\caption{Visit-count instrumentation hyperparameters.}
+\label{tab:env-count}
+\end{table}
+
+\subsection{Intrinsic-reward wrapper}
+\label{sec:env-intrinsic}
+
+\texttt{ComputeIntrinsicRewardWrapper} computes the chosen bonus on every step and records it
+in \texttt{info}; the bonus is added to the SAC reward inside the replay buffer
+(\texttt{VectorIntrinsicReplayBuffer}) as $r = r^{\mathrm{ext}} + \beta\,r^{\mathrm{int}}$.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{beta} ($\beta$) & $\{10^{-4},\dots,10^{3}\}$ (sweep) & Weight on the intrinsic bonus. \\
+\texttt{algorithm} & one of Table~\ref{tab:methods} & Which intrinsic method supplies $r^{\mathrm{int}}$. \\
+\texttt{rnd\_obs\_norm} & True & Enable RND input normalization. \\
+\texttt{rnd\_distance} & \texttt{mse} & RND per-output distance (\texttt{mse}/\texttt{abs}). \\
+\texttt{rnd\_output\_dim} ($m$) & 128 & RND target/predictor output size. \\
+\texttt{n\_predictors} ($N$) & 1 & RND ensemble size. \\
+\bottomrule
+\end{tabular}
+\caption{Intrinsic-reward wrapper hyperparameters.}
+\label{tab:env-intrinsic}
+\end{table}
+
+\subsection{Time-limit termination wrapper}
+\label{sec:env-term}
+
+\texttt{TerminateOnTimeLimitWrapper} optionally converts a time-limit truncation into a
+termination, so a timeout ends the episode as a full termination rather than a truncation.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.3cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{apply\_termination\_wrapper} & False (sweep / 04); True (script 03) & Treat truncation as termination when on. \\
+\bottomrule
+\end{tabular}
+\caption{Time-limit termination hyperparameters.}
+\label{tab:env-term}
+\end{table}
+
+\subsection{Training and evaluation configuration}
+\label{sec:env-loop}
+
+The SAC training and evaluation loop is shared across environments; its hyperparameters
+(sweep values) are below.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{total\_timesteps} & $2{\times}10^{6}$ & Training environment steps per run. \\
+\texttt{discount\_factor} ($\gamma$) & 0.999 & SAC discount. \\
+\texttt{eval\_freq} & 50000 & Evaluate every this many steps. \\
+\texttt{n\_eval\_episodes} & 100 & Episodes per mid-training evaluation. \\
+\texttt{n\_eval\_episodes\_final} & 10000 & Episodes at the final evaluation. \\
+\texttt{device} & cpu (sweep) & Compute device. \\
+Policy & SAC (\texttt{MlpPolicy}) & Stable-Baselines3 agent. \\
+\bottomrule
+\end{tabular}
+\caption{Training and evaluation loop hyperparameters.}
+\label{tab:env-loop}
+\end{table}
+
+%==============================================================================
+\section{Optimizer for the RND predictor}
+\label{sec:optimizer}
+%==============================================================================
+
+The RND bonus at a state is the predictor's residual error there
+(Section~\ref{sec:rnd}), so how fast that error shrinks as a state is revisited
+is set entirely by the optimizer that fits the predictor $g_\phi$ to the frozen
+target $f_\theta$. This section records the optimizer this project uses and the
+one used by the original RND work and the widely-used RND code
+(Section~\ref{sec:opt-used}), then asks which optimizer would make the learned
+bonus fall off like the count oracle's $1/\sqrt{n}$ (Section~\ref{sec:opt-sqrtn}).
+
+\subsection{Optimizers used in practice}
+\label{sec:opt-used}
+
+Every RND implementation we examined trains the predictor with Adam
+\citep{kingma2014adam}; Table~\ref{tab:opt-used} lists the settings. They agree
+on betas $(0.9,0.999)$ and zero weight decay and differ only in the columns
+shown. The original RND line of work---the paper \citep{burda2019exploration},
+OpenAI's release, the most-used PyTorch port, and CleanRL---folds the predictor
+into the \emph{same} Adam as the PPO policy at learning rate $10^{-4}$. This
+project and RLeXplore instead give the predictor its \emph{own} Adam at
+$10^{-3}$, because SAC \citep{haarnoja2018soft} is off-policy and the predictor
+is fit on replay minibatches rather than on-policy rollouts. The fact that
+matters for Section~\ref{sec:opt-sqrtn}: none of them anneal the predictor's
+learning rate on a $1/n$ schedule and none use a cumulative (AdaGrad-style)
+step---the learning rate is constant throughout (CleanRL's optional
+linear-to-zero anneal is the only schedule, and it decays faster than $1/n$, not
+slower).
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{0.9cm} >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{1.5cm} >{\raggedright\arraybackslash}p{1.6cm}@{}}
+\toprule
+\textbf{Source} & \textbf{Optim.} & \textbf{LR / $\epsilon$} & \textbf{Optimizer scope} & \textbf{Grad.\ clip} & \textbf{LR schedule} \\
+\midrule
+This work (\texttt{04\_many\_\allowbreak exploration\_\allowbreak method}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
+RLeXplore \texttt{rllte} (\texttt{02\_rnd\_\allowbreak rlexplore}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
+\midrule
+Burda et al.\ 2019 (paper) & Adam & $10^{-4}$ / n/s & shared with PPO & n/s & none \\
+OpenAI repo & Adam (MPI) & $10^{-4}$ / $10^{-8}$ & shared (policy\,+\,value\,+\,predictor) & global-norm $1.0$ & none \\
+jcwleo (PyTorch) & Adam & $10^{-4}$ / $10^{-8}$ & shared with PPO & global-norm $0.5$ & none \\
+CleanRL \texttt{ppo\_rnd\_\allowbreak envpool} & Adam & $10^{-4}$ / $10^{-5}$ & shared with PPO & global-norm $0.5$ & linear $\to 0$ \\
+\bottomrule
+\end{tabular}
+\caption{Optimizer used to train the RND predictor network. All sources use Adam
+\citep{kingma2014adam} with betas $(0.9,0.999)$ and no weight decay; the columns
+list only what differs (``$\epsilon$'' is the Adam epsilon). ``Optimizer scope''
+is whether the predictor has its own Adam or shares one optimizer with the PPO
+policy and value networks (so the predictor's learning rate equals the policy's).
+n/s = not stated in the paper. The top block is this project's stack; the bottom
+block is the original RND paper and the three most-used RND repositories.}
+\label{tab:opt-used}
+\end{table}
+
+\noindent{\footnotesize Source files:
+RLeXplore \url{https://github.com/RLE-Foundation/rllte} (\texttt{rllte/xplore/reward/rnd.py});
+OpenAI \url{https://github.com/openai/random-network-distillation} (\texttt{ppo\_agent.py}, \texttt{run\_atari.py});
+jcwleo \url{https://github.com/jcwleo/random-network-distillation-pytorch} (\texttt{agents.py}, \texttt{config.conf});
+CleanRL \url{https://github.com/vwxyzjn/cleanrl} (\texttt{ppo\_rnd\_envpool.py}, also vendored here as \texttt{07\_reconstruction/ppo\_rnd\_envpool.py}).}
+
+\subsection{Which optimizer gives a $1/\sqrt{n}$ bonus?}
+\label{sec:opt-sqrtn}
+
+The count oracle's bonus $r^{\mathrm{int}}(n)=\min(1,\,1/\sqrt{n})$ (Section~\ref{sec:count-based})
+is the standard error of an $n$-sample average: visiting a cell $n$ times drives
+the uncertainty about it down as $1/\sqrt{n}$. A \emph{learned} RND bonus
+reproduces this only if the predictor at a state behaves like an average over
+that state's $n$ visits---which requires the per-visit step size to shrink
+like $1/n$.
+
+To see this, linearize the predictor at a repeatedly-visited state $s$ (lazy /
+neural-tangent regime) and let $e_n = g_\phi(s)-f_\theta(s)$ be the residual
+after $n$ predictor updates that include $s$. One step with learning rate
+$\eta_n$ gives
+\begin{align}
+e_{n+1} \;\approx\; (I-\eta_n K)\,e_n \;+\; \eta_n\,\xi_n,
+\end{align}
+where $K=JJ^\top$ (with $J=\partial g_\phi(s)/\partial\phi$) is the
+tangent-kernel Gram matrix at $s$ with relevant curvature $\kappa$, and $\xi_n$
+(zero mean, variance $\sigma^2$) is the perturbation at $s$ from the other states
+co-sampled in the same minibatch (interference). Two regimes follow:
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+\item \textbf{Constant $\eta$.} With no interference, $e_n=(I-\eta K)^n e_0$
+decays geometrically; with interference,
+$\mathbb{E}\lVert e_n\rVert^2 \to \eta\sigma^2/(2\kappa)$, a non-zero steady-state
+error. The bonus reaches a constant and stops tracking the count.
+\item \textbf{$\eta_n = c/n$ (Robbins--Monro \citep{robbins1951stochastic}).}
+The recursion becomes a running mean, $\mathbb{E}\lVert e_n\rVert^2 \propto 1/n$,
+so the error norm $\lVert e_n\rVert \propto 1/\sqrt{n}$.
+\end{itemize}
+
+Constant-rate Adam---this project and every repository in
+Table~\ref{tab:opt-used}---is the first regime: a constant-gain update that
+converges to a non-zero steady-state error, so the learned bonus saturates rather
+than decaying as $1/\sqrt{n}$. This is a structural reason a learned RND field
+departs from the count oracle, independent of network width or $\beta$.
+Table~\ref{tab:opt-candidates} lists the alternatives and what each does to the
+per-state error.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{2.9cm} >{\centering\arraybackslash}p{0.7cm}@{}}
+\toprule
+\textbf{Optimizer} & \textbf{Per-step update} & \textbf{Eff.\ step at a fixed state} & \textbf{Error $\lVert e_n\rVert$ vs visit count $n$} & \textbf{$\tfrac{1}{\sqrt{n}}$?} \\
+\midrule
+SGD, constant $\eta$ & $\phi \leftarrow \phi - \eta g$ & $\eta$ (constant) & geometric $\to$ steady-state error & \xmark \\
+SGD + momentum & $v\!\leftarrow\!\mu v{+}g$;\ \ $\phi\!\leftarrow\!\phi{-}\eta v$ & $\eta/(1{-}\mu)$ (constant) & geometric $\to$ steady-state error & \xmark \\
+RMSProp, const.\ $\eta$ & $\phi \leftarrow \phi - \eta g/\!\sqrt{\bar v{+}\epsilon}$,\ \ $\bar v{=}\mathrm{EMA}(g^2)$ & $\approx\eta$ (scale-normalized) & fast $\to$ steady state; EMA forgets $n$ & \xmark \\
+Adam, const.\ $\eta$ (this work) & $\phi \leftarrow \phi - \eta\,\hat m/\!\sqrt{\hat v{+}\epsilon}$,\ \ $m,v$ EMA & $\approx\eta$ (scale-normalized) & fast $\to$ steady state; EMA forgets $n$ & \xmark \\
+AdaGrad & $\phi \leftarrow \phi - \eta g/\!\sqrt{\textstyle\sum_k g_k^2{+}\epsilon}$ & $\propto \eta/\sqrt{n}$ (cumulative $\approx$ count) & count-like step; closest to $1/\sqrt{n}$ & $\approx$ \\
+SGD, $\eta_n{=}c/n$ (Robbins--Monro) & $\phi \leftarrow \phi - (c/n)\,g$ & $c/n$ & RMS $\propto 1/\sqrt{n}$ & \cmark \\
+Polyak--Ruppert averaging & const-$\eta$ SGD; output $\bar\phi_n{=}\tfrac1n\!\sum_k\phi_k$ & const.\ step, averaged iterate & RMS $\propto 1/\sqrt{n}$ (optimal) & \cmark \\
+\bottomrule
+\end{tabular}
+\caption{Candidate optimizers for the RND predictor and how each shapes the
+per-state residual error $e_n=g_\phi(s)-f_\theta(s)$ as a state's visit count $n$
+grows, under the recursion above (interference noise variance $\sigma^2$,
+curvature $\kappa$). ``Eff.\ step at a fixed state'' is the effective learning
+rate applied to that state's prediction on its $n$-th visit. \cmark: the error
+norm decays as $1/\sqrt{n}$, matching the count oracle; \xmark: the error reaches
+a non-zero steady state (the bonus saturates); $\approx$: the per-state step is
+count-like ($\propto 1/\sqrt{n}$), the closest off-the-shelf behavior, with the
+exact exponent depending on feature locality. In all rows the target $f_\theta$
+is fixed and only the predictor $\phi$ is trained.}
+\label{tab:opt-candidates}
+\end{table}
+
+Two routes reach $1/\sqrt{n}$: an explicit $1/n$ learning-rate schedule
+(Robbins--Monro), or Polyak--Ruppert iterate averaging
+\citep{polyak1992acceleration}; both realize the running-average estimator. The
+closest off-the-shelf optimizer is AdaGrad \citep{duchi2011adaptive}: its
+accumulator $\sum_k g_k^2$ is a cumulative sum---a soft visit count---so its
+per-state step shrinks $\propto 1/\sqrt{n}$, whereas Adam and RMSProp use an
+exponential moving average of $g^2$ and therefore forget the count.
+
+Two caveats. First, the optimizer controls the error \emph{norm}
+$\lVert e_n\rVert$: a running-average step gives $\lVert e_n\rVert\propto
+1/\sqrt{n}$, which matches the oracle directly for the L2 bonus of
+\texttt{rnd\_linear\_next\_state} ($r^{\mathrm{int}}=\lVert e_n\rVert$), while the
+default squared (\texttt{mse}) bonus $d=\tfrac12\lVert e_n\rVert^2$ then decays as
+$1/n$---so to target $1/\sqrt{n}$ exactly, pair a count-accumulating optimizer
+with the L2 distance. Second, a per-state $1/\sqrt{n}$ also needs updates at $s$
+not to generalize to every other state; with a smooth shared MLP the effective
+count is a kernel-weighted count. The clean construction is cumulative ridge
+regression with a linear head, whose converged residual is the elliptical bonus
+$\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ with
+$\Lambda=\sum_t\varphi_t\varphi_t^\top+\lambda I$ a genuine feature-space
+count---exactly $\propto 1/\sqrt{n}$ for a direction seen $n$ times
+(Section~\ref{sec:elliptical}). This project's \texttt{rnd\_elliptical} recomputes
+$\Lambda$ per batch instead of accumulating, and its RND predictors use
+constant-rate Adam, so neither accumulates a count---consistent with the
+saturation above.
+
+\clearpage
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
 
+\clearpage
 \appendix
+
+\section{Distance to ground truth metrics}
+\label{sec:metrics}
+
+Each metric compares a method's bonus field $p$ to the oracle field $g$ over the grid
+$G$ and returns a single scalar distance $D$ (logged as \texttt{distance\_to\_gt/*}).
+Distance is only logged for methods whose bonus field can be built without actions
+(\texttt{no\_exploration}, the two count methods, \texttt{rnd\_next\_state},
+\texttt{rnd\_next\_state\_position\_only}, \texttt{rnd\_state},
+\texttt{rnd\_linear\_next\_state}); action-conditioned methods are skipped.
+Table~\ref{tab:metrics} summarizes the six metrics; the three families are detailed below.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.0cm}@{}}
+\toprule
+\textbf{Family} & \textbf{Metric} & \textbf{Formula} & \textbf{What it measures} \\
+\midrule
+\multirow{2}{2.4cm}{Scale-fit} & \texttt{min\_c\_l1\_diff} & $\min_c\lVert g-c\,p\rVert_1$ & Best-scaled $L_1$ mismatch to the GT field. \\
+ & \texttt{min\_c\_l2\_diff} & $\min_c\lVert g-c\,p\rVert_2$ & Best-scaled $L_2$ mismatch (closed-form $c$). \\
+\midrule
+\multirow{2}{2.4cm}{Inverse-ratio} & \texttt{min\_c\_l1\_inv} & $\min_c\lVert c\mathbf{1}-z\rVert_1$ & $L_1$ spread of the ratio $z=p\oslash g$ ($c^\star=\mathrm{median}$). \\
+ & \texttt{min\_c\_l2\_inv} & $\min_c\lVert c\mathbf{1}-z\rVert_2$ & $L_2$ spread of the ratio $z$ ($c^\star=\mathrm{mean}$). \\
+\midrule
+\multirow{2}{2.4cm}{Normalized geometry} & \texttt{normalized\_l2} & $\lVert\hat{g}-\hat{p}\rVert_2$ & $L_2$ distance after max-absolute scaling. \\
+ & \texttt{normalized\_\allowbreak angle\_\allowbreak rad} & $\arccos\langle u_g,u_p\rangle$ & Angle between unit vectors, in $[0,\pi]$. \\
+\bottomrule
+\end{tabular}
+\caption{Distance-to-ground-truth metrics: each compares a method's bonus field $p$ to the
+oracle field $g$ over the grid $G$ and returns a scalar distance $D$. The symbols $z$,
+$\hat{g}$, $\hat{p}$, $u_g$, $u_p$ are defined in the respective subsections below.}
+\label{tab:metrics}
+\end{table}
+
+\subsection{Scale-fit metrics}
+\label{sec:dist-scale}
+
+The scale-fit family is invariant to the overall magnitude of $p$: it fits a single
+scalar $c$ and reports the residual, $D = \min_{c}\lVert g - c\,p\rVert$.
+
+\paragraph{\texttt{min\_c\_l1\_diff}.}
+\begin{align}
+D = \min_{c}\lVert g - c\,p\rVert_1 = \min_c\sum_i|g_i - c\,p_i|,
+\end{align}
+with $c$ found by bounded 1-D numerical search. An exact minimizer is in fact available: $c^\star$ is the weighted median of the ratios $g_i/p_i$ with weights $|p_i|$ (the $L_1$ counterpart of the $L_2$ projection above), so the numerical search is a convenience, not a necessity. If $p\equiv0$, $D = \lVert g\rVert_1$.
+
+\paragraph{\texttt{min\_c\_l2\_diff}.}
+Closed-form least-squares scale:
+\begin{align}
+D = \lVert g - c^\star p\rVert_2, \qquad c^\star = \frac{\langle g,p\rangle}{\langle p,p\rangle}.
+\end{align}
+\emph{Why this $c^\star$.} It is the minimizer of $\min_c\lVert g-c\,p\rVert_2$: the squared objective $f(c)=\lVert g-c\,p\rVert_2^2=\langle g,g\rangle-2c\,\langle g,p\rangle+c^2\langle p,p\rangle$ is a convex quadratic in the scalar $c$, so its stationary point $f'(c)=-2\langle g,p\rangle+2c\,\langle p,p\rangle=0$---that is, $c^\star=\langle g,p\rangle/\langle p,p\rangle$---is the global minimum (the quadratic opens upward because $\langle p,p\rangle\ge0$). If $p\equiv0$, $D = \lVert g\rVert_2$.
+
+\subsection{Inverse-ratio metrics}
+\label{sec:dist-inv}
+
+These ask whether $p$ is a single constant multiple of $g$ \emph{cell by cell}. Form the
+element-wise ratio $z = p \oslash g$ (with $g$ regularized so $|g_i|\ge\varepsilon=10^{-8}$,
+sign preserved), fit one constant $c$, and report $D = \min_{c}\lVert c\mathbf{1} - z\rVert$.
+A small value means $p/g$ is nearly constant across all cells.
+
+\paragraph{\texttt{min\_c\_l1\_inv}.}
+The $L_1$ minimizer is the median:
+\begin{align}
+D = \sum_i|c^\star - z_i|, \qquad c^\star = \mathrm{median}(z).
+\end{align}
+
+\paragraph{\texttt{min\_c\_l2\_inv}.}
+The $L_2$ minimizer is the mean:
+\begin{align}
+D = \lVert c^\star\mathbf{1} - z\rVert_2, \qquad c^\star = \bar{z}.
+\end{align}
+Equivalent to $\sqrt{n}$ times the standard deviation of $z$.
+
+\subsection{Normalized-geometry metrics}
+\label{sec:dist-norm}
+
+Rescale both vectors to a common scale, then compare their shape. One uses max-absolute
+scaling and an $L_2$ difference; the other compares directions via the angle between unit
+vectors.
+
+\paragraph{\texttt{normalized\_l2}.}
+\begin{align}
+D = \Big\lVert \frac{g}{\max_i|g_i|+\varepsilon} - \frac{p}{\max_i|p_i|+\varepsilon}\Big\rVert_2,
+\end{align}
+with $\varepsilon=10^{-10}$ (each vector's peak magnitude scaled to $\approx1$).
+
+\paragraph{\texttt{normalized\_angle\_rad}.}
+\begin{align}
+D = \arccos\!\big(\mathrm{clip}(\langle u_g, u_p\rangle, -1, 1)\big)\in[0,\pi],
+\end{align}
+where $u_g = g/(\lVert g\rVert_2+\varepsilon)$ and $u_p = p/(\lVert p\rVert_2+\varepsilon)$
+are the unit directions ($\varepsilon=10^{-10}$). $0$ = same direction, $\pi$ = opposite.
+
 
 \end{document}

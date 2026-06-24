@@ -87,11 +87,11 @@ def get_valid_cells(env, maze_map=None):
     return valid
 
 
-def select_fixed_goal_top_left(env, maze_map=None):
+def select_fixed_goal_bottom_left(env, maze_map=None):
     """
-    Return the visual top-left valid (open) cell as the fixed goal.
-    Heatmap uses invert_yaxis(), so high row = visual top. Top-left = max row, min col.
-    Returns (row, col) 0-based.
+    Return the open cell at array (max row, min col). In world coordinates -- row 0 at the top,
+    x increasing right, y increasing up (the main.tex / visit-count-heatmap convention) -- this is
+    the lower-left open cell: max row = lowest y, min col = lowest x. Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
     if not valid:
@@ -99,11 +99,11 @@ def select_fixed_goal_top_left(env, maze_map=None):
     return max(valid, key=lambda c: (c[0], -c[1]))
 
 
-def select_fixed_goal_bottom_right(env, maze_map=None):
+def select_fixed_goal_top_right(env, maze_map=None):
     """
-    Return the visual bottom-right valid (open) cell as the fixed goal.
-    Heatmap uses invert_yaxis(), so low row = visual bottom. Bottom-right = min row, max col.
-    Returns (row, col) 0-based.
+    Return the open cell at array (min row, max col). In world coordinates -- row 0 at the top,
+    x increasing right, y increasing up (the main.tex / visit-count-heatmap convention) -- this is
+    the upper-right open cell: min row = highest y, max col = highest x. Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
     if not valid:
