@@ -312,6 +312,109 @@ r^{\mathrm{int}}(s,a) = \sqrt{\max\big(\varphi(s,a)^\top \Lambda^{-1} \varphi(s,
 Large bonus for $(s,a)$ directions seen rarely (small variance) in feature space.
 Action-conditioned, so no distance-to-GT vector is logged.
 
+\paragraph{Feature matrix and dimensions.}
+The frozen encoder is a two-layer random MLP
+\begin{align}
+\varphi(s,a) = W_2\,\mathrm{ReLU}\!\big(W_1[s;a]+b_1\big)\in\mathbb{R}^{d_\varphi},
+\qquad [s;a]\in\mathbb{R}^{4+2},\quad d_\varphi=128,
+\end{align}
+with hidden width $256$ and all weights held at their random initialization. For a
+training batch of $n$ transitions $\{(s_i,a_i)\}_{i=1}^{n}$ (here $n=256$), stack the per-sample
+row vectors $\varphi(s_i,a_i)^\top$ as the rows of the \emph{feature matrix}
+\begin{align}
+\Phi=\begin{bmatrix}\varphi(s_1,a_1)^\top\\[-1pt]\vdots\\[-1pt]\varphi(s_n,a_n)^\top\end{bmatrix}
+\in\mathbb{R}^{n\times d_\varphi}.
+\end{align}
+Then $\tfrac1n\Phi^\top\Phi=\tfrac1n\sum_{i=1}^{n}\varphi(s_i,a_i)\varphi(s_i,a_i)^\top
+\in\mathbb{R}^{d_\varphi\times d_\varphi}$ is the empirical (uncentered) second-moment matrix of the
+features, and
+\begin{align}
+\Lambda=\tfrac1n\Phi^\top\Phi+\lambda I\in\mathbb{R}^{d_\varphi\times d_\varphi}
+\end{align}
+is symmetric positive definite. Note the two indices play different roles: $\Phi$ stacks $n$
+\emph{samples} along its rows and $d_\varphi$ \emph{features} along its columns, while $\Lambda$ is
+$d_\varphi\times d_\varphi$ and does not grow with $n$. As shipped, $\Lambda$ is recomputed from
+scratch on each batch (no accumulation across batches), so the $n$ here is the batch size, not a
+cumulative visit count---a deliberate simplification revisited in
+Section~\ref{sec:opt-sqrtn} and in the growing-data paragraph below.
+
+\paragraph{The regularizer $\lambda$.}
+The diagonal load $\lambda I$ (default $\lambda=10^{-6}$) is a ridge (Tikhonov) term with two roles.
+First, it makes $\Lambda$ invertible: $\tfrac1n\Phi^\top\Phi$ has rank at most $\min(n,d_\varphi)$ and
+is singular whenever the batch features are collinear or $n<d_\varphi$, so without $\lambda$ the
+inverse $\Lambda^{-1}$ in the bonus need not exist. Adding $\lambda I$ raises every eigenvalue by
+$\lambda>0$, making $\Lambda$ positive definite. Second, it caps the bonus along unseen directions:
+an eigendirection with zero feature variance has $\Lambda$-eigenvalue $\lambda$, hence
+$\Lambda^{-1}$-eigenvalue $1/\lambda$, so $\varphi^\top\Lambda^{-1}\varphi\le\lVert\varphi\rVert^2/\lambda$.
+Statistically, $\lambda$ is a prior precision: ridge regression with penalty $\lambda$ is the
+maximum-a-posteriori estimate under a zero-mean Gaussian prior on the regression weights with
+covariance $\lambda^{-1}I$. A small $\lambda$ is a weak prior, letting the data dominate $\Lambda$
+wherever the batch has support.
+
+\paragraph{Statistical reading of $\varphi^\top\Lambda^{-1}\varphi$.}
+The squared bonus is the squared Mahalanobis norm of the current feature under $\Lambda$. Diagonalize
+$\Lambda=\sum_{j=1}^{d_\varphi}\sigma_j^2\,u_ju_j^\top$ with orthonormal eigenvectors $u_j$ and
+eigenvalues $\sigma_j^2\ge\lambda$. Then
+\begin{align}
+\varphi(s,a)^\top\Lambda^{-1}\varphi(s,a)=\sum_{j=1}^{d_\varphi}\frac{\big(u_j^\top\varphi(s,a)\big)^2}{\sigma_j^2}.
+\end{align}
+Each squared projection of $\varphi(s,a)$ onto eigendirection $u_j$ is divided by the feature variance
+$\sigma_j^2$ the batch shows in that direction: directions explored often (large $\sigma_j^2$)
+contribute little; directions seldom explored (small $\sigma_j^2$, down to the floor $\lambda$)
+contribute a lot. The bonus is large exactly when $\varphi(s,a)$ aligns with under-sampled directions
+of feature space.
+
+Equivalently, in the linear-regression / linear-bandit view, $\Lambda$ (up to the $1/n$ scaling) is
+the ridge design matrix and $\Lambda^{-1}$ is proportional to the posterior covariance of the
+least-squares weights fit on $\Phi$ under unit observation noise and prior precision $\lambda$. Then
+$\varphi(s,a)^\top\Lambda^{-1}\varphi(s,a)$ is, up to that scaling, the \emph{predictive variance} of
+the fitted linear model at $(s,a)$---its uncertainty about its own prediction there---and the bonus
+$\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ is the predictive standard deviation, i.e.\ the
+confidence-interval width used as the optimism bonus in LinUCB / OFUL. So the elliptical bonus rewards
+the $(s,a)$ pairs at which a linear predictor on the frozen features is most uncertain---precisely the
+novel ones. In the special case of one-hot cell-indicator features, $\Lambda$ is diagonal with entries
+$n_i/n+\lambda$, where $n_i$ is the batch visit count of cell $i$, and for a visited cell
+$\varphi^\top\Lambda^{-1}\varphi\approx n/n_i$, giving bonus $\propto 1/\sqrt{n_i}$---the count bonus of
+Section~\ref{sec:count-based} recovered up to the global scale. This is the sense in which the
+elliptical bonus is a non-isotropic, count-like quantity.
+
+\paragraph{Computing the bonus on a large, growing dataset.}
+For this project's setting---a single, ever-growing stream of $(s,a)$ pairs from the replay buffer---the
+statistically faithful object is the \emph{cumulative} feature precision, not the per-batch one:
+\begin{align}
+\Lambda_t=\lambda I+\sum_{\tau\le t}\varphi(s_\tau,a_\tau)\varphi(s_\tau,a_\tau)^\top
+\in\mathbb{R}^{d_\varphi\times d_\varphi},
+\end{align}
+which is what gives the count-like $1/\sqrt{n}$ decay of Section~\ref{sec:opt-sqrtn}. Three points make
+this cheap regardless of how much data accumulates. (i) \emph{Constant memory.} $\Lambda_t$ is
+$d_\varphi\times d_\varphi$ ($128\times128\approx 1.6\times10^4$ floats); you accumulate into it and never
+store the data, so cost is independent of the number of samples seen. (ii) \emph{Incremental inverse.}
+Rather than refactor $\Lambda_t^{-1}$ from scratch ($O(d_\varphi^3)$) whenever the bonus is needed,
+maintain $M_t=\Lambda_t^{-1}$ and update it with the Sherman--Morrison identity per new sample,
+\begin{align}
+M_t=M_{t-1}-\frac{M_{t-1}\,\varphi\varphi^\top M_{t-1}}{1+\varphi^\top M_{t-1}\varphi},
+\end{align}
+in $O(d_\varphi^2)$; the denominator $1+\varphi^\top M_{t-1}\varphi$ is one plus the squared bonus, so
+the inverse update and the bonus share the vector $M_{t-1}\varphi$. For a batch of $b$ samples
+$\Phi_b\in\mathbb{R}^{b\times d_\varphi}$, the rank-$b$ Woodbury identity does it in one shot,
+\begin{align}
+\Lambda_t^{-1}=M-M\Phi_b^\top\big(I_b+\Phi_b M\Phi_b^\top\big)^{-1}\Phi_b M,
+\qquad M=\Lambda_{t-1}^{-1},
+\end{align}
+at cost $O(d_\varphi^2 b+b^3)$, which beats the $O(d_\varphi^3)$ refactor when $b\ll d_\varphi$ (with the
+current $b=256>d_\varphi=128$ a direct recompute is the cheaper option, so the incremental route pays off
+mainly for small or single-sample updates). (iii) \emph{Numerical stability.} Propagating an explicit
+inverse over many updates can lose symmetry and positive-definiteness; the stable alternative is to keep a
+Cholesky factor $L_tL_t^\top=\Lambda_t$, apply a rank-1 Cholesky update per sample in $O(d_\varphi^2)$, and
+read the bonus as $\varphi^\top\Lambda_t^{-1}\varphi=\lVert L_t^{-1}\varphi\rVert^2$ via one triangular
+solve. An optional discount $\Lambda_t=\gamma\Lambda_{t-1}+\varphi\varphi^\top$ ($0<\gamma\le1$) down-weights
+old data for non-stationary exploration. \textbf{Recommended change for
+\texttt{07\_reconstruction}:} replace the per-batch recompute of
+$\Lambda=\tfrac1n\Phi^\top\Phi+\lambda I$ in \texttt{EllipticalBonus.update} with a persistent cumulative
+$\Lambda_t$ (drop the $1/n$ normalization, accumulate $\Phi_b^\top\Phi_b$ each batch) and a Woodbury or
+Cholesky update of its inverse---constant memory, no data retention, and a genuine count-like bonus rather
+than a within-batch covariance.
+
 %==============================================================================
 \section{Environments}
 \label{sec:environments}
@@ -743,23 +846,270 @@ accumulator $\sum_k g_k^2$ is a cumulative sum---a soft visit count---so its
 per-state step shrinks $\propto 1/\sqrt{n}$, whereas Adam and RMSProp use an
 exponential moving average of $g^2$ and therefore forget the count.
 
-Two caveats. First, the optimizer controls the error \emph{norm}
-$\lVert e_n\rVert$: a running-average step gives $\lVert e_n\rVert\propto
-1/\sqrt{n}$, which matches the oracle directly for the L2 bonus of
-\texttt{rnd\_linear\_next\_state} ($r^{\mathrm{int}}=\lVert e_n\rVert$), while the
-default squared (\texttt{mse}) bonus $d=\tfrac12\lVert e_n\rVert^2$ then decays as
-$1/n$---so to target $1/\sqrt{n}$ exactly, pair a count-accumulating optimizer
-with the L2 distance. Second, a per-state $1/\sqrt{n}$ also needs updates at $s$
-not to generalize to every other state; with a smooth shared MLP the effective
-count is a kernel-weighted count. The clean construction is cumulative ridge
-regression with a linear head, whose converged residual is the elliptical bonus
-$\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ with
-$\Lambda=\sum_t\varphi_t\varphi_t^\top+\lambda I$ a genuine feature-space
-count---exactly $\propto 1/\sqrt{n}$ for a direction seen $n$ times
-(Section~\ref{sec:elliptical}). This project's \texttt{rnd\_elliptical} recomputes
-$\Lambda$ per batch instead of accumulating, and its RND predictors use
-constant-rate Adam, so neither accumulates a count---consistent with the
-saturation above.
+Two caveats, both about turning this optimizer fact into the bonus the code
+actually ships. The first is about \emph{which quantity we read out}. The
+optimizer controls the error \emph{norm} $\lVert e_n\rVert$: a running-average
+step gives $\lVert e_n\rVert\propto 1/\sqrt{n}$, which matches the oracle directly
+for the L2 bonus of \texttt{rnd\_linear\_next\_state}
+($r^{\mathrm{int}}=\lVert e_n\rVert$), while the default squared (\texttt{mse})
+bonus $d=\tfrac12\lVert e_n\rVert^2$ then decays as $1/n$---so to target
+$1/\sqrt{n}$ exactly, pair a count-accumulating optimizer with the L2 distance.
+
+The second caveat is about \emph{generalization across states}, and is the
+subtler point. The count oracle keeps a separate tally for each state, so a
+state's bonus depends only on how often \emph{that} state was visited. A neural
+predictor instead shares one set of weights across all states, so a single
+gradient step taken at $s$ also nudges the prediction at every other state.
+Because of this sharing, the ``$n$'' that drives the bonus at $s$ is not $s$'s own
+visit count but a \emph{kernel-weighted count}
+$n_{\mathrm{eff}}(s)=\sum_t k(s,s_t)$, where the weight $k(s,s')$ is the tangent
+kernel between two states---the cross-state form of the Gram matrix $K$ in the
+linearization above---and measures how strongly an update at $s'$ moves the
+prediction at $s$. In words: visiting states the network treats as similar to $s$
+also drives $s$'s error down, and a visit to $s$ partly discounts look-alike
+states it never actually saw. The clean per-state $1/\sqrt{n}$ law therefore
+survives only when this leakage is \emph{local}---an update at $s$ staying near
+$s$, so that $k$ behaves like an indicator $\mathbb{1}[s'{=}s]$ and
+$n_{\mathrm{eff}}(s)$ collapses back to $s$'s own count. A smooth shared MLP does
+the opposite: it spreads each update across the whole space and blurs the count.
+
+\paragraph{The right way: keep a running total and never forget it.}
+There is one way to set up the bonus so that the count is exact. Keep a true
+running total of everything seen so far, and never throw any of it away.
+Concretely: freeze the features $\varphi$ (do not let them keep changing), put a
+single \emph{linear} layer on top of them, and keep \emph{adding} each new feature
+into a running sum $\Lambda=\sum_t\varphi_t\varphi_t^\top+\lambda I$ that carries
+over from every past batch. Built this way, $\Lambda$ is a real tally: each visit
+adds its own feature to the total, so a direction that has shown up $n$ times over
+the whole run has been counted $n$ times. The left-over prediction error of the
+linear layer then works out to exactly the elliptical bonus
+$\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ (Section~\ref{sec:elliptical})---large
+where the layer has seen a direction rarely, small where it has seen it often---and
+it shrinks as $1/\sqrt{n}$, the same law as the count oracle. This is the version
+that reproduces the oracle's count exactly.
+
+\paragraph{What this project does, and whether it is wrong.}
+Table~\ref{tab:count-accumulation} puts the two places this project builds its
+bonus next to the ideal construction. The only setup that keeps a running count
+over all of training is the cumulative one, and it is the only one whose bonus
+actually decays as $1/\sqrt{n}$.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{6.1cm} >{\centering\arraybackslash}p{1.7cm} >{\centering\arraybackslash}p{1.6cm}@{}}
+\toprule
+\textbf{Setup} & \textbf{How the ``count'' is maintained} & \textbf{Running total kept?} & \textbf{Decays as $1/\sqrt{n}$?} \\
+\midrule
+\textbf{Right way:} fixed features $+$ linear head, cumulative ridge &
+$\Lambda \leftarrow \Lambda + \varphi_t\varphi_t^\top$ (plus $\lambda I$): every visit is added in and never discarded, so the effective $n$ is all visits so far &
+\cmark & \cmark \\
+\midrule
+\texttt{rnd\_elliptical} (this project) &
+$\Lambda=\tfrac1n\Phi^\top\Phi+\lambda I$ rebuilt from scratch each batch; old batches discarded, so the effective $n$ is one batch ($256$) &
+\xmark & \xmark \\
+RND predictors (this project) &
+constant-rate Adam: a moving average of recent gradients; older updates fade out, so no total is kept &
+\xmark & \xmark \\
+\bottomrule
+\end{tabular}
+\caption{The second caveat as a table: only a setup that \emph{accumulates} a
+running count over all of training reproduces the count oracle's $1/\sqrt{n}$
+decay. The ideal cumulative-ridge construction (top, above the rule) does; the two
+places this project builds its bonus (bottom) do not---\texttt{rnd\_elliptical}
+recomputes $\Lambda$ per batch, and the RND predictors use a constant-rate Adam
+optimizer whose moving average forgets the count---so both saturate instead.
+\cmark: yes; \xmark: no. This is a deliberate simplification, not a coding bug.}
+\label{tab:count-accumulation}
+\end{table}
+
+So the current setup is not buggy---it is a deliberate simplification---but it does
+not reproduce the oracle's $1/\sqrt{n}$ decay: with no running count kept, the
+learned bonus levels off (saturates) instead of shrinking as $1/\sqrt{n}$,
+consistent with the saturation described above.
+
+%==============================================================================
+% Train-run-1 content assembled from the analysis folder
+%   train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/
+% Data table tab:trainrun1-best is spliced by code/03_table_and_bar.py (markers below);
+% figures bar_*/line_* are produced by code/03_table_and_bar.py and code/04_line_plot.py.
+%==============================================================================
+\section{Train runs}
+\label{sec:train-runs}
+%==============================================================================
+
+This section reports the SAC training runs that sweep the intrinsic-bonus methods
+of Section~\ref{sec:methods} on \texttt{PointMaze\_Large-v3}, and ranks the methods
+by the extrinsic reward they reach.
+
+\subsection{Train run 1 (before reorganization)}
+\label{sec:train-run-1}
+
+\paragraph{Sweep.}
+Train run~1 is the Weights \& Biases grid sweep \texttt{sweep\_my\_rnd}
+(id \texttt{y24vyh06}, project \texttt{rnd\_07\_reconstruction}). It crosses every
+intrinsic-bonus method of Table~\ref{tab:methods} with eight intrinsic
+coefficients~$\beta$ and up to 100 random seeds, all on the same environment and
+SAC configuration of Section~\ref{sec:environments}---with the fixed
+\texttt{bottom\_right} goal used here, before the later reorganization to
+\texttt{top\_right}. The fixed (non-swept) hyperparameters are listed in
+Table~\ref{tab:trainrun1-fixed} and the swept axes in
+Table~\ref{tab:trainrun1-sweep}; the fixed values are the sweep configuration of
+Section~\ref{sec:environments} (notably $2\times10^{6}$ training steps, discount
+$\gamma=0.999$, and a final evaluation over $10^{4}$ episodes). Of the $8000$
+launched runs, $3292$ finished and $4708$ crashed; only finished runs enter the
+aggregates below.
+
+% Fixed (non-swept) hyperparameters of train run 1 — values verified from the
+% data/y24vyh06 run configs (hand-authored static config).
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{3.9cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Value} \\
+\midrule
+Environment & \texttt{env\_name} & \texttt{PointMaze\_Large-v3} \\
+Goal corner & \texttt{goal\_position} & \texttt{bottom\_right} \\
+Continuing task & \texttt{continuing\_task} & True \\
+Reset target on goal & \texttt{reset\_target} & False \\
+Max episode steps & \texttt{env\_max\_episode} & $400$ \\
+Time-limit $\to$ termination & \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & False \\
+\midrule
+Training steps & \texttt{total\_timesteps} & $2\times10^{6}$ \\
+Discount factor & $\gamma$ & $0.999$ \\
+Policy / agent & --- & SAC (\texttt{MlpPolicy}) \\
+Compute device & \texttt{device} & \texttt{cpu} \\
+Evaluation frequency & \texttt{eval\_freq} & every $50000$ steps \\
+Eval episodes (mid-training) & \texttt{n\_eval\_episodes} & $100$ \\
+Eval episodes (final) & \texttt{n\_eval\_\allowbreak episodes\_\allowbreak final} & $10^{4}$ \\
+\midrule
+RND input normalization & \texttt{rnd\_obs\_norm} & True \\
+RND distance & \texttt{rnd\_distance} & \texttt{mse} \\
+RND output dimension & $m$ & $128$ \\
+RND ensemble size & $N$ & $1$ \\
+\bottomrule
+\end{tabular}
+\caption{Fixed (non-swept) hyperparameters of train run~1 (\texttt{y24vyh06}), held
+constant across the grid of Table~\ref{tab:trainrun1-sweep}. Values are read from the
+run configurations and match the sweep settings of Section~\ref{sec:environments}; the
+goal is \texttt{bottom\_right} here, before the later reorganization to
+\texttt{top\_right}.}
+\label{tab:trainrun1-fixed}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{7.0cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Swept values} \\
+\midrule
+Intrinsic-bonus method & \texttt{algorithm} & The $10$ methods of Table~\ref{tab:methods}: \texttt{no\_exploration}; \texttt{gt\_position}, \texttt{gt\_position\_velocity}; \texttt{rnd\_next\_state}, \texttt{rnd\_next\_state\_position\_only}, \texttt{rnd\_state}, \texttt{rnd\_state\_action}, \texttt{rnd\_state\_action\_next\_state}, \texttt{rnd\_linear\_next\_state}; \texttt{rnd\_elliptical}. \\
+Intrinsic coefficient & $\beta$ & $\{10^{-4},\,10^{-3},\,10^{-2},\,10^{-1},\,1,\,10,\,10^{2},\,10^{3}\}$ ($8$ values; forced to $0$ for \texttt{no\_exploration}). \\
+Random seed & \texttt{a\_seed} & $0$--$99$; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together ($\approx 40$ finished seeds per (\texttt{algorithm}, $\beta$) group). \\
+\bottomrule
+\end{tabular}
+\caption{Swept axes of train run~1 (\texttt{y24vyh06}). The grid is
+\texttt{algorithm} $\times\,\beta\,\times$ \texttt{a\_seed}; all other knobs are the
+Section~\ref{sec:environments} sweep values.}
+\label{tab:trainrun1-sweep}
+\end{table}
+
+\paragraph{Aggregation.}
+Finished runs are grouped by $(\texttt{algorithm}, \beta)$. The primary metric is
+the final eval extrinsic reward $r^{\mathrm{ext}}$ (the $10^{4}$-episode evaluation
+at $2\times10^{6}$ steps). For a group of $n$ seeds with per-seed final rewards
+$R_i$, we report the seed mean and its standard error,
+\begin{align}
+\bar{R} = \frac{1}{n}\sum_{i=1}^{n} R_i,
+\qquad
+\mathrm{SE} = \frac{s}{\sqrt{n}},
+\qquad
+s = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}\big(R_i-\bar{R}\big)^2}.
+\end{align}
+For each algorithm we keep the single coefficient
+$\beta^\star = \argmax_{\beta}\,\bar{R}(\texttt{algorithm},\beta)$ with the largest
+mean reward---the best-tuned coefficient---and report that group.
+Table~\ref{tab:trainrun1-best} lists $\beta^\star$ and its $(\bar{R},\mathrm{SE},n)$
+per algorithm.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.2}
+% Auto-generated by train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/code/03_table_and_bar.py
+% >>> AUTO-GENERATED TABLE START: trainrun1-best
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.2cm} r r r r@{}}
+\toprule
+\textbf{Algorithm} & \textbf{$\beta^\star$} & \textbf{$\bar{R}$ ($\downarrow$)} & \textbf{SE} & \textbf{$n$} \\
+\midrule
+\texttt{gt\_position\_velocity} & $1$ & \textbf{74.86} & 4.63 & 43 \\
+\texttt{rnd\_elliptical} & $0.01$ & \underline{71.12} & 6.09 & 44 \\
+\texttt{rnd\_state} & $100$ & 69.90 & 4.80 & 41 \\
+\texttt{rnd\_next\_state} & $100$ & 62.03 & 5.34 & 40 \\
+\texttt{gt\_position} & $10$ & 59.37 & 5.32 & 45 \\
+\texttt{rnd\_state\_action\_next\_state} & $100$ & 57.04 & 4.97 & 40 \\
+\texttt{rnd\_state\_action} & $10$ & 52.53 & 4.87 & 43 \\
+\texttt{rnd\_linear\_next\_state} & $10$ & 32.18 & 5.60 & 42 \\
+\texttt{rnd\_next\_state\_position\_only} & $1000$ & 29.99 & 5.97 & 38 \\
+\texttt{no\_exploration} & $0.0001$ & 25.60 & 6.09 & 45 \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: trainrun1-best
+\caption{Train run~1: best intrinsic coefficient $\beta^\star$ per algorithm, with
+the final eval extrinsic reward $\bar{R}$ (mean over $n$ finished seeds),
+its standard error, and $n$. Rows are sorted by $\bar{R}$ descending;
+the best value is \textbf{bold} and the second best is \underline{underlined}.
+Higher reward is better.}
+\label{tab:trainrun1-best}
+\end{table}
+
+\paragraph{Final performance.}
+Figure~\ref{fig:trainrun1-bar} ranks the algorithms by the best-$\beta^\star$ mean
+eval reward $\bar{R}$ with standard-error bars. The
+\texttt{gt\_position\_velocity} count oracle is the strongest method
+($\bar{R}=74.9$), with the learned \texttt{rnd\_elliptical} bonus a close second
+($71.1$) and \texttt{rnd\_state} third ($69.9$); all three are well above the
+\texttt{no\_exploration} baseline ($25.6$). The position-only RND variants and the
+linear RND head trail the field.
+
+\begin{figure}[H]
+\centering
+% Plot produced by train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/code/03_table_and_bar.py
+\includegraphics[width=0.86\linewidth]{train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/plots/bar_best_beta_eval_reward.pdf}
+\caption{Train run~1: final eval extrinsic reward $\bar{R}$ at $2\times10^{6}$ steps
+for each algorithm at its best coefficient $\beta^\star$ (the $\beta$ in
+parentheses), mean $\pm$ standard error over finished seeds. Bars are colored per
+algorithm and sorted best-first; the same colors are used in
+Figure~\ref{fig:trainrun1-curve}.}
+\label{fig:trainrun1-bar}
+\end{figure}
+
+\paragraph{Learning curves.}
+Figure~\ref{fig:trainrun1-curve} shows, for each algorithm's best-$\beta^\star$
+group, the eval extrinsic reward as a function of training step (mean over seeds,
+shaded band $=$ standard error). The ranking at $2\times10^{6}$ steps matches
+Table~\ref{tab:trainrun1-best}; the count oracle and the elliptical bonus separate
+from the rest by roughly $10^{6}$ steps.
+
+\begin{figure}[H]
+\centering
+% Plot produced by train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/code/04_line_plot.py
+\includegraphics[width=0.92\linewidth]{train_run_aggregate/2026-06-24-17-31_run_1_before_reorganization/plots/line_best_beta_eval_curve.pdf}
+\caption{Train run~1: eval extrinsic reward over training for each algorithm at its
+best coefficient $\beta^\star$. Each line is the seed mean of the best-$\beta^\star$
+group; the shaded band is $\pm$ standard error over seeds. Colors match
+Figure~\ref{fig:trainrun1-bar}; the legend is ordered by final reward.}
+\label{fig:trainrun1-curve}
+\end{figure}
 
 \clearpage
 \bibliographystyle{plainnat}

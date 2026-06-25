@@ -36,3 +36,7 @@ _minted-*/
 
 # Local backup copies of the paper source
 backup/
+
+# train_run_aggregate analyses: raw W&B data only (regenerable from code/).
+# code/, plots/ (PNGs), and analysis.md stay committed; tables are spliced into main.tex.
+train_run_aggregate/*/data/
