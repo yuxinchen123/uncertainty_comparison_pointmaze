@@ -50,10 +50,14 @@ venv.bak/
 *.hdf5
 *.npy
 *.npz
+*.csv
+*.json
 saved_data/
 
 # W&B exports / combined runs tables (large, regenerable)
 07_reconstruction/analysis/data/
+# Per-run downloaded data tables (large, regenerable)
+07_reconstruction/train_runs/**/data/
 # Local pandoc binary tree (see script/build_analysis_pdfs.sh)
 07_reconstruction/analysis/.tools/
 

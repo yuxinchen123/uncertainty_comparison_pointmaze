@@ -17,7 +17,7 @@ git submodule update --init --recursive
 
 ## 2. Python version
 
-- Use **Python 3.8–3.11** (3.10 is a safe choice).
+- Use **Python 3.11** (the project's conda env is `exploration`, Python 3.11).
 - Check: `python3 --version`
 
 ## 3. Create a virtual environment (recommended)
@@ -33,16 +33,17 @@ source .venv/bin/activate   # Linux/macOS
 **Option B – conda:**
 
 ```bash
-conda create -n rnd python=3.10 -y
-conda activate rnd
+conda create -n exploration python=3.11 -y
+conda activate exploration
 ```
 
 ## 4. Install dependencies
 
-From the **project root** (where this `07_reconstruction` folder lives):
+Install the package itself (editable, src-layout) — this pulls the dependencies from `pyproject.toml` and makes
+`import rnd_exploration` resolve from any directory:
 
 ```bash
-pip install -r 07_reconstruction/requirements.txt
+pip install -e 07_reconstruction
 ```
 
 For **GPU (CUDA)** install PyTorch with the right CUDA version, then the rest:
@@ -55,20 +56,21 @@ pip install -r 07_reconstruction/requirements.txt
 
 See [pytorch.org](https://pytorch.org/get-started/locally/) for your OS/CUDA combo.
 
-## 5. Run from the right directory
+## 5. Run the training entry point
 
-Scripts expect to be run with `07_reconstruction` as the current working directory (so imports like `utilities`, `env_wrapper`, `intrinsic` resolve).
+The entry point is `train.py`. Because the package is installed editable (step 4), `import rnd_exploration`
+resolves regardless of the working directory; run `train.py` from `07_reconstruction`:
 
 ```bash
 cd 07_reconstruction
-python 03_rnd_my_implementation.py --help
+python train.py --help
 ```
 
 Example local run (no wandb, CPU, short):
 
 ```bash
 cd 07_reconstruction
-python 03_rnd_my_implementation.py --use_wandb false --device cpu --total_timesteps 1000
+python train.py --algorithm rnd_linear_next_state --use_wandb false --device cpu --total_timesteps 1000
 ```
 
 ## 6. Optional: Weights & Biases (wandb)
@@ -87,12 +89,13 @@ Set the sweep config and run as in your current setup.
 | Step | Command / check |
 |------|------------------|
 | Python 3.8+ | `python3 --version` |
-| Venv/conda | `source .venv/bin/activate` or `conda activate rnd` |
-| Deps | `pip install -r 07_reconstruction/requirements.txt` |
-| CWD | `cd 07_reconstruction` before running scripts |
+| Venv/conda | `source .venv/bin/activate` or `conda activate exploration` |
+| Package | `pip install -e 07_reconstruction` (editable; pulls deps from pyproject.toml) |
+| CWD | `cd 07_reconstruction` before running `train.py` |
 | GPU (optional) | Install `torch` with CUDA, then use `--device cuda` |
 
-## 8. If you also run other scripts in this repo
+## 8. Legacy precursors
 
-- `02_rnd_rlexplore.py` uses **rllte** (RLeXplore). Install from the RLeXplore submodule or `pip install rllte` if needed.
-- `01_gt.py` and `03_rnd_my_implementation.py` only need the packages in `07_reconstruction/requirements.txt`.
+The numbered precursors `01_gt.py`, `02_rnd_rlexplore.py`, `03_rnd_my_implementation.py` now live under
+`legacy/` as a frozen reference and are **not** runnable against the current package (their imports target the
+pre-reorganization layout). To run them, check out the pre-reorganization commit — see `legacy/README.md`.

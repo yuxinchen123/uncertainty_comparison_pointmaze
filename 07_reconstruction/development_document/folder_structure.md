@@ -1,84 +1,75 @@
 # `07_reconstruction` — folder structure
 
-Companion to `development_document/main.tex`. This is the code base behind the
-development document: SAC on `PointMaze_Large-v3` with switchable intrinsic
-exploration bonuses, plus a distance-to-ground-truth comparison of each bonus
-against an oracle visit-count field.
+Companion to `development_document/main.tex`. This is the code base behind the development document: SAC on
+`PointMaze_Large-v3` with a switchable intrinsic exploration bonus, plus a distance-to-ground-truth comparison of
+each bonus against an oracle visit-count field.
 
-Noise directories are omitted: `__pycache__/`, `*.pyc`, `wandb/` (2087 run
-folders), `image/` (57 rendered figures), `slurm_output.log` (large), and the
-per-run export trees under `analysis/data/`.
+After the 2026-06-24 reorganization the code is an installable package (`rnd_exploration`) with one entry point
+(`train.py`) and a registry that is the single source of truth for the algorithms. Noise directories are omitted:
+`__pycache__/`, `*.pyc`, and the git-ignored per-run `train_runs/**/data/` + `train_runs/**/logs/`.
 
 ```text
 07_reconstruction/
 │
-├── 01_gt.py                       # precursor: visit-count (oracle) bonus only
-├── 02_rnd_rlexplore.py            # precursor: RND bonus via RLeXplore utilities
-├── 03_rnd_my_implementation.py    # precursor: self-contained RND bonus
-├── 04_many_exploration_method.py  # MAIN entrypoint: SAC + switchable bonus (--algorithm)
-├── 0{1,2,3,4}_wandb_sweep.yaml     # W&B sweep configs for each script
-├── ppo_rnd_envpool.py             # reference PPO+RND (Atari) implementation
-├── note.md                        # coding notes (obs formats, replay buffer, RND knobs)
-├── SETUP.md / requirements.txt    # environment setup
+├── train.py                       # the entry point (was 04_many_exploration_method.py): build_* helpers + run()
+├── pyproject.toml                 # installable package; `pip install -e .` so `import rnd_exploration` resolves
+├── note.md  SETUP.md  requirements.txt
+├── ppo_rnd_envpool.py             # reference PPO+RND (Atari) implementation (vendored from CleanRL)
 │
-├── intrinsic/                     # intrinsic-reward (exploration bonus) library
-│   ├── intrinsic_method/
-│   │   ├── base.py                # IntrinsicRewardModel ABC: compute() + update()
-│   │   ├── visit_count.py         # VisitCount: count-based bonus (oracle GT)
-│   │   ├── rnd.py                 # RND: feature variants, ensemble, linear RND
-│   │   └── elliptical_bonus.py    # EllipticalBonus: Mahalanobis / UCB bonus
-│   ├── RLeXplore_utilities/       # adapters: batch / transition -> RND samples dict
-│   ├── vector_intrinsic_replay_buffer.py   # ReplayBuffer: reward = ext + beta*int on sample()
-│   └── intrinsic_replay_buffer.py
+├── src/rnd_exploration/           # the importable package (layers import downward only)
+│   ├── common/                    # leaf helpers: format.py, debug.py, heatmap_utils.py
+│   ├── envs/                      # PointMaze Gymnasium wrappers: point_maze_wrappers.py, point_maze_utils.py
+│   ├── methods/                   # intrinsic-reward methods + the registry
+│   │   ├── base.py                #   IntrinsicRewardModel ABC: compute(samples) + update(samples)
+│   │   ├── visit_count.py         #   VisitCount: count-based bonus (oracle ground truth)
+│   │   ├── rnd.py                 #   RND: feature variants, ensemble, linear RND
+│   │   ├── elliptical_bonus.py    #   EllipticalBonus: Mahalanobis / UCB bonus
+│   │   └── __init__.py            #   AlgorithmSpec, REGISTRY, build_intrinsic_model, EnvContext,
+│   │                              #     ALGORITHM_NAMES, ALGORITHMS_NO_ACTION  (single source of truth)
+│   ├── buffers/                   # vector_intrinsic_replay_buffer.py (reward = ext + beta*int at sample())
+│   ├── metrics/                   # distance-to-ground-truth: algorithm_vector.py, vector_distance.py,
+│   │                              #   full_observation_list.py
+│   └── callbacks/                 # wandb_eval_logging.py, train_episode_stats.py, distance_logging.py
 │
-├── distance_to_GT/                # how close is a bonus field to the oracle field
-│   ├── full_observation_list.py   # discretized (x,y,vx,vy) grid of valid maze cells
-│   ├── vector_distance.py         # the six distance metrics (L1/L2 diff, inv, normalized)
-│   ├── algorithm_vector.py        # builds bonus vector over the grid; GT = gt_position_velocity
-│   └── test/
+├── tests/                         # hierarchical per-module pytest suite
+│   ├── common/  envs/  buffers/  callbacks/
+│   ├── methods/   (+ methods/rnd/ for the RND feature-mode / ensemble / linear tests)
+│   ├── metrics/   (test_vector_distance.py, test_algorithm_vector.py, ...)
+│   └── integration/  (test_algorithms.py runs train.py per algorithm; test_final_eval_n_episodes.py)
 │
-├── env_wrapper/                   # PointMaze Gymnasium wrappers
-│   ├── point_maze_wrappers.py     # fixed goal/start, goal removal, visit-count, intrinsic-reward
-│   └── point_maze_utils.py        # maze map, (x,y)->(row,col), (vx,vy)->bin, cell selection
+├── train_runs/                    # one self-contained folder per training run / sweep (replaces a configs/ dir)
+│   └── <YYYY-MM-DD-HH-MM>_<purpose>/
+│       ├── config/                #   the wandb sweep yaml + resolved config for this run
+│       ├── experiment_background.md
+│       ├── data/                  #   all data this run generated (wandb export, parquet, ...) — git-ignored
+│       ├── logs/                  #   slurm + training logs — git-ignored
+│       ├── slurm/                 #   the slurm submission script(s) used for this run
+│       └── analysis/              #   optional dated analysis subfolders (analysis.md + code/ + plots/)
 │
-├── utilities/
-│   ├── callbacks/
-│   │   ├── wandb_eval_logging.py      # eval/mean_extrinsic_reward + heatmaps
-│   │   ├── train_episode_stats.py     # training episode stats
-│   │   └── distance_logging.py        # logs distance_to_gt/* during training
-│   ├── format.py                  # to_tensor / to_numpy helpers
-│   ├── heatmap_utils.py           # visit-count heatmaps
-│   └── debug.py
+├── legacy/                        # frozen pre-reorganization reference (not runnable as-is; see legacy/README.md)
+│   ├── 01_gt.py / 02_rnd_rlexplore.py / 03_rnd_my_implementation.py  (+ their sweep yamls)
+│   └── debug/                     # diagnostic scripts + report.md write-ups
 │
-├── tests/                         # pytest: algorithms, distance metrics, final eval
-│   ├── test_04_algorithms.py
-│   ├── test_vector_distance.py
-│   └── test_final_eval_n_episodes.py
-│
-├── debug/                         # diagnostics + reports (env, rnd, visit-count)
-│
-├── slurm/ , slurm_yuxin/          # cluster job scripts
-│
-├── analysis/                      # W&B sweep analysis
-│   ├── analysis.md                # self-contained write-up (tables, formulas, correlation)
-│   ├── analysis.html / pdf/       # rendered analysis
-│   ├── plot/                      # best-beta bar chart, reward-vs-distance correlation
-│   └── script/                    # download / combine / aggregate / plot scripts
+├── analysis/                      # cross-run W&B sweep analysis (analysis.md, plot/, pdf/, script/, data/)
+│   └── 2026-06-24-cpu-parallelization-understanding/   # dated study (frozen; pinned to its commit)
 │
 └── development_document/          # THIS document (LaTeX)
-    ├── main.tex                   # notation table + method catalog
+    ├── main.tex                   # notation, method catalog, environments, train runs, distance metrics
     ├── folder_structure.md        # this file
-    ├── bibliography.bib
-    └── neurips_2026.sty
+    ├── bibliography.bib  neurips_2026.sty
+    └── code/                      # figure-generating scripts for the writeup
 ```
 
 ## Reading order
 
-1. `04_many_exploration_method.py` — the driver. `_algorithm_to_config` maps each
-   `--algorithm` name to an intrinsic model + feature.
-2. `intrinsic/intrinsic_method/` — the three model families (count, RND, elliptical).
-3. `intrinsic/vector_intrinsic_replay_buffer.py` — where the bonus enters training:
-   on `sample()`, reward becomes `extrinsic + beta * intrinsic`.
-4. `distance_to_GT/` — the six metrics that score each bonus field against the
-   oracle `gt_position_velocity` field.
-5. `analysis/analysis.md` — results of the W&B sweep over `(algorithm, beta)`.
+1. `train.py` — the entry point. `parse_config()` builds the `Config`; `run()` builds the env stack, the
+   intrinsic model (via the registry), SAC, and the callbacks, then trains.
+2. `src/rnd_exploration/methods/__init__.py` — the registry: each `--algorithm` name maps (through one
+   `AlgorithmSpec` table + `build_intrinsic_model`) to an intrinsic model.
+3. `src/rnd_exploration/methods/` — the three model families (count, RND, elliptical) behind the
+   `IntrinsicRewardModel` ABC.
+4. `src/rnd_exploration/buffers/vector_intrinsic_replay_buffer.py` — where the bonus enters training: on
+   `sample()`, reward becomes `extrinsic + beta * intrinsic`.
+5. `src/rnd_exploration/metrics/` — the six metrics scoring each bonus field against the oracle
+   `gt_position_velocity` field.
+6. `train_runs/<run>/analysis/analysis.md` — results of a W&B sweep over `(algorithm, beta)`.
