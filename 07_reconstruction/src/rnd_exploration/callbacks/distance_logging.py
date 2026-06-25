@@ -24,6 +24,7 @@ class DistanceLoggingCallback(BaseCallback):
         visit_count_env_position_velocity: Any,
         eval_freq: int,
         use_wandb: bool,
+        log_to_wandb: bool = None,
         verbose: int = 0,
     ):
         super().__init__(verbose)
@@ -32,7 +33,10 @@ class DistanceLoggingCallback(BaseCallback):
         self.visit_count_env_position_velocity = visit_count_env_position_velocity
         self.eval_freq = eval_freq
         self.use_wandb = use_wandb
-        if self.use_wandb and wandb.run is not None:
+        # log_to_wandb: send distance metrics to wandb only in full mode (see WandbEvalLoggingCallback)
+        self.log_to_wandb = use_wandb if log_to_wandb is None else log_to_wandb
+        self.history = []  # per-eval distance dicts captured for local logging
+        if self.log_to_wandb and wandb.run is not None:
             wandb.define_metric("step")
             wandb.define_metric("distance_to_gt/*", step_metric="step")
 
@@ -49,8 +53,9 @@ class DistanceLoggingCallback(BaseCallback):
         if metrics is None:
             return True
         metrics["step"] = self.num_timesteps
+        self.history.append(dict(metrics))  # capture locally (both modes)
         print_or_wandb_log(
-            self.use_wandb,
+            self.log_to_wandb,
             metrics,
             "Distance To Ground Truth"
         )

@@ -1,11 +1,23 @@
 # RND slurm submission convention (reservation-aware) — project rule
 
-How to launch RND wandb-agent training sweeps (07_reconstruction) from Claude Code. Each sbatch job runs
-`srun wandb agent <sweep>` with **ntasks=8, cpus-per-task=2** (16 CPUs, **one node** `--nodes=1`), so each job
-runs 8 agents in parallel; submit MANY jobs against the sweep(s). This supersedes the old fan-out in `slurm.md`.
-Per-run slurm scripts live in `train_runs/<run>/slurm/`, write output into `train_runs/<run>/logs/`, and export
-`WANDB_DIR=train_runs/<run>/data` before `wandb agent` (see `wandb-logging.md`). Shared cluster facts (jaguar03
-specs, the jaguar03/puma01 reservation, qos) live in the global `cluster-slurm.md`.
+How to launch RND training sweeps (07_reconstruction) from Claude Code. The config source is a **local file
+work queue, not a W&B sweep** (see `run-id-and-logging.md`): `slurm/launch_queue.sh` submits the jobs, each
+running `srun slurm/worker.slurm` with **ntasks=8, cpus-per-task=2** (16 CPUs, **one node** `--nodes=1`), so
+each job runs 8 work-queue workers in parallel; submit MANY jobs (64 jobs => 512 workers but only **64 squeue
+IDs**, so an admin sees 64, not 512). Each worker atomically claims a config from `queue/pending/` and runs
+`train.py` with `use_wandb=False`, logging to a per-run JSON under `data/local/`. Per-run slurm scripts live in
+`train_runs/<run>/slurm/` and write output into `train_runs/<run>/logs/`. This supersedes the old `wandb
+agent` fan-out in `slurm.md` (and the `wandb agent` description in CLAUDE.md's Slurm section). Shared cluster
+facts (jaguar03 specs, the jaguar03/puma01 reservation, qos) live in the global `cluster-slurm.md`.
+
+## 0. NEVER cancel jobs not submitted in THIS session (hard rule — see also cluster-slurm.md + global CLAUDE.md)
+`scancel -u sl5nw` (or `-t PD`/`-t R`, or `-n <name>` since names like `tab-bench`/`meta-icl` can be reused by
+another session) cancels **every** job under the uid — including other concurrent Claude sessions' jobs. This has
+caused real damage. **Only cancel job IDs you submitted for this run, read from the run folder.** As you
+submit, append each `sbatch` id to `train_runs/<run>/slurm/submitted_jobids.txt` (`id=$(sbatch ... | grep -oP
+'[0-9]+$'); echo "$id" >> .../submitted_jobids.txt`). **After submitting, the monitoring loop (every ~10 min)
+refreshes that id file** so it stays current; cancel only those ids. **Do NOT ask the user for job ids** (they
+leave right after submitting — the id file is the source of truth) and never blanket-cancel.
 
 ## 1. Check for an active reservation first, then branch (dynamic — sometimes there is none)
 Discover it at submit time; never hardcode:

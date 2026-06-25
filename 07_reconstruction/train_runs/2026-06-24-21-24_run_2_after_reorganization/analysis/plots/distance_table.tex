@@ -1,0 +1,10 @@
+% Train run 2 distance-to-ground-truth table (pooled over all finished seeds; single local mode, no wandb).
+% Lower distance is better; rows sorted ascending by normalized_l2; per column best bold, second underlined.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} r r r r r r@{}}
+\toprule
+\textbf{Algorithm} & \textbf{\shortstack[r]{\texttt{min\_c\_}\\ \texttt{l1\_diff}}} & \textbf{\shortstack[r]{\texttt{min\_c\_}\\ \texttt{l2\_diff}}} & \textbf{\shortstack[r]{\texttt{min\_c\_}\\ \texttt{l1\_inv}}} & \textbf{\shortstack[r]{\texttt{min\_c\_}\\ \texttt{l2\_inv}}} & \textbf{\shortstack[r]{\texttt{normalized\_}\\ \texttt{l2} ($\uparrow$)}} & \textbf{\shortstack[r]{\texttt{normalized\_}\\ \texttt{angle\_rad}}} \\
+\midrule
+\texttt{gt\_position\_velocity} & \textbf{0.00114} & \textbf{0} & \textbf{2.88e-14} & \textbf{1.78e-15} & \textbf{0} & \textbf{2.76e-06} \\
+\texttt{rnd\_state} & \underline{2.02e+03} & \underline{37.8} & \underline{2.32} & \underline{0.0692} & \underline{49} & \underline{0.733} \\
+\bottomrule
+\end{tabular}

@@ -7,8 +7,10 @@ if/elif dispatch is replaced by the registry factory ``build_intrinsic_model``.
 """
 import argparse
 import collections
+import json
 import os
 import random
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -68,6 +70,12 @@ class Config:
     rnd_output_dim: int = 128
     n_predictors: int = 1
     apply_termination_wrapper: bool = False
+    # run-2 additions:
+    g_algo_beta: str = ""               # "algorithm|beta" — when set, overrides algorithm + beta (one grid sweep)
+    z_logging_mode: str = "wandb_full"  # "wandb_full" | "wandb_param_only" | "local" (z_ so the grid sweeps it innermost)
+    local_log_dir: str = ""             # if set, write a per-run JSON (config + eval/train/distance history + runtime)
+    run_id: int = -1                    # 0-based position of this run in its sweep ("i" of i/total); -1 = standalone run
+    run_total: int = 0                  # sweep size ("total" of i/total); 0 = standalone -> descriptive (non-id) filename
 
 
 def _str2bool(x: str) -> bool:
@@ -103,6 +111,19 @@ def parse_config() -> Config:
     parser.add_argument("--n_predictors", type=int, default=1)
     parser.add_argument("--apply_termination_wrapper", default=False, type=_str2bool,
                         help="If true, truncation -> termination (else SB3 timeout handling).")
+    parser.add_argument("--g_algo_beta", type=str, default="",
+                        help="Combined 'algorithm|beta' (run-2 sweep): pins each algorithm to its beta in one grid sweep.")
+    parser.add_argument("--z_logging_mode", type=str, default="wandb_full",
+                        choices=["wandb_full", "wandb_param_only", "local"],
+                        help="wandb_full = log metrics to wandb; wandb_param_only = wandb.init for params but log locally only; "
+                             "local = no wandb at all, log locally (used by the local work-queue, use_wandb=False).")
+    parser.add_argument("--local_log_dir", type=str, default="",
+                        help="If set, write a per-run JSON (config + eval/train/distance history + runtime) under <dir>/<z_logging_mode>/.")
+    parser.add_argument("--run_id", type=int, default=-1,
+                        help="0-based position of this run in its sweep ('i' of i/total). Set by the local work queue; "
+                             "drives the id-based per-run JSON filename. -1 (default) = standalone run -> descriptive name.")
+    parser.add_argument("--run_total", type=int, default=0,
+                        help="Sweep size ('total' of i/total). 0 (default) = standalone run.")
 
     # argparse -> Config dataclass
     args = parser.parse_args()
@@ -115,12 +136,26 @@ def parse_config() -> Config:
         for key in vars(cfg):
             if key in wandb.config:
                 setattr(cfg, key, wandb.config[key])
+    # run-2: a combined (algorithm|beta) sweep param pins each algorithm to its beta in ONE grid sweep
+    # (wandb grid can't zip two axes). Split it and record the resolved values back to wandb.config so the
+    # downstream analysis can still group by algorithm/beta.
+    if cfg.g_algo_beta:
+        algo, beta_str = cfg.g_algo_beta.split("|")
+        cfg.algorithm = algo
+        cfg.beta = float(beta_str)
+        if cfg.use_wandb and wandb.run is not None:
+            wandb.config.update({"algorithm": cfg.algorithm, "beta": cfg.beta}, allow_val_change=True)
     return cfg
 
 
 def _run_name(cfg: Config) -> str:
-    """Pipe-delimited run name (identical fields/order to 04's _args_to_run_name, so existing
-    image/<run_name>/ folders and analysis joins keep matching)."""
+    """The run's JSON filename stem. A sweep run (run_total > 0) is named by its id, so each run owns one
+    short, sweep-sortable file; a standalone run (run_total == 0) keeps the descriptive pipe-delimited name."""
+    # sweep run: id-based name. before: run_id=42, run_total=600 -> after: "042_of_600" (id zero-padded to
+    # run_total's width so names sort in sweep order). The descriptive fields live inside the JSON, not the name.
+    if cfg.run_total > 0:
+        return f"{cfg.run_id:0{len(str(cfg.run_total))}d}_of_{cfg.run_total}"
+    # standalone run (no sweep id): descriptive pipe-delimited name with every load-bearing knob spelled out
     parts = [
         f"algorithm={cfg.algorithm}",
         cfg.env_name.replace("/", "-"),
@@ -222,19 +257,55 @@ def build_sac(cfg: Config, vec_env, intrinsic_model, seed: int) -> SAC:
     )
 
 
+def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distance_history, train_history) -> None:
+    """Write THIS run's own JSON to <local_log_dir>/<z_logging_mode>/<run_name>.json.
+
+    Logging design (see .claude/rules/run-id-and-logging.md):
+    - One file per run (named by the run's id, run_name=NNN_of_TOTAL) -> no two runs ever write the same
+      path, so there is no file-lock contention across the 512 concurrent workers.
+    - Group-style, single write: every metric is accumulated in memory by its callback during training
+      (eval_history / train_history / distance_history) and the whole record is flushed here in ONE
+      file write at run end -- file access is slow, so we never write incrementally per eval step.
+    The three history lists are the logging GROUPS; each row in a group is one eval-cadence snapshot."""
+    # one file per run, under the logging-mode subdir; the dir is created lazily on first write
+    out_dir = os.path.join(cfg.local_log_dir, cfg.z_logging_mode)
+    os.makedirs(out_dir, exist_ok=True)
+    record = {
+        # --- identity / config group (written once at the end) ---
+        "run_id": cfg.run_id,                 # this run's position in the sweep ("i")
+        "run_total": cfg.run_total,           # sweep size ("total"); run_id/run_total is the run's identity
+        "algorithm": cfg.algorithm,
+        "beta": cfg.beta,
+        "a_seed": cfg.a_seed,
+        "z_logging_mode": cfg.z_logging_mode,
+        "total_timesteps": cfg.total_timesteps,
+        "eval_freq": cfg.eval_freq,
+        "runtime_seconds": runtime_seconds,
+        # --- metric groups (each a list of per-eval-cadence snapshots, accumulated then flushed here) ---
+        "eval_history": eval_history,         # eval group: eval/mean_extrinsic_reward, visit_counts/*, ... (all algos)
+        "train_history": train_history,       # train group: train/mean_extrinsic_reward over the past
+                                              # n_eval_episodes training episodes, ... (all algos)
+        "distance_history": distance_history, # distance group: distance_to_gt/* (only ALGORITHMS_NO_ACTION algos)
+    }
+    with open(os.path.join(out_dir, _run_name(cfg) + ".json"), "w") as f:
+        json.dump(record, f)
+
+
 def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocity_wrapper,
-                    intrinsic_model, goal_cell, start_cell, run_name):
-    """Build the three training callbacks (eval + heatmap, train episode stats, distance-to-GT)."""
+                    intrinsic_model, goal_cell, start_cell, run_name, log_to_wandb):
+    """Build the three training callbacks (eval + heatmap, train episode stats, distance-to-GT).
+    log_to_wandb gates whether metrics are sent to wandb (False in the wandb_param_only mode)."""
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_vec, cfg.eval_freq, cfg.n_eval_episodes, cfg.use_wandb,
         visit_count_env=position_wrapper, goal_cell=goal_cell, start_cell=start_cell, run_name=run_name,
         beta=cfg.beta,
         total_timesteps=cfg.total_timesteps,
         n_eval_episodes_final=cfg.n_eval_episodes_final,
+        log_to_wandb=log_to_wandb,
     )
     train_stats_callback = TrainEpisodeStatsCallback(
         train_env=train_vec, eval_freq=cfg.eval_freq, n_eval_episodes=cfg.n_eval_episodes,
-        use_wandb=cfg.use_wandb, beta=cfg.beta,
+        use_wandb=cfg.use_wandb, beta=cfg.beta, log_to_wandb=log_to_wandb,
     )
     distance_logging_callback = DistanceLoggingCallback(
         algorithm=cfg.algorithm,
@@ -242,6 +313,7 @@ def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocit
         visit_count_env_position_velocity=position_velocity_wrapper,
         eval_freq=cfg.eval_freq,
         use_wandb=cfg.use_wandb,
+        log_to_wandb=log_to_wandb,
     )
     return [wandb_eval_callback, train_stats_callback, distance_logging_callback]
 
@@ -252,6 +324,10 @@ def run(cfg: Config) -> None:
     if not REGISTRY[cfg.algorithm].builds_model:
         cfg.beta = 0
     seed = cfg.a_seed
+    # wandb_param_only: wandb.init already ran (params fetched) but metrics stay local (log_to_wandb=False)
+    log_to_wandb = cfg.use_wandb and (cfg.z_logging_mode != "wandb_param_only")
+    # runtime clock: from here (params in hand, training about to set up + run) to program end
+    t_start = time.time()
 
     # resolve device with cuda->cpu fallback
     if cfg.device == "cuda" and not torch.cuda.is_available():
@@ -314,9 +390,18 @@ def run(cfg: Config) -> None:
 
     callbacks = build_callbacks(
         cfg, train_vec, eval_vec, train_position, train_position_velocity,
-        intrinsic_model, goal_cell, start_cell, _run_name(cfg),
+        intrinsic_model, goal_cell, start_cell, _run_name(cfg), log_to_wandb,
     )
     model.learn(total_timesteps=cfg.total_timesteps, callback=callbacks)
+
+    # runtime = setup + training (wandb param-fetch wait is excluded — t_start is after params)
+    runtime_seconds = time.time() - t_start
+    if log_to_wandb:
+        wandb.log({"runtime_seconds": runtime_seconds})
+    if cfg.local_log_dir:
+        # callbacks = [eval, train-episode-stats, distance]; save all three histories
+        _write_local_log(cfg, runtime_seconds, callbacks[0].history, callbacks[2].history, callbacks[1].history)
+    print(f"runtime_seconds={runtime_seconds:.2f} mode={cfg.z_logging_mode}")
 
     if not cfg.use_wandb:
         print("-------------Program Finished-------------")

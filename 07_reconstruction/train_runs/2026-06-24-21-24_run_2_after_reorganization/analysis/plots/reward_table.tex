@@ -1,0 +1,11 @@
+% Train run 2 reward table (pooled over all finished seeds; single local logging mode, no wandb).
+% Higher reward is better; rows sorted by Rbar descending; best bold, second-best underlined.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r@{}}
+\toprule
+\textbf{Algorithm} & \textbf{$\beta^\star$} & \textbf{$\bar{R}$ ($\downarrow$)} & \textbf{SE} & \textbf{$n$} \\
+\midrule
+\texttt{gt\_position\_velocity} & $1$ & \textbf{67.76} & 2.44 & 97 \\
+\texttt{rnd\_elliptical} & $0.01$ & \underline{44.49} & 3.32 & 116 \\
+\texttt{rnd\_state} & $100$ & 35.79 & 3.32 & 99 \\
+\bottomrule
+\end{tabular}

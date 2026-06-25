@@ -17,12 +17,15 @@ class TrainEpisodeStatsCallback(BaseCallback):
     Assumes Monitor wrapper is present. Tracks extrinsic/intrinsic from info dict.
     """
 
-    def __init__(self, train_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, beta: float = 0.0, verbose: int = 0):
+    def __init__(self, train_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, beta: float = 0.0, log_to_wandb: bool = None, verbose: int = 0):
         super().__init__(verbose)
         self.train_env = train_env
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
         self.use_wandb = use_wandb
+        # log_to_wandb: send train stats to wandb only in full mode (see WandbEvalLoggingCallback)
+        self.log_to_wandb = use_wandb if log_to_wandb is None else log_to_wandb
+        self.history = []
         self.beta = beta
         self._monitor = None
         self._ep_extrinsic = 0.0
@@ -88,8 +91,9 @@ class TrainEpisodeStatsCallback(BaseCallback):
             ("train/mean_episode_length", mean_length),
             ("train/n_episodes_averaged", n_window),
         ])
+        self.history.append(dict(summary))
         print_or_wandb_log(
-            self.use_wandb,
+            self.log_to_wandb,
             summary,
             f"Train episode stats (step {self.num_timesteps})",
         )
