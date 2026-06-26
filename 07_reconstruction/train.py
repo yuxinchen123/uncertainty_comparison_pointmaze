@@ -70,12 +70,20 @@ class Config:
     rnd_output_dim: int = 128
     n_predictors: int = 1
     apply_termination_wrapper: bool = False
+    # distance-to-GT computation is OFF by default: gridding the whole maze through the intrinsic model at every
+    # eval is overhead, and most runs only need the reward curves. Set --log_distance True to log distance_to_gt/*.
+    log_distance: bool = False
     # run-2 additions:
     g_algo_beta: str = ""               # "algorithm|beta" — when set, overrides algorithm + beta (one grid sweep)
     z_logging_mode: str = "wandb_full"  # "wandb_full" | "wandb_param_only" | "local" (z_ so the grid sweeps it innermost)
     local_log_dir: str = ""             # if set, write a per-run JSON (config + eval/train/distance history + runtime)
     run_id: int = -1                    # 0-based position of this run in its sweep ("i" of i/total); -1 = standalone run
     run_total: int = 0                  # sweep size ("total" of i/total); 0 = standalone -> descriptive (non-id) filename
+    # performance switches (default off = original behavior; benchmarked under analysis/2026-06-25-run-profiling)
+    opt_torch_reward: bool = False      # intrinsic buffer: combine reward in torch (no numpy round-trip)
+    opt_polyak_foreach: bool = False    # bit-exact torch._foreach_ polyak target update (replaces SB3 zip_strict)
+    sac_train_freq: int = 1             # SAC train_freq: env steps between gradient-update bursts
+    sac_gradient_steps: int = 1         # SAC gradient_steps per burst (with train_freq=N, gradient_steps=N keeps total updates equal)
 
 
 def _str2bool(x: str) -> bool:
@@ -111,6 +119,8 @@ def parse_config() -> Config:
     parser.add_argument("--n_predictors", type=int, default=1)
     parser.add_argument("--apply_termination_wrapper", default=False, type=_str2bool,
                         help="If true, truncation -> termination (else SB3 timeout handling).")
+    parser.add_argument("--log_distance", default=False, type=_str2bool,
+                        help="If true, log distance_to_gt/* (grids the maze each eval). OFF by default.")
     parser.add_argument("--g_algo_beta", type=str, default="",
                         help="Combined 'algorithm|beta' (run-2 sweep): pins each algorithm to its beta in one grid sweep.")
     parser.add_argument("--z_logging_mode", type=str, default="wandb_full",
@@ -124,6 +134,13 @@ def parse_config() -> Config:
                              "drives the id-based per-run JSON filename. -1 (default) = standalone run -> descriptive name.")
     parser.add_argument("--run_total", type=int, default=0,
                         help="Sweep size ('total' of i/total). 0 (default) = standalone run.")
+    # performance switches (default off = baseline)
+    parser.add_argument("--opt_torch_reward", default=False, type=_str2bool,
+                        help="Intrinsic buffer: combine reward in torch (no numpy round-trip).")
+    parser.add_argument("--opt_polyak_foreach", default=False, type=_str2bool,
+                        help="Bit-exact torch._foreach_ polyak target update (replaces SB3 zip_strict).")
+    parser.add_argument("--sac_train_freq", type=int, default=1, help="SAC train_freq (env steps per update burst).")
+    parser.add_argument("--sac_gradient_steps", type=int, default=1, help="SAC gradient_steps per burst.")
 
     # argparse -> Config dataclass
     args = parser.parse_args()
@@ -237,10 +254,17 @@ def wrap_for_rollout(flat_env, cfg: Config, intrinsic_model, seed: int) -> Dummy
 
 def build_sac(cfg: Config, vec_env, intrinsic_model, seed: int) -> SAC:
     """Build SAC with the intrinsic replay buffer when beta>0, else the stock buffer (04's plumbing)."""
+    # perf switch: install the bit-exact torch._foreach_ polyak target update over SB3's zip_strict loop
+    if cfg.opt_polyak_foreach:
+        from rnd_exploration.common.sb3_patches import patch_polyak_foreach
+        patch_polyak_foreach()
     # beta>0 swaps in the buffer that recomputes reward = ext + beta*intrinsic at sample time
     if cfg.beta > 0:
         replay_buffer_class = VectorIntrinsicReplayBuffer
-        replay_buffer_kwargs = {"beta": cfg.beta, "intrinsic_reward_model": intrinsic_model}
+        replay_buffer_kwargs = {
+            "beta": cfg.beta, "intrinsic_reward_model": intrinsic_model,
+            "opt_torch_reward": cfg.opt_torch_reward,  # perf switch: torch-only reward combine
+        }
     else:
         replay_buffer_class = None
         replay_buffer_kwargs = None
@@ -252,12 +276,16 @@ def build_sac(cfg: Config, vec_env, intrinsic_model, seed: int) -> SAC:
         device=cfg.device,
         gamma=cfg.discount_factor,
         tensorboard_log=None,
+        # train_freq/gradient_steps default to 1/1 (SB3 default) = baseline; raising both together batches updates
+        train_freq=cfg.sac_train_freq,
+        gradient_steps=cfg.sac_gradient_steps,
         replay_buffer_class=replay_buffer_class,
         replay_buffer_kwargs=replay_buffer_kwargs,
     )
 
 
-def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distance_history, train_history) -> None:
+def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distance_history, train_history,
+                     train_episode_history) -> None:
     """Write THIS run's own JSON to <local_log_dir>/<z_logging_mode>/<run_name>.json.
 
     Logging design (see .claude/rules/run-id-and-logging.md):
@@ -285,6 +313,8 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
         "eval_history": eval_history,         # eval group: eval/mean_extrinsic_reward, visit_counts/*, ... (all algos)
         "train_history": train_history,       # train group: train/mean_extrinsic_reward over the past
                                               # n_eval_episodes training episodes, ... (all algos)
+        "train_episode_history": train_episode_history,  # episode-level: one row per completed training episode
+                                              # (run-4 convention) -> full first-to-last training trajectory
         "distance_history": distance_history, # distance group: distance_to_gt/* (only ALGORITHMS_NO_ACTION algos)
     }
     with open(os.path.join(out_dir, _run_name(cfg) + ".json"), "w") as f:
@@ -313,6 +343,7 @@ def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocit
         visit_count_env_position_velocity=position_velocity_wrapper,
         eval_freq=cfg.eval_freq,
         use_wandb=cfg.use_wandb,
+        enabled=cfg.log_distance,  # OFF by default; no-op (empty history) unless --log_distance True
         log_to_wandb=log_to_wandb,
     )
     return [wandb_eval_callback, train_stats_callback, distance_logging_callback]
@@ -400,7 +431,8 @@ def run(cfg: Config) -> None:
         wandb.log({"runtime_seconds": runtime_seconds})
     if cfg.local_log_dir:
         # callbacks = [eval, train-episode-stats, distance]; save all three histories
-        _write_local_log(cfg, runtime_seconds, callbacks[0].history, callbacks[2].history, callbacks[1].history)
+        _write_local_log(cfg, runtime_seconds, callbacks[0].history, callbacks[2].history, callbacks[1].history,
+                         callbacks[1].episode_history)
     print(f"runtime_seconds={runtime_seconds:.2f} mode={cfg.z_logging_mode}")
 
     if not cfg.use_wandb:

@@ -682,8 +682,8 @@ $\to$ \texttt{ComputeIntrinsicReward}.
 The evaluation environment uses the identical stack but with frozen visit counts
 (\texttt{update\_counts}$=$False) that reference the training counts, so evaluation never
 alters the count statistics. Each environment type and its hyperparameters follow;
-default values are the code defaults, with the sweep value (\sout{\texttt{04\_wandb\_sweep.yaml}}\claudeedit{each run's \texttt{config/} sweep yaml under \texttt{train\_runs/}})
-noted where it differs.\claudecomment{the sweep yaml moved into per-run train\_runs/<run>/config/ in the reorganization}
+default values are the code defaults, with the sweep value (each run's \texttt{config/} sweep yaml under \texttt{train\_runs/})
+noted where it differs.
 
 \subsection{Wrapper stack overview}
 \label{sec:env-wrapper-table}
@@ -952,18 +952,6 @@ Policy & SAC (\texttt{MlpPolicy}) & Stable-Baselines3 agent. \\
 \end{table}
 
 %==============================================================================
-\section{Optimizer for the RND predictor}
-\label{sec:optimizer}
-%==============================================================================
-
-The RND bonus at a state is the predictor's residual error there
-(Section~\ref{sec:rnd}), so how fast that error shrinks as a state is revisited
-is set entirely by the optimizer that fits the predictor $g_\phi$ to the frozen
-target $f_\theta$. Section~\ref{sec:opt-defs} builds the optimizers up from their
-definitions and asks which of them makes the learned bonus fall off like the
-count oracle's $1/\sqrt{n}$; Section~\ref{sec:opt-used} then records the optimizer
-this project and the widely-used RND code actually use.
-
 \subsection{Optimizers from first principles}
 \label{sec:opt-defs}
 
@@ -983,6 +971,15 @@ If the optimizer makes the predictor forget old visits, then the RND bonus will
 not behave like a count. If the optimizer accumulates information from all visits,
 then the RND bonus can become closer to the count oracle's $1/\sqrt{n}$ decay.
 
+
+Here ``bonus'' must be separated from ``loss.'' The predictor optimizer updates
+$\phi$ by minimizing a supervised regression loss against the frozen random target.
+SAC does not optimize this predictor loss directly; SAC receives an intrinsic
+reward readout computed from the predictor--target residual. Thus the RND
+predictor objective and the intrinsic-bonus readout can be the same scalar in the
+default implementation, but they do not have to be the same scalar.
+
+
 \begin{definition}[Optimizer]
 An optimizer is an update rule for the trainable parameters $\phi$. At update
 step $t$, the optimizer receives a minibatch loss $L_t(\phi)$ and its gradient
@@ -995,7 +992,47 @@ case, the update has the form
 \phi_{t+1}=\phi_t-\eta h_t,
 \]
 where $\eta>0$ is the learning rate.
+
+For the RND predictor, this loss is the predictor-training objective. It is not
+the SAC return objective and it is not necessarily the same scalar that is passed
+to SAC as the intrinsic bonus.
+
 \end{definition}
+
+
+\begin{definition}[Predictor objective and bonus readout]
+Let
+\[
+e_\phi(\tilde{x})=g_\phi(\tilde{x})-f_\theta(\tilde{x})
+\]
+be the RND residual. The predictor optimizer minimizes a loss
+\[
+L_t(\phi)
+\]
+with respect to $\phi$. SAC receives a reward
+\[
+r_t^{\mathrm{train}}
+=
+r_t^{\mathrm{ext}}
++
+\beta\,\mathcal{B}_\psi(x_t;\phi_t),
+\]
+where $\mathcal{B}_\psi$ is the chosen intrinsic-bonus readout. Therefore the
+full system contains two different optimization problems:
+\[
+\boxed{
+\text{RND predictor: minimize } L_t(\phi)
+}
+\qquad
+\boxed{
+\text{SAC policy: maximize return under }
+r^{\mathrm{ext}}+\beta\mathcal{B}_\psi
+}.
+\]
+The bonus readout affects SAC through the reward, but it is not itself the loss
+that the RND optimizer differentiates.
+\end{definition}
+
 
 \paragraph{The RND predictor loss.}
 For a minibatch of $b$ RND inputs $\{x_i\}_{i=1}^{b}$, where $x_i$ may be
@@ -1012,6 +1049,84 @@ g_\phi(\tilde{x}_i)-f_\theta(\tilde{x}_i)
 \end{align}
 The gradient $h_t=\nabla_\phi L_t(\phi_t)$ tells us how to change $\phi$ to make
 the predictor closer to the frozen target on the current minibatch.
+
+
+This squared-error objective is the standard RND predictor objective: the original
+RND construction trains the predictor against a fixed random target by minimizing
+mean squared prediction error \citep{burda2019exploration}. For the experiments
+in this document, define
+\[
+d_{\mathrm{mse}}(x;\phi)
+=
+\frac12
+\left\lVert
+g_\phi(\tilde{x})-f_\theta(\tilde{x})
+\right\rVert_2^2.
+\]
+Then the predictor objective is
+\[
+L_t^{\mathrm{mse}}(\phi)
+=
+\frac1b\sum_{i=1}^{b}d_{\mathrm{mse}}(x_i;\phi).
+\]
+The canonical RND bonus readout is the same per-sample squared error:
+\[
+\mathcal{B}_{\mathrm{mse}}(x;\phi)
+=
+d_{\mathrm{mse}}(x;\phi).
+\]
+For the count-scale experiments, the recommended alternative readout is the L2
+residual norm:
+\[
+\mathcal{B}_{\mathrm{l2}}(x;\phi)
+=
+\left\lVert
+g_\phi(\tilde{x})-f_\theta(\tilde{x})
+\right\rVert_2
+=
+\sqrt{2d_{\mathrm{mse}}(x;\phi)}.
+\]
+Thus the verified design choice is not ``always use MSE as the objective and L2
+as the bonus in every RND experiment.'' The more precise recommendation is:
+\[
+\boxed{
+\text{Keep } L_t^{\mathrm{mse}} \text{ as the predictor objective}
+}
+\qquad
+\boxed{
+\text{use } \mathcal{B}_{\mathrm{l2}} \text{ when the goal is to match a }
+1/\sqrt{n}
+\text{ count scale}
+}.
+\]
+The squared-error bonus $\mathcal{B}_{\mathrm{mse}}$ should remain as the canonical
+RND baseline, while $\mathcal{B}_{\mathrm{l2}}$ is the count-scale readout.
+
+
+
+The reason is statistical scale. Squared error is variance-scale. Its square root
+is standard-deviation or standard-error scale. Since the count oracle uses
+$r^{\mathrm{int}}(n)=1/\sqrt{n}$, the count oracle is on standard-error scale, not
+variance scale. Therefore, if the residual satisfies
+\[
+\mathbb{E}\lVert e_n\rVert_2^2=O(1/n),
+\]
+then
+\[
+\lVert e_n\rVert_2=O(1/\sqrt{n})
+\]
+has the same scale as the count oracle, while
+\[
+\tfrac12\lVert e_n\rVert_2^2=O(1/n)
+\]
+decays too quickly. This is also the scale used by linear confidence and
+elliptical bonuses, where the uncertainty readout is a square root of a quadratic
+form, such as
+\[
+\sqrt{\varphi^\top\Lambda^{-1}\varphi}
+\]
+rather than the quadratic form itself \citep{abbasi2011online}.
+
 
 \paragraph{Gradient descent and stochastic gradient descent.}
 The most basic optimizer is gradient descent:
@@ -1089,7 +1204,8 @@ q_t
 \frac{\widehat{m}_t}{\sqrt{\widehat{q}_t}+\epsilon}.
 \end{align}
 Adam is the standard default optimizer for many neural networks because it is
-stable and fast. The current RND predictor uses constant-rate Adam with its own
+stable and fast. Adam is a first-order stochastic optimizer that uses
+adaptive moment estimates of the gradients \citep{kingma2014adam}. The current RND predictor uses constant-rate Adam with its own
 learning rate. But Adam also uses exponential moving averages. Therefore, Adam
 does not remember the total number of visits to an input. This means it can make
 the RND bonus saturate instead of continuing to decay like $1/\sqrt{n}$.
@@ -1116,6 +1232,11 @@ corresponding entries of $c_t$ grow. The effective step size shrinks roughly lik
 This makes AdaGrad the closest off-the-shelf optimizer to a soft count. It is not
 an exact per-state counter, because neural-network parameters are shared across
 states, but it is much closer to count accumulation than Adam.
+
+This matches AdaGrad's original motivation: the update adapts to the geometry of
+data observed in earlier iterations and gives frequently observed features smaller
+effective steps than rare features \citep{duchi2011adaptive}.
+
 
 \paragraph{A $1/t$ learning-rate schedule.}
 Another way to obtain count-like behavior is to use a decreasing learning rate:
@@ -1150,6 +1271,11 @@ averaging can reduce the variance of the final predictor. In simple stochastic
 approximation problems, the averaged iterate has the desired
 $1/\sqrt{n}$ statistical error rate. This makes it a useful optimizer variant to
 test for RND, especially for the linear RND head.
+
+Polyak--Ruppert averaging is relevant here because it is designed to recover the
+statistical averaging rate of stochastic approximation iterates
+\citep{polyak1992acceleration}.
+
 
 \paragraph{Why constant Adam does not give a count bonus.}
 Consider one fixed input $x$ that has been included in $n$ predictor updates.
@@ -1214,54 +1340,174 @@ is variance-scale. If the norm decays as $1/\sqrt{n}$, the squared error decays
 as $1/n$. This is why the next optimizer experiments should include both the
 optimizer and the readout type.
 
+
+\paragraph{Why not optimize the L2 norm directly?}
+It is mathematically possible to train the predictor with an L2-norm objective,
+for example
+\[
+L_t^{\mathrm{norm}}(\phi)
+=
+\frac1b
+\sum_{i=1}^{b}
+\left\lVert
+g_\phi(\tilde{x}_i)-f_\theta(\tilde{x}_i)
+\right\rVert_2.
+\]
+A smoothed version would be
+\[
+L_t^{\mathrm{smooth\text{-}norm}}(\phi)
+=
+\frac1b
+\sum_{i=1}^{b}
+\sqrt{
+\left\lVert
+g_\phi(\tilde{x}_i)-f_\theta(\tilde{x}_i)
+\right\rVert_2^2+\epsilon
+}.
+\]
+However, this is not the usual RND or regression objective. The exact norm is not
+differentiable at zero residual. Away from zero, its gradient with respect to the
+residual is
+\[
+\nabla_e \lVert e\rVert_2
+=
+\frac{e}{\lVert e\rVert_2},
+\]
+so the gradient magnitude does not shrink in proportion to the residual magnitude.
+By contrast, the squared loss has gradient
+\[
+\nabla_e \frac12\lVert e\rVert_2^2=e,
+\]
+which is smooth and naturally becomes small as the predictor approaches the
+target. This makes squared loss easier to optimize near the solution and gives
+the usual least-squares estimator.
+
+
+
+The statistical reason is also important. Squared loss corresponds to estimating a
+conditional mean and has the standard least-squares/variance interpretation. In a
+fixed-feature linear model, minimizing squared error leads to covariance and
+confidence formulas involving
+\[
+(\Phi^\top\Phi+\lambda I)^{-1},
+\]
+and the uncertainty for a feature vector $\varphi$ is a standard-error quantity
+of the form
+\[
+\sqrt{\varphi^\top(\Phi^\top\Phi+\lambda I)^{-1}\varphi}.
+\]
+That is exactly the square-root scale used by elliptical bonuses. Directly
+optimizing a norm loss is closer to an absolute-error or robust-regression
+objective: it can be useful when one wants robustness to outliers, but it is less
+aligned with the variance and confidence-bound theory that motivates count-like
+RND and elliptical bonuses \citep{huber1964robust,abbasi2011online}.
+
+
+
+Therefore the clean separation is:
+\[
+\boxed{
+L_t^{\mathrm{mse}}(\phi)
+=
+\frac1b\sum_i\frac12\lVert e_\phi(\tilde{x}_i)\rVert_2^2
+\quad
+\text{for predictor training}
+}
+\]
+and, for the count-scale experiment,
+\[
+\boxed{
+\mathcal{B}_{\mathrm{l2}}(x;\phi)
+=
+\lVert e_\phi(\tilde{x})\rVert_2
+\quad
+\text{for the SAC intrinsic reward}
+}.
+\]
+The two functions are different functions of the same residual. They are coupled,
+but they play different roles.
+
+
 \begin{table}[H]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3.5pt}
+\setlength{\tabcolsep}{2.5pt}
 \renewcommand{\arraystretch}{1.35}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{3.2cm} >{\centering\arraybackslash}p{1.2cm}@{}}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm}
+>{\raggedright\arraybackslash}p{3.4cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\centering\arraybackslash}p{1.1cm}
+>{\raggedright\arraybackslash}p{3.4cm}
+>{\raggedright\arraybackslash}p{4.1cm}@{}}
 \toprule
-\textbf{Optimizer} & \textbf{Memory used by the update} & \textbf{Expected RND-bonus behavior} & \textbf{Count-like?} \\
+\textbf{Optimizer} &
+\textbf{Memory used by the update} &
+\textbf{Expected RND-bonus behavior} &
+\textbf{Count-like?} &
+\textbf{Predictor objective optimized} &
+\textbf{Bonus readout sent to SAC} \\
 \midrule
 SGD, constant $\eta$ &
 No memory except current $\phi_t$ &
 Fast early decrease, then possible steady-state residual &
-\xmark \\
+\xmark &
+$L_t^{\mathrm{mse}}$. Do not switch to $L_t^{\mathrm{norm}}$ unless deliberately testing a nonsmooth/robust objective. &
+Canonical control: $\mathcal{B}_{\mathrm{mse}}$. Count-scale diagnostic: $\mathcal{B}_{\mathrm{l2}}$, but constant $\eta$ can still saturate. \\
 \midrule
 Momentum &
 Exponential moving average of gradients &
 Smoother and faster than SGD, but still constant-gain &
-\xmark \\
+\xmark &
+$L_t^{\mathrm{mse}}$. Momentum changes the update dynamics, not the recommended predictor loss. &
+$\mathcal{B}_{\mathrm{l2}}$ is the count-scale readout; $\mathcal{B}_{\mathrm{mse}}$ remains the canonical RND baseline. \\
 \midrule
 RMSProp &
 Exponential moving average of squared gradients &
 Adaptive scale, but old visits are forgotten &
-\xmark \\
+\xmark &
+$L_t^{\mathrm{mse}}$. RMSProp rescales gradients but does not change the least-squares target. &
+$\mathcal{B}_{\mathrm{l2}}$ tests the correct $1/\sqrt{n}$ scale, but RMSProp's moving memory still forgets old visits. \\
 \midrule
 Adam &
 Exponential moving average of gradients and squared gradients &
 Stable default; likely bonus saturation with constant $\eta$ &
-\xmark \\
+\xmark &
+$L_t^{\mathrm{mse}}$, matching standard RND predictor training. &
+Use $\mathcal{B}_{\mathrm{mse}}$ for the canonical Adam-RND baseline; use $\mathcal{B}_{\mathrm{l2}}$ as the count-scale readout ablation. \\
 \midrule
 AdaGrad &
 Cumulative sum of squared gradients &
 Soft feature-count behavior; step shrinks with repeated visits &
-$\approx$ \\
+$\approx$ &
+$L_t^{\mathrm{mse}}$. AdaGrad supplies cumulative memory through the optimizer, not through a new loss. &
+$\mathcal{B}_{\mathrm{l2}}$ is recommended when testing whether cumulative gradient memory yields $1/\sqrt{n}$ residual scale. \\
 \midrule
 SGD with $\eta_t=\eta_0/(t+t_0)$ &
 Global decreasing step size &
 Can produce $1/\sqrt{n}$ residual decay in the ideal local-average case &
-\cmark \\
+\cmark &
+$L_t^{\mathrm{mse}}$. The $1/t$ schedule supplies averaging behavior while keeping the squared-error regression objective. &
+$\mathcal{B}_{\mathrm{l2}}$ is the matching readout; $\mathcal{B}_{\mathrm{mse}}$ would report the squared, $1/n$-scale quantity. \\
 \midrule
 Polyak--Ruppert averaging &
 Average of past iterates &
 Can recover $1/\sqrt{n}$ statistical error while using noisy updates &
-\cmark \\
+\cmark &
+$L_t^{\mathrm{mse}}$. The averaged predictor $g_{\bar{\phi}_t}$ should still be trained by squared error. &
+$\mathcal{B}_{\mathrm{l2}}(x;\bar{\phi}_t)$ is the count-scale readout from the averaged predictor. \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \caption{Optimizer families for the RND predictor. The main issue for exploration
 is not only whether the loss goes down, but whether the residual behaves like a
-count-based uncertainty estimate.}
+count-based uncertainty estimate.
+The two added columns separate the predictor objective from the
+intrinsic-bonus readout. The verified recommendation for count-matching
+experiments is to optimize the MSE predictor loss $L_t^{\mathrm{mse}}$ while using
+the L2 residual $\mathcal{B}_{\mathrm{l2}}$ as the SAC bonus. This is not the same
+as claiming that all RND experiments should discard the canonical squared-error
+bonus; $\mathcal{B}_{\mathrm{mse}}$ remains the baseline readout.}
 \label{tab:optimizer-from-definition}
 \end{table}
 
@@ -1271,6 +1517,27 @@ designed to represent visit counts. For RND as an exploration bonus, the next
 experiments should test count-aware alternatives: AdaGrad, SGD with a $1/t$
 schedule, and Polyak--Ruppert averaging. These should be paired with an L2
 residual readout when the goal is to match the count oracle's $1/\sqrt{n}$ scale.
+
+
+The final design rule is therefore:
+\[
+\begin{aligned}
+&\boxed{\text{train the RND predictor with MSE}}
+\quad\text{and}\\[6pt]
+&\boxed{\;\begin{array}{c}
+\text{use the L2 residual as the bonus only}\\
+\text{when the desired bonus scale is }1/\sqrt{n}
+\end{array}\;}.
+\end{aligned}
+\]
+Directly optimizing the L2 norm is possible, but it changes the regression
+problem: it gives a nonsmooth or smoothed-norm objective rather than the standard
+least-squares objective, weakens the variance/confidence interpretation, and is
+less natural for the elliptical-bonus connection. In the proposed experiments,
+the loss function and the bonus function should therefore be two functions of the
+same residual: squared residual for training, residual norm for count-scale
+reward readout.
+
 
 \subsection{Optimizers used in practice}
 \label{sec:opt-used}
@@ -1299,9 +1566,8 @@ slower).
 \toprule
 \textbf{Source} & \textbf{Optim.} & \textbf{LR / $\epsilon$} & \textbf{Optimizer scope} & \textbf{Grad.\ clip} & \textbf{LR schedule} \\
 \midrule
-This work (\sout{\texttt{04\_many\_\allowbreak exploration\_\allowbreak method}}\claudeedit{\texttt{train.py}}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
-RLeXplore \texttt{rllte} (\sout{\texttt{02\_rnd\_\allowbreak rlexplore}}\claudeedit{\texttt{legacy/02\_rnd\_\allowbreak rlexplore}}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
-\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{12cm}@{}}{\claudecomment{driver renamed to train.py and the 02 precursor archived under legacy/ in the reorganization}} \\
+This work (\texttt{train.py}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
+RLeXplore \texttt{rllte} (\texttt{legacy/02\_rnd\_\allowbreak rlexplore}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
 \midrule
 Burda et al.\ 2019 (paper) & Adam & $10^{-4}$ / n/s & shared with PPO & n/s & none \\
 OpenAI repo & Adam (MPI) & $10^{-4}$ / $10^{-8}$ & shared (policy\,+\,value\,+\,predictor) & global-norm $1.0$ & none \\
@@ -1331,9 +1597,9 @@ CleanRL \url{https://github.com/vwxyzjn/cleanrl} (\texttt{ppo\_rnd\_envpool.py},
 %==============================================================================
 
 Every training run records its metrics to \textbf{its own JSON file} under
-\texttt{train\_\allowbreak runs/<run>/\allowbreak data/local/}. Because each run owns a distinct file, the
-$512$ concurrent work-queue workers never write the same path, so there is \textbf{no file-lock
-contention}. File access is slow, so logging is \textbf{group-style and written once}: every metric is
+\texttt{train\_\allowbreak runs/<run>/\allowbreak data/\allowbreak <sweep\_\allowbreak id>/local/}. Because each
+run owns a distinct file, the $512$ concurrent work-queue workers never write the same path, so there is
+\textbf{no file-lock contention}. File access is slow, so logging is \textbf{group-style and written once}: every metric is
 accumulated in memory by its callback at the evaluation cadence (\texttt{eval\_freq}) during training, and
 the whole record --- all groups --- is flushed in a \textbf{single file write at the end of the run}. No
 metric is written incrementally per step.
@@ -1347,6 +1613,18 @@ seed $s$ owns a contiguous id block of one id per algorithm in fixed order (\tex
 position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak elliptical}, \texttt{rnd\_\allowbreak state}), so
 seed $0$ takes ids $0$--$2$, seed $1$ takes $3$--$5$, and an earlier seed always has smaller ids than a
 later one.
+
+\paragraph{Sweep id (many sweeps per run folder).}
+A run folder may hold \textbf{many sweeps} --- reruns of the same configuration (which \emph{extend} coverage)
+or different configurations. Each sweep launch is given a \texttt{sweep\_\allowbreak id} of the form
+\texttt{<date>\_\allowbreak <tag>} (the tag names the configuration version), and everything it produces is
+scoped under that id: its queue under \texttt{queue/<sweep\_\allowbreak id>/}, its per-run JSONs under
+\texttt{data/<sweep\_\allowbreak id>/local/}, and its submitted job ids in
+\texttt{submitted\_\allowbreak jobids\_\allowbreak <sweep\_\allowbreak id>.txt}. A manifest
+(\texttt{data/SWEEPS.md}) catalogues every sweep. The analysis loads a sweep by id (pooling reruns that share a
+configuration tag), so superseded or invalid data in the same folder never contaminates a new analysis --- and
+the run id above is sweep-local, with the pair \texttt{(sweep\_\allowbreak id, run\_\allowbreak id)} unique
+within the folder.
 
 \paragraph{What is logged.}
 Table~\ref{tab:logging} lists every logged quantity by group. A \emph{group} is the set of metrics written
@@ -1367,22 +1645,26 @@ group's list) and persisted at the final write; a \emph{final} field is written 
 \addlinespace
 \texttt{algorithm}, \texttt{beta}, \texttt{a\_\allowbreak seed}, \texttt{z\_\allowbreak logging\_\allowbreak mode}, \texttt{total\_\allowbreak timesteps}, \texttt{eval\_\allowbreak freq}, \texttt{runtime\_\allowbreak seconds} & the run's argparse config + dispatch mode + wall clock & final (once at run end) & top-level & identify, reproduce, and group runs; per-run timing & every run \\
 \midrule
-\texttt{eval/\allowbreak mean\_\allowbreak extrinsic\_\allowbreak reward} ($+$ intrinsic, total, \texttt{ep\_\allowbreak length}); \texttt{eval/\allowbreak n\_\allowbreak eval\_\allowbreak episodes} & a fresh eval rollout of \texttt{n\_\allowbreak eval\_\allowbreak episodes} ($=100$; \texttt{\ldots\_final} at the last step) & intermediate, every \texttt{eval\_\allowbreak freq} ($50$k steps) $+$ a final eval at \texttt{total\_\allowbreak timesteps} & \texttt{eval\_\allowbreak history} & primary metric (final extrinsic reward) and the eval reward curve & every algorithm, every eval step \\
+\texttt{eval/\allowbreak mean\_\allowbreak extrinsic\_\allowbreak reward} ($+$ intrinsic, total, \texttt{ep\_\allowbreak length}); \texttt{eval/\allowbreak n\_\allowbreak eval\_\allowbreak episodes} & a fresh eval rollout of \texttt{n\_\allowbreak eval\_\allowbreak episodes} ($=100$), the final eval included (no special case) & intermediate, every \texttt{eval\_\allowbreak freq} ($50$k steps), including the final eval at \texttt{total\_\allowbreak timesteps} & \texttt{eval\_\allowbreak history} & primary metric (final extrinsic reward) and the eval reward curve & every algorithm, every eval step \\
 \addlinespace
 \texttt{visit\_\allowbreak counts/}\{\texttt{total\_\allowbreak visits}, \texttt{cells\_\allowbreak visited}, \texttt{open\_\allowbreak cells}, \texttt{coverage\_\allowbreak pct}\} & the visit-count env over the eval rollout & intermediate, every \texttt{eval\_\allowbreak freq} & \texttt{eval\_\allowbreak history} & maze coverage / exploration breadth & only when a visit-count env is attached (all run-2 algos) \\
 \midrule
 \texttt{train/\allowbreak mean\_\allowbreak extrinsic\_\allowbreak reward} ($+$ intrinsic, total, \texttt{episode\_\allowbreak length}); \texttt{train/\allowbreak n\_\allowbreak episodes\_\allowbreak averaged} & the past \texttt{n\_\allowbreak eval\_\allowbreak episodes} ($=100$) completed training episodes & intermediate, every \texttt{eval\_\allowbreak freq} & \texttt{train\_\allowbreak history} & training-time performance (the dashed training curve) & every algorithm, every eval step \\
 \midrule
-\texttt{distance\_\allowbreak to\_\allowbreak gt/}\{\texttt{min\_\allowbreak c\_\allowbreak l1\_\allowbreak diff}, \texttt{min\_\allowbreak c\_\allowbreak l2\_\allowbreak diff}, \texttt{min\_\allowbreak c\_\allowbreak l1\_\allowbreak inv}, \texttt{min\_\allowbreak c\_\allowbreak l2\_\allowbreak inv}, \texttt{normalized\_\allowbreak l2}, \texttt{normalized\_\allowbreak angle\_\allowbreak rad}\} & the learned bonus field vs the oracle \texttt{gt\_\allowbreak position\_\allowbreak velocity} visit-count field & intermediate, every \texttt{eval\_\allowbreak freq} & \texttt{distance\_\allowbreak history} & how close the learned bonus field is to the oracle (the core research metric) & \textbf{only} algorithms in \texttt{ALGORITHMS\_\allowbreak NO\_\allowbreak ACTION} (e.g.\ \texttt{gt\_\allowbreak position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak state}); \textbf{not} \texttt{rnd\_\allowbreak elliptical} \\
+\texttt{train/\allowbreak extrinsic\_\allowbreak reward}, \texttt{train/\allowbreak intrinsic\_\allowbreak reward}, \texttt{train/\allowbreak total\_\allowbreak reward}, \texttt{train/\allowbreak episode\_\allowbreak length}, \texttt{step} & one record per \emph{completed training episode} (episode-level, not step-level, to save space) & episode-level: one entry appended when each training episode ends & \texttt{train\_\allowbreak episode\_\allowbreak history} & the complete first-to-last training-episode trajectory; the per-eval training-evaluation curve $=$ mean over the past \texttt{n\_\allowbreak eval\_\allowbreak episodes} of these & every algorithm, every completed training episode \\
+\midrule
+\texttt{distance\_\allowbreak to\_\allowbreak gt/}\{\texttt{min\_\allowbreak c\_\allowbreak l1\_\allowbreak diff}, \texttt{min\_\allowbreak c\_\allowbreak l2\_\allowbreak diff}, \texttt{min\_\allowbreak c\_\allowbreak l1\_\allowbreak inv}, \texttt{min\_\allowbreak c\_\allowbreak l2\_\allowbreak inv}, \texttt{normalized\_\allowbreak l2}, \texttt{normalized\_\allowbreak angle\_\allowbreak rad}\} & the learned bonus field vs the oracle \texttt{gt\_\allowbreak position\_\allowbreak velocity} visit-count field & intermediate, every \texttt{eval\_\allowbreak freq} & \texttt{distance\_\allowbreak history} & how close the learned bonus field is to the oracle (the core research metric) & \textbf{OFF by default} (\texttt{log\_\allowbreak distance} switch); when on, \textbf{only} \texttt{ALGORITHMS\_\allowbreak NO\_\allowbreak ACTION} (e.g.\ \texttt{gt\_\allowbreak position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak state}), \textbf{not} \texttt{rnd\_\allowbreak elliptical} \\
 \bottomrule
 \end{tabular}
 \caption{What each run logs to its own per-run JSON, by group. All metrics are accumulated in memory at
 the evaluation cadence and written in a single file access at the end of the run (group-style logging, to
 minimize slow file access); one file per run avoids lock contention across the $512$ concurrent workers.
 \emph{Intermediate} $=$ one snapshot per \texttt{eval\_freq} step appended to the group's list;
-\emph{final} $=$ written once at run end. The \texttt{distance\_history} group is the only one with an
-algorithm-dependent trigger: it is logged only for algorithms whose intrinsic bonus is a state-only field
-(\texttt{ALGORITHMS\_NO\_ACTION}), which excludes \texttt{rnd\_elliptical}.}
+\emph{final} $=$ written once at run end. The \texttt{distance\_history} group is \textbf{off by default}
+(the \texttt{log\_distance} switch): gridding the maze through the intrinsic model every eval is overhead, so
+most runs omit it. When enabled it has an algorithm-dependent trigger --- logged only for algorithms whose
+intrinsic bonus is a state-only field (\texttt{ALGORITHMS\_NO\_ACTION}), which excludes
+\texttt{rnd\_elliptical}.}
 \label{tab:logging}
 \end{table}
 
@@ -1448,13 +1730,17 @@ RND input normalization & \texttt{rnd\_obs\_norm} & True \\
 RND distance & \texttt{rnd\_distance} & \texttt{mse} \\
 RND output dimension & $m$ & $128$ \\
 RND ensemble size & $N$ & $1$ \\
+\midrule\midrule
+Elliptical feature normalization & \texttt{feature\_\allowbreak normal\allowbreak ization} & \texttt{none} (raw features). \emph{Caveat:} this run predates unit-norm feature normalization, now the \texttt{rnd\_\allowbreak elliptical} default, so its elliptical bonus used unnormalized features. \\
 \bottomrule
 \end{tabular}
 \caption{Fixed (non-swept) hyperparameters of train run~1 (\texttt{y24vyh06}), held
 constant across the grid of Table~\ref{tab:trainrun1-sweep}. Values are read from the
 run configurations and match the sweep settings of Section~\ref{sec:environments}; the
 goal is \texttt{bottom\_right} here, before the later reorganization to
-\texttt{top\_right}.}
+\texttt{top\_right}.  The double rule separates the ordinary run hyperparameters
+(above) from a feature-normalization caveat (below): the elliptical bonus in this run
+used raw features, predating the unit-norm default.}
 \label{tab:trainrun1-fixed}
 \end{table}
 
@@ -1574,20 +1860,20 @@ Figure~\ref{fig:trainrun1-bar}; the legend is ordered by final reward.}
 \paragraph{Run.}
 Train run~2 re-runs the three best-performing methods of Train run~1 at their best-tuned intrinsic
 coefficients on the reorganized \texttt{07\_reconstruction} package, with the fixed \texttt{top\_right}
-goal. It is \textcolor{blue}{not a Weights \& Biases sweep}: configurations are handed out by a
-\textcolor{blue}{local file work queue} and each run logs \textcolor{blue}{only to local JSON
-(\texttt{use\_wandb}=False)}, so no run contacts wandb. The fixed (non-swept) hyperparameters are in
+goal. It is not a Weights \& Biases sweep: configurations are handed out by a
+local file work queue and each run logs only to local JSON
+(\texttt{use\_wandb}=False), so no run contacts wandb. The fixed (non-swept) hyperparameters are in
 Table~\ref{tab:trainrun2-fixed} and the axes in Table~\ref{tab:trainrun2-sweep}; they match the run-1
-configuration except for the values in \textcolor{blue}{blue} (\textcolor{blue}{$10^{6}$} training steps,
-a \textcolor{blue}{$100$}-episode final evaluation, the \textcolor{blue}{three-algorithm} subset, and up
-to \textcolor{blue}{$200$} seeds per algorithm). The run was \emph{cancelled after $312$ of the planned
+configuration except for a few values ($10^{6}$ training steps,
+a $100$-episode final evaluation, the three-algorithm subset, and up
+to $200$ seeds per algorithm). The run was \emph{cancelled after $312$ of the planned
 $600$ runs had finished}; every table below states $n$, the number of finished seeds it pools, per
 algorithm ($n=97$ for \texttt{gt\_\allowbreak position\_\allowbreak velocity}, $116$ for
 \texttt{rnd\_\allowbreak elliptical}, $99$ for \texttt{rnd\_\allowbreak state}). The cancellation and how
 to resume the remaining $288$ runs are recorded in the run folder's \texttt{CANCELLATION\_\allowbreak
 AND\_\allowbreak RESUME.md}.
 
-% Fixed (non-swept) hyperparameters of train run 2 — hand-authored static config; blue = differs from run 1.
+% Fixed (non-swept) hyperparameters of train run 2 — hand-authored static config; values differing from run 1 are noted in the caption.
 \begin{table}[H]
 \centering
 \footnotesize
@@ -1598,30 +1884,34 @@ AND\_\allowbreak RESUME.md}.
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Value} \\
 \midrule
 Environment & \texttt{env\_name} & \texttt{PointMaze\_Large-v3} \\
-Goal corner & \texttt{goal\_position} & \textcolor{blue}{\texttt{top\_right}} \\
+Goal corner & \texttt{goal\_position} & \texttt{top\_right} \\
 Continuing task & \texttt{continuing\_task} & True \\
 Reset target on goal & \texttt{reset\_target} & False \\
 Max episode steps & \texttt{env\_max\_episode} & $400$ \\
 Time-limit $\to$ termination & \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & False \\
 \midrule
-Training steps & \texttt{total\_timesteps} & \textcolor{blue}{$1\times10^{6}$} \\
+Training steps & \texttt{total\_timesteps} & $1\times10^{6}$ \\
 Discount factor & $\gamma$ & $0.999$ \\
 Policy / agent & --- & SAC (\texttt{MlpPolicy}) \\
 Compute device & \texttt{device} & \texttt{cpu} \\
 Evaluation frequency & \texttt{eval\_freq} & every $50000$ steps \\
 Eval episodes (mid-training) & \texttt{n\_eval\_episodes} & $100$ \\
-Eval episodes (final) & \texttt{n\_eval\_\allowbreak episodes\_\allowbreak final} & \textcolor{blue}{$100$} \\
+Eval episodes (final) & \texttt{n\_eval\_\allowbreak episodes\_\allowbreak final} & $100$ \\
 \midrule
 RND input normalization & \texttt{rnd\_obs\_norm} & True \\
 RND distance & \texttt{rnd\_distance} & \texttt{mse} \\
 RND output dimension & $m$ & $128$ \\
 RND ensemble size & $N$ & $1$ \\
+\midrule\midrule
+Elliptical feature normalization & \texttt{feature\_\allowbreak normal\allowbreak ization} & \texttt{none} (raw features). \emph{Caveat:} this run predates unit-norm feature normalization, now the \texttt{rnd\_\allowbreak elliptical} default, so its elliptical bonus used unnormalized features. \\
 \bottomrule
 \end{tabular}
 \caption{Fixed (non-swept) hyperparameters of train run~2, held constant across the axes of
 Table~\ref{tab:trainrun2-sweep}. Values match the run-1 configuration (Table~\ref{tab:trainrun1-fixed})
-except those in \textcolor{blue}{blue}: the \texttt{top\_right} goal, $10^{6}$ training steps, and a
-$100$-episode final evaluation.}
+except the following: the \texttt{top\_right} goal, $10^{6}$ training steps, and a
+$100$-episode final evaluation.  The double rule separates the ordinary run
+hyperparameters (above) from a feature-normalization caveat (below): the elliptical
+bonus in this run used raw features, predating the unit-norm default.}
 \label{tab:trainrun2-fixed}
 \end{table}
 
@@ -1634,10 +1924,10 @@ $100$-episode final evaluation.}
 \toprule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Values} \\
 \midrule
-Intrinsic-bonus method & \texttt{algorithm} & \textcolor{blue}{The three best methods of Train run~1}: \texttt{gt\_\allowbreak position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak elliptical}, \texttt{rnd\_\allowbreak state}. \\
-Intrinsic coefficient & $\beta$ & \textcolor{blue}{Pinned per algorithm to its run-1 $\beta^\star$}: \texttt{gt\_\allowbreak position\_\allowbreak velocity} $\beta{=}1$, \texttt{rnd\_\allowbreak elliptical} $\beta{=}0.01$, \texttt{rnd\_\allowbreak state} $\beta{=}100$ (not swept). \\
-Random seed & \texttt{a\_seed} & \textcolor{blue}{$0$--$199$} ($200$ seeds; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together). \\
-Logging / dispatch & --- & \textcolor{blue}{Local file work queue; per-run JSON only, no wandb.} \\
+Intrinsic-bonus method & \texttt{algorithm} & The three best methods of Train run~1: \texttt{gt\_\allowbreak position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak elliptical}, \texttt{rnd\_\allowbreak state}. \\
+Intrinsic coefficient & $\beta$ & Pinned per algorithm to its run-1 $\beta^\star$: \texttt{gt\_\allowbreak position\_\allowbreak velocity} $\beta{=}1$, \texttt{rnd\_\allowbreak elliptical} $\beta{=}0.01$, \texttt{rnd\_\allowbreak state} $\beta{=}100$ (not swept). \\
+Random seed & \texttt{a\_seed} & $0$--$199$ ($200$ seeds; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together). \\
+Logging / dispatch & --- & Local file work queue; per-run JSON only, no wandb. \\
 \bottomrule
 \end{tabular}
 \caption{Axes of train run~2. Each algorithm is run at its single best-tuned coefficient $\beta^\star$
@@ -1648,8 +1938,8 @@ Logging / dispatch & --- & \textcolor{blue}{Local file work queue; per-run JSON 
 
 \paragraph{Aggregation.}
 As in Train run~1, runs are grouped by algorithm (each at its single $\beta^\star$). The primary metric
-is the final eval extrinsic reward $r^{\mathrm{ext}}$ (the \textcolor{blue}{$100$}-episode evaluation at
-\textcolor{blue}{$10^{6}$} steps); for $n$ seeds with per-seed final rewards $R_i$ we report the seed mean
+is the final eval extrinsic reward $r^{\mathrm{ext}}$ (the $100$-episode evaluation at
+$10^{6}$ steps); for $n$ seeds with per-seed final rewards $R_i$ we report the seed mean
 $\bar{R}$ and standard error $\mathrm{SE}=s/\sqrt{n}$ (as in Eq.~(1) of Train run~1).
 Table~\ref{tab:trainrun2-best} lists $(\beta^\star,\bar{R},\mathrm{SE},n)$ per algorithm,
 Figure~\ref{fig:trainrun2-bar} shows the same final rewards as bars, and Figure~\ref{fig:trainrun2-curve}
@@ -1672,9 +1962,9 @@ cancelled at $312/600$ finished, so $n$ is the number of finished seeds pooled p
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.86\linewidth]{../train_runs/2026-06-24-21-24_run_2_after_reorganization/analysis/plots/bar_final_reward.pdf}
-\caption{Train run~2: final eval extrinsic reward $\bar{R}$ at \textcolor{blue}{$10^{6}$} steps per
+\caption{Train run~2: final eval extrinsic reward $\bar{R}$ at $10^{6}$ steps per
 algorithm (mean $\pm$ standard error over finished seeds), each at its $\beta^\star$. The
-\textcolor{blue}{three-algorithm} subset of Train run~1, at \textcolor{blue}{$10^{6}$} steps.}
+three-algorithm subset of Train run~1, at $10^{6}$ steps.}
 \label{fig:trainrun2-bar}
 \end{figure}
 
@@ -1682,8 +1972,8 @@ algorithm (mean $\pm$ standard error over finished seeds), each at its $\beta^\s
 \centering
 \includegraphics[width=0.92\linewidth]{../train_runs/2026-06-24-21-24_run_2_after_reorganization/analysis/plots/line_reward_curve.pdf}
 \caption{Train run~2: eval extrinsic reward over training for each algorithm at its $\beta^\star$
-(mean $\pm$ standard error over seeds). \textcolor{blue}{Each line is drawn only up to the largest step
-reached by at least $30$ seeds}, so no plotted segment averages fewer than 30 runs.}
+(mean $\pm$ standard error over seeds). Each line is drawn only up to the largest step
+reached by at least $30$ seeds, so no plotted segment averages fewer than 30 runs.}
 \label{fig:trainrun2-curve}
 \end{figure}
 
@@ -1697,393 +1987,1671 @@ reached by at least $30$ seeds}, so no plotted segment averages fewer than 30 ru
 \texttt{gt\_position\_velocity} visit-count field (lower is better; per column, best \textbf{bold},
 second \underline{underlined}). Only algorithms whose bonus is a per-cell field over the maze, comparable
 to the visit-count oracle, are listed: \texttt{gt\_position\_velocity} (the oracle itself, $\approx 0$)
-and \texttt{rnd\_state}. \textcolor{blue}{\texttt{rnd\_elliptical} is omitted} --- its elliptical bonus is
+and \texttt{rnd\_state}. \texttt{rnd\_elliptical} is omitted --- its elliptical bonus is
 not in \texttt{ALGORITHMS\_NO\_ACTION}, so no distance-to-ground-truth field is logged for it.}
 \label{tab:trainrun2-dist}
 \end{table}
-
-\subsection{Train run 3 (proposed): cumulative elliptical bonuses and count-aware RND optimizers}
+\subsection{Train run 3 (proposed): elliptical bonuses and RND optimizers}
 \label{sec:train-run-3-proposed}
 
 \paragraph{Purpose.}
-Train run~1 showed that the count oracle \texttt{gt\_position\_velocity} is the
-best method and that the learned \texttt{rnd\_elliptical} bonus is the closest
-learned competitor. The next run should not merely repeat the same sweep. It
-should test the two mechanisms that the previous sections identify as most
-important:
-\begin{enumerate}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
-\item whether the elliptical bonus should use a per-batch covariance
-$\Lambda_B$ or a cumulative covariance $\Lambda_t$;
-\item whether RND predictors need count-aware optimizers instead of constant-rate
-Adam.
-\end{enumerate}
-
-\paragraph{Main hypotheses.}
-The proposed run tests four hypotheses.
-\begin{description}[leftmargin=1.8em,itemsep=2pt,topsep=2pt]
-\item[H1.]
-A cumulative elliptical matrix
+Train run~3 tests two count-matching hypotheses.  The first hypothesis is that the
+elliptical bonus works because
 \[
-\Lambda_t=\lambda I+\sum_{\tau\le t}\varphi_\tau\varphi_\tau^\top
+\sqrt{\varphi^\top\Lambda^{-1}\varphi}
 \]
-will produce a more count-like bonus than the current per-batch matrix
+is a continuous analogue of the count bonus \(1/\sqrt{n}\).  The second hypothesis
+is that ordinary RND is limited because constant-rate Adam does not accumulate a
+visit count.  Thus the run is divided into two parts:
 \[
-\Lambda_B=\frac1b\Phi_B^\top\Phi_B+\lambda I.
+\begin{aligned}
+&\boxed{\text{Part I: how should the elliptical matrix }\Lambda\text{ remember data?}}\\[6pt]
+&\boxed{\text{Part II: how should the RND predictor be optimized?}}
+\end{aligned}
 \]
 
-\item[H2.]
-If \texttt{rnd\_elliptical} is strong because it approximates the count oracle,
-then the cumulative version should improve the distance-to-ground-truth metrics
-of Section~\ref{sec:metrics}, especially the normalized-angle and scale-fit
-metrics between the prediction field $p$ and the ground-truth field $g$.
-
-\item[H3.]
-For RND predictors, replacing constant-rate Adam with a count-aware optimizer
-such as AdaGrad, SGD with $\eta_t=\eta_0/(t+t_0)$, or Polyak--Ruppert averaging
-should reduce late-training bonus saturation.
-
-\item[H4.]
-The L2 residual readout
+\paragraph{Priority convention.}
+All sweep tables use the same priority notation:
 \[
-\lVert g_\phi(\tilde{x})-f_\theta(\tilde{x})\rVert_2
+\textbf{must try}
+\quad>\quad
+\text{try}
+\quad>\quad
+\textcolor{gray}{\text{less interesting}}.
 \]
-should match the count oracle's $1/\sqrt{n}$ scale better than the default
-squared-error readout
-\[
-\frac12\lVert g_\phi(\tilde{x})-f_\theta(\tilde{x})\rVert_2^2.
-\]
-\end{description}
+The full Cartesian product should \emph{not} be run.  A \textbf{must try} row
+belongs in the first-stage sweep.  A plain row is a second-stage refinement after
+the best family is found.  A \textcolor{gray}{gray} row is a diagnostic or
+stability check, not part of the main grid.
+\subsubsection{Part I: elliptical bonuses}
+\label{sec:train-run-3-elliptical}
 
-\paragraph{Fixed training setup.}
-Use the same base training configuration as Section~\ref{sec:env-loop}: SAC with
-\texttt{MlpPolicy}, \texttt{PointMaze\_Large-v3}, $2\times 10^6$ training steps,
-discount factor $\gamma=0.999$, evaluation every $50000$ steps, $100$ evaluation
-episodes during training, and $10^4$ final evaluation episodes. Since the project
-has been reorganized after Train run~1, use the current fixed goal convention
-\[
-\texttt{goal\_position}=\texttt{top\_right}
-\]
-for this run.
-
-\paragraph{Two-stage design.}
-The proposed run has two stages. Stage A is a cheaper diagnostic stage that checks
-whether the bonus has the right shape. Stage B is the full SAC training stage that
-checks whether the better-shaped bonus actually improves control.
-
-\paragraph{Stage A: bonus-shape diagnostic before full SAC.}
-Before launching the full grid, run every candidate bonus on the same saved replay
-stream. This removes policy feedback and asks a cleaner question: given the same
-visited data, does the method produce a count-like field?
-
-For each candidate, evaluate the prediction field $p$ on the grid $G$ and compare
-it to the oracle field $g$ using the existing metrics of Section~\ref{sec:metrics}.
-Also estimate the empirical decay slope of the bonus with respect to visit count.
-For grid cells indexed by $i$, let $n_i$ be the oracle visit count and $p_i$ the
-candidate bonus. Fit
-\begin{align}
-(\widehat{c},\widehat{\alpha}_{\mathrm{bonus}})
-=
-\argmin_{c,\alpha}
-\sum_{i\in G}
-\left[
-\log(p_i+\varepsilon)
--
-c
--
-\alpha\log(n_i+1)
-\right]^2.
-\end{align}
-A count-like L2 bonus should have
-\[
-\widehat{\alpha}_{\mathrm{bonus}}\approx -\frac12.
-\]
-A squared-error RND bonus should be expected to have a slope closer to $-1$ if the
-underlying residual norm is count-like.
-
-\paragraph{Probe field for action-conditioned bonuses.}
-The current distance-to-ground-truth logging skips action-conditioned methods
-because $g$ is defined over the state grid $G$, while methods such as
-\texttt{rnd\_elliptical} depend on $a$. For Train run~3, log a probe field by
-averaging over a small fixed action set:
-\begin{align}
-A_{\mathrm{probe}}
-=
-\{(0,0),(1,0),(-1,0),(0,1),(0,-1)\}.
-\end{align}
-For a grid state $s_i\in G$, define
-\begin{align}
-p_i^{\mathrm{probe}}
-=
-\frac{1}{|A_{\mathrm{probe}}|}
-\sum_{a\in A_{\mathrm{probe}}}
-r^{\mathrm{int}}(s_i,a).
-\end{align}
-Then use $p^{\mathrm{probe}}$ in the same distance metrics that compare $p$ to
-$g$. This lets us evaluate action-conditioned methods instead of skipping them.
-
-\paragraph{Stage B: full SAC sweep.}
-After Stage A, run the full SAC sweep on the candidates in
-Table~\ref{tab:trainrun3-candidates}. Keep the two oracle baselines and the
-current best learned methods as controls. The purpose is to isolate mechanism,
-not only to maximize reward.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3.5pt}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{5.3cm}@{}}
-\toprule
-\textbf{Class} & \textbf{Candidate} & \textbf{What it tests} \\
-\midrule
-Baseline &
-\texttt{no\_\allowbreak exploration} &
-SAC without intrinsic reward; verifies the task difficulty. \\
-\midrule
-Oracle count &
-\texttt{gt\_\allowbreak position\_\allowbreak velocity} &
-Upper reference: true count field $g$ over position and velocity. \\
-\midrule
-Oracle count &
-\texttt{gt\_\allowbreak position} &
-Simpler count reference: position-only counting. \\
-\midrule
-Current learned control &
-\texttt{rnd\_\allowbreak elliptical} &
-The current per-batch elliptical method from Train run~1. \\
-\midrule
-Elliptical &
-\texttt{elliptical\_\allowbreak cumulative\_\allowbreak sa} &
-Replace $\Lambda_B$ with cumulative $\Lambda_t$ using features of $[s;a]$. \\
-\midrule
-Elliptical &
-\texttt{elliptical\_\allowbreak discounted\_\allowbreak sa} &
-Use discounted cumulative memory with $\rho_\Lambda<1$ to test whether old data
-should gradually fade. \\
-\midrule
-Elliptical &
-\texttt{elliptical\_\allowbreak cumulative\_\allowbreak state} &
-Use cumulative random features of $s$ only; action-free, so $p$ can be compared
-directly to $g$. \\
-\midrule
-Elliptical &
-\texttt{elliptical\_\allowbreak cumulative\_\allowbreak next\_\allowbreak state} &
-Use cumulative random features of $s'$ only; tests whether next-state novelty is
-better aligned with the count oracle. \\
-\midrule
-Current RND control &
-\texttt{rnd\_\allowbreak next\_\allowbreak state\_\allowbreak adam\_\allowbreak mse} &
-Current RND style: Adam optimizer and squared-error bonus. \\
-\midrule
-Optimizer &
-\texttt{rnd\_\allowbreak next\_\allowbreak state\_\allowbreak adam\_\allowbreak l2} &
-Keeps Adam but changes readout from squared error to L2 residual; isolates the
-effect of the bonus scale. \\
-\midrule
-Optimizer &
-\texttt{rnd\_\allowbreak next\_\allowbreak state\_\allowbreak adagrad\_\allowbreak l2} &
-Tests whether cumulative adaptive steps reduce saturation for ordinary RND. \\
-\midrule
-Optimizer &
-\texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state\_\allowbreak adagrad\_\allowbreak l2} &
-Tests the cleanest match between fixed random features, a linear predictor, a
-count-aware optimizer, and L2 readout. \\
-\midrule
-Optimizer &
-\texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state\_\allowbreak sgd1t\_\allowbreak l2} &
-Tests the explicit $\eta_t=\eta_0/(t+t_0)$ schedule predicted to give
-$1/\sqrt{n}$ residual decay. \\
-\midrule
-Optimizer &
-\texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state\_\allowbreak polyak\_\allowbreak l2} &
-Tests Polyak--Ruppert averaging of the linear RND predictor. \\
-\bottomrule
-\end{tabular}
-\caption{Candidate methods for Train run~3. The elliptical block tests whether
-the feature covariance should accumulate across training. The optimizer block
-tests whether RND needs count-aware optimization and L2 residual readout.}
-\label{tab:trainrun3-candidates}
-\end{table}
-
-\paragraph{Swept hyperparameters.}
-Use a smaller but still logarithmic $\beta$ sweep for the pilot, then expand only
-the best candidates. The recommended pilot grid is
-\begin{align}
-\beta
-\in
-\{10^{-3},10^{-2},10^{-1},1,10,10^2\}.
-\end{align}
-For final confirmation, add the endpoints from Train run~1:
-\[
-\beta\in\{10^{-4},10^{-3},10^{-2},10^{-1},1,10,10^2,10^3\}.
-\]
-
-For the new elliptical methods, sweep the regularizer
-\[
-\lambda\in\{10^{-6},10^{-4},10^{-2}\}
-\]
-in Stage A. In full SAC, keep only the best $\lambda$ per elliptical method from
-Stage A, unless the Stage A curves show that performance is highly sensitive to
-$\lambda$.
-
-For discounted cumulative elliptical, sweep
-\[
-\rho_\Lambda\in\{0.99,0.999,1.0\},
-\]
-where $\rho_\Lambda=1.0$ is the ordinary cumulative version.
-
-For optimizer methods, use the following pilot settings:
-\begin{align}
-\eta
-&\in
-\{10^{-4},10^{-3}\}
-\quad\text{for Adam and AdaGrad},\\
-\eta_0
-&\in
-\{10^{-2},10^{-1},1\},
-\qquad
-t_0\in\{10^3,10^4\}
-\quad\text{for SGD with } \eta_t=\eta_0/(t+t_0).
-\end{align}
-The final SAC sweep should keep only the optimizer learning-rate setting that
-wins the Stage A bonus-shape diagnostic.
+\paragraph{Symbols used in this part.}
+Table~\ref{tab:trainrun3-elliptical-symbols} fixes the notation for the
+elliptical-bonus experiments.  Symbols that already appear in the global notation
+table keep the same meaning.
 
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{4.8cm}@{}}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.2cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{7.4cm}@{}}
 \toprule
-\textbf{Axis} & \textbf{Pilot values} & \textbf{Reason} \\
+\textbf{Symbol} & \textbf{Name} & \textbf{Meaning in Part I} \\
 \midrule
-Intrinsic coefficient $\beta$ &
-$\{10^{-3},10^{-2},10^{-1},1,10,10^2\}$ &
-Covers the useful range around the best Train run~1 values without the full cost. \\
-\midrule
-Elliptical regularizer $\lambda$ &
-$\{10^{-6},10^{-4},10^{-2}\}$ &
-Tests whether the inverse covariance is too sharp or too smooth. \\
-\midrule
-Discount factor for $\Lambda_t$ &
-$\rho_\Lambda\in\{0.99,0.999,1.0\}$ &
-Tests recent-memory versus full-memory feature counts. \\
-\midrule
-Optimizer learning rate $\eta$ &
-$\{10^{-4},10^{-3}\}$ &
-Covers the common RND learning-rate range. \\
-\midrule
-SGD schedule constants &
-$\eta_0\in\{10^{-2},10^{-1},1\}$, $t_0\in\{10^3,10^4\}$ &
-Controls how fast the $1/t$ optimizer becomes conservative. \\
-\midrule
-Random seeds \texttt{a\_seed} &
-$0$--$29$ pilot; $0$--$99$ confirmation &
-Pilot identifies promising methods; confirmation reduces seed noise. \\
+\(s\) & State & Current observation, as in Table~\ref{tab:notation}. \\
+\(a\) & Action & Continuous action, as in Table~\ref{tab:notation}. \\
+\(x=(s,a)\) & Elliptical input & State--action pair used by \texttt{rnd\_elliptical}. \\
+\(z_\varphi(x)\) & Raw random feature & Output of the frozen random encoder before feature normalization. \\
+\(\varphi(x)\) & Feature encoder & Normalized feature used in the covariance matrix; this is the feature denoted by \(\varphi\) in Table~\ref{tab:notation}. \\
+\(d_\varphi\) & Feature dimension & Dimension of \(\varphi(x)\); default \(128\). \\
+\(\Phi_C\) & Feature matrix & Matrix obtained by stacking \(\varphi(x)^\top\) for all \(x\in C\). \\
+\(\Lambda\) & Feature covariance / precision & Positive-definite matrix that stores feature-space coverage. \\
+\(\lambda\) & Regularizer & Diagonal prior in \(\Lambda\); same symbol as Table~\ref{tab:notation}. \\
+\(\beta\) & Intrinsic coefficient & Weight in \(r=r^{\mathrm{ext}}+\beta r^{\mathrm{int}}\); same symbol as Table~\ref{tab:notation}. \\
+\(B_t\) & Replay minibatch & Minibatch sampled from the replay buffer at update \(t\); the bonus is computed and the covariance (and any running feature statistics) are updated on this same sampled batch. \\
+\(\rho_\Lambda\) & Covariance discount & Discount factor for recency-weighted global covariance. \\
+\(\omega\) & Mixture weight & Weight on the global term in the mixed batch--global bonus. \\
+\(K_\Lambda\) & Cholesky refresh cadence & Number of covariance updates between two Cholesky refactorizations. \\
+\(\epsilon_\varphi\) & Feature-normalization constant & Small denominator constant in feature normalization; fixed at \(10^{-8}\). \\
+\(\epsilon_{\mathrm{chol}}\) & Cholesky jitter & Small diagonal correction added only before Cholesky factorization; not a ridge parameter. \\
+\(\epsilon_q\) & Quadratic-form floor & Numerical floor used before the square root; fixed at \(0\) unless strict positivity is needed for logging. \\
 \bottomrule
-\end{tabular}
-\caption{Recommended swept axes for Train run~3. The pilot should be used to
-select mechanisms; the confirmation run should use the full seed set only for the
-best candidates.}
-\label{tab:trainrun3-sweep}
+\end{tabular}%
+}
+\caption{Symbols for the elliptical-bonus part of Train run~3.}
+\label{tab:trainrun3-elliptical-symbols}
 \end{table}
 
-\paragraph{Primary metrics.}
-The primary control metric remains final evaluation extrinsic reward:
+\paragraph{Priority convention.}
+The tables below use the same priority convention as the rest of Train run~3:
 \[
-\bar{R}
+\textbf{must try}
+\quad>\quad
+\text{try}
+\quad>\quad
+\textcolor{gray}{\text{less interesting}}.
+\]
+Bold values are first-stage values.  Plain values are second-stage refinements.
+Gray values are diagnostics and should not be included in the main grid.
+
+\paragraph{Raw features and normalized features.}
+Let
+\[
+z_\varphi(x)\in\mathbb{R}^{d_\varphi}
+\]
+be the raw output of the frozen random encoder.  The matrix \(\Lambda\) should not
+be built from \(z_\varphi(x)\) directly, because the raw feature norm is an
+uncontrolled random-network artifact.  If one input has a larger raw norm than
+another, then
+\[
+z_\varphi(x)^\top\Lambda^{-1}z_\varphi(x)
+\]
+can be large because of feature amplitude, not because of genuine novelty.
+
+Therefore the covariance matrix will be built from a normalized feature
+\[
+\varphi(x)
 =
-\frac1n\sum_{i=1}^{n}R_i,
+\mathcal{N}_{\nu_\varphi}\!\left(z_\varphi(x)\right),
+\]
+where \(\nu_\varphi\) is the feature-normalization mode.  The default mode is
+unit-norm normalization:
+\begin{align}
+\mathcal{N}_{\mathrm{unit}}\!\left(z\right)
+&=
+\frac{z}{\lVert z\rVert_2+\epsilon_\varphi},
 \qquad
-\mathrm{SE}
+\epsilon_\varphi=10^{-8}.
+\end{align}
+Then
+\[
+\lVert \varphi(x)\rVert_2\le 1.
+\]
+This makes the scale of \(\lambda\) interpretable.  In particular, if
+\(\Lambda_0=\lambda I_{d_\varphi}\), then
+\[
+\varphi(x)^\top\Lambda_0^{-1}\varphi(x)
 =
-\frac{s}{\sqrt{n}}.
+\frac{\lVert\varphi(x)\rVert_2^2}{\lambda}
+\le
+\frac1\lambda,
+\qquad
+\mathcal{E}_0(x)\le \frac1{\sqrt{\lambda}}.
 \]
-As in Train run~1, select the best coefficient
+Thus, with unit-norm features, \(\lambda=1\) gives an initial maximum bonus of
+approximately \(1\), matching the scale of the clipped count oracle.
+
+A second normalization mode is coordinate RMS followed by unit normalization:
+\begin{align}
+u_t(z)
+&=
+\frac{z-\mu_t^\varphi}{\sigma_t^\varphi+\epsilon_\varphi},\\
+\mathcal{N}_{\mathrm{rms\text{-}unit}}(z)
+&=
+\frac{u_t(z)}{\lVert u_t(z)\rVert_2+\epsilon_\varphi}.
+\end{align}
+Here \(\mu_t^\varphi\) and \((\sigma_t^\varphi)^2\) are running feature statistics.
+They are updated from the replay minibatch \(B_t\) sampled from the buffer---the
+same batch used to compute the bonus and update the covariance, since the bonus is
+recomputed and these statistics refreshed every time a batch is sampled from the
+replay buffer.  This mode removes coordinate-scale imbalance before the final unit
+normalization.  It is more engineered than pure unit-norm normalization, so it is a
+second-stage option.
+
+The unnormalized mode
 \[
-\beta^\star
+\mathcal{N}_{\mathrm{none}}(z)=z
+\]
+is kept only as a diagnostic.  It makes \(\lambda\) difficult to interpret and can
+produce large intrinsic-reward spikes.
+
+\paragraph{Common elliptical bonus.}
+For any positive-definite matrix
+\[
+\Lambda_t\in\mathbb{R}^{d_\varphi\times d_\varphi},
+\qquad
+\Lambda_t=\Lambda_t^\top,
+\qquad
+v^\top\Lambda_t v>0
+\quad\text{for all }v\ne0,
+\]
+define the exact quadratic form
+\begin{align}
+q_t^{\mathrm{exact}}(x;\Lambda_t)
+&=
+\varphi(x)^\top\Lambda_t^{-1}\varphi(x).
+\end{align}
+The exact elliptical bonus is
+\begin{align}
+\mathcal{E}_t^{\mathrm{exact}}(x;\Lambda_t)
+&=
+\sqrt{q_t^{\mathrm{exact}}(x;\Lambda_t)}.
+\end{align}
+The square root is essential.  If \(\varphi(x)=e_j\) is a one-hot cell feature and
+\[
+\Lambda_t
 =
-\argmax_{\beta}
-\bar{R}(\texttt{algorithm},\beta)
+\lambda I_{d_\varphi}
++
+\sum_{\tau\le t}
+\varphi(x_\tau)\varphi(x_\tau)^\top,
 \]
-for each algorithm.
-
-\paragraph{Secondary diagnostic metrics.}
-In addition to final reward, log the following diagnostics:
-\begin{enumerate}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
-\item all distance-to-ground-truth metrics from Section~\ref{sec:metrics};
-\item the bonus-count slope $\widehat{\alpha}_{\mathrm{bonus}}$;
-\item the median intrinsic bonus in low-count, medium-count, and high-count cells;
-\item the saturation ratio
+then
 \[
-S_{\mathrm{sat}}
+\Lambda_t
 =
-\frac{
-\mathrm{median}\{p_i:\,n_i\text{ is in the top count quartile}\}
-}{
-\mathrm{median}\{p_i:\,n_i\text{ is in the bottom count quartile}\}
-+\varepsilon
-};
+\operatorname{diag}(\lambda+n_1,\ldots,\lambda+n_{d_\varphi}),
 \]
-\item for elliptical methods, $\log\det(\Lambda_t)$ or
-$\sum_j\log(\ell_j)$, which measures how much feature space has been covered;
-\item for RND methods, the mean L2 residual
+and for a point in cell \(j\),
+\begin{align}
+\mathcal{E}_t^{\mathrm{exact}}(x;\Lambda_t)
+&=
+\sqrt{
+e_j^\top\Lambda_t^{-1}e_j
+}
+=
+\frac{1}{\sqrt{\lambda+n_j}}.
+\end{align}
+Thus the elliptical bonus is a soft feature-space version of the count bonus
+\(1/\sqrt{n}\).  This is the same square-root quadratic form used by
+least-squares confidence ellipsoids in linear bandits \citep{abbasi2011online}.
+
+\paragraph{Stable quadratic-form computation.}
+The notation \(\Lambda_t^{-1}\varphi(x)\) is mathematical shorthand.  It should
+not be implemented by explicitly computing \(\Lambda_t^{-1}\).  The stable
+computation is a linear solve.
+
+First define the symmetric part of a matrix:
 \[
-\frac1{|G|}\sum_{s_i\in G}
-\lVert g_\phi(\tilde{s}_i)-f_\theta(\tilde{s}_i)\rVert_2
+\operatorname{sym}(M)
+=
+\frac12(M+M^\top).
 \]
-and the mean squared residual
+Before factorization, form
+\begin{align}
+A_t
+&=
+\operatorname{sym}(\Lambda_t)
++
+\epsilon_{\mathrm{chol}} I_{d_\varphi}.
+\end{align}
+The constant \(\epsilon_{\mathrm{chol}}\ge0\) is \emph{Cholesky jitter}.  It is a
+purely numerical diagonal correction used to make the factorization robust to
+floating-point round-off.  It is not the ridge regularizer \(\lambda\).  The
+default implementation should try
 \[
-\frac1{|G|}\sum_{s_i\in G}
-\frac12
-\lVert g_\phi(\tilde{s}_i)-f_\theta(\tilde{s}_i)\rVert_2^2.
+\epsilon_{\mathrm{chol}}=0
 \]
-\end{enumerate}
-
-\paragraph{Decision rules.}
-The next run should answer the following concrete questions.
-
-\begin{enumerate}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
-\item \textbf{Does cumulative elliptical improve the bonus shape?}
-It succeeds if its distance to $g$ is lower than the current per-batch
-\texttt{rnd\_elliptical} distance, and if
+first and retry with
 \[
-\widehat{\alpha}_{\mathrm{bonus}}
+\epsilon_{\mathrm{chol}}=10^{-8}
 \]
-is closer to $-1/2$.
+only if Cholesky factorization fails.  Larger jitter values should be treated as
+debugging evidence that the covariance construction is unstable, not as a normal
+sweep dimension.
 
-\item \textbf{Does cumulative elliptical improve control?}
-It succeeds as an RL method if its best-$\beta^\star$ final reward $\bar{R}$ is
-higher than or statistically comparable to the current \texttt{rnd\_elliptical}
-while also having better bonus-shape diagnostics.
+Since \(A_t\) is positive definite, compute its Cholesky factorization
+\begin{align}
+A_t
+&=
+L_tL_t^\top,
+\end{align}
+where \(L_t\) is lower triangular with positive diagonal entries.  Then solve
+\begin{align}
+L_t y_t(x)
+&=
+\varphi(x).
+\end{align}
+The computed quadratic form is
+\begin{align}
+\widehat q_t(x;\Lambda_t)
+&=
+\lVert y_t(x)\rVert_2^2.
+\end{align}
+Indeed,
+\begin{align}
+\lVert L_t^{-1}\varphi(x)\rVert_2^2
+&=
+\varphi(x)^\top L_t^{-\top}L_t^{-1}\varphi(x)\\
+&=
+\varphi(x)^\top (L_tL_t^\top)^{-1}\varphi(x)\\
+&=
+\varphi(x)^\top A_t^{-1}\varphi(x).
+\end{align}
+Thus the implementation computes the quadratic form by factorization and triangular
+solve, not by an explicit inverse.
 
-\item \textbf{Does action conditioning matter?}
-Compare \texttt{elliptical\_cumulative\_sa} against
-\texttt{elliptical\_cumulative\_state} and
-\texttt{elliptical\_cumulative\_next\_state}. If the state-only methods match
-$g$ better but the state-action method gets higher reward, then action novelty is
-useful even when it is not fully captured by the state-only ground-truth field.
+Finally define the implemented bonus as
+\begin{align}
+\mathcal{E}_t(x;\Lambda_t)
+&=
+\sqrt{
+\max\!\left(\widehat q_t(x;\Lambda_t),\,\epsilon_q\right)
+}.
+\end{align}
+In exact arithmetic, \(q_t^{\mathrm{exact}}\ge0\).  The maximum is only a guard
+against round-off.  The default is
+\[
+\epsilon_q=0.
+\]
+If a strictly positive value is needed for logging or normalization, use
+\(\epsilon_q=10^{-12}\); do not sweep it.
 
-\item \textbf{Does optimizer choice matter for RND?}
-AdaGrad, $1/t$ SGD, or Polyak averaging succeeds if it reduces late-stage
-saturation and gives a bonus-count slope closer to the target scale than
-constant-rate Adam.
+\paragraph{Batch evaluation.}
+For a batch \(C=\{x_i\}_{i=1}^c\), stack features as rows:
+\[
+\Phi_C
+=
+\begin{bmatrix}
+\varphi(x_1)^\top\\
+\vdots\\
+\varphi(x_c)^\top
+\end{bmatrix}
+\in\mathbb{R}^{c\times d_\varphi}.
+\]
+After computing \(A_t=L_tL_t^\top\), solve one triangular matrix equation
+\[
+L_tY^\top=\Phi_C^\top,
+\qquad
+Y\in\mathbb{R}^{c\times d_\varphi}.
+\]
+Then
+\[
+\widehat q_t(x_i;\Lambda_t)
+=
+\sum_{k=1}^{d_\varphi}Y_{ik}^2.
+\]
+This vectorized solve is the default implementation for replay minibatches.
 
-\item \textbf{Does readout scale matter?}
-If \texttt{rnd\_next\_state\_adam\_l2} has better count-like diagnostics than
-\texttt{rnd\_next\_state\_adam\_mse}, then the mismatch is partly the squared-error
-readout, not only the optimizer.
-\end{enumerate}
+\paragraph{Reduced numerical knobs.}
+The ridge \(\lambda\) and the jitter \(\epsilon_{\mathrm{chol}}\) have different
+roles:
+\[
+\boxed{
+\lambda I
+\text{ is the statistical prior in }\Lambda
+}
+\qquad
+\boxed{
+\epsilon_{\mathrm{chol}}I
+\text{ is a last-mile numerical correction before factorization.}
+}
+\]
+Because unit-norm features make \(\lambda\) interpretable, we do not need a large
+ridge sweep.  The cumulative methods should use \(\lambda=1\) as the first-stage
+value.  This is the count-prior choice: one unobserved unit-norm direction has
+bonus at most \(1\).  The batch method may use the smaller value
+\(\lambda=10^{-2}\), because its covariance is averaged by \(1/b\) and otherwise
+the bonus can become too flat.  Values near \(10^{-6}\) are deliberately removed
+from the main sweep; after unit normalization they mostly test numerical
+aggressiveness, not a distinct statistical idea.
 
-\paragraph{Expected result.}
-The most likely outcome is that cumulative elliptical will give the cleanest
-count-like bonus because it explicitly stores a running feature count through
-$\Lambda_t$. Among optimizer methods, the strongest candidate is
-\texttt{rnd\_linear\_next\_state\_adagrad\_l2}, because it combines fixed random
-features, a linear predictor, a cumulative optimizer, and an L2 residual readout.
-If these diagnostics improve but final SAC reward does not, then the limiting
-factor is probably not the mathematical count approximation itself, but how the
-intrinsic reward changes the policy's data distribution.
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{4.7cm}
+>{\raggedright\arraybackslash}p{5.8cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\nu_\varphi\) &
+Feature normalization &
+\(\{\mathbf{\mathrm{unit\text{-}norm}},
+\mathrm{rms\text{-}unit},
+\textcolor{gray}{\mathrm{none}}\}\) &
+Unit-norm features make the ridge interpretable and bound the initial bonus.
+RMS-unit additionally equalizes feature coordinates.  No normalization is only a
+diagnostic. &
+\textbf{must try} \\
+\midrule
+\(d_\varphi\) &
+Feature dimension &
+\(\{\mathbf{128},256,\textcolor{gray}{64}\}\) &
+The current value is \(128\).  A larger value tests richer random features but
+increases storage as \(O(d_\varphi^2)\) and Cholesky cost as \(O(d_\varphi^3)\). &
+try \\
+\midrule
+\(\epsilon_{\mathrm{chol}}\) &
+Cholesky jitter &
+Fixed adaptive rule: \(\mathbf{0}\), retry \(10^{-8}\) only on failure &
+This is not a statistical hyperparameter.  It only protects the Cholesky
+factorization from floating-point failure. &
+\textbf{must try} \\
+\midrule
+\(\epsilon_q\) &
+Quadratic-form floor &
+Fixed \(\mathbf{0}\); use \(10^{-12}\) only if strict positivity is needed &
+The exact quadratic form is nonnegative.  The floor only prevents an invalid
+square root under round-off. &
+\textcolor{gray}{less interesting} \\
+\midrule
+\(r_{\max}^{\mathcal{E}}\) &
+Bonus clip &
+\(\{\mathbf{\infty},10\}\) &
+The unclipped value tests the intended formula.  A finite clip is a stability
+check if rare reward spikes destabilize SAC. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Common numerical settings for all elliptical methods.  The main first-stage
+run fixes \(d_\varphi=128\), unit-norm features, adaptive Cholesky jitter, and no
+bonus clipping.}
+\label{tab:trainrun3-elliptical-common-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method E1: batch elliptical.}
+Let
+\[
+B_t=\{x_i\}_{i=1}^{b}
+\]
+be the replay minibatch at update \(t\).  The batch covariance is
+\begin{align}
+\Lambda_t^{\mathrm{batch}}
+&=
+\lambda I_{d_\varphi}
++
+\frac1b
+\sum_{x_i\in B_t}
+\varphi(x_i)\varphi(x_i)^\top\\
+&=
+\lambda I_{d_\varphi}
++
+\frac1b
+\Phi_{B_t}^\top\Phi_{B_t}.
+\end{align}
+The factor \(1/b\) makes this matrix approximately independent of minibatch size.
+This method measures novelty relative to the current replay minibatch only.
+
+\paragraph{Instabilities and remedies for E1.}
+The batch matrix can be low-rank because a minibatch need not span
+\(\mathbb{R}^{d_\varphi}\).  The ridge \(\lambda I\) makes the matrix positive
+definite.  Small \(\lambda\) gives sharper novelty but can produce large rewards
+in feature directions absent from the batch.  With unit-norm features, the first
+batch value to test is
+\[
+\lambda=10^{-2}.
+\]
+The value \(\lambda=1\) is a conservative check.  The old very small ridge values
+are not first-stage candidates.
+
+The conceptual limitation is not numerical: E1 does not remember lifetime visits.
+A state can receive a large bonus simply because its feature direction is absent
+from the current minibatch, even if the state has been visited many times before.
+Therefore E1 is a baseline, not the main count-like method.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{4.7cm}
+>{\raggedright\arraybackslash}p{5.8cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-4},10^{-3},\mathbf{10^{-2}},10^{-1},1\}\) &
+Train run~1 selected \(\beta^\star=10^{-2}\) for
+\texttt{rnd\_elliptical}.  E1 is the closest method to that implementation, so the
+grid is centered on \(10^{-2}\) and kept logarithmic. &
+\textbf{must try} \\
+\midrule
+\(\lambda\) &
+Ridge regularizer &
+\(\{\mathbf{10^{-2}},1,\textcolor{gray}{10^{-4}}\}\) &
+The batch covariance is averaged by \(1/b\), so \(\lambda=10^{-2}\) is a sharp but
+stable default.  \(\lambda=1\) checks whether the bonus becomes too flat.  The
+gray value is only a diagnostic. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Batch elliptical sweep.  E1 is the baseline for comparing local minibatch
+novelty against lifetime feature-space memory.}
+\label{tab:trainrun3-batch-elliptical-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method E2: global elliptical.}
+Let \(B_t\) be the replay minibatch sampled from the buffer at update \(t\).  The
+global covariance accumulates the feature outer-products of every sampled batch:
+\begin{align}
+\Lambda_t^{\mathrm{global}}
+&=
+\Lambda_{t-1}^{\mathrm{global}}
++
+\sum_{x_i\in B_t}
+\varphi(x_i)\varphi(x_i)^\top,
+\qquad
+\Lambda_0^{\mathrm{global}}=\lambda I_{d_\varphi}.
+\end{align}
+Equivalently,
+\[
+\Lambda_t^{\mathrm{global}}
+=
+\lambda I_{d_\varphi}
++
+\sum_{\tau\le t}
+\Phi_{B_\tau}^\top\Phi_{B_\tau}.
+\]
+Because the covariance is updated on each batch sampled from the replay buffer, it
+accumulates feature coverage over all sampled transitions, giving the lifetime
+(cumulative) feature-space memory that distinguishes E2 from the per-batch E1.  A
+transition contributes once for each time it is sampled, so the matrix weights
+transitions by how often they are replayed.
+
+\paragraph{Instabilities and remedies for E2.}
+The naive cumulative sum would require revisiting all past data.  The stable
+implementation is the rank-batch update
+\[
+\Lambda_t
+=
+\Lambda_{t-1}
++
+\Phi_{B_t}^\top\Phi_{B_t},
+\]
+which costs \(O(|B_t|d_\varphi^2)\) time and \(O(d_\varphi^2)\) memory.  The
+Cholesky factorization costs \(O(d_\varphi^3)\), so the factor can be cached and
+refreshed every \(K_\Lambda\) covariance updates.  The exact setting is
+\(K_\Lambda=1\).
+
+With unit-norm features, the theory-aligned ridge is
+\[
+\lambda=1.
+\]
+It acts like one prior visit in every feature direction and bounds the initial
+bonus by \(1\).  This is the main reason the ridge sweep is reduced.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{4.7cm}
+>{\raggedright\arraybackslash}p{5.8cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
+After unit normalization and \(\lambda=1\), the raw bonus is on approximately the
+same scale as a count bonus.  Therefore the grid is centered near the
+count-oracle coefficient rather than the old batch-elliptical coefficient. &
+\textbf{must try} \\
+\midrule
+\(\lambda\) &
+Ridge regularizer &
+\(\{\mathbf{1},10^{-2},\textcolor{gray}{10^{-4}}\}\) &
+\(\lambda=1\) is the count-prior value for unit-norm cumulative features.
+\(\lambda=10^{-2}\) tests more aggressive exploration.  The gray value tests
+near-singular behavior and should not be in the main grid. &
+try \\
+\midrule
+\(K_\Lambda\) &
+Cholesky refresh cadence &
+\(\{\mathbf{1},16\}\) &
+\(K_\Lambda=1\) is exact.  \(K_\Lambda=16\) tests whether cached factors reduce
+CPU time without changing learning behavior. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Global elliptical sweep.  E2 is the main count-like elliptical method.}
+\label{tab:trainrun3-global-elliptical-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method E3: discounted global elliptical.}
+The discounted method gives old visits less weight:
+\begin{align}
+\Lambda_t^{\mathrm{disc}}
+&=
+\rho_\Lambda\Lambda_{t-1}^{\mathrm{disc}}
++
+\sum_{x_i\in B_t}
+\varphi(x_i)\varphi(x_i)^\top
++
+(1-\rho_\Lambda)\lambda I_{d_\varphi},
+\qquad
+0<\rho_\Lambda\le1.
+\end{align}
+The term \((1-\rho_\Lambda)\lambda I_{d_\varphi}\) is necessary.  Without it, the
+baseline ridge would decay away.  With it, the matrix can be written as
+\[
+\Lambda_t^{\mathrm{disc}}
+=
+\lambda I_{d_\varphi}
++
+\sum_{\tau\le t}
+\rho_\Lambda^{t-\tau}
+\varphi(x_\tau)\varphi(x_\tau)^\top,
+\]
+up to the batching convention.  The effective memory length is approximately
+\[
+H_\Lambda
+\approx
+\frac{1}{1-\rho_\Lambda}.
+\]
+
+\paragraph{Instabilities and remedies for E3.}
+If \(\rho_\Lambda\) is too small, the method forgets useful lifetime coverage and
+becomes close to a recency bonus.  If \(\rho_\Lambda\) is too close to \(1\), it is
+nearly identical to the global method.  Therefore this is not a first-stage
+method.  It should be tested only after E2 shows whether lifetime memory is
+helpful.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{4.7cm}
+>{\raggedright\arraybackslash}p{5.8cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\rho_\Lambda\) &
+Covariance discount &
+\(\{0.999,\mathbf{0.9995},1,\textcolor{gray}{0.99}\}\) &
+\(0.999\) and \(0.9995\) correspond to effective windows of roughly \(10^3\) and
+\(2{\cdot}10^3\) covariance updates.  \(\rho_\Lambda=1\) recovers E2.  \(0.99\)
+is a short-memory diagnostic. &
+try \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
+Use the same count-scale grid as E2.  Discounting changes memory, not the intended
+reward scale. &
+try \\
+\midrule
+\(\lambda\) &
+Ridge regularizer &
+\(\{\mathbf{1},10^{-2}\}\) &
+Use the same reduced ridge choices as E2.  The ridge must also be re-injected by
+\((1-\rho_\Lambda)\lambda I\). &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Discounted global elliptical sweep.  E3 is a second-stage test of whether
+lifetime memory is too strong under a changing policy.}
+\label{tab:trainrun3-discounted-elliptical-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method E4: mixed batch--global elliptical.}
+The mixed method combines local minibatch novelty and lifetime novelty.  Let
+\[
+\mathcal{E}_t^{\mathrm{batch}}(x)
+=
+\mathcal{E}_t(x;\Lambda_t^{\mathrm{batch}}),
+\qquad
+\mathcal{E}_t^{\mathrm{global}}(x)
+=
+\mathcal{E}_t(x;\Lambda_t^{\mathrm{global}}).
+\]
+Because the two matrices have different scales, raw bonuses should not be mixed
+directly.  Instead maintain running second moments
+\begin{align}
+M_t^{v}
+&=
+\left(1-\frac1{\tau_{\mathrm{rms}}}\right)M_{t-1}^{v}
++
+\frac1{\tau_{\mathrm{rms}}}
+\cdot
+\frac1{|C_t|}
+\sum_{x\in C_t}
+\left(\mathcal{E}_t^{v}(x)\right)^2,
+\qquad
+v\in\{\mathrm{batch},\mathrm{global}\},
+\end{align}
+where \(C_t\) is the bonus-evaluation batch.  Define
+\begin{align}
+\widehat{\mathcal{E}}_t^{v}(x)
+&=
+\frac{\mathcal{E}_t^{v}(x)}
+{\sqrt{M_t^v}+\epsilon_{\mathrm{rms}}},
+\qquad
+v\in\{\mathrm{batch},\mathrm{global}\}.
+\end{align}
+The mixed bonus is
+\begin{align}
+\mathcal{E}_t^{\mathrm{mix}}(x)
+&=
+(1-\omega)\widehat{\mathcal{E}}_t^{\mathrm{batch}}(x)
++
+\omega\widehat{\mathcal{E}}_t^{\mathrm{global}}(x),
+\qquad
+0\le\omega\le1.
+\end{align}
+
+\paragraph{Instabilities and remedies for E4.}
+The main instability is scale mismatch.  The batch covariance is an averaged
+minibatch matrix, while the global covariance is cumulative.  The remedy is to
+mix RMS-normalized bonuses, not raw quadratic forms.  The second instability is
+early-time division by a small RMS; use
+\[
+\epsilon_{\mathrm{rms}}=10^{-8}
+\]
+and initialize \(M_0^v=1\), so the first updates do not create artificial reward
+spikes.
+
+The endpoints \(\omega=0\) and \(\omega=1\) duplicate the pure batch and pure
+global methods.  They are not part of the main mixed sweep.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{4.7cm}
+>{\raggedright\arraybackslash}p{5.8cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\omega\) &
+Global mixture weight &
+\(\{\mathbf{0.5},0.75,\textcolor{gray}{0.25},
+\textcolor{gray}{0},\textcolor{gray}{1}\}\) &
+\(\omega=0.5\) is the symmetric test of complementarity.  \(\omega=0.75\) favors
+the count-like global term.  The endpoints duplicate E1 and E2. &
+\textbf{must try} \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
+RMS normalization puts the mixed bonus on an approximately unit scale, so the
+count-scale grid is appropriate. &
+\textbf{must try} \\
+\midrule
+\(\tau_{\mathrm{rms}}\) &
+RMS time constant &
+\(\{\mathbf{10^4},10^5\}\) &
+A shorter time constant adapts faster; a longer one gives a stabler scale.  Do
+not cross many RMS constants with the main grid. &
+try \\
+\midrule
+\(\epsilon_{\mathrm{rms}}\) &
+RMS denominator constant &
+Fixed \(\mathbf{10^{-8}}\) &
+This is a numerical guard, not a statistical parameter. &
+\textcolor{gray}{less interesting} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Mixed elliptical sweep.  E4 tests whether local minibatch novelty and
+lifetime feature-space novelty are complementary.}
+\label{tab:trainrun3-mixed-elliptical-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Elliptical staging.}
+The full Cartesian product of all elliptical knobs should not be run.  The
+recommended staged design is:
+\[
+\begin{array}{ll}
+\textbf{E0:} &
+\{\textbf{E1: batch},\textbf{E2: global},\textbf{E4: mixed}\}
+\times
+\beta
+\times
+\texttt{a\_seed},
+\\[3pt]
+& d_\varphi=128,\quad
+\nu_\varphi=\mathrm{unit\text{-}norm},\quad
+\epsilon_{\mathrm{chol}}:0\to10^{-8},\quad
+r_{\max}^{\mathcal{E}}=\infty,
+\\[3pt]
+& \lambda=10^{-2}\text{ for E1},\quad
+\lambda=1\text{ for E2},\quad
+\omega=0.5\text{ for E4};
+\\[8pt]
+\textbf{E1:} &
+\text{best E0 family}
+\times
+\{\nu_\varphi\in\{\mathrm{unit\text{-}norm},\mathrm{rms\text{-}unit}\},
+\lambda\text{ one alternate value},
+K_\Lambda\text{ if global}\};
+\\[8pt]
+\text{E2:} &
+\text{discounted global around the best E2 setting, using }
+\rho_\Lambda\in\{0.999,0.9995\};
+\\[8pt]
+\textcolor{gray}{\text{E3:}} &
+\textcolor{gray}{stress tests:
+d_\varphi=256,\ r_{\max}^{\mathcal{E}}=10,\ \lambda=10^{-4}.}
+\end{array}
+\]
+The primary scientific comparison is therefore
+\[
+\boxed{\text{batch-only memory}}
+\quad\text{versus}\quad
+\boxed{\text{global lifetime memory}}
+\quad\text{versus}\quad
+\boxed{\text{mixed local/global memory}}.
+\]
+The reduced numerical design keeps the experiment focused: \(\lambda\) is no
+longer a large sweep, \(\epsilon_{\mathrm{chol}}\) is not swept at all, and feature
+normalization is the main engineering choice that makes the ridge meaningful.
+
+%------------------------------------------------------------------------------
+\paragraph{Implemented elliptical-bonus hyperparameters.}
+Table~\ref{tab:elliptical-implemented-hyperparameters} lists the hyperparameters
+actually set in the \texttt{EllipticalBonus} code (the per-batch method E1 used by
+\texttt{rnd\_elliptical}), with the realized default values.  By default the
+quadratic form \(\varphi^\top\Lambda^{-1}\varphi\) is computed \emph{inverse-free}
+by the Cholesky factorization and triangular solve of
+Section~\ref{sec:train-run-3-elliptical}: form
+\(A=\operatorname{sym}(\Lambda)+\epsilon_{\mathrm{chol}}I=L L^\top\), solve
+\(L\,y(x)=\varphi(x)\), and read \(\widehat q=\lVert y(x)\rVert_2^2\); no explicit
+inverse is formed.  The explicit-inverse path is retained as a non-default option
+for cross-checking.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.6cm}
+>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}p{3.1cm}
+>{\raggedright\arraybackslash}p{2.2cm}
+>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Code argument} & \textbf{Default} & \textbf{Note} \\
+\midrule
+\(d_\varphi\) &
+Feature dimension &
+\texttt{feature\_\allowbreak dim} &
+\(128\) &
+Output size of the frozen random \((s,a)\) encoder \(z_\varphi\). \\
+\midrule
+\(\nu_\varphi\) &
+Feature normalization &
+\texttt{feature\_\allowbreak normal\allowbreak ization} &
+\texttt{unit} &
+\(\varphi=z_\varphi/(\lVert z_\varphi\rVert_2+\epsilon_\varphi)\), so \(\lVert\varphi\rVert_2\le1\)
+and the ridge \(\lambda\) is interpretable.  Options \texttt{rms\_\allowbreak unit}
+(coordinate RMS then unit) and \texttt{none} (raw features). \\
+\midrule
+\(\epsilon_\varphi\) &
+Feature-norm constant &
+\texttt{feature\_\allowbreak norm\_\allowbreak eps} &
+\(10^{-8}\) &
+Denominator constant in the feature normalization. \\
+\midrule
+\(\lambda\) &
+Ridge regularizer &
+\texttt{regular\allowbreak ization} &
+\(10^{-6}\) &
+Diagonal prior in the per-batch covariance
+\(\Lambda_B=\tfrac1n\Phi^\top\Phi+\lambda I\). \\
+\midrule
+--- &
+Quadratic-form solver &
+\texttt{bonus\_\allowbreak method} &
+\texttt{cholesky} &
+Inverse-free Cholesky factor plus triangular solve,
+\(\widehat q=\lVert L^{-1}\varphi\rVert_2^2\).  The explicit-inverse path
+\texttt{inverse} is kept but is not the default. \\
+\midrule
+\(\epsilon_{\mathrm{chol}}\) &
+Cholesky jitter &
+\texttt{cholesky\_\allowbreak jitter} &
+\(0\) &
+Diagonal correction added before factorization; set \(10^{-8}\) only if the
+Cholesky factorization fails. \\
+\midrule
+\(\epsilon_q\) &
+Quadratic-form floor &
+\texttt{quadratic\_\allowbreak floor} &
+\(10^{-12}\) &
+Floor in \(\sqrt{\max(\widehat q,\epsilon_q)}\) guarding the square root against
+round-off. \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Elliptical-bonus hyperparameters as implemented in the
+\texttt{EllipticalBonus} class (the per-batch method E1 used by
+\texttt{rnd\_elliptical}).  By default features are unit-norm normalized
+(\(\nu_\varphi=\texttt{unit}\)); \texttt{rms\_unit} and \texttt{none} are also
+available.  These realized code defaults are what the implementation uses and may
+differ from the proposed sweep values above---in particular \(\epsilon_q\) defaults
+to \(10^{-12}\) here, and \(\epsilon_{\mathrm{chol}}\) is a fixed \(0\) rather than an
+automatic retry rule.}
+\label{tab:elliptical-implemented-hyperparameters}
+\end{table}
+
+%------------------------------------------------------------------------------
+\subsubsection{Part II: RND optimizer variants}
+\label{sec:train-run-3-rnd-optimizers}
+
+\paragraph{Common RND object.}
+For an RND input \(x\), define the residual
+\[
+e_\phi(x)
+=
+g_\phi(\tilde{x})-f_\theta(\tilde{x}),
+\]
+where \(f_\theta\) is frozen and \(g_\phi\) is trained.  The predictor objective
+is always the mean squared error
+\begin{align}
+L_t^{\mathrm{mse}}(\phi)
+=
+\frac1b\sum_{i=1}^{b}
+\frac12\lVert e_\phi(x_i)\rVert_2^2.
+\end{align}
+Only the optimizer and the bonus readout are changed.  The three readouts are
+\begin{align}
+\mathcal{B}_{\mathrm{mse}}(x;\phi)
+&=
+\frac12\lVert e_\phi(x)\rVert_2^2,\\
+\mathcal{B}_{\mathrm{l2}}(x;\phi)
+&=
+\lVert e_\phi(x)\rVert_2,\\
+\mathcal{B}_{\mathrm{l2norm}}(x;\phi)
+&=
+\frac{1}{\sqrt{m}}\lVert e_\phi(x)\rVert_2 .
+\end{align}
+The MSE readout is the canonical RND bonus \citep{burda2019exploration}.  The L2
+readout is the count-scale readout: if
+\(\mathbb{E}\lVert e_n\rVert_2^2=O(1/n)\), then
+\(\lVert e_n\rVert_2=O(1/\sqrt{n})\).  The normalized L2 readout removes the
+trivial \(\sqrt{m}\) dependence on output dimension.
+
+\paragraph{Common optimizer difficulties.}
+The predictor loss and the intrinsic reward must not be confused.  SAC receives
+\[
+r_t^{\mathrm{train}}
+=
+r_t^{\mathrm{ext}}
++
+\beta\,\mathcal{B}(x_t;\phi_t),
+\]
+but the RND optimizer differentiates \(L_t^{\mathrm{mse}}\), not
+\(\mathcal{B}\) directly.  We do \emph{not} switch the predictor objective to
+\(\lVert e\rVert_2\), because the exact norm is nonsmooth at zero and its
+gradient \(e/\lVert e\rVert_2\) does not vanish with the residual.  The clean
+design is:
+\[
+\boxed{\text{train with squared loss}}
+\qquad
+\boxed{\text{read out either squared error or L2 residual as reward}} .
+\]
+
+%------------------------------------------------------------------------------
+\paragraph{Method O1: Adam.}
+Adam keeps exponential moving averages of the gradient and squared gradient:
+\begin{align}
+m_t
+&=
+\rho_1 m_{t-1}+(1-\rho_1)h_t,\\
+q_t
+&=
+\rho_2 q_{t-1}+(1-\rho_2)(h_t\odot h_t),\\
+\widehat{m}_t
+&=
+\frac{m_t}{1-\rho_1^t},
+\qquad
+\widehat{q}_t
+=
+\frac{q_t}{1-\rho_2^t},\\
+\phi_{t+1}
+&=
+\phi_t
+-
+\eta_{\mathrm{Adam}}
+\frac{\widehat{m}_t}{\sqrt{\widehat{q}_t}+\epsilon_{\mathrm{Adam}}},
+\qquad
+h_t=\nabla_\phi L_t^{\mathrm{mse}}(\phi_t).
+\end{align}
+This is the practice baseline for RND and neural-network regression
+\citep{kingma2014adam,burda2019exploration}.
+
+\paragraph{Instabilities and remedies for O1.}
+Adam is stable for reducing a neural loss, but it is not a lifetime-count
+optimizer.  Both \(m_t\) and \(q_t\) are exponentially weighted, so old visits are
+forgotten.  With a constant effective step size, the residual can approach a
+nonzero steady state rather than decaying like \(1/\sqrt{n}\).  Adam must
+therefore be run in two forms: the canonical Adam-MSE baseline and the Adam-L2
+readout ablation.  The first tests standard RND; the second tests whether the
+readout scale alone explains the gap.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\mathcal{B}\) &
+Bonus readout &
+\(\{\mathbf{\mathcal{B}_{\mathrm{mse}}},
+\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\mathcal{B}_{\mathrm{l2}}\}\) &
+\(\mathcal{B}_{\mathrm{mse}}\) is the canonical RND baseline.
+\(\mathcal{B}_{\mathrm{l2norm}}\) is the count-scale ablation. &
+\textbf{must try} \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
+Train run~1 selected \(\beta^\star=10^2\) for \texttt{rnd\_state}.  The L2
+readout changes the reward scale, so the grid spans two orders below and above
+the old optimum. &
+\textbf{must try} \\
+\midrule
+\(\eta_{\mathrm{Adam}}\) &
+Adam learning rate &
+\(\{10^{-5},\allowbreak 3{\cdot}10^{-5},\allowbreak \mathbf{10^{-4}},\allowbreak
+3{\cdot}10^{-4},\allowbreak \mathbf{10^{-3}},\allowbreak 3{\cdot}10^{-3}\}\) &
+The original RND-style implementations often use \(10^{-4}\), while this project
+uses a separate predictor Adam at \(10^{-3}\) (Table~\ref{tab:opt-used}). &
+\textbf{must try} \\
+\midrule
+\((\rho_1,\rho_2)\) &
+Adam moment rates &
+\(\{(\mathbf{0.9},\mathbf{0.999}),\allowbreak (0.9,0.99),\allowbreak
+\textcolor{gray}{(0,0.999)}\}\) &
+\((0.9,0.999)\) is the standard setting.  Lower \(\rho_2\) forgets squared
+gradients faster; \(\rho_1=0\) removes momentum. &
+try \\
+\midrule
+\(\epsilon_{\mathrm{Adam}}\) &
+Adam denominator constant &
+\(\{\mathbf{10^{-8}},10^{-5}\}\) &
+\(10^{-8}\) is the standard Adam value; \(10^{-5}\) is a common stabilizing value
+in RND-style code. &
+try \\
+\midrule
+\(g_{\max}\) &
+Gradient clipping norm &
+\(\{\infty,0.5,1,10\}\) &
+Clipping protects the predictor from rare large residual gradients.  The
+unclipped value is the clean baseline. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Adam RND sweep.  Adam-MSE and Adam-L2 are both required: the first is the
+standard baseline, the second isolates the bonus-readout scale.}
+\label{tab:trainrun3-adam-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method O2: AdaGrad.}
+AdaGrad uses a cumulative sum of squared gradients:
+\begin{align}
+c_t
+&=
+c_{t-1}+h_t\odot h_t,\\
+\phi_{t+1}
+&=
+\phi_t
+-
+\eta_{\mathrm{Ada}}
+\frac{h_t}{\sqrt{c_t}+\epsilon_{\mathrm{Ada}}}.
+\end{align}
+Unlike Adam, \(c_t\) is not an exponential moving average.  It remembers all past
+squared gradients.  Thus repeated feature directions get smaller effective steps,
+which is the closest off-the-shelf optimizer analogue of a soft count
+\citep{duchi2011adaptive}.
+
+\paragraph{Instabilities and remedies for O2.}
+AdaGrad can fail in two opposite ways.  If \(c_0=0\) and the early gradients are
+small, the first steps can be too large because the denominator is tiny.  If
+\(c_t\) grows too quickly, the predictor can stall because the effective learning
+rate becomes too small.  The remedies are an initial accumulator \(c_0\), a
+larger base learning rate than Adam, and gradient clipping.  The main readout
+should be \(\mathcal{B}_{\mathrm{l2norm}}\), because AdaGrad is being tested as a
+count-memory optimizer.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\mathcal{B}\) &
+Bonus readout &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\mathcal{B}_{\mathrm{mse}}\}\) &
+The L2-normalized readout is the count-scale readout.  MSE is kept only as an
+ablation. &
+\textbf{must try} \\
+\midrule
+\(\eta_{\mathrm{Ada}}\) &
+AdaGrad learning rate &
+\(\{10^{-4},\allowbreak 3{\cdot}10^{-4},\allowbreak 10^{-3},\allowbreak 3{\cdot}10^{-3},\allowbreak
+\mathbf{10^{-2}},\allowbreak 3{\cdot}10^{-2},\allowbreak 10^{-1}\}\) &
+The standard library default is \(10^{-2}\).  Since the accumulator shrinks steps
+monotonically, both smaller and larger initial values should be tested. &
+\textbf{must try} \\
+\midrule
+\(c_0\) &
+Initial accumulator &
+\(\{\mathbf{0},10^{-4},10^{-2},1\}\) &
+\(c_0=0\) is the pure AdaGrad rule.  Positive \(c_0\) prevents extremely large
+early adaptive steps and acts like a prior count. &
+try \\
+\midrule
+\(\epsilon_{\mathrm{Ada}}\) &
+AdaGrad denominator constant &
+\(\{10^{-10},10^{-8},10^{-6}\}\) &
+\(10^{-10}\) is the standard AdaGrad value.  Larger values stabilize coordinates
+with tiny accumulated gradients. &
+try \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
+The optimizer changes the residual scale; the intrinsic coefficient must be
+re-tuned rather than copied from Adam-RND. &
+\textbf{must try} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{AdaGrad RND sweep.  This is the main cumulative-gradient-memory
+optimizer.}
+\label{tab:trainrun3-adagrad-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method O3: SGD with a \(1/t\) schedule.}
+The decreasing-step method uses
+\begin{align}
+\eta_t
+&=
+\max\!\left(
+\eta_{\min},
+\frac{\eta_0}{1+t/t_0}
+\right),\\
+\phi_{t+1}
+&=
+\phi_t-\eta_t h_t.
+\end{align}
+Here \(t\) is the predictor-update index.  The offset \(t_0\) prevents the step
+size from becoming small before the predictor has learned the target.
+
+\paragraph{Instabilities and remedies for O3.}
+A pure \(1/t\) schedule can freeze too early.  Conversely, a large \(\eta_0\) can
+make the reward oscillate because the predictor changes the intrinsic reward
+rapidly.  The mathematical remedy is the shifted schedule
+\(\eta_0/(1+t/t_0)\), plus an optional floor \(\eta_{\min}\).  The engineering
+remedy is to log the predictor loss and intrinsic-reward RMS separately from the
+SAC return.  This method is theoretically attractive because stochastic
+approximation with a decreasing step can behave like a running average, but it is
+less adaptive than Adam or AdaGrad.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(\mathcal{B}\) &
+Bonus readout &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\textcolor{gray}{\mathcal{B}_{\mathrm{mse}}}\}\) &
+The method is designed to produce a residual-norm scale \(O(1/\sqrt{n})\).  The
+squared readout would report the variance-scale \(O(1/n)\) quantity. &
+\textbf{must try} \\
+\midrule
+\(\eta_0\) &
+Initial learning rate &
+\(\{10^{-3},\allowbreak 3{\cdot}10^{-3},\allowbreak 10^{-2},\allowbreak 3{\cdot}10^{-2},\allowbreak 10^{-1}\}\) &
+A decaying schedule needs a larger initial learning rate than constant Adam
+because the effective step shrinks over training. &
+\textbf{must try} \\
+\midrule
+\(t_0\) &
+Schedule offset &
+\(\{10^2,10^3,10^4,10^5\}\) &
+The schedule is nearly constant before \(t\approx t_0\) and approximately \(1/t\)
+afterward.  This controls early fitting versus asymptotic averaging. &
+\textbf{must try} \\
+\midrule
+\(\eta_{\min}\) &
+Learning-rate floor &
+\(\{\mathbf{0},10^{-6},10^{-5}\}\) &
+The zero value is the clean stochastic-approximation rule.  A floor prevents the
+predictor from becoming completely frozen. &
+try \\
+\midrule
+\(g_{\max}\) &
+Gradient clipping norm &
+\(\{\infty,0.5,1,10\}\) &
+SGD has no adaptive denominator, so clipping is a direct stability control. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{SGD-\(1/t\) RND sweep.  This is the main decreasing-step optimizer.}
+\label{tab:trainrun3-sgd1t-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method O4: Adam with Polyak--Ruppert readout.}
+This method trains the predictor parameters \(\phi_t\) with Adam, but reads the
+bonus from an averaged predictor.  After a burn-in time \(t_{\mathrm{avg}}\),
+define
+\begin{align}
+\bar{\phi}_t
+&=
+\bar{\phi}_{t-1}
++
+\alpha_t(\phi_t-\bar{\phi}_{t-1}),\\
+\alpha_t
+&=
+\frac{1}{t-t_{\mathrm{avg}}+1},
+\qquad
+t\ge t_{\mathrm{avg}}.
+\end{align}
+The intrinsic bonus is
+\[
+\mathcal{B}(x;\bar{\phi}_t)
+\]
+rather than \(\mathcal{B}(x;\phi_t)\).
+
+\paragraph{Instabilities and remedies for O4.}
+Averaging from initialization can preserve a poor early predictor.  Therefore
+\(t_{\mathrm{avg}}\) should be swept.  The method also requires one extra copy of
+the predictor parameters, but this is only \(O(|\phi|)\) memory and no extra
+backward pass.  Adam-PR is not as theoretically clean as SGD-\(1/t\)-PR because
+Adam is still a constant-gain optimizer underneath; nevertheless it is cheap and
+tests whether readout averaging alone stabilizes the RND bonus.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\(t_{\mathrm{avg}}\) &
+Averaging start &
+\(\{0,10^3,10^4,5{\cdot}10^4\}\) &
+Delayed averaging removes bias from the initially untrained predictor. &
+try \\
+\midrule
+\(\alpha_t\) &
+Averaging rule &
+\(\{\mathbf{1/(t-t_{\mathrm{avg}}+1)},\allowbreak
+\textcolor{gray}{0.001},\allowbreak \textcolor{gray}{0.01}\}\) &
+Uniform Polyak averaging is the principled rule.  Fixed-rate EMA is a diagnostic,
+not the main method. &
+try \\
+\midrule
+\(\eta_{\mathrm{Adam}}\) &
+Adam learning rate &
+\(\{\mathbf{10^{-4}},3{\cdot}10^{-4},\mathbf{10^{-3}}\}\) &
+Use the two practice centers from RND implementations and this project, with one
+middle value. &
+try \\
+\midrule
+\(\mathcal{B}\) &
+Bonus readout &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\mathcal{B}_{\mathrm{mse}}\}\) &
+The averaged predictor is mainly useful if the readout is on count scale. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Adam-PR sweep.  This is a cheap averaging diagnostic, not the main
+count-memory optimizer.}
+\label{tab:trainrun3-adam-pr-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Method O5: SGD-\(1/t\) with Polyak--Ruppert readout.}
+This method combines the decreasing-step update with averaged readout:
+\begin{align}
+\phi_{t+1}
+&=
+\phi_t-\eta_t h_t,
+\qquad
+\eta_t=\max\!\left(\eta_{\min},\frac{\eta_0}{1+t/t_0}\right),\\
+\bar{\phi}_t
+&=
+\bar{\phi}_{t-1}
++
+\frac{1}{t-t_{\mathrm{avg}}+1}
+(\phi_t-\bar{\phi}_{t-1}).
+\end{align}
+The bonus is \(\mathcal{B}_{\mathrm{l2norm}}(x;\bar{\phi}_t)\).
+
+\paragraph{Instabilities and remedies for O5.}
+This is the most statistically principled optimizer family, but it has the most
+knobs: \(\eta_0\), \(t_0\), \(\eta_{\min}\), and \(t_{\mathrm{avg}}\).  To avoid
+a large grid, use the best \((\eta_0,t_0)\) from Method O3, then sweep only
+\(t_{\mathrm{avg}}\).  The averaged predictor should be updated without gradient
+tracking and should be used only for reward readout, not for further training.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
+\midrule
+\((\eta_0,t_0)\) &
+SGD-\(1/t\) schedule &
+Best two settings from Table~\ref{tab:trainrun3-sgd1t-sweep} &
+Do not re-cross the full SGD-\(1/t\) grid.  First identify a stable decreasing
+schedule, then test averaging. &
+\textbf{must try} \\
+\midrule
+\(t_{\mathrm{avg}}\) &
+Averaging start &
+\(\{0,10^3,10^4,5{\cdot}10^4\}\) &
+Polyak--Ruppert averaging can be biased by early iterates; delayed averaging is
+the main stabilization knob. &
+\textbf{must try} \\
+\midrule
+\(\mathcal{B}\) &
+Bonus readout &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}}\}\) &
+This method is designed specifically for count-scale residual norms. &
+\textbf{must try} \\
+\midrule
+\(\eta_{\min}\) &
+Learning-rate floor &
+\(\{\mathbf{0},10^{-6}\}\) &
+The zero value is the pure theory.  A small floor is a robustness check. &
+try \\
+\bottomrule
+\end{tabular}%
+}
+\caption{SGD-\(1/t\)-PR sweep.  This is the most theory-aligned RND optimizer
+variant, but it should reuse the best schedule from the SGD-\(1/t\) sweep.}
+\label{tab:trainrun3-sgd1t-pr-sweep}
+\end{table}
+
+%------------------------------------------------------------------------------
+\paragraph{Optimizer method-level staging.}
+The first-stage optimizer grid should consist of method bundles, not all
+hyperparameter combinations:
+\[
+\begin{array}{lll}
+\textbf{O0-a:} & \textbf{Adam-MSE} &
+\text{canonical RND baseline},\\
+\textbf{O0-b:} & \textbf{Adam-L2Norm} &
+\text{readout-only count-scale ablation},\\
+\textbf{O0-c:} & \textbf{AdaGrad-L2Norm} &
+\text{cumulative-gradient-memory test},\\
+\textbf{O0-d:} & \textbf{SGD-}1/t\textbf{-L2Norm} &
+\text{decreasing-step count-memory test},\\
+\textbf{O0-e:} & \textbf{SGD-}1/t\textbf{-PR-L2Norm} &
+\text{decreasing-step plus averaged-readout test},\\
+\text{O0-f:} & \mathrm{Adam\text{-}PR\text{-}L2Norm} &
+\text{cheap averaging diagnostic}.
+\end{array}
+\]
+The main RND input should be \texttt{rnd\_state}, because Train run~1 made it the
+strongest ordinary RND method and it admits distance-to-ground-truth logging.
+After the best optimizer family is found, repeat the winner on
+\texttt{rnd\_next\_state} and, if compute allows, on \texttt{rnd\_state\_action}.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.25}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm}
+>{\raggedright\arraybackslash}p{3.4cm}
+>{\raggedright\arraybackslash}p{5.4cm}
+>{\raggedright\arraybackslash}p{4.4cm}
+>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\toprule
+\textbf{Bundle} & \textbf{Optimizer} & \textbf{Fixed settings for first stage} & \textbf{Question answered} & \textbf{Priority} \\
+\midrule
+Adam-MSE &
+Adam &
+\(\mathcal{B}_{\mathrm{mse}}\), \(\eta=10^{-3}\), betas \((0.9,0.999)\) &
+What does the current standard RND optimizer achieve? &
+\textbf{must try} \\
+\midrule
+Adam-L2Norm &
+Adam &
+\(\mathcal{B}_{\mathrm{l2norm}}\), \(\eta\in\{10^{-4},10^{-3}\}\) &
+Is the RND problem mainly a readout-scale problem? &
+\textbf{must try} \\
+\midrule
+AdaGrad-L2Norm &
+AdaGrad &
+\(\mathcal{B}_{\mathrm{l2norm}}\), \(\eta_{\mathrm{Ada}}\in\{10^{-3},10^{-2},10^{-1}\}\),
+\(c_0\in\{0,10^{-2}\}\) &
+Does cumulative squared-gradient memory improve count matching? &
+\textbf{must try} \\
+\midrule
+SGD-\(1/t\)-L2Norm &
+SGD with decreasing step &
+\(\mathcal{B}_{\mathrm{l2norm}}\),
+\(\eta_0\in\{10^{-2},10^{-1}\}\),
+\(t_0\in\{10^3,10^4,10^5\}\) &
+Does a classical decreasing step recover residual decay? &
+\textbf{must try} \\
+\midrule
+SGD-\(1/t\)-PR-L2Norm &
+SGD with decreasing step plus averaged readout &
+Use best two SGD-\(1/t\) schedules, sweep \(t_{\mathrm{avg}}\) &
+Does Polyak--Ruppert averaging improve the count-scale residual? &
+\textbf{must try} \\
+\midrule
+Adam-PR-L2Norm &
+Adam plus averaged readout &
+\(\eta\in\{10^{-4},10^{-3}\}\), \(t_{\mathrm{avg}}\in\{10^3,10^4\}\) &
+Does averaging help even when the base optimizer is still Adam? &
+try \\
+\midrule
+\textcolor{gray}{Norm-loss RND} &
+\textcolor{gray}{Any optimizer} &
+\textcolor{gray}{Train with \(\sum_i\lVert e_i\rVert_2\) instead of MSE} &
+\textcolor{gray}{Tests a robust/nonsmooth objective, but breaks the least-squares
+connection to elliptical confidence.} &
+\textcolor{gray}{less interesting} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{First-stage optimizer bundles.  Each row is a small designed experiment;
+the full product of optimizer constants should not be run.}
+\label{tab:trainrun3-optimizer-bundles}
+\end{table}
+
+%------------------------------------------------------------------------------
+\subsubsection{Final run design}
+\label{sec:train-run-3-final-design}
+
+\paragraph{Recommended stages.}
+Train run~3 should be staged as follows:
+\[
+\begin{array}{ll}
+\textbf{E0:} &
+\{\textbf{batch},\textbf{global},\textbf{mixed}\}
+\times
+\beta_{\mathcal{E}}
+\times
+\texttt{a\_seed},\\[2pt]
+\textbf{E1:} &
+\text{best elliptical memory}
+\times
+\{\lambda,d_\varphi,\nu_\varphi,K_\Lambda\},\\[2pt]
+\text{E2:} &
+\text{discounted global around the best global setting},\\[4pt]
+\textbf{O0:} &
+\text{optimizer bundles in Table~\ref{tab:trainrun3-optimizer-bundles}}
+\times
+\beta
+\times
+\texttt{a\_seed},\\[2pt]
+\textbf{O1:} &
+\text{best optimizer family}
+\times
+\text{its method-specific learning-rate and stability knobs},\\[2pt]
+\text{O2:} &
+\text{repeat the best optimizer on one additional RND input}.
+\end{array}
+\]
+The primary elliptical comparison is
+\[
+\text{batch memory}
+\quad\text{versus}\quad
+\text{global lifetime memory}
+\quad\text{versus}\quad
+\text{mixed local/global memory}.
+\]
+The primary optimizer comparison is
+\[
+\begin{aligned}
+&\text{constant-rate Adam}\quad\text{versus}\\[2pt]
+&\text{cumulative AdaGrad}\quad\text{versus}\\[2pt]
+&\text{decreasing-step SGD}\quad\text{versus}\\[2pt]
+&\text{decreasing-step SGD with averaged readout}.
+\end{aligned}
+\]
+The final confirmation should rerun the best elliptical method and the best RND
+optimizer method with the same seed budget and evaluation protocol used for
+Train run~2.
+
+\subsection{Train run 4 (fully-JAX, sample-time reproduction of run 2)}
+\label{sec:train-run-4}
+
+\paragraph{Purpose.}
+Train run~4 reproduces Train run~2 with the SAC agent and the \texttt{rnd\_\allowbreak state} intrinsic moved
+entirely into JAX: \texttt{sbx} provides the XLA-jitted SAC, and a flax/optax RND predictor,
+target, and running observation normalization (\texttt{jax\_\allowbreak rnd.JaxRND}) replace the torch RND, so
+the per-step intrinsic path contains no torch. The aim is twofold --- confirm the JAX implementation
+reproduces run-2's learning curves, and measure the end-to-end speedup. The algorithm is
+identical to run~2; the only intended difference is $5\times10^{5}$ training steps (run~2
+used $10^{6}$). In particular the intrinsic reward is recomputed at \textbf{sample time} --- on each sampled
+gradient-step batch, exactly as run-2's \texttt{VectorIntrinsicReplayBuffer} does, not when a state is first
+visited. The SAC subclass \texttt{SACWithIntrinsic} performs this recompute at \texttt{sbx}'s numpy hook
+before the jitted update: the buffer stores the extrinsic reward, and $r=r^{\mathrm{ext}}+\beta\,r^{\mathrm{int}}$
+is rebuilt on the sampled batch every gradient step with the predictor trained then. Table~\ref{tab:trainrun4-parity}
+lists every hyperparameter against run~2; only a few values differ.
+
+\paragraph{Logging.}
+Run~4 adopts the revised logging convention (Section~\ref{sec:logging}): besides \texttt{eval\_\allowbreak history}
+and \texttt{train\_\allowbreak history}, every run saves \texttt{train\_\allowbreak episode\_\allowbreak
+history} --- one record per completed training episode (episode-level, not step-level, to save space) --- so the
+full first-to-last training-episode trajectory is retained. The eval-at-final-parameters special case is
+removed: the final evaluation uses the same \texttt{n\_\allowbreak eval\_\allowbreak episodes}
+($=100$) as every other evaluation. Run~4 logs the reward groups (\texttt{eval\_\allowbreak history} with the
+\texttt{visit\_\allowbreak counts/}$*$ coverage block, \texttt{train\_\allowbreak history}, and
+\texttt{train\_\allowbreak episode\_\allowbreak history}) but \textbf{not} the oracle-distance group
+(\texttt{distance\_\allowbreak history}): \texttt{log\_\allowbreak distance} is off by default, since run~4 is a
+reward comparison and run~2's data already carries the distance-to-ground-truth field. Each sweep's JSONs land
+under \texttt{data/<sweep\_\allowbreak id>/local/} (the sweep-id convention), so a rerun extends coverage
+without colliding with earlier data.
+
+% Parity table: run-2 vs run-4 hyperparameters; only a few values differ. Hand-authored static config.
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.0cm}@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Train run 2} & \textbf{Train run 4} \\
+\midrule
+Agent backend & SAC (Stable-Baselines3, torch) & SAC (\texttt{sbx}, JAX/XLA) \\
+\texttt{rnd\_\allowbreak state} intrinsic & torch RND & JAX RND (\texttt{jax\_\allowbreak rnd.JaxRND}) \\
+Intrinsic recompute & sample time (per sampled batch) & sample time (per sampled batch) \\
+Algorithms ($\beta$) & gt\_\allowbreak pos\_\allowbreak vel ($1$), rnd\_\allowbreak ell ($0.01$), rnd\_\allowbreak state ($100$) & gt\_\allowbreak pos\_\allowbreak vel ($1$), rnd\_\allowbreak ell ($0.01$), rnd\_\allowbreak state ($100$) \\
+Seeds & $0$--$199$ ($200$) & $0$--$199$ ($200$) \\
+Training steps & $1\times10^{6}$ & $5\times10^{5}$ \\
+Discount $\gamma$ & $0.999$ & $0.999$ \\
+Learning rate / batch / $\tau$ & $3{\times}10^{-4}$ / $256$ / $0.005$ & $3{\times}10^{-4}$ / $256$ / $0.005$ \\
+Buffer / learning starts & $10^{6}$ / $100$ & $10^{6}$ / $100$ \\
+\texttt{train\_\allowbreak freq} / \texttt{gradient\_\allowbreak steps} & $1$ / $1$ & $1$ / $1$ \\
+Eval freq / \texttt{n\_\allowbreak eval\_\allowbreak episodes} & $50$k / $100$ & $50$k / $100$ \\
+Final-eval episodes & $100$ (\texttt{\ldots\_final}) & $100$ (no special case) \\
+Episode-level train log & --- & \texttt{train\_\allowbreak episode\_\allowbreak history} \\
+\midrule\midrule
+Elliptical feature normalization & \texttt{none} (raw features) & \texttt{none} (raw features) \\
+\bottomrule
+\end{tabular}
+\caption{Train run~4 against Train run~2, hyperparameter by hyperparameter. Only a few values
+differ: run~4 swaps the agent and RND backends to JAX, runs $5\times10^{5}$ steps
+(half of run~2), drops the final-eval special case, and adds the episode-level training log. Every
+learning-relevant knob --- the SAC hyperparameters, the per-algorithm $\beta$, the sample-time intrinsic
+recompute, the seed budget --- is identical, so any curve difference is attributable to the backend or the
+shorter horizon, not to a changed algorithm.  The double rule separates the ordinary
+hyperparameters (above) from a feature-normalization caveat (below): both runs predate
+unit-norm feature normalization (now the \texttt{rnd\_elliptical} default), so the
+elliptical bonus used raw features in each.}
+\label{tab:trainrun4-parity}
+\end{table}
+
+\paragraph{Comparison and finding.}
+Figure~\ref{fig:trainrun4-comparison} overlays the eval extrinsic reward over training for run~2
+(\textbf{dashed}) and run~4 (\textbf{solid}), one color per algorithm, together with run~4's
+training-evaluation curve (a \textbf{dash-dot} line of the same color) --- the mean extrinsic reward over the
+past \texttt{n\_\allowbreak eval\_\allowbreak episodes} completed \emph{training} episodes at each evaluation
+step. Each line is drawn only up to the largest step reached by at least $30$ seeds.
+\textbf{Run~4 does not reproduce run~2.} The curves match up to $\approx2.5\times10^{5}$ steps, after which
+run~2 keeps climbing while run~4 grows slowly; at $5\times10^{5}$ steps run~4 reaches only
+$0.39$--$0.52\times$ run~2's reward for every algorithm (Table~\ref{tab:trainrun4-result}). The shortfall is
+attributable to the \textbf{SAC backend}, not the intrinsic path or the sample-time recompute:
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} uses the \emph{identical} torch visit-count bonus with
+the same sample-time recompute as run~2 and differs only in the agent (\texttt{sbx}/JAX SAC vs
+Stable-Baselines3/torch SAC), yet shows the same gap. So swapping the SAC implementation to \texttt{sbx} is
+\emph{not behavior-preserving} on this sparse-reward task --- even with every audited hyperparameter matched
+(Table~\ref{tab:trainrun4-parity}) --- and the divergence appears in the late-training exploitation phase,
+after the exploration bonus has largely decayed. Run~4 is, however, \textbf{$1.55$--$1.81\times$ faster} per
+run at matched step count ($\approx2.9$--$3.1$\,h vs $\approx4.7$--$5.2$\,h for $5\times10^{5}$ steps on $2$
+CPUs; below the $\sim2.2\times$ an isolated single-run benchmark suggested, because the sweep packs $8$ workers
+per node on slower, more contended hardware). The sweep was stopped at $395/600$ runs once the gap was
+established. \textbf{Takeaway:} folding the RND predictor into JAX is correct and faster, but reproducing
+run~2 in JAX would require matching \texttt{sbx}'s SAC to Stable-Baselines3's, which this run shows is not
+automatic.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{../train_runs/2026-06-25-21-54_run_4_fully_jax_sampletime_500K_3algo_200seed/analysis/plots/comparison_reward_curve.pdf}
+\caption{Train run~4 (fully-JAX, sample-time) vs Train run~2 (torch): eval extrinsic reward over training,
+one color per algorithm. \textbf{Dashed} = run~2 eval (to $10^{6}$ steps); \textbf{solid} = run~4 eval (to
+$5\times10^{5}$ steps); \textbf{dash-dot} = run~4 training-evaluation (past-$100$-episode training mean), same color.
+Bands are $\pm$ standard error over seeds; each line stops at the last step reached by $\geq 30$ seeds.
+Run-4 (solid) falls below run-2 (dashed) after $\approx2.5\times10^{5}$ steps --- see Table~\ref{tab:trainrun4-result}.}
+\label{fig:trainrun4-comparison}
+\end{figure}
+
+% Result table: run-4 vs run-2 at 500K + speedup. Hand-authored from the stopped sweep (395/600 runs).
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{1.5cm}@{}}
+\toprule
+\textbf{Algorithm} & \textbf{run-4 $R$} & \textbf{run-2 $R$} & \textbf{ratio} & \textbf{runtime (run-4 / run-2)} & \textbf{speedup} \\
+\midrule
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} & $15.6\pm2.2$ & $38.8\pm2.9$ & $0.40$ & $2.84$ / $5.15$\,h & $1.81\times$ \\
+\texttt{rnd\_\allowbreak elliptical} & $7.8\pm1.7$ & $20.2\pm2.7$ & $0.39$ & $3.07$ / $4.86$\,h & $1.58\times$ \\
+\texttt{rnd\_\allowbreak state} & $7.8\pm1.9$ & $14.9\pm2.3$ & $0.52$ & $3.03$ / $4.69$\,h & $1.55\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Train run~4 (fully-JAX, sample-time; $n=136/134/125$ seeds) vs Train run~2 (torch). $R$ is the mean
+eval extrinsic reward $\pm$ standard error at $5\times10^{5}$ steps; ratio $=$ run-4$/$run-2 (lower is a worse
+reproduction). Runtime is the median wall-clock per run on $2$ CPUs; run-2's $10^{6}$-step time is halved to
+the $5\times10^{5}$-step equivalent. Run-4 reaches $0.39$--$0.52\times$ run-2's reward while running
+$1.55$--$1.81\times$ faster: the JAX backend is faster, but the \texttt{sbx} SAC under-trains relative to
+Stable-Baselines3 on this task, so run-4 is not a faithful reproduction.}
+\label{tab:trainrun4-result}
+\end{table}
 
 \clearpage
 \bibliographystyle{plainnat}

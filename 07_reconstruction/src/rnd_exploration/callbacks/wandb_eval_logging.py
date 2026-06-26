@@ -61,8 +61,10 @@ class WandbEvalLoggingCallback(BaseCallback):
             except Exception as e:
                 if self.verbose > 0:
                     print(f"  Heatmap: {e}")
-        # Custom eval loop to collect extrinsic, intrinsic, and total per episode
-        n_ep = self.n_eval_episodes_final if (self.total_timesteps is not None and self.num_timesteps >= self.total_timesteps) else self.n_eval_episodes
+        # Custom eval loop to collect extrinsic, intrinsic, and total per episode.
+        # run-4 convention: NO final-eval special case -- the final eval uses the same n_eval_episodes as
+        # every other eval (the n_eval_episodes_final knob is retired).
+        n_ep = self.n_eval_episodes
         episode_extrinsic = []
         episode_intrinsic = []
         episode_total = []

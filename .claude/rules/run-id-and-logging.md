@@ -4,6 +4,26 @@ How run-2+ sweeps assign run ids and how each run logs locally (no wandb). The 0
 work queue replaced the W&B sweep as the config source; this rule fixes the id and logging conventions so
 the writeup's `\section{Logging}` (`development_document/main.tex`) and the analysis code stay in sync.
 
+## Sweep id — many sweeps per run folder, no legacy-data collisions
+- A run folder (`train_runs/<run-slug>/`) can hold **many sweeps**: reruns of the same config (which EXTEND
+  coverage) or different configs. Each sweep launch gets a **`sweep_id` = `<YYYY-MM-DD-HH-MM>_<tag>`** (the tag
+  names the config version, e.g. `obsrms-distoff`). Reruns of the same config share the tag, differ by timestamp.
+- Everything a sweep produces is scoped under its id, so sweeps never collide and old/invalid data never
+  pollutes a new analysis:
+  - queue:  `queue/<sweep_id>/{pending,running,done,failed}/`
+  - data:   `data/<sweep_id>/local/<run_id>_of_<total>.json`
+  - job ids: `slurm/submitted_jobids_<sweep_id>.txt` (cancel only a sweep's own ids; never `scancel -u`)
+- `slurm/build_queue.py --sweep_id <id>` builds one sweep's queue and appends a row to **`data/SWEEPS.md`**
+  (the manifest: id, size, config, `log_distance` on/off, status). `slurm/launch_queue.sh [tag]` generates the
+  id, builds the queue, and injects `SWEEP_ID` into every job (`sbatch --export=ALL,SWEEP_ID=...`); `worker.py`
+  reads `SWEEP_ID` and only touches that sweep's subtree.
+- **Analysis loads by sweep_id.** `load_records(data/<sweep_id>)` reads exactly that sweep (its `local/`
+  subdir). Pool multiple sweep_ids that share a config tag to combine reruns; mark superseded sweeps `legacy`
+  in `SWEEPS.md` to exclude them. Because the data path is `data/<sweep_id>/local/`, the existing
+  `load_records` glob (`<dir>/*/*.json`) works unchanged when pointed at one sweep's dir.
+- The `run_id` below is **sweep-local** (0..total-1 within one sweep); the `(sweep_id, run_id)` pair is unique
+  within the run folder.
+
 ## Run id (sweep position) — seed outermost
 - Each run carries an integer `run_id` (its 0-based position in the sweep) and `run_total` (the sweep
   size, 600 for 3 algorithms x 200 seeds). Together `run_id`/`run_total` is the run's identity ("i / total").
@@ -23,21 +43,34 @@ the writeup's `\section{Logging}` (`development_document/main.tex`) and the anal
   name. Do not remove that branch.
 
 ## Logging: own file per run, group-style, single write
-- **One JSON per run** under `train_runs/<run>/data/local/`. Because every run owns a distinct path, the
-  512 concurrent workers never write the same file — no file-lock contention. Never write a shared log file.
+- **One JSON per run** under `train_runs/<run>/data/<sweep_id>/local/`. Because every run owns a distinct path
+  (sweep-scoped), the 512 concurrent workers never write the same file — no file-lock contention, and runs from
+  different sweeps never collide. Never write a shared log file.
 - **Group-style, written once.** File access is slow, so every metric is accumulated in memory by its
   callback at the eval cadence (`eval_freq`) during training, and the whole record — all groups — is
   flushed in a SINGLE file write at run end (`_write_local_log`). Do NOT write incrementally per step.
-- The record has four groups: the top-level config/identity fields (`run_id`, `run_total`, `algorithm`,
-  `beta`, `a_seed`, `z_logging_mode`, `total_timesteps`, `eval_freq`, `runtime_seconds`), and three
-  per-eval history lists:
+- The record has five groups: the top-level config/identity fields (`run_id`, `run_total`, `algorithm`,
+  `beta`, `a_seed`, `z_logging_mode` or `trainer`, `total_timesteps`, `eval_freq`, `runtime_seconds`), and
+  four history lists:
   - `eval_history` — `eval/mean_*reward`, `eval/n_eval_episodes`, `visit_counts/*` (all algorithms).
   - `train_history` — `train/mean_*reward`, `train/mean_episode_length`, `train/n_episodes_averaged`,
     averaged over the past `n_eval_episodes` training episodes (all algorithms). Plotted as the DASHED
     training curve alongside the solid eval curve.
-  - `distance_history` — `distance_to_gt/*` (6 metrics). **Logged ONLY for algorithms in
-    `ALGORITHMS_NO_ACTION`** (state-only bonus fields, e.g. `gt_position_velocity`, `rnd_state`); NOT for
-    `rnd_elliptical`. This is the one group with an algorithm-dependent trigger.
+  - `train_episode_history` — **one record per COMPLETED training episode** (`step`,
+    `train/extrinsic_reward`, `train/intrinsic_reward`, `train/total_reward`, `train/episode_length`), so
+    the full first-to-last training-episode trajectory is saved. Episode-level (NOT step-level) to save
+    space; all algorithms. The per-eval training-evaluation curve = mean over the past `n_eval_episodes` of
+    these. Appended by `TrainEpisodeStatsCallback` on each episode end (this is the run-4 logging addition,
+    mirrored into the run-2 python repo so both trainers log it).
+  - `distance_history` — `distance_to_gt/*` (6 metrics). **OFF by default** (`log_distance` switch, default
+    False): gridding the whole maze through the intrinsic model at every eval is overhead and most runs only
+    need the reward curves. When enabled, logged ONLY for algorithms in `ALGORITHMS_NO_ACTION` (state-only
+    bonus fields, e.g. `gt_position_velocity`, `rnd_state`); NOT for `rnd_elliptical`. The switch is a
+    `Config.log_distance` field (python `train.py`) / `--log_distance` arg (JAX `run4_train.py`); the shared
+    `DistanceLoggingCallback` takes `enabled=` and is a no-op (empty history) when off.
+- **No final-eval special case.** Every evaluation — including the final one at `total_timesteps` — uses the
+  same `n_eval_episodes`; the `n_eval_episodes_final` knob is retired (run-2 set it to 100 = `n_eval_episodes`,
+  so this is no numeric change for run-2, just a cleaner convention).
 - The analysis (`analysis/code/common.py` `load_records`) reads every `data/local/*.json` by content, not
   filename, so old descriptive-name JSONs and new id-named JSONs analyze together.
 
@@ -45,5 +78,5 @@ the writeup's `\section{Logging}` (`development_document/main.tex`) and the anal
 - Document it in `train_runs/<run>/CANCELLATION_AND_RESUME.md` (status per algorithm, completed vs
   incomplete config lists). Resume with `slurm/resume_setup.py` (rebuilds the id-based queue and pre-marks
   finished `(algorithm, a_seed)` pairs as done), then `slurm/launch_queue.sh`.
-- Cancellation safety is the global rule: only `scancel` ids in `slurm/submitted_jobids.txt`; never
-  `scancel -u`. See `.claude/rules/slurm-submission.md`.
+- Cancellation safety is the global rule: only `scancel` ids in that sweep's own
+  `slurm/submitted_jobids_<sweep_id>.txt`; never `scancel -u`. See `.claude/rules/slurm-submission.md`.

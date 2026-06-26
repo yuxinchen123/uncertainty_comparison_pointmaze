@@ -28,6 +28,7 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         intrinsic_reward_fn: Optional[Callable] = None,
         beta: float = 1.0,
         intrinsic_reward_model: Optional[Any] = None,
+        opt_torch_reward: bool = False,
     ):
         super().__init__(
             buffer_size=buffer_size,
@@ -41,6 +42,9 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         self.intrinsic_reward_fn = intrinsic_reward_fn
         self.beta = beta
         self.intrinsic_reward_model = intrinsic_reward_model
+        # optimization switch: when True, combine reward = extrinsic + beta*intrinsic entirely in torch
+        # (no torch->numpy->torch round-trip) and pass the sampled tensors to the model without re-wrapping.
+        self.opt_torch_reward = opt_torch_reward
 
     def add(
         self,
@@ -67,22 +71,40 @@ class VectorIntrinsicReplayBuffer(ReplayBuffer):
         if self.intrinsic_reward_model is None or self.beta <= 0.0:
             return batch
 
-        # Build minimal samples dict directly from the sampled batch
-        obs = to_tensor(batch.observations, self.device)
-        next_obs = to_tensor(batch.next_observations, self.device)
-        actions = to_tensor(batch.actions, self.device)
-        samples = {
-            "observations": obs,
-            "next_observations": next_obs,
-            "actions": actions,
-        }
-        intrinsic_rewards = self.intrinsic_reward_model.compute(samples)
-        self.intrinsic_reward_model.update(samples)
-        intrinsic = to_numpy_flat(intrinsic_rewards)
-        extrinsic = to_numpy_flat(batch.rewards)
-        # SB3 expects rewards shape (batch_size, 1); (batch_size,) can cause critic MSE shape mismatch
-        total = (extrinsic + self.beta * intrinsic).reshape(-1, 1)
-        total = to_tensor(total, self.device)
+        if self.opt_torch_reward:
+            # OPTIMIZED PATH: batch.{observations,next_observations,actions} are already float32 tensors on
+            # self.device (SB3 _get_samples), so pass them straight through (no to_tensor re-wrap), and
+            # combine rewards entirely in torch -- no torch->numpy->torch round-trip.
+            samples = {
+                "observations": batch.observations,
+                "next_observations": batch.next_observations,
+                "actions": batch.actions,
+            }
+            intrinsic_rewards = self.intrinsic_reward_model.compute(samples)
+            self.intrinsic_reward_model.update(samples)
+            # intrinsic may be a torch tensor (RND/elliptical) or numpy (visit-count) -> get it into torch once
+            if not torch.is_tensor(intrinsic_rewards):
+                intrinsic_rewards = torch.as_tensor(intrinsic_rewards, device=batch.rewards.device)
+            # match SB3's (batch_size, 1) reward shape/dtype; total = extrinsic + beta*intrinsic, all torch
+            intrinsic_t = intrinsic_rewards.reshape(-1, 1).to(dtype=batch.rewards.dtype, device=batch.rewards.device)
+            total = batch.rewards + self.beta * intrinsic_t
+        else:
+            # ORIGINAL PATH: build the samples dict via to_tensor, then combine rewards in numpy and convert back.
+            obs = to_tensor(batch.observations, self.device)
+            next_obs = to_tensor(batch.next_observations, self.device)
+            actions = to_tensor(batch.actions, self.device)
+            samples = {
+                "observations": obs,
+                "next_observations": next_obs,
+                "actions": actions,
+            }
+            intrinsic_rewards = self.intrinsic_reward_model.compute(samples)
+            self.intrinsic_reward_model.update(samples)
+            intrinsic = to_numpy_flat(intrinsic_rewards)
+            extrinsic = to_numpy_flat(batch.rewards)
+            # SB3 expects rewards shape (batch_size, 1); (batch_size,) can cause critic MSE shape mismatch
+            total = (extrinsic + self.beta * intrinsic).reshape(-1, 1)
+            total = to_tensor(total, self.device)
 
         return ReplayBufferSamples(
             observations=batch.observations,
