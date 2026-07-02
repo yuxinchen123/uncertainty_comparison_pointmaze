@@ -103,3 +103,30 @@ launch (the reservation name/nodes change over time).
 ## 6. wandb rate limit — submit in batches
 Do **not** submit all jobs at once. Submit at most **10 jobs, then sleep 30s**, then the next 10, until all are
 in.
+
+## 7. Single-cpu multi-task job shapes: always `--ntasks-per-core=2`, then verify AllocCPUS (added 2026-07-02)
+All nodes have `ThreadsPerCore=2`. A job asking `--ntasks=16 --cpus-per-task=1` WITHOUT
+`--ntasks-per-core=2` gets each task charged a full core (`AllocCPUS=32`, double the intent), can have two
+tasks bound to ONE hardware thread (workers at ~50% CPU while allocated cores idle), and is rejected
+outright on 16-core nodes (adriatic/affogato class). This bit run 3.1.2's arm-B fleet. Therefore:
+- any job with `cpus-per-task=1` and many tasks MUST carry `--ntasks-per-core=2`;
+- after submitting a NEW job shape, verify `sacct -j <id> --format=JobID,JobName,AllocCPUS,NodeList`
+  shows the intended AllocCPUS before assuming capacity math holds; spot-check worker `%CPU` on the node
+  (healthy = ~100 x cpus-per-task).
+Also (verified 2026-07-02): **reservation jobs count toward the per-user partition caps** — puma01
+reservation CPUs eat the cpu partition's 400/user, jaguar03's eat the gpu partition's 400/user — so
+compute open-partition headroom as 400 minus BOTH normal and reservation usage in that partition. Read the
+true counted usage with `scontrol show assoc_mgr qos=cspartcpu flags=qos` (format `limit(current)`).
+
+## 8. Submission ORDER: open partitions FIRST, reserved nodes LAST (probe-verified 2026-07-02)
+Reservation jobs (`--qos=csresnolim`, flag `OverPartQOS`) are ADMITTED even when the per-user partition
+counter is already at 400/400 (verified: a probe started on puma01 at `cpu=400(400)`), but their usage
+still fills that counter against later NORMAL jobs. Order therefore sets the ceiling:
+- reserved-first (the old habit): reservation usage eats the 400s -> open ceiling shrinks accordingly.
+- **open-first, reserved-last: normal jobs fill every open cap, reservation jobs ride ABOVE the caps.**
+Per-user pools are INDEPENDENT per partition — count all five: cpu 400 + gpu 400 + nolim 80 + gnolim 80
+(gnolim = old-tier gpu nodes ai05/07-10, jinx01-02, titanx03; own QOS `cspartgnolim`; usable for CPU-only
+jobs with `--gpus-per-node=0`) + reserved jaguar03 224 + puma01 160 ≈ **1344 CPUs total ceiling**.
+So: submit the open-partition buckets to their caps first, then fill the reserved nodes. (Run 3.1.2
+launched reserved-first and paid the difference; step 1's reservation-first phrasing above is superseded
+by this ordering for capacity purposes — the reservation checks in step 1 still apply, just last.)

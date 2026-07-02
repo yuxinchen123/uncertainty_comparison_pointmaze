@@ -1,0 +1,12 @@
+% Train run 3.1.1 beta-star table: one row per method, its best config (training-episode reward).
+% Higher reward is better; rows sorted by Rbar descending; best bold, second-best underlined.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm} c c c r r r@{}}
+\toprule
+\textbf{Method} & \textbf{input$^\star$} & \textbf{$\lambda^\star$} & \textbf{$\beta^\star$} & \textbf{$\bar{R}$ ($\uparrow$)} & \textbf{SE} & \textbf{$n$} \\
+\midrule
+\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (sample) & $s'$ & $1$ & $10^{2}$ & \textbf{37.41} & 5.69 & 47 \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & $s'$ (fixed) & --- & $10^{2}$ & \underline{36.95} & 3.92 & 48 \\
+\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (add) & $s'$ & $1$ & $10^{1}$ & 28.57 & 4.69 & 53 \\
+\texttt{rnd\_\allowbreak elliptical} (batch) & $s'$ & $10^{-2}$ & $10^{-2}$ & 15.65 & 3.75 & 45 \\
+\bottomrule
+\end{tabular}

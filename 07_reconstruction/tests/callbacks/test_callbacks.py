@@ -17,6 +17,7 @@ from rnd_exploration.callbacks import (
     TrainEpisodeStatsCallback,
     WandbEvalLoggingCallback,
     DistanceLoggingCallback,
+    LocalLogCheckpointCallback,
 )
 from rnd_exploration.callbacks import train_episode_stats as tes_mod
 from rnd_exploration.callbacks import wandb_eval_logging as wel_mod
@@ -115,11 +116,18 @@ def test_train_episode_stats_get_monitor_missing_raises():
 
 
 def test_train_episode_stats_accumulates_and_weights_intrinsic():
-    """Golden: extrinsic + beta*intrinsic accumulate per step; edge: a done flushes and resets."""
-    # eval_freq=0 short-circuits the logging block so we isolate the accumulation logic
-    cb = TrainEpisodeStatsCallback(train_env=object(), eval_freq=0, n_eval_episodes=5, use_wandb=False, beta=0.5)
+    """Golden: extrinsic + beta*intrinsic accumulate per step; edge: a done flushes the episode (recording
+    the Monitor's total reward + length into episode_history, the run-4 convention) and resets."""
+    # Monitor-backed vec-env so the done branch can read the just-finished episode's total reward + length.
+    monitor = Monitor(_TinyGymEnv())
+    monitor.episode_returns = [9.0]
+    monitor.episode_lengths = [3]
+    vec_env = types.SimpleNamespace(envs=[monitor])
+    # eval_freq=0 short-circuits the windowed-logging block so we isolate the accumulation logic
+    cb = TrainEpisodeStatsCallback(train_env=vec_env, eval_freq=0, n_eval_episodes=5, use_wandb=False, beta=0.5)
 
     # golden path: a non-terminal step adds extrinsic (2.0) and beta-weighted intrinsic (0.5*4.0)
+    cb.num_timesteps = 1
     cb.locals = {"infos": [{"extrinsic_reward": 2.0, "intrinsic_reward": 4.0}], "dones": [False]}
     assert cb._on_step() is True
     assert cb._ep_extrinsic == 2.0
@@ -127,11 +135,17 @@ def test_train_episode_stats_accumulates_and_weights_intrinsic():
     assert cb._episode_extrinsics == []
 
     # edge: a terminal step accumulates again then flushes the episode totals and resets
+    cb.num_timesteps = 2
     cb.locals = {"infos": [{"extrinsic_reward": 2.0, "intrinsic_reward": 4.0}], "dones": [True]}
     assert cb._on_step() is True
     assert cb._episode_extrinsics == [4.0]
     assert cb._episode_intrinsics == [4.0]
     assert cb._ep_extrinsic == 0.0 and cb._ep_intrinsic == 0.0
+    # the completed episode is recorded with the Monitor's total reward + length and the ending step
+    assert cb.episode_history[-1] == {
+        "step": 2, "train/extrinsic_reward": 4.0, "train/intrinsic_reward": 4.0,
+        "train/total_reward": 9.0, "train/episode_length": 3,
+    }
 
 
 def test_train_episode_stats_logs_windowed_means(monkeypatch):
@@ -190,6 +204,9 @@ def test_wandb_eval_construction_defaults():
     assert cb.total_timesteps == 50000
     assert cb.n_eval_episodes_final == 42
 
+    # the callback itself defaults to running the standalone eval (the trainer overrides it to False)
+    assert cb.eval_standalone is True
+
     # edge: omit the optional kwargs and confirm the documented defaults
     cb_default = WandbEvalLoggingCallback(eval_env=eval_env, eval_freq=1, n_eval_episodes=3, use_wandb=False)
     assert cb_default.n_eval_episodes_final == 100
@@ -198,32 +215,38 @@ def test_wandb_eval_construction_defaults():
     assert cb_default.goal_cell is None and cb_default.start_cell is None
     assert cb_default.run_name == ""
     assert cb_default.beta == 0.0
+    assert cb_default.eval_standalone is True
 
 
-def test_wandb_eval_selects_episode_count(monkeypatch):
-    """Golden: final-eval count chosen once num_timesteps>=total; edge: normal count otherwise / when total is None."""
-    # capture the logged summary so we can read which episode count drove the eval loop
+def test_wandb_eval_standalone_gates_rollout(monkeypatch):
+    """eval_standalone gates the expensive deterministic rollout: ON -> the eval/* reward keys are logged
+    (with the regular n_eval_episodes -- the retired n_eval_episodes_final special case is gone); OFF
+    (the run-3.1.1 default) -> the rollout is skipped and no eval/* reward key appears."""
+    # capture the logged summary so we can read which keys the eval step produced
     captured = {}
     monkeypatch.setattr(wel_mod, "print_or_wandb_log", lambda use_wandb, summary, message: captured.update(summary=dict(summary)))
 
-    def run(total_timesteps, num_timesteps):
-        """Build a callback over fake env+model, run one eval step, return the selected episode count."""
+    def run(eval_standalone):
+        """Build a callback over a fake env+model, run one eval step, return the logged summary."""
         captured.clear()
         cb = WandbEvalLoggingCallback(
             eval_env=_OneStepVecEnv(), eval_freq=1, n_eval_episodes=2, use_wandb=False,
-            total_timesteps=total_timesteps, n_eval_episodes_final=5,
+            total_timesteps=10, eval_standalone=eval_standalone,
         )
         cb.model = _ConstantModel()
-        cb.num_timesteps = num_timesteps  # eval_freq=1 makes any value divisible -> loop runs
+        cb.num_timesteps = 10  # eval_freq=1 -> divisible -> the eval step runs
         assert cb._on_step() is True
-        return captured["summary"]["eval/n_eval_episodes"]
+        return captured["summary"]
 
-    # golden path: training has reached its budget -> final-eval count (5) is used
-    assert run(total_timesteps=10, num_timesteps=10) == 5
-    # edge: still below budget -> the regular eval count (2) is used
-    assert run(total_timesteps=10, num_timesteps=4) == 2
-    # edge: no total configured -> the regular eval count (2) is used regardless of step
-    assert run(total_timesteps=None, num_timesteps=10) == 2
+    # ON: the rollout runs and logs the reward keys at the regular n_eval_episodes (2) -- no final-eval special case
+    on = run(True)
+    assert on["eval/n_eval_episodes"] == 2
+    assert "eval/mean_extrinsic_reward" in on and "eval/mean_total_reward" in on
+    # OFF: the rollout is skipped, so no eval/* reward keys are logged (the step is still recorded)
+    off = run(False)
+    assert "eval/mean_extrinsic_reward" not in off
+    assert "eval/n_eval_episodes" not in off
+    assert off["step"] == 10
 
 
 def test_wandb_eval_skips_when_not_due():
@@ -237,6 +260,26 @@ def test_wandb_eval_skips_when_not_due():
     cb2 = WandbEvalLoggingCallback(eval_env=_OneStepVecEnv(), eval_freq=1000, n_eval_episodes=2, use_wandb=False)
     cb2.num_timesteps = 1234
     assert cb2._on_step() is True
+
+
+# ========================================================================================
+# LocalLogCheckpointCallback
+# ========================================================================================
+def test_local_log_checkpoint_fires_on_cadence_only():
+    """Golden: flush() fires exactly when num_timesteps is a multiple of eval_freq; edge: eval_freq<=0
+    disables the callback entirely (mirrors the other callbacks' cadence semantics)."""
+    calls = []
+    cb = LocalLogCheckpointCallback(eval_freq=100, flush=lambda: calls.append(1))
+    # golden path: only the multiple-of-100 steps flush
+    for step in (50, 100, 150, 200):
+        cb.num_timesteps = step
+        assert cb._on_step() is True
+    assert len(calls) == 2
+    # edge: non-positive cadence never flushes
+    cb_off = LocalLogCheckpointCallback(eval_freq=0, flush=lambda: calls.append(1))
+    cb_off.num_timesteps = 100
+    assert cb_off._on_step() is True
+    assert len(calls) == 2
 
 
 # ========================================================================================

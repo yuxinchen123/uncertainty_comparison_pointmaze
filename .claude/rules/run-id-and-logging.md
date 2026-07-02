@@ -46,9 +46,16 @@ the writeup's `\section{Logging}` (`development_document/main.tex`) and the anal
 - **One JSON per run** under `train_runs/<run>/data/<sweep_id>/local/`. Because every run owns a distinct path
   (sweep-scoped), the 512 concurrent workers never write the same file — no file-lock contention, and runs from
   different sweeps never collide. Never write a shared log file.
-- **Group-style, written once.** File access is slow, so every metric is accumulated in memory by its
-  callback at the eval cadence (`eval_freq`) during training, and the whole record — all groups — is
-  flushed in a SINGLE file write at run end (`_write_local_log`). Do NOT write incrementally per step.
+- **Group-style, checkpointed at the eval cadence (revised 2026-07-02, run 3.1.2).** Every metric is
+  accumulated in memory by its callback; the whole record — all groups — is flushed by `_write_local_log`
+  atomically (write `<name>.json.tmp`, then `os.replace`) at EACH eval cadence with `"completed": false`,
+  and once at run end with `"completed": true` (`LocalLogCheckpointCallback`, appended last so a flush
+  sees the same step's fresh history rows). Do NOT write incrementally per step. Why the revision: under
+  the original write-once-at-end convention, 488 run-3.1.1 runs killed at the Slurm job walltime left ZERO
+  data despite 10+ trained hours each; ~20 checkpoint writes per 1M-step run to the run's OWN file are
+  negligible filesystem load and leave usable partial curves. Analyses and progress counters MUST treat
+  `completed=false` records as partial (count separately; usable for truncated curves, never for final-
+  reward aggregates); a missing `completed` field means an old write-once record, i.e. complete.
 - The record has five groups: the top-level config/identity fields (`run_id`, `run_total`, `algorithm`,
   `beta`, `a_seed`, `z_logging_mode` or `trainer`, `total_timesteps`, `eval_freq`, `runtime_seconds`), and
   four history lists:
@@ -78,5 +85,12 @@ the writeup's `\section{Logging}` (`development_document/main.tex`) and the anal
 - Document it in `train_runs/<run>/CANCELLATION_AND_RESUME.md` (status per algorithm, completed vs
   incomplete config lists). Resume with `slurm/resume_setup.py` (rebuilds the id-based queue and pre-marks
   finished `(algorithm, a_seed)` pairs as done), then `slurm/launch_queue.sh`.
+- **Requeueing configs whose attempt was killed mid-run (added 2026-07-02):** a rerun OVERWRITES the same
+  per-run JSON path on its first checkpoint, destroying the killed attempt's partial record. Before moving
+  a killed config's marker from `running/` back to `pending/`, ARCHIVE its partial JSON (completed=false)
+  to `data/<sweep_id>/killed_attempts_<YYYY-MM-DD-HH-MM>/` — that preserves the lost-work evidence (steps
+  reached, runtime at last checkpoint) for the infrastructure accounting while keeping `local/` truthful.
+  Job-level timing needs nothing extra: sacct keeps every job's Start/End permanently, and each attempt's
+  `runtime_seconds` restarts from its own clock, so paces never mix attempts.
 - Cancellation safety is the global rule: only `scancel` ids in that sweep's own
   `slurm/submitted_jobids_<sweep_id>.txt`; never `scancel -u`. See `.claude/rules/slurm-submission.md`.

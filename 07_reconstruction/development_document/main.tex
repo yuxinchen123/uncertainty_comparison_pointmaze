@@ -41,6 +41,30 @@
 \newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
 \newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
 
+% Python code listings (used in the "When statistics are updated" design block).
+\usepackage{listings}
+\definecolor{code-keyword}{RGB}{0,0,170}
+\definecolor{code-comment}{RGB}{110,110,110}
+\definecolor{code-string}{RGB}{160,40,40}
+\lstdefinestyle{pythoncode}{%
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{code-keyword},
+  commentstyle=\color{code-comment}\itshape,
+  stringstyle=\color{code-string},
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{gray!45},
+  framesep=4pt,
+  xleftmargin=6pt,
+  aboveskip=6pt,
+  belowskip=6pt,
+}
+
 \mathtoolsset{showonlyrefs}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -118,7 +142,7 @@ Feature dimension & $d_\varphi$ & Elliptical feature size (default $128$) & Elli
 Ensemble size & $N$ & Number of predictors (default $1$) & RND ensemble \\
 Disagreement weight & $\beta_{\mathrm{std}}$ & Weight on ensemble std (default $0$) & RND ensemble \\
 Feature covariance & $\Lambda$ & $\tfrac1n\Phi^\top\Phi+\lambda I$ over a batch & Elliptical bonus \\
-Regularizer & $\lambda$ & Diagonal load on $\Lambda$ (default $10^{-6}$) & Elliptical bonus \\
+Regularizer & $\lambda$ & Diagonal load on $\Lambda$ (default $10^{-2}$) & Elliptical bonus \\
 Ground-truth field & $g$ & Oracle bonus vector over the grid (gt\_position\_velocity counts) & Distance to GT \\
 Prediction field & $p$ & A method's bonus vector over the grid & Distance to GT \\
 Free scale & $c$ & Scalar aligning $p$ to $g$ & Distance metrics \\
@@ -177,7 +201,8 @@ Baseline & \texttt{no\_exploration} & $r^{\mathrm{int}}=0$ & Intrinsic reward di
  & \texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state} & $\lVert g_\phi(s')-f_\theta(s')\rVert_2$ & Shared frozen trunk, trainable linear head. \\
  & RND ensemble ($N>1$) & $\bar{d}+\beta_{\mathrm{std}}\,s_d$ & Mean distance $+$ disagreement std over $N$ predictors. \\
 \midrule
-Elliptical bonus & \texttt{rnd\_elliptical} & $\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ & Mahalanobis norm of the frozen $(s,a)$ feature (needs $a$). \\
+\multirow{2}{1.9cm}{Elliptical bonus} & \texttt{rnd\_elliptical} & $\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ & Mahalanobis norm of the frozen $(s,a)$ feature; batch covariance (needs $a$). \\
+ & \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} & $\sqrt{\varphi^\top\Lambda^{-1}\varphi}$ & Same bonus; global (cumulative) covariance over visited $(s,a)$ (needs $a$). \\
 \bottomrule
 \end{longtable}
 \endgroup
@@ -560,79 +585,126 @@ Section~\ref{sec:count-based}. The elliptical bonus is therefore a generalized
 count: it behaves like a count when features are one-hot, and like a soft
 feature-space count when features are continuous random vectors.
 
-\paragraph{Current per-batch version versus cumulative version.}
-The current implementation recomputes
-\[
-\Lambda_B=\frac{1}{b}\Phi_B^\top\Phi_B+\lambda I
-\]
-from the current minibatch only. This gives a within-batch novelty score. It can
-be useful, but it does not remember all previous visits. Therefore, it is not a
-true lifetime count.
-
-The statistically cleaner version is the cumulative version:
+\paragraph{The elliptical family: one bonus, a covariance rule, and an update timing.}
+Every elliptical method shares the same frozen feature $\varphi$, the same feature normalization, the
+same quadratic-form solve, and the same bonus
 \begin{align}
-\Lambda_t
+r^{\mathrm{int}}(s,a)
 =
-\lambda I
-+
-\sum_{\tau\le t}
-\varphi(s_\tau,a_\tau)\varphi(s_\tau,a_\tau)^\top.
+\min\!\Big(
+\sqrt{\max\big(\varphi(s,a)^\top\Lambda^{-1}\varphi(s,a),\,\epsilon_q\big)},\;
+r_{\max}^{\mathcal{E}}
+\Big),
 \end{align}
-Equivalently, for a new minibatch $B_t$,
-\begin{align}
-\Lambda_t
-=
-\Lambda_{t-1}
-+
-\sum_{(s_i,a_i)\in B_t}
-\varphi(s_i,a_i)\varphi(s_i,a_i)^\top.
-\end{align}
-This version keeps a true running total of feature coverage. It needs only
-$d_\varphi\times d_\varphi$ memory, not storage of the whole replay buffer. With
-$d_\varphi=128$, this matrix has only $128^2=16384$ entries.
+clipped to $r_{\max}^{\mathcal{E}}=5$ by default. (With a small ridge an under-covered feature
+direction can give a very large raw bonus; the clip bounds the rare reward spikes that would otherwise
+destabilize SAC. Setting $r_{\max}^{\mathcal{E}}=\infty$ recovers the unclipped value.) The members
+differ along two independent choices: \emph{which covariance rule} maintains $\Lambda$, and \emph{when}
+that rule fires. Two covariance rules are implemented.
 
-\paragraph{Discounted cumulative version.}
-A middle option is a discounted cumulative matrix:
+\emph{Batch elliptical} (the shipped \texttt{rnd\_elliptical}) replaces $\Lambda$ with the covariance
+of the current update batch $U$ of size $n$:
 \begin{align}
-\Lambda_t
-=
-\rho_\Lambda \Lambda_{t-1}
-+
-\sum_{(s_i,a_i)\in B_t}
-\varphi(s_i,a_i)\varphi(s_i,a_i)^\top
-+
-(1-\rho_\Lambda)\lambda I,
+\Lambda=\frac{1}{n}\Phi_U^\top\Phi_U+\lambda I.
+\end{align}
+This is a within-batch novelty score; it does not remember earlier visits, so it is not a lifetime
+count.
+
+\emph{Global elliptical} (\texttt{rnd\_elliptical\_global}) keeps a true running total of feature
+coverage. It is maintained \textbf{iteratively}, by one running $d_\varphi\times d_\varphi$ matrix that
+each update adds the new batch's outer products to:
+\begin{align}
+\Lambda_t=\Lambda_{t-1}+\Phi_{U_t}^\top\Phi_{U_t},
 \qquad
-0<\rho_\Lambda\le 1.
+\Lambda_0=\lambda I.
 \end{align}
-When $\rho_\Lambda=1$, this is the ordinary cumulative count. When
-$\rho_\Lambda<1$, old data gradually loses influence. This can be useful if the
-policy changes a lot during training and we want the bonus to emphasize the
-agent's current exploration distribution.
+This is the \emph{only} way the global covariance is computed: the closed form
+$\Lambda_t=\lambda I+\sum_{\tau\le t}\varphi_\tau\varphi_\tau^\top$ is merely the value this recurrence
+equals --- it is never recomputed from the stored history. The update costs $O(|U_t|\,d_\varphi^2)$
+time plus the $O(d_\varphi^3)$ Cholesky refactor, and $O(d_\varphi^2)$ memory (with $d_\varphi=128$,
+only $128^2=16384$ entries), \emph{not} storage of the replay buffer. The ridge default is
+$\lambda=10^{-2}$ for both rules (interpretable because unit-norm features have $\lVert\varphi\rVert\le
+1$). A discounted variant
+$\Lambda_t=\rho_\Lambda\Lambda_{t-1}+\Phi_{U_t}^\top\Phi_{U_t}+(1-\rho_\Lambda)\lambda I$ that down-weights
+old visits is a possible future extension and is not part of the first run.
 
-\paragraph{Recommended implementation for the next version.}
-For the next experiment, the main elliptical method should be the cumulative
-version:
-\begin{align}
-r^{\mathrm{int}}_t(s,a)
-=
-\sqrt{
-\max\Big(
-\varphi(s,a)^\top\Lambda_t^{-1}\varphi(s,a),
-10^{-8}
-\Big)
-},
-\qquad
-\Lambda_t
-=
-\lambda I
-+
-\sum_{\tau\le t}
-\varphi(s_\tau,a_\tau)\varphi(s_\tau,a_\tau)^\top.
-\end{align}
-This tests whether the strong performance of \texttt{rnd\_elliptical} in
-Train run~1 comes from the correct count-like uncertainty idea, or merely from
-the noise and regularization of the per-batch covariance.
+\paragraph{When statistics are updated: on sample (default) versus on add.}
+What the batch above calls $U_t$ --- and therefore what every intrinsic statistic counts --- is decided
+by the replay buffer, which is the single switch between two timings. The buffer's \texttt{add()} stores
+only the extrinsic reward and calls the model's \texttt{observe()}; its \texttt{sample()} computes the
+bonus and calls the model's \texttt{update()} once per SAC gradient step on the replay minibatch:
+\begin{lstlisting}[style=pythoncode]
+# VectorIntrinsicReplayBuffer
+def add(self, obs, next_obs, action, reward, done, infos):
+    super().add(obs, next_obs, action, reward, done, infos)   # stores the extrinsic reward only
+    if self.intrinsic_reward_model is not None and self.beta > 0.0:
+        new = {"observations": obs, "next_observations": next_obs, "actions": action}
+        self.intrinsic_reward_model.observe(new)              # fires only for update_timing="add"
+
+def sample(self, batch_size, env=None):
+    batch = super()._get_samples(batch_inds, env)             # raw stored transitions (no obs-rms)
+    intrinsic = self.intrinsic_reward_model.compute(samples)  # the bonus, on the sampled batch
+    self.intrinsic_reward_model.update(samples)               # fires only for update_timing="sample"
+    return batch_with_reward(extrinsic + self.beta * intrinsic)
+\end{lstlisting}
+
+\emph{What RND does (on sample), and how it differs in input handling.} For \texttt{rnd\_next\_state}
+the bonus is the prediction error on the next state $s'$. RND's running observation mean/variance and
+its predictor distillation step both happen inside \texttt{update()}, i.e.\ \textbf{on sample} (from
+replay draws), and RND \emph{standardizes its input} with that running mean/variance:
+\begin{lstlisting}[style=pythoncode]
+# RND.update  (called by buffer.sample())
+def update(self, samples):
+    x = self._get_feature_tensor(samples)            # rnd_next_state -> next state s'
+    if self.use_obs_norm:
+        self.obs_rms.update(x.detach().cpu().numpy())  # running mean/var, on sample
+    x = self._normalize_obs(x)                       # standardize, then clip to [-5, 5]
+    src, tgt = self.predictor(x), self.target(x).detach()
+    loss = ((src - tgt) ** 2).mean()                 # distillation step, on sample
+    loss.backward(); self.opt.step()
+\end{lstlisting}
+The elliptical family is deliberately different on the input side: its encoder consumes the \textbf{raw}
+state $s$ and action $a$. It applies \emph{no} observation RMS; the only normalization is the in-family
+feature normalization $\varphi=z/\lVert z\rVert$ (Section ``Raw features and normalized features''). So
+the elliptical bonus never standardizes the state upstream of the encoder.
+
+\emph{What batch elliptical did, and what global elliptical does.} In the elliptical family the update
+timing is an explicit field \texttt{update\_timing} that is orthogonal to the covariance rule, so
+\texttt{update()} (sample) and \texttt{observe()} (add) both route to one \texttt{\_update\_covariance};
+the \textbf{default is sample timing} for every member. Batch elliptical replaces $\Lambda$ from the
+sampled minibatch; global elliptical accumulates onto its running $\Lambda$:
+\begin{lstlisting}[style=pythoncode]
+# EllipticalBonus (family base): timing is orthogonal to the covariance rule
+def update(self, samples):                  # called by buffer.sample()
+    if self.update_timing == "sample":      # default for the whole family
+        self._update_covariance(samples)
+
+def observe(self, samples):                 # called by buffer.add()
+    if self.update_timing == "add":
+        self._update_covariance(samples)
+
+def _update_covariance(self, samples):      # BATCH rule: replace Lambda from this batch
+    phi = self._features_for_update(samples)
+    self._cov = (phi.T @ phi) / len(phi) + self.regularization * self._eye
+    self._prepare_solver()                  # refactor the Cholesky every update
+
+class GlobalEllipticalBonus(EllipticalBonus):
+    def _update_covariance(self, samples):  # GLOBAL rule: accumulate (Lambda_0 = lambda I)
+        phi = self._features_for_update(samples)
+        self._cov = self._cov + phi.T @ phi  # one running matrix, never recomputed from history
+        self._prepare_solver()
+\end{lstlisting}
+The two timings count different things. On the \textbf{default sample timing}, $\Lambda$ accumulates the
+replay minibatches, so a frequently re-sampled transition contributes more than once --- the global
+covariance then tracks replay-draw frequency. On \textbf{add timing} (\texttt{update\_timing="add"}),
+each freshly collected transition enters $\Lambda$ exactly once through \texttt{observe()}, so the
+covariance is a true environment-visitation count (the count-oracle reading of the previous paragraph).
+Add timing is available to the whole family; sample timing is the default.
+
+\paragraph{No Cholesky-refresh cadence.} The Cholesky factor is recomputed on every covariance update,
+with no caching cadence. Nothing is saved by amortizing it: batch elliptical already pays a full
+$O(d_\varphi^3)$ factorization on every sampled minibatch, so refactoring the global covariance once per
+update --- the same cost --- has nothing to amortize against.
 
 \begin{table}[H]
 \centering
@@ -641,25 +713,26 @@ the noise and regularization of the per-batch covariance.
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{4.7cm}@{}}
 \toprule
-\textbf{Version} & \textbf{Matrix used} & \textbf{Meaning} \\
+\textbf{Method} & \textbf{Covariance rule} & \textbf{Meaning} \\
 \midrule
-Per-batch elliptical &
-$\Lambda_B=\frac1b\Phi_B^\top\Phi_B+\lambda I$ &
-Measures novelty relative to the current minibatch only; simple but does not keep a lifetime count. \\
+Batch elliptical \newline (implemented) &
+$\Lambda=\frac1n\Phi_U^\top\Phi_U+\lambda I$ \newline (replace) &
+Novelty relative to the current update batch only; simple, but keeps no lifetime count. \\
 \midrule
-Cumulative elliptical &
-$\Lambda_t=\lambda I+\sum_{\tau\le t}\varphi_\tau\varphi_\tau^\top$ &
-Measures novelty relative to all data seen so far; closest to the count oracle's $1/\sqrt{n}$ behavior. \\
+Global elliptical \newline (implemented) &
+$\Lambda_t=\Lambda_{t-1}+\Phi_{U_t}^\top\Phi_{U_t}$ \newline ($\Lambda_0=\lambda I$, iterative) &
+Novelty relative to all features seen so far; one running matrix, never recomputed. Closest to the count oracle's $1/\sqrt{n}$ behavior. \\
 \midrule
-Discounted cumulative elliptical &
-$\Lambda_t=\rho_\Lambda\Lambda_{t-1}+\sum_{\tau\in B_t}\varphi_\tau\varphi_\tau^\top$ &
-Measures novelty relative to recent data more than old data; useful if the policy distribution changes strongly. \\
+Discounted global \newline (future option) &
+$\Lambda_t=\rho_\Lambda\Lambda_{t-1}+\Phi_{U_t}^\top\Phi_{U_t}+(1-\rho_\Lambda)\lambda I$ &
+Novelty relative to recent data more than old; useful if the policy distribution changes strongly. \\
 \bottomrule
 \end{tabular}
-\caption{Three elliptical-bonus versions to distinguish. Here
-$\varphi_\tau=\varphi(s_\tau,a_\tau)$, and $B_t$ is the minibatch at update $t$.
-The key scientific question is whether the bonus should remember all past visits
-or only the current batch.}
+\caption{The elliptical covariance rules. $\Phi_{U_t}$ stacks the features of the update batch $U_t$.
+The covariance rule (batch / global) is orthogonal to the update timing (on sample, the default / on
+add): on sample $U_t$ is the replay minibatch (counting replay draws); on add it is the freshly
+collected transitions (counting environment visits). The global covariance is maintained iteratively
+and never recomputed from stored data.}
 \label{tab:elliptical-versions}
 \end{table}
 
@@ -1688,7 +1761,8 @@ by the extrinsic reward they reach.
 \paragraph{Sweep.}
 Train run~1 is the Weights \& Biases grid sweep \texttt{sweep\_my\_rnd}
 (id \texttt{y24vyh06}, project \texttt{rnd\_07\_reconstruction}). It crosses every
-intrinsic-bonus method of Table~\ref{tab:methods} with eight intrinsic
+intrinsic-bonus method of Table~\ref{tab:methods} except the later
+\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (which postdates this run), with eight intrinsic
 coefficients~$\beta$ and up to 100 random seeds, all on the same environment and
 SAC configuration of Section~\ref{sec:environments}---with the fixed
 \texttt{bottom\_right} goal used here, before the later reorganization to
@@ -1753,7 +1827,7 @@ used raw features, predating the unit-norm default.}
 \toprule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Swept values} \\
 \midrule
-Intrinsic-bonus method & \texttt{algorithm} & The $10$ methods of Table~\ref{tab:methods}: \texttt{no\_exploration}; \texttt{gt\_position}, \texttt{gt\_position\_velocity}; \texttt{rnd\_next\_state}, \texttt{rnd\_next\_state\_position\_only}, \texttt{rnd\_state}, \texttt{rnd\_state\_action}, \texttt{rnd\_state\_action\_next\_state}, \texttt{rnd\_linear\_next\_state}; \texttt{rnd\_elliptical}. \\
+Intrinsic-bonus method & \texttt{algorithm} & Ten of the methods of Table~\ref{tab:methods} (this run predates \texttt{rnd\_\allowbreak elliptical\_\allowbreak global}): \texttt{no\_exploration}; \texttt{gt\_position}, \texttt{gt\_position\_velocity}; \texttt{rnd\_next\_state}, \texttt{rnd\_next\_state\_position\_only}, \texttt{rnd\_state}, \texttt{rnd\_state\_action}, \texttt{rnd\_state\_action\_next\_state}, \texttt{rnd\_linear\_next\_state}; \texttt{rnd\_elliptical}. \\
 Intrinsic coefficient & $\beta$ & $\{10^{-4},\,10^{-3},\,10^{-2},\,10^{-1},\,1,\,10,\,10^{2},\,10^{3}\}$ ($8$ values; forced to $0$ for \texttt{no\_exploration}). \\
 Random seed & \texttt{a\_seed} & $0$--$99$; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together ($\approx 40$ finished seeds per (\texttt{algorithm}, $\beta$) group). \\
 \bottomrule
@@ -1991,7 +2065,7 @@ and \texttt{rnd\_state}. \texttt{rnd\_elliptical} is omitted --- its elliptical 
 not in \texttt{ALGORITHMS\_NO\_ACTION}, so no distance-to-ground-truth field is logged for it.}
 \label{tab:trainrun2-dist}
 \end{table}
-\subsection{Train run 3 (proposed): elliptical bonuses and RND optimizers}
+\subsection{Train run 3: elliptical bonuses and RND optimizers (design and runs)}
 \label{sec:train-run-3-proposed}
 
 \paragraph{Purpose.}
@@ -2023,7 +2097,14 @@ The full Cartesian product should \emph{not} be run.  A \textbf{must try} row
 belongs in the first-stage sweep.  A plain row is a second-stage refinement after
 the best family is found.  A \textcolor{gray}{gray} row is a diagnostic or
 stability check, not part of the main grid.
-\subsubsection{Part I: elliptical bonuses}
+
+\paragraph{Run numbering.}
+This subsection holds the two \emph{design} parts first (Part~I elliptical, Part~II RND optimizers,
+then the final-run design), followed by the \emph{executed} runs, appended in launch order and numbered
+\(3.\langle\text{family}\rangle.\langle\text{index}\rangle\): family~1 = elliptical bonuses (Part~I),
+family~2 = RND optimizer variants (Part~II). Executed so far: Train run~3.1.1 (four-method elliptical/RND
+sweep) and Train run~3.1.2 (run-2 replication and factor ablation).
+\subsubsection{Part I (design): elliptical bonuses}
 \label{sec:train-run-3-elliptical}
 
 \paragraph{Symbols used in this part.}
@@ -2056,7 +2137,6 @@ table keep the same meaning.
 \(B_t\) & Replay minibatch & Minibatch sampled from the replay buffer at update \(t\); the bonus is computed and the covariance (and any running feature statistics) are updated on this same sampled batch. \\
 \(\rho_\Lambda\) & Covariance discount & Discount factor for recency-weighted global covariance. \\
 \(\omega\) & Mixture weight & Weight on the global term in the mixed batch--global bonus. \\
-\(K_\Lambda\) & Cholesky refresh cadence & Number of covariance updates between two Cholesky refactorizations. \\
 \(\epsilon_\varphi\) & Feature-normalization constant & Small denominator constant in feature normalization; fixed at \(10^{-8}\). \\
 \(\epsilon_{\mathrm{chol}}\) & Cholesky jitter & Small diagonal correction added only before Cholesky factorization; not a ridge parameter. \\
 \(\epsilon_q\) & Quadratic-form floor & Numerical floor used before the square root; fixed at \(0\) unless strict positivity is needed for logging. \\
@@ -2378,16 +2458,17 @@ square root under round-off. &
 \midrule
 \(r_{\max}^{\mathcal{E}}\) &
 Bonus clip &
-\(\{\mathbf{\infty},10\}\) &
-The unclipped value tests the intended formula.  A finite clip is a stability
-check if rare reward spikes destabilize SAC. &
+\(\{\mathbf{5},\infty\}\) &
+The default clips the bonus to \(5\), bounding the rare large rewards an
+under-covered feature direction can produce (a small ridge makes the raw bonus
+large).  \(\infty\) tests the unclipped formula. &
 try \\
 \bottomrule
 \end{tabular}%
 }
 \caption{Common numerical settings for all elliptical methods.  The main first-stage
-run fixes \(d_\varphi=128\), unit-norm features, adaptive Cholesky jitter, and no
-bonus clipping.}
+run fixes \(d_\varphi=128\), unit-norm features, adaptive Cholesky jitter, and a
+bonus clip of \(5\).}
 \label{tab:trainrun3-elliptical-common-sweep}
 \end{table}
 
@@ -2509,16 +2590,16 @@ implementation is the rank-batch update
 \Phi_{B_t}^\top\Phi_{B_t},
 \]
 which costs \(O(|B_t|d_\varphi^2)\) time and \(O(d_\varphi^2)\) memory.  The
-Cholesky factorization costs \(O(d_\varphi^3)\), so the factor can be cached and
-refreshed every \(K_\Lambda\) covariance updates.  The exact setting is
-\(K_\Lambda=1\).
+Cholesky factorization costs \(O(d_\varphi^3)\) and is recomputed on every
+covariance update; there is no refresh cadence to tune.  Nothing is saved by
+amortizing it: the batch method (E1) already pays the same \(O(d_\varphi^3)\)
+factorization on every sampled minibatch, so refactoring the global covariance
+once per update --- the same cost --- has nothing to amortize against.
 
-With unit-norm features, the theory-aligned ridge is
-\[
-\lambda=1.
-\]
-It acts like one prior visit in every feature direction and bounds the initial
-bonus by \(1\).  This is the main reason the ridge sweep is reduced.
+The ridge default is \(\lambda=10^{-2}\), the same value as the batch method.  The
+count-prior value \(\lambda=1\) (which, with unit-norm features, acts like one
+prior visit in every feature direction and bounds the initial bonus by \(1\)) is
+kept only as an optional sweep point, not the default.
 
 \begin{table}[H]
 \centering
@@ -2537,24 +2618,17 @@ bonus by \(1\).  This is the main reason the ridge sweep is reduced.
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
-After unit normalization and \(\lambda=1\), the raw bonus is on approximately the
+After unit normalization, the raw bonus is on approximately the
 same scale as a count bonus.  Therefore the grid is centered near the
 count-oracle coefficient rather than the old batch-elliptical coefficient. &
 \textbf{must try} \\
 \midrule
 \(\lambda\) &
 Ridge regularizer &
-\(\{\mathbf{1},10^{-2},\textcolor{gray}{10^{-4}}\}\) &
-\(\lambda=1\) is the count-prior value for unit-norm cumulative features.
-\(\lambda=10^{-2}\) tests more aggressive exploration.  The gray value tests
-near-singular behavior and should not be in the main grid. &
-try \\
-\midrule
-\(K_\Lambda\) &
-Cholesky refresh cadence &
-\(\{\mathbf{1},16\}\) &
-\(K_\Lambda=1\) is exact.  \(K_\Lambda=16\) tests whether cached factors reduce
-CPU time without changing learning behavior. &
+\(\{\mathbf{10^{-2}},1,\textcolor{gray}{10^{-4}}\}\) &
+\(\lambda=10^{-2}\) is the default, the same value as the batch method.
+\(\lambda=1\) is the count-prior value for unit-norm cumulative features.  The gray
+value tests near-singular behavior and should not be in the main grid. &
 try \\
 \bottomrule
 \end{tabular}%
@@ -2772,7 +2846,7 @@ recommended staged design is:
 & d_\varphi=128,\quad
 \nu_\varphi=\mathrm{unit\text{-}norm},\quad
 \epsilon_{\mathrm{chol}}:0\to10^{-8},\quad
-r_{\max}^{\mathcal{E}}=\infty,
+r_{\max}^{\mathcal{E}}=5,
 \\[3pt]
 & \lambda=10^{-2}\text{ for E1},\quad
 \lambda=1\text{ for E2},\quad
@@ -2782,8 +2856,7 @@ r_{\max}^{\mathcal{E}}=\infty,
 \text{best E0 family}
 \times
 \{\nu_\varphi\in\{\mathrm{unit\text{-}norm},\mathrm{rms\text{-}unit}\},
-\lambda\text{ one alternate value},
-K_\Lambda\text{ if global}\};
+\lambda\text{ one alternate value}\};
 \\[8pt]
 \text{E2:} &
 \text{discounted global around the best E2 setting, using }
@@ -2791,7 +2864,7 @@ K_\Lambda\text{ if global}\};
 \\[8pt]
 \textcolor{gray}{\text{E3:}} &
 \textcolor{gray}{stress tests:
-d_\varphi=256,\ r_{\max}^{\mathcal{E}}=10,\ \lambda=10^{-4}.}
+d_\varphi=256,\ r_{\max}^{\mathcal{E}}=\infty,\ \lambda=10^{-4}.}
 \end{array}
 \]
 The primary scientific comparison is therefore
@@ -2856,9 +2929,9 @@ Denominator constant in the feature normalization. \\
 \(\lambda\) &
 Ridge regularizer &
 \texttt{regular\allowbreak ization} &
-\(10^{-6}\) &
-Diagonal prior in the per-batch covariance
-\(\Lambda_B=\tfrac1n\Phi^\top\Phi+\lambda I\). \\
+\(10^{-2}\) &
+Diagonal prior in the covariance \(\Lambda\); same default for the batch and
+global elliptical methods. \\
 \midrule
 --- &
 Quadratic-form solver &
@@ -2881,12 +2954,27 @@ Quadratic-form floor &
 \(10^{-12}\) &
 Floor in \(\sqrt{\max(\widehat q,\epsilon_q)}\) guarding the square root against
 round-off. \\
+\midrule
+\(r_{\max}^{\mathcal{E}}\) &
+Bonus clip &
+\texttt{bonus\_\allowbreak clip} &
+\(5\) &
+Clips the bonus, \(r=\min(\sqrt{\max(\widehat q,\epsilon_q)},\,r_{\max}^{\mathcal{E}})\);
+\(\infty\) disables clipping. \\
+\midrule
+--- &
+Update timing &
+\texttt{update\_\allowbreak timing} &
+\texttt{sample} &
+Whether the covariance rule fires in \texttt{update()} (on a sampled replay
+minibatch, the default) or \texttt{observe()} (on each freshly added transition). \\
 \bottomrule
 \end{tabular}%
 }
 \caption{Elliptical-bonus hyperparameters as implemented in the
-\texttt{EllipticalBonus} class (the per-batch method E1 used by
-\texttt{rnd\_elliptical}).  By default features are unit-norm normalized
+\texttt{EllipticalBonus} family (the batch method \texttt{rnd\_elliptical} and the
+global method \texttt{rnd\_elliptical\_global}, which shares this base and overrides
+only the covariance rule).  By default features are unit-norm normalized
 (\(\nu_\varphi=\texttt{unit}\)); \texttt{rms\_unit} and \texttt{none} are also
 available.  These realized code defaults are what the implementation uses and may
 differ from the proposed sweep values above---in particular \(\epsilon_q\) defaults
@@ -2896,7 +2984,7 @@ automatic retry rule.}
 \end{table}
 
 %------------------------------------------------------------------------------
-\subsubsection{Part II: RND optimizer variants}
+\subsubsection{Part II (design): RND optimizer variants}
 \label{sec:train-run-3-rnd-optimizers}
 
 \paragraph{Common RND object.}
@@ -3487,7 +3575,7 @@ Train run~3 should be staged as follows:
 \textbf{E1:} &
 \text{best elliptical memory}
 \times
-\{\lambda,d_\varphi,\nu_\varphi,K_\Lambda\},\\[2pt]
+\{\lambda,d_\varphi,\nu_\varphi\},\\[2pt]
 \text{E2:} &
 \text{discounted global around the best global setting},\\[4pt]
 \textbf{O0:} &
@@ -3524,6 +3612,272 @@ The primary optimizer comparison is
 The final confirmation should rerun the best elliptical method and the best RND
 optimizer method with the same seed budget and evaluation protocol used for
 Train run~2.
+
+%------------------------------------------------------------------------------
+\subsubsection{Train run 3.1.1: PyTorch elliptical \& RND (training-reward only)}
+\label{sec:train-run-3-1-1}
+
+\paragraph{Run.}
+Train run~3.1.1 is the first \emph{actual} run of the Train-run-3 family (Part~I, elliptical bonuses),
+using the live \textbf{PyTorch} trainer (\texttt{train.py}, SB3 SAC) on the reorganized
+\texttt{07\_reconstruction} package. It compares four intrinsic-bonus methods on
+\texttt{PointMaze\_Large-v3} (fixed start, \texttt{top\_right} goal), each tuned over an intrinsic
+coefficient (\(\beta\)) grid, and---for the three elliptical methods---over a ridge-\(\lambda\) grid and a
+feature-input grid. The four methods are: \textbf{A1} batch elliptical (\texttt{rnd\_\allowbreak
+elliptical}); \textbf{A2} global elliptical with the covariance updated at buffer-\emph{sample} time
+(\texttt{rnd\_\allowbreak elliptical\_\allowbreak global}, \texttt{update\_\allowbreak timing}=\texttt{sample});
+\textbf{A3} global elliptical updated at buffer-\emph{add} time (same algorithm,
+\texttt{update\_\allowbreak timing}=\texttt{add}); and \textbf{A4} \texttt{rnd\_\allowbreak next\_\allowbreak
+state}. All elliptical runs use unit-norm features.
+
+\paragraph{Logging (training-reward only).}
+To save compute, this run sets the new default \texttt{eval\_standalone}=\texttt{False}: the deterministic
+standalone evaluation rollout is \emph{not} run, and every method is scored on the \emph{training-episode}
+extrinsic reward (the windowed mean over the past \texttt{n\_eval\_episodes} training episodes, snapshotted
+every \texttt{eval\_freq} steps), not a separate eval. Each run logs only to local JSON
+(\texttt{z\_logging\_mode}=\texttt{local}, no wandb). The fixed (non-swept) hyperparameters are in
+Table~\ref{tab:trainrun3-1-1-fixed} and the swept axes in Table~\ref{tab:trainrun3-1-1-sweep}.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{6.6cm}@{}}
+\toprule
+\textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
+\midrule
+Intrinsic-bonus method & \texttt{algorithm} & A1 \texttt{rnd\_\allowbreak elliptical} (batch); A2/A3 \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (sample-/add-time update); A4 \texttt{rnd\_\allowbreak next\_\allowbreak state}. \\
+Intrinsic coefficient & \(\beta\) & \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\) (7; all 4 methods). \\
+Ridge regularizer & \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,\,10^{-2}\}\) (elliptical only; RND has none). \\
+Elliptical feature input & \texttt{elliptical\_\allowbreak feature\_\allowbreak input} & \(\{(s,a),\ s'\}\): state\,+\,action, or next-state only (elliptical only; RND uses next-state). \\
+Random seed & \texttt{a\_seed} & \(0\)--\(99\) (100 seeds). \\
+\bottomrule
+\end{tabular}
+\caption{Train run~3.1.1 swept axes. The grid is per-method: each of A1/A2/A3 (elliptical) is
+\(\beta\,(7)\times\lambda\,(2)\times\text{input}\,(2)=28\) configurations, and A4 (RND) is \(\beta\,(7)\),
+so \(3\times28+7=91\) configurations \(\times\,100\) seeds \(=9100\) runs. The writeup is updated once every
+configuration has \(\ge 30\) finished seeds.}
+\label{tab:trainrun3-1-1-sweep}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.5cm}
+>{\raggedright\arraybackslash}p{2.9cm}
+>{\raggedright\arraybackslash}p{2.9cm}
+>{\raggedright\arraybackslash}p{2.9cm}
+>{\raggedright\arraybackslash}p{2.9cm}@{}}
+\toprule
+\textbf{Hyperparameter (code arg)} &
+\textbf{A1: \texttt{rnd\_\allowbreak elliptical} (batch, sample)} &
+\textbf{A2: \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, sample)} &
+\textbf{A3: \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, add)} &
+\textbf{A4: \texttt{rnd\_\allowbreak next\_\allowbreak state} (RND)} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Environment}} \\
+\texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
+\texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
+\texttt{continuing\_task}, \texttt{reset\_target} & \multicolumn{4}{c}{True, False} \\
+\texttt{env\_max\_episode} & \multicolumn{4}{c}{400} \\
+\texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & \multicolumn{4}{c}{False} \\
+\(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as run~2)}} \\
+\texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
+\texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
+\texttt{batch\_size}, \texttt{learning\_starts} & \multicolumn{4}{c}{256, 100} \\
+\(\tau\), \texttt{ent\_coef} & \multicolumn{4}{c}{0.005, auto} \\
+\texttt{net\_arch} & \multicolumn{4}{c}{\([256,256]\)} \\
+\texttt{train\_freq}, \texttt{gradient\_steps} & \multicolumn{4}{c}{1, 1} \\
+\texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard)}} \\
+\texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; training-episode reward)} \\
+\texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
+\texttt{log\_distance} & \multicolumn{4}{c}{False} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Intrinsic --- swept}} \\
+\(\beta\) (\texttt{beta}) & \multicolumn{4}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\)} \\
+\(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & --- \\
+input (\texttt{elliptical\_\allowbreak feature\_\allowbreak input}) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(s'\) (fixed) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
+feature normalization & unit & unit & unit & --- \\
+\(d_\varphi\) (\texttt{feature\_dim}) & 128 & 128 & 128 & --- \\
+\texttt{bonus\_method}, \texttt{bonus\_clip} & cholesky, 5 & cholesky, 5 & cholesky, 5 & --- \\
+covariance rule & batch replace & global cumulative & global cumulative & --- \\
+\texttt{elliptical\_\allowbreak update\_\allowbreak timing} & sample & sample & add & --- \\
+RND output dim \(m\) & --- & --- & --- & 128 \\
+\texttt{rnd\_obs\_norm}, \texttt{rnd\_distance} & --- & --- & --- & True, mse \\
+\texttt{n\_predictors}, RND \texttt{lr} & --- & --- & --- & 1, \(10^{-3}\) \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Train run~3.1.1 fixed (non-swept) hyperparameters per method (columns are the four methods, rows
+the knobs). Rows spanning all four columns are shared; ``---'' marks a knob a method does not use. SAC
+hyperparameters are the stable-baselines3 \texttt{MlpPolicy} defaults (unset in code, as in run~2), so the
+reused run-2 \texttt{gt\_position\_velocity} reference curve stays comparable. The swept axes
+(\(\beta,\lambda,\)input, seed) are in Table~\ref{tab:trainrun3-1-1-sweep}.}
+\label{tab:trainrun3-1-1-fixed}
+\end{table}
+
+\paragraph{Aggregation.}
+Aggregated on 2026-07-02, pooling \emph{finished} runs only: a run writes its JSON once, at completion of
+all \(10^{6}\) steps, so cancelled or incomplete runs contribute no file and are excluded by construction.
+At aggregation time \(4054\) of the planned \(9100\) runs had finished (\(0\) failed; the rest were still
+queued or running), and every one of the \(91\) configurations had \(\ge 30\) finished seeds (minimum
+\(37\), median \(45\)). The scored metric is the \emph{final training-episode extrinsic reward}: the mean
+extrinsic reward over the last \texttt{n\_eval\_episodes}\({}=100\) completed training episodes at
+\(10^{6}\) steps (\texttt{train/mean\_\allowbreak extrinsic\_\allowbreak reward}; this run logs no
+standalone eval). For \(n\) seeds with per-seed final rewards \(R_i\) we report the seed mean
+\(\bar{R}=\frac{1}{n}\sum_i R_i\) and standard error \(\mathrm{SE}=s/\sqrt{n}\) (\(s\) the sample standard
+deviation). For each of the four methods, Table~\ref{tab:trainrun3-1-1-best} reports the \emph{best
+combination of parameters}: the \((\text{input},\lambda,\beta)\) configuration (\(\beta\) only for RND)
+with the highest \(\bar{R}\), among configurations with \(\ge 30\) finished seeds.
+Figure~\ref{fig:trainrun3-1-1-curve} shows the reward over training for each method at that best
+configuration, with three run-2 reference curves. Note that at this
+coverage the top two rows are within
+one standard error of each other (\(37.41 \pm 5.69\) vs.\ \(36.95 \pm 3.92\)), so the bold/underline
+ordering between them should not be read as a real separation.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\input{../train_runs/2026-06-26-05-15_run_3_1_1_pytorch_4algo_betagrid_ridge1-1e-2_input-sa-nexts_1Mstep_100seed_trainrewardonly/analysis/plots/reward_table.tex}
+\caption{Train run~3.1.1: best combination of parameters per method --- encoder input\(^\star\), ridge
+\(\lambda^\star\), and coefficient \(\beta^\star\) --- with the final training-episode extrinsic reward
+\(\bar{R}\) (mean over \(n\) finished seeds), its standard error, and \(n\). Rows sorted by \(\bar{R}\)
+descending; best \textbf{bold}, second \underline{underlined}; higher reward is better. Only
+configurations with \(\ge 30\) finished seeds are eligible; RND has no ridge and a fixed next-state
+input.}
+\label{tab:trainrun3-1-1-best}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../train_runs/2026-06-26-05-15_run_3_1_1_pytorch_4algo_betagrid_ridge1-1e-2_input-sa-nexts_1Mstep_100seed_trainrewardonly/analysis/plots/line_reward_curve.pdf}
+\caption{Train run~3.1.1: extrinsic reward over training --- seven lines. Solid: the four run-3.1.1
+methods, each at its best configuration from Table~\ref{tab:trainrun3-1-1-best}, showing the
+\emph{training-episode} reward (mean over the past 100 completed training episodes; mean \(\pm\) standard
+error over seeds; each line drawn only up to the largest step reached by \(\ge 30\) seeds). Dashed: three
+run-2 references at their run-2 best-tuned coefficients --- the \texttt{gt\_\allowbreak
+position\_\allowbreak velocity} oracle (\(\beta{=}1\)), \texttt{rnd\_\allowbreak state}
+(\(\beta{=}100\)), and the run-2 batch elliptical \texttt{rnd\_\allowbreak elliptical}
+(\(\beta{=}0.01\)); note the run-2 elliptical is \emph{not} the same configuration as any run-3.1.1
+elliptical (raw features, ridge \(10^{-6}\), no bonus clip --- see the comparison paragraph). The
+reference curves show run-2's \emph{eval} extrinsic reward (run~2 logged eval reward only), so the dashed
+and solid lines use related but not identical metrics: the eval reward follows the deterministic policy,
+while the training-episode reward includes the stochastic exploration behavior.}
+\label{fig:trainrun3-1-1-curve}
+\end{figure}
+
+\paragraph{Why the batch elliptical scores far below run 2's \texttt{rnd\_elliptical}.}
+The run-2 batch elliptical reached \(\bar{R}=44.49\) (eval) at \(\beta{=}0.01\), while the run-3.1.1
+batch elliptical's best configuration reaches only \(15.65\) (train) --- and at the configuration
+closest to run~2 (\((s,a)\) input, \(\lambda{=}10^{-2}\), \(\beta{=}0.01\)) only \(9.03 \pm 3.22\)
+(\(n{=}39\)), so the gap is not explained by the sweep picking different hyperparameters. The two are
+\emph{not} the same algorithm: between run~2 and run~3.1.1 the elliptical implementation changed in three
+ways. (i)~\emph{Feature normalization}: run~2 used raw frozen-encoder features (unbounded, state-dependent
+norm); run~3.1.1 unit-normalizes every feature (\(\lVert\varphi\rVert_2\le1\)).
+(ii)~\emph{Ridge}: run~2 hard-coded \(\lambda{=}10^{-6}\); the run-3.1.1 grid contains only
+\(\{1, 10^{-2}\}\). (iii)~\emph{Bonus clip}: run~2 had no clip; run~3.1.1 clips at \(5\). Together these
+compress the bonus's dynamic range by orders of magnitude: with unit-norm features the bonus is bounded by
+\(\sqrt{\varphi^\top\Lambda^{-1}\varphi} \le \sqrt{1/\lambda}\) --- at most \(10\) for
+\(\lambda{=}10^{-2}\), further truncated to \(5\) by the clip, and at most \(1\) for \(\lambda{=}1\) ---
+whereas run-2's raw features with \(\lambda{=}10^{-6}\) and no clip produced novelty bonuses up to
+\(\sim 10^{3}\,\lVert z_\varphi\rVert\) with a strong novel-vs-visited contrast that the coefficient
+\(\beta\) alone cannot restore (rescaling shifts the mean level but not the compressed contrast, and the
+clip flattens exactly the most-novel states). The metric change (run-2 eval vs.\ run-3.1.1
+training-episode reward) contributes at most a small part of the gap: the run-2 \texttt{rnd\_\allowbreak
+state} eval reference (\(35.79\)) and the run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}
+training curve (\(36.95\)) nearly coincide in Figure~\ref{fig:trainrun3-1-1-curve}. Isolating which of the
+three changes matters --- e.g.\ re-running the batch elliptical with \(\lambda{=}10^{-6}\), a disabled
+clip, or raw features under the current code --- is left to a follow-up run (Train run~3.1.2, next).
+
+%------------------------------------------------------------------------------
+\subsubsection{Train run 3.1.2: replicating run 2's elliptical and isolating the factors}
+\label{sec:train-run-3-1-2}
+
+\paragraph{Run.}
+Train run~3.1.2 replicates run-2's batch elliptical under the current code and attributes the run-3.1.1
+gap by a full factorial over the three implementation deltas identified above. Every run uses the batch
+elliptical (\texttt{rnd\_\allowbreak elliptical}, sample-time covariance updates) with the \((s,a)\)
+input, and --- unlike run~3.1.1 --- \emph{standalone eval is ON} (\texttt{eval\_\allowbreak standalone}
+= True, $100$ episodes every $50000$ steps), so every number below is the same deterministic eval reward
+as run-2's $44.49$; the training-episode reward is still logged as the secondary metric. All non-swept
+hyperparameters equal Table~\ref{tab:trainrun3-1-1-fixed}. The cell (raw features, \(\lambda{=}10^{-6}\),
+no clip, \(\beta{=}0.01\)) is run-2's exact configuration; the remaining stated deltas are only numerical
+(float64 Cholesky vs.\ run-2's float32 explicit inverse; quadratic floor \(10^{-12}\) vs.\ \(10^{-8}\)).
+The compute is split into two equal-CPU Slurm-shape arms (an infrastructure comparison recorded in the
+run folder's analysis, not a science axis): arm~A $=8$ tasks $\times\,2$ CPUs (even seeds), arm~B $=16$
+tasks $\times\,1$ CPU (odd seeds), identical 16-CPU$+$32G job asks, co-located pairs on the reserved
+nodes.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\toprule
+\textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
+\midrule
+Feature normalization & \(\nu_\varphi\) (\texttt{elliptical\_\allowbreak feature\_\allowbreak normalization}) & \texttt{none} (raw, as run~2), \texttt{unit} (as run~3.1.1). \\
+Ridge regularizer & \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{10^{-6},\,10^{-4},\,10^{-2}\}\) (run~2 used \(10^{-6}\); run~3.1.1 swept \(\{10^{-2},1\}\); \(10^{-4}\) probes the ridge-ratio hypothesis). \\
+Bonus clip & \(r^{\mathcal{E}}_{\max}\) (\texttt{elliptical\_\allowbreak bonus\_\allowbreak clip}) & \(\{\infty\ (\text{no clip, as run 2}),\ 5\ (\text{as run 3.1.1})\}\). \\
+Intrinsic coefficient & \(\beta\) & \(\{10^{-3},\,10^{-2},\,10^{-1}\}\) (run-2's \(\beta^\star{=}10^{-2}\) centered). \\
+Random seed & \texttt{a\_seed} & \(0\)--\(49\); even seeds run on Slurm arm~A, odd on arm~B. \\
+\bottomrule
+\end{tabular}
+\caption{Train run~3.1.2 swept axes: a full \(2\times3\times2\) factorial over the three implementation
+deltas between run-2's and run-3.1.1's elliptical bonus, \(\times\,3\) coefficients \(\times\,50\) seeds
+\(=12\) cells \(\times\,3\ \beta\times 50 = 1800\) runs. The writeup is updated once every configuration
+has \(\ge 20\) pooled finished seeds.}
+\label{tab:trainrun3-1-2-sweep}
+\end{table}
+
+\paragraph{Pre-registered hypothesis: the effective ridge ratio.}
+With the batch rule \(\Lambda = \frac{1}{n}\Phi^{\top}\Phi + \lambda I\), the data part's average
+eigenvalue is \(\bar\mu = \overline{\lVert\varphi\rVert^{2}}/d\), so the bonus contrast between an
+uncovered direction and a typically covered one is
+\[
+\frac{r_{\text{novel}}}{r_{\text{covered}}}
+= \sqrt{1 + \bar\mu/\lambda}
+= \sqrt{1 + 1/\rho},
+\qquad
+\rho \;=\; \frac{\lambda\, d}{\overline{\lVert\varphi\rVert^{2}}}.
+\]
+Run 2 (raw features, \(\lambda{=}10^{-6}\)) ran at \(\rho \sim 10^{-5}\)--\(10^{-3}\) (contrast
+30--300\(\times\)); run 3.1.1's unit-norm features fix \(\overline{\lVert\varphi\rVert^{2}} = 1\), so its
+grid \(\lambda \in \{10^{-2}, 1\}\) sat at \(\rho \in \{1.28, 128\}\) (contrast \(1.33\times\) and
+\(1.004\times\) --- essentially no exploration signal). Predictions: the replica cell recovers
+run-2-level reward; if the ridge-ratio account is right, (unit, \(10^{-6}\)) and (unit, \(10^{-4}\)) with
+no clip come close to it and the three raw-\(\lambda\) cells are similar; if instead the raw features'
+corner-seeking norm bias is the driver (the zero-bias ReLU encoder makes
+\(\lVert z(x)\rVert \propto \lVert (s,a)\rVert\), largest at the \texttt{top\_right} goal corner), the
+unit-norm small-\(\lambda\) cells stay far below the replica. Each run logs measured diagnostics
+(\(\overline{\lVert z\rVert^{2}}\), \(\overline{\lVert\varphi\rVert^{2}}\), \(\rho\), the \(\Lambda\)
+eigenvalue range, and the clip-hit fraction) so these are checked against numbers, not assumptions. On
+the clip: neither the original RND paper (Burda et al.\ 2018, \S2.4 --- intrinsic reward divided by a
+running standard-deviation estimate of intrinsic returns) nor CleanRL's RND implementation clips the
+intrinsic reward; the clip axis therefore measures a non-standard knob, and running-std normalization is
+the literature-aligned alternative left to future work.
+
+\paragraph{Results (pending).}
+Once every configuration has \(\ge 20\) pooled finished seeds, this section will report (i) the 12-cell
+table at each cell's best \(\beta\) (eval reward \(\bar R\), standard error, success rate over seeds,
+\(n\), and the training-reward secondary column), (ii) the reward-over-training figure for the replica
+cell, its single-factor swaps, and the run-2 \texttt{rnd\_\allowbreak elliptical} reference (all eval
+reward --- no metric caveat), and (iii) the measured-\(\rho\) diagnostics table against the predictions
+above. The Slurm-arm comparison (8\(\times\)2 vs.\ 16\(\times\)1: per-run duration on identical silicon,
+per-node throughput, infrastructure error rate) is recorded in the run folder's \texttt{analysis.md}.
 
 \subsection{Train run 4 (fully-JAX, sample-time reproduction of run 2)}
 \label{sec:train-run-4}
@@ -3762,7 +4116,7 @@ are the unit directions ($\varepsilon=10^{-10}$). $0$ = same direction, $\pi$ = 
 
 Not every algorithm yields a bonus field that can be compared to the oracle, so not every
 metric can be computed for every algorithm. Table~\ref{tab:metric-applicability} marks, for
-each of the ten \texttt{--algorithm} choices, which of the six distance metrics are computed
+each of the eleven \texttt{--algorithm} choices, which of the six distance metrics are computed
 (\ding{51}; a blank cell means the metric is not computed for that algorithm). The split is
 decided per algorithm rather than per metric: the dispatcher
 (\texttt{compute\_intrinsic\_vector\_distance}) computes \emph{all six} metrics for an
@@ -3786,7 +4140,8 @@ logged). The reason for each algorithm is enumerated below.
   >{\centering\arraybackslash}p{1.05cm} |
   >{\centering\arraybackslash}p{1.0cm}
   >{\centering\arraybackslash}p{1.05cm}
-  >{\centering\arraybackslash}p{1.35cm}@{}}
+  >{\centering\arraybackslash}p{1.35cm}
+  >{\centering\arraybackslash}p{1.55cm}@{}}
 \toprule
  & \texttt{no\_\allowbreak exploration}
  & \texttt{gt\_\allowbreak position}
@@ -3797,21 +4152,22 @@ logged). The reason for each algorithm is enumerated below.
  & \texttt{rnd\_\allowbreak linear\_\allowbreak next\_\allowbreak state}
  & \texttt{rnd\_\allowbreak state\_\allowbreak action}
  & \texttt{rnd\_\allowbreak state\_\allowbreak action\_\allowbreak next\_\allowbreak state}
- & \texttt{rnd\_\allowbreak elliptical} \\
+ & \texttt{rnd\_\allowbreak elliptical}
+ & \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} \\
 \midrule
-\texttt{min\_c\_l1\_diff}       & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
-\texttt{min\_c\_l2\_diff}       & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
-\texttt{min\_c\_l1\_inv}        & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
-\texttt{min\_c\_l2\_inv}        & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
-\texttt{normalized\_l2}         & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
-\texttt{normalized\_angle\_rad} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  \\
+\texttt{min\_c\_l1\_diff}       & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+\texttt{min\_c\_l2\_diff}       & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+\texttt{min\_c\_l1\_inv}        & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+\texttt{min\_c\_l2\_inv}        & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+\texttt{normalized\_l2}         & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
+\texttt{normalized\_angle\_rad} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} &  &  &  &  \\
 \bottomrule
 \end{tabular}%
 }
 \caption{Which distance-to-ground-truth metrics are computed for each algorithm.
 \ding{51}~= computed (logged under \texttt{distance\_to\_gt/*}); a blank cell = not computed.
 The seven columns left of the rule are the algorithms whose bonus field is evaluable without
-actions (\texttt{ALGORITHMS\_NO\_ACTION}), for which all six metrics are computed; the three
+actions (\texttt{ALGORITHMS\_NO\_ACTION}), for which all six metrics are computed; the four
 columns to the right are action-conditioned and are skipped entirely. \texttt{gt\_position\_velocity}
 is the oracle field $g$ itself, so its six values are self-distances (numerically $\approx 0$).}
 \label{tab:metric-applicability}
@@ -3846,6 +4202,10 @@ the grid cell alone.
 $\sqrt{\phi(s,a)^\top\Lambda^{-1}\phi(s,a)}$ is computed on state--action features and
 accumulates its covariance $\Lambda$ from actions, so it has no action-free per-cell value to
 compare against $g$.
+\item \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} --- \emph{none.} The same
+state--action bonus as \texttt{rnd\_elliptical}, differing only in that the covariance $\Lambda$ is
+the global (cumulative) running matrix rather than the per-batch one; it is still action-conditioned,
+so it likewise has no action-free per-cell value to compare against $g$.
 \end{enumerate}
 
 

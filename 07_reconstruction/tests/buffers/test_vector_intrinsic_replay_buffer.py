@@ -15,7 +15,8 @@ BUFFER_SIZE = 8
 
 
 class FakeIntrinsicModel:
-    """Fake intrinsic reward model: compute() returns a known constant per sample; update() records its call."""
+    """Fake intrinsic reward model: compute() returns a known constant per sample; update()/observe()
+    record their calls (update on sample(), observe on add())."""
 
     def __init__(self, constant: float):
         # Constant intrinsic reward returned for every transition in a batch.
@@ -23,6 +24,9 @@ class FakeIntrinsicModel:
         # Bookkeeping the tests assert against.
         self.update_called = False
         self.update_count = 0
+        self.observe_called = False
+        self.observe_count = 0
+        self.last_observe_batch = None
         self.last_compute_keys = None
         self.last_compute_batch = None
 
@@ -37,6 +41,12 @@ class FakeIntrinsicModel:
         # Record that the buffer invoked update() during sample().
         self.update_called = True
         self.update_count += 1
+
+    def observe(self, samples):
+        # Record that the buffer invoked observe() during add() with the freshly added transition(s).
+        self.observe_called = True
+        self.observe_count += 1
+        self.last_observe_batch = samples["observations"].shape[0]
 
 
 def make_spaces():
@@ -85,8 +95,36 @@ def test_add_stores_raw_extrinsic_reward():
     # buffer.rewards has shape (BUFFER_SIZE, n_envs); column 0 holds the stored raw extrinsic.
     stored = buffer.rewards[: len(extrinsics), 0]
     np.testing.assert_allclose(stored, np.array(extrinsics, dtype=np.float32), rtol=0, atol=1e-6)
-    # Storing must not have touched the intrinsic model.
+    # Storing must not have run a sample-time update (that happens in sample(), not add()).
     assert model.update_called is False
+
+
+def test_add_routes_to_observe():
+    """add() feeds each freshly added transition to the model's observe() (the add-time update hook),
+    once per add and with the n_envs batch size; sample-time update() is untouched by add()."""
+    model = FakeIntrinsicModel(constant=0.0)
+    buffer = make_buffer(beta=1.0, intrinsic_reward_model=model)
+    # Golden path: three adds -> three observe() calls, each carrying the single (n_envs=1) transition.
+    for r in (0.5, -2.0, 3.25):
+        add_transition(buffer, r)
+    assert model.observe_count == 3
+    assert model.observe_called is True
+    assert model.last_observe_batch == 1
+    # add() must not have triggered the sample-time update.
+    assert model.update_called is False
+
+
+def test_add_skips_observe_when_no_model_or_beta_zero():
+    """observe() is skipped when there is no model or beta <= 0 (the add-time hook mirrors the
+    sample-time short-circuit), so neither configuration crashes on add()."""
+    # beta = 0 with a model present: add() must not call observe().
+    model = FakeIntrinsicModel(constant=1.0)
+    buffer_zero_beta = make_buffer(beta=0.0, intrinsic_reward_model=model)
+    add_transition(buffer_zero_beta, 1.0)
+    assert model.observe_called is False
+    # no model: add() simply stores (no observe routing, no crash).
+    buffer_no_model = make_buffer(beta=1.0, intrinsic_reward_model=None)
+    add_transition(buffer_no_model, 1.0)
 
 
 def test_sample_reward_is_extrinsic_plus_beta_times_intrinsic():
