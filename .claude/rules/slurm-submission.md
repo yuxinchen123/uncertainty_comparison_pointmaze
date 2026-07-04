@@ -130,3 +130,33 @@ jobs with `--gpus-per-node=0`) + reserved jaguar03 224 + puma01 160 ≈ **1344 C
 So: submit the open-partition buckets to their caps first, then fill the reserved nodes. (Run 3.1.2
 launched reserved-first and paid the difference; step 1's reservation-first phrasing above is superseded
 by this ordering for capacity purposes — the reservation checks in step 1 still apply, just last.)
+
+## 9. Multi-task srun jobs MUST pass `srun --wait=0` (WaitTime=3600 kills siblings; verified 2026-07-04)
+This cluster's `slurm.conf` sets `WaitTime=3600`: by default, srun TERMINATES a step's remaining tasks
+3600 s after the FIRST task exits (job then shows FAILED 9:0, step CANCELLED, workers SIGKILLed with
+their queue markers left in `running/`). Any job whose tasks can exit at different times — in particular
+a work-queue job whose workers exit when `pending/` is empty — must run `srun --wait=0` (0 = never kill
+remaining tasks). Verified 2026-07-04 on the run-3.1.2 follow-up sweep (single-wave queue, one run per
+worker): 3 jobs whose SPARE workers found the queue empty died at exactly 1 h 00 m; 10 more died ~1 h
+after their fastest worker finished (12–18 h in); 94 mid-flight runs were killed. The 3.1.2/3.1.1 sweeps
+never hit this only because their queues kept every worker busy to the walltime. Both worker scripts
+(`worker_16x1.slurm`, `worker_8x2.slurm`) now carry `srun --wait=0`; keep it in any new worker script.
+Recovery for killed configs: archive partial JSONs to `data/<sweep_id>/killed_attempts_<ts>/`, requeue
+markers, resubmit (see `run-id-and-logging.md`).
+`--wait=0` semantics VERIFIED by controlled probe 2026-07-04 (jobs 6382110/6382111, logs in the run
+folder's `logs/wait_probe/`; 4 tasks, task 0 exits at t=0, tasks 1-3 run 300 s): `--wait=30` killed the
+survivors exactly 30 s after the first exit (FAILED 9:0 — the event's signature); `--wait=0` ran every
+task to natural completion (COMPLETED 0:0). So 0 = unlimited wait / never kill — it does NOT mean "kill
+immediately" (man srun: "A value of 0 indicates an unlimited wait").
+
+## 10. Always leave 16 CPUs of headroom for the user's own jobs (added 2026-07-04)
+The uid is shared: the user submits their own jobs as the same user (`sl5nw`), so sweep jobs compete
+with the user's manual submissions for the same reserved nodes and the same per-user partition caps.
+Therefore, at every sweep launch and every refill wave:
+- **If a reservation is active:** leave at least 16 CPUs unallocated on the reserved node. Count other
+  already-running jobs on the node first (`squeue -w <node>`); with 32-thread jobs on jaguar03
+  (224 threads) that means at most `floor((224-16)/32)` = 6 sweep jobs.
+- **If no reservation is active:** leave at least 16 CPUs of headroom under the gpu partition's
+  per-user cap instead — fill sweep jobs only up to 384 of the 400 gpu-cap CPUs, counting every
+  existing job under the uid (`scontrol show assoc_mgr qos=cspartgpu flags=qos` shows the counted
+  usage as `cpu=400(<current>)`).

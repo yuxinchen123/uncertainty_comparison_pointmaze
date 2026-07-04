@@ -232,3 +232,92 @@ def test_update_reduces_bonus_linear_rnd():
     after = rnd.compute(samples).mean().item()
     assert after < before
     assert after >= 0.0
+
+
+def test_sgd_1t_schedule_math():
+    """_sgd_1t_lr follows eta0/(1 + t/t0) with a 0-based t and optional floor; update() applies it per step."""
+    # formula checks: t=0 -> eta0; t=t0 -> eta0/2; large t -> ~eta0*t0/t; monotone non-increasing; floor binds
+    assert RND._sgd_1t_lr(0.1, 1000.0, 0) == pytest.approx(0.1)
+    assert RND._sgd_1t_lr(0.1, 1000.0, 1000) == pytest.approx(0.05)
+    assert RND._sgd_1t_lr(0.1, 1000.0, 10**9) == pytest.approx(0.1 * 1000.0 / 10**9, rel=1e-3)
+    lrs = [RND._sgd_1t_lr(0.1, 1000.0, t) for t in range(0, 5000, 500)]
+    assert all(a >= b for a, b in zip(lrs, lrs[1:]))
+    assert RND._sgd_1t_lr(1e-3, 1e3, 10**9, eta_min=1e-4) == 1e-4
+    # live check pinning the t convention: the FIRST update uses t=0 (lr == eta0), the second t=1
+    rnd = make_rnd(use_obs_norm=False, optimizer="sgd1t", sgd_eta0=0.1, sgd_t0=1000.0)
+    samples = make_samples()
+    rnd.update(samples)
+    assert rnd.opt.param_groups[0]["lr"] == pytest.approx(0.1)
+    assert rnd._n_updates == 1
+    rnd.update(samples)
+    assert rnd.opt.param_groups[0]["lr"] == pytest.approx(0.1 / (1.0 + 1.0 / 1000.0))
+    assert rnd._n_updates == 2
+
+
+def test_bonus_readout_l2_is_sqrt_of_twice_mse():
+    """The l2 readout equals sqrt(2 * mse readout) on identical weights; mse matches the manual formula."""
+    samples = make_samples()
+    mse = make_rnd(use_obs_norm=False)
+    l2 = make_rnd(use_obs_norm=False, bonus_readout="l2")
+    # identical networks so both readouts see the same residual e = target(x) - predictor(x)
+    l2.predictor.load_state_dict(mse.predictor.state_dict())
+    l2.target.load_state_dict(mse.target.state_dict())
+    b_mse = mse.compute(samples)
+    b_l2 = l2.compute(samples)
+    assert torch.allclose(b_l2, (2.0 * b_mse).sqrt(), atol=1e-6)
+    # manual recompute of the mse readout: B_mse = 0.5 * sum_j e_j^2 on the raw (un-normalized) input
+    x = torch.as_tensor(samples["next_observations"])
+    with torch.no_grad():
+        e = mse.target(x) - mse.predictor(x)
+    assert torch.allclose(b_mse, 0.5 * e.pow(2).sum(dim=1), atol=1e-6)
+    # hand-checked edge on the distance kernel: residual all-ones over 3 dims -> B_mse=1.5, B_l2=sqrt(3)
+    d = mse._dist_ensemble(torch.zeros(1, 1, 3), torch.ones(1, 3))
+    assert d.item() == pytest.approx(1.5)
+    assert (2.0 * d).sqrt().item() == pytest.approx(np.sqrt(3.0))
+
+
+def test_optimizer_class_selection():
+    """_build_optimizer returns the documented class and constants per rnd optimizer; bad values raise."""
+    # golden path: adam = historical construction (lr 1e-3); adagrad = PyTorch defaults; sgd1t lr = eta0
+    adam = make_rnd(use_obs_norm=False)
+    assert isinstance(adam.opt, torch.optim.Adam)
+    assert adam.opt.param_groups[0]["lr"] == pytest.approx(1e-3)
+    ada = make_rnd(use_obs_norm=False, optimizer="adagrad")
+    assert isinstance(ada.opt, torch.optim.Adagrad)
+    group = ada.opt.param_groups[0]
+    assert group["lr"] == pytest.approx(1e-2)
+    assert group["eps"] == pytest.approx(1e-10)
+    assert group["initial_accumulator_value"] == 0
+    sgd = make_rnd(use_obs_norm=False, optimizer="sgd1t", sgd_eta0=3e-3)
+    assert isinstance(sgd.opt, torch.optim.SGD)
+    assert sgd.opt.param_groups[0]["lr"] == pytest.approx(3e-3)
+    assert sgd.opt.param_groups[0]["momentum"] == 0
+    # edge cases: unknown optimizer / readout, l2 on the abs distance, and t0 <= 0 all fail loud
+    with pytest.raises(ValueError):
+        make_rnd(optimizer="rmsprop")
+    with pytest.raises(ValueError):
+        make_rnd(bonus_readout="huber")
+    with pytest.raises(ValueError):
+        make_rnd(bonus_readout="l2", distance="abs")
+    with pytest.raises(ValueError):
+        make_rnd(optimizer="sgd1t", sgd_t0=0.0)
+
+
+def test_default_behavior_matches_explicit_adam_mse():
+    """Defaults (no new kwargs) == explicit adam+mse, and the readout never enters the training loss."""
+    samples = make_samples()
+    # identical seeds -> identical networks; the default construction must equal the explicit one
+    torch.manual_seed(0)
+    default = make_rnd(use_obs_norm=False)
+    torch.manual_seed(0)
+    explicit = make_rnd(use_obs_norm=False, optimizer="adam", bonus_readout="mse")
+    assert isinstance(default.opt, torch.optim.Adam)
+    assert torch.equal(default.compute(samples), explicit.compute(samples))
+    # readout independence of training: same-seed mse and l2 models take one update on the same batch
+    # and end with byte-identical predictor parameters (both trained on the mse objective)
+    torch.manual_seed(0)
+    l2 = make_rnd(use_obs_norm=False, bonus_readout="l2")
+    default.update(samples)
+    l2.update(samples)
+    for p_mse, p_l2 in zip(default.predictor.parameters(), l2.predictor.parameters()):
+        assert torch.equal(p_mse, p_l2)

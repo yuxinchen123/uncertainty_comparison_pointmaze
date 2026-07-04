@@ -75,6 +75,12 @@ class Config:
     rnd_distance: str = "mse"
     rnd_output_dim: int = 128
     n_predictors: int = 1
+    # RND predictor-optimizer knobs (run 3.2.1); adam/mse are the historical defaults (bit-identical
+    # to the pre-switch behavior). The sgd_* knobs are read only when rnd_optimizer="sgd1t".
+    rnd_optimizer: str = "adam"          # predictor optimizer: "adam" | "adagrad" | "sgd1t"
+    rnd_bonus_readout: str = "mse"       # bonus readout: "mse" = 0.5*||e||^2 | "l2" = ||e||_2
+    rnd_sgd_eta0: float = 1e-2           # sgd1t initial learning rate eta0
+    rnd_sgd_t0: float = 1e3              # sgd1t schedule offset t0 (> 0)
     # elliptical-bonus knobs (rnd_elliptical / rnd_elliptical_global); ignored by non-elliptical algos.
     elliptical_regularization: float = 1e-2          # ridge λ on the covariance diagonal
     elliptical_feature_normalization: str = "unit"   # ν_φ: "unit" (default) | "rms_unit" | "none"
@@ -96,6 +102,7 @@ class Config:
     opt_polyak_foreach: bool = False    # bit-exact torch._foreach_ polyak target update (replaces SB3 zip_strict)
     sac_train_freq: int = 1             # SAC train_freq: env steps between gradient-update bursts
     sac_gradient_steps: int = 1         # SAC gradient_steps per burst (with train_freq=N, gradient_steps=N keeps total updates equal)
+    sb3_verbose: int = 0                # SB3 SAC verbose: 0 (default) = no periodic rollout/train table; 1 restores it
 
 
 def _str2bool(x: str) -> bool:
@@ -132,6 +139,16 @@ def parse_config() -> Config:
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"])
     parser.add_argument("--rnd_output_dim", type=int, default=128)
     parser.add_argument("--n_predictors", type=int, default=1)
+    parser.add_argument("--rnd_optimizer", type=str, default="adam", choices=["adam", "adagrad", "sgd1t"],
+                        help="RND predictor optimizer (run 3.2.1): adam (O1, default), adagrad (O2), "
+                             "sgd1t (O3: eta_t = eta0/(1 + t/t0), no floor).")
+    parser.add_argument("--rnd_bonus_readout", type=str, default="mse", choices=["mse", "l2"],
+                        help="RND bonus readout: mse = 0.5*||e||^2 (canonical, default) | l2 = ||e||_2. "
+                             "Training always uses the mse objective; only the reward readout changes.")
+    parser.add_argument("--rnd_sgd_eta0", type=float, default=1e-2,
+                        help="sgd1t initial learning rate eta0 (used only when rnd_optimizer=sgd1t).")
+    parser.add_argument("--rnd_sgd_t0", type=float, default=1e3,
+                        help="sgd1t schedule offset t0 > 0 (used only when rnd_optimizer=sgd1t).")
     parser.add_argument("--elliptical_regularization", type=float, default=1e-2,
                         help="Elliptical ridge λ on the covariance diagonal (rnd_elliptical[_global]).")
     parser.add_argument("--elliptical_feature_normalization", type=str, default="unit",
@@ -167,6 +184,8 @@ def parse_config() -> Config:
                         help="Bit-exact torch._foreach_ polyak target update (replaces SB3 zip_strict).")
     parser.add_argument("--sac_train_freq", type=int, default=1, help="SAC train_freq (env steps per update burst).")
     parser.add_argument("--sac_gradient_steps", type=int, default=1, help="SAC gradient_steps per burst.")
+    parser.add_argument("--sb3_verbose", type=int, default=0, choices=[0, 1],
+                        help="SB3 SAC verbosity: 0 (default) = silent (no periodic rollout/train table), 1 = SB3's table.")
 
     # argparse -> Config dataclass
     args = parser.parse_args()
@@ -297,7 +316,7 @@ def build_sac(cfg: Config, vec_env, intrinsic_model, seed: int) -> SAC:
     return SAC(
         "MlpPolicy",
         vec_env,
-        verbose=0 if cfg.use_wandb else 1,
+        verbose=cfg.sb3_verbose,
         seed=seed,
         device=cfg.device,
         gamma=cfg.discount_factor,
@@ -350,6 +369,15 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
     # elliptical-only knobs: recorded so the analysis can group runs by covariance rule (batch/global),
     # update timing (sample/add), encoder input (s,a vs next-state), and ridge λ. Omitted for non-elliptical
     # algorithms (which never read them) so their JSON stays free of irrelevant defaults.
+    # RND-only knobs (run 3.2.1): recorded so the analysis can group runs by optimizer method,
+    # bonus readout, and the sgd1t schedule parameters. Omitted for non-RND algorithms (which never
+    # read them) so their JSON stays free of irrelevant defaults. eta0/t0 are recorded for every RND
+    # run (only load-bearing under sgd1t) so the O3 grouping key is always complete.
+    if REGISTRY[cfg.algorithm].kind == "rnd":
+        record["rnd_optimizer"] = cfg.rnd_optimizer
+        record["rnd_bonus_readout"] = cfg.rnd_bonus_readout
+        record["rnd_sgd_eta0"] = cfg.rnd_sgd_eta0
+        record["rnd_sgd_t0"] = cfg.rnd_sgd_t0
     if REGISTRY[cfg.algorithm].kind == "elliptical":
         record["elliptical_regularization"] = cfg.elliptical_regularization
         record["elliptical_update_timing"] = cfg.elliptical_update_timing

@@ -131,6 +131,10 @@ class RND(IntrinsicRewardModel):
         feature: str = "rnd_next_state",
         action_dim: Optional[int] = None,
         linear_rnd: bool = False,
+        optimizer: str = "adam",
+        bonus_readout: str = "mse",
+        sgd_eta0: float = 1e-2,
+        sgd_t0: float = 1e3,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         self.feature = feature
@@ -163,6 +167,24 @@ class RND(IntrinsicRewardModel):
         self.n_predictors = 1 if self.linear_rnd else n_predictors
         self.beta_std = beta_std
 
+        # predictor optimizer + bonus readout (run 3.2.1 switches). adam/mse are the historical
+        # defaults (bit-identical to the pre-switch code). The l2 readout is only defined on top of
+        # the squared-error distance (||e||_2 = sqrt(2 * B_mse)), so it requires distance='mse'.
+        self.lr = lr
+        self.optimizer = str(optimizer).lower()
+        if self.optimizer not in {"adam", "adagrad", "sgd1t"}:
+            raise ValueError("optimizer must be one of: 'adam', 'adagrad', 'sgd1t'")
+        self.bonus_readout = str(bonus_readout).lower()
+        if self.bonus_readout not in {"mse", "l2"}:
+            raise ValueError("bonus_readout must be one of: 'mse', 'l2'")
+        if self.bonus_readout == "l2" and self.distance != "mse":
+            raise ValueError("bonus_readout='l2' requires distance='mse' (l2 = sqrt(2*mse))")
+        self.sgd_eta0 = float(sgd_eta0)
+        self.sgd_t0 = float(sgd_t0)
+        if self.sgd_t0 <= 0:
+            raise ValueError("sgd_t0 must be > 0 (divides the update count in the 1/t schedule)")
+        self._n_updates = 0  # predictor-update counter t for the sgd1t schedule (0-based)
+
         if self.linear_rnd:
             # Frozen target: body + head; never updated.
             self.target = ObservationEncoder(
@@ -178,7 +200,7 @@ class RND(IntrinsicRewardModel):
                 self.predictor.body.load_state_dict(self.target.body.state_dict())
             for p in self.predictor.body.parameters():
                 p.requires_grad = False
-            self.opt = torch.optim.Adam(self.predictor.head.parameters(), lr=lr)
+            self.opt = self._build_optimizer(self.predictor.head.parameters())
         else:
             if n_predictors == 1:
                 self.predictor = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
@@ -189,10 +211,28 @@ class RND(IntrinsicRewardModel):
             self.target = ObservationEncoder(self._rnd_obs_shape, output_dim).to(self.device)
             for p in self.target.parameters():
                 p.requires_grad = False
-            self.opt = torch.optim.Adam(self.predictor.parameters(), lr=lr)
+            self.opt = self._build_optimizer(self.predictor.parameters())
         self.obs_rms: Optional[object] = None
         if self.use_obs_norm:
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
+
+    def _build_optimizer(self, params) -> torch.optim.Optimizer:
+        """Construct the predictor optimizer named by self.optimizer (run 3.2.1 methods O1/O2/O3)."""
+        # adam (O1): the historical construction, bit-identical to the pre-switch code (factory lr=1e-3,
+        # PyTorch default betas (0.9, 0.999) and eps 1e-8)
+        if self.optimizer == "adam":
+            return torch.optim.Adam(params, lr=self.lr)
+        # adagrad (O2): PyTorch defaults written out for self-documentation (the Adam lr is ignored)
+        if self.optimizer == "adagrad":
+            return torch.optim.Adagrad(params, lr=1e-2, eps=1e-10, initial_accumulator_value=0)
+        # sgd1t (O3): plain SGD (momentum 0, no weight decay); update() recomputes the lr from the
+        # 1/t schedule before every step, and lr=eta0 here equals the schedule's t=0 value
+        return torch.optim.SGD(params, lr=self.sgd_eta0)
+
+    @staticmethod
+    def _sgd_1t_lr(eta0: float, t0: float, t: int, eta_min: float = 0.0) -> float:
+        """Shifted 1/t learning-rate schedule: eta_t = max(eta_min, eta0 / (1 + t/t0)), t 0-based."""
+        return max(eta_min, eta0 / (1.0 + t / t0))
 
     def _get_feature_tensor(self, samples: Dict[str, Any]) -> torch.Tensor:
         """Build input tensor (batch_size, _rnd_input_dim) from samples."""
@@ -256,6 +296,11 @@ class RND(IntrinsicRewardModel):
                 src = src.unsqueeze(1)
             tgt = self.target(x)
             distances = self._dist_ensemble(src, tgt)
+            # l2 readout: with distance='mse' (enforced in __init__), distances holds per-predictor
+            # B_mse = 0.5*sum_j e_j^2, so ||e||_2 = sqrt(2 * distances). before: [[1.5]] (residual
+            # all-ones over 3 dims) -> after: [[1.7321]] (= sqrt(3)). The mse readout skips this.
+            if self.bonus_readout == "l2":
+                distances = (2.0 * distances).clamp(min=1e-8).sqrt()
         mean_dist = distances.mean(dim=1)
         if self.n_predictors == 1:
             std_dist = torch.zeros_like(mean_dist, device=mean_dist.device, dtype=mean_dist.dtype)
@@ -282,4 +327,12 @@ class RND(IntrinsicRewardModel):
                 tgt = self.target(x)
             loss = self._dist_ensemble(src, tgt).mean()
         loss.backward()
+        # sgd1t: set this step's lr from the 1/t schedule; t = predictor updates done so far (0-based,
+        # so the first step uses eta0 exactly). The loss above is ALWAYS the mse objective, for every
+        # readout — the bonus readout never enters training (the exact norm is nonsmooth at zero).
+        if self.optimizer == "sgd1t":
+            lr_t = self._sgd_1t_lr(self.sgd_eta0, self.sgd_t0, self._n_updates)
+            for group in self.opt.param_groups:
+                group["lr"] = lr_t
         self.opt.step()
+        self._n_updates += 1

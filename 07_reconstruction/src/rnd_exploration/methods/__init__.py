@@ -117,6 +117,13 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
             linear_rnd=spec.linear_rnd,
             feature=spec.rnd_feature,
             action_dim=ctx.action_dim,
+            # run-3.2.1 optimizer/readout knobs, duck-typed like the elliptical block below: the
+            # getattr defaults MUST equal the Config defaults so a cfg without the fields (older
+            # configs, test stubs) reproduces the historical adam/mse behavior exactly
+            optimizer=getattr(cfg, "rnd_optimizer", "adam"),
+            bonus_readout=getattr(cfg, "rnd_bonus_readout", "mse"),
+            sgd_eta0=getattr(cfg, "rnd_sgd_eta0", 1e-2),
+            sgd_t0=getattr(cfg, "rnd_sgd_t0", 1e3),
         )
         if cfg.rnd_obs_norm:
             _warmup_obs_rms(model, ctx)

@@ -154,3 +154,42 @@ def test_build_elliptical_passes_all_cfg_knobs_through():
     del cfg.elliptical_bonus_clip
     model_default = build_intrinsic_model("rnd_elliptical", cfg, ctx)
     assert model_default.bonus_clip == 5.0
+
+
+def test_build_rnd_forwards_optimizer_readout_knobs():
+    """The factory forwards the four run-3.2.1 RND knobs; a cfg without them falls back to adam/mse. Guards
+    the silent-masking hazard: the factory reads the knobs via getattr with defaults, so a knob missing from
+    cfg would silently pick the wrong optimizer/readout."""
+    import types
+    import torch
+    from rnd_exploration.methods import EnvContext
+
+    # cfg stub: an O3 sgd1t + l2 configuration (obs-norm off so no warmup rollout is needed)
+    cfg = types.SimpleNamespace(
+        device="cpu",
+        rnd_output_dim=16,
+        rnd_obs_norm=False,
+        rnd_distance="mse",
+        n_predictors=1,
+        rnd_optimizer="sgd1t",
+        rnd_bonus_readout="l2",
+        rnd_sgd_eta0=3e-3,
+        rnd_sgd_t0=1e4,
+    )
+    # the RND branch only reads obs_shape / action_dim / device from the context
+    ctx = EnvContext(obs_shape=(4,), action_dim=2, observation_space=None, action_space=None,
+                     position_wrapper=None, position_velocity_wrapper=None)
+    model = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    # golden path: every knob arrives on the model and the SGD optimizer really is constructed
+    assert model.optimizer == "sgd1t"
+    assert model.bonus_readout == "l2"
+    assert model.sgd_eta0 == 3e-3
+    assert model.sgd_t0 == 1e4
+    assert isinstance(model.opt, torch.optim.SGD)
+    # edge case: a cfg WITHOUT the new attrs falls back to the historical adam/mse defaults
+    for attr in ("rnd_optimizer", "rnd_bonus_readout", "rnd_sgd_eta0", "rnd_sgd_t0"):
+        delattr(cfg, attr)
+    model_default = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    assert model_default.optimizer == "adam"
+    assert model_default.bonus_readout == "mse"
+    assert isinstance(model_default.opt, torch.optim.Adam)
