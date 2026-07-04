@@ -1,0 +1,10 @@
+[I 2026-07-03 20:14:49,733] A new study created in Journal with name: point3_study
+[I 2026-07-03 20:14:49,747] Using an existing study with name 'point3_study' instead of creating a new one.
+
+first create_study OK; study has 1 trial(s)
+load_if_exists=True re-attached; study_b has 1 trial(s)
+  same study_id? True
+  study_b sees first trial value: 42.0
+second create_study without load_if_exists:
+  raised optuna.exceptions.DuplicatedStudyError: Another study with name point3_study already exists. Please specify a different name, or reuse the existing one by setting `load_if_exists` (for Python API) or `--skip-if-exists` flag (for CLI).
+

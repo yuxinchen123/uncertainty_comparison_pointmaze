@@ -68,3 +68,68 @@ Commit: `8622c33d5dc10f52898192459494fe7d02ef3777` (branch `Use-RLexplore-RND`);
 carries the run-3.1.1 changes (elliptical family refactor, float64 Cholesky, eval_standalone) plus the
 run-3.1.2 changes listed above, all uncommitted. The run uses the live package at this state; do not edit
 the elliptical/train code while the sweep is running. A code snapshot is in this folder's `code/`.
+
+---
+
+# Follow-up sweep (launched 2026-07-03): unit normalization at ridge 1e-8, no clip
+
+Sweep id: `2026-07-03-21-22_unit_ridge-1e-8_clip-inf_beta-1e-4-1e-3-1e-2-1e-1-1e0_50seed_16x1`
+(queue under `queue/<sweep_id>/`, data under `data/<sweep_id>/local/`, job ids in
+`slurm/submitted_jobids_<sweep_id>.txt`; manifest row in `data/SWEEPS.md`).
+
+## Purpose
+
+Run-3.1.2 finding (iv) (writeup section 5.3.5): unit-normalized features could not reach the run-2
+replica's effective ridge ratio inside the 3.1.1/3.1.2 grids — their floor is $\rho = \lambda d$
+($1.28\times 10^{-4}$ at $\lambda = 10^{-6}$, $35\times$ the replica's measured $3.7\times 10^{-6}$) —
+and matching run-2's bonus contrast under unit norm would need $\lambda \approx 3\times 10^{-8}$, below
+anything swept so far. This sweep tests that regime directly with ONE cell below the old grid: unit
+normalization at $\lambda = 10^{-8}$ (floor $\rho = \lambda d = 1.28\times 10^{-6}$, BELOW the replica's
+measured $3.7\times 10^{-6}$), no clip. The questions:
+
+1. Does unit normalization at a replica-level (or smaller) $\rho$ recover replica-level eval reward
+   (about 52.8), i.e. was the ridge ratio the whole story (Hypothesis 1, now tested where 3.1.2 could
+   not test it)?
+2. Or does it stay below the raw-feature replica even at matched $\rho$, which would revive the
+   raw-feature extreme-state-premium hypothesis (Hypothesis 2, dropped on parsimony in 3.1.2)?
+3. Where does $\beta^\star$ sit for this large-contrast bonus? Finding (v) says $\beta^\star$ shifts
+   inversely with bonus scale, hence the wide five-decade beta sweep including the new endpoints
+   $10^{-4}$ and $10^{0}$.
+
+## Key hyperparameters
+
+Identical to the 3.1.2 replicate/ablate sweeps except the cell and the beta range:
+
+| Parameter | Value |
+|-----------|-------|
+| algorithm | `rnd_elliptical` (batch covariance, sample-time update), `(s,a)` input |
+| cell | unit normalization, ridge $\lambda$ = 1e-8, clip = inf (no clip) |
+| swept: β | {0.0001, 0.001, 0.01, 0.1, 1.0} (ascending, inner axis) |
+| seeds | 0–49 (50), OUTERMOST — seed s owns ids [5s .. 5s+4]; run_total = 250 |
+| env / agent / eval | PointMaze_Large-v3 top_right, SAC γ=0.999 cpu, 1M steps, standalone eval ON, 100 episodes / 50k steps |
+| logging | local JSON per run (`data/<sweep_id>/local/<id>_of_250.json`), checkpointed at eval cadence, distance logging off |
+| Slurm | 16 jobs × (16 tasks × 1 cpu, `--ntasks-per-core=2`, 2G/cpu, `--time=4-00:00:00`) = 256 workers ≥ 250 runs (one wave) |
+| placement | OPEN partitions only (cpu 8, gpu allowlist lynx01–05 5, gnolim 3); reservation jaguar03/puma01 deliberately left free; nolim skipped (its per-user memory pool was full) |
+
+## Code and config changes
+
+Relative to the 3.1.2 sweeps in this folder (trainer/`train.py` untouched — same code state):
+
+- `slurm/build_queue_unit_ridge_1e8.py` (new): builds this sweep's 250-config queue (single cell,
+  beta inner ascending, seed outermost) and appends the `data/SWEEPS.md` row.
+- `slurm/worker.py` `claim()`: now sorts pending names by id and picks randomly among only the FIRST 32
+  (ordered-window claim) so early seeds finish first — the rule made explicit for post-3.1.2 sweeps in
+  `.claude/rules/run-id-and-logging.md`; the old fully-shuffled claim executed runs in random order.
+- `slurm/progress_unit_ridge_1e8.py` (new): single-sweep progress (per-beta completed-seed coverage).
+- `slurm/launch_queue_unit_ridge_1e8.sh` (new): the 16-job open-partition submission described above.
+- `slurm/test_unit_ridge_1e8_convention.py` (new): pins the 250-config grid and the ordered-window claim
+  (all tests pass together with the existing `test_run_id_convention.py`).
+- `slurm/worker_16x1.slurm` reused unchanged.
+
+## Git state
+
+Commit: `a85b1821de31d19b4a518c7a44e6bb8a4df59793` (branch `Use-RLexplore-RND`); working tree dirty —
+uncommitted at launch: the new/edited `slurm/` files above, this file, `analysis/analysis.md` +
+`analysis/code/` + `analysis/plots/` (run-3.1.2 analysis), `development_document/main.tex`, and the
+project rule `.claude/rules/run-id-and-logging.md`. Trainer code (`train.py`, `methods/`, `callbacks/`)
+is byte-identical to the state the 3.1.2 sweeps ran (snapshot in this folder's `code/`).

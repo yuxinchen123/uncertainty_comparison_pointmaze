@@ -1,0 +1,28 @@
+Total budget per approach: 90 trials (split = 30 trials x 3 methods).
+TPE default n_startup_trials = 10 (random) before the model takes over.
+best_true = best NOISE-FREE mean reward the search reached (search quality, no max-of-noise bias).
+best_noisy = max noisy objective value = study.best_value (biased upward by noise and by #trials).
+
+seed   method  shared_n  shared_true  shared_noisy  split_n  split_true  split_noisy  true_peak
+-----------------------------------------------------------------------------------------------
+   0     adam         9        22.53         26.24       30       22.75        33.72       23.0
+   0  adagrad        20        26.96         29.37       30       26.97        42.85       27.0
+   0    sgd1t        61        44.96         53.65       30       44.25        48.72       45.0
+   1     adam        10        19.95         19.13       30       22.65        27.38       23.0
+   1  adagrad        10        26.70         25.89       30       26.96        35.87       27.0
+   1    sgd1t        70        44.50         53.32       30       42.55        51.81       45.0
+   2     adam        10        20.00         28.39       30       19.96        26.26       23.0
+   2  adagrad        10        23.96         22.30       30       27.00        37.29       27.0
+   2    sgd1t        70        44.85         54.45       30       44.84        55.98       45.0
+
+Shared-study trial allocation per method (share of 90 trials), averaged over seeds:
+      adam: mean   9.7 trials  (per-seed counts: [9, 10, 10])
+   adagrad: mean  13.3 trials  (per-seed counts: [20, 10, 10])
+     sgd1t: mean  67.0 trials  (per-seed counts: [61, 70, 70])
+
+Search quality: gap of best_true to the true peak (0 = reached the peak), averaged over seeds:
+  method  shared_gap  split_gap
+    adam        2.18       1.22
+ adagrad        1.13       0.02
+   sgd1t        0.23       1.12
+

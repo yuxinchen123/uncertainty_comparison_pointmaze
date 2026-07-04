@@ -1,0 +1,12 @@
+[I 2026-07-03 20:23:52,914] A new study created in Journal with name: point4_ask_tell
+
+deliberately failed trial number=0 -> state=FAIL
+study still asks after FAIL: got trial number=1; telling it back as FAIL too
+launched 4 worker processes
+total trials: 42
+COMPLETE: 40  FAIL: 2
+tells made with a plain int trial number: 40
+best value: 0.2411
+best params: {'x': 2.440595242780977, 'y': -0.802414834478219}
+POINT 4 OK: 40 COMPLETE via file-queue ask/tell; int-number tell works; FAIL tell does not stop the study
+

@@ -1,0 +1,9 @@
+  method  grid_size  n_trials_run  unique_cells  best_value
+------------------------------------------------------------
+    adam         16            16            16      22.024
+ adagrad         16            16            16      25.026
+   sgd1t        160           160           160      51.648
+
+studies in the one storage: ['grid_adagrad', 'grid_adam', 'grid_sgd1t']
+expected grid sizes: adam=16, adagrad=16, sgd1t=160 (16 / 16 / 160)
+

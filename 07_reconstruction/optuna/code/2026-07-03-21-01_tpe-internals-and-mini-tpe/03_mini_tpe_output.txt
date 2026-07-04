@@ -1,0 +1,16 @@
+optuna version: 4.9.0
+landscape: peak at (-6.0, -2.0), box [(-6.0, -2.0), (-3.0, -1.0)], height 50, width 1 decade, noise SD 10
+budget = 60 trials; 'hit' = within 0.5 (half a decade) of the peak
+
+seed  mini_tpe hits  random hits  real_tpe hits
+   0             19            2             15
+   1             28            3             10
+   2             22            1             13
+
+ sum             69            6             38
+
+seed 0 closest-approach distance to peak:
+   mini_tpe: 0.077
+     random: 0.403
+   real_tpe: 0.212
+

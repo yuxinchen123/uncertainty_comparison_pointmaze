@@ -1,0 +1,13 @@
+/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-20-09_samplers-tpe-random-gp-comparison/06_gp_vs_tpe_runtime.py:47: ExperimentalWarning: GPSampler is experimental (supported from v3.6.0). The interface can change in the future.
+  gp_secs, gp_best = time_study(optuna.samplers.GPSampler(seed=0), n_trials)
+
+optuna 4.9.0 | torch 2.10.0+cu128
+
+budget = 60 trials, same objective
+
+sampler          total_s   per_trial_s  best_value
+TPESampler         0.216        0.0036      60.878
+GPSampler          3.456        0.0576      64.962
+
+GP / TPE total-time ratio = 16.0x
+

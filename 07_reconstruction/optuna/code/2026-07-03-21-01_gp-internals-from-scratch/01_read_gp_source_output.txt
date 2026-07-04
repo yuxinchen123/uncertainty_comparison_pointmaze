@@ -1,0 +1,535 @@
+
+==============================================================================
+VERSIONS
+==============================================================================
+optuna 4.9.0
+numpy 1.26.4
+torch 2.10.0+cu128
+
+==============================================================================
+GPSampler CLASS DOCSTRING (verbatim)
+==============================================================================
+Sampler using Gaussian process-based Bayesian optimization.
+
+This sampler fits a Gaussian process (GP) to the objective function and optimizes
+the acquisition function to suggest the next parameters.
+
+The current implementation uses Matern kernel with nu=2.5 (twice differentiable) with automatic
+relevance determination (ARD) for the length scale of each parameter.
+The hyperparameters of the kernel are obtained by maximizing the marginal log-likelihood of the
+hyperparameters given the past trials.
+To prevent overfitting, Gamma prior is introduced for kernel scale and noise variance and
+a hand-crafted prior is introduced for inverse squared lengthscales.
+
+As an acquisition function, we use:
+
+- log expected improvement (logEI) for single-objective optimization,
+- log expected hypervolume improvement (logEHVI) for Multi-objective optimization, and
+- the summation of logEI and the logarithm of the feasible probability with the independent
+  assumption of each constraint for (black-box inequality) constrained optimization.
+
+For further information about these acquisition functions, please refer to the following
+papers:
+
+- `Unexpected Improvements to Expected Improvement for Bayesian Optimization
+  <https://arxiv.org/abs/2310.20708>`__
+- `Differentiable Expected Hypervolume Improvement for Parallel Multi-Objective Bayesian
+  Optimization <https://arxiv.org/abs/2006.05078>`__
+- `Bayesian Optimization with Inequality Constraints
+  <https://proceedings.mlr.press/v32/gardner14.pdf>`__
+
+Please also check our articles:
+
+- `[Optuna v4.5] Gaussian Process-Based Sampler (GPSampler) Can Now Perform Constrained
+  Multi-Objective Optimization <https://medium.com/optuna/optuna-v4-5-81e78d8e077a>`__
+- `[Optuna v4.2] Gaussian Process-Based Sampler (GPSampler) Can Now Handle Inequality
+  Constraints
+  <https://medium.com/optuna/optuna-v4-2-gaussian-process-based-sampler-can-now-handle-inequality-constraints-a4f68e8ee810>`__
+- `Introducing Optuna's Native GPSampler
+  <https://medium.com/optuna/introducing-optunas-native-gpsampler-0aa9aa3b4840>`__
+
+The optimization of the acquisition function is performed via:
+
+1. Collect the best param from the past trials,
+2. Collect ``n_preliminary_samples`` points using Quasi-Monte Carlo (QMC) sampling,
+3. Choose the best point from the collected points,
+4. Choose ``n_local_search - 2`` points from the collected points using the roulette
+   selection,
+5. Perform a local search for each chosen point as an initial point, and
+6. Return the point with the best acquisition function value as the next parameter.
+
+Decoupled optimizer update with a batched evaluation is employed to perform a batch of local
+searches simultaneously, specifically speeding up Step 5 above.
+
+The following paper details the methodology:
+
+- `Batch Acquisition Function Evaluations and Decouple Optimizer Updates for Faster Bayesian
+  Optimization <https://arxiv.org/abs/2511.13625>`__
+
+Note that the procedures for non single-objective optimization setups are slightly different
+from the single-objective version described above, but we omit the descriptions for the others
+for brevity.
+
+The local search iteratively optimizes the acquisition function by repeating:
+
+1. Gradient ascent using l-BFGS-B for continuous parameters, and
+2. Line search or exhaustive search for each discrete parameter independently.
+
+The local search is terminated if the routine stops updating the best parameter set or the
+maximum number of iterations is reached.
+
+We use line search instead of rounding the results from the continuous optimization since EI
+typically yields a high value between one grid and its adjacent grid.
+
+.. note::
+    This sampler requires ``scipy`` and ``torch``.
+    You can install these dependencies with ``pip install scipy torch``.
+
+Args:
+    seed:
+        Random seed to initialize internal random number generator.
+        Defaults to :obj:`None` (a seed is picked randomly).
+    independent_sampler:
+        Sampler used for initial sampling (for the first ``n_startup_trials`` trials)
+        and for conditional parameters. Defaults to :obj:`None`
+        (a random sampler with the same ``seed`` is used).
+    n_startup_trials:
+        Number of initial trials. Defaults to 10.
+    deterministic_objective:
+        Whether the objective function is deterministic or not.
+        If :obj:`True`, the sampler will fix the noise variance of the surrogate model to
+        the minimum value (slightly above 0 to ensure numerical stability).
+        Defaults to :obj:`False`. Currently, all the objectives will be assume to be
+        deterministic if :obj:`True`.
+    constraints_func:
+        An optional function that computes the objective constraints. It must take a
+        :class:`~optuna.trial.FrozenTrial` and return the constraints. The return value must
+        be a sequence of :obj:`float` s. A value strictly larger than 0 means that a
+        constraints is violated. A value equal to or smaller than 0 is considered feasible.
+        If ``constraints_func`` returns more than one value for a trial, that trial is
+        considered feasible if and only if all values are equal to 0 or smaller.
+
+        The ``constraints_func`` will be evaluated after each successful trial.
+        The function won't be called when trials fail or are pruned, but this behavior is
+        subject to change in future releases.
+    warn_independent_sampling:
+        If this is :obj:`True`, a warning message is emitted when
+        the value of a parameter is sampled by using an independent sampler,
+        meaning that no GP model is used in the sampling.
+        Note that the parameters of the first trial in a study are always sampled
+        via an independent sampler, so no warning messages are emitted in this case.
+
+.. note::
+    Added in v3.6.0 as an experimental feature. The interface may change in newer versions
+    without prior notice. See https://github.com/optuna/optuna/releases/tag/v3.6.0.
+
+==============================================================================
+KERNEL: optuna._gp.gp.Matern52Kernel (verbatim)
+==============================================================================
+class Matern52Kernel(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx: Any, squared_distance: torch.Tensor) -> torch.Tensor:
+        """
+        This method calculates `exp(-sqrt5d) * (1/3 * sqrt5d ** 2 + sqrt5d + 1)` where
+        `sqrt5d = sqrt(5 * squared_distance)`.
+
+        Please note that automatic differentiation by PyTorch does not work well at
+        `squared_distance = 0` due to zero division, so we manually save the derivative, i.e.,
+        `-5/6 * (1 + sqrt5d) * exp(-sqrt5d)`, for the exact derivative calculation.
+
+        Notice that the derivative of this function is taken w.r.t. d**2, but not w.r.t. d.
+        """
+        sqrt5d = torch.sqrt(5 * squared_distance)
+        exp_part = torch.exp(-sqrt5d)
+        val = exp_part * ((5 / 3) * squared_distance + sqrt5d + 1)
+        deriv = (-5 / 6) * (sqrt5d + 1) * exp_part
+        ctx.save_for_backward(deriv)
+        return val
+
+    @staticmethod
+    def backward(ctx: Any, grad: torch.Tensor) -> torch.Tensor:
+        """
+        Let x be squared_distance, f(x) be forward(ctx, x), and g(f) be a provided function, then
+        deriv := df/dx, grad := dg/df, and deriv * grad = df/dx * dg/df = dg/dx.
+        """
+        (deriv,) = ctx.saved_tensors
+        return deriv * grad
+
+
+==============================================================================
+KERNEL APPLY: optuna._gp.gp.GPRegressor.kernel (verbatim)
+==============================================================================
+    def kernel(
+        self, X1: torch.Tensor | None = None, X2: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """
+        Return the kernel matrix with the shape of (..., n_A, n_B) given X1 and X2 each with the
+        shapes of (..., n_A, len(params)) and (..., n_B, len(params)).
+
+        If x1 and x2 have the shape of (len(params), ), kernel(x1, x2) is computed as:
+            kernel_scale * Matern52Kernel.apply(
+                sqd(x1, x2) @ inverse_squared_lengthscales
+            )
+        where if x1[i] is continuous, sqd(x1, x2)[i] = (x1[i] - x2[i]) ** 2 and if x1[i] is
+        categorical, sqd(x1, x2)[i] = int(x1[i] != x2[i]).
+        Note that the distance for categorical parameters is the Hamming distance.
+        """
+        if X1 is None:
+            assert X2 is None
+            sqd = self._squared_X_diff
+        else:
+            if X2 is None:
+                X2 = self._X_train
+
+            sqd = (X1 - X2 if X1.ndim == 1 else X1.unsqueeze(-2) - X2.unsqueeze(-3)).square_()
+            if self._is_categorical.any():
+                sqd[..., self._is_categorical] = (sqd[..., self._is_categorical] > 0.0).type(
+                    torch.float64
+                )
+        sqdist = sqd.matmul(self.inverse_squared_lengthscales)
+        return Matern52Kernel.apply(sqdist) * self.kernel_scale  # type: ignore
+
+
+==============================================================================
+OBJECTIVE NORMALIZATION: optuna.samplers._gp.sampler._standardize_values (verbatim)
+==============================================================================
+def _standardize_values(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    clipped_values = gp.warn_and_convert_inf(values)
+    means = np.mean(clipped_values, axis=0)
+    stds = np.std(clipped_values, axis=0)
+    standardized_values = (clipped_values - means) / np.maximum(EPS, stds)
+    return standardized_values, means, stds
+
+
+==============================================================================
+INPUT NORMALIZATION: optuna._gp.search_space._normalize_one_param (verbatim)
+==============================================================================
+def _normalize_one_param(
+    param_value: np.ndarray, scale_type: _ScaleType, bounds: tuple[float, float], step: float
+) -> np.ndarray:
+    # param_value can be batched, or not.
+    if scale_type == _ScaleType.CATEGORICAL:
+        return param_value
+    low, high = (bounds[0] - 0.5 * step, bounds[1] + 0.5 * step)
+    if scale_type == _ScaleType.LOG:
+        low, high = (math.log(low), math.log(high))
+        param_value = np.log(param_value)
+    if high == low:
+        return np.full_like(param_value, 0.5)
+    param_value = (param_value - low) / (high - low)
+    return param_value
+
+
+==============================================================================
+HYPERPARAMETER FITTING: optuna._gp.gp.GPRegressor._fit_kernel_params (verbatim)
+==============================================================================
+    def _fit_kernel_params(
+        self,
+        log_prior: Callable[[GPRegressor], torch.Tensor],
+        minimum_noise: float,
+        deterministic_objective: bool,
+        gtol: float,
+    ) -> GPRegressor:
+        n_params = self._X_train.shape[1]
+
+        # We apply log transform to enforce the positivity of the kernel parameters.
+        # Note that we cannot just use the constraint because of the numerical unstability
+        # of the marginal log likelihood.
+        # We also enforce the noise parameter to be greater than `minimum_noise` to avoid
+        # pathological behavior of maximum likelihood estimation.
+        initial_raw_params = np.concatenate(
+            [
+                np.log(self.inverse_squared_lengthscales.detach().cpu().numpy()),
+                [
+                    np.log(self.kernel_scale.item()),
+                    # We add 0.01 * minimum_noise to initial noise_var to avoid instability.
+                    np.log(self.noise_var.item() - 0.99 * minimum_noise),
+                ],
+            ]
+        )
+
+        def loss_func(raw_params: np.ndarray) -> tuple[float, np.ndarray]:
+            raw_params_tensor = torch.from_numpy(raw_params).requires_grad_(True)
+            with torch.enable_grad():
+                self.inverse_squared_lengthscales = torch.exp(raw_params_tensor[:n_params])
+                self.kernel_scale = torch.exp(raw_params_tensor[n_params])
+                self.noise_var = (
+                    torch.tensor(minimum_noise, dtype=torch.float64)
+                    if deterministic_objective
+                    else torch.exp(raw_params_tensor[n_params + 1]) + minimum_noise
+                )
+                loss = -self.marginal_log_likelihood() - log_prior(self)
+                loss.backward()  # type: ignore
+                # scipy.minimize requires all the gradients to be zero for termination.
+                raw_noise_var_grad = raw_params_tensor.grad[n_params + 1]  # type: ignore
+                assert not deterministic_objective or raw_noise_var_grad == 0
+            return loss.item(), raw_params_tensor.grad.detach().cpu().numpy()  # type: ignore
+
+        with single_blas_thread_if_scipy_v1_15_or_newer():
+            # jac=True means loss_func returns the gradient for gradient descent.
+            res = scipy.optimize.minimize(
+                # Too small `gtol` causes instability in loss_func optimization.
+                loss_func,
+                initial_raw_params,
+                jac=True,
+                method="l-bfgs-b",
+                options={"gtol": gtol},
+            )
+        if not res.success:
+            raise RuntimeError(f"Optimization failed: {res.message}")
+
+        raw_params_opt_tensor = torch.from_numpy(res.x)
+        self.inverse_squared_lengthscales = torch.exp(raw_params_opt_tensor[:n_params])
+        self.kernel_scale = torch.exp(raw_params_opt_tensor[n_params])
+        self.noise_var = (
+            torch.tensor(minimum_noise, dtype=torch.float64)
+            if deterministic_objective
+            else minimum_noise + torch.exp(raw_params_opt_tensor[n_params + 1])
+        )
+        self._cache_matrix()
+        return self
+
+
+==============================================================================
+MARGINAL LOG LIKELIHOOD: optuna._gp.gp.GPRegressor.marginal_log_likelihood (verbatim)
+==============================================================================
+    def marginal_log_likelihood(self) -> torch.Tensor:  # Scalar
+        """
+        This method computes the marginal log-likelihood of the kernel hyperparameters given the
+        training dataset (X, y).
+        Assume that N = len(X) in this method.
+
+        Mathematically, the closed form is given as:
+            -0.5 * log((2*pi)**N * det(C)) - 0.5 * y.T @ inv(C) @ y
+            = -0.5 * log(det(C)) - 0.5 * y.T @ inv(C) @ y + const,
+        where C = cov_Y_Y = cov_fX_fX + noise_var * I and inv(...) is the inverse operator.
+
+        We exploit the full advantages of the Cholesky decomposition (C = L @ L.T) in this method:
+            1. The determinant of a lower triangular matrix is the diagonal product, which can be
+               computed with N flops where log(det(C)) = log(det(L.T @ L)) = 2 * log(det(L)).
+            2. Solving linear system L @ u = y, which yields u = inv(L) @ y, costs N**2 flops.
+        Note that given `u = inv(L) @ y` and `inv(C) = inv(L @ L.T) = inv(L).T @ inv(L)`,
+        y.T @ inv(C) @ y is calculated as (inv(L) @ y) @ (inv(L) @ y).
+
+        In principle, we could invert the matrix C first, but in this case, it costs:
+            1. 1/3*N**3 flops for the determinant of inv(C).
+            2. 2*N**2-N flops to solve C @ alpha = y, which is alpha = inv(C) @ y.
+
+        Since the Cholesky decomposition costs 1/3*N**3 flops and the matrix inversion costs
+        2/3*N**3 flops, the overall cost for the former is 1/3*N**3+N**2+N flops and that for the
+        latter is N**3+2*N**2-N flops.
+        """
+        cov_Y_Y = self.kernel()
+        # NOTE(nabenabe): If we extend it to batch optimization, use diagonal(dim1=-2, dim2=-1).
+        cov_Y_Y.diagonal().add_(self.noise_var)
+        L = torch.linalg.cholesky(cov_Y_Y)
+        logdet_part = -L.diagonal().log().sum()
+        inv_L_y = torch.linalg.solve_triangular(L, self._y_train[:, None], upper=False)[:, 0]
+        quad_part = -0.5 * (inv_L_y @ inv_L_y)
+        # NOTE(nabe): Omitting the constant does not change the optimum.
+        return logdet_part + quad_part
+
+
+==============================================================================
+PRIOR ON HYPERPARAMETERS: optuna._gp.prior.default_log_prior (verbatim)
+==============================================================================
+def default_log_prior(gpr: gp.GPRegressor) -> torch.Tensor:
+    # Log of prior distribution of kernel parameters.
+
+    def gamma_log_prior(x: torch.Tensor, concentration: float, rate: float) -> torch.Tensor:
+        # We omit the constant factor `rate ** concentration / Gamma(concentration)`.
+        return (concentration - 1) * torch.log(x) - rate * x
+
+    # NOTE(contramundum53): The priors below (params and function
+    # shape for inverse_squared_lengthscales) were picked by heuristics.
+    # TODO(contramundum53): Check whether these priors are appropriate.
+    return (
+        -(0.1 / gpr.inverse_squared_lengthscales + 0.1 * gpr.inverse_squared_lengthscales).sum()
+        + gamma_log_prior(gpr.kernel_scale, 2, 1)
+        + gamma_log_prior(gpr.noise_var, 1.1, 30)
+    )
+
+DEFAULT_MINIMUM_NOISE_VAR = 1e-06
+
+==============================================================================
+ACQUISITION (single-objective): optuna._gp.acqf.logei (verbatim)
+==============================================================================
+def logei(mean: torch.Tensor, var: torch.Tensor, f0: float) -> torch.Tensor:
+    # Return E_{y ~ N(mean, var)}[max(0, y-f0)]
+    return standard_logei((mean - f0) / (sigma := var.sqrt_())) + sigma.log()
+
+
+==============================================================================
+ACQUISITION helper: optuna._gp.acqf.standard_logei (verbatim)
+==============================================================================
+def standard_logei(z: torch.Tensor) -> torch.Tensor:
+    """
+    Return E_{x ~ N(0, 1)}[max(0, x+z)]
+    The calculation depends on the value of z for numerical stability.
+    Please refer to Eq. (9) in the following paper for more details:
+        https://arxiv.org/pdf/2310.20708.pdf
+
+    NOTE: We do not use the third condition because [-10**100, 10**100] is an overly high range.
+    """
+    # First condition (most z falls into this condition, so we calculate it first)
+    # NOTE: ei(z) = z * cdf(z) + pdf(z)
+    out = (
+        (z_half := 0.5 * z) * torch.special.erfc(-_SQRT_HALF * z)  # z * cdf(z)
+        + (-z_half * z).exp() * _INV_SQRT_2PI  # pdf(z)
+    ).log()
+    if (z_small := z[(small := z < -25)]).numel():
+        # Second condition (does not happen often, so we calculate it only if necessary)
+        out[small] = (
+            -0.5 * z_small**2
+            - _LOG_SQRT_2PI
+            + (1 + _SQRT_HALF_PI * z_small * torch.special.erfcx(-_SQRT_HALF * z_small)).log()
+        )
+    return out
+
+
+==============================================================================
+ACQUISITION class: optuna._gp.acqf.LogEI (verbatim)
+==============================================================================
+class LogEI(BaseAcquisitionFunc):
+    def __init__(
+        self,
+        gpr: GPRegressor,
+        search_space: SearchSpace,
+        threshold: float,
+        normalized_params_of_running_trials: np.ndarray | None = None,
+        stabilizing_noise: float = 1e-12,
+    ) -> None:
+        self._gpr = gpr
+        self._stabilizing_noise = stabilizing_noise
+        self._threshold = threshold
+
+        if normalized_params_of_running_trials is not None:
+            normalized_params_of_running_trials_tensor = torch.from_numpy(
+                normalized_params_of_running_trials
+            )
+
+            # NOTE(sawa3030): To handle running trials, the `best` constant liar strategy is
+            # currently implemented, as it is simple and performs well in our benchmarks.
+            # We plan to implement Monte-Carlo based approaches (e.g., BoTorch’s fantasize)
+            # in the near future.
+            # See https://github.com/optuna/optuna/pull/6430 for details.
+            # For background on the Constant Liar and Kriging Believer strategies, see
+            # Ginsbourger et al., "Kriging Is Well-Suited to Parallelize Optimization" (2010).
+            constant_liar_value = self._gpr._y_train.max()
+            constant_liar_y = constant_liar_value.expand(
+                normalized_params_of_running_trials_tensor.shape[0]
+            )
+
+            self._gpr.append_running_data(
+                normalized_params_of_running_trials_tensor,
+                constant_liar_y,
+            )
+
+        super().__init__(gpr.length_scales, search_space)
+
+    def eval_acqf(self, x: torch.Tensor) -> torch.Tensor:
+        mean, var = self._gpr.posterior(x)
+        # If there are no feasible trials, max_Y is set to -np.inf.
+        # If max_Y is set to -np.inf, we set logEI to zero to ignore it.
+        return (
+            logei(mean=mean, var=var + self._stabilizing_noise, f0=self._threshold)
+            if not np.isneginf(self._threshold)
+            else torch.zeros(x.shape[:-1], dtype=torch.float64)
+        )
+
+
+==============================================================================
+ACQ OPTIMIZER: optuna._gp.optim_mixed.optimize_acqf_mixed (verbatim)
+==============================================================================
+def optimize_acqf_mixed(
+    acqf: BaseAcquisitionFunc,
+    *,
+    warmstart_normalized_params_array: np.ndarray | None = None,
+    n_preliminary_samples: int = 2048,
+    n_local_search: int = 10,
+    tol: float = 1e-4,
+    rng: np.random.RandomState | None = None,
+) -> tuple[np.ndarray, float]:
+    rng = rng or np.random.RandomState()
+
+    if warmstart_normalized_params_array is None:
+        warmstart_normalized_params_array = np.empty((0, acqf.search_space.dim))
+
+    assert len(warmstart_normalized_params_array) <= n_local_search - 1, (
+        "We must choose at least 1 best sampled point + given_initial_xs as start points."
+    )
+
+    sampled_xs = acqf.search_space.sample_normalized_params(n_preliminary_samples, rng=rng)
+
+    # Evaluate all values at initial samples
+    f_vals = acqf.eval_acqf_no_grad(sampled_xs)
+    assert isinstance(f_vals, np.ndarray)
+
+    max_i = np.argmax(f_vals)
+
+    # TODO(nabenabe): Benchmark the BoTorch roulette selection as well.
+    # https://github.com/pytorch/botorch/blob/v0.14.0/botorch/optim/initializers.py#L942
+    # We use a modified roulette wheel selection to pick the initial param for each local search.
+    probs = np.exp(f_vals - f_vals[max_i])
+    probs[max_i] = 0.0  # We already picked the best param, so remove it from roulette.
+    probs /= probs.sum()
+    n_non_zero_probs_improvement = int(np.count_nonzero(probs > 0.0))
+    # n_additional_warmstart becomes smaller when study starts to converge.
+    n_additional_warmstart = min(
+        n_local_search - len(warmstart_normalized_params_array) - 1, n_non_zero_probs_improvement
+    )
+    if n_additional_warmstart == n_non_zero_probs_improvement:
+        _logger.warning("Study already converged, so the number of local search is reduced.")
+    chosen_idxs = np.array([max_i])
+    if n_additional_warmstart > 0:
+        additional_idxs = rng.choice(
+            len(sampled_xs), size=n_additional_warmstart, replace=False, p=probs
+        )
+        chosen_idxs = np.append(chosen_idxs, additional_idxs)
+
+    x_warmstarts = np.vstack([sampled_xs[chosen_idxs, :], warmstart_normalized_params_array])
+    best_xs, best_fvals = local_search_mixed_batched(acqf, x_warmstarts, tol=tol)
+    best_idx = np.argmax(best_fvals).item()
+    return best_xs[best_idx], best_fvals[best_idx]
+
+
+==============================================================================
+POSTERIOR FORMULAS: optuna._gp.gp.GPRegressor.posterior docstring (verbatim)
+==============================================================================
+This method computes the posterior mean and variance given the points `x` where both mean
+and variance tensors will have the shape of x.shape[:-1].
+If ``joint=True``, the joint posterior will be computed.
+
+The posterior mean and variance are computed as:
+    mean = cov_fx_fX @ inv(cov_fX_fX + noise_var * I) @ y, and
+    var = cov_fx_fx - cov_fx_fX @ inv(cov_fX_fX + noise_var * I) @ cov_fx_fX.T.
+
+Please note that we clamp the variance to avoid negative values due to numerical errors.
+
+==============================================================================
+NUMERICAL CHECK: installed Matern52Kernel.forward vs closed form
+==============================================================================
+   t=(r/L)^2      installed    closed_form     abs_diff
+      0.0000   1.0000000000   1.0000000000     0.00e+00
+      0.0100   0.9917592362   0.9917592362     0.00e+00
+      0.2500   0.8286491424   0.8286491424     2.22e-16
+      1.0000   0.5239941088   0.5239941088     0.00e+00
+      2.2500   0.2831632713   0.2831632713     0.00e+00
+      4.0000   0.1386602191   0.1386602191     0.00e+00
+      9.0000   0.0277234219   0.0277234219     3.47e-18
+max abs diff: 2.220446049250313e-16
+Matches closed form: True
+
+==============================================================================
+GPSampler default acquisition-optimizer settings (observed on an instance)
+==============================================================================
+n_startup_trials        = 10
+n_preliminary_samples   = 2048 (QMC candidates per ask)
+n_local_search          = 10 (local-search restarts per ask)
+tol                     = 0.0001
+minimum_noise (var)     = 1e-06
+deterministic_objective = False
+/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-21-01_gp-internals-from-scratch/01_read_gp_source.py:108: ExperimentalWarning: GPSampler is experimental (supported from v3.6.0). The interface can change in the future.
+  gps = optuna.samplers.GPSampler(seed=0)
+
+

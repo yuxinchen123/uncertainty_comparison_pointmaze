@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-"""Local work-queue worker for Train run 3.1.2 (PyTorch / SB3 SAC), scoped to ONE arm's sweep by SWEEP_ID.
+"""Local work-queue worker for the run-3.1.2 folder's sweeps (PyTorch / SB3 SAC), scoped by SWEEP_ID.
 
-Identical loop to run 3.1.1's worker: atomically claim a pending config (rename into running/), run
-train.py, move the marker to done/ (rc 0) or failed/ (otherwise), repeat until pending/ is empty. The
+Loop: atomically claim a pending config (rename into running/; since the 2026-07-03 follow-up sweep the
+claim is approximately run-id-ORDERED — see claim()), run train.py, move the marker to done/ (rc 0) or
+failed/ (otherwise), repeat until pending/ is empty. The
 per-run stopwatch PER_RUN_TIMEOUT force-stops a single hung training run (the worker survives and claims
 the next config); healthy runs take ~10-15 h eval-off and up to ~19 h with eval ON, so 24 h only ever
 fires on genuinely stuck runs.
@@ -38,19 +39,24 @@ def log(msg):
 
 
 def claim():
-    """Atomically claim one pending config. Returns (name, running_path) or (None, None) when empty."""
-    # list pending, shuffle to spread workers across files, then win one via atomic rename
+    """Atomically claim one pending config, approximately in run-id order. Returns (name, running_path)
+    or (None, None) when empty."""
+    # Sort pending names (zero-padded ids -> lexical order == id order) and pick randomly among only the
+    # FIRST 32: workers stay inside the earliest-id window so early seeds FINISH first (a cancelled sweep
+    # then leaves complete early-seed coverage), while the random pick within the window keeps the
+    # rename-collision protection. Required for sweeps after 3.1.2 (.claude/rules/run-id-and-logging.md;
+    # the old fully-shuffled claim executed runs in random order).
     try:
-        names = os.listdir(PENDING)
+        names = sorted(os.listdir(PENDING))
     except FileNotFoundError:
         return None, None
-    random.shuffle(names)
-    for name in names:
+    while names:
+        name = random.choice(names[:32])
         try:
             os.rename(os.path.join(PENDING, name), os.path.join(RUNNING, name))
             return name, os.path.join(RUNNING, name)
         except OSError:
-            continue  # another worker won the race; try the next file
+            names.remove(name)  # another worker won this file; retry within the refreshed window
     return None, None
 
 

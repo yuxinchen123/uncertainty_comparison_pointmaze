@@ -1,0 +1,10 @@
+[I 2026-07-03 21:06:04,978] A new study created in Journal with name: s1_pruning_demo
+
+[A] completed trial number=0 with per-step value 1.0 at steps 1..10
+[B] on load, completed trials visible from journal = 1; direction=MAXIMIZE
+[B] trial number=1 should_prune()==True at step=1; told PRUNED
+
+Final trial states read back from the shared journal:
+  trial number=0 state=COMPLETE value=1.0 intermediate_steps=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  trial number=1 state=PRUNED value=0.0 intermediate_steps=[1]
+

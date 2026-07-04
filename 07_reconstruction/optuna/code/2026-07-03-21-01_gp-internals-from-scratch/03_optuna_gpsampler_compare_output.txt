@@ -1,0 +1,29 @@
+From-scratch EI: argmax at x=-4.18 ; high-EI band (EI>=0.9*max) = [-4.56, -3.50]
+
+Test A: 10 independent GPSampler asks, one per seed (fresh study each, 6 obs, no pending):
+  seed 0 -> ask x=-4.033  (in high-EI band)
+  seed 1 -> ask x=-4.033  (in high-EI band)
+  seed 2 -> ask x=-4.033  (in high-EI band)
+  seed 3 -> ask x=-4.033  (in high-EI band)
+  seed 4 -> ask x=-4.033  (in high-EI band)
+  seed 5 -> ask x=-4.033  (in high-EI band)
+  seed 6 -> ask x=-4.033  (in high-EI band)
+  seed 7 -> ask x=-4.033  (in high-EI band)
+  seed 8 -> ask x=-4.033  (in high-EI band)
+  seed 9 -> ask x=-4.033  (in high-EI band)
+  asks sorted: [-4.033 -4.033 -4.033 -4.033 -4.033 -4.033 -4.033 -4.033 -4.033 -4.033]
+  mean ask x = -4.033 ; in high-EI band: 10 / 10
+
+Test B: 10 sequential asks on one study WITHOUT tell (pending trials accumulate):
+  ask  0 -> x=-4.033  (in high-EI band)
+  ask  1 -> x=-4.654  (outside band)
+  ask  2 -> x=-3.418  (outside band)
+  ask  3 -> x=-3.210  (outside band)
+  ask  4 -> x=-4.812  (outside band)
+  ask  5 -> x=-4.810  (outside band)
+  ask  6 -> x=-3.211  (outside band)
+  ask  7 -> x=-3.763  (in high-EI band)
+  ask  8 -> x=-4.811  (outside band)
+  ask  9 -> x=-3.214  (outside band)
+  in high-EI band: 2 / 10 (spread wider than Test A due to pending-trial constant-liar)
+

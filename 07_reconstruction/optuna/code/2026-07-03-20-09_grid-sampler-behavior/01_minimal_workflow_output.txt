@@ -1,0 +1,10 @@
+optuna version: 4.9.0
+len(study.trials): 15
+best_trial.number: 10
+best_trial.value: 4.765721447163506
+best_trial.params: {'beta': 0.007657214471635064, 'normalization': 'unit'}
+best_params: {'beta': 0.007657214471635064, 'normalization': 'unit'}
+best_value: 4.765721447163506
+trials_dataframe shape: (15, 8)
+trials_dataframe columns: ['number', 'value', 'datetime_start', 'datetime_complete', 'duration', 'params_beta', 'params_normalization', 'state']
+

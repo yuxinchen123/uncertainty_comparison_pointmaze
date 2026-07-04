@@ -1,0 +1,47 @@
+[W 2026-07-03 20:15:06,879] Trial 0 failed with parameters: {'bucket': 1} because of the following error: ValueError('deliberate failure to produce a FAIL state').
+Traceback (most recent call last):
+  File "/u/sl5nw/.conda/envs/exploration/lib/python3.11/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+                      ^^^^^^^^^^^
+  File "/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-20-09_grid-sampler-behavior/07_trial_states.py", line 16, in objective
+    raise ValueError("deliberate failure to produce a FAIL state")
+ValueError: deliberate failure to produce a FAIL state
+[W 2026-07-03 20:15:06,880] Trial 0 failed with value None.
+[W 2026-07-03 20:15:06,881] Trial 2 failed with parameters: {'bucket': 1} because of the following error: ValueError('deliberate failure to produce a FAIL state').
+Traceback (most recent call last):
+  File "/u/sl5nw/.conda/envs/exploration/lib/python3.11/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+                      ^^^^^^^^^^^
+  File "/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-20-09_grid-sampler-behavior/07_trial_states.py", line 16, in objective
+    raise ValueError("deliberate failure to produce a FAIL state")
+ValueError: deliberate failure to produce a FAIL state
+[W 2026-07-03 20:15:06,881] Trial 2 failed with value None.
+[W 2026-07-03 20:15:06,883] Trial 7 failed with parameters: {'bucket': 1} because of the following error: ValueError('deliberate failure to produce a FAIL state').
+Traceback (most recent call last):
+  File "/u/sl5nw/.conda/envs/exploration/lib/python3.11/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+                      ^^^^^^^^^^^
+  File "/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-20-09_grid-sampler-behavior/07_trial_states.py", line 16, in objective
+    raise ValueError("deliberate failure to produce a FAIL state")
+ValueError: deliberate failure to produce a FAIL state
+[W 2026-07-03 20:15:06,884] Trial 7 failed with value None.
+[W 2026-07-03 20:15:06,886] Trial 11 failed with parameters: {'bucket': 1} because of the following error: ValueError('deliberate failure to produce a FAIL state').
+Traceback (most recent call last):
+  File "/u/sl5nw/.conda/envs/exploration/lib/python3.11/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+                      ^^^^^^^^^^^
+  File "/p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-20-09_grid-sampler-behavior/07_trial_states.py", line 16, in objective
+    raise ValueError("deliberate failure to produce a FAIL state")
+ValueError: deliberate failure to produce a FAIL state
+[W 2026-07-03 20:15:06,887] Trial 11 failed with value None.
+
+optuna version: 4.9.0
+total trials: 12
+COMPLETE: 4
+PRUNED: 4
+FAIL: 4
+example COMPLETE: trial #1, params={'bucket': 2}, value=2.0
+example PRUNED: trial #4, params={'bucket': 0}, value=None
+example FAIL: trial #0, params={'bucket': 1}, value=None
+len(study.get_trials(states=(TrialState.COMPLETE,))): 4
+

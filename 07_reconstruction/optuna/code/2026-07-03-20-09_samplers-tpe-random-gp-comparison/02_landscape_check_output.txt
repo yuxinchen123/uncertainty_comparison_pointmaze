@@ -1,0 +1,13 @@
+clean_reward on a log grid (rows=log10 ridge, cols=log10 beta):
+            beta=1e-3   beta=1e-2   beta=1e-1
+ridge=1e-6      30.327      50.000      30.327
+ridge=1e-5      18.394      30.327      18.394
+ridge=1e-4       4.104       6.767       4.104
+ridge=1e-3       0.337       0.555       0.337
+ridge=1e-2       0.010       0.017       0.010
+
+measured noise SD over 2000 points = 9.816 (configured 10.0)
+
+repeat same point+seed: 51.3803 == 51.3803 -> True
+same point, seed 7 vs 8: 51.3803 vs 39.2098 -> differ: True
+

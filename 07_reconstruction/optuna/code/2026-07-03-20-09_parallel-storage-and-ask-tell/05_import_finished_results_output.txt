@@ -1,0 +1,19 @@
+[I 2026-07-03 20:25:33,389] A new study created in memory with name: point5_grid_import
+[I 2026-07-03 20:25:33,402] A new study created in memory with name: no-name-561ae814-b29d-4105-89e6-16de414fa2ab
+[I 2026-07-03 20:25:33,442] A new study created in memory with name: no-name-db3512c0-f9fd-427d-831b-f0affe23d3b3
+
+=== Part A: import the project grid into a fresh TPE study ===
+[A] len(study.trials) before any ask: 20
+[A] states of imported trials: {'COMPLETE'}
+[A] best imported value: 47.873  params: {'normalization': 'none', 'ridge_lambda': 0.0001, 'bonus_clip': '5', 'beta': 0.01}
+[A] ask() after import succeeded: trial.number=20
+[A] suggested params for the new trial: {'normalization': 'unit', 'ridge_lambda': 7.1835153924624485e-06, 'bonus_clip': '5', 'beta': 0.004596951400846611}
+
+=== Part B: imported COMPLETE trials count toward n_startup_trials ===
+[B] completed trials the sampler sees: 20
+[B] n_startup_trials=10  (20>=10 -> TPE model): mean|x-5| of 20 asks = 0.306
+[B] n_startup_trials=100 (20<100 -> random)   : mean|x-5| of 20 asks = 7.911
+[B] uniform baseline E|x-5| over [-10,10] is about 5.0
+[B] first 5 asked x, n_startup=10 : [4.87 5.15 4.93 5.22 5.  ]
+[B] first 5 asked x, n_startup=100: [ -1.66   4.41 -10.    -3.95  -7.06]
+

@@ -1,0 +1,39 @@
+Fixed hyperparameters: s2(signal var)=400.0  L(lengthscale)=0.80  noise_var=1.00
+Observations (x=log10 ridge, y=reward):
+  x=-6.00  y=  3.41
+  x=-5.50  y= 10.28
+  x=-5.00  y= 25.07
+  x=-3.00  y= 24.87
+  x=-2.50  y= 10.68
+  x=-2.00  y=  2.81
+f_best (incumbent) = 25.068 at x=-5.00
+
+      x        mu     sigma        z        EI
+  -6.00     3.393     0.997  -21.750    0.0000
+  -5.75     5.460     2.786   -7.038    0.0000
+  -5.50    10.343     0.993  -14.824    0.0000
+  -5.25    18.137     2.783   -2.490    0.0057
+  -5.00    24.970     0.997   -0.098    0.3505
+  -4.75    27.177     6.230    0.339    3.6810
+  -4.50    25.854    11.629    0.068    5.0429
+  -4.25    23.774    14.942   -0.087    5.3369
+  -4.00    22.793    16.023   -0.142    5.3195
+  -3.75    23.529    14.942   -0.103    5.2233
+  -3.50    25.431    11.629    0.031    4.8230
+  -3.25    26.739     6.230    0.268    3.4100
+  -3.00    24.776     0.997   -0.293    0.2686
+  -2.75    18.364     2.783   -2.409    0.0074
+  -2.50    10.731     0.993  -14.433    0.0000
+  -2.25     5.458     2.786   -7.038    0.0000
+  -2.00     2.800     0.997  -22.344    0.0000
+
+argmax EI at x=-4.25  (mu=23.77, sigma=14.94, EI=5.3369)
+Nearest observations bracketing it: this x lies in the unsampled gap between x=-5 and x=-3.
+
+EXPLORE-driven point (EI high mainly because sigma is large / far from data):
+  x=-4.00  mu=22.79  sigma=16.02  z=-0.142  EI=5.3195  [exploit term=-1.009, explore term=6.328]
+  -> mu is BELOW f_best (z<0), so the exploitation term is negative; all EI comes from sigma.
+EXPLOIT-driven point (EI high mainly because mu is high / near the best observation):
+  x=-4.75  mu=27.18  sigma=6.23  z=0.339  EI=3.6810  [exploit term=1.334, explore term=2.347]
+  -> mu is ABOVE f_best (z>0): the predicted mean itself beats the incumbent, with small sigma.
+

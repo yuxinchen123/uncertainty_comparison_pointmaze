@@ -1,0 +1,16 @@
+=== (a) pruning is cooperative: should_prune() True does nothing until you raise ===
+  should_prune() returned True 50 times, objective never raised -> final state TrialState.COMPLETE, seeds run 50
+  same pruner, objective raises TrialPruned -> final state TrialState.PRUNED, seeds run 1
+
+=== (b) a pruned trial's state is PRUNED and its intermediate_values survive ===
+  stored trial state: TrialState.PRUNED
+  intermediate_values kept: 12 points, steps [1, 2, 3]...12
+  last stored running mean: 1.225
+  the partial seed curve is fully readable after pruning
+
+=== (c) should_prune() with no pruner passed: default pruner is MedianPruner ===
+  type(study.pruner) when none was passed: <class 'optuna.pruners._median.MedianPruner'>
+  should_prune() is callable with the default pruner; returns bool. Sample: step1=False, step25=False, step50=False
+  (with a single trial MedianPruner has no other trials to compare against, so False)
+
+

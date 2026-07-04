@@ -1,0 +1,4 @@
+    adam: best value= 26.01  from  9 trials  params={'method': 'adam', 'readout': 'mse', 'log10_beta': 1.6616268613509622}
+ adagrad: best value= 36.18  from 71 trials  params={'method': 'adagrad', 'readout': 'mse', 'log10_beta': 0.8023088191639868}
+   sgd1t: best value= 24.26  from 10 trials  params={'method': 'sgd1t', 'readout': 'mse', 'log10_beta': 1.3501992387220194, 'eta0': 0.01134725777275251, 't0': 1000.0}
+

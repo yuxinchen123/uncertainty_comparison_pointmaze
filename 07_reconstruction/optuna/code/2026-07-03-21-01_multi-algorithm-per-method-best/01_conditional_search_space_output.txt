@@ -1,0 +1,22 @@
+trials_dataframe columns:
+['number', 'value', 'datetime_start', 'datetime_complete', 'duration', 'params_eta0', 'params_log10_beta', 'params_method', 'params_readout', 'params_t0', 'state']
+
+first 8 rows (note eta0/t0 are NaN unless method == sgd1t):
+ number     value params_method params_readout  params_log10_beta  params_eta0  params_t0
+      0 26.376746       adagrad            mse           1.521259          NaN        NaN
+      1 -2.537244         sgd1t             l2           0.702264     0.013680     1000.0
+      2 -6.420862         sgd1t             l2           3.850328     0.039657    10000.0
+      3  5.351227       adagrad            mse          -0.097366          NaN        NaN
+      4 19.994438       adagrad            mse           1.323448          NaN        NaN
+      5  8.944017         sgd1t            mse           0.059224     0.024846    10000.0
+      6  6.491730          adam             l2           0.991377          NaN        NaN
+      7 29.366628       adagrad            mse           1.571758          NaN        NaN
+
+total trials: 60
+trials with method == sgd1t : 34
+trials containing eta0      : 34   (present only in sgd1t trials: True)
+trials containing t0        : 34   (present only in sgd1t trials: True)
+trials containing log10_beta: 60   (present in every trial: True)
+
+non-sgd1t rows: 26; all have params_eta0 NaN: True; all have params_t0 NaN: True
+

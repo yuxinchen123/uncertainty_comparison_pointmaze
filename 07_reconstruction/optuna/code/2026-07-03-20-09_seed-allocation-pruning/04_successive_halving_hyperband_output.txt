@@ -1,0 +1,42 @@
+SuccessiveHalvingPruner key args: min_resource=10, reduction_factor=2, min_early_stopping_rate=0, bootstrap_count=0
+  rungs (resource=seed count): [10, 20, 40] ... top 1/2 promoted at each rung
+HyperbandPruner key args: min_resource=10, max_resource=50, reduction_factor=2, bootstrap_count=0
+  Hyperband inner brackets before any trial runs: 0 (built lazily)
+
+----- SuccessiveHalvingPruner -----
+cell true_mean seeds last_mean reached_50              state
+   0      52.8    50     48.88       True TrialState.COMPLETE
+   1      35.2    10     41.62      False  TrialState.PRUNED
+   2      29.0    10     16.39      False  TrialState.PRUNED
+   3      26.1    10      7.53      False  TrialState.PRUNED
+   4      26.0    10     31.43      False  TrialState.PRUNED
+   5      17.9    10     26.95      False  TrialState.PRUNED
+   6      17.3    10      9.93      False  TrialState.PRUNED
+   7       9.6    10     23.80      False  TrialState.PRUNED
+   8       4.9    10      8.64      False  TrialState.PRUNED
+   9       1.0    10     -1.05      False  TrialState.PRUNED
+  10       0.5    10     -0.00      False  TrialState.PRUNED
+  11       0.1    10      1.71      False  TrialState.PRUNED
+total seed-runs used: 160  (full grid would use 600)
+cells reaching 50 seeds: [0]
+
+----- HyperbandPruner -----
+cell true_mean seeds last_mean reached_50              state
+   0      52.8    50     48.88       True TrialState.COMPLETE
+   1      35.2    10     41.62      False  TrialState.PRUNED
+   2      29.0    50     24.20       True TrialState.COMPLETE
+   3      26.1    50     26.95       True TrialState.COMPLETE
+   4      26.0    40     24.96      False  TrialState.PRUNED
+   5      17.9    50     20.51       True TrialState.COMPLETE
+   6      17.3    40     14.97      False  TrialState.PRUNED
+   7       9.6    20     20.61      False  TrialState.PRUNED
+   8       4.9    40      6.61      False  TrialState.PRUNED
+   9       1.0    20     -0.62      False  TrialState.PRUNED
+  10       0.5    10     -0.00      False  TrialState.PRUNED
+  11       0.1    20      0.60      False  TrialState.PRUNED
+total seed-runs used: 400  (full grid would use 600)
+cells reaching 50 seeds: [0, 2, 3, 5]
+Hyperband inner brackets after the study ran: 3
+Hyperband adds over successive halving: it runs several successive-halving brackets, each
+starting at a different first-rung budget, hedging against picking one wrong min_resource.
+

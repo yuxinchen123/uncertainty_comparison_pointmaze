@@ -1,0 +1,66 @@
+Custom pruner rule: prune when n>=10 and mean + 1.96*sd/sqrt(n) < 35.0
+True survivors (target mean>=35): cells [0, 1]
+Full grid cost (12 cells x 50 seeds) = 600 seed-runs
+
+===== base_seed 0 =====
+cell true_mean seeds    mean  upper95     status
+   0      52.8    50   48.88    60.26  COMPLETED
+   1      35.2    50   36.48    48.05  COMPLETED
+   2      29.0    24   19.97    34.63     PRUNED
+   3      26.1    10    7.53    24.28     PRUNED
+   4      26.0    26   20.55    34.84     PRUNED
+   5      17.9    28   20.31    34.70     PRUNED
+   6      17.3    10    9.93    25.82     PRUNED
+   7       9.6    14   16.84    34.72     PRUNED
+   8       4.9    10    8.64    25.30     PRUNED
+   9       1.0    10   -1.05     0.07     PRUNED
+  10       0.5    10   -0.00     1.61     PRUNED
+  11       0.1    10    1.71     3.74     PRUNED
+total seed-runs used: 252  (full grid would use 600)
+surviving cells: [0, 1]
+wrong keep (kept but true mean<35): []
+wrong prune (pruned but true mean>=35): []
+
+===== base_seed 1 =====
+cell true_mean seeds    mean  upper95     status
+   0      52.8    50   48.87    60.55  COMPLETED
+   1      35.2    12   14.41    32.76     PRUNED
+   2      29.0    50   32.29    43.30  COMPLETED
+   3      26.1    50   34.73    45.99  COMPLETED
+   4      26.0    50   27.16    38.13  COMPLETED
+   5      17.9    10    0.78     2.22     PRUNED
+   6      17.3    36   22.75    34.48     PRUNED
+   7       9.6    10    0.12     2.11     PRUNED
+   8       4.9    10   -0.16     1.34     PRUNED
+   9       1.0    10   -1.00     0.39     PRUNED
+  10       0.5    10    0.38     1.94     PRUNED
+  11       0.1    10    1.15     1.99     PRUNED
+total seed-runs used: 308  (full grid would use 600)
+surviving cells: [0, 2, 3, 4]
+wrong keep (kept but true mean<35): [2, 3, 4]
+wrong prune (pruned but true mean>=35): [1]
+
+===== base_seed 2 =====
+cell true_mean seeds    mean  upper95     status
+   0      52.8    50   46.85    58.48  COMPLETED
+   1      35.2    11   15.02    34.45     PRUNED
+   2      29.0    50   31.97    42.61  COMPLETED
+   3      26.1    45   23.64    34.87     PRUNED
+   4      26.0    12   13.81    33.57     PRUNED
+   5      17.9    10    5.97    20.17     PRUNED
+   6      17.3    10    0.69     2.73     PRUNED
+   7       9.6    10    7.74    23.47     PRUNED
+   8       4.9    10   -0.19     1.80     PRUNED
+   9       1.0    10    0.45     2.12     PRUNED
+  10       0.5    10    0.28     2.93     PRUNED
+  11       0.1    10   -1.00     1.23     PRUNED
+total seed-runs used: 238  (full grid would use 600)
+surviving cells: [0, 2]
+wrong keep (kept but true mean<35): [2]
+wrong prune (pruned but true mean>=35): [1]
+
+===== summary across base seeds 0,1,2 =====
+total seed-runs used: min 238  max 308  values [252, 308, 238]
+full grid cost: 600
+surviving sets: [(0, 1), (0, 2, 3, 4), (0, 2)]
+

@@ -1,0 +1,14 @@
+journal file: /p/rlprojects/RND/07_reconstruction/optuna/code/2026-07-03-21-01_multi-algorithm-per-method-best/journal_demo/runs_3_2_1.log
+file size on disk: 45761 bytes
+
+optuna.get_all_study_names(storage) -> ['3_2_1_adagrad', '3_2_1_adam', '3_2_1_sgd1t']
+
+Reloaded each study by name (fresh storage handle):
+      study_name  n_trials  expected  best_value
+      3_2_1_adam        12        12      15.805
+   3_2_1_adagrad         8         8      29.232
+     3_2_1_sgd1t        20        20      37.015
+
+sum of per-study trial counts: 40 (== total submitted 40: True)
+every study holds exactly its own budget (no cross-talk): True
+

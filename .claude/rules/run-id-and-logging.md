@@ -34,6 +34,15 @@ the writeup's `\section{Logging}` (`development_document/main.tex`) and the anal
   `--run_id`/`--run_total`; `train.py` uses them.
 - When changing the sweep, keep seed outermost and keep `run_id` a gap-free `0..run_total-1`. The unit
   test `slurm/test_run_id_convention.py` pins this ordering — update it with any change.
+- **EXECUTION order must follow the id order too (rule made explicit 2026-07-02; applies to runs AFTER
+  3.1.2).** The id convention's intent is that early seeds FINISH first, so a cancelled sweep leaves
+  complete early-seed coverage instead of partial coverage of all seeds. The old `wandb agent` pulled
+  configs in order and honored this automatically; the local file queue's worker broke it silently — its
+  `claim()` does `random.shuffle` over ALL pending names (to avoid rename collisions), so runs 2, 3.1.1,
+  3.1.2, and 4 executed in RANDOM order. For future sweeps, `worker.py` `claim()` must instead SORT the
+  pending names by id and pick randomly among only the FIRST ~32 — approximate seed order (workers stay
+  inside the earliest ~one-seed window) while keeping the collision protection. Left as-is for the
+  already-running 3.1.2 fleet by user decision (live workers cannot pick up the change anyway).
 
 ## Per-run JSON filename
 - A sweep run (`run_total > 0`) is named **`<run_id zero-padded to run_total's width>_of_<run_total>.json`**

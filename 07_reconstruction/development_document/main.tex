@@ -1340,14 +1340,39 @@ of the iterates for prediction:
 \frac1t\sum_{k=1}^{t}\phi_k.
 \end{align}
 The predictor readout becomes $g_{\bar{\phi}_t}$ rather than $g_{\phi_t}$. The
-averaging can reduce the variance of the final predictor. In simple stochastic
-approximation problems, the averaged iterate has the desired
-$1/\sqrt{n}$ statistical error rate. This makes it a useful optimizer variant to
-test for RND, especially for the linear RND head.
+averaging can reduce the variance of the final predictor.
 
-Polyak--Ruppert averaging is relevant here because it is designed to recover the
-statistical averaging rate of stochastic approximation iterates
-\citep{polyak1992acceleration}.
+The scope of the $1/\sqrt{n}$ claim must be stated carefully.  The classical
+result \citep{polyak1992acceleration} assumes stochastic gradient descent with
+decreasing steps $\eta_t\propto t^{-\alpha}$, $\alpha\in(1/2,1)$, on a smooth
+problem whose iterates converge to an isolated stationary point with a
+positive-definite Hessian, under stationary noise; the averaged iterate is then
+asymptotically normal with the optimal covariance, i.e., it attains the
+$1/\sqrt{n}$ statistical error rate.  A nonlinear predictor network violates
+these assumptions in three ways:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Non-convexity.}  Convergence to a single good stationary point is
+not guaranteed, so the result is at best conditional on the iterates settling
+into one basin.
+\item \textbf{Degenerate Hessians.}  An overparameterized network has continuous
+symmetries (for example, permutations of hidden units), so its minima form flat
+manifolds with singular Hessians, and the asymptotic-normality result does not
+hold as stated at such minima.
+\item \textbf{Parameter averaging is not function averaging.}  For a nonlinear
+$g$, $g_{\bar{\phi}_t}(x)\neq\frac1t\sum_{k=1}^{t} g_{\phi_k}(x)$; the parameter
+average tracks the averaged predictor only while the iterates stay in a
+neighborhood where $g$ is approximately linear in $\phi$.  Iterates drifting
+along a symmetry manifold can average to a worse parameter vector, which is one
+reason the averaging start $t_{\mathrm{avg}}$ must be swept.
+\end{enumerate}
+For the linear RND head the predictor objective is least squares---convex and
+quadratic---so the classical setting applies exactly and the $1/\sqrt{n}$ rate
+is a real prediction, up to the nonstationarity of the RND input stream (which
+no optimizer variant escapes).  For the MLP predictor the rate is expected only
+insofar as training stays close to initialization, where the network is
+approximately linear in its parameters.  Otherwise the honest reading of the
+averaged-readout variants is as an empirical variance-reduction and
+stabilization test, not as a method with a guaranteed count-scale rate.
 
 
 \paragraph{Why constant Adam does not give a count bonus.}
@@ -1565,7 +1590,8 @@ $\mathcal{B}_{\mathrm{l2}}$ is the matching readout; $\mathcal{B}_{\mathrm{mse}}
 \midrule
 Polyak--Ruppert averaging &
 Average of past iterates &
-Can recover $1/\sqrt{n}$ statistical error while using noisy updates &
+Can recover $1/\sqrt{n}$ statistical error while using noisy updates (a theorem
+only for the linear head; a heuristic for the MLP predictor) &
 \cmark &
 $L_t^{\mathrm{mse}}$. The averaged predictor $g_{\bar{\phi}_t}$ should still be trained by squared error. &
 $\mathcal{B}_{\mathrm{l2}}(x;\bar{\phi}_t)$ is the count-scale readout from the averaged predictor. \\
@@ -1635,17 +1661,17 @@ slower).
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{0.9cm} >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{1.5cm} >{\raggedright\arraybackslash}p{1.6cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{0.9cm} >{\raggedright\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{3.0cm}@{}}
 \toprule
-\textbf{Source} & \textbf{Optim.} & \textbf{LR / $\epsilon$} & \textbf{Optimizer scope} & \textbf{Grad.\ clip} & \textbf{LR schedule} \\
+\textbf{Source} & \textbf{Optim.} & \textbf{LR / $\epsilon$} & \textbf{Optimizer scope} & \textbf{Grad.\ clip} & \textbf{RND input} & \textbf{LR decay} \\
 \midrule
-This work (\texttt{train.py}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
-RLeXplore \texttt{rllte} (\texttt{legacy/02\_rnd\_\allowbreak rlexplore}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & none \\
+This work (\texttt{train.py}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & switchable: $s$, $s'$, $(s,a)$, $(s,a,s')$ (\texttt{algorithm}) & constant $10^{-3}$ \\
+RLeXplore \texttt{rllte} (\texttt{legacy/02\_rnd\_\allowbreak rlexplore}) & Adam & $10^{-3}$ / $10^{-8}$ & own (predictor only) & none & next state $s'$ & constant $10^{-3}$ \\
 \midrule
-Burda et al.\ 2019 (paper) & Adam & $10^{-4}$ / n/s & shared with PPO & n/s & none \\
-OpenAI repo & Adam (MPI) & $10^{-4}$ / $10^{-8}$ & shared (policy\,+\,value\,+\,predictor) & global-norm $1.0$ & none \\
-jcwleo (PyTorch) & Adam & $10^{-4}$ / $10^{-8}$ & shared with PPO & global-norm $0.5$ & none \\
-CleanRL \texttt{ppo\_rnd\_\allowbreak envpool} & Adam & $10^{-4}$ / $10^{-5}$ & shared with PPO & global-norm $0.5$ & linear $\to 0$ \\
+Burda et al.\ 2019 (paper) & Adam & $10^{-4}$ / n/s & shared with PPO & n/s & next state $s'$ & constant $10^{-4}$ \\
+OpenAI repo & Adam (MPI) & $10^{-4}$ / $10^{-8}$ & shared (policy + value + predictor) & global-norm $1.0$ & next state $s'$ & constant $10^{-4}$ \\
+jcwleo (PyTorch) & Adam & $10^{-4}$ / $10^{-8}$ & shared with PPO & global-norm $0.5$ & next state $s'$ & constant $10^{-4}$ \\
+CleanRL \texttt{ppo\_rnd\_\allowbreak envpool} & Adam & $10^{-4}$ / $10^{-5}$ & shared with PPO & global-norm $0.5$ & next state $s'$ & linear: $\eta_u=\eta_0\,(1-(u{-}1)/U)$, where $u$ is the PPO update index, $U$ the total number of updates, and $\eta_0=10^{-4}$ \\
 \bottomrule
 \end{tabular}
 \caption{Optimizer used to train the RND predictor network. All sources use Adam
@@ -1654,7 +1680,19 @@ list only what differs (``$\epsilon$'' is the Adam epsilon). ``Optimizer scope''
 is whether the predictor has its own Adam or shares one optimizer with the PPO
 policy and value networks (so the predictor's learning rate equals the policy's).
 n/s = not stated in the paper. The top block is this project's stack; the bottom
-block is the original RND paper and the three most-used RND repositories.}
+block is the original RND paper and the three most-used RND repositories.
+``RND input'' is the observation fed to the target/predictor pair: every
+external source distills the next state \(s'\) (the observation produced by the
+step; the OpenAI code slices the time-shifted frame \texttt{ph[:,1:]}), while
+this project's \texttt{algorithm} switch selects \(s\), \(s'\), \((s,a)\), or
+\((s,a,s')\) --- Train run~3.2.1 uses \texttt{rnd\_next\_state} (\(s'\)),
+matching the external sources.
+The ``LR decay'' column shows that no source decays the predictor learning rate
+as an RND design decision: five of six use a constant rate, and the one decay
+(CleanRL's linear anneal) reaches the predictor only because the predictor
+shares the PPO optimizer.  A deliberately decreasing predictor step size, as in
+the decreasing-step optimizer variants designed later in this document, appears
+in no existing RND implementation.}
 \label{tab:opt-used}
 \end{table}
 
@@ -3002,23 +3040,23 @@ L_t^{\mathrm{mse}}(\phi)
 \frac1b\sum_{i=1}^{b}
 \frac12\lVert e_\phi(x_i)\rVert_2^2.
 \end{align}
-Only the optimizer and the bonus readout are changed.  The three readouts are
+Only the optimizer and the bonus readout are changed.  The two readouts are
 \begin{align}
 \mathcal{B}_{\mathrm{mse}}(x;\phi)
 &=
 \frac12\lVert e_\phi(x)\rVert_2^2,\\
 \mathcal{B}_{\mathrm{l2}}(x;\phi)
 &=
-\lVert e_\phi(x)\rVert_2,\\
-\mathcal{B}_{\mathrm{l2norm}}(x;\phi)
-&=
-\frac{1}{\sqrt{m}}\lVert e_\phi(x)\rVert_2 .
+\lVert e_\phi(x)\rVert_2 .
 \end{align}
 The MSE readout is the canonical RND bonus \citep{burda2019exploration}.  The L2
 readout is the count-scale readout: if
 \(\mathbb{E}\lVert e_n\rVert_2^2=O(1/n)\), then
-\(\lVert e_n\rVert_2=O(1/\sqrt{n})\).  The normalized L2 readout removes the
-trivial \(\sqrt{m}\) dependence on output dimension.
+\(\lVert e_n\rVert_2=O(1/\sqrt{n})\).  A constant rescaling of the L2 readout
+(for example a \(1/\sqrt{m}\) output-dimension normalization) is absorbed into
+the swept coefficient \(\beta\) and leaves every distance-to-ground-truth metric
+unchanged (all of them fit or remove a scalar factor), so no normalized variant
+is kept.
 
 \paragraph{Common optimizer difficulties.}
 The predictor loss and the intrinsic reward must not be confused.  SAC receives
@@ -3095,49 +3133,45 @@ readout scale alone explains the gap.
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{mse}}},
-\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
-\mathcal{B}_{\mathrm{l2}}\}\) &
+\mathbf{\mathcal{B}_{\mathrm{l2}}}\}\) &
 \(\mathcal{B}_{\mathrm{mse}}\) is the canonical RND baseline.
-\(\mathcal{B}_{\mathrm{l2norm}}\) is the count-scale ablation. &
+\(\mathcal{B}_{\mathrm{l2}}\) is the count-scale ablation. &
 \textbf{must try} \\
 \midrule
 \(\beta\) &
 Intrinsic coefficient &
-\(\{10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
+\(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
 Train run~1 selected \(\beta^\star=10^2\) for \texttt{rnd\_state}.  The L2
-readout changes the reward scale, so the grid spans two orders below and above
-the old optimum. &
+readout changes the reward scale, so the grid spans \(10^{-3}\)--\(10^{4}\)
+around the old optimum. &
 \textbf{must try} \\
 \midrule
 \(\eta_{\mathrm{Adam}}\) &
 Adam learning rate &
-\(\{10^{-5},\allowbreak 3{\cdot}10^{-5},\allowbreak \mathbf{10^{-4}},\allowbreak
-3{\cdot}10^{-4},\allowbreak \mathbf{10^{-3}},\allowbreak 3{\cdot}10^{-3}\}\) &
-The original RND-style implementations often use \(10^{-4}\), while this project
-uses a separate predictor Adam at \(10^{-3}\) (Table~\ref{tab:opt-used}). &
-\textbf{must try} \\
+\(10^{-3}\) (PyTorch default) &
+Not swept: fixed at the PyTorch Adam default.  (The original RND-style
+implementations often use \(10^{-4}\); this project's separate predictor Adam
+already uses \(10^{-3}\), Table~\ref{tab:opt-used}.) &
+fixed \\
 \midrule
 \((\rho_1,\rho_2)\) &
 Adam moment rates &
-\(\{(\mathbf{0.9},\mathbf{0.999}),\allowbreak (0.9,0.99),\allowbreak
-\textcolor{gray}{(0,0.999)}\}\) &
-\((0.9,0.999)\) is the standard setting.  Lower \(\rho_2\) forgets squared
-gradients faster; \(\rho_1=0\) removes momentum. &
-try \\
+\((0.9,0.999)\) (PyTorch default) &
+Not swept: fixed at the PyTorch Adam default. &
+fixed \\
 \midrule
 \(\epsilon_{\mathrm{Adam}}\) &
 Adam denominator constant &
-\(\{\mathbf{10^{-8}},10^{-5}\}\) &
-\(10^{-8}\) is the standard Adam value; \(10^{-5}\) is a common stabilizing value
-in RND-style code. &
-try \\
+\(10^{-8}\) (PyTorch default) &
+Not swept: fixed at the PyTorch Adam default. &
+fixed \\
 \midrule
 \(g_{\max}\) &
 Gradient clipping norm &
-\(\{\infty,0.5,1,10\}\) &
-Clipping protects the predictor from rare large residual gradients.  The
-unclipped value is the clean baseline. &
-try \\
+\(\infty\) (no clipping) &
+Not swept: no gradient clipping, matching this project's previous RND
+implementation (the predictor update never clipped). &
+fixed \\
 \bottomrule
 \end{tabular}%
 }
@@ -3170,8 +3204,11 @@ AdaGrad can fail in two opposite ways.  If \(c_0=0\) and the early gradients are
 small, the first steps can be too large because the denominator is tiny.  If
 \(c_t\) grows too quickly, the predictor can stall because the effective learning
 rate becomes too small.  The remedies are an initial accumulator \(c_0\), a
-larger base learning rate than Adam, and gradient clipping.  The main readout
-should be \(\mathcal{B}_{\mathrm{l2norm}}\), because AdaGrad is being tested as a
+larger base learning rate than Adam, and gradient clipping.  In this run these
+knobs are not tuned: AdaGrad uses the PyTorch defaults
+(\(\eta_{\mathrm{Ada}}=10^{-2}\), \(c_0=0\), \(\epsilon_{\mathrm{Ada}}=10^{-10}\)),
+which already give a base learning rate \(10\times\) Adam's.  The main readout
+should be \(\mathcal{B}_{\mathrm{l2}}\), because AdaGrad is being tested as a
 count-memory optimizer.
 
 \begin{table}[H]
@@ -3190,37 +3227,36 @@ count-memory optimizer.
 \midrule
 \(\mathcal{B}\) &
 Bonus readout &
-\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
 \mathcal{B}_{\mathrm{mse}}\}\) &
-The L2-normalized readout is the count-scale readout.  MSE is kept only as an
+The L2 readout is the count-scale readout.  MSE is kept only as an
 ablation. &
 \textbf{must try} \\
 \midrule
 \(\eta_{\mathrm{Ada}}\) &
 AdaGrad learning rate &
-\(\{10^{-4},\allowbreak 3{\cdot}10^{-4},\allowbreak 10^{-3},\allowbreak 3{\cdot}10^{-3},\allowbreak
-\mathbf{10^{-2}},\allowbreak 3{\cdot}10^{-2},\allowbreak 10^{-1}\}\) &
-The standard library default is \(10^{-2}\).  Since the accumulator shrinks steps
-monotonically, both smaller and larger initial values should be tested. &
-\textbf{must try} \\
+\(10^{-2}\) (PyTorch default) &
+Not swept: fixed at the PyTorch AdaGrad default.  (This is also \(10\times\) the
+Adam learning rate, as AdaGrad's shrinking steps require.) &
+fixed \\
 \midrule
 \(c_0\) &
 Initial accumulator &
-\(\{\mathbf{0},10^{-4},10^{-2},1\}\) &
-\(c_0=0\) is the pure AdaGrad rule.  Positive \(c_0\) prevents extremely large
-early adaptive steps and acts like a prior count. &
-try \\
+\(0\) (PyTorch default) &
+Not swept: fixed at the PyTorch AdaGrad default
+(\texttt{initial\_\allowbreak accumulator\_\allowbreak value=0}), the pure
+AdaGrad rule. &
+fixed \\
 \midrule
 \(\epsilon_{\mathrm{Ada}}\) &
 AdaGrad denominator constant &
-\(\{10^{-10},10^{-8},10^{-6}\}\) &
-\(10^{-10}\) is the standard AdaGrad value.  Larger values stabilize coordinates
-with tiny accumulated gradients. &
-try \\
+\(10^{-10}\) (PyTorch default) &
+Not swept: fixed at the PyTorch AdaGrad default. &
+fixed \\
 \midrule
 \(\beta\) &
 Intrinsic coefficient &
-\(\{10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
+\(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
 The optimizer changes the residual scale; the intrinsic coefficient must be
 re-tuned rather than copied from Adam-RND. &
 \textbf{must try} \\
@@ -3246,8 +3282,39 @@ The decreasing-step method uses
 &=
 \phi_t-\eta_t h_t.
 \end{align}
-Here \(t\) is the predictor-update index.  The offset \(t_0\) prevents the step
+Here \(t\) is the predictor-update index.  Concretely, \(t\) starts at \(0\) and
+increases by \(1\) on every SAC gradient step, because each replay-minibatch
+draw triggers exactly one predictor gradient step on that same minibatch
+(\texttt{VectorIntrinsicReplayBuffer.sample()}); with this project's cadence
+(\texttt{train\_freq=1}, \texttt{gradient\_steps=1}) that is one predictor
+update per environment step, so a \(10^6\)-step run ends near \(t=10^6\).  Note
+\(t\) is a single global counter, not a per-state visit count: the step size
+decays with total training progress even for states visited for the first time.
+The offset \(t_0\) prevents the step
 size from becoming small before the predictor has learned the target.
+
+\paragraph{Comparison with the linear-anneal baseline.}
+The only decaying baseline in Table~\ref{tab:opt-used} is CleanRL's linear
+anneal
+\begin{align}
+\eta_u
+=
+\eta_0\left(1-\frac{u-1}{U}\right)
+=
+\eta_0\left(1-\frac{t}{U}\right),
+\end{align}
+where \(u\) is the update index, \(U\) is the total number of updates,
+\(\eta_0\) is the initial learning rate, and \(t=u-1\) is the same zero-based
+update counter as above.  Written side by side, the two schedules differ only
+in how the time ratio enters:
+\(\eta_0\left(1-t/U\right)\) versus
+\(\eta_0/\!\left(1+t/t_0\right)\).  The linear anneal falls at a constant
+rate set by the training budget and reaches exactly \(0\) at the end of the
+run.  The shifted \(1/t\) schedule is budget-independent and never reaches
+zero: it halves at \(t=t_0\) and then follows the long \(\eta_0 t_0/t\) tail
+that produces the running-average (count-style) behavior.  Late in training the
+two are opposite: the linear anneal freezes the predictor entirely, while the
+\(1/t\) schedule keeps updating it with ever-smaller steps.
 
 \paragraph{Instabilities and remedies for O3.}
 A pure \(1/t\) schedule can freeze too early.  Conversely, a large \(\eta_0\) can
@@ -3275,10 +3342,18 @@ less adaptive than Adam or AdaGrad.
 \midrule
 \(\mathcal{B}\) &
 Bonus readout &
-\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
-\textcolor{gray}{\mathcal{B}_{\mathrm{mse}}}\}\) &
-The method is designed to produce a residual-norm scale \(O(1/\sqrt{n})\).  The
-squared readout would report the variance-scale \(O(1/n)\) quantity. &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
+\mathbf{\mathcal{B}_{\mathrm{mse}}}\}\) &
+Both readouts are run.  The method is designed to produce a residual-norm scale
+\(O(1/\sqrt{n})\), which \(\mathcal{B}_{\mathrm{l2}}\) reports directly;
+\(\mathcal{B}_{\mathrm{mse}}\) reports the variance-scale \(O(1/n)\) quantity. &
+\textbf{must try} \\
+\midrule
+\(\beta\) &
+Intrinsic coefficient &
+\(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
+The optimizer changes the residual scale; the intrinsic coefficient must be
+re-tuned rather than copied from Adam-RND. &
 \textbf{must try} \\
 \midrule
 \(\eta_0\) &
@@ -3290,23 +3365,34 @@ because the effective step shrinks over training. &
 \midrule
 \(t_0\) &
 Schedule offset &
-\(\{10^2,10^3,10^4,10^5\}\) &
+\(\{10^3,10^4\}\) &
 The schedule is nearly constant before \(t\approx t_0\) and approximately \(1/t\)
-afterward.  This controls early fitting versus asymptotic averaging. &
+afterward.  A run performs \(t_{\max}\approx10^6\) predictor updates, so these
+two values keep \(\ge99\%\) of the run in the \(1/t\) regime while their final
+step sizes \(\eta_0/(1+t_{\max}/t_0)\) differ \(10\times\).  \(10^2\) is dropped
+because decay would begin \(\sim\!100\) updates in --- the same order as
+\texttt{learning\_starts} --- before the predictor has fit the target;
+\(10^5\) is dropped because the whole run would decay only \(11\times\),
+nearly a constant rate, redundant with the Adam baseline. &
 \textbf{must try} \\
 \midrule
 \(\eta_{\min}\) &
 Learning-rate floor &
-\(\{\mathbf{0},10^{-6},10^{-5}\}\) &
-The zero value is the clean stochastic-approximation rule.  A floor prevents the
-predictor from becoming completely frozen. &
-try \\
+\(0\) (no floor) &
+Not swept: fixed at the clean stochastic-approximation rule.  With the \(t_0\)
+grid above, a \(10^{-5}\) floor would bind only in the
+smallest-\(\eta_0\)/smallest-\(t_0\) corner and a \(10^{-6}\) floor essentially
+never; revisit only if the logged predictor loss shows freezing. &
+fixed \\
 \midrule
 \(g_{\max}\) &
 Gradient clipping norm &
-\(\{\infty,0.5,1,10\}\) &
-SGD has no adaptive denominator, so clipping is a direct stability control. &
-try \\
+\(\infty\) (no clipping) &
+Not swept: no gradient clipping, matching this project's previous RND
+implementation.  (Note SGD has no adaptive denominator, so a rare large residual
+gradient reaches the parameters unbuffered; watch the logged predictor loss for
+spikes.) &
+fixed \\
 \bottomrule
 \end{tabular}%
 }
@@ -3375,14 +3461,13 @@ try \\
 \midrule
 \(\eta_{\mathrm{Adam}}\) &
 Adam learning rate &
-\(\{\mathbf{10^{-4}},3{\cdot}10^{-4},\mathbf{10^{-3}}\}\) &
-Use the two practice centers from RND implementations and this project, with one
-middle value. &
-try \\
+\(10^{-3}\) (PyTorch default) &
+Not swept: fixed at the PyTorch Adam default, matching Method O1. &
+fixed \\
 \midrule
 \(\mathcal{B}\) &
 Bonus readout &
-\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}},
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
 \mathcal{B}_{\mathrm{mse}}\}\) &
 The averaged predictor is mainly useful if the readout is on count scale. &
 try \\
@@ -3410,10 +3495,13 @@ This method combines the decreasing-step update with averaged readout:
 \frac{1}{t-t_{\mathrm{avg}}+1}
 (\phi_t-\bar{\phi}_{t-1}).
 \end{align}
-The bonus is \(\mathcal{B}_{\mathrm{l2norm}}(x;\bar{\phi}_t)\).
+The bonus is \(\mathcal{B}_{\mathrm{l2}}(x;\bar{\phi}_t)\).
 
 \paragraph{Instabilities and remedies for O5.}
-This is the most statistically principled optimizer family, but it has the most
+This is the most statistically principled optimizer family---with the caveat
+from Section~\ref{sec:opt-defs} that the \(1/\sqrt{n}\) averaging guarantee is a
+theorem only for the linear head, not for the nonlinear MLP predictor---but it
+has the most
 knobs: \(\eta_0\), \(t_0\), \(\eta_{\min}\), and \(t_{\mathrm{avg}}\).  To avoid
 a large grid, use the best \((\eta_0,t_0)\) from Method O3, then sweep only
 \(t_{\mathrm{avg}}\).  The averaged predictor should be updated without gradient
@@ -3449,7 +3537,7 @@ the main stabilization knob. &
 \midrule
 \(\mathcal{B}\) &
 Bonus readout &
-\(\{\mathbf{\mathcal{B}_{\mathrm{l2norm}}}\}\) &
+\(\{\mathbf{\mathcal{B}_{\mathrm{l2}}}\}\) &
 This method is designed specifically for count-scale residual norms. &
 \textbf{must try} \\
 \midrule
@@ -3462,7 +3550,9 @@ try \\
 \end{tabular}%
 }
 \caption{SGD-\(1/t\)-PR sweep.  This is the most theory-aligned RND optimizer
-variant, but it should reuse the best schedule from the SGD-\(1/t\) sweep.}
+variant (the alignment is exact only for the linear head; see
+Section~\ref{sec:opt-defs}), but it should reuse the best schedule from the
+SGD-\(1/t\) sweep.}
 \label{tab:trainrun3-sgd1t-pr-sweep}
 \end{table}
 
@@ -3474,15 +3564,15 @@ hyperparameter combinations:
 \begin{array}{lll}
 \textbf{O0-a:} & \textbf{Adam-MSE} &
 \text{canonical RND baseline},\\
-\textbf{O0-b:} & \textbf{Adam-L2Norm} &
+\textbf{O0-b:} & \textbf{Adam-L2} &
 \text{readout-only count-scale ablation},\\
-\textbf{O0-c:} & \textbf{AdaGrad-L2Norm} &
+\textbf{O0-c:} & \textbf{AdaGrad-L2} &
 \text{cumulative-gradient-memory test},\\
-\textbf{O0-d:} & \textbf{SGD-}1/t\textbf{-L2Norm} &
+\textbf{O0-d:} & \textbf{SGD-}1/t\textbf{-L2} &
 \text{decreasing-step count-memory test},\\
-\textbf{O0-e:} & \textbf{SGD-}1/t\textbf{-PR-L2Norm} &
+\textbf{O0-e:} & \textbf{SGD-}1/t\textbf{-PR-L2} &
 \text{decreasing-step plus averaged-readout test},\\
-\text{O0-f:} & \mathrm{Adam\text{-}PR\text{-}L2Norm} &
+\text{O0-f:} & \mathrm{Adam\text{-}PR\text{-}L2} &
 \text{cheap averaging diagnostic}.
 \end{array}
 \]
@@ -3490,6 +3580,11 @@ The main RND input should be \texttt{rnd\_state}, because Train run~1 made it th
 strongest ordinary RND method and it admits distance-to-ground-truth logging.
 After the best optimizer family is found, repeat the winner on
 \texttt{rnd\_next\_state} and, if compute allows, on \texttt{rnd\_state\_action}.
+(Superseded at launch: Train run~3.2.1, Section~\ref{sec:train-run-3-2-1}, uses
+\texttt{rnd\_next\_state} instead --- the canonical input of every external RND
+source, Table~\ref{tab:opt-used}, and it equally admits
+distance-to-ground-truth logging; the follow-up repeat of the winner swaps
+accordingly to \texttt{rnd\_state}.)
 
 \begin{table}[H]
 \centering
@@ -3507,40 +3602,41 @@ After the best optimizer family is found, repeat the winner on
 \midrule
 Adam-MSE &
 Adam &
-\(\mathcal{B}_{\mathrm{mse}}\), \(\eta=10^{-3}\), betas \((0.9,0.999)\) &
+\(\mathcal{B}_{\mathrm{mse}}\), PyTorch Adam defaults
+(\(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\)) &
 What does the current standard RND optimizer achieve? &
 \textbf{must try} \\
 \midrule
-Adam-L2Norm &
+Adam-L2 &
 Adam &
-\(\mathcal{B}_{\mathrm{l2norm}}\), \(\eta\in\{10^{-4},10^{-3}\}\) &
+\(\mathcal{B}_{\mathrm{l2}}\), PyTorch Adam defaults &
 Is the RND problem mainly a readout-scale problem? &
 \textbf{must try} \\
 \midrule
-AdaGrad-L2Norm &
+AdaGrad-L2 &
 AdaGrad &
-\(\mathcal{B}_{\mathrm{l2norm}}\), \(\eta_{\mathrm{Ada}}\in\{10^{-3},10^{-2},10^{-1}\}\),
-\(c_0\in\{0,10^{-2}\}\) &
+\(\mathcal{B}_{\mathrm{l2}}\), PyTorch AdaGrad defaults
+(\(\eta_{\mathrm{Ada}}=10^{-2}\), \(c_0=0\), \(\epsilon_{\mathrm{Ada}}=10^{-10}\)) &
 Does cumulative squared-gradient memory improve count matching? &
 \textbf{must try} \\
 \midrule
-SGD-\(1/t\)-L2Norm &
+SGD-\(1/t\)-L2 &
 SGD with decreasing step &
-\(\mathcal{B}_{\mathrm{l2norm}}\),
+\(\mathcal{B}_{\mathrm{l2}}\),
 \(\eta_0\in\{10^{-2},10^{-1}\}\),
-\(t_0\in\{10^3,10^4,10^5\}\) &
+\(t_0\in\{10^3,10^4\}\) &
 Does a classical decreasing step recover residual decay? &
 \textbf{must try} \\
 \midrule
-SGD-\(1/t\)-PR-L2Norm &
+SGD-\(1/t\)-PR-L2 &
 SGD with decreasing step plus averaged readout &
 Use best two SGD-\(1/t\) schedules, sweep \(t_{\mathrm{avg}}\) &
 Does Polyak--Ruppert averaging improve the count-scale residual? &
 \textbf{must try} \\
 \midrule
-Adam-PR-L2Norm &
+Adam-PR-L2 &
 Adam plus averaged readout &
-\(\eta\in\{10^{-4},10^{-3}\}\), \(t_{\mathrm{avg}}\in\{10^3,10^4\}\) &
+PyTorch Adam defaults, \(t_{\mathrm{avg}}\in\{10^3,10^4\}\) &
 Does averaging help even when the base optimizer is still Adam? &
 try \\
 \midrule
@@ -3643,7 +3739,7 @@ Table~\ref{tab:trainrun3-1-1-fixed} and the swept axes in Table~\ref{tab:trainru
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{6.6cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{6.4cm}@{}}
 \toprule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
 \midrule
@@ -3825,7 +3921,7 @@ nodes.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.0cm}@{}}
 \toprule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
 \midrule
@@ -3838,46 +3934,498 @@ Random seed & \texttt{a\_seed} & \(0\)--\(49\); even seeds run on Slurm arm~A, o
 \end{tabular}
 \caption{Train run~3.1.2 swept axes: a full \(2\times3\times2\) factorial over the three implementation
 deltas between run-2's and run-3.1.1's elliptical bonus, \(\times\,3\) coefficients \(\times\,50\) seeds
-\(=12\) cells \(\times\,3\ \beta\times 50 = 1800\) runs. The writeup is updated once every configuration
-has \(\ge 20\) pooled finished seeds.}
+\(=12\) cells \(\times\,3\ \beta\times 50 = 1800\) runs. The writeup is first updated when every
+configuration has approximately \(20\) pooled finished seeds (the first aggregation ran with a pooled
+minimum of \(18\)).}
 \label{tab:trainrun3-1-2-sweep}
 \end{table}
 
-\paragraph{Pre-registered hypothesis: the effective ridge ratio.}
-With the batch rule \(\Lambda = \frac{1}{n}\Phi^{\top}\Phi + \lambda I\), the data part's average
-eigenvalue is \(\bar\mu = \overline{\lVert\varphi\rVert^{2}}/d\), so the bonus contrast between an
-uncovered direction and a typically covered one is
+\paragraph{The research questions, opened.}
+This run answers four questions.
+\begin{enumerate}[label=\textbf{RQ\arabic*},leftmargin=*]
+\item \textbf{(replication)} If run-2's exact elliptical configuration is rerun under today's code, does
+it recover run-2's \(44.49 \pm 3.32\)? If yes, the run-3.1.1 collapse is fully explained by the three
+changed knobs; if no, something else (environment, trainer, the float64 solver) changed too.
+\item \textbf{(attribution)} Which of the three knobs --- feature normalization (raw \(\to\) unit), ridge
+(\(10^{-6} \to \{10^{-2},1\}\)), bonus clip (none \(\to 5\)) --- carries how much of the damage? The full
+factorial measures each knob alone and in every combination.
+\item \textbf{(mechanism)} WHY does the winning configuration win? Two candidate explanations are spelled
+out below (Hypotheses 1 and 2), and each run logs the measured quantities that tell them apart.
+\item \textbf{(infrastructure)} At equal silicon, does the 8-tasks\(\times\)2-CPU or the
+16\(\times\)1 Slurm job shape train more steps per CPU-hour? (Measured alongside; summary at the end of
+this section, details in the run folder's \texttt{analysis.md}.)
+\end{enumerate}
+
+\paragraph{The objects in the bonus, defined.}
+Every symbol used below is defined here, in the order it enters the bonus.
+\begin{itemize}
+\item \textbf{The encoder} \(z(\cdot)\): a frozen, randomly initialized two-layer network mapping the
+state--action pair \(x = (s,a) \in \mathbb{R}^{6}\) (four observation numbers, two action numbers) to a
+vector \(z(x) \in \mathbb{R}^{d}\), \(d = 128\). It is never trained --- a fixed random embedding.
+\item \textbf{The feature} \(\varphi(x)\): what actually enters the bonus. Raw features: \(\varphi = z\).
+Unit-norm features: \(\varphi = z / \lVert z\rVert_2\) --- the same vector rescaled to length one, so
+only its DIRECTION is kept and its length is thrown away.
+\item \textbf{The coverage matrix} \(\Lambda\) (\(d \times d\)). At every update the batch rule sets
+\(\Lambda = \frac{1}{n}\Phi^{\top}\Phi + \lambda I\), where \(\Phi\) stacks the \(n{=}256\) minibatch
+features (row \(i\) is \(\varphi_i^{\top}\)), so \(\frac{1}{n}\Phi^{\top}\Phi =
+\frac{1}{n}\sum_i \varphi_i^{\vphantom{\top}}\varphi_i^{\top}\) is the average outer product of a fresh
+\(256\)-sample draw from the replay buffer --- so ``coverage'' approximates the run's visitation
+distribution so far, resampled at every update, not the most recent transitions --- and \(\lambda I\)
+adds the constant \(\lambda\) to every diagonal entry (the \emph{ridge}).
+\item \textbf{Eigenvalues, in plain terms.} A symmetric matrix like \(\Lambda\) has \(d\) perpendicular
+directions \(v_1,\dots,v_d\) (eigenvectors) with numbers \(\sigma_1,\dots,\sigma_d\) (eigenvalues),
+\(\Lambda v_j = \sigma_j v_j\). Here each one splits as \(\sigma_j = c_j + \lambda\) with
+\[
+c_j \;=\; \frac{1}{n}\sum_{i=1}^{n} \big(\varphi_i^{\top} v_j\big)^{2},
+\]
+the average squared alignment of the batch's features with direction \(v_j\) --- literally ``how much
+data the batch has in direction \(v_j\)''. A direction the features often point along has large
+\(c_j\); a direction no feature touches has \(c_j \approx 0\), leaving \(\sigma_j = \lambda\). So the
+ridge \(\lambda\) is a FLOOR: the coverage every direction is credited with before any data is seen.
+\item \textbf{The bonus.} \(r(x) = \sqrt{\varphi(x)^{\top}\Lambda^{-1}\varphi(x)}\). Written in the
+eigenvector basis,
+\[
+r(x)^{2} \;=\; \sum_{j=1}^{d} \frac{\big(\varphi(x)^{\top} v_j\big)^{2}}{c_j + \lambda},
+\]
+each component of the feature is divided by the coverage of its direction: components along well-covered
+directions contribute little, components along uncovered directions are divided only by the floor
+\(\lambda\) and dominate. That is how the bonus rewards novelty.
+\end{itemize}
+
+\paragraph{Hypothesis 1: the effective ridge ratio \(\rho\).}
+Two reference cases follow directly from the eigen-form above. A feature pointing entirely along an
+\emph{uncovered} direction (\(c_j \approx 0\)) gets
+\(r_{\text{novel}} = \lVert\varphi\rVert / \sqrt{\lambda}\); one pointing along a direction with coverage
+\(c\) gets \(r_{\text{covered}} = \lVert\varphi\rVert / \sqrt{\lambda + c}\). How big is a TYPICAL
+coverage? The trace (the sum of the diagonal) gives it in one line:
+\[
+\sum_{j=1}^{d} c_j
+\;=\; \operatorname{trace}\!\Big(\tfrac{1}{n}\Phi^{\top}\Phi\Big)
+\;=\; \tfrac{1}{n}\sum_{i=1}^{n} \lVert\varphi_i\rVert^{2}
+\;=\; \overline{\lVert\varphi\rVert^{2}},
+\]
+i.e.\ the \(d\) coverages sum to the average squared feature length, so their average is
+\(\bar\mu = \overline{\lVert\varphi\rVert^{2}} / d\). Taking \(c = \bar\mu\) as the typical coverage,
 \[
 \frac{r_{\text{novel}}}{r_{\text{covered}}}
-= \sqrt{1 + \bar\mu/\lambda}
+= \sqrt{\frac{\lambda + \bar\mu}{\lambda}}
 = \sqrt{1 + 1/\rho},
 \qquad
-\rho \;=\; \frac{\lambda\, d}{\overline{\lVert\varphi\rVert^{2}}}.
+\rho \;\equiv\; \frac{\lambda}{\bar\mu} \;=\; \frac{\lambda\, d}{\overline{\lVert\varphi\rVert^{2}}}.
 \]
-Run 2 (raw features, \(\lambda{=}10^{-6}\)) ran at \(\rho \sim 10^{-5}\)--\(10^{-3}\) (contrast
-30--300\(\times\)); run 3.1.1's unit-norm features fix \(\overline{\lVert\varphi\rVert^{2}} = 1\), so its
-grid \(\lambda \in \{10^{-2}, 1\}\) sat at \(\rho \in \{1.28, 128\}\) (contrast \(1.33\times\) and
-\(1.004\times\) --- essentially no exploration signal). Predictions: the replica cell recovers
-run-2-level reward; if the ridge-ratio account is right, (unit, \(10^{-6}\)) and (unit, \(10^{-4}\)) with
-no clip come close to it and the three raw-\(\lambda\) cells are similar; if instead the raw features'
-corner-seeking norm bias is the driver (the zero-bias ReLU encoder makes
-\(\lVert z(x)\rVert \propto \lVert (s,a)\rVert\), largest at the \texttt{top\_right} goal corner), the
-unit-norm small-\(\lambda\) cells stay far below the replica. Each run logs measured diagnostics
-(\(\overline{\lVert z\rVert^{2}}\), \(\overline{\lVert\varphi\rVert^{2}}\), \(\rho\), the \(\Lambda\)
-eigenvalue range, and the clip-hit fraction) so these are checked against numbers, not assumptions. On
-the clip: neither the original RND paper (Burda et al.\ 2018, \S2.4 --- intrinsic reward divided by a
-running standard-deviation estimate of intrinsic returns) nor CleanRL's RND implementation clips the
-intrinsic reward; the clip axis therefore measures a non-standard knob, and running-std normalization is
-the literature-aligned alternative left to future work.
+\(\rho\) compares the ridge floor to the typical data coverage. \(\rho \ll 1\): the floor sits far below
+the data, novel directions stand out, large contrast. \(\rho \ge 1\): the floor drowns the data, every
+direction looks the same, contrast \(\to 1\) --- and \(\beta\) cannot restore the contrast, because it
+rescales the informative variation and the constant offset together, leaving their ratio fixed at the
+contrast itself. (This is an order-of-magnitude summary --- the
+real spectrum is uneven, hence ``typical'' --- which is why every run logs its MEASURED
+\(\overline{\lVert z\rVert^{2}}\), \(\overline{\lVert\varphi\rVert^{2}}\), \(\rho\), and eigenvalue
+range.) Before substituting numbers, note the two limiting behaviors of the contrast --- they make every
+number below transparent. For \(\rho \ll 1\) the \(1\) inside the square root is negligible next to
+\(1/\rho\), so
+\[
+\sqrt{1 + 1/\rho} \;\approx\; \sqrt{1/\rho} \;=\; 1/\sqrt{\rho}
+\qquad (\rho \ll 1),
+\]
+and for \(\rho \gg 1\) the first-order expansion \(\sqrt{1+\varepsilon} \approx 1 + \varepsilon/2\) with
+\(\varepsilon = 1/\rho\) gives
+\[
+\sqrt{1 + 1/\rho} \;\approx\; 1 + \frac{1}{2\rho}
+\qquad (\rho \gg 1),
+\]
+i.e.\ a novelty premium of only \(1/(2\rho)\) above a visited state. Now the three regimes of this run,
+each worked through in full:
+\begin{itemize}
+\item \textbf{Run-2 replica (raw features, \(\lambda = 10^{-6}\)).} The measured raw feature scale is
+\(\overline{\lVert z\rVert^{2}} \approx 35\), so
+\[
+\rho \;=\; \frac{\lambda\, d}{\overline{\lVert\varphi\rVert^{2}}}
+\;=\; \frac{10^{-6} \times 128}{35}
+\;\approx\; 3.7\times10^{-6},
+\qquad
+\frac{1}{\rho} \;\approx\; 2.7\times10^{5},
+\]
+\[
+\text{contrast} \;=\; \sqrt{1 + 2.7\times10^{5}} \;\approx\; \sqrt{2.7\times10^{5}}
+\;=\; 1/\sqrt{\rho} \;\approx\; 520.
+\]
+A never-visited direction pays about \(520\) times what a typically visited one pays --- an unmistakable
+``go where you have not been'' signal.
+\item \textbf{Run-3.1.1, small ridge (unit-norm features, \(\lambda = 10^{-2}\)).} Unit norm forces
+\(\overline{\lVert\varphi\rVert^{2}} = 1\), so
+\[
+\rho \;=\; \frac{10^{-2} \times 128}{1} \;=\; 1.28,
+\qquad
+\frac{1}{\rho} \;=\; 0.78,
+\]
+\[
+\text{contrast} \;=\; \sqrt{1 + 0.78} \;=\; \sqrt{1.78} \;\approx\; 1.33.
+\]
+A novel state now earns only \(33\%\) more than a visited one --- a weak preference, easily buried by
+reward noise and function-approximation error.
+\item \textbf{Run-3.1.1, large ridge (unit-norm features, \(\lambda = 1\)).}
+\[
+\rho \;=\; \frac{1 \times 128}{1} \;=\; 128,
+\qquad
+\text{contrast} \;=\; \sqrt{1 + 1/128} \;\approx\; 1 + \frac{1}{2 \times 128} \;=\; 1.004,
+\]
+using the large-\(\rho\) expansion (the exact value is \(1.0039\)). The novelty premium is \(0.4\%\) ---
+invisible under training noise, hence effectively no exploration signal at any \(\beta\).
+\end{itemize}
+Prediction: reward should track the measured \(\rho\), not the raw/unit label itself; unit-norm cells
+with small measured \(\rho\) should approach the replica.
 
-\paragraph{Results (pending).}
-Once every configuration has \(\ge 20\) pooled finished seeds, this section will report (i) the 12-cell
-table at each cell's best \(\beta\) (eval reward \(\bar R\), standard error, success rate over seeds,
-\(n\), and the training-reward secondary column), (ii) the reward-over-training figure for the replica
-cell, its single-factor swaps, and the run-2 \texttt{rnd\_\allowbreak elliptical} reference (all eval
-reward --- no metric caveat), and (iii) the measured-\(\rho\) diagnostics table against the predictions
-above. The Slurm-arm comparison (8\(\times\)2 vs.\ 16\(\times\)1: per-run duration on identical silicon,
-per-node throughput, infrastructure error rate) is recorded in the run folder's \texttt{analysis.md}.
+\paragraph{Hypothesis 2: the corner-seeking norm bias.}
+The competing account says raw features helped run 2 for a reason unrelated to novelty contrast. The
+encoder's bias parameters are initialized to zero and frozen, so the network is a chain of ``multiply by
+a matrix'' and ``replace negatives by zero'' steps --- and both steps scale: doubling the input doubles
+every intermediate value and hence the output, \(z(\alpha x) = \alpha\, z(x)\) for \(\alpha \ge 0\).
+Consequently the raw feature LENGTH carries the input length,
+\(\lVert z(x)\rVert = \lVert x\rVert \cdot g(x / \lVert x\rVert)\) with \(g\) depending only on the input
+direction, and the raw-feature bonus factorizes as
+\[
+r(x) \;=\; \lVert z(x)\rVert \cdot \sqrt{u^{\top}\Lambda^{-1} u},
+\qquad u = z / \lVert z\rVert :
+\]
+a novelty part (the square root) TIMES a visitation-independent part
+\(\lVert z(x)\rVert \propto \lVert(s,a)\rVert\). What makes \(\lVert(s,a)\rVert\) large? The input is
+six-dimensional --- position \((x,y)\) spanning \([-6,6]\times[-4.5,4.5]\) around the arena center,
+velocity clipped to \(\pm5\) per axis by the environment, and the action in \([-1,1]^2\) --- so the
+maximum squared-norm contributions are position \(56.25\), velocity \(50\), action \(2\): velocity
+contributes almost as much as position. At a given speed the norm is largest near the maze corners
+(including the \texttt{top\_right} goal corner and equally the \texttt{bottom\_left} start corner), so
+``corner-seeking'' is the position shadow of what is really an extreme-state premium: raw features pay a
+permanent bonus premium for jointly extreme position AND speed, independent of novelty; unit-norm divides
+exactly this factor out. If THIS were the driver, unit-norm cells would stay far below the replica even
+at matched measured \(\rho\).
+
+\paragraph{On the clip (literature).}
+Neither the original RND paper (Burda et al.\ 2018, \S2.4 --- intrinsic reward divided by a running
+standard-deviation estimate of intrinsic returns) nor CleanRL's RND implementation clips the intrinsic
+reward; the clip axis therefore measures a non-standard knob, and running-std normalization is the
+literature-aligned alternative left to future work.
+
+\paragraph{Aggregation.}
+Aggregated on 2026-07-03 with the sweep still filling: \(935\) of the \(1800\) runs complete (\(0\)
+failed), pooled over both Slurm arms; at each cell's winning \(\beta\) the seed count is \(n=20\)--\(33\)
+(per-configuration \(n\) ranges \(18\)--\(38\); all tables and all prose numbers in this section are from
+this one snapshot). A run's score is its final \(100\)-episode
+deterministic eval reward \(R_i\) at \(10^{6}\) steps (run-2's protocol); we report
+\(\bar{R}=\frac{1}{n}\sum_i R_i\), \(\mathrm{SE}=s/\sqrt{n}\), and --- because the per-seed outcome is
+bimodal (a mass near \(0\) and a mass above \(20\)) --- the success rate
+\(\text{succ} = \frac{1}{n}\left|\{i : R_i > 5\}\right|\) (the threshold sits in the bimodal gap).
+Because the sweep has four dimensions (features \(\times\) \(\lambda\) \(\times\) clip \(\times\)
+\(\beta\)), the data is reported in the standard factorial-experiment forms: the COMPLETE grid with error
+bars (Table~\ref{tab:trainrun3-1-2-grid} --- every one of the 36 configurations, so nothing is hidden by
+a selection step), small-multiple heatmaps of the same numbers (Figure~\ref{fig:trainrun3-1-2-heatmap} ---
+one panel per features\(\times\)clip combination, so the two structural knobs are compared across panels
+and \(\lambda\times\beta\) within a panel), and an interaction plot against the measured mechanism
+variable (Figure~\ref{fig:trainrun3-1-2-rho}). No single \(\beta\) dominates --- the per-cell best
+\(\beta^\star\) tends to move from \(10^{-1}\) at large \(\rho\) down to \(10^{-3}\)--\(10^{-2}\) at
+small \(\rho\) (a tendency with exceptions, not a rule), consistent with \(\beta\) compensating the
+bonus's overall scale --- so the \(\beta\) axis is shown in full rather than collapsed. Table~\ref{tab:trainrun3-1-2-cells} then condenses to the 12 cells
+at each cell's best \(\beta\), with the MEASURED diagnostics (each run's logged \(\rho\) and the fraction
+of computed bonuses that hit the clip), and Figure~\ref{fig:trainrun3-1-2-curve} shows the key cells over
+training --- every line is the same eval metric, including the run-2 reference.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\input{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/full_grid_table.tex}
+\caption{Train run~3.1.2, the COMPLETE grid: final eval extrinsic reward \(\bar{R} \pm \mathrm{SE}\)
+(\(n\) in parentheses) for all 36 configurations --- rows are the 12
+features\(\times\lambda\times\)clip cells, columns the three coefficients \(\beta\); each row's best
+\(\beta\) in \textbf{bold}. Higher is better.}
+\label{tab:trainrun3-1-2-grid}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/heatmap_facets.pdf}
+\caption{The same 36 numbers as Table~\ref{tab:trainrun3-1-2-grid}, as small-multiple heatmaps (one
+shared color scale): panels compare the two structural knobs (columns: raw vs unit-norm features; rows:
+no clip vs clip 5), and each panel spans \(\lambda\) (vertical) \(\times\) \(\beta\) (horizontal). The
+bright region is confined to the raw-features/no-clip panel at small \(\lambda\) and small-to-middle
+\(\beta\); the entire clip-5 row of panels is dark.}
+\label{fig:trainrun3-1-2-heatmap}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/reward_vs_rho.pdf}
+\caption{The mechanism test (RQ3): mean eval reward vs the MEASURED effective ridge ratio \(\rho\), one
+point per configuration (log horizontal axis; color = clip, marker = features). Under Hypothesis~1 the
+no-clip points should decline as \(\rho\) grows regardless of the raw/unit label --- which they broadly
+do. Under Hypothesis~2 the unit-norm points would sit systematically below raw points of comparable
+\(\rho\); the design contains no exactly matched-\(\rho\) raw/unit pair (raw \(\rho\) values are
+\(35\times\) smaller at equal \(\lambda\)), and the two nearest comparisons give one tie and one gap of
+about \(1.2\) combined standard errors --- no systematic separation beyond noise, so Hypothesis~2 is
+dropped on parsimony rather than excluded outright. The clip-5 points sit collapsed below wherever the
+measured saturation is high (small \(\rho\)) and rejoin the no-clip points only at \(\rho \approx 1\),
+where the cap almost never binds. The low no-clip outliers at the smallest \(\rho\) are the
+\(\beta{=}0.1\) configurations, where the intrinsic term swamps the sparse extrinsic reward.}
+\label{fig:trainrun3-1-2-rho}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\input{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/reward_table.tex}%
+}
+\caption{Train run~3.1.2: the 12 cells at each cell's best \(\beta\) (chosen by \(\bar{R}\)), sorted by
+\(\bar{R}\) descending; best \textbf{bold}, second \underline{underlined}; higher is better.
+``\(\rho\) (meas.)'' is the measured effective ridge ratio \(\lambda d / \overline{\lVert\varphi\rVert^2}\)
+averaged over the cell's runs; ``clip hits'' is the measured fraction of bonuses that exceeded the cap
+(--- for the no-clip cells); \(\bar{R}_{\text{train}}\) is the training-episode secondary metric.}
+\label{tab:trainrun3-1-2-cells}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/line_reward_curve.pdf}
+\caption{Train run~3.1.2: reward over training for the key cells at their best \(\beta\). For each cell,
+two same-colored lines: \textbf{solid} is the eval extrinsic reward (the deterministic \(100\)-episode
+eval, mean \(\pm\) standard error over seeds; shaded band \(=\pm\)SE; each point pooled over \(\ge 10\)
+seeds) and \textbf{dashed} is the SAME cell's training extrinsic reward (mean over the past \(100\)
+training episodes; no band). \textbf{Gray dotted}: the run-2 \texttt{rnd\_\allowbreak elliptical} eval
+reference --- the SAME eval metric, so the solid and dotted lines are directly comparable. Training
+closely tracks eval for every cell. The replica cell (raw features, \(\lambda{=}10^{-6}\), no clip) tracks
+and passes the run-2 reference; the clipped raw cell is flat near zero.}
+\label{fig:trainrun3-1-2-curve}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \emph{The replication succeeded (RQ1)}: run-2's exact configuration under the current code reaches
+\(\bar{R}=52.76 \pm 6.18\) (\(n{=}33\)), matching run-2's \(44.49 \pm 3.32\) (the difference is \(1.2\)
+combined standard errors) --- so the run-3.1.1 gap was caused by the implementation deltas, not by the
+environment, the trainer, or the float64 solver.
+\item \emph{The clip is the single most damaging factor in the low-\(\rho\) regime (RQ2)}: adding clip
+\(=5\) to the replica cell alone collapses \(52.8 \to 4.8\), and the measured saturation explains why ---
+\(98\%\) of all computed bonuses hit the cap, erasing the novelty ranking. Across the grid the
+relationship is bucket-level (the heavily saturated cells are statistically indistinguishable from one
+another): \(89\)--\(98\%\) saturation \(\to\) reward \(5\)--\(8\); \(36\)--\(48\%\) \(\to\)
+\(10\)--\(12\); at \(\rho \ge 1\) the clip almost never binds (\(1.6\%\) hits) and is inert
+(\(17.2\) vs \(17.2\)) --- exactly the boundedness argument of Section~\ref{sec:train-run-3-1-1}'s
+comparison paragraph, and consistent with the literature note that neither the RND paper nor CleanRL
+clips the intrinsic reward.
+\item \emph{The ridge acts through the measured ratio \(\rho\) (RQ3, Hypothesis 1)}: in \(\rho\) order,
+the six no-clip cells score \(52.8\) (\(\rho{=}3.7\times10^{-6}\)), \(26.1\) (\(1.3\times10^{-4}\)),
+\(35.2\) (\(3.7\times10^{-4}\)), \(26.5\) (\(1.3\times10^{-2}\)), \(28.0\) (\(3.4\times10^{-2}\)),
+\(17.2\) (\(1.28\)). The top cell is the smallest-\(\rho\) cell and the bottom the largest, as
+pre-registered, but the middle is flat with one inversion: the \(26.1\) (a unit-norm cell) sits below the
+\(35.2\) (a raw cell) despite SMALLER \(\rho\) --- the one comparison leaning toward Hypothesis~2, and it
+is within \(1.2\) combined standard errors.
+\item \emph{Feature normalization matters mainly by raising the floor of reachable \(\rho\) (RQ3;
+Hypothesis 2 dropped on parsimony, not excluded)}: one honesty note first --- the pre-registered
+prediction ``unit-norm cells with small measured \(\rho\) approach the replica'' turned out to be
+untestable inside this grid, because unit-norm features cannot reach the replica's \(\rho\) at all (their
+floor is \(\lambda d = 1.28\times10^{-4}\), \(35\times\) the replica's \(3.7\times10^{-6}\)); only the
+weaker nearest-neighbor comparison could be assessed. That comparison shows no systematic unit-below-raw
+separation beyond noise (one tie --- \(26.5\) vs \(28.0\) --- and the one \(\approx 1.2\)-combined-SE gap
+named in (iii)), so Hypothesis~2 is not needed to explain run-2's advantage. The raw features' measured
+scale (\(\overline{\lVert z\rVert^{2}} \approx 35\)) simply gives them a \(35\times\) smaller \(\rho\) at
+equal \(\lambda\); under unit norm, matching run-2's contrast would need
+\(\lambda \approx 3\times10^{-8}\), below anything in the 3.1.1 grid.
+\item \emph{Internal consistency}: the run-3.1.1-like cell (unit, \(10^{-2}\), clip 5) at \(\beta{=}0.01\)
+scores \(9.3 \pm 3.7\) here (eval), reproducing run-3.1.1's \(9.03 \pm 3.22\) (train) for the same
+configuration. Also as expected, \(\beta^\star\) tends to shift inversely with the bonus scale
+(small-\(\rho\) cells pick \(\beta^\star \le 10^{-2}\); at \(\beta{=}0.1\) the tiny-\(\rho\) cells
+collapse to \(0\) as the intrinsic term swamps the sparse extrinsic reward).
+\end{enumerate}
+The Slurm-shape comparison ran alongside: at equal silicon, the 16-tasks\(\times\)1-CPU shape delivered
+about \(26\%\) more training steps per CPU-hour than 8\(\times\)2 (per node class \(1.15\times\) to
+\(1.51\times\)); the measurements, the core-binding pitfall this uncovered, and the submission-order
+lesson are recorded in the run folder's \texttt{analysis.md} and the project Slurm rules.
+
+\paragraph{Follow-up sweep (launched 2026-07-03; results pending).}
+Finding~(iv) identified a regime the 3.1.1/3.1.2 grids cannot reach: unit-normalized features at a
+replica-level effective ridge ratio, which needs \(\lambda \approx 3\times10^{-8}\). A follow-up sweep
+in the same run folder (sweep id timestamp \texttt{2026-07-03-21-22}; catalogued in the folder's
+\texttt{data/SWEEPS.md}) runs exactly that regime with one cell a decade below the old grid --- unit
+normalization, \(\lambda = 10^{-8}\) (ratio floor \(\rho = \lambda d = 1.28\times10^{-6}\), below the
+replica's measured \(3.7\times10^{-6}\)), no clip --- crossed with five \(\beta\) decades
+\(\{10^{-4}, 10^{-3}, 10^{-2}, 10^{-1}, 10^{0}\}\) at 50 seeds each (250 runs; every other setting
+identical to the grid cells, standalone eval on). It asks:
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+\item whether unit normalization at a replica-level (here even smaller) \(\rho\) recovers replica-level
+eval reward (\(\approx 52.8\)) --- Hypothesis~1 tested where the grid could not test it;
+\item whether it instead stays below the raw-feature replica at matched \(\rho\), which would revive the
+extreme-state-premium account (Hypothesis~2, dropped on parsimony in finding~(iv));
+\item where \(\beta^\star\) sits for this large-contrast bonus (finding~(v): \(\beta^\star\) shifts
+inversely with the bonus scale --- hence the wide five-decade \(\beta\) sweep).
+\end{enumerate}
+The 250 runs execute as one wave (16 open-partition Slurm jobs \(\times\) 16 single-CPU workers, the
+shape the comparison above found fastest; the reservation nodes were deliberately left free for other
+work). The run folder's \texttt{experiment\_background.md} records the full launch configuration; this
+section will be extended with the results.
+
+%------------------------------------------------------------------------------
+\subsubsection{Train run 3.2.1: RND optimizer variants (O1 Adam, O2 AdaGrad, O3 SGD-\(1/t\))}
+\label{sec:train-run-3-2-1}
+
+\paragraph{Run.}
+Train run~3.2.1 is the first live run of the Part~II optimizer design
+(Section~\ref{sec:train-run-3-rnd-optimizers}).  It sweeps the three
+non-averaged optimizer families --- Method O1 (Adam, the canonical RND
+baseline), Method O2 (AdaGrad, cumulative squared-gradient memory), and Method
+O3 (SGD with the shifted \(1/t\) schedule) --- each crossed with the two bonus
+readouts \(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\) and the
+intrinsic coefficient \(\beta\); the only optimizer-specific swept knobs are
+O3's schedule parameters \((\eta_0,t_0)\).  The RND input is
+\texttt{rnd\_next\_state} for every run --- the canonical input every external
+RND source distills (Table~\ref{tab:opt-used}) and the same input as the
+run-3.1.1 reference arm.  This deviates from the staging preference for
+\texttt{rnd\_state} (Section~\ref{sec:train-run-3-rnd-optimizers}, chosen there
+as run-1's strongest ordinary RND method); \texttt{rnd\_next\_state} equally
+admits distance-to-ground-truth logging, so nothing is lost for the winner
+rerun.  Every optimizer constant is fixed at its
+PyTorch default and no gradient clipping is used
+(Tables~\ref{tab:trainrun3-adam-sweep}--\ref{tab:trainrun3-sgd1t-sweep}).
+Standalone eval is OFF (run-3.1.1 standard: no deterministic rollout; every
+configuration is scored on the training-episode reward --- the windowed mean
+over the past \texttt{n\_eval\_episodes} training episodes, snapshotted every
+\texttt{eval\_freq} steps); each run writes its own local JSON,
+checkpointed at the eval cadence, under the sweep's \texttt{sweep\_id}, and the
+queue worker claims configs in id order (seed outermost, per the revised
+convention).  The run requires four new \texttt{train.py} switches ---
+\texttt{rnd\_optimizer} (\texttt{adam}\,/\,\texttt{adagrad}\,/\,\texttt{sgd1t}),
+\texttt{rnd\_bonus\_readout} (\texttt{mse}\,/\,\texttt{l2}),
+\texttt{rnd\_sgd\_eta0}, and \texttt{rnd\_sgd\_t0} --- everything else reuses
+the run-3.1.1 stack unchanged.  For comparison,
+Table~\ref{tab:trainrun3-2-1-fixed} also lists run-3.1.1's
+\texttt{rnd\_next\_state} arm (canonical Adam-MSE RND on the next state) as a
+reference column, and the analysis plots will draw that arm's best
+configuration as a reference line --- taken from its training-episode reward
+curve (the same metric logged here), not from a standalone-eval curve.
+Because run~3.2.1 uses the same \texttt{rnd\_next\_state} input, O1's
+\(\mathcal{B}_{\mathrm{mse}}\) arm has exactly the reference arm's
+configuration (Adam at PyTorch defaults, MSE readout, no clipping), so the
+seven \(\beta\) values it shares with run~3.1.1 double as a replication of
+that arm.
+
+The run answers three questions.
+\begin{enumerate}[label=\textbf{RQ\arabic*},leftmargin=*]
+\item \textbf{(readout scale)} Does switching Adam's readout from
+\(\mathcal{B}_{\mathrm{mse}}\) to \(\mathcal{B}_{\mathrm{l2}}\) alone change
+exploration --- is the RND problem mainly a readout-scale problem?
+\item \textbf{(count memory)} Does AdaGrad's cumulative squared-gradient memory
+improve exploration over constant-gain Adam at matched readout?
+\item \textbf{(decreasing step)} Does the shifted \(1/t\) schedule --- the
+closest match to the stochastic-approximation averaging argument --- beat both
+constant-gain optimizers, and at which \((\eta_0,t_0)\)?
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.0cm}@{}}
+\toprule
+\textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
+\midrule
+Optimizer method & \texttt{rnd\_optimizer} & O1 Adam; O2 AdaGrad; O3 SGD-\(1/t\)
+with \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\). \\
+Bonus readout & \(\mathcal{B}\) (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) &
+\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) (all three methods). \\
+Intrinsic coefficient & \(\beta\) &
+\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\) (8; all methods; Train
+run~1's \(\beta^\star=10^{2}\) for \texttt{rnd\_next\_state} sits inside the grid,
+and \(10^{-3}\) matches the low end used by runs 3.1.1/3.1.2). \\
+O3 initial learning rate & \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) &
+\(\{10^{-3},3{\cdot}10^{-3},10^{-2},3{\cdot}10^{-2},10^{-1}\}\) (5; O3 only). \\
+O3 schedule offset & \(t_0\) (\texttt{rnd\_sgd\_t0}) &
+\(\{10^{3},10^{4}\}\) (2; O3 only). \\
+Random seed & \texttt{a\_seed} & \(0\)--\(49\) (50 seeds, every configuration). \\
+\bottomrule
+\end{tabular}
+\caption{Train run~3.2.1 swept axes. The grid is per-method: O1 is
+readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations, O2 likewise \(16\),
+and O3 is readout\,(2)\,\(\times\,\eta_0\)\,(5)\,\(\times\,t_0\)\,(2)\,\(\times\,\beta\)\,(8)
+\(=160\), so \(16+16+160=192\) configurations \(\times\,50\) seeds \(=9600\)
+runs (comparable to run-3.1.1's \(9100\)).  The writeup is first updated when
+every configuration has \(\ge 20\) finished seeds.}
+\label{tab:trainrun3-2-1-sweep}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}@{}}
+\toprule
+\textbf{Hyperparameter (code arg)} &
+\textbf{O1: Adam} &
+\textbf{O2: AdaGrad} &
+\textbf{O3: SGD-\(1/t\)} &
+\textbf{Reference: run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2)}} \\
+\texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
+\texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
+\texttt{continuing\_task}, \texttt{reset\_target} & \multicolumn{4}{c}{True, False} \\
+\texttt{env\_max\_episode} & \multicolumn{4}{c}{400} \\
+\texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & \multicolumn{4}{c}{False} \\
+\(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as runs 3.1.1/3.1.2)}} \\
+\texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
+\texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
+\texttt{batch\_size}, \texttt{learning\_starts} & \multicolumn{4}{c}{256, 100} \\
+\(\tau\), \texttt{ent\_coef} & \multicolumn{4}{c}{0.005, auto} \\
+\texttt{net\_arch} & \multicolumn{4}{c}{\([256,256]\)} \\
+\texttt{train\_freq}, \texttt{gradient\_steps} & \multicolumn{4}{c}{1, 1} \\
+\texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard: training-reward only)}} \\
+\texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; scored on the training-episode reward)} \\
+\texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
+\texttt{log\_distance} & \multicolumn{4}{c}{False (distance-to-GT deferred to the winner rerun)} \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Intrinsic --- swept (values in Table~\ref{tab:trainrun3-2-1-sweep})}} \\
+\(\beta\) (\texttt{beta}) & \multicolumn{3}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\)} & \(\{10^{-3},\dots,10^{3}\}\) (7; as run 3.1.1) \\
+readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \multicolumn{3}{c}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
+\(\eta_0\) (\texttt{rnd\_sgd\_eta0}) & --- & --- & \(\{10^{-3},3{\cdot}10^{-3},10^{-2},\) \(3{\cdot}10^{-2},10^{-1}\}\) & --- \\
+\(t_0\) (\texttt{rnd\_sgd\_t0}) & --- & --- & \(\{10^{3},10^{4}\}\) & --- \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
+RND input (\texttt{algorithm}) & \multicolumn{4}{c}{\texttt{rnd\_\allowbreak next\_\allowbreak state} (\(s'\))} \\
+RND output dim \(m\) (\texttt{rnd\_output\_dim}) & \multicolumn{4}{c}{128} \\
+\texttt{rnd\_obs\_norm}, \texttt{rnd\_distance} & \multicolumn{4}{c}{True, mse} \\
+\texttt{n\_predictors} & \multicolumn{4}{c}{1} \\
+predictor optimizer & Adam & AdaGrad & SGD, \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\) & Adam \\
+optimizer constants & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) (PyTorch defaults) & \(\eta_{\mathrm{Ada}}=10^{-2}\), \(c_0=0\), \(\epsilon_{\mathrm{Ada}}=10^{-10}\) (PyTorch defaults) & \(\eta_{\min}=0\) (no floor) & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) \\
+\(g_{\max}\) (gradient clipping) & \multicolumn{4}{c}{\(\infty\) (no clipping)} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Train run~3.2.1 hyperparameters per optimizer method (columns are the
+three methods plus run-3.1.1's \texttt{rnd\_next\_state} arm as a reference),
+rows the knobs.  Rows spanning all columns are shared; ``---'' marks a knob a
+method does not use.  Environment and SAC follow runs 3.1.1/3.1.2 exactly;
+logging follows the run-3.1.1 training-reward-only standard (no standalone
+eval), so the new curves and the reference arm's curves are the same metric.
+All four columns share the \texttt{rnd\_\allowbreak next\_\allowbreak state}
+input, so the reference arm differs from O1's \(\mathcal{B}_{\mathrm{mse}}\)
+arm only in its \(\beta\) grid (7 vs.\ 8 values).
+The analysis plots will draw the reference arm's best configuration as a
+reference line, from its training-episode reward curve.  The swept axes
+(readout, \(\beta\), \(\eta_0\), \(t_0\), seed) are in
+Table~\ref{tab:trainrun3-2-1-sweep}.}
+\label{tab:trainrun3-2-1-fixed}
+\end{table}
 
 \subsection{Train run 4 (fully-JAX, sample-time reproduction of run 2)}
 \label{sec:train-run-4}

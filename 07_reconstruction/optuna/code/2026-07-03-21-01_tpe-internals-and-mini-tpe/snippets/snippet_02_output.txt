@@ -1,0 +1,5 @@
+mixture weights: [0.25 0.25 0.25 0.25] (last = prior)
+component mus  : [2. 3. 8. 5.] (last = prior center 5.0)
+component sigma: [ 2.  5.  5. 10.] (last = prior sigma = range 10)
+sigmas with magic clip: [ 4.  2.  4. 10.] -> smallest floored to 2.0, not 0.001
+
