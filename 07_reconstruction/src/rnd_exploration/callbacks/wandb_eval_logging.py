@@ -122,9 +122,12 @@ class WandbEvalLoggingCallback(BaseCallback):
             summary["visit_counts/coverage_pct"] = 100.0 * visited_cells / max(1, open_cells)
         # capture every eval summary locally (both modes), then send to wandb only in full mode
         self.history.append(dict(summary))
-        print_or_wandb_log(
-            self.log_to_wandb,
-            summary,
-            f"Eval (step {self.num_timesteps})",
-        )
+        # wandb mode still logs every snapshot; local mode prints the block only when verbose>0
+        # (default silent — the per-run JSON carries the full history, the console adds nothing)
+        if self.log_to_wandb or self.verbose > 0:
+            print_or_wandb_log(
+                self.log_to_wandb,
+                summary,
+                f"Eval (step {self.num_timesteps})",
+            )
         return True

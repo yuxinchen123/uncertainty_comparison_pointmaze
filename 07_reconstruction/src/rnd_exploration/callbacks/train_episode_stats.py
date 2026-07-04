@@ -107,9 +107,12 @@ class TrainEpisodeStatsCallback(BaseCallback):
             ("train/n_episodes_averaged", n_window),
         ])
         self.history.append(dict(summary))
-        print_or_wandb_log(
-            self.log_to_wandb,
-            summary,
-            f"Train episode stats (step {self.num_timesteps})",
-        )
+        # wandb mode still logs every snapshot; local mode prints the block only when verbose>0
+        # (default silent — the per-run JSON carries the full history, the console adds nothing)
+        if self.log_to_wandb or self.verbose > 0:
+            print_or_wandb_log(
+                self.log_to_wandb,
+                summary,
+                f"Train episode stats (step {self.num_timesteps})",
+            )
         return True

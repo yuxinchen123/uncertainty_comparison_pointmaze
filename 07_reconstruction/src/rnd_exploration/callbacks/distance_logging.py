@@ -62,9 +62,11 @@ class DistanceLoggingCallback(BaseCallback):
             return True
         metrics["step"] = self.num_timesteps
         self.history.append(dict(metrics))  # capture locally (both modes)
-        print_or_wandb_log(
-            self.log_to_wandb,
-            metrics,
-            "Distance To Ground Truth"
-        )
+        # wandb mode still logs every snapshot; local mode prints the block only when verbose>0
+        if self.log_to_wandb or self.verbose > 0:
+            print_or_wandb_log(
+                self.log_to_wandb,
+                metrics,
+                "Distance To Ground Truth"
+            )
         return True

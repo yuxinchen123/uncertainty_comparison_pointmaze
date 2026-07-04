@@ -102,7 +102,8 @@ class Config:
     opt_polyak_foreach: bool = False    # bit-exact torch._foreach_ polyak target update (replaces SB3 zip_strict)
     sac_train_freq: int = 1             # SAC train_freq: env steps between gradient-update bursts
     sac_gradient_steps: int = 1         # SAC gradient_steps per burst (with train_freq=N, gradient_steps=N keeps total updates equal)
-    sb3_verbose: int = 0                # SB3 SAC verbose: 0 (default) = no periodic rollout/train table; 1 restores it
+    sb3_verbose: int = 0                # console verbosity: 0 (default) = no SB3 rollout/train table AND no per-eval
+                                        # callback blocks; 1 restores both. JSON logging is unaffected either way.
 
 
 def _str2bool(x: str) -> bool:
@@ -185,7 +186,8 @@ def parse_config() -> Config:
     parser.add_argument("--sac_train_freq", type=int, default=1, help="SAC train_freq (env steps per update burst).")
     parser.add_argument("--sac_gradient_steps", type=int, default=1, help="SAC gradient_steps per burst.")
     parser.add_argument("--sb3_verbose", type=int, default=0, choices=[0, 1],
-                        help="SB3 SAC verbosity: 0 (default) = silent (no periodic rollout/train table), 1 = SB3's table.")
+                        help="Console verbosity: 0 (default) = silent (no SB3 rollout/train table, no per-eval "
+                             "callback blocks); 1 = print both. The per-run JSON is unaffected either way.")
 
     # argparse -> Config dataclass
     args = parser.parse_args()
@@ -410,10 +412,14 @@ def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocit
         n_eval_episodes_final=cfg.n_eval_episodes_final,
         eval_standalone=cfg.eval_standalone,
         log_to_wandb=log_to_wandb,
+        # sb3_verbose doubles as the console-verbosity knob: 0 (default) = no per-eval console
+        # blocks (the per-run JSON keeps the full history), 1 = print them (and the SB3 table)
+        verbose=cfg.sb3_verbose,
     )
     train_stats_callback = TrainEpisodeStatsCallback(
         train_env=train_vec, eval_freq=cfg.eval_freq, n_eval_episodes=cfg.n_eval_episodes,
         use_wandb=cfg.use_wandb, beta=cfg.beta, log_to_wandb=log_to_wandb,
+        verbose=cfg.sb3_verbose,
     )
     distance_logging_callback = DistanceLoggingCallback(
         algorithm=cfg.algorithm,
@@ -423,6 +429,7 @@ def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocit
         use_wandb=cfg.use_wandb,
         enabled=cfg.log_distance,  # OFF by default; no-op (empty history) unless --log_distance True
         log_to_wandb=log_to_wandb,
+        verbose=cfg.sb3_verbose,
     )
     return [wandb_eval_callback, train_stats_callback, distance_logging_callback]
 

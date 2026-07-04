@@ -159,7 +159,10 @@ def test_train_episode_stats_logs_windowed_means(monkeypatch):
     monitor.episode_returns = [10.0, 20.0, 30.0]
     monitor.episode_lengths = [5, 7, 9]
     vec_env = types.SimpleNamespace(envs=[monitor])
-    cb = TrainEpisodeStatsCallback(train_env=vec_env, eval_freq=4, n_eval_episodes=2, use_wandb=False)
+    # verbose=1: the console print path is opt-in since 2026-07-04 (default 0 = silent; the JSON
+    # history is unaffected). verbose=1 keeps the capture mechanism of this test working.
+    cb = TrainEpisodeStatsCallback(train_env=vec_env, eval_freq=4, n_eval_episodes=2, use_wandb=False,
+                                   verbose=1)
     cb._episode_extrinsics = [1.0, 2.0, 3.0]
     cb._episode_intrinsics = [0.1, 0.2, 0.3]
     cb.locals = {}  # empty infos -> skip accumulation, isolate the windowed-logging path
@@ -180,6 +183,26 @@ def test_train_episode_stats_logs_windowed_means(monkeypatch):
     monitor.episode_lengths = []
     assert cb._on_step() is True
     assert captured == {}
+
+
+def test_train_episode_stats_console_silent_by_default(monkeypatch):
+    """Default verbose=0 + local mode: the console print is skipped but the history row is kept."""
+    # any call to the print helper would be a failure of the default-silence contract
+    monkeypatch.setattr(tes_mod, "print_or_wandb_log",
+                        lambda *a, **k: pytest.fail("print_or_wandb_log called at verbose=0"))
+    monitor = Monitor(_TinyGymEnv())
+    monitor.episode_returns = [10.0, 20.0]
+    monitor.episode_lengths = [5, 7]
+    vec_env = types.SimpleNamespace(envs=[monitor])
+    cb = TrainEpisodeStatsCallback(train_env=vec_env, eval_freq=4, n_eval_episodes=2, use_wandb=False)
+    cb._episode_extrinsics = [1.0, 2.0]
+    cb._episode_intrinsics = [0.1, 0.2]
+    cb.locals = {}
+    cb.num_timesteps = 4
+    # golden path: the step runs, no console call, and the JSON-bound history still gets its row
+    assert cb._on_step() is True
+    assert len(cb.history) == 1
+    assert cb.history[0]["train/mean_extrinsic_reward"] == pytest.approx(1.5)
 
 
 # ========================================================================================
@@ -229,9 +252,11 @@ def test_wandb_eval_standalone_gates_rollout(monkeypatch):
     def run(eval_standalone):
         """Build a callback over a fake env+model, run one eval step, return the logged summary."""
         captured.clear()
+        # verbose=1: the console print path is opt-in since 2026-07-04 (default 0 = silent);
+        # verbose=1 keeps this test's capture mechanism working
         cb = WandbEvalLoggingCallback(
             eval_env=_OneStepVecEnv(), eval_freq=1, n_eval_episodes=2, use_wandb=False,
-            total_timesteps=10, eval_standalone=eval_standalone,
+            total_timesteps=10, eval_standalone=eval_standalone, verbose=1,
         )
         cb.model = _ConstantModel()
         cb.num_timesteps = 10  # eval_freq=1 -> divisible -> the eval step runs
@@ -315,9 +340,11 @@ def test_distance_logging_on_step(monkeypatch):
     monkeypatch.setattr(dl_mod, "print_or_wandb_log", lambda use_wandb, metrics, message: captured.update(metrics=dict(metrics)))
 
     vc_env = types.SimpleNamespace(maze_map=np.zeros((3, 3)))
+    # verbose=1: the console print path is opt-in since 2026-07-04 (default 0 = silent);
+    # verbose=1 keeps this test's capture mechanism working
     cb = DistanceLoggingCallback(
         algorithm="rnd", intrinsic_reward_model=object(), visit_count_env_position_velocity=vc_env,
-        eval_freq=5, use_wandb=False,
+        eval_freq=5, use_wandb=False, verbose=1,
     )
     cb.num_timesteps = 5  # divisible by eval_freq so the distance block runs
 
