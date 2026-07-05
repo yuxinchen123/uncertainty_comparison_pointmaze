@@ -5,7 +5,7 @@ in this document was verified by actually running it in this project's environme
 4.9.0**, installed 2026-07-03 into the `exploration` conda env (`conda run -n exploration python
 ...`, Python 3.11, numpy 1.26.4, scipy 1.16.0, torch 2.10.0). Every code block that shows an
 "Output (observed)" was executed; the full scripts, with their raw outputs saved next to them, live
-in nine folders under `07_reconstruction/optuna/code/` (listed in §12). Where a statement comes
+in eleven folders under `07_reconstruction/optuna/code/` (listed in §12). Where a statement comes
 from Optuna's own documentation or source rather than from a run, it is quoted and marked as such.
 
 ## Table of contents
@@ -44,10 +44,12 @@ from Optuna's own documentation or source rather than from a run, it is quoted a
    - [7.3 One ask, step by step: 24 candidates from the good density](#73-one-ask-step-by-step-24-candidates-from-the-good-density)
    - [7.4 Why the density ratio is expected improvement: the derivation, checked numerically](#74-why-the-density-ratio-is-expected-improvement-the-derivation-checked-numerically)
    - [7.5 A mini-TPE from scratch in numpy](#75-a-mini-tpe-from-scratch-in-numpy)
+   - [7.6 A high-variance objective: what TPE does with noisy values](#76-a-high-variance-objective-what-tpe-does-with-noisy-values)
 8. [The Gaussian-process sampler, in detail](#8-the-gaussian-process-sampler-in-detail)
    - [8.1 The surrogate Optuna fits](#81-the-surrogate-optuna-fits)
    - [8.2 The posterior and the acquisition, from scratch in numpy](#82-the-posterior-and-the-acquisition-from-scratch-in-numpy)
    - [8.3 Optuna's asks agree with the from-scratch acquisition landscape](#83-optunas-asks-agree-with-the-from-scratch-acquisition-landscape)
+   - [8.4 The Gaussian process with noisy values: the fitted noise term](#84-the-gaussian-process-with-noisy-values-the-fitted-noise-term)
 9. [Multi-algorithm sweeps: the best configuration per method (run 3.2.1)](#9-multi-algorithm-sweeps-the-best-configuration-per-method-run-321)
    - [9.1 Run 3.2.1's search problem](#91-run-321s-search-problem)
    - [9.2 Method-specific parameters in one study: conditional suggests work](#92-method-specific-parameters-in-one-study-conditional-suggests-work)
@@ -832,6 +834,11 @@ value, so a batch of simultaneous asks spreads out instead of clustering on one 
 Verified with measured numbers in §10.4: a batch of 8 unanswered asks had mean pairwise distance
 0.118 in the two log axes without the option and 0.519 with it.
 
+For the full answer to the noise question — what TPE literally does with high-variance values, what
+happens when a good configuration draws a bad first seed, and what it optimizes instead of the
+mean — see §7.6. Section 8.4 covers the same for the Gaussian process, which unlike TPE fits an
+explicit noise term.
+
 ---
 
 ## 7. TPE as Optuna implements it
@@ -1193,6 +1200,344 @@ Optuna's in the details that §7.1–7.2 pin down (bandwidth rule, prior compone
 trial-age weights, gamma schedule) — but the behavior class is the same, which is the point: TPE's
 full mechanism fits in a page of numpy, with nothing hidden.
 
+### 7.6 A high-variance objective: what TPE does with noisy values
+
+This subsection answers a direct question: per-seed results here have high variance — a
+configuration can draw a very bad first seed and still have a high mean — so what does the default
+sampler actually do with that? Everything below was measured (folder 10 in §12).
+
+**TPE has no noise model.** The split step is literally a sort by value — the installed source:
+`sorted_trials = sorted(trials, key=lambda trial: trial.value, reverse=True)`, then the top
+$k(n)$ become the good group. Nothing averages repeated or nearby parameters, and nothing estimates
+variance. Verified at the smallest scale: two trials at the *same* $x$ with values 90 and 10 fall on
+opposite sides of the split. Every consequence below follows from this one fact.
+
+**An unlucky draw dents a region's proposal rate; it does not remove the region.** The four soft
+mechanisms of §7.1–§7.3 (the split is recomputed from all finished trials at every ask; the
+densities are smoothed; the prior keeps $\ell(x) > 0$ everywhere; the pick is an argmax over 24
+sampled candidates) mean a bad draw at a good location costs allocation, not existence. Quantified —
+20 good observations cluster near the peak at $x = 8$, and bad draws (value near 0) are placed
+exactly at $x = 8$:
+
+```python
+# How many bad draws at a good location does it take to move TPE's proposal off the peak?
+import hashlib
+import numpy as np
+import optuna
+from optuna.samplers import TPESampler
+from optuna.samplers._tpe.sampler import _split_trials
+from optuna.trial import TrialState
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+SPACE = {"x": optuna.distributions.FloatDistribution(0.0, 10.0)}
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string (order-independent)
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def add(study, x, value):
+    # add one already-evaluated (x, value) trial as a COMPLETE trial
+    study.add_trial(optuna.trial.create_trial(
+        params={"x": float(x)}, distributions=SPACE, value=float(value)))
+
+
+def build(n_bad):
+    # good group = 20 observations near x=8 (values 45-55); 180 background trials (values ~10) make
+    # gamma=ceil(0.1*n)=20 so the 20 good ARE the good group; then n_bad bad draws (value ~0) at x=8
+    study = optuna.create_study(direction="maximize", sampler=TPESampler(seed=0))
+    bx, bv = substream(0, "bg_x"), substream(0, "bg_val")
+    for _ in range(180):
+        add(study, bx.uniform(0, 10), bv.normal(10, 4))
+    gx, gv = substream(0, "good_x"), substream(0, "good_val")
+    for _ in range(20):
+        add(study, np.clip(gx.normal(8.0, 0.6), 0, 10), gv.uniform(45, 55))
+    br = substream(0, "bad_val")
+    for _ in range(n_bad):
+        add(study, 8.0, abs(br.normal(0, 0.3)))
+    return study
+
+
+def acquisition(study, grid):
+    # drive the installed sampler internals: split good/rest by value, fit l and g, return log l - log g
+    sampler = TPESampler(seed=0)
+    trials = study._get_trials(deepcopy=False, states=(TrialState.COMPLETE,), use_cache=False)
+    below, above = _split_trials(study, trials, sampler._gamma(len(trials)), False)
+    l = sampler._build_parzen_estimator(study, SPACE, below, handle_below=True)
+    g = sampler._build_parzen_estimator(study, SPACE, above, handle_below=False)
+    return sampler._compute_acquisition_func({"x": grid}, l, g)
+
+
+grid = np.linspace(0, 10, 1001)
+i8 = int(np.argmin(np.abs(grid - 8.0)))
+print("bad draws at x=8 | argmax x | acq(x=8) - max(acq)")
+for n_bad in (0, 1, 3, 6):
+    acq = acquisition(build(n_bad), grid)
+    print(f"{n_bad:>16} | {grid[int(np.argmax(acq))]:>8.3f} | {acq[i8] - acq.max():>18.4f}")
+```
+
+Output (observed, Optuna 4.9.0; private internals, per the §7.2–§7.3 warning):
+
+```
+bad draws at x=8 | argmax x | acq(x=8) - max(acq)
+               0 |    7.960 |            -0.0719
+               1 |    7.950 |            -0.0628
+               3 |    8.760 |            -0.7531
+               6 |    8.760 |            -1.3296
+```
+
+One bad draw at the peak changes essentially nothing — the proposal argmax stays on the peak and
+the acquisition at $x = 8$ sits 0.06 below its maximum. It takes three to six bad draws at the same
+point to push proposals to the shoulder of the peak. And in a live run with honest bimodal draws,
+the recovery is fast:
+
+```python
+# Does TPE return to the true-best region after unlucky early failures placed there? Yes, quickly.
+import hashlib
+import numpy as np
+import optuna
+from optuna.samplers import TPESampler
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+SPACE = {"x": optuna.distributions.FloatDistribution(0.0, 10.0)}
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string (order-independent)
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def true_mean(x):
+    # single-peak landscape: true mean m(x), max 50 at x=8 (the true best)
+    return 50.0 * np.exp(-((np.asarray(x) - 8.0) ** 2) / 2.0)
+
+
+def one_seed(rng, m):
+    # bimodal per-seed reward: success near 80 w.p. m/80 else collapse near 0 (mean over seeds = m)
+    return float(rng.normal(80, 10)) if rng.random() < m / 80.0 else float(rng.normal(0, 3))
+
+
+def near_peak_fractions(seed, with_failures):
+    # seed 20 informative random observations (+ optionally 3 forced failures at x=8), run TPE 100 trials,
+    # return the fraction of proposals with |x-8|<1 in each successive 25-trial window
+    study = optuna.create_study(direction="maximize", sampler=TPESampler(seed=seed))
+    xr = substream(seed, "init_x")
+    for i in range(20):
+        x = float(xr.uniform(0, 10))
+        study.add_trial(optuna.trial.create_trial(
+            params={"x": x}, distributions=SPACE,
+            value=one_seed(substream(seed, "init_r", i), float(true_mean(x)))))
+    if with_failures:
+        fr = substream(seed, "fail")
+        for _ in range(3):
+            study.add_trial(optuna.trial.create_trial(
+                params={"x": 8.0}, distributions=SPACE, value=float(abs(fr.normal(0, 0.5)))))
+    xs = []
+    for i in range(100):
+        trial = study.ask(SPACE)
+        x = trial.params["x"]
+        xs.append(x)
+        study.tell(trial, one_seed(substream(seed, "reward", i), float(true_mean(x))))
+    arr = np.asarray(xs)
+    return [float(np.mean(np.abs(arr[lo:lo + 25] - 8.0) < 1.0)) for lo in (0, 25, 50, 75)]
+
+
+# Average the per-window near-peak fraction over 3 base seeds, with and without the 3 forced failures at x=8.
+for with_failures in (True, False):
+    fr = np.mean([near_peak_fractions(s, with_failures) for s in (0, 1, 2)], axis=0)
+    label = "with 3 forced failures at x=8" if with_failures else "without forced failures      "
+    print(f"{label}: trials 1-25={fr[0]:.2f}  26-50={fr[1]:.2f}  51-75={fr[2]:.2f}  76-100={fr[3]:.2f}")
+```
+
+Output (observed, Optuna 4.9.0):
+
+```
+with 3 forced failures at x=8: trials 1-25=0.45  26-50=0.53  51-75=0.63  76-100=0.53
+without forced failures      : trials 1-25=0.52  26-50=0.59  51-75=0.63  76-100=0.59
+```
+
+Three forced failure draws sitting exactly on the true best lower the near-peak proposal fraction
+by 0.07 in the first 25 trials, and the two arms are within a few hundredths of each other from
+trial 26 on. So the direct answer to the question: an unlucky start at a high-mean configuration
+costs some early allocation, and honest draws take the region back within tens of trials — nothing
+is eliminated. (Contrast this with a pruning or racing rule, §5.3–§5.6, which *does* make
+irreversible stop decisions from early draws; that is where an unlucky start is genuinely
+dangerous, and why those rules carry a minimum seed count.)
+
+**But under single-seed feedback, TPE does not optimize the mean.** With repeated draws at one
+$x$, kernels for $x$ appear in *both* densities, and the acquisition there reflects the fraction of
+that configuration's draws that reached the top quantile (verified: a point with 12 of 12 draws in
+the good group scores $\log \ell - \log g = +3.77$; a point with 4 of 12 scores $-0.95$). So
+single-seed TPE steers toward the probability that *one draw* is among the best draws seen — a
+top-quantile target, not a mean target. Where the two targets disagree, TPE follows the quantile:
+
+```python
+# Single-seed TPE targets the top-quantile draw, not the mean; averaging seeds re-aligns it.
+import hashlib
+import numpy as np
+import optuna
+from optuna.samplers import TPESampler
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+SPACE = {"x": optuna.distributions.FloatDistribution(0.0, 10.0)}
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string (order-independent)
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def reward(rng, x):
+    # region A near x=3: consistent, true mean 60. region B near x=7: half succeed near 80, half
+    # collapse near 0, true mean 40 (lower) -- but its successes near 80 fill the top decile of draws.
+    if abs(x - 3.0) <= 0.5:
+        return float(rng.normal(60.0, 5.0))
+    if abs(x - 7.0) <= 0.5:
+        return float(rng.normal(80.0, 10.0)) if rng.random() < 0.5 else float(rng.normal(0.0, 3.0))
+    return float(rng.normal(5.0, 3.0))
+
+
+def region(x):
+    # label a proposed x by which region it falls in
+    return "A" if abs(x - 3.0) <= 0.5 else ("B" if abs(x - 7.0) <= 0.5 else "elsewhere")
+
+
+def concentration(seed, n_trials, seeds_per_trial, window, startup):
+    # run TPE, each trial value the mean of `seeds_per_trial` reward draws; report which of A/B got
+    # more proposals in the last `window` trials
+    study = optuna.create_study(direction="maximize", sampler=TPESampler(seed=seed, n_startup_trials=startup))
+    xs = []
+    for i in range(n_trials):
+        trial = study.ask(SPACE)
+        x = trial.params["x"]
+        xs.append(x)
+        vals = [reward(substream(seed, seeds_per_trial, i, s), x) for s in range(seeds_per_trial)]
+        study.tell(trial, float(np.mean(vals)))
+    tail = [region(x) for x in xs[-window:]]
+    a, b = tail.count("A"), tail.count("B")
+    return "A" if a > b else ("B" if b > a else "tie")
+
+
+# Tally over 8 base seeds: single-seed (150 trials) vs 10-seed means (15 trials) -- same 150 seed-runs.
+single = {"A": 0, "B": 0, "tie": 0}
+mean10 = {"A": 0, "B": 0, "tie": 0}
+for seed in range(8):
+    single[concentration(seed, 150, 1, window=50, startup=10)] += 1
+    mean10[concentration(seed, 15, 10, window=12, startup=3)] += 1
+print("region of late-window concentration over 8 seeds (A: true mean 60 is best; B: true mean 40):")
+print(f"  single seed     : B {single['B']}  A {single['A']}  tie {single['tie']}")
+print(f"  mean of 10 seeds: B {mean10['B']}  A {mean10['A']}  tie {mean10['tie']}")
+```
+
+Output (observed, Optuna 4.9.0):
+
+```
+region of late-window concentration over 8 seeds (A: true mean 60 is best; B: true mean 40):
+  single seed     : B 5  A 3  tie 0
+  mean of 10 seeds: B 2  A 6  tie 0
+```
+
+Fed single seeds, TPE concentrated on region B — true mean 40, twenty points *below* region A —
+in most base seeds, because B's successes near 80 dominate the top decile of individual draws.
+Fed 10-seed means at the same total seed-run budget, the majority flips to the true-best region A.
+Two verified qualifications keep this honest:
+
+1. **The divergence needs a variance asymmetry, not just noise.** A rare-spike region (an 80 with
+   probability 0.15, true mean 24.75) against a consistent mean-30 region did *not* mislead
+   single-seed TPE — it preferred the higher-mean region in 12 of 12 base seeds, because the steady
+   30s fill the top decile and the rare 80s are too few to displace them. The failure mode needs
+   the lower-mean region's draws to reach the top quantile *more often* than the better region's.
+2. **In this project's single-method landscape, the two targets mostly agree** — the per-seed
+   success probability rises with the mean, so the configuration with the best mean also produces
+   top-decile draws most often. The misalignment matters when comparing configurations or methods
+   with *different variances at similar means* — which is exactly the shape of run 3.2.1's
+   three-optimizer comparison, and one more reason its trials should carry 10-seed means (§11).
+
+**Single-seed values also inflate the reported best (max-of-noise, sampler-side).** The same fixed
+budget of 300 seed-runs, spent three ways:
+
+```python
+# Spend a fixed seed-run budget three ways: single-seed best-by-value is inflated; averaging fixes it.
+import hashlib
+import numpy as np
+import optuna
+from optuna.samplers import TPESampler
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+SPACE = {"x": optuna.distributions.FloatDistribution(0.0, 10.0)}
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string (order-independent)
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def true_mean(x):
+    # single-peak landscape: true mean reward m(x), max 50 at x=8
+    return 50.0 * np.exp(-((np.asarray(x) - 8.0) ** 2) / 2.0)
+
+
+def one_seed(rng, m):
+    # bimodal per-seed reward: success near 80 w.p. m/80 else collapse near 0 (mean over seeds = m)
+    return float(rng.normal(80, 10)) if rng.random() < m / 80.0 else float(rng.normal(0, 3))
+
+
+def run(seed, n_trials, seeds_per_trial):
+    # run TPE with each trial value a mean of `seeds_per_trial` bimodal draws; return best-by-value stats
+    study = optuna.create_study(direction="maximize", sampler=TPESampler(seed=seed))
+    for i in range(n_trials):
+        trial = study.ask(SPACE)
+        x = trial.params["x"]
+        vals = [one_seed(substream(seed, "r", i, s), float(true_mean(x))) for s in range(seeds_per_trial)]
+        study.tell(trial, float(np.mean(vals)))
+    bx = study.best_trial.params["x"]
+    return study.best_trial.value, float(true_mean(bx))
+
+
+# 300 seed-runs three ways, averaged over 3 base seeds: report inflation and the true mean of the picked x.
+print("design (300 seed-runs)  | best value | m(picked x) | inflation")
+for label, n_trials, k in [("300 x 1 seed        ", 300, 1),
+                           ("100 x 3-seed mean   ", 100, 3),
+                           (" 30 x 10-seed mean  ", 30, 10)]:
+    bv = [run(s, n_trials, k) for s in (0, 1, 2)]
+    best_value = np.mean([v for v, _ in bv])
+    m_picked = np.mean([m for _, m in bv])
+    print(f"{label} | {best_value:>10.2f} | {m_picked:>11.2f} | {best_value - m_picked:>9.2f}")
+```
+
+Output (observed, Optuna 4.9.0):
+
+```
+design (300 seed-runs)  | best value | m(picked x) | inflation
+300 x 1 seed         |     107.31 |       41.81 |     65.50
+100 x 3-seed mean    |      90.74 |       47.32 |     43.42
+ 30 x 10-seed mean   |      63.67 |       46.25 |     17.42
+```
+
+All three designs find roughly the right region of a single-peak landscape (the top-quantile and
+mean targets agree there, per qualification 2 above), but the single-seed design's reported best of
+107 sits 65 points above the true mean of the configuration it picked — §9.4's trap, now measured
+on the sampler side — while 10-seed means cut the inflation to 17 and pick a slightly better
+configuration.
+
+**What this adds up to** (the rules of §6.6, now with their measured reasons):
+
+1. Feed the sampler batch means, not single seeds — one trial = one configuration, value = the mean
+   of its 10-seed batch. This shrinks the standard error by $\sqrt{10}$, re-aligns the top-quantile
+   target with the mean target, and cuts the best-value inflation by a factor of about four.
+2. Let the racing rule (§11 stage 3) handle seed-level allocation; the sampler is the wrong tool
+   for it — TPE reacts to unlucky draws gently (this subsection), which is good for search but
+   means it also cannot *decide* anything about a configuration's mean.
+3. Never report the best trial value as the winner's reward; report per-configuration seed means
+   (§9.4).
+4. If single-seed feedback is unavoidable, the Gaussian-process sampler is structurally better
+   suited — it fits an explicit noise term (§8.4).
+
 ---
 
 ## 8. The Gaussian-process sampler, in detail
@@ -1423,6 +1768,176 @@ objective and fits its own hyperparameters. Two more measured facts:
    the best observed value), so consecutive unanswered asks spread across the gap instead of
    repeating $-4.03$ (verified: ten unanswered asks ranged over $[-4.81, -3.21]$). This matters for
    parallel batches — §10.4.
+
+### 8.4 The Gaussian process with noisy values: the fitted noise term
+
+Where TPE takes every value at face value (§7.6), the GP models observation noise explicitly. The
+kernel-fitting step of §8.1 fits, alongside the lengthscales and signal variance, an
+**observation-noise variance** $\sigma_n^2$ — the default `deterministic_objective=False` means it
+is *fitted* on every ask (with a Gamma(1.1, 30) prior and a $10^{-6}$ floor), and that fitted value
+enters the posterior directly through $(K + \sigma_n^2 I)^{-1}$. Verified: on 12 bimodal draws
+(sample standard deviation about 29), the fitted noise variance came out at 0.36 in standardized
+units — the GP explained the across-seed spread as noise — versus exactly the $10^{-6}$ floor when
+pinned with `deterministic_objective=True`. Three measured consequences (folder 11 in §12):
+
+**1. The posterior at a point tracks the mean of repeated draws there, not the last draw.**
+
+```python
+"""The GP posterior at a point tracks the MEAN of repeated noisy draws there, not the last draw."""
+import hashlib
+
+import numpy as np
+import torch
+
+import optuna._gp.gp as gp
+import optuna._gp.prior as prior
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def bimodal(rng, mean, n):
+    # project noise model: success -> Normal(80,10), else -> Normal(0,3)
+    hit = rng.random(n) < mean / 80.0
+    return np.where(hit, rng.normal(80, 10, n), rng.normal(0, 3, n))
+
+
+def posterior_mean_raw(X, y_raw, x_query, deterministic):
+    # fit optuna's GP the way GPSampler does; return posterior mean at x_query in raw reward units
+    m, s = y_raw.mean(), max(1e-10, y_raw.std())
+    gpr = gp.fit_kernel_params(
+        X=X, Y=(y_raw - m) / s, is_categorical=np.zeros(X.shape[1], dtype=bool),
+        log_prior=prior.default_log_prior, minimum_noise=prior.DEFAULT_MINIMUM_NOISE_VAR,
+        deterministic_objective=deterministic, gpr_cache=None)
+    pm, _ = gpr.posterior(torch.from_numpy(np.asarray(x_query, dtype=np.float64)))
+    return float(pm.item()) * s + m
+
+
+# Three anchor points elsewhere give the GP spatial structure; x_target=0.5 (true mean 30).
+anchor_x = np.array([0.05, 0.30, 0.95])
+anchor_y = np.array([bimodal(substream(0, "anchor", i), mu, 1)[0] for i, mu in enumerate([10, 60, 5])])
+draws = bimodal(substream(0, "target"), 30.0, 10)  # 10 draws at x_target, true mean 30
+print("10 draws at x_target (true mean 30):", np.array2string(draws, precision=1))
+print()
+print(f"{'k':>3} {'sample_mean':>12} {'last_draw':>10} {'post_mean (fitted noise)':>25} {'post_mean (det=True)':>21}")
+for k in (1, 3, 10):
+    # stack k draws at x_target=0.5 plus the 3 anchors, read posterior mean back at x_target
+    X = np.vstack([np.full((k, 1), 0.5), anchor_x.reshape(-1, 1)])
+    y = np.concatenate([draws[:k], anchor_y])
+    fit = posterior_mean_raw(X, y, np.array([0.5]), deterministic=False)
+    det = posterior_mean_raw(X, y, np.array([0.5]), deterministic=True)
+    print(f"{k:>3} {draws[:k].mean():>12.2f} {draws[k-1]:>10.2f} {fit:>25.2f} {det:>21.2f}")
+print()
+print("At k=10 the fitted-noise posterior mean tracks the sample mean, far from the last draw.")
+```
+
+Output (observed, Optuna 4.9.0; `optuna._gp` is private API, same caution as §7.2–§7.3):
+
+```
+10 draws at x_target (true mean 30): [85.3 77.5 73.5 78.8  0.4 85.7  3.   1.4 -5.4 -2.8]
+
+  k  sample_mean  last_draw  post_mean (fitted noise)  post_mean (det=True)
+  1        85.31      85.31                     85.21                 85.31
+  3        78.79      73.55                     78.72                 78.79
+ 10        39.75      -2.82                     39.08                 39.75
+```
+
+This is the averaging TPE does not have: ten conflicting draws at one point produce a posterior
+mean of 39 (their sample mean is 39.75), not the last draw's $-2.8$. (With draws stacked at one
+identical point, `deterministic_objective=True` also arrives at the sample mean — it cannot
+interpolate conflicting values — but on *distinct nearby* points it interpolates each raw draw
+exactly, reproducing the noise, while the fitted-noise default smooths toward the cluster mean.
+Keep the default.)
+
+**2. Unlucky draws at the true optimum are discounted as noise.**
+
+```python
+"""Three unlucky draws at the true optimum: fitted noise keeps the GP's estimate there high.
+
+Landscape m(x) = 50*exp(-(x-8)^2/2), optimum at x=8. We give the GP 20 informative points that
+reveal the bump, plus 3 forced ~0 draws sitting exactly at x=8 (three unlucky seeds). With the noise
+fitted (the default) the posterior mean at x=8 stays well above 0; with the noise pinned to the
+floor (deterministic_objective=True) it is dragged down onto those zeros.
+"""
+import hashlib
+
+import numpy as np
+import torch
+
+import optuna._gp.gp as gp
+import optuna._gp.prior as prior
+
+
+def substream(base, *parts):
+    # one generator per named quantity, keyed by a stable string
+    key = "::".join(str(p) for p in (base, *parts))
+    return np.random.default_rng(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0xFFFFFFFF)
+
+
+def true_mean(x):
+    # reward-mean landscape: a Gaussian bump peaking at x=8 with height 50
+    return 50.0 * np.exp(-((x - 8.0) ** 2) / 2.0)
+
+
+def posterior_mean_at_8(X, y_raw, deterministic):
+    # fit optuna's GP the way GPSampler does; return the posterior mean at x=8 in raw reward units
+    m, s = y_raw.mean(), max(1e-10, y_raw.std())
+    gpr = gp.fit_kernel_params(
+        X=X, Y=(y_raw - m) / s, is_categorical=np.zeros(1, dtype=bool),
+        log_prior=prior.default_log_prior, minimum_noise=prior.DEFAULT_MINIMUM_NOISE_VAR,
+        deterministic_objective=deterministic, gpr_cache=None)
+    pm, _ = gpr.posterior(torch.from_numpy(np.array([8.0 / 10.0])))  # x normalized to [0,1]
+    return float(pm.item()) * s + m
+
+
+# 20 informative points at random x valued at the true mean, plus 3 forced ~0 draws at x=8.
+xr = substream(0, "informative_x").uniform(0, 10, 20)
+X = np.concatenate([xr, [8.0, 8.0, 8.0]]).reshape(-1, 1) / 10.0  # normalize params to [0,1]
+zeros = np.abs(substream(0, "forced_zeros").normal(0, 1, 3))
+y_raw = np.concatenate([true_mean(xr), zeros])
+
+print("true mean at the optimum m(8) =", round(float(true_mean(8.0)), 2))
+print("the 3 forced draws at x=8     =", np.array2string(zeros, precision=2))
+print("posterior mean at x=8, noise FITTED (default)      = %.2f" % posterior_mean_at_8(X, y_raw, False))
+print("posterior mean at x=8, noise PINNED (det=True)     = %.2f" % posterior_mean_at_8(X, y_raw, True))
+print("Fitted noise keeps the optimum's estimate positive; pinned noise sits on the unlucky zeros.")
+```
+
+Output (observed, Optuna 4.9.0):
+
+```
+true mean at the optimum m(8) = 50.0
+the 3 forced draws at x=8     = [2.28 1.14 1.98]
+posterior mean at x=8, noise FITTED (default)      = 23.45
+posterior mean at x=8, noise PINNED (det=True)     = 1.80
+Fitted noise keeps the optimum's estimate positive; pinned noise sits on the unlucky zeros.
+```
+
+The fitted noise term is what makes the difference between "the optimum's estimate stays high
+enough that the acquisition keeps proposing there" and "the surrogate believes the three zeros."
+In the live version of the same experiment (a real `GPSampler`, 60 honest single-seed trials after
+the pre-load), near-optimum proposals per 20-trial window rose from 1.0 to 6.3 to 10.0 of 20,
+averaged over three base seeds — the GP returns to the true optimum despite the unlucky start.
+This is the direct reason `deterministic_objective` must stay `False` for this project's objective.
+
+**3. On the two-region problem, the GP prefers the higher-mean region — with one caveat.**
+Run on §7.6's rare-spike variant (region A constant near mean 30; region B true mean 24.75 with
+occasional 80s), 150 single-seed `GPSampler` trials, three base seeds: the best posterior mean fell
+in region A for every seed, the posterior mean at B's center averaged 24.2 across seeds (close to
+its true 24.75 — the occasional 80s are averaged, not believed), and about two thirds of the last
+50 proposals went to A. The caveat is the homoscedastic limit: the GP fits **one** noise variance
+for the whole space, and sampling the high-variance region inflated it (0.22 when one seed mostly
+sampled the low-variance region, 0.75 when the others sampled region B heavily) — noise from one
+region widens the model's uncertainty everywhere, which slows concentration but did not change the
+answer in these runs.
+
+Summary for this project: for single-seed feedback the GP is the structurally safer sampler — it
+averages repeats, discounts unlucky draws, and does not inherit TPE's top-quantile target. Batch
+means (§6.6) remain the recommendation for *both* samplers; with 10-seed means the two behave
+similarly, and TPE is cheaper per ask (§8.3) and not experimental.
 
 ---
 
@@ -2194,7 +2709,7 @@ Version facts to keep in mind when rereading this document later:
 - The `cmaes` package is not installed (so `CmaEsSampler` is unavailable); everything else in this
   document runs with the env as it is.
 
-The nine verification folders under `07_reconstruction/optuna/code/` (each contains a `README.md`
+The eleven verification folders under `07_reconstruction/optuna/code/` (each contains a `README.md`
 with the exact rerun command for every script, and each script's raw output saved as
 `<script>_output.txt`):
 
@@ -2222,3 +2737,9 @@ with the exact rerun command for every script, and each script's raw output save
 9. `2026-07-03-21-01_parallel-scale-and-stale-trials/` — everything in §10: cross-process pruning,
    the per-process pruner trap, heartbeat facts and dead-worker cleanup, the startup wave, journal
    size/load/concurrency measurements, and the TPE-at-9600-trials cost observation.
+10. `2026-07-04-02-29_tpe-noise-behavior/` — everything in §7.6: the sort-by-value source fact, the
+    bad-draw acquisition dent, recovery from unlucky early draws, the top-quantile-versus-mean
+    demonstrations, and the budget-matched inflation comparison.
+11. `2026-07-04-02-29_gp-noise-behavior/` — everything in §8.4: the fitted noise variance,
+    posterior averaging of repeated draws, the unlucky-draws-at-the-optimum contrast, the
+    two-region run, and the constant-liar recheck.

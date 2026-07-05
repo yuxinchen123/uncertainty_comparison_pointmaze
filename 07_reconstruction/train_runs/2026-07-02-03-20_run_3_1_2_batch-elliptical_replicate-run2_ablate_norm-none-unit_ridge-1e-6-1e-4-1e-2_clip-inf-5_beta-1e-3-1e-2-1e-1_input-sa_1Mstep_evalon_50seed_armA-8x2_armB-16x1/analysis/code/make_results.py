@@ -35,6 +35,12 @@ CODE_DIR = Path(__file__).resolve().parent
 RUN_DIR = CODE_DIR.parent.parent
 SWEEPS = ["2026-07-02-03-52_armA-8tasks-2cpu_replicate-ablate",
           "2026-07-02-03-52_armB-16tasks-1cpu_replicate-ablate"]
+# The 2026-07-03 follow-up sweep (unit norm, ridge 1e-8, no clip, 5 betas; stopped 2026-07-04 at
+# 140/250 runs). Loaded alongside the arms so its cell joins the CELL TABLE and the CURVE FIGURE; the
+# 36-config grid artifacts (full grid table, heatmap facets, reward-vs-rho) stay grid-only via the
+# filter in main().
+FOLLOWUP_SWEEP = "2026-07-03-21-22_unit_ridge-1e-8_clip-inf_beta-1e-4-1e-3-1e-2-1e-1-1e0_50seed_16x1"
+FOLLOWUP_CELL = ("unit", 1e-08, float("inf"))
 RUN2_DATA = RUN_DIR.parent / "2026-06-24-21-24_run_2_after_reorganization" / "data" / "local"
 SUCCESS_THRESHOLD = 5.0
 EVAL_KEY = "eval/mean_extrinsic_reward"
@@ -58,7 +64,7 @@ def _finite(x) -> bool:
 
 
 def load_runs() -> list[dict]:
-    """Load both arms' COMPLETED runs into tidy dicts.
+    """Load the COMPLETED runs of both arms plus the follow-up sweep into tidy dicts.
 
     Before: per-run JSON with eval_history rows like {"step": 1000000, "eval/mean_extrinsic_reward": 52.1}
             and train_history rows like {"step": 1000000, "train/mean_extrinsic_reward": 8.4,
@@ -69,7 +75,7 @@ def load_runs() -> list[dict]:
     """
     runs = []
     cutoff = _freeze_cutoff()  # None = load all; a timestamp = only runs completed at/before the snapshot
-    for sw in SWEEPS:
+    for sw in SWEEPS + [FOLLOWUP_SWEEP]:
         for jf in sorted((RUN_DIR / "data" / sw / "local").glob("*.json")):
             # pin to the frozen writeup snapshot: skip runs whose last write is after the cutoff
             if cutoff is not None and jf.stat().st_mtime > cutoff:
@@ -106,7 +112,8 @@ def load_runs() -> list[dict]:
 
 
 def cell_summaries(runs: list[dict]) -> list[dict]:
-    """Per CELL: stats of every beta, then the winner. One output row per cell (12 rows).
+    """Per CELL: stats of every beta, then the winner. One output row per cell (12 grid cells + the
+    follow-up cell = 13 rows).
 
     Before: run dicts; After: {"cell": ..., "beta": 0.01, "n": 33, "mean": 52.76, "se": 6.18,
     "success": 0.82, "train_mean": 49.9, "rho": 3.7e-6, "clip_hit": 0.0}, sorted by mean descending."""
@@ -116,7 +123,8 @@ def cell_summaries(runs: list[dict]) -> list[dict]:
     rows = []
     for cell in sorted({r["cell"] for r in runs}):
         best = None
-        for beta in (0.001, 0.01, 0.1):
+        # betas present for THIS cell (grid cells have 3, the follow-up cell has 5)
+        for beta in sorted({b for (c, b) in by_cfg if c == cell}):
             grp = by_cfg.get((cell, beta), [])
             if len(grp) < 2:
                 continue
@@ -165,7 +173,8 @@ def _mark(values: list[float], formatted: list[str]) -> list[str]:
 
 
 def reward_table(rows: list[dict], plots: Path) -> None:
-    """Write the 12-row LaTeX tabular: cells sorted by mean eval reward descending; per the analysis
+    """Write the cell-table LaTeX tabular (12 grid cells + the follow-up cell): cells sorted by mean
+    eval reward descending; per the analysis
     convention, EACH metric column (Rbar, success, train Rbar) gets its best bolded / second underlined;
     measured rho and clip-hit columns carry the mechanism evidence."""
     mean_s = _mark([r["mean"] for r in rows], [f"{r['mean']:.2f}" for r in rows])
@@ -183,7 +192,8 @@ def reward_table(rows: list[dict], plots: Path) -> None:
         )
     body = "\n".join(lines)
     (plots / "reward_table.tex").write_text(
-        "% Train run 3.1.2 cell table (12 cells at each cell's best beta; pooled over both slurm arms).\n"
+        "% Train run 3.1.2 cell table (12 grid cells pooled over both slurm arms, plus the 2026-07-04\n"
+        "% follow-up cell unit/1e-8/no-clip; each cell at its best beta).\n"
         "% Higher eval reward is better; rows sorted by Rbar descending; best bold, second underlined.\n"
         "\\begin{tabular}{@{}l c c c c c r r r r r@{}}\n"
         "\\toprule\n"
@@ -197,7 +207,8 @@ def reward_table(rows: list[dict], plots: Path) -> None:
     )
 
 
-# The curve series: the replica, the single-factor probes on the rho ladder, the 3.1.1-like cell.
+# The curve series: the replica, the single-factor probes on the rho ladder, the 3.1.1-like cell,
+# and the 2026-07-04 follow-up cell (unit norm at a below-replica rho).
 CURVE_CELLS = [
     (("none", 1e-06, float("inf")), "raw, $\\lambda$=1e-6, no clip (run-2 replica)"),
     (("none", 0.0001, float("inf")), "raw, $\\lambda$=1e-4, no clip"),
@@ -206,6 +217,7 @@ CURVE_CELLS = [
     (("unit", 0.0001, float("inf")), "unit, $\\lambda$=1e-4, no clip"),
     (("unit", 0.01, 5.0), "unit, $\\lambda$=1e-2, clip 5 (run-3.1.1 config)"),
     (("none", 1e-06, 5.0), "raw, $\\lambda$=1e-6, clip 5"),
+    (FOLLOWUP_CELL, "unit, $\\lambda$=1e-8, no clip (follow-up)"),
 ]
 MIN_SEEDS_CURVE = 10  # a curve point needs at least this many seeds
 RUN2_MIN_SEEDS = 30   # the run-2 reference curve needs at least this many seeds per step
@@ -255,7 +267,7 @@ def curve_figure(runs: list[dict], rows: list[dict], plots: Path) -> None:
     SOLID = eval extrinsic reward (100-episode deterministic eval), DASHED = training extrinsic reward
     (mean over the past 100 training episodes). Plus the run-2 rnd_elliptical eval reference (gray dotted).
     Solid lines carry a shaded +-SE band; the dashed training lines are drawn without a band to keep the
-    (7 cells x 2 lines) figure readable."""
+    (8 cells x 2 lines) figure readable."""
     from matplotlib.lines import Line2D  # proxy handles for the solid/dashed style legend
 
     best_beta = {r["cell"]: r["beta"] for r in rows}
@@ -425,7 +437,10 @@ def main() -> None:
     plots.mkdir(parents=True, exist_ok=True)
     runs = load_runs()
     rows = cell_summaries(runs)
-    stats = config_stats(runs)
+    # the 36-config grid artifacts (full grid table, heatmap facets, reward-vs-rho) stay grid-only:
+    # their captions/axes describe the 2 norms x 3 ridges x 2 clips factorial, so the follow-up cell
+    # (unit, 1e-8, no clip) enters only the cell table and the curve figure above
+    stats = config_stats([r for r in runs if r["cell"] != FOLLOWUP_CELL])
     reward_table(rows, plots)
     full_grid_table(stats, plots)
     heatmap_facets(stats, plots)

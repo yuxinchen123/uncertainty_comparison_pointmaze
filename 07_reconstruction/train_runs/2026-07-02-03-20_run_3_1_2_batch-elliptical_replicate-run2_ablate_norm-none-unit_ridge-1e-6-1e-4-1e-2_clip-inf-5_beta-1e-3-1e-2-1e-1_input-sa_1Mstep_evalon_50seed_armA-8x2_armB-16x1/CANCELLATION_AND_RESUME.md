@@ -44,3 +44,36 @@ infrastructure comparison.
 
 ## Cancellation safety
 Only ids from `slurm/submitted_jobids_<sweep>.txt` files are ever cancelled; never blanket cancels.
+
+# Follow-up sweep (unit norm, ridge 1e-8) — WaitTime kill event + user stop (2026-07-04)
+
+## Event 1: srun WaitTime=3600 killed 94 mid-flight runs (~09:20-15:25)
+The sweep's queue drained in one wave (256 workers >= 250 configs), so each worker exits after its one
+run — and this cluster's `slurm.conf` `WaitTime=3600` makes srun kill a step's remaining tasks 3600 s
+after its FIRST task exits. 13 of 16 jobs died that way (3 at exactly 1 h — their spare workers exited
+at start; 10 at ~1 h after their fastest worker finished); 1 job completed inside the window; job
+6314802 (ai05) had no finisher and kept running. 140/250 runs completed; 0 model-side failures.
+Recovery at ~16:31: 94 killed attempts' partials archived to
+`data/<sweep_id>/killed_attempts_2026-07-04-16-34/`, markers requeued, 6 recovery jobs submitted
+(6380501-06) with the worker scripts fixed to `srun --wait=0`.
+
+## Verification of the fix (controlled probe, ~16:53)
+Jobs 6382110/6382111 (4 tasks; task 0 exits at t=0, tasks 1-3 run 300 s), logs in `logs/wait_probe/`:
+`srun --wait=30` killed tasks 1-3 exactly 30 s after task 0 exited (job FAILED 9:0, step CANCELLED —
+the same signature as the event); `srun --wait=0` ran all tasks to natural completion (COMPLETED 0:0,
+elapsed 5:00). So `--wait=0` = unlimited wait / never kill, confirming the man page.
+
+## Event 2: user stop (~17:00) — enough signal at 140/250
+All 7 live jobs (6380501-06 + 6314802) cancelled, ids taken ONLY from
+`slurm/submitted_jobids_<sweep_id>.txt`. Final coverage 140/250 (beta=1e-4: 20, 1e-3: 31, 1e-2: 27,
+1e-1: 31, 1e0: 31 seeds), 0 failed. The interim answer stands as final: unit norm at replica-level
+rho does not recover the replica (best 22.99 +/- 5.75 vs 53.81 +/- 5.95); Hypothesis 2 revived.
+Status after the stop: `queue/<sweep_id>/running/` still holds 110 markers (16 ai05 first-wave + 94
+recovery attempts, all killed by the cancel); `local/` holds 140 completed + 16 ai05 partials; the 94
+recovery attempts died before their first checkpoint (~20 min in) so they left no JSONs.
+
+## Resume path (if more seeds are ever wanted)
+Archive the 16 ai05 partials (completed=false) out of `local/` to a new
+`killed_attempts_<ts>/`, move all 110 `running/` markers back to `pending/`, and submit jobs with the
+(already fixed) `worker_16x1.slurm`; ids append to the same id file. Analyses need no change (they
+read `completed=true` only).

@@ -122,3 +122,12 @@ results/
 debug/
 # Claude Code personal settings (.claude/CLAUDE.md and .claude/rules/ ARE shared; this file is personal)
 .claude/settings.local.json
+
+# Text data / log outputs (regenerable): job-id records, snippet outputs, resume lists, etc.
+*.txt
+*.jsonl
+# ...but keep the dependency list tracked.
+!07_reconstruction/requirements.txt
+
+# Slurm job-submission folders (per-run worker scripts, work queues, job-id records)
+**/slurm/

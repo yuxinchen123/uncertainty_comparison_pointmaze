@@ -1703,6 +1703,262 @@ jcwleo \url{https://github.com/jcwleo/random-network-distillation-pytorch} (\tex
 CleanRL \url{https://github.com/vwxyzjn/cleanrl} (\texttt{ppo\_rnd\_envpool.py}, also vendored here as \texttt{07\_reconstruction/ppo\_rnd\_envpool.py}).}
 
 %==============================================================================
+\section{RND tricks}
+\label{sec:rnd-tricks}
+%==============================================================================
+
+Beyond the predictor--target pair itself, the published RND setup
+\citep{burda2019exploration} includes implementation components that change
+the bonus the agent receives. This section documents them, one subsection per
+component, across the same six sources as Table~\ref{tab:opt-used} (this
+project's stack on top; the original paper and the three most-used
+repositories below).
+
+\subsection{Normalization}
+\label{sec:rnd-norm}
+
+\subsubsection{Overview}
+\label{sec:rnd-norm-overview}
+
+RND implementations normalize at two points: the input fed to the
+target/predictor pair (\emph{state normalization}, before the networks) and
+the prediction error handed to the agent as the intrinsic reward
+(\emph{reward normalization}, after the networks). Table~\ref{tab:rnd-norm}
+lists what each source does; the mechanisms named in the table are defined
+below it.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.25cm} >{\raggedright\arraybackslash}p{4.15cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{4.0cm}@{}}
+\toprule
+\textbf{Source} & \textbf{State normalization} & \textbf{State-norm warm-up} & \textbf{Reward normalization} \\
+\midrule
+This work (\texttt{train.py}) & RMS + clip to $[-5,5]$ on the RND input $x$ (whatever feature the \texttt{algorithm} switch selects; action coordinates included for the action-conditioned variants); statistics updated on replay training batches (\texttt{rnd\_obs\_norm} $=$ True) & none & none: the bonus is the raw distance $d(x)$, scaled by the swept $\beta$ \\
+RLeXplore \texttt{rllte} (\texttt{legacy/02\_rnd\_\allowbreak rlexplore}) & off: the script passes \texttt{obs\_norm\_\allowbreak type=\allowbreak "none"} (the library default is RMS + clip to $[-5,5]$) & none (the library's $128\times20=2560$-step random-action warm-up runs only when its RMS is on) & off: the script passes \texttt{rwd\_norm\_\allowbreak type=\allowbreak "none"} (the library default is Eq.~\eqref{eq:rwd-norm-rllte}) \\
+\midrule
+Burda et al.\ 2019 (paper) & RMS + clip to $[-5,5]$ on the next state; applied to predictor and target, not to the policy network & random agent for a small number of steps (count not stated in the paper) & divide by a running std estimate of the discounted intrinsic returns (Eq.~\eqref{eq:rwd-norm}) \\
+OpenAI repo & RMS + clip to $[-5,5]$ on the last frame of the stacked observation & $128\times50=6400$ random-action steps of the vectorized environment & Eq.~\eqref{eq:rwd-norm} with $\gamma_{\mathrm{int}}=0.99$ \\
+jcwleo (PyTorch) & RMS + clip to $[-5,5]$ on the next frame & $128\times50=6400$ random-action steps (\texttt{ObsNormStep} $=50$) & Eq.~\eqref{eq:rwd-norm} with $\gamma_{\mathrm{int}}=0.99$ \\
+CleanRL \texttt{ppo\_rnd\_\allowbreak envpool} & RMS + clip to $[-5,5]$ on the last frame of the stacked observation & $128\times50=6400$ random-action steps per environment & Eq.~\eqref{eq:rwd-norm} with $\gamma_{\mathrm{int}}=0.99$, except that the filter loop iterates the transposed reward array: the accumulation runs over the environment index at a fixed rollout position, not over time \\
+\bottomrule
+\end{tabular}
+\caption{State and reward normalization in each RND implementation (same
+sources and source files as Table~\ref{tab:opt-used}). All sources that
+normalize use the same two mechanisms --- standardize-and-clip on the network
+input (Eq.~\eqref{eq:obs-norm}) and divide-by-running-std on the intrinsic
+reward (Eq.~\eqref{eq:rwd-norm} or Eq.~\eqref{eq:rwd-norm-rllte}); the rows
+differ in whether each mechanism is on and in which data feed its statistics.
+The top block is this project's stack; the bottom block is the original RND
+paper and the three most-used RND repositories.}
+\label{tab:rnd-norm}
+\end{table}
+
+\paragraph{RMS (running mean / standard deviation).}
+An RMS tracker maintains running estimates $(\mu,\sigma^{2},n)$ of the mean,
+variance, and count of every value it has been fed, initialized at $\mu=0$,
+$\sigma^{2}=1$, $n=10^{-4}$, and kept per input dimension. Each incoming batch,
+with mean $m_B$, variance $v_B$, and size $n_B$, updates the estimates by the
+pooled-moments rule
+\begin{align}
+n' &= n + n_B,
+\qquad
+\delta = m_B - \mu,
+\qquad
+\mu' = \mu + \delta\,\frac{n_B}{n'},
+\label{eq:rms-update}\\
+\sigma'^{2} &= \frac{n\,\sigma^{2} + n_B\,v_B}{n'} + \delta^{2}\,\frac{n\,n_B}{n'^{2}}.
+\end{align}
+All six sources use this same update (\texttt{RunningMeanStd} in the OpenAI,
+jcwleo, and CleanRL code and in \texttt{gymnasium}, which this project's
+\texttt{methods/rnd.py} imports; \texttt{TorchRunningMeanStd} in
+\texttt{rllte}).
+
+\paragraph{State normalization.}
+The RND input $x$ is standardized per dimension by the running estimates
+$(\mu,\sigma^{2})$ of Eq.~\eqref{eq:rms-update} and clipped, producing the
+normalized input $\tilde{x}$ already used throughout Section~\ref{sec:rnd};
+$\epsilon$ is a small denominator constant ($10^{-8}$ in this project; the
+external sources divide by $\sqrt{\sigma^{2}}$ directly):
+\begin{align}
+\tilde{x} = \mathrm{clip}\!\Big(\tfrac{x-\mu}{\sqrt{\sigma^{2}+\epsilon}},\,-5,\,5\Big).
+\label{eq:obs-norm}
+\end{align}
+Both target and predictor receive $\tilde{x}$.
+
+\paragraph{Reward normalization (discounted-return scheme).}
+The paper and the three Atari repositories divide the intrinsic reward by a
+scale estimate built from a discounted accumulation of past intrinsic rewards.
+Recall $r^{\mathrm{int}}$ is the raw intrinsic reward of
+Section~\ref{sec:rnd}; write $r^{\mathrm{int}}_t$ for its value at step $t$
+and $\hat{r}^{\mathrm{int}}_t$ for the normalized reward the agent receives.
+Define $F_t$ as the forward-filter value --- one accumulator per environment
+copy, not reset at episode boundaries --- define $\gamma_{\mathrm{int}}$ as
+the intrinsic discount ($0.99$ in all three repositories; distinct from the
+SAC discount $\gamma$ of Table~\ref{tab:env-loop}), and define $\sigma_F$ as
+the square root of the running RMS variance (Eq.~\eqref{eq:rms-update}) of all
+filter values produced so far. The filter and the normalized reward are then
+\begin{align}
+F_t = \gamma_{\mathrm{int}}\,F_{t-1} + r^{\mathrm{int}}_t,
+\qquad
+\hat{r}^{\mathrm{int}}_t = \frac{r^{\mathrm{int}}_t}{\sigma_F}.
+\label{eq:rwd-norm}
+\end{align}
+The reward is divided only --- no mean is subtracted --- so the bonus stays
+nonnegative.
+
+\paragraph{Reward normalization (\texttt{rllte} scheme).}
+The \texttt{rllte} library's default (\texttt{rwd\_norm\_type="rms"}) divides
+by the running RMS std $\sigma_r$ of the intrinsic rewards themselves --- no
+discounted filter unless a discount is passed (its \texttt{gamma} argument,
+default off) --- and then multiplies by a decaying weight. Define $u$ as the
+number of \texttt{compute} calls made so far, and define $\beta_0$ and
+$\kappa$ as the library's initial weight and decay rate (the legacy script
+passes $\beta_0=1$, $\kappa=0$, so the weight is the constant $1$). The
+normalized reward is then
+\begin{align}
+\hat{r}^{\mathrm{int}}_t = \frac{r^{\mathrm{int}}_t}{\sigma_r}\;\beta_0\,(1-\kappa)^{u}.
+\label{eq:rwd-norm-rllte}
+\end{align}
+A \texttt{minmax} option rescales each batch to $[0,1]$ by its own minimum and
+maximum. The legacy script disables the whole mechanism
+(\texttt{rwd\_norm\_type="none"}).
+
+\subsubsection{State normalization}
+\label{sec:rnd-norm-state}
+
+State normalization maps each input dimension to approximately zero mean and
+unit variance under the data seen so far, then bounds it to $\pm5$ standard
+deviations. The paper's stated reason is that the target network is frozen:
+its weights cannot adapt to the scale of the inputs, so without
+standardization the target's output variation depends on the arbitrary scale
+and offset of each input dimension \citep{burda2019exploration}. In this
+project the RND input mixes position and velocity coordinates (and, for the
+action-conditioned variants, action coordinates), whose ranges under the
+training distribution differ.
+
+Facts that follow from the mechanism:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Scope.} The normalization is applied to the target and predictor
+input only. The policy does not see normalized observations: the paper applies
+it to predictor and target but not to the policy network, and in this project
+SAC is trained on raw states.
+\item \textbf{Per-dimension standardization only.} Each coordinate is
+standardized independently (a diagonal transform); coordinates are not
+decorrelated. The clip bounds each coordinate at five standard deviations.
+\item \textbf{The input map is nonstationary.} The running estimates $\mu$ and
+$\sigma^{2}$ (Eq.~\eqref{eq:rms-update}) keep updating during training, so the
+same raw state $x$ maps to a changing $\tilde{x}$. The frozen target's output at a fixed state therefore changes
+over training --- and with it the bonus at that state --- even with no
+predictor update. The random-action warm-up reduces this drift by moving the
+estimates through their fastest initial changes before the bonus is first
+used. This project runs no warm-up: its estimates start at $\mu=0$,
+$\sigma^{2}=1$ and converge during training.
+\item \textbf{Different data feed the statistics.} The on-policy sources
+update the RMS on rollout observations, so the statistics track the current
+policy's visitation distribution. This project updates it on replay
+minibatches (Section~\ref{sec:rnd}), so the statistics track the replay
+distribution, which mixes all past policies.
+\end{enumerate}
+
+\paragraph{Relation to the elliptical corner bias.}
+Train run~3.1.2 (Section~\ref{sec:train-run-3-1-2}, Hypothesis~2) identifies a
+corner bias in the raw-feature elliptical bonus. Recall $z(x)$ is the
+elliptical family's raw random feature (Section~\ref{sec:elliptical}): its
+encoder has all bias parameters at zero, so it is positively homogeneous
+($z(\alpha x)=\alpha\,z(x)$ for $\alpha\ge0$) and the bonus factorizes into a
+novelty factor times the visitation-independent factor
+$\lVert z(x)\rVert\propto\lVert x\rVert$ --- a permanent premium for jointly
+extreme position and speed. The same mechanism is present in RND at
+initialization, because the networks have the same structure. Recall from
+Section~\ref{sec:rnd} that $f_\theta$ is the frozen random target, $g_\phi$
+the trained predictor, and $d=\tfrac{1}{2}\lVert g_\phi-f_\theta\rVert^{2}$
+the squared distance read out as the bonus; define the residual
+$e=g_\phi-f_\theta$. This project's target and predictor are ReLU networks
+whose biases are initialized to zero (\texttt{layer\_init} with
+\texttt{bias\_const} $=0$; CleanRL, jcwleo, and \texttt{rllte}'s orthogonal
+mode zero their biases as well), and the frozen target keeps its zeros
+forever. A zero-bias ReLU network is positively homogeneous, so at
+initialization $e$ inherits the property and the bonus factorizes exactly as
+in the elliptical case: writing $u=\tilde{x}/\lVert\tilde{x}\rVert$,
+\begin{align}
+e(\alpha\tilde{x}) = \alpha\,e(\tilde{x})\;\;(\alpha\ge0)
+\qquad\Longrightarrow\qquad
+d(\tilde{x}) = \tfrac{1}{2}\big\lVert e(\tilde{x})\big\rVert^{2}
+= \lVert\tilde{x}\rVert^{2}\cdot\tfrac{1}{2}\big\lVert e(u)\big\rVert^{2},
+\label{eq:rnd-corner-bias}
+\end{align}
+a direction-only factor times the squared input norm. The untrained bonus
+therefore pays the same extreme-state premium --- quadratic in
+$\lVert\tilde{x}\rVert$ under the squared-distance readout, linear under the
+norm readout of linear RND (matching the elliptical premium). Two facts temper
+the bias relative to the elliptical case:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{It is transient at visited states.} The predictor is trained, so
+at visited inputs the residual shrinks regardless of $\lVert\tilde{x}\rVert$
+(and training moves the predictor's biases off zero, breaking the exact
+factorization). The premium persists only where the predictor has not yet fit
+--- though the frozen target stays homogeneous throughout training, so the
+regression targets at large-norm inputs remain proportionally larger. In the
+elliptical raw-feature bonus, by contrast, the factor $\lVert z(x)\rVert$
+multiplies the bonus permanently.
+\item \textbf{State normalization relocates and caps the premium.} With
+normalization on, the norm in Eq.~\eqref{eq:rnd-corner-bias} is
+$\lVert\tilde{x}\rVert$: the distance from the running visitation mean in
+per-dimension standard deviations. The premium then points at states far from
+the data seen so far rather than at fixed maze corners, and the clip bounds it
+at $\lVert\tilde{x}\rVert^{2}\le 5^{2}D$ ($D$ the input dimension), about
+$25\times$ the typical squared norm
+$\mathbb{E}\lVert\tilde{x}\rVert^{2}\approx D$ of standardized inputs. With
+normalization off (the legacy RLeXplore run; \texttt{rnd\_obs\_norm} $=$
+False), the premium sits on the raw coordinates --- the same fixed
+corner-and-extreme-speed geometry as the elliptical raw-feature case, with no
+cap.
+\end{enumerate}
+
+\subsubsection{Reward normalization}
+\label{sec:rnd-norm-reward}
+
+Reward normalization divides the raw prediction error by a running scale
+estimate before it reaches the agent. The paper's stated reason is scale
+consistency: the prediction error's magnitude differs across environments and
+shrinks over the course of one run, which makes it hard to pick one intrinsic
+coefficient that works everywhere; dividing by a running std keeps the reward
+on a roughly stable scale \citep{burda2019exploration}.
+
+Facts that follow from the mechanism:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Scale only, not shape.} At any moment every state's bonus is
+divided by the same scalar --- the filter std $\sigma_F$ of
+Eq.~\eqref{eq:rwd-norm} --- so the ordering of states by bonus is unchanged;
+only the common scale is removed.
+\item \textbf{The loss is not normalized.} All four external sources train the
+predictor on the unnormalized error; only the reward readout is divided. So
+reward normalization changes what the agent sees, not what the predictor
+learns.
+\item \textbf{The denominator is on the return scale.} The filter $F_t$ of
+Eq.~\eqref{eq:rwd-norm} accumulates discounted past rewards, so $\sigma_F$ is
+larger than the per-step reward's own std, and the normalized per-step reward
+has std well below $1$. The
+\texttt{rllte} scheme (Eq.~\eqref{eq:rwd-norm-rllte}) divides by the reward's
+own std instead; the two ``rms'' schemes differ by exactly that factor.
+\item \textbf{Global decay is (slowly) divided out.} $\sigma_F$ is a
+cumulative estimate over the whole run (the RMS count $n$ never shrinks), so
+it lags the current error scale; to the extent it catches up with a shrinking
+error, the division cancels the common factor. The normalized bonus therefore
+measures novelty relative to the run's error history, not an absolute error
+scale. For the count comparison of Section~\ref{sec:opt-defs} this matters: a
+bonus with a count-like global decay, fed through this normalizer, no longer
+decays at its raw rate.
+\item \textbf{This project uses no reward normalization.} \texttt{train.py}
+hands SAC the raw distance $d(x)$ scaled by the swept $\beta$, and the legacy
+RLeXplore script explicitly disabled the library's reward RMS, so run~2's
+comparison operated on raw bonuses in both stacks.
+\end{enumerate}
+
+%==============================================================================
 \section{Logging}
 \label{sec:logging}
 %==============================================================================
@@ -4123,8 +4379,8 @@ and \(\lambda\times\beta\) within a panel), and an interaction plot against the 
 variable (Figure~\ref{fig:trainrun3-1-2-rho}). No single \(\beta\) dominates --- the per-cell best
 \(\beta^\star\) tends to move from \(10^{-1}\) at large \(\rho\) down to \(10^{-3}\)--\(10^{-2}\) at
 small \(\rho\) (a tendency with exceptions, not a rule), consistent with \(\beta\) compensating the
-bonus's overall scale --- so the \(\beta\) axis is shown in full rather than collapsed. Table~\ref{tab:trainrun3-1-2-cells} then condenses to the 12 cells
-at each cell's best \(\beta\), with the MEASURED diagnostics (each run's logged \(\rho\) and the fraction
+bonus's overall scale --- so the \(\beta\) axis is shown in full rather than collapsed. Table~\ref{tab:trainrun3-1-2-cells} then condenses to the cells
+(the 12 grid cells and, added 2026-07-04, the follow-up cell) at each cell's best \(\beta\), with the MEASURED diagnostics (each run's logged \(\rho\) and the fraction
 of computed bonuses that hit the clip), and Figure~\ref{fig:trainrun3-1-2-curve} shows the key cells over
 training --- every line is the same eval metric, including the run-2 reference.
 
@@ -4162,7 +4418,8 @@ do. Under Hypothesis~2 the unit-norm points would sit systematically below raw p
 \(\rho\); the design contains no exactly matched-\(\rho\) raw/unit pair (raw \(\rho\) values are
 \(35\times\) smaller at equal \(\lambda\)), and the two nearest comparisons give one tie and one gap of
 about \(1.2\) combined standard errors --- no systematic separation beyond noise, so Hypothesis~2 is
-dropped on parsimony rather than excluded outright. The clip-5 points sit collapsed below wherever the
+dropped on parsimony rather than excluded outright (the follow-up sweep, Table~\ref{tab:trainrun3-1-2-followup},
+later revived Hypothesis~2: unit normalization at a below-replica \(\rho\) does not recover the replica). The clip-5 points sit collapsed below wherever the
 measured saturation is high (small \(\rho\)) and rejoin the no-clip points only at \(\rho \approx 1\),
 where the cap almost never binds. The low no-clip outliers at the smallest \(\rho\) are the
 \(\beta{=}0.1\) configurations, where the intrinsic term swamps the sparse extrinsic reward.}
@@ -4177,7 +4434,8 @@ where the cap almost never binds. The low no-clip outliers at the smallest \(\rh
 \resizebox{\textwidth}{!}{%
 \input{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/reward_table.tex}%
 }
-\caption{Train run~3.1.2: the 12 cells at each cell's best \(\beta\) (chosen by \(\bar{R}\)), sorted by
+\caption{Train run~3.1.2: the 12 grid cells plus the 2026-07-04 follow-up cell (unit,
+\(\lambda{=}10^{-8}\), no clip), each at its best \(\beta\) (chosen by \(\bar{R}\)), sorted by
 \(\bar{R}\) descending; best \textbf{bold}, second \underline{underlined}; higher is better.
 ``\(\rho\) (meas.)'' is the measured effective ridge ratio \(\lambda d / \overline{\lVert\varphi\rVert^2}\)
 averaged over the cell's runs; ``clip hits'' is the measured fraction of bonuses that exceeded the cap
@@ -4195,7 +4453,9 @@ seeds) and \textbf{dashed} is the SAME cell's training extrinsic reward (mean ov
 training episodes; no band). \textbf{Gray dotted}: the run-2 \texttt{rnd\_\allowbreak elliptical} eval
 reference --- the SAME eval metric, so the solid and dotted lines are directly comparable. Training
 closely tracks eval for every cell. The replica cell (raw features, \(\lambda{=}10^{-6}\), no clip) tracks
-and passes the run-2 reference; the clipped raw cell is flat near zero.}
+and passes the run-2 reference; the clipped raw cell is flat near zero. The gray line is the 2026-07-04
+follow-up cell (unit, \(\lambda{=}10^{-8}\), no clip): despite the smallest measured \(\rho\) of any
+cell, it stays in the middle pack with the other unit-norm cells, far below the replica.}
 \label{fig:trainrun3-1-2-curve}
 \end{figure}
 
@@ -4220,7 +4480,8 @@ the six no-clip cells score \(52.8\) (\(\rho{=}3.7\times10^{-6}\)), \(26.1\) (\(
 \(17.2\) (\(1.28\)). The top cell is the smallest-\(\rho\) cell and the bottom the largest, as
 pre-registered, but the middle is flat with one inversion: the \(26.1\) (a unit-norm cell) sits below the
 \(35.2\) (a raw cell) despite SMALLER \(\rho\) --- the one comparison leaning toward Hypothesis~2, and it
-is within \(1.2\) combined standard errors.
+is within \(1.2\) combined standard errors (the follow-up sweep below, Table~\ref{tab:trainrun3-1-2-followup},
+later confirmed this raw-over-unit lean is real, not noise).
 \item \emph{Feature normalization matters mainly by raising the floor of reachable \(\rho\) (RQ3;
 Hypothesis 2 dropped on parsimony, not excluded)}: one honesty note first --- the pre-registered
 prediction ``unit-norm cells with small measured \(\rho\) approach the replica'' turned out to be
@@ -4228,10 +4489,13 @@ untestable inside this grid, because unit-norm features cannot reach the replica
 floor is \(\lambda d = 1.28\times10^{-4}\), \(35\times\) the replica's \(3.7\times10^{-6}\)); only the
 weaker nearest-neighbor comparison could be assessed. That comparison shows no systematic unit-below-raw
 separation beyond noise (one tie --- \(26.5\) vs \(28.0\) --- and the one \(\approx 1.2\)-combined-SE gap
-named in (iii)), so Hypothesis~2 is not needed to explain run-2's advantage. The raw features' measured
+named in (iii)), so within this grid Hypothesis~2 is not needed to explain run-2's advantage. The raw features' measured
 scale (\(\overline{\lVert z\rVert^{2}} \approx 35\)) simply gives them a \(35\times\) smaller \(\rho\) at
 equal \(\lambda\); under unit norm, matching run-2's contrast would need
-\(\lambda \approx 3\times10^{-8}\), below anything in the 3.1.1 grid.
+\(\lambda \approx 3\times10^{-8}\), below anything in the 3.1.1 grid. The follow-up sweep below
+(Table~\ref{tab:trainrun3-1-2-followup}) has since reached that regime and overturns this parsimony
+choice: unit normalization at a below-replica \(\rho\) does not recover the replica, so Hypothesis~2 is
+revived as the live explanation of run-2's advantage --- see the follow-up paragraphs.
 \item \emph{Internal consistency}: the run-3.1.1-like cell (unit, \(10^{-2}\), clip 5) at \(\beta{=}0.01\)
 scores \(9.3 \pm 3.7\) here (eval), reproducing run-3.1.1's \(9.03 \pm 3.22\) (train) for the same
 configuration. Also as expected, \(\beta^\star\) tends to shift inversely with the bonus scale
@@ -4262,8 +4526,50 @@ inversely with the bonus scale --- hence the wide five-decade \(\beta\) sweep).
 \end{enumerate}
 The 250 runs execute as one wave (16 open-partition Slurm jobs \(\times\) 16 single-CPU workers, the
 shape the comparison above found fastest; the reservation nodes were deliberately left free for other
-work). The run folder's \texttt{experiment\_background.md} records the full launch configuration; this
-section will be extended with the results.
+work). The run folder's \texttt{experiment\_background.md} records the full launch configuration.
+
+\paragraph{Follow-up results (2026-07-04; stopped at 140 of 250 runs).}
+An infrastructure event interrupted the first wave: this cluster's \texttt{slurm.conf} sets
+\texttt{WaitTime=3600}, so \texttt{srun} kills a job's remaining tasks one hour after its \emph{first}
+task exits --- and in a single-wave queue (one run per worker) the first finisher starts that countdown
+while its siblings still have hours to go. 94 mid-flight runs were killed; their checkpoint partials
+were archived and the configs requeued under the same sweep id, with the worker scripts fixed
+(\texttt{srun --wait=0}); details in the run folder's \texttt{analysis.md}. Because the kills are
+timing-based (node speed and job composition), not outcome-based, the completed subset is unbiased for
+the per-\(\beta\) means. The sweep was stopped on 2026-07-04 at 140 completed runs (20--31 seeds per
+\(\beta\); 0 failed) --- the signal below was judged sufficient, so this coverage is final.
+Table~\ref{tab:trainrun3-1-2-followup} answers the three questions:
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+\item \emph{No --- the ridge ratio is not the whole story.} Unit normalization at a below-replica
+measured \(\rho\) (\(1.28\times10^{-6}\) vs the replica's \(3.7\times10^{-6}\)) does not recover
+replica-level reward: the best \(\beta\) row reaches \(22.99 \pm 5.75\) vs the replica's
+\(53.81 \pm 5.95\) (final pooled arm data, \(n{=}40\)) --- a gap of about \(3.7\) combined standard
+errors.
+\item \emph{Hypothesis 2 is revived.} Within unit norm the \(\rho\) ladder is flat: lowering the ridge
+from \(10^{-6}\) to \(10^{-8}\) (measured \(\rho\) \(1.3\times10^{-4} \to 1.3\times10^{-6}\)) leaves the
+best cell statistically unchanged (\(19.3 \pm 5.0\) vs \(23.0 \pm 5.8\) in
+Table~\ref{tab:trainrun3-1-2-cells}, a gap under one combined standard error), while raw features at a
+comparable \(\rho\) score about twice as high. The feature normalization itself --- not the reachable \(\rho\) --- separates
+the cells, exactly the extreme-state-premium account that finding~(iv) had dropped on parsimony.
+\item \(\beta^\star \approx 10^{-3}\), statistically tied with \(10^{-4}\) (\(22.99 \pm 5.75\) vs
+\(20.07 \pm 6.34\)); \(\beta \ge 10^{-1}\) collapses to \(\approx 0\), as finding~(v)'s
+inverse-scale rule predicts.
+\end{enumerate}
+
+\begin{table}[t]
+\centering
+\small
+\input{../train_runs/2026-07-02-03-20_run_3_1_2_batch-elliptical_replicate-run2_ablate_norm-none-unit_ridge-1e-6-1e-4-1e-2_clip-inf-5_beta-1e-3-1e-2-1e-1_input-sa_1Mstep_evalon_50seed_armA-8x2_armB-16x1/analysis/plots/followup_reward_table.tex}%
+\caption{Follow-up sweep, final coverage (stopped 2026-07-04 at 140/250 runs): unit normalization at
+\(\lambda = 10^{-8}\), no clip, one row per \(\beta\) (top block, \(\beta\) ascending), against the
+run-2 replica cell and run-2 itself (reference block, sorted by \(\bar{R}\) descending; the arrow marks
+the sort column). \(\bar{R}\) is the mean final eval extrinsic reward over \(n\) seeds (higher is
+better) and SE its standard error; succ.\ is the fraction of seeds with final reward above 5;
+\(\rho\)~(meas.) is the measured effective ridge ratio; \(\bar{R}_{\text{train}}\) is the mean
+training-episode reward at the final eval cadence. Best per metric column bold, second underlined.
+Generated by \texttt{analysis/code/make\_followup\_interim.py}.}
+\label{tab:trainrun3-1-2-followup}
+\end{table}
 
 %------------------------------------------------------------------------------
 \subsubsection{Train run 3.2.1: RND optimizer variants (O1 Adam, O2 AdaGrad, O3 SGD-\(1/t\))}
@@ -4274,10 +4580,18 @@ Train run~3.2.1 is the first live run of the Part~II optimizer design
 (Section~\ref{sec:train-run-3-rnd-optimizers}).  It sweeps the three
 non-averaged optimizer families --- Method O1 (Adam, the canonical RND
 baseline), Method O2 (AdaGrad, cumulative squared-gradient memory), and Method
-O3 (SGD with the shifted \(1/t\) schedule) --- each crossed with the two bonus
+O3 (SGD with the shifted \(1/t\) schedule) --- \sout{each crossed with the two bonus
 readouts \(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\) and the
-intrinsic coefficient \(\beta\); the only optimizer-specific swept knobs are
-O3's schedule parameters \((\eta_0,t_0)\).  The RND input is
+intrinsic coefficient \(\beta\)}\claudeedit{O2 and O3 crossed with the two bonus readouts
+\(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\), O1 with the
+\(\mathcal{B}_{\mathrm{l2}}\) readout only, and every method crossed with the intrinsic
+coefficient \(\beta\)}; the only optimizer-specific swept knobs are
+O3's schedule parameters \((\eta_0,t_0)\).
+\claudecomment{Superseded at launch (user decision 2026-07-04): the O1 Adam--mse cell is exactly
+run 3.1.1's \texttt{rnd\_next\_state} reference arm (same input, Adam at PyTorch defaults, MSE
+readout, no clipping), already measured there, so it is not re-run; the grid shrinks
+\(192 \to 184\) configurations. Launch record:
+\texttt{train\_runs/2026-07-04-17-41\_run\_3\_2\_1\_*/experiment\_background.md}.}  The RND input is
 \texttt{rnd\_next\_state} for every run --- the canonical input every external
 RND source distills (Table~\ref{tab:opt-used}) and the same input as the
 run-3.1.1 reference arm.  This deviates from the staging preference for
@@ -4303,11 +4617,17 @@ Table~\ref{tab:trainrun3-2-1-fixed} also lists run-3.1.1's
 reference column, and the analysis plots will draw that arm's best
 configuration as a reference line --- taken from its training-episode reward
 curve (the same metric logged here), not from a standalone-eval curve.
-Because run~3.2.1 uses the same \texttt{rnd\_next\_state} input, O1's
+\sout{Because run~3.2.1 uses the same \texttt{rnd\_next\_state} input, O1's
 \(\mathcal{B}_{\mathrm{mse}}\) arm has exactly the reference arm's
 configuration (Adam at PyTorch defaults, MSE readout, no clipping), so the
 seven \(\beta\) values it shares with run~3.1.1 double as a replication of
-that arm.
+that arm.}\claudeedit{Because O1's \(\mathcal{B}_{\mathrm{mse}}\) cell would have exactly the
+reference arm's configuration (Adam at PyTorch defaults, MSE readout, no clipping), it is not
+re-run: the run-3.1.1 arm itself stands in as O1's mse row in the analysis, and the RQ1 readout
+comparison (Adam mse vs.\ l2) is therefore a cross-run comparison --- same code stack, same input,
+same training-episode-reward metric, but seeds run months apart.}
+\claudecomment{Same launch decision as above; the cross-run caveat is stated so RQ1's answer is
+not read as a within-run paired comparison.}
 
 The run answers three questions.
 \begin{enumerate}[label=\textbf{RQ\arabic*},leftmargin=*]
@@ -4321,6 +4641,31 @@ closest match to the stochastic-approximation averaging argument --- beat both
 constant-gain optimizers, and at which \((\eta_0,t_0)\)?
 \end{enumerate}
 
+\claudeedit{\paragraph{Seed allocation (added at launch: adaptive, controller-stopped).}
+The queue holds all \(184 \times 50 = 9200\) (configuration, seed) pairs with run ids
+seed-outermost, so every configuration gains seeds in step. For one configuration with \(n\)
+finished seeds, define \(\bar{R}\) as the sample mean of its final training-episode rewards,
+\(s\) as their sample standard deviation, and
+\(U = \bar{R} + 2.576\, s/\sqrt{n}\)
+as the upper limit of the two-sided 99\% confidence interval. A 1-CPU controller job re-reads the
+finished results every 10 minutes and stops a configuration --- moving its remaining queue entries
+to \texttt{pruned/}, so no new seeds start --- as soon as \(n \ge 10\) and \(U < b\), where the
+bar \(b\) is run 3.1.1's best \texttt{rnd\_next\_state} arm's mean final training-episode reward,
+recomputed over the full run-3.1.1 data at launch and frozen: \(b = 35.15\)
+(\(\beta^\star{=}100\), \(n{=}52\), SE \(3.80\); the 2026-07-02 aggregation quoted \(36.95\) at
+\(n{=}48\)). Configurations whose interval still reaches the bar keep receiving seeds to the
+50-seed cap. Every decision is bookkept as one Optuna trial per configuration (journal-file
+storage in the run folder, one study per method); the sampler decides nothing --- the grid is
+fixed and fully enqueued, Optuna is the crash-safe decision ledger. The writeup is first updated
+once every configuration has crossed the 10-seed decision floor, and finally when the sweep ends.}
+\claudecomment{Added at launch 2026-07-04. Sources: the allocation design and the frozen bar are
+in \texttt{train\_runs/2026-07-04-17-41\_run\_3\_2\_1\_*/experiment\_background.md} and
+\texttt{.../optuna/frozen\_bar.json} (bar 35.1544, frozen 18:22:17); the rule mechanics follow
+\texttt{07\_reconstruction/optuna/optuna\_tutorial.md} \S5/\S9/\S11 with the user's two revisions:
+99\% interval (2.576) instead of 95\%, and an absolute bar instead of the per-method relative
+race. This paragraph supersedes the fixed 50-seeds-everywhere reading of
+Table~\ref{tab:trainrun3-2-1-sweep}.}
+
 \begin{table}[H]
 \centering
 \footnotesize
@@ -4333,7 +4678,7 @@ constant-gain optimizers, and at which \((\eta_0,t_0)\)?
 Optimizer method & \texttt{rnd\_optimizer} & O1 Adam; O2 AdaGrad; O3 SGD-\(1/t\)
 with \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\). \\
 Bonus readout & \(\mathcal{B}\) (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) &
-\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) (all three methods). \\
+\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) \sout{(all three methods)}\claudeedit{(O2 and O3; O1 runs \(\mathcal{B}_{\mathrm{l2}}\) only --- its mse cell is the run-3.1.1 reference arm, not re-run)}. \\
 Intrinsic coefficient & \(\beta\) &
 \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\) (8; all methods; Train
 run~1's \(\beta^\star=10^{2}\) for \texttt{rnd\_next\_state} sits inside the grid,
@@ -4342,15 +4687,22 @@ O3 initial learning rate & \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) &
 \(\{10^{-3},3{\cdot}10^{-3},10^{-2},3{\cdot}10^{-2},10^{-1}\}\) (5; O3 only). \\
 O3 schedule offset & \(t_0\) (\texttt{rnd\_sgd\_t0}) &
 \(\{10^{3},10^{4}\}\) (2; O3 only). \\
-Random seed & \texttt{a\_seed} & \(0\)--\(49\) (50 seeds, every configuration). \\
+Random seed & \texttt{a\_seed} & \(0\)--\(49\) \sout{(50 seeds, every configuration)}\claudeedit{(50-seed cap; seeds are allocated adaptively by the controller --- see the seed-allocation paragraph above)}. \\
 \bottomrule
 \end{tabular}
 \caption{Train run~3.2.1 swept axes. The grid is per-method: O1 is
-readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations, O2 likewise \(16\),
+\sout{readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations}\claudeedit{readout\,(1: l2)\,\(\times\,\beta\)\,(8) \(=8\) configurations}, O2 \sout{likewise}\claudeedit{is} \(16\),
 and O3 is readout\,(2)\,\(\times\,\eta_0\)\,(5)\,\(\times\,t_0\)\,(2)\,\(\times\,\beta\)\,(8)
-\(=160\), so \(16+16+160=192\) configurations \(\times\,50\) seeds \(=9600\)
-runs (comparable to run-3.1.1's \(9100\)).  The writeup is first updated when
-every configuration has \(\ge 20\) finished seeds.}
+\(=160\), so \sout{\(16+16+160=192\) configurations \(\times\,50\) seeds \(=9600\)
+runs}\claudeedit{\(8+16+160=184\) configurations \(\times\) a 50-seed cap \(=9200\) queue entries}
+(comparable to run-3.1.1's \(9100\)).  \sout{The writeup is first updated when
+every configuration has \(\ge 20\) finished seeds.}\claudeedit{The writeup is first updated once
+every configuration has \(\ge 10\) finished seeds (the controller's decision floor), and finally
+when the sweep ends.}
+\claudecomment{Counts follow the launch decision above (O1 mse cell dropped); the \(\ge 20\)-seed
+update trigger is superseded by the adaptive allocation --- stopped configurations end at about 10
+seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Queue built
+2026-07-04 (sweep \texttt{2026-07-04-18-21\_optimizer-variants-bar}, 9200 entries verified).}}
 \label{tab:trainrun3-2-1-sweep}
 \end{table}
 
@@ -4396,7 +4748,7 @@ every configuration has \(\ge 20\) finished seeds.}
 \midrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept (values in Table~\ref{tab:trainrun3-2-1-sweep})}} \\
 \(\beta\) (\texttt{beta}) & \multicolumn{3}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\)} & \(\{10^{-3},\dots,10^{3}\}\) (7; as run 3.1.1) \\
-readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \multicolumn{3}{c}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
+readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \sout{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)}\claudeedit{\(\mathcal{B}_{\mathrm{l2}}\) only} & \multicolumn{2}{c}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
 \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) & --- & --- & \(\{10^{-3},3{\cdot}10^{-3},10^{-2},\) \(3{\cdot}10^{-2},10^{-1}\}\) & --- \\
 \(t_0\) (\texttt{rnd\_sgd\_t0}) & --- & --- & \(\{10^{3},10^{4}\}\) & --- \\
 \midrule
@@ -4418,8 +4770,12 @@ method does not use.  Environment and SAC follow runs 3.1.1/3.1.2 exactly;
 logging follows the run-3.1.1 training-reward-only standard (no standalone
 eval), so the new curves and the reference arm's curves are the same metric.
 All four columns share the \texttt{rnd\_\allowbreak next\_\allowbreak state}
-input, so the reference arm differs from O1's \(\mathcal{B}_{\mathrm{mse}}\)
-arm only in its \(\beta\) grid (7 vs.\ 8 values).
+input\sout{, so the reference arm differs from O1's \(\mathcal{B}_{\mathrm{mse}}\)
+arm only in its \(\beta\) grid (7 vs.\ 8 values)}\claudeedit{; the reference arm IS the O1 mse
+cell (which is therefore not re-run in this sweep --- O1 sweeps the l2 readout only)}.
+\claudecomment{Readout row and caption updated for the launch decision (O1 mse cell dropped); the
+strikethrough in the readout row shows the old all-three-methods span replaced by an
+O1-specific cell plus an O2--O3 span.}
 The analysis plots will draw the reference arm's best configuration as a
 reference line, from its training-episode reward curve.  The swept axes
 (readout, \(\beta\), \(\eta_0\), \(t_0\), seed) are in

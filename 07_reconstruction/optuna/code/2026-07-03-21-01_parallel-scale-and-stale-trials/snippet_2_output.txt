@@ -1,6 +1,0 @@
-is BaseHeartbeat: False
-heartbeat enabled: False
-orphan trial state: RUNNING
-after fail_stale_trials: RUNNING
-after tell(number, FAIL): FAIL
-

@@ -133,3 +133,33 @@ uncommitted at launch: the new/edited `slurm/` files above, this file, `analysis
 `analysis/code/` + `analysis/plots/` (run-3.1.2 analysis), `development_document/main.tex`, and the
 project rule `.claude/rules/run-id-and-logging.md`. Trainer code (`train.py`, `methods/`, `callbacks/`)
 is byte-identical to the state the 3.1.2 sweeps ran (snapshot in this folder's `code/`).
+
+## Follow-up sweep: infrastructure event + recovery (2026-07-04)
+
+- **What happened**: the cluster's `slurm.conf` `WaitTime=3600` makes srun kill a step's remaining
+  tasks 3600 s after its FIRST task exits. In this single-wave queue (one run per worker; workers exit
+  when `pending/` is empty) that killed 94 mid-flight runs across 13 of the 16 jobs: the 3 jobs whose
+  spare workers exited at t≈1 min died at exactly 1 h; 10 more died ~1 h after their fastest worker
+  finished (12–18 h in). 1 job completed all 16 runs inside the window; job 6314802 (ai05) had no
+  finisher yet and kept running. 140/250 runs completed on the first wave; 0 model-side failures.
+- **Recovery (16:31–16:36)**: the 94 killed attempts' partial JSONs archived to
+  `data/<sweep_id>/killed_attempts_2026-07-04-16-34/` (per `run-id-and-logging.md`), markers moved back
+  to `pending/`, and 6 recovery jobs submitted (ids 6380501–6380506, appended to the same
+  `submitted_jobids_<sweep_id>.txt`; 3 cpu + 2 gpu lynx06/07 + 1 gnolim). All 94 configs were reclaimed
+  within a minute. Job 6314802's 16 first-attempt runs predate the fix; when its first worker finishes,
+  the remaining may be killed ~1 h later — they will be archived and requeued the same way.
+- **Fix**: `worker_16x1.slurm` and `worker_8x2.slurm` now pass `srun --wait=0`; lesson recorded in
+  `.claude/rules/slurm-submission.md` (step 9) and the global cluster rule.
+- **Interim results at 140/250** (details + table: `analysis/analysis.md`, follow-up section;
+  writeup section 5.3.5 follow-up paragraphs): unit norm at measured ρ=1.28e-6 does NOT recover the
+  replica (best β row 22.99 ± 5.75 at β=1e-3 vs replica 53.81 ± 5.95) — the ridge ratio alone does not
+  explain run-2's advantage; the raw-feature extreme-state-premium hypothesis is revived. β ≥ 0.1
+  collapses to ~0.
+
+## Follow-up sweep: stopped 2026-07-04 (~17:00), coverage final at 140/250
+
+User decision: the interim signal sufficed. All 7 live jobs cancelled from the sweep's own id file;
+`squeue -u sl5nw` empty afterwards (nothing else was running). The `srun --wait` semantics were
+verified by a controlled probe first (`logs/wait_probe/`): `--wait=30` kills survivors exactly 30 s
+after the first task exit; `--wait=0` = never kill (job ran to natural completion). Full event +
+resume path: `CANCELLATION_AND_RESUME.md`.

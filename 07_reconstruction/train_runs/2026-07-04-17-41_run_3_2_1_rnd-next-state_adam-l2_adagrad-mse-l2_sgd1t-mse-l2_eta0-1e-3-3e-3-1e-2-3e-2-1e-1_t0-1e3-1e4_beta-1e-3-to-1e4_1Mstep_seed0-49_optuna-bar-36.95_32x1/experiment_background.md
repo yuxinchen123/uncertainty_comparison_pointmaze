@@ -87,3 +87,33 @@ follow-up artifacts):
  M 07_reconstruction/train.py
  M .claude/rules/slurm-submission.md   (new section 10: 16-CPU user headroom)
 ```
+
+Launch-time commit: `a86d52c` (branch `Use-RLexplore-RND`) — the four-switch code, this run folder, and rule section 10 committed 2026-07-04.
+
+**Frozen bar (controller, 2026-07-04T18:22:17):** 35.1544 (beta*=100, n=52, SE=3.796; reference 36.95 was the 2026-07-02 aggregation at n=48).
+
+## Launch record (2026-07-04)
+
+- Sweep id: `2026-07-04-18-21_optimizer-variants-bar`; 9200 queue entries built; controller job
+  6387094 RUNNING on nolim/heartpiece; **bar frozen at 35.1544** (beta*=100, n=52, SE 3.80 — the
+  full run-3.1.1 rnd_next_state data; the 36.95 reference was the earlier n=48 aggregation).
+- Worker fleet at launch: 12 cpu-partition 32x1 jobs (6 running on bigcat01–06, 6 queued behind
+  other users), 2 x 32x1 on cheetah03, 2 x 32x1 on nolim (heartpiece, slurm2), 3 x 32x1 on puma01
+  (reservation), 6 x 32x1 queued for jaguar03 (node DOWN at launch, "unexpectedly rebooted"
+  17:47 — the reservation holds it; jobs start when it returns), plus 10 x **16x1** jobs on the
+  16-core node class (affogato13–15, ai01–04 on gpu; ai08–10 on gnolim) — see the finding below.
+  All ids in `slurm/submitted_jobids_2026-07-04-18-21_optimizer-variants-bar.txt`.
+- Shape verified: `sacct` shows AllocCPUS=32 / ReqMem=64G on the 32x1 jobs; `ps` inside job
+  6387095 (bigcat01) shows 32 workers at ~99.6% CPU each.
+- **Cluster finding (probe-verified 2026-07-04): sbatch rejects a job whose task count exceeds the
+  node's PHYSICAL CORES**, regardless of `--ntasks-per-core=2` / `--hint=multithread` ("Requested
+  node configuration is not available"). On 16-core/32-thread nodes (adriatic/affogato/ai class)
+  `-n32 -c1` is impossible in every variant while `-n16 -c1 --ntasks-per-core=2` schedules. So the
+  32x1 shape needs nodes with >= 32 real cores; the 16-core class runs 16x1 jobs instead.
+- 440 configurations claimed and training within 5 minutes of launch.
+- Correction (same evening): one 16x1 job fills only 16 of a 16-core node's 30 ALLOCATABLE threads
+  (every node reserves one core for the system: CPUEfctv = CPUTot - 2, verified cluster-wide), and a
+  second 16x1 never fits (16+16 > 30). Each 16-core node now runs one 16x1 + one 14x1 job
+  (ids 6388162–6388171); the ten stuck 16x1 seconds (6387831–6387840) and the never-runnable ai07
+  32x1 job (6387149) were cancelled — ids from this run's submitted_jobids file only. Policy written
+  into slurm-submission.md section 11.

@@ -43,20 +43,28 @@ Same per-job shape (ntasks=8, cpus-per-task=2, `--nodes=1`):
   reserved node into a normal `--nodelist` (a multi-node `--nodelist` requires ALL nodes, so one busy/reserved
   sibling blocks the whole job — verified, see step 5).
 
-## 3. Job names — make the buckets look like unrelated projects
+## 3. Job names — at most TWO base names per launch; number the buckets (revised 2026-07-04)
 Slurm always shows the owning uid (`squeue -u sl5nw` reveals every job regardless of name), so names are
-cosmetic; still, give each bucket a distinct, unrelated-looking codename so the *job-name* column doesn't read as
-one project taking a lot of the cluster. One name per bucket (per reserved node + per partition); many jobs share
-a name, each still ntasks=8. So an admin sees at most (#partitions + #reserved-nodes) names. Suggested map (swap
-freely):
+cosmetic; still, keep the *job-name* column from reading as one project taking a lot of the cluster.
+- **Pick at most 2 base codenames per sweep launch.** When more distinct labels are needed (one per
+  partition bucket, per reserved node, controller, ...), distinguish them with a NUMBER SUFFIX on the
+  same base — `sparse1`, `sparse2`, `sparse3`, ... — instead of inventing a new codename per bucket.
+- Many jobs still share one name (a bucket's jobs are interchangeable); the suffix map is per launch
+  and recorded in the launch script. Example map for a run-3.2.1-style launch (swap the bases freely,
+  keep them distinct from names other sessions are currently running):
 
 | bucket | job-name |
 |---|---|
-| reserved node jaguar03 | `diff-prior` |
-| reserved node puma01 | `seq2graph` |
-| partition cpu | `tab-bench` |
-| partition gpu | `meta-icl` |
-| partition nolim | `causal-rep` |
+| partition cpu | `sparse1` |
+| partition gpu | `sparse2` |
+| partition gnolim | `sparse3` |
+| partition nolim | `sparse4` |
+| reserved node jaguar03 | `mixr1` |
+| reserved node puma01 | `mixr2` |
+| controller (1 CPU) | `mixr3` |
+
+- The monitoring loop and the id-file refresh match jobs by these names; a base-plus-suffix scheme
+  keeps that a single prefix match (`grep -E "sparse[0-9]|mixr[0-9]"`).
 
 ## 4. Curated gpu allowlist (include, not exclude)
 Submit gpu jobs one node per job from this allowlist. It holds only clearly-lower-tier nodes; everything at
@@ -160,3 +168,54 @@ Therefore, at every sweep launch and every refill wave:
   per-user cap instead — fill sweep jobs only up to 384 of the 400 gpu-cap CPUs, counting every
   existing job under the uid (`scontrol show assoc_mgr qos=cspartgpu flags=qos` shows the counted
   usage as `cpu=400(<current>)`).
+
+## 11. Task count must not exceed the node's PHYSICAL cores; pick the job shape per node class (probe-verified 2026-07-04)
+**The fact:** sbatch validates `--ntasks` against a node's CORE count, not its hardware-thread count:
+a node with 16 cores / 32 threads REJECTS `-n32 -c1` at submit ("Requested node configuration is not
+available") in every variant — with `--ntasks-per-core=2`, with `--hint=multithread`, or bare — while
+`-n16 -c1 --ntasks-per-core=2` schedules there (tasks pack two-per-core onto sibling threads fine,
+but ONE JOB's task count may never exceed the node's core count). Verified with `sbatch --test-only`
+probes on affogato13 (2 sockets x 8 cores x 2 threads) during the run-3.2.1 launch.
+
+**Second fact — every node reserves one core for the system (verified 2026-07-04, cluster-wide):**
+`scontrol show node` shows `CPUEfctv = CPUTot - 2` on every class checked (affogato/ai 30 of 32,
+bigcat 62 of 64, cheetah03 70 of 72, jaguar03 222 of 224, puma01 158 of 160, heartpiece 38 of 40,
+slurm2 46 of 48). Only CPUEfctv threads are allocatable — a set of jobs summing to CPUTot on one
+node leaves the last job PENDING (Resources) forever. Size whole-node fills against CPUEfctv.
+
+**The policy (how to fill each node class with single-cpu workers):**
+- **Nodes with >= 32 physical cores: prioritize the 32x1 shape** (`--ntasks=32 --cpus-per-task=1
+  --ntasks-per-core=2 --mem-per-cpu=2G` = 64G/job) — fewer squeue ids per worker. Verified-current
+  32-core-plus nodes: bigcat01-06, cortado01-10, affogato02, cheetah03, heartpiece, slurm2-4,
+  jaguar03, puma01.
+- **Nodes that only allow up to 16 tasks (16-core / 32-thread class: adriatic, affogato, ai):
+  submit 16x1 jobs — ONE 16x1 PLUS ONE 14x1 per node.** One 16x1 job with `--ntasks-per-core=2`
+  occupies 16 of the 30 allocatable threads; a second 16x1 does NOT fit (16+16 = 32 > 30 = CPUEfctv
+  — verified: it pends on Resources forever) — the second job must be 14x1 (16+14 = 30, fills the
+  node exactly; both jobs started immediately at the run-3.2.1 launch after this correction).
+- **Memory when pairing 16x1 + 14x1 on a 64G node (ai01-04):** 2G-per-cpu for both needs
+  32768 + 28672 = 61440M <= 64000M (fits), but for safety margin the run-3.2.1 pairing used 2G for
+  the 16x1 + 1900M for the 14x1 (32768 + 26600 = 59368M). 128G nodes (affogato13-15, ai08-10) take
+  2G-per-cpu for both without thought.
+- After submitting, verify per job: 32x1 -> AllocCPUS=32; 16x1 -> AllocCPUS=16; 14x1 ->
+  AllocCPUS=14 (§7's check).
+
+## 12. Capacity planning: target the five per-user pools, then fill fragments with odd-size jobs (added 2026-07-04)
+**Plan every sweep launch backwards from the pool ceilings, not forwards from a job-shape count.**
+The per-user pools are independent (§8): **cpu 400 + gpu 400 + gnolim 80 + nolim 80**, plus the
+reserved nodes riding above the caps (jaguar03 and puma01 at their ALLOCATABLE size, CPUEfctv =
+CPUTot - 2 per §11; puma01 additionally memory-capped), minus the §10 16-CPU user headroom on the
+reserved node. The run-3.2.1 launch under-filled by sizing buckets as "N jobs of the preferred
+shape" (nolim and gnolim got 2 x 32 = 64 of their 80s; no fragment was filled anywhere) — plan the
+POOL TOTALS first, then choose shapes that sum to them.
+- **Odd-size single-cpu jobs are fine and expected as gap fillers**: 30x1 on a 64-thread node's
+  second half (62 allocatable - 32), 16x1 + 14x1 pairs on the 16-core class (§11), 22x1 to land a
+  partition counter exactly on its cap, 14x1 to top nolim off at 80, 6x1 onto cheetah03's tail.
+  Same flags as every worker job: `--ntasks-per-core=2`, `srun --wait=0`, 2G per cpu (1900M on the
+  64G ai nodes); verify AllocCPUS == ntasks after each new shape (§7).
+- **Displacement at top-up time:** a normal job is admitted only while
+  (running usage + ask) <= the partition cap, and RUNNING reservation jobs count into that usage
+  (§8). So when topping up, compute open-partition room as cap - (running open + running reserved)
+  in that partition, and keep submitting open-partition fillers BEFORE adding more reservation
+  load — e.g. do not add extra puma01 jobs while open cpu jobs are still trying to start, or the
+  reservation usage eats their admission room.
