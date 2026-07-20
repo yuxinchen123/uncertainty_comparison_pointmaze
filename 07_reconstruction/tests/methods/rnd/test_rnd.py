@@ -321,3 +321,90 @@ def test_default_behavior_matches_explicit_adam_mse():
     l2.update(samples)
     for p_mse, p_l2 in zip(default.predictor.parameters(), l2.predictor.parameters()):
         assert torch.equal(p_mse, p_l2)
+
+
+def test_bias_init_schemes_values_and_weights_untouched():
+    """bias_init overwrites only the four Linear biases per its scheme (run 3.2.3); weights never move."""
+    import hashlib
+
+    def expected_gen(*parts):
+        """Recompute the keyed generator with the ablation's exact key format (pins the key contract)."""
+        key = "::".join(str(p) for p in parts)
+        g = torch.Generator()
+        g.manual_seed(int(hashlib.sha256(key.encode()).hexdigest(), 16) & 0x7FFFFFFF)
+        return g
+
+    # same global seed -> the orthogonal weight draws are identical across all four constructions
+    models = {}
+    for scheme in ("zero", "pytorch_default", "normal_0.5", "normal_1.0"):
+        torch.manual_seed(0)
+        models[scheme] = make_rnd(use_obs_norm=False, bias_init=scheme, bias_seed=111)
+    # golden path per net/layer: zero stays zero; pytorch_default equals the keyed U(+-1/sqrt(fan_in))
+    # draw; normal_<sigma> equals sigma * keyed z, so normal_1.0 == 2 * normal_0.5 (shared z direction)
+    for net_name in ("target", "predictor"):
+        for layer_idx in (0, 2):
+            layers = {s: getattr(m, net_name).network[layer_idx] for s, m in models.items()}
+            fan_in = layers["zero"].in_features
+            assert torch.equal(layers["zero"].bias, torch.zeros_like(layers["zero"].bias))
+            u = torch.rand(layers["zero"].bias.shape,
+                           generator=expected_gen(111, "bias-uniform", net_name, layer_idx)) * 2.0 - 1.0
+            assert torch.equal(layers["pytorch_default"].bias, u / (fan_in ** 0.5))
+            z = torch.randn(layers["zero"].bias.shape,
+                            generator=expected_gen(111, "bias-normal", net_name, layer_idx))
+            assert torch.equal(layers["normal_0.5"].bias, 0.5 * z)
+            assert torch.equal(layers["normal_1.0"].bias, 1.0 * z)
+            # weights byte-identical across every scheme (bias_init must never touch them)
+            for scheme in ("pytorch_default", "normal_0.5", "normal_1.0"):
+                assert torch.equal(layers[scheme].weight, layers["zero"].weight)
+
+
+def test_bias_init_invalid_combinations_raise():
+    """bias_init != 'zero' fails loud on unsupported architectures and malformed scheme strings."""
+    # unsupported architectures: the linear-RND split and the ensemble encoder store biases differently
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, linear_rnd=True, bias_init="pytorch_default")
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, n_predictors=3, bias_init="normal_0.5")
+    # malformed schemes: unknown name, non-numeric sigma, non-positive sigma
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, bias_init="uniform")
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, bias_init="normal_abc")
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, bias_init="normal_-1")
+
+
+def test_reward_norm_filter_and_division():
+    """reward_norm divides compute() by the running std of the forward-filtered intrinsic return."""
+    from gymnasium.wrappers.utils import RunningMeanStd
+
+    torch.manual_seed(0)
+    model = make_rnd(use_obs_norm=False, reward_norm=True, reward_norm_gamma=0.9)
+    torch.manual_seed(0)
+    plain = make_rnd(use_obs_norm=False)  # same nets, no normalization
+    # feed three single-transition steps in time order; replicate the filter + running-std by hand.
+    # before: raw bonuses r1, r2, r3; after: filtered returns R1=r1, R2=.9*R1+r2, R3=.9*R2+r3 and an
+    # independent RunningMeanStd updated with [R1], [R2], [R3]
+    reference_rms = RunningMeanStd(shape=())
+    rff = None
+    for step_seed in (1, 2, 3):
+        step = make_samples(n=1, seed=step_seed)
+        raw = float(plain.compute(step)[0])
+        rff = raw if rff is None else 0.9 * rff + raw
+        reference_rms.update(np.asarray([rff], dtype=np.float64))
+        model.observe(step)
+    assert model._rff_return[0] == pytest.approx(rff)
+    assert float(model.reward_rms.var) == pytest.approx(float(reference_rms.var))
+    # golden path: compute() = raw readout / sqrt(running var)
+    batch = make_samples(seed=4)
+    expected = plain.compute(batch) / float(np.sqrt(reference_rms.var))
+    assert torch.allclose(model.compute(batch), expected)
+    # compute() must never move the statistics (the eval wrapper only calls compute())
+    var_before = float(model.reward_rms.var)
+    model.compute(batch)
+    assert float(model.reward_rms.var) == var_before
+    # edge cases: observe() is a no-op without reward_norm; a bad filter discount fails loud
+    plain.observe(make_samples(n=1, seed=5))
+    assert plain.reward_rms is None and plain._rff_return is None
+    with pytest.raises(ValueError):
+        make_rnd(use_obs_norm=False, reward_norm=True, reward_norm_gamma=1.0)

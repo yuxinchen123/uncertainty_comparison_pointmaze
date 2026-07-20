@@ -81,6 +81,22 @@ class Config:
     rnd_bonus_readout: str = "mse"       # bonus readout: "mse" = 0.5*||e||^2 | "l2" = ||e||_2
     rnd_sgd_eta0: float = 1e-2           # sgd1t initial learning rate eta0
     rnd_sgd_t0: float = 1e3              # sgd1t schedule offset t0 (> 0)
+    # RND initialization / normalization knobs (run 3.2.3 + convergence run 1); the defaults
+    # reproduce the historical behavior exactly (orthogonal weights, zero biases, no reward norm).
+    rnd_weight_init: str = "orthogonal"  # weight init for BOTH nets: "orthogonal" | "pytorch_default"
+    rnd_bias_init: str = "zero"          # bias init for BOTH nets: "zero" | "pytorch_default" | "normal_<sigma>"
+    rnd_reward_norm: bool = False        # classic-RND reward normalization: divide the bonus by the running
+                                         # std of the forward-filtered (discounted) intrinsic return
+    rnd_reward_norm_gamma: float = 0.99  # forward-filter discount (the RND paper's intrinsic discount)
+    # original-RND knobs (train run 5); defaults reproduce the historical behavior exactly (adam lr 1e-3,
+    # relu, symmetric nets, full-batch predictor update, 200 obs-space warmup draws).
+    rnd_lr: float = 0.001                # Adam/Adagrad predictor lr (ignored by sgd1t); original RND = 1e-4
+    rnd_activation: str = "relu"         # hidden activation for BOTH nets: "relu" | "leaky_relu" (slope 0.2)
+    rnd_predictor_extra_layers: int = 0  # extra [act, Linear(m,m)] blocks on the PREDICTOR (deeper than target)
+    rnd_update_proportion: float = 1.0   # fraction of the batch kept in the predictor loss (CleanRL mask); 1.0 = all
+    rnd_obs_warmup_mode: str = "space_sample"  # obs-RMS warmup source: "space_sample" | "env_steps" (random agent)
+    rnd_obs_warmup_steps: int = 200      # warmup sample/step count (original RND: 6400 env steps)
+    visit_count_decay: float = -0.5      # count->bonus exponent for gt_* oracles: -0.5 => 1/sqrt(n), -1 => 1/n
     # elliptical-bonus knobs (rnd_elliptical / rnd_elliptical_global); ignored by non-elliptical algos.
     elliptical_regularization: float = 1e-2          # ridge λ on the covariance diagonal
     elliptical_feature_normalization: str = "unit"   # ν_φ: "unit" (default) | "rms_unit" | "none"
@@ -143,13 +159,54 @@ def parse_config() -> Config:
     parser.add_argument("--rnd_optimizer", type=str, default="adam", choices=["adam", "adagrad", "sgd1t"],
                         help="RND predictor optimizer (run 3.2.1): adam (O1, default), adagrad (O2), "
                              "sgd1t (O3: eta_t = eta0/(1 + t/t0), no floor).")
-    parser.add_argument("--rnd_bonus_readout", type=str, default="mse", choices=["mse", "l2"],
-                        help="RND bonus readout: mse = 0.5*||e||^2 (canonical, default) | l2 = ||e||_2. "
-                             "Training always uses the mse objective; only the reward readout changes.")
+    parser.add_argument("--rnd_bonus_readout", type=str, default="mse", choices=["mse", "l2", "mse_mean"],
+                        help="RND bonus readout: mse = 0.5*||e||^2 (canonical, default) | l2 = ||e||_2 | "
+                             "mse_mean = (1/m)*sum e_j^2 (original RND's mean-over-dims). Training always "
+                             "uses the mse objective; only the reward readout changes.")
     parser.add_argument("--rnd_sgd_eta0", type=float, default=1e-2,
                         help="sgd1t initial learning rate eta0 (used only when rnd_optimizer=sgd1t).")
     parser.add_argument("--rnd_sgd_t0", type=float, default=1e3,
                         help="sgd1t schedule offset t0 > 0 (used only when rnd_optimizer=sgd1t).")
+    parser.add_argument("--rnd_weight_init", type=str, default="orthogonal",
+                        choices=["orthogonal", "pytorch_default"],
+                        help="Weight init for BOTH RND nets' Linear layers (convergence run 1): "
+                             "orthogonal = gain sqrt(2) (historical default), pytorch_default = "
+                             "U(-1/sqrt(fan_in), +1/sqrt(fan_in)), the full nn.Linear default law.")
+    parser.add_argument("--rnd_bias_init", type=str, default="zero",
+                        help="Bias init for BOTH RND nets' Linear layers (run 3.2.3): zero (historical "
+                             "default), pytorch_default = U(-1/sqrt(fan_in), +1/sqrt(fan_in)), or "
+                             "normal_<sigma> = N(0, sigma^2), e.g. normal_0.5. Weights stay orthogonal.")
+    parser.add_argument("--rnd_reward_norm", default=False, type=_str2bool,
+                        help="Classic-RND intrinsic reward normalization (run 3.2.3): divide the bonus by "
+                             "the running std of the forward-filtered (discounted) intrinsic return. OFF "
+                             "by default (historical behavior).")
+    parser.add_argument("--rnd_reward_norm_gamma", type=float, default=0.99,
+                        help="Forward-filter discount for --rnd_reward_norm (the RND paper's intrinsic "
+                             "discount, default 0.99).")
+    parser.add_argument("--rnd_lr", type=float, default=0.001,
+                        help="RND Adam/Adagrad predictor learning rate (train run 5); ignored by sgd1t. "
+                             "Historical default 1e-3; original RND uses 1e-4.")
+    parser.add_argument("--rnd_activation", type=str, default="relu", choices=["relu", "leaky_relu"],
+                        help="Hidden activation for BOTH RND nets (train run 5): relu (default) or "
+                             "leaky_relu (slope 0.2, the original RND's tf.nn.leaky_relu default).")
+    parser.add_argument("--rnd_predictor_extra_layers", type=int, default=0,
+                        help="Extra [activation, Linear(m,m)] blocks on the PREDICTOR only (train run 5), "
+                             "making it deeper than the target (original RND's asymmetric predictor). "
+                             "0 = symmetric (historical default).")
+    parser.add_argument("--rnd_update_proportion", type=float, default=1.0,
+                        help="Fraction of each batch kept in the predictor loss (train run 5, CleanRL "
+                             "keep-mask). 1.0 = whole batch (historical default AND the original RND "
+                             "repo's code default); the RND paper Table 5 and CleanRL use 0.25.")
+    parser.add_argument("--rnd_obs_warmup_mode", type=str, default="space_sample",
+                        choices=["space_sample", "env_steps"],
+                        help="obs-RMS warmup source (train run 5): space_sample (draw from env spaces, "
+                             "historical default) | env_steps (random-agent rollout, original RND).")
+    parser.add_argument("--rnd_obs_warmup_steps", type=int, default=200,
+                        help="obs-RMS warmup sample/step count (train run 5). Historical default 200; "
+                             "original RND uses 6400 env steps (128 envs x 50 steps).")
+    parser.add_argument("--visit_count_decay", type=float, default=-0.5,
+                        help="Count->bonus exponent for gt_* visit-count oracles: -0.5 => 1/sqrt(n) (default), "
+                             "-1 => 1/n. Used only by the visit-count (gt_*) algorithms.")
     parser.add_argument("--elliptical_regularization", type=float, default=1e-2,
                         help="Elliptical ridge λ on the covariance diagonal (rnd_elliptical[_global]).")
     parser.add_argument("--elliptical_feature_normalization", type=str, default="unit",
@@ -380,6 +437,25 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
         record["rnd_bonus_readout"] = cfg.rnd_bonus_readout
         record["rnd_sgd_eta0"] = cfg.rnd_sgd_eta0
         record["rnd_sgd_t0"] = cfg.rnd_sgd_t0
+        # run-3.2.3 / convergence-run-1 knobs: recorded for every RND run so the grouping key
+        # (weight + bias scheme, reward normalization on/off + its filter discount) is always
+        # complete in the analysis loader.
+        record["rnd_weight_init"] = cfg.rnd_weight_init
+        record["rnd_bias_init"] = cfg.rnd_bias_init
+        record["rnd_reward_norm"] = cfg.rnd_reward_norm
+        record["rnd_reward_norm_gamma"] = cfg.rnd_reward_norm_gamma
+        # train-run-5 original-RND knobs: recorded for every RND run so the analysis can group the
+        # original-small arm (lr, activation, deeper predictor, keep-mask, env-steps warmup) distinctly.
+        record["rnd_lr"] = cfg.rnd_lr
+        record["rnd_activation"] = cfg.rnd_activation
+        record["rnd_predictor_extra_layers"] = cfg.rnd_predictor_extra_layers
+        record["rnd_update_proportion"] = cfg.rnd_update_proportion
+        record["rnd_obs_warmup_mode"] = cfg.rnd_obs_warmup_mode
+        record["rnd_obs_warmup_steps"] = cfg.rnd_obs_warmup_steps
+    # visit-count (gt_*) oracles: record the count->bonus decay exponent so 1/sqrt(n) (-0.5) and 1/n (-1)
+    # runs are distinguishable in the JSON. Omitted for non-visit-count algorithms.
+    if REGISTRY[cfg.algorithm].kind == "visit_count":
+        record["visit_count_decay"] = cfg.visit_count_decay
     if REGISTRY[cfg.algorithm].kind == "elliptical":
         record["elliptical_regularization"] = cfg.elliptical_regularization
         record["elliptical_update_timing"] = cfg.elliptical_update_timing
@@ -487,6 +563,13 @@ def run(cfg: Config) -> None:
     # build the intrinsic model from the registry (only when beta>0, exactly as 04)
     intrinsic_model = None
     if cfg.beta > 0:
+        # env-steps obs warmup (original RND) needs a FRESH env whose visit counts are throwaway, so the
+        # random-agent warmup never pollutes the training counts (train_flat steps the count wrappers).
+        # Built only for that mode; space_sample warmup (the default) allocates no extra env.
+        warmup_env = None
+        if getattr(cfg, "rnd_obs_warmup_mode", "space_sample") == "env_steps":
+            warmup_base = make_base_env(cfg)
+            warmup_env, _, _ = build_env_stack(cfg, warmup_base, start_cell, goal_cell)
         ctx = EnvContext(
             obs_shape=obs_shape,
             action_dim=action_dim,
@@ -494,8 +577,12 @@ def run(cfg: Config) -> None:
             action_space=train_flat.action_space,
             position_wrapper=train_position,
             position_velocity_wrapper=train_position_velocity,
+            env=warmup_env,
         )
         intrinsic_model = build_intrinsic_model(cfg.algorithm, cfg, ctx)
+        # release the throwaway warmup env after the RMS is seeded (its counts are discarded)
+        if warmup_env is not None:
+            warmup_env.close()
 
     train_vec = wrap_for_rollout(train_flat, cfg, intrinsic_model, seed)
     model = build_sac(cfg, train_vec, intrinsic_model, seed)

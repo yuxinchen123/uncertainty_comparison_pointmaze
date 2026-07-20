@@ -193,3 +193,102 @@ def test_build_rnd_forwards_optimizer_readout_knobs():
     assert model_default.optimizer == "adam"
     assert model_default.bonus_readout == "mse"
     assert isinstance(model_default.opt, torch.optim.Adam)
+
+
+def test_build_visit_count_forwards_decay_exponent():
+    """The factory forwards cfg.visit_count_decay to VisitCount (1/sqrt(n) default -0.5, 1/n = -1); a cfg
+    without the field falls back to -0.5. Guards the silent-getattr-masking hazard for the gt_* oracles."""
+    import types
+    from rnd_exploration.methods import EnvContext
+
+    # a minimal visit-count wrapper stub with the one method VisitCount reads
+    class _W:
+        def observation_to_count(self, obs):
+            return 4
+    ctx = EnvContext(obs_shape=(4,), action_dim=2, observation_space=None, action_space=None,
+                     position_wrapper=_W(), position_velocity_wrapper=_W())
+    # 1/n oracle: cfg carries decay -1 -> forwarded to the model
+    cfg = types.SimpleNamespace(device="cpu", visit_count_decay=-1.0)
+    model = build_intrinsic_model("gt_position_velocity", cfg, ctx)
+    assert model.intrinsic_decay_rate == -1.0
+    # edge case: a cfg WITHOUT the field falls back to the historical 1/sqrt(n) default (-0.5)
+    del cfg.visit_count_decay
+    model_default = build_intrinsic_model("gt_position_velocity", cfg, ctx)
+    assert model_default.intrinsic_decay_rate == -0.5
+
+
+def test_build_rnd_forwards_bias_init_and_reward_norm_knobs():
+    """The factory forwards the run-3.2.3 RND knobs (bias scheme keyed by a_seed, reward
+    normalization + filter discount); a cfg without them falls back to the historical zero-bias,
+    no-normalization behavior. Guards the same silent-getattr-masking hazard as the run-3.2.1 test."""
+    import types
+    import torch
+    from rnd_exploration.methods import EnvContext
+
+    # cfg stub: normal_0.5 biases keyed by a_seed=7, reward normalization on with a non-default gamma
+    cfg = types.SimpleNamespace(
+        device="cpu",
+        rnd_output_dim=16,
+        rnd_obs_norm=False,
+        rnd_distance="mse",
+        n_predictors=1,
+        a_seed=7,
+        rnd_bias_init="normal_0.5",
+        rnd_reward_norm=True,
+        rnd_reward_norm_gamma=0.97,
+    )
+    ctx = EnvContext(obs_shape=(4,), action_dim=2, observation_space=None, action_space=None,
+                     position_wrapper=None, position_velocity_wrapper=None)
+    model = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    # golden path: every knob arrives on the model, biases are really nonzero, stats state exists
+    assert model.bias_init == "normal_0.5"
+    assert model.bias_seed == 7
+    assert model.reward_norm is True
+    assert model.reward_norm_gamma == 0.97
+    assert model.reward_rms is not None
+    assert torch.count_nonzero(model.target.network[0].bias) > 0
+    # edge case: a cfg WITHOUT the new attrs falls back to zero biases and no normalization
+    for attr in ("rnd_bias_init", "rnd_reward_norm", "rnd_reward_norm_gamma"):
+        delattr(cfg, attr)
+    model_default = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    assert model_default.bias_init == "zero"
+    assert model_default.reward_norm is False
+    assert model_default.reward_rms is None
+    assert torch.count_nonzero(model_default.target.network[0].bias) == 0
+    assert torch.count_nonzero(model_default.predictor.network[2].bias) == 0
+
+
+def test_build_rnd_forwards_original_rnd_knobs():
+    """The factory forwards the train-run-5 RND knobs (Adam lr, activation, deeper predictor,
+    keep-mask); a cfg without them falls back to the historical 1e-3 / relu / symmetric / full-batch
+    behavior. Guards the same silent-getattr-masking hazard as the earlier forwarding tests."""
+    import types
+    import torch
+    import torch.nn as nn
+    from rnd_exploration.methods import EnvContext
+
+    # cfg stub: the run-5 original-small knob values (obs-norm off so no warmup env is needed)
+    cfg = types.SimpleNamespace(
+        device="cpu", rnd_output_dim=16, rnd_obs_norm=False, rnd_distance="mse", n_predictors=1,
+        rnd_lr=1e-4, rnd_activation="leaky_relu", rnd_predictor_extra_layers=1,
+        rnd_update_proportion=1.0, rnd_bonus_readout="mse_mean",
+    )
+    ctx = EnvContext(obs_shape=(4,), action_dim=2, observation_space=None, action_space=None,
+                     position_wrapper=None, position_velocity_wrapper=None)
+    model = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    # golden path: every knob arrives on the model (lr reaches the Adam group, predictor is deeper)
+    assert model.opt.param_groups[0]["lr"] == pytest.approx(1e-4)
+    assert model.activation == "leaky_relu"
+    assert model.predictor_extra_layers == 1
+    assert model.bonus_readout == "mse_mean"
+    assert len([m for m in model.predictor.network if isinstance(m, nn.Linear)]) == 3
+    assert len([m for m in model.target.network if isinstance(m, nn.Linear)]) == 2
+    # edge case: a cfg WITHOUT the new attrs falls back to the historical defaults
+    for attr in ("rnd_lr", "rnd_activation", "rnd_predictor_extra_layers", "rnd_update_proportion",
+                 "rnd_bonus_readout"):
+        delattr(cfg, attr)
+    model_default = build_intrinsic_model("rnd_next_state", cfg, ctx)
+    assert model_default.opt.param_groups[0]["lr"] == pytest.approx(1e-3)
+    assert model_default.activation == "relu"
+    assert model_default.predictor_extra_layers == 0
+    assert model_default.update_proportion == 1.0

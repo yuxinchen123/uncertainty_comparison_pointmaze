@@ -5,6 +5,7 @@ replaces the four parallel structures the old code hand-maintained in lock-step:
 ``_algorithm_to_config``, 04's model-instantiation if/elif, and the ``ALGORITHM_NAMES`` /
 ``ALGORITHMS_NO_ACTION`` lists that lived in ``distance_to_GT/algorithm_vector.py``.
 """
+import hashlib
 from dataclasses import dataclass
 from typing import Any, Optional
 
@@ -66,26 +67,60 @@ class EnvContext:
     action_space: Any
     position_wrapper: Any            # PositionVisitCountWrapper (for gt_position)
     position_velocity_wrapper: Any   # PositionVelocityVisitCountWrapper (for gt_position_velocity)
+    env: Any = None                  # a fresh flat env for env-steps obs-RMS warmup (None otherwise)
 
 
-def _warmup_obs_rms(model: "RND", ctx: EnvContext) -> None:
-    """Seed an RND model's observation running-mean/std from 200 sampled transitions (exactly 04's
-    inline warmup). No-op if the model keeps no obs_rms (use_obs_norm=False)."""
+def _warmup_obs_rms(model: "RND", cfg: Any, ctx: EnvContext) -> None:
+    """Seed an RND model's observation running-mean/std before training. Two modes (cfg, duck-typed):
+    'space_sample' (default, exactly 04's inline warmup) draws obs/action from the env SPACES;
+    'env_steps' (original RND) rolls a random agent on a fresh env for rnd_obs_warmup_steps steps.
+    rnd_obs_warmup_steps defaults to 200. No-op if the model keeps no obs_rms (use_obs_norm=False)."""
     # only an RND with use_obs_norm has obs_rms; nothing to seed otherwise
     if getattr(model, "obs_rms", None) is None:
         return
-    # sample 200 (obs, next_obs, action) triples from the env spaces
-    # before: empty buffers; after: each is a list of 200 float32 arrays
-    obs_buf, next_buf, act_buf = [], [], []
-    for _ in range(200):
-        obs_buf.append(np.asarray(ctx.observation_space.sample(), dtype=np.float32))
-        next_buf.append(np.asarray(ctx.observation_space.sample(), dtype=np.float32))
-        act_buf.append(np.asarray(ctx.action_space.sample(), dtype=np.float32))
-    samples = {
-        "observations": np.stack(obs_buf, axis=0),       # (200, obs_dim)
-        "next_observations": np.stack(next_buf, axis=0), # (200, obs_dim)
-        "actions": np.stack(act_buf, axis=0),            # (200, action_dim)
-    }
+    mode = getattr(cfg, "rnd_obs_warmup_mode", "space_sample")
+    steps = int(getattr(cfg, "rnd_obs_warmup_steps", 200))
+    if mode == "space_sample":
+        # sample `steps` (obs, next_obs, action) triples from the env spaces (default 200 = 04's warmup)
+        # before: empty buffers; after: each is a list of `steps` float32 arrays
+        obs_buf, next_buf, act_buf = [], [], []
+        for _ in range(steps):
+            obs_buf.append(np.asarray(ctx.observation_space.sample(), dtype=np.float32))
+            next_buf.append(np.asarray(ctx.observation_space.sample(), dtype=np.float32))
+            act_buf.append(np.asarray(ctx.action_space.sample(), dtype=np.float32))
+        samples = {
+            "observations": np.stack(obs_buf, axis=0),       # (steps, obs_dim)
+            "next_observations": np.stack(next_buf, axis=0), # (steps, obs_dim)
+            "actions": np.stack(act_buf, axis=0),            # (steps, action_dim)
+        }
+    elif mode == "env_steps":
+        # original RND: roll a RANDOM agent on a FRESH env (ctx.env, its own visit-count maps so the
+        # training counts are untouched) for `steps` steps; collect (obs, next_obs, action) in time order.
+        if ctx.env is None:
+            raise ValueError("rnd_obs_warmup_mode='env_steps' needs ctx.env (a fresh flat env)")
+        # keyed warmup seed (rng-seeding rule): its own stream, so it never collides with the run seed
+        seed = int(hashlib.sha256(f"{getattr(cfg, 'a_seed', 0)}::rnd_obs_warmup".encode()).hexdigest(),
+                   16) & 0x7FFFFFFF
+        obs, _ = ctx.env.reset(seed=seed)
+        ctx.env.action_space.seed(seed)
+        obs_buf, next_buf, act_buf = [], [], []
+        for _ in range(steps):
+            action = ctx.env.action_space.sample()
+            next_obs, _, terminated, truncated, _ = ctx.env.step(action)
+            obs_buf.append(np.asarray(obs, dtype=np.float32))
+            next_buf.append(np.asarray(next_obs, dtype=np.float32))
+            act_buf.append(np.asarray(action, dtype=np.float32))
+            obs = next_obs
+            # reset on episode end (env_max_episode=400 => ~steps/400 episodes)
+            if terminated or truncated:
+                obs, _ = ctx.env.reset()
+        samples = {
+            "observations": np.stack(obs_buf, axis=0),
+            "next_observations": np.stack(next_buf, axis=0),
+            "actions": np.stack(act_buf, axis=0),
+        }
+    else:
+        raise ValueError(f"rnd_obs_warmup_mode must be 'space_sample' or 'env_steps'; got {mode!r}")
     # update obs_rms with whatever feature slice this RND mode consumes (obs / obs+act / +next_obs)
     x = model._get_feature_tensor(samples)
     model.obs_rms.update(x.detach().cpu().numpy())
@@ -107,7 +142,9 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
         model = RND(
             obs_shape=ctx.obs_shape,
             output_dim=cfg.rnd_output_dim,
-            lr=0.001,
+            # Adam/Adagrad predictor lr, duck-typed (default 0.001 = the historical hardcoded value;
+            # ignored by sgd1t, which uses sgd_eta0). Original RND uses 1e-4.
+            lr=getattr(cfg, "rnd_lr", 0.001),
             batch_size=256,
             device=cfg.device,
             use_obs_norm=cfg.rnd_obs_norm,
@@ -124,15 +161,31 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
             bonus_readout=getattr(cfg, "rnd_bonus_readout", "mse"),
             sgd_eta0=getattr(cfg, "rnd_sgd_eta0", 1e-2),
             sgd_t0=getattr(cfg, "rnd_sgd_t0", 1e3),
+            # run-3.2.3 / convergence-run-1 knobs, same duck-typed pattern: weight + bias
+            # initialization for both nets (keyed by the run seed so the bias draws match the
+            # 2026-07-10 bias-ablation fields) and the classic-RND intrinsic reward normalization
+            # (off by default = historical behavior)
+            weight_init=getattr(cfg, "rnd_weight_init", "orthogonal"),
+            bias_init=getattr(cfg, "rnd_bias_init", "zero"),
+            bias_seed=getattr(cfg, "a_seed", 0),
+            reward_norm=getattr(cfg, "rnd_reward_norm", False),
+            reward_norm_gamma=getattr(cfg, "rnd_reward_norm_gamma", 0.99),
+            # train-run-5 original-RND knobs, same duck-typed pattern (defaults reproduce the historical
+            # relu / symmetric / full-batch behavior): hidden activation, deeper predictor, keep-mask.
+            activation=getattr(cfg, "rnd_activation", "relu"),
+            predictor_extra_layers=getattr(cfg, "rnd_predictor_extra_layers", 0),
+            update_proportion=getattr(cfg, "rnd_update_proportion", 1.0),
         )
         if cfg.rnd_obs_norm:
-            _warmup_obs_rms(model, ctx)
+            _warmup_obs_rms(model, cfg, ctx)
         return model
-    # VisitCount (oracle bonus): pick the visit-count wrapper the spec names
+    # VisitCount (oracle bonus): pick the visit-count wrapper the spec names; the count->bonus decay
+    # exponent is read from cfg (duck-typed via getattr; default -0.5 => 1/sqrt(n), -1 => 1/n) so
+    # methods/ never imports train.py and a cfg without the field reproduces the historical 1/sqrt(n).
     if spec.kind == "visit_count":
         wrapper = (ctx.position_velocity_wrapper if spec.gt_wrapper_kind == "position_velocity"
                    else ctx.position_wrapper)
-        return VisitCount(wrapper)
+        return VisitCount(wrapper, intrinsic_decay_rate=getattr(cfg, "visit_count_decay", -0.5))
     # Elliptical family (Mahalanobis / UCB bonus): one shared config; the class is picked by
     # elliptical_mode. The ridge λ, feature normalization, update timing, and encoder input are read
     # from cfg (duck-typed via getattr so methods/ never imports train.py); they default to the
