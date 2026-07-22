@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.06}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} cccc@{}}
+\toprule
+\textbf{Optimizer configuration} & \textbf{env 1.1} & \textbf{env 1.2} & \textbf{env 2} & \textbf{aggregate} \\
+\midrule
+Adam $\mathrm{lr}\,10^{-5}$ & $-1.046 \pm 0.001$ & $-1.122 \pm 0.002$ & $-1.029 \pm 0.001$ & $-1.058 \pm 0.001$ \\
+Adam $\mathrm{lr}\,10^{-4}$ & $-1.404 \pm 0.003$ & $-1.590 \pm 0.004$ & $-1.267 \pm 0.002$ & $-1.374 \pm 0.004$ \\
+Adam $\mathrm{lr}\,10^{-3}$ & $-1.46 \pm 0.01$ & $-1.14 \pm 0.01$ & $-0.821 \pm 0.002$ & $-0.957 \pm 0.003$ \\
+SGD-$1/t$ $\eta_0\,10^{-3}$ $t_0\,10^{2}$ & $-1.31 \pm 0.01$ & $-2.66 \pm 0.02$ & $-0.92 \pm 0.01$ & $-1.03 \pm 0.01$ \\
+SGD-$1/t$ $\eta_0\,10^{-3}$ $t_0\,10^{3}$ & $-1.37 \pm 0.01$ & $-1.99 \pm 0.02$ & $-0.96 \pm 0.01$ & $-1.13 \pm 0.01$ \\
+SGD-$1/t$ $\eta_0\,10^{-3}$ $t_0\,10^{4}$ & $-1.19 \pm 0.01$ & $-1.83 \pm 0.01$ & $-0.84 \pm 0.01$ & $-0.93 \pm 0.01$ \\
+SGD-$1/t$ $\eta_0\,10^{-2}$ $t_0\,10^{2}$ & $-1.09 \pm 0.03$ & $-2.27 \pm 0.08$ & $-0.605 \pm 0.004$ & $-0.68 \pm 0.01$ \\
+SGD-$1/t$ $\eta_0\,10^{-2}$ $t_0\,10^{3}$ & \underline{$-0.46 \pm 0.01$} & \textbf{$-0.73 \pm 0.03$} & \underline{$-0.512 \pm 0.003$} & \textbf{$-0.478 \pm 0.004$} \\
+SGD-$1/t$ $\eta_0\,10^{-2}$ $t_0\,10^{4}$ & \textbf{$-0.53 \pm 0.02$} & \underline{$-0.84 \pm 0.02$} & $-0.479 \pm 0.003$ & \underline{$-0.409 \pm 0.003$} \\
+SGD-$1/t$ $\eta_0\,10^{-1}$ $t_0\,10^{2}$ & $-1.34 \pm 0.01$ & $-2.63 \pm 0.01$ & $-0.574 \pm 0.004$ {\scriptsize(2/4)} & $-0.81 \pm 0.01$ {\scriptsize(2/4)} \\
+SGD-$1/t$ $\eta_0\,10^{-1}$ $t_0\,10^{3}$ & $-0.91 \pm 0.01$ & $-2.71 \pm 0.01$ & \textbf{$-0.512 \pm 0.004$ {\scriptsize(2/4)}} & $-0.71 \pm 0.01$ {\scriptsize(2/4)} \\
+SGD-$1/t$ $\eta_0\,10^{-1}$ $t_0\,10^{4}$ & $-0.943 \pm 0.004$ & $-2.72 \pm 0.01$ & $-0.447 \pm 0.003$ {\scriptsize(2/4)} & $-0.60 \pm 0.01$ {\scriptsize(2/4)} \\
+\bottomrule
+\end{tabular}
+\caption{Optimizer hyperparameter effect on the fitted slope (per-seed fits, slopes averaged over the four initializations within each seed, then mean $\pm$ standard error over the 30 seeds). Best per column (closest to $-1/2$) bold, second underlined. ``div.''\ marks cells whose runs all diverged; ``($k$/4)'' marks cells where only $k$ of the 4 initializations survived (SGD-$1/t$ at $\eta_0\,10^{-1}$ on env~2 diverged for I3/I4 at every $t_0$).}
+\label{tab:convergence-run1-opt-effect}
+\end{table}

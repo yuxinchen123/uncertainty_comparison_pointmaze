@@ -66,8 +66,9 @@ log_distance False, device cpu, SAC γ 0.999, SB3 MlpPolicy defaults.
   `train.py` (Config fields + argparse + logging). Full suite: 186 tests pass.
 - Reference implementations (RND paper + CleanRL + ExPLORe) fact sheets: in the writeup's dev-doc
   `code/` folder; the tex `\subsection{Train run 5}` presents the cross-implementation table.
-- **Git commit (Phase-1 commit-before-submit rule):** `<FILLED AT COMMIT>` — the repo is committed
-  and pushed before the sweep is submitted, so git reflects exactly the code that ran.
+- **Git commit (Phase-1 commit-before-submit rule):** `e56dbbd` (branch Use-RLexplore-RND, pushed to
+  origin 2026-07-20) — the repo is committed and pushed before the sweep is submitted, so git
+  reflects exactly the code that ran.
 
 ## Launch / monitoring
 

@@ -1,0 +1,308 @@
+% ============================================================================================
+% Train run 5 (set baseline: original RND) — REVIEWABLE DRAFT FRAGMENT
+% Splice as the LAST \subsection of \section{Train runs} (after Train run 4, before
+% \section{Convergence rate runs}). Do NOT compile in place until spliced.
+% ============================================================================================
+\subsection{Train run 5 (set baseline: original RND)}
+\label{sec:train-run-5}
+
+\paragraph{Run.}
+Train run~5 fixes a clean baseline: three RND configurations, each on $300$ fresh seeds
+(\texttt{a\_\allowbreak seed} $600$--$899$, disjoint from the $0$--$599$ used by every prior run),
+same SAC / \texttt{PointMaze\_\allowbreak Large-v3} stack and training-episode metric as run~3.2.4.
+The three arms are:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{original-small} --- the \emph{original} RND recipe \citep{burda2019exploration}
+  transplanted onto this task on the train-run-3 RND network size, swept over eight intrinsic
+  weights that race under a pruning controller;
+\item \textbf{C2} --- the run-3.2.2 RND benchmark (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
+  no reward normalization), re-run at $300$ seeds; and
+\item \textbf{N1} --- the run-3.2.3 reward-normalized winner (Adam, $\mathcal{B}_{\mathrm{mse}}$,
+  $\beta{=}10^{4}$, reward normalization $\gamma_{\mathrm{norm}}{=}0.99$), re-run at $300$ seeds.
+\end{enumerate}
+
+\paragraph{Purpose.}
+Two goals. First, the project has always compared its bonuses against its own ``RND benchmark''
+(the C2 line), never against a faithful \emph{original} RND; original-small is that reference,
+assembling the scattered original-RND facts of Section~\ref{sec:rnd-norm} and
+Table~\ref{tab:rnd-norm} / Table~\ref{tab:trainrun3-2-2-rnd-init} into one run. Second, C2 and N1
+already have fresh-seed data (runs 3.2.2/3.2.3/3.2.4); re-running them at $300$ seeds lets us test,
+per previous run, whether the new data differs enough to stand alone or whether the old data may be
+pooled in --- the substitution check under \emph{Results}.
+
+% -------- train run 3 RND definition table --------
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\toprule
+\textbf{Name} & \textbf{Which train run(s)} & \textbf{RND config on the shared base} \\
+\midrule
+\textbf{train run 3 RND (base)} & runs 3.1.1--3.2.4 &
+  next-state input $s'$; target $\equiv$ predictor (symmetric)
+  $=\;$state$(4)\!\to\!256\!\to\!\mathrm{ReLU}\!\to\!128$; orthogonal gain $\sqrt2$; zero bias;
+  obs-norm RMS clip $[-5,5]$; output $m{=}128$ \\
+\textbf{C2} (train run 3.2.2) & \S\ref{sec:train-run-3-2-2}, seeds $100$--$199$
+  (origin \S\ref{sec:train-run-3-1-1}) & $+$ Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
+  \emph{no} reward normalization \\
+\textbf{N1} (train run 3.2.3) & \S\ref{sec:train-run-3-2-3} seeds $0$--$99$; validated
+  \S\ref{sec:train-run-3-2-4} seeds $500$--$599$ & $+$ Adam, $\mathcal{B}_{\mathrm{mse}}$,
+  $\beta{=}10^{4}$, reward normalization $\gamma_{\mathrm{norm}}{=}0.99$ \\
+\bottomrule
+\end{tabular}
+\caption{The project's previous RND, defined once as \emph{train run 3 RND}. All of train run 3
+shares the base architecture; C2 and N1 are two configurations of it, and are the two own-RND arms
+re-run here. original-small borrows only this network's \emph{widths} (see below).}
+\label{tab:trainrun5-trainrun3-rnd}
+\end{table}
+
+\paragraph{Original RND, component by component.}
+Before the translation we restate the original recipe one component at a time, each time giving the
+original \citep{burda2019exploration} value, then CleanRL's \citep{huang2022cleanrl}, then --- where
+it is informative --- ExPLORe's \citep{li2023accelerating} state-input RND. The two Atari references
+run no continuous-control task (verified: the original repository and paper evaluate only Atari plus
+an MNIST toy, and CleanRL's only RND is the Atari envpool script), so ExPLORe supplies the
+state/continuous reference. The full cell-by-cell values are in Table~\ref{tab:trainrun5-hparams}.
+
+\paragraph{State normalization.}
+The original whitens the RND input by a running mean/std with a clip to $[-5,5]$ (no denominator
+$\epsilon$), and seeds those statistics from a random agent before training: $128$ parallel copies
+$\times\,50$ steps $=6400$ warm-up transitions. CleanRL is identical except it excludes the initial
+reset observations from the warm-up. ExPLORe applies \emph{no} state normalization at all --- the
+predictor and target consume the raw state-action vector.
+
+\paragraph{Intrinsic reward normalization.}
+Define $r^{\mathrm{int}}_t$ as the raw bonus on the transition collected at step $t$,
+$\gamma_{\mathrm{norm}}$ as the intrinsic discount ($=0.99$), $F_t$ as the forward-filtered
+intrinsic return (one accumulator per environment copy, not reset at episode boundaries;
+$F_0=r^{\mathrm{int}}_0$),
+and $\sigma_F$ as the running standard deviation of all filter values so far. The original filter
+and normalized reward are
+\begin{align}
+F_t = \gamma_{\mathrm{norm}}\,F_{t-1} + r^{\mathrm{int}}_t,
+\qquad
+\hat{r}^{\mathrm{int}}_t = r^{\mathrm{int}}_t / \sigma_F ,
+\end{align}
+with no mean subtracted, so the bonus stays non-negative. CleanRL implements the same filter and
+running-std division with $\gamma_{\mathrm{norm}}{=}0.99$. ExPLORe uses \emph{no} reward
+normalization --- its bonus is the raw distillation error times a constant coefficient
+($\mathrm{coeff}{=}1.0$).
+
+\paragraph{Target and predictor architecture.}
+The original target is a three-layer convolutional trunk (LeakyReLU) followed by a single linear
+projection to $m{=}512$; the predictor is a \emph{separate} network of the same trunk architecture
+(independently initialized, no weight sharing) that adds \emph{two} extra $512$-wide ReLU layers
+before its $512$-output --- the predictor is deliberately \emph{deeper} than the target.
+Both use orthogonal initialization with gain $\sqrt2$ and zero biases. CleanRL matches this shape
+(its convolutional LeakyReLU slope is the PyTorch default $0.01$ rather than the original's $0.2$).
+ExPLORe departs sharply: a state-action MLP with hidden widths $(256,256,256)$ and a $256$-feature
+head, Xavier/Glorot initialization, and predictor \emph{identical} to the target (symmetric, no
+extra depth).
+
+\paragraph{Bonus readout.}
+Let $e\in\mathbb{R}^m$ be the per-dimension error between target and predictor features. The
+original reads out the bonus as the \emph{mean} over dimensions,
+$\tfrac1m\sum_j e_j^2$ (no $\tfrac12$ factor), and trains the predictor with the same reduction.
+CleanRL instead reports the bonus as $\tfrac12\sum_j e_j^2$ (a sum, halved) while --- inconsistently
+--- taking the mean over dimensions in the predictor \emph{loss}. ExPLORe uses the same
+mean-over-dimensions readout as the original paper (times its constant coefficient).
+
+\paragraph{Predictor optimizer and update proportion.}
+The original trains the predictor with Adam at learning rate $10^{-4}$ (betas $(0.9,0.999)$,
+$\epsilon{=}10^{-8}$), inside one joint optimizer that also carries the policy and value networks,
+with no gradient clipping. CleanRL is the same except $\epsilon{=}10^{-5}$ and a global-norm
+gradient clip of $0.5$. On the fraction of each batch used to train the predictor there is a
+documentation-vs-code split worth stating plainly: the RND paper's Table~5 lists an update
+proportion of $0.25$, and CleanRL uses $0.25$, but the \emph{original repository's own code}
+defaults to $1.0$ (train on the whole batch). ExPLORe takes one Adam step ($3\times10^{-4}$) per
+environment step on a single fresh transition, with no subsampling.
+
+\paragraph{The RL side.}
+The original and CleanRL are PPO with \emph{two} value heads: an intrinsic head trained on
+non-episodic returns (intrinsic discount $\gamma_{\mathrm{int}}{=}0.99$) and an extrinsic head on
+episodic returns (extrinsic discount $\gamma_{\mathrm{ext}}$; the original code uses $0.99$, its
+paper and CleanRL use $0.999$). The two advantages are combined with an extrinsic coefficient of
+$2$ and an intrinsic coefficient of $1$ --- a $2\!:\!1$ extrinsic-to-intrinsic weighting, run with
+$128$ parallel environments. ExPLORe instead runs RLPD (SAC with a $50/50$ offline/online replay
+mix, UTD $20$, one environment) and \emph{adds} the bonus directly to the scalar reward with no
+separate value head. The project's own RND (train run 3) and run~5 likewise use SAC with a single
+reward stream $r^{\mathrm{ext}}+\beta\,r^{\mathrm{int}}$.
+
+\paragraph{From Atari-PPO to PointMaze-SAC: the translation choices.}
+original-small keeps the original RND settings above wherever the SAC/PointMaze/state setting allows,
+and makes the following explicit translations:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{CNN $\to$ MLP.} The $84\times84$ convolutional trunk becomes a fully-connected trunk
+  on the $4$-dimensional state $(x,y,v_x,v_y)$.
+\item \textbf{Small widths, deeper predictor.} original-small takes the train-run-3 RND \emph{widths}
+  ($256$ hidden, output $m{=}128$) but keeps the original's defining \emph{asymmetry}: the predictor
+  is one $128$-wide LeakyReLU$(0.2)$ block deeper than the target. Target
+  $=\;$state$(4)\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$; predictor
+  $=\;$state$(4)\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128\!\to\!\mathrm{LReLU}\!\to\!128$ (output
+  dim stays $128$ so the distillation error dimension matches the target).
+\item \textbf{Activation.} LeakyReLU with negative slope $0.2$ --- the original's
+  \texttt{tf.nn.\allowbreak leaky\_\allowbreak relu} default, \emph{not} PyTorch's $0.01$ (which is
+  what CleanRL inherits).
+\item \textbf{Readout.} the original mean-over-dimensions $\tfrac1m\sum_j e_j^2$
+  (\texttt{mse\_\allowbreak mean}).
+\item \textbf{Optimizer.} Adam at $10^{-4}$, $\epsilon{=}10^{-8}$ (the original's value).
+\item \textbf{Update proportion $1.0$.} following the original \emph{repository code} default (train
+  on the whole replay batch), not the paper's Table-5 value of $0.25$.
+\item \textbf{Warm-up.} $6400$ random-agent environment steps (the original's count), rolled on a
+  fresh throwaway environment so the training visit counts are untouched.
+\item \textbf{Reward normalization.} on, $\gamma_{\mathrm{norm}}{=}0.99$.
+\item \textbf{Single reward stream.} SAC forms $r^{\mathrm{ext}}+\beta\,r^{\mathrm{int}}$ in the
+  replay buffer; there is no separate intrinsic value head, so the $2\!:\!1$ advantage weighting
+  becomes a single scalar $\beta$. The point $\beta{=}0.5$ is the faithful counterpart of the
+  original's $2\!:\!1$ extrinsic-to-intrinsic ratio.
+\end{enumerate}
+
+\paragraph{Beta sweep and pruning.}
+original-small sweeps $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight betas
+race: let $\bar R_\beta$, $s_\beta$, and $n_\beta$ be the mean, sample standard deviation, and count
+of a beta's finished-seed final training-episode rewards, and let the \emph{bar} be the largest
+$\bar R_\beta$ over betas with $n_\beta\ge 30$. A beta is stopped once
+\begin{align}
+n_\beta \ge 30
+\qquad\text{and}\qquad
+\bar R_\beta + 2.576\,\frac{s_\beta}{\sqrt{n_\beta}} \;<\; \mathrm{bar}
+\end{align}
+(its one-sided $99\%$ upper confidence limit sits below the running best mean); survivors run to the
+full $300$ seeds. C2 and N1 never prune and run all $300$ seeds.
+
+\paragraph{Pipeline.}
+Figure~\ref{fig:trainrun5-pipeline} traces the original RND data flow --- environment step, next
+state, observation whitening, frozen target and trainable predictor, per-dimension error, readout,
+forward-filter reward normalization, $\beta$-scaling, and the sum with the extrinsic reward feeding
+the RL update --- with CleanRL's departures marked as callouts: its predictor \emph{update} feeds
+the stored current-step observation rather than the next observation; its convolutional LeakyReLU
+slope is $0.01$; it clips gradients at global norm $0.5$; and it normalizes advantages per
+minibatch. original-small follows the original everywhere the figure's solid path runs (next-state
+input throughout, no gradient clip), on SAC's single reward stream.
+
+% ============================================================================================
+% BIG hyperparameter table — columns by source; architecture as net-pipeline strings.
+% Table-48 machinery: \footnotesize, tabcolsep 3pt, \resizebox to \textwidth, p{} cols,
+% \allowbreak in long \texttt, \multicolumn group-header rows and shared-value collapses, --- for N/A.
+% ============================================================================================
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{2.5cm}
+>{\raggedright\arraybackslash}p{2.5cm}
+>{\raggedright\arraybackslash}p{3.2cm}@{}}
+\toprule
+& & & & \multicolumn{2}{c}{\textbf{train run 3 RND}} & \\
+\cmidrule(lr){5-6}
+\textbf{Hyperparameter} &
+\textbf{RND paper} &
+\textbf{CleanRL} &
+\textbf{ExPLORe} &
+\textbf{C2} & \textbf{N1} &
+\textbf{run 5 (this work)} \\
+& \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
+\small(no norm) & \small(reward norm) & \small(original-small) \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
+algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{3}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
+parallel envs & $128$ & $128$ & $1$ & \multicolumn{3}{c}{$1$} \\
+on/off-policy & on-policy & on-policy & off-policy replay & \multicolumn{3}{c}{off-policy replay} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{RND input \& preprocessing}} \\
+RND input & next frame $s'$ ($84{\times}84$) & next frame $s'$ & concat$(s,a)$, current &
+  \multicolumn{2}{c}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) \\
+preprocessing & grayscale, sticky $0.25$ & grayscale, sticky $0.25$ & --- &
+  \multicolumn{3}{c}{--- (raw state)} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Network architecture \& initialization}} \\
+target net & conv$\times$3$\to$fc$512$ & conv$\times$3$\to$fc$512$ &
+  $(s,a)\to256\to256\to256\to256$ &
+  \multicolumn{2}{c}{$s'\!\to\!256\!\to\!128$} &
+  $s'\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$ \\
+predictor net & conv$\times$3$\to$fc$512$\allowbreak$\to$$512$$\to$$512$ (2 deeper) &
+  same (2 deeper) & same as target (symmetric) &
+  \multicolumn{2}{c}{$=$ target (symmetric)} &
+  $\dots128\!\to\!\mathrm{LReLU}\!\to\!128$ (\textbf{1 deeper}) \\
+output dim $m$ & $512$ & $512$ & $256$ & \multicolumn{2}{c}{$128$} & $128$ \\
+activation & LeakyReLU $0.2$ & LeakyReLU $0.01$ & ReLU & \multicolumn{2}{c}{ReLU} & LeakyReLU $0.2$ \\
+weight init & orthogonal $\sqrt2$ & orthogonal $\sqrt2$ & Xavier/Glorot &
+  \multicolumn{3}{c}{orthogonal $\sqrt2$} \\
+bias init & zero & zero & zero & \multicolumn{3}{c}{zero} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{State normalization}} \\
+obs norm & RMS, clip $\pm5$ & RMS, clip $\pm5$ & none &
+  \multicolumn{3}{c}{RMS, clip $\pm5$ (denom $\mathrm{var}{+}10^{-8}$)} \\
+warm-up & $6400$ steps ($128{\times}50$) & $6400$ ($50{\times}128$) & --- &
+  \multicolumn{2}{c}{$200$ obs-space draws} & $6400$ env steps (fresh env) \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Bonus readout}} \\
+readout & $\tfrac1m\sum_j e_j^2$ & $\tfrac12\sum_j e_j^2$ & $\tfrac1m\sum_j e_j^2\times\mathrm{coeff}$ &
+  \multicolumn{2}{c}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Reward normalization}} \\
+reward norm & running std, $\gamma{=}0.99$ & running std, $\gamma{=}0.99$ & none &
+  no & $\gamma{=}0.99$ & $\gamma{=}0.99$ \\
+non-episodic filter & yes & yes & --- & --- & yes & yes \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Predictor optimizer \& update}} \\
+optimizer & Adam $10^{-4}$ & Adam $10^{-4}$ & Adam $3{\times}10^{-4}$ &
+  \multicolumn{2}{c}{Adam $10^{-3}$} & Adam $10^{-4}$ \\
+Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c}{$10^{-8}$} & $10^{-8}$ \\
+update proportion & $0.25$ (paper); $1.0$ (repo code) & $0.25$ & $1.0$ (batch $1$) &
+  \multicolumn{2}{c}{$1.0$} & $1.0$ \\
+gradient clip & none & $0.5$ & none & \multicolumn{2}{c}{none} & none \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Value heads}} \\
+value heads & dual ($V^{\mathrm{int}}\!/\!V^{\mathrm{ext}}$) & dual & single (bonus $\to$ reward) &
+  \multicolumn{3}{c}{single ($r^{\mathrm{ext}}{+}\beta r^{\mathrm{int}}$)} \\
+$\gamma_{\mathrm{int}}/\gamma_{\mathrm{ext}}$ & $0.99/0.99$ (paper $0.999$) & $0.99/0.999$ & $-/0.99$ &
+  \multicolumn{3}{c}{$-/0.999$} \\
+adv.\ weighting & ext $2$ : int $1$ & ext $2$ : int $1$ & coeff $1.0$ &
+  $\beta{=}100$ & $\beta{=}10^{4}$ & $\beta$ swept; $0.5$ faithful \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Fixed env \& SAC block (project columns)}} \\
+env & Atari & Atari & D4RL antmaze/adroit & \multicolumn{3}{c}{\texttt{PointMaze\_\allowbreak Large-v3}, top-right} \\
+SAC / steps & --- & --- & UTD $20$ & \multicolumn{3}{c}{SB3 defaults (lr $3{\times}10^{-4}$), $10^{6}$ steps} \\
+seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Train run~5 hyperparameters by source. Columns are the two Atari references (the RND paper
+\citep{burda2019exploration} and CleanRL \citep{huang2022cleanrl}), the state-input reference ExPLORe
+\citep{li2023accelerating}, the project's previous RND (its two configurations C2 and N1,
+Table~\ref{tab:trainrun5-trainrun3-rnd}), and run~5's original-small arm. Rows spanning several
+columns share a value; ``---'' marks a knob a source does not use. Architecture is written as one
+network-pipeline string per net. There is no continuous-control column for the two Atari references:
+neither the original RND repository/paper nor CleanRL evaluates a MuJoCo/continuous-control task
+(verified), so ExPLORe supplies the state-input reference. original-small follows the RND paper on
+every non-architecture knob (readout, Adam $10^{-4}$/$\epsilon\,10^{-8}$, warm-up, reward norm) and
+the original \emph{repository code} on the update proportion ($1.0$); it takes the train-run-3 RND
+widths but keeps the original's deeper-predictor asymmetry (one extra $128$-wide block).}
+\label{tab:trainrun5-hparams}
+\end{table}
+
+\paragraph{Results.}
+\claudecomment{PENDING the sweep (3000 runs, seeds 600--899, launched 2026-07-20). At completion:
+(1) \texttt{\textbackslash input} the performance table \texttt{analysis/plots/reward\_table.tex}
+(rows original-small winning $\beta$, C2, N1 with the old-C2/old-N1 reference rows; final
+training-episode reward $\bar R$ $\pm$ SE, success fraction, $n$; bold best / underline second) and
+the beta-sweep table; (2) \texttt{\textbackslash includegraphics} the reward-over-training curve
+\texttt{analysis/plots/reward\_curve.pdf}; (3) fill the per-run substitution verdict --- for each old
+run (3.2.2 and 3.1.1 for C2; 3.2.3 and 3.2.4 for N1) a Welch $t$-test, Cohen's $d$, and KS statistic
+vs the run-5 fresh line for the same \texttt{config\_key}, with the pre-registered rule
+``substantially different iff $p<0.01$ and $|d|>0.3$'', plus an executed-path code-diff audit;
+substitute (pool) exactly the old runs that pass both gates, noting the provenance in one short
+clause. Old run folders stay byte-untouched.}
+\claudecomment{Citation keys \texttt{li2023accelerating} (ExPLORe, Li et al., NeurIPS 2023) and
+\texttt{rnd\_code} (the openai/random-network-distillation repository) are used above and need
+matching \texttt{bibliography.bib} entries pasted by the author; the build warns ``Citation
+undefined'' until then.}

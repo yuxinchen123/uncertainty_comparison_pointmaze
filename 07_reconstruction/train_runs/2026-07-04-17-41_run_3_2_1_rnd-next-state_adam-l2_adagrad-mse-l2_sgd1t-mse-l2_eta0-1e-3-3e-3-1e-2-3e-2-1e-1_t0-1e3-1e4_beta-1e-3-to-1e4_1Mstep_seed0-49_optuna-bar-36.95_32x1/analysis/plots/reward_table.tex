@@ -1,0 +1,16 @@
+% Run 3.2.1: best configuration per (optimizer, readout), scored on final training-episode
+% extrinsic reward. Row 4 (Adam, mse) is the run-3.1.1 reference arm (not swept in run 3.2.1).
+% Higher reward is better; rows sorted by Rbar descending; in the Rbar and succ. columns the best
+% is bold and the second-best underlined.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.5cm} c c c c r r r r@{}}
+\toprule
+\textbf{Method} & \textbf{Readout} & \textbf{$\beta^\star$} & \textbf{$\eta_0^\star$} & \textbf{$t_0^\star$} & \textbf{$\bar{R}$ ($\uparrow$)} & \textbf{SE} & \textbf{succ.} & \textbf{$n$} \\
+\midrule
+O3 SGD-$1/t$ & $\mathcal{B}_{\mathrm{mse}}$ & $10$ & $0.1$ & $10^{3}$ & \textbf{47.64} & 5.24 & \underline{0.77} & 48 \\
+O3 SGD-$1/t$ & $\mathcal{B}_{\mathrm{l2}}$ & $1$ & $10^{-2}$ & $10^{4}$ & \underline{45.33} & 5.50 & \textbf{0.79} & 47 \\
+O2 AdaGrad & $\mathcal{B}_{\mathrm{mse}}$ & $10^{2}$ & --- & --- & 38.35 & 4.75 & \underline{0.77} & 47 \\
+O1 Adam (run-3.1.1 ref.) & $\mathcal{B}_{\mathrm{mse}}$ & $10^{2}$ & --- & --- & 35.15 & 3.80 & 0.75 & 52 \\
+O2 AdaGrad & $\mathcal{B}_{\mathrm{l2}}$ & $1$ & --- & --- & 34.11 & 4.79 & 0.71 & 48 \\
+O1 Adam & $\mathcal{B}_{\mathrm{l2}}$ & $1$ & --- & --- & 26.15 & 4.11 & 0.55 & 49 \\
+\bottomrule
+\end{tabular}

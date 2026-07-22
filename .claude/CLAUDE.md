@@ -5,8 +5,10 @@ This is `/p/rlprojects/RND/` — a series of classic deep-RL experiments on **in
 independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 
 ## Python environment
-- Run all Python through **`conda run -n exploration python …`** (Python 3.11) — the real cluster env
-  (`/u/sl5nw/.conda/envs/exploration`).
+- Run all Python through the SHARED canonical env **`/p/rlprojects/RND/.venvs/exploration/bin/python …`**
+  (Python 3.11; registry `.venvs/ENVS.md`). `conda run -n exploration` (the private
+  `/u/sl5nw/.conda/envs/exploration`) is RETIRED for new work — identical clone, kept only to
+  reproduce runs launched <= 3.2.3.
 - NOTE: `07_reconstruction/SETUP.md` documents a generic `conda create -n rnd python=3.10`, but the
   actual runs use **`exploration` / 3.11** — prefer `exploration`. Dependencies in `requirements.txt`
   (torch, gymnasium, gymnasium-robotics, stable-baselines3, wandb).
@@ -17,11 +19,21 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
   under `distance_to_gt/*`. Per-run logging convention: see `.claude/rules/wandb-logging.md`.
 
 ## Slurm
-- **RND's Slurm usage convention is the project rule `.claude/rules/slurm.md`** — numbered
-  `0X_run_<partition>.slurm` agent scripts fanned out at one wandb sweep by `00_batch_slurm.sh`
-  (partitions `gpu`/`gnolim`/`cpu`/`nolim`); the launching shell must have `exploration` active
-  before `sbatch`. This convention is intentionally project-level (RND's Slurm usage differs from
-  the other projects on this cluster).
+- **Large CPU sweeps follow the SHARED skill
+  `/p/rlprojects/.claude/skills/submit-cpu-sweep/SKILL.md`** (moved there 2026-07-11; readable by
+  every rlprojects member): how to submit (reservation discovery per user, partition buckets, gpu
+  allowlist filled lowest-GPU-capability first, job shapes, `srun --wait=0`, capacity planning
+  over each user's own pools) plus the local file work queue (sweep ids, seed-outermost run ids,
+  per-run JSON logging). The project stubs `.claude/rules/slurm-submission.md` and
+  `.claude/rules/run-id-and-logging.md` keep the RND-specific facts (paths, scripts, record
+  format). Collaborators adding workers to a live run follow that run's
+  `for_collaborator/README.md`.
+- The launch and worker scripts call the env's python by full path, so no conda activation is
+  needed at `sbatch` time. The canonical project env is the SHARED
+  `/p/rlprojects/RND/.venvs/exploration/bin/python` (registry: `.venvs/ENVS.md`; the old private
+  `/u/sl5nw/.conda/envs/exploration` is retired — kept only to reproduce runs launched <= 3.2.3).
+- The old `wandb agent` fan-out convention (`.claude/rules/slurm.md`) was deleted 2026-07-08 —
+  superseded by the work-queue convention above.
 - Shared cluster hardware/network facts (jaguar03 specs, gpu-partition CPU sizing): the global
   `cluster-slurm.md` rule.
 

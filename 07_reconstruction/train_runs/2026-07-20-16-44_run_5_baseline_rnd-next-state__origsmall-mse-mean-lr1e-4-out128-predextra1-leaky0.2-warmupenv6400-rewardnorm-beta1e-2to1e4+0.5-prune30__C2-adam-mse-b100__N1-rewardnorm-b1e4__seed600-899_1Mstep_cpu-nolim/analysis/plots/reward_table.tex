@@ -1,0 +1,12 @@
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r@{}}
+\toprule
+\textbf{Arm} & $\bar R$ & $\mathrm{SE}$ & succ. & $n$ \\
+\midrule
+original-small ($\beta{=}1000$) & 39.94 & 2.05 & 0.79 & 227 \\
+C2 (Adam, no norm) & 36.19 & 2.02 & 0.72 & 234 \\
+N1 (Adam, reward norm) & \textbf{47.56} & 1.99 & \textbf{0.89} & 233 \\
+\midrule
+C2 (run 3.2.2) & 34.50 & 3.13 & 0.69 & 100 \\
+N1 (run 3.2.4) & \underline{43.71} & 3.24 & \underline{0.84} & 100 \\
+\bottomrule
+\end{tabular}

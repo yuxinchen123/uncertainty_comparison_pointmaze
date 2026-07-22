@@ -134,3 +134,23 @@ debug/
 
 # Cloned reference implementations (RND paper repo, CleanRL, ExPLORe) — large, not tracked
 reference_repos/
+# The ExPLORe clone that used to sit at the repo root was deleted 2026-07-22; the one kept copy is
+# /p/rlprojects/RLforOR/accelerating_exploration_with_unlabeled_prior_data/explore. This keeps a
+# future re-clone here out of git (the existing "explore/" line above only covers the lowercase name).
+/ExPLORe/
+
+# Optuna controller state inside a run folder (journal log, per-trial decisions, SWEEP_COMPLETE
+# sentinel) — regenerable run state, same treatment as the slurm/ and queue/ folders. The tutorial
+# folder 07_reconstruction/optuna/ is NOT covered by this and stays tracked.
+07_reconstruction/train_runs/**/optuna/
+
+# Work-queue folders inside a run folder (pending/running/done/failed job configs)
+07_reconstruction/train_runs/**/queue/
+
+# Lock files written next to the collaborator job-id files while a worker appends to them
+*.lock
+
+# Optuna / sqlite storage backends
+*.db
+*.sqlite
+*.sqlite3
