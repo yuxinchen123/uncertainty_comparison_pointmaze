@@ -13,10 +13,6 @@ import torch
 from rnd_exploration.metrics.full_observation_list import (
     full_observation_list,
     VELOCITY_N_BINS,
-    LEFT,
-    RIGHT,
-    BOTTOM,
-    TOP,
 )
 from rnd_exploration.metrics.algorithm_vector import (
     compute_intrinsic_vector_distance,
@@ -129,8 +125,10 @@ def test_full_observation_list_velocity_bins_and_bounds():
     maze = _small_int_maze()
     obs_arr = np.stack(full_observation_list(maze))
     xs, ys, vxs, vys = obs_arr[:, 0], obs_arr[:, 1], obs_arr[:, 2], obs_arr[:, 3]
-    assert xs.min() >= LEFT and xs.max() <= RIGHT
-    assert ys.min() >= BOTTOM and ys.max() <= TOP
+    # the world extent is derived from the grid shape (cells of 1 m, centered at the origin)
+    rows, cols = maze.shape
+    assert xs.min() >= -cols / 2.0 and xs.max() <= cols / 2.0
+    assert ys.min() >= -rows / 2.0 and ys.max() <= rows / 2.0
     # the first cell's block of VELOCITY_N_BINS^2 rows must show exactly VELOCITY_N_BINS unique
     # vx values and VELOCITY_N_BINS unique vy values, all within the clamp range [-5, 5]
     first_block = obs_arr[: VELOCITY_N_BINS * VELOCITY_N_BINS]

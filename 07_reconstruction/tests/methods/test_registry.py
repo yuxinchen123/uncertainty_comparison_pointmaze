@@ -18,11 +18,13 @@ from rnd_exploration.methods import (
     build_intrinsic_model,
 )
 
-# The eleven algorithm names in their canonical registry order (REGISTRY is insertion-ordered).
+# The thirteen algorithm names in their canonical registry order (REGISTRY is insertion-ordered).
 EXPECTED_NAMES = [
     "no_exploration",
     "gt_position",
     "gt_position_velocity",
+    "gt_position_maze_cell",
+    "gt_position_1m",
     "rnd_next_state",
     "rnd_next_state_position_only",
     "rnd_state",
@@ -40,6 +42,8 @@ EXPECTED_SPECS = {
     "no_exploration":               ("none",        None,                           False, False, None,                False, None),
     "gt_position":                  ("visit_count", None,                           False, False, "position",          True,  None),
     "gt_position_velocity":         ("visit_count", None,                           False, False, "position_velocity", True,  None),
+    "gt_position_maze_cell":        ("visit_count", None,                           False, False, "position",          True,  None),
+    "gt_position_1m":               ("visit_count", None,                           False, False, "position_1m",       True,  None),
     "rnd_next_state":               ("rnd",         "rnd_next_state",               False, False, None,                True,  None),
     "rnd_next_state_position_only": ("rnd",         "rnd_next_state_position_only", False, False, None,                True,  None),
     "rnd_state":                    ("rnd",         "rnd_state",                    False, False, None,                True,  None),
@@ -52,10 +56,10 @@ EXPECTED_SPECS = {
 
 
 def test_registry_has_expected_names_in_order():
-    # Golden path: REGISTRY holds exactly the eleven documented names in their documented order.
+    # Golden path: REGISTRY holds exactly the thirteen documented names in their documented order.
     assert list(REGISTRY) == EXPECTED_NAMES
-    # Edge case: exactly eleven entries (no extras / duplicates) and each key equals its spec.name.
-    assert len(REGISTRY) == 11
+    # Edge case: exactly thirteen entries (no extras / duplicates) and each key equals its spec.name.
+    assert len(REGISTRY) == 13
     assert all(name == spec.name for name, spec in REGISTRY.items())
 
 
@@ -68,11 +72,13 @@ def test_algorithm_names_mirrors_registry():
 
 
 def test_algorithms_no_action_exact_list():
-    # Golden path: ALGORITHMS_NO_ACTION is exactly the seven action-free algorithms, in order.
+    # Golden path: ALGORITHMS_NO_ACTION is exactly the nine action-free algorithms, in order.
     assert ALGORITHMS_NO_ACTION == [
         "no_exploration",
         "gt_position",
         "gt_position_velocity",
+        "gt_position_maze_cell",
+        "gt_position_1m",
         "rnd_next_state",
         "rnd_next_state_position_only",
         "rnd_state",

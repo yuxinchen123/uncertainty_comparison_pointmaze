@@ -6216,6 +6216,79 @@ band.  Partial snapshot 2026-07-22.}
 \label{fig:trainrun5-curve}
 \end{figure}
 
+% ---- Run 5: ground-truth oracles vs best RND (hand-built, snapshot 2026-07-22) ----
+% Sources: run-2 data/local (97 gt seeds), run-3.2.2 folder oracle sweeps
+% 2026-07-09-00-15 (1/sqrt(n)) and 2026-07-09-00-27 (1/n) at seeds 200-499, and the
+% run-5 set-baseline sweep (N1 arm). Recompute when run 5 finishes its long tail.
+\paragraph{Ground-truth oracles vs.\ the best RND arm.}
+Table~\ref{tab:trainrun5-oracle-vs-rnd} places the run-5 winner N1 next to the ground-truth
+count-based oracles (recall the count exponent $\alpha$ of Section~\ref{sec:count-based}:
+the bonus is $\min(1,n^{\alpha})$, so $\alpha=-0.5$ gives $\min(1,1/\sqrt{n})$ and $\alpha=-1$
+gives $\min(1,1/n)$), all trained on the same task and step budget
+($10^{6}$ steps, \texttt{PointMaze\_\allowbreak Large-v3}, top-right goal). Define, per
+configuration:
+\begin{itemize}[leftmargin=*]
+\item the \emph{final reward} $\bar R$ --- the final extrinsic reward of each seed, averaged over
+  seeds ($\mathrm{SE}=s/\sqrt{n}$). For the N1 row and the oracle re-runs this is the
+  training-window mean over the last $100$ training episodes (the run-3-onward scoring metric);
+  the $97$ run-2 seeds inside the merged row instead recorded a standalone $100$-episode
+  evaluation --- the two protocols agree on the matched configuration (Welch's $t$-test,
+  $p=0.48$);
+\item the \emph{episode success rate} --- the share of a seed's last $100$ training episodes with
+  extrinsic reward $>0$, averaged over seeds;
+\item the \emph{seed success rate} --- the share of seeds whose final reward is $>0$ (the agent
+  still reaches the goal at the end of training); this is a lower threshold than the
+  $\mathrm{succ.}>5$ column of Table~\ref{tab:trainrun5-results};
+\item the \emph{visit coverage} --- the number of distinct position cells visited during
+  training, divided by the $46$ reachable cells of the $9\times12$ grid
+  (Section~\ref{sec:env-count}), at the end of training.
+\end{itemize}
+The merged first row pools train run~2 (\S\ref{sec:train-run-2}, seeds $3$--$199$, $n=97$) with
+the $\alpha=-0.5$ oracle re-run stored in the run-3.2.2 run folder (seeds $200$--$499$, $n=300$,
+launched 2026-07-09): the two share the environment, the algorithm and bonus
+(\texttt{gt\_\allowbreak position\_\allowbreak velocity}, $\alpha=-0.5$, $\beta=1$), the trainer,
+and the step budget; they differ only in whether a standalone evaluation also ran; their seed
+ranges are disjoint; and their reward and coverage distributions are statistically
+indistinguishable (Welch's $t$-test, reward $p=0.48$, coverage $p=0.46$) --- so pooling is
+justified. The $\alpha=-1$ oracle is a different bonus shape and stays separate. The N1 row is a
+later 2026-07-22 snapshot than Table~\ref{tab:trainrun5-results} ($n=253$ vs.\ $233$ seeds
+finished), so its numbers differ slightly. Reading the table: N1 reaches about $71\%$ of the
+merged oracle's reward, and covers slightly \emph{more} of the maze than either oracle.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}
+>{\raggedright\arraybackslash}p{1.7cm} c c c c c@{}}
+\toprule
+\textbf{Configuration} & \textbf{Source run(s)} & $\bar R$ ($\pm\,\mathrm{SE}$) &
+\shortstack{\textbf{episode}\\\textbf{succ.\ rate}} &
+\shortstack{\textbf{seed}\\\textbf{succ.\ rate}} &
+\shortstack{\textbf{visit}\\\textbf{coverage}} & $n$ \\
+\midrule
+\texttt{gt\_\allowbreak position\_\allowbreak velocity}, $\min(1,1/\sqrt{n})$, $\beta{=}1$
+  (merged) & train runs 2 $+$ 3.2.2 & \textbf{66.24} $\pm$ 1.30 & \textbf{0.784} &
+  \textbf{0.985} & \underline{0.768} $\pm$ 0.007 & 397 \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity}, $\min(1,1/n)$, $\beta{=}1$ &
+  train run 3.2.2 & \underline{56.49} $\pm$ 1.50 & \underline{0.726} & \underline{0.970} &
+  0.767 $\pm$ 0.007 & 300 \\
+N1 (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$, reward norm) --- best run-5 RND &
+  train run 5 & 47.33 $\pm$ 1.92 & 0.685 & 0.913 & \textbf{0.787} $\pm$ 0.008 & 253 \\
+\bottomrule
+\end{tabular}
+\caption{Ground-truth count-based oracles vs.\ the best run-5 RND arm (N1), all at $10^{6}$ steps
+on the top-right \texttt{PointMaze\_Large-v3} task. Best \textbf{bold}, second
+\underline{underlined} per metric column (higher is better in every metric column). The source
+column names the train run(s) whose data each row aggregates; both oracle re-runs are stored in
+the run-3.2.2 run folder (sweeps of 2026-07-09, seeds $200$--$499$). The merged row's episode
+success rate comes from its $300$ oracle-re-run seeds only (run 2 kept no per-episode records).
+$n$ is the number of independent seeds; the N1 row is a partial 2026-07-22 snapshot ($253$ of
+$300$ seeds).}
+\label{tab:trainrun5-oracle-vs-rnd}
+\end{table}
+
 \paragraph{Substitution of previous RND runs.}
 Two run-5 arms (C2, N1) re-run configurations that earlier training runs already measured, so
 each old run can be tested for poolability against its run-5 fresh line.  Define the test on the
@@ -6644,6 +6717,367 @@ Findings:
   survive --- the large-coordinate raw inputs amplify the largest-scale initializations past
   the stable-step threshold.
 \end{enumerate}
+
+\clearpage
+\section{point maze + ant maze}
+\label{sec:pm-am}
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:pm-am-envspec}
+
+PointMaze and AntMaze both come from the Gymnasium-Robotics maze family
+\citep{delazcano2023gymrobotics}, refactored from D4RL \citep{fu2020d4rl}: a maze built from
+square cells in which the agent must reach a goal position and receives a sparse reward on arrival.
+PointMaze moves a force-actuated two-dimensional ball; AntMaze replaces the ball with the quadruped
+``Ant'' robot, so reaching the goal additionally requires learning legged locomotion. This project
+uses four PointMaze maze sizes (\texttt{PointMaze\_\allowbreak UMaze-v3},
+\texttt{PointMaze\_\allowbreak Open-v3}, \texttt{PointMaze\_\allowbreak Medium-v3},
+\texttt{PointMaze\_\allowbreak Large-v3}) and the four matching AntMaze sizes
+(\texttt{AntMaze\_\allowbreak UMaze-v5} through \texttt{AntMaze\_\allowbreak Large-v5}) --- eight
+base environments. Each base environment is instantiated with two fixed start/goal sets (one per
+pair of opposite corners), so there are $8 \times 2 = 16$ named environment configurations, each
+named by its start corner (Table~\ref{tab:pm-am-envspec}). The choice to run RND on maze navigation
+follows ExPLORe \citep{li2023accelerating}, which ran state-input RND on the D4RL AntMaze tasks;
+every reward curve in this section is this project's own run, and nothing is reused from ExPLORe.
+
+\paragraph{Goal dynamics (code-verified).} The maze environment keeps exactly one active goal at a
+time, sampled at reset. A ``diverse'' variant samples that one goal from several candidate cells but
+still exposes a single two-dimensional goal, so the agent is never asked to reach more than one goal
+at once. Two constructor flags govern what happens when the agent reaches the goal. With the library
+defaults (\texttt{continuing\_task=True}, \texttt{reset\_target=False}) the episode never terminates
+on success and the goal never moves: the agent keeps collecting the per-step reward for every step
+it stays inside the success radius, until the time limit truncates the episode --- this is exactly
+the project's previous PointMaze configuration, whose mean extrinsic reward therefore counts steps
+spent at the goal. The environment configurations in this section instead set
+\texttt{continuing\_task=False}, so the episode terminates the moment the agent is within $0.45$~m of
+the goal.\footnote{The installed docstring and the online documentation describe
+\texttt{reset\_target} the opposite way from the code: they state that \texttt{True} keeps the goal
+in place, whereas the code regenerates the goal after success when \texttt{True} and leaves it fixed
+when \texttt{False} (\texttt{point\_maze.py}, \texttt{maze\_v4.py}). The code is authoritative; this
+section states the code behavior.} The only place a goal moves mid-episode is the
+\texttt{update\_goal} branch, which fires only when \texttt{continuing\_task} and
+\texttt{reset\_target} are both true and there is more than one candidate goal cell; under this
+section's settings that branch is unreachable, so the goal is fixed at one exact cell center for the
+whole run.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\toprule
+\textbf{Parameter} &
+\textbf{PointMaze} &
+\textbf{AntMaze} \\
+& \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
+state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
+  orientation (4) $+$ joint angles (8) $+$ velocities (14); contact forces off \\
+goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak goal} discarded
+  (goal never observed) & both goal keys discarded (goal never observed), but $x, y$ are first
+  re-attached from \texttt{achieved\_\allowbreak goal}, because AntMaze strips them out of
+  \texttt{observation} \\
+action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Maze}} \\
+map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
+  \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
+  \newline Medium $8\times8$ \newline Large $9\times12$ \\
+cell size & $1$~m & $4$~m \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Episode}} \\
+max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
+  Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
+  \newline Large $1000$ \\
+reward & $-1$ per step; $0$ on the goal-reaching step (sparse reward $-1$, ExPLORe convention) &
+  same \\
+reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
+  (\texttt{continuing\_task=False}) & same \\
+at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Start and goal}} \\
+goal reset & never --- one fixed goal cell, exact center, whole run; the goal cannot move
+  mid-episode & same \\
+set (1): start $\to$ goal & UMaze: bottom-left $(3,1) \to$ top-left $(1,1)$ \newline Open:
+  bottom-left $(3,1) \to$ top-right $(1,5)$ \newline Medium: $(6,1) \to (1,6)$ \newline Large:
+  $(7,1) \to (1,10)$ & same cells (identical maps) \\
+set (1) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
+  bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
+  start\_\allowbreak bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
+  Medium-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left} \newline
+  \texttt{PointMaze\_\allowbreak Large-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left} &
+  \texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}
+  \newline \texttt{AntMaze\_\allowbreak Open-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak
+  left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
+  bottom\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
+  start\_\allowbreak bottom\_\allowbreak left} \\
+set (2): start $\to$ goal & UMaze: top-left $(1,1) \to$ bottom-left $(3,1)$ \newline Open: top-left
+  $(1,1) \to$ bottom-right $(3,5)$ \newline Medium: $(1,1) \to (6,6)$ \newline Large:
+  $(1,1) \to (7,10)$ & same cells (identical maps) \\
+set (2) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
+  top\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
+  start\_\allowbreak top\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
+  Medium-v3\_\allowbreak start\_\allowbreak top\_\allowbreak left} \newline
+  \texttt{PointMaze\_\allowbreak Large-v3\_\allowbreak start\_\allowbreak top\_\allowbreak left} &
+  \texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak top\_\allowbreak left}
+  \newline \texttt{AntMaze\_\allowbreak Open-v5\_\allowbreak start\_\allowbreak top\_\allowbreak
+  left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
+  top\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
+  start\_\allowbreak top\_\allowbreak left} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Environment specification for the $16$ named configurations ($8$ base environments $\times$
+$2$ start/goal sets). PointMaze and AntMaze share identical maze maps per size class and differ only
+in the cell size ($1$~m vs $4$~m) and the agent body. Each start/goal set is its own environment
+configuration, named by its start corner. UMaze uses the two ends of the U corridor (top-left /
+bottom-left); the other maps use the two corner-to-corner diagonals. Cells are 0-based
+$(\text{row}, \text{col})$ with row $0$ at the top; the ball or ant is placed at the exact cell
+center every episode --- \texttt{position\_\allowbreak noise\_\allowbreak range} is set to $0$ on the
+built environment, since it cannot be passed through \texttt{gym.make}. ``same''/``same cells''
+means the AntMaze value equals the PointMaze value in that row.}
+\label{tab:pm-am-envspec}
+\end{table}
+
+\paragraph{Metrics.} Every train run in this section logs the following five metrics for each
+environment configuration it uses. Define $r_t$ as the (shifted) extrinsic reward at env step $t$,
+$R = \sum_t r_t$ as the episode return, $k$ as the number of env steps the episode takes with the
+goal-reaching step included, and $T_{\max}$ as the episode time limit (the registered default of
+Table~\ref{tab:pm-am-envspec}).
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{Episode return} $R = \sum_t r_t$. A successful episode earns $-1$ on each of its first
+  $k-1$ steps and $0$ on the terminating step, so $R = -(k-1)$; a failed episode earns $-1$ on all
+  $T_{\max}$ steps, so $R = -T_{\max}$.
+\item \textbf{Success rate} $= N_{\mathrm{succ}} / N$, where $N_{\mathrm{succ}}$ is the number of
+  episodes that end with \texttt{terminated=True} (the agent reached the goal) and $N$ is the total
+  number of episodes.
+\item \textbf{Steps to reach the goal} $= k$ (the terminating step included), averaged over
+  successful episodes only; on a success $R = -(k-1)$, so steps-to-goal $= 1 - R$.
+\item \textbf{Maze-cell coverage} $= C_{\mathrm{cell}} / C_{\mathrm{cell}}^{\mathrm{open}}$, where
+  $C_{\mathrm{cell}}$ is the number of distinct open maze cells the agent has visited and
+  $C_{\mathrm{cell}}^{\mathrm{open}}$ is the total number of open maze cells; one cell is $1$~m for
+  PointMaze and $4$~m for AntMaze.
+\item \textbf{$1$~m $\times$ $1$~m coverage} $= C_{1\mathrm{m}} / C_{1\mathrm{m}}^{\mathrm{open}}$,
+  where $C_{1\mathrm{m}}$ is the number of distinct open $1$~m squares visited and
+  $C_{1\mathrm{m}}^{\mathrm{open}}$ is the total number of open $1$~m squares. This equals metric~4
+  for PointMaze (its cells are already $1$~m); for AntMaze each open $4$~m cell contains exactly
+  $16$ such squares.
+\end{enumerate}
+
+\paragraph{D4RL vs.\ the current implementation.} This project builds its maze environments from the
+current Gymnasium-Robotics library \citep{delazcano2023gymrobotics}; ExPLORe
+\citep{li2023accelerating} built its AntMaze tasks from the older D4RL \citep{fu2020d4rl}
+implementation. The two share the maze family but differ in several implementation details.
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{Success radius.} D4RL declares success within $0.5$~m of the goal; the current library
+  uses a fixed $0.45$~m radius, independent of the cell size.
+\item \textbf{Goal placement noise.} D4RL redraws the goal position each reset with one-sided
+  uniform noise up to $1.5$~m per axis (to reduce evaluation variance); the current configurations
+  set the per-reset position noise to $0$, so the goal sits at its exact cell center every episode.
+\item \textbf{Start placement noise.} D4RL places the ant at the start cell with $\pm0.1$ position
+  noise and small velocity noise; the current configurations use exact-center starts (noise $0$).
+\item \textbf{Termination and time-limit API.} D4RL uses the old single-flag gym step API: at the
+  time limit it returns \texttt{done=True} with \texttt{info["TimeLimit.truncated"]=True}, and
+  ExPLORe maps that to a bootstrapped value. The current library uses the Gymnasium five-tuple API,
+  returning \texttt{terminated=True} on goal reach and \texttt{truncated=True} at the time limit, and
+  SB3's replay buffer bootstraps the value at truncations (\texttt{handle\_\allowbreak
+  timeout\_\allowbreak termination=True}).
+\item \textbf{Reward shift and hidden goal (shared).} Both subtract $1$ from the sparse reward
+  ($-1$ per step, $0$ on the success step) and both keep the goal out of the agent's state; the
+  current configurations match ExPLORe on these two counts.
+\item \textbf{Simulator and bindings.} D4RL runs on the older \texttt{mujoco-py} bindings; the
+  current library runs on MuJoCo $3.1.6$ through Gymnasium-Robotics $1.3.1$.
+\end{enumerate}
+
+\paragraph{Versions.} The project uses the newest released version of each environment.
+\texttt{PointMaze\_\allowbreak *-v3} is the newest PointMaze version (nothing newer exists up to
+library release $1.4.2$), and the installed Gymnasium-Robotics $1.3.1$ provides the newest AntMaze
+version \texttt{AntMaze\_\allowbreak *-v5} (it registers v3/v4/v5). Library releases
+$1.4.0$--$1.4.2$ changed nothing for these two environments --- their notes cover dependency floors,
+Python-version support, legacy MuJoCo v2/v3 migration, and hot fixes --- so no upgrade is required.
+
+\subsection{Train run 1}
+\label{sec:pm-am-trainrun1}
+
+The point maze + ant maze train run~1 tests the following hypothesis.
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{The ground-truth bonus performs better than RND on every PointMaze configuration.} On
+  all four PointMaze configurations in this run (the \texttt{start\_\allowbreak bottom\_\allowbreak
+  left} set), SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak velocity} (the oracle visit-count
+  bonus) reaches better performance than SAC $+$ RND, compared at each algorithm's best bonus weight
+  on the run's primary metrics (episode return and success rate).
+\end{enumerate}
+
+Train run~1 uses only the set-(1) \texttt{start\_\allowbreak bottom\_\allowbreak left} configurations
+--- $8$ of the $16$. Table~\ref{tab:pm-am-trainrun1-envs} is a frozen copy of
+Table~\ref{tab:pm-am-envspec} with the set-(2) rows removed: subsection~\ref{sec:pm-am-envspec} may
+be extended later, but this copy stays fixed as the record of what train run~1 used.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
+>{\raggedright\arraybackslash}p{6.0cm}
+>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\toprule
+\textbf{Parameter} &
+\textbf{PointMaze} &
+\textbf{AntMaze} \\
+& \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
+state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
+  orientation (4) $+$ joint angles (8) $+$ velocities (14); contact forces off \\
+goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak goal} discarded
+  (goal never observed) & both goal keys discarded (goal never observed), but $x, y$ are first
+  re-attached from \texttt{achieved\_\allowbreak goal}, because AntMaze strips them out of
+  \texttt{observation} \\
+action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Maze}} \\
+map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
+  \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
+  \newline Medium $8\times8$ \newline Large $9\times12$ \\
+cell size & $1$~m & $4$~m \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Episode}} \\
+max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
+  Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
+  \newline Large $1000$ \\
+reward & $-1$ per step; $0$ on the goal-reaching step (sparse reward $-1$, ExPLORe convention) &
+  same \\
+reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
+  (\texttt{continuing\_task=False}) & same \\
+at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Start and goal (only set (1) is used in this run)}} \\
+goal reset & never --- one fixed goal cell, exact center, whole run & same \\
+start $\to$ goal & UMaze: bottom-left $(3,1) \to$ top-left $(1,1)$ \newline Open: bottom-left
+  $(3,1) \to$ top-right $(1,5)$ \newline Medium: $(6,1) \to (1,6)$ \newline Large:
+  $(7,1) \to (1,10)$ & same cells (identical maps) \\
+config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
+  bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
+  start\_\allowbreak bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
+  Medium-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left} \newline
+  \texttt{PointMaze\_\allowbreak Large-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left} &
+  \texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}
+  \newline \texttt{AntMaze\_\allowbreak Open-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak
+  left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
+  bottom\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
+  start\_\allowbreak bottom\_\allowbreak left} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Environments used by train run~1: the $8$ set-(1) \texttt{start\_\allowbreak
+bottom\_\allowbreak left} configurations. This is Table~\ref{tab:pm-am-envspec} with the set-(2) rows
+removed, kept as a separate frozen table so it stays fixed even if
+subsection~\ref{sec:pm-am-envspec} is extended later. All rows except the start-and-goal block are
+identical to Table~\ref{tab:pm-am-envspec}.}
+\label{tab:pm-am-trainrun1-envs}
+\end{table}
+
+Table~\ref{tab:pm-am-trainrun1-algos} lists the five algorithm columns. Plain SAC and SAC $+$ RND
+run on all $8$ configurations; each ground-truth (oracle visit-count) bonus runs on the family it is
+defined for --- \texttt{gt\_\allowbreak position\_\allowbreak velocity} on the $4$ PointMaze
+configurations, \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} and
+\texttt{gt\_\allowbreak position\_\allowbreak 1m} on the $4$ AntMaze configurations. The SAC $+$ RND
+column reuses the train-run-5 original-small RND stack unchanged.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}p{2.1cm}
+>{\raggedright\arraybackslash}p{3.7cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.7cm}@{}}
+\toprule
+\textbf{Hyperparameter} &
+\textbf{SAC} &
+\textbf{SAC $+$ RND} &
+\textbf{SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak velocity}} &
+\textbf{SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell}} &
+\textbf{SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak 1m}} \\
+& \small(SB3) & \small(run 5 stack) & \small(PointMaze) & \small(AntMaze) & \small(AntMaze) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{RL algorithm \& environments}} \\
+base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} \\
+runs on & the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
+  the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
+  the $4$ PointMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
+  the $4$ AntMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
+  the $4$ AntMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs \\
+total env steps & $10^{6}$ & \multicolumn{4}{c}{same} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{SAC}} \\
+discount & $0.99$ (knob; the previous PointMaze-Large runs used $0.999$) &
+  \multicolumn{4}{c}{same} \\
+optimizer, learning rate & Adam $3{\times}10^{-4}$ (SB3 default) & \multicolumn{4}{c}{same} \\
+batch size / tau / buffer & $256$ / $0.005$ / $10^{6}$ (SB3 defaults) & \multicolumn{4}{c}{same} \\
+networks & $2\times256$ ReLU (SB3 default) & \multicolumn{4}{c}{same} \\
+entropy & auto temperature, target $-\dim(A)$ (SB3 default) & \multicolumn{4}{c}{same} \\
+train freq / gradient steps / learning starts & $1$ / $1$ / $100$ (SB3 defaults) &
+  \multicolumn{4}{c}{same} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Intrinsic bonus}} \\
+bonus input & N/A & next state ($4$-d PointMaze / $29$-d AntMaze) &
+  (position $1$~m cell, velocity bin) of the next state; velocity binned $10\times10$ over
+  $[-5,5]^2$ & $4$~m maze cell of the next $(x, y)$ & $1$~m square of the next $(x, y)$ \\
+bonus form & N/A & RND distillation error, run-5 original-small stack (next row) &
+  count bonus $\min(1, 1/\sqrt{n})$ (decay rate $-0.5$) & $\min(1, 1/\sqrt{n})$ &
+  $\min(1, 1/\sqrt{n})$ \\
+RND stack & N/A & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper;
+  output $128$; orthogonal $\sqrt2$ init, zero bias; obs norm RMS clip $\pm5$ with $6400$-step
+  fresh-env warm-up; readout mean squared error over the $128$ dims; reward norm by running std
+  (discount $0.99$, non-episodic); Adam $10^{-4}$, $\epsilon\,10^{-8}$; trained on each SAC replay
+  batch (proportion $1.0$) --- identical to train run~5 & N/A & N/A & N/A \\
+count table shape & N/A & N/A & (rows $\times$ cols) position $\times\,10\times10$ velocity &
+  (rows $\times$ cols) of the map & ($4\cdot$rows $\times\,4\cdot$cols) $1$~m squares \\
+where the bonus enters & N/A & replay buffer stores extrinsic $+\ \beta \times$ intrinsic (existing
+  pipeline) & \multicolumn{3}{c}{same} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Bonus weight}} \\
+beta sweep & N/A & \multicolumn{4}{>{\raggedright\arraybackslash}p{12.0cm}}{$\{10^{-3},
+  3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2}, 10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2},
+  3{\times}10^{2}, 10^{3}, 3{\times}10^{3}, 10^{4}\}$ --- $15$ values (the same for the RND and the
+  three ground-truth columns)} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
+configs in this column & $8$(env configs) $= 8$ & $8$(env configs) $\times$ $15$(bonus weight)
+  $= 120$ & $4$(PointMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
+  $4$(AntMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
+  $4$(AntMaze env configs) $\times$ $15$(bonus weight) $= 60$ \\
+total configs in this table & \multicolumn{5}{c}{$8 + 120 + 60 + 60 + 60 = \mathbf{308}$} \\
+seeds & \multicolumn{5}{>{\raggedright\arraybackslash}p{14.2cm}}{racing: initial $20$ seeds per
+  config (prune floor); survivors race to $100$; then only the best config of each
+  (env, algorithm) cell continues to $300$} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Algorithms for train run~1. Columns are the five algorithm arms; rows are hyperparameters
+grouped by category. ``same'' collapses a value shared with the columns to its left; ``N/A'' marks a
+knob that does not apply to a column. The SAC $+$ RND column reuses the train-run-5 original-small
+RND stack unchanged (Table~\ref{tab:trainrun5-hparams}). The three ground-truth columns are oracle
+visit-count bonuses $\min(1, 1/\sqrt{n})$ over the count table shown, one per environment family. The
+config-count rows give each column's contribution as a product annotated with the swept knob, and
+the total over the whole table is $308$ configurations, each run at $10^{6}$ env steps.}
+\label{tab:pm-am-trainrun1-algos}
+\end{table}
 
 \clearpage
 \bibliographystyle{plainnat}

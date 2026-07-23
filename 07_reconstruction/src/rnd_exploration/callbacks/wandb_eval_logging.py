@@ -14,7 +14,7 @@ from rnd_exploration.common.heatmap_utils import create_visit_count_heatmap
 class WandbEvalLoggingCallback(BaseCallback):
     """Eval at eval_freq, log to WandB. Log visit-count heatmap at same freq when use_wandb."""
 
-    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", beta: float = 0.0, total_timesteps: int = None, n_eval_episodes_final: int = 100, eval_standalone: bool = True, log_to_wandb: bool = None, verbose: int = 0):
+    def __init__(self, eval_env, eval_freq: int, n_eval_episodes: int, use_wandb: bool, visit_count_env=None, goal_cell=None, start_cell=None, run_name: str = "", beta: float = 0.0, total_timesteps: int = None, n_eval_episodes_final: int = 100, eval_standalone: bool = True, log_to_wandb: bool = None, visit_count_env_1m=None, verbose: int = 0):
         super().__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
@@ -32,6 +32,9 @@ class WandbEvalLoggingCallback(BaseCallback):
         self.log_to_wandb = use_wandb if log_to_wandb is None else log_to_wandb
         self.history = []  # per-eval summaries captured for local logging (used by both modes)
         self.visit_count_env = visit_count_env
+        # 1 m coverage surface (section 8): the AntMaze sub-grid counts, or the PointMaze cell grid
+        # itself (cells are already 1 m). None keeps the pre-section-8 behavior (no 1 m block).
+        self.visit_count_env_1m = visit_count_env_1m
         self.goal_cell = goal_cell
         self.start_cell = start_cell
         self.run_name = run_name
@@ -120,6 +123,13 @@ class WandbEvalLoggingCallback(BaseCallback):
             summary["visit_counts/cells_visited"] = int(visited_cells)
             summary["visit_counts/open_cells"] = int(open_cells)
             summary["visit_counts/coverage_pct"] = 100.0 * visited_cells / max(1, open_cells)
+        if self.visit_count_env_1m is not None:
+            counts_1m = self.visit_count_env_1m.get_visit_counts()
+            open_squares = (self.visit_count_env_1m.maze_map == 0).sum()
+            visited_squares = (counts_1m > 0).sum()
+            summary["visit_counts_1m/cells_visited"] = int(visited_squares)
+            summary["visit_counts_1m/open_cells"] = int(open_squares)
+            summary["visit_counts_1m/coverage_pct"] = 100.0 * visited_squares / max(1, open_squares)
         # capture every eval summary locally (both modes), then send to wandb only in full mode
         self.history.append(dict(summary))
         # wandb mode still logs every snapshot; local mode prints the block only when verbose>0

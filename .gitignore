@@ -147,6 +147,15 @@ reference_repos/
 # Work-queue folders inside a run folder (pending/running/done/failed job configs)
 07_reconstruction/train_runs/**/queue/
 
+# jaguar03 threading experiment (inside the run-5 folder): measurement outputs, regenerable by
+# re-running the experiment scripts. avxburn_work/ holds one .w text file per hardware thread
+# (time + throughput lines); load_sweep_work/ holds per-worker .txt outputs; the data*/ folders
+# hold the collected sweep measurements. The code files next to them (run_experiment.py,
+# load_sweep.py, avxburn.c, jaguar03_throttle_repro.sh, report.md) stay tracked.
+07_reconstruction/train_runs/**/jaguar03_threading_experiment/avxburn_work/
+07_reconstruction/train_runs/**/jaguar03_threading_experiment/load_sweep_work/
+07_reconstruction/train_runs/**/jaguar03_threading_experiment/data_*/
+
 # Lock files written next to the collaborator job-id files while a worker appends to them
 *.lock
 
@@ -154,3 +163,6 @@ reference_repos/
 *.db
 *.sqlite
 *.sqlite3
+
+# Monitoring snapshots inside a run folder (per-tick table dumps; the scripts themselves stay tracked)
+07_reconstruction/train_runs/**/20_mins_monitoring/outputs/

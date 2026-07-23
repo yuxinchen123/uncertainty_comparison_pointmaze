@@ -62,3 +62,88 @@ Sweep `2026-07-20-16-55_set-baseline`. Owner sl5nw. cpu + nolim only (no reserva
   They are mostly redundant C2 seeds -- C2 already has n=234, N1 n=233, b1000 n=227, all far above
   the sample needed for stable estimates (the substitution test already confirms C2/N1 stability).
   Surfaced the finish-now vs wait-for-300 tradeoff to the user.
+
+## 2026-07-22T21:20 — HARD EVIDENCE: jaguar03 hardware-throttles to 400 MHz under load
+- Historical per-node finish times: every node finishes a run in 15-21h; jaguar03 has finished
+  ZERO runs in ~30h. jaguar03 in-flight runs average ~123k of 1e6 steps (median 100k) = ~12% after
+  30h (~4.1k steps/hr) vs ~50-67k steps/hr elsewhere.
+- Controlled single-core fixed-work benchmark (3000 256x256 matmuls + random-gather over 256MB),
+  run via srun on each node under current load:
+    puma01   (reservation, 64-task load): 2300 MHz  compute=1.33s  mem=1.98s
+    ai06     (open partition):            1200 MHz  compute=1.63s  mem=0.43s
+    jaguar03 (reservation, 192-task load): 400 MHz  compute=34.69s mem=3.15s
+  => jaguar03 compute is 26x slower than puma01 / 21x slower than ai06, but memory only ~1.6x
+  slower. So the bottleneck is CLOCK, not memory bandwidth (earlier bandwidth guess REFUTED).
+- Root cause (cpufreq read on jaguar03 under load): 2x AMD EPYC 7663 (112 cores/224 threads),
+  governor schedutil, cpu0 scaling_min=1.5GHz scaling_max=2.0GHz but scaling_cur=400MHz -- the
+  ACTUAL clock is BELOW the OS-requested minimum, and only 31/224 cores are >1GHz. Actual freq
+  below the software floor = HARDWARE-ENFORCED throttling (power/thermal cap on the dual 240W
+  EPYC under all-core load). Node is also admin-capped at 2.0GHz max (chip boosts to 3.5GHz).
+  puma01 on the same reservation but lighter load holds 2.3GHz and finishes runs in ~14h.
+- Takeaway for future sweeps: jaguar03 is unsuitable for CPU-bound all-core training (it collapses
+  to ~400MHz); prefer puma01/bigcat/cortado. No jobs touched pending the user's decision.
+
+## 2026-07-22T21:41 — cancelled the 6 jaguar03 jobs (user ok), requeued their 192 orphans
+- User authorized freeing jaguar03 for a threading-config experiment. scancelled ONLY the 6
+  jaguar03 ids from the owner id file (6516452-6516457); puma01 jobs 6516458/6516459 left running.
+- BUG FOUND + FIXED in requeue_orphans.py: marker_config_key called
+  build_queue.config_key(spec["params"], spec["beta"]) with 2 args, but config_key(cfg_spec) takes
+  1 (the whole config dict). Phase-2 (failed/->pending/) would have crashed on the first orphan,
+  stranding markers in failed/. Fixed to config_key(spec). This bug never fired before because no
+  orphan had ever existed this sweep (all prior job exits were clean COMPLETED).
+- Ran requeue_orphans (fixed): 192 jaguar03 orphans moved running/->failed/->pending/ (43 C2, 47
+  N1, 48 b100, 54 b1000). puma01's live runs correctly left in running/ (their job is still alive).
+- Ran prune_controller --once: the 48 requeued b100 markers belong to a pruned arm, re-pruned them
+  (pruned 1039->1087). Net queue: pending=143 (42 C2, 47 N1, 54 b1000 -- wanted arms), running=31
+  (puma01), done=1739, pruned=1087, failed=0; total 3000. No run lost; jaguar03 is now free.
+
+## 2026-07-22T23:52 — jaguar03 threading experiment DONE (report in jaguar03_threading_experiment/report.md)
+- Compared 3 thread->core layouts at full 108-core/400 MHz load: A=108 runs/2thr, B=54 runs/4thr,
+  C=216 runs/1thr (the layout the real sweep used). Steady-state steps/min per run, node totals:
+    A: per-run 159, TOTAL 17242 steps/min, per-core 160, 400 MHz
+    B: per-run 211, TOTAL 11286 steps/min, per-core 105, 400 MHz  (worst: 4 threads waste cores)
+    C: per-run  82, TOTAL 17801 steps/min, per-core 165, 400 MHz  (best total, ~3% over A)
+- Verdict: C wins total node throughput but only ~3% over A; A gives ~same total with 2x better
+  per-run latency (1M-step run ~105h vs C's ~203h at 400 MHz). B is ~37% worse. The real sweep
+  already used C, so its slowness was the 400 MHz throttle (~26x), not a layout mistake -- the
+  layout is a ~3% lever, the throttle a ~26x one. No layout makes jaguar03 usable while throttled.
+- Web research + past-run forensics (6-agent verified workflow) added to report.md: the ~400 MHz is
+  BELOW the OS scaling_min (1.5 GHz) => firmware/SMU throttle (power/thermal/PROCHOT), a node FAULT,
+  fixable only admin-side (power cycle, BMC event log, BIOS cTDP/determinism, cooling). And it is
+  RECENT: jaguar03 ran the identical 192-thread load at ~14h/run in early July (run 3.2.1, fastest
+  node) but completed 0 runs in 30h now (run 5). Recommend reporting jaguar03 to cluster admins.
+- Experiment folder holds: report.md, run_experiment.py, data/{A,B,C}/progress_*.csv, logs/.
+  First C attempt (0.2s stagger) hit a 216-process filesystem-import herd (91/216 stuck in setup);
+  re-run with 0.8s stagger + 30min window was clean (all 216 at steady 400 MHz). jaguar03 released.
+
+## 2026-07-23T00:10 — CORRECTION: throttle onset is Jul 8-11; runs 3.2.3 + 3.2.4 also hit it (no data lost)
+- The 6-agent research had said runs 3.2.3/3.2.4 "barely used / did not use" jaguar03. WRONG -- it
+  missed their jaguar03 jobs (job-name fossil1 / valid32). Corrected via sacct -X on each run's id file:
+    run 3.2.3 (Jul 11): 4 jaguar03 jobs (fossil1 6485364-67), 32 tasks each = 192 threads; each claimed
+      ~1 run/worker, completed 0, TIMEOUT at 96h. = throttle signature (healthy would do ~6 runs/worker).
+    run 3.2.4 (Jul 15): 4 jaguar03 jobs (valid32 6497224-27), same shape, claimed ~28-32, completed 0,
+      TIMEOUT at 96h.
+    run 5 (Jul 20): 6 jaguar03 jobs, completed 0 in 30h, cancelled+requeued.
+- So the throttle onset is BETWEEN Jul 8 and Jul 11 (jaguar03 fast through Jul 5-8 run 3.2.1 ~14h/run;
+  throttled by Jul 11), narrower than the earlier "after Jul 8". It has persisted since.
+- DATA INTEGRITY: no run lost data or got wrong numbers. The throttle only prevents completion; a
+  completed run's value is unchanged (same seed+compute). The runs the jaguar03 jobs failed to finish
+  were requeued to healthy nodes; all queues drained fully -- 3.2.3: 4652 completed (pending=0);
+  3.2.4: 498 (pending=0); run 5: draining on cpu partition. Only cost = wasted jaguar03 compute + delay.
+- report.md "Was jaguar03 always this slow?" section corrected accordingly.
+
+## 2026-07-23T00:45 — CONFOUND CHECK: same Slurm settings AND same env, fast then vs slow now
+- Question: is the jaguar03 "collapse" actually a different submission setting, not the hardware?
+  Compared the FAST early jaguar03 job (run 3.2.1, 6387153/6387168, Jul 5, ~14h/run) vs the SLOW
+  ones (run 3.2.3 fossil1 6485364 Jul 11; run 3.2.4 valid32 6497224 Jul 14; run 5 run5res 6516452
+  Jul 21).
+- sacct AllocTRES IDENTICAL for all: cpu=32, mem=64G, node=1. Worker scripts byte-identical except
+  the run-folder path and the python path. Both use: --ntasks=32 --cpus-per-task=1
+  --ntasks-per-core=2 (192 threads, 2 per core), --mem-per-cpu=2G (64G/job), OMP_NUM_THREADS=1,
+  srun --wait=0. Same packing, same memory, same thread cap.
+- ENV also ruled out: run 3.2.1 (fast) AND run 3.2.3 (throttled) BOTH used the SAME private env
+  /u/sl5nw/.conda/envs/exploration. (run 3.2.4 and 5 used the shared clone, but 3.2.3 on the private
+  env was already throttled, so the env change is not the cause.)
+- Conclusion: same submission + same env + same node + same 192-thread/2-per-core workload, fast on
+  Jul 5, collapsed on Jul 11. Only variable is time. Rules out the settings/env confounds ->
+  the collapse is a genuine jaguar03 hardware/firmware degradation ~Jul 8-11, not a user-side change.

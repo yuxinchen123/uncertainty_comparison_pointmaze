@@ -4,19 +4,21 @@ Used to compute intrinsic reward vectors over the full state space for distance-
 """
 import numpy as np
 
-# Match PointMaze_Large: X[-6, 6], Y[-4.5, 4.5], grid_rows x grid_cols
-LEFT, RIGHT = -6.0, 6.0
-BOTTOM, TOP = -4.5, 4.5
 VELOCITY_N_BINS = 10
 V_MIN, V_MAX = -5.0, 5.0
 
 
-def _grid_to_xy(row: int, col: int, grid_rows: int, grid_cols: int) -> tuple:
-    """Convert grid (row, col) to continuous (x, y) at cell center. Inverse of observation_to_grid."""
-    cell_width = (RIGHT - LEFT) / grid_cols
-    cell_height = (TOP - BOTTOM) / grid_rows
-    x = LEFT + (col + 0.5) * cell_width
-    y = TOP - (row + 0.5) * cell_height
+def _grid_to_xy(row: int, col: int, grid_rows: int, grid_cols: int, cell_size: float = 1.0) -> tuple:
+    """Convert grid (row, col) to continuous (x, y) at cell center. Inverse of observation_to_grid:
+    the world extent is derived from the grid shape and cell size, centered at the origin (the
+    maze_v4 convention). Defaults reproduce PointMaze_Large exactly (9x12 cells of 1 m ->
+    X[-6, 6], Y[-4.5, 4.5])."""
+    total_width = grid_cols * cell_size
+    total_height = grid_rows * cell_size
+    left = -total_width / 2.0
+    top = total_height / 2.0
+    x = left + (col + 0.5) * cell_size
+    y = top - (row + 0.5) * cell_size
     return (x, y)
 
 

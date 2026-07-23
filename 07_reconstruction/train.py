@@ -10,6 +10,7 @@ import collections
 import json
 import os
 import random
+import sys
 import time
 from dataclasses import dataclass
 
@@ -31,15 +32,19 @@ from rnd_exploration.callbacks import (
     DistanceLoggingCallback,
     LocalLogCheckpointCallback,
 )
+from rnd_exploration.envs.env_setups import ENV_SETUPS, ENV_SETUP_NAMES
 from rnd_exploration.envs.point_maze_utils import (
+    get_cell_size,
     select_fixed_cell,
     select_fixed_goal_bottom_left,
     select_fixed_goal_top_right,
 )
 from rnd_exploration.envs.point_maze_wrappers import (
+    AttachAchievedGoalWrapper,
     FixedGoalWrapper,
     FixedStartWrapper,
     RemoveGoalWrapper,
+    RewardShiftWrapper,
     TerminateOnTimeLimitWrapper,
     PositionVisitCountWrapper,
     PositionVelocityVisitCountWrapper,
@@ -69,8 +74,19 @@ class Config:
     beta: float = 0.01
     algorithm: str = "rnd_linear_next_state"
     discount_factor: float = 0.99
-    env_max_episode: int = 400
+    env_max_episode: int = 400           # episode cap passed to gym.make; -1 = the env id's registered default
     goal_position: str = "bottom_left"
+    # --- section-8 env knobs (2026-07): every env-side parameter is a knob. --env_setup applies a named
+    # EnvSetup (rnd_exploration.envs.env_setups) to all of these fields EXCEPT any the CLI set explicitly.
+    env_setup: str = ""                  # named EnvSetup ("" = use the individual fields as given)
+    continuing_task: bool = True         # False => terminated=True at the goal (distance <= 0.45 m)
+    reset_target: bool = False           # True => goal resampled after an in-episode success (unused here)
+    position_noise_range: float = 0.25   # per-reset goal/start noise (x cell size); 0.0 = exact cell centers
+    reward_shift: float = 0.0            # constant added to every step's extrinsic reward (-1 = ExPLORe)
+    attach_xy_to_state: bool = False     # AntMaze: re-attach achieved_goal (x, y) to the network state
+    include_contact_forces: bool = False # AntMaze: keep the 78-d contact forces in the state
+    start_cell: str = ""                 # explicit "row,col" start cell ("" = goal_position logic)
+    goal_cell: str = ""                  # explicit "row,col" goal cell ("" = goal_position logic)
     rnd_obs_norm: bool = True
     rnd_distance: str = "mse"
     rnd_output_dim: int = 128
@@ -149,9 +165,33 @@ def parse_config() -> Config:
     parser.add_argument("--algorithm", type=str, default="rnd_linear_next_state",
                         choices=list(ALGORITHM_NAMES), help="Exploration algorithm")
     parser.add_argument("--discount_factor", type=float, default=0.99)
-    parser.add_argument("--env_max_episode", type=int, default=400)
+    parser.add_argument("--env_max_episode", type=int, default=400,
+                        help="Episode cap passed to gym.make; -1 = the env id's registered default limit.")
     parser.add_argument("--goal_position", type=str, default="bottom_left",
                         choices=["bottom_left", "top_right", "random"])
+    parser.add_argument("--env_setup", type=str, default="", choices=[""] + ENV_SETUP_NAMES,
+                        help="Named EnvSetup (rnd_exploration.envs.env_setups): applies its env fields to "
+                             "every flag the command line did not set explicitly.")
+    parser.add_argument("--continuing_task", default=True, type=_str2bool,
+                        help="False => the episode returns terminated=True at the goal (distance <= 0.45 m).")
+    parser.add_argument("--reset_target", default=False, type=_str2bool,
+                        help="True => the goal is resampled after an in-episode success (needs continuing_task).")
+    parser.add_argument("--position_noise_range", type=float, default=0.25,
+                        help="Per-reset goal/start noise in cell-size units; 0.0 = exact cell centers. Set on "
+                             "the built env (gym.make rejects it as a kwarg).")
+    parser.add_argument("--reward_shift", type=float, default=0.0,
+                        help="Constant added to every step's extrinsic reward; -1 gives the ExPLORe "
+                             "convention (-1 per step, 0 on the goal-reaching step).")
+    parser.add_argument("--attach_xy_to_state", default=False, type=_str2bool,
+                        help="AntMaze: re-attach achieved_goal (x, y) in front of the body state (AntMaze "
+                             "strips x, y out of the observation key).")
+    parser.add_argument("--include_contact_forces", default=False, type=_str2bool,
+                        help="AntMaze: keep the 78-d contact forces in the state (v5 default has them; this "
+                             "project runs without).")
+    parser.add_argument("--start_cell", type=str, default="",
+                        help="Explicit start cell 'row,col' (0-based); overrides goal_position logic.")
+    parser.add_argument("--goal_cell", type=str, default="",
+                        help="Explicit goal cell 'row,col' (0-based); overrides goal_position logic.")
     parser.add_argument("--rnd_obs_norm", default=True, type=_str2bool)
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"])
     parser.add_argument("--rnd_output_dim", type=int, default=128)
@@ -250,6 +290,12 @@ def parse_config() -> Config:
     args = parser.parse_args()
     cfg = Config(**{f: getattr(args, f) for f in Config.__dataclass_fields__})
 
+    # named EnvSetup: overlay its env fields onto cfg, skipping any flag the command line set
+    # explicitly (so single-field CLI overrides always win over the setup)
+    if cfg.env_setup:
+        explicit = {a[2:].split("=", 1)[0] for a in sys.argv[1:] if a.startswith("--")}
+        _apply_env_setup(cfg, explicit)
+
     # wandb sweep overrides each field (keeps the sweep as the source of run config); WANDB_DIR (set
     # by the slurm launcher) makes wandb write its local run dir into the per-run train_runs folder
     if cfg.use_wandb:
@@ -267,6 +313,30 @@ def parse_config() -> Config:
         if cfg.use_wandb and wandb.run is not None:
             wandb.config.update({"algorithm": cfg.algorithm, "beta": cfg.beta}, allow_val_change=True)
     return cfg
+
+
+def _apply_env_setup(cfg: Config, explicit: set) -> None:
+    """Overlay the named EnvSetup onto cfg's env fields, skipping fields the CLI set explicitly."""
+    if cfg.env_setup not in ENV_SETUPS:
+        raise ValueError(f"env_setup must be one of {ENV_SETUP_NAMES}; got {cfg.env_setup!r}")
+    setup = ENV_SETUPS[cfg.env_setup]
+    # one entry per env-side Config field the setup controls; max_episode_steps None -> the -1 sentinel
+    mapping = {
+        "env_name": setup.env_id,
+        "continuing_task": setup.continuing_task,
+        "reset_target": setup.reset_target,
+        "position_noise_range": setup.position_noise_range,
+        "env_max_episode": -1 if setup.max_episode_steps is None else setup.max_episode_steps,
+        "reward_shift": setup.reward_shift,
+        "attach_xy_to_state": setup.attach_xy_to_state,
+        "include_contact_forces": setup.include_contact_forces,
+        "discount_factor": setup.discount_factor,
+        "start_cell": f"{setup.start_cell[0]},{setup.start_cell[1]}",
+        "goal_cell": f"{setup.goal_cell[0]},{setup.goal_cell[1]}",
+    }
+    for field, value in mapping.items():
+        if field not in explicit:
+            setattr(cfg, field, value)
 
 
 def _run_name(cfg: Config) -> str:
@@ -291,21 +361,37 @@ def _run_name(cfg: Config) -> str:
 
 
 def make_base_env(cfg: Config) -> gym.Env:
-    """Create the base PointMaze env (+ optional truncation->termination wrapper). gym.register_envs
-    must already have run."""
-    base_env = gym.make(
-        cfg.env_name,
-        continuing_task=True,
-        reset_target=False,
-        max_episode_steps=cfg.env_max_episode,
-    )
+    """Create the base maze env (PointMaze or AntMaze) from cfg's env knobs (+ optional
+    truncation->termination wrapper). gym.register_envs must already have run."""
+    kwargs = {"continuing_task": cfg.continuing_task, "reset_target": cfg.reset_target}
+    # -1 keeps the env id's registered default episode limit
+    if cfg.env_max_episode > 0:
+        kwargs["max_episode_steps"] = cfg.env_max_episode
+    # AntMaze-only kwarg (PointMaze rejects it): drop the 78-d contact forces from the observation
+    if cfg.env_name.startswith("AntMaze") and not cfg.include_contact_forces:
+        kwargs["include_cfrc_ext_in_observation"] = False
+    base_env = gym.make(cfg.env_name, **kwargs)
+    # the noise knob is NOT a gym.make kwarg (it leaks into the MuJoCo agent env and raises a
+    # TypeError); set it on the built maze env — 0.0 pins goal and start to exact cell centers
+    base_env.unwrapped.position_noise_range = cfg.position_noise_range
+    # ExPLORe reward convention when nonzero: shift every step's extrinsic reward by a constant
+    if cfg.reward_shift != 0.0:
+        base_env = RewardShiftWrapper(base_env, cfg.reward_shift)
     if cfg.apply_termination_wrapper:
         base_env = TerminateOnTimeLimitWrapper(base_env)
     return base_env
 
 
 def select_cells(cfg: Config, base_env: gym.Env, seed: int):
-    """Pick the fixed goal and start cells (bottom_left / top_right / random), exactly as 04."""
+    """Pick the fixed goal and start cells: explicit "row,col" knobs win (validated against the
+    map's open cells); else the legacy goal_position logic (bottom_left / top_right / random)."""
+    if cfg.goal_cell and cfg.start_cell:
+        goal_cell = tuple(int(v) for v in cfg.goal_cell.split(","))
+        start_cell = tuple(int(v) for v in cfg.start_cell.split(","))
+        # force_cell validation fails loud on a wall / out-of-range cell
+        select_fixed_cell(base_env, seed, force_cell=goal_cell)
+        select_fixed_cell(base_env, seed, force_cell=start_cell)
+        return goal_cell, start_cell
     if cfg.goal_position == "bottom_left":
         goal_cell = select_fixed_goal_bottom_left(base_env)
         start_cell = select_fixed_goal_top_right(base_env)
@@ -319,30 +405,37 @@ def select_cells(cfg: Config, base_env: gym.Env, seed: int):
 
 
 def build_env_stack(cfg: Config, base_env, start_cell, goal_cell, count_map_refs=None, update_counts=True):
-    """Build the wrapper stack FixedStart -> FixedGoal -> RemoveGoal -> PositionVisitCount ->
-    PositionVelocityVisitCount -> Flatten. Returns (flat_env, position_wrapper, position_velocity_wrapper).
+    """Build the wrapper stack FixedStart -> FixedGoal -> [AttachAchievedGoal] -> RemoveGoal ->
+    PositionVisitCount -> second count surface -> Flatten. Returns (flat_env, position_wrapper,
+    second_wrapper). The second surface is PositionVelocityVisitCount for PointMaze (feeds
+    gt_position_velocity and the distance-to-GT field) and a 1 m sub-grid PositionVisitCount for
+    AntMaze (feeds gt_position_1m and the 1 m coverage metric).
 
     One helper builds both the train and eval stacks (04 hand-copied them). For eval, pass
-    count_map_refs=(train position counts, train position-velocity counts) and update_counts=False so
+    count_map_refs=(train position counts, train second-surface counts) and update_counts=False so
     eval reads the train counts without mutating them.
     """
-    # fixed start/goal + drop the goal from the observation
+    # fixed start/goal; AntMaze re-attaches (x, y) BEFORE the goal keys are dropped
     start_env = FixedStartWrapper(base_env, start_cell)
     goal_env = FixedGoalWrapper(start_env, goal_cell)
+    if cfg.attach_xy_to_state:
+        goal_env = AttachAchievedGoalWrapper(goal_env)
     no_goal_env = RemoveGoalWrapper(goal_env)
-    # position wrapper feeds the heatmap; position-velocity wrapper feeds the distance-to-GT field
-    if count_map_refs is None:
-        position_wrapper = PositionVisitCountWrapper(no_goal_env)
-        position_velocity_wrapper = PositionVelocityVisitCountWrapper(position_wrapper)
+    # position wrapper feeds the heatmap + cell coverage; the second surface is per env family
+    position_ref, second_ref = count_map_refs if count_map_refs is not None else (None, None)
+    position_wrapper = PositionVisitCountWrapper(
+        no_goal_env, count_map_ref=position_ref, update_counts=update_counts)
+    if cfg.env_name.startswith("AntMaze"):
+        # subdivision that turns the maze-cell grid into a 1 m grid (AntMaze cell 4 m -> 4)
+        sub_1m = max(1, int(round(get_cell_size(base_env))))
+        second_wrapper = PositionVisitCountWrapper(
+            position_wrapper, count_map_ref=second_ref, update_counts=update_counts, subdivision=sub_1m)
     else:
-        position_ref, position_velocity_ref = count_map_refs
-        position_wrapper = PositionVisitCountWrapper(
-            no_goal_env, count_map_ref=position_ref, update_counts=update_counts)
-        position_velocity_wrapper = PositionVelocityVisitCountWrapper(
-            position_wrapper, count_map_ref=position_velocity_ref, update_counts=update_counts)
-    # flatten Dict obs to a (4,) vector [x, y, vx, vy]
-    flat_env = FlattenObservation(position_velocity_wrapper)
-    return flat_env, position_wrapper, position_velocity_wrapper
+        second_wrapper = PositionVelocityVisitCountWrapper(
+            position_wrapper, count_map_ref=second_ref, update_counts=update_counts)
+    # flatten Dict obs to a flat vector starting with (x, y) — (4,) PointMaze / (29,) AntMaze
+    flat_env = FlattenObservation(second_wrapper)
+    return flat_env, position_wrapper, second_wrapper
 
 
 def wrap_for_rollout(flat_env, cfg: Config, intrinsic_model, seed: int) -> DummyVecEnv:
@@ -413,6 +506,17 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
         "beta": cfg.beta,
         "a_seed": cfg.a_seed,
         "z_logging_mode": cfg.z_logging_mode,
+        # --- env identity (section-8 multi-env sweeps need it; older single-env records omit it) ---
+        "env_setup": cfg.env_setup,
+        "env_name": cfg.env_name,
+        "start_cell": cfg.start_cell,
+        "goal_cell": cfg.goal_cell,
+        "continuing_task": cfg.continuing_task,
+        "env_max_episode": cfg.env_max_episode,
+        "position_noise_range": cfg.position_noise_range,
+        "reward_shift": cfg.reward_shift,
+        "discount_factor": cfg.discount_factor,
+        "device": cfg.device,           # where this run actually computed ("cpu"/"cuda")
         "total_timesteps": cfg.total_timesteps,
         "eval_freq": cfg.eval_freq,
         "eval_standalone": cfg.eval_standalone,   # whether the standalone eval rollout ran (OFF by default)
@@ -476,13 +580,17 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
     os.replace(tmp_path, path)
 
 
-def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocity_wrapper,
+def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, second_wrapper,
                     intrinsic_model, goal_cell, start_cell, run_name, log_to_wandb):
     """Build the three training callbacks (eval + heatmap, train episode stats, distance-to-GT).
+    second_wrapper = position-velocity counts (PointMaze) or the 1 m sub-grid counts (AntMaze).
     log_to_wandb gates whether metrics are sent to wandb (False in the wandb_param_only mode)."""
+    # 1 m coverage surface: the AntMaze sub-grid, or the PointMaze cell grid (cells already 1 m)
+    visit_count_env_1m = second_wrapper if cfg.env_name.startswith("AntMaze") else position_wrapper
     wandb_eval_callback = WandbEvalLoggingCallback(
         eval_vec, cfg.eval_freq, cfg.n_eval_episodes, cfg.use_wandb,
         visit_count_env=position_wrapper, goal_cell=goal_cell, start_cell=start_cell, run_name=run_name,
+        visit_count_env_1m=visit_count_env_1m,
         beta=cfg.beta,
         total_timesteps=cfg.total_timesteps,
         n_eval_episodes_final=cfg.n_eval_episodes_final,
@@ -500,7 +608,7 @@ def build_callbacks(cfg, train_vec, eval_vec, position_wrapper, position_velocit
     distance_logging_callback = DistanceLoggingCallback(
         algorithm=cfg.algorithm,
         intrinsic_reward_model=intrinsic_model,
-        visit_count_env_position_velocity=position_velocity_wrapper,
+        visit_count_env_position_velocity=second_wrapper,
         eval_freq=cfg.eval_freq,
         use_wandb=cfg.use_wandb,
         enabled=cfg.log_distance,  # OFF by default; no-op (empty history) unless --log_distance True
@@ -554,8 +662,10 @@ def run(cfg: Config) -> None:
     print(f"Fixed goal cell: {goal_cell}, start cell: {start_cell}")
     print(f"algorithm={cfg.algorithm}")
 
-    # train env stack + spaces
-    train_flat, train_position, train_position_velocity = build_env_stack(cfg, base_env, start_cell, goal_cell)
+    # train env stack + spaces; the second count surface is position-velocity (PointMaze) or the
+    # 1 m sub-grid (AntMaze)
+    is_antmaze = cfg.env_name.startswith("AntMaze")
+    train_flat, train_position, train_second = build_env_stack(cfg, base_env, start_cell, goal_cell)
     full_obs_dim = int(np.prod(train_flat.observation_space.shape))
     obs_shape = (full_obs_dim,)
     action_dim = int(np.prod(train_flat.action_space.shape))
@@ -576,7 +686,10 @@ def run(cfg: Config) -> None:
             observation_space=train_flat.observation_space,
             action_space=train_flat.action_space,
             position_wrapper=train_position,
-            position_velocity_wrapper=train_position_velocity,
+            # PointMaze: second surface = position-velocity counts; AntMaze: it is the 1 m grid.
+            # position_1m for PointMaze IS the cell grid (cells are already 1 m).
+            position_velocity_wrapper=None if is_antmaze else train_second,
+            position_1m_wrapper=train_second if is_antmaze else train_position,
             env=warmup_env,
         )
         intrinsic_model = build_intrinsic_model(cfg.algorithm, cfg, ctx)
@@ -591,13 +704,13 @@ def run(cfg: Config) -> None:
     eval_base = make_base_env(cfg)
     eval_flat, _, _ = build_env_stack(
         cfg, eval_base, start_cell, goal_cell,
-        count_map_refs=(train_position.visit_counts, train_position_velocity.visit_counts),
+        count_map_refs=(train_position.visit_counts, train_second.visit_counts),
         update_counts=False,
     )
     eval_vec = wrap_for_rollout(eval_flat, cfg, intrinsic_model, seed)
 
     callbacks = build_callbacks(
-        cfg, train_vec, eval_vec, train_position, train_position_velocity,
+        cfg, train_vec, eval_vec, train_position, train_second,
         intrinsic_model, goal_cell, start_cell, _run_name(cfg), log_to_wandb,
     )
 

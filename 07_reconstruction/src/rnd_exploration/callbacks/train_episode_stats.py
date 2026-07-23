@@ -36,6 +36,7 @@ class TrainEpisodeStatsCallback(BaseCallback):
         self._ep_intrinsic = 0.0
         self._episode_extrinsics = []
         self._episode_intrinsics = []
+        self._episode_successes = []
 
     def _get_monitor(self):
         """Locate Monitor wrapper (assumed to exist)."""
@@ -65,15 +66,23 @@ class TrainEpisodeStatsCallback(BaseCallback):
                 # length; we hold the accumulated extrinsic/intrinsic. before: episode just ended; after: one
                 # row appended with the step it ended at -> the full episode trajectory is reconstructable.
                 monitor = self._get_monitor()
+                # success = the episode TERMINATED (reached the goal under continuing_task=False); a
+                # time-limit end arrives as done=True + info["TimeLimit.truncated"]=True (SB3 VecEnv)
+                success = not bool(info.get("TimeLimit.truncated", False))
+                ep_length = int(monitor.get_episode_lengths()[-1])
                 self.episode_history.append({
                     "step": int(self.num_timesteps),
                     "train/extrinsic_reward": float(self._ep_extrinsic),
                     "train/intrinsic_reward": float(self._ep_intrinsic),
                     "train/total_reward": float(monitor.get_episode_rewards()[-1]),
-                    "train/episode_length": int(monitor.get_episode_lengths()[-1]),
+                    "train/episode_length": ep_length,
+                    "train/success": success,
+                    # steps to goal counts the terminating step; null for episodes that never reached it
+                    "train/steps_to_goal": ep_length if success else None,
                 })
                 self._episode_extrinsics.append(self._ep_extrinsic)
                 self._episode_intrinsics.append(self._ep_intrinsic)
+                self._episode_successes.append(success)
                 self._ep_extrinsic = 0.0
                 self._ep_intrinsic = 0.0
 
@@ -92,11 +101,13 @@ class TrainEpisodeStatsCallback(BaseCallback):
         window_lengths = lengths[-n_window:]
         window_extrinsics = self._episode_extrinsics[-n_window:]
         window_intrinsics = self._episode_intrinsics[-n_window:]
+        window_successes = self._episode_successes[-n_window:]
 
         mean_total = float(np.mean(window_rewards))
         mean_extrinsic = float(np.mean(window_extrinsics)) if window_extrinsics else 0.0
         mean_intrinsic = float(np.mean(window_intrinsics)) if window_intrinsics else 0.0
         mean_length = float(np.mean(window_lengths))
+        success_rate = float(np.mean(window_successes)) if window_successes else 0.0
 
         summary = collections.OrderedDict([
             ("step", self.num_timesteps),
@@ -104,6 +115,7 @@ class TrainEpisodeStatsCallback(BaseCallback):
             ("train/mean_intrinsic_reward", mean_intrinsic),
             ("train/mean_total_reward", mean_total),
             ("train/mean_episode_length", mean_length),
+            ("train/success_rate", success_rate),
             ("train/n_episodes_averaged", n_window),
         ])
         self.history.append(dict(summary))

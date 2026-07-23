@@ -41,6 +41,10 @@ REGISTRY: "dict[str, AlgorithmSpec]" = {
         AlgorithmSpec("no_exploration",               "none",        None,                           False, False, None,                False),
         AlgorithmSpec("gt_position",                  "visit_count", None,                           False, False, "position",          True),
         AlgorithmSpec("gt_position_velocity",         "visit_count", None,                           False, False, "position_velocity", True),
+        # section-8 AntMaze ground-truth variants (2026-07): position-only counts on the maze-cell
+        # grid (4 m cells) vs on the 1 m sub-grid — two separately named algorithms so both race.
+        AlgorithmSpec("gt_position_maze_cell",        "visit_count", None,                           False, False, "position",          True),
+        AlgorithmSpec("gt_position_1m",               "visit_count", None,                           False, False, "position_1m",       True),
         AlgorithmSpec("rnd_next_state",               "rnd",         "rnd_next_state",               False, False, None,                True),
         AlgorithmSpec("rnd_next_state_position_only", "rnd",         "rnd_next_state_position_only", False, False, None,                True),
         AlgorithmSpec("rnd_state",                    "rnd",         "rnd_state",                    False, False, None,                True),
@@ -65,9 +69,10 @@ class EnvContext:
     action_dim: int
     observation_space: Any
     action_space: Any
-    position_wrapper: Any            # PositionVisitCountWrapper (for gt_position)
+    position_wrapper: Any            # PositionVisitCountWrapper (for gt_position / gt_position_maze_cell)
     position_velocity_wrapper: Any   # PositionVelocityVisitCountWrapper (for gt_position_velocity)
     env: Any = None                  # a fresh flat env for env-steps obs-RMS warmup (None otherwise)
+    position_1m_wrapper: Any = None  # 1 m sub-grid PositionVisitCountWrapper (for gt_position_1m)
 
 
 def _warmup_obs_rms(model: "RND", cfg: Any, ctx: EnvContext) -> None:
@@ -183,8 +188,14 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
     # exponent is read from cfg (duck-typed via getattr; default -0.5 => 1/sqrt(n), -1 => 1/n) so
     # methods/ never imports train.py and a cfg without the field reproduces the historical 1/sqrt(n).
     if spec.kind == "visit_count":
-        wrapper = (ctx.position_velocity_wrapper if spec.gt_wrapper_kind == "position_velocity"
-                   else ctx.position_wrapper)
+        if spec.gt_wrapper_kind == "position_velocity":
+            wrapper = ctx.position_velocity_wrapper
+        elif spec.gt_wrapper_kind == "position_1m":
+            wrapper = ctx.position_1m_wrapper
+            if wrapper is None:
+                raise ValueError(f"algorithm {name!r} needs ctx.position_1m_wrapper (the 1 m sub-grid counts)")
+        else:
+            wrapper = ctx.position_wrapper
         return VisitCount(wrapper, intrinsic_decay_rate=getattr(cfg, "visit_count_decay", -0.5))
     # Elliptical family (Mahalanobis / UCB bonus): one shared config; the class is picked by
     # elliptical_mode. The ridge λ, feature normalization, update timing, and encoder input are read

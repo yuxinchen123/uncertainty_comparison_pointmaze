@@ -11,22 +11,31 @@ def get_maze_map(env):
     return None
 
 
-def observation_to_grid(observation, grid_rows=9, grid_cols=12):
+def get_cell_size(env) -> float:
+    """Read the maze cell size in meters from the env (maze_size_scaling: PointMaze 1, AntMaze 4)."""
+    return float(env.unwrapped.maze.maze_size_scaling)
+
+
+def observation_to_grid(observation, grid_rows=9, grid_cols=12, cell_size=1.0):
     """
     Map continuous (x, y) observation to grid cell (row, col).
-    Matches PointMaze coordinate system: X[-6.0, 6.0], Y[-4.5, 4.5] -> grid_rows x grid_cols.
+    The world extent is derived from the grid shape and cell size, centered at the origin
+    (the maze_v4 cell-to-world convention): width = grid_cols*cell_size, height = grid_rows*cell_size.
+    Defaults reproduce PointMaze_Large-v3 exactly: 9x12 cells of 1 m -> X[-6.0, 6.0], Y[-4.5, 4.5].
+    For a subdivided grid pass the subdivided shape and the sub-cell size (e.g. AntMaze 1 m grid:
+    36x48 cells of 1.0 m from the 9x12 map of 4 m cells).
     Returns 0-based (row, col) indices for numpy array indexing.
     Uses observation[:2] (x, y) for dict obs from 'observation' key.
     """
     arr = observation["observation"][:2] if isinstance(observation, dict) else observation[:2]
     x, y = float(arr[0]), float(arr[1])
 
-    left_edge = -6.0
-    right_edge = 6.0
-    bottom_edge = -4.5
-    top_edge = 4.5
-    total_width = 12.0
-    total_height = 9.0
+    total_width = grid_cols * cell_size
+    total_height = grid_rows * cell_size
+    left_edge = -total_width / 2.0
+    right_edge = total_width / 2.0
+    bottom_edge = -total_height / 2.0
+    top_edge = total_height / 2.0
     cell_width = total_width / grid_cols
     cell_height = total_height / grid_rows
 
@@ -109,6 +118,28 @@ def select_fixed_goal_top_right(env, maze_map=None):
     if not valid:
         raise ValueError("No valid cells in maze")
     return min(valid, key=lambda c: (c[0], -c[1]))
+
+
+def select_corner_cell(env, corner: str, maze_map=None):
+    """
+    Return the open cell at one of the four map corners (0-based (row, col), row 0 at the top —
+    the main.tex world convention, so top = high y, left = low x):
+    top_left = (min row, then min col); bottom_left = (max row, then min col);
+    top_right = (min row, then max col); bottom_right = (max row, then max col).
+    """
+    valid = get_valid_cells(env, maze_map)
+    if not valid:
+        raise ValueError("No valid cells in maze")
+    # each corner is an extreme in (row, col) order; ties broken toward the named side
+    if corner == "top_left":
+        return min(valid, key=lambda c: (c[0], c[1]))
+    if corner == "bottom_left":
+        return max(valid, key=lambda c: (c[0], -c[1]))
+    if corner == "top_right":
+        return min(valid, key=lambda c: (c[0], -c[1]))
+    if corner == "bottom_right":
+        return max(valid, key=lambda c: (c[0], c[1]))
+    raise ValueError(f"corner must be top_left/bottom_left/top_right/bottom_right; got {corner!r}")
 
 
 def select_fixed_cell(env, seed: int, exclude_cells=None, force_cell=None, maze_map=None):

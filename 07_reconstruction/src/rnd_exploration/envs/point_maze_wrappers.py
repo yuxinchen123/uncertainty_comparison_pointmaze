@@ -9,7 +9,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 
-from .point_maze_utils import get_maze_map, observation_to_grid, velocity_to_grid
+from .point_maze_utils import get_cell_size, get_maze_map, observation_to_grid, velocity_to_grid
 
 
 class FixedGoalWrapper(gym.Wrapper):
@@ -69,19 +69,29 @@ class RemoveGoalWrapper(gym.Wrapper):
 
 class PositionVisitCountWrapper(gym.Wrapper):
     """
-    Wraps PointMaze to track visit counts per position grid cell only.
-    Reads maze map from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
+    Wraps a maze env to track visit counts per position grid cell only.
+    Reads maze map and cell size from env. Maps (x,y) to (row,col), increments visit_counts on open cells.
+    subdivision=n splits every maze cell into n x n sub-cells (e.g. AntMaze 4 m cells with
+    subdivision=4 give a 1 m x 1 m grid); subdivision=1 (default) is the plain per-cell grid.
     Does not compute or add intrinsic reward; use ComputeIntrinsicRewardWrapper for that.
     For eval: pass count_map_ref=train_env.visit_counts and update_counts=False to reuse train counts.
     """
 
-    def __init__(self, env, count_map_ref=None, update_counts=True):
+    def __init__(self, env, count_map_ref=None, update_counts=True, subdivision: int = 1):
         super().__init__(env)
         self.update_counts = update_counts
-        self.maze_map = get_maze_map(env)
-        if self.maze_map is None:
+        base_map = get_maze_map(env)
+        if base_map is None:
             raise ValueError("Could not extract maze_map from environment")
+        self.subdivision = int(subdivision)
+        # expand the wall map to the sub-grid so every consumer (wall check, open-cell count) sees one
+        # uniform grid. before: 9x12 map of 4 m cells, subdivision 4; after: 36x48 map where each wall
+        # entry became a 4x4 block of walls and each open entry a 4x4 block of open sub-cells.
+        self.maze_map = np.kron(base_map, np.ones((self.subdivision, self.subdivision), dtype=base_map.dtype)) \
+            if self.subdivision > 1 else base_map
         self.grid_rows, self.grid_cols = self.maze_map.shape
+        # sub-cell edge length in meters (PointMaze cell 1 m / AntMaze cell 4 m, divided by subdivision)
+        self.cell_size = get_cell_size(env) / self.subdivision
         if count_map_ref is not None:
             self.visit_counts = count_map_ref
         else:
@@ -89,7 +99,7 @@ class PositionVisitCountWrapper(gym.Wrapper):
 
     def observation_to_count(self, obs) -> int:
         """Map observation to grid cell and return visit count for that cell. Raises ValueError if out-of-bounds or wall."""
-        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
         if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
             raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
         if self.maze_map[row, col] != 0:
@@ -98,7 +108,7 @@ class PositionVisitCountWrapper(gym.Wrapper):
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
-        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
         if self.update_counts and 0 <= row < self.grid_rows and 0 <= col < self.grid_cols:
             if self.maze_map[row, col] == 0:
                 self.visit_counts[row, col] += 1
@@ -122,6 +132,7 @@ class PositionVelocityVisitCountWrapper(gym.Wrapper):
         self.update_counts = update_counts
         self.maze_map = get_maze_map(env)
         self.grid_rows, self.grid_cols = self.maze_map.shape
+        self.cell_size = get_cell_size(env)
         n = self.VELOCITY_N_BINS
         if count_map_ref is not None:
             self.visit_counts = np.asarray(count_map_ref)
@@ -130,7 +141,7 @@ class PositionVelocityVisitCountWrapper(gym.Wrapper):
 
     def observation_to_count(self, obs) -> int:
         """Return visit count for the (position, velocity) cell. Raises ValueError if position is out-of-bounds or wall."""
-        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+        row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
         if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
             raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
         if self.maze_map[row, col] != 0:
@@ -141,7 +152,7 @@ class PositionVelocityVisitCountWrapper(gym.Wrapper):
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
         if self.update_counts:
-            row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols)
+            row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
             if 0 <= row < self.grid_rows and 0 <= col < self.grid_cols and self.maze_map[row, col] == 0:
                 vx_bin, vy_bin = velocity_to_grid(obs, n_bins=self.VELOCITY_N_BINS)
                 self.visit_counts[row, col, vx_bin, vy_bin] += 1
@@ -150,6 +161,45 @@ class PositionVelocityVisitCountWrapper(gym.Wrapper):
     def get_visit_counts(self):
         """Return visit count array (grid_rows, grid_cols, 10, 10) for eval reuse."""
         return self.visit_counts.copy()
+
+
+class AttachAchievedGoalWrapper(gym.ObservationWrapper):
+    """Prepend achieved_goal (the global x, y) to the 'observation' key of a Dict observation.
+    AntMaze strips x, y out of 'observation' (ant_maze_v5 _get_obs: observation = ant_obs[2:]), so
+    without this the network state has no maze position. Apply BEFORE RemoveGoalWrapper; the
+    resulting flat state then starts with (x, y), matching the PointMaze layout."""
+
+    def __init__(self, env):
+        super().__init__(env)
+        obs_spaces = dict(env.observation_space.spaces)
+        inner = obs_spaces["observation"]
+        achieved = obs_spaces["achieved_goal"]
+        obs_spaces["observation"] = spaces.Box(
+            low=np.concatenate([achieved.low, inner.low]),
+            high=np.concatenate([achieved.high, inner.high]),
+            dtype=inner.dtype,
+        )
+        self.observation_space = spaces.Dict(obs_spaces)
+
+    def observation(self, obs):
+        """Rebuild the dict with (x, y) prepended to 'observation'; goal keys pass through unchanged."""
+        out = dict(obs)
+        out["observation"] = np.concatenate([obs["achieved_goal"], obs["observation"]])
+        return out
+
+
+class RewardShiftWrapper(gym.Wrapper):
+    """Add a constant to every step's extrinsic reward. With shift=-1 the sparse maze reward
+    (1 within the goal radius, else 0) becomes the ExPLORe convention: -1 per step, 0 on the
+    goal-reaching step."""
+
+    def __init__(self, env, shift: float):
+        super().__init__(env)
+        self.shift = float(shift)
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        return obs, reward + self.shift, terminated, truncated, info
 
 
 class TerminateOnTimeLimitWrapper(gym.Wrapper):

@@ -145,6 +145,8 @@ def test_train_episode_stats_accumulates_and_weights_intrinsic():
     assert cb.episode_history[-1] == {
         "step": 2, "train/extrinsic_reward": 4.0, "train/intrinsic_reward": 4.0,
         "train/total_reward": 9.0, "train/episode_length": 3,
+        # no TimeLimit.truncated in info => the episode TERMINATED => success, 3 steps to goal
+        "train/success": True, "train/steps_to_goal": 3,
     }
 
 
