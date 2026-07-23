@@ -64,7 +64,7 @@ cell coverage for PointMaze). `eval_standalone=False` (scored on training episod
 
 - Python: `/p/rlprojects/RND/.venvs/exploration/bin/python` (shared canonical env; gymnasium
   1.2.3, gymnasium-robotics 1.3.1, mujoco 3.1.6, SB3 2.7.1).
-- Git state: branch `Use-RLexplore-RND`, commit `FILL_AT_LAUNCH` (commit-before-submit; recorded
+- Git state: branch `Use-RLexplore-RND`, commit `6c0dd0b` (commit-before-submit; recorded
   here at first sbatch).
 - Entry point: `07_reconstruction/train.py --env_setup <name> ...` (the worker builds argv from
   the queue JSON; `--device` overridden per node type via `WORKER_DEVICE`).
