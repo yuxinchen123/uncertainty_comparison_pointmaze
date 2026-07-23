@@ -92,9 +92,9 @@ def test_position_visit_count_shared_ref_and_wall():
     wrapper.step(ZERO_ACTION)
     assert ref.sum() == 6
 
-    # edge case: an observation that maps to a wall cell is rejected
-    with pytest.raises(ValueError):
-        wrapper.observation_to_count(WALL_OBS)
+    # edge case: an observation over a wall cell reads count 0 ("unvisited" -> maximal bonus);
+    # the AntMaze torso overhangs walls, so this is a legitimate position, not an error
+    assert wrapper.observation_to_count(WALL_OBS) == 0
 
 
 def test_position_velocity_visit_count_increments():
@@ -136,9 +136,9 @@ def test_position_velocity_visit_count_observation_to_count_and_wall():
     ref[row, col, vx_bin, vy_bin] = 7
     assert wrapper.observation_to_count(obs) == 7
 
-    # edge case: a wall observation is rejected before any velocity lookup
-    with pytest.raises(ValueError):
-        wrapper.observation_to_count(WALL_OBS)
+    # edge case: a wall observation reads count 0 before any velocity lookup (same convention
+    # as PositionVisitCountWrapper: wall/out-of-bounds positions are "unvisited", never an error)
+    assert wrapper.observation_to_count(WALL_OBS) == 0
 
 
 def test_compute_intrinsic_reward_info_fields():

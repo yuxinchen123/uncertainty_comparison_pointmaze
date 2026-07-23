@@ -44,6 +44,33 @@ Two caveats that matter more than the layout choice:
 
 These numbers are at the throttled 400 MHz. On a healthy jaguar03 (2.0 GHz base) all three would be roughly 5x higher, and the same ranking (C ≈ A > B) would hold.
 
+## CORRECTION (2026-07-23): the real cause is MEMORY LATENCY, not a CPU throttle
+
+Everything below this section was written under the belief that jaguar03 throttles its CPU clock. A
+later, controlled reproduction shows that is wrong. The real fault is the memory subsystem:
+
+- **Direct reproduction with the actual training, at LIGHT load (8 runs, 1 thread per core, so NOT a
+  full-node effect):** the identical training runs at **168 steps/min/run on jaguar03 vs 1,301 on a
+  healthy node (adriatic02) — 7.7x slower.** So jaguar03 is slow for this workload per-process, even
+  lightly loaded; it is not a full-node power/thermal throttle.
+- **Mechanism, via a single-thread random-access latency test (`latency.c`, pointer-chase over 256 MB,
+  no dependencies):** jaguar03 **425 ns per random memory access vs 99 ns on a healthy node (ai06) —
+  4.3x worse memory latency.**
+- This reconciles every earlier puzzle: the RND/SAC training does constant small RANDOM memory reads
+  (replay-buffer sampling), so it is memory-latency-bound and runs ~8x slower; a cache-resident compute
+  benchmark (numpy matmul, AVX FMA burn) never touches main memory, so it ran at FULL speed on jaguar03
+  and no CPU stress test reproduced the problem. The "~400 MHz" figure was an acpi-cpufreq mis-report,
+  not a real clock; the CPU is fine.
+- Root cause is therefore a MEMORY fault (a degraded DIMM, a channel dropped to a lower speed/rank, a
+  memory-controller issue, or a NUMA/interleave change), recent (this same training ran at healthy speed
+  in early July -- see the five-run table), and node-specific. It is checkable by admins: DIMM speeds
+  (`dmidecode -t memory`), memory error counts (EDAC / `ras-mc-ctl`), memtest, NUMA config.
+- Self-contained reproducer for admins: `gcc -O3 -o latency latency.c && ./latency 256` on jaguar03 vs a
+  healthy node -> ~425 ns vs ~100 ns.
+
+The sections below are kept for the record but read "throttle/clock" as "memory latency"; the timing,
+recency, and node-specific findings all still hold.
+
 ## Is the jaguar03 throttling expected?
 
 Under sustained load on all 112 cores, jaguar03's cores drop to about 400 MHz. A controlled single-core fixed-work benchmark on the node (recorded in run 5's `infra_history.md`, 2026-07-22T21:20) ran 34.69 s of compute versus 1.33 s on puma01 (2300 MHz) and 1.63 s on ai06 (1200 MHz) — about 26 times slower than puma01. Because the same fixed amount of work takes 26 times as long, the low clock is real and not just a misreport from the OS frequency counters.

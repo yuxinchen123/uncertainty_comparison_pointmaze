@@ -1,0 +1,1 @@
+2026-07-23 03:13:18 gnolim GPU jobs 6519829-32 cancelled: old titan-class cards unsupported by torch 2.10+cu128 (CUDA 'no kernel image'); 265 infra-failed queue entries moved back to pending; gnolim refilled with CPU-only workers per the submit-cpu-sweep old-tier rule

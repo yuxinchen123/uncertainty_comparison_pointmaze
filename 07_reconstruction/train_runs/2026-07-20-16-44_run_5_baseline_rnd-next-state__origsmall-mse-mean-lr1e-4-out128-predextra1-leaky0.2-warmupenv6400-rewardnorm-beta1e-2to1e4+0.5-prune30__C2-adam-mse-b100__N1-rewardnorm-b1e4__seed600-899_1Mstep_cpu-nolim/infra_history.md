@@ -147,3 +147,42 @@ Sweep `2026-07-20-16-55_set-baseline`. Owner sl5nw. cpu + nolim only (no reserva
 - Conclusion: same submission + same env + same node + same 192-thread/2-per-core workload, fast on
   Jul 5, collapsed on Jul 11. Only variable is time. Rules out the settings/env confounds ->
   the collapse is a genuine jaguar03 hardware/firmware degradation ~Jul 8-11, not a user-side change.
+
+## 2026-07-23T02:15 — REPRODUCED + RE-DIAGNOSED: jaguar03 fault is MEMORY LATENCY, not a CPU throttle
+- Controlled reproduction with the REAL training at LIGHT load (8 runs, 1 thread/core, NOT full node):
+  jaguar03 168 steps/min/run vs healthy adriatic02 1301 steps/min/run = 7.7x slower. So it is per-process
+  and load-independent, not a full-node power/thermal throttle.
+- Mechanism: single-thread random-access latency test (latency.c, 256MB pointer-chase, no deps):
+  jaguar03 425 ns/access vs healthy ai06 99 ns/access = 4.3x worse memory latency.
+- This reconciles the earlier puzzles: the RND/SAC training is memory-latency-bound (replay-buffer random
+  sampling) so jaguar03 runs it ~8x slower; cache-resident compute (numpy matmul, AVX FMA burn) never
+  hits DRAM so it ran at FULL speed on jaguar03 (why no CPU stress test reproduced it, and why the raw
+  compute microbench looked fast). The "~400 MHz" was an acpi-cpufreq MISREPORT, not a real clock -- the
+  CPU is fine.
+- Corrected root cause: a MEMORY fault (degraded DIMM / channel dropped to lower speed-rank / memory
+  controller / NUMA-interleave change), RECENT (same training ran ~14h/run in early July), node-specific.
+  Admin checks: dmidecode -t memory (DIMM speeds), EDAC/ras-mc-ctl (memory errors), memtest, NUMA config.
+- Self-contained repro for admins (no training env): gcc -O3 -o latency latency.c && ./latency 256
+  -> jaguar03 ~425 ns vs healthy ~100 ns. report.md updated with a CORRECTION section at the top.
+
+## 2026-07-23T02:30 — ruled out "slow by nature": same-architecture control confirms degradation
+- Concern: is jaguar03's 426 ns latency just a naturally-slow (big dual-socket / more NUMA hops) node?
+- Controlled test, identical latency.c (256MB random pointer-chase), against a SAME-ARCHITECTURE node:
+    jaguar03   : 2 sockets, 2 NUMA nodes -> 426 ns/access
+    adriatic02 : 2 sockets, 2 NUMA nodes (healthy) -> 112 ns/access
+  Same dual-socket/2-NUMA architecture, same test -> jaguar03 is 3.8x worse. So NOT a by-design NUMA
+  effect (a healthy dual-EPYC is ~100 ns local, ~200-250 ns worst-case cross-socket; 426 ns is beyond
+  any healthy config). (numactl absent on both nodes, so NUMA-local binding not tested, but the
+  same-architecture healthy control already controls for socket/NUMA count.)
+- Independent confirmation (workload, not microbench): jaguar03 ran this SAME memory-bound training at
+  ~14 h/run on Jul 5/7. If its memory were slow by nature the training could not have been fast then.
+  => memory latency was normal then and degraded since. Two independent lines both => genuine
+  degradation, not a naturally-slow node. Diagnosis (recent memory-subsystem fault) stands.
+
+## 2026-07-23T02:53 — both puma01 reservation jobs completed cleanly; sweep in final drain
+- puma01 jobs 6516458 (ended 02:22:07) and 6516459 (ended 02:34:55) both State=COMPLETED after ~1d11h.
+  Clean exit (queue empty for them) -> no orphaned running/ markers. Reservation-node work is done.
+- Queue now: done=1774, pruned=1087, running=139, pending=0 (accounts for all 3000). Final drain: the
+  remaining 139 full 1M-step runs are all running concurrently on the 5 cpu-partition jobs (160 task
+  slots > 139 runs, so no queueing). SWEEP_COMPLETE expected when the slowest finishes (~14-16h/run on
+  healthy cpu nodes) -> later on 2026-07-23. No action.

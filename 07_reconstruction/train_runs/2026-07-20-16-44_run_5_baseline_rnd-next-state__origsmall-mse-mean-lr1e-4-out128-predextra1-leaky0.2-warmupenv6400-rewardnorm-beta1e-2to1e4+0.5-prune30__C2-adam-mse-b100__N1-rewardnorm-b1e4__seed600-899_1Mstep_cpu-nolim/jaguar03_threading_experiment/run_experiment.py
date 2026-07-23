@@ -26,6 +26,8 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.environ.get("DATA_ROOT", os.path.join(HERE, "data"))  # override to run on another node
+#                                                                      without clobbering jaguar03's data
 RUN_DIR = os.path.dirname(HERE)
 PROJ = "/p/rlprojects/RND/07_reconstruction"
 PY = "/p/rlprojects/RND/.venvs/exploration/bin/python"
@@ -114,7 +116,7 @@ def read_step_runtime(path):
 
 def launch_layout(cfg):
     """Launch every run of one layout, pinned via taskset, return the list of (run_id, Popen, datadir)."""
-    datadir = os.path.join(HERE, "data", cfg)
+    datadir = os.path.join(DATA_ROOT, cfg)
     logdir = os.path.join(HERE, "logs", cfg)
     os.makedirs(logdir, exist_ok=True)
     spec = masks_for(cfg)
@@ -139,7 +141,7 @@ def launch_layout(cfg):
 def poll_and_wait(cfg, procs):
     """For WINDOW_SEC, every POLL_SEC append each run's (elapsed, run_id, step, runtime) to a CSV and
     sample node MHz; return the list of MHz samples. This is the frequent step log the report reads."""
-    csv_path = os.path.join(HERE, "data", cfg, f"progress_{cfg}.csv")
+    csv_path = os.path.join(DATA_ROOT, cfg, f"progress_{cfg}.csv")
     os.makedirs(os.path.dirname(csv_path), exist_ok=True)
     mhz_samples = []
     with open(csv_path, "w") as csv:

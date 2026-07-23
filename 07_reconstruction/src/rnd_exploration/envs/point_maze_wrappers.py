@@ -98,12 +98,15 @@ class PositionVisitCountWrapper(gym.Wrapper):
             self.visit_counts = np.zeros((self.grid_rows, self.grid_cols), dtype=int)
 
     def observation_to_count(self, obs) -> int:
-        """Map observation to grid cell and return visit count for that cell. Raises ValueError if out-of-bounds or wall."""
+        """Map observation to grid cell and return visit count for that cell. A position over a wall
+        cell or out of bounds returns 0 ("unvisited"): the AntMaze torso overhangs walls (its body
+        is wide, unlike the PointMaze ball), so such positions are legitimate — counts still only
+        ACCUMULATE on open cells (see step)."""
         row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
         if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
-            raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
+            return 0
         if self.maze_map[row, col] != 0:
-            raise ValueError(f"observation maps to wall cell (row={row}, col={col})")
+            return 0
         return int(self.visit_counts[row, col])
 
     def step(self, action):
@@ -140,12 +143,13 @@ class PositionVelocityVisitCountWrapper(gym.Wrapper):
             self.visit_counts = np.zeros((self.grid_rows, self.grid_cols, n, n), dtype=int)
 
     def observation_to_count(self, obs) -> int:
-        """Return visit count for the (position, velocity) cell. Raises ValueError if position is out-of-bounds or wall."""
+        """Return visit count for the (position, velocity) cell. A position over a wall cell or out
+        of bounds returns 0 ("unvisited") — same convention as PositionVisitCountWrapper."""
         row, col = observation_to_grid(obs, self.grid_rows, self.grid_cols, self.cell_size)
         if not (0 <= row < self.grid_rows and 0 <= col < self.grid_cols):
-            raise ValueError(f"observation maps to grid (row={row}, col={col}) which is out of bounds for grid shape ({self.grid_rows}, {self.grid_cols})")
+            return 0
         if self.maze_map[row, col] != 0:
-            raise ValueError(f"observation maps to wall cell (row={row}, col={col})")
+            return 0
         vx_bin, vy_bin = velocity_to_grid(obs, n_bins=self.VELOCITY_N_BINS)
         return int(self.visit_counts[row, col, vx_bin, vy_bin])
 
