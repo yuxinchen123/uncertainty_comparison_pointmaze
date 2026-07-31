@@ -15,7 +15,7 @@ treat `completed=false` records as partial (usable for truncated curves, never f
 aggregates); a missing `completed` field means an old write-once record, i.e. complete.
 
 This file keeps the RND-specific parts, so the writeup's `\section{Logging}`
-(`development_document/main.tex`) and the analysis code stay in sync.
+(`development_document/RND_development_document.tex`) and the analysis code stay in sync.
 
 ## RND sweep order
 - `run_total` 600 = 3 algorithms x 200 seeds; seed OUTERMOST, algorithm inner in fixed `ALGO_BETA`

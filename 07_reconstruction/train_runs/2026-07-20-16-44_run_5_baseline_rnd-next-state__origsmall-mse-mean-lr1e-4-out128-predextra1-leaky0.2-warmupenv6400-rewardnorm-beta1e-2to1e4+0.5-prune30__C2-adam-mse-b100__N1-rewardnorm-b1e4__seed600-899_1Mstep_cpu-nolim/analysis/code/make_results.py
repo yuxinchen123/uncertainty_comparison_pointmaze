@@ -2,11 +2,11 @@
 """Generate the Train run 5 (set baseline) analysis artifacts for main.tex.
 
 Outputs (under ../plots/, each a bare tabular \\input by main.tex, plus one figure):
-- reward_table.tex        the three arms (original-small winning beta, C2, N1) + old-C2/old-N1
+- reward_table.tex        the three arms (run-5 original-small winning beta, benchmark, reward-norm) + old references
                           reference rows; final training-episode reward Rbar +- SE, success fraction, n.
-- beta_sweep_table.tex    the 8 original-small betas: Rbar +- SE, n, and whether pruned.
+- beta_sweep_table.tex    the 8 run-5 original-small betas: Rbar +- SE, n, and whether pruned.
 - reward_curve.pdf        mean +- SE training-reward curve per arm over 1e6 steps.
-- substitution_table.tex  + ../substitution.md : per old run (3.2.2/3.1.1 for C2; 3.2.3/3.2.4 for N1)
+- substitution_table.tex  + ../substitution.md : per old run (3.2.2/3.1.1 for the benchmark; 3.2.3/3.2.4 for the reward-norm)
                           a Welch t-test, Cohen's d, and KS statistic vs the run-5 fresh line for the
                           same config_key; pre-registered "substantially different iff p<0.01 and
                           |d|>0.3"; the runs that pass BOTH gates may be pooled (substituted).
@@ -53,12 +53,12 @@ def _first(pat):
     return g[0] if g else None
 
 OLD_RUNS = {
-    # C2 sources
-    "C2 (run 3.2.2)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_2*", "data", "*", "local")),
-    "C2 (run 3.1.1)": _first(os.path.join(TRAIN_RUNS, "*run_3_1_1*", "data", "*", "local")),
-    # N1 sources
-    "N1 (run 3.2.3)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_3*", "data", "*", "local")),
-    "N1 (run 3.2.4)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_4*", "data", "*", "local")),
+    # benchmark sources
+    "benchmark (run-3.2.2 data)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_2*", "data", "*", "local")),
+    "benchmark (run-3.1.1 data)": _first(os.path.join(TRAIN_RUNS, "*run_3_1_1*", "data", "*", "local")),
+    # reward-norm sources
+    "reward-norm (run-3.2.3 data)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_3*", "data", "*", "local")),
+    "reward-norm (run-3.2.4 data)": _first(os.path.join(TRAIN_RUNS, "*run_3_2_4*", "data", "*", "local")),
 }
 
 # canonical keys (8-field, matching build_queue.config_key)
@@ -182,21 +182,21 @@ def tex(v, mark):
 # ---------------------------------------------------------------------------------------------------
 
 def write_reward_table(run5, olds):
-    """The headline performance table: original-small (best beta), C2, N1, + old references."""
-    # pick the winning original-small beta by mean over its finished seeds
+    """The headline performance table: run-5 original-small (best beta), benchmark, reward-norm, + old references."""
+    # pick the winning run-5 original-small beta by mean over its finished seeds
     os_stats = [(b, agg(run5.get(k, {"final": []})["final"]))
                 for b, k in zip(BETAS, ORIGSMALL_KEYS)]
     os_ranked = sorted(os_stats, key=lambda t: (-1 if t[1][1] != t[1][1] else t[1][1]), reverse=True)
     best_beta, best_agg = os_ranked[0]
     rows = []  # (label, n, mean, se, succ, source)
     n, m, se, sc = best_agg
-    rows.append([f"original-small ($\\beta{{=}}{best_beta}$)", n, m, se, sc, "run 5"])
-    for label, key in (("C2 (Adam, no norm)", KEY_C2), ("N1 (Adam, reward norm)", KEY_N1)):
+    rows.append([f"run-5 original-small ($\\beta{{=}}{best_beta}$)", n, m, se, sc, "run 5"])
+    for label, key in (("run-3.2.2 benchmark (Adam, no norm)", KEY_C2), ("run-3.2.3 reward-norm (Adam)", KEY_N1)):
         n, m, se, sc = agg(run5.get(key, {"final": []})["final"])
         rows.append([label, n, m, se, sc, "run 5"])
-    # reference rows: old C2 (3.2.2) and old N1 (3.2.4)
-    for label, run_label, key in (("C2 (run 3.2.2)", "C2 (run 3.2.2)", KEY_C2),
-                                  ("N1 (run 3.2.4)", "N1 (run 3.2.4)", KEY_N1)):
+    # reference rows: old benchmark (3.2.2) and old reward-norm (3.2.4)
+    for label, run_label, key in (("benchmark (run-3.2.2 data)", "benchmark (run-3.2.2 data)", KEY_C2),
+                                  ("reward-norm (run-3.2.4 data)", "reward-norm (run-3.2.4 data)", KEY_N1)):
         n, m, se, sc = agg(olds.get(run_label, {}).get(key, {"final": []})["final"])
         rows.append([label, n, m, se, sc, "prior"])
     marks_r = mark_rows([(r[0], r[2]) for r in rows], 1)
@@ -215,7 +215,7 @@ def write_reward_table(run5, olds):
 
 
 def write_beta_sweep_table(run5, pruned_keys):
-    """Per-beta original-small results (mean +- SE, n, pruned flag)."""
+    """Per-beta run-5 original-small results (mean +- SE, n, pruned flag)."""
     lines = [r"\begin{tabular}{@{}r r r r c@{}}", r"\toprule",
              r"$\beta$ & $\bar R$ & $\mathrm{SE}$ & $n$ & pruned \\", r"\midrule"]
     for b, k in zip(BETAS, ORIGSMALL_KEYS):
@@ -239,9 +239,9 @@ def cohen_d(a, b):
 
 def write_substitution(run5, olds):
     """Per old run, test the run-5 fresh line vs the old line for the same config_key."""
-    # tests: run-5 C2 vs old-C2 sources; run-5 N1 vs old-N1 sources
-    cases = [("C2 (run 3.2.2)", KEY_C2, "C2"), ("C2 (run 3.1.1)", KEY_C2, "C2"),
-             ("N1 (run 3.2.3)", KEY_N1, "N1"), ("N1 (run 3.2.4)", KEY_N1, "N1")]
+    # tests: run-5 benchmark vs old benchmark sources; run-5 reward-norm vs old reward-norm sources
+    cases = [("benchmark (run-3.2.2 data)", KEY_C2, "benchmark"), ("benchmark (run-3.1.1 data)", KEY_C2, "benchmark"),
+             ("reward-norm (run-3.2.3 data)", KEY_N1, "reward-norm"), ("reward-norm (run-3.2.4 data)", KEY_N1, "reward-norm")]
     rows, md = [], ["# Train run 5 — per-run substitution test\n",
                     "Pre-registered rule: an old run is *substantially different* from the run-5 fresh line "
                     "(and so is NOT pooled) iff **p < 0.01 AND |d| > 0.3** (Welch t on the final "
@@ -279,10 +279,10 @@ def write_reward_curve(run5, best_beta):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    # mathtext label so the legend prints a real beta, e.g. "original-small ($\beta$=1000)"
-    arms = [(f"original-small ($\\beta$={best_beta})",
+    # mathtext label so the legend prints a real beta, e.g. "run-5 original-small ($\beta$=1000)"
+    arms = [(f"run-5 original-small ($\\beta$={best_beta})",
              ORIGSMALL_KEYS[BETAS.index(best_beta)], "tab:blue"),
-            ("C2", KEY_C2, "tab:orange"), ("N1", KEY_N1, "tab:green")]
+            ("run-3.2.2 benchmark", KEY_C2, "tab:orange"), ("run-3.2.3 reward-norm", KEY_N1, "tab:green")]
     fig, ax = plt.subplots(figsize=(6, 4))
     for label, key, color in arms:
         curves = run5.get(key, {"curves": []})["curves"]
@@ -314,7 +314,7 @@ def _write(name, content):
 
 
 def load_pruned_keys():
-    """The set of original-small keys the controller pruned (from the newest decisions ledger)."""
+    """The set of run-5 original-small keys the controller pruned (from the newest decisions ledger)."""
     ledgers = sorted(glob.glob(os.path.join(RUN_DIR, "slurm", "prune_decisions_*.jsonl")))
     pruned = set()
     if ledgers:

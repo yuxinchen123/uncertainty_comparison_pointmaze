@@ -1,6 +1,6 @@
 # `07_reconstruction` — folder structure
 
-Companion to `development_document/main.tex`. This is the code base behind the development document: SAC on
+Companion to `development_document/RND_development_document.tex`. This is the code base behind the development document: SAC on
 `PointMaze_Large-v3` with a switchable intrinsic exploration bonus, plus a distance-to-ground-truth comparison of
 each bonus against an oracle visit-count field.
 
@@ -54,7 +54,7 @@ After the 2026-06-24 reorganization the code is an installable package (`rnd_exp
 │   └── 2026-06-24-cpu-parallelization-understanding/   # dated study (frozen; pinned to its commit)
 │
 └── development_document/          # THIS document (LaTeX)
-    ├── main.tex                   # notation, method catalog, environments, train runs, distance metrics
+    ├── RND_development_document.tex  # notation, method catalog, environments, train runs, distance metrics
     ├── folder_structure.md        # this file
     ├── bibliography.bib  neurips_2026.sty
     └── code/                      # figure-generating scripts for the writeup

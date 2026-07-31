@@ -99,7 +99,7 @@ def get_valid_cells(env, maze_map=None):
 def select_fixed_goal_bottom_left(env, maze_map=None):
     """
     Return the open cell at array (max row, min col). In world coordinates -- row 0 at the top,
-    x increasing right, y increasing up (the main.tex / visit-count-heatmap convention) -- this is
+    x increasing right, y increasing up (the RND_development_document.tex / visit-count-heatmap convention) -- this is
     the lower-left open cell: max row = lowest y, min col = lowest x. Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
@@ -111,7 +111,7 @@ def select_fixed_goal_bottom_left(env, maze_map=None):
 def select_fixed_goal_top_right(env, maze_map=None):
     """
     Return the open cell at array (min row, max col). In world coordinates -- row 0 at the top,
-    x increasing right, y increasing up (the main.tex / visit-count-heatmap convention) -- this is
+    x increasing right, y increasing up (the RND_development_document.tex / visit-count-heatmap convention) -- this is
     the upper-right open cell: min row = highest y, max col = highest x. Returns (row, col) 0-based.
     """
     valid = get_valid_cells(env, maze_map)
@@ -123,7 +123,7 @@ def select_fixed_goal_top_right(env, maze_map=None):
 def select_corner_cell(env, corner: str, maze_map=None):
     """
     Return the open cell at one of the four map corners (0-based (row, col), row 0 at the top —
-    the main.tex world convention, so top = high y, left = low x):
+    the RND_development_document.tex world convention, so top = high y, left = low x):
     top_left = (min row, then min col); bottom_left = (max row, then min col);
     top_right = (min row, then max col); bottom_right = (max row, then max col).
     """

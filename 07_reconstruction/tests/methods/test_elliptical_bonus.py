@@ -92,7 +92,7 @@ def test_default_feature_normalization_is_unit():
 
 
 def test_unit_norm_bounds_feature_norm():
-    """unit-norm features satisfy ||φ||_2 <= 1, so the ridge λ is interpretable (main.tex)."""
+    """unit-norm features satisfy ||φ||_2 <= 1, so the ridge λ is interpretable (RND_development_document.tex)."""
     model = _make_model(feature_normalization="unit")
     phi = model._samples_to_features(_batch(16, seed=4))
     norms = phi.norm(dim=-1)

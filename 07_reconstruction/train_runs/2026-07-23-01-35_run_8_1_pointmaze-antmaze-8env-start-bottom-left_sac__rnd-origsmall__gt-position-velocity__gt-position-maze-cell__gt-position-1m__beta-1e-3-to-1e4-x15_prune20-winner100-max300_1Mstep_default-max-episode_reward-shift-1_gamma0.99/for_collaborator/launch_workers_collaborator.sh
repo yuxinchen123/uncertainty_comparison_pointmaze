@@ -44,11 +44,11 @@ TLIM=$(printf '%d-%02d:%02d:%02d' "$d" "$h" "$m" "$s")
 echo "[time] --time=$TLIM"
 
 # ---- queue-depth guard: never submit more worker slots than there is work left --------------
-# live worker CPUs across ALL submitters: the owner fleet (job names r81*) + every collaborator using
+# live worker CPUs across ALL submitters: the owner fleet (job names pmam*) + every collaborator using
 # THIS packet (the three random prefixes baked into packet_env.sh). Never over-provision the queue.
 pending=$(ls "$PENDING_DIR" | wc -l)
 slots=$(squeue -h -t R -o "%C %j" 2>/dev/null \
-        | awk -v re="^(r81|$PREFIX_CPU|$PREFIX_NOLIM|$PREFIX_GPU)" '$2 ~ re {s+=$1} END{print s+0}')
+        | awk -v re="^(pmam|$PREFIX_CPU|$PREFIX_NOLIM|$PREFIX_GPU)" '$2 ~ re {s+=$1} END{print s+0}')
 remaining=$(( pending - slots ))
 echo "[depth] pending=$pending  live-worker-cpus(all submitters)=$slots  remaining-unclaimed=$remaining"
 if (( remaining <= 0 )); then

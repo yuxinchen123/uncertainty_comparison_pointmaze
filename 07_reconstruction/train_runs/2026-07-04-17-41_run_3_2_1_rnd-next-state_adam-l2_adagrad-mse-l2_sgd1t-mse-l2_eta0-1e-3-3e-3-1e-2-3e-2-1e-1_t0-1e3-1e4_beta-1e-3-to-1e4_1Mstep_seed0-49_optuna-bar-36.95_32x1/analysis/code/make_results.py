@@ -55,7 +55,7 @@ ORACLE_1SQRTN_LOCAL = ORACLE_DATA / "2026-07-09-00-15_oracle-gt-position-velocit
 ORACLE_1N_LOCAL = ORACLE_DATA / "2026-07-09-00-27_oracle-gt-position-velocity-1n_seed200-499" / "local"
 
 # The canonical RND benchmark config (Adam optimizer, mse readout, beta=100), used as row 4 of the
-# run-3.2.1 table (from run-3.1.1 data) and as C2 of the run-3.2.2 table (from run-3.2.2 data).
+# run-3.2.1 table (from run-3.1.1 data) and as the RND-benchmark row of the run-3.2.2 table (from run-3.2.2 data).
 BENCH_KEY = "adam|mse|-|-|100"
 
 # ---------------------------------------------------------------------------------------------------------
@@ -71,9 +71,9 @@ GT_R321 = {
     "adam|l2|-|-|1":         (26.15, 4.11, 0.55, 49),
 }
 GT_R322 = {                                             # final, all n=100 (2026-07-09)
-    "sgd1t|mse|0.1|1000|10": (37.12, 3.17, 0.84, 100),  # C1
-    "adam|mse|-|-|100":      (34.50, 3.13, 0.69, 100),  # C2 (benchmark)
-    "sgd1t|l2|0.1|1000|1":   (33.17, 3.28, 0.69, 100),  # C0
+    "sgd1t|mse|0.1|1000|10": (37.12, 3.17, 0.84, 100),  # winner 1
+    "adam|mse|-|-|100":      (34.50, 3.13, 0.69, 100),  # benchmark
+    "sgd1t|l2|0.1|1000|1":   (33.17, 3.28, 0.69, 100),  # winner 2
 }
 
 
@@ -152,7 +152,7 @@ def _check(agg: dict, gt: dict, label: str) -> None:
 # ---------------------------------------------------------------------------------------------------------
 # Artifact 1: run-3.2.1 six-row table.
 # ---------------------------------------------------------------------------------------------------------
-OPT_METHOD = {"sgd1t": "O3 SGD-$1/t$", "adagrad": "O2 AdaGrad", "adam": "O1 Adam"}
+OPT_METHOD = {"sgd1t": "SGD-$1/t$", "adagrad": "AdaGrad", "adam": "Adam"}
 READOUT_TEX = {"mse": r"$\mathcal{B}_{\mathrm{mse}}$", "l2": r"$\mathcal{B}_{\mathrm{l2}}$"}
 
 
@@ -218,9 +218,9 @@ def write_reward_table(rows: list[dict]) -> None:
 # Artifact 2: run-3.2.2 three-row validation table.
 # ---------------------------------------------------------------------------------------------------------
 OPT_NAME = {"sgd1t": "SGD-$1/t$", "adagrad": "AdaGrad", "adam": "Adam"}
-CONFIG_LABEL = {"sgd1t|mse|0.1|1000|10": "C1", "adam|mse|-|-|100": "C2 (RND benchmark)",
-                "sgd1t|l2|0.1|1000|1": "C0",
-                "oracle|1sqrtn": "O$\\sqrt{}$ (oracle)", "oracle|1n": "O$n$ (oracle)"}
+CONFIG_LABEL = {"sgd1t|mse|0.1|1000|10": "run-3.2.1 winner 1", "adam|mse|-|-|100": "RND benchmark",
+                "sgd1t|l2|0.1|1000|1": "run-3.2.1 winner 2",
+                "oracle|1sqrtn": "count oracle $1/\\sqrt{n}$", "oracle|1n": "count oracle $1/n$"}
 # per-oracle "Optimizer / readout / beta" descriptor + row label for the validation table
 ORACLE_SPECS = [
     (ORACLE_1SQRTN_LOCAL, "oracle|1sqrtn", "visit-count / $1/\\sqrt{n}$ / $1$"),
@@ -437,7 +437,7 @@ def main() -> None:
         v321s = f"{v321['mean']:.2f} (n={v321['n']})" if v321 else "n/a"
         print(f"  {key:26s} 3.2.2 Rbar={v322['mean']:.2f} (n={v322['n']})  <-  3.2.1 Rbar={v321s}",
               file=sys.stderr)
-    # the run-3.2.1 best sgd1t|l2 config (row 2 of the table) for context vs C0
+    # the run-3.2.1 best sgd1t|l2 config (row 2 of the table) for context vs winner 2
     row2 = best_config(agg321, "sgd1t", "l2")
     print(f"  best sgd1t|l2 in 3.2.1 (table row 2): {row2['key']} Rbar={row2['mean']:.2f} (n={row2['n']})",
           file=sys.stderr)

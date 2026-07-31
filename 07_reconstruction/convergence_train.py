@@ -9,7 +9,7 @@ compute()'s 1e-8 numerical clamp, which would floor deeply converged values at 1
 
 Observation normalization is OFF (raw [x, y, 0, 0] inputs), so given the seed the whole run is
 deterministic: the initialization realization is the only randomness. Design + tables:
-development_document/main.tex, Section "Convergence rate runs" (convergence run 1).
+development_document/RND_development_document.tex, Section "Convergence rate runs" (convergence run 1).
 """
 import argparse
 import json

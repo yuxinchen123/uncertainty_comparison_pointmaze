@@ -6,16 +6,22 @@ showing the algorithm's CURRENT BEST config (best = highest mean per-episode ext
 its completed records), ranked by reward (best first). Repeatedly callable; keeps no state.
 
 Metric columns — each "mean ± standard-error" over the best config's completed seeds, plus a final
-completed-seeds N column. Standard error = sample std / sqrt(n) (0 when n < 2):
-- reward         : score_of_record(d) = mean over ALL train_episode_history rows of
-                   train/extrinsic_reward (the whole-run mean per-episode extrinsic return)
-- success_rate   : per record = (# train_episode_history rows with a truthy train/success) / (# rows);
-                   mean +/- SE over records
-- steps_to_goal  : per record = mean train/steps_to_goal over its SUCCESSFUL rows; records with zero
-                   successes are excluded from this column (its included-record count is shown as
-                   "(n=..)" when it differs from N)
-- maze_cell_cov% : last eval_history row's visit_counts/coverage_pct
-- 1m_cov%        : last eval_history row's visit_counts_1m/coverage_pct
+completed-seeds N column. Standard error = sample std / sqrt(n) (0 when n < 2).
+Definitions revised 2026-07-24 (user): the "current performance" columns use only the LAST 100
+episodes of each run; ranking (and the racing prune score) stays the whole-run reward:
+- reward           : score_of_record(d) = mean over ALL train_episode_history rows of
+                     train/extrinsic_reward (the whole-run mean per-episode extrinsic return;
+                     the RANKING column and the prune score)
+- reward_last100   : per record = mean train/extrinsic_reward over the LAST 100 episodes
+- success_rate     : per record = (# of the LAST 100 episodes with a truthy train/success) / 100
+                     (denominator = however many of the last 100 exist when a run has fewer)
+- steps_to_goal    : per record = mean train/steps_to_goal over its SUCCESSFUL rows (whole run);
+                     records with zero successes are excluded from this column (its included-record
+                     count is shown as "(n=..)" when it differs from N)
+- maze_cell_cov%   : visit_counts/coverage_pct at the END of the run (the last eval snapshot; the
+                     counts are cumulative, so this is the coverage after the final — i.e. last
+                     100 — episodes; a last-100-only coverage is not in the record format)
+- 1m_cov%          : visit_counts_1m/coverage_pct at the END of the run (same convention)
 
 Row label spells the swept knob out: bonus algorithms -> "<algorithm> — bonus-weight-<beta>" (the
 --beta intrinsic-bonus weight is the only swept knob); no_exploration -> "no_exploration — no swept
@@ -59,10 +65,35 @@ def mean_se(vals):
     return m, math.sqrt(var) / math.sqrt(n), n
 
 
+def compact_record(d):
+    """Reduce a full per-run record to a small dict carrying ONLY what the metrics tables need,
+    so the loader never holds the ~1400-episode train_episode_history / eval_history of thousands of
+    records in memory at once (that OOM-killed the 4G monitor at ~3000 records). All six metric
+    helpers below read the precomputed "_"-prefixed scalars when present and fall back to computing
+    from a full record otherwise (so the standalone CLI still works on raw JSON).
+
+    before: {..., train_episode_history:[1400 dicts], eval_history:[20 dicts], + config fields}
+    after : {env_setup, algorithm, beta, _score, _r100, _succ, _steps, _mcov, _cov1m}  (9 scalars)
+    """
+    return {
+        "env_setup": d.get("env_setup"),
+        "algorithm": d.get("algorithm"),
+        "beta": d.get("beta"),
+        "_score": prune_controller.score_of_record(d),     # whole-run mean per-episode return
+        "_r100": record_reward_last100(d),                  # last-100 mean return
+        "_succ": record_success_rate(d),                    # last-100 success fraction
+        "_steps": record_steps_to_goal(d),                  # mean steps over successful episodes
+        "_mcov": record_last_eval(d, "visit_counts/coverage_pct"),
+        "_cov1m": record_last_eval(d, "visit_counts_1m/coverage_pct"),
+    }
+
+
 def load_completed(sweep_id):
-    """{config_key: [record, ...]} over completed per-run JSONs that have a computable score.
-    A missing "completed" field counts as complete (prune_controller convention); a completed=false
-    checkpoint of a killed attempt is skipped, as is a record with no scorable episode."""
+    """{config_key: [compact_record, ...]} over completed per-run JSONs that have a computable score.
+    Each record is reduced to scalars immediately (compact_record) so the loader's memory stays
+    bounded by the record COUNT, not the total episode count. A missing "completed" field counts as
+    complete (prune_controller convention); a completed=false checkpoint of a killed attempt is
+    skipped, as is a record with no scorable episode."""
     local = os.path.join(DATA_RUN_DIR, "data", sweep_id, "local")
     by_key = {}
     for path in glob.glob(os.path.join(local, "*.json")):
@@ -75,14 +106,35 @@ def load_completed(sweep_id):
             continue
         if prune_controller.score_of_record(d) is None:
             continue
-        by_key.setdefault(prune_controller.key_from_record(d), []).append(d)
+        key = prune_controller.key_from_record(d)
+        by_key.setdefault(key, []).append(compact_record(d))
+        # d (with its big history lists) goes out of scope here and is freed before the next file
     return by_key
 
 
+def score_of(d):
+    """Whole-run mean per-episode return: the precomputed compact scalar, or compute from a full record."""
+    return d["_score"] if "_score" in d else prune_controller.score_of_record(d)
+
+
+def record_reward_last100(d):
+    """Mean train/extrinsic_reward over the record's LAST 100 episodes (fewer if the run has fewer);
+    None when the record has no episodes. Reads the compact scalar when present."""
+    if "_r100" in d:
+        return d["_r100"]
+    rows = (d.get("train_episode_history") or [])[-100:]
+    vals = [r["train/extrinsic_reward"] for r in rows if "train/extrinsic_reward" in r]
+    if not vals:
+        return None
+    return sum(vals) / len(vals)
+
+
 def record_success_rate(d):
-    """Fraction of train_episode_history rows with a truthy train/success (denominator = all rows);
-    None when the record has no episodes."""
-    rows = d.get("train_episode_history") or []
+    """Fraction of the record's LAST 100 episodes with a truthy train/success (denominator =
+    however many of the last 100 exist); None when the record has no episodes. Compact-aware."""
+    if "_succ" in d:
+        return d["_succ"]
+    rows = (d.get("train_episode_history") or [])[-100:]
     if not rows:
         return None
     return sum(1 for r in rows if r.get("train/success")) / len(rows)
@@ -90,7 +142,9 @@ def record_success_rate(d):
 
 def record_steps_to_goal(d):
     """Mean train/steps_to_goal over the record's SUCCESSFUL episodes; None when it had no success
-    (so a zero-success record is excluded from the steps-to-goal column)."""
+    (so a zero-success record is excluded from the steps-to-goal column). Compact-aware."""
+    if "_steps" in d:
+        return d["_steps"]
     rows = d.get("train_episode_history") or []
     steps = [r["train/steps_to_goal"] for r in rows
              if r.get("train/success") and "train/steps_to_goal" in r]
@@ -100,7 +154,12 @@ def record_steps_to_goal(d):
 
 
 def record_last_eval(d, field):
-    """A field on the record's LAST eval_history row, or None if there is no eval row / no field."""
+    """A field on the record's LAST eval_history row, or None if there is no eval row / no field.
+    Compact-aware: the two coverage fields are precomputed onto compact records."""
+    if field == "visit_counts/coverage_pct" and "_mcov" in d:
+        return d["_mcov"]
+    if field == "visit_counts_1m/coverage_pct" and "_cov1m" in d:
+        return d["_cov1m"]
     evals = d.get("eval_history") or []
     if not evals:
         return None
@@ -131,7 +190,7 @@ def best_config(by_key, keys):
         recs = by_key.get(k, [])
         if not recs:
             continue
-        m = sum(prune_controller.score_of_record(r) for r in recs) / len(recs)
+        m = sum(score_of(r) for r in recs) / len(recs)
         if best_mean is None or m > best_mean:
             best_k, best_recs, best_mean = k, recs, m
     return best_k, best_recs
@@ -155,9 +214,12 @@ def cell_str(mean, se, prec):
 def build_row(algorithm, config_key, recs):
     """One metrics row (dict of formatted strings + the reward mean used to rank)."""
     # reward: every record in `recs` has a computable score by construction
-    reward_vals = [prune_controller.score_of_record(r) for r in recs]
+    reward_vals = [score_of(r) for r in recs]
     r_mean, r_se, n = mean_se(reward_vals)
-    # success rate over records that have episodes
+    # reward over the LAST 100 episodes of each record (end-of-training performance)
+    r100_vals = [v for r in recs if (v := record_reward_last100(r)) is not None]
+    r100_mean, r100_se, _ = mean_se(r100_vals)
+    # success rate over the LAST 100 episodes of each record
     succ_vals = [v for r in recs if (v := record_success_rate(r)) is not None]
     s_mean, s_se, _ = mean_se(succ_vals)
     # steps-to-goal over records that had at least one success (others excluded)
@@ -174,6 +236,7 @@ def build_row(algorithm, config_key, recs):
     return {
         "label": row_label(algorithm, config_key),
         "reward": cell_str(r_mean, r_se, 2),
+        "reward100": cell_str(r100_mean, r100_se, 2),
         "success": cell_str(s_mean, s_se, 3),
         "steps": steps_txt,
         "mcov": cell_str(mc_mean, mc_se, 2),
@@ -184,6 +247,7 @@ def build_row(algorithm, config_key, recs):
 
 
 MCOLS = [("label", "algorithm — knob (best config)", "l"), ("reward", "reward", "r"),
+         ("reward100", "reward_last100ep", "r"),
          ("success", "success_rate", "r"), ("steps", "steps_to_goal", "r"),
          ("mcov", "maze_cell_cov%", "r"), ("cov1m", "1m_cov%", "r"), ("N", "N", "r")]
 
@@ -219,10 +283,13 @@ def build_all(sweep_id):
     """Full printable text: the eight per-env tables plus a metric legend footer."""
     by_key = load_completed(sweep_id)
     blocks = [f"# run 8.1 interim metrics  sweep_id={sweep_id}  {time.strftime('%Y-%m-%dT%H:%M:%S')}",
-              "# reward = whole-run mean per-episode extrinsic return; success_rate = fraction of "
-              "training episodes reaching the goal;",
-              "# steps_to_goal = mean steps on SUCCESSFUL episodes (zero-success seeds excluded); "
-              "coverage = last-eval visit-count coverage %.",
+              "# reward = whole-run mean per-episode extrinsic return (RANKING column and prune score);",
+              "# reward_last100ep = mean per-episode return over the LAST 100 episodes of each run;",
+              "# success_rate = fraction of the LAST 100 episodes reaching the goal;",
+              "# steps_to_goal = mean steps on SUCCESSFUL episodes, whole run (zero-success seeds "
+              "excluded);",
+              "# coverage = cumulative visit-count coverage % at the END of the run (after its final "
+              "episodes; a last-100-only coverage is not in the record format).",
               ""]
     for env_setup in build_queue.ENV_SETUPS_RUN1:
         rows, awaiting = [], []

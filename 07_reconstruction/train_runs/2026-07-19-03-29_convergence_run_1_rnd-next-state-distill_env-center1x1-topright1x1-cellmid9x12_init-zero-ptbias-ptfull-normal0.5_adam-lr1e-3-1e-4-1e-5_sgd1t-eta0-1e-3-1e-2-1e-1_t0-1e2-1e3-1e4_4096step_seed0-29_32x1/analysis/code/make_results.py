@@ -25,8 +25,8 @@ ENV_COLS = FITS["env_cols"]
 ENV_HEAD = {"center_square": "env 1.1", "top_right_cell": "env 1.2",
             "cell_midpoints": "env 2", "aggregate": "aggregate"}
 
-INIT_TEX = {"I1-zero": "I1 zero", "I2-ptbias": "I2 pt-bias",
-            "I3-ptfull": "I3 pt-full", "I4-normal0.5": "I4 normal-0.5"}
+INIT_TEX = {"I1-zero": "zero-bias", "I2-ptbias": "pytorch-bias",
+            "I3-ptfull": "pytorch-full", "I4-normal0.5": "normal-0.5"}
 
 BY = {(r["init"], r["opt"], r["env"]): r for r in FITS["results"]}
 
@@ -99,9 +99,9 @@ def emit_slope_table(kind: str, label: str, caption: str, path: str) -> None:
     for e in ENV_COLS:
         mark_best(col_cells[e], col_values[e])
     lines = [
-        "\\begin{table}[H]", "\\centering", "\\footnotesize",
-        "\\setlength{\\tabcolsep}{4pt}", "\\renewcommand{\\arraystretch}{1.04}",
-        "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{4.6cm} cccc@{}}",
+        "\\begin{table}[H]", "\\centering", "\\scriptsize",
+        "\\setlength{\\tabcolsep}{4pt}", "\\renewcommand{\\arraystretch}{1.0}",
+        "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{5.2cm} cccc@{}}",
         "\\toprule",
         "\\textbf{Configuration} & \\textbf{env 1.1} & \\textbf{env 1.2} & \\textbf{env 2} "
         "& \\textbf{aggregate} \\\\", "\\midrule",
@@ -164,7 +164,7 @@ def emit_effect_table() -> None:
         "error over the 30 seeds). Best per column (closest to $-1/2$) bold, second underlined. "
         "``div.''\\ marks cells whose runs all diverged; ``($k$/4)'' marks cells where only "
         "$k$ of the 4 initializations survived (SGD-$1/t$ at $\\eta_0\\,10^{-1}$ on env~2 "
-        "diverged for I3/I4 at every $t_0$).}",
+        "diverged for pytorch-full/normal-0.5 at every $t_0$).}",
         "\\label{tab:convergence-run1-opt-effect}", "\\end{table}"]
     path = os.path.join(PLOTS, "opt_effect_table.tex")
     with open(path, "w") as fh:

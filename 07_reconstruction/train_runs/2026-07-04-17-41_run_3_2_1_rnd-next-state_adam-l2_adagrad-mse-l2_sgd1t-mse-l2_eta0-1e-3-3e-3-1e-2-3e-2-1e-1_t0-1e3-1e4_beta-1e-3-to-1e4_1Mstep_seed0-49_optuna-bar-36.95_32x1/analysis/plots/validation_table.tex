@@ -7,10 +7,10 @@
 \toprule
 \textbf{Config} & \textbf{Optimizer / readout / $\beta$} & \textbf{$\bar{R}$ ($\uparrow$)} & \textbf{SE} & \textbf{succ.} & \textbf{$n$} & \textbf{$\Delta$ vs bench.} & \textbf{conf.} \\
 \midrule
-O$\sqrt{}$ (oracle) & visit-count / $1/\sqrt{n}$ / $1$ & \textbf{65.75} & 1.53 & \textbf{0.98} & 300 & $+31.25$ & 100\% \\
-O$n$ (oracle) & visit-count / $1/n$ / $1$ & \underline{56.49} & 1.50 & \underline{0.96} & 300 & $+21.99$ & 100\% \\
-C1 & SGD-$1/t$ / mse / $10$ & 37.12 & 3.17 & 0.84 & 100 & $+2.62$ & 72\% \\
-C2 (RND benchmark) & Adam / mse / $10^{2}$ & 34.50 & 3.13 & 0.69 & 100 & --- (ref.) & --- \\
-C0 & SGD-$1/t$ / l2 / $1$ & 33.17 & 3.28 & 0.69 & 100 & $-1.33$ & 38\% \\
+count oracle $1/\sqrt{n}$ & visit-count / $1/\sqrt{n}$ / $1$ & \textbf{65.75} & 1.53 & \textbf{0.98} & 300 & $+31.25$ & 100\% \\
+count oracle $1/n$ & visit-count / $1/n$ / $1$ & \underline{56.49} & 1.50 & \underline{0.96} & 300 & $+21.99$ & 100\% \\
+run-3.2.1 winner 1 & SGD-$1/t$ / mse / $10$ & 37.12 & 3.17 & 0.84 & 100 & $+2.62$ & 72\% \\
+RND benchmark & Adam / mse / $10^{2}$ & 34.50 & 3.13 & 0.69 & 100 & --- (ref.) & --- \\
+run-3.2.1 winner 2 & SGD-$1/t$ / l2 / $1$ & 33.17 & 3.28 & 0.69 & 100 & $-1.33$ & 38\% \\
 \bottomrule
 \end{tabular}

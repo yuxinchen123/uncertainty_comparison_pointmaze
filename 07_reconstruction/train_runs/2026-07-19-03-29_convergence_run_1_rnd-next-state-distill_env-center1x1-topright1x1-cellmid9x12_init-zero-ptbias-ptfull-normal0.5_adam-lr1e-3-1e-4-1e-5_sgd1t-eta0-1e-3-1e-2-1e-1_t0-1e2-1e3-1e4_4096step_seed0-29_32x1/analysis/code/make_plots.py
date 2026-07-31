@@ -36,8 +36,8 @@ ENV_FILE = {"center_square": "env11", "top_right_cell": "env12", "cell_midpoints
 ENV_TITLE = {"center_square": "env 1.1 (center square)",
              "top_right_cell": "env 1.2 (top-right cell)",
              "cell_midpoints": "env 2 (cell midpoints)", "aggregate": "aggregate"}
-INIT_NICE = {"I1-zero": "I1 zero", "I2-ptbias": "I2 pt-bias",
-             "I3-ptfull": "I3 pt-full", "I4-normal0.5": "I4 normal-0.5"}
+INIT_NICE = {"I1-zero": "zero-bias", "I2-ptbias": "pytorch-bias",
+             "I3-ptfull": "pytorch-full", "I4-normal0.5": "normal-0.5"}
 COLORS = dict(zip(FITS["init_order"], ["tab:blue", "tab:orange", "tab:green", "tab:red"]))
 
 

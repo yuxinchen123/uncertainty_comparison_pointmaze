@@ -17,7 +17,7 @@ The family is one bonus with two orthogonal choices:
      - "add":              fired in observe() on each freshly collected transition (buffer.add()) — each
        visited (s,a) enters exactly once, so the covariance is a true environment-visitation count.
 
-Feature normalization (see development_document/main.tex, "Raw features and normalized features").
+Feature normalization (see development_document/RND_development_document.tex, "Raw features and normalized features").
 The covariance Λ is built from a normalized feature φ(x) = N_{ν_φ}(z_φ(x)), not the raw encoder output
 z_φ(x), because the raw feature norm is an uncontrolled random-network artifact. Three modes:
   - "unit" (default): φ = z / (||z||_2 + ε_φ), so ||φ||_2 <= 1 and the ridge λ is interpretable.

@@ -186,3 +186,127 @@ Sweep `2026-07-20-16-55_set-baseline`. Owner sl5nw. cpu + nolim only (no reserva
   remaining 139 full 1M-step runs are all running concurrently on the 5 cpu-partition jobs (160 task
   slots > 139 runs, so no queueing). SWEEP_COMPLETE expected when the slowest finishes (~14-16h/run on
   healthy cpu nodes) -> later on 2026-07-23. No action.
+
+## 2026-07-23T11:50 — fleet-wide latency survey rules out "jaguar03 slow by nature"
+Concern: is jaguar03's 424 ns just normal for a big/many-CPU node? Measured latency.c (256MB random
+pointer-chase) across the gpu partition, spanning 16 -> 256 CPUs:
+  jaguar05(16)=111  nekomata01(24)=99  jaguar02(32)=101  ai06(32)=105  adriatic06(32,idle)=112
+  cheetah01(32,busy)=286  jaguar06(48)=96  jaguar01(64)=104  serval06(64)=129  cheetah02(72)=109
+  lotus(80)=107  serval03(128)=131  puma01(160,busy)=803  cheetah04(256)=145  jaguar03(224,idle)=424
+Findings:
+ - Healthy band is a FLAT ~95-145 ns from 16 to 256 CPUs -> node size does NOT predict latency.
+ - DECISIVE: cheetah04 (256 CPUs/128 cores, BIGGER than jaguar03) = 145 ns; jaguar03 (224/112) = 424 ns.
+   The larger node is 2.9x faster -> "big node = slow memory" is false.
+ - jaguar03 siblings jaguar01/02/05/06 (same vendor family, one with same 1TB RAM) = 96-111 ns -> not a
+   model trait; jaguar03-specific.
+ - jaguar03 measured IDLE (best case) while most comparators were busy (contended, inflated) -> the true
+   gap is even larger. jaguar03 is a lone 3-4x outlier => genuine fault, not natural slowness. CONFIRMED.
+ - Caveats: cheetah01(286) and puma01(803) read high but were BUSY (co-tenant memory contention), not
+   clean idle readings. puma01 is the other reserved node -> worth a separate idle check (may be load, or
+   may also need a look); does not affect the jaguar03 conclusion.
+Data: jaguar03_threading_experiment/latency_fleet_survey.txt
+
+## 2026-07-23T12:15 — REVISED DIAGNOSIS: memory BANDWIDTH is the dominant fault, not latency
+Prompted by: (a) training slowdown (~10x) >> latency penalty (~4x), so latency alone never fit; and
+(b) puma01 (788ns) appeared to train OK, questioning the latency story.
+
+Combined lat-vs-train probe (clean idle latency + real single-thread RND training rate, back to back):
+  node        latency   train_rate(steps/min)
+  jaguar01    105 ns    2829   (healthy)
+  adriatic06  111 ns    1693   (healthy, idle)
+  jaguar03    424 ns     171   (idle -> 9.9x slower than adriatic06)
+  puma01      788 ns     879   (BUSY: 118/160 cpus on other pmam-* jobs -> all readings contended)
+
+Memory bandwidth (STREAM-triad, bandwidth.c):
+  node        1-thread    16-thread
+  jaguar01    13.4 GB/s   69.9 GB/s   (healthy)
+  adriatic06  12.0 GB/s   54.2 GB/s   (healthy)
+  jaguar03     2.7 GB/s    8.3 GB/s   (IDLE -> 4.4x/6.5x worse -> THE smoking gun)
+  puma01       2.3 GB/s    (n/a)      (BUSY, contended -> not a clean hardware reading)
+
+jaguar03 (idle) vs adriatic06 (idle): latency 3.8x worse, bandwidth 4.4x (1thr)/6.5x (16thr) worse,
+training 9.9x slower. CPU compute is fine (AVX burn fast). => jaguar03's MEMORY SUBSYSTEM is degraded in
+BOTH bandwidth and latency; bandwidth is the LARGER deficit and the one that matches the sweep slowdown
+(~6.5x aggregate-bandwidth deficit ~ the earlier ~7-8x full-node training slowdown). Latency (4x) is a
+secondary symptom.
+
+puma01 is NOT a counterexample: it is 74% loaded by non-this-session jobs (6519833/34/35/859, ~118 cpus),
+so its 788ns/2.3GB/s/879-steps are all contention, not hardware. Cannot get a clean puma01 reading without
+cancelling others' jobs (forbidden). puma01's true hardware health is UNKNOWN (worth a clean idle check
+later); it does not change the jaguar03 conclusion.
+
+Bottom line: earlier "latency fault" was incomplete. Correct diagnosis = jaguar03 memory subsystem
+(bandwidth-dominant + latency) degraded; CPU fine; training ~10x slow. Two independent reproducers now:
+bandwidth.c (2.7 vs 12 GB/s) and latency.c (424 vs 111 ns).
+Data: lat_vs_train_results.txt, bandwidth_results.txt, puma01_bw.txt
+
+## 2026-07-24T16:50 — admin could not reproduce; re-checked post-reboot: FAULT PERSISTS, block-size ruled out
+Admin (Jed) could not reproduce, found no system errors, suggested adjusting block-size. Re-checked:
+- jaguar03 was REBOOTED (up since 2026-07-24 13:02); reboot did NOT clear the fault.
+- Re-measured (idle, exclusive) 2026-07-24: jaguar03 1-thread BW 2.7-2.9 GB/s (all buffer sizes),
+  4-thread 4.3 GB/s, latency 413 ns. adriatic06 (healthy): 1-thread ~11 GB/s, 4-thread 22 GB/s,
+  latency 138 ns. Same ~4x (BW) / 3x (latency) gap as 2026-07-23. Persistent.
+- BLOCK-SIZE SWEEP (single-thread, working set 3MB->768MB), directly answering Jed's suggestion:
+    working_set   adriatic06(healthy)   jaguar03
+    3 MB          19.8 GB/s             3.1 GB/s
+    12 MB         11.2                  3.0
+    24 MB         10.7                  3.1
+    48 MB         10.8                  3.0
+    96 MB         10.9                  2.7
+    768 MB        11.1                  2.9
+  jaguar03 is 4-6x slower at EVERY block size -> no block size makes it healthy; block-size is not the
+  cause and cannot be a fix.
+- NEW (broadens diagnosis): jaguar03 is slow even for tiny cache-resident buffers (3MB: 3.1 vs 19.8),
+  not just DRAM. Register-only AVX compute is full-speed. So the degradation is in the data-movement
+  path (loads/stores at ALL cache levels + DRAM), pointing at the memory controller / Infinity Fabric
+  (uncore/FCLK) rather than a single DIMM. A perf degradation of this kind logs NO system errors
+  (consistent with Jed finding none) and hides behind jaguar03's large 512MB L3 for small tests.
+- Suggested checks broaden: Infinity Fabric / uncore (FCLK) clock, memory controller, in addition to
+  DIMM speed/ECC; a plain reboot did not help (already tried) -> full power cycle or hardware inspection.
+Data: recheck_2026-07-24.txt, jaguar03_blocksize_sweep.txt, adriatic06_blocksize_sweep.txt
+
+## 2026-07-24T17:20 — ROOT CAUSE CORRECTED: CPU clock throttled to ~400 MHz node-wide (not a memory fault)
+The memory-bandwidth diagnosis was a SYMPTOM. Controlling for the AVX-512(adriatic)/AVX2(jaguar) ISA
+difference with a portable scalar compute loop (clockcheck.c, no -march=native) exposed the real cause:
+- Register-only compute (no memory traffic): jaguar03 0.49 G(mul-add)/s vs adriatic06 2.45 -> 5x slower.
+- scaling_cur_freq UNDER LOAD, all cores both sockets (0,28,56,84,112,140,168,196): ALL ~399,700-399,985
+  kHz = ~400 MHz. scaling_min=1,500,000, scaling_max/bios_limit=2,000,000. So cores run BELOW the OS
+  minimum (1.5 GHz) -> not the governor (schedutil); a firmware/hardware clamp below OS control.
+- /proc/cpuinfo shows a misleading 1500 MHz (stale); scaling_cur_freq shows the true 400 MHz. This is why
+  the admin (and my earlier check) found nothing -- and why I WRONGLY called the 400 MHz an acpi-cpufreq
+  misread on 07-23: I had only compared jaguar03 to itself. Cross-node compute proves 400 MHz is REAL.
+Single root cause explains everything: compute 5x slow (400MHz vs 2000 nominal), single-thread memory
+bandwidth 4x slow (slow core issues loads slowly), latency 3x (SoC/fabric likely throttled too),
+training ~8-10x slow. No system errors (a power/firmware clamp does not log). Reboot (up 2026-07-24
+13:02) did NOT clear it -> persistent firmware/hardware throttle.
+Likely mechanism (freq pinned below OS min): power delivery (VRM), thermal (stuck PROCHOT / sensor), or
+BMC/firmware power-cap (PPT). Fix: full power cycle / BMC reset / check power+thermal via BMC-IPMI; a
+plain reboot already failed.
+Admin verification (seconds): `cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq` under load ->
+~400000 on all cores (should be >=1500000). Data: clockcheck.c, and the compute/freq run above.
+
+## 2026-07-29 — admin rebuttal (cpuinfo ramps to 2.0GHz); re-tested with ground-truth throughput
+Admin (Jed): did a "full power drain", says hardware is fine, recommends using another node. His evidence:
+cpuinfo_cur_freq (the ACTUAL hardware freq, root-only) ramps 1.5->2.0 GHz under all-core load; scaling_cur_freq
+is not the real freq; and 2.5 GHz was an unfair baseline (7663 maxes at 2.0). He is right on those points:
+- Confirmed scaling_cur_freq is UNRELIABLE: adriatic06 read 800MHz while its compute was 2.49 GHz. So my
+  earlier "400 MHz" scaling_cur_freq reading is not a trustworthy frequency.
+- cpuinfo_cur_freq is Permission denied for a non-root Slurm job -> I never could read the true hw freq.
+- jaguar03 uptime still 2026-07-24 13:02 -> this node was NOT actually rebooted/drained (despite the note).
+BUT the ground-truth signal (compute throughput = work/time, needs no freq counter) still shows jaguar03 slow,
+today, under FULL all-core load:
+  jaguar03   all 222 threads busy -> per-core effective 0.28 GHz/thread (~0.55/core)
+  adriatic06 all 30 threads busy  -> 2.49 GHz/thread
+  jaguar03 single core -> 0.51 GHz ; --cpu-freq=Performance did NOT change it (0.52).
+Register-only loop (no memory), same binary -> Zen3 has >= the Xeon's FP IPC, so 0.5 vs 2.5 G/s means the
+CORE CLOCK my jobs get is ~5x low. This is real for MY jobs.
+Reconciliation (Jed's 2.0GHz root reading vs my 0.5GHz throughput on the same un-rebooted node): the frequency
+my Slurm jobs get differs from root's direct benchmark. Two possibilities, not yet distinguished:
+  (A) my Slurm jobs are frequency/power-capped on jaguar03 (Slurm power/cpufreq plugin, reservation, or cgroup)
+      while root is not -> hardware fine, fix is Slurm config or just use another node.
+  (B) hardware genuinely throttled AND cpuinfo_cur_freq also misreports (the acpi-cpufreq driver is already
+      wrong for scaling_cur_freq) -> hardware/firmware fault.
+Decisive test I cannot run (non-root): have Jed run clockcheck.c AS ROOT and report effective GHz. Fast(~2)=>A,
+slow(~0.5)=>B. Practical: Jed recommends another node; run 5's jobs are already all on other nodes. Verdict for
+the user: jaguar03 is STILL slow for our jobs (measured), regardless of which counter is right; move off it.
+Data: allcore_probe.sh output above.

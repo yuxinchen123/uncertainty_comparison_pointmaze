@@ -41,7 +41,6 @@ if (( fail )); then
 fi
 echo "  OK: queue state dirs, data dir, log dir writable; a pending marker is readable."
 
-pend_before=$(ls "$Q/pending" | wc -l)
 echo "=== [2/3] >= 5 short canary runs of train.py (isolated under $SMOKE_OUT) ==="
 export RUN_DIR PROJ_DIR SWEEP_ID SMOKE_OUT
 "$PY" - << 'PYEOF'
@@ -65,22 +64,42 @@ def profile(name):
             return (fam, a)
     return (fam, "unknown")
 
-names = sorted(os.listdir(PENDING))
+# COLD-END, READ-AT-PICK selection (owner fix after yuxinchen's 2026-07-23-04-25 report): the live
+# fleet claims markers in id order from the LOW end, so pick from the HIGH-id end and read each
+# marker's JSON immediately; a marker claimed between listing and open simply falls through to the
+# next candidate. The queue is never renamed by this script.
+names = sorted(os.listdir(PENDING), reverse=True)
+
+
+def read_marker(nm):
+    """Return the marker's parsed JSON, or None if a live worker claimed it in this instant."""
+    try:
+        with open(os.path.join(PENDING, nm)) as fh:
+            return json.load(fh)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
+
+
 picked, seen = [], set()
 for nm in names:
     p = profile(nm)
-    if p not in seen:
-        seen.add(p); picked.append(nm)
+    if p in seen:
+        continue
+    cfg = read_marker(nm)
+    if cfg is None:
+        continue
+    seen.add(p); picked.append((nm, cfg))
 for nm in names:                               # top up to >= 5 if fewer distinct profiles exist
     if len(picked) >= 5: break
-    if nm not in picked: picked.append(nm)
+    if any(nm == pn for pn, _ in picked): continue
+    cfg = read_marker(nm)
+    if cfg is not None:
+        picked.append((nm, cfg))
 picked = picked[:6]
-print(f"  picked {len(picked)} canary configs: " + ", ".join(profile(n)[0] + "/" + profile(n)[1] for n in picked))
+print(f"  picked {len(picked)} canary configs: " + ", ".join(profile(n)[0] + "/" + profile(n)[1] for n, _ in picked))
 
 results = []
-for nm in picked:
-    with open(os.path.join(PENDING, nm)) as fh:   # READ-ONLY: the marker stays in pending/
-        cfg = json.load(fh)
+for nm, cfg in picked:
     # shrink to a fast canary: a few thousand steps, one eval, so it finishes well under the 1200s cap
     cfg["fixed"]["total_timesteps"] = 2000
     cfg["fixed"]["eval_freq"] = 1000
@@ -107,14 +126,16 @@ print(f"  canary result: {n_ok}/{len(results)} completed with completed:true")
 sys.exit(0 if (n_ok == len(results) and len(results) >= 5) else 2)
 PYEOF
 canary_rc=$?
-pend_after=$(ls "$Q/pending" | wc -l)
 
 echo "=== [3/3] checklist ==="
 echo "  - canary runs COMPLETED with completed:true : $([[ $canary_rc -eq 0 ]] && echo PASS || echo FAIL)"
-echo "  - queue untouched (pending $pend_before -> $pend_after) : $([[ $pend_before -eq $pend_after ]] && echo PASS || echo FAIL)"
-echo "  - problems/open/ empty : $([[ -z "$(ls -A "$FC/problems/open" 2>/dev/null | grep -v '^.gitkeep$')" ]] && echo PASS || echo 'FAIL (open reports present)')"
+# The old "pending count unchanged" check is GONE (owner fix, 2026-07-23): a live claiming fleet
+# moves pending markers constantly, so the count can never hold. This script performs no renames
+# at all, so queue safety is by construction; only the smoke's own outputs are checked.
+echo "  - this script performed no queue renames (by construction; outputs isolated) : PASS"
+echo "  - problems/open/ reports : $([[ -z "$(ls -A "$FC/problems/open" 2>/dev/null | grep -v '^.gitkeep$')" ]] && echo 'none' || echo 'WARNING: open reports present (informational — read them; not a smoke failure)')"
 echo "  - isolated outputs under : $SMOKE_OUT/local/"
-if [[ $canary_rc -eq 0 && $pend_before -eq $pend_after ]]; then
+if [[ $canary_rc -eq 0 ]]; then
   echo "SMOKE PASSED — start the first wave: bash launch_workers_collaborator.sh, then the monitor loop."
   exit 0
 else

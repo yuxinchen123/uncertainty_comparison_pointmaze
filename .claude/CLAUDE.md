@@ -68,7 +68,7 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 
 ## Paper / writeup
 - `development_document/` holds the NeurIPS-style writeup (fresh template). Build it with the global
-  paper skills: `ml-paper`, `latex-build-tinytex`, `generate-latex-table`, `claude-edit-latex`.
+  paper skills: `latex-build-tinytex`, `generate-latex-table`, `claude-edit-latex`.
 
 ## Collaboration
 - `/p/rlprojects/RND` is one git repo shared with a collaborator (`slurm_yuxin/`, owner

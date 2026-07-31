@@ -41,6 +41,13 @@
 \definecolor{claude-green}{RGB}{0,100,0}
 \newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
 \newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
+% Dark brown marks the 2026-07-31 mid-sweep update of subsection "Train run 1" (point maze + ant
+% maze): everything added in that update is set in this color, per the user's instruction.
+\definecolor{update-darkbrown}{RGB}{101,67,33}
+% Provenance-name marker (user request 2026-07-31): every reference to a named run artifact
+% (\runref{run-5 original-small}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
+% is set bold inside square brackets so it can be found at a glance.
+\newcommand{\runref}[1]{\textbf{[#1]}}
 
 % Python code listings (used in the "When statistics are updated" design block).
 \usepackage{listings}
@@ -1975,7 +1982,7 @@ RLeXplore script explicitly disabled the library's reward RMS, so run~2's
 comparison operated on raw bonuses in both stacks.
 \claudeedit{Train run~3.2.3 (Section~\ref{sec:train-run-3-2-3}) adds the original recipe's
 normalizer to \texttt{train.py} as an opt-in switch
-(\texttt{rnd\_\allowbreak reward\_\allowbreak norm}, off by default) and sweeps it as arm N1.}
+(\texttt{rnd\_\allowbreak reward\_\allowbreak norm}, off by default) and sweeps it as the \runref{run-3.2.3 reward-norm} arm.}
 \claudecomment{Updated 2026-07-11 at the run-3.2.3 launch: the present-tense ``uses no reward
 normalization'' became stale once \texttt{train.py} gained the switch.}
 \end{enumerate}
@@ -2794,7 +2801,7 @@ bonus clip of \(5\).}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method E1: batch elliptical.}
+\paragraph{Method: batch elliptical.}
 Let
 \[
 B_t=\{x_i\}_{i=1}^{b}
@@ -2817,7 +2824,7 @@ be the replay minibatch at update \(t\).  The batch covariance is
 The factor \(1/b\) makes this matrix approximately independent of minibatch size.
 This method measures novelty relative to the current replay minibatch only.
 
-\paragraph{Instabilities and remedies for E1.}
+\paragraph{Instabilities and remedies for the batch elliptical.}
 The batch matrix can be low-rank because a minibatch need not span
 \(\mathbb{R}^{d_\varphi}\).  The ridge \(\lambda I\) makes the matrix positive
 definite.  Small \(\lambda\) gives sharper novelty but can produce large rewards
@@ -2829,10 +2836,10 @@ batch value to test is
 The value \(\lambda=1\) is a conservative check.  The old very small ridge values
 are not first-stage candidates.
 
-The conceptual limitation is not numerical: E1 does not remember lifetime visits.
+The conceptual limitation is not numerical: the batch elliptical does not remember lifetime visits.
 A state can receive a large bonus simply because its feature direction is absent
 from the current minibatch, even if the state has been visited many times before.
-Therefore E1 is a baseline, not the main count-like method.
+Therefore the batch elliptical is a baseline, not the main count-like method.
 
 \begin{table}[H]
 \centering
@@ -2852,7 +2859,7 @@ Therefore E1 is a baseline, not the main count-like method.
 Intrinsic coefficient &
 \(\{10^{-4},10^{-3},\mathbf{10^{-2}},10^{-1},1\}\) &
 Train run~1 selected \(\beta^\star=10^{-2}\) for
-\texttt{rnd\_elliptical}.  E1 is the closest method to that implementation, so the
+\texttt{rnd\_elliptical}.  The batch elliptical is the closest method to that implementation, so the
 grid is centered on \(10^{-2}\) and kept logarithmic. &
 \textbf{must try} \\
 \midrule
@@ -2866,13 +2873,13 @@ try \\
 \bottomrule
 \end{tabular}%
 }
-\caption{Batch elliptical sweep.  E1 is the baseline for comparing local minibatch
+\caption{Batch elliptical sweep.  The batch elliptical is the baseline for comparing local minibatch
 novelty against lifetime feature-space memory.}
 \label{tab:trainrun3-batch-elliptical-sweep}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method E2: global elliptical.}
+\paragraph{Method: global elliptical.}
 Let \(B_t\) be the replay minibatch sampled from the buffer at update \(t\).  The
 global covariance accumulates the feature outer-products of every sampled batch:
 \begin{align}
@@ -2896,11 +2903,11 @@ Equivalently,
 \]
 Because the covariance is updated on each batch sampled from the replay buffer, it
 accumulates feature coverage over all sampled transitions, giving the lifetime
-(cumulative) feature-space memory that distinguishes E2 from the per-batch E1.  A
+(cumulative) feature-space memory that distinguishes the global elliptical from the per-batch variant.  A
 transition contributes once for each time it is sampled, so the matrix weights
 transitions by how often they are replayed.
 
-\paragraph{Instabilities and remedies for E2.}
+\paragraph{Instabilities and remedies for the global elliptical.}
 The naive cumulative sum would require revisiting all past data.  The stable
 implementation is the rank-batch update
 \[
@@ -2913,7 +2920,7 @@ implementation is the rank-batch update
 which costs \(O(|B_t|d_\varphi^2)\) time and \(O(d_\varphi^2)\) memory.  The
 Cholesky factorization costs \(O(d_\varphi^3)\) and is recomputed on every
 covariance update; there is no refresh cadence to tune.  Nothing is saved by
-amortizing it: the batch method (E1) already pays the same \(O(d_\varphi^3)\)
+amortizing it: the batch method already pays the same \(O(d_\varphi^3)\)
 factorization on every sampled minibatch, so refactoring the global covariance
 once per update --- the same cost --- has nothing to amortize against.
 
@@ -2954,12 +2961,12 @@ try \\
 \bottomrule
 \end{tabular}%
 }
-\caption{Global elliptical sweep.  E2 is the main count-like elliptical method.}
+\caption{Global elliptical sweep.  The global elliptical is the main count-like elliptical method.}
 \label{tab:trainrun3-global-elliptical-sweep}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method E3: discounted global elliptical.}
+\paragraph{Method: discounted global elliptical.}
 The discounted method gives old visits less weight:
 \begin{align}
 \Lambda_t^{\mathrm{disc}}
@@ -2991,11 +2998,11 @@ H_\Lambda
 \frac{1}{1-\rho_\Lambda}.
 \]
 
-\paragraph{Instabilities and remedies for E3.}
+\paragraph{Instabilities and remedies for the discounted global elliptical.}
 If \(\rho_\Lambda\) is too small, the method forgets useful lifetime coverage and
 becomes close to a recency bonus.  If \(\rho_\Lambda\) is too close to \(1\), it is
 nearly identical to the global method.  Therefore this is not a first-stage
-method.  It should be tested only after E2 shows whether lifetime memory is
+method.  It should be tested only after the global elliptical shows whether lifetime memory is
 helpful.
 
 \begin{table}[H]
@@ -3016,33 +3023,33 @@ helpful.
 Covariance discount &
 \(\{0.999,\mathbf{0.9995},1,\textcolor{gray}{0.99}\}\) &
 \(0.999\) and \(0.9995\) correspond to effective windows of roughly \(10^3\) and
-\(2{\cdot}10^3\) covariance updates.  \(\rho_\Lambda=1\) recovers E2.  \(0.99\)
+\(2{\cdot}10^3\) covariance updates.  \(\rho_\Lambda=1\) recovers the global elliptical.  \(0.99\)
 is a short-memory diagnostic. &
 try \\
 \midrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
-Use the same count-scale grid as E2.  Discounting changes memory, not the intended
+Use the same count-scale grid as the global elliptical.  Discounting changes memory, not the intended
 reward scale. &
 try \\
 \midrule
 \(\lambda\) &
 Ridge regularizer &
 \(\{\mathbf{1},10^{-2}\}\) &
-Use the same reduced ridge choices as E2.  The ridge must also be re-injected by
+Use the same reduced ridge choices as the global elliptical.  The ridge must also be re-injected by
 \((1-\rho_\Lambda)\lambda I\). &
 try \\
 \bottomrule
 \end{tabular}%
 }
-\caption{Discounted global elliptical sweep.  E3 is a second-stage test of whether
+\caption{Discounted global elliptical sweep.  The discounted global elliptical is a second-stage test of whether
 lifetime memory is too strong under a changing policy.}
 \label{tab:trainrun3-discounted-elliptical-sweep}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method E4: mixed batch--global elliptical.}
+\paragraph{Method: mixed batch--global elliptical.}
 The mixed method combines local minibatch novelty and lifetime novelty.  Let
 \[
 \mathcal{E}_t^{\mathrm{batch}}(x)
@@ -3088,7 +3095,7 @@ The mixed bonus is
 0\le\omega\le1.
 \end{align}
 
-\paragraph{Instabilities and remedies for E4.}
+\paragraph{Instabilities and remedies for the mixed elliptical.}
 The main instability is scale mismatch.  The batch covariance is an averaged
 minibatch matrix, while the global covariance is cumulative.  The remedy is to
 mix RMS-normalized bonuses, not raw quadratic forms.  The second instability is
@@ -3121,7 +3128,7 @@ Global mixture weight &
 \(\{\mathbf{0.5},0.75,\textcolor{gray}{0.25},
 \textcolor{gray}{0},\textcolor{gray}{1}\}\) &
 \(\omega=0.5\) is the symmetric test of complementarity.  \(\omega=0.75\) favors
-the count-like global term.  The endpoints duplicate E1 and E2. &
+the count-like global term.  The endpoints duplicate the batch and global ellipticals. &
 \textbf{must try} \\
 \midrule
 \(\beta\) &
@@ -3146,7 +3153,7 @@ This is a numerical guard, not a statistical parameter. &
 \bottomrule
 \end{tabular}%
 }
-\caption{Mixed elliptical sweep.  E4 tests whether local minibatch novelty and
+\caption{Mixed elliptical sweep.  The mixed elliptical tests whether local minibatch novelty and
 lifetime feature-space novelty are complementary.}
 \label{tab:trainrun3-mixed-elliptical-sweep}
 \end{table}
@@ -3154,11 +3161,11 @@ lifetime feature-space novelty are complementary.}
 %------------------------------------------------------------------------------
 \paragraph{Elliptical staging.}
 The full Cartesian product of all elliptical knobs should not be run.  The
-recommended staged design is:
+recommended staged design is (the gray stage 4 is optional):
 \[
 \begin{array}{ll}
-\textbf{E0:} &
-\{\textbf{E1: batch},\textbf{E2: global},\textbf{E4: mixed}\}
+\textbf{Stage 1:} &
+\{\textbf{batch},\textbf{global},\textbf{mixed}\}
 \times
 \beta
 \times
@@ -3169,22 +3176,22 @@ recommended staged design is:
 \epsilon_{\mathrm{chol}}:0\to10^{-8},\quad
 r_{\max}^{\mathcal{E}}=5,
 \\[3pt]
-& \lambda=10^{-2}\text{ for E1},\quad
-\lambda=1\text{ for E2},\quad
-\omega=0.5\text{ for E4};
+& \lambda=10^{-2}\text{ for batch},\quad
+\lambda=1\text{ for global},\quad
+\omega=0.5\text{ for mixed};
 \\[8pt]
-\textbf{E1:} &
-\text{best E0 family}
+\textbf{Stage 2:} &
+\text{best stage-1 family}
 \times
 \{\nu_\varphi\in\{\mathrm{unit\text{-}norm},\mathrm{rms\text{-}unit}\},
 \lambda\text{ one alternate value}\};
 \\[8pt]
-\text{E2:} &
-\text{discounted global around the best E2 setting, using }
+\textbf{Stage 3:} &
+\text{discounted global around the best global setting, using }
 \rho_\Lambda\in\{0.999,0.9995\};
 \\[8pt]
-\textcolor{gray}{\text{E3:}} &
-\textcolor{gray}{stress tests:
+\textcolor{gray}{\textbf{Stage 4:}} &
+\textcolor{gray}{\text{stress tests: }
 d_\varphi=256,\ r_{\max}^{\mathcal{E}}=\infty,\ \lambda=10^{-4}.}
 \end{array}
 \]
@@ -3203,7 +3210,7 @@ normalization is the main engineering choice that makes the ridge meaningful.
 %------------------------------------------------------------------------------
 \paragraph{Implemented elliptical-bonus hyperparameters.}
 Table~\ref{tab:elliptical-implemented-hyperparameters} lists the hyperparameters
-actually set in the \texttt{EllipticalBonus} code (the per-batch method E1 used by
+actually set in the \texttt{EllipticalBonus} code (the per-batch elliptical used by
 \texttt{rnd\_elliptical}), with the realized default values.  By default the
 quadratic form \(\varphi^\top\Lambda^{-1}\varphi\) is computed \emph{inverse-free}
 by the Cholesky factorization and triangular solve of
@@ -3362,7 +3369,7 @@ design is:
 \]
 
 %------------------------------------------------------------------------------
-\paragraph{Method O1: Adam.}
+\paragraph{Method: Adam.}
 Adam keeps exponential moving averages of the gradient and squared gradient:
 \begin{align}
 m_t
@@ -3390,7 +3397,7 @@ h_t=\nabla_\phi L_t^{\mathrm{mse}}(\phi_t).
 This is the practice baseline for RND and neural-network regression
 \citep{kingma2014adam,burda2019exploration}.
 
-\paragraph{Instabilities and remedies for O1.}
+\paragraph{Instabilities and remedies for Adam.}
 Adam is stable for reducing a neural loss, but it is not a lifetime-count
 optimizer.  Both \(m_t\) and \(q_t\) are exponentially weighted, so old visits are
 forgotten.  With a constant effective step size, the residual can approach a
@@ -3464,7 +3471,7 @@ standard baseline, the second isolates the bonus-readout scale.}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method O2: AdaGrad.}
+\paragraph{Method: AdaGrad.}
 AdaGrad uses a cumulative sum of squared gradients:
 \begin{align}
 c_t
@@ -3482,7 +3489,7 @@ squared gradients.  Thus repeated feature directions get smaller effective steps
 which is the closest off-the-shelf optimizer analogue of a soft count
 \citep{duchi2011adaptive}.
 
-\paragraph{Instabilities and remedies for O2.}
+\paragraph{Instabilities and remedies for AdaGrad.}
 AdaGrad can fail in two opposite ways.  If \(c_0=0\) and the early gradients are
 small, the first steps can be too large because the denominator is tiny.  If
 \(c_t\) grows too quickly, the predictor can stall because the effective learning
@@ -3552,7 +3559,7 @@ optimizer.}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method O3: SGD with a \(1/t\) schedule.}
+\paragraph{Method: SGD with a \(1/t\) schedule.}
 The decreasing-step method uses
 \begin{align}
 \eta_t
@@ -3599,7 +3606,7 @@ that produces the running-average (count-style) behavior.  Late in training the
 two are opposite: the linear anneal freezes the predictor entirely, while the
 \(1/t\) schedule keeps updating it with ever-smaller steps.
 
-\paragraph{Instabilities and remedies for O3.}
+\paragraph{Instabilities and remedies for SGD-\(1/t\).}
 A pure \(1/t\) schedule can freeze too early.  Conversely, a large \(\eta_0\) can
 make the reward oscillate because the predictor changes the intrinsic reward
 rapidly.  The mathematical remedy is the shifted schedule
@@ -3684,7 +3691,7 @@ fixed \\
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method O4: Adam with Polyak--Ruppert readout.}
+\paragraph{Method: Adam with Polyak--Ruppert readout.}
 This method trains the predictor parameters \(\phi_t\) with Adam, but reads the
 bonus from an averaged predictor.  After a burn-in time \(t_{\mathrm{avg}}\),
 define
@@ -3706,7 +3713,7 @@ The intrinsic bonus is
 \]
 rather than \(\mathcal{B}(x;\phi_t)\).
 
-\paragraph{Instabilities and remedies for O4.}
+\paragraph{Instabilities and remedies for the Polyak--Ruppert Adam.}
 Averaging from initialization can preserve a poor early predictor.  Therefore
 \(t_{\mathrm{avg}}\) should be swept.  The method also requires one extra copy of
 the predictor parameters, but this is only \(O(|\phi|)\) memory and no extra
@@ -3745,7 +3752,7 @@ try \\
 \(\eta_{\mathrm{Adam}}\) &
 Adam learning rate &
 \(10^{-3}\) (PyTorch default) &
-Not swept: fixed at the PyTorch Adam default, matching Method O1. &
+Not swept: fixed at the PyTorch Adam default, matching the Adam method. &
 fixed \\
 \midrule
 \(\mathcal{B}\) &
@@ -3763,7 +3770,7 @@ count-memory optimizer.}
 \end{table}
 
 %------------------------------------------------------------------------------
-\paragraph{Method O5: SGD-\(1/t\) with Polyak--Ruppert readout.}
+\paragraph{Method: SGD-\(1/t\) with Polyak--Ruppert readout.}
 This method combines the decreasing-step update with averaged readout:
 \begin{align}
 \phi_{t+1}
@@ -3780,13 +3787,13 @@ This method combines the decreasing-step update with averaged readout:
 \end{align}
 The bonus is \(\mathcal{B}_{\mathrm{l2}}(x;\bar{\phi}_t)\).
 
-\paragraph{Instabilities and remedies for O5.}
+\paragraph{Instabilities and remedies for the Polyak--Ruppert SGD-\(1/t\).}
 This is the most statistically principled optimizer family---with the caveat
 from Section~\ref{sec:opt-defs} that the \(1/\sqrt{n}\) averaging guarantee is a
 theorem only for the linear head, not for the nonlinear MLP predictor---but it
 has the most
 knobs: \(\eta_0\), \(t_0\), \(\eta_{\min}\), and \(t_{\mathrm{avg}}\).  To avoid
-a large grid, use the best \((\eta_0,t_0)\) from Method O3, then sweep only
+a large grid, use the best \((\eta_0,t_0)\) from the SGD-\(1/t\) method, then sweep only
 \(t_{\mathrm{avg}}\).  The averaged predictor should be updated without gradient
 tracking and should be used only for reward readout, not for further training.
 
@@ -3845,17 +3852,17 @@ The first-stage optimizer grid should consist of method bundles, not all
 hyperparameter combinations:
 \[
 \begin{array}{lll}
-\textbf{O0-a:} & \textbf{Adam-MSE} &
+\textbf{Bundle 1:} & \textbf{Adam-MSE} &
 \text{canonical RND baseline},\\
-\textbf{O0-b:} & \textbf{Adam-L2} &
+\textbf{Bundle 2:} & \textbf{Adam-L2} &
 \text{readout-only count-scale ablation},\\
-\textbf{O0-c:} & \textbf{AdaGrad-L2} &
+\textbf{Bundle 3:} & \textbf{AdaGrad-L2} &
 \text{cumulative-gradient-memory test},\\
-\textbf{O0-d:} & \textbf{SGD-}1/t\textbf{-L2} &
+\textbf{Bundle 4:} & \textbf{SGD-}1/t\textbf{-L2} &
 \text{decreasing-step count-memory test},\\
-\textbf{O0-e:} & \textbf{SGD-}1/t\textbf{-PR-L2} &
+\textbf{Bundle 5:} & \textbf{SGD-}1/t\textbf{-PR-L2} &
 \text{decreasing-step plus averaged-readout test},\\
-\text{O0-f:} & \mathrm{Adam\text{-}PR\text{-}L2} &
+\textbf{Bundle 6:} & \mathrm{Adam\text{-}PR\text{-}L2} &
 \text{cheap averaging diagnostic}.
 \end{array}
 \]
@@ -3942,32 +3949,32 @@ the full product of optimizer constants should not be run.}
 \label{sec:train-run-3-final-design}
 
 \paragraph{Recommended stages.}
-Train run~3 should be staged as follows:
+Train run~3 should be staged as follows, per track:
 \[
 \begin{array}{ll}
-\textbf{E0:} &
+\textbf{Elliptical 1:} &
 \{\textbf{batch},\textbf{global},\textbf{mixed}\}
 \times
 \beta_{\mathcal{E}}
 \times
 \texttt{a\_seed},\\[2pt]
-\textbf{E1:} &
+\textbf{Elliptical 2:} &
 \text{best elliptical memory}
 \times
 \{\lambda,d_\varphi,\nu_\varphi\},\\[2pt]
-\text{E2:} &
+\textbf{Elliptical 3:} &
 \text{discounted global around the best global setting},\\[4pt]
-\textbf{O0:} &
+\textbf{Optimizer 1:} &
 \text{optimizer bundles in Table~\ref{tab:trainrun3-optimizer-bundles}}
 \times
 \beta
 \times
 \texttt{a\_seed},\\[2pt]
-\textbf{O1:} &
+\textbf{Optimizer 2:} &
 \text{best optimizer family}
 \times
 \text{its method-specific learning-rate and stability knobs},\\[2pt]
-\text{O2:} &
+\textbf{Optimizer 3:} &
 \text{repeat the best optimizer on one additional RND input}.
 \end{array}
 \]
@@ -4002,12 +4009,12 @@ using the live \textbf{PyTorch} trainer (\texttt{train.py}, SB3 SAC) on the reor
 \texttt{07\_reconstruction} package. It compares four intrinsic-bonus methods on
 \texttt{PointMaze\_Large-v3} (fixed start, \texttt{top\_right} goal), each tuned over an intrinsic
 coefficient (\(\beta\)) grid, and---for the three elliptical methods---over a ridge-\(\lambda\) grid and a
-feature-input grid. The four methods are: \textbf{A1} batch elliptical (\texttt{rnd\_\allowbreak
-elliptical}); \textbf{A2} global elliptical with the covariance updated at buffer-\emph{sample} time
+feature-input grid. The four methods are: batch elliptical (\texttt{rnd\_\allowbreak
+elliptical}); global elliptical with the covariance updated at buffer-\emph{sample} time
 (\texttt{rnd\_\allowbreak elliptical\_\allowbreak global}, \texttt{update\_\allowbreak timing}=\texttt{sample});
-\textbf{A3} global elliptical updated at buffer-\emph{add} time (same algorithm,
-\texttt{update\_\allowbreak timing}=\texttt{add}); and \textbf{A4} \texttt{rnd\_\allowbreak next\_\allowbreak
-state}. All elliptical runs use unit-norm features.
+global elliptical updated at buffer-\emph{add} time (same algorithm,
+\texttt{update\_\allowbreak timing}=\texttt{add}); and RND (\texttt{rnd\_\allowbreak next\_\allowbreak
+state}). All elliptical runs use unit-norm features.
 
 \paragraph{Logging (training-reward only).}
 To save compute, this run sets the new default \texttt{eval\_standalone}=\texttt{False}: the deterministic
@@ -4026,15 +4033,15 @@ Table~\ref{tab:trainrun3-1-1-fixed} and the swept axes in Table~\ref{tab:trainru
 \toprule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
 \midrule
-Intrinsic-bonus method & \texttt{algorithm} & A1 \texttt{rnd\_\allowbreak elliptical} (batch); A2/A3 \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (sample-/add-time update); A4 \texttt{rnd\_\allowbreak next\_\allowbreak state}. \\
+Intrinsic-bonus method & \texttt{algorithm} & \texttt{rnd\_\allowbreak elliptical} (batch); \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (sample-/add-time update); \texttt{rnd\_\allowbreak next\_\allowbreak state} (RND). \\
 Intrinsic coefficient & \(\beta\) & \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\) (7; all 4 methods). \\
 Ridge regularizer & \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,\,10^{-2}\}\) (elliptical only; RND has none). \\
 Elliptical feature input & \texttt{elliptical\_\allowbreak feature\_\allowbreak input} & \(\{(s,a),\ s'\}\): state\,+\,action, or next-state only (elliptical only; RND uses next-state). \\
 Random seed & \texttt{a\_seed} & \(0\)--\(99\) (100 seeds). \\
 \bottomrule
 \end{tabular}
-\caption{Train run~3.1.1 swept axes. The grid is per-method: each of A1/A2/A3 (elliptical) is
-\(\beta\,(7)\times\lambda\,(2)\times\text{input}\,(2)=28\) configurations, and A4 (RND) is \(\beta\,(7)\),
+\caption{Train run~3.1.1 swept axes. The grid is per-method: each of the three elliptical methods is
+\(\beta\,(7)\times\lambda\,(2)\times\text{input}\,(2)=28\) configurations, and RND is \(\beta\,(7)\),
 so \(3\times28+7=91\) configurations \(\times\,100\) seeds \(=9100\) runs. The writeup is updated once every
 configuration has \(\ge 30\) finished seeds.}
 \label{tab:trainrun3-1-1-sweep}
@@ -4053,10 +4060,10 @@ configuration has \(\ge 30\) finished seeds.}
 >{\raggedright\arraybackslash}p{2.9cm}@{}}
 \toprule
 \textbf{Hyperparameter (code arg)} &
-\textbf{A1: \texttt{rnd\_\allowbreak elliptical} (batch, sample)} &
-\textbf{A2: \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, sample)} &
-\textbf{A3: \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, add)} &
-\textbf{A4: \texttt{rnd\_\allowbreak next\_\allowbreak state} (RND)} \\
+\textbf{\texttt{rnd\_\allowbreak elliptical} (batch, sample)} &
+\textbf{\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, sample)} &
+\textbf{\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, add)} &
+\textbf{\texttt{rnd\_\allowbreak next\_\allowbreak state} (RND)} \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Environment}} \\
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
@@ -4599,22 +4606,22 @@ Generated by \texttt{analysis/code/make\_followup\_interim.py}.}
 \end{table}
 
 %------------------------------------------------------------------------------
-\subsubsection{Train run 3.2.1: RND optimizer variants (O1 Adam, O2 AdaGrad, O3 SGD-\(1/t\))}
+\subsubsection{Train run 3.2.1: RND optimizer variants (Adam, AdaGrad, SGD-\(1/t\))}
 \label{sec:train-run-3-2-1}
 
 \paragraph{Run.}
 Train run~3.2.1 is the first live run of the Part~II optimizer design
 (Section~\ref{sec:train-run-3-rnd-optimizers}).  It sweeps the three
-non-averaged optimizer families --- Method O1 (Adam, the canonical RND
-baseline), Method O2 (AdaGrad, cumulative squared-gradient memory), and Method
-O3 (SGD with the shifted \(1/t\) schedule) --- \sout{each crossed with the two bonus
+non-averaged optimizer families --- Adam (the canonical RND
+baseline), AdaGrad (cumulative squared-gradient memory), and
+SGD with the shifted \(1/t\) schedule --- \sout{each crossed with the two bonus
 readouts \(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\) and the
-intrinsic coefficient \(\beta\)}\claudeedit{O2 and O3 crossed with the two bonus readouts
-\(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\), O1 with the
+intrinsic coefficient \(\beta\)}\claudeedit{AdaGrad and SGD-\(1/t\) crossed with the two bonus readouts
+\(\{\mathcal{B}_{\mathrm{mse}},\mathcal{B}_{\mathrm{l2}}\}\), Adam with the
 \(\mathcal{B}_{\mathrm{l2}}\) readout only, and every method crossed with the intrinsic
 coefficient \(\beta\)}; the only optimizer-specific swept knobs are
-O3's schedule parameters \((\eta_0,t_0)\).
-\claudecomment{Superseded at launch (user decision 2026-07-04): the O1 Adam--mse cell is exactly
+the SGD-\(1/t\) schedule parameters \((\eta_0,t_0)\).
+\claudecomment{Superseded at launch (user decision 2026-07-04): the Adam--mse cell is exactly
 run 3.1.1's \texttt{rnd\_next\_state} reference arm (same input, Adam at PyTorch defaults, MSE
 readout, no clipping), already measured there, so it is not re-run; the grid shrinks
 \(192 \to 184\) configurations. Launch record:
@@ -4644,13 +4651,13 @@ Table~\ref{tab:trainrun3-2-1-fixed} also lists run-3.1.1's
 reference column, and the analysis plots will draw that arm's best
 configuration as a reference line --- taken from its training-episode reward
 curve (the same metric logged here), not from a standalone-eval curve.
-\sout{Because run~3.2.1 uses the same \texttt{rnd\_next\_state} input, O1's
+\sout{Because run~3.2.1 uses the same \texttt{rnd\_next\_state} input, Adam's
 \(\mathcal{B}_{\mathrm{mse}}\) arm has exactly the reference arm's
 configuration (Adam at PyTorch defaults, MSE readout, no clipping), so the
 seven \(\beta\) values it shares with run~3.1.1 double as a replication of
-that arm.}\claudeedit{Because O1's \(\mathcal{B}_{\mathrm{mse}}\) cell would have exactly the
+that arm.}\claudeedit{Because Adam's \(\mathcal{B}_{\mathrm{mse}}\) cell would have exactly the
 reference arm's configuration (Adam at PyTorch defaults, MSE readout, no clipping), it is not
-re-run: the run-3.1.1 arm itself stands in as O1's mse row in the analysis, and the RQ1 readout
+re-run: the run-3.1.1 arm itself stands in as Adam's mse row in the analysis, and the RQ1 readout
 comparison (Adam mse vs.\ l2) is therefore a cross-run comparison --- same code stack, same input,
 same training-episode-reward metric, but seeds run months apart.}
 \claudecomment{Same launch decision as above; the cross-run caveat is stated so RQ1's answer is
@@ -4702,31 +4709,31 @@ Table~\ref{tab:trainrun3-2-1-sweep}.}
 \toprule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
 \midrule
-Optimizer method & \texttt{rnd\_optimizer} & O1 Adam; O2 AdaGrad; O3 SGD-\(1/t\)
+Optimizer method & \texttt{rnd\_optimizer} & Adam; AdaGrad; SGD-\(1/t\)
 with \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\). \\
 Bonus readout & \(\mathcal{B}\) (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) &
-\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) \sout{(all three methods)}\claudeedit{(O2 and O3; O1 runs \(\mathcal{B}_{\mathrm{l2}}\) only --- its mse cell is the run-3.1.1 reference arm, not re-run)}. \\
+\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) \sout{(all three methods)}\claudeedit{(AdaGrad and SGD-\(1/t\); Adam runs \(\mathcal{B}_{\mathrm{l2}}\) only --- its mse cell is the run-3.1.1 reference arm, not re-run)}. \\
 Intrinsic coefficient & \(\beta\) &
 \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\) (8; all methods; Train
 run~1's \(\beta^\star=10^{2}\) for \texttt{rnd\_next\_state} sits inside the grid,
 and \(10^{-3}\) matches the low end used by runs 3.1.1/3.1.2). \\
-O3 initial learning rate & \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) &
-\(\{10^{-3},3{\cdot}10^{-3},10^{-2},3{\cdot}10^{-2},10^{-1}\}\) (5; O3 only). \\
-O3 schedule offset & \(t_0\) (\texttt{rnd\_sgd\_t0}) &
-\(\{10^{3},10^{4}\}\) (2; O3 only). \\
+SGD-\(1/t\) initial learning rate & \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) &
+\(\{10^{-3},3{\cdot}10^{-3},10^{-2},3{\cdot}10^{-2},10^{-1}\}\) (5; SGD-\(1/t\) only). \\
+SGD-\(1/t\) schedule offset & \(t_0\) (\texttt{rnd\_sgd\_t0}) &
+\(\{10^{3},10^{4}\}\) (2; SGD-\(1/t\) only). \\
 Random seed & \texttt{a\_seed} & \(0\)--\(49\) \sout{(50 seeds, every configuration)}\claudeedit{(50-seed cap; seeds are allocated adaptively by the controller --- see the seed-allocation paragraph above)}. \\
 \bottomrule
 \end{tabular}
-\caption{Train run~3.2.1 swept axes. The grid is per-method: O1 is
-\sout{readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations}\claudeedit{readout\,(1: l2)\,\(\times\,\beta\)\,(8) \(=8\) configurations}, O2 \sout{likewise}\claudeedit{is} \(16\),
-and O3 is readout\,(2)\,\(\times\,\eta_0\)\,(5)\,\(\times\,t_0\)\,(2)\,\(\times\,\beta\)\,(8)
+\caption{Train run~3.2.1 swept axes. The grid is per-method: Adam is
+\sout{readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations}\claudeedit{readout\,(1: l2)\,\(\times\,\beta\)\,(8) \(=8\) configurations}, AdaGrad \sout{likewise}\claudeedit{is} \(16\),
+and SGD-\(1/t\) is readout\,(2)\,\(\times\,\eta_0\)\,(5)\,\(\times\,t_0\)\,(2)\,\(\times\,\beta\)\,(8)
 \(=160\), so \sout{\(16+16+160=192\) configurations \(\times\,50\) seeds \(=9600\)
 runs}\claudeedit{\(8+16+160=184\) configurations \(\times\) a 50-seed cap \(=9200\) queue entries}
 (comparable to run-3.1.1's \(9100\)).  \sout{The writeup is first updated when
 every configuration has \(\ge 20\) finished seeds.}\claudeedit{The writeup is first updated once
 every configuration has \(\ge 10\) finished seeds (the controller's decision floor), and finally
 when the sweep ends.}
-\claudecomment{Counts follow the launch decision above (O1 mse cell dropped); the \(\ge 20\)-seed
+\claudecomment{Counts follow the launch decision above (Adam mse cell dropped); the \(\ge 20\)-seed
 update trigger is superseded by the adaptive allocation --- stopped configurations end at about 10
 seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Queue built
 2026-07-04 (sweep \texttt{2026-07-04-18-21\_optimizer-variants-bar}, 9200 entries verified).}}
@@ -4746,9 +4753,9 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 >{\raggedright\arraybackslash}p{3.0cm}@{}}
 \toprule
 \textbf{Hyperparameter (code arg)} &
-\textbf{O1: Adam} &
-\textbf{O2: AdaGrad} &
-\textbf{O3: SGD-\(1/t\)} &
+\textbf{Adam} &
+\textbf{AdaGrad} &
+\textbf{SGD-\(1/t\)} &
 \textbf{Reference: run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2)}} \\
@@ -4797,12 +4804,12 @@ method does not use.  Environment and SAC follow runs 3.1.1/3.1.2 exactly;
 logging follows the run-3.1.1 training-reward-only standard (no standalone
 eval), so the new curves and the reference arm's curves are the same metric.
 All four columns share the \texttt{rnd\_\allowbreak next\_\allowbreak state}
-input\sout{, so the reference arm differs from O1's \(\mathcal{B}_{\mathrm{mse}}\)
-arm only in its \(\beta\) grid (7 vs.\ 8 values)}\claudeedit{; the reference arm IS the O1 mse
-cell (which is therefore not re-run in this sweep --- O1 sweeps the l2 readout only)}.
-\claudecomment{Readout row and caption updated for the launch decision (O1 mse cell dropped); the
+input\sout{, so the reference arm differs from Adam's \(\mathcal{B}_{\mathrm{mse}}\)
+arm only in its \(\beta\) grid (7 vs.\ 8 values)}\claudeedit{; the reference arm IS the Adam mse
+cell (which is therefore not re-run in this sweep --- Adam sweeps the l2 readout only)}.
+\claudecomment{Readout row and caption updated for the launch decision (Adam mse cell dropped); the
 strikethrough in the readout row shows the old all-three-methods span replaced by an
-O1-specific cell plus an O2--O3 span.}
+Adam-specific cell plus an AdaGrad--SGD-\(1/t\) span.}
 The analysis plots will draw the reference arm's best configuration as a
 reference line, from its training-episode reward curve.  The swept axes
 (readout, \(\beta\), \(\eta_0\), \(t_0\), seed) are in
@@ -4822,16 +4829,16 @@ robustness companion to the mean, which the bimodal per-seed outcome makes
 noisy).  Figure~\ref{fig:trainrun3-2-1-curve} draws the five swept rows' reward
 curves (solid) against the reference (dashed).  Reading the table:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{SGD-\(1/t\) tops the grid.}  Both O3 rows sit above every other
-method --- O3-\(\mathcal{B}_{\mathrm{mse}}\) at \(\bar{R}=47.6\) and
-O3-\(\mathcal{B}_{\mathrm{l2}}\) at \(45.3\), each about \(10\) reward points
+\item \textbf{SGD-\(1/t\) tops the grid.}  Both SGD-\(1/t\) rows sit above every other
+method --- SGD-\(1/t\) (\(\mathcal{B}_{\mathrm{mse}}\)) at \(\bar{R}=47.6\) and
+SGD-\(1/t\) (\(\mathcal{B}_{\mathrm{l2}}\)) at \(45.3\), each about \(10\) reward points
 above the RND benchmark (\(35.2\)), and both at their best with a large initial
 step \(\eta_0=10^{-1}\) (mse) or \(\eta_0=10^{-2}\) (l2) and \(\beta\) near
 \(1\)--\(10\).
 \item \textbf{AdaGrad clears the benchmark only with the mse readout.}
-O2-\(\mathcal{B}_{\mathrm{mse}}\) reaches \(38.4\) (above the benchmark), while
-O2-\(\mathcal{B}_{\mathrm{l2}}\) reaches only \(34.1\) (below it).
-\item \textbf{Adam is not rescued by the l2 readout.}  O1-\(\mathcal{B}_{\mathrm{l2}}\)
+AdaGrad (\(\mathcal{B}_{\mathrm{mse}}\)) reaches \(38.4\) (above the benchmark), while
+AdaGrad (\(\mathcal{B}_{\mathrm{l2}}\)) reaches only \(34.1\) (below it).
+\item \textbf{Adam is not rescued by the l2 readout.}  Adam (\(\mathcal{B}_{\mathrm{l2}}\))
 scores \(26.2\) at its best \(\beta\) --- the worst of the six rows and well
 below the Adam-\(\mathcal{B}_{\mathrm{mse}}\) reference (\(35.2\)) it is meant to
 be compared against.
@@ -4849,7 +4856,7 @@ readout, scored on the final training-episode extrinsic reward \(\bar{R}\)
 (mean over seeds; \(\mathrm{SE}=s/\sqrt{n}\)), sorted by \(\bar{R}\) descending;
 best \textbf{bold}, second \underline{underlined} in the \(\bar{R}\) and
 \(\mathrm{succ.}\) columns (higher is better).  \(\beta^\star\) /
-\(\eta_0^\star\) / \(t_0^\star\) are the winning coefficient and (O3 only)
+\(\eta_0^\star\) / \(t_0^\star\) are the winning coefficient and (SGD-\(1/t\) only)
 schedule parameters; ``---'' marks a knob a method does not use.  The
 Adam--\(\mathcal{B}_{\mathrm{mse}}\) row is the run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}
 reference arm (not re-swept here); the other five rows are this run's swept
@@ -4895,7 +4902,7 @@ contents like runs 3.2.1 and 3.2.3; the content below is unchanged. The initiali
 that this run's oracle gap motivated (the untrained-bonus field, the bias ablation, the remedy
 list) stays inside this subsubsection.}
 The run-3.2.1 winners were selected as the argmax over many configurations at
-modest seed counts (O3 alone has \(160\) configurations, each stopped near
+modest seed counts (SGD-\(1/t\) alone has \(160\) configurations, each stopped near
 \(10\)--\(50\) seeds), so their reported means are upward-biased by the
 selection --- the maximum over many noisy estimates sits above every true mean.
 To measure the effect without that bias, Train run~3.2.2 re-runs the two best
@@ -4911,9 +4918,9 @@ where \(\Phi\) is the standard normal cumulative distribution.
 Table~\ref{tab:trainrun3-2-2-validation} reports the result.
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{The advantage does not survive fresh seeds.}  The best SGD-\(1/t\)
-configuration (C1, mse, \(\beta{=}10\)) leads the benchmark by only
+configuration (\runref{run-3.2.1 winner 1}: mse, \(\beta{=}10\)) leads the benchmark by only
 \(\Delta=+2.6\) (one-sided confidence \(72\%\) --- not significant), and the
-second (C0, l2, \(\beta{=}1\)) is \(\Delta=-1.3\), \emph{below} the benchmark.
+second (\runref{run-3.2.1 winner 2}: l2, \(\beta{=}1\)) is \(\Delta=-1.3\), \emph{below} the benchmark.
 On unbiased seeds the three configurations are statistically tied.
 \item \textbf{The benchmark reproduced; the winners regressed.}  The benchmark's
 fresh-seed mean (\(34.5\)) matches its run-3.1.1 value (\(35.2\)), but the two
@@ -4949,8 +4956,8 @@ selecting the top of many configurations at small \(n\).}
 \caption{Train run~3.2.2: the two best run-3.2.1 SGD-\(1/t\) configurations and
 the RND benchmark on \(100\) fresh seeds (\texttt{a\_seed} \(100\)--\(199\)),
 plus the two visit-count oracle rows (\texttt{gt\_\allowbreak position\_\allowbreak velocity},
-\(\beta{=}1\), fresh seeds \(200\)--\(499\)): the \(1/\sqrt{n}\)-decay oracle
-(O\(\sqrt{}\)) and the \(1/n\)-decay oracle (O\(n\)), the latter two measured on
+\(\beta{=}1\), fresh seeds \(200\)--\(499\)): the \(1/\sqrt{n}\)-decay count oracle
+and the \(1/n\)-decay count oracle, the latter two measured on
 the same training-episode metric so they are a proper ceiling for the learned
 bonuses.  Sorted by \(\bar{R}\) descending; best \textbf{bold}, second
 \underline{underlined} in \(\bar{R}\) and \(\mathrm{succ.}\).  ``\(\Delta\) vs
@@ -4976,7 +4983,7 @@ The two oracle rows of Table~\ref{tab:trainrun3-2-2-validation} isolate (2):
 keeping the even start and changing only the decay from \(1/\sqrt{n}\) to
 \(1/n\) costs about \(9\) reward points.  To isolate (1), the following plots
 show the \emph{initial} bonus of the benchmark RND network --- the exact step-0
-network of the run-3.2.2 benchmark's best seed (\texttt{a\_seed} \(111\), final
+network of the \runref{run-3.2.2 benchmark}'s best seed (\texttt{a\_seed} \(111\), final
 reward \(109.9\)), rebuilt by mirroring \texttt{train.py}'s construction (same
 seeding order, so the weights are identical to that run's; the
 observation-normalization warmup is re-seeded deterministically, and the
@@ -5019,7 +5026,7 @@ quadratic with their minimum near \(v\approx 0\) and similar magnitude for
 middle point the bonus at zero velocity is \(\approx 0\).
 \end{enumerate}
 \textbf{Both oracle ingredients differ from learned RND: the decay comparison
-(O\(\sqrt{}\) vs.\ O\(n\)) shows the \(\sqrt{n}\) denominator matters, and these
+(\(1/\sqrt{n}\) vs.\ \(1/n\)) shows the \(\sqrt{n}\) denominator matters, and these
 initial-field plots show the even numerator is also absent --- at step 0 RND
 directs exploration by an arbitrary random preference for fast, corner states
 rather than uniformly.}
@@ -5045,7 +5052,7 @@ rather than uniformly.}
 \end{subfigure}
 \caption{The \emph{initial} (untrained) RND bonus over the maze at zero
 velocity (\(v_x{=}v_y{=}0\)); the network is the step-0 weights of the
-run-3.2.2 benchmark's best seed (\texttt{a\_seed} \(111\)).  Top row: values
+\runref{run-3.2.2 benchmark}'s best seed (\texttt{a\_seed} \(111\)).  Top row: values
 normalized by the maximum shared with
 Figure~\ref{fig:trainrun3-2-2-initfield-vel} (so the three velocity levels are
 comparable).  Bottom row: the same field normalized by its \emph{own} maximum
@@ -5406,37 +5413,37 @@ actually enabled).  Everything else is the run-3.2.1 stack unchanged: SAC on
 input, \(10^{6}\) steps, and the training-episode reward as the score.  Three
 arms:
 \begin{itemize}[leftmargin=*]
-\item \textbf{N1 (reward-normalized RND).}  The benchmark configuration ---
+\item \textbf{Reward-norm.}  The benchmark configuration ---
 Adam at PyTorch defaults, \(\mathcal{B}_{\mathrm{mse}}\) readout, zero biases
 --- with the classic intrinsic-reward normalization switched on
 (\texttt{rnd\_\allowbreak reward\_\allowbreak norm}, next paragraph), sweeping
 \(\beta\in\{10^{-4},\dots,10^{4}\}\) (9 decades; one decade lower than the
 run-3.2.1 grid because the normalized bonus is rescaled to unit return-std,
 so useful \(\beta\) values shift down).
-\item \textbf{O1\(\times\)init (Adam, nonzero biases).}  Adam with the
+\item \textbf{Adam\(\times\)init (nonzero biases).}  Adam with the
 \(\mathcal{B}_{\mathrm{l2}}\) readout only (user decision at launch,
 2026-07-11), the two bias-initialization schemes below, and
 \(\beta\in\{10^{-5},\dots,10^{4}\}\) (10 decades; extended one further decade
 down because a nonzero bias raises the initial bonus floor by up to two orders
 of magnitude, Table~\ref{tab:trainrun3-2-2-bias-ablation}).
-\item \textbf{O3\(\times\)init (SGD-\(1/t\), nonzero biases).}  The run-3.2.1
+\item \textbf{SGD-\(1/t\)\(\times\)init (nonzero biases).}  The run-3.2.1
 SGD-\(1/t\) family with the same readout, schemes, and \(\beta\) grid as
-O1\(\times\)init, with the schedule grid trimmed to the region run 3.2.1
+Adam\(\times\)init, with the schedule grid trimmed to the region run 3.2.1
 found competitive: \(\eta_0\in\{10^{-3},10^{-2},10^{-1}\}\),
 \(t_0\in\{10^{3},10^{4}\}\).
 \end{itemize}
-The two remedies are deliberately not crossed: arm N1 keeps zero biases, and
+The two remedies are deliberately not crossed: the reward-norm arm keeps zero biases, and
 the two init arms keep the normalization off, so each effect is measured
-against the same unmodified benchmark.  The reference is configuration C2 ---
-the RND benchmark re-measured on fresh seeds in run~3.2.2
+against the same unmodified benchmark.  The reference is the RND benchmark
+re-measured on fresh seeds in run~3.2.2
 (Table~\ref{tab:trainrun3-2-2-validation}): \(\bar{R}=34.50\),
 \(\mathrm{SE}=3.13\), \(n=100\).  It is not re-run here.
 
-\paragraph{The reward normalization (arm N1).}
+\paragraph{The reward normalization (the reward-norm arm).}
 This codebase has never normalized the intrinsic reward: the raw readout
 enters the replay reward \(r^{\mathrm{ext}} + \beta\,r^{\mathrm{int}}\)
 directly, and only the RND \emph{input} is whitened
-(\texttt{rnd\_\allowbreak obs\_\allowbreak norm}).  Arm N1 adds the original
+(\texttt{rnd\_\allowbreak obs\_\allowbreak norm}).  The reward-norm arm adds the original
 paper's reward-side normalization \citep{burda2019exploration}.  Define
 \(r^{\mathrm{int}}_t\) as the raw bonus readout on the transition collected at
 environment step \(t\), \(\gamma_{\mathrm{norm}}\) as the filter discount
@@ -5460,7 +5467,7 @@ bonus, never move the statistics.  The predictor's training loss is
 unnormalized (the paper normalizes the reward, not the distillation
 objective).
 
-\paragraph{The bias initialization (arms O1\(\times\)init, O3\(\times\)init).}
+\paragraph{The bias initialization (arms Adam\(\times\)init, SGD-\(1/t\)\(\times\)init).}
 The bias ablation above (Table~\ref{tab:trainrun3-2-2-bias-ablation},
 Figure~\ref{fig:trainrun3-2-2-bias-ablation}) measured the untrained field;
 these arms measure whether the flattened start actually helps training.  The
@@ -5479,17 +5486,17 @@ for the zero-bias baseline).
 The sweep runs under the same adaptive controller as run~3.2.1
 (Section~\ref{sec:train-run-3-2-1}): every configuration races on the shared
 seed list, and the controller stops a configuration once its data rule out the
-bar.  Two parameters change.  First, the bar is now C2's fresh-seed mean
+bar.  Two parameters change.  First, the bar is now the \runref{run-3.2.2 benchmark}'s fresh-seed mean
 \(34.50\) (frozen at first controller start by recomputing it from run-3.2.2's
-C2 records) rather than the run-3.1.1 in-sample mean.  Second, the seed cap is
+benchmark records) rather than the run-3.1.1 in-sample mean.  Second, the seed cap is
 \(100\) (\texttt{a\_seed} \(0\)--\(99\)), doubling run-3.2.1's cap so surviving
 configurations end with validation-grade precision.  Recall the rule: with
 \(n\) finished seeds of mean \(\bar{R}\) and sample standard deviation \(s\), a
 configuration is stopped when \(n\ge 10\) and
 \(\bar{R} + 2.576\,s/\sqrt{n} < 34.50\) (the one-sided \(99\%\) upper limit
 sits below the benchmark mean).  The grid is
-N1\,(9) \(+\) O1\(\times\)init\,(\(2\times10=20\)) \(+\)
-O3\(\times\)init\,(\(2\times3\times2\times10=120\)) \(=149\)
+reward-norm\,(9) \(+\) Adam\(\times\)init\,(\(2\times10=20\)) \(+\)
+SGD-\(1/t\)\(\times\)init\,(\(2\times3\times2\times10=120\)) \(=149\)
 configurations \(\times\) the 100-seed cap \(=14{,}900\) queue entries;
 execution follows the seed-outermost id order, so early seeds finish first and
 stopped configurations end near the 10-seed floor.
@@ -5507,10 +5514,10 @@ stopped configurations end near the 10-seed floor.
 >{\raggedright\arraybackslash}p{3.0cm}@{}}
 \toprule
 \textbf{Hyperparameter (code arg)} &
-\textbf{N1: Adam \(+\) reward norm} &
-\textbf{O1\(\times\)init: Adam} &
-\textbf{O3\(\times\)init: SGD-\(1/t\)} &
-\textbf{Reference: C2 (run-3.2.2 benchmark)} \\
+\textbf{Adam \(+\) reward norm} &
+\textbf{Adam\(\times\)init} &
+\textbf{SGD-\(1/t\)\(\times\)init} &
+\textbf{Reference: \runref{run-3.2.2 benchmark}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2/3.2.1)}} \\
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
@@ -5559,15 +5566,15 @@ optimizer constants & \multicolumn{2}{c}{\(\eta=10^{-3}\), betas \((0.9,0.999)\)
 \end{tabular}%
 }
 \caption{Train run~3.2.3 hyperparameters per arm (columns are the three swept
-arms plus run-3.2.2's C2 benchmark as the reference), rows the knobs.  Rows
+arms plus the \runref{run-3.2.2 benchmark} as the reference), rows the knobs.  Rows
 spanning all columns are shared; ``---'' marks a knob an arm does not use.
 Environment, SAC, and logging follow run 3.2.1 exactly, so every curve is the
-same training-episode metric as the C2 reference.  The reference column is the
+same training-episode metric as the benchmark reference.  The reference column is the
 run-3.2.2 fresh-seed re-measurement of the benchmark
 (Table~\ref{tab:trainrun3-2-2-validation}; \(\bar{R}=34.50\),
 \(\mathrm{SE}=3.13\), \(n=100\)) and is not re-run.  The grid is
-N1\,(9 \(\beta\)) \(+\) O1\(\times\)init\,(2 schemes \(\times\) 10 \(\beta\)
-\(=20\)) \(+\) O3\(\times\)init\,(2 schemes \(\times\) 3 \(\eta_0\) \(\times\)
+reward-norm\,(9 \(\beta\)) \(+\) Adam\(\times\)init\,(2 schemes \(\times\) 10 \(\beta\)
+\(=20\)) \(+\) SGD-\(1/t\)\(\times\)init\,(2 schemes \(\times\) 3 \(\eta_0\) \(\times\)
 2 \(t_0\) \(\times\) 10 \(\beta\) \(=120\)) \(=149\) configurations \(\times\)
 a 100-seed cap \(=14{,}900\) queue entries, raced under the run-3.2.1
 controller against the bar \(34.50\) with stopping rule \(n\ge 10\) and
@@ -5586,15 +5593,15 @@ reports the best configuration (at least \(10\) seeds) per arm and bias
 scheme; recall \(\mathrm{succ.}\) is the fraction of seeds with final training
 reward above \(5\) (Section~\ref{sec:train-run-3-2-1}).
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{Reward normalization leads in-sample.}  N1 at \(\beta{=}10^{4}\)
+\item \textbf{Reward normalization leads in-sample.}  The reward-norm arm at \(\beta{=}10^{4}\)
 reaches \(\bar{R}=45.6\) with the highest success rate of the table
-(\(0.92\)) — about \(11\) points above the C2 benchmark.
-\item \textbf{Nonzero biases lift SGD-\(1/t\) again.}  Both O3 rows clear the
+(\(0.92\)) — about \(11\) points above the \runref{run-3.2.2 benchmark}.
+\item \textbf{Nonzero biases lift SGD-\(1/t\) again.}  Both SGD-\(1/t\)\(\times\)init rows clear the
 benchmark (\(43.8\) with \texttt{normal\_0.5}, \(41.4\) with
 \texttt{pytorch\_\allowbreak default}), echoing run 3.2.1's SGD-\(1/t\) lead
 — which run 3.2.2 then showed to be selection bias, hence the fresh-seed
 validation below.
-\item \textbf{Adam gains little from a nonzero bias.}  O1 with
+\item \textbf{Adam gains little from a nonzero bias.}  Adam\(\times\)init with
 \texttt{normal\_0.5} sits just above the benchmark (\(35.5\)); with
 \texttt{pytorch\_\allowbreak default} it stays below (\(31.8\)).
 \end{enumerate}
@@ -5617,8 +5624,8 @@ extrinsic reward \(\bar{R}\) (mean over seeds; \(\mathrm{SE}=s/\sqrt{n}\)),
 sorted by \(\bar{R}\) descending; best \textbf{bold}, second
 \underline{underlined} in the \(\bar{R}\) and \(\mathrm{succ.}\) columns
 (higher is better).  \(\beta^\star\)/\(\eta_0^\star\)/\(t_0^\star\) are the
-winning coefficient and (O3 only) schedule parameters; ``---'' marks a knob an
-arm does not use.  The C2 row is the run-3.2.2 fresh-seed RND benchmark
+winning coefficient and (SGD-\(1/t\) only) schedule parameters; ``---'' marks a knob an
+arm does not use.  The \runref{run-3.2.2 benchmark} row is the fresh-seed re-measurement of the benchmark
 (Table~\ref{tab:trainrun3-2-2-validation}), recomputed from its records ---
 the same bar the controller pruned against.  Final: the sweep completed
 2026-07-18 with every surviving configuration at the \(100\)-seed cap.}
@@ -5631,11 +5638,12 @@ the same bar the controller pruned against.  Final: the sweep completed
 \paragraph{Run.}
 The run-3.2.3 winners are again an argmax over many noisy cells, so — exactly
 as run 3.2.2 did for run 3.2.1 — the top five racing configurations by
-in-sample mean at selection time (2026-07-14) were re-run as V1--V5 on \(100\)
+in-sample mean at selection time (2026-07-14) were re-run, numbered rank~1--rank~5
+by that in-sample mean, on \(100\)
 \emph{fresh} seeds (\texttt{a\_seed} \(500\)--\(599\), disjoint from the
 \(0\)--\(499\) used by every prior run), with no pruning: every configuration
 runs all \(100\) seeds.  Same stack and metric as run 3.2.3; jobs on the open
-cpu partition, nolim, and the reservation nodes.  Two V1 seeds (\(575\),
+cpu partition, nolim, and the reservation nodes.  Two rank-1 seeds (\(575\),
 \(598\)) diverged within minutes of starting — the SAC actor emitted NaN
 under the largest initial bonus of the five — and are excluded from \(n\) and
 reported here rather than requeued (the failure is the model's, not the
@@ -5648,36 +5656,36 @@ confidence \(\Phi\!\big(\Delta/\sqrt{\mathrm{SE}_c^2+\mathrm{SE}_b^2}\big)\)
 that a candidate exceeds it.  Table~\ref{tab:trainrun3-2-4-validation} reports
 the five candidates on the fresh seeds.
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{Two configurations validate out-of-sample.}  V1
+\item \textbf{Two configurations validate out-of-sample.}  Rank~1
 (SGD-\(1/t\)/l2/\(\beta{=}1\), \texttt{normal\_0.5}) holds at
-\(\bar{R}=49.3\) (\(\Delta=+14.8\), confidence \(100\%\)) and V3 (the
+\(\bar{R}=49.3\) (\(\Delta=+14.8\), confidence \(100\%\)) and rank~3 (the
 reward-normalized Adam at \(\beta{=}10^{4}\)) at \(44.7\)
 (\(\Delta=+10.2\), \(98\%\)) — the first configurations in this project to
 beat the RND benchmark on fresh seeds.
-\item \textbf{The winner's curse strikes again, selectively.}  V2 — second
+\item \textbf{The winner's curse strikes again, selectively.}  Rank~2 — second
 in-sample at selection (\(41.9\)) — collapses to \(29.0\) on fresh seeds
 (\(\Delta=-5.5\)), the same selection-bias regression run 3.2.2 measured for
-the run-3.2.1 winners; V4 and V5 land near the benchmark.
+the run-3.2.1 winners; ranks~4 and~5 land near the benchmark.
 \item \textbf{Caveat.}  About \(75\) of \(100\) seeds per configuration are
 finished at this snapshot; the remaining runs execute on a final worker wave
 (part of the tail was restarted after a job-walltime kill), and the table is
 regenerated at completion — the numbers move a little, not qualitatively.
 \end{enumerate}
 
-% ---- Run 3.2.4 validation table: V1-V5 on fresh seeds vs the benchmark ----
+% ---- Run 3.2.4 validation table: rank 1-5 on fresh seeds vs the benchmark ----
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
 \input{../train_runs/2026-07-11-00-27_run_3_2_3_rnd-next-state_rewardnorm-adam-mse-gamma0.99_beta-1e-4-to-1e4__bias-pytorch-default-normal0.5_adam-l2_sgd1t-l2_eta0-1e-3-1e-2-1e-1_t0-1e3-1e4_beta-1e-5-to-1e4_1Mstep_seed0-99_optuna-bar-34.50_32x1/analysis/plots/validation_table.tex}
-\caption{Train run~3.2.4: the run-3.2.3 top five (V1--V5, numbered by
+\caption{Train run~3.2.4: the run-3.2.3 top five (rank~1--rank~5 by
 in-sample mean at the 2026-07-14 selection) on \(100\) fresh seeds
-(\texttt{a\_seed} \(500\)--\(599\)), against the run-3.2.2 C2 RND benchmark.
+(\texttt{a\_seed} \(500\)--\(599\)), against the \runref{run-3.2.2 benchmark}.
 Sorted by \(\bar{R}\) descending; best \textbf{bold}, second
 \underline{underlined} in \(\bar{R}\) and \(\mathrm{succ.}\)  ``\(\Delta\) vs
 bench.''\ and ``conf.''\ as defined above; the benchmark row is the reference
-(``---'').  V1's \(n\) excludes its two NaN-diverged seeds (\(575\), \(598\)).
+(``---'').  Rank~1's \(n\) excludes its two NaN-diverged seeds (\(575\), \(598\)).
 Partial snapshot of 2026-07-18 (\(n\approx 75\) per row, validation still
 running); the table is regenerated at completion.}
 \label{tab:trainrun3-2-4-validation}
@@ -5827,20 +5835,20 @@ Train run~5 fixes a clean baseline: three RND configurations, each on $300$ fres
 same SAC / \texttt{PointMaze\_\allowbreak Large-v3} stack and training-episode metric as run~3.2.4.
 The three arms are:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{original-small} --- the \emph{original} RND recipe \citep{burda2019exploration}
+\item \runref{run-5 original-small} --- the \emph{original} RND recipe \citep{burda2019exploration}
   transplanted onto this task on the train-run-3 RND network size, swept over eight intrinsic
   weights that race under a pruning controller;
-\item \textbf{C2} --- the run-3.2.2 RND benchmark (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
+\item \runref{run-3.2.2 benchmark} --- the RND benchmark of run 3.2.2 (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
   no reward normalization), re-run at $300$ seeds; and
-\item \textbf{N1} --- the run-3.2.3 reward-normalized winner (Adam, $\mathcal{B}_{\mathrm{mse}}$,
+\item \runref{run-3.2.3 reward-norm} --- the reward-normalized winner of run 3.2.3 (Adam, $\mathcal{B}_{\mathrm{mse}}$,
   $\beta{=}10^{4}$, reward normalization $\gamma_{\mathrm{norm}}{=}0.99$), re-run at $300$ seeds.
 \end{enumerate}
 
 \paragraph{Purpose.}
 Two goals. First, the project has always compared its bonuses against its own ``RND benchmark''
-(the C2 line), never against a faithful \emph{original} RND; original-small is that reference,
+(the \runref{run-3.2.2 benchmark} line), never against a faithful \emph{original} RND; \runref{run-5 original-small} is that reference,
 assembling the scattered original-RND facts of Section~\ref{sec:rnd-norm} and
-Table~\ref{tab:rnd-norm} / Table~\ref{tab:trainrun3-2-2-rnd-init} into one run. Second, C2 and N1
+Table~\ref{tab:rnd-norm} / Table~\ref{tab:trainrun3-2-2-rnd-init} into one run. Second, the benchmark and reward-norm configurations
 already have fresh-seed data (runs 3.2.2/3.2.3/3.2.4); re-running them at $300$ seeds lets us test,
 per previous run, whether the new data differs enough to stand alone or whether the old data may be
 pooled in --- the substitution check under \emph{Results}.
@@ -5851,7 +5859,7 @@ pooled in --- the substitution check under \emph{Results}.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{6.2cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{5.8cm}@{}}
 \toprule
 \textbf{Name} & \textbf{Which train run(s)} & \textbf{RND config on the shared base} \\
 \midrule
@@ -5859,17 +5867,18 @@ pooled in --- the substitution check under \emph{Results}.
   next-state input $s'$; target $\equiv$ predictor (symmetric)
   $=\;$state$(4)\!\to\!256\!\to\!\mathrm{ReLU}\!\to\!128$; orthogonal gain $\sqrt2$; zero bias;
   obs-norm RMS clip $[-5,5]$; output $m{=}128$ \\
-\textbf{C2} (train run 3.2.2) & \S\ref{sec:train-run-3-2-2}, seeds $100$--$199$
+\runref{run-3.2.2 benchmark} & \S\ref{sec:train-run-3-2-2}, seeds $100$--$199$
   (origin \S\ref{sec:train-run-3-1-1}) & $+$ Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
   \emph{no} reward normalization \\
-\textbf{N1} (train run 3.2.3) & \S\ref{sec:train-run-3-2-3} seeds $0$--$99$; validated
+\runref{run-3.2.3 reward-norm} & \S\ref{sec:train-run-3-2-3} seeds $0$--$99$; validated
   \S\ref{sec:train-run-3-2-4} seeds $500$--$599$ & $+$ Adam, $\mathcal{B}_{\mathrm{mse}}$,
   $\beta{=}10^{4}$, reward normalization $\gamma_{\mathrm{norm}}{=}0.99$ \\
 \bottomrule
 \end{tabular}
 \caption{The project's previous RND, defined once as \emph{train run 3 RND}. All of train run 3
-shares the base architecture; C2 and N1 are two configurations of it, and are the two own-RND arms
-re-run here. original-small borrows only this network's \emph{widths} (see below).}
+shares the base architecture; the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm} are two
+configurations of it, and are the two own-RND arms re-run here. The \runref{run-5 original-small} arm
+borrows only this network's \emph{widths} (see below).}
 \label{tab:trainrun5-trainrun3-rnd}
 \end{table}
 
@@ -5967,12 +5976,12 @@ separate value head. The project's own RND (train run 3) and run~5 likewise use 
 reward stream $r^{\mathrm{ext}}+\beta\,r^{\mathrm{int}}$.
 
 \paragraph{From Atari-PPO to PointMaze-SAC: the translation choices.}
-original-small keeps the original RND settings above wherever the SAC/PointMaze/state setting allows,
+The \runref{run-5 original-small} arm keeps the original RND settings above wherever the SAC/PointMaze/state setting allows,
 and makes the following explicit translations:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{CNN $\to$ MLP.} The $84\times84$ convolutional trunk becomes a fully-connected trunk
   on the $4$-dimensional state $(x,y,v_x,v_y)$.
-\item \textbf{Small widths, deeper predictor.} original-small takes the train-run-3 RND \emph{widths}
+\item \textbf{Small widths, deeper predictor.} The \runref{run-5 original-small} arm takes the train-run-3 RND \emph{widths}
   ($256$ hidden, output $m{=}128$) but keeps the original's defining \emph{asymmetry}: the predictor
   is one $128$-wide LeakyReLU$(0.2)$ block deeper than the target. Target
   $=\;$state$(4)\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$; predictor
@@ -5996,7 +6005,7 @@ and makes the following explicit translations:
 \end{enumerate}
 
 \paragraph{Beta sweep and pruning.}
-original-small sweeps $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight betas
+The \runref{run-5 original-small} arm sweeps $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight betas
 race: let $\bar R_\beta$, $s_\beta$, and $n_\beta$ be the mean, sample standard deviation, and count
 of a beta's finished-seed final training-episode rewards, and let the \emph{bar} be the largest
 $\bar R_\beta$ over betas with $n_\beta\ge 30$. A beta is stopped once
@@ -6006,7 +6015,7 @@ n_\beta \ge 30
 \bar R_\beta + 2.576\,\frac{s_\beta}{\sqrt{n_\beta}} \;<\; \mathrm{bar}
 \end{align}
 (its one-sided $99\%$ upper confidence limit sits below the running best mean); survivors run to the
-full $300$ seeds. C2 and N1 never prune and run all $300$ seeds.
+full $300$ seeds. The benchmark and reward-norm arms never prune and run all $300$ seeds.
 
 \paragraph{Pipeline.}
 Figure~\ref{fig:trainrun5-pipeline} traces the original RND data flow --- environment step, next
@@ -6015,7 +6024,7 @@ forward-filter reward normalization, $\beta$-scaling, and the sum with the extri
 the RL update --- with CleanRL's departures marked as callouts: its predictor \emph{update} feeds
 the stored current-step observation rather than the next observation; its convolutional LeakyReLU
 slope is $0.01$; it clips gradients at global norm $0.5$; and it normalizes advantages per
-minibatch. original-small follows the original everywhere the figure's solid path runs (next-state
+minibatch. The \runref{run-5 original-small} arm follows the original everywhere the figure's solid path runs (next-state
 input throughout, no gradient clip), on SAC's single reward stream.
 
 \begin{figure}[t]
@@ -6027,7 +6036,7 @@ $\hat f(s')$ give the per-dimension error $e$, read out as the bonus $b$, normal
 std $\sigma_F$ of the forward-filtered intrinsic return, scaled by $\beta$, and added to the
 extrinsic reward for the RL update. The predictor-gradient path (blue dashed) terminates only at the
 predictor; the RMS statistic updates are dotted. CleanRL's departures from the original are marked as
-dashed callouts. original-small follows the solid path on SAC's single reward stream.}
+dashed callouts. The \runref{run-5 original-small} arm follows the solid path on SAC's single reward stream.}
 \label{fig:trainrun5-pipeline}
 \end{figure}
 
@@ -6056,10 +6065,10 @@ dashed callouts. original-small follows the solid path on SAC's single reward st
 \textbf{RND paper} &
 \textbf{CleanRL} &
 \textbf{ExPLORe} &
-\textbf{C2} & \textbf{N1} &
+\runref{run-3.2.2 benchmark} & \runref{run-3.2.3 reward-norm} &
 \textbf{run 5 (this work)} \\
 & \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
-\small(no norm) & \small(reward norm) & \small(original-small) \\
+\small(no norm) & \small(reward norm) & \small(\runref{run-5 original-small}) \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
 algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{3}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
@@ -6127,12 +6136,11 @@ seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ \
 }
 \caption{Train run~5 hyperparameters by source. Columns are the two Atari references (the RND paper
 \citep{burda2019exploration} and CleanRL \citep{huang2022cleanrl}), the state-input reference ExPLORe
-\citep{li2023accelerating}, the project's previous RND (its two configurations C2 and N1,
-Table~\ref{tab:trainrun5-trainrun3-rnd}), and run~5's original-small arm. Rows spanning several
+\citep{li2023accelerating}, the project's previous RND (its two configurations, the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm}, Table~\ref{tab:trainrun5-trainrun3-rnd}), and the \runref{run-5 original-small} arm. Rows spanning several
 columns share a value; ``---'' marks a knob a source does not use. Architecture is written as one
 network-pipeline string per net. There is no continuous-control column for the two Atari references:
 neither the original RND repository/paper nor CleanRL evaluates a MuJoCo/continuous-control task
-(verified), so ExPLORe supplies the state-input reference. original-small follows the RND paper on
+(verified), so ExPLORe supplies the state-input reference. The \runref{run-5 original-small} arm follows the RND paper on
 every non-architecture knob (readout, Adam $10^{-4}$/$\epsilon\,10^{-8}$, warm-up, reward norm) and
 the original \emph{repository code} on the update proportion ($1.0$); it takes the train-run-3 RND
 widths but keeps the original's deeper-predictor asymmetry (one extra $128$-wide block). In
@@ -6147,23 +6155,24 @@ intrinsic value head, which the single-head SAC setup does not have.}
 \paragraph{Results (partial snapshot 2026-07-22; the 3000-run sweep is still draining its long
 tail, so the per-arm seed counts $n$ below are interim, not the full 300 seeds --- the numbers
 will firm up but are not expected to move much).}
-Table~\ref{tab:trainrun5-results} reports the three run-5 arms --- the winning original-small
-$\beta$, C2 (Adam, no reward normalization), and N1 (Adam, reward normalization) --- on the final
+Table~\ref{tab:trainrun5-results} reports the three run-5 arms --- the winning \runref{run-5 original-small}
+$\beta$, the \runref{run-3.2.2 benchmark} (Adam, no reward normalization), and the \runref{run-3.2.3 reward-norm}
+(Adam, reward normalization) --- on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
-old-run C2 and N1 reference rows beneath.  Recall $\mathrm{succ.}$ is the fraction of a
+old-run reference rows beneath.  Recall $\mathrm{succ.}$ is the fraction of a
 configuration's seeds whose final training reward exceeds $5$ (defined for
 run~3.2.1, Section~\ref{sec:train-run-3-2-1}).  Table~\ref{tab:trainrun5-betasweep} gives all eight
-original-small $\beta$ values with the beta-race prune verdict, and
+\runref{run-5 original-small} $\beta$ values with the beta-race prune verdict, and
 Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading the snapshot:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{Reward normalization (N1) leads, and reproduces the old N1.}  N1 reaches
+\item \textbf{Reward normalization leads, and reproduces its old result.}  The \runref{run-3.2.3 reward-norm} arm reaches
   $\bar R=47.56$ ($n=233$, $\mathrm{succ.}=0.89$), the top of the table --- above the winning
-  original-small arm and above C2, and slightly above its own old N1 reference
-  ($43.71$, run~3.2.4).
-\item \textbf{The original-small arm lands between C2 and N1.}  At its winning weight
+  \runref{run-5 original-small} arm and above the \runref{run-3.2.2 benchmark}, and slightly above its own old
+  reference ($43.71$, run~3.2.4).
+\item \textbf{The \runref{run-5 original-small} arm lands between the two previous-RND arms.}  At its winning weight
   $\beta=10^3$ the faithful-original arm scores $\bar R=39.92$ ($n=226$,
-  $\mathrm{succ.}=0.79$) --- above C2 ($36.19$) but below N1, so on this maze the reward
-  normalization of N1 buys more than the remaining original-RND components (observation
+  $\mathrm{succ.}=0.79$) --- above the \runref{run-3.2.2 benchmark} ($36.19$) but below the \runref{run-3.2.3 reward-norm}, so on this maze the reward
+  normalization buys more than the remaining original-RND components (observation
   normalization, the deeper predictor, the mean-squared readout) recover.
 \item \textbf{The bonus weight is strongly single-peaked.}  Across the eight $\beta$ the mean
   reward traces an inverted-U (Table~\ref{tab:trainrun5-betasweep}): every $\beta\le1$ sits
@@ -6183,21 +6192,21 @@ Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading
 \caption{Train run~5, the three arms scored on the final training-episode extrinsic reward
 $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$); best \textbf{bold}, second
 \underline{underlined} in the $\bar R$ and $\mathrm{succ.}$ columns (higher is better).  Top block:
-this run's three arms (original-small at its winning $\beta=10^3$, C2, N1).  Bottom block: the
-old-run C2 and N1 reference rows (run~3.2.2 and run~3.2.4) shown for scale.  $\mathrm{succ.}$ is
+this run's three arms (\runref{run-5 original-small} at its winning $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}).  Bottom block: the
+old-run reference rows (run~3.2.2 and run~3.2.4) shown for scale.  $\mathrm{succ.}$ is
 the fraction of seeds with final reward $>5$.  Partial snapshot --- the $n$ column is the seeds
 completed so far, not the full 300.}
 \label{tab:trainrun5-results}
 \end{table}
 
-% ---- Run 5 beta-sweep table (8 original-small betas + prune verdict) ----
+% ---- Run 5 beta-sweep table (8 run-5 original-small betas + prune verdict) ----
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
 \renewcommand{\arraystretch}{1.2}
 \input{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/beta_sweep_table.tex}
-\caption{Train run~5, the eight original-small bonus weights $\beta$ on the final
+\caption{Train run~5, the eight \runref{run-5 original-small} bonus weights $\beta$ on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
 beta-race prune verdict.  The race gives each $\beta$ at least $30$ seeds, then prunes a $\beta$
 once its one-sided $99\%$ upper confidence limit falls below the running-best mean; the sole
@@ -6211,17 +6220,22 @@ their pruned-time $n$.}
 \centering
 \includegraphics[width=0.92\linewidth]{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/reward_curve.pdf}
 \caption{Train run~5: training-episode extrinsic reward over $10^6$ steps for the three arms
-(original-small at $\beta=10^3$, C2, N1), each the mean over seeds with a $\pm1$ standard-error
-band.  Partial snapshot 2026-07-22.}
+(\runref{run-5 original-small} at $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}),
+each the mean over seeds with a $\pm1$ standard-error
+band.  Partial snapshot 2026-07-22.  The legend still shows the arms' old short labels
+(original-small; C2 $=$ the \runref{run-3.2.2 benchmark}; N1 $=$ the \runref{run-3.2.3 reward-norm}) --- the
+figure is a data snapshot and is redrawn with the new names when the run's final analysis
+regenerates it.}
 \label{fig:trainrun5-curve}
 \end{figure}
 
 % ---- Run 5: ground-truth oracles vs best RND (hand-built, snapshot 2026-07-22) ----
 % Sources: run-2 data/local (97 gt seeds), run-3.2.2 folder oracle sweeps
 % 2026-07-09-00-15 (1/sqrt(n)) and 2026-07-09-00-27 (1/n) at seeds 200-499, and the
-% run-5 set-baseline sweep (N1 arm). Recompute when run 5 finishes its long tail.
+% run-5 set-baseline sweep (reward-norm arm). Recompute when run 5 finishes its long tail.
 \paragraph{Ground-truth oracles vs.\ the best RND arm.}
-Table~\ref{tab:trainrun5-oracle-vs-rnd} places the run-5 winner N1 next to the ground-truth
+Table~\ref{tab:trainrun5-oracle-vs-rnd} places the run-5 winner (the \runref{run-3.2.3 reward-norm}
+configuration) next to the ground-truth
 count-based oracles (recall the count exponent $\alpha$ of Section~\ref{sec:count-based}:
 the bonus is $\min(1,n^{\alpha})$, so $\alpha=-0.5$ gives $\min(1,1/\sqrt{n})$ and $\alpha=-1$
 gives $\min(1,1/n)$), all trained on the same task and step budget
@@ -6229,7 +6243,7 @@ gives $\min(1,1/n)$), all trained on the same task and step budget
 configuration:
 \begin{itemize}[leftmargin=*]
 \item the \emph{final reward} $\bar R$ --- the final extrinsic reward of each seed, averaged over
-  seeds ($\mathrm{SE}=s/\sqrt{n}$). For the N1 row and the oracle re-runs this is the
+  seeds ($\mathrm{SE}=s/\sqrt{n}$). For the reward-norm row and the oracle re-runs this is the
   training-window mean over the last $100$ training episodes (the run-3-onward scoring metric);
   the $97$ run-2 seeds inside the merged row instead recorded a standalone $100$-episode
   evaluation --- the two protocols agree on the matched configuration (Welch's $t$-test,
@@ -6250,9 +6264,9 @@ launched 2026-07-09): the two share the environment, the algorithm and bonus
 and the step budget; they differ only in whether a standalone evaluation also ran; their seed
 ranges are disjoint; and their reward and coverage distributions are statistically
 indistinguishable (Welch's $t$-test, reward $p=0.48$, coverage $p=0.46$) --- so pooling is
-justified. The $\alpha=-1$ oracle is a different bonus shape and stays separate. The N1 row is a
+justified. The $\alpha=-1$ oracle is a different bonus shape and stays separate. The reward-norm row is a
 later 2026-07-22 snapshot than Table~\ref{tab:trainrun5-results} ($n=253$ vs.\ $233$ seeds
-finished), so its numbers differ slightly. Reading the table: N1 reaches about $71\%$ of the
+finished), so its numbers differ slightly. Reading the table: the reward-norm arm reaches about $71\%$ of the
 merged oracle's reward, and covers slightly \emph{more} of the maze than either oracle.
 
 \begin{table}[H]
@@ -6274,23 +6288,24 @@ merged oracle's reward, and covers slightly \emph{more} of the maze than either 
 \texttt{gt\_\allowbreak position\_\allowbreak velocity}, $\min(1,1/n)$, $\beta{=}1$ &
   train run 3.2.2 & \underline{56.49} $\pm$ 1.50 & \underline{0.726} & \underline{0.970} &
   0.767 $\pm$ 0.007 & 300 \\
-N1 (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$, reward norm) --- best run-5 RND &
+\runref{run-3.2.3 reward-norm} (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$) --- best run-5 RND &
   train run 5 & 47.33 $\pm$ 1.92 & 0.685 & 0.913 & \textbf{0.787} $\pm$ 0.008 & 253 \\
 \bottomrule
 \end{tabular}
-\caption{Ground-truth count-based oracles vs.\ the best run-5 RND arm (N1), all at $10^{6}$ steps
+\caption{Ground-truth count-based oracles vs.\ the best run-5 RND arm (the \runref{run-3.2.3 reward-norm} configuration), all at $10^{6}$ steps
 on the top-right \texttt{PointMaze\_Large-v3} task. Best \textbf{bold}, second
 \underline{underlined} per metric column (higher is better in every metric column). The source
 column names the train run(s) whose data each row aggregates; both oracle re-runs are stored in
 the run-3.2.2 run folder (sweeps of 2026-07-09, seeds $200$--$499$). The merged row's episode
 success rate comes from its $300$ oracle-re-run seeds only (run 2 kept no per-episode records).
-$n$ is the number of independent seeds; the N1 row is a partial 2026-07-22 snapshot ($253$ of
+$n$ is the number of independent seeds; the reward-norm row is a partial 2026-07-22 snapshot ($253$ of
 $300$ seeds).}
 \label{tab:trainrun5-oracle-vs-rnd}
 \end{table}
 
 \paragraph{Substitution of previous RND runs.}
-Two run-5 arms (C2, N1) re-run configurations that earlier training runs already measured, so
+Two run-5 arms (the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm}) re-run configurations
+that earlier training runs already measured, so
 each old run can be tested for poolability against its run-5 fresh line.  Define the test on the
 final training-episode reward: for one old run versus the run-5 arm with the same
 \texttt{config\_key}, report the Welch $t$-test $p$, Cohen's $d$, and the two-sample Kolmogorov--Smirnov
@@ -6298,9 +6313,11 @@ statistic.  The pre-registered rule (fixed before the sweep) is that an old run 
 \emph{substantially different} --- and so is \emph{not} pooled --- iff $p<0.01$ \emph{and}
 $\lvert d\rvert>0.3$; a run that passes neither gate (not substantially different) may be pooled
 after an executed-path code-diff audit confirms the run code matches.
-Table~\ref{tab:trainrun5-substitution} reports the four tests.  Three old runs (C2 run~3.2.2, N1
-run~3.2.3, N1 run~3.2.4) are statistically indistinguishable from their run-5 lines
-($p\ge0.3$, $\lvert d\rvert\le0.12$) and are candidates for pooling; the older C2 run~3.1.1
+Table~\ref{tab:trainrun5-substitution} reports the four tests.  Three old runs (the benchmark's
+run-3.2.2 data, the reward-norm's run-3.2.3 and run-3.2.4 data) are statistically
+indistinguishable from their run-5 lines
+($p\ge0.3$, $\lvert d\rvert\le0.12$) and are candidates for pooling; the benchmark's older
+run-3.1.1 data
 differs sharply ($p\approx5\times10^{-10}$, $d=0.99$) and is kept separate.  The actual pooling
 is deferred to sweep completion, when the fresh lines reach their full seed counts and the
 code-diff audit is run; until then the reference rows in Table~\ref{tab:trainrun5-results} are
@@ -6471,34 +6488,35 @@ the only randomness}, and each of the $30$ seeds re-draws both networks.
 Define $d$ as a layer's fan-in (its input width: $d = 4$ for the first Linear layer, $d = 256$
 for the second).  Four schemes, applied to both networks:
 \begin{enumerate}[leftmargin=*]
-\item \textbf{I1 --- RND paper $=$ CleanRL (project default).}  Orthogonal weights with gain
+\item \textbf{zero-bias --- RND paper $=$ CleanRL (project default).}  Orthogonal weights with gain
   $\sqrt{2}$ on every layer, all biases $0$.  Section~\ref{sec:train-run-3-2-2}
   (Table~\ref{tab:trainrun3-2-2-rnd-init}) verified that the original RND release, CleanRL, and
   this codebase share exactly this law.  Flag: \texttt{rnd\_\allowbreak bias\_\allowbreak
   init}$=$\texttt{zero}.
-\item \textbf{I2 --- PyTorch-default biases (runs 3.2.3/3.2.4 scheme).}  Weights stay
+\item \textbf{pytorch-bias --- PyTorch-default biases (runs 3.2.3/3.2.4 scheme).}  Weights stay
   orthogonal with gain $\sqrt{2}$; every bias is drawn i.i.d.\ uniform on
   $[-1/\sqrt{d},\, +1/\sqrt{d}]$ (PyTorch's default bias law).  Flag:
   \texttt{rnd\_\allowbreak bias\_\allowbreak init}$=$\texttt{pytorch\_\allowbreak default}.
-\item \textbf{I3 --- full PyTorch default (new switch).}  Weights \emph{and} biases are drawn
+\item \textbf{pytorch-full --- full PyTorch default (new switch).}  Weights \emph{and} biases are drawn
   i.i.d.\ uniform on $[-1/\sqrt{d},\, +1/\sqrt{d}]$ --- for the weights this is what
   \texttt{nn.Linear}'s default (\texttt{kaiming\_\allowbreak uniform\_} with $a{=}\sqrt{5}$)
   reduces to, a law the document had not previously stated.  Note the repo's
-  \texttt{pytorch\_\allowbreak default} bias flag alone (I2) is \emph{not} the full PyTorch
+  \texttt{pytorch\_\allowbreak default} bias flag alone (pytorch-bias) is \emph{not} the full PyTorch
   default; the new weight switch \texttt{rnd\_\allowbreak weight\_\allowbreak
   init}$=$\texttt{pytorch\_\allowbreak default} (default \texttt{orthogonal}, bit-identical to
   all prior runs) completes it, drawing from its own keyed stream so no existing draw shifts.
-\item \textbf{I4 --- best of run 3.2.4.}  Weights orthogonal with gain $\sqrt{2}$; every bias
+\item \textbf{normal-0.5 --- best of run 3.2.4.}  Weights orthogonal with gain $\sqrt{2}$; every bias
   $b = 0.5\,z$ with $z \sim N(0,1)$, i.e.\ $b \sim N(0,\, 0.25)$ --- the
-  \texttt{normal\_\allowbreak 0.5} scheme of the winning fresh-seed configuration V1 of run
+  \texttt{normal\_\allowbreak 0.5} scheme of \runref{run-3.2.4 rank 1}, the fresh-seed winner of run
   3.2.4 (Section~\ref{sec:train-run-3-2-4}; preliminary at $n \approx 75$ of $100$ seeds, but
   the ranking has been stable across snapshots).
 \end{enumerate}
-The keyed bias draws of I2 and I4 are byte-identical to runs 3.2.3/3.2.4 at the same seed
+The keyed bias draws of pytorch-bias and normal-0.5 are byte-identical to runs 3.2.3/3.2.4 at the same seed
 (Section~\ref{sec:train-run-3-2-3}).
 
 \paragraph{Optimizers.}
-Recall Method O3 of Section~\ref{sec:train-run-3-rnd-optimizers}: define $t$ as the $0$-based
+Recall the \runref{run-3.2.1 SGD-\(1/t\)} method (defined in
+Section~\ref{sec:train-run-3-rnd-optimizers}, swept in run 3.2.1): define $t$ as the $0$-based
 optimizer-step counter, $\eta_0$ as the initial learning rate (the exact step size at $t=0$),
 $t_0$ as the schedule offset, and $\eta_{\min}$ as the learning-rate floor; SGD-$1/t$ is plain
 SGD with $\eta_t = \max(\eta_{\min},\, \eta_0/(1 + t/t_0))$ and $\eta_{\min} = 0$.  The rate is
@@ -6570,7 +6588,7 @@ logged readout & \multicolumn{2}{c}{$\mathcal{B}_{\mathrm{l2}}$ per point (exact
 device, precision & \multicolumn{2}{c}{cpu, float32} \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Swept}} \\
-init scheme (\texttt{rnd\_\allowbreak weight\_\allowbreak init}, \texttt{rnd\_\allowbreak bias\_\allowbreak init}) & \multicolumn{2}{c}{I1, I2, I3, I4 ($4$ schemes)} \\
+init scheme (\texttt{rnd\_\allowbreak weight\_\allowbreak init}, \texttt{rnd\_\allowbreak bias\_\allowbreak init}) & \multicolumn{2}{c}{zero-bias, pytorch-bias, pytorch-full, normal-0.5 ($4$ schemes)} \\
 optimizer configuration & $3$ (Table~\ref{tab:convergence-run1-optimizers}) & $9$ (Table~\ref{tab:convergence-run1-optimizers}) \\
 random seed (\texttt{a\_\allowbreak seed}) & \multicolumn{2}{c}{$0$--$29$ ($30$ seeds; each re-draws only the initialization)} \\
 \midrule
@@ -6627,9 +6645,9 @@ the run.
 The sweep completed 2026-07-19: all $4320$ runs finished (13 minutes wall on 192 workers, none
 failed).  $180$ runs diverged and are excluded from every fit --- exactly the $6$ cells
 $\times$ $30$ seeds of SGD-$1/t$ at $\eta_0 = 10^{-1}$ on env~2 for the two largest-scale
-initializations (I3 and I4), at every $t_0$: env~2's raw inputs reach $\lvert x\rvert = 5.5$
-(no observation normalization), and the $0.1$-rate full-batch step is unstable there, while I1
-and I2 survive it.  The tables mark these cells.  Recall the fitted model of
+initializations (pytorch-full and normal-0.5), at every $t_0$: env~2's raw inputs reach $\lvert x\rvert = 5.5$
+(no observation normalization), and the $0.1$-rate full-batch step is unstable there, while zero-bias
+and pytorch-bias survive it.  The tables mark these cells.  Recall the fitted model of
 Eq.~\eqref{eq:convergence-power-model}; every cell below reports the fitted slope
 $-\hat\alpha$, and rows are ranked by closeness of the per-seed aggregate slope to the
 reference $-1/2$.
@@ -6671,7 +6689,7 @@ Figure~\ref{fig:convergence-run1-env11}.}
 \includegraphics[width=0.86\linewidth]{../train_runs/2026-07-19-03-29_convergence_run_1_rnd-next-state-distill_env-center1x1-topright1x1-cellmid9x12_init-zero-ptbias-ptfull-normal0.5_adam-lr1e-3-1e-4-1e-5_sgd1t-eta0-1e-3-1e-2-1e-1_t0-1e2-1e3-1e4_4096step_seed0-29_32x1/analysis/plots/curves_env2.pdf}
 \caption{Convergence run~1, env~2 (all cell midpoints); same construction as
 Figure~\ref{fig:convergence-run1-env11}.  The best-SGD picks here avoid the diverged
-$\eta_0 = 10^{-1}$ cells of I3/I4.}
+$\eta_0 = 10^{-1}$ cells of pytorch-full/normal-0.5.}
 \label{fig:convergence-run1-env2}
 \end{figure}
 
@@ -6689,12 +6707,12 @@ cells.}
 
 Findings:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{A near-perfect $-1/2$ exists.}  The top configuration --- I1 (zero-bias) with
+\item \textbf{A near-perfect $-1/2$ exists.}  The top configuration --- zero-bias with
   SGD-$1/t$ at $\eta_0 = 10^{-2}$, $t_0 = 10^{2}$ --- fits an aggregate slope of
   $-0.503 \pm 0.005$ (seed-average fit $-0.502$): under the right decaying schedule the l2
   bonus tracks the one-over-square-root-of-visits reference almost exactly over three decades
   of steps.  Several SGD-$1/t$ cells cluster within $\pm 0.05$ of $-1/2$.
-\item \textbf{Adam decays faster than $-1/2$ everywhere.}  The best Adam configuration (I1,
+\item \textbf{Adam decays faster than $-1/2$ everywhere.}  The best Adam configuration (zero-bias,
   lr $10^{-3}$) fits $-0.83$ on the aggregate, and no Adam cell comes close to $-1/2$: under a
   constant adaptive rate the bonus falls off substantially faster than a count-based bonus
   would --- consistent with deterministic full-batch descent having no gradient noise to slow
@@ -6711,9 +6729,9 @@ Findings:
   geometric ramp, a mid-range plateau, and a late steepening whose onset tracks $t_0$; the
   very steep small-$\eta_0$ slopes (down to $\approx -1.7$) reflect that late near-constant-rate
   geometric phase rather than any count-like decay.  The floor $c$ absorbs the stabilizing
-  tail (e.g.\ $c \approx 0.026$ for I4 with $\eta_0 = 10^{-1}$, $t_0 = 10^{4}$ on env~1.2).
+  tail (e.g.\ $c \approx 0.026$ for normal-0.5 with $\eta_0 = 10^{-1}$, $t_0 = 10^{4}$ on env~1.2).
 \item \textbf{The stability boundary is initialization-dependent.}  SGD-$1/t$ at
-  $\eta_0 = 10^{-1}$ diverges on env~2 for I3 and I4 (all seeds, every $t_0$) while I1 and I2
+  $\eta_0 = 10^{-1}$ diverges on env~2 for pytorch-full and normal-0.5 (all seeds, every $t_0$) while zero-bias and pytorch-bias
   survive --- the large-coordinate raw inputs amplify the largest-scale initializations past
   the stable-step threshold.
 \end{enumerate}
@@ -6992,7 +7010,7 @@ run on all $8$ configurations; each ground-truth (oracle visit-count) bonus runs
 defined for --- \texttt{gt\_\allowbreak position\_\allowbreak velocity} on the $4$ PointMaze
 configurations, \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} and
 \texttt{gt\_\allowbreak position\_\allowbreak 1m} on the $4$ AntMaze configurations. The SAC $+$ RND
-column reuses the train-run-5 original-small RND stack unchanged.
+column reuses the \runref{run-5 original-small} RND stack unchanged.
 
 \begin{table}[H]
 \centering
@@ -7038,7 +7056,7 @@ train freq / gradient steps / learning starts & $1$ / $1$ / $100$ (SB3 defaults)
 bonus input & N/A & next state ($4$-d PointMaze / $29$-d AntMaze) &
   (position $1$~m cell, velocity bin) of the next state; velocity binned $10\times10$ over
   $[-5,5]^2$ & $4$~m maze cell of the next $(x, y)$ & $1$~m square of the next $(x, y)$ \\
-bonus form & N/A & RND distillation error, run-5 original-small stack (next row) &
+bonus form & N/A & RND distillation error, \runref{run-5 original-small} stack (next row) &
   count bonus $\min(1, 1/\sqrt{n})$ (decay rate $-0.5$) & $\min(1, 1/\sqrt{n})$ &
   $\min(1, 1/\sqrt{n})$ \\
 RND stack & N/A & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper;
@@ -7071,13 +7089,282 @@ seeds & \multicolumn{5}{>{\raggedright\arraybackslash}p{14.2cm}}{racing: initial
 }
 \caption{Algorithms for train run~1. Columns are the five algorithm arms; rows are hyperparameters
 grouped by category. ``same'' collapses a value shared with the columns to its left; ``N/A'' marks a
-knob that does not apply to a column. The SAC $+$ RND column reuses the train-run-5 original-small
+knob that does not apply to a column. The SAC $+$ RND column reuses the \runref{run-5 original-small}
 RND stack unchanged (Table~\ref{tab:trainrun5-hparams}). The three ground-truth columns are oracle
 visit-count bonuses $\min(1, 1/\sqrt{n})$ over the count table shown, one per environment family. The
 config-count rows give each column's contribution as a product annotated with the swept knob, and
 the total over the whole table is $308$ configurations, each run at $10^{6}$ env steps.}
 \label{tab:pm-am-trainrun1-algos}
 \end{table}
+
+% ==================================================================================================
+% Interim update 2026-07-31 (mid-sweep). Everything inside this \begingroup...\endgroup block was
+% added on 2026-07-31 while the train-run-1 sweep was still running, and is set in dark brown
+% (update-darkbrown) to mark it as this update. The three tabulars are auto-generated:
+% code/2026-07-31-16-22_pm-am-run1-interim-tables/make_all.py re-reads the run's completed per-run
+% records and replaces the blocks between the AUTO-GENERATED TABLE marker comments (captions and
+% prose stay hand-edited).
+\begingroup\color{update-darkbrown}
+\subsubsection{Interim results (2026-07-31, sweep still running)}
+\label{sec:pm-am-trainrun1-interim}
+
+This block was added on 2026-07-31, eight days after launch, while the sweep was still running;
+every number covers only the runs completed by then. Only records a run wrote at its natural end
+(\texttt{completed=true}) enter any aggregate: when a worker is killed mid-run (for example by a
+Slurm job reaching its time limit), the run's partial checkpoint record is skipped and the run is
+re-queued and re-run in full, so no infrastructure-killed run enters any denominator, and no run
+has failed permanently ($0$ in the queue's failed state). The owner's and the collaborator's
+workers share one queue, so the numbers pool every submitter's completed runs. As of this
+snapshot, $13780$ runs are complete. Of the $308$ configurations, $202$ have been pruned, $106$
+are still racing, and no (environment, algorithm) cell has reached the winner phase (which starts
+only when every surviving configuration of the cell has $\ge 100$ completed seeds) --- so every
+number below is interim: a cell's best configuration can still change, most of all in the cells
+that still race many configurations, and the final analysis at sweep completion (full per-environment
+tables at final seed counts plus the planned reward-curve plots) supersedes this block.
+Table~\ref{tab:pm-am-run1-interim-status} gives the racing state per (environment, algorithm)
+cell.
+
+\begin{table}[H]
+\color{update-darkbrown}
+\captionsetup{font={color=update-darkbrown}}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+\resizebox{\textwidth}{!}{%
+% Auto-generated by code/2026-07-31-16-22_pm-am-run1-interim-tables/make_all.py
+% >>> AUTO-GENERATED TABLE START: pm-am-run1-interim-status
+\begin{tabular}{@{}l l r r r r r@{}}
+\toprule
+\textbf{environment} & \textbf{algorithm} & \textbf{configurations} & \textbf{still racing} & \textbf{pruned} & \textbf{winner phase} & \textbf{completed runs} \\
+\midrule
+\texttt{PointMaze\_\allowbreak UMaze-v3} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 78 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 1 & 14 & 0 & 545 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak velocity} & 15 & 1 & 14 & 0 & 422 \\
+\texttt{PointMaze\_\allowbreak Open-v3} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 81 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 1 & 14 & 0 & 489 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak velocity} & 15 & 1 & 14 & 0 & 428 \\
+\texttt{PointMaze\_\allowbreak Medium-v3} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 80 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 2 & 13 & 0 & 673 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak velocity} & 15 & 1 & 14 & 0 & 468 \\
+\texttt{PointMaze\_\allowbreak Large-v3} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 80 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 1 & 14 & 0 & 426 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak velocity} & 15 & 1 & 14 & 0 & 470 \\
+\texttt{AntMaze\_\allowbreak UMaze-v5} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 80 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 1 & 14 & 0 & 445 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} & 15 & 2 & 13 & 0 & 491 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak 1m} & 15 & 3 & 12 & 0 & 532 \\
+\texttt{AntMaze\_\allowbreak Open-v5} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 81 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 2 & 13 & 0 & 478 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} & 15 & 1 & 14 & 0 & 419 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak 1m} & 15 & 3 & 12 & 0 & 578 \\
+\texttt{AntMaze\_\allowbreak Medium-v5} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 80 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 2 & 13 & 0 & 477 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} & 15 & 15 & 0 & 0 & 1169 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak 1m} & 15 & 15 & 0 & 0 & 1170 \\
+\texttt{AntMaze\_\allowbreak Large-v5} & \texttt{no\_\allowbreak exploration} & 1 & 1 & 0 & 0 & 79 \\
+ & \texttt{rnd\_\allowbreak next\_\allowbreak state} & 15 & 15 & 0 & 0 & 1140 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} & 15 & 15 & 0 & 0 & 1159 \\
+ & \texttt{gt\_\allowbreak position\_\allowbreak 1m} & 15 & 15 & 0 & 0 & 1162 \\
+\midrule
+\textbf{total} &  & \textbf{308} & \textbf{106} & \textbf{202} & \textbf{0} & \textbf{13780} \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-am-run1-interim-status
+}
+\caption{Racing state of train run~1, one row per (environment, algorithm) cell, at the
+2026-07-31 snapshot: configurations in the cell, configurations still racing, configurations
+pruned (a pruned configuration receives no new seeds), configurations in the winner phase (none
+yet), and the cell's completed runs pooled over its configurations. Auto-generated from the
+sweep's queue directories and prune decision log by
+\texttt{code/2026-07-31-16-22\_\allowbreak pm-am-run1-interim-tables/make\_\allowbreak all.py}.}
+\label{tab:pm-am-run1-interim-status}
+\end{table}
+
+\paragraph{How to read the interim metrics tables.}
+Tables~\ref{tab:pm-am-run1-interim-pointmaze} and \ref{tab:pm-am-run1-interim-antmaze} show, for
+each environment, one row per algorithm at its \emph{current best} configuration --- best $=$
+highest mean whole-run reward among the algorithm's configurations, computed over completed runs
+--- with the swept knob (the bonus weight $\beta$) spelled out in the row label. Define, for one
+run (one seed of one configuration), $R_e$ as the total extrinsic reward of its $e$-th completed
+training episode and $E$ as its number of completed training episodes. The metric columns are:
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{whole-run reward} $\bar{R} = \frac{1}{E}\sum_{e=1}^{E} R_e$ --- the ranking column
+  of the tables and the racing prune score;
+\item \textbf{last-100 reward} $\bar{R}_{100} = \frac{1}{100}\sum_{e=E-99}^{E} R_e$ (over all
+  episodes when $E < 100$) --- the end-of-training performance;
+\item \textbf{success rate} --- the fraction of the run's last $100$ episodes that reach the
+  goal;
+\item \textbf{steps to goal} --- the mean number of steps to reach the goal over the run's
+  successful episodes (whole run); a run with zero successful episodes is excluded from this
+  column, and when that leaves fewer runs than the row's $N$, the included count is shown as
+  ($n$=..);
+\item \textbf{maze-cell coverage \%} --- the percentage of open maze cells visited at least once
+  by the end of the run (the visit counts are cumulative, so this is the coverage after the final
+  episodes);
+\item \textbf{$1$\,m coverage \%} (AntMaze table only) --- the same percentage over $1$-meter
+  squares; the PointMaze maze cell is $1$~m, so on PointMaze this column would repeat the
+  maze-cell column and is dropped.
+\end{enumerate}
+Define $n$ as the number of completed runs of the row's configuration and $s$ as the sample
+standard deviation of a metric over those $n$ runs. Each table cell shows the metric's mean $\pm$
+its standard error $s/\sqrt{n}$ over those runs, and the final column $N$ is that $n$. Rows are
+ranked by whole-run reward, best first (the single sort arrow marks the ranking column). Per
+metric column, within each environment block, the best value is \textbf{bold} and the second best
+\underline{underlined}; higher is better in every column except steps to goal (lower is better);
+$N$ is bookkeeping and is never marked.
+
+\begin{table}[H]
+\color{update-darkbrown}
+\captionsetup{font={color=update-darkbrown}}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+% Auto-generated by code/2026-07-31-16-22_pm-am-run1-interim-tables/make_all.py
+% >>> AUTO-GENERATED TABLE START: pm-am-run1-interim-pointmaze
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} r r r r r r@{}}
+\toprule
+\textbf{algorithm --- best configuration} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-100\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{steps to\\goal}} &
+\textbf{\shortstack[c]{maze-cell\\coverage \%}} &
+\textbf{$N$} \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} --- bonus-weight-3 & {\boldmath$-98.09 \pm 0.08$} & {\boldmath$-92.37 \pm 0.03$} & {\boldmath$1.000 \pm 0.000$} & {\boldmath$97.1 \pm 0.1$} & {\boldmath$100.00 \pm 0.00$} & 76 \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-10000 & \underline{$-104.21 \pm 0.35$} & \underline{$-96.63 \pm 0.58$} & \underline{$0.997 \pm 0.002$} & \underline{$102.3 \pm 0.3$} & {\boldmath$100.00 \pm 0.00$} & 76 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-134.89 \pm 6.24$ & $-117.84 \pm 6.01$ & $0.923 \pm 0.030$ & $106.0 \pm 0.5$ (n=72) & \underline{$99.27 \pm 0.36$} & 78 \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-300 & {\boldmath$-80.14 \pm 0.07$} & \underline{$-78.91 \pm 0.07$} & {\boldmath$1.000 \pm 0.000$} & {\boldmath$80.4 \pm 0.0$} & {\boldmath$100.00 \pm 0.00$} & 77 \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} --- bonus-weight-0.3 & \underline{$-80.24 \pm 0.06$} & {\boldmath$-78.80 \pm 0.06$} & {\boldmath$1.000 \pm 0.000$} & {\boldmath$80.4 \pm 0.0$} & {\boldmath$100.00 \pm 0.00$} & 79 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-81.84 \pm 0.21$ & $-79.05 \pm 0.06$ & {\boldmath$1.000 \pm 0.000$} & \underline{$80.7 \pm 0.1$} & \underline{$99.67 \pm 0.16$} & 81 \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\texttt{PointMaze\_\allowbreak Medium-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} --- bonus-weight-1 & {\boldmath$-129.38 \pm 0.25$} & {\boldmath$-121.12 \pm 0.06$} & {\boldmath$1.000 \pm 0.000$} & {\boldmath$125.7 \pm 0.1$} & \underline{$99.11 \pm 0.24$} & 78 \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-3000 & \underline{$-129.68 \pm 0.31$} & \underline{$-122.86 \pm 0.47$} & {\boldmath$1.000 \pm 0.000$} & \underline{$126.3 \pm 0.2$} & {\boldmath$99.56 \pm 0.14$} & 78 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-173.16 \pm 12.81$ & $-153.40 \pm 12.98$ & \underline{$0.938 \pm 0.027$} & $128.6 \pm 0.6$ (n=75) & $93.37 \pm 0.61$ & 80 \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\texttt{PointMaze\_\allowbreak Large-v3\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-3000 & {\boldmath$-331.58 \pm 1.71$} & \underline{$-293.91 \pm 2.06$} & \underline{$0.997 \pm 0.002$} & {\boldmath$306.9 \pm 1.1$} & {\boldmath$94.63 \pm 0.74$} & 79 \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity} --- bonus-weight-1 & \underline{$-337.77 \pm 1.31$} & {\boldmath$-282.92 \pm 0.78$} & {\boldmath$1.000 \pm 0.000$} & \underline{$308.3 \pm 0.7$} & \underline{$93.31 \pm 0.75$} & 78 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-630.17 \pm 21.44$ & $-568.71 \pm 28.11$ & $0.463 \pm 0.056$ & $337.4 \pm 11.8$ (n=38) & $67.80 \pm 2.48$ & 80 \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-am-run1-interim-pointmaze
+}
+\caption{Interim per-environment results on the four PointMaze environments (2026-07-31 snapshot,
+sweep still running): one row per algorithm at its current best configuration, ranked by
+whole-run reward within each environment block. Cells are mean $\pm$ standard error over the
+configuration's completed runs; $N$ $=$ completed runs. Best per metric column and environment
+block \textbf{bold}, second best \underline{underlined}; higher is better except steps to goal.
+Metric definitions in the numbered list above. Auto-generated from the run's completed records by
+\texttt{code/2026-07-31-16-22\_\allowbreak pm-am-run1-interim-tables/make\_\allowbreak all.py}.}
+\label{tab:pm-am-run1-interim-pointmaze}
+\end{table}
+
+\begin{table}[H]
+\color{update-darkbrown}
+\captionsetup{font={color=update-darkbrown}}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+% Auto-generated by code/2026-07-31-16-22_pm-am-run1-interim-tables/make_all.py
+% >>> AUTO-GENERATED TABLE START: pm-am-run1-interim-antmaze
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} r r r r r r r@{}}
+\toprule
+\textbf{algorithm --- best configuration} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-100\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{steps to\\goal}} &
+\textbf{\shortstack[c]{maze-cell\\coverage \%}} &
+\textbf{\shortstack[c]{$1$\,m\\coverage \%}} &
+\textbf{$N$} \\
+\midrule
+\multicolumn{8}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-10000 & {\boldmath$-689.85 \pm 0.71$} & {\boldmath$-686.08 \pm 1.19$} & {\boldmath$0.061 \pm 0.005$} & $448.6 \pm 5.4$ & {\boldmath$100.00 \pm 0.00$} & {\boldmath$99.52 \pm 0.19$} & 77 \\
+\texttt{gt\_\allowbreak position\_\allowbreak 1m} --- bonus-weight-30 & \underline{$-699.87 \pm 0.07$} & \underline{$-699.69 \pm 0.25$} & \underline{$0.001 \pm 0.001$} & {\boldmath$248.7 \pm 75.8$ (n=5)} & \underline{$69.05 \pm 3.06$} & \underline{$56.62 \pm 1.71$} & 24 \\
+\texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} --- bonus-weight-10000 & $-699.88 \pm 0.04$ & $-699.81 \pm 0.11$ & \underline{$0.001 \pm 0.000$} & \underline{$253.1 \pm 43.5$ (n=12)} & $67.81 \pm 1.75$ & $54.88 \pm 1.50$ & 79 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-700.00 \pm 0.00$ & $-700.00 \pm 0.00$ & $0.000 \pm 0.000$ & --- & $60.00 \pm 0.82$ & $50.59 \pm 0.67$ & 80 \\
+\midrule
+\multicolumn{8}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Open-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-10000 & {\boldmath$-681.53 \pm 1.06$} & {\boldmath$-674.71 \pm 1.91$} & {\boldmath$0.095 \pm 0.007$} & \underline{$452.9 \pm 2.7$} & {\boldmath$100.00 \pm 0.00$} & {\boldmath$99.90 \pm 0.06$} & 76 \\
+\texttt{gt\_\allowbreak position\_\allowbreak 1m} --- bonus-weight-3000 & \underline{$-699.98 \pm 0.01$} & \underline{$-700.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & $489.3 \pm 31.8$ (n=7) & $81.52 \pm 1.51$ & \underline{$66.39 \pm 1.60$} & 79 \\
+\texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} --- bonus-weight-3 & $-699.99 \pm 0.01$ & \underline{$-700.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & {\boldmath$215.0 \pm 0.0$ (n=1)} & \underline{$82.56 \pm 1.48$} & $66.31 \pm 0.89$ & 26 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & $-700.00 \pm 0.00$ & \underline{$-700.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & --- & $78.44 \pm 0.80$ & $59.70 \pm 0.61$ & 81 \\
+\midrule
+\multicolumn{8}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-3000 & {\boldmath$-998.48 \pm 0.17$} & {\boldmath$-996.47 \pm 0.52$} & {\boldmath$0.015 \pm 0.002$} & {\boldmath$755.9 \pm 11.6$ (n=57)} & {\boldmath$96.95 \pm 0.87$} & {\boldmath$92.96 \pm 1.39$} & 77 \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & \underline{$-1000.00 \pm 0.00$} & \underline{$-1000.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & --- & $29.71 \pm 0.53$ & \underline{$23.09 \pm 0.35$} & 80 \\
+\texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} --- bonus-weight-0.001 & \underline{$-1000.00 \pm 0.00$} & \underline{$-1000.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & --- & \underline{$30.05 \pm 0.56$} & $22.86 \pm 0.33$ & 80 \\
+\texttt{gt\_\allowbreak position\_\allowbreak 1m} --- bonus-weight-0.001 & \underline{$-1000.00 \pm 0.00$} & \underline{$-1000.00 \pm 0.00$} & \underline{$0.000 \pm 0.000$} & --- & $29.89 \pm 0.49$ & $22.94 \pm 0.34$ & 79 \\
+\midrule
+\multicolumn{8}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
+\texttt{no\_\allowbreak exploration} --- no swept knob & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$0.000 \pm 0.000$} & --- & $10.32 \pm 0.22$ & $8.24 \pm 0.11$ & 79 \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} --- bonus-weight-0.001 & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$0.000 \pm 0.000$} & --- & $10.26 \pm 0.24$ & $8.26 \pm 0.13$ & 79 \\
+\texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} --- bonus-weight-0.001 & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$0.000 \pm 0.000$} & --- & \underline{$10.33 \pm 0.21$} & {\boldmath$8.42 \pm 0.12$} & 77 \\
+\texttt{gt\_\allowbreak position\_\allowbreak 1m} --- bonus-weight-0.001 & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$-1000.00 \pm 0.00$} & {\boldmath$0.000 \pm 0.000$} & --- & {\boldmath$10.35 \pm 0.22$} & \underline{$8.31 \pm 0.13$} & 75 \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-am-run1-interim-antmaze
+}
+\caption{Interim per-environment results on the four AntMaze environments (2026-07-31 snapshot,
+sweep still running); same layout and marking as
+Table~\ref{tab:pm-am-run1-interim-pointmaze}, plus the $1$\,m coverage column ($4$~m maze cells
+vs $1$~m squares). Auto-generated by the same script.}
+\label{tab:pm-am-run1-interim-antmaze}
+\end{table}
+
+\paragraph{Interim findings.}
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{The hypothesis is currently supported on two of the four PointMaze
+  configurations.} On whole-run reward (the ranking and prune score),
+  \texttt{gt\_\allowbreak position\_\allowbreak velocity} leads SAC $+$ RND's best configuration
+  on UMaze ($-98.09 \pm 0.08$ vs $-104.21 \pm 0.35$) and Medium ($-129.38 \pm 0.25$ vs
+  $-129.68 \pm 0.31$, a gap smaller than one combined standard error), while SAC $+$ RND
+  currently leads on Open ($-80.14 \pm 0.07$ vs $-80.24 \pm 0.06$, also about one combined
+  standard error) and Large ($-331.58 \pm 1.71$ vs $-337.77 \pm 1.31$). On the last-100 reward
+  --- the end-of-training performance --- \texttt{gt\_\allowbreak position\_\allowbreak velocity}
+  leads on all four PointMaze environments. Read literally: the ground-truth bonus reaches the
+  better final policy everywhere, but on Open and Large SAC $+$ RND collects more reward during
+  training, so the whole-run mean currently favors it there.
+\item \textbf{Every bonus arm solves every PointMaze environment; plain SAC falls behind as the
+  maze grows.} SAC $+$ RND and SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak velocity}
+  reach success rate $\ge 0.997$ on all four PointMaze environments. Plain SAC
+  (\texttt{no\_\allowbreak exploration}) reaches $1.000$ on Open but $0.923$ on UMaze, $0.938$ on
+  Medium, and $0.463$ on Large, where its whole-run reward ($-630.17 \pm 21.44$) is far behind
+  the two bonus arms (about $-332$ to $-338$).
+\item \textbf{On AntMaze, only SAC $+$ RND reaches the goal in a meaningful fraction of
+  episodes.} Its last-100 success rate is $0.061$ (UMaze), $0.095$ (Open), $0.015$ (Medium), $0$
+  (Large), with maze-cell coverage $100.00$ (UMaze, Open) and $96.95 \pm 0.87$ (Medium). The two
+  ground-truth count arms and plain SAC are at success rate $\approx 0$ on every AntMaze
+  environment; the count bonuses do raise coverage over plain SAC (for example Open:
+  $82.56 \pm 1.48$ and $81.52 \pm 1.51$ vs $78.44 \pm 0.80$ maze-cell coverage). The bold steps-to-goal
+  cells in ground-truth rows rest on a handful of successful runs (their ($n$=..) counts) and are
+  not comparable to the SAC $+$ RND row. One recorded design difference to keep in mind when
+  reading this gap: the two AntMaze ground-truth bonuses count positions only (the $4$~m maze
+  cell or the $1$~m square of $x, y$), while the RND bonus reads the full $29$-dimensional state.
+\item \textbf{AntMaze Large is unsolved by every arm so far.} Every completed run of every
+  algorithm ends every episode at the $1000$-step limit (whole-run reward $-1000.00 \pm 0.00$,
+  success rate $0$), and maze-cell coverage stays near $10\%$. Where every configuration of a
+  cell sits at $-1000.00$ --- the three bonus cells of AntMaze Large, and the two ground-truth
+  cells of AntMaze Medium --- the racing score cannot separate the configurations: nothing has
+  been pruned there (those cells still race all $15$ bonus weights), and the best-configuration
+  row label shown for them (bonus-weight-$0.001$) means only ``no configuration distinguishable
+  yet'', not a real winner.
+\item \textbf{Best bonus weights so far.} The best SAC $+$ RND bonus weight is large on every
+  environment with a distinguishable best ($300$ to $10^{4}$), while the best
+  \texttt{gt\_\allowbreak position\_\allowbreak velocity} weight on PointMaze is moderate ($0.3$
+  to $3$).
+\end{enumerate}
+\endgroup
 
 \clearpage
 \bibliographystyle{plainnat}
