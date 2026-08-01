@@ -75,9 +75,9 @@ and state normalization — with reward normalization OFF):
 
 ## Git state
 
-Launch commit: recorded below at submit time (commit-before-submit).
-
-- Code state at folder creation: branch `Use-RLexplore-RND`, parent commit
-  `0d6b3f56bde60b1ae54fa984bcd8179cb94ad806` plus the working-tree changes listed above
-  (rnd.py / train.py / methods/__init__.py / this run folder), committed before submission.
-- Launch commit hash: (filled at submit time)
+- Launch commit (commit-before-submit): `9dcb85ad1a9eb0b618849087b6d81e71848a6908` on branch
+  `Use-RLexplore-RND` — the exact code and run scaffolding that execute this sweep (trainer
+  changes, queue machinery, FROZEN_BARS.json, writeup 8.1.2).
+- Parent state at folder creation: `0d6b3f56bde60b1ae54fa984bcd8179cb94ad806`.
+- Truncation-simulation launch gate: `slurm/simulate_truncation.py --full` PASS
+  (240 synthetic configs -> 120 pruned, 120 survivors, 0 failures) at the launch commit.
