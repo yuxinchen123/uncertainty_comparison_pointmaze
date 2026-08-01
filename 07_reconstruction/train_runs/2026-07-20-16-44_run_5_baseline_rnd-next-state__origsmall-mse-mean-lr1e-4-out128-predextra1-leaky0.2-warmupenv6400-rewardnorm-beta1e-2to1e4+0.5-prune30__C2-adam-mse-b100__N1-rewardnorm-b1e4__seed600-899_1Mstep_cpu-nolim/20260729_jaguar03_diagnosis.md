@@ -133,3 +133,35 @@ look are:
 
 Either way, I have moved my jobs off jaguar03, so there is no urgency — I just want it recorded so it can
 be sorted out. Happy to run anything that helps.
+
+## Follow-up 2026-07-31: fixed after the reboot
+
+The node was rebooted 2026-07-31 14:38 (BootTime). I re-ran the identical probe (same `clockcheck.c`,
+built without `-march=native`, loads pinned to distinct physical cores, node otherwise idle) as Slurm
+job 6528713 under reservation `sl5nw_151`, plus an outbound-internet check (job 6528714). Job ids are in
+`slurm/submitted_jobids_jaguar03_probe.txt`; probe files and raw output in
+`slurm/clockcheck_probe_20260731/`.
+
+| cores loaded | per-core G(mul-add)/s, 2026-07-29 (before reboot) | per-core G(mul-add)/s, 2026-07-31 (after reboot) |
+|---|---|---|
+| 1 | 0.52 | 4.62 |
+| 2 | 0.52 | 4.67 |
+| 8 | 0.53 | 4.66 |
+
+Reading of the result:
+
+1. **The problem is gone.** Throughput is ~9x what it was before the reboot — the same factor as the
+   8–10x training slowdown that was observed.
+2. On why the after-reboot number (4.66) is above the 2.0 GHz rating: this AMD core (Zen 3) can retire
+   about two mul-add pairs per cycle for this kernel, while the calibration Xeons retire about one per
+   cycle. So 4.66 G pairs/s corresponds to an actual clock of roughly 2.3 GHz — at or slightly above the
+   rated 2.0 GHz, i.e. healthy. The decisive comparison is same node, identical binary, before vs
+   after: 0.52 → 4.66.
+3. Outbound internet from the node works again (HTTP 200 from huggingface.co).
+4. **The actual training workload is also back to full speed** (checked the same evening, since the
+   compute probe above does not touch memory and the true root cause was memory latency — see the
+   2026-07-23 correction in `jaguar03_threading_experiment/report.md`): 8 copies of the real run-5
+   training, 1 thread per physical core, ran at a median 1,731 steps/min per run on jaguar03 vs
+   1,382 on the same-day healthy control adriatic06 (sick value was 168), and memory latency
+   measured 107 ns per random access (sick: 413–425 ns; healthy range: 99–138 ns). Full method and
+   table: `jaguar03_threading_experiment/recheck_2026-07-31_train_throughput/results.md`.
