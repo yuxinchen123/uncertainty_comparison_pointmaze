@@ -14,7 +14,8 @@
 # and the default WaitTime=3600 would otherwise kill the survivors 1 h after the first worker exits.
 # launch_workers_collaborator.sh supplies --job-name/--partition/--time/--comment/--export and may
 # OVERRIDE --ntasks (fragment conversion) on the command line; the #SBATCH defaults below also let a
-# bare `sbatch worker_30x1_collab.slurm --partition=cpu --job-name=<prefix>` work.
+# bare submission work — options must come BEFORE the script:
+#   sbatch --partition=cpu --job-name=<prefix> --time=<t> --export=ALL,SWEEP_ID=<id> worker_30x1_collab.slurm
 #SBATCH --nodes=1
 #SBATCH --ntasks=30
 #SBATCH --cpus-per-task=1

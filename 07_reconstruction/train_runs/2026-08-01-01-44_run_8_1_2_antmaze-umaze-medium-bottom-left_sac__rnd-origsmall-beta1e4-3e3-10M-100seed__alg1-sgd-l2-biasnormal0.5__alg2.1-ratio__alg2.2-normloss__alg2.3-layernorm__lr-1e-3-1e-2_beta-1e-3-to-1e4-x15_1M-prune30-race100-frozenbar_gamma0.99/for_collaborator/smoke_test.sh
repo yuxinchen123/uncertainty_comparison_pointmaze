@@ -58,6 +58,7 @@ echo "  OK: both pools + running/done/failed writable, data dir and log dir writ
 
 echo "=== [2/3] >= 5 short canary runs of train.py (isolated under $SMOKE_OUT) ==="
 export RUN_DIR PROJ_DIR SWEEP_ID SMOKE_OUT
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1  # cap torch threads: the smoke may run on the login node
 export WORKER_DEVICE=cpu          # collaborators run CPU-only
 export WORKER_POOLS="pending_1m"  # only satisfies worker.py's import; claim() is never called
 "$PY" - << 'PYEOF'
