@@ -1,0 +1,24 @@
+{
+  "bars": {
+    "AntMaze_Medium-v5_start_bottom_left": {
+      "beta": "3000",
+      "mean": -998.4677725501422,
+      "n": 82,
+      "sd": 1.5544717242410815,
+      "se": 0.17166268474814064
+    },
+    "AntMaze_UMaze-v5_start_bottom_left": {
+      "beta": "10000",
+      "mean": -689.7403806739246,
+      "n": 84,
+      "sd": 6.222875604903102,
+      "se": 0.6789713928514899
+    }
+  },
+  "computed_at": "2026-08-01T01:56:53",
+  "git_at_compute": "0d6b3f56bde60b1ae54fa984bcd8179cb94ad806",
+  "schema": 1,
+  "score_rule": "mean of train/extrinsic_reward over all train_episode_history rows, completed=true records only",
+  "source_local_dir": "/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-23-01-35_run_8_1_pointmaze-antmaze-8env-start-bottom-left_sac__rnd-origsmall__gt-position-velocity__gt-position-maze-cell__gt-position-1m__beta-1e-3-to-1e4-x15_prune20-winner100-max300_1Mstep_default-max-episode_reward-shift-1_gamma0.99/data/2026-07-23-02-05_pm-am-run1/local",
+  "source_sweep": "2026-07-23-02-05_pm-am-run1"
+}

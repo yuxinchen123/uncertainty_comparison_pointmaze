@@ -93,7 +93,7 @@ class Config:
     n_predictors: int = 1
     # RND predictor-optimizer knobs (run 3.2.1); adam/mse are the historical defaults (bit-identical
     # to the pre-switch behavior). The sgd_* knobs are read only when rnd_optimizer="sgd1t".
-    rnd_optimizer: str = "adam"          # predictor optimizer: "adam" | "adagrad" | "sgd1t"
+    rnd_optimizer: str = "adam"          # predictor optimizer: "adam" | "adagrad" | "sgd" (constant rate) | "sgd1t"
     rnd_bonus_readout: str = "mse"       # bonus readout: "mse" = 0.5*||e||^2 | "l2" = ||e||_2
     rnd_sgd_eta0: float = 1e-2           # sgd1t initial learning rate eta0
     rnd_sgd_t0: float = 1e3              # sgd1t schedule offset t0 (> 0)
@@ -112,6 +112,11 @@ class Config:
     rnd_update_proportion: float = 1.0   # fraction of the batch kept in the predictor loss (CleanRL mask); 1.0 = all
     rnd_obs_warmup_mode: str = "space_sample"  # obs-RMS warmup source: "space_sample" | "env_steps" (random agent)
     rnd_obs_warmup_steps: int = 200      # warmup sample/step count (original RND: 6400 env steps)
+    # run-8.1.2 algorithm-2 knobs (defaults reproduce the historical behavior exactly).
+    rnd_readout_norm_init: bool = False  # ratio bonus ||e_theta||_2 / (||e_0||_2 + eps) vs a frozen init predictor
+    rnd_readout_norm_eps: float = 1e-8   # eps guard in the ratio bonus denominator
+    rnd_predictor_loss: str = "mse"      # predictor training loss: "mse" (historical) | "mse_init_normalized" (2.2)
+    rnd_layer_norm: bool = False         # LayerNorm after each hidden Linear in BOTH nets (algorithm 2.3)
     visit_count_decay: float = -0.5      # count->bonus exponent for gt_* oracles: -0.5 => 1/sqrt(n), -1 => 1/n
     # elliptical-bonus knobs (rnd_elliptical / rnd_elliptical_global); ignored by non-elliptical algos.
     elliptical_regularization: float = 1e-2          # ridge λ on the covariance diagonal
@@ -196,9 +201,11 @@ def parse_config() -> Config:
     parser.add_argument("--rnd_distance", type=str, default="mse", choices=["mse", "abs"])
     parser.add_argument("--rnd_output_dim", type=int, default=128)
     parser.add_argument("--n_predictors", type=int, default=1)
-    parser.add_argument("--rnd_optimizer", type=str, default="adam", choices=["adam", "adagrad", "sgd1t"],
-                        help="RND predictor optimizer (run 3.2.1): adam (O1, default), adagrad (O2), "
-                             "sgd1t (O3: eta_t = eta0/(1 + t/t0), no floor).")
+    parser.add_argument("--rnd_optimizer", type=str, default="adam",
+                        choices=["adam", "adagrad", "sgd", "sgd1t"],
+                        help="RND predictor optimizer: adam (O1, default), adagrad (O2), sgd "
+                             "(run 8.1.2: plain SGD at the CONSTANT rate rnd_lr, momentum 0, no "
+                             "schedule), sgd1t (O3: eta_t = eta0/(1 + t/t0), no floor).")
     parser.add_argument("--rnd_bonus_readout", type=str, default="mse", choices=["mse", "l2", "mse_mean"],
                         help="RND bonus readout: mse = 0.5*||e||^2 (canonical, default) | l2 = ||e||_2 | "
                              "mse_mean = (1/m)*sum e_j^2 (original RND's mean-over-dims). Training always "
@@ -244,6 +251,20 @@ def parse_config() -> Config:
     parser.add_argument("--rnd_obs_warmup_steps", type=int, default=200,
                         help="obs-RMS warmup sample/step count (train run 5). Historical default 200; "
                              "original RND uses 6400 env steps (128 envs x 50 steps).")
+    parser.add_argument("--rnd_readout_norm_init", default=False, type=_str2bool,
+                        help="Ratio bonus (run 8.1.2, algorithms 2.1-2.3): keep a frozen copy of the "
+                             "predictor at initialization and emit ||e_theta||_2 / (||e_0||_2 + eps), "
+                             "so every state's readout starts at 1. Requires rnd_bonus_readout=l2.")
+    parser.add_argument("--rnd_readout_norm_eps", type=float, default=1e-8,
+                        help="eps guard in the ratio bonus denominator (run 8.1.2).")
+    parser.add_argument("--rnd_predictor_loss", type=str, default="mse",
+                        choices=["mse", "mse_init_normalized"],
+                        help="Predictor training loss (run 8.1.2): mse = (1/b) sum 0.5*||e||^2 "
+                             "(historical) | mse_init_normalized (algorithm 2.2) = (1/b) sum "
+                             "||e_theta||^2 / (||e_0||^2 + 1e-8); requires rnd_readout_norm_init.")
+    parser.add_argument("--rnd_layer_norm", default=False, type=_str2bool,
+                        help="LayerNorm after each hidden Linear, before its activation, in BOTH RND "
+                             "nets (run 8.1.2, algorithm 2.3); never after the output Linear.")
     parser.add_argument("--visit_count_decay", type=float, default=-0.5,
                         help="Count->bonus exponent for gt_* visit-count oracles: -0.5 => 1/sqrt(n) (default), "
                              "-1 => 1/n. Used only by the visit-count (gt_*) algorithms.")
@@ -556,6 +577,12 @@ def _write_local_log(cfg: "Config", runtime_seconds: float, eval_history, distan
         record["rnd_update_proportion"] = cfg.rnd_update_proportion
         record["rnd_obs_warmup_mode"] = cfg.rnd_obs_warmup_mode
         record["rnd_obs_warmup_steps"] = cfg.rnd_obs_warmup_steps
+        # run-8.1.2 algorithm-2 knobs: recorded for every RND run so the analysis can distinguish
+        # algorithm 1 (plain l2) from 2.1 (ratio bonus), 2.2 (normalized loss), 2.3 (LayerNorm).
+        record["rnd_readout_norm_init"] = cfg.rnd_readout_norm_init
+        record["rnd_readout_norm_eps"] = cfg.rnd_readout_norm_eps
+        record["rnd_predictor_loss"] = cfg.rnd_predictor_loss
+        record["rnd_layer_norm"] = cfg.rnd_layer_norm
     # visit-count (gt_*) oracles: record the count->bonus decay exponent so 1/sqrt(n) (-0.5) and 1/n (-1)
     # runs are distinguishable in the JSON. Omitted for non-visit-count algorithms.
     if REGISTRY[cfg.algorithm].kind == "visit_count":

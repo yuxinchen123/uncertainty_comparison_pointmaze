@@ -180,6 +180,13 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
             activation=getattr(cfg, "rnd_activation", "relu"),
             predictor_extra_layers=getattr(cfg, "rnd_predictor_extra_layers", 0),
             update_proportion=getattr(cfg, "rnd_update_proportion", 1.0),
+            # run-8.1.2 algorithm-2 knobs, same duck-typed pattern (defaults = the historical
+            # behavior): ratio bonus vs the frozen initial predictor (2.1-2.3), the
+            # initialization-normalized training loss (2.2), and in-net LayerNorm (2.3).
+            readout_norm_init=getattr(cfg, "rnd_readout_norm_init", False),
+            readout_norm_eps=getattr(cfg, "rnd_readout_norm_eps", 1e-8),
+            predictor_loss=getattr(cfg, "rnd_predictor_loss", "mse"),
+            layer_norm=getattr(cfg, "rnd_layer_norm", False),
         )
         if cfg.rnd_obs_norm:
             _warmup_obs_rms(model, cfg, ctx)

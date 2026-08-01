@@ -3,6 +3,7 @@ RND (Random Network Distillation) intrinsic reward model.
 Predictor vs frozen target; intrinsic reward = distance(predictor(obs), target(obs)).
 All learning data comes from VectorIntrinsicReplayBuffer sample().
 """
+import copy
 import hashlib
 from typing import Any, Dict, Tuple, Optional
 
@@ -48,6 +49,22 @@ def keyed_gen(*parts) -> torch.Generator:
     return g
 
 
+def _keyed_linears(net: nn.Sequential):
+    """Yield (key_idx, layer) for each Linear of `net`, key_idx = the layer's position in the
+    LayerNorm-STRIPPED module list. Without LayerNorm this equals the enumerate index, so every
+    historical keyed init draw stays byte-identical; with LayerNorm (algorithm 2.3) each Linear keeps
+    the key of its LayerNorm-free twin, so 2.3 draws the same weights/biases as 2.1 at the same seed."""
+    # before (no LN):   [Lin, act, Lin, act, Lin] -> keys 0, 2, 4
+    # after  (with LN): [Lin, LN, act, Lin, LN, act, Lin] -> keys 0, 2, 4 (LN never counted)
+    key_idx = 0
+    for layer in net:
+        if isinstance(layer, nn.LayerNorm):
+            continue
+        if isinstance(layer, nn.Linear):
+            yield key_idx, layer
+        key_idx += 1
+
+
 class ObservationEncoder(nn.Module):
     """
     MLP encoder for flat observations: (batch_size, obs_dim) -> (batch_size, output_dim).
@@ -65,14 +82,19 @@ class ObservationEncoder(nn.Module):
         linear_mode: bool = False,
         activation: str = "relu",
         extra_layers: int = 0,
+        layer_norm: bool = False,
     ):
         super().__init__()
         obs_dim = obs_shape[0] if isinstance(obs_shape, (tuple, list)) else int(obs_shape)
         self.linear_mode = linear_mode
+        self.layer_norm = bool(layer_norm)
         # extra_layers deepens the predictor (original RND's deeper-predictor asymmetry); it is only
-        # defined for the standard Sequential path, never the linear_rnd body/head split.
+        # defined for the standard Sequential path, never the linear_rnd body/head split. layer_norm
+        # (run 8.1.2 algorithm 2.3) is likewise standard-path only.
         if linear_mode and extra_layers > 0:
             raise ValueError("extra_layers > 0 is not supported with linear_mode")
+        if linear_mode and self.layer_norm:
+            raise ValueError("layer_norm is not supported with linear_mode")
         if linear_mode:
             self.body = nn.Sequential(
                 layer_init(nn.Linear(obs_dim, 256)),
@@ -84,14 +106,22 @@ class ObservationEncoder(nn.Module):
             # base 2-Linear MLP, then `extra_layers` appended [activation, Linear(out, out)] blocks on
             # the OUTPUT width. extra_layers=0 (default) yields exactly [Linear, act, Linear] -> two
             # layer_init draws in the historical order, so the default net is byte-identical.
-            # before (extra_layers=0): [Lin(obs,256), act, Lin(256,out)]
-            # after  (extra_layers=1): [Lin(obs,256), act, Lin(256,out), act, Lin(out,out)]  (out stays)
-            modules = [
-                layer_init(nn.Linear(obs_dim, 256)),
-                _make_activation(activation),
-                layer_init(nn.Linear(256, output_dim)),
-            ]
+            # With layer_norm=True a LayerNorm sits after each HIDDEN Linear, before its activation
+            # (never after the output Linear); LayerNorm starts at the identity (weight 1, bias 0)
+            # and its construction draws no RNG, so every Linear draw stays byte-identical.
+            # before (extra_layers=0, layer_norm=False): [Lin(obs,256), act, Lin(256,out)]
+            # after  (extra_layers=1, layer_norm=False): [Lin(obs,256), act, Lin(256,out), act, Lin(out,out)]
+            # after  (extra_layers=0, layer_norm=True):  [Lin(obs,256), LN(256), act, Lin(256,out)]
+            # after  (extra_layers=1, layer_norm=True):  [Lin(obs,256), LN(256), act, Lin(256,out),
+            #                                             LN(out), act, Lin(out,out)]
+            modules = [layer_init(nn.Linear(obs_dim, 256))]
+            if self.layer_norm:
+                modules.append(nn.LayerNorm(256))
+            modules.append(_make_activation(activation))
+            modules.append(layer_init(nn.Linear(256, output_dim)))
             for _ in range(int(extra_layers)):
+                if self.layer_norm:
+                    modules.append(nn.LayerNorm(output_dim))
                 modules.append(_make_activation(activation))
                 modules.append(layer_init(nn.Linear(output_dim, output_dim)))
             self.network = nn.Sequential(*modules)
@@ -182,6 +212,11 @@ class RND(IntrinsicRewardModel):
         activation: str = "relu",
         predictor_extra_layers: int = 0,
         update_proportion: float = 1.0,
+        readout_norm_init: bool = False,
+        readout_norm_eps: float = 1e-8,
+        predictor_loss: str = "mse",
+        predictor_loss_delta: float = 1e-8,
+        layer_norm: bool = False,
     ):
         self.obs_shape = obs_shape if isinstance(obs_shape, tuple) else (int(obs_shape),)
         self.feature = feature
@@ -219,8 +254,8 @@ class RND(IntrinsicRewardModel):
         # the squared-error distance (||e||_2 = sqrt(2 * B_mse)), so it requires distance='mse'.
         self.lr = lr
         self.optimizer = str(optimizer).lower()
-        if self.optimizer not in {"adam", "adagrad", "sgd1t"}:
-            raise ValueError("optimizer must be one of: 'adam', 'adagrad', 'sgd1t'")
+        if self.optimizer not in {"adam", "adagrad", "sgd", "sgd1t"}:
+            raise ValueError("optimizer must be one of: 'adam', 'adagrad', 'sgd', 'sgd1t'")
         self.bonus_readout = str(bonus_readout).lower()
         if self.bonus_readout not in {"mse", "l2", "mse_mean"}:
             raise ValueError("bonus_readout must be one of: 'mse', 'l2', 'mse_mean'")
@@ -229,6 +264,37 @@ class RND(IntrinsicRewardModel):
         # readout (no 1/2 factor); mse (0.5*sum) is the historical default.
         if self.bonus_readout in {"l2", "mse_mean"} and self.distance != "mse":
             raise ValueError(f"bonus_readout={self.bonus_readout!r} requires distance='mse'")
+
+        # run-8.1.2 algorithm-2 switches. readout_norm_init keeps a FROZEN copy of the predictor at
+        # initialization and emits the ratio bonus ||e_theta||_2 / (||e_0||_2 + eps), so every state's
+        # readout starts at 1. predictor_loss='mse_init_normalized' (algorithm 2.2) trains on
+        # (1/b) sum_i ||e_theta(s_i)||^2 / (||e_0(s_i)||^2 + delta) instead of the historical
+        # (1/b) sum_i 0.5*||e_theta(s_i)||^2. layer_norm (algorithm 2.3) inserts LayerNorm inside both
+        # nets (see ObservationEncoder). All three are defined only for the standard single-predictor
+        # squared-error architecture.
+        self.readout_norm_init = bool(readout_norm_init)
+        self.readout_norm_eps = float(readout_norm_eps)
+        self.predictor_loss = str(predictor_loss).lower()
+        self.predictor_loss_delta = float(predictor_loss_delta)
+        self.layer_norm = bool(layer_norm)
+        if self.predictor_loss not in {"mse", "mse_init_normalized"}:
+            raise ValueError("predictor_loss must be one of: 'mse', 'mse_init_normalized'")
+        if self.readout_norm_init:
+            if self.bonus_readout != "l2":
+                raise ValueError("readout_norm_init requires bonus_readout='l2' (the ratio of l2 readouts)")
+            if self.distance != "mse":
+                raise ValueError("readout_norm_init requires distance='mse'")
+            if self.linear_rnd or n_predictors > 1:
+                raise ValueError(
+                    "readout_norm_init is only implemented for the standard single-predictor "
+                    "RND architecture (not linear_rnd, not the ensemble encoder)")
+        if self.predictor_loss == "mse_init_normalized" and not self.readout_norm_init:
+            raise ValueError("predictor_loss='mse_init_normalized' requires readout_norm_init=True "
+                             "(the frozen initial predictor supplies the denominator)")
+        if self.layer_norm and (self.linear_rnd or n_predictors > 1):
+            raise ValueError(
+                "layer_norm is only implemented for the standard single-predictor "
+                "RND architecture (not linear_rnd, not the ensemble encoder)")
         self.sgd_eta0 = float(sgd_eta0)
         self.sgd_t0 = float(sgd_t0)
         if self.sgd_t0 <= 0:
@@ -329,14 +395,16 @@ class RND(IntrinsicRewardModel):
             if n_predictors == 1:
                 self.predictor = ObservationEncoder(
                     self._rnd_obs_shape, output_dim,
-                    activation=self.activation, extra_layers=self.predictor_extra_layers
+                    activation=self.activation, extra_layers=self.predictor_extra_layers,
+                    layer_norm=self.layer_norm,
                 ).to(self.device)
             else:
                 self.predictor = EnsembleObservationEncoder(
                     self._rnd_obs_shape, output_dim, n_predictors=n_predictors
                 ).to(self.device)
             self.target = ObservationEncoder(
-                self._rnd_obs_shape, output_dim, activation=self.activation
+                self._rnd_obs_shape, output_dim, activation=self.activation,
+                layer_norm=self.layer_norm,
             ).to(self.device)
             for p in self.target.parameters():
                 p.requires_grad = False
@@ -348,6 +416,16 @@ class RND(IntrinsicRewardModel):
             self._apply_weight_init()
         if self.bias_init != "zero":
             self._apply_bias_init()
+        # frozen initial-predictor copy (algorithms 2.1-2.3), taken AFTER the weight/bias schemes so
+        # predictor == init_predictor at t=0 exactly (ratio bonus = 1 everywhere, normalized loss ~ 1).
+        # deepcopy creates NEW Parameter objects, so self.opt (built above on the live predictor's
+        # parameters) can never touch the copy.
+        self.init_predictor: Optional[ObservationEncoder] = None
+        if self.readout_norm_init:
+            self.init_predictor = copy.deepcopy(self.predictor)
+            for p in self.init_predictor.parameters():
+                p.requires_grad = False
+            self.init_predictor.eval()
         self.obs_rms: Optional[object] = None
         if self.use_obs_norm:
             self.obs_rms = RunningMeanStd(shape=self._rnd_obs_shape)
@@ -361,9 +439,7 @@ class RND(IntrinsicRewardModel):
         # (0, 2) keys exactly; a deeper predictor's extra Linears take NEW keys {4, 6, ...}, so the base
         # {0, 2} streams stay frozen (rng-seeding rule).
         for net_name, net in (("target", self.target.network), ("predictor", self.predictor.network)):
-            for layer_idx, layer in enumerate(net):
-                if not isinstance(layer, nn.Linear):
-                    continue
+            for layer_idx, layer in _keyed_linears(net):
                 fan_in = layer.in_features
                 with torch.no_grad():
                     # PyTorch Linear default weight law U(-1/sqrt(fan_in), +1/sqrt(fan_in)).
@@ -381,9 +457,7 @@ class RND(IntrinsicRewardModel):
         # Linears keep positions {0, 2} (byte-identical to the old hardcoded (0, 2)); a deeper
         # predictor's extra Linears take NEW keys {4, 6, ...}, so the base streams stay frozen.
         for net_name, net in (("target", self.target.network), ("predictor", self.predictor.network)):
-            for layer_idx, layer in enumerate(net):
-                if not isinstance(layer, nn.Linear):
-                    continue
+            for layer_idx, layer in _keyed_linears(net):
                 fan_in = layer.in_features
                 with torch.no_grad():
                     if self.bias_init == "pytorch_default":
@@ -411,6 +485,10 @@ class RND(IntrinsicRewardModel):
         # adagrad (O2): PyTorch defaults written out for self-documentation (the Adam lr is ignored)
         if self.optimizer == "adagrad":
             return torch.optim.Adagrad(params, lr=1e-2, eps=1e-10, initial_accumulator_value=0)
+        # sgd (run 8.1.2): plain SGD at a CONSTANT rate taken from `lr` (like adam); momentum 0,
+        # no weight decay, no schedule — update() never touches this optimizer's lr.
+        if self.optimizer == "sgd":
+            return torch.optim.SGD(params, lr=self.lr)
         # sgd1t (O3): plain SGD (momentum 0, no weight decay); update() recomputes the lr from the
         # 1/t schedule before every step, and lr=eta0 here equals the schedule's t=0 value
         return torch.optim.SGD(params, lr=self.sgd_eta0)
@@ -497,6 +575,17 @@ class RND(IntrinsicRewardModel):
             # all-ones over 3 dims) -> after: [[1.7321]] (= sqrt(3)). The mse readout skips this.
             if self.bonus_readout == "l2":
                 distances = (2.0 * distances).clamp(min=1e-8).sqrt()
+                # ratio bonus (algorithms 2.1-2.3): divide by the frozen initial predictor's l2 error
+                # on the SAME normalized input, so at t=0 (predictor == frozen copy) the bonus is 1
+                # everywhere and it grows only where the live predictor beats its own start.
+                # before: distances = ||e_theta||_2, e.g. [[1.7321]]; init l2 = [[1.7321]] at t=0
+                # after:  distances = ||e_theta||_2 / (||e_0||_2 + eps) = [[~1.0]]
+                if self.readout_norm_init:
+                    init_src = self.init_predictor(x)
+                    if self.n_predictors == 1:
+                        init_src = init_src.unsqueeze(1)
+                    init_l2 = (2.0 * self._dist_ensemble(init_src, tgt)).clamp(min=1e-8).sqrt()
+                    distances = distances / (init_l2 + self.readout_norm_eps)
             # mse_mean readout (original RND): (1/m)*sum_j e_j^2 = (2/m)*B_mse (distances hold B_mse).
             # before: [[1.5]] (residual all-ones over 3 dims, m=3) -> after: [[1.0]] (= 3/3). Never
             # scales the mse readout (which stays 0.5*sum) or the training loss.
@@ -560,7 +649,23 @@ class RND(IntrinsicRewardModel):
             with torch.no_grad():
                 tgt = self.target(x)
             dist = self._dist_ensemble(src, tgt)
-            if self.update_proportion >= 1.0:
+            if self.predictor_loss == "mse_init_normalized":
+                # algorithm 2.2: L = (1/b) sum_i ||e_theta(s_i)||^2 / (||e_0(s_i)||^2 + delta).
+                # dist holds B_mse = 0.5*||e||^2, so numerator = 2*dist; the denominator comes from
+                # the frozen initial predictor on the same input, gradient-free (a per-sample
+                # constant). No 1/2 factor, per the run-8.1.2 definition.
+                # before: dist=[[1.5]] (0.5*||e||^2), init ||e_0||^2=[[3.0]] -> per_sample=[[3.0/3.0]]=1
+                with torch.no_grad():
+                    init_src = self.init_predictor(x)
+                    if self.n_predictors == 1:
+                        init_src = init_src.unsqueeze(1)
+                    init_sq = 2.0 * self._dist_ensemble(init_src, tgt)
+                per_sample = (2.0 * dist) / (init_sq + self.predictor_loss_delta)
+                if self.update_proportion >= 1.0:
+                    loss = per_sample.mean()
+                else:
+                    loss = self._masked_mean(per_sample.mean(dim=1))
+            elif self.update_proportion >= 1.0:
                 loss = dist.mean()
             else:
                 loss = self._masked_mean(dist.mean(dim=1))

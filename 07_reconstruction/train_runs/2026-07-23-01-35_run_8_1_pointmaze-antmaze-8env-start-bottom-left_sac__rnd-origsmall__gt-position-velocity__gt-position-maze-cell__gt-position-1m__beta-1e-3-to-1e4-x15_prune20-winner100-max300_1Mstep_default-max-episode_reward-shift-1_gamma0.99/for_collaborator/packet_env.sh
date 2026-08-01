@@ -41,6 +41,7 @@ prefix_for_partition() {
 #           capable gpu nodes first, so good GPUs' CPUs stay free for real GPU jobs.
 # NO owner reservation (puma01/jaguar03), NO gnolim, and NO GPU-using jobs (the sweep's GPU packing
 # count W is still being probed by the owner — device=cuda submission stays owner-only for now).
-TARGET_CPU=400
-TARGET_NOLIM=80
-TARGET_GPU=400   # gpu-partition CPU-ONLY jobs only; set to 0 to disable the gpu-partition bucket
+TARGET_CPU=0     # 2026-08-01 yuxinchen: user ordered full stop of my wave (capacity moves to run 8.1.2)
+TARGET_NOLIM=0   # 2026-08-01 yuxinchen: full stop (was 80)
+TARGET_GPU=0     # gpu-partition CPU-ONLY jobs only; set to 0 to disable the gpu-partition bucket
+                 # 2026-08-01 yuxinchen: full stop (was 400)
