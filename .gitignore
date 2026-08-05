@@ -134,6 +134,15 @@ debug/
 
 # Cloned reference implementations (RND paper repo, CleanRL, ExPLORe) — large, not tracked
 reference_repos/
+# The untouched upstream CleanRL clone (255 MB, carries its own .git). Its URL and commit hash are
+# recorded in 08_cleanrl_ppo_rnd/UPSTREAM.md, which IS tracked; the modified training code lives in
+# the tracked 08_cleanrl_ppo_rnd/src/.
+08_cleanrl_ppo_rnd/cleanrl/
+# A pip package tree installed into the benchmark scratch folder while profiling (980 MB of it).
+# The benchmark scripts and their result JSONs next to it stay tracked.
+08_cleanrl_ppo_rnd/bench_scratch/envpool_pkgs/
+# Inductor's compilation cache (regenerable, and only used when torch.compile is on).
+08_cleanrl_ppo_rnd/.torchinductor_cache/
 # The ExPLORe clone that used to sit at the repo root was deleted 2026-07-22; the one kept copy is
 # /p/rlprojects/RLforOR/accelerating_exploration_with_unlabeled_prior_data/explore. This keeps a
 # future re-clone here out of git (the existing "explore/" line above only covers the lowercase name).
