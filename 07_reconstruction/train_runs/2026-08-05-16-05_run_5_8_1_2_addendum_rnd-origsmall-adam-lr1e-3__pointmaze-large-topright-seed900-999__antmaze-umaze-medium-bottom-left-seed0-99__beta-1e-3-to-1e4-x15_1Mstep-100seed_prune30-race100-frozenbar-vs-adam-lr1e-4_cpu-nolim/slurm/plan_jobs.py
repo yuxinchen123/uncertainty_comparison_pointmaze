@@ -101,14 +101,15 @@ def candidate_nodes(partition, excluded):
         if any(bad in state for bad in ("DOWN", "DRAIN", "FAIL", "MAINT", "RESERVED", "UNKNOWN")):
             continue
         efctv, alloc = int(f["CPUEfctv"]), int(f["CPUAlloc"])
-        cores = int(f["Sockets"]) * int(f["CoresPerSocket"])
+        sockets = int(f["Sockets"])
+        cores = sockets * int(f["CoresPerSocket"])
         threads_per_core = int(f["ThreadsPerCore"])
         free = efctv - alloc
         mem_per_task = min(MAX_MEM_MB, int(int(f["RealMemory"]) * MEM_FRACTION) // max(efctv, 1))
         if free < MIN_TASKS or mem_per_task < MIN_MEM_MB:
             continue
         nodes.append({"name": name, "free": free, "cores": cores, "mem": mem_per_task,
-                      "threads_per_core": threads_per_core})
+                      "threads_per_core": threads_per_core, "sockets": sockets})
     # fill the roomiest nodes first so the plan uses few, large jobs before many small ones
     return sorted(nodes, key=lambda n: -n["free"])
 
@@ -216,8 +217,17 @@ def build_plan():
                 n = min(MAX_TASKS, node["cores"], free, room)
                 if n < MIN_TASKS:
                     break
+                # Spread the tasks evenly over the node's sockets. Without this, Slurm packs a job
+                # onto as few sockets as it fits on: on slurm4 (2 sockets x 12 cores) a 24-task job
+                # took ALL of socket 0, so its 24 workers shared one memory controller while an
+                # 8-task job on socket 1 had a whole controller for eight. Both showed 100% CPU;
+                # the crowded job ran at less than half the throughput (measured 2026-08-05 — this
+                # workload is memory-latency-bound, so bandwidth per task, not cycles, sets its
+                # speed). ceil(n / sockets) forces the even split.
+                per_socket = -(-n // node["sockets"]) if node["sockets"] > 1 else None
                 plan.append({"partition": partition, "node": node["name"], "ntasks": n,
                              "mem_mb": n * node["mem"], "walltime": walltime,
+                             "ntasks_per_socket": per_socket,
                              "ntasks_per_core": 2 if node["threads_per_core"] >= 2 else None})
                 free -= n
                 room -= n
@@ -235,6 +245,8 @@ def sbatch_argv(job, sweep_id, jobname, script, comment):
             f"--export=ALL,SWEEP_ID={sweep_id}", script]
     if job["ntasks_per_core"]:
         argv.insert(-1, f"--ntasks-per-core={job['ntasks_per_core']}")
+    if job.get("ntasks_per_socket"):
+        argv.insert(-1, f"--ntasks-per-socket={job['ntasks_per_socket']}")
     return argv
 
 
