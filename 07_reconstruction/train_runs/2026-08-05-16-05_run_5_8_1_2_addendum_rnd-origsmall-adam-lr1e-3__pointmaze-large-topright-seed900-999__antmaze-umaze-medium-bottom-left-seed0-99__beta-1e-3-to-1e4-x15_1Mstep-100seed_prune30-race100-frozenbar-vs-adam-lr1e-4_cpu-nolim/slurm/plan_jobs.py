@@ -113,12 +113,32 @@ def candidate_nodes(partition, excluded):
     return sorted(nodes, key=lambda n: -n["free"])
 
 
-def pool_room(qos, cap):
-    """Threads still available under this user's cap in one partition, minus HEADROOM."""
+def my_cpus_in(partition):
+    """CPUs this user already has RUNNING or PENDING in one partition, summed from squeue.
+
+    A pending job counts: it will start and take those CPUs, so a top-up that ignores it submits
+    work twice. Returns 0 if squeue fails, which only makes the QOS reading below the binding one.
+    """
+    out = subprocess.run(["squeue", "-u", getpass.getuser(), "-h", "-t", "R,PD",
+                          "-p", partition, "-o", "%C"], capture_output=True, text=True).stdout
+    return sum(int(v) for v in out.split() if v.isdigit())
+
+
+def pool_room(qos, cap, partition):
+    """Threads still available under this user's cap in one partition, minus HEADROOM.
+
+    Usage is the LARGER of two readings, because each can under-report on its own:
+    - the partition QOS counter, which also sees jobs submitted outside this run;
+    - this user's own running-plus-pending CPUs in the partition, from squeue.
+    The QOS counter was observed reading 400(0) on the cpu partition while 384 of this user's CPUs
+    were running there (2026-08-05), and a top-up that trusted it alone resubmitted the entire
+    fleet a second time. squeue alone would miss usage the QOS counts but squeue cannot see.
+    """
     out = subprocess.run(["scontrol", "show", "assoc_mgr", f"qos={qos}", "flags=qos"],
                          capture_output=True, text=True).stdout
     m = re.search(rf"MaxTRESPU=cpu={cap}\((\d+)\)", out)
-    used = int(m.group(1)) if m else 0
+    qos_used = int(m.group(1)) if m else 0
+    used = max(qos_used, my_cpus_in(partition))
     return max(0, cap - used - HEADROOM), used
 
 
@@ -184,7 +204,7 @@ def build_plan():
     excluded = reserved_nodes()
     plan = []
     for partition, (qos, cap) in POOLS.items():
-        room, used = pool_room(qos, cap)
+        room, used = pool_room(qos, cap, partition)
         walltime, why = walltime_for(partition)
         print(f"[{partition}] cap {cap}, in use {used}, headroom {HEADROOM} -> {room} threads to "
               f"fill; --time {walltime} ({why})")
