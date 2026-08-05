@@ -52,33 +52,47 @@ def test_episode_cap_keeps_every_stride_past_the_cap(tmp_path):
     assert on_disk["episodes_dropped_from_history"] == 16
 
 
-def test_restore_from_disk_appends_instead_of_restarting(tmp_path):
-    """Resume: a second RunRecord over the same path continues the history and the runtime."""
+def test_restore_for_resume_from_the_record_truncates_at_the_checkpoint(tmp_path):
+    """Resume: the history is cut to the checkpoint, because that is where the run continues from."""
     path = str(tmp_path / "3_of_30.json")
     first = RunRecord(path, {"run_id": 3, "run_total": 30})
-    for i in range(4):
-        first.add_episode({"step": i})
+    for i in range(6):
+        first.add_episode({"step": i * 10})
+        first.add_update({"step": i * 10, "update": i}, {"step": i * 10, "update": i})
     first.flush()
     first_runtime = json.load(open(path))["runtime_seconds"]
 
+    # The checkpoint stopped at update 3 / step 30; updates 4 and 5 will be redone.
     second = RunRecord(path, {"run_id": 3, "run_total": 30})
-    assert second.restore_from_disk() is True
-    assert second.episodes_seen == 4
-    second.add_episode({"step": 4})
-    second.flush()
-
-    on_disk = json.load(open(path))
-    assert len(on_disk["train_episode_history"]) == 5
-    assert [e["step"] for e in on_disk["train_episode_history"]] == [0, 1, 2, 3, 4]
+    note = second.restore_for_resume(None, resume_update=3, resume_step=30)
+    assert [r["update"] for r in second.train_history] == [0, 1, 2, 3]
+    assert [e["step"] for e in second.train_episode_history] == [0, 10, 20, 30]
+    assert "truncated to update 3" in note
     # The resumed record's runtime includes the first segment's, so it never goes backwards.
-    assert on_disk["runtime_seconds"] >= first_runtime
+    second.flush()
+    assert json.load(open(path))["runtime_seconds"] >= first_runtime
 
 
-def test_restore_from_disk_on_a_fresh_run(tmp_path):
-    """Edge case: with no file on disk, restore reports False and leaves the record empty."""
+def test_restore_for_resume_prefers_the_checkpoint_history(tmp_path):
+    """A checkpoint that carries history wins over the record, which is always fresher."""
+    path = str(tmp_path / "5_of_30.json")
+    rec = RunRecord(path, {"run_id": 5, "run_total": 30})
+    note = rec.restore_for_resume(
+        {"train_episode_history": [{"step": 1}], "train_history": [{"update": 1}],
+         "eval_history": [{"update": 1}], "episodes_seen": 7, "episodes_dropped": 2,
+         "runtime_seconds": 12.5},
+        resume_update=1, resume_step=1)
+    assert rec.episodes_seen == 7 and rec.episodes_dropped == 2
+    assert rec.prior_runtime_seconds == 12.5
+    assert "from the checkpoint" in note
+
+
+def test_restore_for_resume_on_a_fresh_run(tmp_path):
+    """Edge case: nothing on disk and nothing in the checkpoint leaves the record empty."""
     rec = RunRecord(str(tmp_path / "4_of_30.json"), {"run_id": 4, "run_total": 30})
-    assert rec.restore_from_disk() is False
+    note = rec.restore_for_resume(None, resume_update=0, resume_step=0)
     assert rec.train_episode_history == [] and rec.episodes_seen == 0
+    assert "no history to restore" in note
 
 
 def test_record_filename():

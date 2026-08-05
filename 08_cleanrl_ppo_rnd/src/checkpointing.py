@@ -34,6 +34,7 @@ write can never leave the run without a readable one.
 
 import os
 import random
+import time
 
 import numpy as np
 import torch
@@ -50,13 +51,22 @@ def _load_rms(rms, state):
 
 
 def save_checkpoint(path, *, agent, rnd_model, optimizer, obs_rms, reward_rms, discounted_reward,
-                    global_step, update, avg_returns, device):
-    """Write one checkpoint atomically and delete the previous one, keeping exactly one on disk."""
+                    global_step, update, avg_returns, device, record=None):
+    """Write one checkpoint atomically and delete the previous one, keeping exactly one on disk.
+
+    When `record` is given, the run's logged history rides along inside the checkpoint. That is not
+    decoration: the sweep's requeue moves the JSON record out of the way when a worker dies, so
+    without this the training state resumes correctly while the reward curve restarts empty. The
+    history stored here is the history as of THIS checkpoint, which is exactly the point the run
+    would continue from, so the two can never disagree.
+    """
     # Collect every piece of state. The target network is included deliberately: it is frozen, so a
     # naive checkpoint that skips it would resume with a different random target and reset the
     # exploration signal.
     payload = {
-        "format_version": 1,
+        # 1 = no history carried. 2 = history carried. The reader accepts both, because checkpoints
+        # written by an already-running process stay at 1 for that process's whole life.
+        "format_version": 2 if record is not None else 1,
         "agent": agent.state_dict(),
         "rnd_model": rnd_model.state_dict(),
         "optimizer": optimizer.state_dict(),
@@ -71,6 +81,18 @@ def save_checkpoint(path, *, agent, rnd_model, optimizer, obs_rms, reward_rms, d
         "rng_torch": torch.get_rng_state(),
         "rng_torch_cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else None,
     }
+    if record is not None:
+        # The history as of this checkpoint, and the counters that go with it. The counters must
+        # come from here rather than from the JSON: past the episode cap the kept rows are strided,
+        # so the true episode count cannot be recovered by counting rows.
+        payload["record_history"] = {
+            "train_episode_history": record.train_episode_history,
+            "train_history": record.train_history,
+            "eval_history": record.eval_history,
+            "episodes_seen": record.episodes_seen,
+            "episodes_dropped": record.episodes_dropped,
+            "runtime_seconds": record.prior_runtime_seconds + (time.time() - record.start_time),
+        }
 
     # Write beside the target, fsync, then rename: a reader (or a restart) sees either the previous
     # complete checkpoint or the new complete one, never a partial file.
@@ -100,8 +122,12 @@ def load_checkpoint(path, *, agent, rnd_model, optimizer, obs_rms, reward_rms, d
         return None
 
     payload = torch.load(path, map_location=device, weights_only=False)
-    if payload.get("format_version") != 1:
-        raise ValueError(f"checkpoint {path} has format_version {payload.get('format_version')}, expected 1")
+    # Accept both versions. A checkpoint written by a process that started before the history was
+    # added is version 1 and carries none; refusing it would make every such checkpoint unreadable
+    # and silently restart those runs from step 0 — far worse than the gap it was meant to close.
+    if payload.get("format_version") not in (1, 2):
+        raise ValueError(f"checkpoint {path} has format_version {payload.get('format_version')}, "
+                         f"expected 1 or 2")
 
     agent.load_state_dict(payload["agent"])
     rnd_model.load_state_dict(payload["rnd_model"])
@@ -122,4 +148,6 @@ def load_checkpoint(path, *, agent, rnd_model, optimizer, obs_rms, reward_rms, d
         "global_step": payload["global_step"],
         "update": payload["update"],
         "avg_returns": payload["avg_returns"],
+        # None for a version-1 checkpoint, which carries no history.
+        "record_history": payload.get("record_history"),
     }

@@ -23,6 +23,8 @@ the environment options are CleanRL's.
 
 import os
 import random
+import signal
+import sys
 import time
 from collections import deque
 from dataclasses import dataclass
@@ -350,6 +352,20 @@ class RewardForwardFilter:
         return self.rewems
 
 
+_terminate_requested = False
+
+
+def _request_termination(signum, _frame):
+    """Note that a termination signal arrived; the training loop acts on it at a safe point."""
+    # Deliberately minimal. Writing the checkpoint here would run torch.save re-entrantly, from a
+    # signal, possibly mid-write of the same file. The loop checks this flag once per iteration,
+    # where the model, the optimizer and the counters are all consistent.
+    global _terminate_requested
+    _terminate_requested = True
+    print(f"[signal] caught signal {signum}; will checkpoint at the next iteration boundary",
+          flush=True)
+
+
 def resolve_env_threads(requested):
     """Pick envpool's worker-thread count, since envpool cannot see the job's cpu allocation.
 
@@ -373,6 +389,11 @@ def resolve_env_threads(requested):
 def main():
     """Train PPO + RND on one Atari environment, writing one JSON record and one checkpoint."""
     args = tyro.cli(Args)
+    # Slurm sends SIGTERM before SIGKILL on a walltime expiry, a scancel, or a preemption, and this
+    # cluster's KillWait gives 128 seconds between them. Catching it turns "lose everything since
+    # the last checkpoint" into "lose one iteration" for every clean kill.
+    signal.signal(signal.SIGTERM, _request_termination)
+    signal.signal(signal.SIGINT, _request_termination)
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
@@ -471,7 +492,9 @@ def main():
     global_step, start_update = 0, 1
     resumed = False
     if args.resume:
-        record.restore_from_disk()
+        # The checkpoint is read FIRST, because it decides where the history has to be cut. Reading
+        # the record first and the checkpoint second would leave rows describing updates the run is
+        # about to redo.
         state = load_checkpoint(
             checkpoint_path, agent=agent, rnd_model=rnd_model, optimizer=optimizer,
             obs_rms=obs_rms, reward_rms=reward_rms, discounted_reward=discounted_reward, device=device,
@@ -480,8 +503,16 @@ def main():
             global_step, start_update = state["global_step"], state["update"] + 1
             avg_returns.extend(state["avg_returns"])
             resumed = True
+            note = record.restore_for_resume(state["record_history"], state["update"], global_step)
             print(f"[resume] continuing at update {start_update} of {args.num_iterations}, "
                   f"global_step {global_step}", flush=True)
+            print(f"[resume] {note}", flush=True)
+        elif os.path.exists(record_path):
+            # A record with no checkpoint beside it: the previous attempt died before its first
+            # checkpoint, so there is nothing to continue from and the record would be a fragment of
+            # a different trajectory. Start clean rather than append to it.
+            print(f"[resume] found a record but no checkpoint; starting from step 0 and "
+                  f"overwriting {os.path.basename(record_path)}", flush=True)
 
     next_obs_np = envs.reset()
     next_obs = torch.as_tensor(next_obs_np, device=device) if args.opt_uint8_obs \
@@ -837,17 +868,38 @@ def main():
                   f"mean_extrinsic_reward={np.mean(avg_returns) if avg_returns else float('nan'):.1f}",
                   flush=True)
 
-        # Checkpoint on a wall-clock cadence, so the interval is the same however fast the node is.
-        if time.time() - last_checkpoint_time >= args.checkpoint_every_seconds:
+        # Checkpoint on a wall-clock cadence, so the interval is the same however fast the node is,
+        # but only on an update that also logs. Aligning the two means the checkpoint and the record
+        # always sit at the same update, which is what makes the resume truncation exact. The delay
+        # this adds is at most log_every_updates updates.
+        due = time.time() - last_checkpoint_time >= args.checkpoint_every_seconds
+        if due and update % args.log_every_updates == 0:
             info_ckpt = save_checkpoint(
                 checkpoint_path, agent=agent, rnd_model=rnd_model, optimizer=optimizer,
                 obs_rms=obs_rms, reward_rms=reward_rms, discounted_reward=discounted_reward,
                 global_step=global_step, update=update, avg_returns=avg_returns, device=device,
+                record=record,
             )
             record.flush(completed=False)
             last_checkpoint_time = time.time()
             print(f"[checkpoint] update={update} global_step={global_step} "
                   f"bytes={info_ckpt['bytes']:,}", flush=True)
+
+        # A clean kill — the walltime, scancel, or preemption — arrives as SIGTERM with a grace
+        # period (KillWait is 128 s on this cluster, and the sbatch scripts ask for 600 s of warning).
+        # Writing a checkpoint takes well under a second, so there is no reason to lose anything.
+        if _terminate_requested:
+            print(f"[signal] termination requested; checkpointing at update {update}", flush=True)
+            save_checkpoint(
+                checkpoint_path, agent=agent, rnd_model=rnd_model, optimizer=optimizer,
+                obs_rms=obs_rms, reward_rms=reward_rms, discounted_reward=discounted_reward,
+                global_step=global_step, update=update, avg_returns=avg_returns, device=device,
+                record=record,
+            )
+            record.flush(completed=False)
+            print(f"[signal] checkpointed at global_step {global_step}; exiting", flush=True)
+            envs.close()
+            sys.exit(0)
 
         if args.profile_iterations and update - start_update + 1 >= args.profile_iterations:
             break
@@ -857,7 +909,7 @@ def main():
     save_checkpoint(
         checkpoint_path, agent=agent, rnd_model=rnd_model, optimizer=optimizer, obs_rms=obs_rms,
         reward_rms=reward_rms, discounted_reward=discounted_reward, global_step=global_step,
-        update=update, avg_returns=avg_returns, device=device,
+        update=update, avg_returns=avg_returns, device=device, record=record,
     )
     record.flush(completed=completed)
     envs.close()

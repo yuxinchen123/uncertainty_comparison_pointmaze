@@ -96,24 +96,63 @@ class RunRecord:
         # new one, never a half-written file.
         os.replace(tmp, self.path)
 
-    def restore_from_disk(self):
-        """Reload an existing record so a resumed run appends to it instead of starting over.
+    def restore_for_resume(self, checkpoint_history, resume_update, resume_step):
+        """Rebuild the history a resumed run continues from, truncated to the checkpoint's position.
 
-        Returns True when a record was found and loaded, False when this is a fresh run.
+        The run continues from the checkpoint, so the history must end at the checkpoint. Anything
+        logged after it describes updates the resumed run is about to redo; keeping those rows would
+        splice a discarded trajectory onto the kept one, duplicate every row in the overlap, and make
+        the step axis fold backwards.
+
+        Two sources, in this order of preference:
+
+        1. **The history inside the checkpoint** (a format-2 checkpoint). It is exact by
+           construction — it was captured at the very moment the training state was.
+        2. **The JSON record on disk**, truncated to the checkpoint's position. Used when the
+           checkpoint predates this mechanism, or when there is no checkpoint at all.
+
+        The JSON is the weaker source precisely because it is FRESHER than the checkpoint: it is
+        flushed every log step while the checkpoint is written on a slower cadence.
+
+        Returns a one-line description of what happened, for the run's log.
         """
+        # before: json has update rows [25, 50, 75, 100], checkpoint stopped at update 60
+        # after:  rows [25, 50] are kept and [75, 100] dropped, because 75 and 100 will be redone
+        if checkpoint_history is not None:
+            self.train_episode_history = checkpoint_history["train_episode_history"]
+            self.train_history = checkpoint_history["train_history"]
+            self.eval_history = checkpoint_history["eval_history"]
+            self.episodes_seen = checkpoint_history["episodes_seen"]
+            self.episodes_dropped = checkpoint_history["episodes_dropped"]
+            self.prior_runtime_seconds = checkpoint_history["runtime_seconds"]
+            return (f"history from the checkpoint: {len(self.train_history)} update rows, "
+                    f"{len(self.train_episode_history)} episode rows, "
+                    f"{self.episodes_seen} episodes seen")
+
         if not os.path.exists(self.path):
-            return False
+            return "no history to restore: neither the checkpoint nor the record carried any"
+
         with open(self.path) as f:
             old = json.load(f)
-        # Take the history and the counters back; the config comes from the current invocation so a
-        # changed argument is visible rather than silently overwritten by the old value.
-        self.train_episode_history = old.get("train_episode_history", [])
-        self.train_history = old.get("train_history", [])
-        self.eval_history = old.get("eval_history", [])
-        self.episodes_seen = old.get("episodes_seen", len(self.train_episode_history))
+        # The config comes from the current invocation, so a changed argument stays visible rather
+        # than being silently overwritten by the old value.
+        train_all = old.get("train_history", [])
+        eval_all = old.get("eval_history", [])
+        ep_all = old.get("train_episode_history", [])
+        self.train_history = [r for r in train_all if r.get("update", 0) <= resume_update]
+        self.eval_history = [r for r in eval_all if r.get("update", 0) <= resume_update]
+        self.train_episode_history = [r for r in ep_all if r.get("step", 0) <= resume_step]
+        dropped = (len(train_all) - len(self.train_history)) + (len(ep_all) - len(self.train_episode_history))
+        # The episode counters cannot be recovered by counting rows, because past the cap the kept
+        # rows are strided. Scale the recorded total by the fraction of episode rows kept — an
+        # approximation, and the reason the checkpoint-carried counters are preferred above.
+        seen = old.get("episodes_seen", len(ep_all))
+        self.episodes_seen = int(seen * (len(self.train_episode_history) / len(ep_all))) if ep_all else 0
         self.episodes_dropped = old.get("episodes_dropped_from_history", 0)
         self.prior_runtime_seconds = old.get("runtime_seconds", 0.0)
-        return True
+        return (f"history from the record on disk, truncated to update {resume_update}: "
+                f"{len(self.train_history)} update rows, {len(self.train_episode_history)} episode "
+                f"rows kept, {dropped} rows dropped past the checkpoint")
 
 
 def record_filename(run_id, run_total):
