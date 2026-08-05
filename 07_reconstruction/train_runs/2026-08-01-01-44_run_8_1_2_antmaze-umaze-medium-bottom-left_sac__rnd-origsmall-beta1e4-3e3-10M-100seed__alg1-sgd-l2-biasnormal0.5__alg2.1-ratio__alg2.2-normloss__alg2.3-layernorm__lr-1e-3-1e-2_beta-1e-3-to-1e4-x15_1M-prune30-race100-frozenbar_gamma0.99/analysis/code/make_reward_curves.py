@@ -174,15 +174,24 @@ def draw_panel(ax, env_setup, by_key, log_x):
         ax.fill_between(steps, mean - se, mean + se, color=color, alpha=0.18, linewidth=0)
     # the stage-1 screening length
     ax.axvline(1e6, color="#666666", linestyle=":", linewidth=1.0)
+    # linear row: the stage-1 range only (0 to 1M, user request), so the screening region is
+    # readable at full width; log row: the full 10M range incl. the task-R baseline's tail
     if log_x:
         ax.set_xscale("log")
         ax.set_xlim(5e4, 1.05e7)
     else:
-        ax.set_xlim(0, 1.05e7)
+        ax.set_xlim(0, 1.02e6)
     ax.grid(True, linewidth=0.4, alpha=0.35)
-    # legend placement clears the data: linear panels are empty at the top right (curves crowd the
-    # left edge and the black 10M tail runs along the bottom); log panels are empty at the top left
-    ax.legend(fontsize=6.5, loc="upper left" if log_x else "upper right", framealpha=0.92)
+    # legend placement clears the data (checked on the render): log panels are empty at the top
+    # left; the 1M linear panels differ per env — UMaze's peak sits at 0.3-0.5M so the descending
+    # right side is the least-informative region (also shown in the log row), while Medium's upper
+    # LEFT quarter is empty (no curve above -992 before 0.35M). Compact, opaque box.
+    if log_x:
+        loc = "upper left"
+    else:
+        loc = "upper right" if env_setup.startswith("AntMaze_UMaze") else "upper left"
+    ax.legend(fontsize=6, loc=loc, framealpha=1.0, handlelength=1.5, labelspacing=0.25,
+              borderpad=0.35)
 
 
 def main():
@@ -193,7 +202,7 @@ def main():
         for row, log_x in enumerate([False, True]):
             ax = axes[row][col]
             draw_panel(ax, env_setup, by_key, log_x)
-            scale = "log $x$" if log_x else "linear $x$"
+            scale = "log $x$ (to $10^{7}$)" if log_x else "linear $x$ (to $10^{6}$)"
             ax.set_title(env_setup.replace("_start_bottom_left", "") + f" --- {scale}", fontsize=10)
             if row == 1:
                 ax.set_xlabel("environment step")
