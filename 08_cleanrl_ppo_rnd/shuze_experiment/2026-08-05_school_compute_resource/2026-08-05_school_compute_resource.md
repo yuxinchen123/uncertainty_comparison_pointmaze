@@ -139,7 +139,7 @@ Older gpu nodes with a 20-day time limit. 8 nodes, 232 cpus counted by slurm, 25
 | `ai10` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
 | `jinx01` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 215 GiB | 2 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
 | `jinx02` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 215 GiB | 2 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
-| `titanx03` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 244 GiB | 1 | Titan X | 12 GiB* | Maxwell (2015) | 5.2 |
+| `titanx03` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 244 GiB | 1 | TITAN X (Pascal) | 12 GiB | Pascal (2016) | 6.1 |
 
 ## Table 5 — per-user limits, per partition
 
@@ -162,9 +162,8 @@ build also covers compute capability 8.9, but nothing covers a major number that
 
 | compute capability | architecture | partitions | nodes | gpus | models |
 |---|---|---|---|---|---|
-| 5.2 | Maxwell | gnolim | 1 | 1 | Titan X |
 | 6.0 | Pascal | gpu | 3 | 12 | Tesla P100 |
-| 6.1 | Pascal | gnolim, gpu | 14 | 52 | GTX 1080, GTX 1080 Ti, Titan Xp |
+| 6.1 | Pascal | gnolim, gpu | 15 | 53 | GTX 1080, GTX 1080 Ti, TITAN X (Pascal), Titan Xp |
 | 7.5 | Turing | gpu | 16 | 65 | Quadro RTX 4000, Quadro RTX 6000, RTX 2080 Ti |
 | 8.0 | Ampere | gpu | 2 | 8 | A100 |
 | 8.6 | Ampere | gpu | 6 | 30 | A16, A40, RTX A4000, RTX A4500 |
@@ -182,3 +181,21 @@ Measured on 2026-08-05 with `torch._C._cuda_getArchFlags()`:
 The second row is a live hazard, not a hypothetical: `/u/sl5nw/.local/lib/python3.11/site-packages`
 sits ahead of a shared env's own `site-packages` on `sys.path`, so a job run as `sl5nw` imports the
 2.10 build unless it exports `PYTHONNOUSERSITE=1`. Every script in this folder sets it.
+
+## Where a card contradicted the shared catalog
+
+These rows were read off the hardware and replace the catalog's values above. The catalog
+(`submit-gpu-sweep/server_introduction/`) feeds the group's GPU packing tools, so a wrong
+entry there decides which nodes a sweep may use — which is not hypothetical: the wrong
+`titanx03` entry excluded that node from a sweep whose floor it actually clears.
+
+| node | field | catalog says | the card says |
+|---|---|---|---|
+| `titanx03` | gpu_model | Titan X | **TITAN X (Pascal)** |
+| `titanx03` | gpu_architecture | Maxwell | **Pascal** |
+| `titanx03` | gpu_architecture_year | 2015 | **2016** |
+| `titanx03` | gpu_compute_capability | 5.2 | **6.1** |
+| `titanx03` | gpu_memory_gib_per_card | 12.0 | **11.9** |
+| `titanx03` | gpu_memory_label | approximate | **measured** |
+
+Source for `titanx03`: nvidia-smi and torch.cuda.get_device_properties on the node, Slurm job 6533825, 2026-08-05. The catalog records a Maxwell Titan X at compute capability 5.2.

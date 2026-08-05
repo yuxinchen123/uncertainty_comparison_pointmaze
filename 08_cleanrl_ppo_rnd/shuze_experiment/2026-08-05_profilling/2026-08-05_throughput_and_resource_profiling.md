@@ -87,8 +87,11 @@ arithmetic is unchanged.
 
 | node | as written | rewritten | ratio |
 |---|---|---|---|
+| `adriatic01` | 688 s | 151 s | 5x |
+| `ai07` | 686 s | 154 s | 4x |
 | `cheetah02` | 579 s | 108 s | 5x |
 | `cheetah08` | 687 s | 140 s | 5x |
+| `jaguar02` | 456 s | 87 s | 5x |
 | `jaguar03` | 532 s | 79 s | 7x |
 | `lotus` | 575 s | 108 s | 5x |
 
@@ -136,6 +139,7 @@ On `adriatic02`:
 | A_nofix_benchmark | 3,098 | 3.00 | 2.22 |
 | B_fix_benchmark_varyshape | 1,254 | 3.01 | 9.98 |
 | C_fix_nobenchmark_varyshape | 2,991 | 3.03 | 2.38 |
+| D_fix_benchmark_fixedshape | 3,137 | 2.99 | 2.16 |
 
 On `lotus`:
 

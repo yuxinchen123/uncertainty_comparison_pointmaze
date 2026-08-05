@@ -7972,6 +7972,671 @@ folder; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated
 
 \clearpage
 \bibliographystyle{plainnat}
+% ============================================================================================
+% Section 9 — CleanRL PPO + RND on Atari, train run 1. Added 2026-08-05.
+% Draft source: code/2026-08-05_cleanrl-rnd-writeup/section_draft.tex (kept in sync by hand).
+% Figure generator: code/2026-08-05_cleanrl-rnd-writeup/rnd_pipeline_comparison.tex
+%   (standalone TikZ; compile with `latexmk -pdf rnd_pipeline_comparison.tex` in that folder).
+% ============================================================================================
+% ============================================================================================
+% Section 9 draft — CleanRL PPO + RND on Atari, train run 1.
+% Spliced into RND_development_document.tex before \section{Distance to ground truth metrics}.
+% Figure: code/2026-08-05_cleanrl-rnd-writeup/rnd_pipeline_comparison.pdf (standalone TikZ,
+% compile with latexmk -pdf rnd_pipeline_comparison.tex in that folder).
+% ============================================================================================
+\clearpage
+\section{CleanRL PPO \texorpdfstring{$+$}{+} RND on Atari}
+\label{sec:cleanrl}
+
+Every RND result so far in this document comes from one implementation --- the project's own, built
+up over train runs 1 through 5 and reused unchanged by \Cref{sec:pm-am}. That implementation was
+written against the original paper and the original repository, but it has never been checked against
+a second, independently written RND. This section runs one: CleanRL's
+\texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py}, a widely used single-file PPO $+$ RND on
+Atari, at the upstream commit \texttt{fe8d8a0} (2026-04-20).
+
+Two things make it worth the compute. First, it is a different RND on a different domain with a
+different base learner --- pixels instead of coordinates, PPO instead of SAC, two value heads instead
+of one reward stream --- so agreement or disagreement with our own RND is informative in a way that
+another sweep of our own code is not. Second, its published result is a single seed. CleanRL reports
+$7100$ on MontezumaRevenge against Burda et al.'s $8152$, and states plainly that one seed was all
+the compute allowed. Thirty seeds turn that single number into a distribution.
+
+\subsection{Train run 1}
+\label{sec:cleanrl-trainrun1}
+
+This run asks four questions.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{Does the published single-seed result hold up across seeds?} CleanRL's $7100$ is one
+  sample from a distribution whose spread is unknown. Thirty seeds give a mean and a spread to
+  compare against Burda et al.'s three-seed $8152$.
+\item \textbf{What does the environment auto-reset defect cost?} CleanRL's own documentation records
+  a bug in this file and says ``it does not seem to impact performance'', without evidence.
+  \Cref{sec:cleanrl-bug} shows the defect is larger than the documentation implies --- it
+  contaminates the intrinsic advantage of every preceding step in a rollout, not just the affected
+  row --- and this run uses the corrected code.
+\item \textbf{Where do the two RND implementations actually differ?}
+  \Cref{tab:cleanrl-vs-project-rnd} and \Cref{fig:cleanrl-rnd-pipelines} answer this knob by knob.
+  Several of the differences are ones this project deliberately chose against CleanRL, and having
+  both stacks written down in one place is a prerequisite for attributing any result to any of them.
+\item \textbf{What does a faithful reproduction of this workload cost on this cluster, and how fast
+  can it be made to run?} The published run took about $250$ hours for one seed. The profiling in
+  \Cref{sec:cleanrl-throughput} measures where that time goes and what is recoverable.
+\end{enumerate}
+
+% --------------------------------------------------------------------------------------------
+% (1) The comparison table, then the comparison figure.
+% --------------------------------------------------------------------------------------------
+\paragraph{The two RND implementations, knob by knob.}
+\Cref{tab:cleanrl-vs-project-rnd} lists every load-bearing design choice of the two stacks side by
+side. The right-hand column is the \runref{run-5 original-small} RND, which is the RND of
+\Cref{tab:pm-am-trainrun1-algos} and of every RND arm in \Cref{sec:pm-am}; its cell-by-cell
+provenance is \Cref{tab:trainrun5-hparams}. Rows where the two agree are marked \emph{same}; the
+remaining rows are the whole of the difference between the two implementations.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+>{\raggedright\arraybackslash}p{5.6cm}
+>{\raggedright\arraybackslash}p{5.6cm}@{}}
+\toprule
+\textbf{Knob} &
+\textbf{CleanRL PPO $+$ RND} &
+\textbf{This project's SAC $+$ RND} \\
+& \small(\texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py} @ \texttt{fe8d8a0}) &
+  \small(\runref{run-5 original-small}, \Cref{tab:pm-am-trainrun1-algos}) \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Base learner and environment}} \\
+base RL algorithm & PPO, on-policy, $128$ parallel environment copies & SAC, off-policy, one
+  environment copy, replay buffer $10^{6}$ \\
+domain & Atari from pixels: \texttt{Montezuma\allowbreak Revenge-v5} via envpool & PointMaze and
+  AntMaze from coordinates \\
+observation the bonus sees & newest frame of a $4\times84\times84$ \texttt{uint8} stack, so
+  $1\times84\times84$ & the full state vector: $4$-d PointMaze, $29$-d AntMaze \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Bonus input}} \\
+what the bonus is computed on & next observation $s'$ & same \\
+whitening & running mean/std per pixel, clip $[-5,5]$, denominator $\sqrt{\sigma^2}$ & running
+  mean/std per dimension, clip $[-5,5]$, denominator $\sqrt{\sigma^2+10^{-8}}$ \\
+warm-up before training & $50 \times 128 = 6400$ rollout steps of a random agent, on the
+  \emph{training} environments & $6400$ environment steps of a random agent, on a \emph{fresh
+  throwaway} environment so the training visit counts stay clean \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Networks}} \\
+target network & $3$ convolutions ($32,64,64$) $\to$ flatten $\to$ linear $512$; frozen & linear
+  $4\to256\to128$; frozen \\
+predictor network & the same $3$ convolutions $\to$ linear $512 \to 512 \to 512$, i.e.\ \textbf{two}
+  fully-connected blocks deeper than the target & the same trunk \textbf{one} $128$-wide block
+  deeper: $4\to256\to128\to128$ \\
+output width $m$ & $512$ & $128$ \\
+activation & LeakyReLU on the convolutions, PyTorch default negative slope $0.01$; ReLU on the
+  predictor's extra blocks & LeakyReLU throughout, negative slope $0.2$ (the TensorFlow default the
+  original paper used) \\
+weight initialization & orthogonal, gain $\sqrt2$ & same \\
+bias initialization & zero & same \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Readout and predictor training}} \\
+bonus readout & $b = \tfrac12\sum_{j=1}^{m} e_j^2$ (half sum over $512$ dimensions) & $b =
+  \tfrac1m\sum_{j=1}^{m} e_j^2$ (mean over $128$ dimensions) \\
+predictor loss & squared error, mean over the output width, then masked and averaged over the
+  minibatch & squared error, mean over the output width, averaged over the replay batch \\
+update proportion & $0.25$ --- a random quarter of each minibatch trains the predictor, following
+  the paper's Table 5 & $1.0$ --- the whole batch trains the predictor, following the original
+  repository code \\
+predictor input at update time & the \emph{stored current} observation of the rollout, not the next
+  observation the bonus was computed on & the next observation, the same input the bonus used \\
+optimizer & Adam, learning rate $10^{-4}$, $\epsilon = 10^{-5}$, \textbf{shared with the policy};
+  gradients clipped at global norm $0.5$ & Adam, learning rate $10^{-4}$, $\epsilon = 10^{-8}$,
+  \textbf{its own optimizer}; no gradient clipping \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic reward}} \\
+reward normalization & divide by the running standard deviation $\sigma_F$ of a non-episodic forward
+  filter $F_t = \gamma_{\mathrm{int}} F_{t-1} + b$, no mean subtracted & same mechanism, same
+  $\gamma = 0.99$ \\
+forward-filter discount & $\gamma_{\mathrm{int}} = 0.99$ & $0.99$ \\
+how the bonus enters the objective & a \textbf{second value head} with its own non-episodic return
+  at $\gamma = 0.99$; the two advantages are combined as $A = 1.0\,A^{\mathrm{int}} +
+  2.0\,A^{\mathrm{ext}}$ & a \textbf{single reward stream}: the replay buffer stores $r^{\mathrm{ext}}
+  + \beta\,r^{\mathrm{int}}$, so there is no intrinsic value head \\
+episodic treatment of the bonus & the intrinsic return never resets at an episode boundary & the
+  bonus is inside the one reward, so it inherits SAC's episodic treatment \\
+bonus weight & fixed by $\mathtt{int\_coef}=1.0$ and $\mathtt{ext\_coef}=2.0$; not swept & $\beta$
+  swept over $15$ values from $10^{-3}$ to $10^{4}$ \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Run scale}} \\
+environment steps per run & $2\times10^{9}$ & $10^{6}$ \\
+seeds & $1$ published; $30$ in this run & $100$ to $300$ per arm \\
+discount on the extrinsic stream & $0.999$ & $0.99$ in \Cref{sec:pm-am} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{The two RND implementations knob by knob. The left column is CleanRL's
+\texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py} at commit \texttt{fe8d8a0}, read from the
+source; the right column is the \runref{run-5 original-small} stack, whose per-cell provenance is
+\Cref{tab:trainrun5-hparams}. ``same'' means the two implementations agree on that row.
+\Cref{fig:cleanrl-rnd-pipelines} draws the same comparison as two pipelines. Four of these
+differences are ones this project chose deliberately against CleanRL and recorded at the time: the
+LeakyReLU slope of $0.2$ rather than $0.01$, the mean readout rather than the half sum, the update
+proportion of $1.0$ rather than $0.25$, and feeding the predictor's update the next observation
+rather than the stored current one.}
+\label{tab:cleanrl-vs-project-rnd}
+\end{table}
+
+\Cref{fig:cleanrl-rnd-pipelines} draws the same two stacks as pipelines, read top to bottom, with the
+rows aligned so that a horizontal line across the page compares the same stage in both. Stages the
+two implementations share are gray; stages that differ are orange, with the difference written into
+the box. The figure is drawn vertically and at the document's own text width, so its text prints at
+full body size --- \Cref{fig:trainrun5-pipeline}, the horizontal pipeline of train run 5, is
+$11.1$~inches wide and is therefore scaled to about half when included, which is why its labels are
+hard to read.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{code/2026-08-05_cleanrl-rnd-writeup/rnd_pipeline_comparison.pdf}
+\caption{The two RND pipelines side by side, each read top to bottom: CleanRL's PPO $+$ RND on the
+left, the project's \runref{run-5 original-small} SAC $+$ RND on the right. The nine rows are
+aligned, so each row compares the same pipeline stage in the two implementations. Gray marks a stage
+that is the same in both; orange marks a stage that differs, with the difference stated inside the
+box. The blue dashed arrow is the predictor gradient, which reaches the predictor only --- the target
+is frozen in both. Generated by
+\texttt{code/2026-08-05\_\allowbreak cleanrl-rnd-writeup/\allowbreak rnd\_\allowbreak
+pipeline\_\allowbreak comparison.tex} (standalone TikZ; \texttt{latexmk -pdf} in that folder).}
+\label{fig:cleanrl-rnd-pipelines}
+\end{figure}
+
+% --------------------------------------------------------------------------------------------
+% (2) The environment table.
+% --------------------------------------------------------------------------------------------
+\paragraph{Environment specification.}
+The environment is a single Atari game, \texttt{Montezuma\allowbreak Revenge-v5}, built by envpool
+$0.6.6$ with four explicit keyword arguments and seventeen defaults. Because almost all of the
+preprocessing lives inside envpool's C++ rather than in a stack of visible Python wrappers,
+\Cref{tab:cleanrl-envspec} lists every configuration key that is in force and says where each value
+comes from, so the environment can be rebuilt from the table alone.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}
+>{\raggedright\arraybackslash}p{5.0cm}
+>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\toprule
+\textbf{Parameter} &
+\textbf{Value} &
+\textbf{Where the value comes from} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+environment id & \texttt{Montezuma\allowbreak Revenge-v5} & passed by CleanRL; the benchmark script's
+  only environment \\
+task and ROM & \texttt{montezuma\_\allowbreak revenge}, ROM shipped inside the envpool wheel &
+  derived from the id; no download, so the environment builds on a node with no internet \\
+observation space & \texttt{Box(0, 255, (4, 84, 84), uint8)} & envpool defaults
+  \texttt{stack\_num=4}, \texttt{img\_height=\allowbreak img\_width=84},
+  \texttt{gray\_scale=True} \\
+channel order & oldest frame first, so index $3$ is the most recent frame & envpool layout; the RND
+  bonus uses index $3$ only \\
+action space & \texttt{Discrete(18)} & the ALE minimal action set, which for this game is the full
+  set \\
+parallel copies & $128$ & \texttt{num\_envs}, passed \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Preprocessing}} \\
+frame skip & $4$ emulator frames per agent step, rewards summed & envpool default
+  \texttt{frame\_skip=4} \\
+max-pooling & element-wise maximum of the last two of the four skipped frames & envpool, fixed \\
+grayscale and resize & ALE palette grayscale, then $210\times160 \to 84\times84$ with OpenCV
+  \texttt{INTER\_AREA} & envpool defaults \texttt{gray\_scale=True},
+  \texttt{use\_inter\_area\_resize=True} \\
+no-ops at reset & uniform on $\{0,\dots,29\}$, then one FIRE frame & envpool default
+  \texttt{noop\_max=30}; FIRE is unconditional in $0.6.6$ when FIRE is in the minimal action set \\
+sticky actions & repeat-action probability $0.25$, applied by the ALE itself & passed by CleanRL,
+  matching the original RND paper \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Episode}} \\
+episodic life & \texttt{done} is raised on every life lost, not only on game over & passed
+  (\texttt{episodic\_life=True}); the underlying game is not reset on a life loss \\
+max episode steps & $108{,}000$ agent steps, so $432{,}000$ emulator frames & envpool's
+  \texttt{registration.py} for every \texttt{-v5} id; in practice non-binding \\
+termination rule & game over, or the step cap, or a life lost & envpool \texttt{atari\_env.h} \\
+auto-reset & next-step: the terminating step returns the terminal observation, and the following
+  step is consumed by the reset & envpool, fixed --- this is the defect
+  \Cref{sec:cleanrl-bug} corrects \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Reward}} \\
+reward seen by the agent & clipped to its sign, so $\{-1,0,+1\}$ & passed
+  (\texttt{reward\_clip=True}) \\
+reward recorded for scoring & the raw unclipped game score, kept in \texttt{info["reward"]} & envpool
+  preserves it; this is what the episodic return in the run record accumulates \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Environment specification for train run~1, in the style of \Cref{tab:pm-am-envspec}. Every
+envpool configuration key in force is listed with its origin: ``passed'' means CleanRL supplies it
+explicitly in \texttt{envpool.make}, everything else is an envpool default or registration value.
+Two values are worth care and were verified against the installed $0.6.6$ rather than the web
+documentation: \texttt{max\_\allowbreak episode\_\allowbreak steps} is $108{,}000$ \emph{agent}
+steps (the web table's $27{,}000$ is a newer release's default), and the keys
+\texttt{use\_\allowbreak fire\_\allowbreak reset} and \texttt{full\_\allowbreak action\_\allowbreak
+space} do not exist in $0.6.6$ at all.}
+\label{tab:cleanrl-envspec}
+\end{table}
+
+% --------------------------------------------------------------------------------------------
+% (3) The run table.
+% --------------------------------------------------------------------------------------------
+\paragraph{Algorithms.}
+\Cref{tab:cleanrl-trainrun1-algos} gives the run's hyperparameters in the style of
+\Cref{tab:pm-am-trainrun1-algos}. Every algorithm value is CleanRL's default, unchanged; the run
+adds no sweep. What the middle column records instead is the small number of things this run changes
+about the \emph{code} rather than the algorithm, each of which is justified in the paragraphs that
+follow the table.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
+>{\raggedright\arraybackslash}p{4.6cm}
+>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\toprule
+\textbf{Hyperparameter} &
+\textbf{Value} &
+\textbf{Source and note} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{RL algorithm}} \\
+algorithm & PPO with two value heads & CleanRL default \\
+policy and value network & $3$ convolutions ($32,64,64$) $\to$ $3136 \to 256 \to 448$, then a
+  $448\to448$ extra block; actor $448\to448\to18$; two critics $448\to1$ & CleanRL default \\
+parallel environments & $128$ & CleanRL default \\
+rollout length & $128$ steps, so a batch of $16{,}384$ & CleanRL default \\
+minibatches per epoch & $4$ & CleanRL default \\
+update epochs & $4$ & CleanRL default \\
+learning rate & $10^{-4}$, annealed linearly to $0$ & CleanRL default, shared by the policy and the
+  RND predictor \\
+optimizer & Adam, $\epsilon = 10^{-5}$ & CleanRL default \\
+clip coefficient & $0.1$; value loss clipped & CleanRL default \\
+entropy coefficient & $0.001$ & CleanRL default \\
+value coefficient & $0.5$ & CleanRL default \\
+gradient clipping & global norm $0.5$ & CleanRL default \\
+advantage normalization & per minibatch & CleanRL default \\
+extrinsic discount & $\gamma = 0.999$ & CleanRL default \\
+GAE $\lambda$ & $0.95$ & CleanRL default \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+bonus & Random Network Distillation & N/A --- the run has one arm \\
+intrinsic discount & $\gamma_{\mathrm{int}} = 0.99$, non-episodic & CleanRL default \\
+extrinsic and intrinsic weights & $\mathtt{ext\_coef} = 2.0$, $\mathtt{int\_coef} = 1.0$ & CleanRL
+  default; no sweep \\
+update proportion & $0.25$ & CleanRL default \\
+observation-normalization warm-up & $50$ rollouts of a random agent, $6400$ steps & CleanRL default \\
+RND stack & as the left column of \Cref{tab:cleanrl-vs-project-rnd} & read from the source \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+environment steps per run & $2\times10^{9}$ & CleanRL's benchmark value \\
+seeds & $30$, \texttt{a\_seed} $= 1 \dots 30$ & this run; CleanRL published one seed \\
+configs in this table & $1$(algorithm) $\times$ $1$(environment) $\times$ $30$(seed) $= 30$ &
+  N/A --- no hyperparameter is swept \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Changes this run makes to the code, not to the algorithm}} \\
+environment auto-reset defect & corrected & \Cref{sec:cleanrl-bug}; the only change that alters what
+  the optimizer sees \\
+metric logging & one JSON record per run, no Weights and Biases and no tensorboard & the record
+  format of \Cref{sec:logging}, carrying the extrinsic and the intrinsic reward \\
+checkpoint and resume & every $8$ hours, one checkpoint per run, previous one replaced &
+  \Cref{sec:cleanrl-resume}; required because a run is far longer than the $4$-day partition limit \\
+throughput options & the options that leave the computation unchanged are on; the options that
+  change it are off & \Cref{sec:cleanrl-throughput} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Hyperparameters of train run~1, in the style of \Cref{tab:pm-am-trainrun1-algos}. ``N/A''
+marks a knob that does not apply. Every algorithm value is CleanRL's own default and nothing is
+swept, so unlike the sweep tables of \Cref{sec:pm-am} this table has a single configuration and its
+config count is just the seed count. The last block lists the changes this run makes to the
+\emph{code}; only the first of them changes what the optimizer sees.}
+\label{tab:cleanrl-trainrun1-algos}
+\end{table}
+
+% --------------------------------------------------------------------------------------------
+% (4) The bug.
+% --------------------------------------------------------------------------------------------
+\subsubsection{The environment auto-reset defect, and what it costs}
+\label{sec:cleanrl-bug}
+
+CleanRL's documentation page for this file carries a \texttt{bug} admonition. It states that envpool
+and gym's vectorized environments disagree about which observation a terminating step returns, that
+this makes the terminal state ``off by one'', and that ``it does not seem to impact performance, so
+we take a note here and await for the upstream fix''. Two of those three claims need revising.
+
+\paragraph{What envpool actually does.}
+Define $s_{\mathrm{last}}$ as the final observation of an episode and $s_{\mathrm{new}}$ as the first
+observation of the next one. envpool resets on the \emph{following} step: the step that ends an
+episode returns $s_{\mathrm{last}}$ with \texttt{done=True}, and the next call to \texttt{step} is
+consumed entirely by the reset, returning $s_{\mathrm{new}}$ with the submitted action discarded.
+Measured directly on the installed envpool $0.6.6$ rather than taken from the documentation, on a
+single CartPole copy where a reset state and a terminal state are told apart by their numbers alone:
+
+\begin{quote}\ttfamily\footnotesize\raggedright
+t=15\ \ done=True\ \ \ obs=TERMINAL\ \ \ \ elapsed\_step=16\\
+t=16\ \ done=False\ \ obs=RESET-LIKE\ \ elapsed\_step=0
+\end{quote}
+
+and on \texttt{Montezuma\allowbreak Revenge-v5} with this run's exact options, where a lost life
+raises \texttt{done} without resetting the game:
+
+\begin{quote}\ttfamily\footnotesize\raggedright
+t=457\ \ done=True\ \ \ lives=5\ \ elapsed\_step=458\\
+t=458\ \ done=False\ \ lives=5\ \ elapsed\_step=458\ \ \ (the counter does not advance)
+\end{quote}
+
+A differential test settles that the discarded action really is discarded: two identically seeded
+environment pools fed identical actions except on that one step stay byte-identical, while the same
+injection one step earlier diverges immediately.
+
+\paragraph{What that does to the rollout buffer.}
+CleanRL stores \texttt{dones[step]} from the \emph{previous} iteration's \texttt{done}, so the
+condition $\texttt{dones}[t]=1$ marks exactly the consumed steps. At such an index the buffer holds
+an observation that is the old episode's terminal state, an action the environment threw away, a
+reward that is always exactly zero, and an intrinsic bonus computed on the \emph{new} episode's first
+frame. It is a transition that never happened, and it enters the policy gradient, both value losses,
+the predictor's own loss, and the statistics that normalize the intrinsic reward. On
+\texttt{Montezuma\allowbreak Revenge-v5} with \texttt{episodic\_life=True} it is about $1.2\%$ of
+rows.
+
+\paragraph{Why the damage is larger than that fraction suggests.}
+The extrinsic stream repairs itself: at index $t-1$ the factor $1 - \texttt{dones}[t]$ is zero, so
+the fabricated advantage cannot propagate backwards. The intrinsic stream has no such factor. The
+intrinsic return is deliberately non-episodic --- Burda et al.\ make it so, and CleanRL follows them
+by hardcoding the intrinsic terminal mask to $1.0$ --- and that is exactly what lets the fabricated
+row leak. Perturbing only the fabricated row's intrinsic reward and re-running the file's own
+generalized-advantage code moves the intrinsic advantage of \emph{every preceding row in the
+rollout}, decaying as $(\gamma_{\mathrm{int}}\lambda)^{\Delta} \approx 0.94^{\Delta}$: full amplitude
+at the row itself, about half ten rows earlier, still measurable at the head of a $128$-step rollout.
+So a defect in $1.2\%$ of rows perturbs a large fraction of the intrinsic advantages, which is the
+signal the whole method rests on. Whether that changes the final score is a separate question this
+run does not answer; the claim here is only that ``it does not seem to impact performance'' was never
+tested and is not obviously true.
+
+\paragraph{The correction.}
+Two edits, both keyed on $\texttt{dones}[t]$, which is the only reliable detector. The obvious
+alternative --- reading envpool's \texttt{elapsed\_step} for a zero --- fails under
+\texttt{episodic\_life=True}, because a lost life consumes a step without resetting the counter; on a
+$600$-step probe it found $4$ of the $24$ consumed rows.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{Carry the advantage through the consumed row} so that row $t-1$ chains to row $t+1$ as
+  though the row were absent. This stops the backward leak in the intrinsic stream.
+\item \textbf{Drop the consumed rows from the update batch}, so no loss is ever evaluated on a
+  transition that did not happen. The batch is then walked as exactly \texttt{num\_minibatches} equal
+  slices with the remainder dropped; a ragged final slice of one row makes the advantage
+  normalization divide by a zero standard deviation, and the resulting NaN reaches the weights within
+  one optimizer step.
+\end{enumerate}
+
+Neither upgrading envpool nor switching to its Gymnasium-style interface avoids this. The behaviour
+is unchanged in every release through $1.2.5$, and Gymnasium $1.0$ moved its own vector API
+\emph{to} next-step auto-reset to match envpool --- so the ``upstream fix'' the documentation waits
+for is not coming, because envpool's behaviour became the standard. The run also corrects a smaller
+consequence of the same defect: the episode-length counter in CleanRL's statistics wrapper
+incremented on consumed steps, overstating episode length by one per life lost.
+
+% --------------------------------------------------------------------------------------------
+% (5) Logging and resumability.
+% --------------------------------------------------------------------------------------------
+\subsubsection{Logging and resumability}
+\label{sec:cleanrl-resume}
+
+\paragraph{Logging.}
+The upstream file writes to tensorboard and optionally to Weights and Biases. This run writes
+neither. It writes one JSON record per run in the format of \Cref{sec:logging}: the configuration and
+identity at the top level, then \texttt{train\_\allowbreak episode\_\allowbreak history} with one
+entry per finished episode carrying the extrinsic return, the intrinsic bonus and the episode length;
+\texttt{train\_\allowbreak history} with the per-update means of both rewards; and
+\texttt{eval\_\allowbreak history} with throughput, the losses, and the count of rows dropped by the
+auto-reset correction. The record is rewritten in full at every logging step through a temporary file
+and an atomic rename, and carries \texttt{completed} so a partial record is never mistaken for a
+finished run.
+
+One deviation from \Cref{sec:logging} is forced by scale. A $2\times10^{9}$-step Atari run finishes
+on the order of a million episodes, and an unbounded per-episode list would outgrow the filesystem.
+The record therefore keeps every episode up to $50{,}000$ and every hundredth after that, and stores
+both the cap and the stride alongside the true episode count, so an analysis can always tell a run
+with few episodes from a run whose episodes were mostly not kept.
+
+\paragraph{Why resumability is required, and what is saved.}
+The \texttt{gpu} partition kills a job at $4$ days. At the throughput measured in
+\Cref{sec:cleanrl-throughput} a single $2\times10^{9}$-step run needs far longer than that, so a run
+that cannot resume cannot finish at all. PPO is on-policy, so there is no replay buffer to carry ---
+the rollout buffer is rebuilt from scratch each iteration. What must be carried is the learned state,
+the normalization statistics and the random streams:
+
+\begin{itemize}[leftmargin=*]
+\item the policy and both value heads, and the RND predictor;
+\item \textbf{the RND target network}, which is frozen and never trained but is randomly initialized
+  and therefore \emph{defines} the bonus --- a checkpoint that omitted it would look correct and
+  silently restart exploration at every resume;
+\item the Adam state over the policy and the predictor together;
+\item the observation normalizer, the intrinsic-reward normalizer, and the forward filter behind it;
+\item the step and update counters, which also carry the learning-rate schedule;
+\item the Python, NumPy, and both Torch random-number states.
+\end{itemize}
+
+The checkpoint measures $50.2$~MB, so all $30$ seeds are checkpointed rather than a subset, and the
+$30$ checkpoints together are $1.5$~GB. It is written every $8$ hours to a temporary file and renamed
+over the previous one, so exactly one checkpoint per run exists at any moment and a kill during a
+write cannot destroy the last good one.
+
+\paragraph{What cannot be saved, stated plainly.}
+envpool exposes no way to serialize its $128$ emulators, so a resumed run restarts its environments
+from a fresh reset. The cost is bounded --- at most one partial episode per environment copy per
+resume, against an $8$-hour checkpoint interval --- but it is a real gap and not a rounding error,
+and it means a resumed run is not bit-identical to an uninterrupted one even though every learned
+quantity is.
+
+\paragraph{Verified, not assumed.}
+The resume was demonstrated before any long run was submitted. A short run was stopped after $8$
+updates at step $1024$ with \texttt{completed=false}; re-running the identical command logged
+\texttt{[resume] continuing at update 9 of 20, global\_step 1024}, ran to update $20$, and finished
+with \texttt{completed=true}, a history whose update column reads $5, 10, 15, 20$ with no duplicated
+or missing rows, and an accumulated runtime spanning both segments.
+
+% --------------------------------------------------------------------------------------------
+% (6) Throughput.
+% --------------------------------------------------------------------------------------------
+\subsubsection{Throughput: where the time goes, and what was recoverable}
+\label{sec:cleanrl-throughput}
+
+CleanRL reports this workload at $2\times10^{9}$ steps in about $250$ hours for one seed, which is
+$2{,}222$ environment steps per second. Thirty seeds at that rate would be $7{,}500$ GPU-hours. The
+profiling asked what that number is made of. Full measurements, the harness, and the raw records are
+in \texttt{08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak rnd/\allowbreak
+shuze\_\allowbreak experiment/\allowbreak 2026-08-05\_\allowbreak profilling/}; the findings that
+change the run are here.
+
+\paragraph{The published run was starved of processor cores, not of GPU.}
+Holding one GPU fixed and varying only the processor allocation:
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+\textbf{cores} & \textbf{steps/s} & \textbf{rollout (s)} & \textbf{update (s)} & \textbf{per rollout step (ms)} \\
+\midrule
+$4$  & $2{,}714$ & $4.31$ & $1.70$ & $33.6$ \\
+$8$  & $3{,}876$ & $2.50$ & $1.70$ & $19.5$ \\
+$16$ & $4{,}182$ & $2.17$ & $1.72$ & $17.0$ \\
+$32$ & $3{,}906$ & $2.42$ & $1.75$ & $18.9$ \\
+$48$ & $4{,}120$ & $2.20$ & $1.75$ & $17.2$ \\
+\bottomrule
+\end{tabular}
+\caption{Environment steps per second against processor cores, on one RTX A4500 with everything else
+fixed. The published rate of $2{,}222$ steps per second is what a four-core allocation gives, which
+is evidence that the published run was limited by the environment simulator's cores rather than by
+the GPU. The curve flattens between $8$ and $16$ cores and does not rise after: past that point the
+rollout stops falling at about $17$~ms per step, and the update is a flat GPU cost that cores do not
+touch.}
+\label{tab:cleanrl-cores}
+\end{table}
+
+The run therefore gives each seed \textbf{eight} cores, not sixteen: eight reaches $93\%$ of the peak
+rate on half the cores, and the processor, not the GPU, is the capped resource in both GPU partitions
+($400$ cores in \texttt{gpu}, $80$ in \texttt{gnolim}).
+
+\paragraph{Changes that leave the arithmetic unchanged are worth $1.35$ to $1.57$ times.}
+Eight changes were applied cumulatively, each measured in a fresh process because the convolution
+autotuner's cache and the memory allocator carry state within a process and would manufacture
+speedups. Measured at sixteen cores, from the unchanged upstream code to all eight applied: Quadro
+RTX 6000 $3{,}054 \to 4{,}659$ ($1.53\times$), RTX 4000 Ada $3{,}041 \to 4{,}670$ ($1.54\times$), RTX
+A4000 $2{,}604 \to 3{,}972$ ($1.53\times$), A16 $1{,}750 \to 2{,}592$ ($1.48\times$), RTX A4500
+$3{,}946 \to 5{,}406$ ($1.37\times$), GTX 1080 Ti $2{,}503 \to 3{,}454$ ($1.38\times$), Quadro RTX
+4000 $2{,}306 \to 3{,}103$ ($1.35\times$).
+
+The largest single change is holding the observation buffer as \texttt{uint8} rather than
+\texttt{float32}, worth $15$ to $24\%$ on its own. The buffer is $128\times128\times4\times84\times84$,
+which is $1.85$~GB as \texttt{float32} against $0.46$~GB as \texttt{uint8}, and the original converted
+each observation to \texttt{float32} \emph{on the host} before copying it to the GPU, so it moved four
+times the bytes it needed to. The networks divide by $255$ either way and every \texttt{uint8} value
+is exactly representable in \texttt{float32}, so the arithmetic is untouched. Separately, start-up
+fell from $531$ to $79$ seconds by filling the observation-normalizer's warm-up batch into a
+preallocated buffer instead of through Python lists --- which matters more than it looks, because
+start-up is paid again at every resume.
+
+\paragraph{A trap: the correction and the convolution autotuner are destructive together.}
+Dropping the auto-reset rows makes the surviving row count differ from update to update, so a
+minibatch sized as a share of it changes shape almost every update --- and the convolution autotuner
+tunes per shape, so it re-tuned almost every update. Each change is sound alone. Measured on a Quadro
+RTX 6000, at sixteen cores:
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{configuration} & \textbf{steps/s} & \textbf{rollout (s)} & \textbf{update (s)} \\
+\midrule
+no correction, autotuning on & $4{,}677$ & $2.17$ & $1.29$ \\
+correction, minibatch shape allowed to drift & $2{,}178$ & $2.15$ & $5.33$ \\
+correction, autotuning off & $4{,}553$ & $2.14$ & $1.41$ \\
+correction, minibatch shape held constant & $\mathbf{4{,}765}$ & $2.15$ & $\mathbf{1.25}$ \\
+\bottomrule
+\end{tabular}
+\caption{The interaction between the auto-reset correction and convolution autotuning, and its fix.
+Only the update phase moves; the rollout is identical throughout, which is what identifies the cause.
+Holding the minibatch shape constant by reserving a fixed row allowance recovers the loss and ends
+slightly ahead of the uncorrected code, because the constant-shape batch is marginally smaller. So
+the correction costs nothing --- but without this the corrected code would have run at half speed.}
+\label{tab:cleanrl-shape}
+\end{table}
+
+\paragraph{Several runs fit on one GPU, and whether that helps depends on which resource is scarce.}
+One run holds under $5$~GB of GPU memory and leaves the GPU idle for more than half of every
+iteration, because the rollout alternates a small GPU pass with a processor-side environment step.
+Running $N$ copies on one RTX A4500 at eight cores each:
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+\textbf{runs on one GPU} & \textbf{steps/s per run} & \textbf{aggregate steps/s} & \textbf{steps/s per core} \\
+\midrule
+$1$ & $4{,}618$ & $4{,}618$ & $577$ \\
+$2$ & $3{,}595$ & $7{,}190$ & $449$ \\
+$3$ & $3{,}343$ & $10{,}029$ & $418$ \\
+$4$ & $2{,}915$ & $\mathbf{11{,}661}$ & $364$ \\
+$6$ & $2{,}290$ & $11{,}450$ & $286$ \\
+\bottomrule
+\end{tabular}
+\caption{Packing several runs onto one GPU. Aggregate throughput per GPU rises to four runs and then
+stops; at six the card held $19{,}869$ of its $20{,}470$~MB and one of the six died. Throughput per
+\emph{core}, the last column, falls throughout --- which is what decides where packing is worth
+doing.}
+\label{tab:cleanrl-packing}
+\end{table}
+
+So packing helps only where the GPU is the scarce side. In \texttt{gpu} ($40$ GPU slots, $400$
+cores) and \texttt{gnolim} ($20$ slots, $80$ cores) the cores run out first, so one run per GPU is
+right --- forty unpacked runs beat fifty packed ones. On the reserved node (eight GPUs, $222$ cores)
+the GPU is scarce, so three runs per GPU turn eight slots into twenty-four at $2.17$ times the
+aggregate rate. The run uses both rules, one per pool.
+
+\paragraph{What the run costs.}
+At the measured rates the $2\times10^{9}$ steps of one seed take about five days on the faster cards
+(RTX A4500, Quadro RTX 6000, RTX 4000 Ada) and up to nine on the slowest in scope (A16), for roughly
+$3{,}900$ GPU-hours over the thirty seeds. With all thirty running at once that is also the
+wall-clock, plus one resume per seed at the four-day partition limit.
+
+% --------------------------------------------------------------------------------------------
+% (7) Provenance and status.
+% --------------------------------------------------------------------------------------------
+\paragraph{Provenance.}
+The upstream implementation is cloned untouched and is never edited; the run executes a copy with
+the four changes of \Cref{tab:cleanrl-trainrun1-algos}. Upstream commit
+\texttt{fe8d8a03\allowbreak c41a7ef5\allowbreak b523e2e3\allowbreak 54bd01c3\allowbreak 63e786bb}.
+The run folder is
+
+\begin{samepage}
+\begin{quote}\ttfamily\footnotesize\raggedright
+08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak rnd/\allowbreak train\_\allowbreak runs/\allowbreak
+2026-08-05-17-45\_\allowbreak cleanrl\_\allowbreak train\_\allowbreak run\_\allowbreak 1\_\allowbreak ppo-rnd\_\allowbreak montezuma-revenge-v5\_\allowbreak \_\allowbreak envpool-autoreset-fixed\_\allowbreak \_\allowbreak 128env-128step-2e9step\_\allowbreak \_\allowbreak int-coef1-ext-coef2-updateproportion0.25\_\allowbreak \_\allowbreak seed1-30\_\allowbreak \_\allowbreak checkpoint-8h-resumable\_\allowbreak \_\allowbreak gpu-gnolim
+\end{quote}
+\end{samepage}
+
+\noindent with the training code in \texttt{08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak
+rnd/\allowbreak src/\allowbreak ppo\_\allowbreak rnd\_\allowbreak envpool\_\allowbreak shuze.py},
+the environment \texttt{/p/\allowbreak rlprojects/\allowbreak RND/\allowbreak .venvs/\allowbreak
+cleanrl\_\allowbreak rnd}, and the profiling in \texttt{08\_\allowbreak cleanrl\_\allowbreak
+ppo\_\allowbreak rnd/\allowbreak shuze\_\allowbreak experiment/\allowbreak 2026-08-05\_\allowbreak
+profilling/}.
+
+\paragraph{Status at the 2026-08-05 snapshot.}
+The run was launched on 2026-08-05 after a five-run canary proved the whole path end to end --- queue
+claim, training, checkpoint write, completion flag, and the output redirect that keeps a canary
+record out of the real output directory. All $30$ seeds are training concurrently on $30$ worker
+slots: eight on the reserved \texttt{jaguar03} (RTX A4500), eight on \texttt{lotus} (Quadro RTX
+6000), four each on \texttt{cheetah02} (RTX 4000 Ada), \texttt{cheetah08} and \texttt{cheetah09} (RTX
+A4000), and two on \texttt{cheetah03} (RTX 2080 Ti), with four spare slots on \texttt{gnolim} held
+for requeues. At the measured rates each seed needs about five days for its $2\times10^{9}$ steps.
+Results tables and reward curves will be added to this subsubsection when the seeds finish; nothing
+in this section reports an outcome yet.
+
+\paragraph{Two things the canary caught that review had not.}
+Both are recorded because they are the kind of defect that does not announce itself.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item \textbf{A one-row minibatch makes the whole network NaN.} Dropping the auto-reset rows leaves a
+  batch that is no longer divisible by the minibatch count, and walking it in fixed-size slices
+  leaves a ragged final slice. When that slice held a single row, the per-minibatch advantage
+  normalization divided by a zero standard deviation and the NaN reached the weights within one
+  optimizer step. The batch is now walked as exactly \texttt{num\_\allowbreak minibatches} equal
+  slices with the remainder dropped, and the shuffle means a different remainder each epoch.
+\item \textbf{A packed job reports the wrong processor count to every run it holds.} Slurm sets the
+  cores-per-task variable to the \emph{job's} total, so five runs sharing a $40$-core job each
+  started $40$ environment worker threads on eight cores' worth of allocation --- a five-fold
+  oversubscription on every packed node. The run now reads the per-run share the sweep's worker
+  manager exports, and falls back to the job total only when running unpacked. This one changes no
+  result; it only costs throughput, silently, on exactly the nodes where packing is used.
+\end{enumerate}
+
+
+\clearpage
+
 \bibliography{bibliography}
 
 \clearpage

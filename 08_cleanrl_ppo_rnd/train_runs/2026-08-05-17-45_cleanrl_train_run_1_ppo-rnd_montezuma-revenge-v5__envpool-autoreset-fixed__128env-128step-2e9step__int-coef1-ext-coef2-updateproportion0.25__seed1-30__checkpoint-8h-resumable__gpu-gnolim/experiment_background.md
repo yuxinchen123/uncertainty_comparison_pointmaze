@@ -85,5 +85,5 @@ which `/u/sl5nw/.local` shadows the environment with a torch build that cannot r
 
 ## Git state
 
-Commit: recorded at submission time, before the first job is queued, per the shared
-commit-before-submit rule.
+Commit: `19429495ebef1fc61ad6ed6a7048ae3850155906` on branch `Use-RLexplore-RND`, pushed before the first job was queued, per the
+shared commit-before-submit rule. Working tree clean for everything this run executes.

@@ -61,6 +61,40 @@ def format_gpu_memory(node):
     return f"{gib:.0f} GiB{mark}"
 
 
+# Values read off the cards themselves, which override the shared catalog where the two disagree.
+# The catalog is the input to the group's GPU packing tools, so a wrong entry there decides which
+# nodes a sweep is allowed to use — titanx03 was excluded from a sweep by its wrong entry.
+MEASURED_OVERRIDES = {
+    "titanx03": {
+        "gpu_model": "TITAN X (Pascal)",
+        "gpu_architecture": "Pascal",
+        "gpu_architecture_year": 2016,
+        "gpu_compute_capability": 6.1,
+        "gpu_memory_gib_per_card": 11.9,
+        "gpu_memory_label": "measured",
+        "source": "nvidia-smi and torch.cuda.get_device_properties on the node, Slurm job 6533825, "
+                  "2026-08-05. The catalog records a Maxwell Titan X at compute capability 5.2.",
+    },
+}
+
+
+def apply_measured_overrides(nodes):
+    """Replace catalog values with values read off the card, returning the list of corrections."""
+    corrections = []
+    for n in nodes:
+        override = MEASURED_OVERRIDES.get(n["node"])
+        if not override:
+            continue
+        for field, new in override.items():
+            if field == "source":
+                continue
+            old = n.get(field)
+            if old != new:
+                corrections.append((n["node"], field, old, new))
+                n[field] = new
+    return corrections
+
+
 def format_architecture(node):
     """Render 'Family (year)' for a GPU node, 'N/A' for a node with no GPU."""
     if node.get("gpu_count", 0) == 0:
@@ -198,6 +232,7 @@ def main():
     here = os.path.dirname(os.path.abspath(__file__))
     data = json.load(open(os.path.join(here, "..", "data", "cluster_nodes.json")))
     nodes, partitions = data["nodes"], {p["partition"]: p for p in data["partitions"]}
+    corrections = apply_measured_overrides(nodes)
 
     # Header: say where the numbers came from and that the file is generated, matching the
     # convention of the previous resource document.
@@ -273,6 +308,23 @@ def main():
         "2.10 build unless it exports `PYTHONNOUSERSITE=1`. Every script in this folder sets it.",
         "",
     ]
+
+    # Anywhere a card contradicted the shared catalog, say so with both values.
+    if corrections:
+        lines += [
+            "## Where a card contradicted the shared catalog",
+            "",
+            "These rows were read off the hardware and replace the catalog's values above. The catalog",
+            "(`submit-gpu-sweep/server_introduction/`) feeds the group's GPU packing tools, so a wrong",
+            "entry there decides which nodes a sweep may use — which is not hypothetical: the wrong",
+            "`titanx03` entry excluded that node from a sweep whose floor it actually clears.",
+            "",
+            render_table(["node", "field", "catalog says", "the card says"],
+                         [[f"`{n}`", f, str(o), f"**{v}**"] for n, f, o, v in corrections]),
+            "",
+        ]
+        for node, spec in MEASURED_OVERRIDES.items():
+            lines += [f"Source for `{node}`: {spec['source']}", ""]
 
     out_path = os.path.join(here, "..", "2026-08-05_school_compute_resource.md")
     with open(out_path, "w") as f:
