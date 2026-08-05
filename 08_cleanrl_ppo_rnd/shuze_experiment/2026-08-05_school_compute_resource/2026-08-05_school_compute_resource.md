@@ -7,144 +7,121 @@ Node inventory read from live Slurm on 2026-08-05T16:20:09-04:00, cross-checked 
 catalog of the shared `submit-gpu-sweep` skill. The previous version of this document, and how
 this one differs from it, are recorded in `../preivous_resource_loation.md`.
 
-The cluster has 96 nodes across the four partitions, 4284 cpus as Slurm counts them, 185 GPUs on 50 nodes, and 42 TiB of system memory.
+The cluster has 96 nodes across the four partitions, 4284 cpus as Slurm counts them, 185 GPUs on 50 nodes, and 41.6 TiB of system memory.
 
-Two things about the numbers before the tables:
+Three things about the numbers before the tables:
 
 1. **`cpus counted by slurm` counts hardware threads, not cores.** Every node here sets
    `ThreadsPerCore=2`, so a 32-cpu node has 16 physical cores. A job that asks for one cpu per
    task is charged a whole core unless it passes `--ntasks-per-core=2`.
 2. **A `*` on a GPU memory value means the catalog's figure is approximate** and should be
    confirmed with `nvidia-smi --query-gpu=memory.total` on the node before it is relied on.
+3. **Nodes with the same hardware share one row.** The `node` column then holds the name range
+   the row covers, written in Slurm's own `--nodelist` syntax so it can be pasted into an sbatch
+   line (`affogato[06-10]`, or `cortado[01-05,07-10]` when the range has a gap). The next column
+   says how many nodes that is, and the `state` column counts the states of those nodes.
+   Every hardware figure stays per node, so a folded row reads exactly like a single-node row;
+   only the closing **total** row of each table adds the nodes up. A node that is not simply
+   running work — down, drained, or reserved — is kept on a row of its own so its name and its
+   state stay visible.
 
 ## Table 1 — partition `cpu`
 
 No gpus; the largest core pool on the cluster. 40 nodes, 1676 cpus counted by slurm, no GPUs, 16.7 TiB of system memory in total. Time limit 4-00:00:00, qos `cspartcpu`. Per user: 400 cpus, no gpu cap (no gpus here), 4 TiB memory.
 
-| node | state | cpu model | sockets x cores x threads | cpus counted by slurm | system memory | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `affogato01` | allocated | Intel Skylake | 1 x 16 x 2 | 32 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato02` | mixed | Intel Skylake | 2 x 16 x 2 | 64 | 119 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato03` | mixed | Intel Skylake | 1 x 8 x 2 | 16 | 94 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato04` | mixed | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato05` | allocated | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato06` | mixed | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato07` | idle | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato08` | idle | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato09` | idle | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `affogato10` | idle | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat01` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat02` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat03` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat04` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat05` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
-| `bigcat06` | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1367 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado01` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado02` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado03` | idle | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado04` | idle | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado05` | idle | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado06` | down+not_responding | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado07` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado08` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado09` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `cortado10` | mixed | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `hydro` | idle+reserved | Intel Skylake | 2 x 16 x 2 | 64 | 250 GiB | N/A | N/A | N/A | N/A | N/A |
-| `lynx08` | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | N/A | N/A | N/A | N/A | N/A |
-| `lynx09` | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | N/A | N/A | N/A | N/A | N/A |
-| `panther01` | allocated | Intel Skylake | 1 x 8 x 2 | 16 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `puma01` | mixed | Intel Ice Lake | 2 x 40 x 2 | 160 | 246 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct01` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct02` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct03` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct04` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct05` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct06` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct07` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct08` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
-| `struct09` | idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
+| node | number<br>of nodes | state | cpu model | sockets x cores x threads | cpus counted by slurm<br>(per node) | system memory<br>(per node) | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `affogato01` | 1 | allocated | Intel Skylake | 1 x 16 x 2 | 32 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
+| `affogato02` | 1 | mixed | Intel Skylake | 2 x 16 x 2 | 64 | 119 GiB | N/A | N/A | N/A | N/A | N/A |
+| `affogato03` | 1 | mixed | Intel Skylake | 1 x 8 x 2 | 16 | 94 GiB | N/A | N/A | N/A | N/A | N/A |
+| `affogato[04-05]` | 2 | 1 allocated, 1 mixed | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
+| `affogato[06-10]` | 5 | 4 idle, 1 mixed | Intel Skylake | 1 x 8 x 2 | 16 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
+| `bigcat[01-05]` | 5 | 5 idle | Intel Skylake | 2 x 16 x 2 | 64 | 1465 GiB | N/A | N/A | N/A | N/A | N/A |
+| `bigcat06` | 1 | idle | Intel Skylake | 2 x 16 x 2 | 64 | 1367 GiB | N/A | N/A | N/A | N/A | N/A |
+| `cortado[01-05,07-10]` | 9 | 6 mixed, 3 idle | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
+| `cortado06` | 1 | down+not_responding | Intel Skylake | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
+| `hydro` | 1 | idle+reserved | Intel Skylake | 2 x 16 x 2 | 64 | 250 GiB | N/A | N/A | N/A | N/A | N/A |
+| `lynx[08-09]` | 2 | 2 idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | N/A | N/A | N/A | N/A | N/A |
+| `panther01` | 1 | allocated | Intel Skylake | 1 x 8 x 2 | 16 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
+| `puma01` | 1 | mixed | Intel Ice Lake | 2 x 40 x 2 | 160 | 246 GiB | N/A | N/A | N/A | N/A | N/A |
+| `struct[01-09]` | 9 | 9 idle | Intel Broadwell | 1 x 14 x 2 | 28 | 125 GiB | N/A | N/A | N/A | N/A | N/A |
+| **total** | **40** | N/A | N/A | N/A | **1676**<br>(in total) | **16.7 TiB**<br>(in total) | **0**<br>(in total) | N/A | N/A | N/A | N/A |
 
 ## Table 2 — partition `gpu`
 
 Every gpu node that is not in gnolim; a 4-day time limit. 42 nodes, 2144 cpus counted by slurm, 160 GPUs, 21.3 TiB of system memory in total. Time limit 4-00:00:00, qos `cspartgpu`. Per user: 400 cpus, 40 gpus, 4 TiB memory.
 
-| node | state | cpu model | sockets x cores x threads | cpus counted by slurm | system memory | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `adriatic01` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `adriatic02` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `adriatic03` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `adriatic04` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `adriatic05` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `adriatic06` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `affogato11` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `affogato13` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `affogato14` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `affogato15` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `ai01` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `ai02` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `ai03` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `ai04` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `ai06` | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 3 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `cheetah01` | mixed | AMD EPYC 7252 | 2 x 8 x 2 | 32 | 250 GiB | 4 | A100 | 40 GiB | Ampere (2020) | 8.0 |
-| `cheetah02` | idle | Intel Skylake | 2 x 18 x 2 | 72 | 1000 GiB | 4 | RTX 4000 Ada | 20 GiB | Ada (2023) | 8.9 |
-| `cheetah03` | idle | Intel Skylake | 2 x 18 x 2 | 72 | 1000 GiB | 2 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `cheetah04` | mixed | AMD EPYC 7742 | 2 x 64 x 2 | 256 | 1000 GiB | 4 | A100 | 79 GiB* | Ampere (2020) | 8.0 |
-| `cheetah08` | idle | Intel Skylake | 2 x 10 x 2 | 40 | 500 GiB | 4 | RTX A4000 | 16 GiB | Ampere (2021) | 8.6 |
-| `cheetah09` | idle | Intel Skylake | 2 x 10 x 2 | 40 | 500 GiB | 4 | RTX A4000 | 16 GiB | Ampere (2021) | 8.6 |
-| `jaguar01` | mixed | Intel Skylake | 2 x 16 x 2 | 64 | 1000 GiB | 4 | A40 | 45 GiB | Ampere (2020) | 8.6 |
-| `jaguar02` | idle | Intel Ice Lake | 2 x 8 x 2 | 32 | 1000 GiB | 8 | A16 | 15 GiB | Ampere (2021) | 8.6 |
-| `jaguar03` | idle | AMD EPYC 7663 | 2 x 56 x 2 | 224 | 1000 GiB | 8 | RTX A4500 | 20 GiB | Ampere (2021) | 8.6 |
-| `jaguar05` | idle | Intel Skylake | 1 x 8 x 2 | 16 | 250 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
-| `jaguar06` | mixed | Intel Ice Lake | 2 x 12 x 2 | 48 | 123 GiB | 2 | A40 | 45 GiB | Ampere (2020) | 8.6 |
-| `lotus` | idle | Intel Skylake | 2 x 20 x 2 | 80 | 250 GiB | 8 | Quadro RTX 6000 | 24 GiB* | Turing (2018) | 7.5 |
-| `lynx01` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Titan Xp | 12 GiB* | Pascal (2017) | 6.1 |
-| `lynx02` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `lynx03` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `lynx04` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `lynx05` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Tesla P100 | 12 GiB* | Pascal (2016) | 6.0 |
-| `lynx06` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Tesla P100 | 12 GiB* | Pascal (2016) | 6.0 |
-| `lynx07` | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Tesla P100 | 12 GiB* | Pascal (2016) | 6.0 |
-| `lynx10` | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
-| `nekomata01` | mixed | Intel Ice Lake | 1 x 12 x 2 | 24 | 125 GiB | 2 | RTX 5080 | 16 GiB* | Blackwell (2025) | 12.0 |
-| `nekomata02` | mixed | Intel Ice Lake | 1 x 12 x 2 | 24 | 125 GiB | 2 | RTX 5080 | 16 GiB* | Blackwell (2025) | 12.0 |
-| `serval03` | idle+reserved | AMD EPYC 9534 | 1 x 64 x 2 | 128 | 500 GiB | 1 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
-| `serval06` | mixed | AMD EPYC 9354 | 1 x 32 x 2 | 64 | 1465 GiB | 2 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
-| `serval07` | mixed | AMD EPYC 9354 | 1 x 32 x 2 | 64 | 1465 GiB | 2 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
-| `serval08` | mixed | AMD EPYC 9354 | 1 x 32 x 2 | 64 | 1465 GiB | 2 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
-| `serval09` | mixed | AMD EPYC 9354 | 1 x 32 x 2 | 64 | 1465 GiB | 2 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
+| node | number<br>of nodes | state | cpu model | sockets x cores x threads | cpus counted by slurm<br>(per node) | system memory<br>(per node) | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `adriatic[01-06]` | 6 | 6 idle | Intel Skylake | 2 x 8 x 2 | 32 | 1000 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
+| `affogato11` | 1 | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
+| `affogato[13-15]` | 3 | 3 mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
+| `ai[01-04]` | 4 | 4 mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
+| `ai06` | 1 | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 3 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
+| `cheetah01` | 1 | mixed | AMD EPYC 7252 | 2 x 8 x 2 | 32 | 250 GiB | 4 | A100 | 40 GiB | Ampere (2020) | 8.0 |
+| `cheetah02` | 1 | idle | Intel Skylake | 2 x 18 x 2 | 72 | 1000 GiB | 4 | RTX 4000 Ada | 20 GiB | Ada (2023) | 8.9 |
+| `cheetah03` | 1 | idle | Intel Skylake | 2 x 18 x 2 | 72 | 1000 GiB | 2 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
+| `cheetah04` | 1 | mixed | AMD EPYC 7742 | 2 x 64 x 2 | 256 | 1000 GiB | 4 | A100 | 79 GiB* | Ampere (2020) | 8.0 |
+| `cheetah[08-09]` | 2 | 2 idle | Intel Skylake | 2 x 10 x 2 | 40 | 500 GiB | 4 | RTX A4000 | 16 GiB | Ampere (2021) | 8.6 |
+| `jaguar01` | 1 | mixed | Intel Skylake | 2 x 16 x 2 | 64 | 1000 GiB | 4 | A40 | 45 GiB | Ampere (2020) | 8.6 |
+| `jaguar02` | 1 | idle | Intel Ice Lake | 2 x 8 x 2 | 32 | 1000 GiB | 8 | A16 | 15 GiB | Ampere (2021) | 8.6 |
+| `jaguar03` | 1 | idle | AMD EPYC 7663 | 2 x 56 x 2 | 224 | 1000 GiB | 8 | RTX A4500 | 20 GiB | Ampere (2021) | 8.6 |
+| `jaguar05` | 1 | idle | Intel Skylake | 1 x 8 x 2 | 16 | 250 GiB | 4 | Quadro RTX 4000 | 8 GiB* | Turing (2018) | 7.5 |
+| `jaguar06` | 1 | mixed | Intel Ice Lake | 2 x 12 x 2 | 48 | 123 GiB | 2 | A40 | 45 GiB | Ampere (2020) | 8.6 |
+| `lotus` | 1 | idle | Intel Skylake | 2 x 20 x 2 | 80 | 250 GiB | 8 | Quadro RTX 6000 | 24 GiB* | Turing (2018) | 7.5 |
+| `lynx01` | 1 | mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Titan Xp | 12 GiB* | Pascal (2017) | 6.1 |
+| `lynx[02-04]` | 3 | 3 mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
+| `lynx[05-07]` | 3 | 3 mixed | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | Tesla P100 | 12 GiB* | Pascal (2016) | 6.0 |
+| `lynx10` | 1 | idle | Intel Broadwell | 2 x 8 x 2 | 32 | 62 GiB | 4 | RTX 2080 Ti | 11 GiB* | Turing (2018) | 7.5 |
+| `nekomata[01-02]` | 2 | 2 mixed | Intel Ice Lake | 1 x 12 x 2 | 24 | 125 GiB | 2 | RTX 5080 | 16 GiB* | Blackwell (2025) | 12.0 |
+| `serval03` | 1 | idle+reserved | AMD EPYC 9534 | 1 x 64 x 2 | 128 | 500 GiB | 1 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
+| `serval[06-09]` | 4 | 4 mixed | AMD EPYC 9354 | 1 x 32 x 2 | 64 | 1465 GiB | 2 | H100 NVL | 94 GiB | Hopper (2023) | 9.0 |
+| **total** | **42** | N/A | N/A | N/A | **2144**<br>(in total) | **21.3 TiB**<br>(in total) | **160**<br>(in total) | N/A | N/A | N/A | N/A |
 
 ## Table 3 — partition `nolim`
 
 No gpus, a 20-day time limit, small core pool. 6 nodes, 232 cpus counted by slurm, no GPUs, 2.3 TiB of system memory in total. Time limit 20-00:00:00, qos `cspartnolim`. Per user: 80 cpus, no gpu cap (no gpus here), 1 TiB memory.
 
-| node | state | cpu model | sockets x cores x threads | cpus counted by slurm | system memory | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `heartpiece` | mixed | Intel Skylake | 2 x 10 x 2 | 40 | 156 GiB | N/A | N/A | N/A | N/A | N/A |
-| `slurm1` | idle | Intel Haswell | 2 x 12 x 1 | 24 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `slurm2` | mixed | Intel Haswell | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `slurm3` | mixed | Intel Haswell | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `slurm4` | idle | Intel Haswell | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
-| `slurm5` | idle | Intel Haswell | 1 x 12 x 2 | 24 | 250 GiB | N/A | N/A | N/A | N/A | N/A |
+| node | number<br>of nodes | state | cpu model | sockets x cores x threads | cpus counted by slurm<br>(per node) | system memory<br>(per node) | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `heartpiece` | 1 | mixed | Intel Skylake | 2 x 10 x 2 | 40 | 156 GiB | N/A | N/A | N/A | N/A | N/A |
+| `slurm1` | 1 | idle | Intel Haswell | 2 x 12 x 1 | 24 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
+| `slurm[2-4]` | 3 | 2 mixed, 1 idle | Intel Haswell | 2 x 12 x 2 | 48 | 500 GiB | N/A | N/A | N/A | N/A | N/A |
+| `slurm5` | 1 | idle | Intel Haswell | 1 x 12 x 2 | 24 | 250 GiB | N/A | N/A | N/A | N/A | N/A |
+| **total** | **6** | N/A | N/A | N/A | **232**<br>(in total) | **2.3 TiB**<br>(in total) | **0**<br>(in total) | N/A | N/A | N/A | N/A |
 
 ## Table 4 — partition `gnolim`
 
 Older gpu nodes with a 20-day time limit. 8 nodes, 232 cpus counted by slurm, 25 GPUs, 1.3 TiB of system memory in total. Time limit 20-00:00:00, qos `cspartgnolim`. Per user: 80 cpus, 20 gpus, 1 TiB memory.
 
-| node | state | cpu model | sockets x cores x threads | cpus counted by slurm | system memory | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `ai05` | mixed | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
-| `ai07` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `ai08` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `ai09` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 109 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
-| `ai10` | idle | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
-| `jinx01` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 215 GiB | 2 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
-| `jinx02` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 215 GiB | 2 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
-| `titanx03` | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 244 GiB | 1 | TITAN X (Pascal) | 12 GiB | Pascal (2016) | 6.1 |
+| node | number<br>of nodes | state | cpu model | sockets x cores x threads | cpus counted by slurm<br>(per node) | system memory<br>(per node) | gpus per node | gpu model | gpu memory per card | gpu architecture (year) | gpu compute capability |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `ai[05,10]` | 2 | 1 idle, 1 mixed | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
+| `ai[07-08]` | 2 | 2 idle | Intel Skylake | 2 x 8 x 2 | 32 | 125 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
+| `ai09` | 1 | idle | Intel Skylake | 2 x 8 x 2 | 32 | 109 GiB | 4 | GTX 1080 Ti | 11 GiB | Pascal (2017) | 6.1 |
+| `jinx[01-02]` | 2 | 2 mixed | Intel Haswell | 1 x 12 x 2 | 24 | 215 GiB | 2 | GTX 1080 | 8 GiB* | Pascal (2016) | 6.1 |
+| `titanx03` | 1 | mixed | Intel Haswell | 1 x 12 x 2 | 24 | 244 GiB | 1 | TITAN X (Pascal) | 12 GiB | Pascal (2016) | 6.1 |
+| **total** | **8** | N/A | N/A | N/A | **232**<br>(in total) | **1.3 TiB**<br>(in total) | **25**<br>(in total) | N/A | N/A | N/A | N/A |
 
-## Table 5 — per-user limits, per partition
+## Table 5 — the four partitions added up
+
+The total row of each table above, gathered here. Every node belongs to exactly one partition,
+so the last row is the whole cluster.
+
+| partition | number of nodes | cpus counted by slurm | gpus | system memory |
+|---|---|---|---|---|
+| `cpu` | 40 | 1676 | 0 | 16.7 TiB |
+| `gpu` | 42 | 2144 | 160 | 21.3 TiB |
+| `nolim` | 6 | 232 | 0 | 2.3 TiB |
+| `gnolim` | 8 | 232 | 25 | 1.3 TiB |
+| **all four partitions** | **96** | **4284** | **185** | **41.6 TiB** |
+
+## Table 6 — per-user limits, per partition
 
 What one user may hold at once. A reservation job is admitted above the partition caps, but its
 usage still counts into them, so open-partition jobs are submitted first and reservation jobs last.
+The total row adds the four partitions only: the caps on the reservation row are set high enough
+never to bind, so counting them in would report a limit nobody actually has.
 
 | partition | qos | time limit | gpus in partition | per-user cpu cap | per-user gpu cap | per-user memory cap |
 |---|---|---|---|---|---|---|
@@ -153,8 +130,9 @@ usage still counts into them, so open-partition jobs are submitted first and res
 | `nolim` | `cspartnolim` | 20-00:00:00 | N/A | 80 | N/A | 1 TiB |
 | `gnolim` | `cspartgnolim` | 20-00:00:00 | 25 | 80 | 20 | 1 TiB |
 | reservation<br>(needs `--reservation`) | `csresnolim` | min(partition limit, reservation end) | the reserved nodes | 16384 | 1024 | 1024 TiB |
+| **total<br>(the four partitions)** | N/A | N/A | **185** | **960** | **60** | **10 TiB** |
 
-## Table 6 — GPU generations present, and which PyTorch build reaches them
+## Table 7 — GPU generations present, and which PyTorch build reaches them
 
 A PyTorch wheel carries compiled code for a fixed list of GPU architectures. Code compiled for
 one architecture runs on any card with the same major compute-capability number, so an `sm_86`
@@ -170,6 +148,7 @@ build also covers compute capability 8.9, but nothing covers a major number that
 | 8.9 | Ada | gpu | 1 | 4 | RTX 4000 Ada |
 | 9.0 | Hopper | gpu | 5 | 9 | H100 NVL |
 | 12.0 | Blackwell | gpu | 2 | 4 | RTX 5080 |
+| **total** | N/A | N/A | **50** | **185** | **16 distinct models** |
 
 Measured on 2026-08-05 with `torch._C._cuda_getArchFlags()`:
 

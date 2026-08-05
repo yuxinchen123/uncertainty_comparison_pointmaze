@@ -8509,9 +8509,10 @@ which is $1.85$~GB as \texttt{float32} against $0.46$~GB as \texttt{uint8}, and 
 each observation to \texttt{float32} \emph{on the host} before copying it to the GPU, so it moved four
 times the bytes it needed to. The networks divide by $255$ either way and every \texttt{uint8} value
 is exactly representable in \texttt{float32}, so the arithmetic is untouched. Separately, start-up
-fell from $531$ to $79$ seconds by filling the observation-normalizer's warm-up batch into a
-preallocated buffer instead of through Python lists --- which matters more than it looks, because
-start-up is paid again at every resume.
+fell by a factor of four to seven --- from $456$--$688$ seconds to $79$--$154$ across the seven
+measured cards --- by filling the observation-normalizer's warm-up batch into a preallocated
+buffer instead of through Python lists, which matters more than it looks because start-up is paid
+again at every resume.
 
 \paragraph{A trap: the correction and the convolution autotuner are destructive together.}
 Dropping the auto-reset rows makes the surviving row count differ from update to update, so a

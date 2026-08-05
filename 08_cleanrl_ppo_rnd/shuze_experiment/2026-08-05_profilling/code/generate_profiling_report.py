@@ -14,6 +14,8 @@ import os
 import re
 import statistics
 
+from options_detail import OPTIONS
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "..", "data")
 OUT = os.path.join(HERE, "..", "2026-08-05_throughput_and_resource_profiling.md")
@@ -96,6 +98,70 @@ def load_canaries():
     for f in sorted(glob.glob(os.path.join(DATA, "canary", "*.json"))):
         out.append(json.load(open(f)))
     return out
+
+
+def option_gain(ladder, ladder_key):
+    """Per node, this option's throughput divided by the previous ladder row's.
+
+    The ladder is cumulative, so a variant's step over its predecessor is exactly the contribution of
+    the single option that variant switched on.
+    """
+    order = list(VARIANT_LABEL)
+    idx = order.index(ladder_key)
+    prev_key = order[idx - 1]
+    rows = []
+    for node in sorted(ladder):
+        vs = ladder[node]["variants"]
+        if ladder_key in vs and prev_key in vs:
+            before, after = vs[prev_key]["steps_per_second"], vs[ladder_key]["steps_per_second"]
+            rows.append([f"`{node}`", vs[ladder_key].get("gpu_name", "?"),
+                         f"{before:,.0f}", f"{after:,.0f}", f"{after / before:.2f}x"])
+    return rows
+
+
+def render_options(ladder, startup, shape):
+    """Render one subsection per change the 30-seed run uses, with its measured gain."""
+    L = [
+        "## Every change the run uses, one at a time",
+        "",
+        "Each subsection below is one change that the 30-seed run actually switches on: what it is,",
+        "the upstream code, the replacement, what it bought, and what it cost. The gain column is the",
+        "ladder step attributable to that one change — the ladder is cumulative, so a row's throughput",
+        "divided by the row above it is the contribution of the single option that row added.",
+        "",
+        "Changes that alter the arithmetic — float16 autocast, channels-last, TF32 matrix",
+        "multiplication, `torch.compile` — are measured in the ladder table above but are **not** used,",
+        "because the run is a faithful reproduction. They are not repeated here.",
+        "",
+    ]
+    for n, opt in enumerate(OPTIONS, start=1):
+        L += [f"### {n}. {opt['title']}", "", f"Flag: `{opt['flag']}`", "",
+              "**What it is.**", opt["what"].strip(), "",
+              "**Before** — upstream `cleanrl/ppo_rnd_envpool.py`:", "",
+              "```python", opt["before"], "```", "",
+              "**After** — `src/ppo_rnd_envpool_shuze.py`:", "",
+              "```python", opt["after"], "```", "",
+              "**What it gives.**", ""]
+        if opt["ladder_key"]:
+            rows = option_gain(ladder, opt["ladder_key"])
+            if rows:
+                L += [table(["node", "GPU", "before (steps/s)", "after (steps/s)", "gain"], rows), ""]
+            else:
+                L += ["No ladder rows reached this option yet.", ""]
+        elif opt["flag"] == "--opt_fast_obs_norm_init" and startup:
+            rows = [[f"`{n}`", f"{s['startup_original']:.0f} s", f"{s['startup_fast']:.0f} s",
+                     f"{s['startup_original'] / s['startup_fast']:.0f}x"]
+                    for n, s in startup if s.get("startup_original") and s.get("startup_fast")]
+            L += [table(["node", "start-up before", "start-up after", "ratio"], rows), "",
+                  "This is start-up time, not throughput, so it does not appear in the ladder.", ""]
+        elif opt["flag"] == "--opt_fixed_minibatch_shape" and shape:
+            for node, srows in shape.items():
+                L += [f"On `{node}`:", "",
+                      table(["configuration", "steps/s", "update phase (s)"],
+                            [[r["config"], f"{r['steps_per_second']:,}", f"{r['update_seconds']:.2f}"]
+                             for r in srows]), ""]
+        L += ["**What it costs.**", opt["costs"].strip(), "", "---", ""]
+    return L
 
 
 def table(headers, rows):
@@ -258,6 +324,10 @@ def main():
         L += ["## How many runs fit on one GPU", "",
               "The packing jobs had not finished when this document was last generated. Rerun the",
               "generator once `data/packing/` is populated.", ""]
+
+    # The per-change detail: what each option is, its before/after code, its gain, and its cost.
+    startups = [(n, d["report"]["startup"]) for n, d in ladder.items() if d["report"].get("startup")]
+    L += render_options(ladder, startups, shape)
 
     L += ["## What this means for the 30-seed run", "",
           "The run configuration is: every option that leaves the arithmetic unchanged, the auto-reset",
