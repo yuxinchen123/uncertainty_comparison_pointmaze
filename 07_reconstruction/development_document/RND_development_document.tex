@@ -40,6 +40,10 @@
 \definecolor{claude-brown}{RGB}{133,45,15}
 \definecolor{claude-green}{RGB}{0,100,0}
 \newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
+% run-8.1.2 sweep table (Table \ref{tab:pm-am-trainrun12-algos}): blue marks an arm's critical
+% design knobs, incl. inherited "same" cells that are load-bearing for that arm
+\definecolor{critical-blue}{RGB}{0,90,200}
+\newcommand{\criticalknob}[1]{{\color{critical-blue}#1}}
 \newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
 % Provenance-name marker (user request 2026-07-31): every reference to a named run artifact
 % (\runref{run-5 original-small}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
@@ -7520,7 +7524,7 @@ writes no model checkpoints.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.05}
+\renewcommand{\arraystretch}{1.0}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}
 >{\raggedright\arraybackslash}p{3.2cm}
@@ -7556,31 +7560,33 @@ networks, entropy, train freq, gradient steps, learning starts & $2\times256$ Re
 \midrule
 \multicolumn{6}{@{}l}{\textit{Intrinsic bonus}} \\
 bonus input & next state ($29$-d) & \multicolumn{4}{c}{same} \\
-networks & target $+$ predictor & same & $+$ a frozen copy of the predictor taken at
-  initialization & \multicolumn{2}{c}{same} \\
-bonus readout & \texttt{mse\_\allowbreak mean}: mean squared error over the $128$ dims &
-  \texttt{l2}: $\lVert e_\theta(s) \rVert_2$ & ratio $B(s)$, $\varepsilon = 10^{-8}$ (formula
-  above) & \multicolumn{2}{c}{same} \\
+networks & target $+$ predictor & same & \criticalknob{$+$ a frozen copy of the predictor taken
+  at initialization} & \multicolumn{2}{c}{\criticalknob{same}} \\
+bonus readout & \criticalknob{\texttt{mse\_\allowbreak mean}: mean squared error over the $128$
+  dims} & \criticalknob{\texttt{l2}: $\lVert e_\theta(s) \rVert_2$} & \criticalknob{ratio $B(s)$,
+  $\varepsilon = 10^{-8}$ (formula above)} & \multicolumn{2}{c}{\criticalknob{same}} \\
 predictor training loss & $L_{\mathrm{original}}$ (formula above) & \multicolumn{2}{c}{same} &
-  $L_{\mathrm{normalized}}$ (formula above), $\delta = 10^{-8}$ & $L_{\mathrm{original}}$ \\
+  \criticalknob{$L_{\mathrm{normalized}}$ (formula above), $\delta = 10^{-8}$} &
+  \criticalknob{$L_{\mathrm{original}}$} \\
 architecture & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper &
-  \multicolumn{3}{c}{same} & same $+$ LayerNorm after every hidden Linear of both nets (the
-  predictor's extra block included); no output LayerNorm \\
+  \multicolumn{3}{c}{same} & \criticalknob{same $+$ LayerNorm after every hidden Linear of both
+  nets (the predictor's extra block included); no output LayerNorm} \\
 output dim & $128$ & \multicolumn{4}{c}{same} \\
 weight init & orthogonal, gain $\sqrt2$ & \multicolumn{3}{c}{same} & same, Linear layers only;
   LayerNorm affine at identity \\
-bias init & zero, both nets & \texttt{normal\_\allowbreak 0.5}, both nets &
-  \multicolumn{2}{c}{same} & same, Linear biases only \\
+bias init & zero, both nets & \criticalknob{\texttt{normal\_\allowbreak 0.5}, both nets} &
+  \multicolumn{2}{c}{\criticalknob{same}} & \criticalknob{same, Linear biases only} \\
 state norm & running RMS, clip $\pm5$ & \multicolumn{4}{c}{same} \\
 state-norm warm-up & $6400$ env steps on a fresh throwaway env & \multicolumn{4}{c}{same} \\
-reward norm & on (running std, discount $0.99$) & \multicolumn{4}{c}{off} \\
-predictor optimizer & Adam $10^{-4}$ & plain SGD at a constant rate (swept), momentum $0$, weight
-  decay $0$, no schedule & \multicolumn{3}{c}{same} \\
+reward norm & \criticalknob{on (running std, discount $0.99$)} &
+  \multicolumn{4}{c}{\criticalknob{off}} \\
+predictor optimizer & \criticalknob{Adam $10^{-4}$} & \criticalknob{plain SGD at a constant rate
+  (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c}{\criticalknob{same}} \\
 update proportion & $1.0$ & \multicolumn{4}{c}{same} \\
 \midrule
 \multicolumn{6}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
-bonus weight $\beta$ & fixed at the train-run-1.1 winner: $10^{4}$ (UMaze), $3{\times}10^{3}$
-  (Medium) & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.4cm}}{the $15$-value grid of
+bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$ (UMaze),
+  $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.4cm}}{the $15$-value grid of
   Table~\ref{tab:pm-am-trainrun1-algos}: $\{10^{-3}, 3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2},
   10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2}, 3{\times}10^{2}, 10^{3}, 3{\times}10^{3},
   10^{4}\}$} \\
@@ -7604,14 +7610,14 @@ total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}
 \end{tabular}%
 }
 \caption{Algorithms for train run~1.2. ``same'' collapses a value shared with the columns to its
-left; ``N/A'' marks a knob that does not apply to a column. The baseline column is train run~1.1's
+left; ``N/A'' marks a knob that does not apply to a column. \criticalknob{Blue} marks each arm's
+critical design knobs, including ``same'' cells whose inherited value is load-bearing for that
+arm. The baseline column is train run~1.1's
 winning configuration per environment on the \runref{run-5 original-small} stack, reused unchanged
 (Table~\ref{tab:trainrun5-hparams}); the four algorithm columns are built on that same single
 stack, and differ from it only in the rows shown, reward normalization off being the deviation all
-four share. Every baseline configuration runs at $10^{7}$
-env steps (task~R) and every other configuration at $10^{6}$ (task~S). The config-count rows give
-each column's contribution as a product annotated with the swept knob; the table total is $242$
-configurations.}
+four share. Task~R runs at $10^{7}$ env steps, task~S at $10^{6}$. The config-count rows give each
+column's contribution; the table total is $242$ configurations.}
 \label{tab:pm-am-trainrun12-algos}
 \end{table}
 
