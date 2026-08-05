@@ -111,5 +111,14 @@ rule does not change which configuration defines the bar — only the scale it i
 
 ## Git state
 
-- Launch commit (commit-before-submit): recorded here at launch.
+- Launch commit (commit-before-submit): `254b79f55ec17041002cff272607e715f04bf501` on branch
+  `Use-RLexplore-RND`, pushed to origin 2026-08-05 — the exact code and run scaffolding that
+  execute this sweep (queue machinery, score rules, frozen bars, controller, checker, collaborator
+  packet, and the writeup columns).
 - Parent state at folder creation: `88b1e6d`.
+- Sweep id: `2026-08-05-16-05_lr1e3` (4,500 queue entries built at 16:26).
+- Launch gates at that commit: 35 unit tests pass
+  (`test_run_queue_convention.py`, `test_truncation_controller.py`,
+  `test_pointmaze_env_equivalence.py`, `test_truncation_check.py`), and
+  `slurm/simulate_truncation.py --full` PASSES — 45 synthetic configurations, no decision before
+  the 30-seed floor, 21 truncated, 24 survivors, 0 invariant violations across every wave.
