@@ -1,3 +1,9 @@
+> **STOPPED 2026-08-05.** This sweep was ended by the owner before the stage-1 race reached a
+> verdict. The queue's pending pools are empty (every remaining marker is parked in
+> `queue/2026-08-01-02-03_run812/stopped_2026-08-05/`), so any worker you still have running will
+> find nothing to claim and exit by itself. **Do not submit new workers for this run.** See
+> `../SWEEP_STOPPED.md`. The follow-up run has its own collaborator packet.
+
 # Run 8.1.2 (AntMaze UMaze + Medium) — collaborator packet
 
 You (any rlprojects member — the known collaborator is `yuxinchen`) can add worker jobs to this

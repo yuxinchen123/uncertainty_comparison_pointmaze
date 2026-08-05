@@ -40,10 +40,17 @@
 \definecolor{claude-brown}{RGB}{133,45,15}
 \definecolor{claude-green}{RGB}{0,100,0}
 \newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
+% Same brown, for a Claude edit that STARTS a p{} table cell. \color emits its whatsit while the
+% cell is still in vertical mode, which costs the cell an empty first line and drops its text one
+% baseline below the rest of the row (verified 2026-08-05 on the run-5 and run-1.2 tables).
+% \leavevmode opens the horizontal list first; it is a no-op anywhere \claudeedit already works.
+\newcommand{\claudecell}[1]{\leavevmode{\color{claude-brown}\,#1}}
 % run-8.1.2 sweep table (Table \ref{tab:pm-am-trainrun12-algos}): blue marks an arm's critical
 % design knobs, incl. inherited "same" cells that are load-bearing for that arm
 \definecolor{critical-blue}{RGB}{0,90,200}
-\newcommand{\criticalknob}[1]{{\color{critical-blue}#1}}
+% \leavevmode for the same reason as \claudecell above: without it, a \criticalknob that STARTS a
+% p{} cell drops one baseline below the rest of its row. It is a no-op in every other position.
+\newcommand{\criticalknob}[1]{\leavevmode{\color{critical-blue}#1}}
 \newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
 % Provenance-name marker (user request 2026-07-31): every reference to a named run artifact
 % (\runref{run-5 original-small}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
@@ -5837,8 +5844,10 @@ same SAC / \texttt{PointMaze\_\allowbreak Large-v3} stack and training-episode m
 The three arms are:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \runref{run-5 original-small} --- the \emph{original} RND recipe \citep{burda2019exploration}
-  transplanted onto this task on the train-run-3 RND network size, swept over eight intrinsic
-  weights that race under a pruning controller;
+  transplanted onto this task on the train-run-3 RND network size, \sout{swept over eight intrinsic
+  weights that race under a pruning controller}\claudeedit{run at each of the eight intrinsic
+  weights $\beta \in \{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$, which race against
+  each other under a truncation controller};
 \item \runref{run-3.2.2 benchmark} --- the RND benchmark of run 3.2.2 (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}100$,
   no reward normalization), re-run at $300$ seeds; and
 \item \runref{run-3.2.3 reward-norm} --- the reward-normalized winner of run 3.2.3 (Adam, $\mathcal{B}_{\mathrm{mse}}$,
@@ -6005,11 +6014,13 @@ and makes the following explicit translations:
   original's $2\!:\!1$ extrinsic-to-intrinsic ratio.
 \end{enumerate}
 
-\paragraph{Beta sweep and pruning.}
-The \runref{run-5 original-small} arm sweeps $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight betas
+\paragraph{\sout{Beta sweep and pruning.}\claudeedit{The eight bonus weights, and how a weight is
+stopped early.}}
+The \runref{run-5 original-small} arm \sout{sweeps}\claudeedit{runs at each of the eight bonus
+weights} $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight \sout{betas}\claudeedit{weights}
 race: let $\bar R_\beta$, $s_\beta$, and $n_\beta$ be the mean, sample standard deviation, and count
-of a beta's finished-seed final training-episode rewards, and let the \emph{bar} be the largest
-$\bar R_\beta$ over betas with $n_\beta\ge 30$. A beta is stopped once
+of a \sout{beta}\claudeedit{weight}'s finished-seed final training-episode rewards, and let the \emph{bar} be the largest
+$\bar R_\beta$ over \sout{betas}\claudeedit{weights} with $n_\beta\ge 30$. A \sout{beta}\claudeedit{weight} is stopped once
 \begin{align}
 n_\beta \ge 30
 \qquad\text{and}\qquad
@@ -6017,6 +6028,43 @@ n_\beta \ge 30
 \end{align}
 (its one-sided $99\%$ upper confidence limit sits below the running best mean); survivors run to the
 full $300$ seeds. The benchmark and reward-norm arms never prune and run all $300$ seeds.
+
+\claudeedit{\paragraph{The learning-rate addendum (submitted 2026-08-05).}
+The \runref{run-5 original-small} arm above follows the original paper's predictor learning rate of
+$10^{-4}$. The last column of Table~\ref{tab:trainrun5-hparams} is the same stack at $10^{-3}$ ---
+one knob moved, every other field of train run 5's own parameter dictionary copied unchanged and
+machine-checked to be unchanged. It runs on the same \texttt{PointMaze\_\allowbreak Large-v3}
+top-right task, for the same $10^{6}$ env steps, on $100$ fresh seeds
+(\texttt{a\_\allowbreak seed} $900$--$999$, disjoint from the $600$--$899$ above and from every
+earlier PointMaze run). It runs at each of the $15$ bonus weights $\beta \in \{10^{-3},
+3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2}, 10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2},
+3{\times}10^{2}, 10^{3}, 3{\times}10^{3}, 10^{4}\}$ --- the grid of
+Table~\ref{tab:pm-am-trainrun1-algos} rather than the eight values above, so the same range is swept
+on this environment and on the two AntMaze environments of
+subsubsection~\ref{sec:pm-am-trainrun12}.
+The truncation rule differs from the one above in what it compares against. Define
+$\bar R^{\star}$ as the mean final training-episode reward of the best $10^{-4}$ bonus weight ---
+$\beta=10^{3}$, $\bar R^{\star} = 38.6412$ over its $n=300$ completed seeds, frozen before launch
+and never recomputed. A $10^{-3}$ bonus weight with $n \ge 30$ completed seeds is stopped at the
+first controller tick at which
+\begin{align}
+\bar R_\beta + 2.576\,\frac{s_\beta}{\sqrt{n_\beta}} \;<\; \bar R^{\star},
+\end{align}
+that is, when its one-sided $99\%$ upper confidence limit falls below what the $10^{-4}$ line
+already achieved; a bonus weight that reaches $100$ completed seeds without ever failing that check
+is kept. So the addendum is not raced against itself: it is raced against the number it is meant to
+beat.}
+\claudecomment{Bar provenance:
+\texttt{slurm/\allowbreak FROZEN\_\allowbreak BARS.json} in the addendum run folder, recomputed at
+launch from train run 5's own records
+(\texttt{data/\allowbreak 2026-07-20-16-55\_\allowbreak set-baseline/\allowbreak local}, $1{,}913$
+JSONs) by \texttt{slurm/\allowbreak compute\_\allowbreak frozen\_\allowbreak bars.py}, which refuses
+to write unless the recomputed winning bonus weight is the expected $10^{3}$. Arithmetic: mean
+$38.6412$, standard deviation $30.7210$, $n=300$. Note this is a LATER snapshot than the $39.92$ at
+$n=226$ quoted in the Results paragraph below --- train run 5 finished its $300$ seeds afterwards,
+so the Results numbers there are the ones that are stale, not this bar. The winning weight is
+$10^{3}$ under both candidate score rules (final reward $38.6412$; whole-run mean $17.1492$), so the
+choice of rule does not move which configuration defines the bar.}
 
 \paragraph{Pipeline.}
 Figure~\ref{fig:trainrun5-pipeline} traces the original RND data flow --- environment step, next
@@ -6052,86 +6100,98 @@ dashed callouts. The \runref{run-5 original-small} arm follows the solid path on
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{2.5cm}
->{\raggedright\arraybackslash}p{2.5cm}
->{\raggedright\arraybackslash}p{3.2cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.4cm}
+>{\raggedright\arraybackslash}p{2.4cm}
+>{\raggedright\arraybackslash}p{2.9cm}
+>{\raggedright\arraybackslash}p{2.9cm}@{}}
 \toprule
-& & & & \multicolumn{2}{c}{\textbf{train run 3 RND}} & \\
-\cmidrule(lr){5-6}
+& & & & \multicolumn{2}{c}{\textbf{train run 3 RND}} & \multicolumn{2}{c}{\textbf{run 5 (this work)}} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}
 \textbf{Hyperparameter} &
 \textbf{RND paper} &
 \textbf{CleanRL} &
 \textbf{ExPLORe} &
 \runref{run-3.2.2 benchmark} & \runref{run-3.2.3 reward-norm} &
-\textbf{run 5 (this work)} \\
+\textbf{Adam $10^{-4}$} & \claudecell{\textbf{Adam $10^{-3}$}} \\
 & \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
-\small(no norm) & \small(reward norm) & \small(\runref{run-5 original-small}) \\
+\small(no norm) & \small(reward norm) & \small(\runref{run-5 original-small}) &
+\claudecell{\small(the same stack, one knob moved)} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
-algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{3}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
-parallel envs & $128$ & $128$ & $1$ & \multicolumn{3}{c}{$1$} \\
-on/off-policy & on-policy & on-policy & off-policy replay & \multicolumn{3}{c}{off-policy replay} \\
+\multicolumn{8}{@{}l}{\textit{RL algorithm \& environments}} \\
+algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{4}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
+parallel envs & $128$ & $128$ & $1$ & \multicolumn{4}{c}{$1$} \\
+on/off-policy & on-policy & on-policy & off-policy replay & \multicolumn{4}{c}{off-policy replay} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{RND input \& preprocessing}} \\
+\multicolumn{8}{@{}l}{\textit{RND input \& preprocessing}} \\
 RND input & next frame $s'$ ($84{\times}84$) & next frame $s'$ & concat$(s,a)$, current &
-  \multicolumn{2}{c}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) \\
+  \multicolumn{2}{c}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) & \claudecell{same} \\
 preprocessing & grayscale, sticky $0.25$ & grayscale, sticky $0.25$ & --- &
-  \multicolumn{3}{c}{--- (raw state)} \\
+  \multicolumn{4}{c}{--- (raw state)} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Network architecture \& initialization}} \\
+\multicolumn{8}{@{}l}{\textit{Network architecture \& initialization}} \\
 target net & conv$\times$3$\to$fc$512$ & conv$\times$3$\to$fc$512$ &
   $(s,a)\to256\to256\to256\to256$ &
   \multicolumn{2}{c}{$s'\!\to\!256\!\to\!128$} &
-  $s'\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$ \\
+  $s'\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$ & \claudecell{same} \\
 predictor net & conv$\times$3$\to$fc$512$\allowbreak$\to$$512$$\to$$512$ (2 deeper) &
   same (2 deeper) & same as target (symmetric) &
   \multicolumn{2}{c}{$=$ target (symmetric)} &
-  $\dots128\!\to\!\mathrm{LReLU}\!\to\!128$ (\textbf{1 deeper}) \\
-output dim $m$ & $512$ & $512$ & $256$ & \multicolumn{2}{c}{$128$} & $128$ \\
-activation & LeakyReLU $0.2$ & LeakyReLU $0.01$ & ReLU & \multicolumn{2}{c}{ReLU} & LeakyReLU $0.2$ \\
+  $\dots128\!\to\!\mathrm{LReLU}\!\to\!128$ (\textbf{1 deeper}) & \claudecell{same} \\
+output dim $m$ & $512$ & $512$ & $256$ & \multicolumn{2}{c}{$128$} & $128$ & \claudecell{same} \\
+activation & LeakyReLU $0.2$ & LeakyReLU $0.01$ & ReLU & \multicolumn{2}{c}{ReLU} & LeakyReLU $0.2$ &
+  \claudecell{same} \\
 weight init & orthogonal $\sqrt2$ & orthogonal $\sqrt2$ & Xavier/Glorot &
-  \multicolumn{3}{c}{orthogonal $\sqrt2$} \\
-bias init & zero & zero & zero & \multicolumn{3}{c}{zero} \\
+  \multicolumn{4}{c}{orthogonal $\sqrt2$} \\
+bias init & zero & zero & zero & \multicolumn{4}{c}{zero} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{State normalization}} \\
+\multicolumn{8}{@{}l}{\textit{State normalization}} \\
 obs norm & RMS, clip $\pm5$ & RMS, clip $\pm5$ & none &
-  \multicolumn{3}{c}{RMS, clip $\pm5$ (denom $\mathrm{var}{+}10^{-8}$)} \\
+  \multicolumn{4}{c}{RMS, clip $\pm5$ (denom $\mathrm{var}{+}10^{-8}$)} \\
 warm-up & $6400$ steps ($128{\times}50$) & $6400$ ($50{\times}128$) & --- &
-  \multicolumn{2}{c}{$200$ obs-space draws} & $6400$ env steps (fresh env) \\
+  \multicolumn{2}{c}{$200$ obs-space draws} & $6400$ env steps (fresh env) & \claudecell{same} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Bonus readout}} \\
+\multicolumn{8}{@{}l}{\textit{Bonus readout}} \\
 readout & $\tfrac1m\sum_j e_j^2$ & $\tfrac12\sum_j e_j^2$ & $\tfrac1m\sum_j e_j^2\times\mathrm{coeff}$ &
-  \multicolumn{2}{c}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ \\
+  \multicolumn{2}{c}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ & \claudecell{same} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Reward normalization}} \\
+\multicolumn{8}{@{}l}{\textit{Reward normalization}} \\
 reward norm (Eq.~\eqref{eq:rwd-norm}) & running std, $\gamma_{\mathrm{int}}{=}0.99$ & running std, $\gamma_{\mathrm{int}}{=}0.99$ & none &
-  no & $\gamma_{\mathrm{int}}{=}0.99$ & $\gamma_{\mathrm{int}}{=}0.99$ \\
-non-episodic filter & yes & yes & --- & --- & yes & yes \\
+  no & $\gamma_{\mathrm{int}}{=}0.99$ & $\gamma_{\mathrm{int}}{=}0.99$ & \claudecell{same} \\
+non-episodic filter & yes & yes & --- & --- & yes & yes & \claudecell{same} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Predictor optimizer \& update}} \\
+\multicolumn{8}{@{}l}{\textit{Predictor optimizer \& update}} \\
 optimizer & Adam $10^{-4}$ & Adam $10^{-4}$ & Adam $3{\times}10^{-4}$ &
-  \multicolumn{2}{c}{Adam $10^{-3}$} & Adam $10^{-4}$ \\
-Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c}{$10^{-8}$} & $10^{-8}$ \\
+  \multicolumn{2}{c}{Adam $10^{-3}$} & Adam $10^{-4}$ &
+  \claudecell{\criticalknob{Adam $10^{-3}$ --- the one knob this column moves}} \\
+Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c}{$10^{-8}$} & $10^{-8}$ &
+  \claudecell{same} \\
 update proportion & $0.25$ (paper); $1.0$ (repo code) & $0.25$ & $1.0$ (batch $1$) &
-  \multicolumn{2}{c}{$1.0$} & $1.0$ \\
-gradient clip & none & $0.5$ & none & \multicolumn{2}{c}{none} & none \\
+  \multicolumn{2}{c}{$1.0$} & $1.0$ & \claudecell{same} \\
+gradient clip & none & $0.5$ & none & \multicolumn{2}{c}{none} & none & \claudecell{same} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Value heads}} \\
+\multicolumn{8}{@{}l}{\textit{Value heads}} \\
 value heads & dual ($V^{\mathrm{int}}\!/\!V^{\mathrm{ext}}$) & dual & single (bonus $\to$ reward) &
-  \multicolumn{3}{c}{single ($r^{\mathrm{ext}}{+}\beta r^{\mathrm{int}}$)} \\
+  \multicolumn{4}{c}{single ($r^{\mathrm{ext}}{+}\beta r^{\mathrm{int}}$)} \\
 $\gamma_{\mathrm{int}}/\gamma_{\mathrm{ext}}$ & $0.99/0.99$ (paper $0.999$) & $0.99/0.999$ & $-/0.99$ &
-  \multicolumn{3}{c}{$-/0.999$} \\
+  \multicolumn{4}{c}{$-/0.999$} \\
 adv.\ weighting & ext $2$ : int $1$ & ext $2$ : int $1$ & coeff $1.0$ &
-  $\beta{=}100$ & $\beta{=}10^{4}$ & $\beta$ swept; $0.5$ faithful \\
+  $\beta{=}100$ & $\beta{=}10^{4}$ &
+  \sout{$\beta$ swept; $0.5$ faithful}\claudecell{$8$ values of $\beta$: $\{10^{-2},$ $10^{-1},$
+  $0.5,$ $1,$ $10,$ $10^{2},$ $10^{3},$ $10^{4}\}$; $0.5$ is the faithful one} &
+  \claudecell{$15$ values of $\beta$, $10^{-3}$ to $10^{4}$ at $1$ and $3$ per decade: $\{10^{-3},$
+  $3{\times}10^{-3},$ $10^{-2},$ $3{\times}10^{-2},$ $10^{-1},$ $3{\times}10^{-1},$ $1,$ $3,$ $10,$
+  $30,$ $10^{2},$ $3{\times}10^{2},$ $10^{3},$ $3{\times}10^{3},$ $10^{4}\}$ --- the grid of
+  Table~\ref{tab:pm-am-trainrun1-algos}} \\
 \midrule
-\multicolumn{7}{@{}l}{\textit{Fixed env \& SAC block (project columns)}} \\
-env & Atari & Atari & D4RL antmaze/adroit & \multicolumn{3}{c}{\texttt{PointMaze\_\allowbreak Large-v3}, top-right} \\
-SAC / steps & --- & --- & UTD $20$ & \multicolumn{3}{c}{SB3 defaults (lr $3{\times}10^{-4}$), $10^{6}$ steps} \\
-seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ \\
+\multicolumn{8}{@{}l}{\textit{Fixed env \& SAC block (project columns)}} \\
+env & Atari & Atari & D4RL antmaze/adroit & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}, top-right} \\
+SAC / steps & --- & --- & UTD $20$ & \multicolumn{4}{c}{SB3 defaults (lr $3{\times}10^{-4}$), $10^{6}$ steps} \\
+seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ &
+  \claudecell{$900$--$999$} \\
 \bottomrule
 \end{tabular}%
 }
@@ -6149,7 +6209,27 @@ the reward-norm row, $\gamma_{\mathrm{int}}$ is the discount of the reward-norma
 Eq.~\eqref{eq:rwd-norm} (the project knob \texttt{rnd\_reward\_norm\_gamma}); in the three project
 columns it appears only inside that filter --- the ``$-$'' in the
 $\gamma_{\mathrm{int}}/\gamma_{\mathrm{ext}}$ row below refers to the discount of a separate
-intrinsic value head, which the single-head SAC setup does not have.}
+intrinsic value head, which the single-head SAC setup does not have.
+\claudeedit{The last column is the learning-rate addendum submitted 2026-08-05: the same
+\runref{run-5 original-small} stack with the predictor's Adam learning rate moved from $10^{-4}$ to
+$10^{-3}$ and nothing else touched, on $100$ fresh seeds ($900$--$999$) per bonus weight over the
+$15$-value grid, raced against the $10^{-4}$ winner's own number (see the paragraph below the
+table).}}
+\claudecomment{The new column's parameters are
+\texttt{slurm/\allowbreak build\_\allowbreak queue.py} \texttt{ORIGSMALL\_\allowbreak ADAM\_\allowbreak LR1E3\_\allowbreak PARAMS}
+in the run folder
+\texttt{train\_\allowbreak runs/\allowbreak 2026-08-05-16-05\_\allowbreak run\_\allowbreak 5\_\allowbreak 8\_\allowbreak 1\_\allowbreak 2\_\allowbreak addendum\_\allowbreak \ldots};
+that dict is train run 5's own \texttt{ORIGSMALL\_\allowbreak PARAMS} with one field changed, and
+\texttt{slurm/\allowbreak test\_\allowbreak run\_\allowbreak queue\_\allowbreak convention.py}
+asserts that \texttt{rnd\_\allowbreak lr} is the ONLY field that differs, so every ``same'' cell in
+the new column is machine-checked rather than asserted by hand. The environment is the named setup
+\texttt{initial\_\allowbreak single\_\allowbreak large\_\allowbreak pointmaze\_\allowbreak max\_\allowbreak 400},
+which \texttt{slurm/\allowbreak test\_\allowbreak pointmaze\_\allowbreak env\_\allowbreak equivalence.py}
+verifies reproduces train run 5's environment field for field, including the resolved goal cell
+$(1,10)$ and start cell $(7,1)$. The struck ``$\beta$ swept'' cell is replaced by the eight values
+themselves; ``swept'' alone did not say what was swept over. Caveat: results for the new column do
+not exist yet --- the sweep was submitted 2026-08-05 and its bonus-weight table will be filled in
+when the seeds land.}
 \label{tab:trainrun5-hparams}
 \end{table}
 
@@ -6163,7 +6243,9 @@ training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqr
 old-run reference rows beneath.  Recall $\mathrm{succ.}$ is the fraction of a
 configuration's seeds whose final training reward exceeds $5$ (defined for
 run~3.2.1, Section~\ref{sec:train-run-3-2-1}).  Table~\ref{tab:trainrun5-betasweep} gives all eight
-\runref{run-5 original-small} $\beta$ values with the beta-race prune verdict, and
+\runref{run-5 original-small} $\beta$ values \sout{with the beta-race prune verdict}\claudeedit{---
+$\{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$ --- with the verdict of the race between
+them}, and
 Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading the snapshot:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{Reward normalization leads, and reproduces its old result.}  The \runref{run-3.2.3 reward-norm} arm reaches
@@ -6178,7 +6260,7 @@ Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading
 \item \textbf{The bonus weight is strongly single-peaked.}  Across the eight $\beta$ the mean
   reward traces an inverted-U (Table~\ref{tab:trainrun5-betasweep}): every $\beta\le1$ sits
   below $8$, the curve climbs through $\beta=10$ ($11.84$) and $\beta=10^2$ ($29.14$) to a peak
-  at $\beta=10^3$ ($39.92$), then falls back to $18.10$ at $\beta=10^4$.  The beta race pruned
+  at $\beta=10^3$ ($39.92$), then falls back to $18.10$ at $\beta=10^4$.  The \sout{beta race}\claudeedit{race between the eight weights} pruned
   the seven off-peak weights and kept only $\beta=10^3$, which is running to the full seed
   budget.
 \end{enumerate}
@@ -6200,19 +6282,21 @@ completed so far, not the full 300.}
 \label{tab:trainrun5-results}
 \end{table}
 
-% ---- Run 5 beta-sweep table (8 run-5 original-small betas + prune verdict) ----
+% ---- Run 5 bonus-weight table (the 8 run-5 original-small weights + the race verdict) ----
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
 \renewcommand{\arraystretch}{1.2}
 \input{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/beta_sweep_table.tex}
-\caption{Train run~5, the eight \runref{run-5 original-small} bonus weights $\beta$ on the final
+\caption{Train run~5, the eight \runref{run-5 original-small} bonus weights
+\claudeedit{$\beta\in\{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$} on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
-beta-race prune verdict.  The race gives each $\beta$ at least $30$ seeds, then prunes a $\beta$
+\sout{beta-race}\claudeedit{race} verdict.  The race gives each $\beta$ at least $30$ seeds, then \sout{prunes}\claudeedit{stops} a $\beta$
 once its one-sided $99\%$ upper confidence limit falls below the running-best mean; the sole
-survivor $\beta=10^3$ runs to the full seed budget.  Partial snapshot --- pruned $\beta$ stop at
-their pruned-time $n$.}
+survivor $\beta=10^3$ runs to the full seed budget.  \sout{Partial snapshot --- pruned $\beta$ stop at
+their pruned-time $n$.}\claudeedit{A stopped $\beta$ keeps the $n$ it had reached when it was
+stopped, so the $n$ column is not constant down the table.}}
 \label{tab:trainrun5-betasweep}
 \end{table}
 
@@ -7081,7 +7165,7 @@ where the bonus enters & N/A & replay buffer stores extrinsic $+\ \beta \times$ 
   pipeline) & \multicolumn{3}{c}{same} \\
 \midrule
 \multicolumn{6}{@{}l}{\textit{Bonus weight}} \\
-beta sweep & N/A & \multicolumn{4}{>{\raggedright\arraybackslash}p{12.0cm}}{$\{10^{-3},
+\sout{beta sweep}\claudeedit{bonus weight $\beta$ --- the values run} & N/A & \multicolumn{4}{>{\raggedright\arraybackslash}p{12.0cm}}{$\{10^{-3},
   3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2}, 10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2},
   3{\times}10^{2}, 10^{3}, 3{\times}10^{3}, 10^{4}\}$ --- $15$ values (the same for the RND and the
   three ground-truth columns)} \\
@@ -7526,11 +7610,12 @@ writes no model checkpoints.
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.0}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{3.2cm}
->{\raggedright\arraybackslash}p{3.2cm}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.5cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{3.0cm}
+>{\raggedright\arraybackslash}p{2.2cm}
 >{\raggedright\arraybackslash}p{2.3cm}
->{\raggedright\arraybackslash}p{2.4cm}
+>{\raggedright\arraybackslash}p{2.8cm}
 >{\raggedright\arraybackslash}p{3.0cm}@{}}
 \toprule
 \textbf{Hyperparameter} &
@@ -7538,74 +7623,93 @@ writes no model checkpoints.
 \textbf{SAC $+$ algorithm 1} &
 \textbf{SAC $+$ algorithm 2.1} &
 \textbf{SAC $+$ algorithm 2.2} &
-\textbf{SAC $+$ algorithm 2.3} \\
+\textbf{SAC $+$ algorithm 2.3} &
+\claudecell{\textbf{SAC $+$ RND baseline at Adam $10^{-3}$}} \\
 & \small(run-5 original-small stack; task R) & \small(this work; task S) &
-  \small(this work; task S) & \small(this work; task S) & \small(this work; task S) \\
+  \small(this work; task S) & \small(this work; task S) & \small(this work; task S) &
+  \claudecell{\small(the learning-rate addendum; its own sweep)} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{RL algorithm \& environments}} \\
-base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} \\
+\multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
+base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} & \claudecell{same} \\
 environments & AntMaze UMaze and Medium, \texttt{start\_\allowbreak bottom\_\allowbreak left} &
-  \multicolumn{4}{c}{same} \\
+  \multicolumn{4}{c}{same} & \claudecell{same} \\
 total env steps & $10^{7}$, in one stage & $10^{6}$ (stage $1$; stage $2$ deferred) &
-  \multicolumn{3}{c}{same} \\
+  \multicolumn{3}{c}{same} & \claudecell{$10^{6}$, in one stage} \\
 device / partitions & cuda on the gpu partition; cpu on gnolim ($20$-day jobs) &
-  cpu only (cpu, nolim, reserved jaguar03) & \multicolumn{3}{c}{same} \\
+  cpu only (cpu, nolim, reserved jaguar03) & \multicolumn{3}{c}{same} &
+  \claudecell{cpu only (cpu and nolim; no gpu, gnolim or reservation)} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{SAC (every value as in Table~\ref{tab:pm-am-trainrun1-algos})}} \\
-discount & $0.99$ & \multicolumn{4}{c}{same} \\
+\multicolumn{7}{@{}l}{\textit{SAC (every value as in Table~\ref{tab:pm-am-trainrun1-algos})}} \\
+discount & $0.99$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
 optimizer, batch, tau, buffer & Adam $3{\times}10^{-4}$, $256$, $0.005$, $10^{6}$ (SB3 defaults) &
-  \multicolumn{4}{c}{same} \\
+  \multicolumn{4}{c}{same} & \claudecell{same} \\
 networks, entropy, train freq, gradient steps, learning starts & $2\times256$ ReLU; auto
-  temperature, target $-\dim(A)$; $1$, $1$, $100$ (SB3 defaults) & \multicolumn{4}{c}{same} \\
+  temperature, target $-\dim(A)$; $1$, $1$, $100$ (SB3 defaults) & \multicolumn{4}{c}{same} &
+  \claudecell{same} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{Intrinsic bonus}} \\
-bonus input & next state ($29$-d) & \multicolumn{4}{c}{same} \\
+\multicolumn{7}{@{}l}{\textit{Intrinsic bonus}} \\
+bonus input & next state ($29$-d) & \multicolumn{4}{c}{same} & \claudecell{same} \\
 networks & target $+$ predictor & same & \criticalknob{$+$ a frozen copy of the predictor taken
-  at initialization} & \multicolumn{2}{c}{\criticalknob{same}} \\
+  at initialization} & \multicolumn{2}{c}{\criticalknob{same}} &
+  \claudecell{target $+$ predictor, as the RND baseline} \\
 bonus readout & \criticalknob{\texttt{mse\_\allowbreak mean}: mean squared error over the $128$
   dims} & \criticalknob{\texttt{l2}: $\lVert e_\theta(s) \rVert_2$} & \criticalknob{ratio $B(s)$,
-  $\varepsilon = 10^{-8}$ (formula above)} & \multicolumn{2}{c}{\criticalknob{same}} \\
+  $\varepsilon = 10^{-8}$ (formula above)} & \multicolumn{2}{c}{\criticalknob{same}} &
+  \claudecell{\criticalknob{\texttt{mse\_\allowbreak mean}, as the RND baseline}} \\
 predictor training loss & $L_{\mathrm{original}}$ (formula above) & \multicolumn{2}{c}{same} &
   \criticalknob{$L_{\mathrm{normalized}}$ (formula above), $\delta = 10^{-8}$} &
-  \criticalknob{$L_{\mathrm{original}}$} \\
+  \criticalknob{$L_{\mathrm{original}}$} & \claudecell{$L_{\mathrm{original}}$} \\
 architecture & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper &
   \multicolumn{3}{c}{same} & \criticalknob{same $+$ LayerNorm after every hidden Linear of both
-  nets (the predictor's extra block included); no output LayerNorm} \\
-output dim & $128$ & \multicolumn{4}{c}{same} \\
+  nets (the predictor's extra block included); no output LayerNorm} &
+  \claudecell{as the RND baseline (no LayerNorm)} \\
+output dim & $128$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
 weight init & orthogonal, gain $\sqrt2$ & \multicolumn{3}{c}{same} & same, Linear layers only;
-  LayerNorm affine at identity \\
+  LayerNorm affine at identity & \claudecell{orthogonal, gain $\sqrt2$} \\
 bias init & zero, both nets & \criticalknob{\texttt{normal\_\allowbreak 0.5}, both nets} &
-  \multicolumn{2}{c}{\criticalknob{same}} & \criticalknob{same, Linear biases only} \\
-state norm & running RMS, clip $\pm5$ & \multicolumn{4}{c}{same} \\
-state-norm warm-up & $6400$ env steps on a fresh throwaway env & \multicolumn{4}{c}{same} \\
+  \multicolumn{2}{c}{\criticalknob{same}} & \criticalknob{same, Linear biases only} &
+  \claudecell{\criticalknob{zero, both nets --- as the RND baseline}} \\
+state norm & running RMS, clip $\pm5$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
+state-norm warm-up & $6400$ env steps on a fresh throwaway env & \multicolumn{4}{c}{same} &
+  \claudecell{same} \\
 reward norm & \criticalknob{on (running std, discount $0.99$)} &
-  \multicolumn{4}{c}{\criticalknob{off}} \\
+  \multicolumn{4}{c}{\criticalknob{off}} &
+  \claudecell{\criticalknob{on (running std, discount $0.99$) --- as the RND baseline}} \\
 predictor optimizer & \criticalknob{Adam $10^{-4}$} & \criticalknob{plain SGD at a constant rate
-  (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c}{\criticalknob{same}} \\
-update proportion & $1.0$ & \multicolumn{4}{c}{same} \\
+  (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c}{\criticalknob{same}} &
+  \claudecell{\criticalknob{Adam $10^{-3}$ --- the one knob that separates this column from the
+  RND baseline}} \\
+update proportion & $1.0$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
+\multicolumn{7}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
 bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$ (UMaze),
-  $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.4cm}}{the $15$-value grid of
+  $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{10.3cm}}{the $15$-value grid of
   Table~\ref{tab:pm-am-trainrun1-algos}: $\{10^{-3}, 3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2},
   10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2}, 3{\times}10^{2}, 10^{3}, 3{\times}10^{3},
-  10^{4}\}$} \\
-SGD learning rate & N/A & \multicolumn{4}{c}{$\{10^{-3}, 10^{-2}\}$} \\
+  10^{4}\}$} & \claudecell{the same $15$-value grid} \\
+SGD learning rate & N/A & \multicolumn{4}{c}{$\{10^{-3}, 10^{-2}\}$} & \claudecell{N/A (Adam)} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{Seeds, pruning, checkpointing}} \\
+\multicolumn{7}{@{}l}{\textit{Seeds, pruning, checkpointing}} \\
 seeds & $100$ per environment, all at $10^{7}$ steps & race to $100$ at $10^{6}$ steps; prune
-  checks from $n \ge 30$ & \multicolumn{3}{c}{same} \\
+  checks from $n \ge 30$ & \multicolumn{3}{c}{same} &
+  \claudecell{race to $100$ at $10^{6}$ steps; checks from $n \ge 30$; \texttt{a\_\allowbreak seed}
+  $0$--$99$} \\
 pruning & never (benchmark arm) & stage-1 frozen-bar racing (rules above) &
-  \multicolumn{3}{c}{same} \\
-checkpoints & none --- every run completes inside one Slurm job & \multicolumn{4}{c}{same} \\
+  \multicolumn{3}{c}{same} &
+  \claudecell{same rule and same frozen bars ($-689.7404$ UMaze, $-998.4678$ Medium), so this
+  column is scored against the $10^{-4}$ result exactly as the four algorithm columns are} \\
+checkpoints & none --- every run completes inside one Slurm job & \multicolumn{4}{c}{same} &
+  \claudecell{same} \\
 \midrule
-\multicolumn{6}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
+\multicolumn{7}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
 configs in this column & $2$(env configs) $\times$ $1$(fixed bonus weight) $= 2$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
-  $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ \\
-total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}$} \\
+  $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
+  \claudecell{$2$(env configs) $\times$ $1$(learning rate) $\times$ $15$(bonus weight) $= 30$} \\
+total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}$} &
+  \claudecell{$+\,30$ in a separate sweep} \\
 \bottomrule
 \end{tabular}%
 }
@@ -7617,7 +7721,25 @@ winning configuration per environment on the \runref{run-5 original-small} stack
 (Table~\ref{tab:trainrun5-hparams}); the four algorithm columns are built on that same single
 stack, and differ from it only in the rows shown, reward normalization off being the deviation all
 four share. Task~R runs at $10^{7}$ env steps, task~S at $10^{6}$. The config-count rows give each
-column's contribution; the table total is $242$ configurations.}
+column's contribution; the table total is $242$ configurations.
+\claudeedit{The last column is the learning-rate addendum submitted 2026-08-05: the RND baseline's
+own stack with the predictor's Adam learning rate moved from $10^{-4}$ to $10^{-3}$ and nothing else
+touched, at $10^{6}$ steps over the same $15$ bonus weights and against the same two frozen bars. It
+is NOT part of this table's $242$ configurations --- it is a separate sweep in its own run folder,
+contributing $30$ configurations on these two environments (and $15$ more on PointMaze, the last
+column of Table~\ref{tab:trainrun5-hparams}). Because it sits to the right of the algorithm columns,
+its cells never say ``same'': each one names the value or says which column it is taken from.}}
+\claudecomment{The new column's parameters are
+\texttt{slurm/\allowbreak build\_\allowbreak queue.py} \texttt{ORIGSMALL\_\allowbreak ADAM\_\allowbreak LR1E3\_\allowbreak PARAMS}
+in \texttt{train\_\allowbreak runs/\allowbreak 2026-08-05-16-05\_\allowbreak run\_\allowbreak 5\_\allowbreak 8\_\allowbreak 1\_\allowbreak 2\_\allowbreak addendum\_\allowbreak \ldots},
+which is train run 5's \texttt{ORIGSMALL\_\allowbreak PARAMS} with \texttt{rnd\_\allowbreak lr}
+alone changed;
+\texttt{slurm/\allowbreak test\_\allowbreak run\_\allowbreak queue\_\allowbreak convention.py}
+asserts that. Bars: \texttt{slurm/\allowbreak FROZEN\_\allowbreak BARS.json} in the same folder,
+recomputed at launch from train run 1.1's records and reproducing this run's own frozen values to
+every digit --- $-689.7404$ ($n=84$, bonus weight $10^{4}$) on UMaze and $-998.4678$ ($n=82$, bonus
+weight $3{\times}10^{3}$) on Medium. Caveat: the addendum has no results yet; it was submitted
+2026-08-05 and this table records only its design.}
 \label{tab:pm-am-trainrun12-algos}
 \end{table}
 
@@ -7713,22 +7835,39 @@ partitions and on the reserved jaguar03 node used as a CPU server. No model chec
 written: every run completes inside one Slurm job, and a run killed mid-flight is re-queued and
 re-run from the start, exactly as in train run~1.1.
 
-\paragraph{Results (interim snapshot, 2026-08-04).}
-The sweep has been running since 2026-08-01. The two tables below are regenerated in place from
+\paragraph{Results \sout{(interim snapshot, 2026-08-04)}\claudeedit{(final state; the sweep was
+stopped 2026-08-05)}.}
+The sweep \sout{has been running since 2026-08-01}\claudeedit{ran from 2026-08-01 to 2026-08-05,
+when it was stopped by the owner so the cpu and nolim pools could go to the learning-rate addendum
+(last column of Table~\ref{tab:pm-am-trainrun12-algos}). The numbers below are therefore final for
+this run, not a snapshot that will firm up: $6{,}210$ of the planned $24{,}200$ runs completed, and
+the remaining $15{,}438$ queue markers are parked unexecuted}. The two tables below are regenerated in place from
 the records on disk by \texttt{code/\allowbreak
 2026-08-04-20-00\_\allowbreak pm-am-run12-interim-tables/\allowbreak make\_\allowbreak all.py},
 which imports the run folder's own monitoring modules --- the same counting and scoring the
-20-minute monitoring report uses, so these tables can never drift from it. At this snapshot no
+20-minute monitoring report uses, so these tables can never drift from it. At \sout{this snapshot}\claudeedit{the stop} no
 task-S configuration had reached the $30$-seed decision floor yet (the fleet was partway through
-its seed waves), so every configuration is still racing, while task~R's first cuda baselines have
+its seed waves), so \sout{every configuration is still racing}\claudeedit{NO configuration was ever
+pruned and none was ever declared a survivor --- the stage-1 race reached no verdict at all}, while task~R's first cuda baselines have
 already completed their $10^{7}$ steps. Table~\ref{tab:pm-am-trainrun12-status} counts each arm's
 configurations, verdicts, and completed runs; Table~\ref{tab:pm-am-trainrun12-interim} ranks each
-arm's best configuration so far by the whole-run mean training return $\bar{R}$ (defined with the
+arm's best configuration \sout{so far}\claudeedit{at the stop} by the whole-run mean training return $\bar{R}$ (defined with the
 truncation rules above; the frozen bar is a $10^{6}$-step value).
 Figure~\ref{fig:pm-am-trainrun12-curves} draws the training-reward curves of the same best
 configurations on both a linear and a log step axis, together with BOTH RND baselines: train
 run~1.1's winner (black dashed, to $10^{6}$ steps) and this run's task-R rerun of that winner
 (black solid, to $10^{7}$ steps).
+\claudecomment{Regenerated 2026-08-05 at the stop from the $8{,}764$ per-run JSONs then on disk
+($6{,}210$ with \texttt{completed:\allowbreak true}); the previous printing of these tables was the
+2026-08-04 snapshot at $5{,}652$ completed runs. Queue state at the stop, from the run folder:
+\texttt{done/} $6{,}210$, \texttt{failed/} $0$, \texttt{running/} $2{,}552$ (mostly stranded from
+earlier walltime kills that were never requeued because the monitoring loop had stopped),
+\texttt{stopped\_\allowbreak 2026-08-05/} $15{,}438$. No decision line was ever written, so
+\texttt{slurm/\allowbreak stage1\_\allowbreak decisions\_\allowbreak \ldots jsonl} does not exist.
+Caveat for the reader: with every configuration stopped at $23$--$27$ seeds and none at the $30$
+required for a verdict, the ranking below separates arms by well under a standard error in places
+and must not be read as a result --- it is where the run was when it ended. Full account:
+\texttt{infra\_\allowbreak history.md} and \texttt{SWEEP\_\allowbreak STOPPED.md} in the run folder.}
 
 \begin{table}[H]
 \centering
@@ -7742,25 +7881,25 @@ run~1.1's winner (black dashed, to $10^{6}$ steps) and this run's task-R rerun o
 \textbf{environment} & \textbf{arm} & \textbf{configurations} & \textbf{undecided} & \textbf{pruned} & \textbf{survivors} & \textbf{completed runs} \\
 \midrule
 \texttt{AntMaze\_\allowbreak UMaze-v5} & RND baseline & 1 & N/A & N/A & N/A & 17 \\
- & algorithm 1 & 30 & 30 & 0 & 0 & 727 \\
- & algorithm 2.1 & 30 & 30 & 0 & 0 & 724 \\
- & algorithm 2.2 & 30 & 30 & 0 & 0 & 708 \\
- & algorithm 2.3 & 30 & 30 & 0 & 0 & 691 \\
+ & algorithm 1 & 30 & 30 & 0 & 0 & 784 \\
+ & algorithm 2.1 & 30 & 30 & 0 & 0 & 793 \\
+ & algorithm 2.2 & 30 & 30 & 0 & 0 & 772 \\
+ & algorithm 2.3 & 30 & 30 & 0 & 0 & 760 \\
 \texttt{AntMaze\_\allowbreak Medium-v5} & RND baseline & 1 & N/A & N/A & N/A & 20 \\
- & algorithm 1 & 30 & 30 & 0 & 0 & 696 \\
- & algorithm 2.1 & 30 & 30 & 0 & 0 & 688 \\
- & algorithm 2.2 & 30 & 30 & 0 & 0 & 689 \\
- & algorithm 2.3 & 30 & 30 & 0 & 0 & 692 \\
+ & algorithm 1 & 30 & 30 & 0 & 0 & 778 \\
+ & algorithm 2.1 & 30 & 30 & 0 & 0 & 756 \\
+ & algorithm 2.2 & 30 & 30 & 0 & 0 & 763 \\
+ & algorithm 2.3 & 30 & 30 & 0 & 0 & 767 \\
 \midrule
-\textbf{total} &  & \textbf{242} & \textbf{240} & \textbf{0} & \textbf{0} & \textbf{5652} \\
+\textbf{total} &  & \textbf{242} & \textbf{240} & \textbf{0} & \textbf{0} & \textbf{6210} \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-am-trainrun12-status
-\caption{Stage-1 status of train run~1.2 at the 2026-08-04 snapshot: one row per (environment,
+\caption{Stage-1 status of train run~1.2 at the \sout{2026-08-04 snapshot}\claudeedit{2026-08-05 stop}: one row per (environment,
 arm). ``undecided'' counts configurations still racing (no verdict at $n \ge 30$ yet); ``N/A''
 marks the task-R baseline arm, which is exempt from decisions. ``completed runs'' counts
 \texttt{completed=true} records --- $10^{6}$-step runs for the four sweep arms, $10^{7}$-step runs
-for the baseline. Auto-generated; regenerated in place as the sweep advances.}
+for the baseline. Auto-generated; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final --- the sweep produces no further records}.}
 \label{tab:pm-am-trainrun12-status}
 \end{table}
 
@@ -7780,25 +7919,25 @@ for the baseline. Auto-generated; regenerated in place as the sweep advances.}
 \textbf{\shortstack[c]{verdict\\so far}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
-algorithm 2.2 --- lr 0.01, bonus-weight 30 & {\boldmath$-672.84 \pm 1.52$} & $-682.23 \pm 2.23$ & 24 & undecided \\
-algorithm 1 --- lr 0.01, bonus-weight 3 & \underline{$-674.49 \pm 1.43$} & {\boldmath$-672.42 \pm 2.47$} & 24 & undecided \\
-algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-683.23 \pm 0.68$ & \underline{$-675.02 \pm 2.14$} & 23 & undecided \\
-algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-686.77 \pm 1.21$ & $-675.89 \pm 3.46$ & 24 & undecided \\
+algorithm 2.2 --- lr 0.01, bonus-weight 30 & {\boldmath$-672.54 \pm 1.37$} & $-681.85 \pm 2.02$ & 27 & undecided \\
+algorithm 1 --- lr 0.01, bonus-weight 3 & \underline{$-674.30 \pm 1.27$} & {\boldmath$-671.94 \pm 2.30$} & 27 & undecided \\
+algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-683.35 \pm 0.74$ & $-676.39 \pm 2.17$ & 26 & undecided \\
+algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-686.52 \pm 1.14$ & \underline{$-674.75 \pm 3.30$} & 26 & undecided \\
 RND baseline --- bonus-weight 10000 ($10^{7}$ steps) & $-695.29 \pm 1.07$ & $-699.17 \pm 0.65$ & 17 & N/A \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-689.7404$ (bonus-weight 10000); 49 of 120 configurations at or above it so far}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
-algorithm 2.2 --- lr 0.01, bonus-weight 30 & {\boldmath$-992.99 \pm 0.39$} & \underline{$-993.79 \pm 1.27$} & 24 & undecided \\
-algorithm 1 --- lr 0.01, bonus-weight 10000 & \underline{$-993.81 \pm 0.55$} & {\boldmath$-993.28 \pm 1.00$} & 23 & undecided \\
-algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-996.41 \pm 0.30$ & $-993.85 \pm 1.06$ & 24 & undecided \\
+algorithm 2.2 --- lr 0.01, bonus-weight 30 & {\boldmath$-993.16 \pm 0.38$} & $-993.98 \pm 1.19$ & 26 & undecided \\
+algorithm 1 --- lr 0.01, bonus-weight 10000 & \underline{$-993.77 \pm 0.51$} & {\boldmath$-993.46 \pm 0.92$} & 26 & undecided \\
+algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-996.35 \pm 0.30$ & \underline{$-993.93 \pm 1.02$} & 25 & undecided \\
 RND baseline --- bonus-weight 3000 ($10^{7}$ steps) & $-996.75 \pm 0.59$ & $-997.51 \pm 1.20$ & 20 & N/A \\
-algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-997.02 \pm 0.35$ & $-995.13 \pm 1.01$ & 24 & undecided \\
+algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-997.06 \pm 0.32$ & $-995.67 \pm 0.94$ & 27 & undecided \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-998.4678$ (bonus-weight 3000); 55 of 120 configurations at or above it so far}} \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-am-trainrun12-interim
 \caption{Each arm's best configuration so far (best $=$ highest mean whole-run training return
-$\bar{R}$ over its completed records), per environment, at the 2026-08-04 snapshot. $\bar{R}$ is
+$\bar{R}$ over its completed records), per environment, at the \sout{2026-08-04 snapshot}\claudeedit{2026-08-05 stop}. $\bar{R}$ is
 the whole-run mean per-episode return; $\bar{R}_{100}$ is the FINAL reward, the mean over the last
 $100$ training episodes of the run (train run~1.1's last-100 metric); $\pm$ is the standard error
 over seeds and $n$ the completed-seed count. Rows are ranked by $\bar{R}$ (the column with the
@@ -7807,14 +7946,14 @@ column within each environment block. Caveat: the baseline row's values are over
 $10^{7}$-step runs, while the four sweep arms' rows and the frozen bar are $10^{6}$-step values,
 so the baseline row is a preview rather than a like-for-like comparison at this snapshot. The line
 under each block restates the frozen bar and how many of the block's configurations currently sit
-at or above it. Auto-generated; regenerated in place as the sweep advances.}
+at or above it. Auto-generated; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final --- the sweep produces no further records}.}
 \label{tab:pm-am-trainrun12-interim}
 \end{table}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.98\linewidth]{../train_runs/2026-08-01-01-44_run_8_1_2_antmaze-umaze-medium-bottom-left_sac__rnd-origsmall-beta1e4-3e3-10M-100seed__alg1-sgd-l2-biasnormal0.5__alg2.1-ratio__alg2.2-normloss__alg2.3-layernorm__lr-1e-3-1e-2_beta-1e-3-to-1e4-x15_1M-prune30-race100-frozenbar_gamma0.99/analysis/plots/reward_curves_run812.pdf}
-\caption{Training-reward curves of train run~1.2 at the 2026-08-04 interim snapshot: one column
+\caption{Training-reward curves of train run~1.2 at the \sout{2026-08-04 interim snapshot}\claudeedit{2026-08-05 stop}: one column
 per environment (the tables' order), the SAME data in both rows --- top on a linear step axis
 over the stage-1 range (to $10^{6}$ steps), bottom on a log step axis over the full range (to
 $10^{7}$ steps), so the task-R baseline's $10^{6}$-to-$10^{7}$ tail appears only in the log row.
@@ -7827,7 +7966,7 @@ $=$ train run~1.1's winner (the previous run, to $10^{6}$ steps, from its final 
 $=$ this run's task-R rerun of that same configuration (to $10^{7}$ steps). The dotted vertical
 rule marks $10^{6}$ steps, the stage-1 screening length. Colors are fixed per arm across panels.
 Generated by \texttt{analysis/code/make\_\allowbreak reward\_\allowbreak curves.py} in the run
-folder; regenerated in place as the sweep advances.}
+folder; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final}.}
 \label{fig:pm-am-trainrun12-curves}
 \end{figure}
 

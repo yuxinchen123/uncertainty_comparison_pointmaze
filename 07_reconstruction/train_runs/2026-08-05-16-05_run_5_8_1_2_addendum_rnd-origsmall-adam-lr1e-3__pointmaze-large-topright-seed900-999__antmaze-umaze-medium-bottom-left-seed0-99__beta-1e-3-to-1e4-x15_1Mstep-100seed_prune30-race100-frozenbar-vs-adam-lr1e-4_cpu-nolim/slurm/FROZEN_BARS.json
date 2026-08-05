@@ -1,0 +1,42 @@
+{
+  "bars": {
+    "AntMaze_Medium-v5_start_bottom_left": {
+      "beta": "3000",
+      "mean": -998.4677725501422,
+      "n": 82,
+      "score_rule": "whole_run_mean",
+      "score_rule_description": "mean of train/extrinsic_reward over all train_episode_history rows (the mean per-episode extrinsic return over every training episode)",
+      "sd": 1.5544717242410815,
+      "se": 0.17166268474814064,
+      "source": "train run 1.1, sweep 2026-07-23-02-05_pm-am-run1"
+    },
+    "AntMaze_UMaze-v5_start_bottom_left": {
+      "beta": "10000",
+      "mean": -689.7403806739246,
+      "n": 84,
+      "score_rule": "whole_run_mean",
+      "score_rule_description": "mean of train/extrinsic_reward over all train_episode_history rows (the mean per-episode extrinsic return over every training episode)",
+      "sd": 6.222875604903102,
+      "se": 0.6789713928514899,
+      "source": "train run 1.1, sweep 2026-07-23-02-05_pm-am-run1"
+    },
+    "initial_single_large_pointmaze_max_400": {
+      "beta": "1000",
+      "mean": 38.641233333333325,
+      "n": 300,
+      "score_rule": "final_reward",
+      "score_rule_description": "last train_history row's train/mean_extrinsic_reward (the mean extrinsic return over the last 100 training episodes at the final evaluation)",
+      "sd": 30.72095561434274,
+      "se": 1.7736751993703324,
+      "source": "train run 5, sweep 2026-07-20-16-55_set-baseline"
+    }
+  },
+  "computed_at": "2026-08-05T16:43:03",
+  "git_at_compute": "88b1e6dbbb64b63a8fb6c9636094607c33f21cb7",
+  "schema": 1,
+  "source_local_dirs": {
+    "AntMaze_Medium-v5_start_bottom_left": "/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-23-01-35_run_8_1_pointmaze-antmaze-8env-start-bottom-left_sac__rnd-origsmall__gt-position-velocity__gt-position-maze-cell__gt-position-1m__beta-1e-3-to-1e4-x15_prune20-winner100-max300_1Mstep_default-max-episode_reward-shift-1_gamma0.99/data/2026-07-23-02-05_pm-am-run1/local",
+    "AntMaze_UMaze-v5_start_bottom_left": "/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-23-01-35_run_8_1_pointmaze-antmaze-8env-start-bottom-left_sac__rnd-origsmall__gt-position-velocity__gt-position-maze-cell__gt-position-1m__beta-1e-3-to-1e4-x15_prune20-winner100-max300_1Mstep_default-max-episode_reward-shift-1_gamma0.99/data/2026-07-23-02-05_pm-am-run1/local",
+    "initial_single_large_pointmaze_max_400": "/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/data/2026-07-20-16-55_set-baseline/local"
+  }
+}
