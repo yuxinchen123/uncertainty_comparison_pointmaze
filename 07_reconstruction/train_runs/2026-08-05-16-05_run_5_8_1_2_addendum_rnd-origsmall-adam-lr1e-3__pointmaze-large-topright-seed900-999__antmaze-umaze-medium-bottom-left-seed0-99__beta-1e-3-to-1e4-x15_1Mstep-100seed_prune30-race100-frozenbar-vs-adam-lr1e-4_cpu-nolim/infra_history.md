@@ -84,3 +84,32 @@ The 18:30 entry above left the split unexplained. It is now measured and fixed.
   runs would each have taken over 35 h rather than about 17 h. `requeue_orphans.py` returned all 24
   markers to `pending/` — queue went pending 4084 -> 4088, running 416 -> 412 — and the kill and
   requeue are recorded in `slurm/killed_orphans_<sweep id>.txt`.
+
+## 2026-08-05 19:10 — two sizing bugs in plan_jobs.py, both found by the collaborator, both fixed
+
+`yuxinchen` joined this sweep at about 19:00 (446 worker slots) and filed two problem reports. Both
+were real bugs in `slurm/plan_jobs.py`, both are fixed, and both reports are in
+`for_collaborator/problems/resolved/` with the verification appended.
+
+1. **The pool size was read from the wrong user's row.** `scontrol show assoc_mgr qos=<qos>
+   flags=qos` prints one `MaxTRESPU=` line per user of the QOS, all with the same cap, and
+   `pool_room()` used a bare `re.search` — which returns whichever user is printed first. `sl5nw` is
+   first in both records, so the owner always read the right row and never noticed; the collaborator
+   read the owner's usage and was told her free nolim room was 0 while she in fact had the whole
+   pool. The error direction is safe (under-submit), so nothing was ever over-run; the cost was an
+   idle pool. Fixed by anchoring on the running user's own `<user>(<uid>)` heading. Verified live:
+   the old search returned 0 (cpu) and 64 (nolim), both `sl5nw`'s; the anchored search returns
+   398/64 for `sl5nw` and 382/64 for `yuxinchen`.
+2. **`--ntasks-per-socket` made the second job on a half-used node pend forever.** The pin added at
+   18:45 is right for a job that takes a whole node, but after a 24-task job takes 6 cores on each
+   socket of a 12-core-per-socket node, a 22-task job pinned to 11 per socket needs 6 cores on each
+   side again — one more than the 11 that remain — so Slurm holds it on `(Resources)`. She hit 8
+   such jobs (154 idle slots) and cleared them by resubmitting the same shapes without the pin.
+   Fixed by emitting the pin ONLY for the first job planned on a node that was completely idle. That
+   keeps the protection it was added for (a single-socket job ran at under half speed here) without
+   the over-constraint: once the first job has taken an even split, the free cores it leaves are
+   already spread across both sockets. Verified live over the current candidate nodes — idle
+   2-socket nodes get the pin on job 1 and not job 2; used and single-socket nodes get none.
+
+The owner fleet was unaffected by either bug: `sl5nw`'s QOS row is first, and no owner job ever
+pended from the socket pin (the pools were at cap, so no top-up job was planned in that window).

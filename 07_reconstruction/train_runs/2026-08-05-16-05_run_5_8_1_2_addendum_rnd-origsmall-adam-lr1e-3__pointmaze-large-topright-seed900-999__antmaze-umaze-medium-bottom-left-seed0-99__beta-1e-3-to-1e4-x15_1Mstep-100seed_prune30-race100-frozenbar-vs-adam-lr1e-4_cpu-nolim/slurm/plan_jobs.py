@@ -109,7 +109,8 @@ def candidate_nodes(partition, excluded):
         if free < MIN_TASKS or mem_per_task < MIN_MEM_MB:
             continue
         nodes.append({"name": name, "free": free, "cores": cores, "mem": mem_per_task,
-                      "threads_per_core": threads_per_core, "sockets": sockets})
+                      "threads_per_core": threads_per_core, "sockets": sockets,
+                      "idle": alloc == 0})
     # fill the roomiest nodes first so the plan uses few, large jobs before many small ones
     return sorted(nodes, key=lambda n: -n["free"])
 
@@ -137,7 +138,15 @@ def pool_room(qos, cap, partition):
     """
     out = subprocess.run(["scontrol", "show", "assoc_mgr", f"qos={qos}", "flags=qos"],
                          capture_output=True, text=True).stdout
-    m = re.search(rf"MaxTRESPU=cpu={cap}\((\d+)\)", out)
+    # The record's "User Limits" block holds ONE MaxTRESPU line per user of the QOS, and the cap is
+    # identical on every line, so a bare search for MaxTRESPU returns whichever user happens to be
+    # printed first. Anchor on the running user's own "<user>(<uid>)" heading instead. Reported by a
+    # collaborator 2026-08-05: an unanchored search handed her sl5nw's 64 used nolim threads, sizing
+    # her free room to zero while she in fact had the whole pool. A missing row (this user has never
+    # submitted to this QOS) correctly yields 0.
+    user = getpass.getuser()
+    m = re.search(rf"^\s+{re.escape(user)}\(\d+\)\s*$.*?MaxTRESPU=cpu={cap}\((\d+)\)",
+                  out, re.M | re.S)
     qos_used = int(m.group(1)) if m else 0
     used = max(qos_used, my_cpus_in(partition))
     return max(0, cap - used - HEADROOM), used
@@ -224,7 +233,18 @@ def build_plan():
                 # the crowded job ran at less than half the throughput (measured 2026-08-05 — this
                 # workload is memory-latency-bound, so bandwidth per task, not cycles, sets its
                 # speed). ceil(n / sockets) forces the even split.
-                per_socket = -(-n // node["sockets"]) if node["sockets"] > 1 else None
+                #
+                # The pin is emitted ONLY for the first job on a node that was completely idle, and
+                # never for a later job on a node already in use. A collaborator reported
+                # (2026-08-05) that the pin makes the SECOND job on a half-used node pend on
+                # (Resources) forever: after a 24-task job takes 6 cores on each socket of a
+                # 12-core-per-socket node, a 22-task job pinned to 11 per socket needs 6 cores on
+                # each side again, one more than the 11 that remain. The first job's even split is
+                # what makes the pin unnecessary later anyway — the free cores it leaves behind are
+                # already spread across both sockets, so the second job cannot land single-socket.
+                first_on_node = not any(j["node"] == node["name"] for j in plan)
+                per_socket = (-(-n // node["sockets"])
+                              if node["sockets"] > 1 and node["idle"] and first_on_node else None)
                 plan.append({"partition": partition, "node": node["name"], "ntasks": n,
                              "mem_mb": n * node["mem"], "walltime": walltime,
                              "ntasks_per_socket": per_socket,
