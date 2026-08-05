@@ -44,6 +44,50 @@ unavailable on the Pascal cards. Note that `torch.cuda.is_bf16_supported()` retu
 `True` on Pascal because it counts emulation; emulated bf16 is far slower than float32,
 so the native column is the one to read.
 
+## Results per node
+
+One row per node class, all at the configuration the 30-seed run uses: the auto-reset fix,
+every same-numerics option, a constant minibatch shape, **8 cpus per run and one run per
+GPU**. This is the table to read when deciding where to put work.
+
+`days per seed` is the time one seed needs for its 2 billion steps at that rate, ignoring
+resumes. `GPU-bound share` is the update phase over the whole iteration — it is the part a
+faster card can shorten, and it bounds what a card upgrade can buy.
+
+### Measured alone on the node, 8 cpus, one run
+
+| node | GPU | architecture | compute capability | steps/s | rollout / update (s) | GPU-bound share | GPU memory (MB) | days per seed |
+|---|---|---|---|---|---|---|---|---|
+| `ai07` | NVIDIA GeForce GTX 1080 Ti | Pascal (2016) | 6.1 | 2,806 | 4.04 / 1.74 | 30% | 5,911 | 8.2 |
+| `titanx03` | NVIDIA TITAN X (Pascal) | Pascal (2016) | 6.1 | 2,662 | 4.22 / 1.87 | 30% | 5,911 | 8.7 |
+| `adriatic01` | Quadro RTX 4000 | Turing (2018) | 7.5 | 2,641 | 4.10 / 2.03 | 33% | 5,911 | 8.8 |
+| `jinx01` | NVIDIA GeForce GTX 1080 | Pascal (2016) | 6.1 | 2,436 | 4.22 / 2.43 | 36% | 5,911 | 9.5 |
+| `jaguar02` | NVIDIA A16 | Ampere (2020) | 8.6 | 2,392 | 2.95 / 3.77 | 55% | 4,545 | 9.7 |
+| `nekomata01` | NVIDIA GeForce RTX 5080 | Blackwell (2025) | 12.0 | **cannot run** | — | — | — | — |
+
+`nekomata01` could not run this stack at all — see the compute-capability
+section above for why.
+
+### The same configuration in the live 30-seed run
+
+Several runs share each node here, and other users' jobs share the hardware, so these
+are the rates the campaign actually gets. `vs alone` compares to the isolated
+measurement above; it reads N/A for every node hosting the run, because those nodes
+were deliberately left out of the profiling wave rather than have a benchmark compete
+with the training on the same hardware.
+
+| node | GPU | runs on it | cpus per run | mean steps/s | slowest run | vs alone | mean step now | days per seed |
+|---|---|---|---|---|---|---|---|---|
+| `jaguar03` | NVIDIA RTX A4500 | 8 | 8 | 4,864 | 4,723 | N/A | 5,068,800 | 4.8 |
+| `cheetah03` | NVIDIA GeForce RTX 2080 Ti | 2 | 8 | 4,035 | 4,014 | N/A | 4,096,000 | 5.7 |
+| `lotus` | Quadro RTX 6000 | 8 | 8 | 3,668 | 3,541 | N/A | 3,686,400 | 6.3 |
+| `cheetah02` | NVIDIA RTX 4000 Ada Generation | 4 | 8 | 3,454 | 3,416 | N/A | 3,686,400 | 6.7 |
+| `cheetah08` | NVIDIA RTX A4000 | 4 | 8 | 3,352 | 3,287 | N/A | 3,276,800 | 6.9 |
+| `cheetah09` | NVIDIA RTX A4000 | 4 | 8 | 3,346 | 3,279 | N/A | 3,276,800 | 6.9 |
+
+The campaign finishes when the **last** seed finishes, so the largest `days per seed`
+is the completion estimate, not the average.
+
 ## The optimization ladder, per GPU
 
 Each row adds one option to the row above. All at 16 cpus per run.

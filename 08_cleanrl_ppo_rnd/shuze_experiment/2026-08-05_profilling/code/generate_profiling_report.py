@@ -14,6 +14,7 @@ import os
 import re
 import statistics
 
+import per_node_section
 from options_detail import OPTIONS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -222,6 +223,9 @@ def main():
               "unavailable on the Pascal cards. Note that `torch.cuda.is_bf16_supported()` returns",
               "`True` on Pascal because it counts emulation; emulated bf16 is far slower than float32,",
               "so the native column is the one to read.", ""]
+
+    # ---- results per node: the table to read when deciding where to put work ----
+    L += per_node_section.render(table)
 
     # ---- the ladder ----
     if ladder:

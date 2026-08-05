@@ -21,7 +21,8 @@ nodes into **classes** rather than listing them one by one, and it covers only t
 
 ## How the new document differs
 
-The new document in this folder is `2026-08-05_school_compute_resource.md`. It keeps the previous
+The new document was built here as `2026-08-05_school_compute_resource.md` and now lives in the
+shared skill under the name `school_compute_resource.md` (see the section below). It keeps the previous
 file's column vocabulary and its per-user-limits table, and changes three things:
 
 1. **Four tables, one per partition** — `cpu`, `gpu`, `nolim`, `gnolim` — instead of two tables that
@@ -30,6 +31,27 @@ file's column vocabulary and its per-user-limits table, and changes three things
 2. **One row per node**, not one row per node class, so a specific node can be looked up directly.
 3. **More columns per node**: cpu model, sockets and cores and threads, system memory, gpus per node,
    memory per gpu, gpu model, gpu architecture family and year, and the node's current state.
+
+## Where the document lives now (2026-08-05, later the same day)
+
+The new document was moved into the shared skill and is now the only compute-resource document:
+
+| field | value |
+|---|---|
+| document | `/p/rlprojects/.claude/skills/submit-gpu-sweep/school_compute_resource/school_compute_resource.md` |
+| machine-readable twin | `.../school_compute_resource/server_introduction.json` (kept its name; every script reads it by that name) |
+| generators and inventory | `.../school_compute_resource/code/` and `.../school_compute_resource/data/` |
+
+The working folder `2026-08-05_school_compute_resource/` that used to sit next to this file was moved
+there whole — document, generators, tests, and node inventory — so nothing was left behind here and no
+second copy of the document exists. The old `server_introduction/` folder was deleted, and
+`generate_server_introduction.py` no longer writes a markdown file; it writes only the JSON.
+
+Two things were added during the move that the working copy did not have: the machines with GPUs that
+Slurm does not manage (`serval02` and `serval05`, read over ssh), and the two notes the old
+`server_introduction.md` carried that nothing else recorded — that a node-class name is the filename
+stem of that class's submission script, and that reservation coverage is read live at submit time and
+never baked into the document.
 
 Two other files were checked and are **not** the previous resource document:
 
