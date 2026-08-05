@@ -356,9 +356,17 @@ def resolve_env_threads(requested):
     envpool computes its default as min(batch_size, std::thread::hardware_concurrency()), and
     hardware_concurrency() reports the machine's core count, not the cgroup's. On a 224-core node
     inside a 16-cpu allocation that default becomes 128 threads fighting over 16 cores.
+
+    The order below matters when several runs share one job. A packed worker job holds the cores of
+    ALL its slots, so SLURM_CPUS_PER_TASK is the job's total, not this run's share — five runs in a
+    40-core job would each start 40 envpool threads on 8 cores' worth of cpu. The sweep's worker
+    manager exports GPU_SWEEP_CPUS_PER_RUN with this run's actual share, so that is read first.
     """
     if requested > 0:
         return requested
+    per_run = os.environ.get("GPU_SWEEP_CPUS_PER_RUN")
+    if per_run:
+        return int(per_run)
     return int(os.environ.get("SLURM_CPUS_PER_TASK", os.cpu_count() or 1))
 
 
