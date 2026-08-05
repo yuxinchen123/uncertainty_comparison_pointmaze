@@ -212,8 +212,10 @@ def test_compact_record_keeps_only_scalars(tmp_path, monkeypatch):
     write_records(local, base, [-600.0])
     by_key = env_metrics_tables.load_completed(SWEEP)
     rec = by_key[build_queue.config_key(base)][0]
-    assert set(rec) == {"key", "score", "completed", "total_timesteps"}
+    assert set(rec) == {"key", "score", "score100", "completed", "total_timesteps"}
     assert rec["score"] == -600.0 and rec["total_timesteps"] == build_queue.STEPS_R
+    # a single-episode synthetic history: the final (last-100) reward equals the whole-run reward
+    assert rec["score100"] == -600.0
 
 
 def test_report_writes_snapshot(tmp_path, monkeypatch):
@@ -262,10 +264,11 @@ def test_parse_worker_log(tmp_path):
 def test_mark_rows_ties_and_missing_values():
     """Edge: tied best values are all bolded (no underline for the tie), the next distinct value is
     underlined, and a row with no value for the column is skipped."""
-    rows = [{"reward": "-679.99", "_raw": {"reward": -679.99}},
-            {"reward": "-679.99", "_raw": {"reward": -679.994}},   # ties at 2 decimals
-            {"reward": "-681.01", "_raw": {"reward": -681.01}},
-            {"reward": "—", "_raw": {"reward": None}}]
+    rows = [{"reward": "-679.99", "reward100": "—", "_raw": {"reward": -679.99, "reward100": None}},
+            {"reward": "-679.99", "reward100": "—",                # ties at 2 decimals
+             "_raw": {"reward": -679.994, "reward100": None}},
+            {"reward": "-681.01", "reward100": "—", "_raw": {"reward": -681.01, "reward100": None}},
+            {"reward": "—", "reward100": "—", "_raw": {"reward": None, "reward100": None}}]
     mr.mark_rows(rows)
     assert rows[0]["reward"] == "**-679.99**" and rows[1]["reward"] == "**-679.99**"
     assert rows[2]["reward"] == "<u>-681.01</u>"

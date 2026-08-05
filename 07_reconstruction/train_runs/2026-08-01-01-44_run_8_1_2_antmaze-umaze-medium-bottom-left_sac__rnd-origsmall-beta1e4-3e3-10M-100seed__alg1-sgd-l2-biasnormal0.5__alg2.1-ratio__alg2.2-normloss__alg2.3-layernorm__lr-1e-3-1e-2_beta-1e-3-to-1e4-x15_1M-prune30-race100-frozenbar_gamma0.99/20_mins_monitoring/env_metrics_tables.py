@@ -77,8 +77,18 @@ def mean_se(vals):
     return m, math.sqrt(var) / math.sqrt(n), n
 
 
+def final_score_of_record(d):
+    """The record's FINAL reward: mean per-episode extrinsic return over the last min(100, E)
+    training episodes (the run-1.1 tables' last-100 metric), or None with no scorable episode."""
+    rows = d.get("train_episode_history") or []
+    vals = [r["train/extrinsic_reward"] for r in rows if "train/extrinsic_reward" in r]
+    if not vals:
+        return None
+    return sum(vals[-100:]) / len(vals[-100:])
+
+
 def compact_record(d):
-    """Reduce a full per-run record to the four scalars these tables need, so the loader never holds
+    """Reduce a full per-run record to the five scalars these tables need, so the loader never holds
     the long per-episode history of thousands of records at once (a task-R record carries ~10x the
     episodes of a task-S record, so this is what keeps the monitor job's memory bounded by the record
     COUNT rather than the total episode count).
@@ -86,11 +96,12 @@ def compact_record(d):
     before: {"env_setup":..., "beta":"3", "rnd_lr":"0.01", "rnd_optimizer":"sgd", "completed":true,
              "total_timesteps":1000000, "train_episode_history":[~1400 dicts], "eval_history":[20 dicts]}
     after : {"key":"AntMaze_UMaze-v5_start_bottom_left|alg2.2|lr0.01|b3", "score":-688.4,
-             "completed":True, "total_timesteps":1000000}
+             "score100":-686.1, "completed":True, "total_timesteps":1000000}
     """
     return {
         "key": build_queue.key_from_record(d),
         "score": stage1_controller.score_of_record(d),
+        "score100": final_score_of_record(d),
         "completed": d.get("completed", True),
         "total_timesteps": int(d.get("total_timesteps", 0)),
     }
@@ -163,16 +174,19 @@ def cell_str(mean, se, prec):
 
 
 def build_row(arm, config_key, recs, verdict):
-    """One metrics row: the formatted reward cell, the completed-seed count, the stage-1 verdict, plus
-    the raw reward mean (kept under "_raw" so the report can rank/mark the reward column)."""
+    """One metrics row: the formatted whole-run and final (last-100) reward cells, the completed-seed
+    count, the stage-1 verdict, plus the raw means (kept under "_raw" so the report can rank/mark
+    both reward columns)."""
     r_mean, r_se, n = mean_se([r["score"] for r in recs])
+    r100_mean, r100_se, _ = mean_se([r["score100"] for r in recs if r["score100"] is not None])
     return {
         "label": row_label(arm, config_key),
         "reward": cell_str(r_mean, r_se, 2),
+        "reward100": cell_str(r100_mean, r100_se, 2),
         "N": str(n),
         "verdict": verdict,
         "_reward_mean": r_mean,
-        "_raw": {"reward": r_mean},
+        "_raw": {"reward": r_mean, "reward100": r100_mean},
     }
 
 
@@ -226,6 +240,7 @@ def env_rows(env_setup, by_key, verdicts):
 
 
 MCOLS = [("label", "arm — knobs (best config)", "l"), ("reward", "whole-run reward", "r"),
+         ("reward100", "final reward", "r"),
          ("N", "completed seeds", "r"), ("verdict", "verdict so far", "l")]
 
 

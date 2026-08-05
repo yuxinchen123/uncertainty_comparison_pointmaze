@@ -254,7 +254,7 @@ def md_node_table(rows, total_row):
 # Section 4 — per-env interim metrics (best bold / second underlined per metric column)
 # ----------------------------------------------------------------------------------------------------
 # (raw-value key, higher_is_better, display precision) — the marked metric columns, in table order.
-MARK_SPEC = [("reward", True, 2)]
+MARK_SPEC = [("reward", True, 2), ("reward100", True, 2)]
 
 
 def mark_rows(rows):

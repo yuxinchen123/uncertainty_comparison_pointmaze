@@ -80,15 +80,24 @@ def latex_label(md_label: str) -> str:
     return f"{ARM_DISPLAY[arm]} --- {knobs}"
 
 
+def latex_cell(md_cell: str) -> str:
+    """One monitoring "mean ± se" markdown cell as a LaTeX math cell ("—" stays a --- dash).
+    before: "-672.84 ± 1.52"   after: "$-672.84 \\pm 1.52$" """
+    if md_cell == "—":
+        return "---"
+    mean_s, se_s = md_cell.split(" ± ")
+    return f"${mean_s} \\pm {se_s}$"
+
+
 def latex_metric_rows(env_setup, by_key, verdicts):
     """(rows, awaiting) for one env: env_metrics_tables.env_rows re-rendered as LaTeX cells."""
     md_rows, awaiting = env_metrics_tables.env_rows(env_setup, by_key, verdicts)
     out = []
     for r in md_rows:
-        mean_s, se_s = r["reward"].split(" ± ")
         out.append({
             "label": latex_label(r["label"]),
-            "reward": f"${mean_s} \\pm {se_s}$",
+            "reward": latex_cell(r["reward"]),
+            "reward100": latex_cell(r["reward100"]),
             "N": r["N"],
             "verdict": r["verdict"],
             "_raw": r["_raw"],
@@ -128,24 +137,25 @@ def bar_row(env_setup, by_key, ncols) -> str:
 def build_metrics_tabular(by_key, verdicts) -> str:
     """One tabular with both environments' blocks: header once, then per env a rule row, the ranked
     and marked best-configuration rows, the frozen-bar line, and the awaiting note if any."""
-    cols = ["label", "reward", "N", "verdict"]
+    cols = ["label", "reward", "reward100", "N", "verdict"]
     heads = {"label": "\\textbf{arm --- best configuration so far}",
              "reward": "\\textbf{\\shortstack[c]{whole-run\\\\reward $\\bar{R}$ $\\uparrow$}}",
+             "reward100": "\\textbf{\\shortstack[c]{final\\\\reward $\\bar{R}_{100}$}}",
              "N": "\\textbf{\\shortstack[c]{completed\\\\seeds $n$}}",
              "verdict": "\\textbf{\\shortstack[c]{verdict\\\\so far}}"}
-    lines = ["\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{6.4cm} r r l@{}}",
+    lines = ["\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{5.6cm} r r r l@{}}",
              "\\toprule",
              " &\n".join(heads[c] for c in cols) + " \\\\"]
     for env_setup in build_queue.ENV_SETUPS_RUN12:
         rows, awaiting = latex_metric_rows(env_setup, by_key, verdicts)
         mark_latex_rows(rows)
         lines.append("\\midrule")
-        lines.append("\\multicolumn{4}{@{}l}{\\textbf{" + tt(env_setup) + "}} \\\\")
+        lines.append("\\multicolumn{5}{@{}l}{\\textbf{" + tt(env_setup) + "}} \\\\")
         for r in rows:
             lines.append(" & ".join(r[c] for c in cols) + " \\\\")
-        lines.append(bar_row(env_setup, by_key, 4))
+        lines.append(bar_row(env_setup, by_key, 5))
         if awaiting:
-            lines.append("\\multicolumn{4}{@{}l}{(awaiting a first completed record: "
+            lines.append("\\multicolumn{5}{@{}l}{(awaiting a first completed record: "
                          + ", ".join(awaiting) + ")} \\\\")
     lines.append("\\bottomrule")
     lines.append("\\end{tabular}")
