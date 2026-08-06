@@ -87,16 +87,26 @@ def summarise_run(path):
         "n_logged_rows": len(values),
     }
     # The gradient answer this run was launched to get, averaged over the run's logged rows.
-    grad_rows = [r for r in (rec.get("eval_history") or []) if "grad/clip_fired_fraction" in r]
+    # "predictor clip fired" is the headline: how often the RND predictor's gradient was scaled down.
+    # Under a joint clip that happens whenever the two networks' combined norm exceeds the threshold,
+    # so it is not evidence the predictor caused the excess — the norm columns say who did.
+    grad_rows = [r for r in (rec.get("eval_history") or []) if "grad/predictor_clip_fired_fraction" in r]
     if grad_rows:
         out.update({
-            "mean_clip_fired_fraction": statistics.fmean(r["grad/clip_fired_fraction"] for r in grad_rows),
-            "final_clip_fired_fraction": grad_rows[-1]["grad/clip_fired_fraction"],
-            "mean_predictor_share_of_squared_norm": statistics.fmean(
-                r["grad/mean_predictor_share_of_squared_norm"] for r in grad_rows
-                if r.get("grad/mean_predictor_share_of_squared_norm") is not None),
-            "max_combined_norm_seen": max(r["grad/max_combined_norm_before_clipping"] for r in grad_rows),
-            "clipping_enabled": grad_rows[-1].get("grad/clipping_enabled"),
+            "mean_predictor_clip_fired_fraction": statistics.fmean(
+                r["grad/predictor_clip_fired_fraction"] for r in grad_rows),
+            "final_predictor_clip_fired_fraction": grad_rows[-1]["grad/predictor_clip_fired_fraction"],
+            "mean_policy_clip_fired_fraction": statistics.fmean(
+                r["grad/policy_clip_fired_fraction"] for r in grad_rows),
+            "predictor_share_of_squared_norm": statistics.fmean(
+                r["grad/predictor_share_of_squared_norm"] for r in grad_rows
+                if r.get("grad/predictor_share_of_squared_norm") is not None),
+            "mean_predictor_norm": statistics.fmean(
+                r["grad/mean_predictor_norm_before_clipping"] for r in grad_rows),
+            "mean_policy_norm": statistics.fmean(
+                r["grad/mean_policy_norm_before_clipping"] for r in grad_rows),
+            "max_joint_norm_seen": max(r["grad/max_joint_norm_before_clipping"] for r in grad_rows),
+            "joint_grad_clip": grad_rows[-1].get("grad/joint_grad_clip"),
         })
     return out
 
@@ -116,7 +126,8 @@ def aggregate_by_arm(runs):
                      r["fraction_of_target"] for r in rs if r["fraction_of_target"] is not None)}
         for metric in ["final_mean_return_last_200_episodes", "whole_run_mean_return",
                        "final_quarter_mean_return", "best_row_mean_return",
-                       "mean_clip_fired_fraction", "mean_predictor_share_of_squared_norm"]:
+                       "mean_predictor_clip_fired_fraction", "predictor_share_of_squared_norm",
+                       "mean_predictor_norm", "mean_policy_norm"]:
             vals = [r[metric] for r in rs if r.get(metric) is not None]
             if not vals:
                 continue
@@ -160,7 +171,8 @@ def main():
     for arm, a in report["by_arm"].items():
         def g(m, k="median"):
             return f"{a[m][k]:.1f}" if m in a else "-"
-        clip = f"{a['mean_clip_fired_fraction']['median']:.3f}" if "mean_clip_fired_fraction" in a else "-"
+        clip = (f"{a['mean_predictor_clip_fired_fraction']['median']:.3f}"
+                if "mean_predictor_clip_fired_fraction" in a else "-")
         print(f"{arm:<26}{a['seeds']:>6}{a['seeds_completed']:>6}"
               f"{a['mean_fraction_of_target']*100:>9.1f}%"
               f"{g('final_mean_return_last_200_episodes'):>10}"

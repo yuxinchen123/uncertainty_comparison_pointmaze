@@ -8311,7 +8311,7 @@ only come from the marked knobs.
 \footnotesize
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.5cm}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.95cm}
 >{\centering\arraybackslash}p{1.9cm}
 >{\centering\arraybackslash}p{1.9cm}
 >{\centering\arraybackslash}p{1.9cm}
@@ -8319,19 +8319,27 @@ only come from the marked knobs.
 >{\centering\arraybackslash}p{1.9cm}@{}}
 \toprule
 \textbf{Knob} & \textbf{Arm 1} & \textbf{Arm 2} & \textbf{Arm 3} & \textbf{Arm 4} & \textbf{Arm 5} \\
-& \small(original) & \small(no clip) & \small(full update) & \small(shallower) & \small(all three) \\
+& \small(original) & \small(no RND clip) & \small(full update) & \small(shallower) & \small(all three) \\
 \midrule
-gradient clipping, global norm & $0.5$ & \criticalknob{none} & $0.5$ & $0.5$ & \criticalknob{none} \\
+policy gradient clipping, global norm & $0.5$ & $0.5$ & $0.5$ & $0.5$ & $0.5$ \\
+RND predictor gradient clipping & joint & \criticalknob{none} & joint & joint & \criticalknob{none} \\
 predictor update proportion & $0.25$ & $0.25$ & \criticalknob{$1.0$} & $0.25$ & \criticalknob{$1.0$} \\
 predictor blocks beyond the target & $2$ & $2$ & $2$ & \criticalknob{$1$} & \criticalknob{$1$} \\
 \midrule
 \multicolumn{6}{@{}l}{\textit{What each departure moves toward}} \\
-matches this project's RND & N/A & \cmark\ (no clip) & \cmark\ (proportion $1.0$) & \cmark\ (one block
-  deeper) & \cmark\ (all three) \\
+matches this project's RND & N/A & \cmark\ (no predictor clip) & \cmark\ (proportion $1.0$) &
+  \cmark\ (one block deeper) & \cmark\ (all three) \\
 seeds & $30$ & $30$ & $30$ & $30$ & $30$ \\
 \bottomrule
 \end{tabular}
-\caption{The five arms of train run~1. Blue marks the knob each arm changes from arm~1. All three
+\caption{The five arms of train run~1. Blue marks the knob each arm changes from arm~1. The
+\emph{policy} is clipped at a global norm of $0.5$ in every arm, including arms~2 and~5: what those
+two arms remove is the clipping of the RND predictor alone. ``joint'' means the predictor is clipped
+through the same single global-norm call as the policy, which is what CleanRL does --- one
+\texttt{clip\_grad\_norm\_} over both parameter lists, so the predictor's gradient is scaled whenever
+the two networks' combined norm exceeds $0.5$, whether or not the predictor caused the excess.
+Removing the predictor from that call therefore also changes what the policy is clipped on, from the
+combined norm to its own. All three
 departures move CleanRL's RND toward the \runref{run-5 original-small} stack of
 \Cref{tab:cleanrl-vs-project-rnd}: that stack does not clip the predictor's gradient, trains the
 predictor on the whole batch rather than a random quarter, and makes its predictor one block deeper

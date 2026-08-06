@@ -1,0 +1,24 @@
+host=jaguar03  date=2026-07-31 23:27:27  boot=2026-07-31 14:38:35
+LATENCY: buffer=256 MB  107.35 ns per random dependent access  (9 Maccess/s)
+node=jaguar03 window_sec=900 order=['L8']
+==== layout L8 START 23:27:37 ====
+[L8] launched 8 runs
+[L8] t=     0s  median_MHz= 1500.0  steps(min/med/max)=0/0/0
+[L8] t=    60s  median_MHz= 1500.0  steps(min/med/max)=0/0/0
+[L8] t=   120s  median_MHz= 1500.0  steps(min/med/max)=150/150/150
+[L8] t=   180s  median_MHz= 1500.0  steps(min/med/max)=1850/1900/1900
+[L8] t=   240s  median_MHz= 1500.0  steps(min/med/max)=3600/3650/3650
+[L8] t=   300s  median_MHz= 1500.0  steps(min/med/max)=5300/5400/5400
+[L8] t=   360s  median_MHz= 1500.0  steps(min/med/max)=6800/7000/7150
+[L8] t=   420s  median_MHz= 1500.0  steps(min/med/max)=8400/8800/8800
+[L8] t=   480s  median_MHz= 1500.0  steps(min/med/max)=10400/10400/10400
+[L8] t=   540s  median_MHz= 1500.0  steps(min/med/max)=12000/12400/12400
+[L8] t=   600s  median_MHz= 1500.0  steps(min/med/max)=13600/14000/14000
+[L8] t=   661s  median_MHz= 1500.0  steps(min/med/max)=15200/15600/15600
+[L8] t=   721s  median_MHz= 1500.0  steps(min/med/max)=17200/17600/17600
+[L8] t=   781s  median_MHz= 1500.0  steps(min/med/max)=18800/19200/19200
+[L8] t=   841s  median_MHz= 1500.0  steps(min/med/max)=20400/20800/20800
+[L8] t=   901s  median_MHz= 1500.0  steps(min/med/max)=22400/22800/22800
+[kill] 8/8 exited; 0 still alive after wait
+==== layout L8 END   23:42:48  median_MHz~1500.0 ====
+EXPERIMENT_DONE

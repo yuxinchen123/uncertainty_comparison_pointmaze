@@ -5,7 +5,7 @@
 set -uo pipefail
 PROG=/p/rlprojects/RND/08_cleanrl_ppo_rnd/shuze_experiment/2026-08-05-22-00-progress
 IDFILE="$PROG/slurm/submitted_jobids_short_run.txt"; touch "$IDFILE"
-ARMS=(arm1_original arm2_no_grad_clip arm3_update_proportion_1 arm4_shallower_predictor arm5_all)
+ARMS=(arm1_original arm2_no_rnd_grad_clip arm3_update_proportion_1 arm4_shallower_predictor arm5_all)
 # Twenty GPU slots: node and its typed gres, repeated once per GPU taken on that node.
 SLOTS=(
   "lotus:quadro_rtx_6000" "lotus:quadro_rtx_6000" "lotus:quadro_rtx_6000" "lotus:quadro_rtx_6000"

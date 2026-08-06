@@ -41,7 +41,7 @@ from gym.wrappers.normalize import RunningMeanStd
 from torch.distributions.categorical import Categorical
 
 from checkpointing import load_checkpoint, save_checkpoint
-from grad_stats import GradientStatistics, total_norm_without_clipping
+from grad_stats import GradientStatistics, clip_gradients
 from interval_stats import IntervalStatistics
 from run_record import RunRecord
 
@@ -89,7 +89,11 @@ class Args:
     vf_coef: float = 0.5
     """coefficient of the value function"""
     max_grad_norm: float = 0.5
-    """the maximum norm for the gradient clipping"""
+    """the maximum gradient norm; the POLICY is clipped at this in every arm"""
+    joint_grad_clip: bool = True
+    """clip the policy and the RND predictor together through ONE norm, as CleanRL does"""
+    rnd_max_grad_norm: float = 0.0
+    """when the clips are separate, the predictor's own maximum norm; 0 leaves the predictor unclipped"""
     target_kl: float = None
     """the target KL divergence threshold"""
 
@@ -108,7 +112,7 @@ class Args:
     # The ablation arm. One flag rather than three, so the arm is recoverable from the record and
     # no run can be given a combination that is not one of the five.
     arm: str = "arm1_original"
-    """arm1_original, arm2_no_grad_clip, arm3_update_proportion_1, arm4_shallower_predictor, arm5_all"""
+    """arm1_original, arm2_no_rnd_grad_clip, arm3_update_proportion_1, arm4_shallower_predictor, arm5_all"""
 
     # The bug fix.
     fix_envpool_autoreset: bool = True
@@ -389,13 +393,18 @@ def _request_termination(signum, _frame):
 # The five arms. Arm 1 is the reference and every other arm is arm 1 with named knobs changed, so a
 # difference between two arms is only ever the knobs listed here. Everything else — the auto-reset
 # fix, the throughput options, every hyperparameter — is identical across all five.
+# "No gradient clipping" means no clipping OF THE RND PREDICTOR. The policy is clipped at
+# max_grad_norm in EVERY arm, including these. CleanRL clips both networks through a single
+# clip_grad_norm_ over one parameter list, so taking the predictor out of that call means the policy
+# is clipped on its own norm instead of on the joint one, and the predictor is then clipped at
+# rnd_max_grad_norm — which is 0 here, meaning not clipped.
 ARMS = {
     "arm1_original":              {},
-    "arm2_no_grad_clip":          {"max_grad_norm": 0.0},
+    "arm2_no_rnd_grad_clip":      {"joint_grad_clip": False, "rnd_max_grad_norm": 0.0},
     "arm3_update_proportion_1":   {"update_proportion": 1.0},
     "arm4_shallower_predictor":   {"predictor_extra_blocks": 1},
-    "arm5_all":                   {"max_grad_norm": 0.0, "update_proportion": 1.0,
-                                   "predictor_extra_blocks": 1},
+    "arm5_all":                   {"joint_grad_clip": False, "rnd_max_grad_norm": 0.0,
+                                   "update_proportion": 1.0, "predictor_extra_blocks": 1},
 }
 
 
@@ -403,8 +412,9 @@ def apply_arm(args):
     """Overwrite the arm's knobs on the parsed arguments, and report what the arm changed."""
     if args.arm not in ARMS:
         raise ValueError(f"unknown arm {args.arm!r}; expected one of {sorted(ARMS)}")
-    # before: arm='arm5_all', max_grad_norm=0.5, update_proportion=0.25, predictor_extra_blocks=2
-    # after:  max_grad_norm=0.0, update_proportion=1.0, predictor_extra_blocks=1
+    # before: arm='arm5_all', joint_grad_clip=True, update_proportion=0.25, predictor_extra_blocks=2
+    # after:  joint_grad_clip=False, rnd_max_grad_norm=0.0, update_proportion=1.0,
+    #         predictor_extra_blocks=1 -- and max_grad_norm still 0.5, because the policy is always clipped
     changes = []
     for knob, value in ARMS[args.arm].items():
         changes.append(f"{knob}: {getattr(args, knob)} -> {value}")
@@ -481,7 +491,9 @@ def main():
     if args.opt_channels_last:
         agent = agent.to(memory_format=torch.channels_last)
         rnd_model = rnd_model.to(memory_format=torch.channels_last)
-    combined_parameters = list(agent.parameters()) + list(rnd_model.predictor.parameters())
+    policy_parameters = list(agent.parameters())
+    predictor_parameters = list(rnd_model.predictor.parameters())
+    combined_parameters = policy_parameters + predictor_parameters
     optimizer = optim.Adam(combined_parameters, lr=args.learning_rate, eps=1e-5)
     scaler = torch.amp.GradScaler("cuda", enabled=args.opt_amp_fp16)
 
@@ -494,8 +506,12 @@ def main():
         rnd_model.target = torch.compile(rnd_model.target)
 
     # Gradient statistics: accumulated on the GPU per optimizer step, read once per logging
-    # interval. The combined norm is free — clip_grad_norm_ already computes it.
-    grad_stats = GradientStatistics(rnd_model.predictor.parameters(), args.max_grad_norm, device)
+    # interval. The clipped norm is free — clip_grad_norm_ already computes it. None when the
+    # statistics are off, which also skips measuring the predictor's norm.
+    grad_stats = GradientStatistics(rnd_model.predictor.parameters(), args.max_grad_norm, device,
+                                    joint_grad_clip=args.joint_grad_clip,
+                                    rnd_max_grad_norm=args.rnd_max_grad_norm) \
+        if args.log_gradient_statistics else None
     # Averaged over the whole logging interval rather than sampled from the last iteration.
     iteration_stats = IntervalStatistics(
         device,
@@ -873,29 +889,16 @@ def main():
                     # The gradients must be unscaled before clipping, or max_grad_norm clips the
                     # scaled gradients and silently does the wrong thing.
                     scaler.unscale_(optimizer)
-                    if args.max_grad_norm:
-                        combined_norm = nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
-                    elif args.log_gradient_statistics:
-                        combined_norm = total_norm_without_clipping(combined_parameters)
-                    else:
-                        combined_norm = None
-                    if args.log_gradient_statistics:
-                        grad_stats.record(combined_norm)
+                    clip_gradients(policy_parameters, predictor_parameters, args.max_grad_norm,
+                                   args.joint_grad_clip, args.rnd_max_grad_norm, grad_stats)
                     scaler.step(optimizer)
                     scaler.update()
                 else:
                     loss.backward()
-                    if args.max_grad_norm:
-                        # Returns the norm BEFORE clipping, over exactly these parameters.
-                        combined_norm = nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
-                    elif args.log_gradient_statistics:
-                        # The no-clipping arm still needs the number, so compute it the same way
-                        # rather than calling the clipper with a threshold that would never bind.
-                        combined_norm = total_norm_without_clipping(combined_parameters)
-                    else:
-                        combined_norm = None
-                    if args.log_gradient_statistics:
-                        grad_stats.record(combined_norm)
+                    # The policy is clipped in every arm at max_grad_norm. joint_grad_clip decides
+                    # whether that same call also clips the RND predictor.
+                    clip_gradients(policy_parameters, predictor_parameters, args.max_grad_norm,
+                                   args.joint_grad_clip, args.rnd_max_grad_norm, grad_stats)
                     optimizer.step()
                 minibatch_stats.add({
                     "losses/value_loss": v_loss.detach(), "losses/policy_loss": pg_loss.detach(),
@@ -970,7 +973,8 @@ def main():
             }
             eval_entry.update({k: v for k, v in per_iteration.items() if k.startswith("charts/")})
             eval_entry.update(minibatch_stats.read_and_reset())
-            eval_entry.update(grad_stats.read_and_reset())
+            if grad_stats is not None:
+                eval_entry.update(grad_stats.read_and_reset())
             record.add_update(train_entry, eval_entry)
             record.flush(completed=False)
             if device.type == "cuda":

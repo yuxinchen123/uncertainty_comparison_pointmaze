@@ -30,12 +30,16 @@ TRAINER = "/p/rlprojects/RND/08_cleanrl_ppo_rnd/src/ppo_rnd_envpool_shuze.py"
 # The five arms, in the fixed order that defines arm_index. Arm 1 is the reference; the others are
 # arm 1 with the named knobs changed. The knob values are recorded here as well as being set by the
 # trainer's own --arm flag, so a marker states what it runs without anyone having to read the code.
+# The policy is clipped at max_grad_norm=0.5 in EVERY arm. What arms 2 and 5 change is that the RND
+# predictor is taken out of that clip: joint_grad_clip=False clips the policy on its own norm, and
+# rnd_max_grad_norm=0 leaves the predictor's gradient unscaled.
+NO_RND_CLIP = {"joint_grad_clip": False, "rnd_max_grad_norm": 0.0}
 ARMS = [
     ("arm1_original", {}, "CleanRL as published"),
-    ("arm2_no_grad_clip", {"max_grad_norm": 0.0}, "no gradient clipping"),
+    ("arm2_no_rnd_grad_clip", dict(NO_RND_CLIP), "the RND predictor is not clipped; the policy still is"),
     ("arm3_update_proportion_1", {"update_proportion": 1.0}, "predictor trained on the whole batch"),
     ("arm4_shallower_predictor", {"predictor_extra_blocks": 1}, "predictor one block deeper, not two"),
-    ("arm5_all", {"max_grad_norm": 0.0, "update_proportion": 1.0, "predictor_extra_blocks": 1},
+    ("arm5_all", {**NO_RND_CLIP, "update_proportion": 1.0, "predictor_extra_blocks": 1},
      "all three departures together"),
 ]
 SEEDS = list(range(1, 31))

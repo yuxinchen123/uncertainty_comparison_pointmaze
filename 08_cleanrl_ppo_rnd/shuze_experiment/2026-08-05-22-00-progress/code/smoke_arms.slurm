@@ -12,7 +12,7 @@ OUT="$PROG_DIR/data/smoke"
 mkdir -p "$OUT"
 PY=/p/rlprojects/RND/.venvs/cleanrl_rnd/bin/python
 i=0
-for arm in arm1_original arm2_no_grad_clip arm3_update_proportion_1 arm4_shallower_predictor arm5_all; do
+for arm in arm1_original arm2_no_rnd_grad_clip arm3_update_proportion_1 arm4_shallower_predictor arm5_all; do
   echo "=== $arm ==="
   timeout 420 "$PY" -u "$P/src/ppo_rnd_envpool_shuze.py" \
     --arm "$arm" --env_id MontezumaRevenge-v5 \
