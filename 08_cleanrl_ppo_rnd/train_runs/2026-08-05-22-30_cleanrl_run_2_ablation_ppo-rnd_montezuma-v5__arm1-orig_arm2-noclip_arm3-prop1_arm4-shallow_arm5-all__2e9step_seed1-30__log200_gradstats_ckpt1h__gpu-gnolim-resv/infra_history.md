@@ -1061,3 +1061,39 @@ The two markers from the cancelled first attempt were returned to `pending/` so 
 
 Campaign unchanged and healthy: 105 runs executing, 45 pending, none failed, none orphaned, no open
 problem reports.
+
+## 2026-08-06, sixteenth tick — the signal arrives now, but `wait` was letting the job end too early
+
+Rehearsal 2 (job 6534146) got further and failed differently, which is what a rehearsal is for.
+
+**What now works.** The batch shell received the signal and the trap fired —
+`[slurm] walltime approaching; forwarding SIGTERM to worker_manager 80569` — and **both trainers
+logged catching it**. So `--signal=B:TERM` plus the forwarding trap fixed the delivery problem from
+the last tick.
+
+**What still failed.** Neither trainer logged finishing its checkpoint; the job ended at exit `15:0`
+three minutes before its limit, exactly when the warning fired.
+
+**Cause: bash's `wait` is interrupted by a trapped signal.** It runs the trap and returns
+immediately with 128+15 — it does not wait for the child. So the script fell off the end, and Slurm
+tore the job down while the manager and its trainers were still in the middle of the checkpoint the
+signal existed to let them write. The fix is to wait again until the child is genuinely gone:
+
+```bash
+wait "$MANAGER_PID"
+while kill -0 "$MANAGER_PID" 2>/dev/null; do wait "$MANAGER_PID"; done
+```
+
+Applied to all 50 submission scripts and to the short-run script, which had the same bug — it never
+showed there because that run finished before its walltime.
+
+**The other half of the rehearsal succeeded outright, and it is the more important half.** Run 0
+resumed from the cancelled first attempt's checkpoint without being told to:
+`[resume] continuing at update 142 of 122070, global_step 2310144`, with its episode sidecar cut to
+match. So claim → run → kill → requeue → re-claim → resume works end to end under the manager. And
+the checkpoints landed 30 s before the signal, so even the failed shutdown cost only 30 s of work.
+
+Third rehearsal submitted with the corrected wait.
+
+Campaign unchanged: 105 runs executing, 45 pending, none failed, none orphaned, no open problem
+reports.

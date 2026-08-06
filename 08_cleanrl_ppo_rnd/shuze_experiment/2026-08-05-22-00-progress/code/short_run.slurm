@@ -24,5 +24,7 @@ P=/p/rlprojects/RND/08_cleanrl_ppo_rnd
   --opt_env_threads "${SLURM_CPUS_PER_TASK:-8}" --resume &
 CHILD=$!
 trap 'echo "[slurm] forwarding SIGTERM to $CHILD"; kill -TERM $CHILD' TERM
-wait $CHILD
+# `wait` returns as soon as the trap fires, not when the child exits; wait again until it is gone.
+wait "$CHILD"
+while kill -0 "$CHILD" 2>/dev/null; do wait "$CHILD"; done
 echo "exit=$?"
