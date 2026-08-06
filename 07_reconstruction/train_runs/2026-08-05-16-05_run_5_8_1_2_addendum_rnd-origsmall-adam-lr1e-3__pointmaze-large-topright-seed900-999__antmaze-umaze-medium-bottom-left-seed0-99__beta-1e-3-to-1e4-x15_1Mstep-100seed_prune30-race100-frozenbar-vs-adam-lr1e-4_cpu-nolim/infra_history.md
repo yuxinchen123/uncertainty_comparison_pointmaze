@@ -113,3 +113,30 @@ were real bugs in `slurm/plan_jobs.py`, both are fixed, and both reports are in
 
 The owner fleet was unaffected by either bug: `sl5nw`'s QOS row is first, and no owner job ever
 pended from the socket pin (the pools were at cap, so no top-up job was planned in that window).
+
+## 2026-08-06 12:10 — walltime guard added to the worker (the 2026-08-09 cliff)
+
+- Trigger: the user asked why a job had ended and whether workers should not simply keep taking new
+  runs. They should, and they do — job 6533853's log shows 32 workers, 64 claims, 32 finishes and
+  0 exits, each worker claiming its next run in the same second it finished the last. The job that
+  ended was `r812-s-nolim1` (6528782), the LAST run-8.1.2 worker job, whose 30 workers all logged
+  `queue empty; exiting` because that sweep was stopped on 2026-08-05. It freed the 32 nolim threads
+  the top-up then refilled with 6534341 and 6534342.
+- The real exposure the question surfaced: the 13 cpu jobs carry `--time=4-00:00:00` (the cpu
+  partition maximum) and started 2026-08-05 16:57, so they end **2026-08-09 16:57**. At a measured
+  median of 15.8 h per run, workers would keep claiming right up to the deadline and roughly 384
+  in-flight runs would be killed at once. This run writes no checkpoints, so each restarts from
+  zero: about 3,000 core-hours burned and then repeated, plus 384 markers hitting requeue_orphans in
+  one tick.
+- Fix: `slurm/worker.py` now refuses to claim when the job has less than `WORKER_REQUIRED_HOURS`
+  (default 20 h) of walltime left, logs why, and exits. The job then ends early, its pool room frees,
+  and the monitor's top-up submits a fresh full-walltime job that picks the work up. Same idle time
+  as being killed, but nothing is lost and nothing is redone.
+- The guard FAILS OPEN: an unreadable job end time claims anyway. It is an optimization, not a
+  correctness rule — failing closed on a scontrol hiccup would idle the whole fleet.
+- Tests: `slurm/test_worker_walltime_guard.py`, 7 cases (plenty of time, too little, the exact
+  boundary, configurability, fail-open, the default covering the measured run length, and a 20-day
+  nolim job never being blocked). All pass; the 35-test launch-gate suite still passes.
+- Scope: worker.py is read at process start, so the 924 runs already in flight are unaffected. The
+  guard takes effect for every job submitted from the next top-up onward, which is well before the
+  2026-08-09 deadline.
