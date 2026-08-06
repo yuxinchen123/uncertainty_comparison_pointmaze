@@ -8,7 +8,7 @@ OUT="$RUN_DIR/for_collaborator/smoke_data/$USER/$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$OUT"
 echo "=== 1. permission probes (read-only; these catch an owner-side permission regression) ==="
 fail=0
-for d in "$RUN_DIR/queue/pending" "$RUN_DIR/queue/running" "$RUN_DIR/queue/done" "$RUN_DIR/queue/failed" "$RUN_DIR/data/local" "$LOGDIR"; do
+for d in "$RUN_DIR/queue/pending" "$RUN_DIR/queue/running" "$RUN_DIR/queue/done" "$RUN_DIR/queue/failed" "$RUN_DIR/data/$SWEEP_ID/local" "$LOGDIR"; do
   [ -r "$d" ] && [ -w "$d" ] && [ -x "$d" ] && echo "  ok  rwx $d" || { echo "  FAIL     $d"; fail=1; }
 done
 m=$(ls "$RUN_DIR/queue/pending"/*.json "$RUN_DIR/queue/running"/*.json 2>/dev/null | head -1)
