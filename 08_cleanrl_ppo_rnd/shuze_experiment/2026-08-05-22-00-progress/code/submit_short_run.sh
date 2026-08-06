@@ -24,7 +24,7 @@ for seed_index in 0 1 2 3; do
     arm=${ARMS[$arm_index]}
     slot=${SLOTS[$n]}; node=${slot%%:*}; gres=${slot##*:}
     id=$(sbatch --parsable --partition=gpu --nodelist="$node" --gres=gpu:${gres}:1 \
-         --cpus-per-task=8 --mem=16G \
+         --cpus-per-task=8 --mem=16G --signal=B:TERM@300 \
          --export=ALL,PROG_DIR="$PROG",RUN_ARM="$arm",RUN_ID="$run_id",RUN_SEED="$seed",RUN_STEPS="$STEPS" \
          --output="$PROG/logs/short_${run_id}_%j.log" --error="$PROG/logs/short_${run_id}_%j.log" \
          "$PROG/code/short_run.slurm" 2>&1)
