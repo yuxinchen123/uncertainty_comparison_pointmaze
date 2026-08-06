@@ -8,7 +8,7 @@ that file's content, not by starting from nothing.
 
 | field | value |
 |---|---|
-| path | `/p/rlprojects/.claude/skills/submit-gpu-sweep/server_introduction/server_introduction.md` |
+| path | `/p/rlprojects/.claude/skills/submit-gpu-sweep/server_introduction/server_introduction.md` **— this path no longer resolves.** The directory was renamed to `school_compute_resource/` on 2026-08-05 and the file to `school_compute_resource.md`; the row is kept as the record of where the previous document was found, not as a path to follow today. |
 | machine-readable twin | `/p/rlprojects/.claude/skills/submit-gpu-sweep/server_introduction/server_introduction.json` |
 | generator | `/p/rlprojects/.claude/skills/submit-gpu-sweep/server_introduction/code/` |
 | generated on | 2026-07-11T22:34:59 local time, from live Slurm |
