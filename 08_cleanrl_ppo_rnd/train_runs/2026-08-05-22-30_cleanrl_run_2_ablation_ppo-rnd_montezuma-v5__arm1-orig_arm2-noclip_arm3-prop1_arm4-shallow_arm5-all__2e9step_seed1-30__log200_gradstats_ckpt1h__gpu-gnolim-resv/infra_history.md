@@ -1032,3 +1032,32 @@ under the manager. Job 6534144 on lynx05.
 
 Two things it will settle: whether a checkpoint exists when the job is killed by walltime rather than
 by `scancel`, and whether re-running the same command resumes from it rather than starting again.
+
+## 2026-08-06, fifteenth tick — the walltime warning was being delivered to nothing
+
+**The rehearsal earned its keep.** Job 6534144, `--time=00:12:00 --signal=TERM@180`, ran **24 minutes**
+— twelve past its EndTime — still training, and its trainers **never logged receiving a signal at
+all**. `scontrol` confirmed `TimeLimit=00:12:00 EndTime=06:00:15` while `RunTime=00:23:51`.
+
+**Cause.** `--signal=<sig>@<time>` without a prefix signals **job steps**. These jobs have no `srun`
+step — `worker_manager` is a plain child of the batch shell — so Slurm had nothing to signal and the
+warning was delivered to nothing. The `--signal=TERM@600` added to all 26 submission scripts two
+ticks ago was a no-op the entire time.
+
+**Fixed in all 50 submission scripts across both run folders**: `--signal=B:TERM@600` sends it to the
+batch shell, and since bash does not pass a signal to a foreground child, the manager now runs in the
+background under a trap that forwards it. This is the same shape already proven in the short-run
+script, where it worked.
+
+**What the rehearsal also proved, and this is the reassuring half.** The checkpoint cadence works
+reliably under the manager: run 0 checkpointed at updates 49, 56, 63, 70, 78, 87, 96, 105, 114, 123,
+132 — every ~90 s as asked, all 50 MB, all landing in the isolated data directory. So the decoupled
+cadence fixed two ticks ago is doing its job. **That bounds the damage of the whole signal defect**:
+with an hourly cadence a walltime kill loses at most one hour of one run, about 105 GPU-hours across
+a full kill wave, or 0.4% of the campaign. Worth fixing, not an emergency.
+
+Second rehearsal submitted as job 6534146 with the corrected script, into the same isolated folder.
+The two markers from the cancelled first attempt were returned to `pending/` so it can claim them.
+
+Campaign unchanged and healthy: 105 runs executing, 45 pending, none failed, none orphaned, no open
+problem reports.
