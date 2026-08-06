@@ -1267,3 +1267,64 @@ jobs still need resubmitting on 2026-08-10 when they hit their walltime.
 | <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**45/45**</span> | <span style="color:gray">**151.0/558.9 GB**</span> | <span style="color:gray">**mean 37% (all listed GPUs)**</span> | <span style="color:gray">**197.9/362**</span> | <span style="color:gray">**73.1/263.7/5732.4**</span> | <span style="color:gray">**45**</span> |
 | **TOTAL** | — | **86/86** | **341.9/1169.8 GB** | **mean 39% (all listed GPUs)** | **433.2/842** | **160.1/657.7/13009.8** | **102** |
 
+## 2026-08-06 07:47  (jobs: 33 running (owner 12, yuxinchen 21), 0 pending | runs: 105 running, 45 pending, 0 done, 0 failed)
+
+| node | gpu type | gpus ours/node | gpu memory used/total (every gpu) | gpu usage (every gpu) | cpu busy/asked (threads) | sys memory used/asked/node (GB) | running runs |
+|---|---|---|---|---|---|---|---|
+| <span style="color:gray">jaguar06 (yuxinchen)</span> | <span style="color:gray">a40</span> | <span style="color:gray">1/1</span> | <span style="color:gray">GPU0*: 3.3/45.0 GB</span> | <span style="color:gray">GPU0*: 90%</span> | <span style="color:gray">5.2/8</span> | <span style="color:gray">1.6/5.9/123.0</span> | <span style="color:gray">1 (048)</span> |
+| <span style="color:gray">cheetah02 (yuxinchen)</span> | <span style="color:gray">rtx_4000_ada</span> | <span style="color:gray">4/4</span> | <span style="color:gray">GPU0*: 3.3/20.0 GB<br>GPU1*: 3.3/20.0 GB<br>GPU2*: 3.3/20.0 GB<br>GPU3*: 3.3/20.0 GB</span> | <span style="color:gray">GPU0*: 96%<br>GPU1*: 5%<br>GPU2*: 5%<br>GPU3*: 5%</span> | <span style="color:gray">18.7/32</span> | <span style="color:gray">6.3/23.4/1000.0</span> | <span style="color:gray">4 (066–067, 085–086)</span> |
+| jaguar03 | rtx_a4500 | 8/8 | GPU0*: 10.7/20.0 GB<br>GPU1*: 10.0/20.0 GB<br>GPU2*: 10.1/20.0 GB<br>GPU3*: 9.7/20.0 GB<br>GPU4*: 10.0/20.0 GB<br>GPU5*: 9.9/20.0 GB<br>GPU6*: 10.0/20.0 GB<br>GPU7*: 10.0/20.0 GB | GPU0*: 26%<br>GPU1*: 24%<br>GPU2*: 97%<br>GPU3*: 21%<br>GPU4*: 97%<br>GPU5*: 64%<br>GPU6*: 100%<br>GPU7*: 96% | 90.8/192 | 37.8/175.8/1000.0 | 24 (001, 005, 007, 010–022, 024–026, 028, 030–031, 038, 044) |
+| <span style="color:gray">cheetah08 (yuxinchen)</span> | <span style="color:gray">rtx_a4000</span> | <span style="color:gray">4/4</span> | <span style="color:gray">GPU0*: 3.2/16.0 GB<br>GPU1*: 3.4/16.0 GB<br>GPU2*: 3.2/16.0 GB<br>GPU3*: 3.2/16.0 GB</span> | <span style="color:gray">GPU0*: 12%<br>GPU1*: 96%<br>GPU2*: 96%<br>GPU3*: 6%</span> | <span style="color:gray">18.1/32</span> | <span style="color:gray">6.3/23.4/500.0</span> | <span style="color:gray">4 (058, 061, 073, 078)</span> |
+| cheetah09 | rtx_a4000 | 4/4 | GPU0*: 3.2/16.0 GB<br>GPU1*: 3.4/16.0 GB<br>GPU2*: 3.2/16.0 GB<br>GPU3*: 3.2/16.0 GB | GPU0*: 96%<br>GPU1*: 7%<br>GPU2*: 7%<br>GPU3*: 5% | 18.2/32 | 6.2/29.3/500.0 | 4 (003, 023, 034–035) |
+| <span style="color:gray">jaguar02 (yuxinchen)</span> | <span style="color:gray">a16</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.2/15.0 GB<br>GPU1*: 3.1/15.0 GB<br>GPU2*: 3.2/15.0 GB</span> | <span style="color:gray">GPU0*: 100%<br>GPU1*: 95%<br>GPU2*: 100%</span> | <span style="color:gray">8.3/24</span> | <span style="color:gray">4.6/17.6/1000.0</span> | <span style="color:gray">3 (084, 101, 112)</span> |
+| lotus | rtx_6000 | 8/8 | GPU0*: 3.4/24.0 GB<br>GPU1*: 3.4/24.0 GB<br>GPU2*: 3.4/24.0 GB<br>GPU3*: 3.4/24.0 GB<br>GPU4*: 3.4/24.0 GB<br>GPU5*: 3.4/24.0 GB<br>GPU6*: 3.4/24.0 GB<br>GPU7*: 3.4/24.0 GB | GPU0*: 7%<br>GPU1*: 8%<br>GPU2*: 7%<br>GPU3*: 35%<br>GPU4*: 7%<br>GPU5*: 6%<br>GPU6*: 7%<br>GPU7*: 32% | 35.9/64 | 12.1/58.6/250.0 | 8 (002, 008, 032, 039, 054, 072, 074–075) |
+| <span style="color:gray">affogato11 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">1/1</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 8%</span> | <span style="color:gray">5.1/8</span> | <span style="color:gray">2.1/5.9/125.0</span> | <span style="color:gray">1 (109)</span> |
+| <span style="color:gray">ai01 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB<br>GPU1*: 3.4/11.0 GB<br>GPU2*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 9%<br>GPU1*: 77%<br>GPU2*: 62%</span> | <span style="color:gray">14.0/24</span> | <span style="color:gray">5.1/17.6/62.5</span> | <span style="color:gray">3 (040, 047, 069)</span> |
+| <span style="color:gray">ai02 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB<br>GPU1*: 3.4/11.0 GB<br>GPU2*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 6%<br>GPU1*: 6%<br>GPU2*: 6%</span> | <span style="color:gray">14.3/24</span> | <span style="color:gray">5.1/17.6/62.5</span> | <span style="color:gray">3 (037, 045, 094)</span> |
+| <span style="color:gray">ai03 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB<br>GPU1*: 4.4/11.0 GB<br>GPU2*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 7%<br>GPU1*: 35%<br>GPU2*: 7%</span> | <span style="color:gray">14.3/24</span> | <span style="color:gray">5.1/17.6/62.5</span> | <span style="color:gray">3 (059, 076, 081)</span> |
+| <span style="color:gray">ai04 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB<br>GPU1*: 3.4/11.0 GB<br>GPU2*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 6%<br>GPU1*: 6%<br>GPU2*: 7%</span> | <span style="color:gray">14.1/24</span> | <span style="color:gray">5.1/17.6/62.5</span> | <span style="color:gray">3 (083, 088, 097)</span> |
+| ai06 (owner, yuxinchen) | rtx_2080_ti | 1/1 | GPU0*: 3.4/11.0 GB | GPU0*: 7% | 5.0/16 | 1.5/7.3/62.5 | 1 (098) |
+| cheetah03 | rtx_2080_ti | 2/2 | GPU0*: 3.4/11.0 GB<br>GPU1*: 3.4/11.0 GB | GPU0*: 7%<br>GPU1*: 7% | 9.0/16 | 3.0/14.6/1000.0 | 2 (055, 064) |
+| <span style="color:gray">lynx10 (yuxinchen)</span> | <span style="color:gray">rtx_2080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.4/11.0 GB<br>GPU1*: 3.4/11.0 GB<br>GPU2*: 3.4/11.0 GB</span> | <span style="color:gray">GPU0*: 33%<br>GPU1*: 6%<br>GPU2*: 90%</span> | <span style="color:gray">14.2/24</span> | <span style="color:gray">4.7/17.6/62.5</span> | <span style="color:gray">3 (113, 122, 124)</span> |
+| <span style="color:gray">adriatic01 (yuxinchen)</span> | <span style="color:gray">quadro_rtx_4000</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.1/8.0 GB<br>GPU1*: 3.2/8.0 GB<br>GPU2*: 3.1/8.0 GB</span> | <span style="color:gray">GPU0*: 96%<br>GPU1*: 97%<br>GPU2*: 15%</span> | <span style="color:gray">12.5/24</span> | <span style="color:gray">4.5/17.6/1000.0</span> | <span style="color:gray">3 (090, 114, 123)</span> |
+| adriatic02 | quadro_rtx_4000 | 3/3 | GPU0*: 3.3/8.0 GB<br>GPU1*: 3.3/8.0 GB<br>GPU2*: 3.3/8.0 GB | GPU0*: 6%<br>GPU1*: 12%<br>GPU2*: 12% | 12.6/24 | 4.6/17.6/1000.0 | 3 (027, 033, 050) |
+| adriatic03 | quadro_rtx_4000 | 3/3 | GPU0*: 3.2/8.0 GB<br>GPU1*: 3.2/8.0 GB<br>GPU2*: 3.2/8.0 GB | GPU0*: 76%<br>GPU1*: 93%<br>GPU2*: 94% | 12.7/24 | 4.6/17.6/1000.0 | 3 (051, 060, 062) |
+| adriatic04 (owner, yuxinchen) | quadro_rtx_4000 | 2/2 | GPU0*: 4.4/8.0 GB<br>GPU1*: 3.2/8.0 GB | GPU0*: 8%<br>GPU1*: 12% | 8.5/24 | 3.1/11.7/1000.0 | 2 (042, 046) |
+| adriatic05 (owner, yuxinchen) | quadro_rtx_4000 | 1/1 | GPU0*: 3.3/8.0 GB | GPU0*: 94% | 4.6/24 | 1.5/5.9/1000.0 | 1 (071) |
+| <span style="color:gray">adriatic06 (yuxinchen)</span> | <span style="color:gray">quadro_rtx_4000</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.3/8.0 GB<br>GPU1*: 3.3/8.0 GB<br>GPU2*: 3.3/8.0 GB</span> | <span style="color:gray">GPU0*: 11%<br>GPU1*: 95%<br>GPU2*: 10%</span> | <span style="color:gray">12.4/24</span> | <span style="color:gray">5.1/17.6/1000.0</span> | <span style="color:gray">3 (103, 108, 116)</span> |
+| <span style="color:gray">jaguar05 (yuxinchen)</span> | <span style="color:gray">quadro_rtx_4000</span> | <span style="color:gray">1/1</span> | <span style="color:gray">GPU0*: 4.4/8.0 GB</span> | <span style="color:gray">GPU0*: 13%</span> | <span style="color:gray">4.3/8</span> | <span style="color:gray">2.1/5.9/250.0</span> | <span style="color:gray">1 (089)</span> |
+| <span style="color:gray">lynx01 (yuxinchen)</span> | <span style="color:gray">titan_xp</span> | <span style="color:gray">1/1</span> | <span style="color:gray">GPU0*: 3.4/12.0 GB</span> | <span style="color:gray">GPU0*: 92%</span> | <span style="color:gray">4.9/8</span> | <span style="color:gray">2.0/5.9/62.5</span> | <span style="color:gray">1 (077)</span> |
+| ai07 | gtx_1080_ti | 3/3 | GPU0*: 3.3/11.0 GB<br>GPU1*: 3.3/11.0 GB<br>GPU2*: 3.3/11.0 GB | GPU0*: 95%<br>GPU1*: 8%<br>GPU2*: 8% | 13.2/24 | 4.2/17.6/125.0 | 3 (009, 049, 063) |
+| ai08 | gtx_1080_ti | 3/3 | GPU0*: 3.3/11.0 GB<br>GPU1*: 3.3/11.0 GB<br>GPU2*: 3.3/11.0 GB | GPU0*: 6%<br>GPU1*: 8%<br>GPU2*: 7% | 13.5/24 | 4.2/17.6/125.0 | 3 (053, 065, 070) |
+| <span style="color:gray">ai09 (yuxinchen)</span> | <span style="color:gray">gtx_1080_ti</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.3/11.0 GB<br>GPU1*: 3.3/11.0 GB<br>GPU2*: 3.3/11.0 GB</span> | <span style="color:gray">GPU0*: 6%<br>GPU1*: 6%<br>GPU2*: 6%</span> | <span style="color:gray">13.5/24</span> | <span style="color:gray">4.2/17.6/109.4</span> | <span style="color:gray">3 (091, 096, 119)</span> |
+| <span style="color:gray">ai05 (yuxinchen)</span> | <span style="color:gray">gtx_1080</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.3/8.0 GB<br>GPU1*: 3.3/8.0 GB<br>GPU2*: 3.3/8.0 GB</span> | <span style="color:gray">GPU0*: 98%<br>GPU1*: 98%<br>GPU2*: 98%</span> | <span style="color:gray">12.2/26</span> | <span style="color:gray">4.4/17.6/125.0</span> | <span style="color:gray">3 (041, 105, 107)</span> |
+| <span style="color:gray">ai10 (yuxinchen)</span> | <span style="color:gray">gtx_1080</span> | <span style="color:gray">3/3</span> | <span style="color:gray">GPU0*: 3.3/8.0 GB<br>GPU1*: 3.3/8.0 GB<br>GPU2*: 3.3/8.0 GB</span> | <span style="color:gray">GPU0*: 10%<br>GPU1*: 11%<br>GPU2*: 8%</span> | <span style="color:gray">12.0/24</span> | <span style="color:gray">4.8/17.6/125.0</span> | <span style="color:gray">3 (029, 036, 115)</span> |
+| jinx01 | gtx_1080 | 2/2 | GPU0*: 3.3/8.0 GB<br>GPU1*: 3.3/8.0 GB | GPU0*: 96%<br>GPU1*: 12% | 7.1/16 | 2.8/14.6/214.8 | 2 (004, 068) |
+| **TOTAL (owner)** | — | **40/40** | **187.7/602.9 GB** | **mean 35% (all listed GPUs)** | **231.3/480** | **85.5/388.2/7277.3** | **56** |
+| <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**45/45**</span> | <span style="color:gray">**151.0/558.9 GB**</span> | <span style="color:gray">**mean 41% (all listed GPUs)**</span> | <span style="color:gray">**198.0/362**</span> | <span style="color:gray">**73.1/263.7/5732.4**</span> | <span style="color:gray">**45**</span> |
+| **TOTAL** | — | **85/85** | **338.7/1161.8 GB** | **mean 38% (all listed GPUs)** | **429.3/842** | **158.6/651.9/13009.8** | **101** |
+
+
+## 2026-08-06 07:47 — no training code has changed under the campaign
+
+Routine tick otherwise: 105 runs executing, 45 pending, none failed, none orphaned, no open problem
+reports, all 105 checkpointed. 2.35% of the 150-run budget, 330,289 steps/s, 10.3 days remaining. 76
+runs have scored, best 6,666.
+
+**A correctness check worth having on the record.** Several fixes have gone in since the campaign
+launched, and runs pick up the code as they start — so a run begun this morning and one begun at
+launch could in principle be executing different training code. Checked against the launch commit
+`e225309`: exactly **one** change has touched `08_cleanrl_ppo_rnd/src/` since,
+
+```
+-        due = time.time() - last_checkpoint_time >= args.checkpoint_every_seconds
+-        if due and update % args.log_every_updates == 0:
++        if time.time() - last_checkpoint_time >= args.checkpoint_every_seconds:
+```
+
+which decides *when a checkpoint is written* and touches no training computation. Every other fix
+this session was in submission scripts, the collaborator packet, the shared `worker_manager.py` and
+`monitor.py`, or the analysis — none of which the trainer's arithmetic passes through.
+
+So all 150 runs are comparable regardless of when they started, which is the property that would have
+been quietly destroyed had any of those edits reached the loss, the clipping, or the environment.
