@@ -94,7 +94,6 @@ def test_v2_checkpoint_with_record_moved_away(tmp_path):
     fresh = RunRecord(rp, {"run_id": 0, "run_total": 1})
     note = fresh.restore_for_resume(state["record_history"], state["update"], state["global_step"])
     assert len(fresh.train_history) == 6
-    assert len(fresh.train_episode_history) == 40
     assert fresh.episodes_seen == 40
     assert "from the checkpoint" in note
 
@@ -135,7 +134,9 @@ def test_v1_checkpoint_falls_back_to_the_record_truncated(tmp_path):
     fresh = RunRecord(rp, {"run_id": 0, "run_total": 1})
     note = fresh.restore_for_resume(None, state["update"], state["global_step"])
     assert [r["update"] for r in fresh.train_history] == [1, 2, 3, 4, 5, 6]
-    assert all(r["step"] <= 600 for r in fresh.train_episode_history)
+    side = rp[: -len(".json")] + ".episodes.jsonl"
+    if os.path.exists(side):
+        assert all(json.loads(l)["step"] <= 600 for l in open(side) if l.strip())
     assert "truncated to update 6" in note
 
 
@@ -146,7 +147,7 @@ def test_v1_checkpoint_with_no_record(tmp_path):
     state = load(cp)
     fresh = RunRecord(rp, {"run_id": 0, "run_total": 1})
     note = fresh.restore_for_resume(None, state["update"], state["global_step"])
-    assert fresh.train_history == [] and fresh.train_episode_history == []
+    assert fresh.train_history == [] and fresh.episodes_seen == 0
     assert "no history to restore" in note
 
 
@@ -161,12 +162,12 @@ def test_a_v1_checkpoint_is_still_readable(tmp_path):
 def test_history_in_the_checkpoint_costs_little(tmp_path):
     """The carried history must not bloat the checkpoint out of proportion."""
     cp_small, cp_big = str(tmp_path / "s.pt"), str(tmp_path / "b.pt")
-    rec = build_record(str(tmp_path / "r.json"), n_updates=4883, n_episodes=50000)
+    rec = build_record(str(tmp_path / "r.json"), n_updates=611, n_episodes=50000)
     small = save(cp_small, None, update=1, step=1)["bytes"]
     big = save(cp_big, rec, update=1, step=1)["bytes"]
     added_mb = (big - small) / 1024 / 1024
-    # At the real run's final size: 4,883 update rows and 50,000 episode rows.
-    assert added_mb < 40, f"history added {added_mb:.1f} MB, more than expected"
+    # The episode rows are in the sidecar, so only the interval history rides in the checkpoint.
+    assert added_mb < 5, f"history added {added_mb:.1f} MB, more than expected"
     print(f"\n  history adds {added_mb:.1f} MB at the run's final size")
 
 

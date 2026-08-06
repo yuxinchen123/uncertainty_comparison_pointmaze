@@ -41,6 +41,8 @@ from gym.wrappers.normalize import RunningMeanStd
 from torch.distributions.categorical import Categorical
 
 from checkpointing import load_checkpoint, save_checkpoint
+from grad_stats import GradientStatistics, total_norm_without_clipping
+from interval_stats import IntervalStatistics
 from run_record import RunRecord
 
 
@@ -103,6 +105,11 @@ class Args:
     num_iterations_obs_norm_init: int = 50
     """number of iterations to initialize the observations normalization parameters"""
 
+    # The ablation arm. One flag rather than three, so the arm is recoverable from the record and
+    # no run can be given a combination that is not one of the five.
+    arm: str = "arm1_original"
+    """arm1_original, arm2_no_grad_clip, arm3_update_proportion_1, arm4_shallower_predictor, arm5_all"""
+
     # The bug fix.
     fix_envpool_autoreset: bool = True
     """drop the rows envpool burns auto-resetting, and stop them contaminating the intrinsic advantage"""
@@ -114,6 +121,8 @@ class Args:
     """how many runs the sweep holds"""
     output_dir: str = "."
     """directory the JSON record and the checkpoint are written to"""
+    log_gradient_statistics: bool = True
+    """collect the predictor gradient norms and the clip-fire rate; off measures their cost"""
     log_every_updates: int = 25
     """how often, in policy updates, to append a row to train_history and eval_history"""
     episode_history_cap: int = 50000
@@ -148,6 +157,8 @@ class Args:
     """let cuDNN autotune its convolution algorithms"""
     opt_fixed_minibatch_shape: bool = True
     """keep the minibatch shape constant across updates by dropping a fixed row allowance"""
+    predictor_extra_blocks: int = 2
+    """[ReLU, Linear(512,512)] blocks after the predictor's first linear; CleanRL uses 2"""
     minibatch_drop_allowance: int = 1024
     """rows held back so the minibatch shape is constant; must exceed the auto-reset rows dropped"""
 
@@ -296,12 +307,25 @@ class Agent(nn.Module):
 class RNDModel(nn.Module):
     """The Random Network Distillation pair: a trained predictor and a frozen random target."""
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, predictor_extra_blocks=2):
+        """Build the frozen target and the trainable predictor.
+
+        `predictor_extra_blocks` is how many [ReLU, Linear(512,512)] blocks follow the predictor's
+        first Linear(3136,512). CleanRL uses 2, which makes the predictor two blocks deeper than the
+        target; arm 4 uses 1, which is the asymmetry the original RND paper and this project's own
+        RND both use. The output width stays 512 either way, so the loss is unchanged.
+        """
         super().__init__()
         self.input_size = input_size
         self.output_size = output_size
+        self.predictor_extra_blocks = predictor_extra_blocks
         feature_output = 7 * 7 * 64
 
+        # before (2 blocks): Linear(3136,512), ReLU, Linear(512,512), ReLU, Linear(512,512)
+        # after  (1 block):  Linear(3136,512), ReLU, Linear(512,512)
+        predictor_head = [layer_init(nn.Linear(feature_output, 512))]
+        for _ in range(predictor_extra_blocks):
+            predictor_head += [nn.ReLU(), layer_init(nn.Linear(512, 512))]
         self.predictor = nn.Sequential(
             layer_init(nn.Conv2d(in_channels=1, out_channels=32, kernel_size=8, stride=4)),
             nn.LeakyReLU(),
@@ -310,11 +334,7 @@ class RNDModel(nn.Module):
             layer_init(nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)),
             nn.LeakyReLU(),
             nn.Flatten(),
-            layer_init(nn.Linear(feature_output, 512)),
-            nn.ReLU(),
-            layer_init(nn.Linear(512, 512)),
-            nn.ReLU(),
-            layer_init(nn.Linear(512, 512)),
+            *predictor_head,
         )
 
         self.target = nn.Sequential(
@@ -366,6 +386,32 @@ def _request_termination(signum, _frame):
           flush=True)
 
 
+# The five arms. Arm 1 is the reference and every other arm is arm 1 with named knobs changed, so a
+# difference between two arms is only ever the knobs listed here. Everything else — the auto-reset
+# fix, the throughput options, every hyperparameter — is identical across all five.
+ARMS = {
+    "arm1_original":              {},
+    "arm2_no_grad_clip":          {"max_grad_norm": 0.0},
+    "arm3_update_proportion_1":   {"update_proportion": 1.0},
+    "arm4_shallower_predictor":   {"predictor_extra_blocks": 1},
+    "arm5_all":                   {"max_grad_norm": 0.0, "update_proportion": 1.0,
+                                   "predictor_extra_blocks": 1},
+}
+
+
+def apply_arm(args):
+    """Overwrite the arm's knobs on the parsed arguments, and report what the arm changed."""
+    if args.arm not in ARMS:
+        raise ValueError(f"unknown arm {args.arm!r}; expected one of {sorted(ARMS)}")
+    # before: arm='arm5_all', max_grad_norm=0.5, update_proportion=0.25, predictor_extra_blocks=2
+    # after:  max_grad_norm=0.0, update_proportion=1.0, predictor_extra_blocks=1
+    changes = []
+    for knob, value in ARMS[args.arm].items():
+        changes.append(f"{knob}: {getattr(args, knob)} -> {value}")
+        setattr(args, knob, value)
+    return changes
+
+
 def resolve_env_threads(requested):
     """Pick envpool's worker-thread count, since envpool cannot see the job's cpu allocation.
 
@@ -394,6 +440,7 @@ def main():
     # the last checkpoint" into "lose one iteration" for every clean kill.
     signal.signal(signal.SIGTERM, _request_termination)
     signal.signal(signal.SIGINT, _request_termination)
+    arm_changes = apply_arm(args)
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
@@ -430,7 +477,7 @@ def main():
     assert isinstance(envs.action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     agent = Agent(envs).to(device)
-    rnd_model = RNDModel(4, envs.single_action_space.n).to(device)
+    rnd_model = RNDModel(4, envs.single_action_space.n, args.predictor_extra_blocks).to(device)
     if args.opt_channels_last:
         agent = agent.to(memory_format=torch.channels_last)
         rnd_model = rnd_model.to(memory_format=torch.channels_last)
@@ -445,6 +492,21 @@ def main():
         agent.network = torch.compile(agent.network)
         rnd_model.predictor = torch.compile(rnd_model.predictor)
         rnd_model.target = torch.compile(rnd_model.target)
+
+    # Gradient statistics: accumulated on the GPU per optimizer step, read once per logging
+    # interval. The combined norm is free — clip_grad_norm_ already computes it.
+    grad_stats = GradientStatistics(rnd_model.predictor.parameters(), args.max_grad_norm, device)
+    # Averaged over the whole logging interval rather than sampled from the last iteration.
+    iteration_stats = IntervalStatistics(
+        device,
+        mean_fields=["train/mean_intrinsic_reward", "train/mean_normalized_intrinsic_reward",
+                     "charts/burned_rows_dropped", "charts/iteration_seconds_mean"],
+        max_fields=["train/mean_intrinsic_reward"])
+    minibatch_stats = IntervalStatistics(
+        device,
+        mean_fields=["losses/value_loss", "losses/policy_loss", "losses/entropy",
+                     "losses/fwd_loss", "losses/approx_kl", "losses/old_approx_kl"],
+        max_fields=["losses/approx_kl"])
 
     reward_rms = RunningMeanStd()
     obs_rms = RunningMeanStd(shape=(1, 1, 84, 84))
@@ -462,7 +524,8 @@ def main():
     dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
     ext_values = torch.zeros((args.num_steps, args.num_envs)).to(device)
     int_values = torch.zeros((args.num_steps, args.num_envs)).to(device)
-    avg_returns = deque(maxlen=20)
+    avg_returns = deque(maxlen=200)
+    avg_lengths = deque(maxlen=200)
 
     # The run's durable record and its checkpoint sit side by side in the output directory.
     os.makedirs(args.output_dir, exist_ok=True)
@@ -555,6 +618,8 @@ def main():
     steps_at_start = global_step
     last_checkpoint_time = time.time()
     dropped_last_update = 0
+    interval_start_time, interval_start_step = time.time(), global_step
+    interval_start_episodes, interval_iterations = 0, 0
 
     for update in range(start_update, num_updates + 1):
         iteration_start = time.time()
@@ -618,6 +683,7 @@ def main():
             for idx, d in enumerate(done):
                 if d and info["lives"][idx] == 0:
                     avg_returns.append(info["r"][idx])
+                    avg_lengths.append(int(info["l"][idx]))
                     record.add_episode({
                         "step": global_step,
                         "train/extrinsic_reward": float(info["r"][idx]),
@@ -634,7 +700,7 @@ def main():
         mean, std, count = (np.mean(curiosity_reward_per_env), np.std(curiosity_reward_per_env),
                             len(curiosity_reward_per_env))
         reward_rms.update_from_moments(mean, std**2, count)
-        raw_curiosity_mean = float(curiosity_rewards.mean().item())
+        raw_curiosity_mean = curiosity_rewards.mean().detach()
         curiosity_rewards /= np.sqrt(reward_rms.var)
 
         update_start = time.time()
@@ -808,63 +874,112 @@ def main():
                     # scaled gradients and silently does the wrong thing.
                     scaler.unscale_(optimizer)
                     if args.max_grad_norm:
-                        nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
+                        combined_norm = nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
+                    elif args.log_gradient_statistics:
+                        combined_norm = total_norm_without_clipping(combined_parameters)
+                    else:
+                        combined_norm = None
+                    if args.log_gradient_statistics:
+                        grad_stats.record(combined_norm)
                     scaler.step(optimizer)
                     scaler.update()
                 else:
                     loss.backward()
                     if args.max_grad_norm:
-                        nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
+                        # Returns the norm BEFORE clipping, over exactly these parameters.
+                        combined_norm = nn.utils.clip_grad_norm_(combined_parameters, args.max_grad_norm)
+                    elif args.log_gradient_statistics:
+                        # The no-clipping arm still needs the number, so compute it the same way
+                        # rather than calling the clipper with a threshold that would never bind.
+                        combined_norm = total_norm_without_clipping(combined_parameters)
+                    else:
+                        combined_norm = None
+                    if args.log_gradient_statistics:
+                        grad_stats.record(combined_norm)
                     optimizer.step()
+                minibatch_stats.add({
+                    "losses/value_loss": v_loss.detach(), "losses/policy_loss": pg_loss.detach(),
+                    "losses/entropy": entropy_loss.detach(), "losses/fwd_loss": forward_loss.detach(),
+                    "losses/approx_kl": approx_kl.detach(), "losses/old_approx_kl": old_approx_kl.detach()})
 
             if args.target_kl is not None and approx_kl > args.target_kl:
                 break
         update_seconds = time.time() - update_start
 
+        # Every logged row is a MEAN OVER THE WHOLE INTERVAL, not a sample of the last iteration.
+        # At a 200-update cadence one row averages 200 iterations and 3,200 optimizer steps, which
+        # is what makes a sparse log better data than a dense log of single samples.
+        iteration_stats.add({
+            "train/mean_intrinsic_reward": raw_curiosity_mean,
+            "train/mean_normalized_intrinsic_reward": curiosity_rewards.mean().detach(),
+            "charts/burned_rows_dropped": float(dropped_last_update),
+            "charts/iteration_seconds_mean": float(time.time() - iteration_start),
+        })
+        interval_iterations += 1
+
         # Append one row per log_every_updates policy updates, and always on the last one.
-        if update % args.log_every_updates == 0 or update == num_updates:
-            elapsed = time.time() - start_time
-            steps_per_second = (global_step - steps_at_start) / max(elapsed, 1e-9)
-            record.add_update(
-                train_entry={
-                    "step": global_step,
-                    "update": update,
-                    "train/mean_extrinsic_reward": float(np.mean(avg_returns)) if avg_returns else None,
-                    "train/mean_intrinsic_reward": raw_curiosity_mean,
-                    "train/mean_normalized_intrinsic_reward": float(curiosity_rewards.mean().item()),
-                    "train/n_episodes_averaged": len(avg_returns),
-                },
-                eval_entry={
-                    "step": global_step,
-                    "update": update,
-                    "charts/steps_per_second": steps_per_second,
-                    # The honest per-iteration cost: the rollout, the update, and everything
-                    # between them (the discounted-return filter, GAE, the normaliser refresh).
-                    # Steady-state throughput is batch_size / iteration_seconds.
-                    "charts/iteration_seconds": time.time() - iteration_start,
-                    "charts/rollout_seconds": rollout_seconds,
-                    "charts/update_seconds": update_seconds,
-                    "charts/obs_norm_init_seconds": obs_norm_init_seconds,
-                    "charts/learning_rate": optimizer.param_groups[0]["lr"],
-                    "charts/burned_rows_dropped": dropped_last_update,
-                    # Peak device memory decides how many runs fit on one GPU.
-                    "charts/gpu_memory_peak_mb": (
-                        torch.cuda.max_memory_allocated() / 1024 / 1024 if device.type == "cuda" else 0.0
-                    ),
-                    "charts/gpu_memory_reserved_mb": (
-                        torch.cuda.max_memory_reserved() / 1024 / 1024 if device.type == "cuda" else 0.0
-                    ),
-                    "losses/value_loss": float(v_loss.item()),
-                    "losses/policy_loss": float(pg_loss.item()),
-                    "losses/entropy": float(entropy_loss.item()),
-                    "losses/fwd_loss": float(forward_loss.item()),
-                    "losses/approx_kl": float(approx_kl.item()),
-                    "losses/old_approx_kl": float(old_approx_kl.item()),
-                },
-            )
+        last_profile_update = args.profile_iterations and (update - start_update + 1) >= args.profile_iterations
+        if update % args.log_every_updates == 0 or update == num_updates or last_profile_update:
+            now = time.time()
+            # An INTERVAL rate, not a lifetime average: the lifetime number stops moving and hides
+            # a node that has slowed down. The cumulative one is kept alongside it.
+            interval_seconds = now - interval_start_time
+            interval_rate = (global_step - interval_start_step) / max(interval_seconds, 1e-9)
+            cumulative_rate = (global_step - steps_at_start) / max(now - start_time, 1e-9)
+            train_entry = {
+                "step": global_step,
+                "update": update,
+                # A trailing mean over the last 200 finished episodes. A trailing window rather than
+                # an interval mean, so the number means the same thing whatever the logging cadence
+                # is; at about 2,341 game-overs per million steps it spans roughly 85,000
+                # environment steps. CleanRL's own window is 20, which at this cadence would average
+                # 20 of the roughly 7,700 episodes that finish between rows.
+                "train/mean_extrinsic_reward": float(np.mean(avg_returns)) if avg_returns else None,
+                "train/max_extrinsic_reward": float(np.max(avg_returns)) if avg_returns else None,
+                "train/mean_episode_length": float(np.mean(avg_lengths)) if avg_lengths else None,
+                "train/n_episodes_averaged": len(avg_returns),
+                # A count, not an average: how many episodes ended since the previous row.
+                "train/episodes_finished_this_interval": record.episodes_seen - interval_start_episodes,
+                # The run logs the MEAN and nothing else. Whether the result of a run is its
+                # final performance (this field on the last row) or its average performance across
+                # the run (these fields averaged over all rows) is decided at the aggregation and
+                # selection stage by analysis/compute_run_metrics.py, not here.
+            }
+            per_iteration = iteration_stats.read_and_reset()
+            train_entry.update({k: v for k, v in per_iteration.items()
+                                if not k.startswith("charts/")})
+            eval_entry = {
+                "step": global_step,
+                "update": update,
+                "charts/steps_per_second": interval_rate,
+                "charts/steps_per_second_cumulative": cumulative_rate,
+                "charts/interval_seconds": interval_seconds,
+                "charts/iteration_seconds": now - iteration_start,
+                "charts/rollout_seconds": rollout_seconds,
+                "charts/update_seconds": update_seconds,
+                "charts/obs_norm_init_seconds": obs_norm_init_seconds,
+                "charts/learning_rate": optimizer.param_groups[0]["lr"],
+                # Peak device memory decides how many runs fit on one GPU. Reset each interval so
+                # the figure describes the interval rather than the whole run.
+                "charts/gpu_memory_peak_mb": (
+                    torch.cuda.max_memory_allocated() / 1024 / 1024 if device.type == "cuda" else 0.0
+                ),
+                "charts/gpu_memory_reserved_mb": (
+                    torch.cuda.max_memory_reserved() / 1024 / 1024 if device.type == "cuda" else 0.0
+                ),
+            }
+            eval_entry.update({k: v for k, v in per_iteration.items() if k.startswith("charts/")})
+            eval_entry.update(minibatch_stats.read_and_reset())
+            eval_entry.update(grad_stats.read_and_reset())
+            record.add_update(train_entry, eval_entry)
             record.flush(completed=False)
+            if device.type == "cuda":
+                torch.cuda.reset_peak_memory_stats()
+            interval_start_time, interval_start_step = now, global_step
+            interval_start_episodes, interval_iterations = record.episodes_seen, 0
             print(f"update={update}/{num_updates} global_step={global_step} "
-                  f"steps_per_second={steps_per_second:.0f} dropped={dropped_last_update} "
+                  f"steps_per_second={interval_rate:.0f} "
+                  f"clip_fired={eval_entry.get('grad/clip_fired_fraction', float('nan')):.2f} "
                   f"mean_extrinsic_reward={np.mean(avg_returns) if avg_returns else float('nan'):.1f}",
                   flush=True)
 

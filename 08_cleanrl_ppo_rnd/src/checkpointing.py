@@ -85,11 +85,15 @@ def save_checkpoint(path, *, agent, rnd_model, optimizer, obs_rms, reward_rms, d
         # The history as of this checkpoint, and the counters that go with it. The counters must
         # come from here rather than from the JSON: past the episode cap the kept rows are strided,
         # so the true episode count cannot be recovered by counting rows.
+        # The per-episode rows are NOT carried here. They live in an append-only sidecar which is
+        # not the run's completion marker, so the sweep's requeue leaves it in place; the resume
+        # cuts it back to this checkpoint's step instead. Only the interval history and the counters
+        # need carrying, which is why this costs kilobytes rather than megabytes.
         payload["record_history"] = {
-            "train_episode_history": record.train_episode_history,
             "train_history": record.train_history,
             "eval_history": record.eval_history,
             "episodes_seen": record.episodes_seen,
+            "episodes_kept": record.episodes_kept,
             "episodes_dropped": record.episodes_dropped,
             "runtime_seconds": record.prior_runtime_seconds + (time.time() - record.start_time),
         }

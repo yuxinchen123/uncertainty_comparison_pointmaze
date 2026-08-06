@@ -9,6 +9,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from run_record import RunRecord, record_filename  # noqa: E402
 
 
+def read_episodes(path):
+    """Read the append-only episode sidecar that sits beside a record."""
+    side = path[: -len(".json")] + ".episodes.jsonl"
+    if not os.path.exists(side):
+        return []
+    return [json.loads(l) for l in open(side) if l.strip()]
+
+
 def test_flush_writes_config_and_history(tmp_path):
     """Golden path: a flushed record carries the config, the history lists and completed=False."""
     path = str(tmp_path / "0_of_30.json")
@@ -20,7 +28,9 @@ def test_flush_writes_config_and_history(tmp_path):
     on_disk = json.load(open(path))
     assert on_disk["run_id"] == 0 and on_disk["a_seed"] == 7
     assert on_disk["completed"] is False
-    assert len(on_disk["train_episode_history"]) == 1
+    assert on_disk["episodes_kept"] == 1
+    assert on_disk["train_episode_history_file"].endswith(".episodes.jsonl")
+    assert len(read_episodes(path)) == 1
     assert len(on_disk["train_history"]) == 1 and len(on_disk["eval_history"]) == 1
     assert on_disk["runtime_seconds"] >= 0.0
     # The record is group-readable, which is what lets a collaborator's analysis open it.
@@ -44,12 +54,14 @@ def test_episode_cap_keeps_every_stride_past_the_cap(tmp_path):
     for i in range(30):
         rec.add_episode({"step": i})
     assert rec.episodes_seen == 30
-    assert len(rec.train_episode_history) == 14
+    assert rec.episodes_kept == 14
     assert rec.episodes_dropped == 16
     rec.flush()
     on_disk = json.load(open(path))
     assert on_disk["episodes_seen"] == 30
+    assert on_disk["episodes_kept"] == 14
     assert on_disk["episodes_dropped_from_history"] == 16
+    assert len(read_episodes(path)) == 14
 
 
 def test_restore_for_resume_from_the_record_truncates_at_the_checkpoint(tmp_path):
@@ -66,7 +78,7 @@ def test_restore_for_resume_from_the_record_truncates_at_the_checkpoint(tmp_path
     second = RunRecord(path, {"run_id": 3, "run_total": 30})
     note = second.restore_for_resume(None, resume_update=3, resume_step=30)
     assert [r["update"] for r in second.train_history] == [0, 1, 2, 3]
-    assert [e["step"] for e in second.train_episode_history] == [0, 10, 20, 30]
+    assert [e["step"] for e in read_episodes(path)] == [0, 10, 20, 30]
     assert "truncated to update 3" in note
     # The resumed record's runtime includes the first segment's, so it never goes backwards.
     second.flush()
@@ -91,7 +103,7 @@ def test_restore_for_resume_on_a_fresh_run(tmp_path):
     """Edge case: nothing on disk and nothing in the checkpoint leaves the record empty."""
     rec = RunRecord(str(tmp_path / "4_of_30.json"), {"run_id": 4, "run_total": 30})
     note = rec.restore_for_resume(None, resume_update=0, resume_step=0)
-    assert rec.train_episode_history == [] and rec.episodes_seen == 0
+    assert rec.episodes_seen == 0 and rec.train_history == []
     assert "no history to restore" in note
 
 
