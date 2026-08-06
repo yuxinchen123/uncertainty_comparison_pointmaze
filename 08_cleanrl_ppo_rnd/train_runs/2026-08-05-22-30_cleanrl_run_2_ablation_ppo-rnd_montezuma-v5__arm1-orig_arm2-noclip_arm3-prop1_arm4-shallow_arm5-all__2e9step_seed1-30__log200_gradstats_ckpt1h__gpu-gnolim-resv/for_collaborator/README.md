@@ -147,10 +147,17 @@ The run is finished when `SWEEP_COMPLETE` appears in the run folder — the owne
 `queue/pending` and `queue/running` are both empty. Until then, `queue/pending` holding zero just
 means every run is claimed, not that the work is over.
 
-**A run that stops early is expected here.** 150 runs at six days each is more than the cluster will
-give in one stretch, and that is planned for: the ids are ordered so that whatever finishes holds
-every arm at the same seed count. Partial coverage is fine; unbalanced coverage is not, which is why
-the claim order matters and why you should not reorder or hand-pick runs.
+**The campaign is on course to finish, which was not the original expectation.** Measured on
+2026-08-06 with 105 runs in flight across both our uids: 326,000 steps per second in aggregate, so
+the remaining work is about **10.5 days** of wall clock (26,800 GPU-hours in total, 179 per run).
+That holds only while the capacity does — it assumes roughly 105 runs stay in flight, and it is your
+jobs that supply half of them.
+
+**A run that stops early is still expected**, because a job's walltime is shorter than a run: `gpu`
+jobs are capped at 4 days and a run needs about 7.5 GPU-days. Every run checkpoints hourly and
+resumes, so a job ending is a handover rather than a loss — but it does mean jobs must be resubmitted
+as they expire. The ids are ordered so that whatever finishes holds every arm at the same seed count,
+which is why you should not reorder or hand-pick runs.
 
 ## The short list of things not to do
 
