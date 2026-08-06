@@ -143,6 +143,69 @@ def aggregate_by_arm(runs):
     return out
 
 
+def matched_step_comparison(records, min_runs_per_arm=5):
+    """Compare the arms only at steps every counted run has reached, and return the whole curve.
+
+    This is the comparison that can be trusted while the campaign is unfinished, and this campaign
+    will not finish: 150 runs of 2e9 steps is more compute than the cluster gives in one stretch. A
+    run's last logged step says as much about the speed of the node it landed on as about its arm, so
+    ranking arms by their final row would rank node allocations. Reading every arm at the same step
+    removes that entirely.
+
+    Returns one entry per step on the shared grid, so the arms can be plotted against each other over
+    training rather than compared at a single point.
+    """
+    # before: runs with last steps [3.2M, 29M, 16M, 42M, ...] and rows on a common 3,276,800 grid
+    # after:  one entry per grid step, holding only the runs that had REACHED that step
+    by_arm = {}
+    for r in records:
+        by_arm.setdefault(r["arm"], []).append(r)
+    all_steps = sorted({s for r in records for s, _ in r["_series"]})
+
+    curve = []
+    for step in all_steps:
+        entry = {"step": step, "arms": {}}
+        for arm, rs in sorted(by_arm.items()):
+            # a run counts at this step only if it got there; its value is the best row up to it
+            reached = [max((v for s, v in r["_series"] if s <= step), default=0.0)
+                       for r in rs if r["_last_step"] >= step]
+            if len(reached) < min_runs_per_arm:
+                continue
+            entry["arms"][arm] = {
+                "runs_reaching_this_step": len(reached),
+                "runs_that_have_scored": sum(1 for v in reached if v > 0),
+                "fraction_scored": sum(1 for v in reached if v > 0) / len(reached),
+                "mean": statistics.fmean(reached),
+                "median": statistics.median(reached),
+                "max": max(reached),
+            }
+        if len(entry["arms"]) == len(by_arm):
+            curve.append(entry)
+    return curve
+
+
+def print_matched_step_table(curve):
+    """Print the deepest step at which every arm still has enough runs, plus the trend before it."""
+    if not curve:
+        print("\nNo step has been reached by enough runs in every arm yet.")
+        return
+    last = curve[-1]
+    print(f"\nEvery arm read at the same step — {last['step']:,}, the deepest point every arm still")
+    print("has runs at. A run counts only if it reached that step; its value is its best row up to it.")
+    hdr = f"{'arm':<26}{'runs':>6}{'scored':>8}{'rate':>8}{'mean':>10}{'median':>9}{'max':>10}"
+    print(hdr); print("-" * len(hdr))
+    for arm, a in last["arms"].items():
+        print(f"{arm:<26}{a['runs_reaching_this_step']:>6}{a['runs_that_have_scored']:>8}"
+              f"{100*a['fraction_scored']:>7.0f}%{a['mean']:>10.1f}{a['median']:>9.1f}{a['max']:>10.1f}")
+    # the trend matters more than any single step while the runs are this early
+    print(f"\nFraction of runs that have scored, over the shared grid "
+          f"({len(curve)} step(s), every arm present):")
+    arms = list(last["arms"])
+    print("  " + f"{'step':>13}" + "".join(f"{a.split('_')[0]:>10}" for a in arms))
+    for e in curve[-6:]:
+        print("  " + f"{e['step']:>13,}" + "".join(f"{100*e['arms'][a]['fraction_scored']:>9.0f}%" for a in arms))
+
+
 def main():
     """Summarise every record in a directory and write one JSON plus a printed table."""
     ap = argparse.ArgumentParser()
@@ -157,8 +220,16 @@ def main():
     runs = [summarise_run(p) for p in paths]
     if args.completed_only:
         runs = [r for r in runs if r.get("completed")]
+    # The matched-step comparison needs each run's whole series, which summarise_run does not keep.
+    for r, path in zip(runs, paths):
+        rec = json.load(open(path))
+        r["_series"] = reward_series(rec.get("train_history") or [])
+        r["_last_step"] = r.get("steps_reached") or 0
+    curve = matched_step_comparison([r for r in runs if "error" not in r and r["_series"]])
+    for r in runs:
+        r.pop("_series", None); r.pop("_last_step", None)
     report = {"data_dir": os.path.abspath(args.data_dir), "runs": runs,
-              "by_arm": aggregate_by_arm(runs)}
+              "by_arm": aggregate_by_arm(runs), "matched_step_curve": curve}
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w") as f:
         json.dump(report, f, indent=1)
@@ -179,6 +250,7 @@ def main():
               f"{g('final_quarter_mean_return'):>10}"
               f"{g('whole_run_mean_return'):>11}{g('best_row_mean_return'):>9}{clip:>11}")
     print("\nvalues are medians across seeds; the JSON carries mean, median, spread, min and max")
+    print_matched_step_table(report["matched_step_curve"])
     print(f"wrote {os.path.abspath(args.out)}")
 
 
