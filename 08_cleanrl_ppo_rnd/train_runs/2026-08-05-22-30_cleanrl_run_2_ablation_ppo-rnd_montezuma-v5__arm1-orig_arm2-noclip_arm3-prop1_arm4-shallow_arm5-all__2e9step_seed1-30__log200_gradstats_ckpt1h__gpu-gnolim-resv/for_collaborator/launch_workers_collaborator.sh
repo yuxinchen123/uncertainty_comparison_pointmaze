@@ -27,11 +27,20 @@ pending=$(ls "$RUN_DIR/queue/pending" 2>/dev/null | wc -l)
 # against squeue by exact job id — never by job name. A name can be reused by another session, and
 # a name-matching count also counts jobs rather than run slots, which is wrong by up to the packing
 # factor: one job on the reserved node holds 24 slots, not 1.
+# The id file may hold lines of two widths: the documented eight fields
+#   <jobid> <node_class> <node> <G> <W> <c_used> <group> <submit_ts>
+# and seven-field lines written before that was fixed, which omit <node_class>. Both are read by
+# field COUNT rather than by a fixed index, so an old line is not silently misread as a new one —
+# reading G and W from the wrong positions would miscount the slots this guard exists to bound.
 live=0
 if [ -s "$IDFILE" ]; then
-  while read -r id node g w rest; do
-    case "$id" in ''|\#*) continue;; esac
-    state=$(squeue -h -j "$id" -o "%T" 2>/dev/null)
+  while read -r -a f; do
+    [ "${#f[@]}" -ge 7 ] || continue
+    case "${f[0]}" in ''|\#*) continue;; esac
+    [[ "${f[0]}" =~ ^[0-9]+$ ]] || continue
+    if [ "${#f[@]}" -ge 8 ]; then g="${f[3]}"; w="${f[4]}"; else g="${f[2]}"; w="${f[3]}"; fi
+    [[ "$g" =~ ^[0-9]+$ && "$w" =~ ^[0-9]+$ ]] || continue   # smoke and monitor rows carry labels
+    state=$(squeue -h -j "${f[0]}" -o "%T" 2>/dev/null)
     case "$state" in RUNNING|PENDING|COMPLETING|CONFIGURING) live=$(( live + g * w ));; esac
   done < "$IDFILE"
 fi
@@ -102,7 +111,13 @@ for spec in $NODES; do
   id="$("${cmd[@]}" 2>&1)"
   if [[ "$id" =~ ^[0-9]+$ ]]; then
     # flock so two of your own shells appending at once cannot interleave a line.
-    ( flock 9; echo "$id $node $g $W $C $SWEEP_ID $(date -Is)" >> "$IDFILE" ) 9>>"$IDFILE.lock"
+    # The id-file line must be the documented eight fields, in order:
+    #   <jobid> <node_class> <node> <G> <W> <c_used> <group> <submit_ts>
+    # A line of the wrong width does not merely look odd — the monitor reads these by position, so a
+    # missing field shifts every later one and the node column ends up holding a GPU count, which
+    # then appears in the infra table as a phantom node and double-counts its cpus.
+    node_class="$(basename "$script")"; node_class="${node_class%%__*}"
+    ( flock 9; echo "$id $node_class $node $g $W $C $SWEEP_ID $(date -Is)" >> "$IDFILE" ) 9>>"$IDFILE.lock"
     printf "  %-12s %d GPU x %d run/GPU = %2d slot(s), %3d cpus, %6sM, %-6s -> %s\n" \
       "$node" "$g" "$W" "$(( W * g ))" "$cpus" "$mem" "$part" "$id"
     submitted=$(( submitted + 1 )); slots=$(( slots + W * g ))
