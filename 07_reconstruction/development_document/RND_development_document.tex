@@ -6375,6 +6375,9 @@ merged oracle's reward, and covers slightly \emph{more} of the maze than either 
   0.767 $\pm$ 0.007 & 300 \\
 \runref{run-3.2.3 reward-norm} (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$) --- best run-5 RND &
   train run 5 & 47.33 $\pm$ 1.92 & 0.685 & 0.913 & \textbf{0.787} $\pm$ 0.008 & 253 \\
+\claudecell{\runref{run-5 original-small} at Adam $10^{-3}$, $\beta{=}10^{3}$ --- the
+  learning-rate addendum} & \claudecell{the addendum run} & \claudecell{40.00 $\pm$ 5.82} &
+  \claudecell{0.803} & \claudecell{1.000} & \claudecell{0.810 $\pm$ 0.029} & \claudecell{20} \\
 \bottomrule
 \end{tabular}
 \caption{Ground-truth count-based oracles vs.\ the best run-5 RND arm (the \runref{run-3.2.3 reward-norm} configuration), all at $10^{6}$ steps
@@ -6384,7 +6387,28 @@ column names the train run(s) whose data each row aggregates; both oracle re-run
 the run-3.2.2 run folder (sweeps of 2026-07-09, seeds $200$--$499$). The merged row's episode
 success rate comes from its $300$ oracle-re-run seeds only (run 2 kept no per-episode records).
 $n$ is the number of independent seeds; the reward-norm row is a partial 2026-07-22 snapshot ($253$ of
-$300$ seeds).}
+$300$ seeds).
+\claudeedit{The last row is the learning-rate addendum's best bonus weight on this task at the
+2026-08-06 snapshot, and is deliberately left OUT of the best/second marking: at $n=20$ against the
+$253$--$397$ of the rows above it, its standard error on $\bar R$ is $5.82$, three to four times
+theirs, so a point estimate that happens to lead a column would not mean it is ahead. Read the row
+as a position report, not a result. It does say something already, though: every one of its $20$
+seeds reaches the goal (seed success $1.000$), and its episode success rate and visit coverage are
+at the top of the table --- so at $10^{-3}$ the arm is exploring at least as widely as the oracles,
+while its reward has not caught them.}}
+\claudecomment{Computed from the addendum run's completed records
+(\texttt{data/\allowbreak 2026-08-05-16-05\_\allowbreak lr1e3/\allowbreak local}, $20$ records for
+this configuration). $\bar R$ is the last \texttt{train\_\allowbreak history} row's
+\texttt{train/\allowbreak mean\_\allowbreak extrinsic\_\allowbreak reward} (train run 5's own
+metric, and this environment's score rule in the addendum's frozen bars); episode success is the
+share of each seed's last $100$ training episodes with reward $>0$; seed success is the share of
+seeds whose final reward is $>0$; visit coverage is the final
+\texttt{visit\_\allowbreak counts/\allowbreak coverage\_\allowbreak pct} over the $46$ reachable
+cells. Bonus weight $10^{3}$ is the addendum's best on this environment by that metric
+($40.0045$), the same weight that won at $10^{-4}$ ($38.6412$, the frozen bar) --- so on PointMaze
+the learning rate has not moved which weight is best, and the two means are within one standard
+error of each other. Caveat: $20$ of a planned $100$ seeds, and below the $30$-seed floor at which
+the addendum's own truncation rule may decide anything.}
 \label{tab:trainrun5-oracle-vs-rnd}
 \end{table}
 
@@ -7840,7 +7864,8 @@ stopped 2026-08-05)}.}
 The sweep \sout{has been running since 2026-08-01}\claudeedit{ran from 2026-08-01 to 2026-08-05,
 when it was stopped by the owner so the cpu and nolim pools could go to the learning-rate addendum
 (last column of Table~\ref{tab:pm-am-trainrun12-algos}). The numbers below are therefore final for
-this run, not a snapshot that will firm up: $6{,}210$ of the planned $24{,}200$ runs completed, and
+this run, not a snapshot that will firm up: $6{,}254$ of the planned $24{,}200$ runs completed
+($6{,}210$ by the stop itself, the rest from runs already in flight that finished afterwards), and
 the remaining $15{,}438$ queue markers are parked unexecuted}. The two tables below are regenerated in place from
 the records on disk by \texttt{code/\allowbreak
 2026-08-04-20-00\_\allowbreak pm-am-run12-interim-tables/\allowbreak make\_\allowbreak all.py},
@@ -7881,17 +7906,17 @@ and must not be read as a result --- it is where the run was when it ended. Full
 \textbf{environment} & \textbf{arm} & \textbf{configurations} & \textbf{undecided} & \textbf{pruned} & \textbf{survivors} & \textbf{completed runs} \\
 \midrule
 \texttt{AntMaze\_\allowbreak UMaze-v5} & RND baseline & 1 & N/A & N/A & N/A & 17 \\
- & algorithm 1 & 30 & 30 & 0 & 0 & 784 \\
- & algorithm 2.1 & 30 & 30 & 0 & 0 & 793 \\
- & algorithm 2.2 & 30 & 30 & 0 & 0 & 772 \\
- & algorithm 2.3 & 30 & 30 & 0 & 0 & 760 \\
+ & algorithm 1 & 30 & 30 & 0 & 0 & 789 \\
+ & algorithm 2.1 & 30 & 30 & 0 & 0 & 803 \\
+ & algorithm 2.2 & 30 & 30 & 0 & 0 & 779 \\
+ & algorithm 2.3 & 30 & 30 & 0 & 0 & 766 \\
 \texttt{AntMaze\_\allowbreak Medium-v5} & RND baseline & 1 & N/A & N/A & N/A & 20 \\
- & algorithm 1 & 30 & 30 & 0 & 0 & 778 \\
- & algorithm 2.1 & 30 & 30 & 0 & 0 & 756 \\
- & algorithm 2.2 & 30 & 30 & 0 & 0 & 763 \\
- & algorithm 2.3 & 30 & 30 & 0 & 0 & 767 \\
+ & algorithm 1 & 30 & 30 & 0 & 0 & 783 \\
+ & algorithm 2.1 & 30 & 30 & 0 & 0 & 757 \\
+ & algorithm 2.2 & 30 & 30 & 0 & 0 & 766 \\
+ & algorithm 2.3 & 30 & 30 & 0 & 0 & 774 \\
 \midrule
-\textbf{total} &  & \textbf{242} & \textbf{240} & \textbf{0} & \textbf{0} & \textbf{6210} \\
+\textbf{total} &  & \textbf{242} & \textbf{240} & \textbf{0} & \textbf{0} & \textbf{6254} \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-am-trainrun12-status
@@ -7921,9 +7946,10 @@ for the baseline. Auto-generated; \sout{regenerated in place as the sweep advanc
 \multicolumn{5}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak UMaze-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
 algorithm 2.2 --- lr 0.01, bonus-weight 30 & {\boldmath$-672.54 \pm 1.37$} & $-681.85 \pm 2.02$ & 27 & undecided \\
 algorithm 1 --- lr 0.01, bonus-weight 3 & \underline{$-674.30 \pm 1.27$} & {\boldmath$-671.94 \pm 2.30$} & 27 & undecided \\
-algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-683.35 \pm 0.74$ & $-676.39 \pm 2.17$ & 26 & undecided \\
+algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-683.27 \pm 0.72$ & $-676.31 \pm 2.09$ & 27 & undecided \\
 algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-686.52 \pm 1.14$ & \underline{$-674.75 \pm 3.30$} & 26 & undecided \\
 RND baseline --- bonus-weight 10000 ($10^{7}$ steps) & $-695.29 \pm 1.07$ & $-699.17 \pm 0.65$ & 17 & N/A \\
+\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 3000 (the learning-rate addendum, its own sweep)} & \claudecell{$-686.56 \pm 1.83$} & \claudecell{$-682.87 \pm 2.93$} & \claudecell{20} & \claudecell{interim} \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-689.7404$ (bonus-weight 10000); 49 of 120 configurations at or above it so far}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
@@ -7932,6 +7958,7 @@ algorithm 1 --- lr 0.01, bonus-weight 10000 & \underline{$-993.77 \pm 0.51$} & {
 algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-996.35 \pm 0.30$ & \underline{$-993.93 \pm 1.02$} & 25 & undecided \\
 RND baseline --- bonus-weight 3000 ($10^{7}$ steps) & $-996.75 \pm 0.59$ & $-997.51 \pm 1.20$ & 20 & N/A \\
 algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-997.06 \pm 0.32$ & $-995.67 \pm 0.94$ & 27 & undecided \\
+\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 3000 (the learning-rate addendum, its own sweep)} & \claudecell{$-996.33 \pm 0.55$} & \claudecell{$-994.16 \pm 1.16$} & \claudecell{19} & \claudecell{interim} \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-998.4678$ (bonus-weight 3000); 55 of 120 configurations at or above it so far}} \\
 \bottomrule
 \end{tabular}
@@ -7946,7 +7973,27 @@ column within each environment block. Caveat: the baseline row's values are over
 $10^{7}$-step runs, while the four sweep arms' rows and the frozen bar are $10^{6}$-step values,
 so the baseline row is a preview rather than a like-for-like comparison at this snapshot. The line
 under each block restates the frozen bar and how many of the block's configurations currently sit
-at or above it. Auto-generated; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final --- the sweep produces no further records}.}
+at or above it. Auto-generated; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-06 --- train run 1.2's own five rows are final (that sweep was stopped
+2026-08-05 and produces no further records), while the addendum row below them is live}.
+\claudeedit{The last row of each block is the learning-rate addendum: the same RND baseline stack at
+Adam $10^{-3}$ instead of $10^{-4}$, at its best bonus weight on that environment so far. It is a
+SEPARATE sweep in its own run folder, shown here because this is where these two environments'
+results are compared, and it is deliberately left OUT of the bold/underline marking of the four
+arms above it. Read it as a position report: at $n \approx 20$ of a planned $100$, and below the
+$30$-seed floor at which its own truncation rule may decide anything. What it shows so far is that
+$10^{-3}$ sits ABOVE the $10^{-4}$ frozen bar on both environments --- by $3.2$ on UMaze
+($-686.56$ against $-689.74$, about $1.7$ standard errors) and by $2.1$ on Medium ($-996.33$
+against $-998.47$, about $3.9$ standard errors) --- so the learning rate alone moves this stack
+past the number train run 1.2's four new algorithms were built to beat.}}
+\claudecomment{The addendum rows are generated by the same script as the rest of this table
+(\texttt{code/\allowbreak 2026-08-04-20-00\_\allowbreak pm-am-run12-interim-tables/\allowbreak make\_\allowbreak all.py},
+function \texttt{lr1e3\_\allowbreak best\_\allowbreak row}), reading that run's own completed
+records live and ranking by the whole-run mean --- the same rule the block uses --- so the line
+cannot drift from the data or be lost on a regeneration. Best bonus weight is $3000$ on BOTH AntMaze
+environments, where at $10^{-4}$ it was $10^{4}$ on UMaze and $3{\times}10^{3}$ on Medium; so on
+UMaze the learning-rate change also moves which weight is best. Caveat on reading the comparison:
+the addendum row and the frozen bar are both $10^{6}$-step values and are like-for-like, but the
+\emph{RND baseline} row in each block is a $10^{7}$-step run and is not.}
 \label{tab:pm-am-trainrun12-interim}
 \end{table}
 
