@@ -130,8 +130,12 @@ if [ -z "$NODES" ]; then
   echo
   echo "Free GPUs right now. The partition column matters: a node is in ONE partition, and pairing"
   echo "a node with the wrong -p means the job simply never runs."
-  printf '  %-12s %-8s %-34s %s\n' NODE PARTITION GPUS "CPUS alloc/idle/other/total"
-  sinfo -p gpu,gnolim -N -h -o "  %-12n %-8P %-34G %C" | sort -u
+  # sinfo rejects a '-' left-justify flag in its format string, so the columns are laid out here
+  # rather than by sinfo. Its own error ("Invalid node format specification: -") is printed once per
+  # node and buries the table, which is the first thing a collaborator sees.
+  printf '  %-12s %-8s %-36s %s\n' NODE PARTITION GPUS "CPUS alloc/idle/other/total"
+  sinfo -p gpu,gnolim -N -h -o "%n %P %G %C" | sort -u \
+    | awk '{printf "  %-12s %-8s %-36s %s\n", $1, $2, $3, $4}'
   echo
   echo "Then re-run with the nodes you want, for example:"
   echo "  NODES=\"cheetah08:4 ai07:3\" bash \$0"
