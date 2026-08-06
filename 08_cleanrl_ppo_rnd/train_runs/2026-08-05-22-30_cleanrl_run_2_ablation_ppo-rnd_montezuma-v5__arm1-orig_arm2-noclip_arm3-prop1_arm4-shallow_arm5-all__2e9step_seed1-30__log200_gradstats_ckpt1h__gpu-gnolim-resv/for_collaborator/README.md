@@ -34,35 +34,57 @@ if it never finishes.
 
 ```bash
 source <this folder>/packet_env.sh
-echo "$RUN_DIR"; ls "$RUN_DIR/queue/$SWEEP_ID/pending" | wc -l    # unclaimed runs
-"$PY" -c "import torch, envpool, gym; print(torch.__version__, envpool.__version__, gym.__version__)"
+echo "$RUN_DIR"; ls "$RUN_DIR/queue/pending" | wc -l    # unclaimed runs
+PYTHONNOUSERSITE=1 "$PY" -c "import torch, envpool, gym; print(torch.__version__, envpool.__version__, gym.__version__)"
 ```
 
 Expect `2.6.0+cu124 0.6.6 0.23.1`. If the import fails, stop and write a problem report — do not try
 to fix the environment.
 
-## 2. Smoke test (about ten minutes) — required before you submit anything
+`PYTHONNOUSERSITE=1` is not decoration. If you have a torch in `~/.local`, Python's user site
+directory takes precedence over the shared environment's packages, and you would be told a version
+this run does not use. Every job sets it too, for the same reason — and because a torch 2.10+cu128
+build has no Pascal kernels, which would kill every run on `gnolim`.
+
+## 2. Smoke test (about five minutes) — required before you submit anything
+
+**Send it to a GPU node; do not run it on the login node.** The trainer falls back to the CPU when no
+GPU is visible, so on the login node it would run five heavy CPU trainings that hit their timeout and
+report a failure that is not real.
 
 ```bash
-bash <this folder>/smoke_test.sh
+sbatch -p gpu --gres=gpu:1 --cpus-per-task=8 --mem=8G -t 00:40:00 \
+       --output="$LOGDIR/smoke_${USER}_%j.out" --wrap "bash <this folder>/smoke_test.sh"
 ```
 
 It checks you can read and write the queue directories and read a queue marker, then runs **one short
 training per arm** — all five — into your own folder, each with a hard 20-minute timeout. It never
-touches the queue. It prints a checklist and ends with `SMOKE PASSED` or `SMOKE FAILED`.
+touches the queue. It prints a checklist and ends with `SMOKE PASSED` or `SMOKE FAILED`. In practice
+it takes about five minutes; the 20-minute timeouts are a ceiling, not an estimate.
 
 If it fails, write a problem report (section 6) and stop.
 
 ## 3. Submitting workers
 
 ```bash
-DRY=1 bash <this folder>/launch_workers_collaborator.sh    # preview, submits nothing
-bash <this folder>/launch_workers_collaborator.sh          # after you add your submit calls
+bash <this folder>/launch_workers_collaborator.sh                      # list free GPUs, submit nothing
+DRY=1 NODES="cheetah08:4 ai07:3" bash <this folder>/launch_workers_collaborator.sh   # print the sbatch lines
+NODES="cheetah08:4 ai07:3" bash <this folder>/launch_workers_collaborator.sh         # submit them
 ```
 
-The launcher refuses to run if the queue is empty or the run is finished, and never submits more
-worker slots than there are unclaimed runs. It writes only **your own** id file and tags every job
-with `--comment=<sweep id>_<your user>` so a job can be recovered if a submission is interrupted.
+**You pass the nodes; the launcher works out everything else** — which submission script serves that
+node, how many runs per GPU it packs, and therefore how many cpus and how much memory to request. You
+never edit this file, and you never need to know the node-to-script mapping.
+
+With no `NODES` it prints the free GPUs **with their partition**, which matters: a node belongs to one
+partition, and pairing a node with the wrong `-p` means the job simply never runs.
+
+The launcher refuses to run if the queue is empty or the run is finished; refuses a node this run
+cannot use, rather than letting you submit an incompatible one; refuses a node inside the owner's
+Slurm reservation, where your job would pend forever with no error; and never submits more worker
+slots than there are unclaimed runs, counting the slots you already hold **by exact job id from your
+own id file**. It writes only **your own** id file and tags every job with
+`--comment=<sweep id>_<your user>` so a job can be recovered if a submission is interrupted.
 
 **Sizing: 8 cpus per run, one run per GPU**, about 6 GB of host memory and 6 GB of GPU memory per run.
 Measured, not guessed — see `resource_facts.md`. Two things not to change:
@@ -70,7 +92,9 @@ Measured, not guessed — see `resource_facts.md`. Two things not to change:
 - **Do not raise the cpus per run.** Throughput was measured flat past 8 to 16 cpus on the fast nodes,
   so extra cores mostly buy nothing and cost you run slots, which are the scarce thing.
 - **Do not pack more than one run per GPU on the open partitions.** Packing raises throughput per GPU
-  but lowers it per cpu, and in `gpu` and `gnolim` the cpu is what runs out first.
+  but lowers it per cpu, and in `gpu` and `gnolim` the cpu is what runs out first. The launcher
+  already applies this: it reads the packing factor from the submission script, so the only packed
+  class is the owner's reserved node, which you cannot submit to anyway.
 
 **Which nodes.** A submission script exists under `slurm/submission_script/` for every node class this
 run supports. **The existence of that file is the compatibility verdict.** If a class has no script,
@@ -85,6 +109,16 @@ bash <this folder>/refresh_my_ids.sh
 ```
 
 Refreshes your id file and prints the state of each of your jobs. Run it before any `scancel`.
+
+To keep topping up on your own, without watching it:
+
+```bash
+NODES="cheetah08:4 ai07:3" nohup bash <this folder>/monitor_collaborator.sh &
+```
+
+Every ten minutes it refreshes your id file, prints your jobs, and refills those nodes only while
+unclaimed runs remain. It stops by itself when `SWEEP_COMPLETE` appears. It is passive: it never
+repairs, requeues, prunes or cancels anything.
 
 ## 5. Cancelling
 
@@ -102,14 +136,16 @@ scancel <id from your id file>                # then, one id at a time
 Write **one new file** in `problems/open/`, named `<YYYYMMDD>_<HHMM>_<your-user>_<short-slug>.md`,
 saying what you saw, which job ids, which nodes, and what you had run. Then stop.
 
-The owner's monitoring loop checks `problems/open/` every twenty minutes, fixes the owner-side cause,
-and moves the file to `problems/resolved/`. Do not repair shared state yourself, and do not requeue
-anything.
+The owner checks `problems/open/` on a twenty-minute cycle while a session is active, fixes the
+owner-side cause, and moves the file to `problems/resolved/`. That cycle is not a daemon — if the
+owner's session has ended, a report waits until the next one. Do not repair shared state yourself,
+and do not requeue anything.
 
 ## 7. Am I done?
 
-The run is finished when `SWEEP_COMPLETE` appears in the run folder. Until then, `queue/<sweep
-id>/pending` holding zero just means every run is claimed — not that the work is over.
+The run is finished when `SWEEP_COMPLETE` appears in the run folder — the owner's tick writes it once
+`queue/pending` and `queue/running` are both empty. Until then, `queue/pending` holding zero just
+means every run is claimed, not that the work is over.
 
 **A run that stops early is expected here.** 150 runs at six days each is more than the cluster will
 give in one stretch, and that is planned for: the ids are ordered so that whatever finishes holds

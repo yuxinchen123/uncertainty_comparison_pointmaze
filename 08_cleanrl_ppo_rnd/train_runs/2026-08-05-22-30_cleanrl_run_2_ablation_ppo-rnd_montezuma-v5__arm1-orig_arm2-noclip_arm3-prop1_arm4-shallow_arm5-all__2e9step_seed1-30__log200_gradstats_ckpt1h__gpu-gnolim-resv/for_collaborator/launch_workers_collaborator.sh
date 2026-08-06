@@ -1,9 +1,18 @@
 #!/bin/bash
 # Submit worker jobs for this run under YOUR OWN Slurm caps. It only adds workers; it never builds,
-# repairs, prunes or cancels anything. DRY=1 previews without submitting.
+# repairs, prunes or cancels anything.
+#
+#   bash launch_workers_collaborator.sh                      # show what is free, submit nothing
+#   NODES="cheetah08:4 ai07:3" bash launch_workers_collaborator.sh          # submit those
+#   DRY=1 NODES="cheetah08:4" bash launch_workers_collaborator.sh          # print the sbatch lines only
+#
+# You pass the nodes; the script works out everything else — which submission script serves that
+# node, how many runs per GPU it packs, and therefore how many cpus and how much memory to ask for.
+# You never have to edit this file, and you never have to know the node-to-script mapping.
 set -uo pipefail
 source /p/rlprojects/RND/08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/for_collaborator/packet_env.sh
 DRY="${DRY:-0}"
+NODES="${NODES:-}"
 
 # The owner runs their own launcher; this one refuses to run for them so the two can never both
 # submit against the same caps by accident.
@@ -13,47 +22,105 @@ DRY="${DRY:-0}"
 [ -f "$RUN_DIR/SWEEP_COMPLETE" ] && { echo "SWEEP_COMPLETE exists - the run is finished. Nothing to do."; exit 0; }
 pending=$(ls "$RUN_DIR/queue/pending" 2>/dev/null | wc -l)
 [ "$pending" -eq 0 ] && { echo "queue pending = 0 - every run is claimed. Nothing to do."; exit 0; }
-echo "queue has $pending unclaimed run(s)"
 
-# Never submit more worker slots than there are unclaimed runs, counting slots already in flight
-# from every submitter.
-live=$( { squeue -u "$USER" -h -o "%j" 2>/dev/null | grep -c -E "^($PREFIX_GPU|$PREFIX_GNOLIM)" ; } || echo 0)
+# How many worker slots you already have in flight. Counted from YOUR OWN id file, cross-checked
+# against squeue by exact job id — never by job name. A name can be reused by another session, and
+# a name-matching count also counts jobs rather than run slots, which is wrong by up to the packing
+# factor: one job on the reserved node holds 24 slots, not 1.
+live=0
+if [ -s "$IDFILE" ]; then
+  while read -r id node g w rest; do
+    case "$id" in ''|\#*) continue;; esac
+    state=$(squeue -h -j "$id" -o "%T" 2>/dev/null)
+    case "$state" in RUNNING|PENDING|COMPLETING|CONFIGURING) live=$(( live + g * w ));; esac
+  done < "$IDFILE"
+fi
 want=$(( pending - live ))
-[ "$want" -le 0 ] && { echo "you already have $live worker job(s) live for $pending unclaimed runs. Nothing to do."; exit 0; }
+echo "queue has $pending unclaimed run(s); you hold $live worker slot(s) in flight"
+[ "$want" -le 0 ] && { echo "your slots already cover every unclaimed run. Nothing to do."; exit 0; }
 echo "you may add up to $want worker slot(s)"
 
-mkdir -p "$LOGDIR" "$(dirname "$IDFILE")"; touch "$IDFILE"
-submit () {  # partition node gres gpus script [extra...]
-  local part=$1 node=$2 gres=$3 g=$4 script=$5; shift 5
-  local cpus=$(( g * CPUS_PER_RUN )) mem=$(( g * 6000 ))
-  local name="$(prefix_for_partition "$part")$g"
-  local tl; [ "$part" = "gnolim" ] && tl=20-00:00:00 || tl=4-00:00:00
-  if [ "$DRY" = "1" ]; then echo "  DRY sbatch -p $part --nodelist=$node --gres=$gres --cpus-per-task=$cpus --mem=${mem}M -t $tl $script $g"; return; fi
-  local id
-  id=$(sbatch --parsable --partition="$part" --nodelist="$node" --gres="$gres" \
-       --cpus-per-task="$cpus" --mem="${mem}M" --time="$tl" --job-name="$name" \
-       --comment="${SWEEP_ID}_${USER}" \
-       --output="$LOGDIR/%x_%j.out" --error="$LOGDIR/%x_%j.out" \
-       "$SUBMISSION_SCRIPT_DIR/$script" "$g" 2>&1)
-  if [[ "$id" =~ ^[0-9]+$ ]]; then
-    # flock so two of your own shells appending at once cannot interleave a line.
-    ( flock 9; echo "$id $node $g 1 $CPUS_PER_RUN $SWEEP_ID $(date -Is)" >> "$IDFILE" ) 9>>"$IDFILE.lock"
-    echo "  submitted $node ($g slot(s)) -> $id"
-  else
-    echo "  sbatch refused for $node: $id"
-  fi
+# Which submission script serves a node. The node-to-class map is derived from the generated script
+# names, so a node this run cannot use resolves to nothing and is refused rather than mis-submitted.
+# That is what makes the excluded classes an enforced rule and not just a sentence in the README.
+script_for () {
+  local node="$1" f cls
+  for f in "$SUBMISSION_SCRIPT_DIR"/*.slurm; do
+    cls="$(basename "$f")"; cls="${cls%%__*}"
+    case "_${cls}_" in *"_${node}_"*) echo "$f"; return;; esac
+    if [[ "$cls" == "$node" ]]; then echo "$f"; return; fi
+    if [[ "$cls" =~ ^([a-z]+)([0-9]+)-([0-9]+)$ ]]; then
+      local base="${BASH_REMATCH[1]}" lo="${BASH_REMATCH[2]}" hi="${BASH_REMATCH[3]}"
+      if [[ "$node" =~ ^${base}([0-9]+)$ ]]; then
+        local n="${BASH_REMATCH[1]}"
+        if (( 10#$n >= 10#$lo && 10#$n <= 10#$hi )); then echo "$f"; return; fi
+      fi
+    fi
+  done
 }
 
-echo
-echo "Pick nodes with free GPUs from the line below, then edit the submit calls at the bottom."
-echo "A submission script exists only for node classes this run supports - if there is no script"
-echo "for a class, this run cannot use it, and that is the compatibility verdict. Classes with no"
-echo "script here: nekomata (compute capability 12.0, above what the torch build covers)."
-echo
-sinfo -p gpu,gnolim -N -h -o "%n %G %C" | head -50
-echo
-echo "Example calls (uncomment and adjust the node and gpu count to what is actually free):"
-echo "  submit gpu    cheetah08 gpu:nvidia_rtx_a4000:2 2 cheetah08-09__ppo-rnd-atari.slurm"
-echo "  submit gnolim ai07      gpu:nvidia_geforce_gtx_1080_ti:2 2 ai07-08__ppo-rnd-atari.slurm"
-echo
-echo "Nothing was submitted. Edit this script's last section to add your submit calls."
+# Nodes inside the owner's Slurm reservation. A job of yours pinned there without the reservation
+# pends forever with no error, so it is refused up front.
+RESERVED="$(scontrol show reservation -o 2>/dev/null | grep -oP 'Nodes=\K\S+' | tr ',\n' '  ')"
+
+mkdir -p "$LOGDIR"; touch "$IDFILE"
+submitted=0; slots=0
+for spec in $NODES; do
+  node="${spec%%:*}"; g="${spec##*:}"
+  script="$(script_for "$node")"
+  if [[ -z "$script" ]]; then
+    echo "  $node: NO SUBMISSION SCRIPT — this run cannot use it (wrong GPU generation). Skipped."
+    continue
+  fi
+  case " $RESERVED " in *" $node "*)
+    echo "  $node: inside the owner's Slurm reservation — your job would pend forever there. Skipped."
+    continue;; esac
+
+  # Every number comes from the script's own header, so the packing decision has one home and this
+  # launcher never recomputes it. W is the runs-per-GPU factor: without it, a packed node is asked
+  # for a third of the cpus and memory it will actually use, which oversubscribes the cpus and
+  # invites a memory kill.
+  part="$(grep -oP '^#SBATCH --partition=\K\S+' "$script")"
+  gres_type="$(grep -oP '^#SBATCH --gres=gpu:\K[^:]+' "$script")"
+  total_g="$(grep -oP '^#SBATCH --gres=gpu:[^:]+:\K[0-9]+' "$script")"
+  W="$(grep -oP '^  --slots_per_gpu \K[0-9]+' "$script")"
+  C="$(grep -oP '^  --cpus_per_run \K[0-9]+' "$script")"
+  mem_total="$(grep -oP '^#SBATCH --mem=\K[0-9]+' "$script")"
+  mem_per_slot=$(( mem_total / (W * total_g) ))
+  cpus=$(( W * g * C )); mem=$(( W * g * mem_per_slot ))
+  tl=4-00:00:00; [ "$part" = "gnolim" ] && tl=20-00:00:00
+  name="$(prefix_for_partition "$part")$g"
+
+  cmd=(sbatch --parsable --partition="$part" --nodelist="$node" --gres=gpu:"$gres_type":"$g"
+       --cpus-per-task="$cpus" --mem="${mem}M" --time="$tl" --job-name="$name"
+       --comment="${SWEEP_ID}_${USER}"
+       --output="$LOGDIR/%x_%j.out" --error="$LOGDIR/%x_%j.out" "$script" "$g")
+  if [ "$DRY" = "1" ]; then
+    printf '  DRY %s   [%d slot(s): %d GPU x %d run/GPU]\n' "${cmd[*]}" "$(( W * g ))" "$g" "$W"
+    slots=$(( slots + W * g )); continue
+  fi
+  id="$("${cmd[@]}" 2>&1)"
+  if [[ "$id" =~ ^[0-9]+$ ]]; then
+    # flock so two of your own shells appending at once cannot interleave a line.
+    ( flock 9; echo "$id $node $g $W $C $SWEEP_ID $(date -Is)" >> "$IDFILE" ) 9>>"$IDFILE.lock"
+    printf "  %-12s %d GPU x %d run/GPU = %2d slot(s), %3d cpus, %6sM, %-6s -> %s\n" \
+      "$node" "$g" "$W" "$(( W * g ))" "$cpus" "$mem" "$part" "$id"
+    submitted=$(( submitted + 1 )); slots=$(( slots + W * g ))
+  else
+    echo "  $node: sbatch refused: $id"
+  fi
+done
+
+if [ -z "$NODES" ]; then
+  echo
+  echo "Free GPUs right now. The partition column matters: a node is in ONE partition, and pairing"
+  echo "a node with the wrong -p means the job simply never runs."
+  printf '  %-12s %-8s %-34s %s\n' NODE PARTITION GPUS "CPUS alloc/idle/other/total"
+  sinfo -p gpu,gnolim -N -h -o "  %-12n %-8P %-34G %C" | sort -u
+  echo
+  echo "Then re-run with the nodes you want, for example:"
+  echo "  NODES=\"cheetah08:4 ai07:3\" bash \$0"
+  echo "Nothing was submitted."
+  exit 0
+fi
+echo "submitted $submitted job(s), $slots worker slot(s); id file holds $(grep -cE '^[0-9]+' "$IDFILE") id(s)"

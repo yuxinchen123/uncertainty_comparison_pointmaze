@@ -79,3 +79,41 @@ violations of the arm definitions and zero non-finite gradient norms.
 
 Arm coverage of the runs started so far is 7 / 6 / 4 / 6 / 5 across arms 1 to 5, over seeds 1-9, 12
 and 13 — the seed-outermost ordering keeping the arms balanced as intended.
+
+## 2026-08-06, fourth tick — the collaborator packet was not safe, and is now fixed
+
+An independent check of the packet against the collaborator-handbook skill found it **not safe to
+hand over**. Three blocking defects, all fixed this tick:
+
+1. **The launcher died on its first use.** `live=$( { squeue … | grep -c … ; } || echo 0)` — `grep -c`
+   prints `0` *and* exits 1 when it matches nothing, so `|| echo 0` appended a second `0`. `live`
+   became the two-line string `0\n0` and the next line's arithmetic failed. A collaborator with no
+   jobs yet — which is everyone, the first time — could not submit at all. The guard also counted
+   *jobs* by name rather than *run slots*, wrong by up to 24x on a packed node, and job names are not
+   a safe key anyway. It now counts slots by exact job id from the collaborator's own id file.
+2. **`DRY=1` printed no submission plan**, because the launcher had no submit calls: it told the
+   collaborator to hand-edit a file the owner owns. It now takes `NODES="node:G …"` like the owner's
+   launcher, and resolves the node to its submission script itself.
+3. **The README's very first command pointed at a directory that does not exist** —
+   `queue/<sweep id>/pending` instead of `queue/pending` — and both the README and the launcher
+   depended on a `SWEEP_COMPLETE` sentinel **that nothing ever wrote**, so the collaborator's "am I
+   done" signal could never appear. `slurm/mark_complete_if_drained.sh` now writes it, and the
+   owner's tick runs it.
+
+Also fixed: the launcher sized cpus and memory as `GPUs x 8` with no runs-per-GPU factor, so a packed
+node would have been asked for a third of what it uses — cpu oversubscription and a likely memory
+kill; it now reads the factor from the submission script. Nodes inside the owner's reservation are
+refused up front rather than pending forever with no error. The free-GPU listing now carries the
+partition column, since a node belongs to one partition and the wrong `-p` means the job never runs.
+A `monitor_collaborator.sh` was added. The owner's own launcher gained a uid guard: it was
+group-writable, so a collaborator running it would have submitted under their uid while appending to
+the **owner's** id file.
+
+**The collaborator got there first and it worked out.** yuxinchen submitted 21 worker jobs at 01:50
+and 01:52, and the queue went from 55 to **106 of 150 runs executing**. 104 of the 106 running
+markers have a usage sample from the last five minutes, so those workers are genuinely training. All
+their jobs are one run per GPU and none is on the reserved node, so neither the packing nor the
+reservation defect could bite. Their nodes run at 2,566 to 2,823 steps/s.
+
+Across every logged row of all 53 records with data: **zero invariant violations, zero non-finite
+gradient norms**. Arm coverage 13 / 9 / 10 / 10 / 11 over 16 seeds.
