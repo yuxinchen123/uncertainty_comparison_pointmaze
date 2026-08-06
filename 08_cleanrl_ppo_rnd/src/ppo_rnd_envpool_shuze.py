@@ -987,12 +987,18 @@ def main():
                   f"mean_extrinsic_reward={np.mean(avg_returns) if avg_returns else float('nan'):.1f}",
                   flush=True)
 
-        # Checkpoint on a wall-clock cadence, so the interval is the same however fast the node is,
-        # but only on an update that also logs. Aligning the two means the checkpoint and the record
-        # always sit at the same update, which is what makes the resume truncation exact. The delay
-        # this adds is at most log_every_updates updates.
-        due = time.time() - last_checkpoint_time >= args.checkpoint_every_seconds
-        if due and update % args.log_every_updates == 0:
+        # Checkpoint on a wall-clock cadence, at ANY iteration boundary once it is due.
+        #
+        # This used to wait for an update that also logs, on the reasoning that a checkpoint and a
+        # record row at the same update make the resume truncation exact. That reasoning was wrong in
+        # one direction and expensive in the other. Wrong, because the resume does not need them
+        # aligned: a format-2 checkpoint carries its own copy of the history, so restore_for_resume
+        # rebuilds from the checkpoint and truncates the record to that position, whatever update it
+        # sits at. Expensive, because it made the real checkpoint interval a multiple of the LOGGING
+        # interval — on a slow node one logging interval is 40 minutes, so an hourly checkpoint
+        # actually landed every 80, and a run killed in between lost all of it. Observed 2026-08-06:
+        # run 79 on a node delivering 1,349 steps/s reached 79 minutes with no checkpoint at all.
+        if time.time() - last_checkpoint_time >= args.checkpoint_every_seconds:
             info_ckpt = save_checkpoint(
                 checkpoint_path, agent=agent, rnd_model=rnd_model, optimizer=optimizer,
                 obs_rms=obs_rms, reward_rms=reward_rms, discounted_reward=discounted_reward,
