@@ -1,4 +1,13 @@
-# Experiment background — original RND at Adam learning rate 1e-3 (addendum to train run 5 and train run 1.2)
+# Experiment background — original RND at Adam learning rates 1e-3 and 1e-2 (addendum to train run 5 and train run 1.2)
+
+> **Scope grew on 2026-08-06, while the sweep was running.** It launched on 2026-08-05 as one
+> learning rate (1e-3) at 100 seeds per configuration. On the user's instruction it now runs **two**
+> learning rates (1e-3 and 1e-2) at **300** seeds per configuration: 90 configurations, 27,000 runs.
+> The change was applied to the LIVE queue by `slurm/extend_queue.py` — no job was stopped or
+> resubmitted, no completed run was repeated. The run folder's name still says `lr1e-3` and
+> `100seed` because renaming it would break the `RUN_DIR` of every running worker; the folder name
+> records how the run started, this file records what it became. See `infra_history.md`,
+> 2026-08-06 20:55.
 
 ## Purpose
 
@@ -9,13 +18,14 @@ target, a 6400 env-step state-normalization warm-up, reward normalization on —
 paper's predictor learning rate of **1e-4**. This run asks one question:
 
 > On the same three environments, does the same stack do better or worse at a predictor learning
-> rate of **1e-3**?
+> rate of **1e-3**, or of **1e-2**?
 
 Nothing else changes. The queue's configuration parameters are train run 5's `ORIGSMALL_PARAMS`
-copied field for field with `rnd_lr` set to `0.001`, and a unit test
-(`slurm/test_run_queue_convention.py`) asserts that `rnd_lr` is the only field that differs. So each
-environment's result is a single new column beside the Adam 1e-4 column already in the writeup, not a
-new arm.
+copied field for field with `rnd_lr` set to `0.001` or `0.01`, and a unit test
+(`slurm/test_run_queue_convention.py`) asserts that `rnd_lr` is the only field that differs, at
+either rate. So each environment's result is two new columns beside the Adam 1e-4 column already in
+the writeup, not a new arm. Both rates use the SAME seeds, so they are paired seed by seed with each
+other as well as being comparable to Adam 1e-4.
 
 The three environments are the three the two sections measure, each kept exactly as its own section
 defines it:
@@ -35,15 +45,15 @@ of the setup every run up to train run 5 used.
 | Parameter | Value |
 |-----------|-------|
 | intrinsic bonus | `rnd_next_state` — the train-run-5 original-small stack |
-| **the one changed knob** | predictor optimizer Adam at learning rate **1e-3** (train run 5 and train run 1.2 used 1e-4) |
+| **the one changed knob** | predictor optimizer Adam at learning rate **1e-3** or **1e-2** (train run 5 and train run 1.2 used 1e-4) |
 | unchanged RND knobs | `mse_mean` readout, update proportion 1.0, LeakyReLU slope 0.2, predictor +1 block of width 128, env-steps warm-up 6400, reward normalization on with discount 0.99, zero bias, orthogonal √2 weights, output dimension 128, state normalization by running RMS with clip ±5, next-state input |
 | bonus weight | swept over the 15 values train run 1.2 uses: 1e-3, 3e-3, 1e-2, 3e-2, 1e-1, 3e-1, 1, 3, 10, 30, 1e2, 3e2, 1e3, 3e3, 1e4 |
 | base RL algorithm | SB3 SAC `MlpPolicy`, Adam 3e-4, batch 256, tau 0.005, buffer 1e6, nets 2×256 ReLU, auto entropy target −dim(A), train freq 1/1, learning starts 100 |
 | total steps per run | 1,000,000 (all three environments) |
-| configurations | 3 environments × 15 bonus weights = **45** |
-| seeds | 100 per configuration. PointMaze uses `a_seed` 900–999 (fresh, disjoint from train run 5's 600–899 and every earlier PointMaze run); AntMaze uses 0–99 (the seed space train runs 1.1 and 1.2 used there) |
-| total runs | 45 × 100 = **4,500** |
-| truncation floor / target | decisions from 30 completed seeds; 100 completed seeds without a truncation = survivor |
+| configurations | 2 predictor learning rates × 3 environments × 15 bonus weights = **90** |
+| seeds | 300 per configuration, the same seeds at both learning rates. PointMaze uses `a_seed` 900–1199 (fresh, disjoint from train run 5's 600–899 and every earlier PointMaze run, whose maximum was 599); AntMaze uses 0–299 (the seed space train runs 1.1 and 1.2 used there) |
+| total runs | 90 × 300 = **27,000** |
+| truncation floor / target | decisions from 30 completed seeds; 300 completed seeds without a truncation = survivor |
 | truncation rule | truncate configuration *c* at the first controller tick where mean + 2.576·s/√n < BAR(environment) |
 | eval / logging cadence | `eval_freq` 50000, `n_eval_episodes` 100, `eval_standalone` False, `log_distance` False, wandb off |
 | device / partitions | cpu only, on the **cpu and nolim** partitions. No gpu, no gnolim, no reservation (user instruction for this run) |
@@ -76,8 +86,14 @@ rule does not change which configuration defines the bar — only the scale it i
 - `slurm/score_rules.py` — the ONE definition of the per-environment score rule, imported by the bar
   computation, the controller, the checker and the report, so the bar and the runs raced against it
   can never be scored differently.
-- `slurm/build_queue.py` — 45 configurations × 100 seeds, seed index outermost, per-environment seed
-  offset (PointMaze +900, AntMaze +0).
+- `slurm/build_queue.py` — 90 configurations × 300 seeds, learning rate outermost among the
+  configurations, seed index outermost overall, per-environment seed offset (PointMaze +900,
+  AntMaze +0).
+- `slurm/extend_queue.py` — grows a LIVE queue to whatever `build_queue.py` now describes, by
+  creating markers for work the queue has never held and renaming markers still in `pending/`. It
+  never touches `running/`, `done/`, `failed/` or `pruned/`, so no completed run is repeated and no
+  in-flight run is disturbed. This is what applied the 2026-08-06 scope change without stopping the
+  sweep.
 - `slurm/compute_frozen_bars.py` → `slurm/FROZEN_BARS.json` — run once, committed, never regenerated.
 - `slurm/truncation_controller.py` — the frozen-bar truncation; `20_mins_monitoring/truncation_check.py`
   re-derives every decision each tick (the sweep_prune skill requires verification whenever a run
@@ -122,3 +138,7 @@ rule does not change which configuration defines the bar — only the scale it i
   `test_pointmaze_env_equivalence.py`, `test_truncation_check.py`), and
   `slurm/simulate_truncation.py --full` PASSES — 45 synthetic configurations, no decision before
   the 30-seed floor, 21 truncated, 24 survivors, 0 invariant violations across every wave.
+- Scope change 2026-08-06 (commit `3891bdb`, applied 20:55–20:57): gates re-run at the new scale —
+  53 unit tests pass, including 9 new ones in `slurm/test_extend_queue.py`, and
+  `slurm/simulate_truncation.py --full` PASSES with 90 synthetic configurations, 45 truncated at the
+  30-seed floor, 45 survivors at 300, 0 invariant violations.

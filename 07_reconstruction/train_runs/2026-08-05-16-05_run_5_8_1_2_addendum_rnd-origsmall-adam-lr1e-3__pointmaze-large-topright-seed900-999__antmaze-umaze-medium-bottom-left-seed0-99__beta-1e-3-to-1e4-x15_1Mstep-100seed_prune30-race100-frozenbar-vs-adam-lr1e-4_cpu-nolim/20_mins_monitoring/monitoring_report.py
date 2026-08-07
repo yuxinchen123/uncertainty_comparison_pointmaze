@@ -112,7 +112,8 @@ def metric_rows(sweep_id, env):
     for cfg in [c for c in bq.CONFIGS if c["env_setup"] == env]:
         k = bq.config_key(cfg)
         mean, se, n, upper = stats(scores.get(k, []))
-        rows.append({"bonus weight": cfg["beta"], "mean": mean, "se": se, "n": n,
+        rows.append({"learning rate": cfg["lr"], "bonus weight": cfg["beta"],
+                     "mean": mean, "se": se, "n": n,
                      "upper 99%": upper, "verdict": decided.get(k, "undecided" if n else "no data")})
     return sorted(rows, key=lambda r: (-r["n"] > 0, -r["mean"]))
 
@@ -158,14 +159,17 @@ def report(sweep_id):
                   f"Score rule: {score_rules.RULE_DESCRIPTION[rule]}.", "",
                   f"Frozen bar {bar:.4f} — the Adam 1e-4 winner at bonus weight {bar_beta}. "
                   f"{at_or_above} of {len(rows)} configurations sit at or above it so far.", ""]
-        table = [{"bonus weight": r["bonus weight"],
+        # both predictor learning rates share this environment's 15 bonus weights, so the weight
+        # alone no longer names a row: the learning rate is the first column
+        table = [{"learning rate": r["learning rate"], "bonus weight": r["bonus weight"],
                   "mean score": fmt(r["mean"], best, second) if r["n"] else "—",
                   "standard error": f"{r['se']:.4f}" if r["n"] else "—",
                   "completed seeds": r["n"],
                   "99% upper bound": f"{r['upper 99%']:.4f}" if r["n"] else "—",
                   "verdict": r["verdict"]} for r in rows]
-        lines += [render_table(table, ["bonus weight", "mean score", "standard error",
-                                       "completed seeds", "99% upper bound", "verdict"]), ""]
+        lines += [render_table(table, ["learning rate", "bonus weight", "mean score",
+                                       "standard error", "completed seeds", "99% upper bound",
+                                       "verdict"]), ""]
     return "\n".join(lines)
 
 

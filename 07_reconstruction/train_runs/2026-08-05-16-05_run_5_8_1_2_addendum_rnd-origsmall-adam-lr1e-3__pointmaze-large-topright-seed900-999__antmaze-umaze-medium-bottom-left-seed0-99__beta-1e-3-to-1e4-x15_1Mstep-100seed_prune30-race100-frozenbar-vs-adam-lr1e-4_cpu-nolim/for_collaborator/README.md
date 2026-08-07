@@ -7,16 +7,24 @@ add workers and, if your environment breaks, you write a problem report.
 
 **What this run tests, in one line:** the project's faithful translation of the original RND has
 always used the paper's predictor learning rate of 1e-4; this run reruns exactly that stack at 1e-3
-on the three environments the writeup measures (PointMaze Large top-right, AntMaze UMaze and AntMaze
-Medium starting bottom-left), sweeping 15 bonus weights per environment and racing each
-configuration to 100 seeds against a bar frozen from the matching 1e-4 result.
+AND at 1e-2 on the three environments the writeup measures (PointMaze Large top-right, AntMaze UMaze
+and AntMaze Medium starting bottom-left), sweeping 15 bonus weights per environment and racing each
+configuration to 300 seeds against a bar frozen from the matching 1e-4 result.
+
+> **The sweep grew on 2026-08-06 and NOTHING is needed from you.** It started as one learning rate
+> at 100 seeds (4,500 runs) and is now two learning rates at 300 seeds (27,000 runs). The extra work
+> was added to the same live queue, so your workers pick it up on their own next claim — no
+> resubmission, no new scripts, no change to anything you run. Your jobs, your id file and your
+> commands are all unchanged. The run folder's name still says `lr1e-3` and `100seed` because
+> renaming it would break every running worker.
 
 Full context: `resource_facts.md` here, and `../experiment_background.md`.
 
 ## How the queue works
 
 A **work queue** lives in the run folder: `queue/<sweep id>/{pending,running,done,failed,pruned}/`,
-one small JSON marker per run (4,500 to start). Each of your workers atomically claims a marker
+one small JSON marker per run (27,000 after the 2026-08-06 extension). Each of your workers
+atomically claims a marker
 (renames it from `pending/` into `running/`), runs `train.py` to completion, then moves it to `done/`
 (exit code 0) or `failed/` (anything else), and claims the next one. Every run is the same shape:
 1,000,000 env steps on one cpu core, about **17–20 hours**.
@@ -87,7 +95,7 @@ never repairs anything.
 ## Am I done?
 
 When `../SWEEP_COMPLETE` exists. The owner's monitor writes it when `pending/` and `running/` are
-empty and all 45 configurations have a verdict.
+empty and all 90 configurations have a verdict (45 per predictor learning rate).
 
 ## Cancelling
 
@@ -109,7 +117,7 @@ Write ONE new file under `problems/open/`, named `<timestamp>_<your user>_<short
 problem concerns specific runs, add one machine-readable line per marker:
 
 ```
-MARKER: 0123_of_4500_AntMaze_UMaze-v5_origsmall_lr0.001_b30_seed23.json
+MARKER: 00123_of_27000_AntMaze_UMaze-v5_origsmall_lr0.001_b30_seed23.json
 ```
 
 The owner's monitor picks the report up within 20 minutes, re-pends those markers, and moves the

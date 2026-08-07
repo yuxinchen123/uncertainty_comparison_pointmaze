@@ -140,3 +140,55 @@ pended from the socket pin (the pools were at cap, so no top-up job was planned 
 - Scope: worker.py is read at process start, so the 924 runs already in flight are unaffected. The
   guard takes effect for every job submitted from the next top-up onward, which is well before the
   2026-08-09 deadline.
+
+## 2026-08-06 20:55 — the sweep grew to 300 seeds and a second learning rate, without stopping
+
+The user asked for two changes to a sweep that was already running with 926 workers: raise the seed
+target per configuration from 100 to 300, and add Adam 1e-2 alongside Adam 1e-3 on the same three
+environments and the same 15 bonus weights. Both were applied to the LIVE queue. No job was
+cancelled, no job was resubmitted, and no completed run was repeated.
+
+- **Why it works.** A worker calls `claim()` in a loop, and `claim()` re-lists
+  `queue/<sweep_id>/pending/` every time. A marker dropped into `pending/` is therefore picked up by
+  the workers already running — no restart, and no code change has to reach them. The worker code
+  itself is untouched.
+- **What `slurm/extend_queue.py` did:** created 22,500 markers for work the queue had never held
+  (45 Adam 1e-2 configurations × 300 seeds = 13,500, plus seeds 100–299 of the 45 Adam 1e-3
+  configurations = 9,000), and renamed the 2,696 markers still sitting in `pending/`. It touched
+  nothing in `running/` (924), `done/` (880), `failed/` or `pruned/`. Result: 25,196 + 924 + 880 =
+  27,000 units, each present exactly once, verified by reading every marker back.
+- **Why the renames were needed.** `claim()` takes the 32 lexically smallest names, which is a
+  seed-ordered frontier ONLY while every id is zero-padded to one width. The old queue padded to 4
+  digits (run_total 4,500), the extended one to 5 (27,000), and `00000` sorts before `1676`. Left
+  mixed, every new marker would have sorted ahead of every old one and starved the Adam 1e-3 arm.
+- **Why the renames are safe.** Each marker is moved OUT of `pending/` into `staging/`, rewritten
+  there, and moved back under its new name, one at a time. So a unit is never visible under two
+  names at once (no double claim), and `pending/` never dips by more than one (no worker sees an
+  empty queue and exits). A marker stranded in `staging/` by a crash is returned to `pending/` by the
+  next invocation, so re-running is always the repair. The whole pass took 104 seconds and reported
+  `claimed_mid_rename 0`.
+- **Ordering after the change.** The lexically smallest pending marker is now `00045…lr0.01…seed900`
+  — seed 0 of the new arm, because ids 0–44 (seed 0 of the old arm) are already done. The new arm
+  therefore catches up to the running arm's frontier first and the two then advance together seed by
+  seed, so both reach the 30-seed decision floor at about the same time.
+- **Rate at which the new work starts.** All 924 slots were busy at the moment of the change, and a
+  slot only frees when its run ends (~18 h median, ~52 completions/hour across the fleet), so the
+  fleet turns over onto the new markers within about 18 hours rather than instantly. This is
+  expected, not a fault.
+- **Frozen bars unchanged.** Both learning rates race against the same per-environment bars in
+  `slurm/FROZEN_BARS.json` (sha256 unchanged), so every decision already logged stays verifiable and
+  the new arm is judged by exactly the same standard.
+- **Monitor re-armed.** `monitor.sh` now passes `--n_target 300`; it is read fresh each tick, so that
+  took effect immediately. `monitor_loop.slurm`'s completion check (`N_CONFIGS`) is baked into the
+  spooled copy of a running job, so job **6533868** was replaced by **6534388** (submitted first,
+  confirmed RUNNING on heartpiece, only then was 6533868 cancelled BY ITS OWN ID from this run's id
+  file). Its first tick reports "0 decided configurations of 90" and all invariants holding.
+- **Report readability.** `20_mins_monitoring/monitoring_report.py` gained a learning-rate column:
+  with both rates in one sweep, an environment's table has 30 rows and the bonus weight alone no
+  longer names a row.
+- **The run folder keeps its name.** Renaming it would break the `RUN_DIR` of every running worker.
+  The folder name records how the run started; `experiment_background.md` records what it became.
+- Gates re-run at the new scale before applying: 53 unit tests pass (9 new in
+  `slurm/test_extend_queue.py`), and `slurm/simulate_truncation.py --full` passes with 90
+  configurations, 45 truncated at the 30-seed floor, 45 survivors at 300, 0 invariant violations.
+  Code committed as `3891bdb` BEFORE the queue was touched.
