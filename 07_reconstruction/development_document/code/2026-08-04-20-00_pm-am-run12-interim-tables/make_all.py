@@ -135,9 +135,11 @@ def bar_row(env_setup, by_key, ncols) -> str:
 
 
 # ---------------------------------------------------------------------------------------------
-# The Adam learning-rate 1e-3 addendum: one extra line per environment block, read live from that
-# run's own records. It is a DIFFERENT sweep (its own run folder, its own frozen bars), added here
-# because subsubsection 8.1.2's table is where these two environments' results are compared.
+# The Adam learning-rate addendum: one extra line per environment block PER LEARNING RATE, read live
+# from that run's own records. It is a DIFFERENT sweep (its own run folder, its own frozen bars),
+# added here because subsubsection 8.1.2's table is where these two environments' results are
+# compared. A rate whose runs are all still in flight contributes a line saying so, rather than none,
+# so the table never silently omits an arm that is running.
 # ---------------------------------------------------------------------------------------------
 LR1E3_RUN = (HERE.parent.parent.parent / "train_runs" /
              "2026-08-05-16-05_run_5_8_1_2_addendum_rnd-origsmall-adam-lr1e-3__pointmaze-large-"
@@ -145,17 +147,26 @@ LR1E3_RUN = (HERE.parent.parent.parent / "train_runs" /
              "x15_1Mstep-100seed_prune30-race100-frozenbar-vs-adam-lr1e-4_cpu-nolim")
 LR1E3_SWEEP = "2026-08-05-16-05_lr1e3"
 LR1E3_MIN_SEEDS = 5      # below this a configuration's mean is too noisy to name as "best so far"
+# the addendum's predictor learning rates, in the order their lines appear under each environment
+ADDENDUM_LRS = ["0.001", "0.01"]
+ADDENDUM_EXPONENT = {"0.001": "-3", "0.01": "-2"}
 
 
-def lr1e3_best_row(env_setup):
-    """The addendum's best configuration on one environment, as a row dict, or None when it has no
-    configuration with at least LR1E3_MIN_SEEDS completed runs yet.
+def addendum_rows(env_setup):
+    """One row dict per addendum learning rate on one environment, in ADDENDUM_LRS order.
 
     Ranked by the whole-run mean return, the same rule the block above it uses. Both reward columns
-    are reported so the line is read the same way as the rows it sits under.
+    are reported so each line is read the same way as the rows it sits under. A rate with no
+    configuration at LR1E3_MIN_SEEDS completed runs still gets a line — with dashes and the number of
+    seeds finished so far across all weights — because "this arm is running" is information the
+    table should carry, and an omitted line reads as "not tried".
+    before: 9,000 addendum JSONs across three environments and two learning rates
+    after : [{"label": "...Adam $10^{-3}$ --- bonus-weight 3000...", "reward": "$-683.87 \\pm 1.30$",
+              "reward100": "...", "N": "40", "verdict": "interim"}, {...Adam $10^{-2}$...}]
     """
     import glob as _glob, json as _json, math as _math, collections as _c
-    whole, final = _c.defaultdict(list), _c.defaultdict(list)
+    whole = _c.defaultdict(lambda: _c.defaultdict(list))
+    final = _c.defaultdict(lambda: _c.defaultdict(list))
     for path in _glob.glob(str(LR1E3_RUN / "data" / LR1E3_SWEEP / "local" / "*.json")):
         try:
             d = _json.load(open(path))
@@ -163,13 +174,16 @@ def lr1e3_best_row(env_setup):
             continue
         if not d.get("completed") or d.get("env_setup") != env_setup:
             continue
+        lr = "%g" % float(d.get("rnd_lr", 0))
+        if lr not in ADDENDUM_EXPONENT:
+            continue
         eps = [r["train/extrinsic_reward"] for r in (d.get("train_episode_history") or [])]
         th = d.get("train_history") or []
         if not eps or not th:
             continue
         beta = "%g" % float(d["beta"])
-        whole[beta].append(sum(eps) / len(eps))
-        final[beta].append(th[-1]["train/mean_extrinsic_reward"])
+        whole[lr][beta].append(sum(eps) / len(eps))
+        final[lr][beta].append(th[-1]["train/mean_extrinsic_reward"])
 
     def mean_se(v):
         # before: [-686.1, -687.4, ...]; after: (mean, standard error over those seeds)
@@ -177,20 +191,28 @@ def lr1e3_best_row(env_setup):
         sd = _math.sqrt(sum((x - m) ** 2 for x in v) / (n - 1)) if n > 1 else 0.0
         return m, (sd / _math.sqrt(n) if n else 0.0)
 
-    ranked = [(b, *mean_se(v)) for b, v in whole.items() if len(v) >= LR1E3_MIN_SEEDS]
-    if not ranked:
-        return None
-    beta, wm, wse = max(ranked, key=lambda r: r[1])
-    fm, fse = mean_se(final[beta])
-    n = len(whole[beta])
-    return {
-        "label": "\\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight " + beta
-                 + " (the learning-rate addendum, its own sweep)}",
-        "reward": "\\claudecell{$" + f"{wm:.2f} \\pm {wse:.2f}" + "$}",
-        "reward100": "\\claudecell{$" + f"{fm:.2f} \\pm {fse:.2f}" + "$}",
-        "N": "\\claudecell{" + str(n) + "}",
-        "verdict": "\\claudecell{interim}",
-    }
+    out = []
+    for lr in ADDENDUM_LRS:
+        head = "\\claudecell{RND baseline at Adam $10^{" + ADDENDUM_EXPONENT[lr] + "}$ --- "
+        ranked = [(b, *mean_se(v)) for b, v in whole[lr].items() if len(v) >= LR1E3_MIN_SEEDS]
+        if not ranked:
+            done = sum(len(v) for v in whole[lr].values())
+            out.append({
+                "label": head + "best bonus weight not yet decided (the learning-rate addendum, "
+                         "its own sweep; still running)}",
+                "reward": "\\claudecell{---}", "reward100": "\\claudecell{---}",
+                "N": "\\claudecell{" + str(done) + "}",
+                "verdict": "\\claudecell{running}"})
+            continue
+        beta, wm, wse = max(ranked, key=lambda r: r[1])
+        fm, fse = mean_se(final[lr][beta])
+        out.append({
+            "label": head + "bonus-weight " + beta + " (the learning-rate addendum, its own sweep)}",
+            "reward": "\\claudecell{$" + f"{wm:.2f} \\pm {wse:.2f}" + "$}",
+            "reward100": "\\claudecell{$" + f"{fm:.2f} \\pm {fse:.2f}" + "$}",
+            "N": "\\claudecell{" + str(len(whole[lr][beta])) + "}",
+            "verdict": "\\claudecell{interim}"})
+    return out
 
 
 def build_metrics_tabular(by_key, verdicts) -> str:
@@ -212,10 +234,9 @@ def build_metrics_tabular(by_key, verdicts) -> str:
         lines.append("\\multicolumn{5}{@{}l}{\\textbf{" + tt(env_setup) + "}} \\\\")
         for r in rows:
             lines.append(" & ".join(r[c] for c in cols) + " \\\\")
-        # the addendum line goes in AFTER mark_latex_rows, so it never competes for the bold/underline
-        # marking of the four arms it is being compared against
-        extra = lr1e3_best_row(env_setup)
-        if extra:
+        # the addendum lines go in AFTER mark_latex_rows, so they never compete for the bold/underline
+        # marking of the four arms they are being compared against
+        for extra in addendum_rows(env_setup):
             lines.append(" & ".join(extra[c] for c in cols) + " \\\\")
         lines.append(bar_row(env_setup, by_key, 5))
         if awaiting:

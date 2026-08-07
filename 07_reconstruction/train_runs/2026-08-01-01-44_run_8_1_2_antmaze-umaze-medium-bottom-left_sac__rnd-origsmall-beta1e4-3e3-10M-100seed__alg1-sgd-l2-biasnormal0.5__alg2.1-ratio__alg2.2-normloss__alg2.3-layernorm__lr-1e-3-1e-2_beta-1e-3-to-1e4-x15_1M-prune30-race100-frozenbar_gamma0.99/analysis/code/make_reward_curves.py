@@ -19,6 +19,7 @@ Writes: ../plots/reward_curves_run812.pdf and .png
 """
 import glob
 import json
+import math
 import os
 import sys
 from collections import Counter
@@ -46,8 +47,8 @@ RUN81_BASELINE_KEY = {  # the run-1.1 winner per env (3-field run-8.1 keys)
     "AntMaze_Medium-v5_start_bottom_left": "AntMaze_Medium-v5_start_bottom_left|rnd_next_state|3000",
 }
 
-# The Adam 1e-3 addendum: the SAME RND baseline stack at a different predictor learning rate, run
-# as its own sweep. Added here so each panel shows the baseline at both rates rather than only 1e-4.
+# The Adam addendum: the SAME RND baseline stack at two other predictor learning rates, run as its
+# own sweep. Added here so each panel shows the baseline at every rate rather than only 1e-4.
 LR1E3_RUN = os.path.join(
     os.path.dirname(RUN_DIR),
     "2026-08-05-16-05_run_5_8_1_2_addendum_rnd-origsmall-adam-lr1e-3__pointmaze-large-topright-"
@@ -55,18 +56,25 @@ LR1E3_RUN = os.path.join(
     "prune30-race100-frozenbar-vs-adam-lr1e-4_cpu-nolim")
 LR1E3_SWEEP = "2026-08-05-16-05_lr1e3"
 LR1E3_MIN_SEEDS = 5
-LR1E3_COLOR = "#D55E00"
+# the addendum's predictor learning rates, drawn in this order, each with its own colour
+ADDENDUM_LRS = ["0.001", "0.01"]
+ADDENDUM_COLOR = {"0.001": "#D55E00", "0.01": "#56B4E9"}
 
 
-def load_lr1e3(env_setup):
-    """(beta, curves, n) for the addendum's best bonus weight on one environment, or None.
+def load_addendum(env_setup):
+    """{lr: (beta, curves, n)} for each addendum rate's best bonus weight on one environment.
 
     Best is by the whole-run mean per-episode return — the same ranking this figure's companion
     table uses — so the curve drawn is the same configuration that table names. One pass over the
-    addendum's records for this environment, keeping only the per-eval curve and the score.
+    addendum's records for this environment serves both rates, keeping only the per-eval curve and
+    the score. A rate with no weight at LR1E3_MIN_SEEDS finished seeds is absent from the result,
+    which is the state of a rate whose runs are all still in flight.
+    before: ~9,000 addendum JSONs across three environments and two learning rates
+    after : {"0.001": ("3000", [([0, 50000, ...], [-700.0, ...]), ...], 40)}
     """
     import collections
-    whole, curves = collections.defaultdict(list), collections.defaultdict(list)
+    whole = collections.defaultdict(lambda: collections.defaultdict(list))
+    curves = collections.defaultdict(lambda: collections.defaultdict(list))
     for path in glob.glob(os.path.join(LR1E3_RUN, "data", LR1E3_SWEEP, "local", "*.json")):
         try:
             d = json.load(open(path))
@@ -74,19 +82,25 @@ def load_lr1e3(env_setup):
             continue
         if not d.get("completed") or d.get("env_setup") != env_setup:
             continue
+        lr = "%g" % float(d.get("rnd_lr", 0))
+        if lr not in ADDENDUM_COLOR:
+            continue
         eps = [r["train/extrinsic_reward"] for r in (d.get("train_episode_history") or [])]
         rows = d.get("train_history") or []
         if not eps or not rows:
             continue
         beta = "%g" % float(d["beta"])
-        whole[beta].append(sum(eps) / len(eps))
-        curves[beta].append(([r["step"] for r in rows],
-                             [r["train/mean_extrinsic_reward"] for r in rows]))
-    ranked = [(b, sum(v) / len(v)) for b, v in whole.items() if len(v) >= LR1E3_MIN_SEEDS]
-    if not ranked:
-        return None
-    beta = max(ranked, key=lambda kv: kv[1])[0]
-    return beta, curves[beta], len(whole[beta])
+        whole[lr][beta].append(sum(eps) / len(eps))
+        curves[lr][beta].append(([r["step"] for r in rows],
+                                 [r["train/mean_extrinsic_reward"] for r in rows]))
+    out = {}
+    for lr in ADDENDUM_LRS:
+        ranked = [(b, sum(v) / len(v)) for b, v in whole[lr].items() if len(v) >= LR1E3_MIN_SEEDS]
+        if not ranked:
+            continue
+        beta = max(ranked, key=lambda kv: kv[1])[0]
+        out[lr] = (beta, curves[lr][beta], len(whole[lr][beta]))
+    return out
 
 
 sys.path.insert(0, os.path.join(RUN_DIR, "slurm"))
@@ -205,15 +219,15 @@ def draw_panel(ax, env_setup, by_key, log_x):
         ax.plot(steps, mean, color="black", linestyle="-", linewidth=1.8,
                 label=f"RND baseline, Adam $10^{{-4}}$, this run $\\beta$={base_spec['beta']} (n={n})")
         ax.fill_between(steps, mean - se, mean + se, color="black", alpha=0.10, linewidth=0)
-    # the same baseline stack at Adam 1e-3 (the addendum sweep, to 1M) — its own colour and dashes
-    # so it reads as a sibling of the two black baselines rather than as a fifth algorithm
-    lr3 = load_lr1e3(env_setup)
-    if lr3:
-        beta3, curves3, _ = lr3
-        steps, mean, se, n = band(curves3)
-        ax.plot(steps, mean, color=LR1E3_COLOR, linestyle="--", linewidth=1.8,
-                label=f"RND baseline, Adam $10^{{-3}}$ $\\beta$={beta3} (n={n})")
-        ax.fill_between(steps, mean - se, mean + se, color=LR1E3_COLOR, alpha=0.15, linewidth=0)
+    # the same baseline stack at each addendum rate (to 1M) — each in its own colour and dashed, so
+    # they read as siblings of the two black baselines rather than as extra algorithms
+    for lr, (beta_a, curves_a, _) in sorted(load_addendum(env_setup).items()):
+        steps, mean, se, n = band(curves_a)
+        exponent = int(round(math.log10(float(lr))))
+        ax.plot(steps, mean, color=ADDENDUM_COLOR[lr], linestyle="--", linewidth=1.8,
+                label=f"RND baseline, Adam $10^{{{exponent}}}$ $\\beta$={beta_a} (n={n})")
+        ax.fill_between(steps, mean - se, mean + se, color=ADDENDUM_COLOR[lr], alpha=0.15,
+                        linewidth=0)
     # the four sweep arms' best configurations (colored, to 1M)
     for arm, (color, name) in ARM_STYLE.items():
         k = best_key(by_key, env_setup, arm)

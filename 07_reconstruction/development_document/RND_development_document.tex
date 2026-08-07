@@ -6029,9 +6029,11 @@ n_\beta \ge 30
 (its one-sided $99\%$ upper confidence limit sits below the running best mean); survivors run to the
 full $300$ seeds. The benchmark and reward-norm arms never prune and run all $300$ seeds.
 
-\claudeedit{\paragraph{The learning-rate addendum (submitted 2026-08-05).}
+\claudeedit{\paragraph{The learning-rate addendum (submitted 2026-08-05, widened 2026-08-06).}
 The \runref{run-5 original RND, Adam $10^{-4}$} arm above follows the original paper's predictor learning rate of
-$10^{-4}$. The last column of Table~\ref{tab:trainrun5-hparams} is the same stack at $10^{-3}$ ---
+$10^{-4}$. The last column of Table~\ref{tab:trainrun5-hparams} is the same stack at $10^{-3}$ and
+at $10^{-2}$ (every row of that column reads \emph{same} except the optimizer, so the two rates
+share one column) ---
 one knob moved, every other field of train run 5's own parameter dictionary copied unchanged and
 machine-checked to be unchanged. It runs on the same \texttt{PointMaze\_\allowbreak Large-v3}
 top-right task, for the same $10^{6}$ env steps, on $100$ fresh seeds
@@ -6051,9 +6053,12 @@ first controller tick at which
 \bar R_\beta + 2.576\,\frac{s_\beta}{\sqrt{n_\beta}} \;<\; \bar R^{\star},
 \end{align}
 that is, when its one-sided $99\%$ upper confidence limit falls below what the $10^{-4}$ line
-already achieved; a bonus weight that reaches $100$ completed seeds without ever failing that check
+already achieved; a bonus weight that reaches the seed target without ever failing that check
 is kept. So the addendum is not raced against itself: it is raced against the number it is meant to
-beat.}
+beat. The second learning rate, $10^{-2}$, races against the same frozen bars under the same rule,
+and both rates run the same seeds, so they are paired seed by seed with each other as well as
+comparable to $10^{-4}$. The seed target was raised from $100$ to $300$ on 2026-08-06, at the same
+time as the $10^{-2}$ rate joined.}
 \claudecomment{Bar provenance:
 \texttt{slurm/\allowbreak FROZEN\_\allowbreak BARS.json} in the addendum run folder, recomputed at
 launch from train run 5's own records
@@ -6116,10 +6121,10 @@ dashed callouts. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the
 \textbf{CleanRL} &
 \textbf{ExPLORe} &
 \runref{run-3.2.2 benchmark} & \runref{run-3.2.3 reward-norm} &
-\textbf{Adam $10^{-4}$} & \claudecell{\textbf{Adam $10^{-3}$}} \\
+\textbf{Adam $10^{-4}$} & \claudecell{\textbf{Adam $10^{-3}$ and $10^{-2}$}} \\
 & \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
 \small(no norm) & \small(reward norm) & \small(\runref{run-5 original RND, Adam $10^{-4}$}) &
-\claudecell{\small(the same stack, one knob moved)} \\
+\claudecell{\small(the same stack, one knob moved, at two rates)} \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{RL algorithm \& environments}} \\
 algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{4}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
@@ -6166,7 +6171,7 @@ non-episodic filter & yes & yes & --- & --- & yes & yes & \claudecell{same} \\
 \multicolumn{8}{@{}l}{\textit{Predictor optimizer \& update}} \\
 optimizer & Adam $10^{-4}$ & Adam $10^{-4}$ & Adam $3{\times}10^{-4}$ &
   \multicolumn{2}{c}{Adam $10^{-3}$} & Adam $10^{-4}$ &
-  \claudecell{\criticalknob{Adam $10^{-3}$ --- the one knob this column moves}} \\
+  \claudecell{\criticalknob{Adam $10^{-3}$ or $10^{-2}$ --- the one knob this column moves}} \\
 Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c}{$10^{-8}$} & $10^{-8}$ &
   \claudecell{same} \\
 update proportion & $0.25$ (paper); $1.0$ (repo code) & $0.25$ & $1.0$ (batch $1$) &
@@ -6236,8 +6241,9 @@ when the seeds land.}
 \paragraph{Results \sout{(partial snapshot 2026-07-22; the 3000-run sweep is still draining its long
 tail, so the per-arm seed counts $n$ below are interim, not the full 300 seeds --- the numbers
 will firm up but are not expected to move much)}\claudeedit{(final for the $10^{-4}$ arms at their
-full $300$ seeds; the $10^{-3}$ addendum rows are interim at about $20$ seeds)}.}
-Table~\ref{tab:trainrun5-results} reports the \sout{three}\claudeedit{four} run-5 arms --- the winning \runref{run-5 original RND, Adam $10^{-4}$}
+full $300$ seeds; the $10^{-3}$ addendum rows are interim at $40$ seeds, and the $10^{-2}$
+addendum rows have no result yet)}.}
+Table~\ref{tab:trainrun5-results} reports the \sout{three}\claudeedit{five} run-5 arms --- the winning \runref{run-5 original RND, Adam $10^{-4}$}
 $\beta$, the \runref{run-3.2.2 benchmark} (Adam, no reward normalization), and the \runref{run-3.2.3 reward-norm}
 (Adam, reward normalization) --- on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
@@ -6273,20 +6279,23 @@ Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
 \input{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/reward_table.tex}
-\caption{Train run~5, the three arms scored on the final training-episode extrinsic reward
+\caption{Train run~5, the \sout{three}\claudeedit{five} arms scored on the final training-episode extrinsic reward
 $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$); best \textbf{bold}, second
 \underline{underlined} in the $\bar R$ and $\mathrm{succ.}$ columns (higher is better).  Top block:
 this run's three arms (\runref{run-5 original RND, Adam $10^{-4}$} at its winning $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}).  Bottom block: the
 old-run reference rows (run~3.2.2 and run~3.2.4) shown for scale.  $\mathrm{succ.}$ is
 the fraction of seeds with final reward $>5$.  \sout{Partial snapshot --- the $n$ column is the seeds
 completed so far, not the full 300.}\claudeedit{The $10^{-4}$ rows are final at their full $300$
-seeds. The second row is new: the SAME stack at Adam $10^{-3}$, at its own best bonus weight, from
-the addendum run --- $\bar R = 40.00 \pm 5.82$ over $20$ of a planned $100$ seeds, against
-$38.64 \pm 1.77$ at $10^{-4}$. The two are within one standard error of each other, so on this task
-the learning rate has not yet been shown to matter either way; what is already clear is that all
-$20$ of its seeds clear the success threshold ($\mathrm{succ.} = 1.00$ against $0.78$). That row is
-left OUT of the bold/underline marking: at $n=20$ against $100$--$300$ its standard error is three
-times the others', so a leading point estimate would not mean a lead.}}
+seeds. Two rows are new, both the SAME stack at a different predictor learning rate, from the
+addendum run, each at its own best bonus weight. At \textbf{Adam $10^{-3}$},
+$\bar R = 39.47 \pm 4.28$ over $40$ of a planned $300$ seeds, against $38.64 \pm 1.77$ at
+$10^{-4}$: the two are within one standard error of each other, so on this task the learning rate
+has not been shown to matter either way, though its seeds clear the success threshold far more
+often ($\mathrm{succ.} = 0.95$ against $0.78$). At \textbf{Adam $10^{-2}$} the arm is still running:
+no bonus weight has enough finished seeds to be named best yet, so its numeric cells are dashes and
+its $n$ counts every seed finished so far across all $15$ weights, not seeds of one weight.
+Both addendum rows are left OUT of the bold/underline marking: at a fraction of the $300$ seeds the
+settled rows carry, a leading point estimate would not mean a lead.}}
 \label{tab:trainrun5-results}
 \end{table}
 
@@ -6306,14 +6315,16 @@ once its one-sided $99\%$ upper confidence limit falls below the running-best me
 survivor $\beta=10^3$ runs to the full seed budget.  \sout{Partial snapshot --- pruned $\beta$ stop at
 their pruned-time $n$.}\claudeedit{A stopped $\beta$ keeps the $n$ it had reached when it was
 stopped, so the $n$ column is not constant down the table.}
-\claudeedit{The right-hand block is new: the same weight at Adam $10^{-3}$, from the addendum run.
-The two grids share seven of the eight weights --- the $10^{-3}$ grid runs $10^{-3}$ to $10^{4}$ at
-$1$ and $3$ per decade and has no $0.5$, so that row reads N/A rather than a blank. Reading across:
-both learning rates trace the same inverted-U and peak at the same $\beta=10^{3}$, with $10^{-3}$
-level or slightly ahead at every shared weight and clearly ahead at $\beta=10^{4}$
-($26.91$ against $18.10$), where the $10^{-4}$ arm was already falling away. The $10^{-3}$ column is
-interim at $17$--$21$ seeds per weight, against $116$--$300$ on the left, so its standard errors are
-three to four times larger and none of these gaps is established yet.}}
+\claudeedit{The two right-hand blocks are new: the same weight at Adam $10^{-3}$ and at Adam
+$10^{-2}$, from the addendum run. All three grids share seven of the eight weights --- the addendum
+grid runs $10^{-3}$ to $10^{4}$ at $1$ and $3$ per decade and has no $0.5$, so that row reads N/A
+rather than a blank. Reading across, both learning rates that have data trace the same inverted-U
+and peak at the same $\beta=10^{3}$, and no shared weight separates them: the largest single gap,
+at $\beta=1$ ($6.50$ against $3.03$), is $1.3$ standard errors of the difference, and every other
+weight is under $0.6$. The $10^{-3}$ column is interim at
+$39$--$41$ seeds per weight, against $116$--$300$ on the left, so its standard errors are two to
+three times larger and none of these gaps is established. The $10^{-2}$ column reads $n=0$
+throughout: that arm's runs are all still in flight, and its cells fill in as they finish.}}
 \label{tab:trainrun5-betasweep}
 \end{table}
 
@@ -6330,10 +6341,11 @@ each the mean over seeds with a $\pm1$ standard-error
 band.  \sout{Partial snapshot 2026-07-22.  The legend still shows the arms' old short labels
 (original-small; C2 $=$ the \runref{run-3.2.2 benchmark}; N1 $=$ the \runref{run-3.2.3 reward-norm}) --- the
 figure is a data snapshot and is redrawn with the new names when the run's final analysis
-regenerates it.}\claudeedit{Redrawn 2026-08-06: every legend entry now names its predictor learning
-rate, so no curve can be read as ``the original RND'' without knowing which rate produced it. The
-$10^{-4}$ line is final ($n=300$); the $10^{-3}$ line is interim (about $20$ of a planned $100$
-seeds) and its band is correspondingly wide.}}
+regenerates it.}\claudeedit{Every legend entry names its predictor learning rate, so no curve can be
+read as ``the original RND'' without knowing which rate produced it. The $10^{-4}$ line is final
+($n=300$); the $10^{-3}$ line is interim ($40$ of a planned $300$ seeds) and its band is
+correspondingly wide. A third addendum rate, Adam $10^{-2}$, is running but has no finished seeds on
+this environment yet, so it contributes no curve; the figure gains one as soon as it does.}}
 \label{fig:trainrun5-curve}
 \end{figure}
 
@@ -6398,9 +6410,9 @@ merged oracle's reward, and covers slightly \emph{more} of the maze than either 
   0.767 $\pm$ 0.007 & 300 \\
 \runref{run-3.2.3 reward-norm} (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$) --- best run-5 RND &
   train run 5 & 47.33 $\pm$ 1.92 & 0.685 & 0.913 & \textbf{0.787} $\pm$ 0.008 & 253 \\
-\claudecell{\runref{run-5 original RND, Adam $10^{-4}$} at Adam $10^{-3}$, $\beta{=}10^{3}$ --- the
-  learning-rate addendum} & \claudecell{the addendum run} & \claudecell{40.00 $\pm$ 5.82} &
-  \claudecell{0.803} & \claudecell{1.000} & \claudecell{0.810 $\pm$ 0.029} & \claudecell{20} \\
+\claudecell{\runref{run-5 original RND, Adam $10^{-3}$}, $\beta{=}10^{3}$ --- the
+  learning-rate addendum} & \claudecell{the addendum run} & \claudecell{39.47 $\pm$ 4.28} &
+  \claudecell{0.737} & \claudecell{0.975} & \claudecell{0.810 $\pm$ 0.022} & \claudecell{40} \\
 \bottomrule
 \end{tabular}
 \caption{Ground-truth count-based oracles vs.\ the best run-5 RND arm (the \runref{run-3.2.3 reward-norm} configuration), all at $10^{6}$ steps
@@ -6412,15 +6424,15 @@ success rate comes from its $300$ oracle-re-run seeds only (run 2 kept no per-ep
 $n$ is the number of independent seeds; the reward-norm row is a partial 2026-07-22 snapshot ($253$ of
 $300$ seeds).
 \claudeedit{The last row is the learning-rate addendum's best bonus weight on this task at the
-2026-08-06 snapshot, and is deliberately left OUT of the best/second marking: at $n=20$ against the
-$253$--$397$ of the rows above it, its standard error on $\bar R$ is $5.82$, three to four times
+2026-08-07 snapshot, and is deliberately left OUT of the best/second marking: at $n=40$ against the
+$253$--$397$ of the rows above it, its standard error on $\bar R$ is $4.28$, more than twice
 theirs, so a point estimate that happens to lead a column would not mean it is ahead. Read the row
-as a position report, not a result. It does say something already, though: every one of its $20$
-seeds reaches the goal (seed success $1.000$), and its episode success rate and visit coverage are
-at the top of the table --- so at $10^{-3}$ the arm is exploring at least as widely as the oracles,
-while its reward has not caught them.}}
+as a position report, not a result. It does say something already, though: almost every seed reaches
+the goal (seed success $0.975$), and its visit coverage is the highest in the table --- so at
+$10^{-3}$ the arm is exploring at least as widely as the oracles, while its reward has not caught
+them.}}
 \claudecomment{Computed from the addendum run's completed records
-(\texttt{data/\allowbreak 2026-08-05-16-05\_\allowbreak lr1e3/\allowbreak local}, $20$ records for
+(\texttt{data/\allowbreak 2026-08-05-16-05\_\allowbreak lr1e3/\allowbreak local}, $40$ records for
 this configuration). $\bar R$ is the last \texttt{train\_\allowbreak history} row's
 \texttt{train/\allowbreak mean\_\allowbreak extrinsic\_\allowbreak reward} (train run 5's own
 metric, and this environment's score rule in the addendum's frozen bars); episode success is the
@@ -6428,10 +6440,13 @@ share of each seed's last $100$ training episodes with reward $>0$; seed success
 seeds whose final reward is $>0$; visit coverage is the final
 \texttt{visit\_\allowbreak counts/\allowbreak coverage\_\allowbreak pct} over the $46$ reachable
 cells. Bonus weight $10^{3}$ is the addendum's best on this environment by that metric
-($40.0045$), the same weight that won at $10^{-4}$ ($38.6412$, the frozen bar) --- so on PointMaze
+($39.4675$), the same weight that won at $10^{-4}$ ($38.6412$, the frozen bar) --- so on PointMaze
 the learning rate has not moved which weight is best, and the two means are within one standard
-error of each other. Caveat: $20$ of a planned $100$ seeds, and below the $30$-seed floor at which
-the addendum's own truncation rule may decide anything.}
+error of each other. Caveats: $40$ of a planned $300$ seeds, and still above the $30$-seed floor
+only for some weights, so the addendum's own truncation rule has not yet decided this cell. The
+addendum's third rate, Adam $10^{-2}$, has no usable data on this task yet --- one finished run
+across the whole $15$-weight grid --- so it gets no row here rather than a row built on a single
+seed.}
 \label{tab:trainrun5-oracle-vs-rnd}
 \end{table}
 
@@ -7671,10 +7686,10 @@ writes no model checkpoints.
 \textbf{SAC $+$ algorithm 2.1} &
 \textbf{SAC $+$ algorithm 2.2} &
 \textbf{SAC $+$ algorithm 2.3} &
-\claudecell{\textbf{SAC $+$ RND baseline at Adam $10^{-3}$}} \\
+\claudecell{\textbf{SAC $+$ RND baseline at Adam $10^{-3}$ and $10^{-2}$}} \\
 & \small(the \runref{run-5 original RND, Adam $10^{-4}$} stack; task R) & \small(this work; task S) &
   \small(this work; task S) & \small(this work; task S) & \small(this work; task S) &
-  \claudecell{\small(the learning-rate addendum; its own sweep)} \\
+  \claudecell{\small(the learning-rate addendum, two rates; its own sweep)} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
 base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} & \claudecell{same} \\
@@ -7724,23 +7739,24 @@ reward norm & \criticalknob{on (running std, discount $0.99$)} &
   \claudecell{\criticalknob{on (running std, discount $0.99$) --- as the RND baseline}} \\
 predictor optimizer & \criticalknob{Adam $10^{-4}$} & \criticalknob{plain SGD at a constant rate
   (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c}{\criticalknob{same}} &
-  \claudecell{\criticalknob{Adam $10^{-3}$ --- the one knob that separates this column from the
-  RND baseline}} \\
+  \claudecell{\criticalknob{Adam $10^{-3}$ and Adam $10^{-2}$ --- the one knob that separates
+  this column from the RND baseline, swept at two values}} \\
 update proportion & $1.0$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
 bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$ (UMaze),
   $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{10.3cm}}{the $15$-value grid of
-  Table~\ref{tab:pm-am-trainrun1-algos}: $\{10^{-3}, 3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2},
-  10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2}, 3{\times}10^{2}, 10^{3}, 3{\times}10^{3},
-  10^{4}\}$} & \claudecell{the same $15$-value grid} \\
+  Table~\ref{tab:pm-am-trainrun1-algos}: $\{$$10^{-3}$, $3{\times}10^{-3}$, $10^{-2}$,
+  $3{\times}10^{-2}$, $10^{-1}$, $3{\times}10^{-1}$, $1$, $3$, $10$, $30$, $10^{2}$,
+  $3{\times}10^{2}$, $10^{3}$, $3{\times}10^{3}$, $10^{4}$$\}$} &
+  \claudecell{the same $15$-value grid} \\
 SGD learning rate & N/A & \multicolumn{4}{c}{$\{10^{-3}, 10^{-2}\}$} & \claudecell{N/A (Adam)} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Seeds, pruning, checkpointing}} \\
 seeds & $100$ per environment, all at $10^{7}$ steps & race to $100$ at $10^{6}$ steps; prune
   checks from $n \ge 30$ & \multicolumn{3}{c}{same} &
-  \claudecell{race to $100$ at $10^{6}$ steps; checks from $n \ge 30$; \texttt{a\_\allowbreak seed}
-  $0$--$99$} \\
+  \claudecell{race to $300$ at $10^{6}$ steps; checks from $n \ge 30$; \texttt{a\_\allowbreak seed}
+  $0$--$299$, the same seeds at both rates} \\
 pruning & never (benchmark arm) & stage-1 frozen-bar racing (rules above) &
   \multicolumn{3}{c}{same} &
   \claudecell{same rule and same frozen bars ($-689.7404$ UMaze, $-998.4678$ Medium), so this
@@ -7754,9 +7770,9 @@ configs in this column & $2$(env configs) $\times$ $1$(fixed bonus weight) $= 2$
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
-  \claudecell{$2$(env configs) $\times$ $1$(learning rate) $\times$ $15$(bonus weight) $= 30$} \\
+  \claudecell{$2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$} \\
 total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}$} &
-  \claudecell{$+\,30$ in a separate sweep} \\
+  \claudecell{$+\,60$ in a separate sweep} \\
 \bottomrule
 \end{tabular}%
 }
@@ -7770,7 +7786,7 @@ stack, and differ from it only in the rows shown, reward normalization off being
 four share. Task~R runs at $10^{7}$ env steps, task~S at $10^{6}$. The config-count rows give each
 column's contribution; the table total is $242$ configurations.
 \claudeedit{The last column is the learning-rate addendum submitted 2026-08-05: the RND baseline's
-own stack with the predictor's Adam learning rate moved from $10^{-4}$ to $10^{-3}$ and nothing else
+own stack with the predictor's Adam learning rate moved from $10^{-4}$ to $10^{-3}$ or $10^{-2}$ and nothing else
 touched, at $10^{6}$ steps over the same $15$ bonus weights and against the same two frozen bars. It
 is NOT part of this table's $242$ configurations --- it is a separate sweep in its own run folder,
 contributing $30$ configurations on these two environments (and $15$ more on PointMaze, the last
@@ -7785,8 +7801,11 @@ alone changed;
 asserts that. Bars: \texttt{slurm/\allowbreak FROZEN\_\allowbreak BARS.json} in the same folder,
 recomputed at launch from train run 1.1's records and reproducing this run's own frozen values to
 every digit --- $-689.7404$ ($n=84$, bonus weight $10^{4}$) on UMaze and $-998.4678$ ($n=82$, bonus
-weight $3{\times}10^{3}$) on Medium. Caveat: the addendum has no results yet; it was submitted
-2026-08-05 and this table records only its design.}
+weight $3{\times}10^{3}$) on Medium. \sout{Caveat: the addendum has no results yet; it was submitted
+2026-08-05 and this table records only its design.}\claudeedit{The $10^{-3}$ rate now has $40$
+completed seeds per bonus weight on both environments and its results are in
+Table~\ref{tab:pm-am-trainrun12-interim}; the $10^{-2}$ rate is still running and this table records
+only its design.}}
 \label{tab:pm-am-trainrun12-algos}
 \end{table}
 
@@ -7972,7 +7991,8 @@ algorithm 1 --- lr 0.01, bonus-weight 3 & \underline{$-674.30 \pm 1.27$} & {\bol
 algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-683.27 \pm 0.72$ & $-676.31 \pm 2.09$ & 27 & undecided \\
 algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-686.52 \pm 1.14$ & \underline{$-674.75 \pm 3.30$} & 26 & undecided \\
 RND baseline --- bonus-weight 10000 ($10^{7}$ steps) & $-695.29 \pm 1.07$ & $-699.17 \pm 0.65$ & 17 & N/A \\
-\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 3000 (the learning-rate addendum, its own sweep)} & \claudecell{$-686.56 \pm 1.83$} & \claudecell{$-682.87 \pm 2.93$} & \claudecell{20} & \claudecell{interim} \\
+\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 3000 (the learning-rate addendum, its own sweep)} & \claudecell{$-683.87 \pm 1.30$} & \claudecell{$-678.90 \pm 2.15$} & \claudecell{40} & \claudecell{interim} \\
+\claudecell{RND baseline at Adam $10^{-2}$ --- best bonus weight not yet decided (the learning-rate addendum, its own sweep; still running)} & \claudecell{---} & \claudecell{---} & \claudecell{5} & \claudecell{running} \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-689.7404$ (bonus-weight 10000); 49 of 120 configurations at or above it so far}} \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{\texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak bottom\_\allowbreak left}}} \\
@@ -7981,7 +8001,8 @@ algorithm 1 --- lr 0.01, bonus-weight 10000 & \underline{$-993.77 \pm 0.51$} & {
 algorithm 2.1 --- lr 0.001, bonus-weight 30 & $-996.35 \pm 0.30$ & \underline{$-993.93 \pm 1.02$} & 25 & undecided \\
 RND baseline --- bonus-weight 3000 ($10^{7}$ steps) & $-996.75 \pm 0.59$ & $-997.51 \pm 1.20$ & 20 & N/A \\
 algorithm 2.3 --- lr 0.001, bonus-weight 30 & $-997.06 \pm 0.32$ & $-995.67 \pm 0.94$ & 27 & undecided \\
-\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 3000 (the learning-rate addendum, its own sweep)} & \claudecell{$-996.33 \pm 0.55$} & \claudecell{$-994.16 \pm 1.16$} & \claudecell{19} & \claudecell{interim} \\
+\claudecell{RND baseline at Adam $10^{-3}$ --- bonus-weight 10000 (the learning-rate addendum, its own sweep)} & \claudecell{$-996.69 \pm 0.27$} & \claudecell{$-994.43 \pm 0.68$} & \claudecell{40} & \claudecell{interim} \\
+\claudecell{RND baseline at Adam $10^{-2}$ --- best bonus weight not yet decided (the learning-rate addendum, its own sweep; still running)} & \claudecell{---} & \claudecell{---} & \claudecell{1} & \claudecell{running} \\
 \multicolumn{5}{@{}l}{\emph{frozen bar $-998.4678$ (bonus-weight 3000); 55 of 120 configurations at or above it so far}} \\
 \bottomrule
 \end{tabular}
@@ -7997,24 +8018,27 @@ $10^{7}$-step runs, while the four sweep arms' rows and the frozen bar are $10^{
 so the baseline row is a preview rather than a like-for-like comparison at this snapshot. The line
 under each block restates the frozen bar and how many of the block's configurations currently sit
 at or above it. Auto-generated; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-06 --- train run 1.2's own five rows are final (that sweep was stopped
-2026-08-05 and produces no further records), while the addendum row below them is live}.
-\claudeedit{The last row of each block is the learning-rate addendum: the same RND baseline stack at
-Adam $10^{-3}$ instead of $10^{-4}$, at its best bonus weight on that environment so far. It is a
-SEPARATE sweep in its own run folder, shown here because this is where these two environments'
-results are compared, and it is deliberately left OUT of the bold/underline marking of the four
-arms above it. Read it as a position report: at $n \approx 20$ of a planned $100$, and below the
-$30$-seed floor at which its own truncation rule may decide anything. What it shows so far is that
-$10^{-3}$ sits ABOVE the $10^{-4}$ frozen bar on both environments --- by $3.2$ on UMaze
-($-686.56$ against $-689.74$, about $1.7$ standard errors) and by $2.1$ on Medium ($-996.33$
-against $-998.47$, about $3.9$ standard errors) --- so the learning rate alone moves this stack
+2026-08-05 and produces no further records), while the addendum rows below them are live}.
+\claudeedit{The last TWO rows of each block are the learning-rate addendum: the same RND baseline
+stack at Adam $10^{-3}$ and at Adam $10^{-2}$ instead of $10^{-4}$, each at its best bonus weight on
+that environment so far. It is a SEPARATE sweep in its own run folder, shown here because this is
+where these two environments' results are compared, and both rows are deliberately left OUT of the
+bold/underline marking of the four arms above them. Read them as position reports: the $10^{-3}$
+rows stand at $n = 40$ of a planned $300$, and the $10^{-2}$ rows have no bonus weight with enough
+finished seeds to name a best yet, so their cells are dashes and their $n$ counts every seed
+finished so far across all $15$ weights. What the $10^{-3}$ rows show is that the rate alone lifts
+this stack ABOVE the $10^{-4}$ frozen bar on both environments --- by $5.9$ on UMaze
+($-683.87$ against $-689.74$, about $4.5$ standard errors) and by $1.8$ on Medium ($-996.69$
+against $-998.47$, about $6.6$ standard errors) --- so the learning rate alone moves this stack
 past the number train run 1.2's four new algorithms were built to beat.}}
 \claudecomment{The addendum rows are generated by the same script as the rest of this table
 (\texttt{code/\allowbreak 2026-08-04-20-00\_\allowbreak pm-am-run12-interim-tables/\allowbreak make\_\allowbreak all.py},
-function \texttt{lr1e3\_\allowbreak best\_\allowbreak row}), reading that run's own completed
-records live and ranking by the whole-run mean --- the same rule the block uses --- so the line
-cannot drift from the data or be lost on a regeneration. Best bonus weight is $3000$ on BOTH AntMaze
-environments, where at $10^{-4}$ it was $10^{4}$ on UMaze and $3{\times}10^{3}$ on Medium; so on
-UMaze the learning-rate change also moves which weight is best. Caveat on reading the comparison:
+function \texttt{addendum\_\allowbreak rows}), reading that run's own completed
+records live and ranking by the whole-run mean --- the same rule the block uses --- so the lines
+cannot drift from the data or be lost on a regeneration. At $10^{-3}$ the best bonus weight is
+$3{\times}10^{3}$ on UMaze and $10^{4}$ on Medium, where at $10^{-4}$ it was $10^{4}$ on UMaze and
+$3{\times}10^{3}$ on Medium --- so on both environments the learning-rate change also moves which
+weight is best. Caveat on reading the comparison:
 the addendum row and the frozen bar are both $10^{6}$-step values and are like-for-like, but the
 \emph{RND baseline} row in each block is a $10^{7}$-step run and is not.}
 \label{tab:pm-am-trainrun12-interim}
@@ -8040,10 +8064,15 @@ Adam $10^{-4}$ are BLACK: DASHED $=$ train run~1.1's winner (the previous run, t
 from its final records); SOLID $=$ this run's task-R rerun of that same configuration (to $10^{7}$
 steps). The third, ORANGE DASHED, is the SAME original-RND stack at Adam $10^{-3}$ --- the
 addendum run of Section~\ref{sec:train-run-5} --- at its own best bonus weight, to $10^{6}$ steps; it is an
-interim line (about $20$ of a planned $100$ seeds) and its band is correspondingly wide.} The dotted vertical
+interim line ($40$ of a planned $300$ seeds) and its band is correspondingly wide. That addendum run
+also sweeps a fourth rate, Adam $10^{-2}$, which appears as a LIGHT-BLUE DASHED line on the same
+footing; it has no bonus weight with enough finished seeds yet, so it contributes no curve today and
+each panel gains one as soon as it does.} The dotted vertical
 rule marks $10^{6}$ steps, the stage-1 screening length. Colors are fixed per arm across panels.
 Generated by \texttt{analysis/code/make\_\allowbreak reward\_\allowbreak curves.py} in the run
-folder; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final}.}
+folder; \sout{regenerated in place as the sweep advances}\claudeedit{this run's own four arms and its
+task-R baseline are final (they stopped 2026-08-05); the addendum curves are redrawn as that
+separate sweep advances}.}
 \label{fig:pm-am-trainrun12-curves}
 \end{figure}
 

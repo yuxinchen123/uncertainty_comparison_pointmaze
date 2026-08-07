@@ -66,25 +66,33 @@ OLD_RUNS = {
 # Tables 55/56 and the reward curve can show both learning rates side by side. Its records carry the
 # identical 8-field key as the 1e-4 arm (the key does not include the learning rate), so they are
 # loaded by their own reader and kept in a separate dict, never merged into run5.
-LR1E3_LOCAL = _first(os.path.join(TRAIN_RUNS, "*run_5_8_1_2_addendum*", "data", "*", "local"))
-LR1E3_ENV = "initial_single_large_pointmaze_max_400"
-RE_ENV_SETUP = re.compile(r'"env_setup":\s*"([^"]*)"')
-RE_RND_LR = re.compile(r'"rnd_lr":\s*([\d.eE+-]+)')
-RE_BETA = re.compile(r'"beta":\s*([\d.eE+-]+)')
+ADDENDUM_LOCAL = _first(os.path.join(TRAIN_RUNS, "*run_5_8_1_2_addendum*", "data", "*", "local"))
+ADDENDUM_ENV = "initial_single_large_pointmaze_max_400"
+# the addendum's own bonus-weight grid: 1e-3 to 1e4 at 1 and 3 per decade, the train-run-1.2 grid.
+# It does not contain 0.5, which run 5's grid does, so that row of Table 56 reads N/A, not a blank.
+ADDENDUM_GRID = {"%g" % float(b) for b in
+                 ["0.001", "0.003", "0.01", "0.03", "0.1", "0.3", "1", "3", "10", "30",
+                  "100", "300", "1000", "3000", "10000"]}
+# the addendum's predictor learning rates, ascending, as they appear in the tables left to right
+ADDENDUM_LRS = ["0.001", "0.01"]
 
 
-def load_lr1e3(local_dir):
-    """COMPLETED PointMaze records of the Adam 1e-3 addendum -> {beta string: [final rewards]}.
+def load_addendum(local_dir):
+    """COMPLETED PointMaze records of the addendum -> {lr: {beta: [(steps, per-eval means), ...]}}.
+
+    One pass over the records serves both the tables (which need the final reward, the last element
+    of each curve) and the reward figure (which needs the whole curve), so the 2,700-file directory
+    is read once rather than once per learning rate.
 
     Parsed with json.load, NOT the head+tail regex path that load() uses. Verified 2026-08-06: on an
     addendum record (524 kB) the head+tail window ends inside train_history and its last match is
     step 400000, so the fast reader silently returns a mid-training reward instead of the final one
     (61.01 where the true final is 93.81). run-5's own records are smaller and read correctly, which
     is why the bug only shows on this arm. Correctness beats speed here: this is a few hundred files.
-    before: 1800 addendum JSONs across three environments
-    after : {"1000": [40.1, 39.4, ...], "30": [...], ...} for PointMaze only
+    before: 2,700 addendum JSONs across three environments and two learning rates
+    after : {"0.001": {"1000": [((0, 50000, ...), [0.0, 1.2, ..., 40.1]), ...], ...}, "0.01": {...}}
     """
-    out = {}
+    out = {lr: {} for lr in ADDENDUM_LRS}
     if not local_dir:
         return out
     for path in glob.glob(os.path.join(local_dir, "*.json")):
@@ -92,41 +100,29 @@ def load_lr1e3(local_dir):
             d = json.load(open(path))
         except (ValueError, OSError):
             continue
-        if not d.get("completed") or d.get("env_setup") != LR1E3_ENV:
+        if not d.get("completed") or d.get("env_setup") != ADDENDUM_ENV:
             continue
-        if abs(float(d.get("rnd_lr", 0)) - 1e-3) > 1e-12:
+        lr = "%g" % float(d.get("rnd_lr", 0))
+        if lr not in out:
             continue
         rows = d.get("train_history") or []
         if not rows:
             continue
-        out.setdefault("%g" % float(d["beta"]), []).append(rows[-1]["train/mean_extrinsic_reward"])
+        out[lr].setdefault("%g" % float(d["beta"]), []).append(
+            (tuple(float(r["step"]) for r in rows),
+             [float(r["train/mean_extrinsic_reward"]) for r in rows]))
     return out
 
 
-def load_lr1e3_curves(local_dir, beta):
-    """Per-seed (steps, means) curves of ONE addendum bonus weight on this environment."""
-    curves = []
-    if not (local_dir and beta):
-        return curves
-    for path in glob.glob(os.path.join(local_dir, "*.json")):
-        try:
-            d = json.load(open(path))
-        except (ValueError, OSError):
-            continue
-        if not d.get("completed") or d.get("env_setup") != LR1E3_ENV:
-            continue
-        if abs(float(d.get("rnd_lr", 0)) - 1e-3) > 1e-12 or "%g" % float(d["beta"]) != beta:
-            continue
-        rows = d.get("train_history") or []
-        if rows:
-            curves.append((tuple(float(r["step"]) for r in rows),
-                           [float(r["train/mean_extrinsic_reward"]) for r in rows]))
-    return curves
+def final_rewards(curves):
+    """The final extrinsic reward of each seed's curve — the score Table 55/56 rank on."""
+    return [c[1][-1] for c in curves]
 
 
-def lr1e3_best(lr1e3, min_seeds=5):
-    """(beta, (n, mean, se, succ)) of the addendum's best weight, or (None, None) if too few seeds."""
-    ranked = [(b, agg(v)) for b, v in lr1e3.items() if len(v) >= min_seeds]
+def addendum_best(per_beta, min_seeds=5):
+    """(beta, (n, mean, se, succ)) of one learning rate's best weight, or (None, None) when no weight
+    yet has `min_seeds` finished seeds — which is the state of a rate whose runs are still in flight."""
+    ranked = [(b, agg(final_rewards(v))) for b, v in per_beta.items() if len(v) >= min_seeds]
     if not ranked:
         return None, None
     return max(ranked, key=lambda t: t[1][1])
@@ -138,7 +134,9 @@ KEY_N1 = "adam|mse|-|-|10000|zero|rewardnorm|-"
 # was ambiguous (it named the network size, not the knob under test) and never said which learning
 # rate a row or curve belonged to; both names now carry the rate explicitly.
 LABEL_LR4 = "run-5 original RND, Adam $10^{-4}$"
-LABEL_LR3 = "run-5 original RND, Adam $10^{-3}$"
+ADDENDUM_LABEL = {"0.001": "run-5 original RND, Adam $10^{-3}$",
+                  "0.01": "run-5 original RND, Adam $10^{-2}$"}
+ADDENDUM_HEAD = {"0.001": r"\textbf{Adam $10^{-3}$}", "0.01": r"\textbf{Adam $10^{-2}$}"}
 BETAS = ["0.01", "0.1", "0.5", "1", "10", "100", "1000", "10000"]
 ORIGSMALL_KEYS = [f"adam|mse_mean|-|-|{'%g' % float(b)}|zero|rewardnorm|origsmall" for b in BETAS]
 
@@ -256,9 +254,9 @@ def tex(v, mark):
 # tables
 # ---------------------------------------------------------------------------------------------------
 
-def write_reward_table(run5, olds, lr1e3=None):
-    """The headline performance table: the original-RND arm at both learning rates (each at its own
-    best bonus weight), the benchmark, the reward-norm arm, and the old reference rows."""
+def write_reward_table(run5, olds, addendum=None):
+    """The headline performance table: the original-RND arm at all three learning rates (each at its
+    own best bonus weight), the benchmark, the reward-norm arm, and the old reference rows."""
     # pick the winning run-5 original-small beta by mean over its finished seeds
     os_stats = [(b, agg(run5.get(k, {"final": []})["final"]))
                 for b, k in zip(BETAS, ORIGSMALL_KEYS)]
@@ -267,11 +265,24 @@ def write_reward_table(run5, olds, lr1e3=None):
     rows = []  # (label, n, mean, se, succ, source)
     n, m, se, sc = best_agg
     rows.append([f"{LABEL_LR4} ($\\beta{{=}}{best_beta}$)", n, m, se, sc, "run 5"])
-    # the same stack at 1e-3, at ITS best weight: one extra row, right under its 1e-4 counterpart
-    lr3_beta, lr3_agg = lr1e3_best(lr1e3 or {})
-    if lr3_beta is not None:
-        n3, m3, se3, sc3 = lr3_agg
-        rows.append([f"{LABEL_LR3} ($\\beta{{=}}{lr3_beta}$)", n3, m3, se3, sc3, "addendum"])
+    # the same stack at each addendum rate, at ITS own best weight: one extra row per rate, directly
+    # under the 1e-4 counterpart. A rate whose runs are all still in flight has no weight with enough
+    # finished seeds to rank; it still gets a row, showing the seed count it has so far, so the table
+    # says the arm is running rather than silently omitting it.
+    addendum = addendum or {}
+    for lr in ADDENDUM_LRS:
+        per_beta = addendum.get(lr, {})
+        beta, stats = addendum_best(per_beta)
+        if beta is not None:
+            n_a, m_a, se_a, sc_a = stats
+            rows.append([f"{ADDENDUM_LABEL[lr]} ($\\beta{{=}}{beta}$)", n_a, m_a, se_a, sc_a,
+                         "addendum"])
+        else:
+            # n here counts every finished seed across all 15 weights, not seeds of one weight —
+            # the caption says so, because no weight has been chosen yet
+            done = sum(len(v) for v in per_beta.values())
+            rows.append([f"{ADDENDUM_LABEL[lr]} (still running)", done,
+                         float("nan"), float("nan"), float("nan"), "addendum"])
     for label, key in (("run-3.2.2 benchmark (Adam, no norm)", KEY_C2), ("run-3.2.3 reward-norm (Adam)", KEY_N1)):
         n, m, se, sc = agg(run5.get(key, {"final": []})["final"])
         rows.append([label, n, m, se, sc, "run 5"])
@@ -299,32 +310,45 @@ def write_reward_table(run5, olds, lr1e3=None):
     return best_beta
 
 
-def write_beta_sweep_table(run5, pruned_keys, lr1e3=None):
-    """Per-weight results at BOTH learning rates, side by side.
+def write_beta_sweep_table(run5, pruned_keys, addendum=None):
+    """Per-weight results at all THREE predictor learning rates, side by side.
 
-    Left block: the 1e-4 sweep's eight weights with the race verdict that stopped each one. Right
-    block: the same weight at 1e-3 where the two grids share it. The 1e-3 grid runs 1e-3..1e4 at 1
-    and 3 per decade and does not contain 0.5, so that one row reads N/A rather than a blank.
+    Leftmost block: the 1e-4 sweep's eight weights with the race verdict that stopped each one. One
+    further block per addendum learning rate, giving the same weight at that rate where the grids
+    share it. The addendum grid runs 1e-3..1e4 at 1 and 3 per decade and does not contain 0.5, so
+    that one row reads N/A rather than a blank; a weight that is in the grid but has no finished seed
+    yet reads as a dash with $n=0$, which says "running", not "absent".
     """
-    lr1e3 = lr1e3 or {}
-    lines = [r"\begin{tabular}{@{}r r r r c c r r r@{}}", r"\toprule",
-             r"& \multicolumn{4}{c}{\textbf{Adam $10^{-4}$}} & & "
-             r"\multicolumn{3}{c}{\textbf{Adam $10^{-3}$}} \\",
-             r"\cmidrule(lr){2-5}\cmidrule(lr){7-9}",
-             r"$\beta$ & $\bar R$ & $\mathrm{SE}$ & $n$ & stopped & & $\bar R$ & $\mathrm{SE}$ & $n$ \\",
-             r"\midrule"]
+    addendum = addendum or {}
+    # column spec: beta, then 4 columns for 1e-4, then a spacer + 3 columns per addendum rate
+    spec = "@{}r r r r c" + " c r r r" * len(ADDENDUM_LRS) + "@{}"
+    head1 = [r"& \multicolumn{4}{c}{\textbf{Adam $10^{-4}$}}"]
+    rules = [r"\cmidrule(lr){2-5}"]
+    head2 = [r"$\beta$ & $\bar R$ & $\mathrm{SE}$ & $n$ & stopped"]
+    for i, lr in enumerate(ADDENDUM_LRS):
+        first = 7 + 4 * i          # 1e-3 spans columns 7-9, 1e-2 spans 11-13
+        head1.append(r"& & \multicolumn{3}{c}{%s}" % ADDENDUM_HEAD[lr])
+        rules.append(r"\cmidrule(lr){%d-%d}" % (first, first + 2))
+        head2.append(r"& & $\bar R$ & $\mathrm{SE}$ & $n$")
+    lines = [r"\begin{tabular}{%s}" % spec, r"\toprule",
+             " ".join(head1) + r" \\", "".join(rules),
+             " ".join(head2) + r" \\", r"\midrule"]
     for b, k in zip(BETAS, ORIGSMALL_KEYS):
         n, m, se, _ = agg(run5.get(k, {"final": []})["final"])
         pr = "yes" if k in pruned_keys else "no"
         label = (f"$10^{{{int(round(math.log10(float(b))))}}}$"
                  if float(b) not in (0.5,) else "$0.5$")
-        vals = lr1e3.get(b)
-        if vals:
-            n3, m3, se3, _ = agg(vals)
-            right = f"{fmt(m3)} & {fmt(se3)} & {n3}"
-        else:
-            right = r"\multicolumn{3}{c}{N/A --- not in the $10^{-3}$ grid}"
-        lines.append(f"{label} & {fmt(m)} & {fmt(se)} & {n} & {pr} & & {right} \\\\")
+        cells = [f"{label} & {fmt(m)} & {fmt(se)} & {n} & {pr}"]
+        for lr in ADDENDUM_LRS:
+            curves = addendum.get(lr, {}).get(b)
+            if curves:
+                n_a, m_a, se_a, _ = agg(final_rewards(curves))
+                cells.append(f"& & {fmt(m_a)} & {fmt(se_a)} & {n_a}")
+            elif b not in ADDENDUM_GRID:
+                cells.append(r"& & \multicolumn{3}{c}{N/A --- not in this grid}")
+            else:
+                cells.append(r"& & -- & -- & 0")
+        lines.append(" ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     _write("beta_sweep_table.tex", "\n".join(lines))
 
@@ -389,12 +413,16 @@ def _curve_matrix(curves):
     return np.array(grid), mean, se, mat.shape[0]
 
 
-def write_reward_curve(run5, best_beta, lr1e3_curves=None, lr1e3_beta=None):
+ADDENDUM_COLOR = {"0.001": "tab:red", "0.01": "tab:purple"}
+
+
+def write_reward_curve(run5, best_beta, addendum=None):
     """Mean +- SE training-reward curve per arm over the eval grid.
 
-    Four curves: the original-RND arm at BOTH learning rates, each at its own best bonus weight, plus
-    the benchmark and the reward-norm arms. Every legend entry names its learning rate, so no curve
-    can be read as "the original RND" without knowing which rate produced it.
+    One curve per predictor learning rate of the original-RND stack, each at its own best bonus
+    weight, plus the benchmark and the reward-norm arms. Every legend entry names its learning rate,
+    so no curve can be read as "the original RND" without knowing which rate produced it. A rate
+    whose runs have not finished yet has no best weight and simply contributes no curve.
     """
     import matplotlib
     matplotlib.use("Agg")
@@ -405,14 +433,19 @@ def write_reward_curve(run5, best_beta, lr1e3_curves=None, lr1e3_beta=None):
             ("run-3.2.2 benchmark (Adam $10^{-3}$)", KEY_C2, "tab:orange"),
             ("run-3.2.3 reward-norm (Adam $10^{-3}$)", KEY_N1, "tab:green")]
     fig, ax = plt.subplots(figsize=(6, 4))
-    # the addendum arm, drawn dashed so it reads as the same stack at a different rate
-    if lr1e3_curves and lr1e3_beta:
-        mat = _curve_matrix(lr1e3_curves)
-        if mat is not None:
-            grid, mean, se, k = mat
-            ax.plot(grid, mean, linestyle="--", color="tab:red",
-                    label=f"run-5 original RND, Adam $10^{{-3}}$ ($\\beta$={lr1e3_beta}) (n={k})")
-            ax.fill_between(grid, mean - se, mean + se, alpha=0.2, color="tab:red")
+    # the addendum arms, drawn dashed so each reads as the same stack at a different rate
+    for lr in ADDENDUM_LRS:
+        beta, _ = addendum_best((addendum or {}).get(lr, {}))
+        if beta is None:
+            continue
+        mat = _curve_matrix(addendum[lr][beta])
+        if mat is None:
+            continue
+        grid, mean, se, k = mat
+        exponent = int(round(math.log10(float(lr))))
+        ax.plot(grid, mean, linestyle="--", color=ADDENDUM_COLOR[lr],
+                label=f"run-5 original RND, Adam $10^{{{exponent}}}$ ($\\beta$={beta}) (n={k})")
+        ax.fill_between(grid, mean - se, mean + se, alpha=0.2, color=ADDENDUM_COLOR[lr])
     for label, key, color in arms:
         curves = run5.get(key, {"curves": []})["curves"]
         if not curves:
@@ -465,16 +498,18 @@ def main():
     olds = {label: load(d) for label, d in OLD_RUNS.items() if d}
     n_completed = sum(len(v["final"]) for v in run5.values())
     print(f"run-5 completed records: {n_completed}; old runs loaded: {list(olds)}")
-    lr1e3 = load_lr1e3(LR1E3_LOCAL)
-    print(f"addendum (Adam 1e-3) PointMaze records: {sum(len(v) for v in lr1e3.values())} "
-          f"across {len(lr1e3)} bonus weights")
-    best_beta = write_reward_table(run5, olds, lr1e3)
-    write_beta_sweep_table(run5, load_pruned_keys(), lr1e3)
+    addendum = load_addendum(ADDENDUM_LOCAL)
+    for lr in ADDENDUM_LRS:
+        per_beta = addendum[lr]
+        beta, _ = addendum_best(per_beta)
+        print(f"addendum (Adam {float(lr):g}) PointMaze records: "
+              f"{sum(len(v) for v in per_beta.values())} across {len(per_beta)} bonus weights; "
+              f"best weight {beta if beta else 'not yet decided'}")
+    best_beta = write_reward_table(run5, olds, addendum)
+    write_beta_sweep_table(run5, load_pruned_keys(), addendum)
     write_substitution(run5, olds)
-    lr3_beta, _ = lr1e3_best(lr1e3)
-    lr3_curves = load_lr1e3_curves(LR1E3_LOCAL, lr3_beta) if lr3_beta else None
     try:
-        write_reward_curve(run5, best_beta, lr3_curves, lr3_beta)
+        write_reward_curve(run5, best_beta, addendum)
     except Exception as e:  # a plotting failure must not lose the tables
         print(f"reward_curve skipped: {e}")
     print(f"wrote reward_table.tex, beta_sweep_table.tex, substitution_table.tex, "
