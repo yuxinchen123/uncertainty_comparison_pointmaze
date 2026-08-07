@@ -53,7 +53,7 @@
 \newcommand{\criticalknob}[1]{\leavevmode{\color{critical-blue}#1}}
 \newcommand{\claudecomment}[1]{({\color{claude-green} Claude: #1})}
 % Provenance-name marker (user request 2026-07-31): every reference to a named run artifact
-% (\runref{run-5 original-small}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
+% (\runref{run-5 original RND, Adam $10^{-4}$}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
 % is set bold inside square brackets so it can be found at a glance.
 \newcommand{\runref}[1]{\textbf{[#1]}}
 
@@ -5843,7 +5843,7 @@ Train run~5 fixes a clean baseline: three RND configurations, each on $300$ fres
 same SAC / \texttt{PointMaze\_\allowbreak Large-v3} stack and training-episode metric as run~3.2.4.
 The three arms are:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \runref{run-5 original-small} --- the \emph{original} RND recipe \citep{burda2019exploration}
+\item \runref{run-5 original RND, Adam $10^{-4}$} --- the \emph{original} RND recipe \citep{burda2019exploration}
   transplanted onto this task on the train-run-3 RND network size, \sout{swept over eight intrinsic
   weights that race under a pruning controller}\claudeedit{run at each of the eight intrinsic
   weights $\beta \in \{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$, which race against
@@ -5856,7 +5856,7 @@ The three arms are:
 
 \paragraph{Purpose.}
 Two goals. First, the project has always compared its bonuses against its own ``RND benchmark''
-(the \runref{run-3.2.2 benchmark} line), never against a faithful \emph{original} RND; \runref{run-5 original-small} is that reference,
+(the \runref{run-3.2.2 benchmark} line), never against a faithful \emph{original} RND; \runref{run-5 original RND, Adam $10^{-4}$} is that reference,
 assembling the scattered original-RND facts of Section~\ref{sec:rnd-norm} and
 Table~\ref{tab:rnd-norm} / Table~\ref{tab:trainrun3-2-2-rnd-init} into one run. Second, the benchmark and reward-norm configurations
 already have fresh-seed data (runs 3.2.2/3.2.3/3.2.4); re-running them at $300$ seeds lets us test,
@@ -5887,7 +5887,7 @@ pooled in --- the substitution check under \emph{Results}.
 \end{tabular}
 \caption{The project's previous RND, defined once as \emph{train run 3 RND}. All of train run 3
 shares the base architecture; the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm} are two
-configurations of it, and are the two own-RND arms re-run here. The \runref{run-5 original-small} arm
+configurations of it, and are the two own-RND arms re-run here. The \runref{run-5 original RND, Adam $10^{-4}$} arm
 borrows only this network's \emph{widths} (see below).}
 \label{tab:trainrun5-trainrun3-rnd}
 \end{table}
@@ -5986,12 +5986,12 @@ separate value head. The project's own RND (train run 3) and run~5 likewise use 
 reward stream $r^{\mathrm{ext}}+\beta\,r^{\mathrm{int}}$.
 
 \paragraph{From Atari-PPO to PointMaze-SAC: the translation choices.}
-The \runref{run-5 original-small} arm keeps the original RND settings above wherever the SAC/PointMaze/state setting allows,
+The \runref{run-5 original RND, Adam $10^{-4}$} arm keeps the original RND settings above wherever the SAC/PointMaze/state setting allows,
 and makes the following explicit translations:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{CNN $\to$ MLP.} The $84\times84$ convolutional trunk becomes a fully-connected trunk
   on the $4$-dimensional state $(x,y,v_x,v_y)$.
-\item \textbf{Small widths, deeper predictor.} The \runref{run-5 original-small} arm takes the train-run-3 RND \emph{widths}
+\item \textbf{Small widths, deeper predictor.} The \runref{run-5 original RND, Adam $10^{-4}$} arm takes the train-run-3 RND \emph{widths}
   ($256$ hidden, output $m{=}128$) but keeps the original's defining \emph{asymmetry}: the predictor
   is one $128$-wide LeakyReLU$(0.2)$ block deeper than the target. Target
   $=\;$state$(4)\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$; predictor
@@ -6016,7 +6016,7 @@ and makes the following explicit translations:
 
 \paragraph{\sout{Beta sweep and pruning.}\claudeedit{The eight bonus weights, and how a weight is
 stopped early.}}
-The \runref{run-5 original-small} arm \sout{sweeps}\claudeedit{runs at each of the eight bonus
+The \runref{run-5 original RND, Adam $10^{-4}$} arm \sout{sweeps}\claudeedit{runs at each of the eight bonus
 weights} $\beta\in\{10^{-2},10^{-1},0.5,1,10,10^{2},10^{3},10^{4}\}$. The eight \sout{betas}\claudeedit{weights}
 race: let $\bar R_\beta$, $s_\beta$, and $n_\beta$ be the mean, sample standard deviation, and count
 of a \sout{beta}\claudeedit{weight}'s finished-seed final training-episode rewards, and let the \emph{bar} be the largest
@@ -6030,7 +6030,7 @@ n_\beta \ge 30
 full $300$ seeds. The benchmark and reward-norm arms never prune and run all $300$ seeds.
 
 \claudeedit{\paragraph{The learning-rate addendum (submitted 2026-08-05).}
-The \runref{run-5 original-small} arm above follows the original paper's predictor learning rate of
+The \runref{run-5 original RND, Adam $10^{-4}$} arm above follows the original paper's predictor learning rate of
 $10^{-4}$. The last column of Table~\ref{tab:trainrun5-hparams} is the same stack at $10^{-3}$ ---
 one knob moved, every other field of train run 5's own parameter dictionary copied unchanged and
 machine-checked to be unchanged. It runs on the same \texttt{PointMaze\_\allowbreak Large-v3}
@@ -6073,7 +6073,7 @@ forward-filter reward normalization, $\beta$-scaling, and the sum with the extri
 the RL update --- with CleanRL's departures marked as callouts: its predictor \emph{update} feeds
 the stored current-step observation rather than the next observation; its convolutional LeakyReLU
 slope is $0.01$; it clips gradients at global norm $0.5$; and it normalizes advantages per
-minibatch. The \runref{run-5 original-small} arm follows the original everywhere the figure's solid path runs (next-state
+minibatch. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the original everywhere the figure's solid path runs (next-state
 input throughout, no gradient clip), on SAC's single reward stream.
 
 \begin{figure}[t]
@@ -6085,7 +6085,7 @@ $\hat f(s')$ give the per-dimension error $e$, read out as the bonus $b$, normal
 std $\sigma_F$ of the forward-filtered intrinsic return, scaled by $\beta$, and added to the
 extrinsic reward for the RL update. The predictor-gradient path (blue dashed) terminates only at the
 predictor; the RMS statistic updates are dotted. CleanRL's departures from the original are marked as
-dashed callouts. The \runref{run-5 original-small} arm follows the solid path on SAC's single reward stream.}
+dashed callouts. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the solid path on SAC's single reward stream.}
 \label{fig:trainrun5-pipeline}
 \end{figure}
 
@@ -6118,7 +6118,7 @@ dashed callouts. The \runref{run-5 original-small} arm follows the solid path on
 \runref{run-3.2.2 benchmark} & \runref{run-3.2.3 reward-norm} &
 \textbf{Adam $10^{-4}$} & \claudecell{\textbf{Adam $10^{-3}$}} \\
 & \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
-\small(no norm) & \small(reward norm) & \small(\runref{run-5 original-small}) &
+\small(no norm) & \small(reward norm) & \small(\runref{run-5 original RND, Adam $10^{-4}$}) &
 \claudecell{\small(the same stack, one knob moved)} \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{RL algorithm \& environments}} \\
@@ -6197,11 +6197,11 @@ seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ &
 }
 \caption{Train run~5 hyperparameters by source. Columns are the two Atari references (the RND paper
 \citep{burda2019exploration} and CleanRL \citep{huang2022cleanrl}), the state-input reference ExPLORe
-\citep{li2023accelerating}, the project's previous RND (its two configurations, the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm}, Table~\ref{tab:trainrun5-trainrun3-rnd}), and the \runref{run-5 original-small} arm. Rows spanning several
+\citep{li2023accelerating}, the project's previous RND (its two configurations, the \runref{run-3.2.2 benchmark} and the \runref{run-3.2.3 reward-norm}, Table~\ref{tab:trainrun5-trainrun3-rnd}), and the \runref{run-5 original RND, Adam $10^{-4}$} arm. Rows spanning several
 columns share a value; ``---'' marks a knob a source does not use. Architecture is written as one
 network-pipeline string per net. There is no continuous-control column for the two Atari references:
 neither the original RND repository/paper nor CleanRL evaluates a MuJoCo/continuous-control task
-(verified), so ExPLORe supplies the state-input reference. The \runref{run-5 original-small} arm follows the RND paper on
+(verified), so ExPLORe supplies the state-input reference. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the RND paper on
 every non-architecture knob (readout, Adam $10^{-4}$/$\epsilon\,10^{-8}$, warm-up, reward norm) and
 the original \emph{repository code} on the update proportion ($1.0$); it takes the train-run-3 RND
 widths but keeps the original's deeper-predictor asymmetry (one extra $128$-wide block). In
@@ -6211,7 +6211,7 @@ columns it appears only inside that filter --- the ``$-$'' in the
 $\gamma_{\mathrm{int}}/\gamma_{\mathrm{ext}}$ row below refers to the discount of a separate
 intrinsic value head, which the single-head SAC setup does not have.
 \claudeedit{The last column is the learning-rate addendum submitted 2026-08-05: the same
-\runref{run-5 original-small} stack with the predictor's Adam learning rate moved from $10^{-4}$ to
+\runref{run-5 original RND, Adam $10^{-4}$} stack with the predictor's Adam learning rate moved from $10^{-4}$ to
 $10^{-3}$ and nothing else touched, on $100$ fresh seeds ($900$--$999$) per bonus weight over the
 $15$-value grid, raced against the $10^{-4}$ winner's own number (see the paragraph below the
 table).}}
@@ -6233,34 +6233,35 @@ when the seeds land.}
 \label{tab:trainrun5-hparams}
 \end{table}
 
-\paragraph{Results (partial snapshot 2026-07-22; the 3000-run sweep is still draining its long
+\paragraph{Results \sout{(partial snapshot 2026-07-22; the 3000-run sweep is still draining its long
 tail, so the per-arm seed counts $n$ below are interim, not the full 300 seeds --- the numbers
-will firm up but are not expected to move much).}
-Table~\ref{tab:trainrun5-results} reports the three run-5 arms --- the winning \runref{run-5 original-small}
+will firm up but are not expected to move much)}\claudeedit{(final for the $10^{-4}$ arms at their
+full $300$ seeds; the $10^{-3}$ addendum rows are interim at about $20$ seeds)}.}
+Table~\ref{tab:trainrun5-results} reports the \sout{three}\claudeedit{four} run-5 arms --- the winning \runref{run-5 original RND, Adam $10^{-4}$}
 $\beta$, the \runref{run-3.2.2 benchmark} (Adam, no reward normalization), and the \runref{run-3.2.3 reward-norm}
 (Adam, reward normalization) --- on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
 old-run reference rows beneath.  Recall $\mathrm{succ.}$ is the fraction of a
 configuration's seeds whose final training reward exceeds $5$ (defined for
 run~3.2.1, Section~\ref{sec:train-run-3-2-1}).  Table~\ref{tab:trainrun5-betasweep} gives all eight
-\runref{run-5 original-small} $\beta$ values \sout{with the beta-race prune verdict}\claudeedit{---
+\runref{run-5 original RND, Adam $10^{-4}$} $\beta$ values \sout{with the beta-race prune verdict}\claudeedit{---
 $\{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$ --- with the verdict of the race between
 them}, and
 Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading the snapshot:
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{Reward normalization leads, and reproduces its old result.}  The \runref{run-3.2.3 reward-norm} arm reaches
-  $\bar R=47.56$ ($n=233$, $\mathrm{succ.}=0.89$), the top of the table --- above the winning
-  \runref{run-5 original-small} arm and above the \runref{run-3.2.2 benchmark}, and slightly above its own old
+  \sout{$\bar R=47.56$ ($n=233$, $\mathrm{succ.}=0.89$)}\claudeedit{$\bar R=46.84$ ($n=300$, $\mathrm{succ.}=0.88$)}, the top of the table --- above the winning
+  \runref{run-5 original RND, Adam $10^{-4}$} arm and above the \runref{run-3.2.2 benchmark}, and slightly above its own old
   reference ($43.71$, run~3.2.4).
-\item \textbf{The \runref{run-5 original-small} arm lands between the two previous-RND arms.}  At its winning weight
-  $\beta=10^3$ the faithful-original arm scores $\bar R=39.92$ ($n=226$,
-  $\mathrm{succ.}=0.79$) --- above the \runref{run-3.2.2 benchmark} ($36.19$) but below the \runref{run-3.2.3 reward-norm}, so on this maze the reward
+\item \textbf{The \runref{run-5 original RND, Adam $10^{-4}$} arm lands between the two previous-RND arms.}  At its winning weight
+  $\beta=10^3$ the faithful-original arm scores \sout{$\bar R=39.92$ ($n=226$,
+  $\mathrm{succ.}=0.79$)}\claudeedit{$\bar R=38.64$ ($n=300$, $\mathrm{succ.}=0.78$)} --- above the \runref{run-3.2.2 benchmark} (\sout{$36.19$}\claudeedit{$35.16$}) but below the \runref{run-3.2.3 reward-norm}, so on this maze the reward
   normalization buys more than the remaining original-RND components (observation
   normalization, the deeper predictor, the mean-squared readout) recover.
 \item \textbf{The bonus weight is strongly single-peaked.}  Across the eight $\beta$ the mean
   reward traces an inverted-U (Table~\ref{tab:trainrun5-betasweep}): every $\beta\le1$ sits
-  below $8$, the curve climbs through $\beta=10$ ($11.84$) and $\beta=10^2$ ($29.14$) to a peak
-  at $\beta=10^3$ ($39.92$), then falls back to $18.10$ at $\beta=10^4$.  The \sout{beta race}\claudeedit{race between the eight weights} pruned
+  below $8$, the curve climbs through $\beta=10$ ($11.84$) and $\beta=10^2$ (\sout{$29.14$}\claudeedit{$28.73$}) to a peak
+  at $\beta=10^3$ (\sout{$39.92$}\claudeedit{$38.64$}), then falls back to $18.10$ at $\beta=10^4$.  The \sout{beta race}\claudeedit{race between the eight weights} pruned
   the seven off-peak weights and kept only $\beta=10^3$, which is running to the full seed
   budget.
 \end{enumerate}
@@ -6275,28 +6276,44 @@ Figure~\ref{fig:trainrun5-curve} draws the reward-over-training curves.  Reading
 \caption{Train run~5, the three arms scored on the final training-episode extrinsic reward
 $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$); best \textbf{bold}, second
 \underline{underlined} in the $\bar R$ and $\mathrm{succ.}$ columns (higher is better).  Top block:
-this run's three arms (\runref{run-5 original-small} at its winning $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}).  Bottom block: the
+this run's three arms (\runref{run-5 original RND, Adam $10^{-4}$} at its winning $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}).  Bottom block: the
 old-run reference rows (run~3.2.2 and run~3.2.4) shown for scale.  $\mathrm{succ.}$ is
-the fraction of seeds with final reward $>5$.  Partial snapshot --- the $n$ column is the seeds
-completed so far, not the full 300.}
+the fraction of seeds with final reward $>5$.  \sout{Partial snapshot --- the $n$ column is the seeds
+completed so far, not the full 300.}\claudeedit{The $10^{-4}$ rows are final at their full $300$
+seeds. The second row is new: the SAME stack at Adam $10^{-3}$, at its own best bonus weight, from
+the addendum run --- $\bar R = 40.00 \pm 5.82$ over $20$ of a planned $100$ seeds, against
+$38.64 \pm 1.77$ at $10^{-4}$. The two are within one standard error of each other, so on this task
+the learning rate has not yet been shown to matter either way; what is already clear is that all
+$20$ of its seeds clear the success threshold ($\mathrm{succ.} = 1.00$ against $0.78$). That row is
+left OUT of the bold/underline marking: at $n=20$ against $100$--$300$ its standard error is three
+times the others', so a leading point estimate would not mean a lead.}}
 \label{tab:trainrun5-results}
 \end{table}
 
-% ---- Run 5 bonus-weight table (the 8 run-5 original-small weights + the race verdict) ----
+% ---- Run 5 bonus-weight table (the 8 weights at Adam 1e-4 with the race verdict,
+%      plus the same weights at Adam 1e-3 from the addendum run) ----
 \begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{6pt}
 \renewcommand{\arraystretch}{1.2}
 \input{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/beta_sweep_table.tex}
-\caption{Train run~5, the eight \runref{run-5 original-small} bonus weights
+\caption{Train run~5, the eight \runref{run-5 original RND, Adam $10^{-4}$} bonus weights
 \claudeedit{$\beta\in\{10^{-2}, 10^{-1}, 0.5, 1, 10, 10^{2}, 10^{3}, 10^{4}\}$} on the final
 training-episode extrinsic reward $\bar R$ (mean over seeds, $\mathrm{SE}=s/\sqrt{n}$), with the
 \sout{beta-race}\claudeedit{race} verdict.  The race gives each $\beta$ at least $30$ seeds, then \sout{prunes}\claudeedit{stops} a $\beta$
 once its one-sided $99\%$ upper confidence limit falls below the running-best mean; the sole
 survivor $\beta=10^3$ runs to the full seed budget.  \sout{Partial snapshot --- pruned $\beta$ stop at
 their pruned-time $n$.}\claudeedit{A stopped $\beta$ keeps the $n$ it had reached when it was
-stopped, so the $n$ column is not constant down the table.}}
+stopped, so the $n$ column is not constant down the table.}
+\claudeedit{The right-hand block is new: the same weight at Adam $10^{-3}$, from the addendum run.
+The two grids share seven of the eight weights --- the $10^{-3}$ grid runs $10^{-3}$ to $10^{4}$ at
+$1$ and $3$ per decade and has no $0.5$, so that row reads N/A rather than a blank. Reading across:
+both learning rates trace the same inverted-U and peak at the same $\beta=10^{3}$, with $10^{-3}$
+level or slightly ahead at every shared weight and clearly ahead at $\beta=10^{4}$
+($26.91$ against $18.10$), where the $10^{-4}$ arm was already falling away. The $10^{-3}$ column is
+interim at $17$--$21$ seeds per weight, against $116$--$300$ on the left, so its standard errors are
+three to four times larger and none of these gaps is established yet.}}
 \label{tab:trainrun5-betasweep}
 \end{table}
 
@@ -6304,13 +6321,19 @@ stopped, so the $n$ column is not constant down the table.}}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\linewidth]{../train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/analysis/plots/reward_curve.pdf}
-\caption{Train run~5: training-episode extrinsic reward over $10^6$ steps for the three arms
-(\runref{run-5 original-small} at $\beta=10^3$, the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}),
+\caption{Train run~5: training-episode extrinsic reward over $10^6$ steps for
+\sout{the three arms}\claudeedit{FOUR arms --- the original-RND stack at BOTH predictor learning
+rates, each at its own best bonus weight, plus the two previous-RND arms}
+(\runref{run-5 original RND, Adam $10^{-4}$} at $\beta=10^3$,
+\claudeedit{\runref{run-5 original RND, Adam $10^{-3}$} at $\beta=10^3$ (dashed red),} the \runref{run-3.2.2 benchmark}, the \runref{run-3.2.3 reward-norm}),
 each the mean over seeds with a $\pm1$ standard-error
-band.  Partial snapshot 2026-07-22.  The legend still shows the arms' old short labels
+band.  \sout{Partial snapshot 2026-07-22.  The legend still shows the arms' old short labels
 (original-small; C2 $=$ the \runref{run-3.2.2 benchmark}; N1 $=$ the \runref{run-3.2.3 reward-norm}) --- the
 figure is a data snapshot and is redrawn with the new names when the run's final analysis
-regenerates it.}
+regenerates it.}\claudeedit{Redrawn 2026-08-06: every legend entry now names its predictor learning
+rate, so no curve can be read as ``the original RND'' without knowing which rate produced it. The
+$10^{-4}$ line is final ($n=300$); the $10^{-3}$ line is interim (about $20$ of a planned $100$
+seeds) and its band is correspondingly wide.}}
 \label{fig:trainrun5-curve}
 \end{figure}
 
@@ -6375,7 +6398,7 @@ merged oracle's reward, and covers slightly \emph{more} of the maze than either 
   0.767 $\pm$ 0.007 & 300 \\
 \runref{run-3.2.3 reward-norm} (Adam, $\mathcal{B}_{\mathrm{mse}}$, $\beta{=}10^{4}$) --- best run-5 RND &
   train run 5 & 47.33 $\pm$ 1.92 & 0.685 & 0.913 & \textbf{0.787} $\pm$ 0.008 & 253 \\
-\claudecell{\runref{run-5 original-small} at Adam $10^{-3}$, $\beta{=}10^{3}$ --- the
+\claudecell{\runref{run-5 original RND, Adam $10^{-4}$} at Adam $10^{-3}$, $\beta{=}10^{3}$ --- the
   learning-rate addendum} & \claudecell{the addendum run} & \claudecell{40.00 $\pm$ 5.82} &
   \claudecell{0.803} & \claudecell{1.000} & \claudecell{0.810 $\pm$ 0.029} & \claudecell{20} \\
 \bottomrule
@@ -7129,7 +7152,7 @@ run on all $8$ configurations; each ground-truth (oracle visit-count) bonus runs
 defined for --- \texttt{gt\_\allowbreak position\_\allowbreak velocity} on the $4$ PointMaze
 configurations, \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell} and
 \texttt{gt\_\allowbreak position\_\allowbreak 1m} on the $4$ AntMaze configurations. The SAC $+$ RND
-column reuses the \runref{run-5 original-small} RND stack unchanged.
+column reuses the \runref{run-5 original RND, Adam $10^{-4}$} RND stack unchanged.
 
 \begin{table}[H]
 \centering
@@ -7175,7 +7198,7 @@ train freq / gradient steps / learning starts & $1$ / $1$ / $100$ (SB3 defaults)
 bonus input & N/A & next state ($4$-d PointMaze / $29$-d AntMaze) &
   (position $1$~m cell, velocity bin) of the next state; velocity binned $10\times10$ over
   $[-5,5]^2$ & $4$~m maze cell of the next $(x, y)$ & $1$~m square of the next $(x, y)$ \\
-bonus form & N/A & RND distillation error, \runref{run-5 original-small} stack (next row) &
+bonus form & N/A & RND distillation error, \runref{run-5 original RND, Adam $10^{-4}$} stack (next row) &
   count bonus $\min(1, 1/\sqrt{n})$ (decay rate $-0.5$) & $\min(1, 1/\sqrt{n})$ &
   $\min(1, 1/\sqrt{n})$ \\
 RND stack & N/A & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper;
@@ -7208,7 +7231,7 @@ seeds & \multicolumn{5}{>{\raggedright\arraybackslash}p{14.2cm}}{racing: initial
 }
 \caption{Algorithms for train run~1.1. Columns are the five algorithm arms; rows are hyperparameters
 grouped by category. ``same'' collapses a value shared with the columns to its left; ``N/A'' marks a
-knob that does not apply to a column. The SAC $+$ RND column reuses the \runref{run-5 original-small}
+knob that does not apply to a column. The SAC $+$ RND column reuses the \runref{run-5 original RND, Adam $10^{-4}$}
 RND stack unchanged (Table~\ref{tab:trainrun5-hparams}). The three ground-truth columns are oracle
 visit-count bonuses $\min(1, 1/\sqrt{n})$ over the count table shown, one per environment family. The
 config-count rows give each column's contribution as a product annotated with the swept knob, and
@@ -7549,7 +7572,7 @@ controller.
 \begin{enumerate}[label=\arabic*.,leftmargin=*]
 \item \textbf{Task R --- the RND baseline at $10^{7}$ steps.} Train run~1.1's winning SAC $+$ RND
   configuration per environment (bonus weight $10^{4}$ on AntMaze UMaze, $3{\times}10^{3}$ on
-  AntMaze Medium; the \runref{run-5 original-small} stack with reward normalization on), run to
+  AntMaze Medium; the \runref{run-5 original RND, Adam $10^{-4}$} stack with reward normalization on), run to
   $10^{7}$ env steps with $100$ seeds per environment and never pruned. It is the comparison curve,
   and its completed records are also the intended source of the $10^{7}$-step bar of the deferred
   second stage described below.
@@ -7649,7 +7672,7 @@ writes no model checkpoints.
 \textbf{SAC $+$ algorithm 2.2} &
 \textbf{SAC $+$ algorithm 2.3} &
 \claudecell{\textbf{SAC $+$ RND baseline at Adam $10^{-3}$}} \\
-& \small(run-5 original-small stack; task R) & \small(this work; task S) &
+& \small(the \runref{run-5 original RND, Adam $10^{-4}$} stack; task R) & \small(this work; task S) &
   \small(this work; task S) & \small(this work; task S) & \small(this work; task S) &
   \claudecell{\small(the learning-rate addendum; its own sweep)} \\
 \midrule
@@ -7741,7 +7764,7 @@ total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}
 left; ``N/A'' marks a knob that does not apply to a column. \criticalknob{Blue} marks each arm's
 critical design knobs, including ``same'' cells whose inherited value is load-bearing for that
 arm. The baseline column is train run~1.1's
-winning configuration per environment on the \runref{run-5 original-small} stack, reused unchanged
+winning configuration per environment on the \runref{run-5 original RND, Adam $10^{-4}$} stack, reused unchanged
 (Table~\ref{tab:trainrun5-hparams}); the four algorithm columns are built on that same single
 stack, and differ from it only in the rows shown, reward normalization off being the deviation all
 four share. Task~R runs at $10^{7}$ env steps, task~S at $10^{6}$. The config-count rows give each
@@ -8008,9 +8031,16 @@ Each panel draws each arm's best configuration so far (best $=$ highest
 mean whole-run return, the tables' rule): the curve is the mean over that configuration's
 completed seeds of the per-run mean return over the past $100$ training episodes, logged every
 $50$k steps; the band is $\pm 1$ standard error over seeds; the legend gives each configuration's
-learning rate, bonus weight $\beta$, and seed count $n$. The two RND baselines are black: DASHED
+learning rate, bonus weight $\beta$, and seed count $n$. \sout{The two RND baselines are black: DASHED
 $=$ train run~1.1's winner (the previous run, to $10^{6}$ steps, from its final records); SOLID
-$=$ this run's task-R rerun of that same configuration (to $10^{7}$ steps). The dotted vertical
+$=$ this run's task-R rerun of that same configuration (to $10^{7}$ steps).}\claudeedit{There are
+three RND baseline curves, and every one of them names its predictor learning rate in the legend,
+so no curve can be read as ``the RND baseline'' without knowing which rate produced it. The two at
+Adam $10^{-4}$ are BLACK: DASHED $=$ train run~1.1's winner (the previous run, to $10^{6}$ steps,
+from its final records); SOLID $=$ this run's task-R rerun of that same configuration (to $10^{7}$
+steps). The third, ORANGE DASHED, is the SAME original-RND stack at Adam $10^{-3}$ --- the
+addendum run of Section~\ref{sec:train-run-5} --- at its own best bonus weight, to $10^{6}$ steps; it is an
+interim line (about $20$ of a planned $100$ seeds) and its band is correspondingly wide.} The dotted vertical
 rule marks $10^{6}$ steps, the stage-1 screening length. Colors are fixed per arm across panels.
 Generated by \texttt{analysis/code/make\_\allowbreak reward\_\allowbreak curves.py} in the run
 folder; \sout{regenerated in place as the sweep advances}\claudeedit{regenerated 2026-08-05 at the stop, and final}.}
@@ -8074,7 +8104,7 @@ This run asks three questions.
 % --------------------------------------------------------------------------------------------
 \paragraph{The two RND implementations, knob by knob.}
 \Cref{tab:cleanrl-vs-project-rnd} lists every load-bearing design choice of the two stacks side by
-side. The right-hand column is the \runref{run-5 original-small} RND, which is the RND of
+side. The right-hand column is the \runref{run-5 original RND, Adam $10^{-4}$} RND, which is the RND of
 \Cref{tab:pm-am-trainrun1-algos} and of every RND arm in \Cref{sec:pm-am}; its cell-by-cell
 provenance is \Cref{tab:trainrun5-hparams}. Rows where the two agree are marked \emph{same}; the
 remaining rows are the whole of the difference between the two implementations.
@@ -8093,7 +8123,7 @@ remaining rows are the whole of the difference between the two implementations.
 \textbf{CleanRL PPO $+$ RND} &
 \textbf{This project's SAC $+$ RND} \\
 & \small(\texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py} @ \texttt{fe8d8a0}) &
-  \small(\runref{run-5 original-small}, \Cref{tab:pm-am-trainrun1-algos}) \\
+  \small(\runref{run-5 original RND, Adam $10^{-4}$}, \Cref{tab:pm-am-trainrun1-algos}) \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Base learner and environment}} \\
 base RL algorithm & PPO, on-policy, $128$ parallel environment copies & SAC, off-policy, one
@@ -8161,7 +8191,7 @@ discount on the extrinsic stream & $0.999$ & $0.99$ in \Cref{sec:pm-am} \\
 }
 \caption{The two RND implementations knob by knob. The left column is CleanRL's
 \texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py} at commit \texttt{fe8d8a0}, read from the
-source; the right column is the \runref{run-5 original-small} stack, whose per-cell provenance is
+source; the right column is the \runref{run-5 original RND, Adam $10^{-4}$} stack, whose per-cell provenance is
 \Cref{tab:trainrun5-hparams}. ``same'' means the two implementations agree on that row.
 \Cref{fig:cleanrl-rnd-pipelines} draws the same comparison as two pipelines. Four of these
 differences are ones this project chose deliberately against CleanRL and recorded at the time: the
@@ -8183,7 +8213,7 @@ hard to read.
 \centering
 \includegraphics[width=\linewidth]{code/2026-08-05_cleanrl-rnd-writeup/rnd_pipeline_comparison.pdf}
 \caption{The two RND pipelines side by side, each read top to bottom: CleanRL's PPO $+$ RND on the
-left, the project's \runref{run-5 original-small} SAC $+$ RND on the right. The nine rows are
+left, the project's \runref{run-5 original RND, Adam $10^{-4}$} SAC $+$ RND on the right. The nine rows are
 aligned, so each row compares the same pipeline stage in the two implementations. Gray marks a stage
 that is the same in both; orange marks a stage that differs, with the difference stated inside the
 box. The blue dashed arrow is the predictor gradient, which reaches the predictor only --- the target
@@ -8387,7 +8417,7 @@ through the same single global-norm call as the policy, which is what CleanRL do
 the two networks' combined norm exceeds $0.5$, whether or not the predictor caused the excess.
 Removing the predictor from that call therefore also changes what the policy is clipped on, from the
 combined norm to its own. All three
-departures move CleanRL's RND toward the \runref{run-5 original-small} stack of
+departures move CleanRL's RND toward the \runref{run-5 original RND, Adam $10^{-4}$} stack of
 \Cref{tab:cleanrl-vs-project-rnd}: that stack does not clip the predictor's gradient, trains the
 predictor on the whole batch rather than a random quarter, and makes its predictor one block deeper
 than its target rather than two. So arm~5 is the closest CleanRL's implementation gets to this

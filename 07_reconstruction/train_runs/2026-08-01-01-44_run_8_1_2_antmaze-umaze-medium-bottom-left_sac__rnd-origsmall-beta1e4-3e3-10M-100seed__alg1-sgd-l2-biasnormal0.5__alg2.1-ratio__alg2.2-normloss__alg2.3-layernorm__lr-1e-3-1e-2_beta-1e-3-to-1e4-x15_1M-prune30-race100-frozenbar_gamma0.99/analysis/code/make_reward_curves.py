@@ -46,6 +46,49 @@ RUN81_BASELINE_KEY = {  # the run-1.1 winner per env (3-field run-8.1 keys)
     "AntMaze_Medium-v5_start_bottom_left": "AntMaze_Medium-v5_start_bottom_left|rnd_next_state|3000",
 }
 
+# The Adam 1e-3 addendum: the SAME RND baseline stack at a different predictor learning rate, run
+# as its own sweep. Added here so each panel shows the baseline at both rates rather than only 1e-4.
+LR1E3_RUN = os.path.join(
+    os.path.dirname(RUN_DIR),
+    "2026-08-05-16-05_run_5_8_1_2_addendum_rnd-origsmall-adam-lr1e-3__pointmaze-large-topright-"
+    "seed900-999__antmaze-umaze-medium-bottom-left-seed0-99__beta-1e-3-to-1e4-x15_1Mstep-100seed_"
+    "prune30-race100-frozenbar-vs-adam-lr1e-4_cpu-nolim")
+LR1E3_SWEEP = "2026-08-05-16-05_lr1e3"
+LR1E3_MIN_SEEDS = 5
+LR1E3_COLOR = "#D55E00"
+
+
+def load_lr1e3(env_setup):
+    """(beta, curves, n) for the addendum's best bonus weight on one environment, or None.
+
+    Best is by the whole-run mean per-episode return — the same ranking this figure's companion
+    table uses — so the curve drawn is the same configuration that table names. One pass over the
+    addendum's records for this environment, keeping only the per-eval curve and the score.
+    """
+    import collections
+    whole, curves = collections.defaultdict(list), collections.defaultdict(list)
+    for path in glob.glob(os.path.join(LR1E3_RUN, "data", LR1E3_SWEEP, "local", "*.json")):
+        try:
+            d = json.load(open(path))
+        except (ValueError, OSError):
+            continue
+        if not d.get("completed") or d.get("env_setup") != env_setup:
+            continue
+        eps = [r["train/extrinsic_reward"] for r in (d.get("train_episode_history") or [])]
+        rows = d.get("train_history") or []
+        if not eps or not rows:
+            continue
+        beta = "%g" % float(d["beta"])
+        whole[beta].append(sum(eps) / len(eps))
+        curves[beta].append(([r["step"] for r in rows],
+                             [r["train/mean_extrinsic_reward"] for r in rows]))
+    ranked = [(b, sum(v) / len(v)) for b, v in whole.items() if len(v) >= LR1E3_MIN_SEEDS]
+    if not ranked:
+        return None
+    beta = max(ranked, key=lambda kv: kv[1])[0]
+    return beta, curves[beta], len(whole[beta])
+
+
 sys.path.insert(0, os.path.join(RUN_DIR, "slurm"))
 import build_queue          # noqa: E402  (ENV_SETUPS_RUN12 / CONFIGS / key_from_record)
 import stage1_controller    # noqa: E402  (score_of_record — the tables' scoring)
@@ -152,7 +195,7 @@ def draw_panel(ax, env_setup, by_key, log_x):
     steps, mean, se, n = band(load_run81_baseline(env_setup))
     beta81 = RUN81_BASELINE_KEY[env_setup].split("|")[2]
     ax.plot(steps, mean, color="black", linestyle="--", linewidth=1.6,
-            label=f"RND baseline, run 1.1 $\\beta$={beta81} (n={n})")
+            label=f"RND baseline, Adam $10^{{-4}}$, run 1.1 $\\beta$={beta81} (n={n})")
     ax.fill_between(steps, mean - se, mean + se, color="black", alpha=0.10, linewidth=0)
     # this run's task-R baseline (black solid, to 10M)
     base_spec = next(c for c in build_queue.BASELINE_CONFIGS if c["env_setup"] == env_setup)
@@ -160,8 +203,17 @@ def draw_panel(ax, env_setup, by_key, log_x):
     if e:
         steps, mean, se, n = band(e["curves"])
         ax.plot(steps, mean, color="black", linestyle="-", linewidth=1.8,
-                label=f"RND baseline, this run $\\beta$={base_spec['beta']} (n={n})")
+                label=f"RND baseline, Adam $10^{{-4}}$, this run $\\beta$={base_spec['beta']} (n={n})")
         ax.fill_between(steps, mean - se, mean + se, color="black", alpha=0.10, linewidth=0)
+    # the same baseline stack at Adam 1e-3 (the addendum sweep, to 1M) — its own colour and dashes
+    # so it reads as a sibling of the two black baselines rather than as a fifth algorithm
+    lr3 = load_lr1e3(env_setup)
+    if lr3:
+        beta3, curves3, _ = lr3
+        steps, mean, se, n = band(curves3)
+        ax.plot(steps, mean, color=LR1E3_COLOR, linestyle="--", linewidth=1.8,
+                label=f"RND baseline, Adam $10^{{-3}}$ $\\beta$={beta3} (n={n})")
+        ax.fill_between(steps, mean - se, mean + se, color=LR1E3_COLOR, alpha=0.15, linewidth=0)
     # the four sweep arms' best configurations (colored, to 1M)
     for arm, (color, name) in ARM_STYLE.items():
         k = best_key(by_key, env_setup, arm)
@@ -208,7 +260,9 @@ def main():
                 ax.set_xlabel("environment step")
             if col == 0:
                 ax.set_ylabel("training reward (mean of past 100 episodes)", fontsize=8)
-    fig.suptitle("Train run 1.2, interim snapshot 2026-08-04: best configuration per arm\n"
+    # the run's own arms stopped 2026-08-05; the Adam 1e-3 line on top of them is still filling seeds
+    fig.suptitle("Train run 1.2 at its 2026-08-05 stop, plus the interim Adam $10^{-3}$ RND "
+                 "baseline: best configuration per arm\n"
                  "mean $\\pm$ 1 standard error over completed seeds; dotted rule at $10^{6}$ "
                  "steps (the stage-1 screening length)", fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
