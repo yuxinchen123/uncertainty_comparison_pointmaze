@@ -8,7 +8,7 @@
 #      enumerate jobs any other way)
 #   2. requeue_orphans.py --repend_failed — reclaim walltime-killed running/ markers and re-pend
 #      failed/ markers
-#   3. truncation_controller.py --once — one frozen-bar pass (truncate from 30 seeds, survivor at 100)
+#   3. truncation_controller.py --once — one frozen-bar pass (truncate from 30 seeds, survivor at 300)
 #   4. truncation_check.py — re-verify every decision (this run replaces the sweep_prune skill's
 #      cell-relative bar with a per-environment frozen bar, so the controller is verified, not trusted)
 #   5. disk guard — free space on the filesystem and this sweep's record bytes
@@ -46,10 +46,10 @@ stamp=$(date '+%Y-%m-%dT%H:%M:%S')
   # 2. reclaim orphans and re-pend failed markers (infrastructure kills retry on fresh workers)
   "$PY" "$HERE/requeue_orphans.py" --sweep_id "$SWEEP_ID" --repend_failed 2>&1 | sed 's/^/[requeue] /'
   # 3. one frozen-bar controller pass
-  "$PY" "$HERE/truncation_controller.py" --sweep_id "$SWEEP_ID" --n_required 30 --n_target 100 --once 2>&1 \
+  "$PY" "$HERE/truncation_controller.py" --sweep_id "$SWEEP_ID" --n_required 30 --n_target 300 --once 2>&1 \
     | sed 's/^/[truncation] /'
   # 4. re-verify every decision (a violation is printed loudly; it does not abort the tick)
-  "$PY" "$MON/truncation_check.py" --sweep_id "$SWEEP_ID" --n_required 30 --n_target 100 2>&1 \
+  "$PY" "$MON/truncation_check.py" --sweep_id "$SWEEP_ID" --n_required 30 --n_target 300 2>&1 \
     | sed 's/^/[check] /'
   # 5. disk guard
   free_gb=$(df -BG --output=avail "$RUN_DIR" | tail -1 | tr -dc '0-9')

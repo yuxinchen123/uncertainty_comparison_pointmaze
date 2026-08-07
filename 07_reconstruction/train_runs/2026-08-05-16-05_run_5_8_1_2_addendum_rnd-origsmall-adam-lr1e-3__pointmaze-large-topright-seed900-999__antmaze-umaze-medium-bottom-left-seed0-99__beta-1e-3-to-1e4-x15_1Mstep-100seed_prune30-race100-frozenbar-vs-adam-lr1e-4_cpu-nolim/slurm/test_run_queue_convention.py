@@ -16,12 +16,25 @@ import build_queue as bq  # noqa: E402
 import score_rules        # noqa: E402
 
 
-def test_config_count_is_three_environments_times_fifteen_bonus_weights():
-    """45 configurations: 3 environments x the 15 bonus weights of train run 1.2."""
+def test_config_count_is_two_learning_rates_times_three_environments_times_fifteen_weights():
+    """90 configurations: 2 predictor learning rates x 3 environments x the 15 weights of run 1.2."""
+    assert len(bq.LEARNING_RATES) == 2
     assert len(bq.ENV_SETUPS) == 3
     assert len(bq.BETAS) == 15
-    assert len(bq.CONFIGS) == 45
-    assert bq.RUN_TOTAL == 45 * 100 == 4500
+    assert len(bq.CONFIGS) == 90
+    assert len(bq.SEED_INDICES) == 300
+    assert bq.RUN_TOTAL == 90 * 300 == 27000
+
+
+def test_the_first_forty_five_configurations_are_the_pre_extension_arm_in_its_old_order():
+    """The Adam 1e-2 arm joined a LIVE sweep, so the Adam 1e-3 configurations must keep indices
+    0..44 in exactly their old order — otherwise extend_queue would renumber running work."""
+    first45 = bq.CONFIGS[:45]
+    assert all(c["lr"] == "0.001" for c in first45)
+    assert all(c["lr"] == "0.01" for c in bq.CONFIGS[45:])
+    # the old order was environments outer, bonus weights inner, both ascending
+    expected = [(env, beta) for env in bq.ENV_SETUPS for beta in bq.BETAS]
+    assert [(c["env_setup"], c["beta"]) for c in first45] == expected
 
 
 def test_bonus_weight_grid_is_train_run_12s_grid():
@@ -32,8 +45,8 @@ def test_bonus_weight_grid_is_train_run_12s_grid():
 
 
 def test_the_only_changed_knob_is_the_adam_learning_rate():
-    """Every configuration is the train-run-5 original-small stack with rnd_lr 1e-3 and nothing
-    else moved. The reference dict below is train run 5's ORIGSMALL_PARAMS verbatim."""
+    """Every configuration is the train-run-5 original RND stack with only rnd_lr moved. The
+    reference dict below is train run 5's ORIGSMALL_PARAMS verbatim (its rnd_lr was 1e-4)."""
     run5_origsmall = {
         "rnd_optimizer": "adam", "rnd_bonus_readout": "mse_mean", "rnd_lr": "0.0001",
         "rnd_update_proportion": "1.0", "rnd_activation": "leaky_relu",
@@ -41,18 +54,20 @@ def test_the_only_changed_knob_is_the_adam_learning_rate():
         "rnd_obs_warmup_steps": "6400", "rnd_reward_norm": "True", "rnd_reward_norm_gamma": "0.99",
         "rnd_bias_init": "zero", "rnd_weight_init": "orthogonal",
     }
-    ours = bq.ORIGSMALL_ADAM_LR1E3_PARAMS
-    assert set(ours) == set(run5_origsmall)
-    differing = {k for k in ours if ours[k] != run5_origsmall[k]}
-    assert differing == {"rnd_lr"}
-    assert ours["rnd_lr"] == "0.001"
+    assert bq.LEARNING_RATES == ["0.001", "0.01"]
+    for lr in bq.LEARNING_RATES:
+        ours = bq.origsmall_params(lr)
+        assert set(ours) == set(run5_origsmall)
+        differing = {k for k in ours if ours[k] != run5_origsmall[k]}
+        assert differing == {"rnd_lr"}
+        assert ours["rnd_lr"] == lr
     for cfg in bq.CONFIGS:
-        assert cfg["params"] == ours
+        assert cfg["params"] == bq.origsmall_params(cfg["lr"])
         assert cfg["algorithm"] == "rnd_next_state"
 
 
 def test_seed_index_is_outermost_and_each_index_owns_a_contiguous_id_block():
-    """Seed index i owns run ids [45*i .. 45*i+44] in the fixed CONFIGS order."""
+    """Seed index i owns run ids [90*i .. 90*i+89] in the fixed CONFIGS order."""
     ids_by_index = {}
     run_id = 0
     for seed_index in bq.SEED_INDICES:
@@ -60,17 +75,26 @@ def test_seed_index_is_outermost_and_each_index_owns_a_contiguous_id_block():
             ids_by_index.setdefault(seed_index, []).append(run_id)
             run_id += 1
     assert run_id == bq.RUN_TOTAL
-    assert ids_by_index[0] == list(range(0, 45))
-    assert ids_by_index[1] == list(range(45, 90))
-    assert ids_by_index[99] == list(range(4455, 4500))
+    assert ids_by_index[0] == list(range(0, 90))
+    assert ids_by_index[1] == list(range(90, 180))
+    assert ids_by_index[299] == list(range(26910, 27000))
 
 
 def test_seed_mapping_is_fresh_on_pointmaze_and_zero_based_on_antmaze():
-    """PointMaze runs seeds 900-999 (disjoint from train run 5's 600-899); AntMaze runs 0-99."""
+    """PointMaze runs seeds 900-1199 (disjoint from train run 5's 600-899, whose own comment records
+    599 as the prior maximum); AntMaze runs 0-299."""
     assert bq.a_seed_of("initial_single_large_pointmaze_max_400", 0) == 900
-    assert bq.a_seed_of("initial_single_large_pointmaze_max_400", 99) == 999
+    assert bq.a_seed_of("initial_single_large_pointmaze_max_400", 299) == 1199
     assert bq.a_seed_of("AntMaze_UMaze-v5_start_bottom_left", 0) == 0
-    assert bq.a_seed_of("AntMaze_Medium-v5_start_bottom_left", 99) == 99
+    assert bq.a_seed_of("AntMaze_Medium-v5_start_bottom_left", 299) == 299
+
+
+def test_both_learning_rates_share_every_seed():
+    """The two arms are paired seed by seed, which is what makes them directly comparable."""
+    for seed_index in (0, 42, 299):
+        seeds = {bq.a_seed_of(c["env_setup"], seed_index) for c in bq.CONFIGS
+                 if c["env_setup"] == "initial_single_large_pointmaze_max_400"}
+        assert seeds == {900 + seed_index}
 
 
 def test_config_key_shape_matches_train_run_12():
@@ -100,7 +124,7 @@ def test_marker_label_is_filesystem_safe_and_identifies_the_configuration():
     for cfg in bq.CONFIGS:
         tag = bq.label(cfg)
         assert "/" not in tag and " " not in tag
-        assert f"b{cfg['beta']}" in tag and "lr0.001" in tag
+        assert f"b{cfg['beta']}" in tag and f"lr{cfg['lr']}" in tag
     tags = {bq.label(c) for c in bq.CONFIGS}
     assert len(tags) == len(bq.CONFIGS)
 

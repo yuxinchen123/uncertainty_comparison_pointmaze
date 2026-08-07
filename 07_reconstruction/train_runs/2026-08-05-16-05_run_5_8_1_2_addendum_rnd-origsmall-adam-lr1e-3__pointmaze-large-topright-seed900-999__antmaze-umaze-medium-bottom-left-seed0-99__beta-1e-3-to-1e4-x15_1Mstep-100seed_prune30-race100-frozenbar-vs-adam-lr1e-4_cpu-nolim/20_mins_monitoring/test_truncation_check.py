@@ -158,9 +158,10 @@ def test_a_decision_on_an_unknown_configuration_is_caught(tree):
     assert any("not one of this run's" in v for v in violations)
 
 
-def test_the_checker_knows_this_run_has_forty_five_configurations():
-    """A guard on the checker's own idea of the sweep size."""
-    assert len(bq.CONFIGS) == 45
+def test_the_checker_knows_this_run_has_ninety_configurations():
+    """A guard on the checker's own idea of the sweep size: 45 per predictor learning rate."""
+    assert len(bq.CONFIGS) == 90
+    assert len({c["lr"] for c in bq.CONFIGS}) == 2
 
 
 if __name__ == "__main__":

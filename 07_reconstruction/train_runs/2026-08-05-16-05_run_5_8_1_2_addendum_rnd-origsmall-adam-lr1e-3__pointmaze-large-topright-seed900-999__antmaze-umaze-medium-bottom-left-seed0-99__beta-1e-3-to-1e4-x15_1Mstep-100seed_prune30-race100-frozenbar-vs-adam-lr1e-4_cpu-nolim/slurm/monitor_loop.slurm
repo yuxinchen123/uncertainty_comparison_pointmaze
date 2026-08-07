@@ -5,8 +5,9 @@
 # sweep id is read from the run's slurm/SWEEP_ID.txt, so this script takes no arguments.
 # Partition, --time and --job-name are supplied on the sbatch command line.
 #
-# COMPLETION = pending/ empty AND running/ empty AND all 45 configurations decided (truncated or
-# survivor in the decision log).
+# COMPLETION = pending/ empty AND running/ empty AND all 90 configurations decided (truncated or
+# survivor in the decision log). 90 = 2 predictor learning rates x 3 environments x 15 bonus
+# weights, the sweep as extended in place on 2026-08-06 (slurm/extend_queue.py).
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -22,7 +23,7 @@ INTERVAL="${INTERVAL:-1200}"   # 20 minutes between ticks
 Q="$RUN_DIR/queue/$SWEEP_ID"
 PY="/p/rlprojects/RND/.venvs/exploration/bin/python"
 export PYTHONNOUSERSITE=1
-N_CONFIGS=45
+N_CONFIGS=90
 
 echo "[$(date '+%Y-%m-%dT%H:%M:%S')] monitor_loop.slurm start job=${SLURM_JOB_ID:-?} node=$(hostname) sweep=$SWEEP_ID interval=${INTERVAL}s"
 while true; do

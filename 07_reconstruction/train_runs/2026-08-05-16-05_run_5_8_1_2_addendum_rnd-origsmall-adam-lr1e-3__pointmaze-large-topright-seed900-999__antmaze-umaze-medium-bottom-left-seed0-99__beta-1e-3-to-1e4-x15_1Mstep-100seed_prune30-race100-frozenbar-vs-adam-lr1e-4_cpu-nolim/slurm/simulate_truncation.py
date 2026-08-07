@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """LAUNCH GATE: drive the real controller and the real checker over a full synthetic sweep.
 
-The unit tests cover the rules one at a time. This runs the whole thing at sweep scale: all 45
+The unit tests cover the rules one at a time. This runs the whole thing at sweep scale: all 90
 configurations, seeds arriving in waves the way the queue delivers them, the real
 truncation_controller and the real truncation_check, against the REAL frozen bars file. It answers
 the question the unit tests cannot — does the machinery, wired together, truncate the configurations
@@ -35,7 +35,7 @@ import truncation_controller as tc  # noqa: E402
 import truncation_check as chk      # noqa: E402
 
 SWEEP = "simulated-sweep"
-SEED_FLOOR, SEED_TARGET = 30, 100
+SEED_FLOOR, SEED_TARGET = 30, 300
 
 
 def synthetic_score(env, bar, good, rng):
@@ -49,14 +49,14 @@ def synthetic_score(env, bar, good, rng):
     return bar + offset + rng.gauss(0, spread)
 
 
-def write_records(local, key, env, bar, good, n_from, n_to, rng):
+def write_records(local, key, env, lr, bar, good, n_from, n_to, rng):
     """Write the records of seeds [n_from, n_to) for one configuration, in that environment's score
     shape (train run 5 reads the last train_history row; train run 1.2 the episode history)."""
     rule = score_rules.rule_for(env)
     for i in range(n_from, n_to):
         s = synthetic_score(env, bar, good, rng)
         rec = {"completed": True, "total_timesteps": bq.STEPS, "env_setup": env,
-               "rnd_lr": 0.001, "beta": float(key.rsplit("|b", 1)[1]),
+               "rnd_lr": float(lr), "beta": float(key.rsplit("|b", 1)[1]),
                "train_history": [{"step": bq.STEPS, "train/mean_extrinsic_reward":
                                   s if rule == "final_reward" else 0.0}],
                "train_episode_history": [{"train/extrinsic_reward":
@@ -87,8 +87,9 @@ def main():
         BARS = {env: v["mean"]
                 for env, v in json.load(open(os.path.join(slurm, "FROZEN_BARS.json")))["bars"].items()}
 
-        # half of each environment's 15 configurations are "good": the ones at index 0, 2, 4, ...
-        # before: 45 configurations; after: good[key] is True for 24 of them, False for 21
+        # half of each environment's configurations are "good": the ones at index 0, 2, 4, ...
+        # before: 90 configurations (2 learning rates x 3 environments x 15 weights); after:
+        # good[key] is True for 48 of them, False for 42
         good = {}
         for env in bq.ENV_SETUPS:
             for j, cfg in enumerate([c for c in bq.CONFIGS if c["env_setup"] == env]):
@@ -96,12 +97,12 @@ def main():
         expected_truncated = sum(1 for v in good.values() if not v)
         expected_survivors = sum(1 for v in good.values() if v)
 
-        # every configuration starts with its full 100 pending markers
+        # every configuration starts with its full 300 pending markers
         for cfg in bq.CONFIGS:
             tag, key = bq.label(cfg), bq.config_key(cfg)
             for i in range(SEED_TARGET):
                 path = os.path.join(root, "queue", SWEEP, "pending",
-                                    f"{i:04d}{abs(hash(key)) % 100:02d}_of_{bq.RUN_TOTAL}_{tag}_seed{i}.json")
+                                    f"{i:05d}{abs(hash(key)) % 100:02d}_of_{bq.RUN_TOTAL}_{tag}_seed{i}.json")
                 with open(path, "w") as fh:
                     json.dump({"config_key": key}, fh)
 
@@ -114,7 +115,8 @@ def main():
                 key, env = bq.config_key(cfg), cfg["env_setup"]
                 if key in decided:
                     continue          # a decided configuration gets no new seeds
-                write_records(local, key, env, BARS[env], good[key], done_to[key], wave_end, rng)
+                write_records(local, key, env, cfg["lr"], BARS[env], good[key],
+                              done_to[key], wave_end, rng)
                 done_to[key] = wave_end
             lines = tc.run_cycle(SWEEP, SEED_FLOOR, SEED_TARGET)
             for ln in lines:
