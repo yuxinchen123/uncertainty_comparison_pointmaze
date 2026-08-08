@@ -168,6 +168,9 @@ def main():
     sweep_queue = os.path.join(RUN_DIR, "queue", args.sweep_id)
     for sub in ("pending", "running", "done", "failed", "pruned"):
         os.makedirs(os.path.join(sweep_queue, sub), exist_ok=True)
+    # the data dir exists from the start, so a collaborator's smoke test run before the first
+    # checkpoint does not fail its write probe (collaborator report 2026-08-08)
+    os.makedirs(os.path.join(RUN_DIR, "data", args.sweep_id, "local"), exist_ok=True)
     width = len(str(RUN_TOTAL))
 
     def write_marker(run_id, cfg_spec, seed_index):

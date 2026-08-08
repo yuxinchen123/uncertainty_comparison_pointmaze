@@ -35,7 +35,10 @@ for d in "$Q/pending" "$Q/running" "$Q/done" "$Q/failed" "$RUN_DIR/data/$SWEEP_I
 done
 # a worker reads a marker FILE before claiming it; a directory-only check would pass while every
 # marker is mode 600 (a real incident on an earlier packet)
-marker=$(ls "$Q/pending"/*.json 2>/dev/null | head -1)
+# find -print -quit, NOT a shell glob: this queue holds 36,000 markers and the expanded glob
+# exceeds the kernel argument-size limit, so `ls .../*.json` never runs (collaborator report
+# 2026-08-08; the addendum queue was small enough to hide this)
+marker=$(find "$Q/pending" -maxdepth 1 -name '*.json' -print -quit 2>/dev/null)
 if [[ -n "$marker" && -r "$marker" ]]; then
   echo "  OK   one pending marker is readable: $(basename "$marker")"
 else
