@@ -275,8 +275,8 @@ def main():
             if col == 0:
                 ax.set_ylabel("training reward (mean of past 100 episodes)", fontsize=8)
     # the run's own arms stopped 2026-08-05; the Adam 1e-3 line on top of them is still filling seeds
-    fig.suptitle("Train run 1.2 at its 2026-08-05 stop, plus the interim Adam $10^{-3}$ RND "
-                 "baseline: best configuration per arm\n"
+    fig.suptitle("Train run 1.2 at its 2026-08-05 stop, plus the interim Adam $10^{-3}$ and "
+                 "$10^{-2}$ RND baselines: best configuration per arm\n"
                  "mean $\\pm$ 1 standard error over completed seeds; dotted rule at $10^{6}$ "
                  "steps (the stage-1 screening length)", fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
