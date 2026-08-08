@@ -8092,6 +8092,118 @@ separate sweep advances}.}
 \label{fig:pm-am-trainrun12-curves}
 \end{figure}
 
+\subsubsection{Why the AntMaze runs do not converge}
+\label{sec:pm-am-nonconvergence}
+
+\claudeedit{Every reward curve of this section plateaus far below solving --- and the task-R
+baseline, given $10^{7}$ steps, ends WORSE ($-695.29$) than the same configuration's own
+$10^{6}$-step value in train run~1.1 ($-689.85$). This subsubsection explains why, from the runs'
+own records (three sweeps, $23{,}039$ completed records; extraction and every number regenerable
+from \texttt{analysis/\allowbreak 2026-08-08-01-55\_\allowbreak antmaze-nonconvergence/} in this
+run folder). Define the per-block success rate $\mathrm{SR}$ as the number of goal-reaching
+episodes over the number of episodes in a block of training steps. The failure has two distinct
+shapes. At $10^{6}$ steps, on every arm of every sweep, the goal is touched but never becomes
+policy: median whole-run success is $\approx 0$ for every configuration, while best single
+episodes ($-46$ to $-148$) show the goal is reachable. At $10^{7}$ steps
+(Figure~\ref{fig:pm-am-nonconv-phenomenon}) the goal IS found and then UNLEARNED: per-1M-block
+median $\mathrm{SR}$ on UMaze runs $0.033,\ 0.059,\ 0.028,\ 0.004,\ 0.002,\ 0.0007$, then exactly
+$0$ for blocks 7--10 (Medium: rises to $\approx 0.02$ by block 4, exactly $0$ from block 8) ---
+while maze-cell coverage is $100\%$ from a median of $0.05$M steps (UMaze) / $0.45$M (Medium)
+onward. Every UMaze seed succeeds at least once; the median LAST success is at $5.56$M steps, and
+nothing succeeds after $\approx 7$M.}
+
+\claudeedit{The strongest mechanism is credit assignment at this discount
+(Figure~\ref{fig:pm-am-nonconv-credit}). Define $T$ as the episode cap, $k$ as the step at which a
+successful episode terminates, and $\gamma = 0.99$ the discount; a success improves the
+start-state value over a timeout by $\Delta_\gamma = (\gamma^{k} - \gamma^{T})/(1-\gamma)$,
+against a return scale of $(1-\gamma^{T})/(1-\gamma) \approx 100$. The measured median $k$ is
+$462$ (UMaze, of cap $700$) and $752$ (Medium, of $1000$) --- so $\Delta_\gamma$ is $0.87$ (0.9\%
+of the scale) and $0.048$ (0.05\%). On the PointMaze UMaze control of train run~1.1 --- same code,
+same $-1$/$0$ reward, same $\gamma$, and it converges --- the median $k$ is $105$ and
+$\Delta_\gamma = 29.9$, i.e.\ $31\%$ of the scale: the signal a success carries is $34$--$620\times$
+weaker on AntMaze. Second, the objective never becomes the task: the median per-block ratio of the
+$\beta$-scaled intrinsic sum to the extrinsic sum on the task-R baseline (reward normalization ON)
+falls only from $3.3$ to $1.7$ across the ten 1M blocks on UMaze and stays $\approx 1$ on Medium
+--- after $10^{7}$ steps, with nothing left to explore, the bonus still matches or outweighs the
+task; on the reward-norm-OFF task-S arms the ratio at the winning weights is $10$--$10^{3}$. A
+fixed goal-reaching policy is not a fixed point of that objective. Third, the successes are
+stumbled upon, not learned: their steps-to-goal barely moves over training (first-half median
+$488$, second-half $436$, against the $\approx 191$ the same runs' best episodes demonstrate), so
+they are exploration by-products. Fourth --- a lock-in rather than a trigger --- the replay buffer
+holds $10^{6}$ transitions (the never-overridden SB3 default) on a $10^{7}$-step run:
+$\mathrm{SR}$ halves while the buffer still holds $\approx 41$ successful episodes, so eviction
+does not start the decay, but once the last success is evicted no gradient update ever sees a goal
+transition again, the extrinsic target becomes a constant $-1$ per step, and recovery is
+impossible. Fifth, the terminal set is small and episodes can be burned: the $0.45$~m goal radius
+is hard-coded while AntMaze cells are $4$~m ($\approx 4\%$ of a cell terminates, against
+$\approx 64\%$ on PointMaze), and the maze wrapper discards the inner Ant's termination flag, so a
+flipped ant runs out the episode at $-1$ per step with no reset.}
+
+\claudeedit{Three things the failure is NOT. It is not exploration: coverage is complete within
+the first half-million steps and stays complete while success decays to zero. It is not the
+quality of the RND bonus: RND is the BEST explorer in train run~1.1 (winner coverage $100\%$),
+while the ground-truth count arms explore WORSE there (winner coverage $64$--$69\%$ --- a count
+bonus saturates as counts grow) and score exactly zero success; no bonus in the sweep converts
+complete coverage into a policy. And it is not the step budget: ten times the steps made the final
+policy worse. The learning-rate addendum fits this account without contradicting it: raising the
+predictor rate raises success and shortens paths monotonically (UMaze whole-run success $0.144$ at
+Adam $10^{-2}$ vs.\ $0.066$ at $10^{-3}$ vs.\ $0.061$ at $10^{-4}$; median $k$ $406$ vs.\ $476$
+vs.\ $\approx 449$) --- consistent with a faster predictor acting as an implicit bonus anneal ---
+but $14\%$ success at $k \approx 400$ of a $700$-step cap is still far from convergence.}
+
+\claudeedit{Context and levers. The paper this environment choice follows (ExPLORe) does not run
+online SAC from scratch: it runs RLPD --- SAC with a $50/50$ replay mix of OFFLINE goal-reaching
+prior data and $20$ gradient steps per environment step --- where these runs use SB3 SAC, one
+environment, one gradient step per step, and no prior data (the design-difference rows are in the
+train-run-5 comparison table). Ranked by the mechanism each targets: raise $\gamma$ to $0.999$ or
+use multi-step returns (moves UMaze's $\Delta_\gamma$ share from $0.9\%$ to $\approx 55\%$ at the
+observed $k$); anneal the bonus, or pair a smaller bonus weight with the faster predictor rate;
+size the buffer to the run ($10^{7}$ Ant transitions $\approx 5$--$6$~GB); take more than one
+gradient step per environment step; add a deterministic standalone evaluation to separate the
+exploration policy from what the critic could exploit; and log trajectories or visit maps so the
+flipped-ant cost becomes measurable.}
+\claudecomment{Sources: train run 1.1 ($14{,}488$ completed 1M-step records), train run 1.2
+($6{,}254$ completed: the four task-S arms at 1M and the task-R baseline at 10M, $n=17$ UMaze /
+$20$ Medium — final, the sweep stopped 2026-08-05), and the learning-rate addendum ($2{,}297$
+completed at the 2026-08-08 stop; its Adam $10^{-2}$ numbers rest on $10$--$12$ seeds). Extraction
+one-pass with \texttt{json.load} per record; verification gates reproduce run-1.1's published
+success rates ($0.0619$ vs $0.061$ UMaze $n=84$; $0.0152$ vs $0.015$ Medium $n=82$), the task-R
+rewards to the cent ($-695.29$/$-996.75$), and the reward identity (success at step $k$ earns
+$-(k-1)$, a timeout earns $-T$) with $0$ violations over all $20{,}742$ shift($-1$) records. The
+success rate, steps-to-goal $k$, and $\Delta_\gamma$ are NEW metrics introduced here; the last-100
+success-rate definition is the one train run 1.1's monitoring used, so those two sources cannot
+drift. Ratios of intrinsic to extrinsic sums are medians over episodes because a reward-norm-ON
+run's first episodes have ratios $\sim 10^{3}$ (a warm-up artifact that would dominate a mean),
+and reward-norm-ON arms are not comparable to reward-norm-OFF arms on this metric. The ExPLORe
+sentences re-present facts already tabulated in the train-run-5 section and add no new claim about
+that paper's results; no new citation is added here.}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\linewidth]{../train_runs/2026-08-01-01-44_run_8_1_2_antmaze-umaze-medium-bottom-left_sac__rnd-origsmall-beta1e4-3e3-10M-100seed__alg1-sgd-l2-biasnormal0.5__alg2.1-ratio__alg2.2-normloss__alg2.3-layernorm__lr-1e-3-1e-2_beta-1e-3-to-1e4-x15_1M-prune30-race100-frozenbar_gamma0.99/analysis/2026-08-08-01-55_antmaze-nonconvergence/plots/f1_phenomenon.pdf}
+\caption{\claudeedit{The phenomenon: the task-R baseline finds the goal and then unlearns it while
+exploration saturates. One column per environment; top row: per-seed success rate per 1M-step
+block (gray) with the across-seed median (black); bottom row: median maze-cell and 1~m coverage
+(blue, left axis) against the same median success rate (black, right axis). Coverage is $100\%$
+from $0.05$M steps (UMaze) / $0.45$M (Medium) while the success rate decays to exactly zero.
+Generated by \texttt{analysis/\allowbreak 2026-08-08-01-55\_\allowbreak
+antmaze-nonconvergence/\allowbreak code/\allowbreak make\_\allowbreak figures.py}.}}
+\label{fig:pm-am-nonconv-phenomenon}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\linewidth]{../train_runs/2026-08-01-01-44_run_8_1_2_antmaze-umaze-medium-bottom-left_sac__rnd-origsmall-beta1e4-3e3-10M-100seed__alg1-sgd-l2-biasnormal0.5__alg2.1-ratio__alg2.2-normloss__alg2.3-layernorm__lr-1e-3-1e-2_beta-1e-3-to-1e4-x15_1M-prune30-race100-frozenbar_gamma0.99/analysis/2026-08-08-01-55_antmaze-nonconvergence/plots/f4_credit.pdf}
+\caption{\claudeedit{The mechanism: where successes happen vs.\ what they are worth. Left:
+distribution of steps-to-goal $k$ over every successful episode --- the PointMaze UMaze control's
+successes cluster at the $1/(1-\gamma) = 100$ horizon, while the AntMaze successes happen at
+$400$--$1000$ steps. Right: the start-state advantage $\Delta_\gamma = (\gamma^{k} -
+\gamma^{T})/(1-\gamma)$ at each environment's median $k$, log scale, against the $\approx 100$
+return scale: $29.9$ on the converging control, $0.87$ and $0.048$ on the AntMaze pair. Same
+generator as Figure~\ref{fig:pm-am-nonconv-phenomenon}.}}
+\label{fig:pm-am-nonconv-credit}
+\end{figure}
+
 \clearpage
 \bibliographystyle{plainnat}
 % ============================================================================================

@@ -192,3 +192,14 @@ cancelled, no job was resubmitted, and no completed run was repeated.
   `slurm/test_extend_queue.py`), and `slurm/simulate_truncation.py --full` passes with 90
   configurations, 45 truncated at the 30-seed floor, 45 survivors at 300, 0 invariant violations.
   Code committed as `3891bdb` BEFORE the queue was touched.
+
+## 2026-08-08 01:53 — sweep stopped (drain); pending archived, in-flight kept
+
+The user stopped the sweep to free the CPU pools for train run 6. All 14,946 pending markers
+moved to `queue/2026-08-05-16-05_lr1e3/stopped_unlaunched/` (0 lost to claim races); the 924
+in-flight runs — at this point all Adam 1e-2 — finish and are kept; no job cancelled, ours and
+the collaborator's drain on their own as workers find the queue empty (~21 h). State at the
+stop, per arm and environment, in `SWEEP_STOPPED.md`. Monitor 6534388 stays up through the
+drain (top-up submits nothing with pending empty) and is stopped BY ITS OWN ID when running/
+reaches 0, followed by one final regeneration of the analysis tables. Collaborator notified via
+`for_collaborator/SWEEP_STOPPING_NOTICE.md`.
