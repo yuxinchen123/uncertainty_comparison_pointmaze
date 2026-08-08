@@ -1,0 +1,20 @@
+{
+  "bars": {
+    "initial_single_large_pointmaze_max_400": {
+      "beta": "1000",
+      "mean": 38.641233333333325,
+      "n": 300,
+      "score_rule": "final_reward",
+      "score_rule_description": "last train_history row's train/mean_extrinsic_reward (the mean extrinsic return over the last 100 training episodes at the final evaluation)",
+      "sd": 30.72095561434274,
+      "se": 1.7736751993703324,
+      "source": "train run 5, sweep 2026-07-20-16-55_set-baseline"
+    }
+  },
+  "computed_at": "2026-08-08T02:14:35",
+  "git_at_compute": "2cde90d7813969af1241a61117b6880315cf0924",
+  "schema": 1,
+  "source_local_dirs": {
+    "initial_single_large_pointmaze_max_400": "/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-20-16-44_run_5_baseline_rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-rewardnorm-beta1e-2to1e4+0.5-prune30__C2-adam-mse-b100__N1-rewardnorm-b1e4__seed600-899_1Mstep_cpu-nolim/data/2026-07-20-16-55_set-baseline/local"
+  }
+}

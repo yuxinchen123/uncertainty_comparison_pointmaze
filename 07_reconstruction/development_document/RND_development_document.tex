@@ -6504,6 +6504,159 @@ matching \texttt{bibliography.bib} entries pasted by the author; the build warns
 undefined'' until then.}
 
 \clearpage
+\subsection{Train run 6 (the four train-run-1.2 algorithms on the run-5 PointMaze task)}
+\label{sec:train-run-6}
+
+\claudeedit{Train run~1.2 built four algorithm arms and raced them on two AntMaze environments,
+where nothing converges (Section~\ref{sec:pm-am-nonconvergence}). Train run~6 asks the same
+comparison question on the task where the original RND demonstrably works: train run~5's own
+PointMaze Large top-right task, unchanged (episode cap $400$, discount $0.999$, raw sparse
+reward, the \texttt{initial\_\allowbreak single\_\allowbreak large\_\allowbreak
+pointmaze\_\allowbreak max\_\allowbreak 400} registry entry). The question: does any of the four
+variations beat the \runref{run-5 original RND, Adam $10^{-4}$} on its own ground, under its own
+score --- the final training-episode reward, i.e.\ the last evaluation's mean extrinsic return
+over the previous $100$ training episodes? The original RND is NOT re-run: its $300$-seed final
+result ($\bar R = 38.6412$ at bonus weight $10^{3}$) is the frozen reference this run races
+against. What IS swept: the four train-run-1.2 arms exactly as that run defined them (their
+parameter dictionaries are copied verbatim from that run's queue builder and pinned by a unit
+test), each over the two plain-SGD predictor learning rates $\{10^{-3}, 10^{-2}\}$ and the
+fifteen bonus weights $\beta \in \{$$10^{-3}$, $3{\times}10^{-3}$, $10^{-2}$,
+$3{\times}10^{-2}$, $10^{-1}$, $3{\times}10^{-1}$, $1$, $3$, $10$, $30$, $10^{2}$,
+$3{\times}10^{2}$, $10^{3}$, $3{\times}10^{3}$, $10^{4}$$\}$ --- $4 \times 2 \times 15 = 120$
+configurations, on fresh seeds $1200$--$1499$ (disjoint from run~5's $600$--$899$ and the
+learning-rate addendum's $900$--$1199$), $10^{6}$ steps per run.}
+
+\claudeedit{The race is two-phase. Define $\bar R_c$, $s_c$ and $n_c$ as configuration $c$'s mean
+final reward, standard deviation and completed-seed count, and $\bar R^{\star} = 38.6412$ the
+frozen bar. Phase 1: from $n_c \ge 20$ completed seeds, $c$ is truncated at the first controller
+tick at which
+\begin{align}
+\bar R_c + 2.576\,\frac{s_c}{\sqrt{n_c}} \;<\; \bar R^{\star},
+\end{align}
+that is, when its one-sided $99\%$ upper confidence limit falls below what the original RND
+already achieved; survivors race to $100$ seeds. Phase 2: once every configuration of an arm is
+resolved, the arm's best-mean surviving configuration CONTINUES to $300$ seeds; every other
+survivor of that arm stops at $100$. So the sweep spends its budget in proportion to promise:
+weak configurations cost $20$ seeds, competitive ones $100$, and exactly one configuration per
+arm gets the full $300$-seed measurement that matches the reference's precision.
+Table~\ref{tab:trainrun6-algos} gives the full configuration; Table~\ref{tab:trainrun6-results}
+and Figure~\ref{fig:trainrun6-curve} report the results from the live records and are regenerated
+as the sweep advances.}
+
+% ---- Train run 6 configuration table (Table-71-like: arms on columns, knobs on rows) ----
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}p{3.2cm}
+>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+\claudecell{\textbf{Hyperparameter}} &
+\claudecell{\textbf{run-5 original RND (reference, not re-run)}} &
+\claudecell{\textbf{algorithm 1}} & \claudecell{\textbf{algorithm 2.1}} &
+\claudecell{\textbf{algorithm 2.2}} & \claudecell{\textbf{algorithm 2.3}} \\
+\midrule
+\multicolumn{6}{@{}l}{\claudecell{\textit{RL algorithm \& environment}}} \\
+\claudecell{environment} & \claudecell{PointMaze Large top-right, cap 400, $\gamma{=}0.999$, raw
+  sparse reward} & \multicolumn{4}{c}{\claudecell{same}} \\
+\claudecell{base RL algorithm} & \claudecell{SB3 SAC \texttt{MlpPolicy} (defaults)} &
+  \multicolumn{4}{c}{\claudecell{same}} \\
+\midrule
+\multicolumn{6}{@{}l}{\claudecell{\textit{RND input \& networks}}} \\
+\claudecell{RND input} & \claudecell{next state $s'$ (4-d)} & \multicolumn{4}{c}{\claudecell{same}} \\
+\claudecell{networks} & \claudecell{target $+$ predictor ($+1$ layer, width 128, LeakyReLU 0.2)} &
+  \claudecell{same} & \claudecell{\criticalknob{$+$ a frozen copy of the predictor at
+  initialization}} & \claudecell{\criticalknob{same as 2.1}} & \claudecell{\criticalknob{same as
+  2.1, $+$ LayerNorm after every hidden Linear}} \\
+\midrule
+\multicolumn{6}{@{}l}{\claudecell{\textit{Predictor training \& bonus}}} \\
+\claudecell{predictor optimizer} & \claudecell{Adam $10^{-4}$} & \claudecell{\criticalknob{plain
+  SGD, constant rate, swept $\{10^{-3}, 10^{-2}\}$}} & \multicolumn{3}{c}{\claudecell{same}} \\
+\claudecell{bonus readout} & \claudecell{mse-mean over the 128 dims} &
+  \claudecell{\criticalknob{$\lVert e \rVert_2$}} & \claudecell{\criticalknob{ratio $\lVert e
+  \rVert_2 / (\lVert e_0 \rVert_2 + 10^{-8})$}} & \multicolumn{2}{c}{\claudecell{same as 2.1}} \\
+\claudecell{training loss} & \claudecell{plain MSE} & \claudecell{same} & \claudecell{same} &
+  \claudecell{\criticalknob{MSE normalized by the frozen-init error}} & \claudecell{plain MSE} \\
+\claudecell{bias initialization} & \claudecell{zero} & \claudecell{\criticalknob{normal 0.5}} &
+  \multicolumn{3}{c}{\claudecell{same}} \\
+\claudecell{reward normalization} & \claudecell{ON ($\gamma{=}0.99$)} &
+  \claudecell{\criticalknob{OFF}} & \multicolumn{3}{c}{\claudecell{same}} \\
+\claudecell{state-norm warm-up} & \claudecell{env steps, 6400} & \multicolumn{4}{c}{\claudecell{same}} \\
+\midrule
+\multicolumn{6}{@{}l}{\claudecell{\textit{Sweep \& race}}} \\
+\claudecell{bonus weight $\beta$} & \claudecell{$10^{3}$ (its run-5 winner)} &
+  \multicolumn{4}{c}{\claudecell{the 15-value grid $10^{-3}$ to $10^{4}$ at 1 and 3 per decade}} \\
+\claudecell{seeds} & \claudecell{600--899 (run 5, final, $n{=}300$)} &
+  \multicolumn{4}{c}{\claudecell{1200--1499, up to 300}} \\
+\claudecell{truncation} & \claudecell{N/A (it IS the bar: 38.6412)} &
+  \multicolumn{4}{c}{\claudecell{phase 1 from $n \ge 20$ vs the bar; phase 2 at $n = 100$:
+  best per arm $\to$ 300}} \\
+\claudecell{configs in this column} & \claudecell{0 (reference only)} &
+  \claudecell{$2 \times 15 = 30$} & \claudecell{30} & \claudecell{30} & \claudecell{30} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{\claudeedit{Algorithms for train run~6. ``same'' collapses a value shared with the
+columns to its left; ``N/A'' marks a knob that does not apply. \criticalknob{Blue} marks each
+arm's critical design knobs. The four arm columns are the train-run-1.2 arms verbatim
+(Table~\ref{tab:pm-am-trainrun12-algos}); the only changes in this run are the environment ---
+train run~5's PointMaze task instead of the two AntMaze environments --- the fresh seed range,
+and the two-phase race against the run-5 original RND's final number instead of a same-sweep
+bar. Total swept configurations $4 \times 2 \times 15 = 120$.}}
+\label{tab:trainrun6-algos}
+\end{table}
+
+% ---- Train run 6 performance table (Table-55-like; auto-generated from live records) ----
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\input{../train_runs/2026-08-08-02-00_run_6_pointmaze-large-topright__alg1-sgd-l2-biasnormal0.5__alg2.1-ratio__alg2.2-normloss__alg2.3-layernorm__lr-1e-3-1e-2_beta-1e-3-to-1e4-x15_1Mstep_seed1200-1499_prune20-race100-winner300_bar-run5-origrnd_cpu-nolim-resv/analysis/plots/reward_table.tex}
+\caption{\claudeedit{Train run~6: each algorithm arm at its best configuration so far, against the
+run-5 original RND reference row, on the final training-episode extrinsic reward $\bar R$ (mean
+over seeds, $\mathrm{SE} = s/\sqrt{n}$); best \textbf{bold}, second \underline{underlined} in the
+$\bar R$ and succ.\ columns (higher is better; succ.\ is the fraction of seeds with final reward
+$> 5$, run 5's definition). The reference row is final at $n = 300$; an arm reading ``still
+running'' has no configuration with five completed seeds yet, and its $n$ counts every seed
+finished so far across its 30 configurations. Auto-generated from the live records by
+\texttt{analysis/\allowbreak code/\allowbreak make\_\allowbreak run6\_\allowbreak results.py} in
+the run folder; regenerated as the sweep advances.}}
+\label{tab:trainrun6-results}
+\end{table}
+
+% ---- Train run 6 reward-over-training curve (Figure-17-like) ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../train_runs/2026-08-08-02-00_run_6_pointmaze-large-topright__alg1-sgd-l2-biasnormal0.5__alg2.1-ratio__alg2.2-normloss__alg2.3-layernorm__lr-1e-3-1e-2_beta-1e-3-to-1e4-x15_1Mstep_seed1200-1499_prune20-race100-winner300_bar-run5-origrnd_cpu-nolim-resv/analysis/plots/reward_curve.pdf}
+\caption{\claudeedit{Train run~6: training-episode extrinsic reward over $10^{6}$ steps. The
+BLACK DASHED line is the run-5 original RND at its winning bonus weight ($\beta = 10^{3}$, from
+train run~5's own $300$-seed records --- the reference, not re-run); each SOLID color line is one
+algorithm arm at its best configuration so far, mean over completed seeds with a $\pm 1$
+standard-error band, the legend naming the arm's learning rate, bonus weight and seed count. Until
+an arm has five completed seeds it contributes no line. Same generator as
+Table~\ref{tab:trainrun6-results}; regenerated as the sweep advances.}}
+\label{fig:trainrun6-curve}
+\end{figure}
+\claudecomment{Run folder:
+\texttt{train\_\allowbreak runs/\allowbreak 2026-08-08-02-00\_\allowbreak run\_\allowbreak 6\_\allowbreak
+pointmaze-large-topright\_\allowbreak ...\_\allowbreak cpu-nolim-resv}. The frozen bar is
+recomputed at launch from train run 5's records and reproduces the published $38.6412$
+($\beta{=}10^{3}$, $n{=}300$) exactly; its file's sha256 is recorded on every truncation decision
+and re-verified every monitoring tick. Launch gates: 24 unit tests (queue convention, arm
+byte-equality against train run 1.2's queue builder, the two-phase controller, the worker walltime
+guard) and a full-scale synthetic simulation of the two-phase race (120 configurations: 108
+planted losers truncated at the 20-seed floor, 8 planted candidates stopped at 100, 4 planted
+winners complete at 300, 0 invariant violations at every wave). Submission: cpu and nolim
+partitions first, the reservation last, per the shared CPU-sweep rule; a collaborator packet is in
+the run folder's \texttt{for\_\allowbreak collaborator/}.}
+
+\clearpage
 \section{Convergence rate runs}
 \label{sec:convergence-rate-runs}
 
