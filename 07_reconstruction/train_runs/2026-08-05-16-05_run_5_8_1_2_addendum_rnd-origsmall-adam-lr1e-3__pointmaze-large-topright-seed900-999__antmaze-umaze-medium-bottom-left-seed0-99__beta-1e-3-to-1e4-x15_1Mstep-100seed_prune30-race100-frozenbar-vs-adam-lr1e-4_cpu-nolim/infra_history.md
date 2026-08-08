@@ -203,3 +203,17 @@ stop, per arm and environment, in `SWEEP_STOPPED.md`. Monitor 6534388 stays up t
 drain (top-up submits nothing with pending empty) and is stopped BY ITS OWN ID when running/
 reaches 0, followed by one final regeneration of the analysis tables. Collaborator notified via
 `for_collaborator/SWEEP_STOPPING_NOTICE.md`.
+
+## 2026-08-08 01:56 — the collaborator cancelled her jobs; re-pended orphans re-archived (02:50)
+
+Three minutes after the stop, the collaborator cancelled all 22 of her jobs (her own ids, her
+right), which killed her ~481 in-flight runs. The monitor's orphan recovery then did exactly what
+it is built to do — archived the 478 killed markers' partial records to
+`data/2026-08-05-16-05_lr1e3/killed_attempts_2026-08-08/` (446 partials preserved) and re-pended
+the markers — but under a STOPPED sweep a re-pend would restart ~7,600 CPU-hours of work the stop
+ended, so the 478 re-pended markers were moved to `stopped_unlaunched/` at 02:50 (0 lost to claim
+races) before any worker claimed one. Net effect on the data: the Adam 1e-2 arm's final seed
+counts come only from the owner's 444 still-draining runs (done was 2,299 at 02:48; expect ~2,743
+at full drain). Her cancel freed ~480 CPUs of CLUSTER capacity immediately; those CPUs sit under
+HER per-user caps, so they are usable right away by her submitting train-run-6 workers, while the
+owner's own cpu room frees only as the owner's addendum jobs drain (~16 h).

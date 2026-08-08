@@ -40,3 +40,23 @@ against the frozen bars), 14,946 archived to `queue/2026-08-05-16-05_lr1e3/stopp
   6534388 by its id from `slurm/submitted_jobids_2026-08-05-16-05_lr1e3_sl5nw.txt`, regenerate
   the tables/figures, and mark this file with the final counts.
 - Collaborator notice: `for_collaborator/SWEEP_STOPPING_NOTICE.md`.
+- 2026-08-08 01:56: the collaborator cancelled her 22 jobs (killing her ~481 in-flight runs;
+  partials preserved in `killed_attempts_2026-08-08/`); the 478 markers the orphan recovery
+  re-pended were re-archived at 02:50.
+- 2026-08-08 04:15: the user ordered the remaining drain KILLED to free the pools for train
+  run 6 at full width. Monitor 6534388 cancelled first, then the 17 worker jobs (all ids from
+  this run's own id file); 440 partials archived; the 440 killed markers joined
+  `stopped_unlaunched/`.
+
+## FINAL counts (sweep fully terminal, 2026-08-08 04:20)
+
+| pool | count |
+|---|---|
+| done | 2,303 |
+| stopped unlaunched (never run) | 15,864 |
+| pruned (truncated by the controller) | 8,833 |
+| running / pending / failed | 0 |
+
+Total 27,000 = the full extended sweep, every marker accounted for. Adam 1e-3 ends at ~40
+completed seeds per surviving configuration (34 of 45 truncated); Adam 1e-2 ends interim at
+~11–13 completed seeds per configuration, all 45 undecided.
