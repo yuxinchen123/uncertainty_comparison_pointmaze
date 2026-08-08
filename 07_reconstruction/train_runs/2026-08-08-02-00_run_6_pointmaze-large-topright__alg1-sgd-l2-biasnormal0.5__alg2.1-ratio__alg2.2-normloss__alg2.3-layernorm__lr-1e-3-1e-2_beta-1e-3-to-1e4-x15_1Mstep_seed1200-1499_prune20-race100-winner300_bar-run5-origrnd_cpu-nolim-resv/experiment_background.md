@@ -49,4 +49,4 @@ The original RND is NOT re-run — its 300-seed final data from train run 5 is t
 Commit at folder creation: `2cde90d7813969af1241a61117b6880315cf0924`; the launch commit (with
 this folder's code) is recorded below when the queue is built.
 
-Launch commit: (filled at submit time)
+Launch commit: `5df4463` (queue built 2026-08-08 02:46, sweep_id 2026-08-08-02-46_run6)
