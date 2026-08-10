@@ -8843,21 +8843,29 @@ and then the jump into the thousands once the agent is several rooms in.}
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}llll@{}}
+\begin{tabular}{@{}llll>{\raggedright\arraybackslash}p{4.6cm}@{}}
 \toprule
-\textbf{Training steps} & \textbf{Modal score} & \textbf{Share} & \textbf{What the agent has done} \\
+\textbf{Training steps} & \textbf{Modal} & \textbf{Share} & \textbf{Next most} &
+\textbf{What the agent has done} \\
+& \textbf{score} & & \textbf{common} & \\
 \midrule
-$0$ -- $75\times10^{6}$ & $0$ & $100\%$ & dies in the first room without reaching the key \\
-$75$ -- $100\times10^{6}$ & $400$ & $53\%$ & key ($100$) and first door ($300$); leaves room~1 \\
-$100$ -- $250\times10^{6}$ & $1400$ & $98\%$ & one further scoring pickup, then $2400$, $2600$, $3600$ \\
-$250\times10^{6}$ -- $1.1\times10^{9}$ & $4600$ & $89$--$100\%$ & a stable route it holds for most of training \\
-$1.1$ -- $2.0\times10^{9}$ & $7100$ & $90$--$98\%$ & a longer route; the level it finishes on \\
+$0$ -- $75\times10^{6}$ & $0$ & $100\%$ & $100$ ($0.2\%$) & dies in the first room, never reaching the key \\
+$75$ -- $100\times10^{6}$ & $400$ & $53\%$ & $0$ ($30\%$) & key ($100$) and first door ($300$); leaves room~1 \\
+$100$ -- $250\times10^{6}$ & $1400$ & $59\%$ & $2400$ ($16\%$) & one further pickup; the run starts reaching $2400$ and $2600$ \\
+$250\times10^{6}$ -- $1.1\times10^{9}$ & $4600$ & $76\%$ & $5000$ ($12\%$) & a stable route it holds for most of training \\
+$1.1$ -- $2.0\times10^{9}$ & $7100$ & $96\%$ & $4600$ ($3\%$) & a longer route; the level it finishes on \\
 \bottomrule
 \end{tabular}
-\caption{The score plateaus of CleanRL's published run, as the modal per-episode score in each block
-of training. The $100$ and $400$ readings are fixed by the on-screen scores in
-\Cref{fig:montezuma-stages}, so the key pays $100$ and the door $300$; the objects behind $1400$ and
-$4600$ are inferred from the increments rather than read off a source. Figure~1 of
+\caption{The score plateaus of CleanRL's published run. Within each block of training, the modal
+score is the single most common per-episode score, and \textbf{the share is the fraction of that
+block's episodes that scored exactly it} --- so $76\%$ on the $4600$ row means that three quarters of
+the episodes between $250\times10^{6}$ and $1.1\times10^{9}$ steps ended on exactly $4600$ points.
+The share is what makes ``plateau'' the right word: the agent is not averaging its way upward, it is
+repeating one route. It is highest at the two ends, where the run is stuck at $0$ or settled at
+$7100$, and lowest in the middle blocks, where the mode competes with the neighbouring levels the run
+is passing through --- hence the next-most-common column. The $100$ and $400$ readings are fixed by
+the on-screen scores in \Cref{fig:montezuma-stages}, so the key pays $100$ and the door $300$; the
+objects behind $1400$ and $4600$ are inferred from the increments rather than read off a source. Figure~1 of
 \citet{burda2019exploration} describes the full route to the torch as passing $17$ rooms and
 collecting gems, keys, a sword and an amulet while opening two doors, so each plateau is one more
 stretch of that route held until exploration opens the next.}
