@@ -8851,86 +8851,32 @@ Three things in these artifacts are worth stating, and only the third is about t
 % --------------------------------------------------------------------------------------------
 % (4) The bug.
 % --------------------------------------------------------------------------------------------
-\subsubsection{The environment auto-reset defect, and what it costs}
+\subsubsection{The environment auto-reset correction}
 \label{sec:cleanrl-bug}
 
-CleanRL's documentation page for this file carries a \texttt{bug} admonition. It states that envpool
-and gym's vectorized environments disagree about which observation a terminating step returns, that
-this makes the terminal state ``off by one'', and that ``it does not seem to impact performance, so
-we take a note here and await for the upstream fix''. Two of those three claims need revising.
+CleanRL's documentation page for this file carries a \texttt{bug} admonition: envpool and gym's
+vectorized environments disagree about which observation a terminating step returns, and ``it does not
+seem to impact performance, so we take a note here and await for the upstream fix''. This run corrects
+the defect rather than waiting.
 
-\paragraph{What envpool actually does.}
-Define $s_{\mathrm{last}}$ as the final observation of an episode and $s_{\mathrm{new}}$ as the first
-observation of the next one. envpool resets on the \emph{following} step: the step that ends an
-episode returns $s_{\mathrm{last}}$ with \texttt{done=True}, and the next call to \texttt{step} is
-consumed entirely by the reset, returning $s_{\mathrm{new}}$ with the submitted action discarded.
-Measured directly on the installed envpool $0.6.6$ rather than taken from the documentation, on a
-single CartPole copy where a reset state and a terminal state are told apart by their numbers alone:
+envpool resets on the step \emph{after} the one that ends an episode, and that following step is
+consumed entirely by the reset --- its submitted action is discarded. The rollout buffer therefore
+holds, at every index where $\texttt{dones}[t]=1$, a transition that never happened: the old episode's
+terminal observation, a discarded action, a reward of exactly zero, and an intrinsic bonus computed on
+the new episode's first frame. On \texttt{Montezuma\allowbreak Revenge-v5} with
+\texttt{episodic\_life=True} that is about $1.2\%$ of rows. The extrinsic stream repairs itself,
+because the factor $1-\texttt{dones}[t]$ zeroes the fabricated advantage; the intrinsic stream does
+not, because its terminal mask is hardcoded to $1.0$ to keep the intrinsic return non-episodic, so the
+fabricated row's error propagates backwards through the whole rollout, decaying as
+$(\gamma_{\mathrm{int}}\lambda)^{\Delta}\approx0.94^{\Delta}$. A defect in $1.2\%$ of rows therefore
+perturbs a large share of the intrinsic advantages, which is the signal the method rests on --- so the
+documentation's ``does not seem to impact performance'' was never tested.
 
-\begin{quote}\ttfamily\footnotesize\raggedright
-t=15\ \ done=True\ \ \ obs=TERMINAL\ \ \ \ elapsed\_step=16\\
-t=16\ \ done=False\ \ obs=RESET-LIKE\ \ elapsed\_step=0
-\end{quote}
-
-and on \texttt{Montezuma\allowbreak Revenge-v5} with this run's exact options, where a lost life
-raises \texttt{done} without resetting the game:
-
-\begin{quote}\ttfamily\footnotesize\raggedright
-t=457\ \ done=True\ \ \ lives=5\ \ elapsed\_step=458\\
-t=458\ \ done=False\ \ lives=5\ \ elapsed\_step=458\ \ \ (the counter does not advance)
-\end{quote}
-
-A differential test settles that the discarded action really is discarded: two identically seeded
-environment pools fed identical actions except on that one step stay byte-identical, while the same
-injection one step earlier diverges immediately.
-
-\paragraph{What that does to the rollout buffer.}
-CleanRL stores \texttt{dones[step]} from the \emph{previous} iteration's \texttt{done}, so the
-condition $\texttt{dones}[t]=1$ marks exactly the consumed steps. At such an index the buffer holds
-an observation that is the old episode's terminal state, an action the environment threw away, a
-reward that is always exactly zero, and an intrinsic bonus computed on the \emph{new} episode's first
-frame. It is a transition that never happened, and it enters the policy gradient, both value losses,
-the predictor's own loss, and the statistics that normalize the intrinsic reward. On
-\texttt{Montezuma\allowbreak Revenge-v5} with \texttt{episodic\_life=True} it is about $1.2\%$ of
-rows.
-
-\paragraph{Why the damage is larger than that fraction suggests.}
-The extrinsic stream repairs itself: at index $t-1$ the factor $1 - \texttt{dones}[t]$ is zero, so
-the fabricated advantage cannot propagate backwards. The intrinsic stream has no such factor. The
-intrinsic return is deliberately non-episodic --- Burda et al.\ make it so, and CleanRL follows them
-by hardcoding the intrinsic terminal mask to $1.0$ --- and that is exactly what lets the fabricated
-row leak. Perturbing only the fabricated row's intrinsic reward and re-running the file's own
-generalized-advantage code moves the intrinsic advantage of \emph{every preceding row in the
-rollout}, decaying as $(\gamma_{\mathrm{int}}\lambda)^{\Delta} \approx 0.94^{\Delta}$: full amplitude
-at the row itself, about half ten rows earlier, still measurable at the head of a $128$-step rollout.
-So a defect in $1.2\%$ of rows perturbs a large fraction of the intrinsic advantages, which is the
-signal the whole method rests on. Whether that changes the final score is a separate question this
-run does not answer; the claim here is only that ``it does not seem to impact performance'' was never
-tested and is not obviously true.
-
-\paragraph{The correction.}
-Two edits, both keyed on $\texttt{dones}[t]$, which is the only reliable detector. The obvious
-alternative --- reading envpool's \texttt{elapsed\_step} for a zero --- fails under
-\texttt{episodic\_life=True}, because a lost life consumes a step without resetting the counter; on a
-$600$-step probe it found $4$ of the $24$ consumed rows.
-
-\begin{enumerate}[label=\arabic*.,leftmargin=*]
-\item \textbf{Carry the advantage through the consumed row} so that row $t-1$ chains to row $t+1$ as
-  though the row were absent. This stops the backward leak in the intrinsic stream.
-\item \textbf{Drop the consumed rows from the update batch}, so no loss is ever evaluated on a
-  transition that did not happen. The batch is then walked as exactly \texttt{num\_minibatches} equal
-  slices with the remainder dropped; a ragged final slice of one row makes the advantage
-  normalization divide by a zero standard deviation, and the resulting NaN reaches the weights within
-  one optimizer step. The surviving-row count is then held at a fixed allowance rather than varying
-  with the number of rows dropped, so every update trains on an equal-sized batch.
-\end{enumerate}
-
-Neither upgrading envpool nor switching to its Gymnasium-style interface avoids this. The behaviour
-is unchanged in every release through $1.2.5$, and Gymnasium $1.0$ moved its own vector API
-\emph{to} next-step auto-reset to match envpool --- so the ``upstream fix'' the documentation waits
-for is not coming, because envpool's behaviour became the standard. The run also corrects a smaller
-consequence of the same defect: the episode-length counter in CleanRL's statistics wrapper
-incremented on consumed steps, overstating episode length by one per life lost.
+The correction is two edits, both keyed on $\texttt{dones}[t]$: carry the advantage through the
+consumed row so that row $t-1$ chains to row $t+1$, and drop the consumed rows from the update batch.
+It is on for every run of this campaign, and it is the only change that alters what the optimizer
+sees. Waiting for an upstream fix would not have helped: the behaviour is unchanged through envpool
+$1.2.5$, and Gymnasium $1.0$ moved its own vector API \emph{to} next-step auto-reset to match.
 
 % --------------------------------------------------------------------------------------------
 % (7) Provenance and status.
@@ -8944,7 +8890,7 @@ The run folder is
 \begin{samepage}
 \begin{quote}\ttfamily\footnotesize\raggedright
 08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak rnd/\allowbreak train\_\allowbreak runs/\allowbreak
-2026-08-05-17-45\_\allowbreak cleanrl\_\allowbreak train\_\allowbreak run\_\allowbreak 1\_\allowbreak ppo-rnd\_\allowbreak montezuma-revenge-v5\_\allowbreak \_\allowbreak envpool-autoreset-fixed\_\allowbreak \_\allowbreak 128env-128step-2e9step\_\allowbreak \_\allowbreak int-coef1-ext-coef2-updateproportion0.25\_\allowbreak \_\allowbreak seed1-30\_\allowbreak \_\allowbreak checkpoint-8h-resumable\_\allowbreak \_\allowbreak gpu-gnolim
+2026-08-05-22-30\_\allowbreak cleanrl\_\allowbreak run\_\allowbreak 2\_\allowbreak ablation\_\allowbreak ppo-rnd\_\allowbreak montezuma-v5\_\allowbreak \_\allowbreak arm1-orig\_\allowbreak arm2-noclip\_\allowbreak arm3-prop1\_\allowbreak arm4-shallow\_\allowbreak arm5-all\_\allowbreak \_\allowbreak 2e9step\_\allowbreak seed1-30\_\allowbreak \_\allowbreak log200\_\allowbreak gradstats\_\allowbreak ckpt1h\_\allowbreak \_\allowbreak gpu-gnolim-resv
 \end{quote}
 \end{samepage}
 
@@ -8958,8 +8904,13 @@ set the run's processor allocation, its GPU packing and the speed changes it app
 changes alters the arithmetic the optimizer sees.
 
 \paragraph{Status.}
-Results tables and reward curves will be added to this section when the seeds finish; nothing in
-this section reports an outcome yet.
+The campaign is unfinished: at the time of writing it has completed about $41\%$ of its total step
+budget and no individual run has reached its $2\times10^{9}$ target, so
+\Cref{tab:cleanrl-interim} and \Cref{fig:cleanrl-interim-curves} read every arm at
+$10^{9}$ steps rather than at a finish. They are regenerated from the run folder's records by
+\texttt{analysis/\allowbreak code/\allowbreak make\_\allowbreak interim\_\allowbreak table\_\allowbreak
+and\_\allowbreak plot.py}; when the seeds finish, that script's reading step moves to
+$2\times10^{9}$ and the table and figures are replaced in place.
 
 
 
