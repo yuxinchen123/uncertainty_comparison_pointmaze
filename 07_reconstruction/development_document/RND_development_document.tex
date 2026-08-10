@@ -8856,19 +8856,13 @@ $250\times10^{6}$ -- $1.1\times10^{9}$ & $4600$ & $76\%$ & $5000$ ($12\%$) & a s
 $1.1$ -- $2.0\times10^{9}$ & $7100$ & $96\%$ & $4600$ ($3\%$) & a longer route; the level it finishes on \\
 \bottomrule
 \end{tabular}
-\caption{The score plateaus of CleanRL's published run. Within each block of training, the modal
-score is the single most common per-episode score, and \textbf{the share is the fraction of that
-block's episodes that scored exactly it} --- so $76\%$ on the $4600$ row means that three quarters of
-the episodes between $250\times10^{6}$ and $1.1\times10^{9}$ steps ended on exactly $4600$ points.
-The share is what makes ``plateau'' the right word: the agent is not averaging its way upward, it is
-repeating one route. It is highest at the two ends, where the run is stuck at $0$ or settled at
-$7100$, and lowest in the middle blocks, where the mode competes with the neighbouring levels the run
-is passing through --- hence the next-most-common column. The $100$ and $400$ readings are fixed by
-the on-screen scores in \Cref{fig:montezuma-stages}, so the key pays $100$ and the door $300$; the
-objects behind $1400$ and $4600$ are inferred from the increments rather than read off a source. Figure~1 of
-\citet{burda2019exploration} describes the full route to the torch as passing $17$ rooms and
-collecting gems, keys, a sword and an amulet while opening two doors, so each plateau is one more
-stretch of that route held until exploration opens the next.}
+\caption{The score plateaus of CleanRL's published run. A \textbf{block} is a stretch of training
+with one dominant score; the boundaries come from a $25$-million-step scan of the mode, so the
+blocks are unequal. \textbf{Share} is the fraction of that block's episodes scoring exactly the
+mode: $76\%$ on the $4600$ row means three quarters of them ended on exactly $4600$ points. A high
+share is what makes ``plateau'' the right word --- the agent repeats one route rather than
+averaging upward. The $100$ and $400$ readings come from the on-screen scores in
+\Cref{fig:montezuma-stages}; the objects behind $1400$ and $4600$ are inferred from the increments.}
 \label{tab:montezuma-stages}
 \end{table}
 
