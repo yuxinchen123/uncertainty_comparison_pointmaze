@@ -8800,6 +8800,29 @@ right edge of this axis to $2\times10^{9}$ steps, ending at $7{,}050$.}
 \label{fig:cleanrl-interim-curves}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/arm1_individual_seeds.pdf}
+\caption{Three individual seeds of arm~1, against arm~1's mean over all of its seeds. The three are
+the \emph{first} by seed number rather than the best three, so the choice cannot flatter the arm;
+seed~1 is absent because its run has not yet been claimed from the queue, so the first three with data
+are seeds~2, 3 and~4. Every curve is the same quantity as in \Cref{fig:cleanrl-interim-curves}, the
+trailing mean over the last $200$ finished episodes. The point of the figure is that \textbf{the mean
+resembles none of the three runs it averages}. Seed~3
+reaches $6{,}700$ by $0.32\times10^{9}$ steps and then sits there for two thirds of the run; seed~2 is
+still under $1{,}200$ at $0.7\times10^{9}$ and climbs to $5{,}900$ only afterwards; seed~4 stays at
+about $400$ --- one room's key and door --- for essentially the whole run so far. The smooth grey
+average passes through the middle of all this and describes no single run. Each curve is also a
+staircase rather than a slope: an agent holds a plateau while it exploits the rooms it knows, then
+steps up when exploration opens a new one. Averaging across seeds turns a set of staircases with
+different step times into a smooth ramp, which is a property of the averaging and not of any agent.}
+\label{fig:cleanrl-arm1-seeds}
+\end{figure}
+
+This is the reason the campaign runs $30$ seeds per arm and why the arms are not yet separated: with
+per-seed outcomes spanning $400$ to $8{,}400$ within a single arm, a mean over eighteen seeds still
+carries a standard error of several hundred, and a difference between arms has to clear that.
+
 Three things in these artifacts are worth stating, and only the third is about the arms.
 
 \begin{enumerate}[label=(\roman*),leftmargin=*]
