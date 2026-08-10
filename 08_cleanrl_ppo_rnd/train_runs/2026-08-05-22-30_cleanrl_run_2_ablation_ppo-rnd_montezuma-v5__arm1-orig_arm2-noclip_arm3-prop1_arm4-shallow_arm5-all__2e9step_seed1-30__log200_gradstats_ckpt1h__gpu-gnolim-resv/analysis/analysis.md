@@ -129,10 +129,22 @@ standard error of several hundred, and any difference between arms has to clear 
    the first room. Whether that is a real difference in reliability or the luck of eighteen seeds is
    what the remaining half of the campaign is for.
 
-The gradient statistics behind the arms are unchanged from earlier ticks: the joint clip scales the
-RND predictor's gradient to about 38% on 92–97% of optimizer steps, while the predictor contributes
-under 1% of the joint squared norm. So the intervention arms 2 and 5 make is large and well measured;
-what is not yet established is that it changes the final score.
+The gradient statistics confirm the arms do what they are meant to, and they have moved since the
+early ticks. Read at 2026-08-10 over the last five logged rows of every run:
+
+| arm | joint norm | policy norm | predictor norm | predictor share of joint sq | predictor clip fires | mean scale on predictor |
+|---|---|---|---|---|---|---|
+| Arm 1 original | 0.545 | 0.537 | 0.083 | 2.1% | 47% | 0.879 |
+| Arm 2 no RND clip | 0.601 | 0.596 | 0.078 | 1.5% | 0% | 1.000 |
+| Arm 3 full batch | 0.598 | 0.591 | 0.079 | 1.7% | 56% | 0.836 |
+| Arm 4 shallower | 0.606 | 0.603 | 0.053 | 0.8% | 58% | 0.838 |
+| Arm 5 all three | 0.534 | 0.527 | 0.068 | 2.0% | 0% | 1.000 |
+
+Arms 2 and 5 never scale the predictor, which is the intervention; arms 1, 3 and 4 scale it on about
+half of optimizer steps. No run has recorded a non-finite norm. The early reading — a scale of about
+0.38 firing on 92–97% of steps — was taken at 2e7 steps, when gradients were far larger; at 1e9 the
+clip still fires often but cuts much less. So the intervention is real and well measured; what is not
+yet established is that it changes the final score.
 
 ## Where this appears in the writeup
 
