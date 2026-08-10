@@ -2,11 +2,11 @@
 \toprule
 \textbf{Arm} & $\bar R$ & $\mathrm{SE}$ & succ. & $n$ \\
 \midrule
-run-5 original RND, Adam $10^{-4}$ ($\beta{=}1000$) --- the frozen bar & \textbf{38.64} & 1.77 & \textbf{0.78} & 300 \\
+run-5 original RND, Adam $10^{-4}$ ($\beta{=}1000$) --- the frozen bar & 38.64 & 1.77 & 0.78 & 300 \\
 \midrule
-algorithm 1 (still running) & -- & -- & -- & 0 \\
-algorithm 2.1 (still running) & -- & -- & -- & 0 \\
-algorithm 2.2 (still running) & -- & -- & -- & 0 \\
-algorithm 2.3 (still running) & -- & -- & -- & 0 \\
+algorithm 1 (lr $0.01$, $\beta{=}0.3$) & \underline{42.35} & 7.87 & 0.72 & 18 \\
+algorithm 2.1 (lr $0.01$, $\beta{=}10$) & 35.33 & 5.75 & \textbf{0.88} & 17 \\
+algorithm 2.2 (lr $0.01$, $\beta{=}10$) & 27.31 & 7.04 & 0.59 & 17 \\
+algorithm 2.3 (lr $0.01$, $\beta{=}10$) & \textbf{60.64} & 10.34 & \underline{0.81} & 16 \\
 \bottomrule
 \end{tabular}
