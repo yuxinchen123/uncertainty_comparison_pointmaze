@@ -8403,10 +8403,10 @@ This run asks three questions.
   sample from a distribution whose spread is unknown. Thirty seeds give a mean and a spread to
   compare against Burda et al.'s three-seed $8152$.
 \item \textbf{What does the environment auto-reset defect cost?} CleanRL's own documentation records
-  a bug in this file and says ``it does not seem to impact performance'', without evidence.
-  \Cref{sec:cleanrl-bug} shows the defect is larger than the documentation implies --- it
-  contaminates the intrinsic advantage of every preceding step in a rollout, not just the affected
-  row --- and this run uses the corrected code.
+  a bug in this file and says ``it does not seem to impact performance'', without evidence. The
+  defect is larger than that implies: because the intrinsic return is non-episodic, the fabricated
+  row contaminates the intrinsic advantage of every preceding step in the rollout, not just its own.
+  Every run here uses the corrected code.
 \item \textbf{Where do the two RND implementations actually differ?}
   \Cref{tab:cleanrl-vs-project-rnd} and \Cref{fig:cleanrl-rnd-pipelines} answer this knob by knob.
   Several of the differences are ones this project deliberately chose against CleanRL, and having
@@ -8594,8 +8594,7 @@ max episode steps & $108{,}000$ agent steps, so $432{,}000$ emulator frames & en
   \texttt{registration.py} for every \texttt{-v5} id; in practice non-binding \\
 termination rule & game over, or the step cap, or a life lost & envpool \texttt{atari\_env.h} \\
 auto-reset & next-step: the terminating step returns the terminal observation, and the following
-  step is consumed by the reset & envpool, fixed --- this is the defect
-  \Cref{sec:cleanrl-bug} corrects \\
+  step is consumed by the reset & envpool, fixed --- the defect this run corrects \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Reward}} \\
 reward seen by the agent & clipped to its sign, so $\{-1,0,+1\}$ & passed
@@ -8675,8 +8674,8 @@ configs in this table & $1$(algorithm) $\times$ $1$(environment) $\times$ $30$(s
   N/A --- no hyperparameter is swept \\
 \midrule
 \multicolumn{3}{@{}l}{\textit{Changes this run makes to the code, not to the algorithm}} \\
-environment auto-reset defect & corrected & \Cref{sec:cleanrl-bug}; the only change that alters what
-  the optimizer sees \\
+environment auto-reset defect & corrected & the consumed rows are carried through the advantage and
+  dropped from the batch; the only change that alters what the optimizer sees \\
 \bottomrule
 \end{tabular}%
 }
@@ -8694,7 +8693,7 @@ differently. \Cref{tab:cleanrl-arms} defines the arms. Arm~1 is the reference an
 change one knob from it; arm~5 changes all three at once, so the difference between arm~5 and the sum
 of arms~2 to~4 measures whether the three interact. Every other value --- the hyperparameters of
 \Cref{tab:cleanrl-trainrun1-algos}, the environment of \Cref{tab:cleanrl-envspec}, and the auto-reset
-correction of \Cref{sec:cleanrl-bug} --- is identical across all five, so an arm-to-arm difference can
+correction --- is identical across all five, so an arm-to-arm difference can
 only come from the marked knobs.
 
 \begin{table}[H]
@@ -8819,6 +8818,53 @@ different step times into a smooth ramp, which is a property of the averaging an
 \label{fig:cleanrl-arm1-seeds}
 \end{figure}
 
+\paragraph{What the staircase steps are.}
+The staircase is a property of the game, not of the plotting. Montezuma's Revenge pays only for
+picking objects up and opening doors, in fixed amounts, so an episode's score is one of a small set of
+values rather than a continuum: across CleanRL's $620{,}276$ logged episodes every score is a multiple
+of $100$ and $71$ distinct values occur, of which five carry almost all the mass.
+\Cref{fig:montezuma-stages} plots the individual episode scores over training, and the run visibly
+sits on one level, then jumps.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/montezuma_score_stages.pdf}\\[0.6em]
+\includegraphics[width=0.72\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/montezuma_first_frames.png}
+\caption{\textbf{Top:} every $40$th episode of CleanRL's published run, plotted as its own score
+rather than as a mean, with the four plateau levels marked. The agent holds a route, scores the same
+total every episode, and jumps only when exploration opens the next stretch --- averaging hides this
+entirely. \textbf{Bottom:} the first six frames of Figure~1 of \citet{burda2019exploration},
+reproduced here because the on-screen score in each frame is what pins the early levels to game
+events. They read $100$, $400$, $400$, $500$, $500$, $6600$: the key, the first door, a second key,
+and then the jump into the thousands once the agent is several rooms in.}
+\label{fig:montezuma-stages}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Training steps} & \textbf{Modal score} & \textbf{Share} & \textbf{What the agent has done} \\
+\midrule
+$0$ -- $75\times10^{6}$ & $0$ & $100\%$ & dies in the first room without reaching the key \\
+$75$ -- $100\times10^{6}$ & $400$ & $53\%$ & key ($100$) and first door ($300$); leaves room~1 \\
+$100$ -- $250\times10^{6}$ & $1400$ & $98\%$ & one further scoring pickup, then $2400$, $2600$, $3600$ \\
+$250\times10^{6}$ -- $1.1\times10^{9}$ & $4600$ & $89$--$100\%$ & a stable route it holds for most of training \\
+$1.1$ -- $2.0\times10^{9}$ & $7100$ & $90$--$98\%$ & a longer route; the level it finishes on \\
+\bottomrule
+\end{tabular}
+\caption{The score plateaus of CleanRL's published run, as the modal per-episode score in each block
+of training. The $100$ and $400$ readings are fixed by the on-screen scores in
+\Cref{fig:montezuma-stages}, so the key pays $100$ and the door $300$; the objects behind $1400$ and
+$4600$ are inferred from the increments rather than read off a source. Figure~1 of
+\citet{burda2019exploration} describes the full route to the torch as passing $17$ rooms and
+collecting gems, keys, a sword and an amulet while opening two doors, so each plateau is one more
+stretch of that route held until exploration opens the next.}
+\label{tab:montezuma-stages}
+\end{table}
+
+
 This is the reason the campaign runs $30$ seeds per arm and why the arms are not yet separated: with
 per-seed outcomes spanning $400$ to $8{,}400$ within a single arm, a mean over eighteen seeds still
 carries a standard error of several hundred, and a difference between arms has to clear that.
@@ -8828,7 +8874,7 @@ Three things in these artifacts are worth stating, and only the third is about t
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item \textbf{All five arms learn the task.} Every arm reaches a trailing mean between $5{,}900$ and
   $7{,}400$ by $10^{9}$ steps, against the $400$ that one room's key and door pay. So the
-  reproduction works, and the auto-reset correction of \Cref{sec:cleanrl-bug} did not break it.
+  reproduction works, and the auto-reset correction did not break it.
 \item \textbf{The curves have flattened since the early phase.} At $2\times10^{7}$ steps the two arms
   that leave the RND predictor unclipped led every other arm on the fraction of seeds that had scored
   at all. That gap has closed: what it measured was how quickly a seed found its first reward, not how
@@ -8851,33 +8897,6 @@ Three things in these artifacts are worth stating, and only the third is about t
 % --------------------------------------------------------------------------------------------
 % (4) The bug.
 % --------------------------------------------------------------------------------------------
-\subsubsection{The environment auto-reset correction}
-\label{sec:cleanrl-bug}
-
-CleanRL's documentation page for this file carries a \texttt{bug} admonition: envpool and gym's
-vectorized environments disagree about which observation a terminating step returns, and ``it does not
-seem to impact performance, so we take a note here and await for the upstream fix''. This run corrects
-the defect rather than waiting.
-
-envpool resets on the step \emph{after} the one that ends an episode, and that following step is
-consumed entirely by the reset --- its submitted action is discarded. The rollout buffer therefore
-holds, at every index where $\texttt{dones}[t]=1$, a transition that never happened: the old episode's
-terminal observation, a discarded action, a reward of exactly zero, and an intrinsic bonus computed on
-the new episode's first frame. On \texttt{Montezuma\allowbreak Revenge-v5} with
-\texttt{episodic\_life=True} that is about $1.2\%$ of rows. The extrinsic stream repairs itself,
-because the factor $1-\texttt{dones}[t]$ zeroes the fabricated advantage; the intrinsic stream does
-not, because its terminal mask is hardcoded to $1.0$ to keep the intrinsic return non-episodic, so the
-fabricated row's error propagates backwards through the whole rollout, decaying as
-$(\gamma_{\mathrm{int}}\lambda)^{\Delta}\approx0.94^{\Delta}$. A defect in $1.2\%$ of rows therefore
-perturbs a large share of the intrinsic advantages, which is the signal the method rests on --- so the
-documentation's ``does not seem to impact performance'' was never tested.
-
-The correction is two edits, both keyed on $\texttt{dones}[t]$: carry the advantage through the
-consumed row so that row $t-1$ chains to row $t+1$, and drop the consumed rows from the update batch.
-It is on for every run of this campaign, and it is the only change that alters what the optimizer
-sees. Waiting for an upstream fix would not have helped: the behaviour is unchanged through envpool
-$1.2.5$, and Gymnasium $1.0$ moved its own vector API \emph{to} next-step auto-reset to match.
-
 % --------------------------------------------------------------------------------------------
 % (7) Provenance and status.
 % --------------------------------------------------------------------------------------------
