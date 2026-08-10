@@ -8741,6 +8741,71 @@ campaign stopped early still holds every arm at the same seed count.}
 \label{tab:cleanrl-arms}
 \end{table}
 
+\paragraph{Where the arms stand at the halfway point.}
+The campaign is unfinished, so no run has a final score and neither artifact below can use a run's
+last logged row: a run's last step reflects the speed of the node it landed on as much as its arm, and
+reading arms at different depths would rank node allocations rather than algorithms. Both therefore
+fix the step first and read every arm at that same step. \Cref{tab:cleanrl-interim} reports one number
+per arm --- the extrinsic reward at $10^{9}$ steps, half of the $2\times10^{9}$ planned --- and
+\Cref{fig:cleanrl-interim-curves} plots the whole trajectory up to that point and a little beyond.
+When the campaign finishes, the table's step becomes the full $2\times10^{9}$ and nothing else about
+it changes.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Arm} & \textbf{Seeds} & \textbf{Mean $\pm$ s.e.} $\uparrow$ & \textbf{Median} & \textbf{Best seed} \\
+\midrule
+Arm 1 original & 18 & 6788.4 $\pm$ 794.5 & 6928.5 & 13494.0 \\
+Arm 2 no RND clip & 17 & 6799.0 $\pm$ 618.8 & 6852.0 & 10951.5 \\
+Arm 3 full batch & 18 & \textbf{7419.9 $\pm$ 725.3} & 7080.0 & 14491.0 \\
+Arm 4 shallower & 22 & 5886.4 $\pm$ 581.6 & 6385.5 & 11230.5 \\
+Arm 5 all three & 18 & \underline{7218.8 $\pm$ 563.8} & 7045.5 & 12350.0 \\
+\bottomrule
+\end{tabular}
+\caption{Extrinsic reward at $10^{9}$ environment steps, half of each run's $2\times10^{9}$ target,
+for the five arms of train run~1. The quantity is the trailing mean over each run's last $200$
+finished episodes; the seeds column counts the runs that had reached $10^{9}$ steps at the time of
+reading, and the mean, its standard error, the median and the best seed are taken across those runs.
+Logging is every $200$ policy updates, or $3{,}276{,}800$ steps, so no row falls exactly on $10^{9}$
+and the row used is the last at or before it. Bold marks the highest mean and underline the second
+highest, but the five arms lie within about two standard errors of one another and the ordering
+should not be read as a result --- see the discussion below.}
+\label{tab:cleanrl-interim}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/interim_arm_curves.pdf}
+\caption{Extrinsic reward against environment steps for the five arms, each curve the mean across
+that arm's seeds with a shaded standard error. \textbf{A curve is drawn only while at least five of
+its seeds have reached that step}, and the lower panel gives the seed count behind every point, so the
+truncation is visible rather than implied: past roughly $1.0\times10^{9}$ steps the count falls from
+about twenty to five and the curves become correspondingly noisy. The dashed vertical line marks the
+step \Cref{tab:cleanrl-interim} reads, so the table and the figure are the same measurement.}
+\label{fig:cleanrl-interim-curves}
+\end{figure}
+
+Three things in these artifacts are worth stating, and only the third is about the arms.
+
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{All five arms learn the task.} Every arm reaches a trailing mean between $5{,}900$ and
+  $7{,}400$ by $10^{9}$ steps, against the $400$ that one room's key and door pay. So the
+  reproduction works, and the auto-reset correction of \Cref{sec:cleanrl-bug} did not break it.
+\item \textbf{The curves have flattened since the early phase.} At $2\times10^{7}$ steps the two arms
+  that leave the RND predictor unclipped led every other arm on the fraction of seeds that had scored
+  at all. That gap has closed: what it measured was how quickly a seed found its first reward, not how
+  much reward it eventually collects, and by $10^{9}$ steps almost every seed in every arm has found
+  it. An early separation on a sparse-reward task is a separation in first-reward timing.
+\item \textbf{The arms are not separated at $10^{9}$ steps.} The spread between the highest and lowest
+  mean is $1{,}533$ while the standard errors are $560$ to $795$, so every pair overlaps. The one
+  difference that does stand out is not in the mean: arm~5's worst seed scores $4{,}584$ while arms~1
+  and~4 each have a seed at $400$, one room's worth. Whether that is a real difference in reliability
+  or the luck of eighteen seeds is exactly what the remaining half of the campaign is for.
+\end{enumerate}
+
 % --------------------------------------------------------------------------------------------
 % (4) The bug.
 % --------------------------------------------------------------------------------------------

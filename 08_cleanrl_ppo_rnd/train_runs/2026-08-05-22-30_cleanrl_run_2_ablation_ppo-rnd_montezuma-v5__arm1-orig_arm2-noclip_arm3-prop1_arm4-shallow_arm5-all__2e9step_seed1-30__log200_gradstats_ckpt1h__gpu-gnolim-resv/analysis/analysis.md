@@ -1,0 +1,89 @@
+# Interim comparison of the five arms, read at the halfway point
+
+Written 2026-08-10, with the campaign at 40.8% of its 300,000,000,000-step budget and no run
+finished. Regenerate with:
+
+```bash
+PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/exploration/bin/python \
+  analysis/code/make_interim_table_and_plot.py --sweep_dir <this run folder>
+```
+
+## The measurement, and why it is fixed to a step
+
+No run has a final score, so nothing here can use a run's last logged row. A run's last step reflects
+the speed of the node it happened to land on as much as its arm: the fastest node in the campaign
+delivers about 3,900 steps per second and the slowest about 2,500, so after four days the same arm
+spans a wide range of depths. Reading arms at different depths would rank node allocations rather
+than algorithms.
+
+Both artifacts therefore fix the step first. The table reads **1,000,000,000 steps**, half of the
+2,000,000,000 planned. Logging is every 200 policy updates, or 3,276,800 steps, so no row falls
+exactly on 1e9 and the row used is the last at or before it, 999,424,000. When the campaign finishes
+this becomes the full 2,000,000,000 and nothing else changes.
+
+The quantity is `train/mean_extrinsic_reward` — the trailing mean over each run's last 200 finished
+episodes, which is what the trainer logs and the only performance number it records.
+
+## The one number, at 1e9 steps
+
+| arm | seeds | mean ± s.e. | median | worst seed | best seed |
+|---|---|---|---|---|---|
+| Arm 1 original | 18 | 6788.4 ± 794.5 | 6928.5 | 400.0 | 13494.0 |
+| Arm 2 no RND clip | 17 | 6799.0 ± 618.8 | 6852.0 | 1773.0 | 10951.5 |
+| Arm 3 full batch | 18 | **7419.9 ± 725.3** | 7080.0 | 469.0 | 14491.0 |
+| Arm 4 shallower | 22 | 5886.4 ± 581.6 | 6385.5 | 400.0 | 11230.5 |
+| Arm 5 all three | 18 | <u>7218.8 ± 563.8</u> | 7045.5 | **4584.0** | 12350.0 |
+
+Bold marks the best value in a column and underline the second best. The seeds column counts the runs
+that had reached 1e9 at the time of reading; it differs across arms only because of node speed, which
+is independent of the arm.
+
+## The plot
+
+`plots/interim_arm_curves.pdf` — mean reward against steps, one line per arm, shaded standard error.
+**A curve is drawn only while at least five of that arm's seeds have reached the step.** Past that the
+mean is a handful of the fastest nodes' runs and stops meaning what the axis says. The lower panel
+gives the seed count behind every point, so the truncation is visible rather than implied. Each arm's
+curve ends where its fifth-deepest seed does:
+
+| arm | curve ends at | seeds there |
+|---|---|---|
+| Arm 1 original | 1,186,201,600 | 5 |
+| Arm 2 no RND clip | 1,179,648,000 | 5 |
+| Arm 3 full batch | 1,169,817,600 | 5 |
+| Arm 4 shallower | 1,327,104,000 | 5 |
+| Arm 5 all three | 1,320,550,400 | 5 |
+
+The seed count falls from about twenty to five between 1.0e9 and 1.2e9, and the curves get visibly
+noisier there. That is the honest picture of what the data supports, which is why the count panel is
+part of the figure rather than a footnote.
+
+## What the numbers say
+
+1. **All five arms learn the task.** Every arm reaches a trailing mean between 5,900 and 7,400 by 1e9
+   steps, against the 400 that the first room's key and door pay. The reproduction works and the
+   auto-reset correction did not break it.
+2. **The early separation has closed.** At 2e7 steps the two arms that leave the RND predictor
+   unclipped led every other arm on the fraction of seeds that had scored at all — 50% against 17%.
+   That measured how quickly a seed found its *first* reward, not how much it eventually collects, and
+   by 1e9 steps almost every seed in every arm has found it. An early lead on a sparse-reward task is
+   a lead in first-reward timing, and it should not have been read as more than that.
+3. **The arms are not separated in the mean at 1e9 steps.** The spread between highest and lowest is
+   1,533 while the standard errors are 560 to 795, so every pair overlaps.
+4. **The one thing that does stand out is the worst seed, not the mean.** Arm 5's weakest seed scores
+   4,584; arms 1 and 4 each have a seed still at 400, one room's worth, and arm 3 has one at 469. So
+   arm 5 — the arm with all three departures — is the only one with no seed that failed to get past
+   the first room. Whether that is a real difference in reliability or the luck of eighteen seeds is
+   what the remaining half of the campaign is for.
+
+The gradient statistics behind the arms are unchanged from earlier ticks: the joint clip scales the
+RND predictor's gradient to about 38% on 92–97% of optimizer steps, while the predictor contributes
+under 1% of the joint squared norm. So the intervention arms 2 and 5 make is large and well measured;
+what is not yet established is that it changes the final score.
+
+## Where this appears in the writeup
+
+`07_reconstruction/development_document/RND_development_document.tex`, section 9: Table 81 is the
+table above and Figure 29 is the plot. Both are regenerated by the script named at the top; the
+LaTeX tabular block is written to `analysis/interim_arm_table.tex` and pasted into the document, so
+re-running the script and re-pasting is the whole update path.

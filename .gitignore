@@ -175,3 +175,14 @@ reference_repos/
 
 # Monitoring snapshots inside a run folder (per-tick table dumps; the scripts themselves stay tracked)
 07_reconstruction/train_runs/**/20_mins_monitoring/outputs/
+
+# Analysis folders (any project): code and data are scratch; plots and analysis.md are the durable
+# record and must survive the blanket *.pdf / *.json / *.png rules above, hence the negations.
+# A pattern containing a slash is anchored to this file's directory, so it needs the leading **/ to
+# reach 08_cleanrl_ppo_rnd/train_runs/... as well as a top-level train_runs/.
+**/train_runs/**/analysis/code/
+**/train_runs/**/analysis/data/
+!**/analysis/plots/
+!**/analysis/plots/*.pdf
+!**/analysis/plots/*.png
+!**/analysis/*.tex
