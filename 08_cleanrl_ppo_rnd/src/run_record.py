@@ -105,7 +105,13 @@ class RunRecord:
                 f.flush()
                 os.fsync(f.fileno())
             self._episode_buffer = []
-            os.chmod(self.episodes_path, 0o660)
+            # The sidecar outlives one segment, and the next segment of the same run may execute
+            # under a different uid: the owner and the collaborator both submit workers for this
+            # sweep, so a run migrates between uids whenever it is requeued. Appending is a group
+            # write and works; chmod is owner-only and raises EPERM on someone else's file. The mode
+            # is already 0660 from whoever created it, so there is nothing to set unless it is ours.
+            if os.stat(self.episodes_path).st_uid == os.getuid():
+                os.chmod(self.episodes_path, 0o660)
 
         # One dumps, one write. json.dump to a file object issues a small write per token and is
         # measured 2.7 times slower at these sizes.

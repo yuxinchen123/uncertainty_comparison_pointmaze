@@ -37,6 +37,33 @@ def test_flush_writes_config_and_history(tmp_path):
     assert os.stat(path).st_mode & 0o060 == 0o060
 
 
+def test_flush_appends_to_a_sidecar_owned_by_another_user(tmp_path, monkeypatch):
+    """A run that migrates to another uid mid-campaign must still be able to flush.
+
+    Both the owner and the collaborator submit workers for this sweep, so a requeued run's next
+    segment often executes under a different uid than the one that created its episode sidecar.
+    Appending is a group write and works; chmod is owner-only and raises EPERM. Observed 2026-08-10:
+    run 79 died with PermissionError on a sidecar owned by the collaborator, and 60 of the 134
+    sidecars on disk were in that state.
+    """
+    path = str(tmp_path / "3_of_30.json")
+    rec = RunRecord(path, {"run_id": 3, "run_total": 30})
+    rec.add_episode({"step": 128, "train/extrinsic_reward": 0.0})
+    rec.flush(completed=False)
+
+    # Make the existing sidecar look like it belongs to somebody else, and make chmod on it fail the
+    # way the kernel does — the real EPERM comes from the uid mismatch, not from the mode.
+    real_stat, real_chmod, side = os.stat, os.chmod, rec.episodes_path
+    monkeypatch.setattr(os, "stat", lambda p, *a, **k: (
+        type("S", (), {"st_uid": os.getuid() + 1})() if p == side else real_stat(p, *a, **k)))
+    monkeypatch.setattr(os, "chmod", lambda p, m: (_ for _ in ()).throw(
+        PermissionError(1, "Operation not permitted", p)) if p == side else real_chmod(p, m))
+
+    rec.add_episode({"step": 256, "train/extrinsic_reward": 100.0})
+    rec.flush(completed=False)   # must not raise: the chmod is skipped, the append still happens
+    assert [e["step"] for e in read_episodes(path)] == [128, 256]
+
+
 def test_flush_completed_flag(tmp_path):
     """A run that reaches its end flushes completed=True."""
     path = str(tmp_path / "1_of_30.json")
