@@ -8867,73 +8867,20 @@ averaging upward. The $100$ and $400$ readings come from the on-screen scores in
 \end{table}
 
 
-This is the reason the campaign runs $30$ seeds per arm and why the arms are not yet separated: with
-per-seed outcomes spanning $400$ to $8{,}400$ within a single arm, a mean over eighteen seeds still
-carries a standard error of several hundred, and a difference between arms has to clear that.
-
-Three things in these artifacts are worth stating, and only the third is about the arms.
+With per-seed outcomes spanning $400$ to $8{,}400$ inside one arm, a mean over eighteen seeds carries
+a standard error of several hundred --- hence $30$ seeds per arm.
 
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{All five arms learn the task.} Every arm reaches a trailing mean between $5{,}900$ and
-  $7{,}400$ by $10^{9}$ steps, against the $400$ that one room's key and door pay. So the
-  reproduction works, and the auto-reset correction did not break it.
-\item \textbf{The curves have flattened since the early phase.} At $2\times10^{7}$ steps the two arms
-  that leave the RND predictor unclipped led every other arm on the fraction of seeds that had scored
-  at all. That gap has closed: what it measured was how quickly a seed found its first reward, not how
-  much reward it eventually collects, and by $10^{9}$ steps almost every seed in every arm has found
-  it. An early separation on a sparse-reward task is a separation in first-reward timing.
-\item \textbf{The arms are not separated at $10^{9}$ steps.} The spread between the highest and lowest
-  mean is $1{,}533$ while the standard errors are $533$ to $759$, so every pair overlaps. The one
-  difference that does stand out is not in the mean: arm~5's worst seed scores $4{,}584$ while arms~1
-  and~4 each have a seed at $400$, one room's worth. Whether that is a real difference in reliability
-  or the luck of nineteen seeds is exactly what the remaining half of the campaign is for.
-\item \textbf{Every arm is ahead of CleanRL's published run at this step}, which sits at $4{,}759$
-  against $5{,}886$ to $7{,}420$. Two things keep that from being a claim of improvement. It is one
-  seed against seventeen to twenty-two, and \Cref{fig:cleanrl-interim-curves} shows why that matters:
-  the reference is flat from about $0.3\times10^{9}$ to $1.0\times10^{9}$ steps and then climbs
-  steeply, so reading it at $10^{9}$ catches it immediately before its own jump. By the end of its
-  run it reaches $7{,}050$, inside the range the arms already occupy. The honest reading is that this
-  reproduction tracks CleanRL's, not that it beats it.
+\item \textbf{All five arms learn the task}, reaching $5{,}900$ to $7{,}400$ by $10^{9}$ steps against
+  the $400$ that one room pays.
+\item \textbf{No arm is separated}: highest minus lowest mean is $1{,}533$ against standard errors of
+  $533$ to $759$. The unclipped arms' early lead measured only how fast a seed found its first reward.
+\item \textbf{Arm~5 alone has no failed seed} --- its worst scores $4{,}584$; arms~1 and~4 each have
+  one at $400$. Reliability or luck is what the second half decides.
+\item \textbf{CleanRL's single seed reads $4{,}759$ here}, just before its own jump
+  (\Cref{fig:cleanrl-interim-curves}), and ends at $7{,}050$ --- inside the arms' range. This
+  reproduction tracks it, it does not beat it.
 \end{enumerate}
-
-% --------------------------------------------------------------------------------------------
-% (4) The bug.
-% --------------------------------------------------------------------------------------------
-% --------------------------------------------------------------------------------------------
-% (7) Provenance and status.
-% --------------------------------------------------------------------------------------------
-\paragraph{Provenance.}
-The upstream implementation is cloned untouched and is never edited; the run executes a copy with
-the four changes of \Cref{tab:cleanrl-trainrun1-algos}. Upstream commit
-\texttt{fe8d8a03\allowbreak c41a7ef5\allowbreak b523e2e3\allowbreak 54bd01c3\allowbreak 63e786bb}.
-The run folder is
-
-\begin{samepage}
-\begin{quote}\ttfamily\footnotesize\raggedright
-08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak rnd/\allowbreak train\_\allowbreak runs/\allowbreak
-2026-08-05-22-30\_\allowbreak cleanrl\_\allowbreak run\_\allowbreak 2\_\allowbreak ablation\_\allowbreak ppo-rnd\_\allowbreak montezuma-v5\_\allowbreak \_\allowbreak arm1-orig\_\allowbreak arm2-noclip\_\allowbreak arm3-prop1\_\allowbreak arm4-shallow\_\allowbreak arm5-all\_\allowbreak \_\allowbreak 2e9step\_\allowbreak seed1-30\_\allowbreak \_\allowbreak log200\_\allowbreak gradstats\_\allowbreak ckpt1h\_\allowbreak \_\allowbreak gpu-gnolim-resv
-\end{quote}
-\end{samepage}
-
-\noindent with the training code in \texttt{08\_\allowbreak cleanrl\_\allowbreak ppo\_\allowbreak
-rnd/\allowbreak src/\allowbreak ppo\_\allowbreak rnd\_\allowbreak envpool\_\allowbreak shuze.py},
-the environment \texttt{/p/\allowbreak rlprojects/\allowbreak RND/\allowbreak .venvs/\allowbreak
-cleanrl\_\allowbreak rnd}, and the profiling in \texttt{08\_\allowbreak cleanrl\_\allowbreak
-ppo\_\allowbreak rnd/\allowbreak shuze\_\allowbreak experiment/\allowbreak 2026-08-05\_\allowbreak
-profilling/}. A separate profiling study measured this workload's throughput on this cluster and
-set the run's processor allocation, its GPU packing and the speed changes it applies; none of those
-changes alters the arithmetic the optimizer sees.
-
-\paragraph{Status.}
-The campaign is unfinished: at the time of writing it has completed about $41\%$ of its total step
-budget and no individual run has reached its $2\times10^{9}$ target, so
-\Cref{tab:cleanrl-interim} and \Cref{fig:cleanrl-interim-curves} read every arm at
-$10^{9}$ steps rather than at a finish. They are regenerated from the run folder's records by
-\texttt{analysis/\allowbreak code/\allowbreak make\_\allowbreak interim\_\allowbreak table\_\allowbreak
-and\_\allowbreak plot.py}; when the seeds finish, that script's reading step moves to
-$2\times10^{9}$ and the table and figures are replaced in place.
-
-
 
 \clearpage
 
