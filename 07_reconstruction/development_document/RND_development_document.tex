@@ -8758,11 +8758,13 @@ it changes.
 \toprule
 \textbf{Arm} & \textbf{Seeds} & \textbf{Mean $\pm$ s.e.} $\uparrow$ & \textbf{Median} & \textbf{Best seed} \\
 \midrule
-Arm 1 original & 18 & 6788.4 $\pm$ 794.5 & 6928.5 & 13494.0 \\
+Arm 1 original & 19 & 6682.7 $\pm$ 758.9 & 6852.5 & 13494.0 \\
 Arm 2 no RND clip & 17 & 6799.0 $\pm$ 618.8 & 6852.0 & 10951.5 \\
 Arm 3 full batch & 18 & \textbf{7419.9 $\pm$ 725.3} & 7080.0 & 14491.0 \\
 Arm 4 shallower & 22 & 5886.4 $\pm$ 581.6 & 6385.5 & 11230.5 \\
-Arm 5 all three & 18 & \underline{7218.8 $\pm$ 563.8} & 7045.5 & 12350.0 \\
+Arm 5 all three & 19 & \underline{7210.6 $\pm$ 533.4} & 7053.0 & 12350.0 \\
+\midrule
+CleanRL published & 1 & 4759.0 & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{Extrinsic reward at $10^{9}$ environment steps, half of each run's $2\times10^{9}$ target,
@@ -8771,8 +8773,12 @@ finished episodes; the seeds column counts the runs that had reached $10^{9}$ st
 reading, and the mean, its standard error, the median and the best seed are taken across those runs.
 Logging is every $200$ policy updates, or $3{,}276{,}800$ steps, so no row falls exactly on $10^{9}$
 and the row used is the last at or before it. Bold marks the highest mean and underline the second
-highest, but the five arms lie within about two standard errors of one another and the ordering
-should not be read as a result --- see the discussion below.}
+highest among the arms. The five arms lie within about two standard errors of one another and the
+ordering should not be read as a result --- see the discussion below. The final row is CleanRL's own
+published run of this file (their benchmark run \texttt{openrlbenchmark/cleanrl/1wm98fjm}, one seed,
+the same $2\times10^{9}$-step configuration), read at the same step and re-averaged over the same
+trailing $200$ episodes, so it is the same quantity rather than a differently smoothed one. It is a
+reference rather than an arm, hence the separate block and the single seed with no spread.}
 \label{tab:cleanrl-interim}
 \end{table}
 
@@ -8784,7 +8790,13 @@ that arm's seeds with a shaded standard error. \textbf{A curve is drawn only whi
 its seeds have reached that step}, and the lower panel gives the seed count behind every point, so the
 truncation is visible rather than implied: past roughly $1.0\times10^{9}$ steps the count falls from
 about twenty to five and the curves become correspondingly noisy. The dashed vertical line marks the
-step \Cref{tab:cleanrl-interim} reads, so the table and the figure are the same measurement.}
+step \Cref{tab:cleanrl-interim} reads, so the table and the figure are the same measurement.
+\textbf{The black dashed curve is CleanRL's own published run} of this file --- their benchmark run
+\texttt{openrlbenchmark/cleanrl/1wm98fjm}, a single seed, the same configuration this campaign
+reproduces. Their per-episode returns are re-averaged here over a trailing $200$ episodes, the window
+this project's trainer uses, rather than the $20$ they log, so the reference and the arms are the same
+quantity and any gap between them is performance and not smoothing. Their run continues past the
+right edge of this axis to $2\times10^{9}$ steps, ending at $7{,}050$.}
 \label{fig:cleanrl-interim-curves}
 \end{figure}
 
@@ -8800,10 +8812,17 @@ Three things in these artifacts are worth stating, and only the third is about t
   much reward it eventually collects, and by $10^{9}$ steps almost every seed in every arm has found
   it. An early separation on a sparse-reward task is a separation in first-reward timing.
 \item \textbf{The arms are not separated at $10^{9}$ steps.} The spread between the highest and lowest
-  mean is $1{,}533$ while the standard errors are $560$ to $795$, so every pair overlaps. The one
+  mean is $1{,}533$ while the standard errors are $533$ to $759$, so every pair overlaps. The one
   difference that does stand out is not in the mean: arm~5's worst seed scores $4{,}584$ while arms~1
   and~4 each have a seed at $400$, one room's worth. Whether that is a real difference in reliability
-  or the luck of eighteen seeds is exactly what the remaining half of the campaign is for.
+  or the luck of nineteen seeds is exactly what the remaining half of the campaign is for.
+\item \textbf{Every arm is ahead of CleanRL's published run at this step}, which sits at $4{,}759$
+  against $5{,}886$ to $7{,}420$. Two things keep that from being a claim of improvement. It is one
+  seed against seventeen to twenty-two, and \Cref{fig:cleanrl-interim-curves} shows why that matters:
+  the reference is flat from about $0.3\times10^{9}$ to $1.0\times10^{9}$ steps and then climbs
+  steeply, so reading it at $10^{9}$ catches it immediately before its own jump. By the end of its
+  run it reaches $7{,}050$, inside the range the arms already occupy. The honest reading is that this
+  reproduction tracks CleanRL's, not that it beats it.
 \end{enumerate}
 
 % --------------------------------------------------------------------------------------------

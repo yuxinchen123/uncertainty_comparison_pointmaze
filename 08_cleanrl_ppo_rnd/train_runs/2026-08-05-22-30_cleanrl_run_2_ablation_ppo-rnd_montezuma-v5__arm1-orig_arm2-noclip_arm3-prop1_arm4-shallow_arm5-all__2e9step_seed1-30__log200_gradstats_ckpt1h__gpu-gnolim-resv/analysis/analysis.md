@@ -28,15 +28,41 @@ episodes, which is what the trainer logs and the only performance number it reco
 
 | arm | seeds | mean ± s.e. | median | worst seed | best seed |
 |---|---|---|---|---|---|
-| Arm 1 original | 18 | 6788.4 ± 794.5 | 6928.5 | 400.0 | 13494.0 |
+| Arm 1 original | 19 | 6682.7 ± 758.9 | 6852.5 | 400.0 | 13494.0 |
 | Arm 2 no RND clip | 17 | 6799.0 ± 618.8 | 6852.0 | 1773.0 | 10951.5 |
 | Arm 3 full batch | 18 | **7419.9 ± 725.3** | 7080.0 | 469.0 | 14491.0 |
 | Arm 4 shallower | 22 | 5886.4 ± 581.6 | 6385.5 | 400.0 | 11230.5 |
-| Arm 5 all three | 18 | <u>7218.8 ± 563.8</u> | 7045.5 | **4584.0** | 12350.0 |
+| Arm 5 all three | 19 | <u>7210.6 ± 533.4</u> | 7053.0 | **4584.0** | 12350.0 |
+| CleanRL published, 1 seed | 1 | 4759.0 | — | — | — |
 
 Bold marks the best value in a column and underline the second best. The seeds column counts the runs
 that had reached 1e9 at the time of reading; it differs across arms only because of node speed, which
 is independent of the arm.
+
+## The published reference
+
+CleanRL's own run of this file is drawn beside the arms and tabulated below them: their benchmark run
+`openrlbenchmark/cleanrl/1wm98fjm` (`MontezumaRevenge-v5__ppo_rnd__1__1657607857`), one seed, pulled
+from wandb into `data/reference/cleanrl_ppo_rnd_montezuma.json`. Its configuration is the one this
+campaign reproduces, checked field by field: 2,000,000,000 total steps, 128 environments, 128 rollout
+steps, update proportion 0.25, max gradient norm 0.5, learning rate 1e-4, intrinsic and extrinsic
+coefficients 1 and 2.
+
+**Their per-episode returns are re-averaged over a trailing 200 episodes here.** They log a trailing
+mean over 20; this project logs 200. Without re-averaging, the reference would look noisier than the
+arms for a reason that has nothing to do with performance. Their wandb history carries one
+`charts/episodic_return` row per finished episode — the same event this project records — so the
+re-average is exact rather than an approximation.
+
+The reference reads **4,759 at 1e9 steps** and **7,050 at the end of its own 2e9-step run**. Every arm
+is above it at 1e9, and two things stop that being a claim of improvement: it is one seed against 17
+to 22, and the curve shows the reference flat from about 0.3e9 to 1.0e9 and then climbing steeply, so
+1e9 catches it immediately before its own jump. By its end it is inside the range the arms occupy.
+The honest reading is that this reproduction tracks CleanRL's.
+
+The original RND paper is not plotted. OpenAI's release is code only, so the paper's Figure 7 would
+have to be digitised off the page, and CleanRL's run is both a closer match to what is being
+reproduced here and available as real data.
 
 ## The plot
 
