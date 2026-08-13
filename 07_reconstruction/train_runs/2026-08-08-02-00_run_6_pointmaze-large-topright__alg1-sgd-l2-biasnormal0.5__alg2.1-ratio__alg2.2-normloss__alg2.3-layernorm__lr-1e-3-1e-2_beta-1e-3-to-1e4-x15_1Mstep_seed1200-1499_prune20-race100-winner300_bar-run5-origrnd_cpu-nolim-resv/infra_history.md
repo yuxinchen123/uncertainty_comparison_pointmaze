@@ -77,3 +77,17 @@ ones never run.
   AllocCPUS 158 = 79 workers x 2 verified. r6e4m12 (30 cpu) pended briefly on QOSMaxCpuPerUser.
   No jaguar03 (user's instruction). Monitor loop 6536758 (nolim); 20-min cron f1ad63c0 armed.
 - Total own fleet at launch: ~449 worker slots running + 30 pending, vs 900 runs.
+
+## 2026-08-13 13:03-13:20 — ext4m fleet swap to the final optimized design
+
+- Trigger: checkpoint coverage 444/450 (98.7%) at 13:03, inside the 10-hour research budget.
+- Cancelled the 39 first/second-wave job ids from the owner id file (monitor 6536758 kept);
+  requeue re-pended all 450 markers (446 resume from their 0.5M checkpoints under the
+  optimized trainer, bit-exact; ~6 checkpoint-less stragglers restart, ~58 CPU-hours lost).
+- Resubmitted 22 jobs / 600 slots (ledger released the cancelled slots, budget exactly spent):
+  FINAL design — loop workers for the full 96 h walltime (claim guard 12 h, trainer suspend at
+  the wall), throughput-research switches applied (APPLIED_CHANGES.md: foreach polyak +
+  torch reward combine + interop=1, −3.2/−3.3% wall), cpu + nolim only, NO puma01, NO
+  reservation, 5 unpinned pending ladder jobs as replenishment.
+- The 1M sweep reached SWEEP_COMPLETE earlier today (11:03 tick); final Table 60/Figure 18
+  committed as e1bc1f0.
