@@ -63,3 +63,17 @@ run 6's claimed work, and resubmit at full width. Executed in order:
 Cost accepted by the user for the immediate width: the 440 addendum in-flight runs (up to ~18 h
 each) and 172 run-6 runs (~2 h each) were killed; the run-6 ones re-run from scratch, the addendum
 ones never run.
+
+## 2026-08-13 02:36-02:55 — ext4m launch (the 4M extension sweep)
+
+- Queue built: sweep `2026-08-13-02-36_run6ext4m`, 900 markers (3 configurations x 300 seeds x
+  4M steps, seeds 1500-1799, resumable via 0.5M-step checkpoints; design slurm/EXT4M_DESIGN.md).
+- Launch gates: 6 queue-convention tests + 4 checkpoint tests incl. the full suspend -> resume ->
+  auto-delete -> complete lifecycle on real trainings; all passed. Launch commits a4a0da4+3476207.
+- Canary 6536743 (8 workers, bigcat01): RUNNING, AllocCPUS==8, 8 claims across all three
+  configurations, sstat showed CPU accumulating (trainer stdout is srun-buffered — not a stall).
+- Full submission 6536744-6536757: 12 more cpu jobs (affogato02, bigcat02-06), 1 nolim
+  (heartpiece 20), and the puma01 reservation job 6536757 at the NEW 2-CPUs-per-worker shape —
+  AllocCPUS 158 = 79 workers x 2 verified. r6e4m12 (30 cpu) pended briefly on QOSMaxCpuPerUser.
+  No jaguar03 (user's instruction). Monitor loop 6536758 (nolim); 20-min cron f1ad63c0 armed.
+- Total own fleet at launch: ~449 worker slots running + 30 pending, vs 900 runs.

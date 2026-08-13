@@ -6628,7 +6628,13 @@ $> 5$, run 5's definition). The reference row is final at $n = 300$; an arm read
 running'' has no configuration with five completed seeds yet, and its $n$ counts every seed
 finished so far across its 30 configurations. Auto-generated from the live records by
 \texttt{analysis/\allowbreak code/\allowbreak make\_\allowbreak run6\_\allowbreak results.py} in
-the run folder; regenerated as the sweep advances.}}
+the run folder; regenerated as the sweep advances.}
+\claudeedit{From 2026-08-13 a second block below a rule carries the 4M-step extension sweep
+(300 fresh seeds each, \texttt{a\_seed} 1500--1799): the run-5 original RND re-run at 4M, the
+best algorithm-2.3 configuration, and the best ground-truth bonus
+$\min(1, 1/\sqrt{n})$ at $\beta = 1$. Its rows appear as each configuration reaches five
+completed seeds, and the two blocks are ranked separately --- a $4\times$ step budget beating a
+$1\times$ budget is not a finding.}}
 \label{tab:trainrun6-results}
 \end{table}
 
@@ -6642,7 +6648,11 @@ train run~5's own $300$-seed records --- the reference, not re-run); each SOLID 
 algorithm arm at its best configuration so far, mean over completed seeds with a $\pm 1$
 standard-error band, the legend naming the arm's learning rate, bonus weight and seed count. Until
 an arm has five completed seeds it contributes no line. Same generator as
-Table~\ref{tab:trainrun6-results}; regenerated as the sweep advances.}}
+Table~\ref{tab:trainrun6-results}; regenerated as the sweep advances.}
+\claudeedit{The 4M-step extension lines join the figure as their configurations reach five
+completed seeds, extending the horizontal axis to $4 \times 10^{6}$: the run-5 original RND at
+4M as a BLACK SOLID line (against its 1M dashed reference), algorithm 2.3 at 4M dash-dotted in
+the arm's color, and the ground-truth bonus $\min(1, 1/\sqrt{n})$ at 4M in vermilion.}}
 \label{fig:trainrun6-curve}
 \end{figure}
 \claudecomment{Run folder:
