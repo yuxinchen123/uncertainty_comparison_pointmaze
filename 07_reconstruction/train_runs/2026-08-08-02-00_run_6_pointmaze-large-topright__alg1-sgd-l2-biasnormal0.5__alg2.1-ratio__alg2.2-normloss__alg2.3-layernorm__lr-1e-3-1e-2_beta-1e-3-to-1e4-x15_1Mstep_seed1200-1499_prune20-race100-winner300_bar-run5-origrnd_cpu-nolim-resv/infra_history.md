@@ -100,3 +100,9 @@ ones never run.
   the ext4m scripts from the working tree (git history keeps them), marked the SWEEPS.md row.
 - Built sweep 2026-08-13-14-00_run6ext96h: 900 fresh markers, 10M-step cap, 96-hour
   single-attempt runs (design slurm/EXT96H_DESIGN.md). Gates: 7 + 2 tests passed.
+
+## 2026-08-13 14:00-14:2x — ext96h launch
+- Canary 6536900 (8 workers, bigcat01): RUNNING, AllocCPUS 8==8, 8 claims, 96h-single-attempt
+  mode confirmed (job ends 2026-08-17T14:01). Full submission: 21 jobs / 592 slots (ledger:
+  600 total with the canary, budget exactly spent; nolim walltime correctly capped to
+  4-00:00:00 by the 96-hour design rule). Monitor loop 6536922. Launch commit 6452ddd.
