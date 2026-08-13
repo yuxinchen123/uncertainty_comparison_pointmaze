@@ -21,14 +21,20 @@ runs left to claim.
 
 ## What is DIFFERENT from the 1M sweep — please read
 
-1. **Runs are resumable.** Each run writes a model checkpoint every 0.5M steps. When a worker's
-   job has too little walltime left for the next 0.5M-step chunk, the trainer exits with code 3
-   and the worker moves the marker **back to pending/** — a log line like
-   `rc=3 ... -> pending` is NORMAL operation (a suspended run waiting for its next claimer),
-   not a failure. Only `-> failed` lines are problems.
-2. **A claim needs only 12 h of remaining walltime** (one chunk), not a whole run — the guard
-   is set in the worker; you do not need to configure anything.
-3. **After your first job of any new shape starts**, check `sacct -j <id> -X -o JobID,AllocCPUS`
+1. **Workers are ONE-SHOT.** Each worker claims exactly one 4M run, finishes it, and exits; the
+   job ends when all its workers are done (~60–76 h, inside the 96 h cpu walltime). Nothing to
+   configure — but expect your jobs to END on their own after roughly three days; that is
+   normal, not a crash. Some of the jobs the launcher submits are UNPINNED and sit PENDING in
+   the Slurm queue on purpose: they are the replacement ladder and start as nodes free.
+2. **Your share of the workload is 300 of the 900 runs** (the owner takes 600). The launcher
+   enforces this through a slots ledger next to your id file
+   (`ext4m_slots_<sweep_id>_$USER.txt`) — one `jobid ntasks` line per submission. Re-running
+   the launcher never exceeds your share; if it prints `budget remaining 0`, your share is
+   fully queued and you are done submitting.
+3. **Runs are resumable.** Each run writes a model checkpoint every 0.5M steps; a rare log line
+   `rc=3 ... -> pending` is a run suspended at a checkpoint waiting for a fresh claimer (a
+   safety net), not a failure. Only `-> failed` lines are problems.
+4. **After your first job of any new shape starts**, check `sacct -j <id> -X -o JobID,AllocCPUS`
    shows AllocCPUS == the ntasks the plan printed (as before).
 
 ## What to watch

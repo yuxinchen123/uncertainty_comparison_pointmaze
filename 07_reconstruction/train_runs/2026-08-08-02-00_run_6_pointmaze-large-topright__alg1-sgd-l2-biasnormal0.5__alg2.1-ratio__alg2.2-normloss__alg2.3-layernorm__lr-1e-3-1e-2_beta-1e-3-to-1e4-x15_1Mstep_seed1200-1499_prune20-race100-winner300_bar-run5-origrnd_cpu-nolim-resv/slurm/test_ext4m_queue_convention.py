@@ -91,3 +91,13 @@ def test_seed_outermost_id_math():
         for pos in range(3):
             assert seed_index * 3 + pos == seed_index * len(ext.CONFIGS) + pos
     assert (ext.RUN_TOTAL - 1) == 299 * 3 + 2
+
+
+def test_share_budget_math():
+    """The workload-share cap: non-cancelled ledger slots consume the share; cancelled release."""
+    import ext4m_plan_jobs as pj
+    rows = [("101", 32), ("102", 30), ("103", 30)]
+    assert pj.budget_remaining(rows, set(), 600) == 508
+    assert pj.budget_remaining(rows, {"102"}, 600) == 538       # cancelled job's slots return
+    assert pj.budget_remaining(rows, set(), 60) == 0            # never negative
+    assert pj.budget_remaining([], set(), 300) == 300

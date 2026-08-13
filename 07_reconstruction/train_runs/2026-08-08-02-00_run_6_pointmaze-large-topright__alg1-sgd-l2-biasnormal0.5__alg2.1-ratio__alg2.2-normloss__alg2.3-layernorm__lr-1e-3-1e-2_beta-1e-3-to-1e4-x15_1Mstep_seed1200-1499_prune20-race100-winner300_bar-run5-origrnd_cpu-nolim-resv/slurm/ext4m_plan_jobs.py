@@ -1,28 +1,29 @@
 #!/usr/bin/env python
-"""Size and submit the worker jobs of the ext4m sweep: cpu -> nolim -> the owner's reservation on
-puma01 ONLY (no jaguar03) — the user's submission order for this sweep.
+"""Size and submit the ONE-SHOT worker jobs of the ext4m sweep: cpu -> nolim, NO reservation
+(user rule 2026-08-13: the reservation is not used for this sweep).
 
-The cpu/nolim sizing is the run-6 plan_jobs.py logic unchanged (per-node shapes from live scontrol
-numbers, the two-reading pool-room guard, the socket spread, the queue-depth guard). New here:
+Every worker claims exactly one 4M run and the job ends when all its workers finish, so each
+job's slots translate one-to-one into runs. Replenishment is a LADDER OF PENDING JOBS: beyond
+the jobs that can start now on free nodes, unpinned filler jobs are queued that wait for the
+big nodes to free as the running wave ends (~60-76 h per run vs the 96 h cpu walltime).
 
-- a RESERVATION bucket after the open pools (owner only): puma01 at the 2-CPUs-per-worker shape —
-  `--ntasks=<free//2> --cpus-per-task=2 --ntasks-per-core=2` with 3000 MB per worker — per the
-  2026-08-13 addition to the shared uva-submit-cpu-sweep skill (1-thread packing ran puma01 at
-  half speed and broke the walltime guard; one full core per worker recovers it). jaguar03 is
-  excluded by the user's instruction. The reservation name is discovered live, never hardcoded.
-- sentinel SWEEP4M_COMPLETE stops all planning.
+WORKLOAD SHARE CAP. Each submitter owns a fixed share of the 900 runs — the owner 600 (2/3),
+a collaborator 300 — enforced through an append-only slots ledger next to the id file
+(ext4m_slots_<sweep>_<user>.txt, one "jobid ntasks" line per submitted job). Because workers
+are one-shot, the sum of a submitter's non-cancelled ledger slots IS the number of runs their
+jobs will consume; planning stops when that sum reaches the share. Cancelled jobs' slots are
+released back to the budget (their claims re-pend).
 
 Usage:
   python ext4m_plan_jobs.py --sweep_id <id>            # print the plan
   python ext4m_plan_jobs.py --sweep_id <id> --submit   # print AND submit, appending ids
   python ext4m_plan_jobs.py --sweep_id <id> --submit --script <collab .slurm> --jobname <prefix> \
-                            --idfile <for_collaborator/...>   # collaborator form (open pools only)
+                            --idfile <for_collaborator/...>   # collaborator form
 """
 import argparse
 import fcntl
 import getpass
 import os
-import re
 import subprocess
 import sys
 import time
@@ -30,72 +31,56 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 RUN_DIR = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-# the run-6 sizing machinery is reused as a library; only the buckets and defaults differ
+# the run-6 sizing machinery is reused as a library; only the buckets and caps differ
 from plan_jobs import (POOLS, HEADROOM, MIN_TASKS, candidate_nodes, pool_room,  # noqa: E402
-                       reserved_nodes, walltime_for, partition_time_limit,
-                       next_maintenance_start, _to_hours, _fields)
+                       reserved_nodes, walltime_for)
 
-RESERVATION_NODE = "puma01"       # the ONLY reserved node this sweep uses (no jaguar03)
-RESERVATION_CPUS_PER_TASK = 2     # one full physical core per worker (skill rule 2026-08-13)
-RESERVATION_MEM_PER_TASK_MB = 3000
 SENTINEL = os.path.join(RUN_DIR, "SWEEP4M_COMPLETE")
+# each submitter's share of the 900 runs (one-shot workers: slots == runs)
+SHARE = {"sl5nw": 600}
+DEFAULT_SHARE = 300            # any collaborator
+FILLER_NTASKS = 30             # unpinned pending jobs; schedule on the >=30-core class as it frees
+FILLER_MEM_MB = FILLER_NTASKS * 2048
 
 
-def my_reservation():
-    """(name, end_epoch) of this user's active reservation covering puma01, or (None, None)."""
-    out = subprocess.run(["scontrol", "show", "reservation", "--oneliner"],
+def ledger_path(idfile, sweep_id):
+    """The slots ledger next to this submitter's id file."""
+    return os.path.join(os.path.dirname(idfile),
+                        f"ext4m_slots_{sweep_id}_{getpass.getuser()}.txt")
+
+
+def read_ledger(path):
+    """[(jobid, ntasks)] rows of the ledger, or [] when it does not exist."""
+    if not os.path.exists(path):
+        return []
+    rows = []
+    with open(path) as fh:
+        for line in fh:
+            jid, n = line.split()
+            rows.append((jid, int(n)))
+    return rows
+
+
+def cancelled_ids(jobids):
+    """The subset of jobids whose sacct state is CANCELLED (their slots return to the budget)."""
+    if not jobids:
+        return set()
+    out = subprocess.run(["sacct", "-j", ",".join(jobids), "-X", "-n", "-o", "JobID,State%20"],
                          capture_output=True, text=True).stdout
-    user = getpass.getuser()
-    for line in out.splitlines():
-        f = _fields(line)
-        if user not in f.get("Users", ""):
-            continue
-        nodes = subprocess.run(["scontrol", "show", "hostnames", f.get("Nodes", "")],
-                               capture_output=True, text=True).stdout.split()
-        if RESERVATION_NODE not in nodes:
-            continue
-        end = time.mktime(time.strptime(f["EndTime"], "%Y-%m-%dT%H:%M:%S"))
-        return f["ReservationName"], end
-    return None, None
+    return {parts[0] for line in out.splitlines()
+            if (parts := line.split()) and len(parts) >= 2 and parts[1].startswith("CANCELLED")}
 
 
-def reservation_job(sweep_id):
-    """The one puma01 reservation job, sized from the node's live free threads, or None."""
-    name, end_epoch = my_reservation()
-    if name is None:
-        print("[reservation] no active reservation covering puma01 for this user; skipping")
-        return None
-    out = subprocess.run(["scontrol", "show", "node", RESERVATION_NODE, "--oneliner"],
-                         capture_output=True, text=True).stdout
-    f = _fields(out.splitlines()[0])
-    free = int(f["CPUEfctv"]) - int(f["CPUAlloc"])
-    ntasks = free // RESERVATION_CPUS_PER_TASK
-    if ntasks < MIN_TASKS:
-        print(f"[reservation] puma01 has only {free} free threads; skipping")
-        return None
-    # walltime: the cpu partition limit, capped by reservation end and any maintenance window
-    limit = partition_time_limit("cpu")
-    hours = _to_hours(limit)
-    res_hours = (end_epoch - time.time() - 1800) / 3600
-    maint = next_maintenance_start()
-    if maint is not None:
-        res_hours = min(res_hours, (maint - time.time() - 1800) / 3600)
-    if res_hours < 1:
-        print("[reservation] under an hour of reservation left; skipping")
-        return None
-    hours = min(hours, int(res_hours))
-    days, rem = divmod(int(hours), 24)
-    walltime = f"{days}-{rem:02d}:00:00"
-    print(f"[reservation] {name} on {RESERVATION_NODE}: {free} free threads -> {ntasks} workers "
-          f"x {RESERVATION_CPUS_PER_TASK} cpus; --time {walltime}")
-    return {"partition": "cpu", "node": RESERVATION_NODE, "ntasks": ntasks,
-            "cpus_per_task": RESERVATION_CPUS_PER_TASK,
-            "mem_mb": ntasks * RESERVATION_MEM_PER_TASK_MB, "walltime": walltime,
-            "ntasks_per_socket": None, "ntasks_per_core": 2, "reservation": name}
+def budget_remaining(ledger_rows, cancelled, share):
+    """Runs this submitter may still queue: share minus non-cancelled ledger slots.
+    before: share=600, ledger=[('101', 32), ('102', 30)], cancelled={'102'}
+    after:  600 - 32 = 568."""
+    used = sum(n for jid, n in ledger_rows if jid not in cancelled)
+    return max(0, share - used)
 
 
 def open_pool_plan():
-    """The cpu + nolim plan (run-6 logic), excluding every reserved node."""
+    """The cpu + nolim start-now plan (run-6 logic), excluding every reserved node."""
     excluded = reserved_nodes()
     plan = []
     for partition, (qos, cap) in POOLS.items():
@@ -113,8 +98,8 @@ def open_pool_plan():
                 per_socket = (-(-n // node["sockets"])
                               if node["sockets"] > 1 and node["idle"] and first_on_node else None)
                 plan.append({"partition": partition, "node": node["name"], "ntasks": n,
-                             "cpus_per_task": 1, "mem_mb": n * node["mem"], "walltime": walltime,
-                             "ntasks_per_socket": per_socket, "reservation": None,
+                             "mem_mb": n * node["mem"], "walltime": walltime,
+                             "ntasks_per_socket": per_socket,
                              "ntasks_per_core": 2 if node["threads_per_core"] >= 2 else None})
                 free -= n
                 room -= n
@@ -123,20 +108,31 @@ def open_pool_plan():
     return plan
 
 
+def filler_jobs(n_slots, walltime):
+    """Unpinned pending jobs covering n_slots runs — the replenishment ladder. They wait in the
+    Slurm queue (accruing age) and start on whichever >=30-core cpu node frees first."""
+    jobs = []
+    while n_slots >= MIN_TASKS:
+        n = min(FILLER_NTASKS, n_slots)
+        jobs.append({"partition": "cpu", "node": None, "ntasks": n, "mem_mb": n * 2048,
+                     "walltime": walltime, "ntasks_per_socket": None, "ntasks_per_core": 2})
+        n_slots -= n
+    return jobs
+
+
 def sbatch_argv(job, sweep_id, jobname, script, comment):
-    """The full sbatch command line for one planned job."""
+    """The full sbatch command line for one planned job (no --nodelist for unpinned fillers)."""
     argv = ["sbatch", "--parsable", f"--job-name={jobname}", f"--comment={comment}",
-            f"--partition={job['partition']}", f"--nodelist={job['node']}", "--nodes=1",
-            f"--ntasks={job['ntasks']}", f"--cpus-per-task={job['cpus_per_task']}",
+            f"--partition={job['partition']}", "--nodes=1",
+            f"--ntasks={job['ntasks']}", "--cpus-per-task=1",
             f"--mem={job['mem_mb']}M", f"--time={job['walltime']}",
             f"--export=ALL,SWEEP_ID={sweep_id}", script]
+    if job.get("node"):
+        argv.insert(-1, f"--nodelist={job['node']}")
     if job["ntasks_per_core"]:
         argv.insert(-1, f"--ntasks-per-core={job['ntasks_per_core']}")
     if job.get("ntasks_per_socket"):
         argv.insert(-1, f"--ntasks-per-socket={job['ntasks_per_socket']}")
-    if job.get("reservation"):
-        argv.insert(-1, f"--reservation={job['reservation']}")
-        argv.insert(-1, "--qos=csresnolim")
     return argv
 
 
@@ -150,30 +146,36 @@ def main():
     args = p.parse_args()
     if os.path.exists(SENTINEL):
         sys.exit("SWEEP4M_COMPLETE exists — this sweep is finished; not planning any jobs")
+    idfile = args.idfile or os.path.join(
+        HERE, f"submitted_jobids_{args.sweep_id}_{getpass.getuser()}.txt")
+    ledger = ledger_path(idfile, args.sweep_id)
+    rows = read_ledger(ledger)
+    budget = budget_remaining(rows, cancelled_ids([j for j, _ in rows]),
+                              SHARE.get(getpass.getuser(), DEFAULT_SHARE))
+    pending_dir = os.path.join(RUN_DIR, "queue", args.sweep_id, "pending")
+    left = len(os.listdir(pending_dir)) if os.path.isdir(pending_dir) else 0
+    print(f"[share] budget remaining {budget} runs (ledger {ledger}); queue has {left} pending")
+
+    # start-now jobs on free nodes, then the pending filler ladder, both under budget AND queue
     plan = open_pool_plan()
-    # the reservation bucket comes LAST (open pools first per the capacity-ordering rule) and only
-    # for the owner — a collaborator has no access to the reservation
-    if getpass.getuser() == "sl5nw":
-        res = reservation_job(args.sweep_id)
-        if res is not None:
-            plan.append(res)
-    # queue-depth guard: never more worker slots than runs left to claim
-    pending = os.path.join(RUN_DIR, "queue", args.sweep_id, "pending")
-    left = len(os.listdir(pending)) if os.path.isdir(pending) else 0
+    allow = min(budget, left)
     trimmed, slots = [], 0
     for job in plan:
-        if slots >= left:
+        if slots + job["ntasks"] > allow:
+            job["ntasks"] = allow - slots          # shrink the last job to fit the cap exactly
+            job["mem_mb"] = job["ntasks"] * 2048
+        if job["ntasks"] < MIN_TASKS:
             break
         trimmed.append(job)
         slots += job["ntasks"]
-    if len(trimmed) < len(plan):
-        print(f"[guard] {left} runs left to claim: dropping {len(plan) - len(trimmed)} of "
-              f"{len(plan)} planned jobs so workers never outnumber the work")
     plan = trimmed
-    print(f"\n[plan] {len(plan)} jobs, {sum(j['ntasks'] for j in plan)} worker slots\n")
+    walltime, _ = walltime_for("cpu")
+    plan += filler_jobs(allow - slots, walltime)
+    total = sum(j["ntasks"] for j in plan)
+    n_fill = sum(1 for j in plan if j.get("node") is None)
+    print(f"\n[plan] {len(plan)} jobs ({n_fill} unpinned pending fillers), {total} worker slots "
+          f"= runs\n")
     comment = f"{args.sweep_id}_{getpass.getuser()}"
-    idfile = args.idfile or os.path.join(
-        HERE, f"submitted_jobids_{args.sweep_id}_{getpass.getuser()}.txt")
     for i, job in enumerate(plan, 1):
         argv = sbatch_argv(job, args.sweep_id, f"{args.jobname}{i}", args.script, comment)
         print(" ".join(argv))
@@ -184,12 +186,13 @@ def main():
         if not jid.isdigit():
             print(f"  [FAILED] {out.stderr.strip()}")
             continue
-        # append the id the INSTANT sbatch returns it (only-cancel-your-own-ids rule)
-        with open(idfile, "a") as fh:
-            fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
-            fh.write(jid + "\n")
-            fh.flush()
-            fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+        # append id file AND slots ledger the INSTANT sbatch returns (cancel-own-ids + share cap)
+        for path, line in ((idfile, jid), (ledger, f"{jid} {job['ntasks']}")):
+            with open(path, "a") as fh:
+                fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+                fh.write(line + "\n")
+                fh.flush()
+                fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
         print(f"  -> {jid}")
         if i % 10 == 0:
             print("  [throttle] 10 submitted; sleeping 30 s")

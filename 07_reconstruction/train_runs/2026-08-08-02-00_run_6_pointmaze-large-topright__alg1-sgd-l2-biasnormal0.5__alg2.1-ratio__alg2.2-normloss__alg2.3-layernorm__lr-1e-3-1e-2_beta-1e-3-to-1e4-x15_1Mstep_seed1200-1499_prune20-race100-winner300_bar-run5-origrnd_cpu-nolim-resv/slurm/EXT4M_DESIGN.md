@@ -85,8 +85,17 @@ DELETED (the durable record is the JSON; final models are not kept). Records: 4M
 - No truncation race: all 900 runs go to completion. Sentinel `SWEEP4M_COMPLETE` when
   done == 900.
 - Seed OUTERMOST (seed index i owns ids 3i..3i+2) as everywhere in this project.
-- Submission: cpu → nolim → the owner's reservation, puma01 ONLY (no jaguar03), puma01 at the
-  new 2-CPUs-per-worker shape (79×2, `--mem-per-cpu=1500M`) per the 2026-08-13 addition to the
-  shared uva-submit-cpu-sweep skill.
-- Collaborator: cpu + nolim buckets via her own scripts and id file (no reservation access);
-  README_ext4m.md in for_collaborator/ explains the new worker.
+- Submission: cpu → nolim, NO reservation (revised by the user 2026-08-13 03:20, replacing the
+  earlier cpu → nolim → puma01 plan; the first fleet, submitted 02:38 with loop workers and a
+  puma01 reservation job, was cancelled at 03:2x before any checkpoint existed — its ~487
+  claimed runs lost under an hour each and re-pended).
+- ONE-SHOT workers (user rule 2026-08-13): each worker claims exactly one run and exits; the job
+  ends when all its workers finish (srun --wait=0), so every claim owns a full 96-hour cpu
+  walltime and no run straddles a job boundary. The trainer's suspend stays as a safety net.
+  Replenishment is a ladder of unpinned PENDING jobs (`filler` jobs in ext4m_plan_jobs.py) that
+  start as the running wave's nodes free.
+- WORKLOAD SHARES: the owner submits at most 600 runs' worth of slots (2/3), a collaborator 300,
+  enforced by the append-only slots ledger `ext4m_slots_<sweep>_<user>.txt` next to each id file
+  (cancelled jobs' slots return to the budget).
+- Collaborator: cpu + nolim buckets via her own scripts and id file; README_ext4m.md in
+  for_collaborator/ explains the one-shot worker and her 300-run share.
