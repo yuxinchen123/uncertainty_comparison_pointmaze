@@ -128,7 +128,7 @@ EXT96H_GROUPS = {
 }
 # the fixed milestones the 96-hour block reports (the user's choice 2026-08-13): a configuration
 # fills a milestone row once >= MIN_SEEDS of its seeds logged that step
-MILESTONES = [2000000, 4000000, 6000000]
+MILESTONES = [2000000, 4000000, 6000000, 8000000, 10000000]
 
 
 def ext96h_group_of(d):

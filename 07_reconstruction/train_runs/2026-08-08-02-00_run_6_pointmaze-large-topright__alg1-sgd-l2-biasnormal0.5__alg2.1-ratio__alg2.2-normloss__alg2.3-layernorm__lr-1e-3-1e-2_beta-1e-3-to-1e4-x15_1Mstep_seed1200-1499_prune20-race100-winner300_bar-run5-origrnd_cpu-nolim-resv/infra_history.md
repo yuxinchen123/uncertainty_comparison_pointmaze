@@ -106,3 +106,8 @@ ones never run.
   mode confirmed (job ends 2026-08-17T14:01). Full submission: 21 jobs / 592 slots (ledger:
   600 total with the canary, budget exactly spent; nolim walltime correctly capped to
   4-00:00:00 by the 96-hour design rule). Monitor loop 6536922. Launch commit 6452ddd.
+
+## 2026-08-13 14:10 — nolim uncapped to the 10M step cap (user order)
+- ext96h_plan_jobs walltime rule now caps only cpu at 96 h; nolim gets the full partition limit.
+- Cancelled nolim jobs 6536913-15 (62 slots, ~30 min in; own id file), re-pended their 62
+  markers (fresh restarts), resubmitted as 6536924-26 (60 slots, --time=20-00:00:00).

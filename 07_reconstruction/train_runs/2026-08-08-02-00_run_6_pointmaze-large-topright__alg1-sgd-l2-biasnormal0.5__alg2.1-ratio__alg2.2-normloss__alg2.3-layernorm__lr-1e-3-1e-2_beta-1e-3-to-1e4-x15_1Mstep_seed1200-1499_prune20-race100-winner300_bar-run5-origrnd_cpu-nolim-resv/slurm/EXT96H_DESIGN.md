@@ -36,3 +36,13 @@ order (fresh start); its scripts are removed from the working tree (git history 
 launch commits a4a0da4/3476207, research commit ba65848); EXT4M_DESIGN.md stays as the record
 of the superseded design. The seeds are reused — every ext96h run is a fresh attempt at the
 same (configuration, seed) instances.
+
+## Amendment 2026-08-13 14:10 — nolim jobs run to the 10M cap
+
+User rule: only the cpu-partition jobs are bound to 96 hours (their partition MaxTime). The
+nolim jobs get the partition's full walltime (20 days, maintenance-capped) so their runs FINISH
+the 10,000,000-step cap (~7-8 days worst case) and end with `ended_by: "step_cap"`. The three
+launch-wave nolim jobs (62 slots, ~30 min old) were cancelled from the owner id file, their
+markers re-pended (fresh restarts by design), and replaced by jobs 6536924-6536926 (60 slots,
+slurm2/slurm3, --time=20-00:00:00). Milestone rows at 6M+ will therefore come mostly from the
+nolim runs; cpu runs contribute up to their ~4.5-6M walltime reach.

@@ -6634,9 +6634,11 @@ the run folder; regenerated as the sweep advances.}
 algorithm-2.3 configuration, and the best ground-truth bonus $\min(1, 1/\sqrt{n})$ at
 $\beta = 1$, each run one fresh 96-hour attempt (a 10M-step cap no job reaches; the run ends
 complete at its job's walltime, so final steps differ by node speed). These rows report FIXED
-MILESTONES --- one sub-block per 2M / 4M / 6M steps, a row appearing once five seeds of that
-configuration logged the milestone --- and each sub-block is ranked on its own; budgets are
-never compared across blocks.}}
+MILESTONES --- one sub-block per 2M / 4M / 6M / 8M / 10M steps, a row appearing once five
+seeds of that configuration logged the milestone --- and each sub-block is ranked on its own;
+budgets are never compared across blocks. The cpu-partition runs reach roughly 4.5--6M in
+their 96 hours; the later milestones are filled by the nolim-partition runs, which keep the
+full walltime they need to finish the 10M cap.}}
 \label{tab:trainrun6-results}
 \end{table}
 

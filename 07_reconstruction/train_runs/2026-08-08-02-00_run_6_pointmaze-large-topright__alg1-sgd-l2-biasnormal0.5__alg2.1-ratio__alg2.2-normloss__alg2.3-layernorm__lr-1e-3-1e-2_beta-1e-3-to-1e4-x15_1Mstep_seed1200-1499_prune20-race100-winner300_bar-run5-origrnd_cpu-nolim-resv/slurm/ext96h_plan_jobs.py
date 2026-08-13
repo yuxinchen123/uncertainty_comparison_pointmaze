@@ -37,11 +37,13 @@ from plan_jobs import (POOLS, HEADROOM, MIN_TASKS, candidate_nodes, pool_room,  
 
 
 def walltime_96h(partition):
-    """The job --time: exactly 96 hours (the run design — every run is one 96-hour attempt),
-    unless the partition limit or an approaching maintenance window caps it lower (walltime_for
-    already handles both)."""
+    """The job --time per partition. cpu: exactly 96 hours (its MaxTime — runs there end at the
+    wall). nolim: the partition's full limit (user rule 2026-08-13: nolim runs get enough
+    walltime to FINISH the 10M-step cap, ~8 days worst case, ending by step_cap instead of
+    walltime; the one-shot job closes itself when its runs finish). walltime_for already caps
+    both below any approaching maintenance window."""
     limit, why = walltime_for(partition)
-    if _to_hours(limit) > 96:
+    if partition == "cpu" and _to_hours(limit) > 96:
         return "4-00:00:00", f"96-hour run design (partition allows {limit})"
     return limit, why
 
