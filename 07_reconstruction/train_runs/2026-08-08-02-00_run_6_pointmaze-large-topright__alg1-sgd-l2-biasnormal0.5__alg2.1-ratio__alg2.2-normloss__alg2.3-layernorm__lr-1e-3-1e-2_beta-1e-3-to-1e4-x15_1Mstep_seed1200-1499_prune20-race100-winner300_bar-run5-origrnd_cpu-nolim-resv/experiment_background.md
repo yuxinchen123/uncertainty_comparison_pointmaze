@@ -50,3 +50,28 @@ Commit at folder creation: `2cde90d7813969af1241a61117b6880315cf0924`; the launc
 this folder's code) is recorded below when the queue is built.
 
 Launch commit: `5df4463` (queue built 2026-08-08 02:46, sweep_id 2026-08-08-02-46_run6)
+
+## 4M extension sweep (ext4m, added 2026-08-13)
+
+A second sweep in this same folder (nothing about the 1M sweep changed): three configurations x
+300 fresh seeds (`a_seed` 1500–1799) x **4,000,000 steps** = 900 runs, no truncation race, every
+run checkpointed every 0.5M steps and resumable across job walltimes. Full design (checkpoint
+contents, the replay-buffer-tail storage decision, suspend/resume protocol, submission buckets):
+`slurm/EXT4M_DESIGN.md`. The three configurations:
+
+1. run-5 original RND (Adam 10⁻⁴, mse-mean readout, reward norm ON, β=1000) — re-run at 4M;
+2. algorithm 2.3 at its best run-6 configuration (plain SGD lr 0.01, β=30);
+3. the best ground-truth bonus: `gt_position_velocity`, bonus min(1, 1/√n), β=1 (the 66.24 ±
+   1.30 oracle of the writeup's run-5 oracle table).
+
+Trainer `train4m.py` (new file beside train.py), worker/plan/monitor under `slurm/ext4m_*`.
+Results join Table 60 as extra rows and Figure 18 as extra lines (no separate section), generated
+by the same `analysis/code/make_run6_results.py`. Submission cpu → nolim → reservation puma01
+only (no jaguar03), puma01 at 2 CPUs per worker. Collaborator packet:
+`for_collaborator/README_ext4m.md`.
+
+ext4m sweep id: `2026-08-13-02-36_run6ext4m` (queue built 2026-08-13 02:36, 900 markers); the
+launch commit is the commit carrying this line. Launch gates passed before submission: 6 queue-
+convention tests (parameters verbatim against the run-5 and run-3.2.2 markers on disk and
+run-6's build_queue.py) and 4 checkpoint tests including the full suspend → resume →
+auto-delete → complete lifecycle on real trainings (tests/test_train4m_checkpoint.py).

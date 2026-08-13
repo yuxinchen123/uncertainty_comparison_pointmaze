@@ -91,7 +91,9 @@ def load_run5_reference():
 
 
 def load_run6():
-    """{arm: {beta_lr_key: {"scores": [...], "curves": [...]}}} over this run's completed records."""
+    """{arm: {beta_lr_key: {"scores": [...], "curves": [...]}}} over the 1M sweep's completed
+    records (the ext4m sweep shares the data/ tree, so the 4M records are filtered out by their
+    step budget and loaded separately by load_ext4m)."""
     out = {arm: {} for arm in bq.ARMS}
     for sweep_dir in glob.glob(os.path.join(RUN_DIR, "data", "*", "local")):
         for path in glob.glob(os.path.join(sweep_dir, "*.json")):
@@ -101,12 +103,63 @@ def load_run6():
                 continue
             if not d.get("completed", True):
                 continue
+            if int(d.get("total_timesteps", 1000000)) != 1000000:
+                continue
             rows = d.get("train_history") or []
             if not rows:
                 continue
             arm = bq.arm_from_record(d)
             key = f'lr{"%g" % float(d["rnd_lr"])}_b{"%g" % float(d["beta"])}'
             e = out[arm].setdefault(key, {"scores": [], "curves": []})
+            e["scores"].append(rows[-1]["train/mean_extrinsic_reward"])
+            e["curves"].append([[float(r["step"]) for r in rows],
+                                [float(r["train/mean_extrinsic_reward"]) for r in rows]])
+    return out
+
+
+# the ext4m groups in table/plot order: dict key -> (row label, curve label, color, linestyle)
+EXT4M_GROUPS = {
+    "run5-origrnd": (r"run-5 original RND, 4M steps (Adam $10^{-4}$, $\beta{=}1000$)",
+                     "run-5 original RND, 4M ($\\beta$=1000)", "black", "-"),
+    "alg2.3": (r"algorithm 2.3, 4M steps (lr $0.01$, $\beta{=}30$)",
+               "algorithm 2.3, 4M (lr=0.01 $\\beta$=30)", "#CC79A7", "-."),
+    "gt": (r"ground-truth bonus $\min(1,1/\sqrt{n})$, 4M steps ($\beta{=}1$)",
+           "ground-truth bonus, 4M ($\\beta$=1)", "#D55E00", "-"),
+}
+
+
+def ext4m_group_of(d):
+    """Which ext4m group a 4M record belongs to, from its own fields.
+    before: {"algorithm": "gt_position_velocity", ...} / {"rnd_bonus_readout": "mse_mean", ...}
+    after:  "gt" / "run5-origrnd" (everything else in this sweep is algorithm 2.3)."""
+    if d.get("algorithm") == "gt_position_velocity":
+        return "gt"
+    if d.get("rnd_bonus_readout") == "mse_mean":
+        return "run5-origrnd"
+    return "alg2.3"
+
+
+def load_ext4m():
+    """{group: {"scores": [...], "curves": [...]}} over the 4M extension's completed records, or
+    None when the ext4m sweep has not been built yet (pre-launch regenerations are unchanged)."""
+    sweep_dirs = glob.glob(os.path.join(RUN_DIR, "data", "*run6ext4m*", "local"))
+    if not sweep_dirs:
+        return None
+    out = {g: {"scores": [], "curves": []} for g in EXT4M_GROUPS}
+    for sweep_dir in sweep_dirs:
+        for path in glob.glob(os.path.join(sweep_dir, "*.json")):
+            try:
+                d = json.load(open(path))
+            except (ValueError, OSError):
+                continue
+            if not d.get("completed", True):
+                continue
+            if int(d.get("total_timesteps", 0)) != 4000000:
+                continue
+            rows = d.get("train_history") or []
+            if not rows:
+                continue
+            e = out[ext4m_group_of(d)]
             e["scores"].append(rows[-1]["train/mean_extrinsic_reward"])
             e["curves"].append([[float(r["step"]) for r in rows],
                                 [float(r["train/mean_extrinsic_reward"]) for r in rows]])
@@ -128,8 +181,11 @@ def fmt(x, nd=2):
     return "--" if x is None or x != x else f"{x:.{nd}f}"
 
 
-def write_table(ref, run6):
-    """The performance table: reference row + one row per arm (best config or still-running)."""
+def write_table(ref, run6, ext4m):
+    """The performance table: reference row + one row per arm (best config or still-running),
+    then — once the ext4m sweep exists — one row per 4M configuration. The 1M and 4M blocks are
+    ranked separately (bold best / underline second per block): a 4M budget beating a 1M budget
+    is not a finding."""
     n_ref, (m_ref, se_ref) = len(ref["scores"]), mean_se(ref["scores"])
     succ_ref = sum(1 for s in ref["scores"] if s > SUCCESS_THRESHOLD) / n_ref
     rows = [[r"run-5 original RND, Adam $10^{-4}$ ($\beta{=}1000$) --- the frozen bar",
@@ -145,21 +201,32 @@ def write_table(ref, run6):
         succ = sum(1 for s in e["scores"] if s > SUCCESS_THRESHOLD) / len(e["scores"])
         rows.append([f"{ARM_LABEL[arm]} (lr ${lr}$, $\\beta{{=}}{beta}$)",
                      m, se, succ, len(e["scores"])])
-    # bold best / underline second in the mean and succ columns, over rows that have numbers
-    scored = [(i, r[1]) for i, r in enumerate(rows) if r[1] is not None]
-    order = sorted(scored, key=lambda t: t[1], reverse=True)
-    marks = {}
-    if order:
-        marks[order[0][0]] = "bold"
-    if len(order) > 1:
-        marks[order[1][0]] = "under"
-    s_scored = [(i, r[3]) for i, r in enumerate(rows) if r[3] is not None]
-    s_order = sorted(s_scored, key=lambda t: t[1], reverse=True)
-    s_marks = {}
-    if s_order:
-        s_marks[s_order[0][0]] = "bold"
-    if len(s_order) > 1:
-        s_marks[s_order[1][0]] = "under"
+    # the 4M block, appended after the 1M arms (row index >= n_1m ranks separately)
+    n_1m = len(rows)
+    if ext4m is not None:
+        for group, (row_label, _, _, _) in EXT4M_GROUPS.items():
+            e = ext4m[group]
+            if len(e["scores"]) < MIN_SEEDS:
+                rows.append([f"{row_label} --- still running", None, None, None,
+                             len(e["scores"])])
+                continue
+            m, se = mean_se(e["scores"])
+            succ = sum(1 for s in e["scores"] if s > SUCCESS_THRESHOLD) / len(e["scores"])
+            rows.append([row_label, m, se, succ, len(e["scores"])])
+
+    def block_marks(col):
+        """{row index: 'bold'|'under'} per metric column, ranked within the 1M and 4M blocks."""
+        marks = {}
+        for lo, hi in ((0, n_1m), (n_1m, len(rows))):
+            order = sorted(((i, rows[i][col]) for i in range(lo, hi)
+                            if rows[i][col] is not None), key=lambda t: t[1], reverse=True)
+            if order:
+                marks[order[0][0]] = "bold"
+            if len(order) > 1:
+                marks[order[1][0]] = "under"
+        return marks
+
+    marks, s_marks = block_marks(1), block_marks(3)
 
     def tex(v, mark):
         return {"bold": f"\\textbf{{{v}}}", "under": f"\\underline{{{v}}}"}.get(mark, v)
@@ -168,7 +235,7 @@ def write_table(ref, run6):
              r"\toprule",
              r"\textbf{Arm} & $\bar R$ & $\mathrm{SE}$ & succ. & $n$ \\", r"\midrule"]
     for i, r in enumerate(rows):
-        if i == 1:
+        if i in (1, n_1m):
             lines.append(r"\midrule")
         lines.append(f"{r[0]} & {tex(fmt(r[1]), marks.get(i))} & {fmt(r[2])} & "
                      f"{tex(fmt(r[3], 2), s_marks.get(i))} & {r[4]} \\\\")
@@ -191,8 +258,9 @@ def curve_band(curves):
     return np.array(grid), mean, se, mat.shape[0]
 
 
-def write_curve(ref, run6):
-    """The reward-over-training figure: the reference black dashed, the four arms solid colors."""
+def write_curve(ref, run6, ext4m):
+    """The reward-over-training figure: the reference black dashed, the four 1M arms solid
+    colors, and — once they have data — the three 4M lines (extending the x axis to 4e6)."""
     fig, ax = plt.subplots(figsize=(6, 4))
     band = curve_band(ref["curves"])
     if band is not None:
@@ -212,6 +280,18 @@ def write_curve(ref, run6):
         ax.plot(grid, mean, color=ARM_COLOR[arm], linewidth=1.8,
                 label=f"{ARM_LABEL[arm]} lr={lr} $\\beta$={beta} (n={n})")
         ax.fill_between(grid, mean - se, mean + se, alpha=0.15, color=ARM_COLOR[arm])
+    if ext4m is not None:
+        for group, (_, curve_label, color, linestyle) in EXT4M_GROUPS.items():
+            e = ext4m[group]
+            if len(e["scores"]) < MIN_SEEDS:
+                continue
+            band = curve_band(e["curves"])
+            if band is None:
+                continue
+            grid, mean, se, n = band
+            ax.plot(grid, mean, color=color, linestyle=linestyle, linewidth=1.8,
+                    label=f"{curve_label} (n={n})")
+            ax.fill_between(grid, mean - se, mean + se, alpha=0.15, color=color)
     ax.set_xlabel("environment steps")
     ax.set_ylabel("training-episode extrinsic reward")
     ax.set_title("Train run 6 — the four algorithms vs the run-5 original RND\n(mean $\\pm$ SE)")
@@ -225,10 +305,13 @@ def write_curve(ref, run6):
 def main():
     ref = load_run5_reference()
     run6 = load_run6()
+    ext4m = load_ext4m()
     n6 = sum(len(e["scores"]) for a in run6.values() for e in a.values())
-    print(f"reference: {len(ref['scores'])} run-5 seeds; run-6 completed records: {n6}")
-    write_table(ref, run6)
-    write_curve(ref, run6)
+    n4 = 0 if ext4m is None else sum(len(e["scores"]) for e in ext4m.values())
+    print(f"reference: {len(ref['scores'])} run-5 seeds; run-6 completed records: {n6}; "
+          f"ext4m completed records: {n4}")
+    write_table(ref, run6, ext4m)
+    write_curve(ref, run6, ext4m)
     print(f"wrote reward_table.tex, reward_curve.pdf/.png into {PLOTS}")
 
 
