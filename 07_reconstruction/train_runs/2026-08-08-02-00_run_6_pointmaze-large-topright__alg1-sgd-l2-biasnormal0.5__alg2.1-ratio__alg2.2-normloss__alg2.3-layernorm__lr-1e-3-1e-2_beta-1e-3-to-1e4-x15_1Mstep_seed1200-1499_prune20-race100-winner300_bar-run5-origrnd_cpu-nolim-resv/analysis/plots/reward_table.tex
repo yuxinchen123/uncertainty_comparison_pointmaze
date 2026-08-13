@@ -4,9 +4,13 @@
 \midrule
 run-5 original RND, Adam $10^{-4}$ ($\beta{=}1000$) --- the frozen bar & 38.64 & 1.77 & \underline{0.78} & 300 \\
 \midrule
-algorithm 1 (lr $0.01$, $\beta{=}0.3$) & 39.33 & 1.90 & 0.77 & 293 \\
-algorithm 2.1 (lr $0.01$, $\beta{=}30$) & \underline{39.63} & 1.97 & 0.76 & 285 \\
+algorithm 1 (lr $0.01$, $\beta{=}0.3$) & \underline{38.99} & 1.87 & 0.76 & 300 \\
+algorithm 2.1 (lr $0.01$, $\beta{=}30$) & 38.66 & 1.91 & 0.76 & 300 \\
 algorithm 2.2 (lr $0.01$, $\beta{=}1$) & 22.28 & 5.51 & 0.48 & 29 \\
-algorithm 2.3 (lr $0.01$, $\beta{=}30$) & \textbf{44.45} & 2.64 & \textbf{0.78} & 174 \\
+algorithm 2.3 (lr $0.01$, $\beta{=}30$) & \textbf{43.41} & 2.40 & \textbf{0.78} & 202 \\
+\midrule
+run-5 original RND, 4M steps (Adam $10^{-4}$, $\beta{=}1000$) --- still running & -- & -- & -- & 0 \\
+algorithm 2.3, 4M steps (lr $0.01$, $\beta{=}30$) --- still running & -- & -- & -- & 0 \\
+ground-truth bonus $\min(1,1/\sqrt{n})$, 4M steps ($\beta{=}1$) --- still running & -- & -- & -- & 0 \\
 \bottomrule
 \end{tabular}
