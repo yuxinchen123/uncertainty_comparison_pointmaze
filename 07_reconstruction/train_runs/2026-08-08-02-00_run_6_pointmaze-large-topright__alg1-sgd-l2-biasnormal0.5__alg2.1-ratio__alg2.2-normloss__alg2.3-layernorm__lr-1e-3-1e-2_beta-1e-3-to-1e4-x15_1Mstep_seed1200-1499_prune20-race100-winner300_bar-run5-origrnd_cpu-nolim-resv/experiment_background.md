@@ -75,3 +75,18 @@ launch commit is the commit carrying this line. Launch gates passed before submi
 convention tests (parameters verbatim against the run-5 and run-3.2.2 markers on disk and
 run-6's build_queue.py) and 4 checkpoint tests including the full suspend → resume →
 auto-delete → complete lifecycle on real trainings (tests/test_train4m_checkpoint.py).
+
+## 96-hour extension sweep (ext96h, 2026-08-13 — REPLACES the ext4m section above)
+
+The ext4m checkpoint/resume sweep was retired before any run completed (the buffer-tail resume
+was judged not faithful enough); its queue, data, and checkpoints were deleted. The replacement,
+sweep `2026-08-13-14-00_run6ext96h`, merges the finished 1M sweep's plain pipeline with the
+throughput research's ADOPTED optimizations only: same three configurations and seeds
+(1500–1799), each run ONE FRESH 96-HOUR ATTEMPT under a 10,000,000-step cap no job reaches; the
+run ends complete at its job's walltime (`ended_by: "walltime"`). Trainer `train96h.py`
+(train.py untouched); no checkpoints, no resume; jobs at exactly `--time=4-00:00:00`; owner 600
+runs in two waves + collaborator 300 via slots ledgers; cpu + nolim, no puma01, no reservation.
+Table 60 reports fixed milestones (2M / 4M / 6M, ranked within each); Figure 18 draws mean
+curves to the last step with >= 5 seeds. Design: `slurm/EXT96H_DESIGN.md`. Launch gates: 7
+queue-convention tests + 2 trainer tests (walltime end marks the record complete at a logged
+boundary; step-cap path) — all passed.

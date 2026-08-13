@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-"""Pin the ext4m queue convention: the three configurations' parameters are VERBATIM copies of
+"""Pin the ext96h queue convention: the three configurations' parameters are VERBATIM copies of
 their sources (run-5 markers on disk, run-6 build_queue.py, run-3.2.2 oracle markers on disk),
-the seed range is fresh, and the id math is seed-outermost.  Run: pytest test_ext4m_queue_convention.py
+the seed range is fresh, and the id math is seed-outermost.  Run: pytest test_ext96h_queue_convention.py
 """
 import json
 import os
@@ -10,7 +10,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import build_queue as bq
-import ext4m_build_queue as ext
+import ext96h_build_queue as ext
 
 RUN5_DONE = ("/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-20-16-44_run_5_baseline_"
              "rnd-next-state__origsmall-mse-mean-lr1e-4-out128-predextra1-leaky0.2-warmupenv6400-"
@@ -23,7 +23,7 @@ ORACLE_DONE = ("/p/rlprojects/RND/07_reconstruction/train_runs/2026-07-07-23-10_
 
 
 def _cfg(arm):
-    """The ext4m configuration spec for one arm name."""
+    """The ext96h configuration spec for one arm name."""
     return next(c for c in ext.CONFIGS if c["arm"] == arm)
 
 
@@ -60,7 +60,7 @@ def test_alg23_params_are_the_1m_sweeps():
 
 def test_gt_params_verbatim():
     """The gt configuration matches the run-3.2.2 oracle re-run (1/sqrt(n) sweep, beta=1) plus the
-    explicit decay knob (the oracle sweep relied on the -0.5 default; ext4m records it)."""
+    explicit decay knob (the oracle sweep relied on the -0.5 default; ext96h records it)."""
     marker = sorted(os.listdir(ORACLE_DONE))[0]
     with open(os.path.join(ORACLE_DONE, marker)) as fh:
         src = json.load(fh)
@@ -68,7 +68,7 @@ def test_gt_params_verbatim():
     assert cfg["algorithm"] == src["algorithm"] == "gt_position_velocity"
     assert float(cfg["beta"]) == float(src["beta"]) == 1.0
     assert cfg["params"] == {"visit_count_decay": "-0.5"}
-    # the oracle sweep's env knobs are exactly what ext4m's env_setup bundles
+    # the oracle sweep's env knobs are exactly what ext96h's env_setup bundles
     assert src["fixed"]["env_name"] == "PointMaze_Large-v3"
     assert src["fixed"]["env_max_episode"] == 400
     assert src["fixed"]["goal_position"] == "top_right"
@@ -77,11 +77,11 @@ def test_gt_params_verbatim():
 
 
 def test_fixed_common_only_changes_the_step_budget():
-    """FIXED_COMMON is the 1M sweep's with only total_timesteps changed, to 4,000,000."""
+    """FIXED_COMMON is the 1M sweep's with only total_timesteps changed, to 10,000,000-step cap (96-hour runs)."""
     diff = {k for k in set(ext.FIXED_COMMON) | set(bq.FIXED_COMMON)
             if ext.FIXED_COMMON.get(k) != bq.FIXED_COMMON.get(k)}
     assert diff == {"total_timesteps"}
-    assert ext.FIXED_COMMON["total_timesteps"] == 4000000
+    assert ext.FIXED_COMMON["total_timesteps"] == 10000000
 
 
 def test_seed_outermost_id_math():
@@ -95,7 +95,7 @@ def test_seed_outermost_id_math():
 
 def test_share_budget_math():
     """The workload-share cap: non-cancelled ledger slots consume the share; cancelled release."""
-    import ext4m_plan_jobs as pj
+    import ext96h_plan_jobs as pj
     rows = [("101", 32), ("102", 30), ("103", 30)]
     assert pj.budget_remaining(rows, set(), 600) == 508
     assert pj.budget_remaining(rows, {"102"}, 600) == 538       # cancelled job's slots return

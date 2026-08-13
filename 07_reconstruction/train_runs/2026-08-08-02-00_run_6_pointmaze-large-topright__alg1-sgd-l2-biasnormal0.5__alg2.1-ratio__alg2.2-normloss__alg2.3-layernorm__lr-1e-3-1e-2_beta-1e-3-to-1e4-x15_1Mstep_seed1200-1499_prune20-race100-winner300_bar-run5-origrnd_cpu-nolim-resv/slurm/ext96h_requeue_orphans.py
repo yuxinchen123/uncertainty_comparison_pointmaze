@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Owner-only orphan reclaim for the ext4m sweep, called each monitor cycle.
+"""Owner-only orphan reclaim for the ext96h sweep, called each monitor cycle.
 
 Simpler than the 1M sweep's requeue_orphans.py because every run is CHECKPOINTED: an orphan
 (running/ marker whose claiming job is terminal) goes STRAIGHT BACK TO PENDING — the next claimer
@@ -20,7 +20,7 @@ Phases:
 Safety: never touches a marker whose job still shows in squeue or whose sacct state is not
 terminal; any read failure skips that marker until the next cycle.
 
-Usage:  python ext4m_requeue_orphans.py --sweep_id <id> [--dry]
+Usage:  python ext96h_requeue_orphans.py --sweep_id <id> [--dry]
 """
 import argparse
 import glob
@@ -40,7 +40,7 @@ TERMINAL_STATES = ("COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "NODE_FAIL",
 
 def log(msg):
     """Timestamped reclaim line, flushed."""
-    print(f"[{time.strftime('%Y-%m-%dT%H:%M:%S')} ext4m_requeue] {msg}", flush=True)
+    print(f"[{time.strftime('%Y-%m-%dT%H:%M:%S')} ext96h_requeue] {msg}", flush=True)
 
 
 def last_claim_jobid(marker_name):
@@ -139,7 +139,7 @@ def main():
         if markers and not args.dry:
             with open(report, "a") as fh:
                 fh.write(f"\n\nRESOLVED {time.strftime('%Y-%m-%dT%H:%M:%S')}: "
-                         f"{moved} marker(s) re-pended by ext4m_requeue_orphans.\n")
+                         f"{moved} marker(s) re-pended by ext96h_requeue_orphans.\n")
             os.makedirs(resolved_dir, exist_ok=True)
             os.rename(report, os.path.join(resolved_dir, os.path.basename(report)))
             log(f"problem report {os.path.basename(report)}: {moved} marker(s) re-pended")

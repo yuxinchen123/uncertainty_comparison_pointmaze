@@ -91,3 +91,12 @@ ones never run.
   reservation, 5 unpinned pending ladder jobs as replenishment.
 - The 1M sweep reached SWEEP_COMPLETE earlier today (11:03 tick); final Table 60/Figure 18
   committed as e1bc1f0.
+
+## 2026-08-13 13:4x-14:1x — ext4m retired, ext96h fresh start (user order)
+
+- User rule: no checkpoint-resumed runs (the buffer-tail resume is not faithful); refresh runs
+  only. Cancelled the whole ext4m fleet incl. its monitor (all ids from the sweep's own file),
+  DELETED queue/data/checkpoints of 2026-08-13-02-36_run6ext4m (0 runs had completed), removed
+  the ext4m scripts from the working tree (git history keeps them), marked the SWEEPS.md row.
+- Built sweep 2026-08-13-14-00_run6ext96h: 900 fresh markers, 10M-step cap, 96-hour
+  single-attempt runs (design slurm/EXT96H_DESIGN.md). Gates: 7 + 2 tests passed.

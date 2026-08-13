@@ -6629,12 +6629,14 @@ running'' has no configuration with five completed seeds yet, and its $n$ counts
 finished so far across its 30 configurations. Auto-generated from the live records by
 \texttt{analysis/\allowbreak code/\allowbreak make\_\allowbreak run6\_\allowbreak results.py} in
 the run folder; regenerated as the sweep advances.}
-\claudeedit{From 2026-08-13 a second block below a rule carries the 4M-step extension sweep
-(300 fresh seeds each, \texttt{a\_seed} 1500--1799): the run-5 original RND re-run at 4M, the
-best algorithm-2.3 configuration, and the best ground-truth bonus
-$\min(1, 1/\sqrt{n})$ at $\beta = 1$. Its rows appear as each configuration reaches five
-completed seeds, and the two blocks are ranked separately --- a $4\times$ step budget beating a
-$1\times$ budget is not a finding.}}
+\claudeedit{From 2026-08-13 further blocks below a rule carry the 96-HOUR extension sweep
+(300 fresh seeds each, \texttt{a\_seed} 1500--1799): the run-5 original RND re-run, the best
+algorithm-2.3 configuration, and the best ground-truth bonus $\min(1, 1/\sqrt{n})$ at
+$\beta = 1$, each run one fresh 96-hour attempt (a 10M-step cap no job reaches; the run ends
+complete at its job's walltime, so final steps differ by node speed). These rows report FIXED
+MILESTONES --- one sub-block per 2M / 4M / 6M steps, a row appearing once five seeds of that
+configuration logged the milestone --- and each sub-block is ranked on its own; budgets are
+never compared across blocks.}}
 \label{tab:trainrun6-results}
 \end{table}
 
@@ -6649,10 +6651,12 @@ algorithm arm at its best configuration so far, mean over completed seeds with a
 standard-error band, the legend naming the arm's learning rate, bonus weight and seed count. Until
 an arm has five completed seeds it contributes no line. Same generator as
 Table~\ref{tab:trainrun6-results}; regenerated as the sweep advances.}
-\claudeedit{The 4M-step extension lines join the figure as their configurations reach five
-completed seeds, extending the horizontal axis to $4 \times 10^{6}$: the run-5 original RND at
-4M as a BLACK SOLID line (against its 1M dashed reference), algorithm 2.3 at 4M dash-dotted in
-the arm's color, and the ground-truth bonus $\min(1, 1/\sqrt{n})$ at 4M in vermilion.}}
+\claudeedit{The 96-hour extension lines join the figure as their configurations reach five
+completed seeds: the run-5 original RND as a BLACK SOLID line (against its 1M dashed
+reference), algorithm 2.3 dash-dotted in the arm's color, and the ground-truth bonus
+$\min(1, 1/\sqrt{n})$ in vermilion. Each line is drawn to the largest step where at least five
+seeds still have data (runs end at their job's 96-hour walltime, so per-seed lengths differ by
+node speed; the mean at each step is over the seeds that reached it).}}
 \label{fig:trainrun6-curve}
 \end{figure}
 \claudecomment{Run folder:

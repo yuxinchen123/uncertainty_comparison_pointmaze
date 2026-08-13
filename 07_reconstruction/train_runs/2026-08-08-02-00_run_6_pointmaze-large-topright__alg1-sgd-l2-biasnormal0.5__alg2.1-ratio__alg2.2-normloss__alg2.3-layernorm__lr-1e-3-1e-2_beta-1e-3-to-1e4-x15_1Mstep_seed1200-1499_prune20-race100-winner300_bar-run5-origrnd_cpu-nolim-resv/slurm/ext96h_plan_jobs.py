@@ -1,23 +1,23 @@
 #!/usr/bin/env python
-"""Size and submit the ONE-SHOT worker jobs of the ext4m sweep: cpu -> nolim, NO reservation
+"""Size and submit the ONE-SHOT worker jobs of the ext96h sweep: cpu -> nolim, NO reservation
 (user rule 2026-08-13: the reservation is not used for this sweep).
 
-Every worker claims exactly one 4M run and the job ends when all its workers finish, so each
-job's slots translate one-to-one into runs. Replenishment is a LADDER OF PENDING JOBS: beyond
-the jobs that can start now on free nodes, unpinned filler jobs are queued that wait for the
-big nodes to free as the running wave ends (~60-76 h per run vs the 96 h cpu walltime).
+Every worker claims exactly one FRESH 96-hour run (the run ends at the job's wall or the 10M
+step cap; no checkpoints, no resume), so each job's slots translate one-to-one into runs.
+Replenishment is a LADDER OF PENDING JOBS: beyond the jobs that can start now on free nodes,
+unpinned filler jobs are queued that start as the 96-hour wave's nodes free.
 
 WORKLOAD SHARE CAP. Each submitter owns a fixed share of the 900 runs — the owner 600 (2/3),
 a collaborator 300 — enforced through an append-only slots ledger next to the id file
-(ext4m_slots_<sweep>_<user>.txt, one "jobid ntasks" line per submitted job). Because workers
+(ext96h_slots_<sweep>_<user>.txt, one "jobid ntasks" line per submitted job). Because workers
 are one-shot, the sum of a submitter's non-cancelled ledger slots IS the number of runs their
 jobs will consume; planning stops when that sum reaches the share. Cancelled jobs' slots are
 released back to the budget (their claims re-pend).
 
 Usage:
-  python ext4m_plan_jobs.py --sweep_id <id>            # print the plan
-  python ext4m_plan_jobs.py --sweep_id <id> --submit   # print AND submit, appending ids
-  python ext4m_plan_jobs.py --sweep_id <id> --submit --script <collab .slurm> --jobname <prefix> \
+  python ext96h_plan_jobs.py --sweep_id <id>            # print the plan
+  python ext96h_plan_jobs.py --sweep_id <id> --submit   # print AND submit, appending ids
+  python ext96h_plan_jobs.py --sweep_id <id> --submit --script <collab .slurm> --jobname <prefix> \
                             --idfile <for_collaborator/...>   # collaborator form
 """
 import argparse
@@ -33,9 +33,20 @@ RUN_DIR = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 # the run-6 sizing machinery is reused as a library; only the buckets and caps differ
 from plan_jobs import (POOLS, HEADROOM, MIN_TASKS, candidate_nodes, pool_room,  # noqa: E402
-                       reserved_nodes, walltime_for)
+                       reserved_nodes, walltime_for, _to_hours)
 
-SENTINEL = os.path.join(RUN_DIR, "SWEEP4M_COMPLETE")
+
+def walltime_96h(partition):
+    """The job --time: exactly 96 hours (the run design — every run is one 96-hour attempt),
+    unless the partition limit or an approaching maintenance window caps it lower (walltime_for
+    already handles both)."""
+    limit, why = walltime_for(partition)
+    if _to_hours(limit) > 96:
+        return "4-00:00:00", f"96-hour run design (partition allows {limit})"
+    return limit, why
+
+
+SENTINEL = os.path.join(RUN_DIR, "SWEEP96H_COMPLETE")
 # each submitter's share of the 900 runs (one-shot workers: slots == runs)
 SHARE = {"sl5nw": 600}
 DEFAULT_SHARE = 300            # any collaborator
@@ -46,7 +57,7 @@ FILLER_MEM_MB = FILLER_NTASKS * 2048
 def ledger_path(idfile, sweep_id):
     """The slots ledger next to this submitter's id file."""
     return os.path.join(os.path.dirname(idfile),
-                        f"ext4m_slots_{sweep_id}_{getpass.getuser()}.txt")
+                        f"ext96h_slots_{sweep_id}_{getpass.getuser()}.txt")
 
 
 def read_ledger(path):
@@ -85,7 +96,7 @@ def open_pool_plan():
     plan = []
     for partition, (qos, cap) in POOLS.items():
         room, used = pool_room(qos, cap, partition)
-        walltime, why = walltime_for(partition)
+        walltime, why = walltime_96h(partition)
         print(f"[{partition}] cap {cap}, in use {used}, headroom {HEADROOM} -> {room} threads to "
               f"fill; --time {walltime} ({why})")
         for node in candidate_nodes(partition, excluded):
@@ -140,12 +151,12 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--sweep_id", required=True)
     p.add_argument("--submit", action="store_true")
-    p.add_argument("--jobname", default="r6e4m")
-    p.add_argument("--script", default=os.path.join(HERE, "ext4m_worker_cpu.slurm"))
+    p.add_argument("--jobname", default="r6e96")
+    p.add_argument("--script", default=os.path.join(HERE, "ext96h_worker_cpu.slurm"))
     p.add_argument("--idfile", default=None)
     args = p.parse_args()
     if os.path.exists(SENTINEL):
-        sys.exit("SWEEP4M_COMPLETE exists — this sweep is finished; not planning any jobs")
+        sys.exit("SWEEP96H_COMPLETE exists — this sweep is finished; not planning any jobs")
     idfile = args.idfile or os.path.join(
         HERE, f"submitted_jobids_{args.sweep_id}_{getpass.getuser()}.txt")
     ledger = ledger_path(idfile, args.sweep_id)
@@ -169,7 +180,7 @@ def main():
         trimmed.append(job)
         slots += job["ntasks"]
     plan = trimmed
-    walltime, _ = walltime_for("cpu")
+    walltime, _ = walltime_96h("cpu")
     plan += filler_jobs(allow - slots, walltime)
     total = sum(j["ntasks"] for j in plan)
     n_fill = sum(1 for j in plan if j.get("node") is None)

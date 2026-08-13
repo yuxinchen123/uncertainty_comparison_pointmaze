@@ -1,4 +1,4 @@
-# 4M-step extension sweep (ext4m) — design
+# 4M-step extension sweep (ext4m) — SUPERSEDED 2026-08-13 by slurm/EXT96H_DESIGN.md (kept as the record of the retired checkpoint/resume design)
 
 Ordered by the user 2026-08-13: extend train run 6 with an additional sweep that runs three
 configurations for 4,000,000 steps each on 300 fresh seeds, with a model checkpoint every

@@ -92,8 +92,8 @@ def load_run5_reference():
 
 def load_run6():
     """{arm: {beta_lr_key: {"scores": [...], "curves": [...]}}} over the 1M sweep's completed
-    records (the ext4m sweep shares the data/ tree, so the 4M records are filtered out by their
-    step budget and loaded separately by load_ext4m)."""
+    records (the 96-hour sweep shares the data/ tree, so its records are filtered out by their
+    step budget and loaded separately by load_ext96h)."""
     out = {arm: {} for arm in bq.ARMS}
     for sweep_dir in glob.glob(os.path.join(RUN_DIR, "data", "*", "local")):
         for path in glob.glob(os.path.join(sweep_dir, "*.json")):
@@ -117,19 +117,22 @@ def load_run6():
     return out
 
 
-# the ext4m groups in table/plot order: dict key -> (row label, curve label, color, linestyle)
-EXT4M_GROUPS = {
-    "run5-origrnd": (r"run-5 original RND, 4M steps (Adam $10^{-4}$, $\beta{=}1000$)",
-                     "run-5 original RND, 4M ($\\beta$=1000)", "black", "-"),
-    "alg2.3": (r"algorithm 2.3, 4M steps (lr $0.01$, $\beta{=}30$)",
-               "algorithm 2.3, 4M (lr=0.01 $\\beta$=30)", "#CC79A7", "-."),
-    "gt": (r"ground-truth bonus $\min(1,1/\sqrt{n})$, 4M steps ($\beta{=}1$)",
-           "ground-truth bonus, 4M ($\\beta$=1)", "#D55E00", "-"),
+# the 96-hour groups in table/plot order: dict key -> (row label, curve label, color, linestyle)
+EXT96H_GROUPS = {
+    "run5-origrnd": (r"run-5 original RND, 96 h (Adam $10^{-4}$, $\beta{=}1000$)",
+                     "run-5 original RND, 96 h ($\\beta$=1000)", "black", "-"),
+    "alg2.3": (r"algorithm 2.3, 96 h (lr $0.01$, $\beta{=}30$)",
+               "algorithm 2.3, 96 h (lr=0.01 $\\beta$=30)", "#CC79A7", "-."),
+    "gt": (r"ground-truth bonus $\min(1,1/\sqrt{n})$, 96 h ($\beta{=}1$)",
+           "ground-truth bonus, 96 h ($\\beta$=1)", "#D55E00", "-"),
 }
+# the fixed milestones the 96-hour block reports (the user's choice 2026-08-13): a configuration
+# fills a milestone row once >= MIN_SEEDS of its seeds logged that step
+MILESTONES = [2000000, 4000000, 6000000]
 
 
-def ext4m_group_of(d):
-    """Which ext4m group a 4M record belongs to, from its own fields.
+def ext96h_group_of(d):
+    """Which 96-hour group a record belongs to, from its own fields.
     before: {"algorithm": "gt_position_velocity", ...} / {"rnd_bonus_readout": "mse_mean", ...}
     after:  "gt" / "run5-origrnd" (everything else in this sweep is algorithm 2.3)."""
     if d.get("algorithm") == "gt_position_velocity":
@@ -139,13 +142,15 @@ def ext4m_group_of(d):
     return "alg2.3"
 
 
-def load_ext4m():
-    """{group: {"scores": [...], "curves": [...]}} over the 4M extension's completed records, or
-    None when the ext4m sweep has not been built yet (pre-launch regenerations are unchanged)."""
-    sweep_dirs = glob.glob(os.path.join(RUN_DIR, "data", "*run6ext4m*", "local"))
+def load_ext96h():
+    """{group: {"at": {milestone: [scores]}, "curves": [...], "n_done": int}} over the 96-hour
+    sweep's completed records (runs end at their job's wall, so lengths differ per node; each
+    record contributes to every milestone its curve reached), or None before the sweep exists."""
+    sweep_dirs = glob.glob(os.path.join(RUN_DIR, "data", "*run6ext96h*", "local"))
     if not sweep_dirs:
         return None
-    out = {g: {"scores": [], "curves": []} for g in EXT4M_GROUPS}
+    out = {g: {"at": {m: [] for m in MILESTONES}, "curves": [], "n_done": 0}
+           for g in EXT96H_GROUPS}
     for sweep_dir in sweep_dirs:
         for path in glob.glob(os.path.join(sweep_dir, "*.json")):
             try:
@@ -154,13 +159,19 @@ def load_ext4m():
                 continue
             if not d.get("completed", True):
                 continue
-            if int(d.get("total_timesteps", 0)) != 4000000:
+            if int(d.get("total_timesteps", 0)) != 10000000:
                 continue
             rows = d.get("train_history") or []
             if not rows:
                 continue
-            e = out[ext4m_group_of(d)]
-            e["scores"].append(rows[-1]["train/mean_extrinsic_reward"])
+            e = out[ext96h_group_of(d)]
+            e["n_done"] += 1
+            # before: rows=[{"step": 50000, "train/mean_extrinsic_reward": 1.2}, ...] up to the
+            # run's walltime end; after: at[2000000] gains the value of the step==2000000 row
+            by_step = {int(r["step"]): float(r["train/mean_extrinsic_reward"]) for r in rows}
+            for m in MILESTONES:
+                if m in by_step:
+                    e["at"][m].append(by_step[m])
             e["curves"].append([[float(r["step"]) for r in rows],
                                 [float(r["train/mean_extrinsic_reward"]) for r in rows]])
     return out
@@ -181,11 +192,11 @@ def fmt(x, nd=2):
     return "--" if x is None or x != x else f"{x:.{nd}f}"
 
 
-def write_table(ref, run6, ext4m):
+def write_table(ref, run6, ext96h):
     """The performance table: reference row + one row per arm (best config or still-running),
-    then — once the ext4m sweep exists — one row per 4M configuration. The 1M and 4M blocks are
-    ranked separately (bold best / underline second per block): a 4M budget beating a 1M budget
-    is not a finding."""
+    then — once the 96-hour sweep exists — one row per (configuration, milestone) with >=
+    MIN_SEEDS seeds past that step. Ranking (bold best / underline second) is separate for the
+    1M block and for EACH milestone sub-block: different step budgets are never compared."""
     n_ref, (m_ref, se_ref) = len(ref["scores"]), mean_se(ref["scores"])
     succ_ref = sum(1 for s in ref["scores"] if s > SUCCESS_THRESHOLD) / n_ref
     rows = [[r"run-5 original RND, Adam $10^{-4}$ ($\beta{=}1000$) --- the frozen bar",
@@ -201,23 +212,35 @@ def write_table(ref, run6, ext4m):
         succ = sum(1 for s in e["scores"] if s > SUCCESS_THRESHOLD) / len(e["scores"])
         rows.append([f"{ARM_LABEL[arm]} (lr ${lr}$, $\\beta{{=}}{beta}$)",
                      m, se, succ, len(e["scores"])])
-    # the 4M block, appended after the 1M arms (row index >= n_1m ranks separately)
-    n_1m = len(rows)
-    if ext4m is not None:
-        for group, (row_label, _, _, _) in EXT4M_GROUPS.items():
-            e = ext4m[group]
-            if len(e["scores"]) < MIN_SEEDS:
+    # the 96-hour block: one milestone sub-block after another, each ranked on its own
+    blocks = [(0, len(rows))]
+    if ext96h is not None:
+        any_row = False
+        for m_step in MILESTONES:
+            lo = len(rows)
+            for group, (row_label, _, _, _) in EXT96H_GROUPS.items():
+                scores = ext96h[group]["at"][m_step]
+                if len(scores) < MIN_SEEDS:
+                    continue
+                m, se = mean_se(scores)
+                succ = sum(1 for s in scores if s > SUCCESS_THRESHOLD) / len(scores)
+                rows.append([f"{row_label} --- at {m_step // 1000000}M", m, se, succ,
+                             len(scores)])
+                any_row = True
+            if len(rows) > lo:
+                blocks.append((lo, len(rows)))
+        if not any_row:
+            # nothing at any milestone yet: one still-running row per group with its done count
+            lo = len(rows)
+            for group, (row_label, _, _, _) in EXT96H_GROUPS.items():
                 rows.append([f"{row_label} --- still running", None, None, None,
-                             len(e["scores"])])
-                continue
-            m, se = mean_se(e["scores"])
-            succ = sum(1 for s in e["scores"] if s > SUCCESS_THRESHOLD) / len(e["scores"])
-            rows.append([row_label, m, se, succ, len(e["scores"])])
+                             ext96h[group]["n_done"]])
+            blocks.append((lo, len(rows)))
 
     def block_marks(col):
-        """{row index: 'bold'|'under'} per metric column, ranked within the 1M and 4M blocks."""
+        """{row index: 'bold'|'under'} per metric column, ranked within each block."""
         marks = {}
-        for lo, hi in ((0, n_1m), (n_1m, len(rows))):
+        for lo, hi in blocks:
             order = sorted(((i, rows[i][col]) for i in range(lo, hi)
                             if rows[i][col] is not None), key=lambda t: t[1], reverse=True)
             if order:
@@ -234,8 +257,9 @@ def write_table(ref, run6, ext4m):
     lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.4cm} r r r r@{}}",
              r"\toprule",
              r"\textbf{Arm} & $\bar R$ & $\mathrm{SE}$ & succ. & $n$ \\", r"\midrule"]
+    rule_rows = {1} | {lo for lo, _ in blocks[1:]}
     for i, r in enumerate(rows):
-        if i in (1, n_1m):
+        if i in rule_rows:
             lines.append(r"\midrule")
         lines.append(f"{r[0]} & {tex(fmt(r[1]), marks.get(i))} & {fmt(r[2])} & "
                      f"{tex(fmt(r[3], 2), s_marks.get(i))} & {r[4]} \\\\")
@@ -258,7 +282,30 @@ def curve_band(curves):
     return np.array(grid), mean, se, mat.shape[0]
 
 
-def write_curve(ref, run6, ext4m):
+def curve_band_varlen(curves, min_seeds):
+    """(grid, mean, se, n_at_each_step) over VARIABLE-LENGTH per-seed curves on the 50k grid,
+    truncated where fewer than min_seeds seeds still have data (96-hour runs end at their node's
+    own walltime step).
+
+    before: curves=[([50000, 100000, 150000], [1.0, 2.0, 3.0]), ([50000, 100000], [1.1, 2.1])],
+            min_seeds=2
+    after:  grid=[50000, 100000], mean=[1.05, 2.05], se=[...], counts=[2, 2] (150000 dropped)."""
+    if not curves:
+        return None
+    by_step = {}
+    for steps, vals in curves:
+        for s, v in zip(steps, vals):
+            by_step.setdefault(float(s), []).append(float(v))
+    grid = sorted(s for s, vs in by_step.items() if len(vs) >= min_seeds)
+    if not grid:
+        return None
+    mean = np.array([np.mean(by_step[s]) for s in grid])
+    se = np.array([np.std(by_step[s], ddof=1) / math.sqrt(len(by_step[s]))
+                   if len(by_step[s]) > 1 else 0.0 for s in grid])
+    return np.array(grid), mean, se, len(curves)
+
+
+def write_curve(ref, run6, ext96h):
     """The reward-over-training figure: the reference black dashed, the four 1M arms solid
     colors, and — once they have data — the three 4M lines (extending the x axis to 4e6)."""
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -280,12 +327,12 @@ def write_curve(ref, run6, ext4m):
         ax.plot(grid, mean, color=ARM_COLOR[arm], linewidth=1.8,
                 label=f"{ARM_LABEL[arm]} lr={lr} $\\beta$={beta} (n={n})")
         ax.fill_between(grid, mean - se, mean + se, alpha=0.15, color=ARM_COLOR[arm])
-    if ext4m is not None:
-        for group, (_, curve_label, color, linestyle) in EXT4M_GROUPS.items():
-            e = ext4m[group]
-            if len(e["scores"]) < MIN_SEEDS:
+    if ext96h is not None:
+        for group, (_, curve_label, color, linestyle) in EXT96H_GROUPS.items():
+            e = ext96h[group]
+            if len(e["curves"]) < MIN_SEEDS:
                 continue
-            band = curve_band(e["curves"])
+            band = curve_band_varlen(e["curves"], MIN_SEEDS)
             if band is None:
                 continue
             grid, mean, se, n = band
@@ -305,13 +352,13 @@ def write_curve(ref, run6, ext4m):
 def main():
     ref = load_run5_reference()
     run6 = load_run6()
-    ext4m = load_ext4m()
+    ext96h = load_ext96h()
     n6 = sum(len(e["scores"]) for a in run6.values() for e in a.values())
-    n4 = 0 if ext4m is None else sum(len(e["scores"]) for e in ext4m.values())
+    n96 = 0 if ext96h is None else sum(e["n_done"] for e in ext96h.values())
     print(f"reference: {len(ref['scores'])} run-5 seeds; run-6 completed records: {n6}; "
-          f"ext4m completed records: {n4}")
-    write_table(ref, run6, ext4m)
-    write_curve(ref, run6, ext4m)
+          f"ext96h completed records: {n96}")
+    write_table(ref, run6, ext96h)
+    write_curve(ref, run6, ext96h)
     print(f"wrote reward_table.tex, reward_curve.pdf/.png into {PLOTS}")
 
 
