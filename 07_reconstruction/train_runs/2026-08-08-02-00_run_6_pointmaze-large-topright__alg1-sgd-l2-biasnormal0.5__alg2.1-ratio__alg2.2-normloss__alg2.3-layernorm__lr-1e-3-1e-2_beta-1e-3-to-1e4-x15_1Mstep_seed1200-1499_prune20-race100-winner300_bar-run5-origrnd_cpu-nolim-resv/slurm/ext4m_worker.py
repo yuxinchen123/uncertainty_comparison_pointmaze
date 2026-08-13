@@ -1,19 +1,17 @@
 #!/usr/bin/env python
-"""ONE-SHOT work-queue worker for the run-6 4M extension sweep (ext4m): each worker claims AT
-MOST ONE run, finishes it, and exits — it never claims a second run (user rule 2026-08-13).
+"""Work-queue worker for the run-6 4M extension sweep (ext4m): claims resumable 4M-step runs
+in a loop for the job's FULL 96-hour walltime, finishing as many as it can (the user's final
+design, 2026-08-13, replacing the brief one-shot variant).
 
-Why one-shot: the cpu partition caps a job at 96 hours and a 4M run takes 60–76 h, so a worker
-that claimed a second run late in its job's life would hand that run a fraction of the walltime
-it needs. Instead every claim owns a FULL fresh job's walltime: the job (srun --wait=0) ends when
-the last of its workers finishes its single run, and replacement jobs already PENDING in the
-Slurm queue start in its place and take the next runs. ext4m_plan_jobs.py keeps that pending
-ladder stocked, capped at this submitter's share of the workload.
+- runs train4m.py (checkpoint every 0.5M steps, resume-on-start; slurm/EXT4M_DESIGN.md) with
+  the throughput-research switches applied (APPLIED_CHANGES.md in the research folder: the
+  foreach polyak update and the torch-only reward combine — bit-exact on every configuration);
+- exit code 3 from the trainer means SUSPENDED at a checkpoint (the job's walltime could not
+  fit another 0.5M-step chunk): the marker goes BACK TO PENDING so the next claimer resumes it;
+- the walltime guard needs only ONE chunk of walltime (default 12 h), not a whole run — the
+  trainer itself suspends before the wall, so late claims still make durable progress.
 
-The trainer's checkpoint suspend stays as a safety net only (exit code 3 -> the marker returns to
-pending with its checkpoint; the next fresh job resumes it). A run on any current node class fits
-one job's walltime, so in normal operation a worker's run simply completes.
-
-Env: RUN_DIR, PROJ_DIR, SWEEP_ID.
+Env: RUN_DIR, PROJ_DIR, SWEEP_ID, WORKER_REQUIRED_HOURS (default 12).
 """
 import os
 import re
@@ -44,8 +42,12 @@ def log(msg):
     print(f"[{stamp} worker {WID} sweep={SWEEP_ID}] {msg}", flush=True)
 
 
+# a claim needs walltime for ONE 0.5M-step chunk plus margin, not a whole 4M run
+REQUIRED_SECONDS = float(os.environ.get("WORKER_REQUIRED_HOURS", "12")) * 3600
+
+
 def job_end_epoch():
-    """The job's end time as a unix epoch (for the trainer's suspend safety net), or None."""
+    """The job's end time as a unix epoch, or None when it cannot be determined."""
     v = os.environ.get("SLURM_JOB_END_TIME")
     if v and v.isdigit():
         return int(v)
@@ -61,6 +63,16 @@ def job_end_epoch():
     if not m:
         return None
     return int(time.mktime(time.strptime(m.group(1), "%Y-%m-%dT%H:%M:%S")))
+
+
+JOB_END = job_end_epoch()   # fixed for the job's life; None = unknown -> the guard never fires
+
+
+def enough_walltime():
+    """Whether this job still has room for one more chunk. Unknown end time claims anyway."""
+    if JOB_END is None:
+        return True
+    return (JOB_END - time.time()) >= REQUIRED_SECONDS
 
 
 def claim():
@@ -80,7 +92,7 @@ def claim():
     return None, None
 
 
-def build_cmd(cfg, job_end):
+def build_cmd(cfg):
     """The train4m.py argv for one claimed config: train.py's args plus the checkpoint args."""
     width = len(str(cfg["run_total"]))
     ckpt_dir = os.path.join(CKPTS, f'{cfg["run_id"]:0{width}d}')
@@ -88,8 +100,11 @@ def build_cmd(cfg, job_end):
         sys.executable, os.path.join(PROJ, "train4m.py"),
         f'--ckpt_dir={ckpt_dir}',
         '--ckpt_every=500000',
-        f'--suspend_end_epoch={job_end or 0}',
+        f'--suspend_end_epoch={JOB_END or 0}',
         '--buffer_tail=100000',
+        # the throughput research's bit-exact switches (research folder APPLIED_CHANGES.md)
+        '--opt_polyak_foreach=True',
+        '--opt_torch_reward=True',
         f'--algorithm={cfg["algorithm"]}',
         f'--beta={cfg["beta"]}',
         f'--a_seed={cfg["a_seed"]}',
@@ -108,35 +123,43 @@ def build_cmd(cfg, job_end):
 
 
 def main():
-    """Claim ONE run, finish it, mark it, exit. The job ends when every worker has done this."""
+    """Claim-run-mark loop; suspended runs (rc=3) return to pending with their checkpoint."""
     time.sleep(random.uniform(0, float(os.environ.get("WORKER_JITTER_MAX", "30"))))
-    job_end = job_end_epoch()
-    end = "unknown" if job_end is None else time.strftime("%Y-%m-%dT%H:%M:%S",
-                                                          time.localtime(job_end))
-    log(f"started (one-shot); job ends {end}")
-    name, path = claim()
-    if name is None:
-        log("queue empty; exiting with no claim")
-        return
-    with open(path) as fh:
-        cfg = json.load(fh)
-    log(f"claimed {name} :: {cfg['env_setup']} beta={cfg['beta']} seed={cfg['a_seed']} "
-        f"steps={cfg['fixed']['total_timesteps']}")
-    t0 = time.time()
-    rc = subprocess.call(build_cmd(cfg, job_end), cwd=PROJ)
-    # 0 -> done; 3 -> suspended at a checkpoint (safety net), back to pending; else failed
-    if rc == 0:
-        dest = DONE
-    elif rc == SUSPEND_EXIT_CODE:
-        dest = PENDING
-    else:
-        dest = FAILED
-    try:
-        os.rename(path, os.path.join(dest, name))
-    except OSError:
-        pass
-    log(f"{name} rc={rc} in {time.time()-t0:.0f}s -> {os.path.basename(dest)}; one-shot worker "
-        f"exiting")
+    end = "unknown" if JOB_END is None else time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(JOB_END))
+    log(f"started; job ends {end}; a claim needs {REQUIRED_SECONDS/3600:.0f} h of walltime left")
+    n_done = n_fail = n_susp = 0
+    while True:
+        if not enough_walltime():
+            left = (JOB_END - time.time()) / 3600
+            log(f"only {left:.1f} h of walltime left, less than the {REQUIRED_SECONDS/3600:.0f} h "
+                f"one chunk needs; exiting after {n_done} done / {n_susp} suspended / {n_fail} failed")
+            return
+        name, path = claim()
+        if name is None:
+            log(f"queue empty; exiting after {n_done} done / {n_susp} suspended / {n_fail} failed")
+            return
+        with open(path) as fh:
+            cfg = json.load(fh)
+        log(f"claimed {name} :: {cfg['env_setup']} beta={cfg['beta']} seed={cfg['a_seed']} "
+            f"steps={cfg['fixed']['total_timesteps']}")
+        t0 = time.time()
+        rc = subprocess.call(build_cmd(cfg), cwd=PROJ)
+        # 0 -> done; 3 -> suspended at a checkpoint, back to pending for the next claimer; else failed
+        if rc == 0:
+            dest = DONE
+            n_done += 1
+        elif rc == SUSPEND_EXIT_CODE:
+            dest = PENDING
+            n_susp += 1
+        else:
+            dest = FAILED
+            n_fail += 1
+        try:
+            os.rename(path, os.path.join(dest, name))
+        except OSError:
+            pass
+        log(f"{name} rc={rc} in {time.time()-t0:.0f}s -> {os.path.basename(dest)} "
+            f"(running totals: {n_done} done, {n_susp} suspended, {n_fail} failed)")
 
 
 if __name__ == "__main__":

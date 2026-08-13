@@ -364,6 +364,9 @@ def run4m(cfg, ext):
 
 def main():
     """Parse the ext args + train.py config and run one resumable job."""
+    # single-thread workers have nothing for the inter-op pool to schedule (throughput research
+    # 2026-08-13, gated bit-exact on all three configurations; must run before any torch work)
+    torch.set_num_interop_threads(1)
     ext = parse_ext_args()
     cfg = t.parse_config()
     run4m(cfg, ext)
