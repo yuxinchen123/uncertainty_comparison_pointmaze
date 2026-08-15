@@ -2,7 +2,7 @@
 
 C independent training copies (own networks, own envs, own running statistics, own optimizer
 moments) advance in lockstep as one batched computation. Every parameter carries a leading copy
-axis and every forward is a batched GEMM (baddbmm). All reductions keep the copy axis; the
+axis and every forward is a batched matrix multiplication. All reductions keep the copy axis; the
 scalar loss is the SUM over copies. The two update styles are two separate functions with no
 data-dependent branch inside (spec section 12.1).
 """
@@ -379,22 +379,34 @@ class PPORND:
         self._update_graph = None
 
     # ---- batched forwards (x always [C, M, in]) ----
+    #
+    # Every layer is written as a plain batched matrix multiplication followed by "add the bias"
+    # in the SAME expression as the activation function, rather than as one `baddbmm` call.
+    # `baddbmm(b, x, W)` looks like the tighter form but is the more expensive one here: the
+    # library has no batched multiply that broadcasts a bias, so it first writes the expanded
+    # bias into the output tensor, then asks the multiplication to accumulate on top of it,
+    # and the activation then reads and writes that tensor again — five passes over the output.
+    # Written as `act(bmm(x, W) + b)` the compiler fuses the bias and the activation into one
+    # pass, so the output is touched three times. At a thousand copies and more these tensors
+    # are hundreds of megabytes and the passes over them are what the stage costs.
+    # before: baddbmm writes bias, multiply reads+writes, activation reads+writes  (5 passes)
+    # after:  multiply writes, one fused kernel reads and writes                    (3 passes)
 
     def _mlp2(self, p, x, act=torch.tanh):
         """Two hidden layers: act(x W0 + b0) W1 ... -> hidden features [C, M, 64]."""
-        h = act(torch.baddbmm(p["b0"].unsqueeze(1), x, p["W0"]))
-        return act(torch.baddbmm(p["b1"].unsqueeze(1), h, p["W1"]))
+        h = act(torch.bmm(x, p["W0"]) + p["b0"].unsqueeze(1))
+        return act(torch.bmm(h, p["W1"]) + p["b1"].unsqueeze(1))
 
     def actor_mean(self, x):
         """Action mean [C, M, 2]."""
         h = self._mlp2(self.actor, x)
-        return torch.baddbmm(self.actor["b2"].unsqueeze(1), h, self.actor["W2"])
+        return torch.bmm(h, self.actor["W2"]) + self.actor["b2"].unsqueeze(1)
 
     def critic_values(self, x):
         """(Vext, Vint) each [C, M]."""
         h = self._mlp2(self.critic, x)
-        vext = torch.baddbmm(self.critic["bext"].unsqueeze(1), h, self.critic["Wext"])
-        vint = torch.baddbmm(self.critic["bint"].unsqueeze(1), h, self.critic["Wint"])
+        vext = torch.bmm(h, self.critic["Wext"]) + self.critic["bext"].unsqueeze(1)
+        vint = torch.bmm(h, self.critic["Wint"]) + self.critic["bint"].unsqueeze(1)
         return vext.squeeze(-1), vint.squeeze(-1)
 
     def rnd_features(self, x):
@@ -402,13 +414,13 @@ class PPORND:
         target and predictor read the same input, so their first layers run as ONE GEMM."""
         W0 = torch.cat([self.target["W0"], self.predictor["W0"]], -1)
         b0 = torch.cat([self.target["b0"], self.predictor["b0"]], -1)
-        h = torch.relu(torch.baddbmm(b0.unsqueeze(1), x, W0))
+        h = torch.relu(torch.bmm(x, W0) + b0.unsqueeze(1))
         Hh = self.target["W0"].shape[-1]
         th, ph = h[..., :Hh], h[..., Hh:]
         with torch.no_grad():
-            tf = torch.baddbmm(self.target["b1"].unsqueeze(1), th, self.target["W1"])
-        ph = torch.relu(torch.baddbmm(self.predictor["b1"].unsqueeze(1), ph, self.predictor["W1"]))
-        pf = torch.baddbmm(self.predictor["b2"].unsqueeze(1), ph, self.predictor["W2"])
+            tf = torch.bmm(th, self.target["W1"]) + self.target["b1"].unsqueeze(1)
+        ph = torch.relu(torch.bmm(ph, self.predictor["W1"]) + self.predictor["b1"].unsqueeze(1))
+        pf = torch.bmm(ph, self.predictor["W2"]) + self.predictor["b2"].unsqueeze(1)
         return tf, pf
 
     def actor_critic(self, x):
@@ -416,27 +428,27 @@ class PPORND:
         both trunks, packed critic heads. Returns (mean [C,M,2], vext [C,M], vint [C,M])."""
         W0 = torch.cat([self.actor["W0"], self.critic["W0"]], -1)
         b0 = torch.cat([self.actor["b0"], self.critic["b0"]], -1)
-        h = torch.tanh(torch.baddbmm(b0.unsqueeze(1), x, W0))
+        h = torch.tanh(torch.bmm(x, W0) + b0.unsqueeze(1))
         ha, hc = h[..., :64], h[..., 64:]
-        ha = torch.tanh(torch.baddbmm(self.actor["b1"].unsqueeze(1), ha, self.actor["W1"]))
-        hc = torch.tanh(torch.baddbmm(self.critic["b1"].unsqueeze(1), hc, self.critic["W1"]))
-        mean = torch.baddbmm(self.actor["b2"].unsqueeze(1), ha, self.actor["W2"])
+        ha = torch.tanh(torch.bmm(ha, self.actor["W1"]) + self.actor["b1"].unsqueeze(1))
+        hc = torch.tanh(torch.bmm(hc, self.critic["W1"]) + self.critic["b1"].unsqueeze(1))
+        mean = torch.bmm(ha, self.actor["W2"]) + self.actor["b2"].unsqueeze(1)
         Wh = torch.cat([self.critic["Wext"], self.critic["Wint"]], -1)
         bh = torch.cat([self.critic["bext"], self.critic["bint"]], -1)
-        v = torch.baddbmm(bh.unsqueeze(1), hc, Wh)
+        v = torch.bmm(hc, Wh) + bh.unsqueeze(1)
         return mean, v[..., 0], v[..., 1]
 
     def predictor_features(self, x):
         """Predictor features only [C, M, F] (the frozen target is hoisted per iteration)."""
-        ph = torch.relu(torch.baddbmm(self.predictor["b0"].unsqueeze(1), x, self.predictor["W0"]))
-        ph = torch.relu(torch.baddbmm(self.predictor["b1"].unsqueeze(1), ph, self.predictor["W1"]))
-        return torch.baddbmm(self.predictor["b2"].unsqueeze(1), ph, self.predictor["W2"])
+        ph = torch.relu(torch.bmm(x, self.predictor["W0"]) + self.predictor["b0"].unsqueeze(1))
+        ph = torch.relu(torch.bmm(ph, self.predictor["W1"]) + self.predictor["b1"].unsqueeze(1))
+        return torch.bmm(ph, self.predictor["W2"]) + self.predictor["b2"].unsqueeze(1)
 
     def target_features(self, x):
         """Frozen target features [C, M, F], never with gradient."""
         with torch.no_grad():
-            th = torch.relu(torch.baddbmm(self.target["b0"].unsqueeze(1), x, self.target["W0"]))
-            return torch.baddbmm(self.target["b1"].unsqueeze(1), th, self.target["W1"])
+            th = torch.relu(torch.bmm(x, self.target["W0"]) + self.target["b0"].unsqueeze(1))
+            return torch.bmm(th, self.target["W1"]) + self.target["b1"].unsqueeze(1)
 
     def whiten(self, obs):
         """RND input whitening with the CURRENT per-copy statistics, clip +-5 (spec 4.2).

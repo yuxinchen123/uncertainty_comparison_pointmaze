@@ -113,3 +113,55 @@ forward and backward, not in the surrounding machinery — XLA fuses that into f
 inductor plus autograd do. Closing it would mean writing the loss and its gradient as one fused
 kernel rather than composing framework operations, which is a larger change than this round and
 should be entered with a go/no-go probe rather than begun speculatively.
+
+## Round 5 — the copy counts the trainer is actually used at (1,024 to 4,096)
+
+Rounds 1 to 4 optimised, and every ledger row above was decided at, 8 to 128 copies. The trainer
+is used at 1,024 to 4,096. This round re-opened the question at those sizes, and the first thing
+the measurements said is that the two regimes are not the same problem.
+
+### Where the time goes at these sizes
+
+Milliseconds per phase, one iteration, sixteen updates per batch, measured as three separately
+captured graphs (`benchmarks/profile_phases.py`):
+
+| phase | 128 copies | 1,024 copies | 4,096 copies |
+|---|---|---|---|
+| rollout, 128 sequential steps | 4.97 | 12.05 | 16.85 |
+| post-rollout processing | 1.30 | 8.76 | 35.30 |
+| update, 16 minibatch steps | 13.89 | 63.98 | 239.15 |
+| the same iteration as one graph | 20.42 | 81.59 | 290.58 |
+
+The rollout, which is a quarter of the iteration at 128 copies, is six percent of it at 4,096:
+it is a chain of 2,304 small operations whose cost barely grows with the copy count, so adding
+copies makes it nearly free. Everything else grows in proportion to the copy count, which is the
+signature of a computation limited by memory traffic rather than by the number of operations.
+**At 128 copies this trainer is launch-bound; at 1,024 and above it is memory-bandwidth-bound.**
+Optimisations chosen for the first regime are not the ones the second regime wants, and one of
+them turned out to be a loss there (row 20).
+
+Microseconds inside ONE minibatch step (`benchmarks/profile_update.py`):
+
+| part of a minibatch step | 1,024 copies | 4,096 copies |
+|---|---|---|
+| forward | 1,272 | 4,637 |
+| backward | 1,620 | 5,797 |
+| clip, Adam and zero over the flat buffer | 1,068 | 3,913 |
+| gather the minibatch | 166 | 372 |
+| one step | 4,127 | 14,720 |
+
+### What one byte of memory traffic costs here
+
+Every candidate below was judged against measurements of the individual operations on their real
+shapes (`benchmarks/probe_update_ops.py`, 1,024 copies):
+
+| operation | time | bytes | rate |
+|---|---|---|---|
+| copy one gibibyte, the reference a streaming kernel reaches | 606 us | 2.15 GB | 3,543 GB/s |
+| clip and Adam over the flat buffer, compiled | 580 us | 1.96 GB | 3,382 GB/s |
+| clip and Adam over the flat buffer, not compiled | 2,562 us | 1.96 GB | 766 GB/s |
+| gather the cached target features | 267 us | 0.54 GB | 2,009 GB/s |
+
+The card delivers about 3.5 TB/s to a plain streaming kernel, against a specification figure of
+3.9. The compiled optimiser chain reaches 95 percent of that, so there is nothing to win inside
+it; the same chain uncompiled is 4.4 times slower, which is what `compile_opt` buys.
