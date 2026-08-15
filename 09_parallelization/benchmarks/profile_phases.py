@@ -48,8 +48,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-copies", type=int, default=128)
     ap.add_argument("--style", default="epoch_minibatch")
+    ap.add_argument("--rev", default="", help="git revision of the trainer to profile instead "
+                                              "of the working tree, for before/after pairing")
+    ap.add_argument("--tag", default="")
     args = ap.parse_args()
-    from torch_ppo_rnd import PPORND, production_config
+    # ab_compare already knows how to load a past revision of the trainer as a module; reusing
+    # it means one implementation of that trick rather than two that can drift apart
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from ab_compare import load_module
+    mod = load_module(args.rev)
+    PPORND, production_config = mod.PPORND, mod.production_config
 
     C = args.n_copies
     # separate graphs per phase, so each phase can be replayed and timed on its own
@@ -110,9 +118,10 @@ def main():
         print(f"  {v/1000:8.2f} ms  {k}")
 
     RESULTS.mkdir(exist_ok=True)
-    out = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_profile_phases_C{C}.json"
+    out = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_profile_phases_C{C}{args.tag}.json"
     out.write_text(json.dumps({
         "n_copies": C, "style": args.style, "torch": torch.__version__,
+        "trainer_revision": args.rev or "working tree",
         "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                               capture_output=True, text=True).stdout.strip(),
         "phases_us": phases, "phases_sum_us": tot, "one_graph_us": whole,

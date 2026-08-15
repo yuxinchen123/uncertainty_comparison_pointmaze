@@ -49,8 +49,13 @@ def main():
     ap.add_argument("--style", default="epoch_minibatch")
     ap.add_argument("--reps", type=int, default=5)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--rev", default="", help="git revision of the trainer to profile instead "
+                                              "of the working tree, for before/after pairing")
     args = ap.parse_args()
-    from torch_ppo_rnd import PPORND, production_config
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from ab_compare import load_module
+    mod = load_module(args.rev)
+    PPORND, production_config = mod.PPORND, mod.production_config
 
     C = args.n_copies
     # one_graph=False so the three bodies can be called separately and profiled by kernel
@@ -81,6 +86,7 @@ def main():
     p = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_profile_kernels_C{C}{args.tag}.json"
     p.write_text(json.dumps({
         "n_copies": C, "style": args.style, "torch": torch.__version__,
+        "trainer_revision": args.rev or "working tree",
         "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                               capture_output=True, text=True).stdout.strip(),
         "stages": out}, indent=1))

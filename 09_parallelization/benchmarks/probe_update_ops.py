@@ -131,13 +131,38 @@ def main():
         grad.zero_()
 
     compiled_chain = torch.compile(adam_chain, dynamic=False)
-    record("gradient-norm reduction (read 1)", timed(norm_only), F32 * C * P)
+    compiled_norm = torch.compile(norm_only, dynamic=False)
+    record("gradient-norm reduction, eager (squares a whole buffer first)",
+           timed(norm_only), F32 * C * P)
+    record("gradient-norm reduction, compiled (read 1)", timed(compiled_norm), F32 * C * P)
     record("clip and Adam, eager", timed(adam_chain), F32 * C * P * 8)
     record("clip and Adam, compiled", timed(compiled_chain), F32 * C * P * 8)
     fresh = torch.randn(C, P, device=dev)
-    record("gradient accumulation (read 2, write 1)",
+    record("gradient accumulation into one contiguous buffer (read 2, write 1)",
            timed(lambda: grad.add_(fresh)), F32 * C * P * 3)
-    del flat, grad, mm, vv, fresh
+
+    # the same accumulation as the backward pass actually does it: the destination is one
+    # parameter's WINDOW onto the flat buffer, so the writes are 4-kilobyte pieces spaced a
+    # quarter of a megabyte apart, and the source is a freshly allocated contiguous tensor
+    # before: destination grad[:, off:off+n] viewed as [C, 256, 128]; after: same bytes, but
+    #         the batch stride is P rather than the block's own size
+    off, n = 20000, 256 * 128
+    window = grad[:, off:off + n].view(C, 256, 128)
+    piece = torch.randn(C, 256, 128, device=dev)
+    record("gradient accumulation into a strided window of that buffer (read 2, write 1)",
+           timed(lambda: window.add_(piece)), F32 * C * n * 3)
+    contig = torch.randn(C, 256, 128, device=dev)
+    record("the same accumulation into a contiguous tensor of that size (read 2, write 1)",
+           timed(lambda: contig.add_(piece)), F32 * C * n * 3)
+
+    # one weight-gradient multiplication writing a contiguous tensor against the same
+    # multiplication writing a strided window, to see whether the layout reaches the multiply
+    a_t = torch.randn(C, 256, 128, device=dev)
+    g_out = torch.randn(C, 128, 128, device=dev)
+    record("weight-gradient multiply into a contiguous tensor",
+           timed(lambda: torch.bmm(a_t, g_out, out=contig)),
+           F32 * C * (256 * 128 + 128 * 128 + 256 * 128), 2.0 * C * 256 * 128 * 128)
+    del flat, grad, mm, vv, fresh, window, piece, contig, a_t, g_out
     torch.cuda.empty_cache()
 
     print(f"\n== the style-B epoch gather, {C} copies ==")

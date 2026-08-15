@@ -245,18 +245,30 @@ class PPORND:
                 + [("predictor", k) for k in ["W0", "b0", "W1", "b1", "W2", "b2"]])
         groups = {"actor": self.actor, "critic": self.critic, "predictor": self.predictor}
         shapes = [(g, k, tuple(groups[g][k].shape)) for g, k in spec]
-        widths = []
+        # Each window starts at a multiple of ALIGN numbers, and so does the per-copy row, so
+        # every parameter's address is a multiple of 16 bytes for EVERY copy. Without this the
+        # windows pack tightly, the row length is 59,910, and a copy's parameters sit at
+        # addresses that are not multiples of 16; the matrix-multiply library then selects its
+        # scalar-load kernels (the "align1" variants visible in a kernel profile) instead of the
+        # four-at-a-time ones, and every multiplication in the trainer pays for it. The padding
+        # costs ten numbers per copy and is never read: nothing writes a gradient into it, so
+        # its Adam step is exactly zero and it adds exactly zero to the gradient norm.
+        # before: widths 256, 64, 4096, ..., 2, 2, ...; row length 59,910 (not a multiple of 4)
+        # after:  strides 256, 64, 4096, ..., 4, 4, ...; row length 59,920 (a multiple of 4)
+        ALIGN = 4
+        widths, strides = [], []
         for _, _, sh in shapes:
             n = 1
             for d in sh[1:]:
                 n *= d
             widths.append(n)
-        per_copy = sum(widths)
+            strides.append(-(-n // ALIGN) * ALIGN)
+        per_copy = sum(strides)
         self._flat = torch.zeros(C, per_copy, device=self.device)
         self._flat_grad = torch.zeros(C, per_copy, device=self.device)
         off = 0
         self.trainable = []
-        for (g, k, sh), n in zip(shapes, widths):
+        for (g, k, sh), n, stride in zip(shapes, widths, strides):
             self._flat[:, off:off + n] = groups[g][k].reshape(C, n)
             # detach makes the window a LEAF that shares storage, so autograd fills its own
             # gradient; assigning .grad up front makes autograd accumulate into the shared
@@ -265,8 +277,11 @@ class PPORND:
             w.grad = self._flat_grad[:, off:off + n].view(C, *sh[1:])
             groups[g][k] = w
             self.trainable.append(w)
-            off += n
+            off += stride
         assert off == per_copy, "the parameter windows do not tile the flat buffer"
+        assert per_copy % ALIGN == 0, "the per-copy row length must keep every copy aligned"
+        for w in self.trainable:
+            assert w.data_ptr() % (ALIGN * 4) == 0, "a parameter window lost its alignment"
         base = self._flat.untyped_storage().data_ptr()
         end = base + self._flat.numel() * self._flat.element_size()
         for w in self.trainable:

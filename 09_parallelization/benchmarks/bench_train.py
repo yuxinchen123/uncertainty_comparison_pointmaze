@@ -18,9 +18,17 @@ sys.path.insert(0, str(BASE / "ppo" / "torch_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
-def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch", timing="sync"):
-    """Time full iterations and the rollout/update split for one copy count."""
-    from torch_ppo_rnd import PPOConfig, PPORND, production_config
+def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch", timing="sync", rev=""):
+    """Time full iterations and the rollout/update split for one copy count.
+
+    rev selects a git revision of the trainer instead of the working tree, so a before/after
+    curve over many copy counts can be measured by the same harness in the same session rather
+    than by comparing two runs taken hours apart under different benchmark code.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from ab_compare import load_module
+    mod = load_module(rev)
+    PPOConfig, PPORND, production_config = mod.PPOConfig, mod.PPORND, mod.production_config
     # start from the ONE definition of the shipped configuration, then apply this run's
     # overrides; building the config by hand here is how a benchmark silently stops measuring
     # what actually ships (it happened once: compile_post was left off)
@@ -107,6 +115,8 @@ def main():
     ap.add_argument("--env-backend", default="torch")
     ap.add_argument("--timing", default="sync", choices=["sync", "pipelined"])
     ap.add_argument("--fused-adam", action="store_true")
+    ap.add_argument("--rev", default="", help="git revision of the trainer to measure instead "
+                                              "of the working tree")
     args = ap.parse_args()
 
     git = subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
@@ -120,7 +130,7 @@ def main():
         try:
             r = bench(c, args.style, args.iters, args.warmup, args.rollout_mode,
                       args.fused_adam, args.capture_update, args.one_graph, args.tf32,
-                      args.env_backend, args.timing)
+                      args.env_backend, args.timing, args.rev)
         except Exception as e:
             failures.append({"n_copies": c, "error": repr(e)[:400]})
             print(f"torch_ppo/{args.style} C={c:>4d}: FAILED {e!r}")
@@ -132,6 +142,7 @@ def main():
         print(f"torch_ppo/{args.style} C={c:>4d}: {r['sec_per_iteration']*1e3:.1f} ms/iter "
               f"{split}= {r['env_steps_per_sec']:.3e} env-steps/s total")
         out.write_text(json.dumps({"impl": "torch_ppo", "style": args.style, "git": git,
+                                   "trainer_revision": args.rev or "working tree",
                                    "gpu": torch.cuda.get_device_name(0),
                                    "torch": torch.__version__, "rows": rows,
                                    "failures": failures}, indent=1))
