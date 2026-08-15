@@ -9,11 +9,14 @@ Run: <python with matplotlib> make_report.py
 """
 import json
 import re
+import sys
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 HERE = Path(__file__).resolve().parent
 REPORT = HERE.parent
@@ -1128,6 +1131,211 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
 """
 
 
+def sec_ceiling():
+    """How far the implementations sit from what the hardware can do."""
+    probe = HERE / ".." / ".." / ".." / "analysis" / "ceiling"
+    mf = probe / "data" / "matmul_floor.json"
+    cp = probe / "data" / "ceiling_probe.json"
+    if not mf.exists():
+        return "## How far from the hardware ceiling\n" + pending(
+            "ceiling analysis", "the ceiling measurements")
+    m = json.loads(mf.read_text())
+    c = json.loads(cp.read_text()) if cp.exists() else {}
+    peak_tf32 = 417.5e12                       # dense, half the datasheet figure quoted with sparsity
+    achieved = max((g["flops_per_s"] for g in c.get("square_gemm", []) if g.get("tf32")),
+                   default=None)
+    itB = m["iteration_styleB"]
+    md = f"""## How far from the hardware ceiling
+
+"An optimisation made it faster" is not the same as "it is now fast". This section asks what the
+machine could do in principle, and what fraction of that the implementations reach. Three separate
+analyses produced it, cross-checking each other; the full working is in `analysis/ceiling/`.
+
+### The environment
+
+One environment step moves 82 bytes and performs about 250 floating-point operations, counted from
+the kernel and then confirmed by compiling it and inspecting the generated instructions. Dividing
+the card's memory bandwidth by the bytes gives a ceiling of **48,000 million steps per second**.
+
+| implementation | million steps per second | share of the bandwidth ceiling |
+|---|---|---|
+| CUDA kernel | 19,300 | 40 percent |
+| JAX, many steps per call | 9,920 | 21 percent |
+| PyTorch, compiled | 4,166 | 9 percent |
+
+The bandwidth ceiling is, however, the wrong limit for the fastest implementation. The kernel needs
+about 12.8 machine instructions per byte it moves, while the processor can only issue about 7.7
+instructions per byte at full bandwidth — so it runs out of instruction issue before it runs out of
+memory. Its real ceiling is about 28,700 million steps per second, and it achieves **67 percent** of
+that.
+
+Two measurements from the project's own record settle which limit binds. Packing the state to cut
+memory traffic by 16 percent changed the time by 0.3 percent — if bandwidth were the limit, the time
+should have fallen by about 16 percent. Removing arithmetic, by contrast, gained 14 percent. That is
+a kernel limited by issuing instructions, not by moving bytes.
+
+### The training computation
+
+One iteration at 128 copies with sixteen updates per batch performs 110.2 thousand million
+floating-point operations. Measured against the card's matrix throughput:
+
+| measure | value |
+|---|---|
+| arithmetic in one iteration | 110.2 GFLOP |
+| time for that iteration (PyTorch) | 20.4 ms |
+| achieved rate | 5.4 TFLOP/s |
+| share of the card's peak matrix rate | 1.3 percent |
+"""
+    if achieved:
+        md += (f"| the largest matrix multiplication this card actually sustains | "
+               f"{achieved/1e12:.0f} TFLOP/s ({achieved/peak_tf32*100:.0f} percent of peak) |\n")
+    md += f"""| every matrix multiplication in the iteration, timed on its own | {itB['seconds']*1e3:.2f} ms |
+
+A share of 1.3 percent sounds like failure and is not, for two reasons that the analysis makes
+precise. First, this algorithm's arithmetic intensity is about 11 operations per byte against a
+machine that balances at 106, so **no implementation of it could exceed about 10 percent** of the
+peak matrix rate. Second, and more usefully: adding up every matrix multiplication in the iteration,
+each timed in isolation, gives {itB['seconds']*1e3:.2f} milliseconds. That is the floor for the
+algorithm as written — the time if every other operation were free. The measured 20.4 milliseconds
+is **{itB['seconds']*1e3/20.42*100:.0f} percent of that floor**, and the JAX implementation's 13.4
+milliseconds is {itB['seconds']*1e3/13.42*100:.0f} percent.
+
+So the honest statement of remaining headroom is not "ninety-nine percent is missing" but "at most
+about three times, and only by removing work that is not matrix multiplication".
+
+### Where that places the project
+
+Practitioners generally distinguish five stages: unoptimised; obvious waste removed; the limiting
+resource identified and the profile flat; at the hardware limit for the algorithm as written; and
+the algorithm itself reformulated to move the limit. On that scale the CUDA environment is at the
+fourth stage — its limiting resource is identified by experiment and it runs at two thirds of that
+limit — and the trainers are at the third, having gone from 0.8 percent to 2.0 percent of the peak
+matrix rate, which is roughly a third of the reachable ceiling for the algorithm as written. Two
+reformulations have already been made (batching the copies, fusing the sweep) and one was measured
+and declined because it changes the algorithm (a shorter horizon, worth three times).
+
+"""
+    return md
+
+
+def sec_cpu():
+    """The same work on ordinary processor cores, for scale."""
+    envs = [json.loads(p.read_text()) for p in sorted(RESULTS.glob("*envbench_cpu*.json"))]
+    trains = [json.loads(p.read_text()) for p in sorted(RESULTS.glob("*trainbench_cpu*.json"))]
+    if not envs or not trains:
+        return "## The same work on ordinary processor cores\n" + pending(
+            "processor comparison", "the processor benchmark files")
+    md = """## The same work on ordinary processor cores
+
+To give the graphics-processor numbers a scale, the same code was run on a processor node of the
+same cluster (puma01: two sockets of forty cores, 160 hardware threads, 246 GB of memory), inside a
+reservation so nothing else was using it.
+
+There are two ways to use many cores, and the difference between them is larger than any
+optimisation in this report. **Thread-parallel** means one program holding all the work in one large
+array, with each operation split across threads — which requires every thread to finish before the
+next operation starts. **Process-parallel** means many independent programs, each with its own share
+of the work and no coordination at all.
+
+| way of using the cores | best aggregate, million steps per second | where the best point was |
+|---|---|---|
+"""
+    for d in envs:
+        best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
+        md += (f"| environment, {d['mode']}, {d['n_envs_per_worker']:,} environments each | "
+               f"{best['env_steps_per_sec']/1e6:.3f} | {best['workers']} workers |\n")
+    md += """
+Thread-parallel peaks at four to eight threads and then gets *worse* — at 160 threads it is twelve
+times slower than a single thread. One environment step is about forty small operations, and the
+regrouping after each one costs more than the work it coordinates once the threads are many. The
+process-parallel form never pays that, and reaches about twenty-four times a single core.
+
+End-to-end training on the same node:
+
+| way of using the cores | workers | copies | seconds per iteration | million steps per second | steps per second per copy |
+|---|---|---|---|---|---|
+"""
+    for d in trains:
+        best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
+        md += (f"| {d['mode']}, {d.get('style')} | {best['workers']} | {best['total_copies']} | "
+               f"{best['sec_per_iteration']:.3f} | {best['env_steps_per_sec']/1e6:.4f} | "
+               f"{best['env_steps_per_sec_per_copy']:,.0f} |\n")
+    md += """
+Putting the two platforms beside each other: for the environment alone the graphics processor is
+about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
+end-to-end training the ratio is about thirty (3.21 against 0.096 million). The gap narrows because
+training is dominated by matrix multiplication, which processors do comparatively well, while the
+environment is dominated by many tiny independent operations, which is exactly what a graphics
+processor is for.
+
+"""
+    return md
+
+
+def sec_choices():
+    """Which environment, which trainer, which combination — and why."""
+    return """## Which implementation to use
+
+Three practical questions, each answered from the measurements above. The tables that justify these
+can be reproduced with `python benchmarks/decide.py`.
+
+**Which environment: the CUDA kernel.** It is fastest at every batch size, and its advantage is
+largest for small batches (178 against 6.3 million steps per second at a thousand environments),
+where the other implementations spend nearly all their time dispatching work rather than simulating.
+All three implementations pass identical exactness checks, so this is purely a speed choice.
+
+**Which trainer: JAX is faster; PyTorch has more built on it.** Measured the same way on both sides —
+each iteration waited for — JAX leads by 4 to 19 percent with one update per batch and by 52 to 70
+percent with sixteen. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
+quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
+learning-rate sweep and per-copy progress recording.
+
+**Which combination: keep the environment in the same framework as the trainer.** Substituting the
+CUDA kernel, twenty-four times faster on its own, into the PyTorch training loop changes the
+iteration by about one percent, because after the optimisation work the environment is a small part
+of an iteration. Crossing frameworks is far worse: handing arrays between two runtimes costs about
+6.8 milliseconds per environment step against a native step of 0.1 to 0.3 milliseconds, and it
+prevents both frameworks from fusing or recording the loop. The fast kernel earns its place in work
+that is only environment simulation — generating data, evaluating a fixed policy — not inside this
+trainer.
+
+"""
+
+
+def sec_parity():
+    """Feature parity between the two trainers."""
+    return """## Feature parity between the two trainers
+
+The learning-rate sweep and per-copy progress recording were first built in PyTorch. They were then
+added to JAX, under the requirement that they cost nothing.
+
+| copies | uniform baseline (ms) | with differing rates and per-copy recording (ms) | noise floor (ms) |
+|---|---|---|---|
+| 8 | 6.90 | 6.86 | 0.06 |
+| 128 | 11.93 | 11.93 | 0.10 |
+| 512 | 25.16 | 25.18 | 0.33 |
+| 2,048 | 81.78 | 81.70 | 1.09 |
+
+Every separated effect — the sweep mechanism, the rates actually differing, the coverage recording —
+lands between −0.5 and +0.4 percent, as often negative as positive. This is better than the PyTorch
+side's +1.0 percent, and the reason is structural: in JAX the per-copy rates are a constant broadcast
+inside the elementwise optimiser update the compiler already emits, so no new operation appears.
+
+The same six properties are tested on both sides: a uniform sweep reproduces the plain run, a
+zero-rate group stays exactly frozen while others train, changing one group's rate leaves other
+groups unchanged to the last bit, and paired and distinct seeding both behave as documented.
+
+**A measurement lesson worth recording.** The first version of this comparison ran each arm in its
+own process, as the other harnesses in this project do. Process-to-process variation alone was 0.68
+to 0.72 milliseconds on an 8 to 13 millisecond iteration — larger than every effect being measured —
+and increasing the number of timed iterations did not reduce it. Constructing all the arms in one
+process and timing them round-robin, with the order reversed on alternate rounds, dropped the floor
+to 0.06 to 0.10 milliseconds. Small effects measured with the per-process harnesses elsewhere in this
+report rest on a noisier instrument than that.
+
+"""
+
+
 def sec_repro():
     return """## Reproduction
 
@@ -1153,10 +1361,16 @@ def main():
     fig_sweep_scaling()
     fig_sweep_vs_separate()
     fig_uniform_vs_sweep()
-    md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
-                    sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
-                    sec_campaign(), sec_sweep(), sec_sweep_scaling(), sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(),
-                    sec_repro()])
+    import section_times as st
+    body = [sec_correctness(), sec_module1(), sec_module2(), sec_module3(), sec_copies(),
+            sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
+            sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
+            # sections added later in the project go at the end, in the order they were added
+            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity()]
+    sections = st.split_sections("\n".join(body))
+    manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
+    order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]
+    md = "\n".join([sec_overview(), st.table_of_contents(order, manifest)] + body)
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
     for p in PENDING:

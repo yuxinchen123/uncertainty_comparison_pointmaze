@@ -17,6 +17,29 @@ baseline, one change, measure, keep or revert, write a row:
 Reading order: what was built and why it is correct, then the module-by-module numbers, then
 what each round changed, then the training campaign and the sweep.
 
+## Contents
+
+| section | first written | last changed |
+|---|---|---|
+| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 03:22 | 2026-08-15 03:22 |
+| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 03:22 | 2026-08-15 18:46 |
+| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 03:22 | 2026-08-15 03:22 |
+| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 03:22 | 2026-08-15 13:53 |
+| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 03:22 | 2026-08-15 14:54 |
+| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 03:22 | 2026-08-15 04:35 |
+| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 04:35 | 2026-08-15 14:54 |
+| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 04:35 | 2026-08-15 14:54 |
+| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 13:39 | 2026-08-15 16:34 |
+| [The three rounds](#the-three-rounds) | 2026-08-15 13:49 | 2026-08-15 13:49 |
+| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 03:22 | 2026-08-15 03:22 |
+| [Reproduction](#reproduction) | 2026-08-15 03:22 | 2026-08-15 03:22 |
+| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 18:46 | 2026-08-15 18:46 |
+| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 18:46 | 2026-08-15 18:46 |
+| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 18:46 | 2026-08-15 18:46 |
+| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 18:46 | 2026-08-15 18:46 |
+
+*Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time.*
+
 ## Environment correctness (all three implementations)
 
 The environments are not approximations: MuJoCo's exact per-step update was extracted and
@@ -42,7 +65,7 @@ joint two-contact solve, all probe-verified against the solver's internal arrays
 |---|---|---|---|---|---|
 | torch eager | 6.58e5 | 6.39e7 | 2.01e8 | — | 2.01e8 at 1,000,000 |
 | torch compiled | 6.32e6 | 6.08e8 | 3.89e9 | 4.17e9 | 4.17e9 at 3,000,000 |
-| CUDA fused kernel | 1.74e8 | 1.20e10 | 1.92e10 | 1.94e10 | 1.94e10 at 3,000,000 |
+| CUDA fused kernel | 1.78e8 | 1.20e10 | 1.93e10 | 1.91e10 | 1.93e10 at 1,000,000 |
 | jax jit per step | 1.32e7 | 1.33e9 | 6.87e9 | 5.92e9 | 6.87e9 at 1,000,000 |
 | jax scan (fused rollout, upper bound) | 6.76e7 | 5.20e9 | 8.40e9 | 7.23e9 | 9.92e9 at 300,000 |
 
@@ -560,3 +583,170 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
 4. Final campaign: `train_runs/run_final.py` (resumable, one process per copy count);
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.
+
+## How far from the hardware ceiling
+
+"An optimisation made it faster" is not the same as "it is now fast". This section asks what the
+machine could do in principle, and what fraction of that the implementations reach. Three separate
+analyses produced it, cross-checking each other; the full working is in `analysis/ceiling/`.
+
+### The environment
+
+One environment step moves 82 bytes and performs about 250 floating-point operations, counted from
+the kernel and then confirmed by compiling it and inspecting the generated instructions. Dividing
+the card's memory bandwidth by the bytes gives a ceiling of **48,000 million steps per second**.
+
+| implementation | million steps per second | share of the bandwidth ceiling |
+|---|---|---|
+| CUDA kernel | 19,300 | 40 percent |
+| JAX, many steps per call | 9,920 | 21 percent |
+| PyTorch, compiled | 4,166 | 9 percent |
+
+The bandwidth ceiling is, however, the wrong limit for the fastest implementation. The kernel needs
+about 12.8 machine instructions per byte it moves, while the processor can only issue about 7.7
+instructions per byte at full bandwidth — so it runs out of instruction issue before it runs out of
+memory. Its real ceiling is about 28,700 million steps per second, and it achieves **67 percent** of
+that.
+
+Two measurements from the project's own record settle which limit binds. Packing the state to cut
+memory traffic by 16 percent changed the time by 0.3 percent — if bandwidth were the limit, the time
+should have fallen by about 16 percent. Removing arithmetic, by contrast, gained 14 percent. That is
+a kernel limited by issuing instructions, not by moving bytes.
+
+### The training computation
+
+One iteration at 128 copies with sixteen updates per batch performs 110.2 thousand million
+floating-point operations. Measured against the card's matrix throughput:
+
+| measure | value |
+|---|---|
+| arithmetic in one iteration | 110.2 GFLOP |
+| time for that iteration (PyTorch) | 20.4 ms |
+| achieved rate | 5.4 TFLOP/s |
+| share of the card's peak matrix rate | 1.3 percent |
+| the largest matrix multiplication this card actually sustains | 265 TFLOP/s (64 percent of peak) |
+| every matrix multiplication in the iteration, timed on its own | 6.55 ms |
+
+A share of 1.3 percent sounds like failure and is not, for two reasons that the analysis makes
+precise. First, this algorithm's arithmetic intensity is about 11 operations per byte against a
+machine that balances at 106, so **no implementation of it could exceed about 10 percent** of the
+peak matrix rate. Second, and more usefully: adding up every matrix multiplication in the iteration,
+each timed in isolation, gives 6.55 milliseconds. That is the floor for the
+algorithm as written — the time if every other operation were free. The measured 20.4 milliseconds
+is **32 percent of that floor**, and the JAX implementation's 13.4
+milliseconds is 49 percent.
+
+So the honest statement of remaining headroom is not "ninety-nine percent is missing" but "at most
+about three times, and only by removing work that is not matrix multiplication".
+
+### Where that places the project
+
+Practitioners generally distinguish five stages: unoptimised; obvious waste removed; the limiting
+resource identified and the profile flat; at the hardware limit for the algorithm as written; and
+the algorithm itself reformulated to move the limit. On that scale the CUDA environment is at the
+fourth stage — its limiting resource is identified by experiment and it runs at two thirds of that
+limit — and the trainers are at the third, having gone from 0.8 percent to 2.0 percent of the peak
+matrix rate, which is roughly a third of the reachable ceiling for the algorithm as written. Two
+reformulations have already been made (batching the copies, fusing the sweep) and one was measured
+and declined because it changes the algorithm (a shorter horizon, worth three times).
+
+
+## The same work on ordinary processor cores
+
+To give the graphics-processor numbers a scale, the same code was run on a processor node of the
+same cluster (puma01: two sockets of forty cores, 160 hardware threads, 246 GB of memory), inside a
+reservation so nothing else was using it.
+
+There are two ways to use many cores, and the difference between them is larger than any
+optimisation in this report. **Thread-parallel** means one program holding all the work in one large
+array, with each operation split across threads — which requires every thread to finish before the
+next operation starts. **Process-parallel** means many independent programs, each with its own share
+of the work and no coordination at all.
+
+| way of using the cores | best aggregate, million steps per second | where the best point was |
+|---|---|---|
+| environment, threads, 10,000 environments each | 1.078 | 4 workers |
+| environment, threads, 100,000 environments each | 4.490 | 8 workers |
+| environment, processes, 1,000 environments each | 10.670 | 160 workers |
+| environment, processes, 10,000 environments each | 25.730 | 32 workers |
+
+Thread-parallel peaks at four to eight threads and then gets *worse* — at 160 threads it is twelve
+times slower than a single thread. One environment step is about forty small operations, and the
+regrouping after each one costs more than the work it coordinates once the threads are many. The
+process-parallel form never pays that, and reaches about twenty-four times a single core.
+
+End-to-end training on the same node:
+
+| way of using the cores | workers | copies | seconds per iteration | million steps per second | steps per second per copy |
+|---|---|---|---|---|---|
+| threads, epoch_minibatch | 4 | 2 | 0.781 | 0.0013 | 655 |
+| threads, epoch_minibatch | 80 | 32 | 0.799 | 0.0205 | 641 |
+| threads, epoch_minibatch | 8 | 32 | 0.573 | 0.0286 | 894 |
+| processes, epoch_minibatch | 160 | 160 | 1.219 | 0.0670 | 418 |
+| processes, epoch_minibatch | 32 | 128 | 0.710 | 0.0958 | 749 |
+| processes, full_batch | 80 | 80 | 0.872 | 0.0469 | 586 |
+| processes, epoch_minibatch | 224 | 224 | 0.379 | 0.3007 | 1,343 |
+
+Putting the two platforms beside each other: for the environment alone the graphics processor is
+about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
+end-to-end training the ratio is about thirty (3.21 against 0.096 million). The gap narrows because
+training is dominated by matrix multiplication, which processors do comparatively well, while the
+environment is dominated by many tiny independent operations, which is exactly what a graphics
+processor is for.
+
+
+## Which implementation to use
+
+Three practical questions, each answered from the measurements above. The tables that justify these
+can be reproduced with `python benchmarks/decide.py`.
+
+**Which environment: the CUDA kernel.** It is fastest at every batch size, and its advantage is
+largest for small batches (178 against 6.3 million steps per second at a thousand environments),
+where the other implementations spend nearly all their time dispatching work rather than simulating.
+All three implementations pass identical exactness checks, so this is purely a speed choice.
+
+**Which trainer: JAX is faster; PyTorch has more built on it.** Measured the same way on both sides —
+each iteration waited for — JAX leads by 4 to 19 percent with one update per batch and by 52 to 70
+percent with sixteen. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
+quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
+learning-rate sweep and per-copy progress recording.
+
+**Which combination: keep the environment in the same framework as the trainer.** Substituting the
+CUDA kernel, twenty-four times faster on its own, into the PyTorch training loop changes the
+iteration by about one percent, because after the optimisation work the environment is a small part
+of an iteration. Crossing frameworks is far worse: handing arrays between two runtimes costs about
+6.8 milliseconds per environment step against a native step of 0.1 to 0.3 milliseconds, and it
+prevents both frameworks from fusing or recording the loop. The fast kernel earns its place in work
+that is only environment simulation — generating data, evaluating a fixed policy — not inside this
+trainer.
+
+
+## Feature parity between the two trainers
+
+The learning-rate sweep and per-copy progress recording were first built in PyTorch. They were then
+added to JAX, under the requirement that they cost nothing.
+
+| copies | uniform baseline (ms) | with differing rates and per-copy recording (ms) | noise floor (ms) |
+|---|---|---|---|
+| 8 | 6.90 | 6.86 | 0.06 |
+| 128 | 11.93 | 11.93 | 0.10 |
+| 512 | 25.16 | 25.18 | 0.33 |
+| 2,048 | 81.78 | 81.70 | 1.09 |
+
+Every separated effect — the sweep mechanism, the rates actually differing, the coverage recording —
+lands between −0.5 and +0.4 percent, as often negative as positive. This is better than the PyTorch
+side's +1.0 percent, and the reason is structural: in JAX the per-copy rates are a constant broadcast
+inside the elementwise optimiser update the compiler already emits, so no new operation appears.
+
+The same six properties are tested on both sides: a uniform sweep reproduces the plain run, a
+zero-rate group stays exactly frozen while others train, changing one group's rate leaves other
+groups unchanged to the last bit, and paired and distinct seeding both behave as documented.
+
+**A measurement lesson worth recording.** The first version of this comparison ran each arm in its
+own process, as the other harnesses in this project do. Process-to-process variation alone was 0.68
+to 0.72 milliseconds on an 8 to 13 millisecond iteration — larger than every effect being measured —
+and increasing the number of timed iterations did not reduce it. Constructing all the arms in one
+process and timing them round-robin, with the order reversed on alternate rounds, dropped the floor
+to 0.06 to 0.10 milliseconds. Small effects measured with the per-process harnesses elsewhere in this
+report rest on a noisier instrument than that.
+

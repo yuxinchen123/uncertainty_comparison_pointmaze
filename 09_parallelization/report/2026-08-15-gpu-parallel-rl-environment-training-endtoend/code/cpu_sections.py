@@ -241,9 +241,13 @@ def sec_cpu():
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
 needs to know what the alternative gives, so the same training loop and the same environment
-were measured on ordinary processor cores. The measurements below ran on **{host}**, held
-exclusively — no other job shared the machine — so the timings are not contaminated by a
-neighbour.
+were measured on ordinary processor cores. The training measurements below ran on **{host}**
+(AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
+the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
+completely idle node on the cluster; a node with more cores was available but already had
+another job on it, which is exactly the contamination this run set out to avoid. The
+environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
+processors), also held under reservation.
 
 Nothing in the algorithm changed. What changed is that the graphics-processor features the
 optimisation work relied on — recording an iteration as a replayable sequence, the
