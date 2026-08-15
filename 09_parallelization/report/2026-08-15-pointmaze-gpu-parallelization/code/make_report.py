@@ -30,7 +30,7 @@ FIGS = REPORT / "figures"
 sys.path.insert(0, str(BASE / "report"
                        / "2026-08-15-gpu-parallel-rl-environment-training-endtoend" / "code"))
 import cpu_sections
-from cpu_sections import hours_per_million
+from cpu_sections import H
 
 # fixed categorical order (validated default palette, light mode): color follows the
 # ENTITY (framework); line style separates modes of the same entity
@@ -489,7 +489,7 @@ more groups leaves the time per iteration flat and the memory byte-identical:
             md += (f"| {r['n_rates']} | {r['copies_per_rate']} | {r['total_copies']:,} | "
                    f"{r['sec_per_iteration']*1e3:.1f} | {r['env_steps_per_sec']/1e6:.2f} | "
                    f"{r['env_steps_per_sec_per_copy']/1e3:.2f} | "
-                   f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} | "
+                   f"{H(r['env_steps_per_sec_per_copy'])} | "
                    f"{r['peak_vram_mb']:.0f} |\n")
         md += f"""
 From 1 group to {groups[-1]['n_rates']} groups the spread is {spread:.2f} ms on a mean of
@@ -569,7 +569,7 @@ Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 5
         md += (f"| {names[row['strategy']]} | {row['total_copies']:,} | "
                f"{row['sec_per_iteration']*1e3:.2f} | "
                f"{per_copy*row['total_copies']/1e6:.2f} | {per_copy/1e3:.2f} | "
-               f"{hours_per_million(per_copy):.3f} | {row['peak_vram_mb']:.0f} |\n")
+               f"{H(per_copy)} | {row['peak_vram_mb']:.0f} |\n")
     md += f"""
 Fusing the groups into one batched run is {d['fused_speedup_vs_separate']:.2f}x faster than
 running them one after another, and costs {d['fused_overhead_vs_uniform']*100:+.1f}% against a
@@ -1269,7 +1269,7 @@ End-to-end training on that node, one row per setting measured:
         md += (f"| {d['mode']}, {d.get('style')} | {best['workers']} | {best['total_copies']} | "
                f"{best['sec_per_iteration']:.3f} | {best['env_steps_per_sec']/1e6:.4f} | "
                f"{best['env_steps_per_sec_per_copy']/1e3:,.2f} | "
-               f"{hours_per_million(best['env_steps_per_sec_per_copy']):.3f} |\n")
+               f"{H(best['env_steps_per_sec_per_copy'])} |\n")
     md += """
 Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
 about forty small operations, and the regrouping after each one costs more than the work it

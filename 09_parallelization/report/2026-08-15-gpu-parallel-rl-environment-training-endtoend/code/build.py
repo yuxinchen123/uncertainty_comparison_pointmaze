@@ -15,6 +15,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from cpu_sections import H
+
 HERE = Path(__file__).resolve().parent
 REPORT = HERE.parent
 BASE = REPORT.parent.parent
@@ -501,27 +503,28 @@ results would be worthless. Three tests guard this:
     if not b:
         return md + missing("the training benchmark files")
     md += ("| copies | milliseconds per iteration | million steps per second, total | "
-           "thousand steps per second, per copy | peak memory (GB) |\n|---|---|---|---|---|\n")
+           "thousand steps per second, per copy | hours per million steps, per copy | "
+           "peak memory (GB) |\n|---|---|---|---|---|---|\n")
     for r in b:
         vram = r.get("peak_vram_mb")
+        mem = f"{vram/1024:.1f}" if vram else "not recorded"
         md += (f"| {r['n_copies']:,} | {r['sec_per_iteration']*1e3:.1f} | "
                f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
-               f"{vram/1024:.1f} |\n" if vram else
-               f"| {r['n_copies']:,} | {r['sec_per_iteration']*1e3:.1f} | "
-               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | not recorded |\n")
+               f"{H(r['env_steps_per_sec_per_copy'])} | {mem} |\n")
     md += """
 *Many small updates per batch. One iteration collects 512 environment steps per copy.*
 
 The second convention, one update per batch of data, does less arithmetic and is
 correspondingly faster:
 
-| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy |
-|---|---|---|---|
+| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy | hours per million steps, per copy |
+|---|---|---|---|---|
 """
     for c in sorted(a):
         r = a[c]
         md += (f"| {c:,} | {r['sec_per_iteration']*1e3:.1f} | {M(r['env_steps_per_sec'])} | "
-               f"{K(r['env_steps_per_sec_per_copy'])} |\n")
+               f"{K(r['env_steps_per_sec_per_copy'])} | "
+               f"{H(r['env_steps_per_sec_per_copy'])} |\n")
     md += """
 ![training scaling](figures/training_scaling.png)
 
@@ -745,8 +748,9 @@ for 10.24 million environment steps per copy, in both update conventions.
         md += missing("the training campaign records")
     else:
         md += ("| update convention | copies | wall time (minutes) | million steps per second | "
-               "thousand steps per second, per copy | fraction of the maze explored | "
-               "copies that reached the goal |\n|---|---|---|---|---|---|---|\n")
+               "thousand steps per second, per copy | hours per million steps, per copy | "
+               "fraction of the maze explored | copies that reached the goal |"
+               "\n|---|---|---|---|---|---|---|---|\n")
         for (style, c) in sorted(recs, key=lambda k: (k[0], k[1])):
             r = recs[(style, c)]
             hist = r["history"]
@@ -757,6 +761,7 @@ for 10.24 million environment steps per copy, in both update conventions.
                     else "many small updates per batch")
             md += (f"| {name} | {c} | {r['train_seconds']/60:.1f} | "
                    f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec']/c)} | "
+                   f"{H(r['env_steps_per_sec']/c)} | "
                    f"{cov:.2f} | {ever} of {c} |\n")
         md += """
 ![end to end](figures/endtoend.png)

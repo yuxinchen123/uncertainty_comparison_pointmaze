@@ -207,26 +207,26 @@ results would be worthless. Three tests guard this:
 
 ### 3.2 Results: how throughput scales with the number of copies
 
-| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy | peak memory (GB) |
-|---|---|---|---|---|
-| 8 | 13.8 | 0.296 | 37 | 0.1 |
-| 16 | 14.9 | 0.550 | 34 | 0.2 |
-| 32 | 15.7 | 1.05 | 33 | 0.3 |
-| 64 | 17.2 | 1.90 | 30 | 0.5 |
-| 128 | 20.4 | 3.21 | 25 | 0.7 |
-| 256 | 28.0 | 4.67 | 18 | 1.2 |
-| 512 | 43.8 | 5.99 | 12 | 2.4 |
-| 1,024 | 76.9 | 6.82 | 6.7 | 3.6 |
+| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy | hours per million steps, per copy | peak memory (GB) |
+|---|---|---|---|---|---|
+| 8 | 13.8 | 0.296 | 37 | 0.0075 | 0.1 |
+| 16 | 14.9 | 0.550 | 34 | 0.00808 | 0.2 |
+| 32 | 15.7 | 1.05 | 33 | 0.00851 | 0.3 |
+| 64 | 17.2 | 1.90 | 30 | 0.00934 | 0.5 |
+| 128 | 20.4 | 3.21 | 25 | 0.0111 | 0.7 |
+| 256 | 28.0 | 4.67 | 18 | 0.0152 | 1.2 |
+| 512 | 43.8 | 5.99 | 12 | 0.0237 | 2.4 |
+| 1,024 | 76.9 | 6.82 | 6.7 | 0.0417 | 3.6 |
 
 *Many small updates per batch. One iteration collects 512 environment steps per copy.*
 
 The second convention, one update per batch of data, does less arithmetic and is
 correspondingly faster:
 
-| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy |
-|---|---|---|---|
-| 2,048 | 45.0 | 23.3 | 11 |
-| 4,096 | 86.9 | 24.1 | 5.9 |
+| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy | hours per million steps, per copy |
+|---|---|---|---|---|
+| 2,048 | 45.0 | 23.3 | 11 | 0.0244 |
+| 4,096 | 86.9 | 24.1 | 5.9 | 0.0471 |
 
 ![training scaling](figures/training_scaling.png)
 
@@ -407,18 +407,18 @@ runs alongside the others.
 To confirm that the system trains rather than merely runs quickly, every copy count was trained
 for 10.24 million environment steps per copy, in both update conventions.
 
-| update convention | copies | wall time (minutes) | million steps per second | thousand steps per second, per copy | fraction of the maze explored | copies that reached the goal |
-|---|---|---|---|---|---|---|
-| many small updates per batch | 8 | 4.6 | 0.294 | 37 | 0.86 | 3 of 8 |
-| many small updates per batch | 16 | 5.0 | 0.550 | 34 | 0.88 | 9 of 16 |
-| many small updates per batch | 32 | 5.2 | 1.04 | 33 | 0.88 | 18 of 32 |
-| many small updates per batch | 64 | 5.8 | 1.89 | 30 | 0.89 | 38 of 64 |
-| many small updates per batch | 128 | 6.8 | 3.20 | 25 | 0.87 | 68 of 128 |
-| one update per batch | 8 | 1.9 | 0.719 | 90 | 0.82 | 5 of 8 |
-| one update per batch | 16 | 2.1 | 1.29 | 80 | 0.83 | 6 of 16 |
-| one update per batch | 32 | 2.1 | 2.58 | 81 | 0.81 | 13 of 32 |
-| one update per batch | 64 | 2.3 | 4.72 | 74 | 0.74 | 19 of 64 |
-| one update per batch | 128 | 2.7 | 8.19 | 64 | 0.80 | 47 of 128 |
+| update convention | copies | wall time (minutes) | million steps per second | thousand steps per second, per copy | hours per million steps, per copy | fraction of the maze explored | copies that reached the goal |
+|---|---|---|---|---|---|---|---|
+| many small updates per batch | 8 | 4.6 | 0.294 | 37 | 0.00755 | 0.86 | 3 of 8 |
+| many small updates per batch | 16 | 5.0 | 0.550 | 34 | 0.00809 | 0.88 | 9 of 16 |
+| many small updates per batch | 32 | 5.2 | 1.04 | 33 | 0.00853 | 0.88 | 18 of 32 |
+| many small updates per batch | 64 | 5.8 | 1.89 | 30 | 0.00941 | 0.89 | 38 of 64 |
+| many small updates per batch | 128 | 6.8 | 3.20 | 25 | 0.0111 | 0.87 | 68 of 128 |
+| one update per batch | 8 | 1.9 | 0.719 | 90 | 0.00309 | 0.82 | 5 of 8 |
+| one update per batch | 16 | 2.1 | 1.29 | 80 | 0.00345 | 0.83 | 6 of 16 |
+| one update per batch | 32 | 2.1 | 2.58 | 81 | 0.00344 | 0.81 | 13 of 32 |
+| one update per batch | 64 | 2.3 | 4.72 | 74 | 0.00377 | 0.74 | 19 of 64 |
+| one update per batch | 128 | 2.7 | 8.19 | 64 | 0.00434 | 0.80 | 47 of 128 |
 
 ![end to end](figures/endtoend.png)
 
@@ -496,15 +496,15 @@ The measurements settle which is better, and the answer is not the obvious one.
 | 32 | 112 | 0.764 | 0.0214 | 0.67 | 0.415 |
 | 64 | 8 | 0.666 | 0.0492 | 0.77 | 0.361 |
 | 64 | 112 | 0.824 | 0.0397 | 0.62 | 0.447 |
-| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.670 |
+| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.67 |
 | 128 | 112 | 1.229 | 0.0533 | 0.42 | 0.667 |
 
 *One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
 | workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
 |---|---|---|---|---|---|---|
-| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.190 |
-| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.200 |
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 |
 | 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 | 0.201 |
 | 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 |
 | 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 |
@@ -539,12 +539,12 @@ one-copy-per-worker processor row, explained under the table.
 
 | platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours per million steps per copy |
 |---|---|---|---|---|---|
-| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.047** |
-| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>0.150</u> |
+| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.0471** |
+| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>0.15</u> |
 | processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 0.262 |
 | processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 0.472 |
 | processor, independent processes, one update, one copy per worker | 224 | 0.326 | 0.3527 | 1.57 | 0.176 |
-| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 0.490 |
+| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 0.49 |
 | processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 0.667 |
 
 The 224-copy row is the exception: it is the processor setting that finishes any single copy soonest, giving each copy 1.57 thousand steps per second against 1.06 thousand for the processor setting that wins on total throughput — a million steps per copy in 0.176 hours instead of 0.262 — at the price of a factor of 10.8 in total throughput.

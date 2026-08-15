@@ -250,6 +250,17 @@ def hours_per_million(per_copy_rate):
     return 1e6 / (3600 * per_copy_rate)
 
 
+def H(per_copy_rate):
+    """Hours per million steps per copy, formatted for a table cell.
+
+    Three significant figures rather than three decimal places: a graphics-processor row sits
+    near 0.008 hours and a processor row near 0.7, so a fixed number of decimals either rounds
+    the fast rows together (8 and 16 copies both printing 0.008) or prints noise on the slow ones.
+    before: 37,000 steps per second per copy -> "0.00751";  1,574 -> "0.176"
+    """
+    return f"{hours_per_million(per_copy_rate):.3g}"
+
+
 def thread_table(host):
     """Thread-mode table: one row per (copy count, thread setting), with both rates on every row.
 
@@ -269,7 +280,7 @@ def thread_table(host):
     for r in sorted(rows, key=lambda r: (r["total_copies"], r["workers"])):
         md += (f"| {r['total_copies']} | {r['workers']} | {r['sec_per_iteration']:.3f} | "
                f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
-               f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} |\n")
+               f"{H(r['env_steps_per_sec_per_copy'])} |\n")
     md += ("\n*One process holding every copy, the array library given 8 or 112 threads. "
            "Sixteen updates per batch.*\n\n")
     return md
@@ -361,7 +372,7 @@ The measurements settle which is better, and the answer is not the obvious one.
             md += (f"| {r['workers']} | {r['n_copies']} | {r['total_copies']} | "
                    f"{r['sec_per_iteration']:.3f} | {M(r['env_steps_per_sec'])} | "
                    f"{K(r['env_steps_per_sec_per_copy'])} | "
-                   f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} |\n")
+                   f"{H(r['env_steps_per_sec_per_copy'])} |\n")
         md += "\n*Independent single-thread processes. Sixteen updates per batch.*\n\n"
     md += f"""![processor against graphics processor](figures/cpu_vs_gpu.png)
 
@@ -401,7 +412,7 @@ one-copy-per-worker processor row, explained under the table.
     cells = {"sec_per_iteration": [f"{r['sec_per_iteration']:.3f}" for r in rows],
              "total": [M(r["total"]) for r in rows],
              "per_copy": [K(r["per_copy"]) for r in rows],
-             "hours_1M": [f"{r['hours_1M']:.3f}" for r in rows]}
+             "hours_1M": [f"{r['hours_1M']:.3g}" for r in rows]}
     for field, higher_is_better in [("sec_per_iteration", False), ("total", True),
                                     ("per_copy", True), ("hours_1M", False)]:
         cells[field] = mark_best(cells[field], [r[field] for r in rows], higher_is_better)
