@@ -455,14 +455,12 @@ The same campaign was run before and after the second round of optimisation work
 ### 5.1 Why this comparison is here
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
-needs to know what the alternative gives, so the same training loop and the same environment
-were measured on ordinary processor cores. The training measurements below ran on **jaguar03**
+needs to know what the alternative gives, so the same end-to-end training loop was measured on
+ordinary processor cores. The measurements below ran on **jaguar03**
 (AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
 the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
 completely idle node on the cluster; a node with more cores was available but already had
-another job on it, which is exactly the contamination this run set out to avoid. The
-environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
-processors), also held under reservation.
+another job on it, which is exactly the contamination this run set out to avoid.
 
 Nothing in the algorithm changed. What changed is that the graphics-processor features the
 optimisation work relied on — recording an iteration as a replayable sequence, the
@@ -482,18 +480,26 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | 8 threads | 112 threads | best seconds per iteration | thousand steps per second per copy |
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|
-| 1 | 0.0015 | 0.0011 | 0.352 | 1.45 |
-| 2 | 0.0027 | 0.0016 | 0.382 | 1.34 |
-| 4 | 0.0050 | 0.0036 | 0.410 | 1.25 |
-| 8 | 0.0095 | 0.0060 | 0.433 | 1.18 |
-| 16 | 0.0170 | 0.0123 | 0.482 | 1.06 |
-| 32 | 0.0284 | 0.0214 | 0.576 | 0.89 |
-| 64 | 0.0492 | 0.0397 | 0.666 | 0.77 |
-| 128 | 0.0531 | 0.0533 | 1.229 | 0.42 |
+| 1 | 8 | 0.352 | 0.0015 | 1.45 |
+| 1 | 112 | 0.453 | 0.0011 | 1.13 |
+| 2 | 8 | 0.382 | 0.0027 | 1.34 |
+| 2 | 112 | 0.636 | 0.0016 | 0.81 |
+| 4 | 8 | 0.410 | 0.0050 | 1.25 |
+| 4 | 112 | 0.568 | 0.0036 | 0.90 |
+| 8 | 8 | 0.433 | 0.0095 | 1.18 |
+| 8 | 112 | 0.686 | 0.0060 | 0.75 |
+| 16 | 8 | 0.482 | 0.0170 | 1.06 |
+| 16 | 112 | 0.665 | 0.0123 | 0.77 |
+| 32 | 8 | 0.576 | 0.0284 | 0.89 |
+| 32 | 112 | 0.764 | 0.0214 | 0.67 |
+| 64 | 8 | 0.666 | 0.0492 | 0.77 |
+| 64 | 112 | 0.824 | 0.0397 | 0.62 |
+| 128 | 8 | 1.235 | 0.0531 | 0.41 |
+| 128 | 112 | 1.229 | 0.0533 | 0.42 |
 
-*One process holding every copy, the array library given 8 or 112 threads. Throughput columns are millions of environment steps per second. Sixteen updates per batch.*
+*One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
 | workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|---|
@@ -510,16 +516,9 @@ The measurements settle which is better, and the answer is not the obvious one.
 
 ![processor against graphics processor](figures/cpu_vs_gpu.png)
 
-![worker scaling](figures/cpu_worker_scaling.png)
-
 The two tables answer it. Independent processes reach 2.11 million environment steps per second at 3,584 copies; one process with threads tops out at 0.0533 million. That is a factor of **40** on the same machine, running the same algorithm — the only difference is how the work was divided.
 
 The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 7 of the 8 copy counts measured — 0.764 seconds per iteration against 0.576 at 32 copies; 0.824 seconds per iteration against 0.666 at 64 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
-
-The environment measurements on the second processor node show the same limit even more
-sharply: one process reached its best throughput at four to eight threads and then got
-**worse**, ending twelve times slower than a single thread when given 160. Independent processes
-scaled to about twenty-four times over the same range.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -553,10 +552,9 @@ The best graphics-processor configuration reaches 24.1 million environment steps
 Best in each column is bold, second best underlined; copies is a setting rather than
 a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
-arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
-for training than for the environment alone, because training is dominated by matrix
-arithmetic, which processors handle comparatively better than they handle many tiny
-dependent operations.
+arrangement is exactly what a work queue across many nodes would do. And a configuration that
+wins on total throughput is not the one that finishes any single copy soonest, which is why both
+rates appear in every table and both curves in every figure.
 
 
 ## 7. Method, and how to repeat the measurements

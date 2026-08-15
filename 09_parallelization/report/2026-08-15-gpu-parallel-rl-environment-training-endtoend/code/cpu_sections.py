@@ -76,22 +76,6 @@ def gpu_train(style="epoch_minibatch"):
     return dedup(rows, "total_copies")
 
 
-def cpu_env(host, mode):
-    """Processor environment rows for one host and parallelisation style."""
-    rows = all_rows(r"envbench_cpu_", host=host, mode=mode)
-    for r in rows:
-        r["total_copies"] = r["total_envs"]
-    return dedup(rows, "total_envs")
-
-
-def gpu_env():
-    """The graphics processor's best environment implementation, for the reference line."""
-    rows = all_rows(r"envbench_cuda_fused_tourn_count_grid")
-    for r in rows:
-        r["env_steps_per_sec_per_env"] = r["env_steps_per_sec"] / r["total_envs"]
-    return dedup(rows, "total_envs")
-
-
 def style_ax(ax):
     """Recessive grid, no top or right frame."""
     ax.grid(True, which="major", **GRID)
@@ -101,55 +85,44 @@ def style_ax(ax):
 
 
 def fig_cpu_vs_gpu():
-    """Both parallelisation styles on the processor, with the graphics processor dashed."""
+    """End-to-end training on both parallelisation styles, with the graphics processor dashed.
+
+    Two panels, because a throughput result is two numbers: the aggregate the machine delivers,
+    and what one copy gets. They point opposite ways — packing more copies raises the first and
+    lowers the second — so a reader choosing a setting needs both curves.
+    """
     tr_proc = cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes")
     tr_thread = cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads")
     tr_gpu = gpu_train("epoch_minibatch")
-    ev_proc = cpu_env("puma01", "processes")
-    ev_thread = cpu_env("puma01", "threads")
-    ev_gpu = gpu_env()
     if not (tr_proc or tr_thread):
         return "the processor training measurements"
 
     fig, axes = plt.subplots(1, 2, figsize=(11.4, 4.4), dpi=160)
-    # left: end-to-end training
-    for label, rows, colour, marker in [
-            ("processor, independent processes", tr_proc, C_CPU_PROC, "o"),
-            ("processor, threads in one process", tr_thread, C_CPU_THREAD, "s")]:
-        if rows:
-            axes[0].plot([r["total_copies"] for r in rows],
-                         [r["env_steps_per_sec"] / 1e6 for r in rows], "-", color=colour,
-                         linewidth=2, marker=marker, markersize=6, label=label)
-    if tr_gpu:
-        axes[0].plot([r["total_copies"] for r in tr_gpu],
-                     [r["env_steps_per_sec"] / 1e6 for r in tr_gpu], "--", color=C_GPU,
-                     linewidth=2, marker="x", markersize=7, label="graphics processor (reference)")
-    axes[0].set_xlabel("independent training copies (log scale)")
+    curves = [("processor, independent processes", tr_proc, C_CPU_PROC, "o", "-"),
+              ("processor, threads in one process", tr_thread, C_CPU_THREAD, "s", "-"),
+              ("graphics processor (reference)", tr_gpu, C_GPU, "x", "--")]
+    # left panel is the aggregate rate, right panel the rate one copy gets; same curves on both
+    for label, rows, colour, marker, dash in curves:
+        if not rows:
+            continue
+        x = [r["total_copies"] for r in rows]
+        axes[0].plot(x, [r["env_steps_per_sec"] / 1e6 for r in rows], dash, color=colour,
+                     linewidth=2, marker=marker, markersize=6, label=label)
+        axes[1].plot(x, [r["env_steps_per_sec_per_copy"] / 1e3 for r in rows], dash, color=colour,
+                     linewidth=2, marker=marker, markersize=6, label=label)
     axes[0].set_ylabel("million environment steps per second")
-    axes[0].set_title("End-to-end training", fontsize=10)
-
-    # right: the environment on its own
-    for label, rows, colour, marker in [
-            ("processor, independent processes", ev_proc, C_CPU_PROC, "o"),
-            ("processor, threads in one process", ev_thread, C_CPU_THREAD, "s")]:
-        if rows:
-            axes[1].plot([r["total_envs"] for r in rows],
-                         [r["env_steps_per_sec"] / 1e6 for r in rows], "-", color=colour,
-                         linewidth=2, marker=marker, markersize=6, label=label)
-    if ev_gpu:
-        axes[1].plot([r["total_envs"] for r in ev_gpu],
-                     [r["env_steps_per_sec"] / 1e6 for r in ev_gpu], "--", color=C_GPU,
-                     linewidth=2, marker="x", markersize=7, label="graphics processor (reference)")
-    axes[1].set_xlabel("environments simulated together (log scale)")
-    axes[1].set_ylabel("million environment steps per second")
-    axes[1].set_title("Environment only", fontsize=10)
+    axes[0].set_title("Total across all copies", fontsize=10)
+    axes[1].set_ylabel("thousand environment steps per second per copy")
+    axes[1].set_title("What one copy gets", fontsize=10)
 
     for ax in axes:
+        ax.set_xlabel("independent training copies (log scale)")
         ax.set_xscale("log", base=2)
         ax.set_yscale("log")
         ax.legend(frameon=False, fontsize=8)
         style_ax(ax)
-    fig.suptitle("Ordinary processor cores against the graphics processor", fontsize=11)
+    fig.suptitle("End-to-end training: ordinary processor cores against the graphics processor",
+                 fontsize=11)
     fig.tight_layout()
     fig.savefig(FIGS / "cpu_vs_gpu.png")
     plt.close(fig)
@@ -205,32 +178,29 @@ def fig_best_setup(limit=4096):
     rows = best_under(limit)
     if not rows:
         return "the measurements the best-setup comparison draws on"
-    fig, axes = plt.subplots(1, 2, figsize=(11.4, 4.4), dpi=160)
+    fig, axes = plt.subplots(1, 3, figsize=(14.6, 4.4), dpi=160)
     names = [r["name"].replace(", ", "\n") for r in rows]
     colours = [C_GPU if r["kind"] == "gpu" else C_CPU_PROC for r in rows]
-    bars = axes[0].barh(range(len(rows)), [r["total"] / 1e6 for r in rows], color=colours,
-                        height=0.6)
-    for i, (rect, r) in enumerate(zip(bars, rows)):
-        axes[0].text(rect.get_width(), i, f"  {r['total']/1e6:.3f}", va="center", fontsize=8)
-    axes[0].set_yticks(range(len(rows)))
-    axes[0].set_yticklabels(names, fontsize=7.5)
-    axes[0].invert_yaxis()
-    axes[0].set_xscale("log")
-    axes[0].set_xlabel("million environment steps per second (log scale)")
-    axes[0].set_title(f"Best total throughput at {limit:,} copies or fewer", fontsize=10)
-    style_ax(axes[0])
-
-    axes[1].barh(range(len(rows)), [r["hours_10M"] for r in rows], color=colours, height=0.6)
-    for i, r in enumerate(rows):
-        axes[1].text(r["hours_10M"], i, f"  {r['hours_10M']:.1f} h", va="center", fontsize=8)
-    axes[1].set_yticks(range(len(rows)))
-    axes[1].set_yticklabels([])
-    # the row labels are printed only on the left panel, so this panel must run the same way up
-    axes[1].invert_yaxis()
-    axes[1].set_xscale("log")
-    axes[1].set_xlabel("hours to give every copy ten million steps (log scale)")
-    axes[1].set_title("What that means in wall time", fontsize=10)
-    style_ax(axes[1])
+    # the three panels are the aggregate rate, the rate one copy gets, and what the per-copy rate
+    # means in wall time; the row order is shared, so every panel must run the same way up
+    panels = [("total", 1e6, "{:.3f}", "million environment steps per second (log scale)",
+               f"Best total throughput at {limit:,} copies or fewer"),
+              ("per_copy", 1e3, "{:,.2f}", "thousand steps per second per copy (log scale)",
+               "What one copy gets there"),
+              ("hours_10M", 1, "{:.1f} h", "hours to give every copy ten million steps (log scale)",
+               "What that means in wall time")]
+    for ax, (field, scale, fmt, xlabel, title) in zip(axes, panels):
+        ax.barh(range(len(rows)), [r[field] / scale for r in rows], color=colours, height=0.6)
+        for i, r in enumerate(rows):
+            ax.text(r[field] / scale, i, "  " + fmt.format(r[field] / scale), va="center",
+                    fontsize=8)
+        ax.set_yticks(range(len(rows)))
+        ax.set_yticklabels(names if field == "total" else [], fontsize=7.5)
+        ax.invert_yaxis()
+        ax.set_xscale("log")
+        ax.set_xlabel(xlabel)
+        ax.set_title(title, fontsize=10)
+        style_ax(ax)
     fig.tight_layout()
     fig.savefig(FIGS / "best_setup.png")
     plt.close(fig)
@@ -251,35 +221,24 @@ def K(x):
 
 
 def thread_table(host):
-    """Thread-mode table with one column per thread setting, so the two are directly comparable.
+    """Thread-mode table: one row per (copy count, thread setting), with both rates on every row.
 
-    Collapsing the settings to a per-copy-count best hides the finding: at 128 copies the two
-    settings differ by half a percent, which is noise, and picking a winner there would read as
-    a real change. Side-by-side columns show the whole picture instead.
+    One row per setting rather than one column per setting, so that the aggregate rate and the
+    per-copy rate are both visible for BOTH thread settings; folding the second setting into an
+    extra column can only show one of the two quantities for it. The rows stay grouped by copy
+    count so the two settings sit next to each other and remain directly comparable.
     before: rows = [{copies:1,threads:8,...}, {copies:1,threads:112,...}, {copies:2,threads:8,...}]
-    after:  one row per copy count, one throughput column per thread setting
+    after:  copies 1 / 8 threads, copies 1 / 112 threads, copies 2 / 8 threads, ...
     """
     rows = all_rows(r"trainbench_cpu_threads", host=host, style="epoch_minibatch")
     if not rows:
         return ""
-    settings = sorted({r["workers"] for r in rows})
-    by_copies = {}
-    for r in rows:
-        by_copies.setdefault(r["total_copies"], {})[r["workers"]] = r
-    head = " | ".join(f"{t} threads" for t in settings)
-    md = (f"| copies | {head} | best seconds per iteration | "
-          f"thousand steps per second per copy |\n|---|" + "---|" * (len(settings) + 2) + "\n")
-    for c in sorted(by_copies):
-        cells, best = [], None
-        for t in settings:
-            r = by_copies[c].get(t)
-            cells.append(M(r["env_steps_per_sec"]) if r else "—")
-            if r and (best is None or r["sec_per_iteration"] < best["sec_per_iteration"]):
-                best = r
-        md += (f"| {c} | {' | '.join(cells)} | {best['sec_per_iteration']:.3f} | "
-               f"{K(best['env_steps_per_sec_per_copy'])} |\n")
+    md = ("| copies | threads | seconds per iteration | million steps per second | "
+          "thousand steps per second per copy |\n|---|---|---|---|---|\n")
+    for r in sorted(rows, key=lambda r: (r["total_copies"], r["workers"])):
+        md += (f"| {r['total_copies']} | {r['workers']} | {r['sec_per_iteration']:.3f} | "
+               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} |\n")
     md += ("\n*One process holding every copy, the array library given 8 or 112 threads. "
-           "Throughput columns are millions of environment steps per second. "
            "Sixteen updates per batch.*\n\n")
     return md
 
@@ -335,14 +294,12 @@ def sec_cpu():
 ### 5.1 Why this comparison is here
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
-needs to know what the alternative gives, so the same training loop and the same environment
-were measured on ordinary processor cores. The training measurements below ran on **{host}**
+needs to know what the alternative gives, so the same end-to-end training loop was measured on
+ordinary processor cores. The measurements below ran on **{host}**
 (AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
 the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
 completely idle node on the cluster; a node with more cores was available but already had
-another job on it, which is exactly the contamination this run set out to avoid. The
-environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
-processors), also held under reservation.
+another job on it, which is exactly the contamination this run set out to avoid.
 
 Nothing in the algorithm changed. What changed is that the graphics-processor features the
 optimisation work relied on — recording an iteration as a replayable sequence, the
@@ -375,14 +332,7 @@ The measurements settle which is better, and the answer is not the obvious one.
         md += "\n*Independent single-thread processes. Sixteen updates per batch.*\n\n"
     md += f"""![processor against graphics processor](figures/cpu_vs_gpu.png)
 
-![worker scaling](figures/cpu_worker_scaling.png)
-
 The two tables answer it. {thread_verdict(host, tr_proc, tr_thread)}
-
-The environment measurements on the second processor node show the same limit even more
-sharply: one process reached its best throughput at four to eight threads and then got
-**worse**, ending twelve times slower than a single thread when given 160. Independent processes
-scaled to about twenty-four times over the same range.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -438,48 +388,11 @@ reaches the highest total throughput inside that range.
     md += """Best in each column is bold, second best underlined; copies is a setting rather than
 a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
-arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
-for training than for the environment alone, because training is dominated by matrix
-arithmetic, which processors handle comparatively better than they handle many tiny
-dependent operations.
+arrangement is exactly what a work queue across many nodes would do. And a configuration that
+wins on total throughput is not the one that finishes any single copy soonest, which is why both
+rates appear in every table and both curves in every figure.
 
 """
     return md
 
 
-def fig_worker_scaling():
-    """Throughput against the number of workers, which is where the two styles diverge."""
-    th = [r for r in all_rows(r"envbench_cpu_threads", mode="threads")]
-    pr = [r for r in all_rows(r"envbench_cpu_processes", mode="processes")]
-    if not th or not pr:
-        return "the processor environment sweeps"
-    # group by the per-worker problem size so each curve varies only the worker count
-    fig, ax = plt.subplots(figsize=(7.0, 4.4), dpi=160)
-    for rows, colour, marker, style_name in [(th, C_CPU_THREAD, "s", "threads in one process"),
-                                             (pr, C_CPU_PROC, "o", "independent processes")]:
-        sizes = sorted({r["n_envs_per_worker"] if "n_envs_per_worker" in r else 0 for r in rows})
-        # colour carries the parallelisation style, so line style and marker fill have to carry
-        # the per-worker problem size — otherwise two curves of one family are indistinguishable
-        for i, size in enumerate(sizes):
-            sel = sorted([r for r in rows if r.get("n_envs_per_worker") == size],
-                         key=lambda r: r["workers"])
-            if len(sel) < 3:
-                continue
-            base = sel[0]["env_steps_per_sec"]
-            ax.plot([r["workers"] for r in sel], [r["env_steps_per_sec"] / base for r in sel],
-                    linestyle=["-", "-."][i % 2], color=colour, linewidth=2, marker=marker,
-                    markersize=6, markerfacecolor=colour if i % 2 == 0 else "white",
-                    markeredgecolor=colour,
-                    label=f"{style_name}, {size:,} environments each")
-    ax.axhline(1.0, color="#9aa0ab", linewidth=1, linestyle=":")
-    ax.set_xscale("log", base=2)
-    ax.set_yscale("log")
-    ax.set_xlabel("workers (threads, or processes) — log scale")
-    ax.set_ylabel("speedup against one worker")
-    ax.legend(frameon=False, fontsize=8)
-    style_ax(ax)
-    fig.suptitle("Adding threads stops helping; adding processes keeps helping", fontsize=11)
-    fig.tight_layout()
-    fig.savefig(FIGS / "cpu_worker_scaling.png")
-    plt.close(fig)
-    return None

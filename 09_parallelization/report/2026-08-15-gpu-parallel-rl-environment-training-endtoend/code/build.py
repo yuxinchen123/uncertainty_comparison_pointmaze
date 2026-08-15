@@ -846,7 +846,7 @@ def main():
     fig_training_scaling()
     fig_sweep()
     fig_endtoend()
-    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup(), cpu.fig_worker_scaling()):
+    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup()):
         if note:
             MISSING.append(note)
     md = "\n".join([sec_intro(), sec_env(), sec_training(), sec_endtoend(),

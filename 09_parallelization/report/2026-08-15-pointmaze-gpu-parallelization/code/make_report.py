@@ -33,6 +33,7 @@ C_JAX = "#1baf7a"     # slot 3 aqua
 C_EXTRA = "#eda100"   # slot 4 yellow (copy counts in the campaign figure use a blue ramp instead)
 GRID = dict(color="#d9d9d9", linewidth=0.6)
 PENDING = []
+STEPS_PER_COPY_PER_ITER = 128 * 4   # num_steps x n_envs: one iteration's steps for one copy
 
 
 def style_ax(ax):
@@ -474,12 +475,13 @@ because it is the same measurement in different units.
 No. Holding the total at {groups[0]['total_copies']} copies and splitting them into more and
 more groups leaves the time per iteration flat and the memory byte-identical:
 
-| groups (learning rates) | copies per rate | ms/iteration | peak VRAM [MB] |
-|---|---|---|---|
+| groups (learning rates) | copies per rate | copies | ms/iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|---|
 """
         for r in groups:
-            md += (f"| {r['n_rates']} | {r['copies_per_rate']} | "
-                   f"{r['sec_per_iteration']*1e3:.1f} | {r['peak_vram_mb']:.0f} |\n")
+            md += (f"| {r['n_rates']} | {r['copies_per_rate']} | {r['total_copies']:,} | "
+                   f"{r['sec_per_iteration']*1e3:.1f} | {r['env_steps_per_sec']/1e6:.2f} | "
+                   f"{r['env_steps_per_sec_per_copy']/1e3:.2f} | {r['peak_vram_mb']:.0f} |\n")
         md += f"""
 From 1 group to {groups[-1]['n_rates']} groups the spread is {spread:.2f} ms on a mean of
 {sum(ms)/len(ms):.1f} ms ({spread/(sum(ms)/len(ms))*100:.2f}%), which is within the run-to-run
@@ -538,8 +540,8 @@ so a difference between groups is the rate's doing. Full description: `ppo/torch
 
 Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
 
-| layout | ms per sweep iteration | peak VRAM [MB] |
-|---|---|---|
+| layout | copies | ms per sweep iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|
 """
     d = newest(r"sweep_strategies")
     if not d:
@@ -547,8 +549,15 @@ Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 5
     names = {"uniform": "uniform rate, one trainer (not a sweep — the reference)",
              "fused": "one trainer, per-copy rate vector, one graph",
              "separate": "one trainer per rate, run in turn"}
+    # this file records only the iteration time, so the two rates are derived from it: one
+    # iteration advances every copy by num_steps x n_envs = 512 environment steps
+    # before: {"total_copies": 2048, "sec_per_iteration": 0.1445}
+    # after:  7.26 million steps/s in total, 3.54 thousand steps/s per copy
     for row in d["rows"]:
-        md += (f"| {names[row['strategy']]} | {row['sec_per_iteration']*1e3:.2f} | "
+        per_copy = STEPS_PER_COPY_PER_ITER / row["sec_per_iteration"]
+        md += (f"| {names[row['strategy']]} | {row['total_copies']:,} | "
+               f"{row['sec_per_iteration']*1e3:.2f} | "
+               f"{per_copy*row['total_copies']/1e6:.2f} | {per_copy/1e3:.2f} | "
                f"{row['peak_vram_mb']:.0f} |\n")
     md += f"""
 Fusing the groups into one batched run is {d['fused_speedup_vs_separate']:.2f}x faster than
@@ -1220,9 +1229,8 @@ and declined because it changes the algorithm (a shorter horizon, worth three ti
 
 def sec_cpu():
     """The same work on ordinary processor cores, for scale."""
-    envs = [json.loads(p.read_text()) for p in sorted(RESULTS.glob("*envbench_cpu*.json"))]
     trains = [json.loads(p.read_text()) for p in sorted(RESULTS.glob("*trainbench_cpu*.json"))]
-    if not envs or not trains:
+    if not trains:
         return "## The same work on ordinary processor cores\n" + pending(
             "processor comparison", "the processor benchmark files")
     md = """## The same work on ordinary processor cores
@@ -1237,36 +1245,23 @@ array, with each operation split across threads — which requires every thread 
 next operation starts. **Process-parallel** means many independent programs, each with its own share
 of the work and no coordination at all.
 
-| way of using the cores | best aggregate, million steps per second | where the best point was |
-|---|---|---|
-"""
-    for d in envs:
-        best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
-        md += (f"| environment, {d['mode']}, {d['n_envs_per_worker']:,} environments each | "
-               f"{best['env_steps_per_sec']/1e6:.3f} | {best['workers']} workers |\n")
-    md += """
-Thread-parallel peaks at four to eight threads and then gets *worse* — at 160 threads it is twelve
-times slower than a single thread. One environment step is about forty small operations, and the
-regrouping after each one costs more than the work it coordinates once the threads are many. The
-process-parallel form never pays that, and reaches about twenty-four times a single core.
+End-to-end training on that node, one row per setting measured:
 
-End-to-end training on the same node:
-
-| way of using the cores | workers | copies | seconds per iteration | million steps per second | steps per second per copy |
+| way of using the cores | workers | copies | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|---|
 """
+    # one row per benchmark file, at that file's fastest point; both the aggregate rate and the
+    # rate a single copy gets are shown, because a setting that wins on one can lose on the other
     for d in trains:
         best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
         md += (f"| {d['mode']}, {d.get('style')} | {best['workers']} | {best['total_copies']} | "
                f"{best['sec_per_iteration']:.3f} | {best['env_steps_per_sec']/1e6:.4f} | "
-               f"{best['env_steps_per_sec_per_copy']:,.0f} |\n")
+               f"{best['env_steps_per_sec_per_copy']/1e3:,.2f} |\n")
     md += """
-Putting the two platforms beside each other: for the environment alone the graphics processor is
-about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
-end-to-end training the ratio is about thirty (3.21 against 0.096 million). The gap narrows because
-training is dominated by matrix multiplication, which processors do comparatively well, while the
-environment is dominated by many tiny independent operations, which is exactly what a graphics
-processor is for.
+Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
+about forty small operations, and the regrouping after each one costs more than the work it
+coordinates once the threads are many. The process-parallel form never pays that. The dedicated-node
+measurements later in this report put numbers on the difference and settle the choice.
 
 """
     return md
@@ -1443,7 +1438,7 @@ def sec_clean_node():
                            / "2026-08-15-gpu-parallel-rl-environment-training-endtoend" / "code"))
     import cpu_sections as cpu
     cpu.FIGS = FIGS
-    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup(), cpu.fig_worker_scaling()):
+    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup()):
         if note:
             PENDING.append(note)
     md = cpu.sec_cpu() + "\n" + cpu.sec_best()

@@ -29,17 +29,17 @@ what each round changed, then the training campaign and the sweep.
 | [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT |
 | [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
 | [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
-| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 13:34 PT |
+| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:21 PT |
 | [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT |
 | [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
 | [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
-| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
+| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 16:20 PT |
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:08 PT |
-| [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:08 PT |
+| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:22 PT |
+| [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:20 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -338,11 +338,11 @@ so a difference between groups is the rate's doing. Full description: `ppo/torch
 
 Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
 
-| layout | ms per sweep iteration | peak VRAM [MB] |
-|---|---|---|
-| uniform rate, one trainer (not a sweep — the reference) | 144.50 | 6457 |
-| one trainer, per-copy rate vector, one graph | 146.21 | 6457 |
-| one trainer per rate, run in turn | 326.11 | 3169 |
+| layout | copies | ms per sweep iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|
+| uniform rate, one trainer (not a sweep — the reference) | 2,048 | 144.50 | 7.26 | 3.54 | 6457 |
+| one trainer, per-copy rate vector, one graph | 2,048 | 146.21 | 7.17 | 3.50 | 6457 |
+| one trainer per rate, run in turn | 2,048 | 326.11 | 3.22 | 1.57 | 3169 |
 
 Fusing the groups into one batched run is 2.23x faster than
 running them one after another, and costs +1.2% against a
@@ -414,16 +414,16 @@ because it is the same measurement in different units.
 No. Holding the total at 2048 copies and splitting them into more and
 more groups leaves the time per iteration flat and the memory byte-identical:
 
-| groups (learning rates) | copies per rate | ms/iteration | peak VRAM [MB] |
-|---|---|---|---|
-| 128 | 16 | 143.1 | 6457 |
-| 64 | 32 | 143.1 | 6457 |
-| 32 | 64 | 143.4 | 6457 |
-| 16 | 128 | 145.0 | 6457 |
-| 8 | 256 | 143.7 | 6457 |
-| 4 | 512 | 144.4 | 6457 |
-| 2 | 1024 | 143.8 | 6457 |
-| 1 | 2048 | 143.9 | 6457 |
+| groups (learning rates) | copies per rate | copies | ms/iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|---|
+| 128 | 16 | 2,048 | 143.1 | 7.33 | 3.58 | 6457 |
+| 64 | 32 | 2,048 | 143.1 | 7.33 | 3.58 | 6457 |
+| 32 | 64 | 2,048 | 143.4 | 7.31 | 3.57 | 6457 |
+| 16 | 128 | 2,048 | 145.0 | 7.23 | 3.53 | 6457 |
+| 8 | 256 | 2,048 | 143.7 | 7.30 | 3.56 | 6457 |
+| 4 | 512 | 2,048 | 144.4 | 7.26 | 3.55 | 6457 |
+| 2 | 1024 | 2,048 | 143.8 | 7.29 | 3.56 | 6457 |
+| 1 | 2048 | 2,048 | 143.9 | 7.29 | 3.56 | 6457 |
 
 From 1 group to 1 groups the spread is 1.88 ms on a mean of
 143.8 ms (1.31%), which is within the run-to-run
@@ -666,45 +666,31 @@ array, with each operation split across threads — which requires every thread 
 next operation starts. **Process-parallel** means many independent programs, each with its own share
 of the work and no coordination at all.
 
-| way of using the cores | best aggregate, million steps per second | where the best point was |
-|---|---|---|
-| environment, threads, 10,000 environments each | 1.078 | 4 workers |
-| environment, threads, 100,000 environments each | 4.490 | 8 workers |
-| environment, processes, 1,000 environments each | 10.670 | 160 workers |
-| environment, processes, 10,000 environments each | 25.730 | 32 workers |
+End-to-end training on that node, one row per setting measured:
 
-Thread-parallel peaks at four to eight threads and then gets *worse* — at 160 threads it is twelve
-times slower than a single thread. One environment step is about forty small operations, and the
-regrouping after each one costs more than the work it coordinates once the threads are many. The
-process-parallel form never pays that, and reaches about twenty-four times a single core.
-
-End-to-end training on the same node:
-
-| way of using the cores | workers | copies | seconds per iteration | million steps per second | steps per second per copy |
+| way of using the cores | workers | copies | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|---|
-| threads, epoch_minibatch | 4 | 2 | 0.781 | 0.0013 | 655 |
-| threads, epoch_minibatch | 80 | 32 | 0.799 | 0.0205 | 641 |
-| threads, epoch_minibatch | 8 | 32 | 0.573 | 0.0286 | 894 |
-| processes, epoch_minibatch | 160 | 160 | 1.219 | 0.0670 | 418 |
-| processes, epoch_minibatch | 32 | 128 | 0.710 | 0.0958 | 749 |
-| processes, full_batch | 80 | 80 | 0.872 | 0.0469 | 586 |
-| processes, epoch_minibatch | 224 | 224 | 0.379 | 0.3007 | 1,343 |
-| processes, epoch_minibatch | 224 | 896 | 0.456 | 0.9887 | 1,104 |
-| processes, epoch_minibatch | 224 | 3584 | 0.881 | 2.1077 | 588 |
-| threads, epoch_minibatch | 8 | 32 | 0.576 | 0.0284 | 889 |
-| threads, epoch_minibatch | 8 | 128 | 1.235 | 0.0531 | 414 |
-| threads, epoch_minibatch | 112 | 32 | 0.764 | 0.0214 | 670 |
-| threads, epoch_minibatch | 112 | 128 | 1.229 | 0.0533 | 417 |
-| processes, full_batch | 224 | 224 | 0.326 | 0.3527 | 1,574 |
-| processes, full_batch | 224 | 3584 | 0.481 | 3.8047 | 1,062 |
-| threads, full_batch | 8 | 128 | 0.904 | 0.0725 | 567 |
+| threads, epoch_minibatch | 4 | 2 | 0.781 | 0.0013 | 0.66 |
+| threads, epoch_minibatch | 80 | 32 | 0.799 | 0.0205 | 0.64 |
+| threads, epoch_minibatch | 8 | 32 | 0.573 | 0.0286 | 0.89 |
+| processes, epoch_minibatch | 160 | 160 | 1.219 | 0.0670 | 0.42 |
+| processes, epoch_minibatch | 32 | 128 | 0.710 | 0.0958 | 0.75 |
+| processes, full_batch | 80 | 80 | 0.872 | 0.0469 | 0.59 |
+| processes, epoch_minibatch | 224 | 224 | 0.379 | 0.3007 | 1.34 |
+| processes, epoch_minibatch | 224 | 896 | 0.456 | 0.9887 | 1.10 |
+| processes, epoch_minibatch | 224 | 3584 | 0.881 | 2.1077 | 0.59 |
+| threads, epoch_minibatch | 8 | 32 | 0.576 | 0.0284 | 0.89 |
+| threads, epoch_minibatch | 8 | 128 | 1.235 | 0.0531 | 0.41 |
+| threads, epoch_minibatch | 112 | 32 | 0.764 | 0.0214 | 0.67 |
+| threads, epoch_minibatch | 112 | 128 | 1.229 | 0.0533 | 0.42 |
+| processes, full_batch | 224 | 224 | 0.326 | 0.3527 | 1.57 |
+| processes, full_batch | 224 | 3584 | 0.481 | 3.8047 | 1.06 |
+| threads, full_batch | 8 | 128 | 0.904 | 0.0725 | 0.57 |
 
-Putting the two platforms beside each other: for the environment alone the graphics processor is
-about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
-end-to-end training the ratio is about thirty (3.21 against 0.096 million). The gap narrows because
-training is dominated by matrix multiplication, which processors do comparatively well, while the
-environment is dominated by many tiny independent operations, which is exactly what a graphics
-processor is for.
+Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
+about forty small operations, and the regrouping after each one costs more than the work it
+coordinates once the threads are many. The process-parallel form never pays that. The dedicated-node
+measurements later in this report put numbers on the difference and settle the choice.
 
 
 ## Which implementation to use
@@ -817,14 +803,12 @@ hand-written operation, which is a larger undertaking and was left as a decision
 ### Why this comparison is here
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
-needs to know what the alternative gives, so the same training loop and the same environment
-were measured on ordinary processor cores. The training measurements below ran on **jaguar03**
+needs to know what the alternative gives, so the same end-to-end training loop was measured on
+ordinary processor cores. The measurements below ran on **jaguar03**
 (AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
 the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
 completely idle node on the cluster; a node with more cores was available but already had
-another job on it, which is exactly the contamination this run set out to avoid. The
-environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
-processors), also held under reservation.
+another job on it, which is exactly the contamination this run set out to avoid.
 
 Nothing in the algorithm changed. What changed is that the graphics-processor features the
 optimisation work relied on — recording an iteration as a replayable sequence, the
@@ -844,18 +828,26 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | 8 threads | 112 threads | best seconds per iteration | thousand steps per second per copy |
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|
-| 1 | 0.0015 | 0.0011 | 0.352 | 1.45 |
-| 2 | 0.0027 | 0.0016 | 0.382 | 1.34 |
-| 4 | 0.0050 | 0.0036 | 0.410 | 1.25 |
-| 8 | 0.0095 | 0.0060 | 0.433 | 1.18 |
-| 16 | 0.0170 | 0.0123 | 0.482 | 1.06 |
-| 32 | 0.0284 | 0.0214 | 0.576 | 0.89 |
-| 64 | 0.0492 | 0.0397 | 0.666 | 0.77 |
-| 128 | 0.0531 | 0.0533 | 1.229 | 0.42 |
+| 1 | 8 | 0.352 | 0.0015 | 1.45 |
+| 1 | 112 | 0.453 | 0.0011 | 1.13 |
+| 2 | 8 | 0.382 | 0.0027 | 1.34 |
+| 2 | 112 | 0.636 | 0.0016 | 0.81 |
+| 4 | 8 | 0.410 | 0.0050 | 1.25 |
+| 4 | 112 | 0.568 | 0.0036 | 0.90 |
+| 8 | 8 | 0.433 | 0.0095 | 1.18 |
+| 8 | 112 | 0.686 | 0.0060 | 0.75 |
+| 16 | 8 | 0.482 | 0.0170 | 1.06 |
+| 16 | 112 | 0.665 | 0.0123 | 0.77 |
+| 32 | 8 | 0.576 | 0.0284 | 0.89 |
+| 32 | 112 | 0.764 | 0.0214 | 0.67 |
+| 64 | 8 | 0.666 | 0.0492 | 0.77 |
+| 64 | 112 | 0.824 | 0.0397 | 0.62 |
+| 128 | 8 | 1.235 | 0.0531 | 0.41 |
+| 128 | 112 | 1.229 | 0.0533 | 0.42 |
 
-*One process holding every copy, the array library given 8 or 112 threads. Throughput columns are millions of environment steps per second. Sixteen updates per batch.*
+*One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
 | workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|---|
@@ -872,16 +864,9 @@ The measurements settle which is better, and the answer is not the obvious one.
 
 ![processor against graphics processor](figures/cpu_vs_gpu.png)
 
-![worker scaling](figures/cpu_worker_scaling.png)
-
 The two tables answer it. Independent processes reach 2.11 million environment steps per second at 3,584 copies; one process with threads tops out at 0.0533 million. That is a factor of **40** on the same machine, running the same algorithm — the only difference is how the work was divided.
 
 The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 7 of the 8 copy counts measured — 0.764 seconds per iteration against 0.576 at 32 copies; 0.824 seconds per iteration against 0.666 at 64 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
-
-The environment measurements on the second processor node show the same limit even more
-sharply: one process reached its best throughput at four to eight threads and then got
-**worse**, ending twelve times slower than a single thread when given 160. Independent processes
-scaled to about twenty-four times over the same range.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -915,8 +900,7 @@ The best graphics-processor configuration reaches 24.1 million environment steps
 Best in each column is bold, second best underlined; copies is a setting rather than
 a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
-arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
-for training than for the environment alone, because training is dominated by matrix
-arithmetic, which processors handle comparatively better than they handle many tiny
-dependent operations.
+arrangement is exactly what a work queue across many nodes would do. And a configuration that
+wins on total throughput is not the one that finishes any single copy soonest, which is why both
+rates appear in every table and both curves in every figure.
 
