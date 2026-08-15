@@ -15,11 +15,13 @@ import json
 import re
 import subprocess
 from datetime import datetime
+from difflib import SequenceMatcher
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 HERE = Path(__file__).resolve().parent
 MANIFEST = HERE / "section_times.json"
+SNAPSHOT = HERE / "section_read_text.json"   # each section's text as the reader last read it
 REPO = HERE.parents[3]   # .../09_parallelization/report/<run>/code -> the repository root
 REL = "09_parallelization/report/2026-08-15-pointmaze-gpu-parallelization/report.md"
 
@@ -119,25 +121,128 @@ def short(iso: str, seconds: bool = False) -> str:
     return when.strftime("%Y-%m-%d %H:%M:%S PT" if seconds else "%Y-%m-%d %H:%M PT")
 
 
+def read_text() -> dict:
+    """Each section's text as it stood when the reader last marked it read."""
+    return json.loads(SNAPSHOT.read_text()) if SNAPSHOT.exists() else {}
+
+
+def state(name: str, manifest: dict) -> str:
+    """Whether the reader has seen this section in its current form.
+
+    Computed from content, never from a flag someone has to remember to set:
+    before: manifest["X"] = {"digest": "abc", "read_digest": "abc"}   after: "read"
+    before: manifest["X"] = {"digest": "def", "read_digest": "abc"}   after: "updated"
+    before: manifest["X"] = {"digest": "def"}  (never marked read)    after: "unread"
+    """
+    t = manifest.get(name, {})
+    if not t.get("read_digest"):
+        return "unread"
+    return "read" if t["read_digest"] == t["digest"] else "updated"
+
+
+def mark_all_read(sections: dict, now: str = None) -> dict:
+    """Record that the reader has read every section in its current form.
+
+    Stores both the digest (for the cheap state check) and the text itself (so the next
+    regeneration can show WHICH parts changed, not merely that something did).
+    """
+    now = now or datetime.now().astimezone().isoformat(timespec="minutes")
+    manifest = load()
+    for name, text in sections.items():
+        entry = manifest.setdefault(name, {"first_added": now, "last_modified": now,
+                                           "digest": _digest(text)})
+        entry.update(read_digest=_digest(text), read_at=now)
+    MANIFEST.write_text(json.dumps(manifest, indent=1))
+    SNAPSHOT.write_text(json.dumps(sections, indent=1))
+    return manifest
+
+
+STATE_LABEL = {"read": "read", "updated": "updated", "unread": "unread"}
+
+
 def table_of_contents(order, manifest) -> str:
-    """The contents table: one row per section, with when it appeared and when it last changed."""
+    """The contents table: one row per section, with its times and whether it has been read.
+
+    An unread section's title is written in blue and an updated one's in dark brown, through
+    span classes the rendered page styles; in plain markdown the class names are inert and the
+    status column still carries the same information.
+    """
     md = ["## Contents\n",
-          "| section | first written | last changed |", "|---|---|---|"]
+          "| section | first written | last changed | status |", "|---|---|---|---|"]
     for name in order:
         if name == "(title and introduction)":
             continue
         t = manifest.get(name, {})
-        md.append(f"| [{name}](#{anchor(name)}) | {short(t.get('first_added'))} "
-                  f"| {short(t.get('last_modified'))} |")
+        st = state(name, manifest)
+        link = f"[{name}](#{anchor(name)})"
+        title = link if st == "read" else f'<span class="{st}">{link}</span>'
+        md.append(f"| {title} | {short(t.get('first_added'))} "
+                  f"| {short(t.get('last_modified'))} | {STATE_LABEL[st]} |")
     md.append("\n*Times are when a section's text first appeared in this document and when it "
               "last changed, taken from the document's version history. A section whose numbers "
               "were re-measured shows a later change time. All times are Pacific (PT); the "
               "machines that produced them run on Eastern Time and the values are converted "
-              "for display.*\n")
+              "for display.*")
+    md.append("\n*Status is computed by comparing each section against the text last marked read: "
+              "an **unread** section is written in blue, title and body; in an **updated** section "
+              "the text that changed since you read it is written in dark brown, and the rest is "
+              "left alone.*\n")
     return "\n".join(md)
 
 
+def blocks(text: str) -> list:
+    """Split a section into renderable blocks: paragraphs, tables, headings, images, code.
+
+    Blank lines separate blocks, except inside a fenced code block, where a blank line is part
+    of the code. Splitting this way lets the page colour only the blocks that changed, and keeps
+    a markdown table whole — a table split across two spans stops being a table.
+    before: "para one\n\n| a | b |\n|---|---|\n| 1 | 2 |"
+    after:  ["para one", "| a | b |\n|---|---|\n| 1 | 2 |"]
+    """
+    out, buf, fenced = [], [], False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+        if not line.strip() and not fenced:
+            if buf:
+                out.append("\n".join(buf))
+                buf = []
+        else:
+            buf.append(line)
+    if buf:
+        out.append("\n".join(buf))
+    return out
+
+
+def changed_blocks(current: str, previously_read: str) -> set:
+    """Indices of the blocks of `current` that are new or altered since the read version.
+
+    before: read "A\n\nB", current "A\n\nB2\n\nC"   after: {1, 2}
+    """
+    # an opcode carries a range in each sequence; the ones that matter here are j1..j2, the
+    # positions in the CURRENT text, since those are the blocks about to be rendered
+    now, before = blocks(current), blocks(previously_read)
+    changed = set()
+    for tag, _, _, j1, j2 in SequenceMatcher(None, before, now, autojunk=False).get_opcodes():
+        if tag in ("replace", "insert"):
+            changed.update(range(j1, j2))
+    return changed
+
+
 if __name__ == "__main__":
-    m = seed_from_git()
-    for k, v in m.items():
-        print(f"{short(v['first_added'])}  {short(v['last_modified'])}  {k}")
+    import sys
+    if "--mark-read" in sys.argv:
+        # the reader says they have read the document as it now stands: record every section's
+        # current text, so the next regeneration can colour only what changes from here on
+        # the contents table is excluded because it is regenerated from this very state and
+        # would always disagree with itself; the title and introduction ARE tracked, since the
+        # reader reads them like any other part
+        secs = {k: v for k, v in
+                split_sections((HERE.parent / "report.md").read_text()).items()
+                if k != "Contents"}
+        man = mark_all_read(secs)
+        print(f"marked {len(secs)} sections read at {short(man[next(iter(secs))]['read_at'])}")
+    else:
+        m = seed_from_git()
+        for k, v in m.items():
+            print(f"{short(v['first_added'])}  {short(v['last_modified'])}  {k}")

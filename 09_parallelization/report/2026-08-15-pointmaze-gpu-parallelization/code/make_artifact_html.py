@@ -17,8 +17,49 @@ import markdown
 HERE = Path(__file__).resolve().parent
 REPORT = HERE.parent
 
+import section_times as st
+
 md_text = (REPORT / "report.md").read_text()
-body = markdown.markdown(md_text, extensions=["tables", "fenced_code"])
+
+
+def render(md: str) -> str:
+    """One markdown fragment to HTML, with the extensions this document needs."""
+    return markdown.markdown(md, extensions=["tables", "fenced_code"])
+
+
+def render_document(md: str) -> str:
+    """The document as HTML, with unread sections in blue and changed text in dark brown.
+
+    Each section is converted on its own so that a colour can be applied to part of a document
+    without disturbing the rest, and each block within a changed section is converted on its own
+    so the colour lands on the blocks that actually changed. Converting block by block (rather
+    than wrapping markdown in a div) is what keeps tables working: python-markdown does not look
+    for markdown inside a raw HTML block, so a table wrapped in a div would render as text.
+    before: section "X" is updated, its second paragraph changed
+    after:  ...<div class="updated"><p>that paragraph</p></div>... and the rest plain
+    """
+    manifest, snapshot = st.load(), st.read_text()
+    out = []
+    for name, text in st.split_sections(md).items():
+        # the contents table carries the state of everything else and has none of its own
+        status = "read" if name == "Contents" or name not in manifest else st.state(name, manifest)
+        if status == "read":
+            out.append(render(text))
+        elif status == "unread":
+            # nothing here has been seen before, so the whole section carries the colour
+            out.append(f'<div class="unread">{render(text)}</div>')
+        else:
+            changed = st.changed_blocks(text, snapshot.get(name, ""))
+            pieces = []
+            for i, block in enumerate(st.blocks(text)):
+                html_block = render(block)
+                pieces.append(f'<div class="updated">{html_block}</div>' if i in changed
+                              else html_block)
+            out.append("\n".join(pieces))
+    return "\n".join(out)
+
+
+body = render_document(md_text)
 
 # embed each figure as a data URI so the page needs no filesystem
 def embed(m):
@@ -32,16 +73,20 @@ CSS = """
 :root {
   --ground: #fbfaf8; --panel: #f1efe9; --ink: #1c1e21; --ink-2: #5c6270;
   --rule: #e3e1dc; --accent: #2a78d6; --accent-ink: #1c5cab;
+  --unread: #1544c4; --updated: #852d0f;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --ground: #16181c; --panel: #1e2126; --ink: #e8e8e4; --ink-2: #9aa0ab;
     --rule: #2a2d33; --accent: #5598e7; --accent-ink: #86b6ef;
+    /* both colours are lightened for a dark ground; each stays recognisably the same colour */
+    --unread: #7ea8f6; --updated: #d98b62;
   }
 }
 :root[data-theme="dark"] {
   --ground: #16181c; --panel: #1e2126; --ink: #e8e8e4; --ink-2: #9aa0ab;
   --rule: #2a2d33; --accent: #5598e7; --accent-ink: #86b6ef;
+  --unread: #7ea8f6; --updated: #d98b62;
 }
 * { box-sizing: border-box; }
 body {
@@ -81,6 +126,13 @@ th {
   color: var(--ink-2); font-weight: 600; border-bottom: 2px solid var(--accent);
 }
 img { max-width: 100%; height: auto; display: block; margin: 1.25rem 0; }
+/* reading state: blue = not yet read, brown = changed since you read it. The brown is the
+   colour the claude-edit skill uses for a machine-made replacement, RGB(133,45,15). */
+.unread, .unread p, .unread li, .unread td, .unread th, .unread h2, .unread h3,
+.unread em, .unread strong, .unread a { color: var(--unread); }
+.updated, .updated p, .updated li, .updated td, .updated th, .updated h2, .updated h3,
+.updated em, .updated strong, .updated a { color: var(--updated); }
+.updated table th { border-bottom-color: var(--updated); }
 ol, ul { padding-left: 1.4rem; }
 li { margin: 0.3rem 0; }
 em { color: var(--ink-2); }

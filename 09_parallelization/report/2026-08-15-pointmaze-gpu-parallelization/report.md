@@ -19,29 +19,31 @@ what each round changed, then the training campaign and the sweep.
 
 ## Contents
 
-| section | first written | last changed |
-|---|---|---|
-| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
-| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT |
-| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
-| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT |
-| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT |
-| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT |
-| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
-| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
-| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT |
-| [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT |
-| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
-| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
-| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
-| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 16:35 PT |
-| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
-| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
-| [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT |
-| [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT |
+| section | first written | last changed | status |
+|---|---|---|---|
+| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT | read |
+| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT | read |
+| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT | read |
+| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT | read |
+| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT | read |
+| [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT | read |
+| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 16:35 PT | read |
+| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT | read |
+| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT | read |
+| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT | read |
+| [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT | read |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
+
+*Status is computed by comparing each section against the text last marked read: an **unread** section is written in blue, title and body; in an **updated** section the text that changed since you read it is written in dark brown, and the rest is left alone.*
 
 ## Environment correctness (all three implementations)
 
