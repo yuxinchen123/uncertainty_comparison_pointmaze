@@ -52,15 +52,21 @@ class JaxPointMaze:
     """Holds the static config/geometry and exposes pure reset/step functions."""
 
     def __init__(self, cfg: EnvConfig, n_copies: int, n_envs: int, base_seed: int = 0,
-                 dtype=jnp.float32):
+                 dtype=jnp.float32, copy_seed_index=None):
         self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
         geo = build_geometry(cfg.map_name)
         self.rows, self.cols = geo["rows"], geo["cols"]
         self.nb_mask = jnp.asarray(geo["nb_mask"].reshape(-1).astype(np.int32))
         self.start_center = cell_center(cfg.start_cell, self.rows, self.cols)
         self.goal_center = cell_center(cfg.goal_cell, self.rows, self.cols)
-        # per-env identity key (uint32 wrap-around arithmetic = the torch int64-masked math)
-        c = jnp.arange(n_copies, dtype=jnp.uint32)[:, None]
+        # per-env identity key (uint32 wrap-around arithmetic = the torch int64-masked math).
+        # copy_seed_index lets several copies share one seed stream on purpose: a learning-rate
+        # sweep passes the index WITHIN the group, so every group meets the same environments
+        # and a difference between groups is the rate's doing. Default: every copy differs.
+        # before: copy_seed_index=None -> [0,1,2,...]; 2 groups of 3 -> [0,1,2,0,1,2]
+        seed_idx = (jnp.arange(n_copies, dtype=jnp.uint32) if copy_seed_index is None
+                    else jnp.asarray(copy_seed_index, dtype=jnp.uint32))
+        c = seed_idx[:, None]
         e = jnp.arange(n_envs, dtype=jnp.uint32)[None, :]
         self.id_key = (jnp.uint32(base_seed) * jnp.uint32(0x9E3779B1)
                        + c * jnp.uint32(0x85EBCA77) + e * jnp.uint32(0xC2B2AE3D))

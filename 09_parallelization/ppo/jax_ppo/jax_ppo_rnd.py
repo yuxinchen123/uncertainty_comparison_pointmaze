@@ -28,7 +28,7 @@ import jax.numpy as jnp  # noqa: E402
 BASE = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE / "pointmaze" / "common"))
 sys.path.insert(0, str(BASE / "pointmaze" / "jax_env"))
-from pm_common import EnvConfig  # noqa: E402
+from pm_common import MAPS, EnvConfig  # noqa: E402
 from jax_pointmaze import EnvState, JaxPointMaze  # noqa: E402
 
 LOG2PI = 1.8378770664093453
@@ -69,6 +69,33 @@ class PPOConfig:
     batch_stats_f32: bool = False    # reduce batch mean/variance in float32 before promoting
                                      # (round 2, J5) — changes the last bits of the statistics,
                                      # so it also breaks bit-agreement with the torch twin
+    learning_rates: tuple = ()       # sweep: one learning rate per GROUP of copies; empty
+                                     # means every copy uses `learning_rate` (round 4)
+    copies_per_rate: tuple = ()      # sweep: copies each rate gets (must sum to n_copies)
+    sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
+                                     # so groups differ ONLY by the swept value;
+                                     # "distinct": every copy is its own seed
+    track_coverage: bool = False     # maintain a per-copy visited-cell map on the device, so
+                                     # per-copy exploration curves can be recorded (round 4)
+
+
+def sweep_config(learning_rates, copies_per_rate, style="epoch_minibatch", **overrides):
+    """Build the configuration for a learning-rate sweep across copy groups.
+
+    learning_rates: the rates to try, e.g. [1e-4, 3e-4, 1e-3, 3e-3].
+    copies_per_rate: how many independent copies each rate gets — one number for all rates,
+    or one per rate. The total copy count is their sum.
+
+    before: sweep_config([1e-4, 1e-3], 128) ; after: 256 copies, the first 128 training at
+    1e-4 and the second 128 at 1e-3, with copy k of both groups sharing initial weights and
+    environments (paired), so the two groups differ only by the rate.
+    """
+    rates = tuple(float(x) for x in learning_rates)
+    counts = ((int(copies_per_rate),) * len(rates) if isinstance(copies_per_rate, int)
+              else tuple(int(x) for x in copies_per_rate))
+    assert len(counts) == len(rates), "give one copy count per learning rate, or a single number"
+    return PPOConfig(n_copies=sum(counts), update_style=style, learning_rates=rates,
+                     copies_per_rate=counts, **overrides)
 
 
 class RMSState(NamedTuple):
@@ -89,6 +116,8 @@ class TrainState(NamedTuple):
     obs_rms: RMSState     # RND input statistics, dim 4
     int_rms: RMSState     # intrinsic-return statistics, dim 1
     int_filter: jnp.ndarray  # [C, N] forward filter accumulator
+    visited: jnp.ndarray  # [C, rows*cols] bool, cumulative visited-cell map (or [C, 0] when
+                          # coverage tracking is off, so the state shape is always valid)
 
 
 def rms_init(n_copies, dim):
@@ -140,18 +169,50 @@ class JaxPPORND:
 
     def __init__(self, cfg: PPOConfig, env_cfg: EnvConfig = None):
         self.cfg = cfg
-        self.env = JaxPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
-                                base_seed=cfg.base_seed)
         C, F, Hh = cfg.n_copies, cfg.rnd_feature_dim, cfg.rnd_hidden
 
+        # per-copy learning rate and per-copy seed stream. A sweep gives each GROUP of copies
+        # its own rate; paired seeding makes copy k of every group start from the same weights
+        # and see the same environments, so a difference between groups is the rate's doing.
+        # before: rates (1e-4, 1e-3), counts (2, 2); after: lr [1e-4,1e-4,1e-3,1e-3],
+        #         seed index [0,1,0,1], group index [0,0,1,1]
+        self.is_sweep = bool(cfg.learning_rates)
+        if self.is_sweep:
+            assert sum(cfg.copies_per_rate) == C, "copies_per_rate must sum to n_copies"
+            lr_list, seed_list, group_list = [], [], []
+            for g, (rate, count) in enumerate(zip(cfg.learning_rates, cfg.copies_per_rate)):
+                lr_list += [rate] * count
+                seed_list += (list(range(count)) if cfg.sweep_seed_mode == "paired"
+                              else list(range(len(seed_list), len(seed_list) + count)))
+                group_list += [g] * count
+            self.copy_seed_index = seed_list
+            self.copy_group = np.asarray(group_list)
+            # a device CONSTANT, so the annealed rate stays one scalar argument per iteration
+            # and no per-iteration host-to-device copy is introduced
+            self.lr_per_copy = jnp.asarray(lr_list, F32)
+        else:
+            self.copy_seed_index = list(range(C))
+            self.copy_group = np.zeros(C, dtype=int)
+            self.lr_per_copy = None
+
+        self.env = JaxPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
+                                base_seed=cfg.base_seed,
+                                copy_seed_index=self.copy_seed_index)
+        # open (non-wall) cells, for turning the visited map into a coverage fraction
+        wall = np.asarray(MAPS[(env_cfg or EnvConfig()).map_name]).reshape(-1) == 1
+        self.open_cells = jnp.asarray(~wall)
+        self.n_cells = int(wall.size)
+
         def stack(net, layers):
-            # per-copy keyed init: copy c's weights identical whether C=8 or C=128
+            # per-copy keyed init: copy c's weights identical whether C=8 or C=128, and
+            # identical across groups when a sweep uses paired seeding
             out = {}
             for li, (rows, cols, gain) in enumerate(layers):
                 ws = []
                 for c in range(C):
                     k = jax.random.fold_in(jax.random.fold_in(jax.random.fold_in(
-                        jax.random.PRNGKey(cfg.base_seed), self._NET_IDS[net]), li), c)
+                        jax.random.PRNGKey(cfg.base_seed), self._NET_IDS[net]), li),
+                        self.copy_seed_index[c])
                     # stored [in, out] for x @ W; orthogonal drawn on [out, in] then transposed
                     ws.append(_orthogonal(k, rows, cols, gain).T)
                 out[f"W{li}"] = jnp.stack(ws)
@@ -189,6 +250,7 @@ class JaxPPORND:
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
             obs_rms=rms_init(cfg.n_copies, 4), int_rms=rms_init(cfg.n_copies, 1),
             int_filter=jnp.zeros((cfg.n_copies, cfg.n_envs), F32),
+            visited=jnp.zeros((cfg.n_copies, self.n_cells if cfg.track_coverage else 0), bool),
         )
 
     # ---- batched forwards (x always [C, M, in]) ----
@@ -234,7 +296,13 @@ class JaxPPORND:
     # ---- Adam (torch.optim.Adam formula, elementwise => C independent Adams) ----
 
     def _adam_step(self, params, grads, m, v, t, lr):
-        """One Adam step: m,v update, bias correction, p -= lr/bc1 * m / (sqrt(v/bc2)+eps)."""
+        """One Adam step: m,v update, bias correction, p -= lr/bc1 * m / (sqrt(v/bc2)+eps).
+
+        Without a sweep, `lr` is the scalar rate for every copy and the arithmetic is
+        unchanged. With a sweep, `lr` is the annealing multiplier and the per-copy rates are a
+        device constant broadcast along the copy axis — a [C] vector reshaped to [C, 1, ...]
+        against each parameter, which XLA folds into the same elementwise update.
+        """
         b1, b2, eps = 0.9, 0.999, self.cfg.adam_eps
         t = t + 1
         tf_ = t.astype(F32)
@@ -242,9 +310,15 @@ class JaxPPORND:
         bc2 = 1.0 - b2 ** tf_
         m = jax.tree.map(lambda mm, g: b1 * mm + (1 - b1) * g, m, grads)
         v = jax.tree.map(lambda vv, g: b2 * vv + (1 - b2) * g * g, v, grads)
-        params = jax.tree.map(
-            lambda p, mm, vv: p - (lr / bc1) * mm / (jnp.sqrt(vv / bc2) + eps),
-            params, m, v)
+        if self.lr_per_copy is None:
+            step = lambda p, mm, vv: p - (lr / bc1) * mm / (jnp.sqrt(vv / bc2) + eps)
+        else:
+            C = self.cfg.n_copies
+            def step(p, mm, vv):
+                # before: lr_per_copy [C]; after: [C, 1, ...] matching this parameter's rank
+                rate = self.lr_per_copy.reshape((C,) + (1,) * (p.ndim - 1)) * lr
+                return p - (rate / bc1) * mm / (jnp.sqrt(vv / bc2) + eps)
+        params = jax.tree.map(step, params, m, v)
         return params, m, v, t
 
     def _clip_per_copy(self, grads):
@@ -447,8 +521,18 @@ class JaxPPORND:
             "adv": flat(adv), "ret_ext": flat(ret_ext), "ret_int": flat(ret_int),
             "vext_old": flat(vext_buf), "rnd_input": self._whiten(nobs_flat, obs_rms),
         }
+        # cumulative visited-cell map, kept on the device so no iteration synchronises; the
+        # driver reads it only on the iterations it records
+        # before: nobs_flat [C, T*N, 4] world coordinates; after: visited [C, rows*cols] bool
+        visited = state.visited
+        if cfg.track_coverage:
+            cols, rows = self.env.cols, self.env.rows
+            jj = jnp.clip((nobs_flat[..., 0] + cols / 2.0).astype(jnp.int32), 0, cols - 1)
+            ii = jnp.clip((rows / 2.0 - nobs_flat[..., 1]).astype(jnp.int32), 0, rows - 1)
+            visited = visited.at[jnp.arange(C)[:, None], ii * cols + jj].set(True)
+
         state = state._replace(env_state=env_state, obs=obs_last, obs_rms=obs_rms,
-                               int_rms=int_rms, int_filter=int_filter)
+                               int_rms=int_rms, int_filter=int_filter, visited=visited)
         state, loss = update_fn(state, batch, lr, jax.random.fold_in(key, 1))
         metrics = {"loss": loss, "reward_ext_sum": rext_buf.sum(axis=(0, 2)),
                    "rint_mean": rint_buf.mean(axis=(0, 2))}
@@ -482,33 +566,66 @@ class JaxPPORND:
         return state._replace(env_state=env_state,
                               obs=jnp.concatenate([pos, vel], -1))
 
-    def train(self, num_iterations, run_seed=0, log_every_seconds=1200, log_fn=print):
-        """Full loop with sparse logging; returns final stats."""
+    def lr_argument(self, iteration, num_iterations):
+        """The scalar passed to one iteration, given the annealing schedule.
+
+        Without a sweep it is the rate itself; with a sweep the per-copy rates are already a
+        device constant, so it is the annealing multiplier that scales all of them together.
+        """
+        frac = (1.0 - (iteration - 1.0) / num_iterations) if self.cfg.anneal_lr else 1.0
+        return jnp.asarray(frac if self.is_sweep else self.cfg.learning_rate * frac, F32)
+
+    def coverage(self, state: TrainState):
+        """Fraction of the open maze cells each copy has visited, [C] — device to host."""
+        return np.asarray(state.visited[:, self.open_cells].mean(axis=1))
+
+    def train(self, num_iterations, run_seed=0, log_every_seconds=1200, log_fn=print,
+              history_every=0):
+        """Full loop with sparse logging; returns (state, stats).
+
+        history_every > 0 records per-copy reward, intrinsic reward and maze coverage every
+        that many iterations. Those are the only iterations that wait for the device, so the
+        recording does not serialise the loop.
+        """
         cfg = self.cfg
         state = self.init_state()
         key = jax.random.PRNGKey(run_seed + 1_000_003 * cfg.base_seed)
         state = self.prime_obs_rms(state, jax.random.fold_in(key, 999999937))
         t0 = time.time()
         last_log = t0
+        history = []
         for it in range(1, num_iterations + 1):
-            lr = cfg.learning_rate * (1.0 - (it - 1.0) / num_iterations) \
-                if cfg.anneal_lr else cfg.learning_rate
             state, metrics = self._iterate(state, jax.random.fold_in(key, it),
-                                           jnp.asarray(lr, F32))
+                                           self.lr_argument(it, num_iterations))
             now = time.time()
+            if history_every and (it % history_every == 0 or it == num_iterations):
+                row = {"iteration": it, "seconds": now - t0,
+                       "global_step": it * cfg.num_steps * cfg.n_copies * cfg.n_envs,
+                       "reward_ext_sum_per_copy": np.asarray(metrics["reward_ext_sum"]).tolist(),
+                       "rint_mean_per_copy": np.asarray(metrics["rint_mean"]).tolist()}
+                if cfg.track_coverage:
+                    row["coverage_per_copy"] = self.coverage(state).tolist()
+                history.append(row)
             if now - last_log >= log_every_seconds or it == num_iterations:
                 jax.block_until_ready(metrics)
                 last_log = now
                 r = np.asarray(metrics["reward_ext_sum"])
+                cov = (f" coverage mean {self.coverage(state).mean():.3f}"
+                       if cfg.track_coverage else "")
                 log_fn(f"iter {it}/{num_iterations} loss {float(metrics['loss']):.4f} "
                        f"ext-reward/copy mean {r.mean():.3f} min {r.min():.3f} "
                        f"max {r.max():.3f} rint mean "
-                       f"{float(np.asarray(metrics['rint_mean']).mean()):.4f} "
+                       f"{float(np.asarray(metrics['rint_mean']).mean()):.4f}{cov} "
                        f"elapsed {now - t0:.0f}s")
         jax.block_until_ready(state.params)
         return state, {"iterations": num_iterations,
                        "global_step": num_iterations * cfg.num_steps * cfg.n_copies * cfg.n_envs,
-                       "seconds": time.time() - t0}
+                       "seconds": time.time() - t0,
+                       "learning_rate_per_copy": (np.asarray(self.lr_per_copy).tolist()
+                                                  if self.is_sweep else None),
+                       "group_index": self.copy_group.tolist(),
+                       "sweep_seed_mode": cfg.sweep_seed_mode if self.is_sweep else None,
+                       "history": history}
 
 
 def main():
