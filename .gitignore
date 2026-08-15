@@ -186,3 +186,10 @@ reference_repos/
 !**/analysis/plots/*.pdf
 !**/analysis/plots/*.png
 !**/analysis/*.tex
+
+# 09_parallelization: reference clones and the unzipped external skill (external content, not versioned here)
+09_parallelization/reference_repo/
+09_parallelization/parallel_agents_skill/
+# keep the validation fixtures (small, regenerable, but they anchor all GPU env checks)
+!09_parallelization/pointmaze/common/fixtures/*.npz
+!09_parallelization/pointmaze/common/fixtures/*.json
