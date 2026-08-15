@@ -41,7 +41,9 @@ they remain independent.
 ### 1.2 How to read the numbers
 
 - All throughput figures are given in **millions of environment steps per second**. One
-  environment step is one action taken in one environment instance.
+  environment step is one action taken in one environment instance. The one exception is
+  throughput *per copy*, which is given in thousands: with thousands of copies sharing the
+  processor, each individual copy advances at a rate that would round to zero in millions.
 - Timings are for one **training iteration**: collecting a fixed amount of experience from
   every copy and performing the resulting parameter updates. With the default settings each
   iteration collects 512 steps of experience per copy.
@@ -199,33 +201,26 @@ results would be worthless. Three tests guard this:
 
 ### 3.2 Results: how throughput scales with the number of copies
 
-| copies | milliseconds per iteration | million steps per second, total | million steps per second, per copy | peak memory (GB) |
+| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy | peak memory (GB) |
 |---|---|---|---|---|
-| 8 | 14.0 | 0.293 | 0.037 | — |
-| 16 | 14.8 | 0.553 | 0.035 | — |
-| 32 | 15.6 | 1.05 | 0.033 | — |
-| 64 | 17.3 | 1.90 | 0.030 | — |
-| 128 | 20.4 | 3.21 | 0.025 | — |
-| 256 | 28.0 | 4.68 | 0.018 | — |
-| 512 | 43.8 | 5.99 | 0.012 | — |
-| 1,024 | 76.8 | 6.83 | 0.007 | — |
-| 2,048 | 144.1 | 7.28 | 0.004 | — |
-| 4,096 | 277.0 | 7.57 | 0.002 | — |
-| 8,192 | 538.9 | 7.78 | 0.001 | — |
-| 16,384 | 1079.0 | 7.77 | 0.000 | — |
+| 8 | 13.8 | 0.296 | 37 | 0.1 |
+| 16 | 14.9 | 0.550 | 34 | 0.2 |
+| 32 | 15.7 | 1.05 | 33 | 0.3 |
+| 64 | 17.2 | 1.90 | 30 | 0.5 |
+| 128 | 20.4 | 3.21 | 25 | 0.7 |
+| 256 | 28.0 | 4.67 | 18 | 1.2 |
+| 512 | 43.8 | 5.99 | 12 | 2.4 |
+| 1,024 | 76.9 | 6.82 | 6.7 | 3.6 |
 
 *Many small updates per batch. One iteration collects 512 environment steps per copy.*
 
 The second convention, one update per batch of data, does less arithmetic and is
 correspondingly faster:
 
-| copies | milliseconds per iteration | million steps per second, total | million steps per second, per copy |
+| copies | milliseconds per iteration | million steps per second, total | thousand steps per second, per copy |
 |---|---|---|---|
-| 8 | 5.7 | 0.716 | 0.089 |
-| 16 | 6.4 | 1.29 | 0.080 |
-| 32 | 6.4 | 2.58 | 0.081 |
-| 64 | 6.9 | 4.72 | 0.074 |
-| 128 | 8.1 | 8.13 | 0.064 |
+| 2,048 | 45.0 | 23.3 | 11 |
+| 4,096 | 86.9 | 24.1 | 5.9 |
 
 ![training scaling](figures/training_scaling.png)
 
@@ -406,18 +401,18 @@ runs alongside the others.
 To confirm that the system trains rather than merely runs quickly, every copy count was trained
 for 10.24 million environment steps per copy, in both update conventions.
 
-| update convention | copies | wall time (minutes) | million steps per second | million steps per second, per copy | fraction of the maze explored | copies that reached the goal |
+| update convention | copies | wall time (minutes) | million steps per second | thousand steps per second, per copy | fraction of the maze explored | copies that reached the goal |
 |---|---|---|---|---|---|---|
-| many small updates per batch | 8 | 4.6 | 0.294 | 0.037 | 0.86 | 3 of 8 |
-| many small updates per batch | 16 | 5.0 | 0.550 | 0.034 | 0.88 | 9 of 16 |
-| many small updates per batch | 32 | 5.2 | 1.04 | 0.033 | 0.88 | 18 of 32 |
-| many small updates per batch | 64 | 5.8 | 1.89 | 0.030 | 0.89 | 38 of 64 |
-| many small updates per batch | 128 | 6.8 | 3.20 | 0.025 | 0.87 | 68 of 128 |
-| one update per batch | 8 | 1.9 | 0.719 | 0.090 | 0.82 | 5 of 8 |
-| one update per batch | 16 | 2.1 | 1.29 | 0.080 | 0.83 | 6 of 16 |
-| one update per batch | 32 | 2.1 | 2.58 | 0.081 | 0.81 | 13 of 32 |
-| one update per batch | 64 | 2.3 | 4.72 | 0.074 | 0.74 | 19 of 64 |
-| one update per batch | 128 | 2.7 | 8.19 | 0.064 | 0.80 | 47 of 128 |
+| many small updates per batch | 8 | 4.6 | 0.294 | 37 | 0.86 | 3 of 8 |
+| many small updates per batch | 16 | 5.0 | 0.550 | 34 | 0.88 | 9 of 16 |
+| many small updates per batch | 32 | 5.2 | 1.04 | 33 | 0.88 | 18 of 32 |
+| many small updates per batch | 64 | 5.8 | 1.89 | 30 | 0.89 | 38 of 64 |
+| many small updates per batch | 128 | 6.8 | 3.20 | 25 | 0.87 | 68 of 128 |
+| one update per batch | 8 | 1.9 | 0.719 | 90 | 0.82 | 5 of 8 |
+| one update per batch | 16 | 2.1 | 1.29 | 80 | 0.83 | 6 of 16 |
+| one update per batch | 32 | 2.1 | 2.58 | 81 | 0.81 | 13 of 32 |
+| one update per batch | 64 | 2.3 | 4.72 | 74 | 0.74 | 19 of 64 |
+| one update per batch | 128 | 2.7 | 8.19 | 64 | 0.80 | 47 of 128 |
 
 ![end to end](figures/endtoend.png)
 
@@ -447,6 +442,99 @@ The same campaign was run before and after the second round of optimisation work
 | Pairing an environment from one framework with a trainer from the other | measured at more than forty times the cost of a native step, as above |
 | Substituting the fastest environment into the training loop | correct and available, but worth about one percent because the environment is no longer the constraint |
 | Recording the stages separately rather than together | superseded: recording them together is faster |
+
+
+## 5. The same work on ordinary processor cores
+
+### 5.1 Why this comparison is here
+
+Every number so far came from a graphics processor. A reader deciding where to run this work
+needs to know what the alternative gives, so the same training loop and the same environment
+were measured on ordinary processor cores. The measurements below ran on **jaguar03**, held
+exclusively — no other job shared the machine — so the timings are not contaminated by a
+neighbour.
+
+Nothing in the algorithm changed. What changed is that the graphics-processor features the
+optimisation work relied on — recording an iteration as a replayable sequence, the
+reduced-precision matrix mode, the fused optimiser — do not exist on a processor, so the
+processor runs the same code in its plain form.
+
+### 5.2 Two ways to use many cores, and why they differ so much
+
+A processor has many cores, and the work has to be divided among them. There are two ways:
+
+- **Threads inside one process.** One program holds every copy in one set of arrays. Each
+  instruction covers all of them, and the array library splits that one instruction across N
+  threads. The threads must regroup after every instruction, because the next one reads what
+  the previous one wrote.
+- **Independent processes.** N separate programs, each owning its own copies, each using one
+  thread. They never coordinate, because there is nothing to coordinate around.
+
+The measurements settle which is better, and the answer is not the obvious one.
+
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
+|---|---|---|---|---|
+| 1 | 8 | 0.433 | 0.0012 | 1.18 |
+| 2 | 8 | 0.444 | 0.0023 | 1.15 |
+| 4 | 8 | 0.452 | 0.0045 | 1.13 |
+| 8 | 8 | 0.460 | 0.0089 | 1.11 |
+| 16 | 8 | 0.489 | 0.0168 | 1.05 |
+| 32 | 8 | 0.573 | 0.0286 | 0.89 |
+
+*One process, threads varied. Sixteen updates per batch.*
+
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
+|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 |
+| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 |
+| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 |
+
+*Independent single-thread processes. Sixteen updates per batch.*
+
+![processor against graphics processor](figures/cpu_vs_gpu.png)
+
+![worker scaling](figures/cpu_worker_scaling.png)
+
+The environment measurements on the earlier processor node make the threading limit plain: one
+process reached its best throughput at four to eight threads and then got **worse**, ending
+twelve times slower than a single thread when given 160. Independent processes scaled to about
+twenty-four times over the same range.
+
+The reason is the regrouping. One environment step is roughly forty small operations, each
+individually cheap, and the coordination after each one costs a fixed amount regardless of how
+little work it contained. With N threads that cost is paid forty times per step, so past a
+handful of threads the coordination costs more than the work it coordinates. Independent
+processes never pay it. This is also why the graphics processor needed the opposite treatment:
+the optimisation work there fused those forty operations into a handful and recorded the whole
+sequence, which is the same problem solved from the other end.
+
+
+## 6. The best setup on each platform
+
+Throughput keeps rising with the number of copies well past the point most work needs, so the
+comparison below is restricted to **4,096 copies or fewer**, which is the range this project
+actually operates in. For each platform and configuration, the table gives the setting that
+reaches the highest total throughput inside that range.
+
+| platform and configuration | copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours to ten million steps per copy |
+|---|---|---|---|---|---|
+| graphics processor, one update per batch | 4,096 | 0.087 | 24.1 | 5.90 | 0.47 |
+| graphics processor, sixteen updates per batch | 4,096 | 0.277 | 7.57 | 1.85 | 1.50 |
+| processor, independent processes, sixteen updates | 224 | 0.379 | 0.3007 | 1.34 | 2.06 |
+| processor, independent processes, one update | 80 | 0.872 | 0.0469 | 0.59 | 4.73 |
+| processor, threads in one process, sixteen updates | 32 | 0.573 | 0.0286 | 0.89 | 3.11 |
+
+![best setup](figures/best_setup.png)
+
+The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 0.3007 million at 224 copies. That is a factor of **80**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2 hours on the processor node.
+
+Two qualifications belong with those numbers. The processor figure is for one node held
+exclusively; a cluster with many such nodes multiplies it, and the independent-process
+arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
+for training than for the environment alone, because training is dominated by matrix
+arithmetic, which processors handle comparatively better than they handle many tiny
+dependent operations.
 
 
 ## 5. Method, and how to repeat the measurements

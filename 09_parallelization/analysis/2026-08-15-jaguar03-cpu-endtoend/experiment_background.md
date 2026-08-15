@@ -1,0 +1,36 @@
+## Purpose
+
+Measure end-to-end training throughput on the best completely idle processor node on the
+cluster, so the graphics-processor numbers in the unified report have a clean reference point.
+An idle node matters: a node shared with another job gives contaminated timings, so this run
+holds its node exclusively.
+
+Two questions: how do the two ways of using many cores compare (threads inside one process
+against independent single-thread processes), and what does a whole processor node reach
+compared with one H100.
+
+## Key hyperparameters
+
+| Parameter | Value |
+|-----------|-------|
+| node | jaguar03: AMD EPYC 7663, 2 sockets x 56 cores x 2 threads = 224 logical processors, 1 TB memory |
+| why this node | the largest completely idle node on the cluster (0 of 224 allocated) and the newest architecture available exclusively; cheetah04 has more cores (256) but already had 24 allocated to another job, and serval03 is in maintenance until 2026-08-31 |
+| exclusivity | `--exclusive`, inside reservation sl5nw_156 whose IGNORE_JOBS and SPEC_NODES flags already exclude other users |
+| partition / qos | gpu (jaguar03's partition) with `--gpus-per-node=0`, qos csresnolim |
+| walltime | 8 hours, against caps of 4 days (partition), no maintenance on this node, and a reservation ending 2026-08-19 |
+| thread study | one process, 8 and 112 threads, at 1 to 128 copies |
+| process study | 8 to 224 independent single-thread workers, 1, 4 and 16 copies each, spanning 8 to 3,584 copies |
+| update conventions | both: sixteen updates per batch, and one update per batch |
+| measurement | median of 3 to 5 timed iterations after warm-up; each iteration collects 512 environment steps per copy |
+| implementation | unchanged trainer with every graphics-processor-only feature off (no recorded sequences, no reduced-precision matrices, no fused optimiser) |
+
+## Code and config changes
+
+None to the trainer. The benchmark `benchmarks/bench_train_cpu.py` already existed; this run
+extends its coverage to 128 copies in threads mode and to 3,584 copies in process mode. Job
+script in `slurm/cpu_train_jaguar03.slurm`; job ids in `slurm/submitted_jobids_cpu_e2e.txt`.
+
+## Git state
+
+Branch Use-RLexplore-RND; the exact commit is recorded in the `git` field of every result file
+written under `benchmarks/results/`.

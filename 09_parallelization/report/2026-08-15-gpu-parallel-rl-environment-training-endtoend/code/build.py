@@ -834,12 +834,17 @@ experiment attempted — including those abandoned — in a progress file beside
 
 def main():
     """Generate the figures and assemble the document."""
+    import cpu_sections as cpu
     FIGS.mkdir(exist_ok=True)
     fig_env_throughput()
     fig_training_scaling()
     fig_sweep()
     fig_endtoend()
-    md = "\n".join([sec_intro(), sec_env(), sec_training(), sec_endtoend(), sec_method()])
+    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup(), cpu.fig_worker_scaling()):
+        if note:
+            MISSING.append(note)
+    md = "\n".join([sec_intro(), sec_env(), sec_training(), sec_endtoend(),
+                     cpu.sec_cpu(), cpu.sec_best(), sec_method()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} ({len(md.splitlines())} lines) and figures")
     for m in MISSING:

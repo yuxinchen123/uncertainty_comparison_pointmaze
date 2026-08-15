@@ -53,6 +53,17 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- 2026-08-15 ~18:40 — processor comparison. End-to-end training measured on jaguar03 (AMD EPYC
+  7663, 224 logical processors, 1 TB) held EXCLUSIVELY inside reservation sl5nw_156, chosen as
+  the largest completely idle node on the cluster; cheetah04 has more cores but was already
+  shared, and serval03 is in maintenance until 2026-08-31. Job 6537825, ids in
+  `analysis/2026-08-15-jaguar03-cpu-endtoend/slurm/`. Both parallelisation styles (threads in
+  one process, independent single-thread processes) over 8 to 3,584 copies, both update
+  conventions. The graphics-processor style-A gap at 2,048 and 4,096 copies was filled at the
+  same time (23.3 and 24.2 million environment steps per second). Report sections 5 and 6 added
+  to `report/2026-08-15-gpu-parallel-rl-environment-training-endtoend/` via
+  `code/cpu_sections.py`, with the graphics processor drawn dashed in every comparison figure.
+
 - 2026-08-15 ~04:45 — TASK COMPLETE. All five phases checked off. Unified report:
   `report/2026-08-15-pointmaze-gpu-parallelization/report.md` (+ a self-contained HTML
   render, regenerable via code/make_artifact_html.py). The 20-minute monitor is retired.
