@@ -683,7 +683,10 @@ class PPORND:
 
     def _iteration_body(self):
         """One full training iteration over the static buffers: rollout, post, update."""
-        self._rollout_body()
+        if self.cfg.env_backend == "cuda":
+            self._rollout_body_cuda()
+        else:
+            self._rollout_body()
         self._post_body()
         self._update_body_captured()
 
@@ -701,8 +704,13 @@ class PPORND:
         self._loss_out = torch.zeros((), device=self.device)
         self._Z.normal_()
 
-        stat_tensors = [self._S_pos, self._S_vel, self._S_goal, self._S_sc, self._S_rc,
-                        self._S_obs, self.int_filter,
+        if self.cfg.env_backend == "cuda":
+            env_state = [self.env.state, self.env.goal, self.env.step_count,
+                         self.env.reset_count]
+        else:
+            env_state = [self._S_pos, self._S_vel, self._S_goal, self._S_sc, self._S_rc,
+                         self._S_obs]
+        stat_tensors = env_state + [self.int_filter,
                         self.obs_rms.mean, self.obs_rms.var, self.obs_rms.count,
                         self.int_rms.mean, self.int_rms.var, self.int_rms.count]
         snap_state = [t.clone() for t in stat_tensors]

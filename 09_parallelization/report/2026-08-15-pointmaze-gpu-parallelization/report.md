@@ -91,11 +91,16 @@ variant, not the default, because it changes the algorithm.
   one replay per iteration and zero python in the loop. Captured paths are verified
   BITWISE equal to the uncaptured trainer.
 - jax env + jax trainer: the whole iteration is one jitted XLA program with donated state.
-- CUDA env + torch trainer: drop-in (the kernel is a torch extension replacing step_core
-  inside the same capture) — pairing measured in the CUDA ledger.
-- Cross-framework pairings (jax env + torch trainer or the reverse) require a dlpack
-  boundary every environment step, which structurally breaks both CUDA-graph capture and
-  XLA scan fusion; they are documented as non-production paths.
+- CUDA env + torch trainer (`env_backend="cuda"`): the fused kernel replaces the env part
+  of the captured rollout, with the policy and RND parts as compiled subgraphs around it.
+  Measured (style B, one-graph): C=8: 25.1 ms/iter, C=128: 35.6 ms/iter — versus the torch-env
+  backend's 26.4 / 36.6 ms at C=8 / 128.
+- Cross-framework pairings (jax env + torch trainer or the reverse) were MEASURED over
+  the dlpack boundary: crossing frameworks costs +6.2 to +7.0 ms per environment step on
+  top of a 70-260 us native step (about 40-90x), because every crossing forces a
+  synchronization between the two runtimes — in addition to structurally breaking
+  CUDA-graph capture and XLA scan fusion. They are documented as non-production paths
+  (`benchmarks/bench_cross_pairing.py`).
 
 ## Scaling the number of independent training copies
 
@@ -147,31 +152,90 @@ production path fuses most of them away):
 
 | block | eager time [ms] | share |
 |---|---|---|
-| env step_core total (dynamics + reward/ends + auto-reset RNG) | 593.34 | 50.2% |
-| env dynamics_step (integrator + contacts) | 472.29 | 40.0% |
-| update: forward + backward | 28.12 | 2.4% |
-| RND bonus (whiten + target + predictor) | 24.46 | 2.1% |
-| value forward (critic, both heads) | 12.90 | 1.1% |
-| update: per-copy clip + Adam step | 12.03 | 1.0% |
-| policy forward (actor mean) | 11.04 | 0.9% |
-| rollout buffer writes (10 copies/step) | 8.55 | 0.7% |
-| update: loss forward | 6.53 | 0.6% |
-| action sample + logprob | 6.46 | 0.5% |
-| post: GAE backward scan (both streams approx) | 2.82 | 0.2% |
-| post: intrinsic filter scan (T steps) | 1.15 | 0.1% |
-| update: minibatch gathers | 1.11 | 0.1% |
+| env step_core total (dynamics + reward/ends + auto-reset RNG) | 593.34 | 83.6% |
+| — of which env dynamics_step (integrator + contacts) | 472.29 | (80% of the env step) |
+| update: forward + backward | 28.12 | 4.0% |
+| RND bonus (whiten + target + predictor) | 24.46 | 3.4% |
+| value forward (critic, both heads) | 12.90 | 1.8% |
+| update: per-copy clip + Adam step | 12.03 | 1.7% |
+| policy forward (actor mean) | 11.04 | 1.6% |
+| rollout buffer writes (10 copies/step) | 8.55 | 1.2% |
+| update: loss forward | 6.53 | 0.9% |
+| action sample + logprob | 6.46 | 0.9% |
+| post: GAE backward scan (both streams approx) | 2.82 | 0.4% |
+| post: intrinsic filter scan (T steps) | 1.15 | 0.2% |
+| update: minibatch gathers | 1.11 | 0.2% |
 | post: flatten + whiten into static batch | 0.63 | 0.1% |
 | post: running-statistics updates (float64) | 0.16 | 0.0% |
 | post: bootstrap values (one big GEMM) | 0.15 | 0.0% |
 
-Reading: in eager form the ENVIRONMENT dominates (90% of raw kernel time across
-dynamics + step bookkeeping), which is why compiling/fusing the env step was the first
-large win; after fusion the three captured phases are nearly balanced, and the remaining
-bottleneck at small C is fixed kernel time in the 128 sequential rollout steps.
+Reading: in eager form the ENVIRONMENT dominates (about 84% of raw kernel time), which is
+why compiling/fusing the env step was the first large win; after fusion the three captured
+phases are nearly balanced, and the remaining bottleneck at small C is fixed kernel time
+in the 128 sequential rollout steps.
 
-## Final training campaign
+## Before/after optimization at the final-run sizes (8-128 copies)
 
-*PENDING — waiting on final-run JSONs.*
+Environment-only throughput at the exact env-batch sizes the final runs use
+(batch = C copies x 4 envs), env steps per second. "Eager" is the CURRENT physics code run
+without compilation (the uncompiled per-step python cost, ~4.4 ms per batched step at
+these sizes, is what the compiled/captured paths remove):
+
+| env batch | eager (before) | compiled (after) | CUDA kernel (after) |
+|---|---|---|---|
+| 32 | 7.25e3 | 2.02e5 | 5.76e6 |
+| 64 | 1.45e4 | 4.20e5 | 1.15e7 |
+| 128 | 2.88e4 | 8.03e5 | 2.30e7 |
+| 256 | 5.67e4 | 1.61e6 | 4.24e7 |
+| 512 | 1.13e5 | 3.24e6 | 8.50e7 |
+
+Whole-loop training throughput (environment steps per second while TRAINING, i.e. the
+end-to-end number; before = eager baseline, after = the final one-graph configuration as
+measured in the campaign itself):
+
+| copies C | before, style B | after, style B | after, style A |
+|---|---|---|---|
+| 8 | 5.27e3 | 1.55e5 | 2.22e5 |
+| 16 | 1.05e4 | 2.97e5 | 4.27e5 |
+| 32 | 2.11e4 | 5.74e5 | 8.42e5 |
+| 64 | 4.22e4 | 1.07e6 | 1.59e6 |
+| 128 | 8.43e4 | 1.79e6 | 2.68e6 |
+
+(The before column uses the measured eager iteration time of 777 ms, which is flat across
+copy counts.) Phase split of one iteration, before vs after (C=128, style B; the "after"
+split is measured in the separate-graphs configuration — the shipped one-graph mode fuses
+the phases and is faster than this sum):
+
+| phase | before (eager) | after (captured) |
+|---|---|---|
+| rollout (env + policy interaction) | 680 ms | 20.1 ms |
+| post-processing (GAE, statistics) | inside rollout | 14.8 ms (eager between graphs); inside the one-graph replay in the final config |
+| update (16 minibatch steps) | 95 ms | 15.5 ms |
+| whole iteration | 777 ms | 36.6 ms (one-graph, final) |
+
+## Final training campaign — 8 to 128 independent RND runs (PyTorch)
+
+20,000 iterations per configuration = 10.24M environment steps per copy; PointMaze Large,
+sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
+environments, statistics, and optimizer.
+
+| style | copies | wall time [s] | total env-steps/s | copies at goal* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|
+| epoch_minibatch | 8 | 529 | 1.55e5 | 2/8 | 0.973 | 146 |
+| epoch_minibatch | 16 | 552 | 2.97e5 | 4/16 | 0.821 | 163 |
+| epoch_minibatch | 32 | 571 | 5.74e5 | 11/32 | 0.867 | 198 |
+| epoch_minibatch | 64 | 615 | 1.07e6 | 19/64 | 0.879 | 268 |
+| epoch_minibatch | 128 | 732 | 1.79e6 | 27/128 | 0.767 | 432 |
+| full_batch | 8 | 369 | 2.22e5 | 3/8 | 0.826 | 156 |
+| full_batch | 16 | 384 | 4.27e5 | 0/16 | 0.753 | 183 |
+| full_batch | 32 | 389 | 8.42e5 | 8/32 | 0.781 | 238 |
+| full_batch | 64 | 412 | 1.59e6 | 9/64 | 0.748 | 348 |
+| full_batch | 128 | 489 | 2.68e6 | 12/128 | 0.746 | 546 |
+
+*copies at goal = copies with a positive extrinsic-reward iteration inside the final 10%
+of training (the sparse goal is intermittently re-found; per-copy curves below).
+
+![campaign curves](figures/campaign_curves.png)
 
 ## What made it fast (and what did not)
 

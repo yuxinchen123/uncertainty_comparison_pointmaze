@@ -95,7 +95,8 @@ def main():
         # one copy-count failing (e.g. OOM at the memory limit) must not lose earlier rows
         try:
             r = bench(c, args.style, args.iters, args.warmup, args.rollout_mode,
-                      args.fused_adam, args.capture_update, args.one_graph, args.tf32)
+                      args.fused_adam, args.capture_update, args.one_graph, args.tf32,
+                      args.env_backend)
         except Exception as e:
             failures.append({"n_copies": c, "error": repr(e)[:400]})
             print(f"torch_ppo/{args.style} C={c:>4d}: FAILED {e!r}")

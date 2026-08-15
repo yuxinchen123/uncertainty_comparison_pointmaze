@@ -36,8 +36,10 @@ copy count that fits is 32,768.
 ## Pairings (the task's module-1 x module-2 grid)
 
 - torch env + torch PPO: THIS path (native, fused).
-- CUDA-kernel env + torch PPO: drop-in once `pointmaze/cuda_env` lands — the kernel is a
-  torch extension, so it replaces `step_core` inside the same capture.
-- jax env + torch PPO (cross-framework): only possible over dlpack with a
-  framework boundary every step; breaks both jit fusion and graph capture. Will be measured
-  once to document the cost, not pursued as a production path.
+- CUDA-kernel env + torch PPO (`env_backend="cuda"`, MEASURED): style B 25.1 ms (C=8) /
+  35.6 ms (C=128); style A 23.2 ms (C=128) — 3-6% over the torch-env backend (the env is a
+  small share of the captured iteration, so the kernel's 24x env-only win compresses).
+- jax env + torch PPO (cross-framework, MEASURED once): the dlpack boundary costs
+  +6.2 to +7.0 ms PER ENV STEP on top of a 70-260 us native step (~40-90x) — every crossing
+  synchronizes both runtimes, in addition to breaking capture and scan fusion. Not a
+  production path (`benchmarks/bench_cross_pairing.py`).

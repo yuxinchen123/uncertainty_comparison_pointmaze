@@ -61,10 +61,11 @@ def main():
 
         # cross: torch-side action -> dlpack -> jax step -> dlpack obs back to torch
         def cross():
-            aj = jdl.from_dlpack(torch.utils.dlpack.to_dlpack(act_t))
+            # modern dlpack protocol: pass the arrays themselves across the boundary
+            aj = jdl.from_dlpack(act_t)
             s, obs, r, te, tr, fo = jstep_nodonate(cross.state, aj)
             cross.state = s
-            return torch.utils.dlpack.from_dlpack(jdl.to_dlpack(obs))
+            return torch.utils.dlpack.from_dlpack(obs)
         jstep_nodonate = jax.jit(jenv.step)        # donation invalid when buffers cross
         cross.state = jenv.reset()
         cross(); jax.block_until_ready(cross.state)

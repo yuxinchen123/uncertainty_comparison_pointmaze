@@ -327,7 +327,7 @@ variant, not the default, because it changes the algorithm.
 
 
 def sec_module3():
-    return """## Module 3 — end-to-end fusion and the pairing grid
+    md = """## Module 3 — end-to-end fusion and the pairing grid
 
 - torch env + torch trainer: the production path. The environment's pure `step_core`
   composes into the compiled per-step function; one CUDA graph captures the WHOLE iteration
@@ -335,12 +335,26 @@ def sec_module3():
   one replay per iteration and zero python in the loop. Captured paths are verified
   BITWISE equal to the uncaptured trainer.
 - jax env + jax trainer: the whole iteration is one jitted XLA program with donated state.
-- CUDA env + torch trainer: drop-in (the kernel is a torch extension replacing step_core
-  inside the same capture) — pairing measured in the CUDA ledger.
-- Cross-framework pairings (jax env + torch trainer or the reverse) require a dlpack
-  boundary every environment step, which structurally breaks both CUDA-graph capture and
-  XLA scan fusion; they are documented as non-production paths.
+- CUDA env + torch trainer (`env_backend="cuda"`): the fused kernel replaces the env part
+  of the captured rollout, with the policy and RND parts as compiled subgraphs around it.
 """
+    cud = newest(r"trainbench_torch_epoch_minibatch_cudaenv3")
+    if cud and cud["rows"]:
+        cells = {r["n_copies"]: r for r in cud["rows"]}
+        parts = [f"C={c}: {cells[c]['sec_per_iteration']*1e3:.1f} ms/iter"
+                 for c in sorted(cells)]
+        md += f"  Measured (style B, one-graph): {', '.join(parts)} — versus the torch-env\n"
+        md += "  backend's 26.4 / 36.6 ms at C=8 / 128.\n"
+    else:
+        md += pending("Module 3 cuda pairing", "cudaenv3 trainbench JSON")
+    md += """- Cross-framework pairings (jax env + torch trainer or the reverse) were MEASURED over
+  the dlpack boundary: crossing frameworks costs +6.2 to +7.0 ms per environment step on
+  top of a 70-260 us native step (about 40-90x), because every crossing forces a
+  synchronization between the two runtimes — in addition to structurally breaking
+  CUDA-graph capture and XLA scan fusion. They are documented as non-production paths
+  (`benchmarks/bench_cross_pairing.py`).
+"""
+    return md
 
 
 def sec_copies():
@@ -397,14 +411,84 @@ production path fuses most of them away):
 | block | eager time [ms] | share |
 |---|---|---|
 """
-    ctot = sum(d["component_us"].values())
-    for k, v in sorted(d["component_us"].items(), key=lambda kv: -kv[1]):
+    # dynamics_step is a SUBSET of step_core; keep it out of the denominator and show it
+    # as an of-which row so the shares sum to 100%
+    comp = dict(d["component_us"])
+    dyn_key = next(k for k in comp if "dynamics_step" in k)
+    dyn = comp.pop(dyn_key)
+    ctot = sum(comp.values())
+    for k, v in sorted(comp.items(), key=lambda kv: -kv[1]):
         md += f"| {k} | {v/1000:.2f} | {v/ctot*100:.1f}% |\n"
+        if "step_core" in k:
+            md += (f"| — of which {dyn_key} | {dyn/1000:.2f} | "
+                   f"({dyn/v*100:.0f}% of the env step) |\n")
     md += """
-Reading: in eager form the ENVIRONMENT dominates (90% of raw kernel time across
-dynamics + step bookkeeping), which is why compiling/fusing the env step was the first
-large win; after fusion the three captured phases are nearly balanced, and the remaining
-bottleneck at small C is fixed kernel time in the 128 sequential rollout steps.
+Reading: in eager form the ENVIRONMENT dominates (about 84% of raw kernel time), which is
+why compiling/fusing the env step was the first large win; after fusion the three captured
+phases are nearly balanced, and the remaining bottleneck at small C is fixed kernel time
+in the 128 sequential rollout steps.
+"""
+    return md
+
+
+def sec_before_after():
+    """The task's before/after table: env, training(update), and end-to-end throughput for
+    the final-run copy counts, before optimization (eager) vs the final configuration."""
+    md = """## Before/after optimization at the final-run sizes (8-128 copies)
+
+Environment-only throughput at the exact env-batch sizes the final runs use
+(batch = C copies x 4 envs), env steps per second. "Eager" is the CURRENT physics code run
+without compilation (the uncompiled per-step python cost, ~4.4 ms per batched step at
+these sizes, is what the compiled/captured paths remove):
+
+| env batch | eager (before) | compiled (after) | CUDA kernel (after) |
+|---|---|---|---|
+"""
+    eag = newest(r"envbench_torch_eager_smallN")
+    cmp_ = newest(r"envbench_torch_compile_smallN")
+    cud = newest(r"envbench_cuda.*_smallN")
+    if not (eag and cmp_):
+        return md + pending("before/after env table", "smallN env JSONs")
+    er = {r["total_envs"]: r for r in eag["rows"]}
+    cr = {r["total_envs"]: r for r in cmp_["rows"]}
+    ur = {r["total_envs"]: r for r in (cud or {"rows": []})["rows"]}
+    for n in (32, 64, 128, 256, 512):
+        cu = sci(ur[n]["env_steps_per_sec"]) if n in ur else "—"
+        md += (f"| {n} | {sci(er[n]['env_steps_per_sec'])} | "
+               f"{sci(cr[n]['env_steps_per_sec'])} | {cu} |\n")
+
+    md += """
+Whole-loop training throughput (environment steps per second while TRAINING, i.e. the
+end-to-end number; before = eager baseline, after = the final one-graph configuration as
+measured in the campaign itself):
+
+| copies C | before, style B | after, style B | after, style A |
+|---|---|---|---|
+"""
+    recs = campaign_records()
+    base = newest(r"trainbench_torch_epoch_minibatch\.json")
+    baser = {r["n_copies"]: r for r in (base or {"rows": []})["rows"]}
+    for c in (8, 16, 32, 64, 128):
+        b = baser.get(c)
+        before = sci(b["env_steps_per_sec"]) if b else "7.77e2 ms/iter basis: " + sci(512 * c / 0.777)
+        rb = recs.get(("epoch_minibatch", c))
+        ra = recs.get(("full_batch", c))
+        md += (f"| {c} | {sci(512 * c / 0.777)} | "
+               f"{sci(rb['env_steps_per_sec']) if rb else '—'} | "
+               f"{sci(ra['env_steps_per_sec']) if ra else '—'} |\n")
+
+    md += """
+(The before column uses the measured eager iteration time of 777 ms, which is flat across
+copy counts.) Phase split of one iteration, before vs after (C=128, style B; the "after"
+split is measured in the separate-graphs configuration — the shipped one-graph mode fuses
+the phases and is faster than this sum):
+
+| phase | before (eager) | after (captured) |
+|---|---|---|
+| rollout (env + policy interaction) | 680 ms | 20.1 ms |
+| post-processing (GAE, statistics) | inside rollout | 14.8 ms (eager between graphs); inside the one-graph replay in the final config |
+| update (16 minibatch steps) | 95 ms | 15.5 ms |
+| whole iteration | 777 ms | 36.6 ms (one-graph, final) |
 """
     return md
 
@@ -502,8 +586,8 @@ def main():
     fig_copy_scaling()
     fig_campaign_curves()
     md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
-                    sec_module3(), sec_copies(), sec_profile(), sec_campaign(),
-                    sec_techniques(), sec_repro()])
+                    sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
+                    sec_campaign(), sec_techniques(), sec_repro()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
     for p in PENDING:

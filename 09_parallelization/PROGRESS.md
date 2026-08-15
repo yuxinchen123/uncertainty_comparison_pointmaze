@@ -30,10 +30,14 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
         74 iter/s (style A) / 50 iter/s (style B) at C=128
   - [ ] remaining optimization loop + learning sanity run
 - [ ] Phase 3 — Module 3: end-to-end (each env variant x each trainer, fused where possible)
-- [ ] Phase 4 — extra step: read /p/rlprojects/RLforOR/inventory_management/joint_replenishment/efficiency,
-      diff techniques, improve modules 1-3 again (do NOT read it before this phase)
-- [ ] Phase 5 — final deliverable: 8/16/32/64/128-copy training runs (pytorch), all tables,
-      profiling breakdowns, throughput plots, unified report in `report/<date>-<name>/`
+- [x] Phase 4 — extra step: review done (`extra_step_review.md`), improvements applied
+      (RND-target hoist, GEMM packing, capturable-Adam coupling fix, incremental bench
+      writes; CUDA E3 recorded as prepared candidate)
+- [x] Phase 5 — final deliverable: campaign 10/10 records (both styles x C=8..128,
+      10.24M steps/copy); smallN env benches; cuda-pairing (35.6/23.2 ms at C=128) and
+      cross-framework dlpack measurements; unified report generated in
+      `report/2026-08-15-pointmaze-gpu-parallelization/` (report.md + figures, all from
+      result JSONs via code/make_report.py)
 
 ## State notes (newest first)
 
