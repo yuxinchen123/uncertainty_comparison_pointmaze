@@ -476,18 +476,18 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
+| copies | 8 threads | 112 threads | best seconds per iteration | thousand steps per second per copy |
 |---|---|---|---|---|
-| 1 | 8 | 0.352 | 0.0015 | 1.45 |
-| 2 | 8 | 0.382 | 0.0027 | 1.34 |
-| 4 | 8 | 0.410 | 0.0050 | 1.25 |
-| 8 | 8 | 0.433 | 0.0095 | 1.18 |
-| 16 | 8 | 0.482 | 0.0170 | 1.06 |
-| 32 | 8 | 0.576 | 0.0284 | 0.89 |
-| 64 | 8 | 0.666 | 0.0492 | 0.77 |
-| 128 | 112 | 1.229 | 0.0533 | 0.42 |
+| 1 | 0.0015 | 0.0011 | 0.352 | 1.45 |
+| 2 | 0.0027 | 0.0016 | 0.382 | 1.34 |
+| 4 | 0.0050 | 0.0036 | 0.410 | 1.25 |
+| 8 | 0.0095 | 0.0060 | 0.433 | 1.18 |
+| 16 | 0.0170 | 0.0123 | 0.482 | 1.06 |
+| 32 | 0.0284 | 0.0214 | 0.576 | 0.89 |
+| 64 | 0.0492 | 0.0397 | 0.666 | 0.77 |
+| 128 | 0.0531 | 0.0533 | 1.229 | 0.42 |
 
-*One process, threads varied. Sixteen updates per batch.*
+*One process holding every copy, the array library given 8 or 112 threads. Throughput columns are millions of environment steps per second. Sixteen updates per batch.*
 
 | workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|---|
@@ -506,10 +506,14 @@ The measurements settle which is better, and the answer is not the obvious one.
 
 ![worker scaling](figures/cpu_worker_scaling.png)
 
-The environment measurements on the earlier processor node make the threading limit plain: one
-process reached its best throughput at four to eight threads and then got **worse**, ending
-twelve times slower than a single thread when given 160. Independent processes scaled to about
-twenty-four times over the same range.
+The two tables answer it. Independent processes reach 2.11 million environment steps per second at 3,584 copies; one process with threads tops out at 0.0533 million. That is a factor of **40** on the same machine, running the same algorithm — the only difference is how the work was divided.
+
+The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 7 of the 8 copy counts measured — 0.764 seconds per iteration against 0.576 at 32 copies; 0.824 seconds per iteration against 0.666 at 64 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
+
+The environment measurements on the second processor node show the same limit even more
+sharply: one process reached its best throughput at four to eight threads and then got
+**worse**, ending twelve times slower than a single thread when given 160. Independent processes
+scaled to about twenty-four times over the same range.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -533,11 +537,12 @@ reaches the highest total throughput inside that range.
 | graphics processor, sixteen updates per batch | 4,096 | 0.277 | 7.57 | 1.85 | 1.50 |
 | processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 2.61 |
 | processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 4.78 |
+| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 4.90 |
 | processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 6.67 |
 
 ![best setup](figures/best_setup.png)
 
-The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 3 hours on the processor node.
+The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6.3**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2.61 hours on the processor node.
 
 Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
@@ -547,7 +552,7 @@ arithmetic, which processors handle comparatively better than they handle many t
 dependent operations.
 
 
-## 5. Method, and how to repeat the measurements
+## 7. Method, and how to repeat the measurements
 
 **Hardware and isolation.** One NVIDIA H100 NVL processor with 95 gigabytes of memory, in a
 shared machine. Every measurement in this report ran while holding an exclusive lock on the

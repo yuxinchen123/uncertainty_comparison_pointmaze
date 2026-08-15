@@ -801,8 +801,8 @@ between samples is not counted.
 
 
 def sec_method():
-    """Section 5: how the measurements were taken, and how to repeat them."""
-    return """## 5. Method, and how to repeat the measurements
+    """Section 7: how the measurements were taken, and how to repeat them."""
+    return """## 7. Method, and how to repeat the measurements
 
 **Hardware and isolation.** One NVIDIA H100 NVL processor with 95 gigabytes of memory, in a
 shared machine. Every measurement in this report ran while holding an exclusive lock on the

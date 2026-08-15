@@ -168,7 +168,10 @@ def best_under(limit=4096):
              cpu_train("jaguar03", "processes", "full_batch")
              or cpu_train("puma01", "processes", "full_batch"), "cpu"),
             ("processor, threads in one process, sixteen updates",
-             cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads"), "cpu")]:
+             cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads"), "cpu"),
+            ("processor, threads in one process, one update",
+             cpu_train("jaguar03", "threads", "full_batch")
+             or cpu_train("puma01", "threads", "full_batch"), "cpu")]:
         pick = [r for r in rows if r["total_copies"] <= limit]
         if not pick:
             continue
@@ -230,6 +233,81 @@ def K(x):
     return f"{v:,.0f}" if v >= 10 else f"{v:.2f}"
 
 
+def thread_table(host):
+    """Thread-mode table with one column per thread setting, so the two are directly comparable.
+
+    Collapsing the settings to a per-copy-count best hides the finding: at 128 copies the two
+    settings differ by half a percent, which is noise, and picking a winner there would read as
+    a real change. Side-by-side columns show the whole picture instead.
+    before: rows = [{copies:1,threads:8,...}, {copies:1,threads:112,...}, {copies:2,threads:8,...}]
+    after:  one row per copy count, one throughput column per thread setting
+    """
+    rows = all_rows(r"trainbench_cpu_threads", host=host, style="epoch_minibatch")
+    if not rows:
+        return ""
+    settings = sorted({r["workers"] for r in rows})
+    by_copies = {}
+    for r in rows:
+        by_copies.setdefault(r["total_copies"], {})[r["workers"]] = r
+    head = " | ".join(f"{t} threads" for t in settings)
+    md = (f"| copies | {head} | best seconds per iteration | "
+          f"thousand steps per second per copy |\n|---|" + "---|" * (len(settings) + 2) + "\n")
+    for c in sorted(by_copies):
+        cells, best = [], None
+        for t in settings:
+            r = by_copies[c].get(t)
+            cells.append(M(r["env_steps_per_sec"]) if r else "—")
+            if r and (best is None or r["sec_per_iteration"] < best["sec_per_iteration"]):
+                best = r
+        md += (f"| {c} | {' | '.join(cells)} | {best['sec_per_iteration']:.3f} | "
+               f"{K(best['env_steps_per_sec_per_copy'])} |\n")
+    md += ("\n*One process holding every copy, the array library given 8 or 112 threads. "
+           "Throughput columns are millions of environment steps per second. "
+           "Sixteen updates per batch.*\n\n")
+    return md
+
+
+def thread_verdict(host, tr_proc, tr_thread):
+    """The two sentences comparing the parallelisation styles, with every number read from data.
+
+    Written from the measurements rather than typed in, so re-running the benchmark cannot leave
+    the prose disagreeing with the tables printed directly above it.
+    """
+    if not tr_proc or not tr_thread:
+        return "*Waiting on measurements.*"
+    # headline: the best each style reached anywhere in its sweep
+    top_p = max(tr_proc, key=lambda r: r["env_steps_per_sec"])
+    top_t = max(tr_thread, key=lambda r: r["env_steps_per_sec"])
+    ratio = top_p["env_steps_per_sec"] / top_t["env_steps_per_sec"]
+    out = (f"Independent processes reach {M(top_p['env_steps_per_sec'])} million environment "
+           f"steps per second at {top_p['total_copies']:,} copies; one process with threads tops "
+           f"out at {M(top_t['env_steps_per_sec'])} million. That is a factor of "
+           f"**{ratio:,.0f}** on the same machine, running the same algorithm — the only "
+           f"difference is how the work was divided.\n\n")
+
+    # the second claim: more threads did not help. Compare the two thread settings copy by copy.
+    rows = all_rows(r"trainbench_cpu_threads", host=host, style="epoch_minibatch")
+    settings = sorted({r["workers"] for r in rows})
+    if len(settings) < 2:
+        return out
+    low, high = settings[0], settings[-1]
+    paired = {}
+    for r in rows:
+        paired.setdefault(r["total_copies"], {})[r["workers"]] = r["sec_per_iteration"]
+    both = {c: v for c, v in paired.items() if low in v and high in v}
+    slower = [c for c, v in both.items() if v[high] > v[low] * 1.02]
+    # cite the two largest copy counts, where there is the most work available to divide and so
+    # the best case for extra threads; the smallest counts would be a weaker demonstration
+    ex = sorted(slower)[-2:]
+    cites = "; ".join(f"{both[c][high]:.3f} seconds per iteration against {both[c][low]:.3f} "
+                      f"at {c} {'copy' if c == 1 else 'copies'}" for c in ex)
+    out += (f"The thread table also shows that adding threads does not help. Giving the single "
+            f"process {high} threads instead of {low} was slower at {len(slower)} of the "
+            f"{len(both)} copy counts measured — {cites} — and never faster by more than the "
+            f"measurement noise. {high // low} times as many threads bought nothing.")
+    return out
+
+
 def sec_cpu():
     """Section: the same work on ordinary processor cores."""
     tr_proc = cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes")
@@ -268,13 +346,7 @@ A processor has many cores, and the work has to be divided among them. There are
 The measurements settle which is better, and the answer is not the obvious one.
 
 """
-    if tr_thread:
-        md += ("| copies | threads | seconds per iteration | million steps per second | "
-               "thousand steps per second per copy |\n|---|---|---|---|---|\n")
-        for r in tr_thread:
-            md += (f"| {r['total_copies']} | {r['workers']} | {r['sec_per_iteration']:.3f} | "
-                   f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} |\n")
-        md += "\n*One process, threads varied. Sixteen updates per batch.*\n\n"
+    md += thread_table(host)
     if tr_proc:
         md += ("| workers | copies each | total copies | seconds per iteration | "
                "million steps per second | thousand steps per second per copy |\n"
@@ -284,14 +356,16 @@ The measurements settle which is better, and the answer is not the obvious one.
                    f"{r['sec_per_iteration']:.3f} | {M(r['env_steps_per_sec'])} | "
                    f"{K(r['env_steps_per_sec_per_copy'])} |\n")
         md += "\n*Independent single-thread processes. Sixteen updates per batch.*\n\n"
-    md += """![processor against graphics processor](figures/cpu_vs_gpu.png)
+    md += f"""![processor against graphics processor](figures/cpu_vs_gpu.png)
 
 ![worker scaling](figures/cpu_worker_scaling.png)
 
-The environment measurements on the earlier processor node make the threading limit plain: one
-process reached its best throughput at four to eight threads and then got **worse**, ending
-twelve times slower than a single thread when given 160. Independent processes scaled to about
-twenty-four times over the same range.
+The two tables answer it. {thread_verdict(host, tr_proc, tr_thread)}
+
+The environment measurements on the second processor node show the same limit even more
+sharply: one process reached its best throughput at four to eight threads and then got
+**worse**, ending twelve times slower than a single thread when given 160. Independent processes
+scaled to about twenty-four times over the same range.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -332,11 +406,12 @@ reaches the highest total throughput inside that range.
         md += (f"The best graphics-processor configuration reaches {M(gpu[0]['total'])} million "
                f"environment steps per second at {gpu[0]['copies']:,} copies; the best processor "
                f"configuration reaches {M(cpu[0]['total'])} million at {cpu[0]['copies']:,} "
-               f"copies. That is a factor of **{ratio:,.0f}**. In wall-clock terms, giving every "
+               f"copies. That is a factor of **{ratio:.1f}**. In wall-clock terms, giving every "
                f"copy ten million environment steps takes {gpu[0]['hours_10M']:.2f} hours on the "
-               f"graphics processor against {cpu[0]['hours_10M']:.0f} hours on the processor "
+               f"graphics processor against {cpu[0]['hours_10M']:.2f} hours on the processor "
                f"node.\n\n")
-    md += """Two qualifications belong with those numbers. The processor figure is for one node held
+    md += """Best in each column is bold, second best underlined; copies is a setting rather than
+a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
 arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
 for training than for the environment alone, because training is dominated by matrix
