@@ -25,6 +25,13 @@ RESULTS = BASE / "benchmarks" / "results"
 RUNS = BASE / "train_runs"
 FIGS = REPORT / "figures"
 
+# the standalone report's processor module: its two sections and the unit conversions they use are
+# defined once, there, and reused here so the two documents cannot come to disagree
+sys.path.insert(0, str(BASE / "report"
+                       / "2026-08-15-gpu-parallel-rl-environment-training-endtoend" / "code"))
+import cpu_sections
+from cpu_sections import hours_per_million
+
 # fixed categorical order (validated default palette, light mode): color follows the
 # ENTITY (framework); line style separates modes of the same entity
 C_TORCH = "#2a78d6"   # slot 1 blue
@@ -475,13 +482,15 @@ because it is the same measurement in different units.
 No. Holding the total at {groups[0]['total_copies']} copies and splitting them into more and
 more groups leaves the time per iteration flat and the memory byte-identical:
 
-| groups (learning rates) | copies per rate | copies | ms/iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
-|---|---|---|---|---|---|---|
+| groups (learning rates) | copies per rate | copies | ms/iteration | million steps/s | thousand steps/s per copy | hours per million steps per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|
 """
         for r in groups:
             md += (f"| {r['n_rates']} | {r['copies_per_rate']} | {r['total_copies']:,} | "
                    f"{r['sec_per_iteration']*1e3:.1f} | {r['env_steps_per_sec']/1e6:.2f} | "
-                   f"{r['env_steps_per_sec_per_copy']/1e3:.2f} | {r['peak_vram_mb']:.0f} |\n")
+                   f"{r['env_steps_per_sec_per_copy']/1e3:.2f} | "
+                   f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} | "
+                   f"{r['peak_vram_mb']:.0f} |\n")
         md += f"""
 From 1 group to {groups[-1]['n_rates']} groups the spread is {spread:.2f} ms on a mean of
 {sum(ms)/len(ms):.1f} ms ({spread/(sum(ms)/len(ms))*100:.2f}%), which is within the run-to-run
@@ -540,8 +549,8 @@ so a difference between groups is the rate's doing. Full description: `ppo/torch
 
 Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
 
-| layout | copies | ms per sweep iteration | million steps/s | thousand steps/s per copy | peak VRAM [MB] |
-|---|---|---|---|---|---|
+| layout | copies | ms per sweep iteration | million steps/s | thousand steps/s per copy | hours per million steps per copy | peak VRAM [MB] |
+|---|---|---|---|---|---|---|
 """
     d = newest(r"sweep_strategies")
     if not d:
@@ -549,16 +558,18 @@ Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 5
     names = {"uniform": "uniform rate, one trainer (not a sweep — the reference)",
              "fused": "one trainer, per-copy rate vector, one graph",
              "separate": "one trainer per rate, run in turn"}
-    # this file records only the iteration time, so the two rates are derived from it: one
-    # iteration advances every copy by num_steps x n_envs = 512 environment steps
+    # this file records only the iteration time, so the rates are derived from it: one iteration
+    # advances every copy by num_steps x n_envs = 512 environment steps, and the hours column is
+    # that per-copy rate written as time
     # before: {"total_copies": 2048, "sec_per_iteration": 0.1445}
-    # after:  7.26 million steps/s in total, 3.54 thousand steps/s per copy
+    # after:  7.26 million steps/s in total, 3.54 thousand steps/s per copy, 0.078 hours per
+    #         million steps per copy
     for row in d["rows"]:
         per_copy = STEPS_PER_COPY_PER_ITER / row["sec_per_iteration"]
         md += (f"| {names[row['strategy']]} | {row['total_copies']:,} | "
                f"{row['sec_per_iteration']*1e3:.2f} | "
                f"{per_copy*row['total_copies']/1e6:.2f} | {per_copy/1e3:.2f} | "
-               f"{row['peak_vram_mb']:.0f} |\n")
+               f"{hours_per_million(per_copy):.3f} | {row['peak_vram_mb']:.0f} |\n")
     md += f"""
 Fusing the groups into one batched run is {d['fused_speedup_vs_separate']:.2f}x faster than
 running them one after another, and costs {d['fused_overhead_vs_uniform']*100:+.1f}% against a
@@ -1247,16 +1258,18 @@ of the work and no coordination at all.
 
 End-to-end training on that node, one row per setting measured:
 
-| way of using the cores | workers | copies | seconds per iteration | million steps per second | thousand steps per second per copy |
-|---|---|---|---|---|---|
+| way of using the cores | workers | copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|---|
 """
     # one row per benchmark file, at that file's fastest point; both the aggregate rate and the
-    # rate a single copy gets are shown, because a setting that wins on one can lose on the other
+    # rate a single copy gets are shown, because a setting that wins on one can lose on the other,
+    # and the per-copy rate again as the time one copy takes over a million steps
     for d in trains:
         best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
         md += (f"| {d['mode']}, {d.get('style')} | {best['workers']} | {best['total_copies']} | "
                f"{best['sec_per_iteration']:.3f} | {best['env_steps_per_sec']/1e6:.4f} | "
-               f"{best['env_steps_per_sec_per_copy']/1e3:,.2f} |\n")
+               f"{best['env_steps_per_sec_per_copy']/1e3:,.2f} | "
+               f"{hours_per_million(best['env_steps_per_sec_per_copy']):.3f} |\n")
     md += """
 Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
 about forty small operations, and the regrouping after each one costs more than the work it
@@ -1433,15 +1446,12 @@ def sec_clean_node():
     module rather than copying its code keeps ONE definition of these numbers, so re-running a
     measurement updates both documents and they cannot come to disagree.
     """
-    # the other report's code folder; its figures are redirected into this report's own folder
-    sys.path.insert(0, str(BASE / "report"
-                           / "2026-08-15-gpu-parallel-rl-environment-training-endtoend" / "code"))
-    import cpu_sections as cpu
-    cpu.FIGS = FIGS
-    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup()):
+    # the module writes its figures into its own report by default; redirect them into this one
+    cpu_sections.FIGS = FIGS
+    for note in (cpu_sections.fig_cpu_vs_gpu(), cpu_sections.fig_best_setup()):
         if note:
             PENDING.append(note)
-    md = cpu.sec_cpu() + "\n" + cpu.sec_best()
+    md = cpu_sections.sec_cpu() + "\n" + cpu_sections.sec_best()
     # this document numbers no sections, and already carries a processor section about the other
     # node, so the source document's numbering goes and the two headings get names that do not
     # collide with it (a repeated heading would collapse two entries of the contents table)

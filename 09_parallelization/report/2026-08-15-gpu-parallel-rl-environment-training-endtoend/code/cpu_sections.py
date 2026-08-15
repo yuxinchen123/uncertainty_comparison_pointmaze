@@ -25,7 +25,6 @@ C_CPU_PROC = "#eb6834"
 C_CPU_THREAD = "#4a3aa7"
 C_CPU_OLD = "#1baf7a"
 GRID = dict(color="#d9d9d9", linewidth=0.6)
-ITERS_FOR_10M = 10e6 / 512          # iterations to give every copy ten million steps
 
 
 def all_rows(pattern, **filters):
@@ -145,31 +144,50 @@ def mark_best(texts, values, higher_is_better):
 
 
 def best_under(limit=4096):
-    """The configuration maximising total throughput below a copy limit, per platform."""
+    """One row per named configuration: its best setting under a copy limit, or a pinned setting.
+
+    Selection is by highest total throughput among the settings at or below the limit. A
+    configuration may instead name one exact setting through `pin`, which is how the
+    one-copy-per-worker processor row gets in: it is in the table for the rate one copy gets, not
+    for its total, so selecting it by maximum total would pick a different setting entirely.
+    """
     out = []
-    for name, rows, kind in [
-            ("graphics processor, one update per batch", gpu_train("full_batch"), "gpu"),
-            ("graphics processor, sixteen updates per batch", gpu_train("epoch_minibatch"), "gpu"),
+    for name, rows, kind, pin in [
+            ("graphics processor, one update per batch", gpu_train("full_batch"), "gpu", None),
+            ("graphics processor, sixteen updates per batch", gpu_train("epoch_minibatch"),
+             "gpu", None),
             ("processor, independent processes, sixteen updates",
-             cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes"), "cpu"),
+             cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes"), "cpu", None),
             ("processor, independent processes, one update",
              cpu_train("jaguar03", "processes", "full_batch")
-             or cpu_train("puma01", "processes", "full_batch"), "cpu"),
+             or cpu_train("puma01", "processes", "full_batch"), "cpu", None),
+            ("processor, independent processes, one update, one copy per worker",
+             cpu_train("jaguar03", "processes", "full_batch"), "cpu", {"workers": 224,
+                                                                      "n_copies": 1}),
             ("processor, threads in one process, sixteen updates",
-             cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads"), "cpu"),
+             cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads"), "cpu", None),
             ("processor, threads in one process, one update",
              cpu_train("jaguar03", "threads", "full_batch")
-             or cpu_train("puma01", "threads", "full_batch"), "cpu")]:
+             or cpu_train("puma01", "threads", "full_batch"), "cpu", None)]:
+        # one measured row per configuration: the pinned ones by an exact match on the setting,
+        # the rest by the highest total throughput among the settings inside the copy limit
+        # before: rows = [{workers: 8, total_copies: 8, ...}, ..., {workers: 224, n_copies: 1,
+        #         total_copies: 224, ...}] and pin = {"workers": 224, "n_copies": 1}
+        # after:  b = the 224-worker one-copy-each row, where an unpinned entry would have taken
+        #         whichever row has the largest env_steps_per_sec
         pick = [r for r in rows if r["total_copies"] <= limit]
         if not pick:
             continue
-        b = max(pick, key=lambda r: r["env_steps_per_sec"])
-        out.append({"name": name, "kind": kind, "copies": b["total_copies"],
-                    "host": b.get("_host", "H100"),
+        if pin:
+            b, = [r for r in pick if all(r[k] == v for k, v in pin.items())]
+        else:
+            b = max(pick, key=lambda r: r["env_steps_per_sec"])
+        out.append({"name": name, "kind": kind, "pinned": pin is not None,
+                    "copies": b["total_copies"], "host": b.get("_host", "H100"),
                     "sec_per_iteration": b["sec_per_iteration"],
                     "total": b["env_steps_per_sec"],
                     "per_copy": b["env_steps_per_sec_per_copy"],
-                    "hours_10M": b["sec_per_iteration"] * ITERS_FOR_10M / 3600})
+                    "hours_1M": hours_per_million(b["env_steps_per_sec_per_copy"])})
     return sorted(out, key=lambda r: -r["total"])
 
 
@@ -184,10 +202,10 @@ def fig_best_setup(limit=4096):
     # the three panels are the aggregate rate, the rate one copy gets, and what the per-copy rate
     # means in wall time; the row order is shared, so every panel must run the same way up
     panels = [("total", 1e6, "{:.3f}", "million environment steps per second (log scale)",
-               f"Best total throughput at {limit:,} copies or fewer"),
+               f"Total throughput at {limit:,} copies or fewer"),
               ("per_copy", 1e3, "{:,.2f}", "thousand steps per second per copy (log scale)",
                "What one copy gets there"),
-              ("hours_10M", 1, "{:.1f} h", "hours to give every copy ten million steps (log scale)",
+              ("hours_1M", 1, "{:.3f} h", "hours per million steps per copy (log scale)",
                "What that means in wall time")]
     for ax, (field, scale, fmt, xlabel, title) in zip(axes, panels):
         ax.barh(range(len(rows)), [r[field] / scale for r in rows], color=colours, height=0.6)
@@ -220,6 +238,18 @@ def K(x):
     return f"{v:,.0f}" if v >= 10 else f"{v:.2f}"
 
 
+def hours_per_million(per_copy_rate):
+    """Hours for one copy to take a million environment steps, from its steps-per-second rate.
+
+    The per-copy rate restated as time, because the question asked of a rate is nearly always how
+    long a run will take. Always normalised to a million steps per copy, whatever step budget the
+    run at hand uses, so the figure is comparable across every table in the report.
+    before: per_copy_rate = 1574.34 environment steps per second for one copy
+    after:  1e6 / (3600 x 1574.34) = 0.1764 hours
+    """
+    return 1e6 / (3600 * per_copy_rate)
+
+
 def thread_table(host):
     """Thread-mode table: one row per (copy count, thread setting), with both rates on every row.
 
@@ -234,10 +264,12 @@ def thread_table(host):
     if not rows:
         return ""
     md = ("| copies | threads | seconds per iteration | million steps per second | "
-          "thousand steps per second per copy |\n|---|---|---|---|---|\n")
+          "thousand steps per second per copy | hours per million steps per copy |\n"
+          "|---|---|---|---|---|---|\n")
     for r in sorted(rows, key=lambda r: (r["total_copies"], r["workers"])):
         md += (f"| {r['total_copies']} | {r['workers']} | {r['sec_per_iteration']:.3f} | "
-               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} |\n")
+               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
+               f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} |\n")
     md += ("\n*One process holding every copy, the array library given 8 or 112 threads. "
            "Sixteen updates per batch.*\n\n")
     return md
@@ -323,12 +355,13 @@ The measurements settle which is better, and the answer is not the obvious one.
     md += thread_table(host)
     if tr_proc:
         md += ("| workers | copies each | total copies | seconds per iteration | "
-               "million steps per second | thousand steps per second per copy |\n"
-               "|---|---|---|---|---|---|\n")
+               "million steps per second | thousand steps per second per copy | "
+               "hours per million steps per copy |\n|---|---|---|---|---|---|---|\n")
         for r in tr_proc:
             md += (f"| {r['workers']} | {r['n_copies']} | {r['total_copies']} | "
                    f"{r['sec_per_iteration']:.3f} | {M(r['env_steps_per_sec'])} | "
-                   f"{K(r['env_steps_per_sec_per_copy'])} |\n")
+                   f"{K(r['env_steps_per_sec_per_copy'])} | "
+                   f"{hours_per_million(r['env_steps_per_sec_per_copy']):.3f} |\n")
         md += "\n*Independent single-thread processes. Sixteen updates per batch.*\n\n"
     md += f"""![processor against graphics processor](figures/cpu_vs_gpu.png)
 
@@ -356,25 +389,36 @@ def sec_best(limit=4096):
 
 Throughput keeps rising with the number of copies well past the point most work needs, so the
 comparison below is restricted to **{limit:,} copies or fewer**, which is the range this project
-actually operates in. For each platform and configuration, the table gives the setting that
-reaches the highest total throughput inside that range.
+actually operates in. For every platform and configuration but one, the table gives the setting
+that reaches the highest total throughput inside that range; the exception is the
+one-copy-per-worker processor row, explained under the table.
 
-| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours to ten million steps per copy |
+| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours per million steps per copy |
 |---|---|---|---|---|---|
 """
-    # mark best and second best in every scored column (copies is a setting, so it is skipped)
+    # mark best and second best in every scored column (copies is a setting, so it is skipped);
+    # hours sorts the opposite way from the two rates, since fewer hours is better
     cells = {"sec_per_iteration": [f"{r['sec_per_iteration']:.3f}" for r in rows],
              "total": [M(r["total"]) for r in rows],
              "per_copy": [K(r["per_copy"]) for r in rows],
-             "hours_10M": [f"{r['hours_10M']:.2f}" for r in rows]}
+             "hours_1M": [f"{r['hours_1M']:.3f}" for r in rows]}
     for field, higher_is_better in [("sec_per_iteration", False), ("total", True),
-                                    ("per_copy", True), ("hours_10M", False)]:
+                                    ("per_copy", True), ("hours_1M", False)]:
         cells[field] = mark_best(cells[field], [r[field] for r in rows], higher_is_better)
     for i, r in enumerate(rows):
         md += (f"| {r['name']} | {r['copies']:,} | {cells['sec_per_iteration'][i]} | "
-               f"{cells['total'][i]} | {cells['per_copy'][i]} | {cells['hours_10M'][i]} |\n")
+               f"{cells['total'][i]} | {cells['per_copy'][i]} | {cells['hours_1M'][i]} |\n")
     gpu = [r for r in rows if r["kind"] == "gpu"]
     cpu = [r for r in rows if r["kind"] == "cpu"]
+    # the pinned row is in the table for the rate one copy gets, so say what it costs against the
+    # processor row that wins on total; both sides are read from the rows the table just printed
+    solo = [r for r in rows if r["pinned"]][0]
+    md += (f"\nThe {solo['copies']:,}-copy row is the exception: it is the processor setting that "
+           f"finishes any single copy soonest, giving each copy {K(solo['per_copy'])} thousand "
+           f"steps per second against {K(cpu[0]['per_copy'])} thousand for the processor setting "
+           f"that wins on total throughput — a million steps per copy in {solo['hours_1M']:.3f} "
+           f"hours instead of {cpu[0]['hours_1M']:.3f} — at the price of a factor of "
+           f"{cpu[0]['total'] / solo['total']:.1f} in total throughput.\n")
     md += "\n![best setup](figures/best_setup.png)\n\n"
     if gpu and cpu:
         ratio = gpu[0]["total"] / cpu[0]["total"]
@@ -382,8 +426,8 @@ reaches the highest total throughput inside that range.
                f"environment steps per second at {gpu[0]['copies']:,} copies; the best processor "
                f"configuration reaches {M(cpu[0]['total'])} million at {cpu[0]['copies']:,} "
                f"copies. That is a factor of **{ratio:.1f}**. In wall-clock terms, giving every "
-               f"copy ten million environment steps takes {gpu[0]['hours_10M']:.2f} hours on the "
-               f"graphics processor against {cpu[0]['hours_10M']:.2f} hours on the processor "
+               f"copy a million environment steps takes {gpu[0]['hours_1M']:.3f} hours on the "
+               f"graphics processor against {cpu[0]['hours_1M']:.3f} hours on the processor "
                f"node.\n\n")
     md += """Best in each column is bold, second best underlined; copies is a setting rather than
 a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held

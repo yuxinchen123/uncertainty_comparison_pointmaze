@@ -480,37 +480,37 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
-|---|---|---|---|---|
-| 1 | 8 | 0.352 | 0.0015 | 1.45 |
-| 1 | 112 | 0.453 | 0.0011 | 1.13 |
-| 2 | 8 | 0.382 | 0.0027 | 1.34 |
-| 2 | 112 | 0.636 | 0.0016 | 0.81 |
-| 4 | 8 | 0.410 | 0.0050 | 1.25 |
-| 4 | 112 | 0.568 | 0.0036 | 0.90 |
-| 8 | 8 | 0.433 | 0.0095 | 1.18 |
-| 8 | 112 | 0.686 | 0.0060 | 0.75 |
-| 16 | 8 | 0.482 | 0.0170 | 1.06 |
-| 16 | 112 | 0.665 | 0.0123 | 0.77 |
-| 32 | 8 | 0.576 | 0.0284 | 0.89 |
-| 32 | 112 | 0.764 | 0.0214 | 0.67 |
-| 64 | 8 | 0.666 | 0.0492 | 0.77 |
-| 64 | 112 | 0.824 | 0.0397 | 0.62 |
-| 128 | 8 | 1.235 | 0.0531 | 0.41 |
-| 128 | 112 | 1.229 | 0.0533 | 0.42 |
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|
+| 1 | 8 | 0.352 | 0.0015 | 1.45 | 0.191 |
+| 1 | 112 | 0.453 | 0.0011 | 1.13 | 0.246 |
+| 2 | 8 | 0.382 | 0.0027 | 1.34 | 0.207 |
+| 2 | 112 | 0.636 | 0.0016 | 0.81 | 0.345 |
+| 4 | 8 | 0.410 | 0.0050 | 1.25 | 0.223 |
+| 4 | 112 | 0.568 | 0.0036 | 0.90 | 0.308 |
+| 8 | 8 | 0.433 | 0.0095 | 1.18 | 0.235 |
+| 8 | 112 | 0.686 | 0.0060 | 0.75 | 0.372 |
+| 16 | 8 | 0.482 | 0.0170 | 1.06 | 0.261 |
+| 16 | 112 | 0.665 | 0.0123 | 0.77 | 0.361 |
+| 32 | 8 | 0.576 | 0.0284 | 0.89 | 0.313 |
+| 32 | 112 | 0.764 | 0.0214 | 0.67 | 0.415 |
+| 64 | 8 | 0.666 | 0.0492 | 0.77 | 0.361 |
+| 64 | 112 | 0.824 | 0.0397 | 0.62 | 0.447 |
+| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.670 |
+| 128 | 112 | 1.229 | 0.0533 | 0.42 | 0.667 |
 
 *One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
-| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
-|---|---|---|---|---|---|
-| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 |
-| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 |
-| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 |
-| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 |
-| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 |
-| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 |
-| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 |
-| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 |
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.190 |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.200 |
+| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 | 0.201 |
+| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 |
+| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 |
+| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 | 0.252 |
+| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 | 0.386 |
+| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 | 0.472 |
 
 *Independent single-thread processes. Sixteen updates per batch.*
 
@@ -533,21 +533,25 @@ sequence, which is the same problem solved from the other end.
 
 Throughput keeps rising with the number of copies well past the point most work needs, so the
 comparison below is restricted to **4,096 copies or fewer**, which is the range this project
-actually operates in. For each platform and configuration, the table gives the setting that
-reaches the highest total throughput inside that range.
+actually operates in. For every platform and configuration but one, the table gives the setting
+that reaches the highest total throughput inside that range; the exception is the
+one-copy-per-worker processor row, explained under the table.
 
-| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours to ten million steps per copy |
+| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours per million steps per copy |
 |---|---|---|---|---|---|
-| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.47** |
-| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>1.50</u> |
-| processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 2.61 |
-| processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 4.78 |
-| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 4.90 |
-| processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 6.67 |
+| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.047** |
+| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>0.150</u> |
+| processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 0.262 |
+| processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 0.472 |
+| processor, independent processes, one update, one copy per worker | 224 | 0.326 | 0.3527 | 1.57 | 0.176 |
+| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 0.490 |
+| processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 0.667 |
+
+The 224-copy row is the exception: it is the processor setting that finishes any single copy soonest, giving each copy 1.57 thousand steps per second against 1.06 thousand for the processor setting that wins on total throughput — a million steps per copy in 0.176 hours instead of 0.262 — at the price of a factor of 10.8 in total throughput.
 
 ![best setup](figures/best_setup.png)
 
-The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6.3**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2.61 hours on the processor node.
+The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6.3**. In wall-clock terms, giving every copy a million environment steps takes 0.047 hours on the graphics processor against 0.262 hours on the processor node.
 
 Best in each column is bold, second best underlined; copies is a setting rather than
 a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
