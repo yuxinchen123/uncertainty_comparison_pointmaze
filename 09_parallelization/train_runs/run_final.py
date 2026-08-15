@@ -24,12 +24,13 @@ def run_one(n_copies, args, outdir):
     import torch
     from torch_ppo_rnd import PPOConfig, PPORND
 
-    data = outdir / "data" / f"copies_{n_copies}_{args.style}.json"
+    tag = "sweep" if args.sweep_rates else "uniform"
+    data = outdir / "data" / f"copies_{n_copies}_{args.style}_{tag}.json"
     if data.exists():
         print(f"[resume] {data.name} exists — skipping", flush=True)
         return
     torch.cuda.reset_peak_memory_stats()
-    log_path = outdir / "logs" / f"copies_{n_copies}_{args.style}.log"
+    log_path = outdir / "logs" / f"copies_{n_copies}_{args.style}_{tag}.log"
     log_f = open(log_path, "a")
 
     def log_fn(msg):
@@ -38,9 +39,15 @@ def run_one(n_copies, args, outdir):
         log_f.write(msg + "\n")
         log_f.flush()
 
-    from torch_ppo_rnd import production_config
-    cfg = production_config(n_copies, style=args.style, one_graph=args.one_graph,
-                            base_seed=args.base_seed)
+    from torch_ppo_rnd import production_config, sweep_config
+    if args.sweep_rates:
+        # a sweep run: n_copies is the TOTAL across groups, set by the caller's rates/counts
+        per_rate = args.copies_per_rate or (n_copies // len(args.sweep_rates))
+        cfg = sweep_config(args.sweep_rates, per_rate, style=args.style,
+                           one_graph=args.one_graph, base_seed=args.base_seed)
+    else:
+        cfg = production_config(n_copies, style=args.style, one_graph=args.one_graph,
+                                base_seed=args.base_seed)
     t_build = time.time()
     trainer = PPORND(cfg, device="cuda")
     stats = trainer.train(args.iterations, log_every_seconds=args.log_every,
@@ -48,6 +55,13 @@ def run_one(n_copies, args, outdir):
     cov = trainer._visited[:, trainer._open_cells].float().mean(dim=1)
     record = {
         "n_copies": n_copies, "style": args.style, "one_graph": args.one_graph,
+        "sweep_rates": list(args.sweep_rates) if args.sweep_rates else None,
+        "copies_per_rate": list(cfg.copies_per_rate) if cfg.copies_per_rate else None,
+        "learning_rate_per_copy": trainer.lr_per_copy.tolist(),
+        "group_index": trainer.copy_group.tolist(),
+        "sweep_seed_mode": cfg.sweep_seed_mode,
+        "num_steps": cfg.num_steps, "n_envs": cfg.n_envs, "tf32": cfg.tf32,
+        "compile_post": cfg.compile_post, "rollout_mode": cfg.rollout_mode,
         "iterations": args.iterations, "base_seed": args.base_seed,
         "torch": torch.__version__, "gpu": torch.cuda.get_device_name(0),
         "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
@@ -76,6 +90,10 @@ def main():
     ap.add_argument("--iterations", type=int, default=20000)
     ap.add_argument("--style", default="epoch_minibatch")
     ap.add_argument("--one-graph", action="store_true")
+    ap.add_argument("--sweep-rates", type=float, nargs="+", default=None,
+                    help="learning rates to sweep across copy groups")
+    ap.add_argument("--copies-per-rate", type=int, default=None,
+                    help="independent copies per learning rate (default: n_copies / rates)")
     ap.add_argument("--base-seed", type=int, default=0)
     ap.add_argument("--log-every", type=int, default=60)
     ap.add_argument("--history-every", type=int, default=50)
@@ -95,6 +113,10 @@ def main():
                "--history-every", str(args.history_every)]
         if args.one_graph:
             cmd.append("--one-graph")
+        if args.sweep_rates:
+            cmd += ["--sweep-rates", *[str(r) for r in args.sweep_rates]]
+            if args.copies_per_rate:
+                cmd += ["--copies-per-rate", str(args.copies_per_rate)]
         subprocess.run(cmd, check=True)
     print("ALL_RUNS_DONE", flush=True)
 

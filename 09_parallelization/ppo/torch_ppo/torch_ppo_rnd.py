@@ -59,10 +59,35 @@ class PPOConfig:
                                      # (requires rollout_mode="capture" semantics and
                                      # capture_update=True; overrides both)
     tf32: bool = False               # TF32 tensor-core matmuls (faster, ~1e-3 relative rounding)
+    learning_rates: tuple = ()       # sweep: one learning rate per GROUP of copies; empty
+                                     # means every copy uses `learning_rate`
+    copies_per_rate: tuple = ()      # sweep: how many copies each rate gets (sums to n_copies)
+    sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
+                                     # so the groups differ ONLY by the swept value;
+                                     # "distinct": every copy is its own seed
     compile_post: bool = False       # compile the post-rollout body (its filter and GAE are
                                      # python loops over T, so eager they are ~256 tiny kernels)
     env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
                                      # (the single fused kernel from pointmaze/cuda_env)
+
+
+def sweep_config(learning_rates, copies_per_rate, style="epoch_minibatch", **overrides):
+    """Build the configuration for a learning-rate sweep across copy groups.
+
+    learning_rates: the rates to try, e.g. [1e-4, 3e-4, 1e-3, 3e-3].
+    copies_per_rate: how many independent copies each rate gets — one number for all rates,
+    or one per rate. The total copy count is their sum.
+
+    before: sweep_config([1e-4, 1e-3], 128) ; after: 256 copies, the first 128 training at
+    1e-4 and the second 128 at 1e-3, with copy k of both groups sharing initial weights and
+    environments (paired), so the two groups differ only by the rate.
+    """
+    rates = tuple(float(x) for x in learning_rates)
+    counts = ((int(copies_per_rate),) * len(rates) if isinstance(copies_per_rate, int)
+              else tuple(int(x) for x in copies_per_rate))
+    assert len(counts) == len(rates), "give one copy count per learning rate, or a single number"
+    return production_config(sum(counts), style=style, learning_rates=rates,
+                             copies_per_rate=counts, **overrides)
 
 
 def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOConfig":
@@ -70,9 +95,10 @@ def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOCon
     the training driver and the tests cannot drift apart:
     whole-iteration CUDA-graph capture, compiled post-rollout body, TF32, fused capturable Adam.
     """
-    return PPOConfig(n_copies=n_copies, update_style=style, rollout_mode="capture",
-                     capture_update=True, one_graph=True, fused_adam=True, tf32=True,
-                     compile_post=True, **overrides)
+    base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
+                fused_adam=True, tf32=True, compile_post=True)
+    base.update(overrides)                      # an explicit override always wins
+    return PPOConfig(n_copies=n_copies, update_style=style, **base)
 
 
 def _substream_seed(*parts) -> int:
@@ -137,16 +163,41 @@ class PPORND:
         self.device = torch.device(device)
         if cfg.tf32:
             torch.set_float32_matmul_precision("high")
+        C = cfg.n_copies
+        # per-copy learning rate and per-copy seed stream (a sweep gives each GROUP of copies
+        # its own rate; paired seeding makes copy k of every group start from the same weights
+        # and see the same environments, so a difference between groups is the rate's doing)
+        # before: rates (1e-4, 1e-3), counts (2, 2); after: lr [1e-4,1e-4,1e-3,1e-3],
+        #         seed index [0,1,0,1], group index [0,0,1,1]
+        self.is_sweep = bool(cfg.learning_rates)
+        if self.is_sweep:
+            assert sum(cfg.copies_per_rate) == C, "copies_per_rate must sum to n_copies"
+            lr_list, seed_list, group_list = [], [], []
+            for g, (rate, count) in enumerate(zip(cfg.learning_rates, cfg.copies_per_rate)):
+                lr_list += [rate] * count
+                seed_list += list(range(count)) if cfg.sweep_seed_mode == "paired" \
+                    else list(range(len(seed_list), len(seed_list) + count))
+                group_list += [g] * count
+            self.copy_seed_index = seed_list
+            self.copy_group = torch.tensor(group_list, device=self.device)
+            self.lr_per_copy = torch.tensor(lr_list, dtype=torch.float32, device=self.device)
+        else:
+            self.copy_seed_index = list(range(C))
+            self.copy_group = torch.zeros(C, dtype=torch.long, device=self.device)
+            self.lr_per_copy = torch.full((C,), cfg.learning_rate, device=self.device)
+
         if cfg.env_backend == "cuda":
             sys.path.insert(0, str(BASE / "pointmaze" / "cuda_env"))
             from cuda_pointmaze import CudaPointMaze
             self.env = CudaPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
                                      device=device, base_seed=cfg.base_seed)
+            assert not self.is_sweep, "the cuda env backend does not take a seed index yet"
         else:
             self.env = TorchPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
-                                      device=device, base_seed=cfg.base_seed)
-        C = cfg.n_copies
+                                      device=device, base_seed=cfg.base_seed,
+                                      copy_seed_index=self.copy_seed_index)
         F, Hh = cfg.rnd_feature_dim, cfg.rnd_hidden
+
 
         def stack(net, layers):
             # per-copy keyed init: copy i's weights identical whether C=8 or C=128
@@ -154,7 +205,8 @@ class PPORND:
             for li, (rows, cols, gain) in enumerate(layers):
                 ws, bs = [], []
                 for c in range(C):
-                    g = torch.Generator().manual_seed(_substream_seed(cfg.base_seed, c, net, li))
+                    g = torch.Generator().manual_seed(
+                        _substream_seed(cfg.base_seed, self.copy_seed_index[c], net, li))
                     # stored [in, out] for x @ W; init orthogonal on [out, in] like nn.Linear
                     ws.append(_orthogonal(rows, cols, gain, g).T)
                     bs.append(torch.zeros(rows))
@@ -181,7 +233,19 @@ class PPORND:
         for p in self.trainable:
             p.requires_grad_(True)
         self._lr_t = torch.tensor(cfg.learning_rate, device=self.device)
-        if cfg.capture_update:
+        # lr_scale is the annealing factor; the per-copy rates are multiplied by it, so one
+        # device tensor drives every group and the captured graph reads the current value
+        self._lr_scale = torch.ones((), device=self.device)
+        if self.is_sweep:
+            # own Adam state: torch.optim.Adam takes one scalar rate for a parameter group,
+            # and putting each copy in its own group would defeat the batched layout
+            self._m = [torch.zeros_like(p) for p in self.trainable]
+            self._v = [torch.zeros_like(p) for p in self.trainable]
+            self._adam_t = torch.zeros((), device=self.device)
+            self._lr_views = [self.lr_per_copy.view(C, *([1] * (p.dim() - 1)))
+                              for p in self.trainable]
+            self.opt = None
+        elif cfg.capture_update:
             # capturable: Adam's step count and lr live on the GPU so the captured graph
             # replays correct bias correction and annealed lr
             self.opt = torch.optim.Adam(self.trainable, lr=self._lr_t, eps=cfg.adam_eps,
@@ -561,9 +625,49 @@ class PPORND:
         scale = (self.cfg.max_grad_norm / (g2.sqrt() + 1e-6)).clamp(max=1.0)
         for p in self.trainable:
             p.grad.mul_(scale.view(C, *([1] * (p.dim() - 1))))
-        self.opt.step()
+        if self.is_sweep:
+            self._adam_step_per_copy()
+        else:
+            self.opt.step()
         # under graph capture the grad buffers must keep their storage across replays
-        self.opt.zero_grad(set_to_none=not self.cfg.capture_update)
+        for p in self.trainable:
+            if self.cfg.capture_update or self.is_sweep:
+                p.grad.zero_()
+            else:
+                p.grad = None
+
+    def _reset_optimizer_state(self):
+        """Zero the optimizer moments and step count (after a graph build's warmup passes)."""
+        if self.is_sweep:
+            for m, v in zip(self._m, self._v):
+                m.zero_()
+                v.zero_()
+            self._adam_t.zero_()
+        else:
+            for group_state in self.opt.state.values():
+                for _, v in group_state.items():
+                    if torch.is_tensor(v):
+                        v.zero_()
+
+    def _adam_step_per_copy(self):
+        """Adam with a per-copy learning rate, i.e. torch.optim.Adam's formula elementwise.
+
+        Adam is elementwise, so C copies stacked on the leading axis are C independent Adams;
+        the only thing torch's implementation cannot express is a different rate per copy,
+        which is exactly what a sweep needs. Bias correction uses a device-side step count so
+        the update stays correct inside a captured graph.
+        """
+        cfg = self.cfg
+        b1, b2 = 0.9, 0.999
+        self._adam_t += 1
+        bc1 = 1.0 - torch.pow(torch.as_tensor(b1, device=self.device), self._adam_t)
+        bc2 = 1.0 - torch.pow(torch.as_tensor(b2, device=self.device), self._adam_t)
+        for p, m, v, lr_view in zip(self.trainable, self._m, self._v, self._lr_views):
+            g = p.grad
+            m.mul_(b1).add_(g, alpha=1.0 - b1)
+            v.mul_(b2).addcmul_(g, g, value=1.0 - b2)
+            denom = (v / bc2).sqrt().add_(cfg.adam_eps)
+            p.data.addcdiv_(m / bc1 * (lr_view * self._lr_scale), denom, value=-1.0)
 
     def _losses(self, mb, style_a):
         """Per-copy losses on one (mini)batch dict; returns the scalar sum over copies.
@@ -685,10 +789,7 @@ class PPORND:
         with torch.no_grad():
             for t, sv in zip(self.trainable, snap):
                 t.copy_(sv)
-        for group_state in self.opt.state.values():
-            for k, v in group_state.items():
-                if torch.is_tensor(v):
-                    v.zero_()
+        self._reset_optimizer_state()
 
         g = torch.cuda.CUDAGraph()
         with torch.cuda.graph(g):
@@ -754,10 +855,7 @@ class PPORND:
                 t.copy_(sv)
             for t, sv in zip(self.trainable, snap_params):
                 t.copy_(sv)
-        for group_state in self.opt.state.values():
-            for k, v in group_state.items():
-                if torch.is_tensor(v):
-                    v.zero_()
+        self._reset_optimizer_state()
 
         g = torch.cuda.CUDAGraph()
         with torch.cuda.graph(g):
@@ -819,12 +917,15 @@ class PPORND:
         last_log = t0
         for it in range(1, num_iterations + 1):
             if cfg.anneal_lr:
-                lr = cfg.learning_rate * (1.0 - (it - 1.0) / num_iterations)
-                if cfg.capture_update:
-                    self._lr_t.fill_(lr)
+                frac = 1.0 - (it - 1.0) / num_iterations
+                self._lr_scale.fill_(frac)
+                if self.is_sweep:
+                    pass                      # the per-copy rates read _lr_scale directly
+                elif cfg.capture_update:
+                    self._lr_t.fill_(cfg.learning_rate * frac)
                 else:
                     for gme in self.opt.param_groups:
-                        gme["lr"] = lr
+                        gme["lr"] = cfg.learning_rate * frac
             if cfg.one_graph:
                 loss = self.iteration_captured()
             else:

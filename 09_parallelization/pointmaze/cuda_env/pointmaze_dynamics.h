@@ -82,9 +82,96 @@ PM_DEV void dynamics(
   const T fi = (T)ic;
   const T fj = (T)jc;
 
-  // two-smallest-by-distance tournament over the 8 candidates, payload (b, R, sx, sy)
-  T d1 = (T)1e9, b1 = (T)-1e30, R1 = (T)0, s1x = (T)0, s1y = (T)0;
-  T d2 = (T)1e9, b2 = (T)-1e30, R2 = (T)0, s2x = (T)0, s2y = (T)0;
+  // Pick the two nearest wall boxes, then evaluate the contact law for those two only.
+  //
+  // Two forms of the same selection are kept. PM_RANK_TOURNAMENT computes the eight distances
+  // independently, ranks each by counting how many candidates precede it, and recomputes the
+  // geometry and the law for the two winners; the older form carries the winners' payload
+  // through a running two-slot tournament, which makes each candidate wait for the previous
+  // candidate's comparison and keeps ten values live across the loop. Both orders are "sort by
+  // distance, ties to the lower candidate index", so they select the same two candidates: the
+  // running form takes a candidate only on a STRICT improvement, and the counting form breaks
+  // an exact tie with (j < k). The two builds are compared against each other by benchmark.
+  T d1, b1 = (T)-1e30, R1 = (T)0, s1x = (T)0, s1y = (T)0;
+  T d2, b2 = (T)-1e30, R2 = (T)0, s2x = (T)0, s2y = (T)0;
+#ifdef PM_RANK_TOURNAMENT
+  // pass 1: the eight distances, independent of each other
+  T dists[8];
+#pragma unroll
+  for (int k = 0; k < 8; k++) {
+    const bool is_wall = (mask & (1 << k)) != 0;
+    const T xl = (fj + (T)DJ8[k]) - (T)(cols / 2.0);
+    const T yb = (T)(rows / 2.0) - (fi + (T)DI8[k] + (T)1.0);
+    const T nx = clampv(px, xl, xl + (T)1.0);
+    const T ny = clampv(py, yb, yb + (T)1.0);
+    const T dx = px - nx;
+    const T dy = py - ny;
+    T dsq = dx * dx + dy * dy;
+    dsq = dsq < (T)1e-24 ? (T)1e-24 : dsq;
+    dists[k] = is_wall ? sqrt(dsq) - (T)K_R : (T)1e9;
+  }
+  // pass 2: rank by counting the candidates that precede each one (stable: ties to lower index)
+  int k1 = 0, k2 = 0;
+#pragma unroll
+  for (int k = 0; k < 8; k++) {
+    int rank = 0;
+#pragma unroll
+    for (int j = 0; j < 8; j++) {
+      rank += (dists[j] < dists[k] || (dists[j] == dists[k] && j < k)) ? 1 : 0;
+    }
+    k1 = (rank == 0) ? k : k1;
+    k2 = (rank == 1) ? k : k2;
+  }
+  // pass 3: geometry and contact law for the two winners only, expression for expression the
+  // same as the running form computes for the same candidate
+  d1 = dists[k1];
+  d2 = dists[k2];
+#pragma unroll
+  for (int w = 0; w < 2; w++) {
+    const int kw = (w == 0) ? k1 : k2;
+    int di = 0, dj = 0;
+#pragma unroll
+    for (int k = 0; k < 8; k++) {
+      di = (k == kw) ? DI8[k] : di;
+      dj = (k == kw) ? DJ8[k] : dj;
+    }
+    const T xl = (fj + (T)dj) - (T)(cols / 2.0);
+    const T yb = (T)(rows / 2.0) - (fi + (T)di + (T)1.0);
+    const T nx = clampv(px, xl, xl + (T)1.0);
+    const T ny = clampv(py, yb, yb + (T)1.0);
+    const T dx = px - nx;
+    const T dy = py - ny;
+    T dsq = dx * dx + dy * dy;
+    dsq = dsq < (T)1e-24 ? (T)1e-24 : dsq;
+    const T dn = sqrt(dsq);
+    const T dist = (w == 0) ? d1 : d2;
+    const T sx = dx / dn;
+    const T sy = dy / dn;
+    const bool active = dist <= (T)K_MARGIN;
+    const T r = dist - (T)K_MARGIN;
+    T xs = fabs(r) / (T)K_SWIDTH;
+    xs = clampv(xs, (T)0.0, (T)1.0);
+    const T ys = xs < (T)K_SMID ? xs * xs / (T)K_SMID
+                                : (T)1.0 - ((T)1.0 - xs) * ((T)1.0 - xs) / (T)K_SMID;
+    const T imp = (T)K_SD0 + (T)(K_SDMAX - K_SD0) * ys;
+    T b_qp = (T)(-K_BREF) * (vx * sx + vy * sy) - (imp * (T)K_KOD) * r - (aux * sx + auy * sy);
+    b_qp = active ? b_qp : (T)-1e30;
+    const T Rreg = ((T)1.0 - imp) / (imp * (T)K_M);
+    // A winner that is not a wall box means the maze cell has fewer than two wall neighbours.
+    // The running form never lets such a candidate enter a slot (its distance is the same 1e9
+    // the slot starts at, and entry needs a strict improvement), so the slot keeps its initial
+    // payload. Reproduce that exactly rather than relying on the forces cancelling later.
+    const bool w_is_wall = (mask & (1 << kw)) != 0;
+    const T bw = w_is_wall ? b_qp : (T)-1e30;
+    const T Rw = w_is_wall ? Rreg : (T)0;
+    const T sxw = w_is_wall ? sx : (T)0;
+    const T syw = w_is_wall ? sy : (T)0;
+    if (w == 0) { b1 = bw; R1 = Rw; s1x = sxw; s1y = syw; }
+    else        { b2 = bw; R2 = Rw; s2x = sxw; s2y = syw; }
+  }
+#else
+  d1 = (T)1e9;
+  d2 = (T)1e9;
 #pragma unroll
   for (int k = 0; k < 8; k++) {
     const bool is_wall = (mask & (1 << k)) != 0;
@@ -123,6 +210,7 @@ PM_DEV void dynamics(
     s1x = take1 ? sx : s1x;
     s1y = take1 ? sy : s1y;
   }
+#endif
 
   // exact 2-contact QP by case enumeration
   const T A11 = (T)(1.0 / K_M);

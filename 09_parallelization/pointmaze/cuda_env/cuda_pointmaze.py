@@ -23,13 +23,25 @@ _EXT = None
 
 
 def _ext():
-    """Compile-on-first-use handle to the CUDA extension (cached in TORCH_EXTENSIONS_DIR)."""
+    """Compile-on-first-use handle to the CUDA extension (cached in TORCH_EXTENSIONS_DIR).
+
+    PM_TOURNAMENT selects which form of the two-nearest-wall selection is compiled in:
+    "count" (default) ranks the eight distances by counting, "select" carries the winners
+    through a running two-slot tournament. They compute the same thing; each gets its own
+    extension name so both can be loaded and compared in one benchmark session.
+    """
     global _EXT
     if _EXT is None:
         from torch.utils.cpp_extension import load
-        _EXT = load(name="pointmaze_cuda_ext",
+        form = os.environ.get("PM_TOURNAMENT", "count")
+        flags = ["-O3", "--fmad=false"]
+        if form == "count":
+            flags.append("-DPM_RANK_TOURNAMENT")
+        elif form != "select":
+            raise ValueError(f"PM_TOURNAMENT must be 'count' or 'select', got {form!r}")
+        _EXT = load(name=f"pointmaze_cuda_ext_{form}",
                     sources=[str(Path(__file__).resolve().parent / "pointmaze_kernel.cu")],
-                    extra_cuda_cflags=["-O3", "--fmad=false"], verbose=False)
+                    extra_cuda_cflags=flags, verbose=False)
     return _EXT
 
 

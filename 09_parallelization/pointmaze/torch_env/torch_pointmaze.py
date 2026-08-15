@@ -46,7 +46,7 @@ class TorchPointMaze:
     """Vectorized PointMaze. Shapes: pos/vel/goal [C, N, 2]; step_count/reset_count [C, N]."""
 
     def __init__(self, cfg: EnvConfig, n_copies: int, n_envs: int, device="cuda",
-                 base_seed: int = 0, dtype=torch.float32):
+                 base_seed: int = 0, dtype=torch.float32, copy_seed_index=None):
         self.cfg, self.C, self.N = cfg, n_copies, n_envs
         self.device, self.dtype = torch.device(device), dtype
         self.base_seed = base_seed
@@ -63,8 +63,16 @@ class TorchPointMaze:
         self.start_center = torch.tensor([sx, sy], dtype=dtype, device=self.device)
         self.goal_center = torch.tensor([gx, gy], dtype=dtype, device=self.device)
 
-        # per-env identity for the keyed RNG (constant tensors)
-        c_idx = torch.arange(n_copies, device=self.device).view(-1, 1).expand(n_copies, n_envs)
+        # per-env identity for the keyed RNG (constant tensors). copy_seed_index lets several
+        # copies share one seed stream on purpose: a learning-rate sweep passes the index
+        # WITHIN the group, so every group sees the same environments and the comparison
+        # between groups is paired. Default is the copy's own index, i.e. all copies differ.
+        # before: copy_seed_index=None -> [0, 1, 2, ...]; sweep of 2 groups of 3 -> [0,1,2,0,1,2]
+        if copy_seed_index is None:
+            seed_idx = torch.arange(n_copies, device=self.device)
+        else:
+            seed_idx = torch.as_tensor(copy_seed_index, device=self.device).long()
+        c_idx = seed_idx.view(-1, 1).expand(n_copies, n_envs)
         e_idx = torch.arange(n_envs, device=self.device).view(1, -1).expand(n_copies, n_envs)
         # base key folds seed/copy/env once; reset_count and quantity are folded per draw
         self._id_key = (base_seed * 0x9E3779B1 + c_idx.long() * 0x85EBCA77

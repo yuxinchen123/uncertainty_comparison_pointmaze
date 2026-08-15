@@ -64,7 +64,8 @@ class PPOConfig:
     hoist_rollout: bool = True       # compute the critic values, the log-probability and the
                                      # RND bonus AFTER the rollout scan, in one wide pass each,
                                      # instead of once per step inside it (round 2, J1)
-    scan_unroll: int = 1             # unroll factor for the rollout scan (round 2, J2)
+    scan_unroll: int = 4             # unroll factor for the rollout scan; 4 and 8 measured
+                                     # equal, 4 chosen for lower compile time (round 2, J2)
 
 
 class RMSState(NamedTuple):
