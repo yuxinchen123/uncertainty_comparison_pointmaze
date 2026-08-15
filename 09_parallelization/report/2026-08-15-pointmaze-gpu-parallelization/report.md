@@ -427,6 +427,40 @@ rate, to within about one percent either way.
 
 ![fused versus separate](figures/sweep_vs_separate.png)
 
+### One rate for everything, against a sweep
+
+Comparing a uniform run with a swept run mixes two changes, so they are measured apart. Giving
+each copy its own learning rate makes the rate a VECTOR, and torch's fused Adam takes one
+scalar rate per parameter group — so a sweep runs a hand-written batched Adam instead. That is
+a real code change. The rates then actually DIFFERING changes no code at all: the same kernels
+read different constants. The three arms below are matched in total copies, 16
+groups in the swept arms, measured in ABBA order in separate processes.
+
+| total copies | one rate [ms] | rate vector, equal rates [ms] | rate vector, differing rates [ms] | noise floor [ms] | cost of the vector | cost of differing |
+|---|---|---|---|---|---|---|
+| 128 | 20.41 | 20.62 | 20.61 | 0.03 | +1.1% | -0.1% |
+| 256 | 27.96 | 28.41 | 28.42 | 0.01 | +1.6% | +0.0% |
+| 512 | 43.80 | 44.19 | 44.16 | 0.03 | +0.9% | -0.1% |
+| 1024 | 76.54 | 77.54 | 77.40 | 0.35 | +1.3% | -0.2% |
+| 2048 | 145.10 | 146.47 | 145.47 | 1.86 | +0.9% | -0.7% |
+| 4096 | 275.76 | 275.76 | 274.56 | 1.22 | +0.0% | -0.4% |
+
+![uniform versus sweep](figures/uniform_vs_sweep.png)
+
+Reading the two columns:
+
+- **The rates differing costs nothing**, as it must: at most 0.7% across the whole
+  range, inside the noise floor at every point. Once the rate is a vector, whether its entries
+  are equal or spread over three orders of magnitude changes only the numbers flowing through
+  the same kernels.
+- **The vector itself costs between +0.0% and +1.6%.** This is the
+  optimizer change, and it is the only real price of being able to sweep. It is small because
+  the per-copy Adam is compiled; before compiling it, it cost 38% (see the trainer ledger,
+  round-3 rows).
+
+So the practical answer is that a sweep is not a different regime from a uniform run — it is
+the same run with a vector where a scalar used to be, and it is priced accordingly.
+
 ## The three rounds
 
 ### Round 1 — build it, and make it exact

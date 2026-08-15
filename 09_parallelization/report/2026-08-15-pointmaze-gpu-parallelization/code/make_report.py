@@ -203,6 +203,94 @@ def fig_sweep_curves():
     return None
 
 
+def fig_uniform_vs_sweep():
+    """Cost of one rate for everything, against a per-copy rate vector, against differing rates."""
+    d = newest(r"uniform_vs_sweep")
+    if not d or not d["rows"]:
+        return pending("uniform-versus-sweep figure", "the uniform_vs_sweep JSON")
+    rows = d["rows"]
+    xs = [r["total_copies"] for r in rows]
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.3), dpi=160)
+    # left: the three arms, absolute
+    for label, key, color, ls, mk in [
+            ("one rate for everything (torch fused Adam)", "uniform_sec", C_TORCH, "-", "o"),
+            ("per-copy rate vector, all rates equal", "same_rates_sec", C_CUDA, "--", "s"),
+            ("per-copy rate vector, rates differ", "diff_rates_sec", C_JAX, ":", "^")]:
+        axes[0].plot(xs, [r[key] * 1e3 for r in rows], ls, color=color, linewidth=2,
+                     marker=mk, markersize=6, label=label)
+    axes[0].set_xscale("log", base=2)
+    axes[0].set_yscale("log")
+    axes[0].set_ylabel("milliseconds per iteration")
+    # right: the two costs as percentages, against the measured noise band
+    axes[1].axhline(0.0, color="#9aa0ab", linewidth=1, linestyle=":")
+    noise = [r["noise_floor_sec"] / r["uniform_sec"] * 100 for r in rows]
+    axes[1].fill_between(xs, [-n for n in noise], noise, color="#d9d9d9", alpha=0.7,
+                         label="noise floor (repeat spread)")
+    axes[1].plot(xs, [r["vector_cost_percent"] for r in rows], "--", color=C_CUDA,
+                 linewidth=2, marker="s", markersize=6,
+                 label="cost of the per-copy vector (the optimizer change)")
+    axes[1].plot(xs, [r["differing_cost_percent"] for r in rows], ":", color=C_JAX,
+                 linewidth=2, marker="^", markersize=6,
+                 label="cost of the rates actually differing")
+    axes[1].set_xscale("log", base=2)
+    axes[1].set_ylabel("percent slower than one rate for everything")
+    for ax in axes:
+        ax.set_xlabel("total copies (log scale)")
+        ax.legend(frameon=False, fontsize=8)
+        style_ax(ax)
+    fig.suptitle("What a sweep costs, separated into its two parts", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "uniform_vs_sweep.png")
+    plt.close(fig)
+    return None
+
+
+def sec_uniform_vs_sweep():
+    """The uniform-versus-swept comparison, decomposed."""
+    d = newest(r"uniform_vs_sweep")
+    if not d or not d["rows"]:
+        return "### One rate for everything, against a sweep\n" + \
+            pending("uniform-versus-sweep", "the uniform_vs_sweep JSON")
+    rows = d["rows"]
+    md = f"""### One rate for everything, against a sweep
+
+Comparing a uniform run with a swept run mixes two changes, so they are measured apart. Giving
+each copy its own learning rate makes the rate a VECTOR, and torch's fused Adam takes one
+scalar rate per parameter group — so a sweep runs a hand-written batched Adam instead. That is
+a real code change. The rates then actually DIFFERING changes no code at all: the same kernels
+read different constants. The three arms below are matched in total copies, {d['n_rates']}
+groups in the swept arms, measured in ABBA order in separate processes.
+
+| total copies | one rate [ms] | rate vector, equal rates [ms] | rate vector, differing rates [ms] | noise floor [ms] | cost of the vector | cost of differing |
+|---|---|---|---|---|---|---|
+"""
+    for r in rows:
+        md += (f"| {r['total_copies']} | {r['uniform_sec']*1e3:.2f} | "
+               f"{r['same_rates_sec']*1e3:.2f} | {r['diff_rates_sec']*1e3:.2f} | "
+               f"{r['noise_floor_sec']*1e3:.2f} | {r['vector_cost_percent']:+.1f}% | "
+               f"{r['differing_cost_percent']:+.1f}% |\n")
+    diff = [abs(r["differing_cost_percent"]) for r in rows]
+    vec = [r["vector_cost_percent"] for r in rows]
+    md += f"""
+![uniform versus sweep](figures/uniform_vs_sweep.png)
+
+Reading the two columns:
+
+- **The rates differing costs nothing**, as it must: at most {max(diff):.1f}% across the whole
+  range, inside the noise floor at every point. Once the rate is a vector, whether its entries
+  are equal or spread over three orders of magnitude changes only the numbers flowing through
+  the same kernels.
+- **The vector itself costs between {min(vec):+.1f}% and {max(vec):+.1f}%.** This is the
+  optimizer change, and it is the only real price of being able to sweep. It is small because
+  the per-copy Adam is compiled; before compiling it, it cost 38% (see the trainer ledger,
+  round-3 rows).
+
+So the practical answer is that a sweep is not a different regime from a uniform run — it is
+the same run with a vector where a scalar used to be, and it is priced accordingly.
+"""
+    return md
+
+
 def sweep_strategy_rows():
     """Every fused-versus-separate measurement, one per rate count, oldest first."""
     out = []
@@ -1064,9 +1152,10 @@ def main():
     fig_sweep_curves()
     fig_sweep_scaling()
     fig_sweep_vs_separate()
+    fig_uniform_vs_sweep()
     md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
                     sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
-                    sec_campaign(), sec_sweep(), sec_sweep_scaling(), sec_rounds(), sec_techniques(),
+                    sec_campaign(), sec_sweep(), sec_sweep_scaling(), sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(),
                     sec_repro()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
