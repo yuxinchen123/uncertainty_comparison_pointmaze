@@ -8,7 +8,9 @@ Run: <python with markdown> make_artifact_html.py  ->  ../report_page.html
 """
 import base64
 import re
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import markdown
 
@@ -95,9 +97,12 @@ em { color: var(--ink-2); }
 body = body.replace("<table>", '<div class="tablewrap"><table>').replace(
     "</table>", "</table></div>")
 
+# the header carries the time this page was built, in the reader's zone (the machines run
+# on Eastern Time, so the value is converted rather than printed as the server sees it)
+built = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M PT")
 meta = ('<div class="meta">'
         '<span>hardware <b>H100 NVL, serval05</b></span>'
-        '<span>date <b>2026-08-15</b></span>'
+        f'<span>generated <b>{built}</b></span>'
         '<span>repo <b>RND/09_parallelization</b></span>'
         '<span>source <b>report.md (generated from benchmark JSONs)</b></span>'
         '</div>')

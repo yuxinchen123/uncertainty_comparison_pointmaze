@@ -450,9 +450,13 @@ The same campaign was run before and after the second round of optimisation work
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
 needs to know what the alternative gives, so the same training loop and the same environment
-were measured on ordinary processor cores. The measurements below ran on **jaguar03**, held
-exclusively — no other job shared the machine — so the timings are not contaminated by a
-neighbour.
+were measured on ordinary processor cores. The training measurements below ran on **jaguar03**
+(AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
+the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
+completely idle node on the cluster; a node with more cores was available but already had
+another job on it, which is exactly the contamination this run set out to avoid. The
+environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
+processors), also held under reservation.
 
 Nothing in the algorithm changed. What changed is that the graphics-processor features the
 optimisation work relied on — recording an iteration as a replayable sequence, the
@@ -474,12 +478,14 @@ The measurements settle which is better, and the answer is not the obvious one.
 
 | copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy |
 |---|---|---|---|---|
-| 1 | 8 | 0.433 | 0.0012 | 1.18 |
-| 2 | 8 | 0.444 | 0.0023 | 1.15 |
-| 4 | 8 | 0.452 | 0.0045 | 1.13 |
-| 8 | 8 | 0.460 | 0.0089 | 1.11 |
-| 16 | 8 | 0.489 | 0.0168 | 1.05 |
-| 32 | 8 | 0.573 | 0.0286 | 0.89 |
+| 1 | 8 | 0.352 | 0.0015 | 1.45 |
+| 2 | 8 | 0.382 | 0.0027 | 1.34 |
+| 4 | 8 | 0.410 | 0.0050 | 1.25 |
+| 8 | 8 | 0.433 | 0.0095 | 1.18 |
+| 16 | 8 | 0.482 | 0.0170 | 1.06 |
+| 32 | 8 | 0.576 | 0.0284 | 0.89 |
+| 64 | 8 | 0.666 | 0.0492 | 0.77 |
+| 128 | 112 | 1.229 | 0.0533 | 0.42 |
 
 *One process, threads varied. Sixteen updates per batch.*
 
@@ -489,6 +495,10 @@ The measurements settle which is better, and the answer is not the obvious one.
 | 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 |
 | 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 |
 | 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 |
+| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 |
+| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 |
+| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 |
+| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 |
 
 *Independent single-thread processes. Sixteen updates per batch.*
 
@@ -521,13 +531,13 @@ reaches the highest total throughput inside that range.
 |---|---|---|---|---|---|
 | graphics processor, one update per batch | 4,096 | 0.087 | 24.1 | 5.90 | 0.47 |
 | graphics processor, sixteen updates per batch | 4,096 | 0.277 | 7.57 | 1.85 | 1.50 |
-| processor, independent processes, sixteen updates | 224 | 0.379 | 0.3007 | 1.34 | 2.06 |
-| processor, independent processes, one update | 80 | 0.872 | 0.0469 | 0.59 | 4.73 |
-| processor, threads in one process, sixteen updates | 32 | 0.573 | 0.0286 | 0.89 | 3.11 |
+| processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 2.61 |
+| processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 4.78 |
+| processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 6.67 |
 
 ![best setup](figures/best_setup.png)
 
-The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 0.3007 million at 224 copies. That is a factor of **80**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2 hours on the processor node.
+The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 3 hours on the processor node.
 
 Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process

@@ -16,6 +16,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 HERE = Path(__file__).resolve().parent
 MANIFEST = HERE / "section_times.json"
@@ -103,9 +104,19 @@ def anchor(heading: str) -> str:
     return re.sub(r"-+", "-", slug)
 
 
-def short(iso: str) -> str:
-    """An ISO timestamp shortened for a table cell: 2026-08-15 04:45."""
-    return iso[:16].replace("T", " ") if iso else "—"
+def short(iso: str, seconds: bool = False) -> str:
+    """A stored timestamp rendered for display: Pacific Time with an explicit marker.
+
+    The servers run on Eastern Time, so every stored timestamp carries an Eastern offset;
+    the reader works in Pacific. The stored value keeps its own zone (nothing is lost); only
+    this display converts.
+
+    before: "2026-08-15T13:39:02-04:00"  after: "2026-08-15 10:39 PT"
+    """
+    if not iso:
+        return "—"
+    when = datetime.fromisoformat(iso).astimezone(ZoneInfo("America/Los_Angeles"))
+    return when.strftime("%Y-%m-%d %H:%M:%S PT" if seconds else "%Y-%m-%d %H:%M PT")
 
 
 def table_of_contents(order, manifest) -> str:
@@ -120,7 +131,9 @@ def table_of_contents(order, manifest) -> str:
                   f"| {short(t.get('last_modified'))} |")
     md.append("\n*Times are when a section's text first appeared in this document and when it "
               "last changed, taken from the document's version history. A section whose numbers "
-              "were re-measured shows a later change time.*\n")
+              "were re-measured shows a later change time. All times are Pacific (PT); the "
+              "machines that produced them run on Eastern Time and the values are converted "
+              "for display.*\n")
     return "\n".join(md)
 
 

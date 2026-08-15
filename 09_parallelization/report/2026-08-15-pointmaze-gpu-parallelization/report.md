@@ -21,24 +21,24 @@ what each round changed, then the training campaign and the sweep.
 
 | section | first written | last changed |
 |---|---|---|
-| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 03:22 | 2026-08-15 03:22 |
-| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 03:22 | 2026-08-15 18:46 |
-| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 03:22 | 2026-08-15 03:22 |
-| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 03:22 | 2026-08-15 13:53 |
-| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 03:22 | 2026-08-15 14:54 |
-| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 03:22 | 2026-08-15 04:35 |
-| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 04:35 | 2026-08-15 14:54 |
-| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 04:35 | 2026-08-15 14:54 |
-| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 13:39 | 2026-08-15 16:34 |
-| [The three rounds](#the-three-rounds) | 2026-08-15 13:49 | 2026-08-15 13:49 |
-| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 03:22 | 2026-08-15 03:22 |
-| [Reproduction](#reproduction) | 2026-08-15 03:22 | 2026-08-15 03:22 |
-| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 18:46 | 2026-08-15 18:46 |
-| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 18:46 | 2026-08-15 18:46 |
-| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 18:46 | 2026-08-15 18:46 |
-| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 18:46 | 2026-08-15 18:46 |
+| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
+| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT |
+| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
+| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT |
+| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT |
+| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT |
+| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
+| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT |
+| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 13:34 PT |
+| [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT |
+| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
+| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
+| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
+| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 15:53 PT |
+| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
+| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 
-*Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time.*
+*Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
 ## Environment correctness (all three implementations)
 
@@ -686,6 +686,13 @@ End-to-end training on the same node:
 | processes, epoch_minibatch | 32 | 128 | 0.710 | 0.0958 | 749 |
 | processes, full_batch | 80 | 80 | 0.872 | 0.0469 | 586 |
 | processes, epoch_minibatch | 224 | 224 | 0.379 | 0.3007 | 1,343 |
+| processes, epoch_minibatch | 224 | 896 | 0.456 | 0.9887 | 1,104 |
+| processes, epoch_minibatch | 224 | 3584 | 0.881 | 2.1077 | 588 |
+| threads, epoch_minibatch | 8 | 32 | 0.576 | 0.0284 | 889 |
+| threads, epoch_minibatch | 8 | 128 | 1.235 | 0.0531 | 414 |
+| threads, epoch_minibatch | 112 | 32 | 0.764 | 0.0214 | 670 |
+| threads, epoch_minibatch | 112 | 128 | 1.229 | 0.0533 | 417 |
+| processes, full_batch | 224 | 224 | 0.326 | 0.3527 | 1,574 |
 
 Putting the two platforms beside each other: for the environment alone the graphics processor is
 about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
