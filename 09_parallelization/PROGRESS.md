@@ -53,6 +53,41 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- Round 4 (2026-08-15 afternoon, Pacific): two branches merged.
+  - `feature/torch-speed`: one flat parameter buffer (the nineteen parameter tensors become
+    windows onto one buffer, so the per-copy gradient clip is one reduction and the optimizer
+    one chain) plus shuffling once per epoch instead of gathering inside every update step.
+    C=128 sixteen-updates 20.4 -> 16.3 ms; C=8 13.8 -> 9.3 ms; one-update-per-batch at C=8 now
+    beats jax. Honest loss recorded: 512 copies is 1.1% SLOWER, the buffer reaching 123 MB and
+    the optimizer becoming bandwidth-bound.
+  - `feature/jax-parity`: the learning-rate sweep and per-copy progress recording added to jax
+    at zero measured cost at 8/128/512/2048 copies.
+  - Still running: `feature/jax-speed` (ceiling-driven jax work), the clean-node cpu comparison
+    on jaguar03, and the Pacific-time display change.
+
+### Lessons worth keeping (they changed how the work is done, not just its result)
+
+1. **Profile before following a plan.** The round-2 research note ranked the minibatch gather as
+   a target and the gradient clip nowhere; the profile showed the clip at 31% of a minibatch step
+   and the gather at 2%. The plan was rewritten from the measurement.
+2. **Per-process A/B comparison is too noisy for small effects here.** Process-to-process
+   variation alone is 0.68-0.72 ms on an 8-13 ms iteration, and more timed iterations do not
+   reduce it. Constructing every arm in ONE process and timing them round-robin with the order
+   reversed on alternate rounds gives a 0.06-0.10 ms floor. Effects below about 2% measured with
+   the per-process harnesses should be treated as unresolved.
+3. **A "measured" number can be measuring nothing.** Two cases this session: the cuda environment
+   launched on the wrong stream, so its captured graph was empty and the pairing numbers never
+   stepped the environment; and revision-loaded modules were not registered in `sys.modules`, so
+   compiled comparisons against a previous revision failed outright. Both were found by writing a
+   test that asserts the thing under test actually happened.
+4. **Faster is not the same as near the limit.** The ceiling analysis puts the environment at 67%
+   of its instruction-issue limit and the trainers at about a third of the matrix-work floor for
+   the algorithm as written; remaining headroom is at most about 3x, not the 99% a naive "percent
+   of peak" reading suggests.
+5. **Record the losses.** The 512-copy regression, the discarded pairing numbers, and the
+   experiments that produced no effect are in the ledgers beside the wins; a ledger of only
+   successes would have hidden the stream defect for good.
+
 - 2026-08-15 ~18:40 — processor comparison. End-to-end training measured on jaguar03 (AMD EPYC
   7663, 224 logical processors, 1 TB) held EXCLUSIVELY inside reservation sl5nw_156, chosen as
   the largest completely idle node on the cluster; cheetah04 has more cores but was already

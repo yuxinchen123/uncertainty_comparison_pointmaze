@@ -1284,9 +1284,9 @@ largest for small batches (178 against 6.3 million steps per second at a thousan
 where the other implementations spend nearly all their time dispatching work rather than simulating.
 All three implementations pass identical exactness checks, so this is purely a speed choice.
 
-**Which trainer: JAX is faster; PyTorch has more built on it.** Measured the same way on both sides —
-each iteration waited for — JAX leads by 4 to 19 percent with one update per batch and by 52 to 70
-percent with sixteen. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
+**Which trainer: they are close, and the choice is no longer mainly about speed.** After the round-four
+work (below), PyTorch is ahead at 8 copies with one update per batch and JAX leads by 10 to 22 percent
+elsewhere, measured the same way on both sides with each iteration waited for. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
 quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
 learning-rate sweep and per-copy progress recording.
 
@@ -1336,6 +1336,85 @@ report rest on a noisier instrument than that.
 """
 
 
+def sec_round4():
+    """Round four: closing the distance between the two trainers."""
+    b = {r["n_copies"]: r for r in rows_of(r"trainbench_torch_epoch_minibatch_round4")} \
+        if "rows_of" in globals() else {}
+    def grab(pat):
+        d = newest(pat)
+        return {r["n_copies"]: r["sec_per_iteration"] * 1e3 for r in d["rows"]} if d else {}
+    nb = grab(r"trainbench_torch_epoch_minibatch_round4")
+    na = grab(r"trainbench_torch_full_batch_round4")
+    # anchor on the file suffix: a later run wrote *_final_styleA_large.json for the big
+    # copy counts, and an unanchored pattern would pick that up instead
+    ob = grab(r"trainbench_torch_epoch_minibatch_final_styleB\.json")
+    oa = grab(r"trainbench_torch_full_batch_final_styleA\.json")
+    jx = newest(r"trainbench_jax_ppo_lfl_sync")
+    js = {}
+    if jx:
+        for r in jx["rows"]:
+            js.setdefault(r.get("style"), {})[r["n_copies"]] = (
+                r.get("sec_per_iteration") or r.get("sec_per_iteration_median")) * 1e3
+    if not nb:
+        return "## Round four — closing the distance between the two trainers\n" + pending(
+            "round four", "the round-four benchmark files")
+    md = """## Round four — closing the distance between the two trainers
+
+Round three left the PyTorch trainer measurably behind the JAX one: level with one update per
+batch, but 52 to 70 percent slower with sixteen. Round four attacked that, under the same rule as
+every other change — the computation must not change.
+
+| update convention | copies | PyTorch before | PyTorch after | JAX | who leads |
+|---|---|---|---|---|---|
+"""
+    for name, new, old, style in (("one update per batch", na, oa, "full_batch"),
+                                  ("sixteen updates per batch", nb, ob, "epoch_minibatch")):
+        for c in sorted(new):
+            j = js.get(style, {}).get(c)
+            lead = ("—" if not j else
+                    f"PyTorch by {(j/new[c]-1)*100:.0f} percent" if new[c] < j else
+                    f"JAX by {(new[c]/j-1)*100:.0f} percent")
+            before = f"{old[c]:.1f}" if c in old else "not measured"
+            md += (f"| {name} | {c} | {before} | **{new[c]:.1f}** | {j:.1f} | {lead} |\n" if j
+                   else f"| {name} | {c} | {before} | **{new[c]:.1f}** | — | — |\n")
+    md += """
+*Milliseconds per iteration, both frameworks waiting for each iteration to finish.*
+
+Two changes produced this.
+
+**One flat parameter buffer.** The trainer holds nineteen parameter tensors per copy. The per-copy
+gradient limit had to walk all nineteen, and so did the optimiser, sixteen times per iteration. The
+nineteen remain separate names, but their storage is now nineteen windows onto a single buffer, with
+the gradients likewise. The limit becomes one reduction and the optimiser one chain: that part of a
+minibatch step fell from 1,183 to 122 microseconds. The forward and backward passes also got faster,
+which was not the intent — assigning the gradient windows up front removes nineteen memory
+allocations per backward pass.
+
+**Shuffling once per epoch.** The data was previously gathered into position inside each of the
+sixteen update steps. Permuting once per epoch into a fixed buffer makes each step a contiguous
+slice instead, cutting 144 gather operations per iteration to 36.
+
+**What the profile taught.** The plan handed to this round ranked the gather as a target and did not
+mention the gradient limit. A profile taken first showed the opposite: the limit was 31 percent of a
+minibatch step and the gather 2 percent. The plan was rewritten from the measurement, and the larger
+of the two changes above is the one the plan had omitted.
+
+**An honest loss.** At 512 copies the new arrangement is 1.1 percent *slower*. The buffer is 123
+megabytes at that size, the optimiser becomes limited by memory bandwidth, and the extra pass the
+per-copy limit needs costs more than the operations it saves. It was kept because it is worth 20 to
+29 percent at 8 to 128 copies, which is the range in use, but the regression is recorded rather than
+averaged away.
+
+**What remains.** The distance that is left sits in the forward and backward passes themselves,
+which are 72 to 84 percent of a minibatch step against 10 to 23 percent for the whole optimiser.
+JAX's compiler fuses a small network's gradient into fewer operations than PyTorch's compiler and
+automatic differentiation do together. Closing that means writing the loss and its gradient as one
+hand-written operation, which is a larger undertaking and was left as a decision rather than begun.
+
+"""
+    return md
+
+
 def sec_repro():
     return """## Reproduction
 
@@ -1366,7 +1445,7 @@ def main():
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
-            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity()]
+            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]

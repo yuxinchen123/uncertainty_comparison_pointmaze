@@ -34,9 +34,10 @@ what each round changed, then the training campaign and the sweep.
 | [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
 | [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
-| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 15:53 PT |
-| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
+| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
+| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
+| [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -693,6 +694,8 @@ End-to-end training on the same node:
 | threads, epoch_minibatch | 112 | 32 | 0.764 | 0.0214 | 670 |
 | threads, epoch_minibatch | 112 | 128 | 1.229 | 0.0533 | 417 |
 | processes, full_batch | 224 | 224 | 0.326 | 0.3527 | 1,574 |
+| processes, full_batch | 224 | 3584 | 0.481 | 3.8047 | 1,062 |
+| threads, full_batch | 8 | 128 | 0.904 | 0.0725 | 567 |
 
 Putting the two platforms beside each other: for the environment alone the graphics processor is
 about seven hundred and fifty times faster (19,300 against 25.7 million steps per second); for
@@ -712,9 +715,9 @@ largest for small batches (178 against 6.3 million steps per second at a thousan
 where the other implementations spend nearly all their time dispatching work rather than simulating.
 All three implementations pass identical exactness checks, so this is purely a speed choice.
 
-**Which trainer: JAX is faster; PyTorch has more built on it.** Measured the same way on both sides —
-each iteration waited for — JAX leads by 4 to 19 percent with one update per batch and by 52 to 70
-percent with sixteen. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
+**Which trainer: they are close, and the choice is no longer mainly about speed.** After the round-four
+work (below), PyTorch is ahead at 8 copies with one update per batch and JAX leads by 10 to 22 percent
+elsewhere, measured the same way on both sides with each iteration waited for. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
 quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
 learning-rate sweep and per-copy progress recording.
 
@@ -756,4 +759,53 @@ and increasing the number of timed iterations did not reduce it. Constructing al
 process and timing them round-robin, with the order reversed on alternate rounds, dropped the floor
 to 0.06 to 0.10 milliseconds. Small effects measured with the per-process harnesses elsewhere in this
 report rest on a noisier instrument than that.
+
+
+## Round four — closing the distance between the two trainers
+
+Round three left the PyTorch trainer measurably behind the JAX one: level with one update per
+batch, but 52 to 70 percent slower with sixteen. Round four attacked that, under the same rule as
+every other change — the computation must not change.
+
+| update convention | copies | PyTorch before | PyTorch after | JAX | who leads |
+|---|---|---|---|---|---|
+| one update per batch | 8 | 5.7 | **5.3** | 5.5 | PyTorch by 3 percent |
+| one update per batch | 32 | 6.4 | **6.1** | 6.0 | JAX by 2 percent |
+| one update per batch | 128 | 8.1 | **7.8** | 6.8 | JAX by 15 percent |
+| sixteen updates per batch | 8 | 13.8 | **9.3** | 8.1 | JAX by 14 percent |
+| sixteen updates per batch | 32 | 15.7 | **10.8** | 9.8 | JAX by 9 percent |
+| sixteen updates per batch | 128 | 20.4 | **16.3** | 13.4 | JAX by 21 percent |
+
+*Milliseconds per iteration, both frameworks waiting for each iteration to finish.*
+
+Two changes produced this.
+
+**One flat parameter buffer.** The trainer holds nineteen parameter tensors per copy. The per-copy
+gradient limit had to walk all nineteen, and so did the optimiser, sixteen times per iteration. The
+nineteen remain separate names, but their storage is now nineteen windows onto a single buffer, with
+the gradients likewise. The limit becomes one reduction and the optimiser one chain: that part of a
+minibatch step fell from 1,183 to 122 microseconds. The forward and backward passes also got faster,
+which was not the intent — assigning the gradient windows up front removes nineteen memory
+allocations per backward pass.
+
+**Shuffling once per epoch.** The data was previously gathered into position inside each of the
+sixteen update steps. Permuting once per epoch into a fixed buffer makes each step a contiguous
+slice instead, cutting 144 gather operations per iteration to 36.
+
+**What the profile taught.** The plan handed to this round ranked the gather as a target and did not
+mention the gradient limit. A profile taken first showed the opposite: the limit was 31 percent of a
+minibatch step and the gather 2 percent. The plan was rewritten from the measurement, and the larger
+of the two changes above is the one the plan had omitted.
+
+**An honest loss.** At 512 copies the new arrangement is 1.1 percent *slower*. The buffer is 123
+megabytes at that size, the optimiser becomes limited by memory bandwidth, and the extra pass the
+per-copy limit needs costs more than the operations it saves. It was kept because it is worth 20 to
+29 percent at 8 to 128 copies, which is the range in use, but the regression is recorded rather than
+averaged away.
+
+**What remains.** The distance that is left sits in the forward and backward passes themselves,
+which are 72 to 84 percent of a minibatch step against 10 to 23 percent for the whole optimiser.
+JAX's compiler fuses a small network's gradient into fewer operations than PyTorch's compiler and
+automatic differentiation do together. Closing that means writing the loss and its gradient as one
+hand-written operation, which is a larger undertaking and was left as a decision rather than begun.
 
