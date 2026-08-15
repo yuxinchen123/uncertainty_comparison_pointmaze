@@ -41,6 +41,12 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- 2026-08-15 ~04:45 — TASK COMPLETE. All five phases checked off. Unified report:
+  `report/2026-08-15-pointmaze-gpu-parallelization/report.md` (+ a self-contained HTML
+  render, regenerable via code/make_artifact_html.py). The 20-minute monitor is retired.
+  Open follow-up candidates recorded in ledgers: CUDA env E3 (distance-only tournament),
+  compiling _post_body's scans, bf16 gated test.
+
 - 2026-08-15 ~02:15 — torch env validation contract fully satisfied (fixtures float64+float32,
   unit tests, cross-impl RNG identity, random-policy distributional check TV=0.026 PASS).
   Learning sanity run (C=8, 20k iters, 81.92M total steps in 658 s): goal reached from
