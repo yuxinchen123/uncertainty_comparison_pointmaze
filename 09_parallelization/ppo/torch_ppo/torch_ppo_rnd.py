@@ -59,6 +59,8 @@ class PPOConfig:
                                      # (requires rollout_mode="capture" semantics and
                                      # capture_update=True; overrides both)
     tf32: bool = False               # TF32 tensor-core matmuls (faster, ~1e-3 relative rounding)
+    env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
+                                     # (the single fused kernel from pointmaze/cuda_env)
 
 
 def _substream_seed(*parts) -> int:
@@ -119,8 +121,14 @@ class PPORND:
         self.device = torch.device(device)
         if cfg.tf32:
             torch.set_float32_matmul_precision("high")
-        self.env = TorchPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
-                                  device=device, base_seed=cfg.base_seed)
+        if cfg.env_backend == "cuda":
+            sys.path.insert(0, str(BASE / "pointmaze" / "cuda_env"))
+            from cuda_pointmaze import CudaPointMaze
+            self.env = CudaPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
+                                     device=device, base_seed=cfg.base_seed)
+        else:
+            self.env = TorchPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
+                                      device=device, base_seed=cfg.base_seed)
         C = cfg.n_copies
         F, Hh = cfg.rnd_feature_dim, cfg.rnd_hidden
 
@@ -215,8 +223,12 @@ class PPORND:
         # the per-step function used by _rollout_body: compiled for the GPU fast paths
         if cfg.rollout_mode in ("compile-step", "capture"):
             self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False)
+            self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False)
+            self._rnd_fn = torch.compile(self._rnd_part, fullgraph=True, dynamic=False)
         else:
             self._one_step = self._one_step_pure
+            self._policy_fn = self._policy_part
+            self._rnd_fn = self._rnd_part
         # the loss forward, compiled for the GPU fast paths (backward compiles with it)
         if cfg.rollout_mode in ("compile-step", "capture") or cfg.capture_update:
             self._loss_fn = torch.compile(self._losses, fullgraph=True, dynamic=False)
@@ -309,6 +321,19 @@ class PPORND:
         self._S_rc.copy_(self.env.reset_count)
         self._S_obs.copy_(torch.cat([self.env.pos, self.env.vel], -1))
 
+    def _policy_part(self, obs, z):
+        """Policy + value + sample + logprob only (compiled for the cuda-env backend)."""
+        mean, vext, vint = self.actor_critic(obs)
+        std = self.actor["logstd"].exp().unsqueeze(1)
+        action = mean + std * z
+        logp = (-0.5 * z * z - self.actor["logstd"].unsqueeze(1) - 0.5 * LOG2PI).sum(-1)
+        return action, logp, vext, vint
+
+    def _rnd_part(self, final_obs):
+        """Whiten + RND bonus only (compiled for the cuda-env backend)."""
+        tf, pf = self.rnd_features(self.whiten(final_obs))
+        return 0.5 * (pf - tf).square().sum(-1)
+
     def _one_step_pure(self, pos, vel, goal, sc, rc, obs, z):
         """One PURE rollout step (no attribute writes): policy + value + sample + env
         step_core + RND bonus. Compiled into one fused graph for the capture/compile modes.
@@ -358,27 +383,54 @@ class PPORND:
         self._S_rc.copy_(rc)
         self._S_obs.copy_(obs)
 
+    @torch.no_grad()
+    def _rollout_body_cuda(self):
+        """The T-step loop for the cuda env backend: compiled policy/RND subgraphs around
+        the fused env kernel; env state is internal to the env and updated in place."""
+        env = self.env
+        b = self._bufs
+        obs = env.state
+        for t in range(self.cfg.num_steps):
+            b["obs"][t].copy_(obs)
+            action, logp, vext, vint = self._policy_fn(obs, self._Z[t])
+            b["act"][t].copy_(action)
+            b["logp"][t].copy_(logp)
+            b["vext"][t].copy_(vext)
+            b["vint"][t].copy_(vint)
+            obs, r_ext, terminated, truncated, final_obs = env.step(action)
+            b["nobs"][t].copy_(final_obs)
+            b["rext"][t].copy_(r_ext)
+            b["term"][t].copy_(terminated.to(env.dtype))
+            b["done"][t].copy_((terminated | truncated).to(env.dtype))
+            b["rint"][t].copy_(self._rnd_fn(final_obs))
+
     def _build_rollout_graph(self):
         """Warm up and capture _rollout_body as one CUDA graph (128 steps -> one replay).
 
         The two warmup passes advance the entry-state buffers; they are snapshotted and
         restored so the first replay continues exactly where the eager path would have.
         """
-        snap = [t.clone() for t in (self._S_pos, self._S_vel, self._S_goal,
-                                    self._S_sc, self._S_rc, self._S_obs)]
+        body = self._rollout_body_cuda if self.cfg.env_backend == "cuda" \
+            else self._rollout_body
+        if self.cfg.env_backend == "cuda":
+            state_tensors = [self.env.state, self.env.goal, self.env.step_count,
+                             self.env.reset_count]
+        else:
+            state_tensors = [self._S_pos, self._S_vel, self._S_goal, self._S_sc,
+                             self._S_rc, self._S_obs]
+        snap = [t.clone() for t in state_tensors]
         self._Z.normal_()
         side = torch.cuda.Stream()
         side.wait_stream(torch.cuda.current_stream())
         with torch.cuda.stream(side):
             for _ in range(2):
-                self._rollout_body()
+                body()
         torch.cuda.current_stream().wait_stream(side)
-        for dst, src in zip((self._S_pos, self._S_vel, self._S_goal,
-                             self._S_sc, self._S_rc, self._S_obs), snap):
+        for dst, src in zip(state_tensors, snap):
             dst.copy_(src)
         g = torch.cuda.CUDAGraph()
         with torch.cuda.graph(g):
-            self._rollout_body()
+            body()
         self._graph = g
 
     @torch.no_grad()
@@ -390,6 +442,8 @@ class PPORND:
         self._Z.normal_()
         if self._graph is not None:
             self._graph.replay()
+        elif self.cfg.env_backend == "cuda":
+            self._rollout_body_cuda()
         else:
             self._rollout_body()
         self.global_step += T * C * N

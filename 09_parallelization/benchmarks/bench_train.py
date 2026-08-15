@@ -18,12 +18,13 @@ sys.path.insert(0, str(BASE / "ppo" / "torch_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
-def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False):
+def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch"):
     """Time full iterations and the rollout/update split for one copy count."""
     from torch_ppo_rnd import PPOConfig, PPORND
     trainer = PPORND(PPOConfig(n_copies=n_copies, update_style=style,
                                rollout_mode=rollout_mode, fused_adam=fused_adam,
-                               capture_update=capture_update, one_graph=one_graph, tf32=tf32),
+                               capture_update=capture_update, one_graph=one_graph, tf32=tf32,
+                               env_backend=env_backend),
                      device="cuda")
     trainer.prime_obs_rms()
     if one_graph:
@@ -60,7 +61,7 @@ def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False
     total = time.perf_counter() - t0
     env_steps = trainer.cfg.num_steps * n_copies * trainer.cfg.n_envs * iters
     return {
-        "n_copies": n_copies, "style": style, "iters_timed": iters,
+        "n_copies": n_copies, "style": style, "env_backend": env_backend, "iters_timed": iters,
         "sec_per_iteration": total / iters,
         "rollout_sec_per_iter": t_roll / iters, "update_sec_per_iter": t_upd / iters,
         "iterations_per_sec": iters / total,
@@ -80,6 +81,7 @@ def main():
     ap.add_argument("--capture-update", action="store_true")
     ap.add_argument("--one-graph", action="store_true")
     ap.add_argument("--tf32", action="store_true")
+    ap.add_argument("--env-backend", default="torch")
     ap.add_argument("--fused-adam", action="store_true")
     args = ap.parse_args()
 
