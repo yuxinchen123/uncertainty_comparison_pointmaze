@@ -19,7 +19,7 @@ sys.path.insert(0, str(BASE / "pointmaze" / "jax_env"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
-def bench(n_copies, n_envs, mode, repeats):
+def bench(n_copies, n_envs, mode, repeats, unroll=1):
     """Measure full step (dynamics + reward + auto-reset) for one batch size."""
     import jax
     import jax.numpy as jnp
@@ -48,7 +48,8 @@ def bench(n_copies, n_envs, mode, repeats):
             state, obs, reward, term, trunc, final = env.step(state, act)
             return state, reward.sum()
 
-        scan_fn = jax.jit(lambda s: jax.lax.scan(body, s, acts_stack), donate_argnums=0)
+        scan_fn = jax.jit(lambda s: jax.lax.scan(body, s, acts_stack, unroll=unroll),
+                          donate_argnums=0)
 
         def run_block(state):
             state, rs = scan_fn(state)
@@ -64,6 +65,7 @@ def bench(n_copies, n_envs, mode, repeats):
     t = sorted(times)[len(times) // 2]
     return {
         "n_copies": n_copies, "n_envs": n_envs, "total_envs": total, "mode": mode,
+        "unroll": unroll,
         "steps_per_block": k, "block_seconds_median": t,
         "env_steps_per_sec": total * k / t,
         "us_per_batch_step": t / k * 1e6,
@@ -77,6 +79,7 @@ def main():
     ap.add_argument("--n-copies", type=int, default=1)
     ap.add_argument("--repeats", type=int, default=5)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--unroll", type=int, default=1)
     args = ap.parse_args()
 
     import jax
@@ -84,7 +87,7 @@ def main():
                          capture_output=True, text=True).stdout.strip()
     rows = []
     for n in args.n_envs:
-        r = bench(args.n_copies, n, args.mode, args.repeats)
+        r = bench(args.n_copies, n, args.mode, args.repeats, args.unroll)
         rows.append(r)
         print(f"jax/{args.mode} C={args.n_copies} N={n:>8d}: "
               f"{r['env_steps_per_sec']:.3e} env-steps/s  ({r['us_per_batch_step']:.1f} us/batch-step)")

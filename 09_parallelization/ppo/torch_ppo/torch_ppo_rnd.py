@@ -242,6 +242,10 @@ class PPORND:
             self._m = [torch.zeros_like(p) for p in self.trainable]
             self._v = [torch.zeros_like(p) for p in self.trainable]
             self._adam_t = torch.zeros((), device=self.device)
+            # the decay constants live on the device: building them per step would be a
+            # host-to-device copy, which graph capture forbids
+            self._b1 = torch.tensor(0.9, device=self.device)
+            self._b2 = torch.tensor(0.999, device=self.device)
             self._lr_views = [self.lr_per_copy.view(C, *([1] * (p.dim() - 1)))
                               for p in self.trainable]
             self.opt = None
@@ -307,6 +311,10 @@ class PPORND:
         else:
             self._one_step = self._one_step_pure
             self._policy_fn = self._policy_part
+        # the per-copy Adam, compiled when asked: written out it is about six operations per
+        # parameter tensor, which is a lot of small kernels next to torch's fused optimizer
+        self._adam_fn = torch.compile(self._adam_step_per_copy, dynamic=False) \
+            if (self.is_sweep and cfg.compile_post) else self._adam_step_per_copy
         # the post-rollout body, compiled when asked (fuses the T-step scans)
         self._post_fn = torch.compile(self._post_body_impl, fullgraph=True, dynamic=False) \
             if cfg.compile_post else self._post_body_impl
@@ -626,7 +634,7 @@ class PPORND:
         for p in self.trainable:
             p.grad.mul_(scale.view(C, *([1] * (p.dim() - 1))))
         if self.is_sweep:
-            self._adam_step_per_copy()
+            self._adam_fn()
         else:
             self.opt.step()
         # under graph capture the grad buffers must keep their storage across replays
@@ -659,15 +667,18 @@ class PPORND:
         """
         cfg = self.cfg
         b1, b2 = 0.9, 0.999
-        self._adam_t += 1
-        bc1 = 1.0 - torch.pow(torch.as_tensor(b1, device=self.device), self._adam_t)
-        bc2 = 1.0 - torch.pow(torch.as_tensor(b2, device=self.device), self._adam_t)
-        for p, m, v, lr_view in zip(self.trainable, self._m, self._v, self._lr_views):
-            g = p.grad
-            m.mul_(b1).add_(g, alpha=1.0 - b1)
-            v.mul_(b2).addcmul_(g, g, value=1.0 - b2)
-            denom = (v / bc2).sqrt().add_(cfg.adam_eps)
-            p.data.addcdiv_(m / bc1 * (lr_view * self._lr_scale), denom, value=-1.0)
+        # add_ rather than += : the latter rebinds the attribute to a NEW tensor, which a
+        # captured graph would not see (it holds the original storage)
+        self._adam_t.add_(1)
+        bc1 = 1.0 - torch.pow(self._b1, self._adam_t)
+        bc2 = 1.0 - torch.pow(self._b2, self._adam_t)
+        with torch.no_grad():
+            for p, m, v, lr_view in zip(self.trainable, self._m, self._v, self._lr_views):
+                g = p.grad
+                m.mul_(b1).add_(g, alpha=1.0 - b1)
+                v.mul_(b2).addcmul_(g, g, value=1.0 - b2)
+                denom = (v / bc2).sqrt().add_(cfg.adam_eps)
+                p.addcdiv_(m / bc1 * (lr_view * self._lr_scale), denom, value=-1.0)
 
     def _losses(self, mb, style_a):
         """Per-copy losses on one (mini)batch dict; returns the scalar sum over copies.

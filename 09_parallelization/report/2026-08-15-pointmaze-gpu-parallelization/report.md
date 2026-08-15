@@ -240,6 +240,85 @@ sparse goal being found and lost again rather than held (per-copy curves below).
 
 ![campaign curves](figures/campaign_curves.png)
 
+## Sweeping learning rates across copy groups
+
+The trainer's copies were identical apart from their seed. They can now be split into groups,
+each group training at its own learning rate, in one batched run — the inputs are exactly the
+rates to try and how many copies each rate gets:
+
+```python
+cfg = sweep_config(learning_rates=[1e-4, 3e-4, 1e-3, 3e-3], copies_per_rate=128)
+```
+
+Adam is elementwise, so copies stacked on the leading axis are already independent optimizers;
+the only thing `torch.optim.Adam` cannot express is a different rate per copy, so a sweep
+switches to a hand-written batched Adam with torch's formula and a per-copy rate vector. Copy k
+of every group starts from the same weights and meets the same environments (paired seeding),
+so a difference between groups is the rate's doing. Full description: `ppo/torch_ppo/SWEEP.md`.
+
+### Which layout is best
+
+Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
+
+| layout | ms per sweep iteration | peak VRAM [MB] |
+|---|---|---|
+| uniform rate, one trainer (not a sweep — the reference) | 43.77 | 1686 |
+| one trainer, per-copy rate vector, one graph | 44.19 | 1686 |
+| one trainer per rate, run in turn | 81.44 | 1246 |
+
+Fusing the groups into one batched run is 1.84x faster than
+running them one after another, and costs +1.0% against a
+uniform-rate run of the same total size — so a sweep is very nearly free relative to training
+the same number of copies at a single rate. Running the groups separately is slower for the
+reason the whole project rests on: each group alone is too small to fill the GPU, and the
+per-iteration cost is dominated by kernel count rather than by arithmetic.
+
+### It finds the right answer
+
+A demonstration run of 5 rates x 32 copies (3.07M environment steps per copy, 140 seconds):
+
+| learning rate | copies | reward per iteration, last 20% | final coverage | copies that reached the goal |
+|---|---|---|---|---|
+| 1e-05 | 32 | 0.00 | 0.654 | 3/32 |
+| 0.0001 | 32 | 5.91 | 0.838 | 20/32 |
+| 0.0003 | 32 | 17.68 | 0.870 | 19/32 |
+| 0.001 | 32 | 8.32 | 0.810 | 11/32 |
+| 0.003 | 32 | 3.07 | 0.838 | 10/32 |
+
+The sweep recovers the expected shape — too small a rate barely learns, too large a rate is
+unstable, and the best value is the 3e-4 the project had been using — from a single run that
+cost the same as training those copies at one rate.
+
+![sweep curves](figures/sweep_curves.png)
+
+## The optimization rounds
+
+The work ran as two full passes of the same loop (baseline, one change, measure, keep or
+revert, log a row), separated by a review of an earlier efficiency campaign on another project.
+
+**Round one** built everything and took the PyTorch trainer from 777 ms per iteration to
+36.6 ms at 128 copies: exact GPU environments in three frameworks, the batched multi-copy
+trainer, whole-iteration CUDA-graph capture, TF32, fused capturable Adam, the RND-target
+hoist and same-input GEMM packing. Its comparisons were single measurements — good enough for
+the large changes it was making, not good enough for the smaller ones that remained.
+
+**Round two** started by fixing that: every change since is measured with a paired ABBA
+comparison in separate processes, against its own predecessor git revision, with the
+within-configuration spread reported as a noise floor and a difference below that spread
+recorded as no effect. Four research agents produced ranked experiment lists, an audit of the
+performance checklist, an external-source sweep, and an adversarial review of the code and of
+the measurement protocol itself; the review found two genuine defects (see below). The round's
+changes and their measured effects are in the per-module ledgers; the two that carried the
+gain were compiling the post-rollout body (+11 to +14%) and hoisting the critic, the
+log-probability and the RND bonus out of the rollout loop (+42 to +45%).
+
+Defects the adversarial review found, both now fixed: the fused-CUDA environment launched its
+kernels on the legacy default stream rather than the current one, which made the published
+CUDA-environment pairing numbers untrustworthy; and priming the observation statistics with
+the CUDA environment stacked one repeated step, because that environment returns a
+preallocated buffer that the next step overwrites.
+
+
 ## What made it fast (and what did not)
 
 Kept (each row measured in a ledger; see the per-module `progress_and_changes.md` files):

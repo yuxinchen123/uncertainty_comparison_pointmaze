@@ -66,6 +66,9 @@ class PPOConfig:
                                      # instead of once per step inside it (round 2, J1)
     scan_unroll: int = 4             # unroll factor for the rollout scan; 4 and 8 measured
                                      # equal, 4 chosen for lower compile time (round 2, J2)
+    batch_stats_f32: bool = False    # reduce batch mean/variance in float32 before promoting
+                                     # (round 2, J5) — changes the last bits of the statistics,
+                                     # so it also breaks bit-agreement with the torch twin
 
 
 class RMSState(NamedTuple):
@@ -95,12 +98,23 @@ def rms_init(n_copies, dim):
                     jnp.full((n_copies, 1), 1e-4, jnp.float64))
 
 
-def rms_update(rms: RMSState, batch) -> RMSState:
-    """Parallel-variance update per copy; batch [C, B, dim] float32, population variance."""
-    b = batch.astype(jnp.float64)
-    batch_mean = b.mean(axis=1)
-    batch_var = b.var(axis=1, ddof=0)
-    batch_count = float(b.shape[1])
+def rms_update(rms: RMSState, batch, batch_stats_f32: bool = False) -> RMSState:
+    """Parallel-variance update per copy; batch [C, B, dim] float32, population variance.
+
+    The accumulators are always float64 (spec section 4.2). batch_stats_f32 controls whether
+    the batch's own mean and variance are reduced in float32 first and then promoted, instead
+    of promoting the whole [C, B, dim] batch — measured as a round-2 experiment, since the
+    promotion is the only float64 work of any size in the compiled iteration.
+    """
+    if batch_stats_f32:
+        batch_mean = batch.mean(axis=1).astype(jnp.float64)
+        batch_var = batch.var(axis=1, ddof=0).astype(jnp.float64)
+        batch_count = float(batch.shape[1])
+    else:
+        b = batch.astype(jnp.float64)
+        batch_mean = b.mean(axis=1)
+        batch_var = b.var(axis=1, ddof=0)
+        batch_count = float(b.shape[1])
     delta = batch_mean - rms.mean
     tot = rms.count + batch_count
     new_mean = rms.mean + delta * batch_count / tot
@@ -399,7 +413,8 @@ class JaxPPORND:
             f = cfg.gamma_int * f + r
             return f, f
         int_filter, filt = jax.lax.scan(filt_body, state.int_filter, rint_buf)
-        int_rms = rms_update(state.int_rms, filt.transpose(1, 0, 2).reshape(C, T * N, 1))
+        int_rms = rms_update(state.int_rms, filt.transpose(1, 0, 2).reshape(C, T * N, 1),
+                             cfg.batch_stats_f32)
         int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
         rint_hat = rint_buf / int_std
 
@@ -426,7 +441,7 @@ class JaxPPORND:
         ret_int = aint_buf + vint_buf
 
         # update RND observation statistics, then whiten the update batch with NEW statistics
-        obs_rms = rms_update(obs_rms_old, nobs_flat)
+        obs_rms = rms_update(obs_rms_old, nobs_flat, cfg.batch_stats_f32)
         batch = {
             "obs": flat(obs_buf), "actions": flat(act_buf), "old_logprob": flat(logp_buf),
             "adv": flat(adv), "ret_ext": flat(ret_ext), "ret_int": flat(ret_int),

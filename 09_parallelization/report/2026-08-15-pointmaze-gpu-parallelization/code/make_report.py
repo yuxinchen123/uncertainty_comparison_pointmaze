@@ -148,6 +148,119 @@ def fig_copy_scaling():
     return None
 
 
+def sweep_record():
+    """The demonstration sweep's run record, if it has been produced."""
+    hits = sorted(RUNS.glob("*sweep_demo*/data/*.json"))
+    return json.loads(hits[-1].read_text()) if hits else None
+
+
+def fig_sweep_curves():
+    """Learning curves per learning-rate group from the demonstration sweep."""
+    r = sweep_record()
+    if not r:
+        return pending("sweep figure", "the demonstration sweep record")
+    import numpy as np
+    g = np.array(r["group_index"])
+    hist = r["history"]
+    # a learning rate is an ordered quantity, so the groups take one sequential ramp
+    # (light = smallest rate) rather than unrelated categorical hues
+    ramp = ["#b7d3f6", "#86b6ef", "#3987e5", "#1c5cab", "#104281"]
+    fig, axes = plt.subplots(1, 2, figsize=(10.8, 4.2), dpi=160)
+    for gi, rate in enumerate(r["sweep_rates"]):
+        idx = np.where(g == gi)[0]
+        xs = [row["global_step"] / r["n_copies"] / 1e6 for row in hist]
+        rew = [float(np.mean([row["reward_ext_sum_per_copy"][i] for i in idx])) for row in hist]
+        cov = [float(np.mean([row["coverage_per_copy"][i] for i in idx])) for row in hist]
+        color = ramp[min(gi, len(ramp) - 1)]
+        axes[0].plot(xs, rew, "-", color=color, linewidth=1.7, label=f"rate {rate:g}")
+        axes[1].plot(xs, cov, "-", color=color, linewidth=1.7, label=f"rate {rate:g}")
+    axes[0].set_ylabel("extrinsic reward per copy per iteration (group mean)")
+    axes[1].set_ylabel("maze coverage (fraction of open cells, group mean)")
+    for ax in axes:
+        ax.set_xlabel("environment steps per copy [millions]")
+        ax.legend(frameon=False, fontsize=9)
+        style_ax(ax)
+    fig.suptitle(f"One run, {len(r['sweep_rates'])} learning rates, "
+                 f"{r['copies_per_rate'][0]} independent copies each", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "sweep_curves.png")
+    plt.close(fig)
+    return None
+
+
+def sec_sweep():
+    """Round 3: sweeping a hyperparameter across copy groups."""
+    md = """## Sweeping learning rates across copy groups
+
+The trainer's copies were identical apart from their seed. They can now be split into groups,
+each group training at its own learning rate, in one batched run — the inputs are exactly the
+rates to try and how many copies each rate gets:
+
+```python
+cfg = sweep_config(learning_rates=[1e-4, 3e-4, 1e-3, 3e-3], copies_per_rate=128)
+```
+
+Adam is elementwise, so copies stacked on the leading axis are already independent optimizers;
+the only thing `torch.optim.Adam` cannot express is a different rate per copy, so a sweep
+switches to a hand-written batched Adam with torch's formula and a per-copy rate vector. Copy k
+of every group starts from the same weights and meets the same environments (paired seeding),
+so a difference between groups is the rate's doing. Full description: `ppo/torch_ppo/SWEEP.md`.
+
+### Which layout is best
+
+Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
+
+| layout | ms per sweep iteration | peak VRAM [MB] |
+|---|---|---|
+"""
+    d = newest(r"sweep_strategies")
+    if not d:
+        return md + pending("sweep layout table", "the sweep strategy JSON")
+    names = {"uniform": "uniform rate, one trainer (not a sweep — the reference)",
+             "fused": "one trainer, per-copy rate vector, one graph",
+             "separate": "one trainer per rate, run in turn"}
+    for row in d["rows"]:
+        md += (f"| {names[row['strategy']]} | {row['sec_per_iteration']*1e3:.2f} | "
+               f"{row['peak_vram_mb']:.0f} |\n")
+    md += f"""
+Fusing the groups into one batched run is {d['fused_speedup_vs_separate']:.2f}x faster than
+running them one after another, and costs {d['fused_overhead_vs_uniform']*100:+.1f}% against a
+uniform-rate run of the same total size — so a sweep is very nearly free relative to training
+the same number of copies at a single rate. Running the groups separately is slower for the
+reason the whole project rests on: each group alone is too small to fill the GPU, and the
+per-iteration cost is dominated by kernel count rather than by arithmetic.
+
+### It finds the right answer
+
+A demonstration run of 5 rates x 32 copies (3.07M environment steps per copy, 140 seconds):
+
+"""
+    r = sweep_record()
+    if r:
+        import numpy as np
+        g = np.array(r["group_index"])
+        hist = r["history"]
+        late = hist[-len(hist) // 5:]
+        md += ("| learning rate | copies | reward per iteration, last 20% | final coverage | "
+               "copies that reached the goal |\n|---|---|---|---|---|\n")
+        for gi, rate in enumerate(r["sweep_rates"]):
+            idx = np.where(g == gi)[0]
+            rew = float(np.mean([[row["reward_ext_sum_per_copy"][i] for i in idx]
+                                 for row in late]))
+            cov = float(np.mean([r["final_coverage_per_copy"][i] for i in idx]))
+            ever = sum(1 for i in idx
+                       if max(row["reward_ext_sum_per_copy"][i] for row in hist) > 0)
+            md += f"| {rate:g} | {len(idx)} | {rew:.2f} | {cov:.3f} | {ever}/{len(idx)} |\n"
+        md += """
+The sweep recovers the expected shape — too small a rate barely learns, too large a rate is
+unstable, and the best value is the 3e-4 the project had been using — from a single run that
+cost the same as training those copies at one rate.
+
+![sweep curves](figures/sweep_curves.png)
+"""
+    return md
+
+
 def campaign_records():
     """The final-campaign per-count JSONs, {(style, C): record}."""
     out = {}
@@ -620,9 +733,11 @@ def main():
     fig_env_throughput()
     fig_copy_scaling()
     fig_campaign_curves()
+    fig_sweep_curves()
     md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
                     sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
-                    sec_campaign(), sec_rounds(), sec_techniques(), sec_repro()])
+                    sec_campaign(), sec_sweep(), sec_rounds(), sec_techniques(),
+                    sec_repro()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
     for p in PENDING:

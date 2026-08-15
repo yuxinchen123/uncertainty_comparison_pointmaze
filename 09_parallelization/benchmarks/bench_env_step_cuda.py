@@ -20,6 +20,56 @@ sys.path.insert(0, str(BASE / "pointmaze" / "cuda_env"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
+def bench_captured(n_copies, n_envs, repeats, block, chunk):
+    """Measure the step when `chunk` steps are captured into one CUDA graph and replayed.
+
+    This is the floor a trainer actually pays: the per-call host and launch cost is paid once
+    per replay instead of once per step, so it separates the kernel's own cost from the cost of
+    asking for it. The action buffer is fixed at capture time, which is exactly how a captured
+    rollout works (the trainer writes fresh noise into a static buffer before replaying).
+    """
+    from pm_common import EnvConfig
+    from cuda_pointmaze import CudaPointMaze
+
+    env = CudaPointMaze(EnvConfig(), n_copies, n_envs, device="cuda", dtype=torch.float32)
+    env.block = block
+    env.reset()
+    total = n_copies * n_envs
+    act = torch.rand(n_copies, n_envs, 2, device="cuda") * 2 - 1
+
+    # warm up on a side stream, then record `chunk` steps into one graph
+    side = torch.cuda.Stream()
+    side.wait_stream(torch.cuda.current_stream())
+    with torch.cuda.stream(side):
+        for _ in range(3):
+            env.step(act)
+    torch.cuda.current_stream().wait_stream(side)
+    g = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(g):
+        for _ in range(chunk):
+            env.step(act)
+
+    replays = max(2, min(500, int(2e8 / max(total * chunk, 1))))
+    for _ in range(3):
+        g.replay()
+    torch.cuda.synchronize()
+
+    times = []
+    for _ in range(repeats):
+        start, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+        start.record()
+        for _ in range(replays):
+            g.replay()
+        end.record()
+        torch.cuda.synchronize()
+        times.append(start.elapsed_time(end) / 1000.0)
+    t = sorted(times)[len(times) // 2]
+    steps = replays * chunk
+    return {"n_copies": n_copies, "n_envs": n_envs, "total_envs": total, "mode": "captured",
+            "graph_chunk": chunk, "replays_per_block": replays, "block_seconds_median": t,
+            "env_steps_per_sec": total * steps / t, "us_per_batch_step": t / steps * 1e6}
+
+
 def bench(n_copies, n_envs, repeats, block):
     """Measure the full fused step() for one batch size."""
     from pm_common import EnvConfig
@@ -61,13 +111,16 @@ def main():
     ap.add_argument("--repeats", type=int, default=5)
     ap.add_argument("--block", type=int, default=256)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--capture-chunk", type=int, default=0,
+                    help="capture this many steps into one graph and replay (0 = plain steps)")
     args = ap.parse_args()
 
     git = subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                          capture_output=True, text=True).stdout.strip()
     rows = []
     for n in args.n_envs:
-        r = bench(args.n_copies, n, args.repeats, args.block)
+        r = (bench_captured(args.n_copies, n, args.repeats, args.block, args.capture_chunk)
+             if args.capture_chunk else bench(args.n_copies, n, args.repeats, args.block))
         rows.append(r)
         print(f"cuda/fused C={args.n_copies} N={n:>8d}: "
               f"{r['env_steps_per_sec']:.3e} env-steps/s  ({r['us_per_batch_step']:.1f} us/batch-step)")
