@@ -1431,6 +1431,34 @@ def sec_repro():
 """
 
 
+def sec_clean_node():
+    """The dedicated-node processor comparison, and the best setup within 4,096 copies.
+
+    Both sections are produced by the standalone report's `cpu_sections` module. Importing that
+    module rather than copying its code keeps ONE definition of these numbers, so re-running a
+    measurement updates both documents and they cannot come to disagree.
+    """
+    # the other report's code folder; its figures are redirected into this report's own folder
+    sys.path.insert(0, str(BASE / "report"
+                           / "2026-08-15-gpu-parallel-rl-environment-training-endtoend" / "code"))
+    import cpu_sections as cpu
+    cpu.FIGS = FIGS
+    for note in (cpu.fig_cpu_vs_gpu(), cpu.fig_best_setup(), cpu.fig_worker_scaling()):
+        if note:
+            PENDING.append(note)
+    md = cpu.sec_cpu() + "\n" + cpu.sec_best()
+    # this document numbers no sections, and already carries a processor section about the other
+    # node, so the source document's numbering goes and the two headings get names that do not
+    # collide with it (a repeated heading would collapse two entries of the contents table)
+    # before: "## 5. The same work on ordinary processor cores" / "### 5.1 Why this comparison is here"
+    # after:  "## End-to-end training on a dedicated processor node" / "### Why this comparison is here"
+    md = md.replace("## 5. The same work on ordinary processor cores",
+                    "## End-to-end training on a dedicated processor node")
+    md = md.replace("## 6. The best setup on each platform",
+                    "## The best setup on each platform, at 4,096 copies or fewer")
+    return re.sub(r"^### \d+\.\d+ ", "### ", md, flags=re.M)
+
+
 def main():
     FIGS.mkdir(exist_ok=True)
     fig_env_throughput()
@@ -1445,7 +1473,8 @@ def main():
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
-            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4()]
+            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
+            sec_clean_node()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]

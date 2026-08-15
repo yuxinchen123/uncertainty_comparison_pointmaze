@@ -38,6 +38,8 @@ what each round changed, then the training campaign and the sweep.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
+| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:08 PT |
+| [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:08 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -808,4 +810,113 @@ which are 72 to 84 percent of a minibatch step against 10 to 23 percent for the 
 JAX's compiler fuses a small network's gradient into fewer operations than PyTorch's compiler and
 automatic differentiation do together. Closing that means writing the loss and its gradient as one
 hand-written operation, which is a larger undertaking and was left as a decision rather than begun.
+
+
+## End-to-end training on a dedicated processor node
+
+### Why this comparison is here
+
+Every number so far came from a graphics processor. A reader deciding where to run this work
+needs to know what the alternative gives, so the same training loop and the same environment
+were measured on ordinary processor cores. The training measurements below ran on **jaguar03**
+(AMD EPYC 7663, 224 logical processors, 1 TB of memory), held exclusively — no other job shared
+the machine — so the timings are not contaminated by a neighbour. It was chosen as the largest
+completely idle node on the cluster; a node with more cores was available but already had
+another job on it, which is exactly the contamination this run set out to avoid. The
+environment-only measurements come from a second node, puma01 (Intel Ice Lake, 160 logical
+processors), also held under reservation.
+
+Nothing in the algorithm changed. What changed is that the graphics-processor features the
+optimisation work relied on — recording an iteration as a replayable sequence, the
+reduced-precision matrix mode, the fused optimiser — do not exist on a processor, so the
+processor runs the same code in its plain form.
+
+### Two ways to use many cores, and why they differ so much
+
+A processor has many cores, and the work has to be divided among them. There are two ways:
+
+- **Threads inside one process.** One program holds every copy in one set of arrays. Each
+  instruction covers all of them, and the array library splits that one instruction across N
+  threads. The threads must regroup after every instruction, because the next one reads what
+  the previous one wrote.
+- **Independent processes.** N separate programs, each owning its own copies, each using one
+  thread. They never coordinate, because there is nothing to coordinate around.
+
+The measurements settle which is better, and the answer is not the obvious one.
+
+| copies | 8 threads | 112 threads | best seconds per iteration | thousand steps per second per copy |
+|---|---|---|---|---|
+| 1 | 0.0015 | 0.0011 | 0.352 | 1.45 |
+| 2 | 0.0027 | 0.0016 | 0.382 | 1.34 |
+| 4 | 0.0050 | 0.0036 | 0.410 | 1.25 |
+| 8 | 0.0095 | 0.0060 | 0.433 | 1.18 |
+| 16 | 0.0170 | 0.0123 | 0.482 | 1.06 |
+| 32 | 0.0284 | 0.0214 | 0.576 | 0.89 |
+| 64 | 0.0492 | 0.0397 | 0.666 | 0.77 |
+| 128 | 0.0531 | 0.0533 | 1.229 | 0.42 |
+
+*One process holding every copy, the array library given 8 or 112 threads. Throughput columns are millions of environment steps per second. Sixteen updates per batch.*
+
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy |
+|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 |
+| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 |
+| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 |
+| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 |
+| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 |
+| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 |
+| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 |
+
+*Independent single-thread processes. Sixteen updates per batch.*
+
+![processor against graphics processor](figures/cpu_vs_gpu.png)
+
+![worker scaling](figures/cpu_worker_scaling.png)
+
+The two tables answer it. Independent processes reach 2.11 million environment steps per second at 3,584 copies; one process with threads tops out at 0.0533 million. That is a factor of **40** on the same machine, running the same algorithm — the only difference is how the work was divided.
+
+The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 7 of the 8 copy counts measured — 0.764 seconds per iteration against 0.576 at 32 copies; 0.824 seconds per iteration against 0.666 at 64 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
+
+The environment measurements on the second processor node show the same limit even more
+sharply: one process reached its best throughput at four to eight threads and then got
+**worse**, ending twelve times slower than a single thread when given 160. Independent processes
+scaled to about twenty-four times over the same range.
+
+The reason is the regrouping. One environment step is roughly forty small operations, each
+individually cheap, and the coordination after each one costs a fixed amount regardless of how
+little work it contained. With N threads that cost is paid forty times per step, so past a
+handful of threads the coordination costs more than the work it coordinates. Independent
+processes never pay it. This is also why the graphics processor needed the opposite treatment:
+the optimisation work there fused those forty operations into a handful and recorded the whole
+sequence, which is the same problem solved from the other end.
+
+
+## The best setup on each platform, at 4,096 copies or fewer
+
+Throughput keeps rising with the number of copies well past the point most work needs, so the
+comparison below is restricted to **4,096 copies or fewer**, which is the range this project
+actually operates in. For each platform and configuration, the table gives the setting that
+reaches the highest total throughput inside that range.
+
+| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours to ten million steps per copy |
+|---|---|---|---|---|---|
+| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.47** |
+| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>1.50</u> |
+| processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 2.61 |
+| processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 4.78 |
+| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 4.90 |
+| processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 6.67 |
+
+![best setup](figures/best_setup.png)
+
+The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6.3**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2.61 hours on the processor node.
+
+Best in each column is bold, second best underlined; copies is a setting rather than
+a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
+exclusively; a cluster with many such nodes multiplies it, and the independent-process
+arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
+for training than for the environment alone, because training is dominated by matrix
+arithmetic, which processors handle comparatively better than they handle many tiny
+dependent operations.
 
