@@ -156,6 +156,21 @@ def fig_cpu_vs_gpu():
     return None
 
 
+def mark_best(texts, values, higher_is_better):
+    """Bold the best cell of a column and underline the second best, ties included.
+
+    before: texts = ["24.1", "7.57", "3.80"], values = [24.1, 7.57, 3.80], higher_is_better
+    after:  ["**24.1**", "<u>7.57</u>", "3.80"]
+    """
+    ranked = sorted(set(values), reverse=higher_is_better)
+    best = ranked[0]
+    second = ranked[1] if len(ranked) > 1 else None
+    out = []
+    for t, v in zip(texts, values):
+        out.append(f"**{t}**" if v == best else (f"<u>{t}</u>" if v == second else t))
+    return out
+
+
 def best_under(limit=4096):
     """The configuration maximising total throughput below a copy limit, per platform."""
     out = []
@@ -210,6 +225,8 @@ def fig_best_setup(limit=4096):
         axes[1].text(r["hours_10M"], i, f"  {r['hours_10M']:.1f} h", va="center", fontsize=8)
     axes[1].set_yticks(range(len(rows)))
     axes[1].set_yticklabels([])
+    # the row labels are printed only on the left panel, so this panel must run the same way up
+    axes[1].invert_yaxis()
     axes[1].set_xscale("log")
     axes[1].set_xlabel("hours to give every copy ten million steps (log scale)")
     axes[1].set_title("What that means in wall time", fontsize=10)
@@ -392,12 +409,20 @@ comparison below is restricted to **{limit:,} copies or fewer**, which is the ra
 actually operates in. For each platform and configuration, the table gives the setting that
 reaches the highest total throughput inside that range.
 
-| platform and configuration | copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours to ten million steps per copy |
+| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours to ten million steps per copy |
 |---|---|---|---|---|---|
 """
-    for r in rows:
-        md += (f"| {r['name']} | {r['copies']:,} | {r['sec_per_iteration']:.3f} | "
-               f"{M(r['total'])} | {K(r['per_copy'])} | {r['hours_10M']:.2f} |\n")
+    # mark best and second best in every scored column (copies is a setting, so it is skipped)
+    cells = {"sec_per_iteration": [f"{r['sec_per_iteration']:.3f}" for r in rows],
+             "total": [M(r["total"]) for r in rows],
+             "per_copy": [K(r["per_copy"]) for r in rows],
+             "hours_10M": [f"{r['hours_10M']:.2f}" for r in rows]}
+    for field, higher_is_better in [("sec_per_iteration", False), ("total", True),
+                                    ("per_copy", True), ("hours_10M", False)]:
+        cells[field] = mark_best(cells[field], [r[field] for r in rows], higher_is_better)
+    for i, r in enumerate(rows):
+        md += (f"| {r['name']} | {r['copies']:,} | {cells['sec_per_iteration'][i]} | "
+               f"{cells['total'][i]} | {cells['per_copy'][i]} | {cells['hours_10M'][i]} |\n")
     gpu = [r for r in rows if r["kind"] == "gpu"]
     cpu = [r for r in rows if r["kind"] == "cpu"]
     md += "\n![best setup](figures/best_setup.png)\n\n"
@@ -433,14 +458,18 @@ def fig_worker_scaling():
     for rows, colour, marker, style_name in [(th, C_CPU_THREAD, "s", "threads in one process"),
                                              (pr, C_CPU_PROC, "o", "independent processes")]:
         sizes = sorted({r["n_envs_per_worker"] if "n_envs_per_worker" in r else 0 for r in rows})
-        for size in sizes:
+        # colour carries the parallelisation style, so line style and marker fill have to carry
+        # the per-worker problem size — otherwise two curves of one family are indistinguishable
+        for i, size in enumerate(sizes):
             sel = sorted([r for r in rows if r.get("n_envs_per_worker") == size],
                          key=lambda r: r["workers"])
             if len(sel) < 3:
                 continue
             base = sel[0]["env_steps_per_sec"]
             ax.plot([r["workers"] for r in sel], [r["env_steps_per_sec"] / base for r in sel],
-                    "-", color=colour, linewidth=2, marker=marker, markersize=6,
+                    linestyle=["-", "-."][i % 2], color=colour, linewidth=2, marker=marker,
+                    markersize=6, markerfacecolor=colour if i % 2 == 0 else "white",
+                    markeredgecolor=colour,
                     label=f"{style_name}, {size:,} environments each")
     ax.axhline(1.0, color="#9aa0ab", linewidth=1, linestyle=":")
     ax.set_xscale("log", base=2)

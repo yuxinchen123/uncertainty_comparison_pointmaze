@@ -14,6 +14,12 @@ Each section states what the part does, presents the measured results in tables 
 and then lists the optimisation techniques that were tried: those that were kept, and those
 that were tried and abandoned, with the measurement that decided each case.
 
+Two further sections put those numbers in context. Section 5 runs the same training loop on
+ordinary processor cores, on a cluster node held exclusively so nothing else disturbed the
+timings, and compares the two ways of dividing work across many cores. Section 6 names the
+single best configuration on each of the two platforms within the range of scale this project
+actually uses, and converts each into the wall-clock time to train every copy.
+
 ### 1.1 The problem being solved
 
 The agent controls a ball in a two-dimensional maze. It can push the ball in two directions,
@@ -531,10 +537,10 @@ comparison below is restricted to **4,096 copies or fewer**, which is the range 
 actually operates in. For each platform and configuration, the table gives the setting that
 reaches the highest total throughput inside that range.
 
-| platform and configuration | copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours to ten million steps per copy |
+| platform and configuration | copies | seconds per iteration | million steps per second ↑ | thousand steps per second per copy | hours to ten million steps per copy |
 |---|---|---|---|---|---|
-| graphics processor, one update per batch | 4,096 | 0.087 | 24.1 | 5.90 | 0.47 |
-| graphics processor, sixteen updates per batch | 4,096 | 0.277 | 7.57 | 1.85 | 1.50 |
+| graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.47** |
+| graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>1.50</u> |
 | processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 2.61 |
 | processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 4.78 |
 | processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 4.90 |
@@ -544,7 +550,8 @@ reaches the highest total throughput inside that range.
 
 The best graphics-processor configuration reaches 24.1 million environment steps per second at 4,096 copies; the best processor configuration reaches 3.80 million at 3,584 copies. That is a factor of **6.3**. In wall-clock terms, giving every copy ten million environment steps takes 0.47 hours on the graphics processor against 2.61 hours on the processor node.
 
-Two qualifications belong with those numbers. The processor figure is for one node held
+Best in each column is bold, second best underlined; copies is a setting rather than
+a score, so it is not marked. Two qualifications belong with those numbers. The processor figure is for one node held
 exclusively; a cluster with many such nodes multiplies it, and the independent-process
 arrangement is exactly what a work queue across many nodes would do. And the gap is narrower
 for training than for the environment alone, because training is dominated by matrix

@@ -272,6 +272,12 @@ Each section states what the part does, presents the measured results in tables 
 and then lists the optimisation techniques that were tried: those that were kept, and those
 that were tried and abandoned, with the measurement that decided each case.
 
+Two further sections put those numbers in context. Section 5 runs the same training loop on
+ordinary processor cores, on a cluster node held exclusively so nothing else disturbed the
+timings, and compares the two ways of dividing work across many cores. Section 6 names the
+single best configuration on each of the two platforms within the range of scale this project
+actually uses, and converts each into the wall-clock time to train every copy.
+
 ### 1.1 The problem being solved
 
 The agent controls a ball in a two-dimensional maze. It can push the ball in two directions,

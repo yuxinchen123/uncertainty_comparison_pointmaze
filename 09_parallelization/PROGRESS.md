@@ -98,6 +98,16 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   same time (23.3 and 24.2 million environment steps per second). Report sections 5 and 6 added
   to `report/2026-08-15-gpu-parallel-rl-environment-training-endtoend/` via
   `code/cpu_sections.py`, with the graphics processor drawn dashed in every comparison figure.
+  DONE at 18:55 Eastern (15:55 PT), every point measured. Independent processes reach 2.11
+  million environment steps per second at 3,584 copies (3.80 with one update per batch); the
+  threaded form tops out at 0.053 million, a factor of 40 slower on the same machine. Raising
+  the thread count from 8 to 112 was slower at 7 of the 8 copy counts measured. Best setup under
+  4,096 copies: graphics processor 24.1 million at 0.47 hours to give every copy ten million
+  steps, against 3.80 million and 2.61 hours for the processor node — a factor of 6.3.
+  Two defects found and fixed while checking the rendered output: the wall-time panel of
+  `figures/best_setup.png` was drawn upside down against its shared row labels (it read as the
+  graphics processor being the SLOWEST), and the method section was numbered 5, colliding with
+  the new processor section.
 
 - 2026-08-15 ~04:45 — TASK COMPLETE. All five phases checked off. Unified report:
   `report/2026-08-15-pointmaze-gpu-parallelization/report.md` (+ a self-contained HTML
