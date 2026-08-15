@@ -65,6 +65,38 @@ def test_update_capture_tracks_eager():
         print(f"ok test_update_capture_tracks_eager[{style}] (worst {worst:.3e})")
 
 
+def test_learning_rate_reaches_the_graph():
+    """A zero learning rate must freeze the parameters when the update is captured.
+
+    The annealed learning rate is written into a device tensor that the captured Adam reads.
+    If capture had instead frozen a python float (the classic capture defect), the replay
+    would keep stepping at the old rate and this test would fail — nothing else in the suite
+    exercises it, because the benchmarks all run at a constant rate.
+    """
+    t = PPORND(PPOConfig(rollout_mode="capture", capture_update=True, fused_adam=True,
+                         one_graph=True, **CFG), device="cuda")
+    torch.manual_seed(13)
+    t.prime_obs_rms()
+    t._build_iteration_graph()
+    t.iteration_captured()                      # one normal iteration at the configured rate
+    before = [p.detach().clone() for p in t.trainable]
+    moved = False
+    t._lr_t.fill_(0.0)                          # anneal all the way down
+    for _ in range(3):
+        t.iteration_captured()
+    after = [p.detach().clone() for p in t.trainable]
+    worst = max((a - b).abs().max().item() for a, b in zip(before, after))
+    print(f"parameter movement over 3 iterations at learning rate 0: {worst:.3e}")
+    assert worst == 0.0, "the captured update ignored the annealed learning rate"
+    # and a non-zero rate must move them again, so the test cannot pass by never updating
+    t._lr_t.fill_(3e-4)
+    t.iteration_captured()
+    moved = max((a - p.detach()).abs().max().item() for a, p in zip(after, t.trainable)) > 0
+    assert moved, "parameters never move, so the zero-rate check proves nothing"
+    print("ok test_learning_rate_reaches_the_graph")
+
+
 if __name__ == "__main__":
     test_rollout_capture_bitwise()
     test_update_capture_tracks_eager()
+    test_learning_rate_reaches_the_graph()

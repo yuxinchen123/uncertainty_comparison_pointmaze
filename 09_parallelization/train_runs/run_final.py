@@ -38,9 +38,9 @@ def run_one(n_copies, args, outdir):
         log_f.write(msg + "\n")
         log_f.flush()
 
-    cfg = PPOConfig(n_copies=n_copies, update_style=args.style,
-                    rollout_mode="capture", capture_update=True, fused_adam=True,
-                    one_graph=args.one_graph, tf32=True, base_seed=args.base_seed)
+    from torch_ppo_rnd import production_config
+    cfg = production_config(n_copies, style=args.style, one_graph=args.one_graph,
+                            base_seed=args.base_seed)
     t_build = time.time()
     trainer = PPORND(cfg, device="cuda")
     stats = trainer.train(args.iterations, log_every_seconds=args.log_every,

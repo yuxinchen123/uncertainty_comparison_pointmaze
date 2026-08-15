@@ -59,8 +59,20 @@ class PPOConfig:
                                      # (requires rollout_mode="capture" semantics and
                                      # capture_update=True; overrides both)
     tf32: bool = False               # TF32 tensor-core matmuls (faster, ~1e-3 relative rounding)
+    compile_post: bool = False       # compile the post-rollout body (its filter and GAE are
+                                     # python loops over T, so eager they are ~256 tiny kernels)
     env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
                                      # (the single fused kernel from pointmaze/cuda_env)
+
+
+def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOConfig":
+    """The measured-best PyTorch configuration (round 2). One definition, so the benchmarks,
+    the training driver and the tests cannot drift apart:
+    whole-iteration CUDA-graph capture, compiled post-rollout body, TF32, fused capturable Adam.
+    """
+    return PPOConfig(n_copies=n_copies, update_style=style, rollout_mode="capture",
+                     capture_update=True, one_graph=True, fused_adam=True, tf32=True,
+                     compile_post=True, **overrides)
 
 
 def _substream_seed(*parts) -> int:
@@ -117,6 +129,10 @@ class PPORND:
         # (a frozen python step counter inside a captured graph corrupts bias correction)
         if cfg.one_graph and not cfg.capture_update:
             object.__setattr__(cfg, "capture_update", True)
+        if cfg.one_graph and cfg.rollout_mode != "capture":
+            # the iteration graph captures the rollout, which is only correct (and only fast)
+            # with the compiled per-step function the capture path builds
+            object.__setattr__(cfg, "rollout_mode", "capture")
         self.cfg = cfg
         self.device = torch.device(device)
         if cfg.tf32:
@@ -224,11 +240,12 @@ class PPORND:
         if cfg.rollout_mode in ("compile-step", "capture"):
             self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False)
             self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False)
-            self._rnd_fn = torch.compile(self._rnd_part, fullgraph=True, dynamic=False)
         else:
             self._one_step = self._one_step_pure
             self._policy_fn = self._policy_part
-            self._rnd_fn = self._rnd_part
+        # the post-rollout body, compiled when asked (fuses the T-step scans)
+        self._post_fn = torch.compile(self._post_body_impl, fullgraph=True, dynamic=False) \
+            if cfg.compile_post else self._post_body_impl
         # the loss forward, compiled for the GPU fast paths (backward compiles with it)
         if cfg.rollout_mode in ("compile-step", "capture") or cfg.capture_update:
             self._loss_fn = torch.compile(self._losses, fullgraph=True, dynamic=False)
@@ -322,35 +339,39 @@ class PPORND:
         self._S_obs.copy_(torch.cat([self.env.pos, self.env.vel], -1))
 
     def _policy_part(self, obs, z):
-        """Policy + value + sample + logprob only (compiled for the cuda-env backend)."""
-        mean, vext, vint = self.actor_critic(obs)
+        """Action sampling only (compiled for the cuda-env backend); see _one_step_pure."""
+        mean = self.actor_mean(obs)
+        std = self.actor["logstd"].exp().unsqueeze(1)
+        return mean + std * z
+
+    def _one_step_pure(self, pos, vel, goal, sc, rc, obs, z,
+                       out_obs, out_act, out_nobs, out_rext, out_term, out_done):
+        """One rollout step: sample an action, step the env, write this step's buffer slices.
+
+        The critic values, the log-probability and the RND bonus are deliberately NOT computed
+        here. Each is a pure function of quantities the loop already stores (the observations,
+        the action noise, the true next observations) and of parameters that do not change
+        during a rollout, so computing them once after the loop over the whole [T, C, N] batch
+        gives exactly the same numbers with a fraction of the kernels. Only the action (which
+        the environment consumes) and the environment step are genuinely sequential.
+
+        The per-step buffer writes are done INSIDE this function, into slices passed as
+        arguments, so the compiler can fuse each write into the kernel that produces the value
+        instead of leaving a separate copy kernel per buffer per step.
+
+        Returns the carried environment state (pos', vel', goal', sc', rc', obs')."""
+        out_obs.copy_(obs)
+        mean = self.actor_mean(obs)
         std = self.actor["logstd"].exp().unsqueeze(1)
         action = mean + std * z
-        logp = (-0.5 * z * z - self.actor["logstd"].unsqueeze(1) - 0.5 * LOG2PI).sum(-1)
-        return action, logp, vext, vint
-
-    def _rnd_part(self, final_obs):
-        """Whiten + RND bonus only (compiled for the cuda-env backend)."""
-        tf, pf = self.rnd_features(self.whiten(final_obs))
-        return 0.5 * (pf - tf).square().sum(-1)
-
-    def _one_step_pure(self, pos, vel, goal, sc, rc, obs, z):
-        """One PURE rollout step (no attribute writes): policy + value + sample + env
-        step_core + RND bonus. Compiled into one fused graph for the capture/compile modes.
-
-        Returns (pos', vel', goal', sc', rc', obs', act, logp, vext, vint, r_ext, term_f,
-        done_f, final_obs, r_int)."""
-        mean, vext, vint = self.actor_critic(obs)
-        std = self.actor["logstd"].exp().unsqueeze(1)
-        action = mean + std * z
-        logp = (-0.5 * z * z - self.actor["logstd"].unsqueeze(1) - 0.5 * LOG2PI).sum(-1)
         (pos, vel, goal, sc, rc, nobs, r_ext, terminated, truncated,
          final_obs) = self.env.step_core(pos, vel, goal, sc, rc, action)
-        tf, pf = self.rnd_features(self.whiten(final_obs))
-        r_int = 0.5 * (pf - tf).square().sum(-1)
-        return (pos, vel, goal, sc, rc, nobs, action, logp, vext, vint, r_ext,
-                terminated.to(self.env.dtype), (terminated | truncated).to(self.env.dtype),
-                final_obs, r_int)
+        out_act.copy_(action)
+        out_nobs.copy_(final_obs)
+        out_rext.copy_(r_ext)
+        out_term.copy_(terminated.to(self.env.dtype))
+        out_done.copy_((terminated | truncated).to(self.env.dtype))
+        return pos, vel, goal, sc, rc, nobs
 
     @torch.no_grad()
     def _rollout_body(self):
@@ -364,18 +385,9 @@ class PPORND:
         b = self._bufs
         step = self._one_step
         for t in range(self.cfg.num_steps):
-            b["obs"][t].copy_(obs)
-            (pos, vel, goal, sc, rc, obs, act, logp, vext, vint, r_ext, term_f, done_f,
-             final_obs, r_int) = step(pos, vel, goal, sc, rc, obs, self._Z[t])
-            b["act"][t].copy_(act)
-            b["logp"][t].copy_(logp)
-            b["vext"][t].copy_(vext)
-            b["vint"][t].copy_(vint)
-            b["nobs"][t].copy_(final_obs)
-            b["rext"][t].copy_(r_ext)
-            b["term"][t].copy_(term_f)
-            b["done"][t].copy_(done_f)
-            b["rint"][t].copy_(r_int)
+            pos, vel, goal, sc, rc, obs = step(
+                pos, vel, goal, sc, rc, obs, self._Z[t],
+                b["obs"][t], b["act"][t], b["nobs"][t], b["rext"][t], b["term"][t], b["done"][t])
         self._S_pos.copy_(pos)
         self._S_vel.copy_(vel)
         self._S_goal.copy_(goal)
@@ -392,17 +404,13 @@ class PPORND:
         obs = env.state
         for t in range(self.cfg.num_steps):
             b["obs"][t].copy_(obs)
-            action, logp, vext, vint = self._policy_fn(obs, self._Z[t])
+            action = self._policy_fn(obs, self._Z[t])
             b["act"][t].copy_(action)
-            b["logp"][t].copy_(logp)
-            b["vext"][t].copy_(vext)
-            b["vint"][t].copy_(vint)
             obs, r_ext, terminated, truncated, final_obs = env.step(action)
             b["nobs"][t].copy_(final_obs)
             b["rext"][t].copy_(r_ext)
             b["term"][t].copy_(terminated.to(env.dtype))
             b["done"][t].copy_((terminated | truncated).to(env.dtype))
-            b["rint"][t].copy_(self._rnd_fn(final_obs))
 
     def _build_rollout_graph(self):
         """Warm up and capture _rollout_body as one CUDA graph (128 steps -> one replay).
@@ -455,6 +463,11 @@ class PPORND:
 
     @torch.no_grad()
     def _post_body(self):
+        """Run the post-rollout processing (compiled when the knob is set)."""
+        self._post_fn()
+
+    @torch.no_grad()
+    def _post_body_impl(self):
         """Post-rollout processing over the static buffers (capturable): bootstrap values,
         intrinsic filter + normalization, two-stream GAE, running-statistics updates, and
         the flattened batch written IN PLACE into _U (spec sections 4-7)."""
@@ -465,11 +478,27 @@ class PPORND:
         obs_buf, nobs_buf, act_buf = b["obs"], b["nobs"], b["act"]
         logp_buf, rext_buf, rint_buf = b["logp"], b["rext"], b["rint"]
         term_buf, done_buf, vext_buf, vint_buf = b["term"], b["done"], b["vext"], b["vint"]
+        # before: buffers are [T, C, N, k]; after: [C, T*N, k], row index t*N + n
+        flat = lambda x: x.permute(1, 0, 2, *range(3, x.dim())).reshape(C, T * N, *x.shape[3:])
+        unflat = lambda x: x.view(C, T, N).permute(1, 0, 2)
+        flat_obs, flat_nobs = flat(obs_buf), flat(nobs_buf)
 
-        # bootstrap values for every stored next obs in one batched call (spec 6)
-        vext_next, vint_next = self.critic_values(nobs_buf.permute(1, 0, 2, 3).reshape(C, T * N, 4))
-        vext_next = vext_next.view(C, T, N).permute(1, 0, 2)
-        vint_next = vint_next.view(C, T, N).permute(1, 0, 2)
+        # --- quantities hoisted out of the T-step rollout loop (exact: pure functions of the
+        # stored data and of parameters that did not change during the rollout) ---
+        # log-probability of the sampled actions depends only on the noise and on logstd
+        logstd = self.actor["logstd"]
+        logp_buf.copy_((-0.5 * self._Z * self._Z - logstd.view(1, C, 1, 2)
+                        - 0.5 * LOG2PI).sum(-1))
+        # one critic pass covers both the on-step values and the bootstrap values
+        vall_e, vall_i = self.critic_values(torch.cat([flat_obs, flat_nobs], dim=1))
+        vext_buf.copy_(unflat(vall_e[:, :T * N]))
+        vint_buf.copy_(unflat(vall_i[:, :T * N]))
+        vext_next = unflat(vall_e[:, T * N:])
+        vint_next = unflat(vall_i[:, T * N:])
+        # intrinsic bonus on the true next observations, with the statistics as they stood at
+        # the START of this iteration (the update below advances them) — spec section 4.2
+        tf_old, pf_old = self.rnd_features(self.whiten(flat_nobs))
+        rint_buf.copy_(unflat(0.5 * (pf_old - tf_old).square().sum(-1)))
 
         # intrinsic filter forward in time + per-copy normalization (spec 5.2)
         filt = torch.empty(T, C, N, device=dev)
@@ -496,11 +525,10 @@ class PPORND:
             aext_buf[t] = aext
             aint_buf[t] = aint
 
-        # flatten (C, T*N, ...) IN PLACE into the static batch buffers; RND obs statistics
-        # update precedes the whiten so the update phase sees the NEW statistics (spec 4.2)
-        flat = lambda x: x.permute(1, 0, 2, *range(3, x.dim())).reshape(
-            C, T * N, *x.shape[3:])
-        nobs_flat = flat(nobs_buf)
+        # flatten (C, T*N, ...) IN PLACE into the static batch buffers; the RND observation
+        # statistics update precedes the whiten so the update phase sees the NEW statistics
+        # (spec section 4.2), unlike the bonus above which used the old ones
+        nobs_flat = flat_nobs
         self.obs_rms.update(nobs_flat)
         U = self._U
         U["obs"].copy_(flat(obs_buf))
@@ -760,7 +788,10 @@ class PPORND:
                 for _ in range(cfg.num_steps):
                     a = torch.rand(C, N, 2, device=self.device) * 2 - 1
                     _, _, _, _, final_obs = self.env.step(a)
-                    batch.append(final_obs)
+                    # clone: the fused-CUDA env returns a preallocated buffer that the next
+                    # step overwrites, so appending it directly would stack N copies of the
+                    # last step and prime the statistics with zero variance along time
+                    batch.append(final_obs.clone())
                 self.obs_rms.update(torch.stack(batch).permute(1, 0, 2, 3).reshape(C, -1, 4))
         self.env.reset()
         self._sync_state_from_env()

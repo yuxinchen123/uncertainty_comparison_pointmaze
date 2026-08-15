@@ -61,6 +61,10 @@ class PPOConfig:
     obs_norm_init_iters: int = 10
     bootstrap_on_truncation: bool = True
     base_seed: int = 0
+    hoist_rollout: bool = True       # compute the critic values, the log-probability and the
+                                     # RND bonus AFTER the rollout scan, in one wide pass each,
+                                     # instead of once per step inside it (round 2, J1)
+    scan_unroll: int = 1             # unroll factor for the rollout scan (round 2, J2)
 
 
 class RMSState(NamedTuple):
@@ -327,30 +331,67 @@ class JaxPPORND:
         obs_rms_old = state.obs_rms
         z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, 2), F32)
 
-        def body(carry, z):
-            env_state, obs = carry
-            vext, vint = self._critic_values(params["critic"], obs)
-            mean = self._actor_mean(params["actor"], obs)
-            logstd = params["actor"]["logstd"]
-            action = mean + jnp.exp(logstd)[:, None, :] * z
-            logp = (-0.5 * z * z - logstd[:, None, :] - 0.5 * LOG2PI).sum(-1)
-            env_state, next_obs, r_ext, term, trunc, final_obs = self.env.step(env_state, action)
-            rnd_in = self._whiten(final_obs, obs_rms_old)
-            tf, pf = self._rnd_features(params["predictor"], rnd_in)
-            r_int = 0.5 * ((pf - tf) ** 2).sum(-1)
-            out = (obs, action, logp, vext, vint, final_obs, r_ext,
-                   term.astype(F32), (term | trunc).astype(F32), r_int)
-            return (env_state, next_obs), out
+        logstd = params["actor"]["logstd"]
+        flat = lambda x: x.transpose(1, 0, 2, *range(3, x.ndim)).reshape(
+            C, T * N, *x.shape[3:])
+        unflat = lambda x: x.reshape(C, T, N).transpose(1, 0, 2)
 
-        (env_state, obs_last), outs = jax.lax.scan(body, (state.env_state, state.obs), z_all)
-        (obs_buf, act_buf, logp_buf, vext_buf, vint_buf, nobs_buf, rext_buf,
-         term_buf, done_buf, rint_buf) = outs
+        if cfg.hoist_rollout:
+            # The scan carries only what is genuinely sequential: the action (which the
+            # environment consumes) and the environment step. The critic values, the
+            # log-probability and the RND bonus are pure functions of data the scan already
+            # stores and of parameters that do not change during a rollout, so they are
+            # computed once afterwards over the whole [C, T*N, ...] batch.
+            def body(carry, z):
+                env_state, obs = carry
+                mean = self._actor_mean(params["actor"], obs)
+                action = mean + jnp.exp(logstd)[:, None, :] * z
+                env_state, next_obs, r_ext, term, trunc, final_obs = self.env.step(
+                    env_state, action)
+                out = (obs, action, final_obs, r_ext,
+                       term.astype(F32), (term | trunc).astype(F32))
+                return (env_state, next_obs), out
 
-        # bootstrap values on every stored next obs in one batched call
-        nobs_flat = nobs_buf.transpose(1, 0, 2, 3).reshape(C, T * N, 4)
-        vext_next, vint_next = self._critic_values(params["critic"], nobs_flat)
-        vext_next = vext_next.reshape(C, T, N).transpose(1, 0, 2)
-        vint_next = vint_next.reshape(C, T, N).transpose(1, 0, 2)
+            (env_state, obs_last), outs = jax.lax.scan(
+                body, (state.env_state, state.obs), z_all, unroll=cfg.scan_unroll)
+            obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+
+            # log-probability of the sampled actions depends only on the noise and on logstd
+            logp_buf = (-0.5 * z_all * z_all - logstd[None, :, None, :] - 0.5 * LOG2PI).sum(-1)
+            # one critic pass covers the on-step values and the bootstrap values together
+            obs_flat, nobs_flat = flat(obs_buf), flat(nobs_buf)
+            vall_e, vall_i = self._critic_values(
+                params["critic"], jnp.concatenate([obs_flat, nobs_flat], axis=1))
+            vext_buf, vint_buf = unflat(vall_e[:, :T * N]), unflat(vall_i[:, :T * N])
+            vext_next, vint_next = unflat(vall_e[:, T * N:]), unflat(vall_i[:, T * N:])
+            # intrinsic bonus with the statistics as they stood at the START of the iteration
+            tf_old, pf_old = self._rnd_features(
+                params["predictor"], self._whiten(nobs_flat, obs_rms_old))
+            rint_buf = unflat(0.5 * ((pf_old - tf_old) ** 2).sum(-1))
+        else:
+            # round-1 form, kept so the hoist can be measured and checked against it
+            def body(carry, z):
+                env_state, obs = carry
+                vext, vint = self._critic_values(params["critic"], obs)
+                mean = self._actor_mean(params["actor"], obs)
+                action = mean + jnp.exp(logstd)[:, None, :] * z
+                logp = (-0.5 * z * z - logstd[:, None, :] - 0.5 * LOG2PI).sum(-1)
+                env_state, next_obs, r_ext, term, trunc, final_obs = self.env.step(
+                    env_state, action)
+                rnd_in = self._whiten(final_obs, obs_rms_old)
+                tf, pf = self._rnd_features(params["predictor"], rnd_in)
+                r_int = 0.5 * ((pf - tf) ** 2).sum(-1)
+                out = (obs, action, logp, vext, vint, final_obs, r_ext,
+                       term.astype(F32), (term | trunc).astype(F32), r_int)
+                return (env_state, next_obs), out
+
+            (env_state, obs_last), outs = jax.lax.scan(
+                body, (state.env_state, state.obs), z_all, unroll=cfg.scan_unroll)
+            (obs_buf, act_buf, logp_buf, vext_buf, vint_buf, nobs_buf, rext_buf,
+             term_buf, done_buf, rint_buf) = outs
+            nobs_flat = flat(nobs_buf)
+            vext_next, vint_next = self._critic_values(params["critic"], nobs_flat)
+            vext_next, vint_next = unflat(vext_next), unflat(vint_next)
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)
         def filt_body(f, r):
@@ -385,8 +426,6 @@ class JaxPPORND:
 
         # update RND observation statistics, then whiten the update batch with NEW statistics
         obs_rms = rms_update(obs_rms_old, nobs_flat)
-        flat = lambda x: x.transpose(1, 0, 2, *range(3, x.ndim)).reshape(
-            C, T * N, *x.shape[3:])
         batch = {
             "obs": flat(obs_buf), "actions": flat(act_buf), "old_logprob": flat(logp_buf),
             "adv": flat(adv), "ret_ext": flat(ret_ext), "ret_int": flat(ret_int),

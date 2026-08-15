@@ -503,30 +503,64 @@ def sec_campaign():
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
 environments, statistics, and optimizer.
 
-| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal* | coverage mean | peak VRAM [MB] |
-|---|---|---|---|---|---|---|---|
+| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|---|
 """
     for (style, c) in sorted(recs, key=lambda k: (k[0], k[1])):
         r = recs[(style, c)]
         hist = r["history"]
-        late = hist[-max(1, len(hist)//10):]
-        solved = 0
-        if late:
-            per_copy = [max(row["reward_ext_sum_per_copy"][i] for row in late)
-                        for i in range(c)]
-            solved = sum(1 for v in per_copy if v > 0)
+        late = hist[-max(1, len(hist) // 10):]
+        count = lambda rows: sum(1 for i in range(c)
+                                 if max(row["reward_ext_sum_per_copy"][i] for row in rows) > 0)
+        solved_late = count(late) if late else 0
+        solved_ever = count(hist) if hist else 0
         cov = sum(r["final_coverage_per_copy"]) / c
         md += (f"| {style} | {c} | {r['train_seconds']:.0f} | "
                f"{sci(r['env_steps_per_sec'])} | {sci(r['env_steps_per_sec'] / c)} | "
-               f"{solved}/{c} | {cov:.3f} | "
+               f"{solved_late}/{c} | {solved_ever}/{c} | {cov:.3f} | "
                f"{r['peak_vram_mb']:.0f} |\n")
     md += """
-*copies at goal = copies with a positive extrinsic-reward iteration inside the final 10%
-of training (the sparse goal is intermittently re-found; per-copy curves below).
+*Both goal columns count copies that scored a positive extrinsic reward in a SAMPLED
+iteration: "late" over the final 10% of samples, "ever" over all of them. Progress is sampled
+every 50 iterations (400 samples of 20,000), so a copy that reached the goal only in an
+unsampled iteration is missed and both columns are lower bounds. The gap between them is the
+sparse goal being found and lost again rather than held (per-copy curves below).
 
 ![campaign curves](figures/campaign_curves.png)
 """
     return md
+
+
+def sec_rounds():
+    """The two optimization rounds, what each changed, and the measured effect of each."""
+    return """## The optimization rounds
+
+The work ran as two full passes of the same loop (baseline, one change, measure, keep or
+revert, log a row), separated by a review of an earlier efficiency campaign on another project.
+
+**Round one** built everything and took the PyTorch trainer from 777 ms per iteration to
+36.6 ms at 128 copies: exact GPU environments in three frameworks, the batched multi-copy
+trainer, whole-iteration CUDA-graph capture, TF32, fused capturable Adam, the RND-target
+hoist and same-input GEMM packing. Its comparisons were single measurements — good enough for
+the large changes it was making, not good enough for the smaller ones that remained.
+
+**Round two** started by fixing that: every change since is measured with a paired ABBA
+comparison in separate processes, against its own predecessor git revision, with the
+within-configuration spread reported as a noise floor and a difference below that spread
+recorded as no effect. Four research agents produced ranked experiment lists, an audit of the
+performance checklist, an external-source sweep, and an adversarial review of the code and of
+the measurement protocol itself; the review found two genuine defects (see below). The round's
+changes and their measured effects are in the per-module ledgers; the two that carried the
+gain were compiling the post-rollout body (+11 to +14%) and hoisting the critic, the
+log-probability and the RND bonus out of the rollout loop (+42 to +45%).
+
+Defects the adversarial review found, both now fixed: the fused-CUDA environment launched its
+kernels on the legacy default stream rather than the current one, which made the published
+CUDA-environment pairing numbers untrustworthy; and priming the observation statistics with
+the CUDA environment stacked one repeated step, because that environment returns a
+preallocated buffer that the next step overwrites.
+
+"""
 
 
 def sec_techniques():
@@ -588,7 +622,7 @@ def main():
     fig_campaign_curves()
     md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
                     sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
-                    sec_campaign(), sec_techniques(), sec_repro()])
+                    sec_campaign(), sec_rounds(), sec_techniques(), sec_repro()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
     for p in PENDING:

@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 #include <cstdint>
 #include <c10/cuda/CUDAException.h>
+#include <c10/cuda/CUDAStream.h>
 
 #include "pointmaze_dynamics.h"
 
@@ -128,7 +129,8 @@ void env_step(torch::Tensor state, torch::Tensor goal,
               long max_episode_steps, bool continuing, long base_seed, long block) {
   const long B = state.numel() / 4;
   AT_DISPATCH_FLOATING_TYPES(state.scalar_type(), "env_step", [&] {
-    step_kernel<scalar_t><<<nblocks(B, (int)block), (int)block>>>(
+    step_kernel<scalar_t><<<nblocks(B, (int)block), (int)block, 0,
+        at::cuda::getCurrentCUDAStream()>>>(
         state.data_ptr<scalar_t>(), goal.data_ptr<scalar_t>(),
         step_count.data_ptr<int>(), reset_count.data_ptr<int>(), act.data_ptr<scalar_t>(),
         reward.data_ptr<scalar_t>(),
@@ -148,7 +150,8 @@ void env_reset(torch::Tensor state, torch::Tensor goal,
                double position_noise, long base_seed, long block) {
   const long B = state.numel() / 4;
   AT_DISPATCH_FLOATING_TYPES(state.scalar_type(), "env_reset", [&] {
-    reset_kernel<scalar_t><<<nblocks(B, (int)block), (int)block>>>(
+    reset_kernel<scalar_t><<<nblocks(B, (int)block), (int)block, 0,
+        at::cuda::getCurrentCUDAStream()>>>(
         state.data_ptr<scalar_t>(), goal.data_ptr<scalar_t>(),
         step_count.data_ptr<int>(), reset_count.data_ptr<int>(),
         (int)B, (int)n_envs, (scalar_t)start_x, (scalar_t)start_y,
@@ -163,7 +166,8 @@ void env_dynamics(torch::Tensor pos_in, torch::Tensor vel_in, torch::Tensor act,
                   long rows, long cols, long block) {
   const long B = pos_in.numel() / 2;
   AT_DISPATCH_FLOATING_TYPES(pos_in.scalar_type(), "env_dynamics", [&] {
-    dynamics_kernel<scalar_t><<<nblocks(B, (int)block), (int)block>>>(
+    dynamics_kernel<scalar_t><<<nblocks(B, (int)block), (int)block, 0,
+        at::cuda::getCurrentCUDAStream()>>>(
         pos_in.data_ptr<scalar_t>(), vel_in.data_ptr<scalar_t>(), act.data_ptr<scalar_t>(),
         pos_out.data_ptr<scalar_t>(), vel_out.data_ptr<scalar_t>(),
         nb_mask.data_ptr<int>(), (int)B, (int)rows, (int)cols);
