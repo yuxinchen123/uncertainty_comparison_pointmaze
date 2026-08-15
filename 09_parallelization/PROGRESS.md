@@ -37,6 +37,13 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- 2026-08-15 ~02:15 — torch env validation contract fully satisfied (fixtures float64+float32,
+  unit tests, cross-impl RNG identity, random-policy distributional check TV=0.026 PASS).
+  Learning sanity run (C=8, 20k iters, 81.92M total steps in 658 s): goal reached from
+  ~2.3M steps/copy, oscillating rediscovery, SUSTAINED reward at run end (mean 32.75,
+  max 210 per 512-step iteration). The trainer learns end to end. Torch trainer at 45.6 ms/iter (C=128); one-graph mode implemented,
+  bench pending. Fork agents: CUDA env in flight; jax agent continuing with e2e fusion tasks.
+
 - 2026-08-15 ~00:30 session start. serval05 idle (H100 NVL 95GB). Dynamics rule verified exact:
   v' = (m*clip(v,±5) + h*g*clip(a,±1))/(m+h*d), q' = q + h*v'; hard-wall clamp within 1.4 mm
   of MuJoCo soft contact. Fixtures written. Next: serval05 env bootstrap + lock + research

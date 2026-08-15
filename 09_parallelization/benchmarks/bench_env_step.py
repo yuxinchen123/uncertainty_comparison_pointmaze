@@ -14,6 +14,12 @@ import time
 from pathlib import Path
 
 import torch
+import torch._dynamo.config as dynconf
+
+# the grid benches many static shapes in one process; each is its own compile entry
+dynconf.cache_size_limit = 64
+if hasattr(dynconf, "recompile_limit"):
+    dynconf.recompile_limit = 64
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE / "pointmaze" / "common"))

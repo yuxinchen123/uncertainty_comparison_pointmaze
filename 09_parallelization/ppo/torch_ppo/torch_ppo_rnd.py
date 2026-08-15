@@ -55,6 +55,10 @@ class PPOConfig:
                                      # compiled per-step function (fused kernels, no python)
     fused_adam: bool = False         # fused CUDA Adam kernel (GPU runs)
     capture_update: bool = False     # CUDA-graph the whole update phase (implies capturable Adam)
+    one_graph: bool = False          # capture rollout+post+update as ONE graph per iteration
+                                     # (requires rollout_mode="capture" semantics and
+                                     # capture_update=True; overrides both)
+    tf32: bool = False               # TF32 tensor-core matmuls (faster, ~1e-3 relative rounding)
 
 
 def _substream_seed(*parts) -> int:
@@ -106,8 +110,15 @@ class PPORND:
     """The batched trainer. Parameters live in dicts of [C, ...] tensors."""
 
     def __init__(self, cfg: PPOConfig, env_cfg: EnvConfig = None, device="cuda"):
+        # one_graph captures the update phase inside the iteration graph, so it REQUIRES
+        # the capturable-Adam machinery; force the flag so the pairing cannot be missed
+        # (a frozen python step counter inside a captured graph corrupts bias correction)
+        if cfg.one_graph and not cfg.capture_update:
+            object.__setattr__(cfg, "capture_update", True)
         self.cfg = cfg
         self.device = torch.device(device)
+        if cfg.tf32:
+            torch.set_float32_matmul_precision("high")
         self.env = TorchPointMaze(env_cfg or EnvConfig(), cfg.n_copies, cfg.n_envs,
                                   device=device, base_seed=cfg.base_seed)
         C = cfg.n_copies
@@ -181,6 +192,26 @@ class PPORND:
         for k in ["logp", "rext", "rint", "term", "done", "vext", "vint"]:
             self._bufs[k] = torch.zeros(T, C, N, device=dev)
         self._graph = None
+        # static flattened-batch buffers, filled IN PLACE by _post_body each iteration and
+        # consumed by every update path (the update graph reads them directly, no copies)
+        B = T * N
+        self._U = {
+            "obs": torch.zeros(C, B, 4, device=dev), "actions": torch.zeros(C, B, 2, device=dev),
+            "old_logprob": torch.zeros(C, B, device=dev), "adv": torch.zeros(C, B, device=dev),
+            "ret_ext": torch.zeros(C, B, device=dev), "ret_int": torch.zeros(C, B, device=dev),
+            "vext_old": torch.zeros(C, B, device=dev), "rnd_input": torch.zeros(C, B, 4, device=dev),
+            "rnd_tf": torch.zeros(C, B, cfg.rnd_feature_dim, device=dev),
+        }
+        self._log_rext_sum = torch.zeros(C, device=dev)
+        self._log_rint_mean = torch.zeros(C, device=dev)
+        # cumulative visited-cell map per copy (exploration diagnostic; open cells only count)
+        rows, cols = self.env.rows, self.env.cols
+        self._visited = torch.zeros(C, rows * cols, dtype=torch.bool, device=dev)
+        self._open_cells = (self.env.nb_mask >= 0)  # placeholder replaced two lines down
+        import numpy as _np
+        from pm_common import MAPS as _MAPS
+        wall = _np.array(_MAPS[self.env.cfg.map_name]) == 1
+        self._open_cells = torch.as_tensor(~wall.reshape(-1), device=dev)
         # the per-step function used by _rollout_body: compiled for the GPU fast paths
         if cfg.rollout_mode in ("compile-step", "capture"):
             self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False)
@@ -213,14 +244,45 @@ class PPORND:
         return vext.squeeze(-1), vint.squeeze(-1)
 
     def rnd_features(self, x):
-        """(target_features detached, predictor_features), each [C, M, F]."""
+        """(target_features detached, predictor_features), each [C, M, F] — layer-1 packed:
+        target and predictor read the same input, so their first layers run as ONE GEMM."""
+        W0 = torch.cat([self.target["W0"], self.predictor["W0"]], -1)
+        b0 = torch.cat([self.target["b0"], self.predictor["b0"]], -1)
+        h = torch.relu(torch.baddbmm(b0.unsqueeze(1), x, W0))
+        Hh = self.target["W0"].shape[-1]
+        th, ph = h[..., :Hh], h[..., Hh:]
         with torch.no_grad():
-            th = torch.relu(torch.baddbmm(self.target["b0"].unsqueeze(1), x, self.target["W0"]))
             tf = torch.baddbmm(self.target["b1"].unsqueeze(1), th, self.target["W1"])
-        ph = torch.relu(torch.baddbmm(self.predictor["b0"].unsqueeze(1), x, self.predictor["W0"]))
         ph = torch.relu(torch.baddbmm(self.predictor["b1"].unsqueeze(1), ph, self.predictor["W1"]))
         pf = torch.baddbmm(self.predictor["b2"].unsqueeze(1), ph, self.predictor["W2"])
         return tf, pf
+
+    def actor_critic(self, x):
+        """Packed actor+critic forward on the same input [C, M, 4]: one layer-1 GEMM for
+        both trunks, packed critic heads. Returns (mean [C,M,2], vext [C,M], vint [C,M])."""
+        W0 = torch.cat([self.actor["W0"], self.critic["W0"]], -1)
+        b0 = torch.cat([self.actor["b0"], self.critic["b0"]], -1)
+        h = torch.tanh(torch.baddbmm(b0.unsqueeze(1), x, W0))
+        ha, hc = h[..., :64], h[..., 64:]
+        ha = torch.tanh(torch.baddbmm(self.actor["b1"].unsqueeze(1), ha, self.actor["W1"]))
+        hc = torch.tanh(torch.baddbmm(self.critic["b1"].unsqueeze(1), hc, self.critic["W1"]))
+        mean = torch.baddbmm(self.actor["b2"].unsqueeze(1), ha, self.actor["W2"])
+        Wh = torch.cat([self.critic["Wext"], self.critic["Wint"]], -1)
+        bh = torch.cat([self.critic["bext"], self.critic["bint"]], -1)
+        v = torch.baddbmm(bh.unsqueeze(1), hc, Wh)
+        return mean, v[..., 0], v[..., 1]
+
+    def predictor_features(self, x):
+        """Predictor features only [C, M, F] (the frozen target is hoisted per iteration)."""
+        ph = torch.relu(torch.baddbmm(self.predictor["b0"].unsqueeze(1), x, self.predictor["W0"]))
+        ph = torch.relu(torch.baddbmm(self.predictor["b1"].unsqueeze(1), ph, self.predictor["W1"]))
+        return torch.baddbmm(self.predictor["b2"].unsqueeze(1), ph, self.predictor["W2"])
+
+    def target_features(self, x):
+        """Frozen target features [C, M, F], never with gradient."""
+        with torch.no_grad():
+            th = torch.relu(torch.baddbmm(self.target["b0"].unsqueeze(1), x, self.target["W0"]))
+            return torch.baddbmm(self.target["b1"].unsqueeze(1), th, self.target["W1"])
 
     def whiten(self, obs):
         """RND input whitening with the CURRENT per-copy statistics, clip +-5 (spec 4.2).
@@ -253,8 +315,7 @@ class PPORND:
 
         Returns (pos', vel', goal', sc', rc', obs', act, logp, vext, vint, r_ext, term_f,
         done_f, final_obs, r_int)."""
-        vext, vint = self.critic_values(obs)
-        mean = self.actor_mean(obs)
+        mean, vext, vint = self.actor_critic(obs)
         std = self.actor["logstd"].exp().unsqueeze(1)
         action = mean + std * z
         logp = (-0.5 * z * z - self.actor["logstd"].unsqueeze(1) - 0.5 * LOG2PI).sum(-1)
@@ -332,6 +393,20 @@ class PPORND:
         else:
             self._rollout_body()
         self.global_step += T * C * N
+        self._post_body()
+        out = dict(self._U)
+        out["reward_ext_sum"] = self._log_rext_sum
+        out["rint_mean"] = self._log_rint_mean
+        return out
+
+    @torch.no_grad()
+    def _post_body(self):
+        """Post-rollout processing over the static buffers (capturable): bootstrap values,
+        intrinsic filter + normalization, two-stream GAE, running-statistics updates, and
+        the flattened batch written IN PLACE into _U (spec sections 4-7)."""
+        cfg = self.cfg
+        C, N, T = cfg.n_copies, cfg.n_envs, cfg.num_steps
+        dev = self.device
         b = self._bufs
         obs_buf, nobs_buf, act_buf = b["obs"], b["nobs"], b["act"]
         logp_buf, rext_buf, rint_buf = b["logp"], b["rext"], b["rint"]
@@ -348,7 +423,7 @@ class PPORND:
         for t in range(T):
             f = cfg.gamma_int * f + rint_buf[t]
             filt[t] = f
-        self.int_filter = f
+        self.int_filter.copy_(f)
         self.int_rms.update(filt.permute(1, 0, 2).reshape(C, T * N, 1))
         int_std = (self.int_rms.var + 1e-8).sqrt().to(torch.float32).view(C, 1, 1)
         rint_hat = rint_buf / int_std.permute(2, 0, 1)
@@ -367,22 +442,31 @@ class PPORND:
             aext_buf[t] = aext
             aint_buf[t] = aint
 
-        adv = cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf
-        ret_ext = aext_buf + vext_buf
-        ret_int = aint_buf + vint_buf
-
-        # update RND observation statistics with this rollout's next observations, then
-        # rebuild the update-phase RND input with the NEW statistics (spec 4.2 ordering)
+        # flatten (C, T*N, ...) IN PLACE into the static batch buffers; RND obs statistics
+        # update precedes the whiten so the update phase sees the NEW statistics (spec 4.2)
         flat = lambda x: x.permute(1, 0, 2, *range(3, x.dim())).reshape(
             C, T * N, *x.shape[3:])
         nobs_flat = flat(nobs_buf)
         self.obs_rms.update(nobs_flat)
-        return {
-            "obs": flat(obs_buf), "actions": flat(act_buf), "old_logprob": flat(logp_buf),
-            "adv": flat(adv), "ret_ext": flat(ret_ext), "ret_int": flat(ret_int),
-            "vext_old": flat(vext_buf), "rnd_input": self.whiten(nobs_flat),
-            "reward_ext_sum": rext_buf.sum(dim=(0, 2)), "rint_mean": rint_buf.mean(dim=(0, 2)),
-        }
+        U = self._U
+        U["obs"].copy_(flat(obs_buf))
+        U["actions"].copy_(flat(act_buf))
+        U["old_logprob"].copy_(flat(logp_buf))
+        U["adv"].copy_(flat(cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf))
+        U["ret_ext"].copy_(flat(aext_buf + vext_buf))
+        U["ret_int"].copy_(flat(aint_buf + vint_buf))
+        U["vext_old"].copy_(flat(vext_buf))
+        U["rnd_input"].copy_(self.whiten(nobs_flat))
+        # hoist: the target net is frozen, so its features are constant within the
+        # iteration — computed once here instead of once per minibatch step
+        U["rnd_tf"].copy_(self.target_features(U["rnd_input"]))
+        self._log_rext_sum.copy_(rext_buf.sum(dim=(0, 2)))
+        self._log_rint_mean.copy_(rint_buf.mean(dim=(0, 2)))
+        # mark visited cells: world (x, y) -> flat cell index, per copy
+        rows, cols = self.env.rows, self.env.cols
+        jj = (nobs_flat[..., 0] + cols / 2.0).long().clamp(0, cols - 1)
+        ii = (rows / 2.0 - nobs_flat[..., 1]).long().clamp(0, rows - 1)
+        self._visited.scatter_(1, ii * cols + jj, torch.ones_like(jj, dtype=torch.bool))
 
     # ---- update phase ----
 
@@ -411,10 +495,9 @@ class PPORND:
         a = mb["adv"]
         a_n = (a - a.mean(dim=1, keepdim=True)) / (a.std(dim=1, unbiased=True, keepdim=True) + 1e-8)
 
-        mean = self.actor_mean(mb["obs"])
+        mean, vext, vint = self.actor_critic(mb["obs"])
         logstd = self.actor["logstd"]
         newlogp = self._logprob(mean, logstd, mb["actions"])
-        vext, vint = self.critic_values(mb["obs"])
         ratio = (newlogp - mb["old_logprob"]).exp()
 
         if style_a:
@@ -428,8 +511,8 @@ class PPORND:
                                         (vc - mb["ret_ext"]).square()).mean(dim=1)
         v_int = 0.5 * (vint - mb["ret_int"]).square().mean(dim=1)
 
-        tf, pf = self.rnd_features(mb["rnd_input"])
-        fwd = (pf - tf).square().mean(dim=2).mean(dim=1)
+        pf = self.predictor_features(mb["rnd_input"])
+        fwd = (pf - mb["rnd_tf"]).square().mean(dim=2).mean(dim=1)
 
         ent = (0.5 + 0.5 * LOG2PI + logstd).sum(dim=1)
         loss_c = pg - cfg.ent_coef * ent + cfg.vf_coef * (v_ext + v_int) + fwd
@@ -455,8 +538,7 @@ class PPORND:
             for k in range(cfg.num_minibatches):
                 idx = perm[e][:, k * mb_size:(k + 1) * mb_size]
                 mb = {}
-                for key in ["obs", "actions", "old_logprob", "adv", "ret_ext", "ret_int",
-                            "vext_old", "rnd_input"]:
+                for key in self._U_KEYS:
                     t = batch[key]
                     ix = idx.unsqueeze(-1).expand(C, mb_size, t.shape[-1]) if t.dim() == 3 else idx
                     mb[key] = t.gather(1, ix)
@@ -467,7 +549,7 @@ class PPORND:
         return last
 
     _U_KEYS = ["obs", "actions", "old_logprob", "adv", "ret_ext", "ret_int",
-               "vext_old", "rnd_input"]
+               "vext_old", "rnd_input", "rnd_tf"]
 
     def _update_body_captured(self):
         """The update loop over the static _U buffers (capturable as one CUDA graph).
@@ -497,13 +579,12 @@ class PPORND:
                     self._clip_per_copy_and_step()
         self._loss_out.copy_(loss.detach())
 
-    def _build_update_graph(self, example_batch):
+    def _build_update_graph(self, example_batch=None):
         """Warm up (with parameter/optimizer state restored afterwards) and capture the
         whole update phase as one CUDA graph."""
         cfg = self.cfg
         C = cfg.n_copies
         Brows = cfg.num_steps * cfg.n_envs
-        self._U = {k: example_batch[k].clone() for k in self._U_KEYS}
         # identity permutations for warmup/capture: building must not consume the global
         # RNG (real permutations are drawn in update_captured, in step with the eager path)
         self._perm = torch.arange(Brows, device=self.device).expand(
@@ -533,18 +614,76 @@ class PPORND:
         self._update_graph = g
 
     def update_captured(self, batch):
-        """Copy the fresh batch into the static buffers, redraw permutations, replay.
-        Builds the graph on first use (warmup restores parameters, so iteration 1 is real)."""
+        """The batch already lives in the static _U buffers (filled by _post_body); redraw
+        permutations and replay. Builds the graph on first use (warmup restores parameters,
+        so iteration 1 is real)."""
         if self._update_graph is None:
             self._build_update_graph(batch)
-        for k in self._U_KEYS:
-            self._U[k].copy_(batch[k])
         if self.cfg.update_style != "full_batch":
             cfg = self.cfg
             self._perm.copy_(torch.rand(cfg.update_epochs, cfg.n_copies,
                                         cfg.num_steps * cfg.n_envs,
                                         device=self.device).argsort(dim=-1))
         self._update_graph.replay()
+        return self._loss_out
+
+    def _iteration_body(self):
+        """One full training iteration over the static buffers: rollout, post, update."""
+        self._rollout_body()
+        self._post_body()
+        self._update_body_captured()
+
+    def _build_iteration_graph(self):
+        """Warm up and capture the WHOLE iteration as one CUDA graph (Module 3, torch).
+
+        Warmup advances env state, running statistics, parameters, and optimizer state;
+        everything is snapshotted and restored so training starts from the virgin state.
+        """
+        cfg = self.cfg
+        C = cfg.n_copies
+        Brows = cfg.num_steps * cfg.n_envs
+        self._perm = torch.arange(Brows, device=self.device).expand(
+            cfg.update_epochs, C, Brows).contiguous()
+        self._loss_out = torch.zeros((), device=self.device)
+        self._Z.normal_()
+
+        stat_tensors = [self._S_pos, self._S_vel, self._S_goal, self._S_sc, self._S_rc,
+                        self._S_obs, self.int_filter,
+                        self.obs_rms.mean, self.obs_rms.var, self.obs_rms.count,
+                        self.int_rms.mean, self.int_rms.var, self.int_rms.count]
+        snap_state = [t.clone() for t in stat_tensors]
+        snap_params = [t.detach().clone() for t in self.trainable]
+        side = torch.cuda.Stream()
+        side.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(side):
+            for _ in range(3):
+                self._iteration_body()
+        torch.cuda.current_stream().wait_stream(side)
+        with torch.no_grad():
+            for t, sv in zip(stat_tensors, snap_state):
+                t.copy_(sv)
+            for t, sv in zip(self.trainable, snap_params):
+                t.copy_(sv)
+        for group_state in self.opt.state.values():
+            for k, v in group_state.items():
+                if torch.is_tensor(v):
+                    v.zero_()
+
+        g = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(g):
+            self._iteration_body()
+        self._iteration_graph = g
+
+    def iteration_captured(self):
+        """One training iteration: refill noise and permutations, replay the graph."""
+        cfg = self.cfg
+        self._Z.normal_()
+        if cfg.update_style != "full_batch":
+            self._perm.copy_(torch.rand(cfg.update_epochs, cfg.n_copies,
+                                        cfg.num_steps * cfg.n_envs,
+                                        device=self.device).argsort(dim=-1))
+        self._iteration_graph.replay()
+        self.global_step += cfg.num_steps * cfg.n_copies * cfg.n_envs
         return self._loss_out
 
     # ---- driver ----
@@ -564,8 +703,12 @@ class PPORND:
         self.env.reset()
         self._sync_state_from_env()
 
-    def train(self, num_iterations, log_every_seconds=1200, log_fn=print):
-        """Run the full loop. Sparse logging (default every 20 minutes); returns final stats."""
+    def train(self, num_iterations, log_every_seconds=1200, log_fn=print,
+              history_every=0):
+        """Run the full loop. Sparse logging (default every 20 minutes); returns final stats.
+
+        history_every > 0 samples per-copy metrics every that many iterations (one small
+        host sync each sample) and returns them under stats["history"]."""
         cfg = self.cfg
         if cfg.capture_update:
             update = self.update_captured
@@ -573,8 +716,11 @@ class PPORND:
             update = self.update_full_batch
         else:
             update = self.update_epoch_minibatch
+        history = []
         self.prime_obs_rms()
-        if self.cfg.rollout_mode == "capture":
+        if cfg.one_graph:
+            self._build_iteration_graph()
+        elif self.cfg.rollout_mode == "capture":
             self._build_rollout_graph()
         t0 = time.time()
         last_log = t0
@@ -586,19 +732,33 @@ class PPORND:
                 else:
                     for gme in self.opt.param_groups:
                         gme["lr"] = lr
-            batch = self.rollout()
-            loss = update(batch)
+            if cfg.one_graph:
+                loss = self.iteration_captured()
+            else:
+                batch = self.rollout()
+                loss = update(batch)
             now = time.time()
+            if history_every and (it % history_every == 0 or it == num_iterations):
+                cov = self._visited[:, self._open_cells].float().mean(dim=1)
+                history.append({
+                    "iteration": it, "global_step": self.global_step,
+                    "seconds": now - t0,
+                    "reward_ext_sum_per_copy": self._log_rext_sum.tolist(),
+                    "rint_mean_per_copy": self._log_rint_mean.tolist(),
+                    "coverage_per_copy": cov.tolist(),
+                })
             if now - last_log >= log_every_seconds or it == num_iterations:
                 last_log = now
-                r = batch["reward_ext_sum"]
+                r = self._log_rext_sum
+                cov = self._visited[:, self._open_cells].float().mean(dim=1)
                 log_fn(f"iter {it}/{num_iterations} step {self.global_step} "
                        f"loss {float(loss):.4f} ext-reward/copy mean {r.mean():.3f} "
                        f"min {r.min():.3f} max {r.max():.3f} "
-                       f"rint mean {batch['rint_mean'].mean():.4f} "
+                       f"rint mean {self._log_rint_mean.mean():.4f} "
+                       f"coverage mean {cov.mean():.3f} max {cov.max():.3f} "
                        f"elapsed {now - t0:.0f}s")
         return {"iterations": num_iterations, "global_step": self.global_step,
-                "seconds": time.time() - t0}
+                "seconds": time.time() - t0, "history": history}
 
 
 def main():

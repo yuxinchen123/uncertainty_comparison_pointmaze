@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 
 BASE = Path(__file__).resolve().parent.parent
-OUT = Path("/tmp/rnd09_cross_impl")
+OUT = BASE / "tests" / ".cross_impl_tmp"
 C, N, SEED = 3, 17, 42
 
 
@@ -48,9 +48,25 @@ def dump_jax():
     np.savez(OUT / "jax.npz", pos0=pos0, goal0=goal0, pos1=np.asarray(obs[..., :2]))
 
 
+def dump_cuda():
+    """Write the same three arrays from the fused-CUDA implementation (runs on the GPU)."""
+    sys.path.insert(0, str(BASE / "common")); sys.path.insert(0, str(BASE / "cuda_env"))
+    import torch
+    from pm_common import EnvConfig
+    from cuda_pointmaze import CudaPointMaze
+    env = CudaPointMaze(EnvConfig(max_episode_steps=3), C, N, device="cuda", base_seed=SEED)
+    obs = env.reset()
+    pos0, goal0 = obs[..., :2].cpu().numpy().copy(), env.goal.cpu().numpy().copy()
+    for _ in range(3):
+        obs2, *_ = env.step(torch.zeros(C, N, 2, device="cuda"))
+    OUT.mkdir(exist_ok=True)
+    np.savez(OUT / "cuda.npz", pos0=pos0, goal0=goal0, pos1=obs2[..., :2].cpu().numpy())
+
+
 def compare():
-    """Bitwise equality of every dumped array."""
-    a, b = np.load(OUT / "torch.npz"), np.load(OUT / "jax.npz")
+    """Bitwise equality of every dumped array (second impl chosen by argv: jax or cuda)."""
+    other = sys.argv[2] if len(sys.argv) > 2 else "jax"
+    a, b = np.load(OUT / "torch.npz"), np.load(OUT / f"{other}.npz")
     for k in ["pos0", "goal0", "pos1"]:
         assert a[k].shape == b[k].shape, k
         same = (a[k] == b[k]).all()
@@ -61,4 +77,4 @@ def compare():
 
 
 if __name__ == "__main__":
-    {"dump-torch": dump_torch, "dump-jax": dump_jax, "compare": compare}[sys.argv[1]]()
+    {"dump-torch": dump_torch, "dump-jax": dump_jax, "dump-cuda": dump_cuda, "compare": compare}[sys.argv[1]]()

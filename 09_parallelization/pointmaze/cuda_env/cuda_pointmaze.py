@@ -50,13 +50,16 @@ class CudaPointMaze:
         self.start_center = cell_center(cfg.start_cell, self.rows, self.cols)
         self.goal_center = cell_center(cfg.goal_cell, self.rows, self.cols)
 
-        z2 = lambda: torch.zeros(n_copies, n_envs, 2, dtype=dtype, device=self.device)
-        self.pos, self.vel, self.goal = z2(), z2(), z2()
+        # packed state [C, N, 4] = (x, y, vx, vy); pos/vel are stride-4 views of it and the
+        # post-reset state IS the returned observation (no separate obs buffer or write)
+        self.state = torch.zeros(n_copies, n_envs, 4, dtype=dtype, device=self.device)
+        self.pos = self.state[..., 0:2]
+        self.vel = self.state[..., 2:4]
+        self.goal = torch.zeros(n_copies, n_envs, 2, dtype=dtype, device=self.device)
         self.step_count = torch.zeros(n_copies, n_envs, dtype=torch.int32, device=self.device)
         self.reset_count = torch.zeros(n_copies, n_envs, dtype=torch.int32, device=self.device)
 
         # preallocated per-step outputs (reused every call)
-        self._obs = torch.zeros(n_copies, n_envs, 4, dtype=dtype, device=self.device)
         self._reward = torch.zeros(n_copies, n_envs, dtype=dtype, device=self.device)
         self._terminated = torch.zeros(n_copies, n_envs, dtype=torch.bool, device=self.device)
         self._truncated = torch.zeros(n_copies, n_envs, dtype=torch.bool, device=self.device)
@@ -64,16 +67,16 @@ class CudaPointMaze:
 
     def reset(self) -> torch.Tensor:
         """Reset every env at its current reset generation; returns obs [C, N, 4]."""
-        _ext().env_reset(self.pos, self.vel, self.goal, self.step_count, self.reset_count,
-                         self._obs, self.N, self.start_center[0], self.start_center[1],
+        _ext().env_reset(self.state, self.goal, self.step_count, self.reset_count,
+                         self.N, self.start_center[0], self.start_center[1],
                          self.goal_center[0], self.goal_center[1], self.cfg.position_noise,
                          self.base_seed, self.block)
-        return self._obs
+        return self.state
 
     def step(self, act: torch.Tensor):
         """One fused env step. act [C, N, 2] on device, env dtype, contiguous."""
-        _ext().env_step(self.pos, self.vel, self.goal, self.step_count, self.reset_count,
-                        act.contiguous(), self._obs, self._reward, self._terminated,
+        _ext().env_step(self.state, self.goal, self.step_count, self.reset_count,
+                        act.contiguous(), self._reward, self._terminated,
                         self._truncated, self._final_obs, self.nb_mask,
                         self.N, self.rows, self.cols,
                         self.start_center[0], self.start_center[1],
@@ -81,7 +84,7 @@ class CudaPointMaze:
                         self.cfg.position_noise, self.cfg.goal_radius ** 2,
                         self.cfg.reward_shift, self.cfg.max_episode_steps,
                         self.cfg.continuing_task, self.base_seed, self.block)
-        return self._obs, self._reward, self._terminated, self._truncated, self._final_obs
+        return self.state, self._reward, self._terminated, self._truncated, self._final_obs
 
     def dynamics_step(self, pos, vel, act):
         """Pure physics on arbitrary [..., 2] tensors (fixture-checker path)."""

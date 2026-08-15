@@ -13,6 +13,9 @@ tests/test_torch_ppo.py (CPU) and tests/test_capture_gpu.py (GPU). Bench JSONs i
 | 3 | whole-rollout CUDA-graph capture of the EAGER body (pure step_core, in-place RMS, static buffers, pre-drawn noise) | rollout 187-211 ms — WORSE than per-step compile: replaying thousands of tiny unfused eager kernels is kernel-time bound | superseded by 4 |
 | 4 | capture the COMPILED per-step function (fused kernels x 128 in one replay, zero python) | rollout 35-40 ms. Capture bitwise-equal to uncaptured compiled step (test_capture_gpu) | KEEP |
 | 5 | capture the whole UPDATE phase (capturable+fused Adam with tensor lr, static input buffers, identity-perm build so the graph build consumes no RNG, compiled loss fwd/bwd, in-graph per-copy clip) | update 125 -> 16.7 ms; TOTAL 45.6 ms/iter = 1.44e6 env-steps/s at C=128 (17x vs baseline; C=8: 32.8 ms). Captured update BITWISE equal to eager update (worst param diff 0.0, both styles) | KEEP |
+| 6 | one-graph iteration capture + TF32 (see e2e ledger rows 1-2) | 45.6 -> 37.9 ms/iter (C=128, style B); style A 26.9 ms | KEEP |
+| 7 | hoist the frozen RND target features out of the minibatch loop (computed once per iteration in _post_body, gathered per minibatch like any batch field) | style B C=128: 37.9 -> 37.3 ms (+1.6%); style A: 26.9 -> 25.2 ms (+6.7%). All GPU capture tests still bitwise-pass | KEEP || 8 | same-input GEMM packing (actor+critic trunks share one layer-1 GEMM and one packed critic-head GEMM; RND target+predictor share one layer-1 GEMM; weights concatenated at forward time so params/optimizer/init stay untouched) | style B C=128: 37.3 -> 36.6 ms (+1.9%); style A: 25.2 -> 24.5 ms (+2.9%); C=8: 27.2 -> 26.4. GPU capture tests still bitwise-pass | KEEP — FINAL production config: one-graph + TF32 + fused capturable Adam + target hoist + packing = 21.2x vs eager baseline at C=128 |
+
 
 ## Notes
 

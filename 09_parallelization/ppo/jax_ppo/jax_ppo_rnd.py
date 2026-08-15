@@ -153,7 +153,9 @@ class JaxPPORND:
         # jitted entry points (style chosen HERE, never branched on inside a trace)
         update = self._update_full_batch if cfg.update_style == "full_batch" \
             else self._update_epoch_minibatch
-        self._iterate = jax.jit(partial(self._iterate_impl, update))
+        # the WHOLE iteration (rollout scan + statistics + GAE + update) is one XLA program;
+        # the TrainState argument is donated so params/opt/env buffers are updated in place
+        self._iterate = jax.jit(partial(self._iterate_impl, update), donate_argnums=(0,))
         self._prime = jax.jit(self._prime_impl)
 
     def init_state(self) -> TrainState:

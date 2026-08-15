@@ -20,13 +20,13 @@ sys.path.insert(0, str(BASE / "ppo" / "jax_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
-def bench(n_copies, style, repeats=5):
+def bench(n_copies, style, repeats=5, num_steps=128, n_envs=4):
     """Median seconds per training iteration (rollout + update) for one config."""
     import jax
     import jax.numpy as jnp
     from jax_ppo_rnd import PPOConfig, JaxPPORND
 
-    cfg = PPOConfig(n_copies=n_copies, update_style=style)
+    cfg = PPOConfig(n_copies=n_copies, update_style=style, num_steps=num_steps, n_envs=n_envs)
     tr = JaxPPORND(cfg)
     state = tr.init_state()
     key = jax.random.PRNGKey(1)
@@ -68,6 +68,8 @@ def main():
     ap.add_argument("--n-copies", type=int, nargs="+", default=[8, 32, 128])
     ap.add_argument("--styles", nargs="+", default=["full_batch", "epoch_minibatch"])
     ap.add_argument("--tag", default="")
+    ap.add_argument("--num-steps", type=int, default=128)
+    ap.add_argument("--n-envs", type=int, default=4)
     args = ap.parse_args()
 
     import jax
@@ -76,7 +78,7 @@ def main():
     rows = []
     for style in args.styles:
         for c in args.n_copies:
-            r = bench(c, style)
+            r = bench(c, style, num_steps=args.num_steps, n_envs=args.n_envs)
             rows.append(r)
             print(f"jax_ppo/{style} C={c:>4d}: {r['iterations_per_sec']:.2f} iter/s  "
                   f"{r['env_steps_per_sec']:.3e} env-steps/s  early={r['early_iteration_seconds']}")
