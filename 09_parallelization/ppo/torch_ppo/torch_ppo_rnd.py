@@ -53,7 +53,10 @@ class PPOConfig:
     rollout_mode: str = "eager"      # "eager" | "compile-step" | "capture"
                                      # capture = whole-rollout CUDA-graph replay of the
                                      # compiled per-step function (fused kernels, no python)
-    fused_adam: bool = False         # fused CUDA Adam kernel (GPU runs)
+    fused_adam: bool = False         # accepted for compatibility and no longer used: the
+                                     # optimizer is one chain over the flat parameter buffer,
+                                     # which is faster here than torch's multi-tensor kernels
+    compile_opt: bool = False        # compile the clip-and-Adam chain over the flat buffer
     capture_update: bool = False     # CUDA-graph the whole update phase (implies capturable Adam)
     one_graph: bool = False          # capture rollout+post+update as ONE graph per iteration
                                      # (requires rollout_mode="capture" semantics and
@@ -96,7 +99,7 @@ def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOCon
     whole-iteration CUDA-graph capture, compiled post-rollout body, TF32, fused capturable Adam.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
-                fused_adam=True, tf32=True, compile_post=True)
+                fused_adam=True, tf32=True, compile_post=True, compile_opt=True)
     base.update(overrides)                      # an explicit override always wins
     return PPOConfig(n_copies=n_copies, update_style=style, **base)
 
@@ -226,37 +229,67 @@ class PPORND:
         self.predictor = stack("rnd_predictor",
                                [(Hh, 4, 2 ** 0.5), (F, Hh, 2 ** 0.5), (F, F, 2 ** 0.5)])
 
-        self.trainable = ([self.actor[k] for k in ["W0", "b0", "W1", "b1", "W2", "b2", "logstd"]]
-                          + [self.critic[k] for k in ["W0", "b0", "W1", "b1",
-                                                      "Wext", "bext", "Wint", "bint"]]
-                          + [self.predictor[k] for k in ["W0", "b0", "W1", "b1", "W2", "b2"]])
-        for p in self.trainable:
-            p.requires_grad_(True)
+        # ---- every trainable tensor is a window onto ONE flat buffer ----
+        # The parameters stay nineteen separate leaf tensors, because that is what the forward
+        # pass and autograd want, but their storage is nineteen windows onto a single [C, P]
+        # buffer, and their gradients are windows onto a single [C, P] gradient buffer. The
+        # optimizer side then touches one tensor instead of nineteen: the per-copy gradient
+        # norm is one reduction, the Adam step is one kernel, and zeroing is one kernel.
+        # Measured before this change: the clip alone was 31% of a minibatch step, because it
+        # walked all nineteen tensors twice.
+        # before: 19 separately allocated tensors, each with its own gradient
+        # after:  19 windows onto _flat [C, P] and _flat_grad [C, P]
+        spec = ([("actor", k) for k in ["W0", "b0", "W1", "b1", "W2", "b2", "logstd"]]
+                + [("critic", k) for k in ["W0", "b0", "W1", "b1", "Wext", "bext",
+                                           "Wint", "bint"]]
+                + [("predictor", k) for k in ["W0", "b0", "W1", "b1", "W2", "b2"]])
+        groups = {"actor": self.actor, "critic": self.critic, "predictor": self.predictor}
+        shapes = [(g, k, tuple(groups[g][k].shape)) for g, k in spec]
+        widths = []
+        for _, _, sh in shapes:
+            n = 1
+            for d in sh[1:]:
+                n *= d
+            widths.append(n)
+        per_copy = sum(widths)
+        self._flat = torch.zeros(C, per_copy, device=self.device)
+        self._flat_grad = torch.zeros(C, per_copy, device=self.device)
+        off = 0
+        self.trainable = []
+        for (g, k, sh), n in zip(shapes, widths):
+            self._flat[:, off:off + n] = groups[g][k].reshape(C, n)
+            # detach makes the window a LEAF that shares storage, so autograd fills its own
+            # gradient; assigning .grad up front makes autograd accumulate into the shared
+            # gradient buffer instead of allocating a fresh tensor per parameter
+            w = self._flat[:, off:off + n].view(C, *sh[1:]).detach().requires_grad_(True)
+            w.grad = self._flat_grad[:, off:off + n].view(C, *sh[1:])
+            groups[g][k] = w
+            self.trainable.append(w)
+            off += n
+        assert off == per_copy, "the parameter windows do not tile the flat buffer"
+        base = self._flat.untyped_storage().data_ptr()
+        end = base + self._flat.numel() * self._flat.element_size()
+        for w in self.trainable:
+            assert base <= w.data_ptr() < end, "a parameter is not a window onto the buffer"
+            assert (w.grad.untyped_storage().data_ptr()
+                    == self._flat_grad.untyped_storage().data_ptr()), "a gradient escaped"
+
         self._lr_t = torch.tensor(cfg.learning_rate, device=self.device)
         # lr_scale is the annealing factor; the per-copy rates are multiplied by it, so one
         # device tensor drives every group and the captured graph reads the current value
         self._lr_scale = torch.ones((), device=self.device)
-        if self.is_sweep:
-            # own Adam state: torch.optim.Adam takes one scalar rate for a parameter group,
-            # and putting each copy in its own group would defeat the batched layout
-            self._m = [torch.zeros_like(p) for p in self.trainable]
-            self._v = [torch.zeros_like(p) for p in self.trainable]
-            self._adam_t = torch.zeros((), device=self.device)
-            # the decay constants live on the device: building them per step would be a
-            # host-to-device copy, which graph capture forbids
-            self._b1 = torch.tensor(0.9, device=self.device)
-            self._b2 = torch.tensor(0.999, device=self.device)
-            self._lr_views = [self.lr_per_copy.view(C, *([1] * (p.dim() - 1)))
-                              for p in self.trainable]
-            self.opt = None
-        elif cfg.capture_update:
-            # capturable: Adam's step count and lr live on the GPU so the captured graph
-            # replays correct bias correction and annealed lr
-            self.opt = torch.optim.Adam(self.trainable, lr=self._lr_t, eps=cfg.adam_eps,
-                                        fused=cfg.fused_adam, capturable=True)
-        else:
-            self.opt = torch.optim.Adam(self.trainable, lr=cfg.learning_rate,
-                                        eps=cfg.adam_eps, fused=cfg.fused_adam)
+        # one Adam over the flat buffer serves both cases: the learning rate is a scalar for a
+        # uniform run and a per-copy column for a sweep, and the arithmetic is identical
+        self._m = torch.zeros_like(self._flat)
+        self._v = torch.zeros_like(self._flat)
+        self._adam_t = torch.zeros((), device=self.device)
+        # the decay constants live on the device: building them per step would be a
+        # host-to-device copy, which graph capture forbids
+        self._b1 = torch.tensor(0.9, device=self.device)
+        self._b2 = torch.tensor(0.999, device=self.device)
+        self._lr_col = (self.lr_per_copy.view(C, 1) if self.is_sweep
+                        else self._lr_t.reshape(1, 1).expand(C, 1))
+        self.opt = None
 
         # per-copy running statistics (spec 4.2, 5.2) and the intrinsic forward filter
         self.obs_rms = BatchedRMS(C, 4, self.device)
@@ -294,6 +327,9 @@ class PPORND:
             "vext_old": torch.zeros(C, B, device=dev), "rnd_input": torch.zeros(C, B, 4, device=dev),
             "rnd_tf": torch.zeros(C, B, cfg.rnd_feature_dim, device=dev),
         }
+        # the same batch in shuffled order: filled once per epoch so that each minibatch is a
+        # slice of it rather than its own gather (see the update body)
+        self._UP = {k: torch.empty_like(v) for k, v in self._U.items()}
         self._log_rext_sum = torch.zeros(C, device=dev)
         self._log_rint_mean = torch.zeros(C, device=dev)
         # cumulative visited-cell map per copy (exploration diagnostic; open cells only count)
@@ -313,8 +349,10 @@ class PPORND:
             self._policy_fn = self._policy_part
         # the per-copy Adam, compiled when asked: written out it is about six operations per
         # parameter tensor, which is a lot of small kernels next to torch's fused optimizer
-        self._adam_fn = torch.compile(self._adam_step_per_copy, dynamic=False) \
-            if (self.is_sweep and cfg.compile_post) else self._adam_step_per_copy
+        # the clip and the Adam step are a short chain of elementwise operations over one
+        # buffer; compiling fuses that chain into a couple of kernels
+        self._opt_fn = torch.compile(self._clip_and_adam_flat, dynamic=False) \
+            if cfg.compile_opt else self._clip_and_adam_flat
         # the post-rollout body, compiled when asked (fuses the T-step scans)
         self._post_fn = torch.compile(self._post_body_impl, fullgraph=True, dynamic=False) \
             if cfg.compile_post else self._post_body_impl
@@ -625,60 +663,52 @@ class PPORND:
     # ---- update phase ----
 
     def _clip_per_copy_and_step(self):
-        """Per-copy gradient-norm clip (spec 10), then one Adam step over all copies."""
-        C = self.cfg.n_copies
-        g2 = torch.zeros(C, device=self.device)
-        for p in self.trainable:
-            g2 = g2 + p.grad.reshape(C, -1).square().sum(1)
-        scale = (self.cfg.max_grad_norm / (g2.sqrt() + 1e-6)).clamp(max=1.0)
-        for p in self.trainable:
-            p.grad.mul_(scale.view(C, *([1] * (p.dim() - 1))))
-        if self.is_sweep:
-            self._adam_fn()
-        else:
-            self.opt.step()
-        # under graph capture the grad buffers must keep their storage across replays
-        for p in self.trainable:
-            if self.cfg.capture_update or self.is_sweep:
-                p.grad.zero_()
-            else:
-                p.grad = None
+        """Per-copy gradient-norm clip (spec 10), then one Adam step over all copies.
+
+        Every parameter's gradient is a window onto one buffer, so the whole stage is a
+        handful of kernels over that buffer rather than a walk over nineteen tensors.
+        """
+        self._opt_fn()
 
     def _reset_optimizer_state(self):
         """Zero the optimizer moments and step count (after a graph build's warmup passes)."""
-        if self.is_sweep:
-            for m, v in zip(self._m, self._v):
-                m.zero_()
-                v.zero_()
-            self._adam_t.zero_()
-        else:
-            for group_state in self.opt.state.values():
-                for _, v in group_state.items():
-                    if torch.is_tensor(v):
-                        v.zero_()
+        self._m.zero_()
+        self._v.zero_()
+        self._adam_t.zero_()
 
-    def _adam_step_per_copy(self):
-        """Adam with a per-copy learning rate, i.e. torch.optim.Adam's formula elementwise.
+    def _clip_and_adam_flat(self):
+        """Clip each copy's gradient norm, then step Adam — all over the one flat buffer.
 
-        Adam is elementwise, so C copies stacked on the leading axis are C independent Adams;
-        the only thing torch's implementation cannot express is a different rate per copy,
-        which is exactly what a sweep needs. Bias correction uses a device-side step count so
-        the update stays correct inside a captured graph.
+        Adam is elementwise, so the C rows of the buffer are C independent Adams. The learning
+        rate is a [C, 1] column, which covers both a uniform run (every entry the same) and a
+        sweep (one value per copy group) with the same arithmetic. The bias correction reads a
+        device-side step count so the update stays correct inside a captured graph.
         """
         cfg = self.cfg
         b1, b2 = 0.9, 0.999
+        g = self._flat_grad
+        # per-copy gradient norm: one reduction over the whole buffer
+        scale = (cfg.max_grad_norm / (g.square().sum(1, keepdim=True).sqrt() + 1e-6)).clamp(max=1.0)
         # add_ rather than += : the latter rebinds the attribute to a NEW tensor, which a
         # captured graph would not see (it holds the original storage)
         self._adam_t.add_(1)
         bc1 = 1.0 - torch.pow(self._b1, self._adam_t)
         bc2 = 1.0 - torch.pow(self._b2, self._adam_t)
         with torch.no_grad():
-            for p, m, v, lr_view in zip(self.trainable, self._m, self._v, self._lr_views):
-                g = p.grad
-                m.mul_(b1).add_(g, alpha=1.0 - b1)
-                v.mul_(b2).addcmul_(g, g, value=1.0 - b2)
-                denom = (v / bc2).sqrt().add_(cfg.adam_eps)
-                p.addcdiv_(m / bc1 * (lr_view * self._lr_scale), denom, value=-1.0)
+            # written as one expression chain rather than a sequence of in-place operations:
+            # the compiler then fuses the whole update into a single pass that reads the
+            # gradient, the two moments and the parameters once and writes three of them back.
+            # At large copy counts this buffer is hundreds of megabytes, so the number of
+            # passes over it — not the number of kernels — is what sets the cost.
+            gs = g * scale
+            m_new = self._m * b1 + gs * (1.0 - b1)
+            v_new = self._v * b2 + gs * gs * (1.0 - b2)
+            step = (m_new / bc1) * (self._lr_col * self._lr_scale) / \
+                   ((v_new / bc2).sqrt() + cfg.adam_eps)
+            self._m.copy_(m_new)
+            self._v.copy_(v_new)
+            self._flat.sub_(step)
+            self._flat_grad.zero_()
 
     def _losses(self, mb, style_a):
         """Per-copy losses on one (mini)batch dict; returns the scalar sum over copies.
@@ -764,13 +794,18 @@ class PPORND:
             Brows = cfg.num_steps * cfg.n_envs
             mb_size = Brows // cfg.num_minibatches
             for e in range(cfg.update_epochs):
+                # shuffle the whole batch ONCE per epoch into a static buffer; the minibatches
+                # are then contiguous slices of it, which cost nothing. Before: nine gather
+                # kernels in every one of the sixteen steps. After: nine per epoch. The rows
+                # and their order are identical either way, so this is exact.
+                idx = self._perm[e]
+                for key in self._U_KEYS:
+                    t = self._U[key]
+                    ix = idx.unsqueeze(-1).expand(C, Brows, t.shape[-1]) if t.dim() == 3 else idx
+                    self._UP[key].copy_(t.gather(1, ix))
                 for k in range(cfg.num_minibatches):
-                    idx = self._perm[e][:, k * mb_size:(k + 1) * mb_size]
-                    mb = {}
-                    for key in self._U_KEYS:
-                        t = self._U[key]
-                        ix = idx.unsqueeze(-1).expand(C, mb_size, t.shape[-1])                             if t.dim() == 3 else idx
-                        mb[key] = t.gather(1, ix)
+                    mb = {key: self._UP[key][:, k * mb_size:(k + 1) * mb_size]
+                          for key in self._U_KEYS}
                     loss = self._loss_fn(mb, style_a=False)
                     loss.backward()
                     self._clip_per_copy_and_step()
@@ -928,15 +963,9 @@ class PPORND:
         last_log = t0
         for it in range(1, num_iterations + 1):
             if cfg.anneal_lr:
-                frac = 1.0 - (it - 1.0) / num_iterations
-                self._lr_scale.fill_(frac)
-                if self.is_sweep:
-                    pass                      # the per-copy rates read _lr_scale directly
-                elif cfg.capture_update:
-                    self._lr_t.fill_(cfg.learning_rate * frac)
-                else:
-                    for gme in self.opt.param_groups:
-                        gme["lr"] = cfg.learning_rate * frac
+                # one device tensor drives the schedule; the optimizer reads it every step,
+                # whether the rate is uniform or one value per copy group
+                self._lr_scale.fill_(1.0 - (it - 1.0) / num_iterations)
             if cfg.one_graph:
                 loss = self.iteration_captured()
             else:

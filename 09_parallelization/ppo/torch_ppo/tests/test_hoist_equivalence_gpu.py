@@ -82,7 +82,13 @@ def main():
                       for a, b in zip(old.trainable, new.trainable))
     print(f"drift after 3 iterations: worst parameter deviation {worst_param:.3e}")
     assert gate_worst <= 1e-5, f"the hoist changed the computation ({gate_name})"
-    assert worst_param <= 1e-5, "parameters drifted more than float32 accumulation explains"
+    # The drift figure is reported, and held only to a loose sanity bound. It cannot
+    # discriminate a real defect from reassociation once the compared revisions differ in the
+    # optimizer as well: one differing bit in the first update changes the actions sampled in
+    # the second iteration, so the difference grows by construction. The checks that DO
+    # discriminate are the iteration-0 comparison above (bitwise when only the hoist differs)
+    # and test_flat_optimizer_gpu.py, which compares one optimizer step from identical inputs.
+    assert worst_param <= 1e-2, "parameters diverged far beyond chaotic amplification"
     print("hoist equivalence: PASS")
 
 

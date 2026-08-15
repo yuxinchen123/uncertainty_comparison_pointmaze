@@ -26,7 +26,8 @@ sys.path.insert(0, str(BASE / "ppo" / "torch_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 PRODUCTION = dict(update_style="epoch_minibatch", rollout_mode="capture", capture_update=True,
-                  fused_adam=True, one_graph=True, tf32=True, compile_post=True)
+                  fused_adam=True, one_graph=True, tf32=True, compile_post=True,
+                  compile_opt=True)
 
 
 def load_module(rev):
@@ -46,6 +47,9 @@ def load_module(rev):
     path.write_text(src)
     spec = importlib.util.spec_from_file_location(f"trainer_rev_{rev}", path)
     mod = importlib.util.module_from_spec(spec)
+    # register before executing: the compiler re-imports the defining module by name when it
+    # traces a function, and a module loaded only from a file path is not importable that way
+    sys.modules[spec.name] = mod
     spec.loader.exec_module(mod)
     return mod
 

@@ -36,3 +36,80 @@ tests/test_torch_ppo.py (CPU) and tests/test_capture_gpu.py (GPU). Bench JSONs i
   concatenating the four 4-input GEMMs (actor/critic/target/predictor first layers) into one.
 - The T=32, N=16 rollout-shape alternative (spec §14) is measured separately for the report;
   it changes the algorithm (GAE horizon) so it is a labeled variant, never a silent swap.
+
+## Round 4 — closing the gap to the JAX trainer
+
+Target: the update stage, which the phase profile put at 13.9 ms of a 20.2 ms iteration at 128
+copies, and which is where the JAX trainer's lead was concentrated (it led by 52-70% with
+sixteen updates per batch, but only 4-19% with one).
+
+Measured breakdown of ONE minibatch step at 128 copies before any round-4 change
+(`benchmarks/profile_update.py`, new in this round):
+
+| part of a minibatch step | time | share |
+|---|---|---|
+| forward and backward | 1,720 us | 58% |
+| clip the per-copy gradient norm | 926 us | 31% |
+| Adam step | 188 us | 6% |
+| gather the minibatch (9 tensors) | 74 us | 2% |
+| zero the gradients (19 tensors) | 69 us | 2% |
+
+| # | change | result | verdict |
+|---|---|---|---|
+| 17 | ROUND 4. One flat parameter buffer. The nineteen parameters stay separate leaf tensors, but their storage is nineteen windows onto a single [C, P] buffer and their gradients are windows onto a single [C, P] gradient buffer, assigned up front. The per-copy norm becomes one reduction, Adam one chain, zeroing one kernel; torch.optim is dropped entirely, so one optimizer now serves both the uniform and the swept case | Update-stage parts at 128 copies: clip+Adam+zero 1,183 -> 122 us. Unexpectedly, forward and backward ALSO fell, 1,720 -> 1,012 us, because pre-assigning the gradient windows removes nineteen allocations per backward. Whole iteration, paired against the predecessor revision: C=8 13.89 -> 9.80 ms (+29.4%), C=128 20.54 -> 16.96 ms (+17.5%), noise floor 0.04-0.05 ms | KEEP |
+| 18 | ROUND 4. Write the clip-and-Adam chain functionally (one expression, then copy back) instead of a sequence of in-place operations, so the compiler fuses it into one pass over the buffer | No change: C=128 +16.9% against the same baseline, versus +17.5% for the in-place form — the two are within the noise floor of each other. Kept for readability, not for speed | KEEP (no effect) |
+| 19 | ROUND 4. Shuffle the whole batch once per epoch into a static buffer, so each minibatch is a contiguous slice instead of its own gather. Nine gather kernels per epoch instead of nine per step: 36 per iteration instead of 144 | C=128 16.96 -> 16.31 ms (cumulative +20.5% against the predecessor); C=512 regression narrowed from -2.5% to -1.1%. Exact: identical rows in identical order | KEEP |
+
+### The one size where this is a loss
+
+At 512 copies the round-4 build is 1.1% SLOWER than its predecessor (44.33 against 43.84 ms,
+noise floor 0.03). The reason is visible in the profile: at that size the flat buffer is 123 MB,
+the optimizer stage becomes limited by memory bandwidth rather than by the number of kernels,
+and the extra pass the per-copy norm requires costs more than the kernels it saves. The win at
+8-128 copies (+20 to +29%) is large and the loss at 512 is small, so the change is kept as the
+default; a run that lives at 512 copies or more and cares about the last percent can measure
+both. Reducing this further needs the moments in a narrower type, which changes the numerics
+and belongs in its own round with its own gate.
+
+### Correctness
+
+All gates pass. Two drift assertions were re-scoped, and the reasoning is recorded here because
+re-scoping a test to make a change pass is exactly the move that hides defects:
+
+- `test_hoist_equivalence_gpu.py` and `test_compile_post_gpu.py` each compare a whole run against
+  another build. Their iteration-0 comparisons (byte-identical inputs) still gate tightly, and
+  iteration 0 is bitwise identical after this round's changes. Their DRIFT figures, measured
+  after three chained iterations, cannot separate a real defect from floating-point
+  reassociation once the compared builds differ in the optimizer: one differing bit in the first
+  update changes the actions sampled in the second iteration. Those two assertions are now loose
+  sanity bounds, and the discriminating check they used to stand in for is a new test.
+- `test_flat_optimizer_gpu.py` (new) is that check: it runs one optimizer step through the flat
+  form and through the previous per-tensor form from byte-identical inputs and compares. Worst
+  relative deviation 6.9e-6, on parameters that moved 3.0e-4 — floating-point rounding. It also
+  asserts the parameters moved at all, so it cannot pass vacuously.
+
+### Where the PyTorch trainer now stands against JAX
+
+Both measured with each iteration waited for (`--timing sync`), milliseconds per iteration:
+
+| update convention | copies | PyTorch before | PyTorch after | JAX | remaining gap |
+|---|---|---|---|---|---|
+| one update per batch | 8 | 5.7 | 5.3 | 5.5 | PyTorch ahead by 4% |
+| one update per batch | 32 | 6.4 | 6.1 | 6.0 | level |
+| one update per batch | 128 | 8.1 | 7.8 | 6.8 | JAX ahead by 15% |
+| sixteen updates per batch | 8 | 13.8 | 9.3 | 8.1 | JAX ahead by 15% |
+| sixteen updates per batch | 32 | 15.7 | 10.8 | 9.8 | JAX ahead by 10% |
+| sixteen updates per batch | 128 | 20.4 | 16.3 | 13.4 | JAX ahead by 22% |
+
+PyTorch now matches or beats JAX with one update per batch at 8 and 32 copies, and the
+sixteen-update gap fell from 52-70% to 10-22%.
+
+### What the remaining gap is made of
+
+After this round the update stage is dominated by the forward and backward passes themselves:
+they are 72-84% of a minibatch step, against 10-23% for the whole optimizer. The remaining
+difference is therefore in how the two frameworks execute a small multi-layer perceptron's
+forward and backward, not in the surrounding machinery — XLA fuses that into fewer kernels than
+inductor plus autograd do. Closing it would mean writing the loss and its gradient as one fused
+kernel rather than composing framework operations, which is a larger change than this round and
+should be entered with a go/no-go probe rather than begun speculatively.
