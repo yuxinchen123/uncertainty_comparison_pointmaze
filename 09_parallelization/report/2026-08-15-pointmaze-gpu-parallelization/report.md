@@ -42,7 +42,7 @@ joint two-contact solve, all probe-verified against the solver's internal arrays
 |---|---|---|---|---|---|
 | torch eager | 6.58e5 | 6.39e7 | 2.01e8 | — | 2.01e8 at 1,000,000 |
 | torch compiled | 6.32e6 | 6.08e8 | 3.89e9 | 4.17e9 | 4.17e9 at 3,000,000 |
-| CUDA fused kernel | 1.67e8 | 1.10e10 | 1.68e10 | 1.75e10 | 1.75e10 at 3,000,000 |
+| CUDA fused kernel | 1.74e8 | 1.20e10 | 1.92e10 | 1.94e10 | 1.94e10 at 3,000,000 |
 | jax jit per step | 1.32e7 | 1.33e9 | 6.87e9 | 5.92e9 | 6.87e9 at 1,000,000 |
 | jax scan (fused rollout, upper bound) | 6.76e7 | 5.20e9 | 8.40e9 | 7.23e9 | 9.92e9 at 300,000 |
 
@@ -99,8 +99,17 @@ variant, not the default, because it changes the algorithm.
 - jax env + jax trainer: the whole iteration is one jitted XLA program with donated state.
 - CUDA env + torch trainer (`env_backend="cuda"`): the fused kernel replaces the env part
   of the captured rollout, with the policy and RND parts as compiled subgraphs around it.
-  Measured (style B, one-graph): C=8: 25.1 ms/iter, C=128: 35.6 ms/iter — versus the torch-env
-  backend's 26.4 / 36.6 ms at C=8 / 128.
+  Measured in the shipped configuration (style B): C=8: 13.8 ms with the CUDA kernel versus 14.0 ms with the PyTorch environment; C=128: 20.7 ms with the CUDA kernel versus 20.4 ms with the PyTorch environment.
+  The two are the same to about 1.5%, which is the point worth taking away: after
+  round two moved most per-step work out of the rollout loop, the environment is a small part
+  of a training iteration, so an environment kernel that is 24x faster on its own changes the
+  training rate very little. The fast kernel earns its place in environment-only work (data
+  generation, evaluation sweeps), not in this trainer.
+  An earlier pairing measurement was discarded: the environment kernels launched on
+  the legacy default stream rather than the capture stream, so the captured graph contained no
+  environment step at all (PyTorch reported an empty graph once a test looked for it). The
+  kernel now launches on the current stream and a test replays a captured env step and checks
+  the state actually advanced.
 - Cross-framework pairings (jax env + torch trainer or the reverse) were MEASURED over
   the dlpack boundary: crossing frameworks costs +6.2 to +7.0 ms per environment step on
   top of a 70-260 us native step (about 40-90x), because every crossing forces a
@@ -117,19 +126,22 @@ The task's two questions, answered by measurement (style B, T=128, N=4, final co
 2. **Does increasing the copy count decrease TOTAL throughput?** No. Total throughput
    rises monotonically and saturates; it never goes down up to the memory limit.
 
-| copies C | ms/iter | total env-steps/s | per-copy env-steps/s |
-|---|---|---|---|
-| 8 | 26.4 | 1.55e5 | 1.94e4 |
-| 128 | 37.9 | 1.73e6 | 1.35e4 |
-| 256 | 48.2 | 2.72e6 | 1.06e4 |
-| 512 | 68.9 | 3.81e6 | 7.43e3 |
-| 1024 | 114.0 | 4.60e6 | 4.49e3 |
-| 2048 | 204.4 | 5.13e6 | 2.51e3 |
-| 4096 | 386.4 | 5.43e6 | 1.33e3 |
-| 8192 | 761.6 | 5.51e6 | 6.72e2 |
-| 16384 | 1499.6 | 5.59e6 | 3.41e2 |
-| 32768 | 3009.6 | 5.57e6 | 1.70e2 |
-| 65536 | out of memory during graph build | — | — |
+| copies C | round 1 ms/iter | round 2 ms/iter | round 2 total env-steps/s | round 2 per-copy env-steps/s |
+|---|---|---|---|---|
+| 8 | 26.4 | 14.0 | 2.93e5 | 3.67e4 |
+| 16 | — | 14.8 | 5.53e5 | 3.45e4 |
+| 32 | — | 15.6 | 1.05e6 | 3.28e4 |
+| 64 | — | 17.3 | 1.90e6 | 2.96e4 |
+| 128 | 37.9 | 20.4 | 3.21e6 | 2.51e4 |
+| 256 | 48.2 | 28.0 | 4.68e6 | 1.83e4 |
+| 512 | 68.9 | 43.8 | 5.99e6 | 1.17e4 |
+| 1024 | 114.0 | — | — | — |
+| 2048 | 204.4 | — | — | — |
+| 4096 | 386.4 | — | — | — |
+| 8192 | 761.6 | — | — | — |
+| 16384 | 1499.6 | — | — | — |
+| 32768 | 3009.6 | — | — | — |
+| 65536 | out of memory during graph build | — | — | — |
 
 **Maximum copies that fit: 32,768** (95 GB H100, this configuration). Torch total
 throughput saturates near 5.6e6 env-steps/s from ~8,192 copies. The jax trainer saturates

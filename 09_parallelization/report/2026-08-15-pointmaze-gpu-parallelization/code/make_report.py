@@ -102,8 +102,19 @@ def fig_env_throughput():
     return None
 
 
-def torch_cscale_rows():
-    """The torch copy-scaling series across the three source JSONs, deduplicated."""
+def torch_cscale_rows(round2=True):
+    """The torch copy-scaling series, one round at a time.
+
+    round2: the shipped configuration measured after round two (C=8..512, and the larger
+    counts once they are re-measured). round1: the round-one configuration, which is where
+    the memory ceiling at 32,768 copies was found.
+    """
+    if round2:
+        rows = (newest(r"trainbench_torch_epoch_minibatch_round2c_large") or {}).get("rows", [])
+        base = (newest(r"trainbench_torch_epoch_minibatch_round2b_styleB") or {}).get("rows", [])
+        seen = {r["n_copies"] for r in rows}
+        return sorted(base + [r for r in rows if r["n_copies"] not in seen],
+                      key=lambda r: r["n_copies"])
     rows_t0 = (newest(r"trainbench_torch_epoch_minibatch_pack\.") or
                newest(r"trainbench_torch_epoch_minibatch_onegraph\.") or {}).get("rows", [])
     rows_t = (newest(r"trainbench_torch_epoch_minibatch_cscale\.") or {}).get("rows", [])
@@ -115,7 +126,8 @@ def torch_cscale_rows():
 
 def fig_copy_scaling():
     """Total and per-copy training throughput vs copy count (torch + jax)."""
-    allt = torch_cscale_rows()
+    allt = torch_cscale_rows(round2=True)
+    r1 = torch_cscale_rows(round2=False)
     rows_j = (newest(r"trainbench_jax_ppo_cscale") or {}).get("rows", [])
     rows_jb = [r for r in rows_j if r.get("style", "epoch_minibatch") == "epoch_minibatch"]
     if not allt:
@@ -127,8 +139,11 @@ def fig_copy_scaling():
     for ax, (key, ylabel) in zip(axes, panels):
         xs = [r["n_copies"] for r in allt]
         ys = [r[key] for r in allt]
+        ax.plot([r["n_copies"] for r in r1], [r[key] for r in r1], "--", color=C_TORCH,
+                linewidth=1.6, marker="o", markersize=5, alpha=0.55,
+                label="torch, round 1 (style B)")
         ax.plot(xs, ys, "-", color=C_TORCH, linewidth=2, marker="o", markersize=6,
-                label="torch (one-graph, style B)")
+                label="torch, round 2 (style B)")
         if rows_jb:
             xj = [r["n_copies"] for r in rows_jb]
             yj = [r.get(key) or r["env_steps_per_sec"] / r["n_copies"] for r in rows_jb]
@@ -457,13 +472,19 @@ def sec_module3():
 - CUDA env + torch trainer (`env_backend="cuda"`): the fused kernel replaces the env part
   of the captured rollout, with the policy and RND parts as compiled subgraphs around it.
 """
-    cud = newest(r"trainbench_torch_epoch_minibatch_cudaenv_streamfixed")
-    if cud and cud["rows"]:
-        cells = {r["n_copies"]: r for r in cud["rows"]}
-        parts = [f"C={c}: {cells[c]['sec_per_iteration']*1e3:.1f} ms/iter"
-                 for c in sorted(cells)]
-        md += f"  Measured (style B, one-graph): {', '.join(parts)} — versus the torch-env\n"
-        md += "  backend's 26.4 / 36.6 ms at C=8 / 128.\n"
+    cud = newest(r"trainbench_torch_epoch_minibatch_cudaenv_streamfixed_prod")
+    tor = newest(r"trainbench_torch_epoch_minibatch_round2b_styleB")
+    if cud and cud["rows"] and tor:
+        cc = {r["n_copies"]: r["sec_per_iteration"] * 1e3 for r in cud["rows"]}
+        tc = {r["n_copies"]: r["sec_per_iteration"] * 1e3 for r in tor["rows"]}
+        parts = [f"C={c}: {cc[c]:.1f} ms with the CUDA kernel versus {tc[c]:.1f} ms with the "
+                 f"PyTorch environment" for c in sorted(cc) if c in tc]
+        md += "  Measured in the shipped configuration (style B): " + "; ".join(parts) + ".\n"
+        md += """  The two are the same to about 1.5%, which is the point worth taking away: after
+  round two moved most per-step work out of the rollout loop, the environment is a small part
+  of a training iteration, so an environment kernel that is 24x faster on its own changes the
+  training rate very little. The fast kernel earns its place in environment-only work (data
+  generation, evaluation sweeps), not in this trainer.\n"""
     else:
         md += pending("Module 3 cuda pairing", "the re-measured pairing on the stream-fixed kernel")
     md += """  An earlier pairing measurement was discarded: the environment kernels launched on
@@ -492,14 +513,21 @@ The task's two questions, answered by measurement (style B, T=128, N=4, final co
 2. **Does increasing the copy count decrease TOTAL throughput?** No. Total throughput
    rises monotonically and saturates; it never goes down up to the memory limit.
 
-| copies C | ms/iter | total env-steps/s | per-copy env-steps/s |
-|---|---|---|---|
+| copies C | round 1 ms/iter | round 2 ms/iter | round 2 total env-steps/s | round 2 per-copy env-steps/s |
+|---|---|---|---|---|
 """
-    for r in torch_cscale_rows():
-        md += (f"| {r['n_copies']} | {r['sec_per_iteration']*1e3:.1f} | "
-               f"{sci(r['env_steps_per_sec'])} | "
-               f"{sci(r['env_steps_per_sec_per_copy'])} |\n")
-    md += """| 65536 | out of memory during graph build | — | — |
+    r1 = {r["n_copies"]: r for r in torch_cscale_rows(round2=False)}
+    r2 = {r["n_copies"]: r for r in torch_cscale_rows(round2=True)}
+    for c in sorted(set(r1) | set(r2)):
+        a = f"{r1[c]['sec_per_iteration']*1e3:.1f}" if c in r1 else "—"
+        if c in r2:
+            b = f"{r2[c]['sec_per_iteration']*1e3:.1f}"
+            tot = sci(r2[c]["env_steps_per_sec"])
+            per = sci(r2[c]["env_steps_per_sec_per_copy"])
+        else:
+            b = tot = per = "—"
+        md += f"| {c} | {a} | {b} | {tot} | {per} |\n"
+    md += """| 65536 | out of memory during graph build | — | — | — |
 
 **Maximum copies that fit: 32,768** (95 GB H100, this configuration). Torch total
 throughput saturates near 5.6e6 env-steps/s from ~8,192 copies. The jax trainer saturates
