@@ -276,10 +276,12 @@ cost the same as training those copies at one rate.
     return md
 
 
-def campaign_records():
-    """The final-campaign per-count JSONs, {(style, C): record}."""
+def campaign_records(round2=True):
+    """The final-campaign per-count JSONs, {(style, C): record}, for one round's campaign."""
+    pattern = "2026-*final_round2*/data/copies_*.json" if round2 else \
+              "2026-08-15-02-56_final*/data/copies_*.json"
     out = {}
-    for p in RUNS.glob("2026-*final*/data/copies_*.json"):
+    for p in RUNS.glob(pattern):
         r = json.loads(p.read_text())
         out[(r["style"], r["n_copies"])] = r
     return out
@@ -527,11 +529,21 @@ The task's two questions, answered by measurement (style B, T=128, N=4, final co
         else:
             b = tot = per = "—"
         md += f"| {c} | {a} | {b} | {tot} | {per} |\n"
-    md += """| 65536 | out of memory during graph build | — | — | — |
+    md += """
+**How many copies fit, and the trade the second round made.** Round one reached 32,768 copies
+and ran out of memory at 65,536; round two runs out at 32,768. That is not a regression to fix
+by accident — it is the price of the speed: hoisting the per-step work into wide passes, and
+caching the frozen RND target's features for the update phase, both hold more data at once
+(the cached features alone are 256 KB per copy). The ceiling moved from 32,768 copies to
+16,384 while every copy count up to there got about 1.8x faster. A run that needs the extra
+copies more than the speed can set `compile_post=False` and skip the hoist to get the round-one
+memory profile back. The ceiling is genuine demand rather than fragmentation: retrying 32,768
+copies with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` reduced the failing allocation
+from 32 GiB to 8 GiB but still ran out.
 
-**Maximum copies that fit: 32,768** (95 GB H100, this configuration). Torch total
-throughput saturates near 5.6e6 env-steps/s from ~8,192 copies. The jax trainer saturates
-near 1.9e7 (style A) / 9.1e6 (style B) around C=2,048-4,096.
+Round-two total throughput saturates near 7.8e6 environment steps per second from about 8,192
+copies (round one: 5.6e6). The jax trainer saturates near 1.9e7 (style A) / 9.1e6 (style B)
+around 2,048-4,096 copies.
 
 ![copy scaling](figures/copy_scaling.png)
 """
@@ -667,11 +679,15 @@ def sec_campaign():
 
 20,000 iterations per configuration = 10.24M environment steps per copy; PointMaze Large,
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
-environments, statistics, and optimizer.
+environments, statistics, and optimizer. The campaign was run twice — once on the round-1 code
+and again on the round-2 code — so the improvement is visible on the deliverable itself and not
+only on the benchmarks. The table reports the round-2 run, with the round-1 throughput beside
+it for comparison.
 
-| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
-|---|---|---|---|---|---|---|---|---|
+| style | copies | wall time [s] | total env-steps/s | round-1 rate | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|---|---|
 """
+    r1recs = campaign_records(round2=False)
     for (style, c) in sorted(recs, key=lambda k: (k[0], k[1])):
         r = recs[(style, c)]
         hist = r["history"]
@@ -681,11 +697,22 @@ environments, statistics, and optimizer.
         solved_late = count(late) if late else 0
         solved_ever = count(hist) if hist else 0
         cov = sum(r["final_coverage_per_copy"]) / c
+        r1 = r1recs.get((style, c))
         md += (f"| {style} | {c} | {r['train_seconds']:.0f} | "
-               f"{sci(r['env_steps_per_sec'])} | {sci(r['env_steps_per_sec'] / c)} | "
+               f"{sci(r['env_steps_per_sec'])} | "
+               f"{sci(r1['env_steps_per_sec']) if r1 else '—'} | "
+               f"{sci(r['env_steps_per_sec'] / c)} | "
                f"{solved_late}/{c} | {solved_ever}/{c} | {cov:.3f} | "
                f"{r['peak_vram_mb']:.0f} |\n")
     md += """
+The round-2 campaign also shows more copies reaching the goal and slightly higher coverage than
+the round-1 one. That is NOT an effect of the optimization: the algorithm is unchanged and every
+round-2 change was verified to compute the same function to within float32 rounding. What those
+tiny differences do is send the runs down different trajectories, and on a sparse-goal task the
+per-copy outcome is close to all-or-nothing, so the aggregate moves by more than one might
+expect. Treat the two campaigns as two samples of the same procedure, and read the throughput
+columns — not the goal columns — as the round's result.
+
 *Both goal columns count copies that scored a positive extrinsic reward in a SAMPLED
 iteration: "late" over the final 10% of samples, "ever" over all of them. Progress is sampled
 every 50 iterations (400 samples of 20,000), so a copy that reached the goal only in an

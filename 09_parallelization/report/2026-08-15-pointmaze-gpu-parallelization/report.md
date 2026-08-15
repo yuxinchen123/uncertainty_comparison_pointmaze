@@ -141,11 +141,21 @@ The task's two questions, answered by measurement (style B, T=128, N=4, final co
 | 8192 | 761.6 | — | — | — |
 | 16384 | 1499.6 | — | — | — |
 | 32768 | 3009.6 | — | — | — |
-| 65536 | out of memory during graph build | — | — | — |
 
-**Maximum copies that fit: 32,768** (95 GB H100, this configuration). Torch total
-throughput saturates near 5.6e6 env-steps/s from ~8,192 copies. The jax trainer saturates
-near 1.9e7 (style A) / 9.1e6 (style B) around C=2,048-4,096.
+**How many copies fit, and the trade the second round made.** Round one reached 32,768 copies
+and ran out of memory at 65,536; round two runs out at 32,768. That is not a regression to fix
+by accident — it is the price of the speed: hoisting the per-step work into wide passes, and
+caching the frozen RND target's features for the update phase, both hold more data at once
+(the cached features alone are 256 KB per copy). The ceiling moved from 32,768 copies to
+16,384 while every copy count up to there got about 1.8x faster. A run that needs the extra
+copies more than the speed can set `compile_post=False` and skip the hoist to get the round-one
+memory profile back. The ceiling is genuine demand rather than fragmentation: retrying 32,768
+copies with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` reduced the failing allocation
+from 32 GiB to 8 GiB but still ran out.
+
+Round-two total throughput saturates near 7.8e6 environment steps per second from about 8,192
+copies (round one: 5.6e6). The jax trainer saturates near 1.9e7 (style A) / 9.1e6 (style B)
+around 2,048-4,096 copies.
 
 ![copy scaling](figures/copy_scaling.png)
 
@@ -213,11 +223,11 @@ measured in the campaign itself):
 
 | copies C | before, style B | after, style B | after, style A |
 |---|---|---|---|
-| 8 | 5.27e3 | 1.55e5 | 2.22e5 |
-| 16 | 1.05e4 | 2.97e5 | 4.27e5 |
-| 32 | 2.11e4 | 5.74e5 | 8.42e5 |
-| 64 | 4.22e4 | 1.07e6 | 1.59e6 |
-| 128 | 8.43e4 | 1.79e6 | 2.68e6 |
+| 8 | 5.27e3 | 2.94e5 | 7.19e5 |
+| 16 | 1.05e4 | 5.50e5 | 1.29e6 |
+| 32 | 2.11e4 | 1.04e6 | 2.58e6 |
+| 64 | 4.22e4 | 1.89e6 | 4.72e6 |
+| 128 | 8.43e4 | 3.20e6 | 8.19e6 |
 
 (The before column uses the measured eager iteration time of 777 ms, which is flat across
 copy counts.) Phase split of one iteration, before vs after (C=128, style B; the "after"
@@ -248,20 +258,31 @@ while every change was verified to compute the same thing.
 
 20,000 iterations per configuration = 10.24M environment steps per copy; PointMaze Large,
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
-environments, statistics, and optimizer.
+environments, statistics, and optimizer. The campaign was run twice — once on the round-1 code
+and again on the round-2 code — so the improvement is visible on the deliverable itself and not
+only on the benchmarks. The table reports the round-2 run, with the round-1 throughput beside
+it for comparison.
 
-| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
-|---|---|---|---|---|---|---|---|---|
-| epoch_minibatch | 8 | 529 | 1.55e5 | 1.94e4 | 2/8 | 6/8 | 0.973 | 146 |
-| epoch_minibatch | 16 | 552 | 2.97e5 | 1.86e4 | 4/16 | 6/16 | 0.821 | 163 |
-| epoch_minibatch | 32 | 571 | 5.74e5 | 1.79e4 | 11/32 | 17/32 | 0.867 | 198 |
-| epoch_minibatch | 64 | 615 | 1.07e6 | 1.67e4 | 19/64 | 28/64 | 0.879 | 268 |
-| epoch_minibatch | 128 | 732 | 1.79e6 | 1.40e4 | 27/128 | 49/128 | 0.767 | 432 |
-| full_batch | 8 | 369 | 2.22e5 | 2.78e4 | 3/8 | 4/8 | 0.826 | 156 |
-| full_batch | 16 | 384 | 4.27e5 | 2.67e4 | 0/16 | 5/16 | 0.753 | 183 |
-| full_batch | 32 | 389 | 8.42e5 | 2.63e4 | 8/32 | 11/32 | 0.781 | 238 |
-| full_batch | 64 | 412 | 1.59e6 | 2.49e4 | 9/64 | 18/64 | 0.748 | 348 |
-| full_batch | 128 | 489 | 2.68e6 | 2.09e4 | 12/128 | 38/128 | 0.746 | 546 |
+| style | copies | wall time [s] | total env-steps/s | round-1 rate | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|---|---|
+| epoch_minibatch | 8 | 278 | 2.94e5 | 1.55e5 | 3.68e4 | 2/8 | 3/8 | 0.856 | 146 |
+| epoch_minibatch | 16 | 298 | 5.50e5 | 2.97e5 | 3.43e4 | 5/16 | 9/16 | 0.882 | 163 |
+| epoch_minibatch | 32 | 315 | 1.04e6 | 5.74e5 | 3.26e4 | 12/32 | 18/32 | 0.884 | 198 |
+| epoch_minibatch | 64 | 347 | 1.89e6 | 1.07e6 | 2.95e4 | 28/64 | 38/64 | 0.890 | 295 |
+| epoch_minibatch | 128 | 409 | 3.20e6 | 1.79e6 | 2.50e4 | 41/128 | 68/128 | 0.873 | 494 |
+| full_batch | 8 | 114 | 7.19e5 | 2.22e5 | 8.98e4 | 3/8 | 5/8 | 0.818 | 156 |
+| full_batch | 16 | 127 | 1.29e6 | 4.27e5 | 8.05e4 | 3/16 | 6/16 | 0.830 | 183 |
+| full_batch | 32 | 127 | 2.58e6 | 8.42e5 | 8.07e4 | 9/32 | 13/32 | 0.808 | 238 |
+| full_batch | 64 | 139 | 4.72e6 | 1.59e6 | 7.37e4 | 13/64 | 19/64 | 0.745 | 348 |
+| full_batch | 128 | 160 | 8.19e6 | 2.68e6 | 6.40e4 | 25/128 | 47/128 | 0.796 | 546 |
+
+The round-2 campaign also shows more copies reaching the goal and slightly higher coverage than
+the round-1 one. That is NOT an effect of the optimization: the algorithm is unchanged and every
+round-2 change was verified to compute the same function to within float32 rounding. What those
+tiny differences do is send the runs down different trajectories, and on a sparse-goal task the
+per-copy outcome is close to all-or-nothing, so the aggregate moves by more than one might
+expect. Treat the two campaigns as two samples of the same procedure, and read the throughput
+columns — not the goal columns — as the round's result.
 
 *Both goal columns count copies that scored a positive extrinsic reward in a SAMPLED
 iteration: "late" over the final 10% of samples, "ever" over all of them. Progress is sampled

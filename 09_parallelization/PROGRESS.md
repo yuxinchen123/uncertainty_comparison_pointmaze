@@ -39,6 +39,18 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
       `report/2026-08-15-pointmaze-gpu-parallelization/` (report.md + figures, all from
       result JSONs via code/make_report.py)
 
+## Rounds
+
+- Round 1 (2026-08-15, early): build all three modules; 777 -> 36.6 ms per iteration at 128
+  copies; first campaign; first report.
+- Round 2 (2026-08-15, afternoon): improve the finished system under a paired measurement
+  protocol. 36.8 -> 20.2 ms (style B) and 24.5 -> 8.1 ms (style A) at 128 copies; jax +32/+47%;
+  cuda env +14% and a real stream defect fixed; campaign re-run; on-policy-only question
+  answered (no effect).
+- Round 3 (2026-08-15, afternoon): learning-rate sweep across copy groups, +1.0% against a
+  uniform run and 1.84x faster than running the groups separately; demonstration run recovers
+  the expected best rate.
+
 ## State notes (newest first)
 
 - 2026-08-15 ~04:45 — TASK COMPLETE. All five phases checked off. Unified report:
