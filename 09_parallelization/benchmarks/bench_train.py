@@ -20,12 +20,17 @@ RESULTS = Path(__file__).resolve().parent / "results"
 
 def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch"):
     """Time full iterations and the rollout/update split for one copy count."""
-    from torch_ppo_rnd import PPOConfig, PPORND
-    trainer = PPORND(PPOConfig(n_copies=n_copies, update_style=style,
-                               rollout_mode=rollout_mode, fused_adam=fused_adam,
-                               capture_update=capture_update, one_graph=one_graph, tf32=tf32,
-                               env_backend=env_backend),
-                     device="cuda")
+    from torch_ppo_rnd import PPOConfig, PPORND, production_config
+    # start from the ONE definition of the shipped configuration, then apply this run's
+    # overrides; building the config by hand here is how a benchmark silently stops measuring
+    # what actually ships (it happened once: compile_post was left off)
+    if one_graph and rollout_mode == "capture" and capture_update and fused_adam and tf32:
+        cfg = production_config(n_copies, style=style, env_backend=env_backend)
+    else:
+        cfg = PPOConfig(n_copies=n_copies, update_style=style, rollout_mode=rollout_mode,
+                        fused_adam=fused_adam, capture_update=capture_update,
+                        one_graph=one_graph, tf32=tf32, env_backend=env_backend)
+    trainer = PPORND(cfg, device="cuda")
     trainer.prime_obs_rms()
     if one_graph:
         trainer._build_iteration_graph()
@@ -62,6 +67,7 @@ def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False
     env_steps = trainer.cfg.num_steps * n_copies * trainer.cfg.n_envs * iters
     return {
         "n_copies": n_copies, "style": style, "env_backend": env_backend, "iters_timed": iters,
+        "compile_post": cfg.compile_post, "tf32": cfg.tf32, "one_graph": cfg.one_graph,
         "sec_per_iteration": total / iters,
         "rollout_sec_per_iter": t_roll / iters, "update_sec_per_iter": t_upd / iters,
         "iterations_per_sec": iters / total,
