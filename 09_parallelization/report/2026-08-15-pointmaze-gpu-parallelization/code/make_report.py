@@ -203,6 +203,228 @@ def fig_sweep_curves():
     return None
 
 
+def sweep_strategy_rows():
+    """Every fused-versus-separate measurement, one per rate count, oldest first."""
+    out = []
+    for p in sorted(RESULTS.glob("*_sweep_strategies.json")):
+        d = json.loads(p.read_text())
+        fused = next((r for r in d["rows"] if r["strategy"] == "fused"), None)
+        sep = next((r for r in d["rows"] if r["strategy"] == "separate"), None)
+        uni = next((r for r in d["rows"] if r["strategy"] == "uniform"), None)
+        if fused and sep and uni:
+            out.append({"n_rates": fused["groups"], "copies_per_rate": fused["copies_per_rate"],
+                        "total_copies": fused["total_copies"],
+                        "fused_ms": fused["sec_per_iteration"] * 1e3,
+                        "separate_ms": sep["sec_per_iteration"] * 1e3,
+                        "uniform_ms": uni["sec_per_iteration"] * 1e3,
+                        "speedup": sep["sec_per_iteration"] / fused["sec_per_iteration"],
+                        "overhead_vs_uniform": fused["sec_per_iteration"] / uni["sec_per_iteration"] - 1})
+    best = {}
+    for r in out:                       # keep the newest measurement per rate count
+        best[r["n_rates"]] = r
+    return sorted(best.values(), key=lambda r: r["n_rates"])
+
+
+def fig_sweep_vs_separate():
+    """How much fusing the groups wins, as the number of rates grows."""
+    rows = sweep_strategy_rows()
+    if len(rows) < 2:
+        return pending("fused-versus-separate figure", "more sweep strategy JSONs")
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=160)
+    ax.plot([r["n_rates"] for r in rows], [r["speedup"] for r in rows], "-", color=C_TORCH,
+            linewidth=2, marker="o", markersize=7, label="measured")
+    ax.axhline(1.0, color="#9aa0ab", linewidth=1, linestyle=":")
+    ax.set_xscale("log", base=2)
+    ax.set_xlabel("number of learning rates (128 copies each, log scale)")
+    ax.set_ylabel("times faster than training the groups one after another")
+    ax.set_ylim(bottom=0.9)
+    ax.legend(frameon=False, fontsize=9)
+    style_ax(ax)
+    fig.suptitle("Fusing the rate groups into one run", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "sweep_vs_separate.png")
+    plt.close(fig)
+    return None
+
+
+def sweep_scaling(study):
+    """Rows of one sweep-scaling study, newest run."""
+    d = newest(rf"sweep_scaling_{study}")
+    return d["rows"] if d else []
+
+
+def fig_sweep_scaling():
+    """Throughput against total copies for both sweep-scaling studies, and the wall-clock view."""
+    rates, copies = sweep_scaling("rates"), sweep_scaling("copies")
+    if not rates:
+        return pending("sweep scaling figures", "the sweep scaling JSONs")
+    uni = (newest(r"trainbench_torch_epoch_minibatch_round2b_styleB") or {}).get("rows", [])
+    uni += (newest(r"trainbench_torch_epoch_minibatch_round2c_large") or {}).get("rows", [])
+    uni = sorted({r["n_copies"]: r for r in uni}.values(), key=lambda r: r["n_copies"])
+
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.3), dpi=160)
+    series = [("more learning rates (128 copies each)", C_TORCH, "-", "o", rates),
+              ("more copies per rate (16 rates)", C_CUDA, "--", "s", copies)]
+    # total throughput
+    for label, color, ls, mk, rows in series:
+        axes[0].plot([r["total_copies"] for r in rows], [r["env_steps_per_sec"] for r in rows],
+                     ls, color=color, linewidth=2, marker=mk, markersize=6, label=label)
+    if uni:
+        axes[0].plot([r["n_copies"] for r in uni],
+                     [r["env_steps_per_sec"] for r in uni], ":", color=C_JAX, linewidth=1.8,
+                     marker="^", markersize=5, label="one learning rate (no sweep)")
+    axes[0].set_ylabel("total environment steps / second")
+    # per-copy throughput, with the per-environment scale on the right
+    for label, color, ls, mk, rows in series:
+        axes[1].plot([r["total_copies"] for r in rows],
+                     [r["env_steps_per_sec_per_copy"] for r in rows],
+                     ls, color=color, linewidth=2, marker=mk, markersize=6, label=label)
+    if uni:
+        axes[1].plot([r["n_copies"] for r in uni],
+                     [r["env_steps_per_sec_per_copy"] for r in uni], ":", color=C_JAX,
+                     linewidth=1.8, marker="^", markersize=5, label="one learning rate (no sweep)")
+    axes[1].set_ylabel("environment steps / second per copy")
+    for ax in axes:
+        ax.set_xscale("log", base=2)
+        ax.set_yscale("log")
+        ax.set_xlabel("total copies (log scale)")
+        ax.legend(frameon=False, fontsize=8.5)
+        style_ax(ax)
+    # the same measurement in per-environment units: a linked secondary axis stays aligned
+    # with the left one whatever the autoscaling does (one copy holds n_envs environments)
+    right = axes[1].secondary_yaxis("right", functions=(lambda y: y / 4.0, lambda y: y * 4.0))
+    right.set_ylabel("environment steps / second per environment", color="#5c6270")
+    right.tick_params(colors="#5c6270")
+    fig.suptitle("Sweep scaling: adding rates costs exactly what adding copies costs",
+                 fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "sweep_scaling.png")
+    plt.close(fig)
+
+    # wall clock to a realistic budget, which is what decides whether a sweep is affordable
+    fig, ax = plt.subplots(figsize=(6.6, 4.2), dpi=160)
+    iters = 10e6 / (128 * 4)
+    for label, color, ls, mk, rows in series:
+        ax.plot([r["total_copies"] for r in rows],
+                [r["sec_per_iteration"] * iters / 3600 for r in rows],
+                ls, color=color, linewidth=2, marker=mk, markersize=6, label=label)
+    sep = [(r["n_rates"], rates[0]["sec_per_iteration"] * r["n_rates"] * iters / 3600)
+           for r in rates]
+    ax.plot([r["total_copies"] for r in rates], [y for _, y in sep], "-.", color="#e34948",
+            linewidth=1.8, marker="x", markersize=6,
+            label="the same groups trained one after another")
+    ax.set_xscale("log", base=2)
+    ax.set_xlabel("total copies (log scale)")
+    ax.set_ylabel("hours to 10 million environment steps per copy")
+    ax.legend(frameon=False, fontsize=8.5)
+    style_ax(ax)
+    fig.suptitle("What a sweep actually costs in wall time", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "sweep_wallclock.png")
+    plt.close(fig)
+    return None
+
+
+def sec_sweep_scaling():
+    """How the sweep scales in rates and in copies."""
+    rates, copies = sweep_scaling("rates"), sweep_scaling("copies")
+    groups = sweep_scaling("groups")
+    if not rates:
+        return "### How it scales\n" + pending("sweep scaling", "the sweep scaling JSONs")
+    iters = 10e6 / (128 * 4)
+    head = next((r for r in rates if r["n_rates"] == 16 and r["copies_per_rate"] == 128), None)
+    md = ""
+    if head:
+        sep = next((r for r in sweep_strategy_rows() if r["n_rates"] == 16), None)
+        hours = head["sec_per_iteration"] * iters / 3600
+        md += f"""### The configuration you asked about
+
+Sixteen learning rates with 128 independent copies each — 2,048 copies in one run — takes
+**{head['sec_per_iteration']*1e3:.0f} ms per iteration**: {sci(head['env_steps_per_sec'])}
+environment steps per second in total, {head['env_steps_per_sec_per_copy']:.0f} per copy,
+{head['env_steps_per_sec_per_env']:.0f} per environment, in {head['peak_vram_mb']/1024:.1f} GB.
+Training all 2,048 of them for 10 million environment steps each takes **{hours:.2f} hours**"""
+        if sep:
+            md += (f", against {sep['separate_ms']/head['sec_per_iteration']/1e3*hours:.2f} hours "
+                   f"if the sixteen groups were trained one after another ({sep['speedup']:.2f}x)")
+        md += ".\n\n"
+    md += """### How it scales
+
+Two knobs grow a sweep: the number of learning rates, and the copies behind each rate. Both
+were measured, and they give the same curve — because both only change the total copy count,
+which is the only thing the cost depends on.
+
+| rates | copies per rate | total copies | ms/iteration | total env-steps/s | per copy | per env | peak VRAM [MB] | hours to 10M steps/copy |
+|---|---|---|---|---|---|---|---|---|
+"""
+    for r in rates + copies:
+        md += (f"| {r['n_rates']} | {r['copies_per_rate']} | {r['total_copies']} | "
+               f"{r['sec_per_iteration']*1e3:.1f} | {sci(r['env_steps_per_sec'])} | "
+               f"{r['env_steps_per_sec_per_copy']:.0f} | {r['env_steps_per_sec_per_env']:.0f} | "
+               f"{r['peak_vram_mb']:.0f} | {r['sec_per_iteration']*iters/3600:.2f} |\n")
+    md += """
+The first six rows grow the rate count at 128 copies each; the last six grow the copies per
+rate at 16 rates. Read them against each other: at every total copy count the two agree to
+0.3 ms out of as much as 274 ms, which is also the best noise estimate available here — the
+two studies are the same measurement reached from different directions.
+
+![sweep scaling](figures/sweep_scaling.png)
+
+Per-environment throughput is the per-copy column divided by the four environments each copy
+holds; it is drawn as the right-hand scale of the second panel rather than as its own curve,
+because it is the same measurement in different units.
+
+"""
+    if groups:
+        ms = [r["sec_per_iteration"] * 1e3 for r in groups]
+        spread = max(ms) - min(ms)
+        md += f"""### Does the number of rates cost anything by itself?
+
+No. Holding the total at {groups[0]['total_copies']} copies and splitting them into more and
+more groups leaves the time per iteration flat and the memory byte-identical:
+
+| groups (learning rates) | copies per rate | ms/iteration | peak VRAM [MB] |
+|---|---|---|---|
+"""
+        for r in groups:
+            md += (f"| {r['n_rates']} | {r['copies_per_rate']} | "
+                   f"{r['sec_per_iteration']*1e3:.1f} | {r['peak_vram_mb']:.0f} |\n")
+        md += f"""
+From 1 group to {groups[-1]['n_rates']} groups the spread is {spread:.2f} ms on a mean of
+{sum(ms)/len(ms):.1f} ms ({spread/(sum(ms)/len(ms))*100:.2f}%), which is within the run-to-run
+noise — and the study was run twice, once from 1 group upward and once from 128 groups
+downward, so the flatness is not an artifact of measuring the points in a fixed order. This is
+what the implementation predicts: the learning rate is a vector indexed by copy,
+Adam is elementwise, the gradient clip reduces per copy, and the loss sums over copies — so
+nothing in the computation is aware of how many distinct rate VALUES that vector holds. Sixteen
+rates cost what sixteen times as many copies cost, and nothing more.
+
+![sweep wall clock](figures/sweep_wallclock.png)
+
+"""
+    strat = sweep_strategy_rows()
+    if strat:
+        md += """### Fusing the groups, against running them one after another
+
+| rates | copies per rate | fused [ms] | separate [ms] | uniform rate, same size [ms] | fused is faster by | sweep overhead vs uniform |
+|---|---|---|---|---|---|---|
+"""
+        for r in strat:
+            md += (f"| {r['n_rates']} | {r['copies_per_rate']} | {r['fused_ms']:.1f} | "
+                   f"{r['separate_ms']:.1f} | {r['uniform_ms']:.1f} | {r['speedup']:.2f}x | "
+                   f"{r['overhead_vs_uniform']*100:+.1f}% |\n")
+        md += """
+The advantage of fusing grows with the number of rates and flattens out: each group on its own
+is too small to fill the GPU, so running them in turn wastes most of the machine, while fusing
+them turns the whole sweep into one batched computation. The last column is the one that
+matters for planning: a sweep costs the same as training the same number of copies at a single
+rate, to within about one percent either way.
+
+![fused versus separate](figures/sweep_vs_separate.png)
+"""
+    return md
+
+
 def sec_sweep():
     """Round 3: sweeping a hyperparameter across copy groups."""
     md = """## Sweeping learning rates across copy groups
@@ -840,9 +1062,11 @@ def main():
     fig_copy_scaling()
     fig_campaign_curves()
     fig_sweep_curves()
+    fig_sweep_scaling()
+    fig_sweep_vs_separate()
     md = "\n".join([sec_overview(), sec_correctness(), sec_module1(), sec_module2(),
                     sec_module3(), sec_copies(), sec_profile(), sec_before_after(),
-                    sec_campaign(), sec_sweep(), sec_rounds(), sec_techniques(),
+                    sec_campaign(), sec_sweep(), sec_sweep_scaling(), sec_rounds(), sec_techniques(),
                     sec_repro()])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")

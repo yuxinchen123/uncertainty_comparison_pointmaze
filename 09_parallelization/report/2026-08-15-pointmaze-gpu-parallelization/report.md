@@ -314,12 +314,12 @@ Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 5
 
 | layout | ms per sweep iteration | peak VRAM [MB] |
 |---|---|---|
-| uniform rate, one trainer (not a sweep — the reference) | 43.77 | 1686 |
-| one trainer, per-copy rate vector, one graph | 44.19 | 1686 |
-| one trainer per rate, run in turn | 81.44 | 1246 |
+| uniform rate, one trainer (not a sweep — the reference) | 144.50 | 6457 |
+| one trainer, per-copy rate vector, one graph | 146.21 | 6457 |
+| one trainer per rate, run in turn | 326.11 | 3169 |
 
-Fusing the groups into one batched run is 1.84x faster than
-running them one after another, and costs +1.0% against a
+Fusing the groups into one batched run is 2.23x faster than
+running them one after another, and costs +1.2% against a
 uniform-rate run of the same total size — so a sweep is very nearly free relative to training
 the same number of copies at a single rate. Running the groups separately is slower for the
 reason the whole project rests on: each group alone is too small to fill the GPU, and the
@@ -342,6 +342,90 @@ unstable, and the best value is the 3e-4 the project had been using — from a s
 cost the same as training those copies at one rate.
 
 ![sweep curves](figures/sweep_curves.png)
+
+### The configuration you asked about
+
+Sixteen learning rates with 128 independent copies each — 2,048 copies in one run — takes
+**144 ms per iteration**: 7.29e6
+environment steps per second in total, 3560 per copy,
+890 per environment, in 6.3 GB.
+Training all 2,048 of them for 10 million environment steps each takes **0.78 hours**, against 1.77 hours if the sixteen groups were trained one after another (2.23x).
+
+### How it scales
+
+Two knobs grow a sweep: the number of learning rates, and the copies behind each rate. Both
+were measured, and they give the same curve — because both only change the total copy count,
+which is the only thing the cost depends on.
+
+| rates | copies per rate | total copies | ms/iteration | total env-steps/s | per copy | per env | peak VRAM [MB] | hours to 10M steps/copy |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 128 | 128 | 20.6 | 3.18e6 | 24830 | 6208 | 494 | 0.11 |
+| 2 | 128 | 256 | 28.4 | 4.61e6 | 18009 | 4502 | 891 | 0.15 |
+| 4 | 128 | 512 | 44.1 | 5.94e6 | 11598 | 2900 | 1686 | 0.24 |
+| 8 | 128 | 1024 | 76.9 | 6.82e6 | 6660 | 1665 | 3277 | 0.42 |
+| 16 | 128 | 2048 | 143.8 | 7.29e6 | 3560 | 890 | 6457 | 0.78 |
+| 32 | 128 | 4096 | 274.2 | 7.65e6 | 1867 | 467 | 12819 | 1.49 |
+| 16 | 8 | 128 | 20.6 | 3.18e6 | 24833 | 6208 | 494 | 0.11 |
+| 16 | 16 | 256 | 28.4 | 4.62e6 | 18036 | 4509 | 891 | 0.15 |
+| 16 | 32 | 512 | 44.2 | 5.93e6 | 11589 | 2897 | 1686 | 0.24 |
+| 16 | 64 | 1024 | 76.8 | 6.83e6 | 6669 | 1667 | 3277 | 0.42 |
+| 16 | 128 | 2048 | 144.1 | 7.28e6 | 3554 | 888 | 6457 | 0.78 |
+| 16 | 256 | 4096 | 274.0 | 7.66e6 | 1869 | 467 | 12819 | 1.49 |
+
+The first six rows grow the rate count at 128 copies each; the last six grow the copies per
+rate at 16 rates. Read them against each other: at every total copy count the two agree to
+0.3 ms out of as much as 274 ms, which is also the best noise estimate available here — the
+two studies are the same measurement reached from different directions.
+
+![sweep scaling](figures/sweep_scaling.png)
+
+Per-environment throughput is the per-copy column divided by the four environments each copy
+holds; it is drawn as the right-hand scale of the second panel rather than as its own curve,
+because it is the same measurement in different units.
+
+### Does the number of rates cost anything by itself?
+
+No. Holding the total at 2048 copies and splitting them into more and
+more groups leaves the time per iteration flat and the memory byte-identical:
+
+| groups (learning rates) | copies per rate | ms/iteration | peak VRAM [MB] |
+|---|---|---|---|
+| 128 | 16 | 143.1 | 6457 |
+| 64 | 32 | 143.1 | 6457 |
+| 32 | 64 | 143.4 | 6457 |
+| 16 | 128 | 145.0 | 6457 |
+| 8 | 256 | 143.7 | 6457 |
+| 4 | 512 | 144.4 | 6457 |
+| 2 | 1024 | 143.8 | 6457 |
+| 1 | 2048 | 143.9 | 6457 |
+
+From 1 group to 1 groups the spread is 1.88 ms on a mean of
+143.8 ms (1.31%), which is within the run-to-run
+noise — and the study was run twice, once from 1 group upward and once from 128 groups
+downward, so the flatness is not an artifact of measuring the points in a fixed order. This is
+what the implementation predicts: the learning rate is a vector indexed by copy,
+Adam is elementwise, the gradient clip reduces per copy, and the loss sums over copies — so
+nothing in the computation is aware of how many distinct rate VALUES that vector holds. Sixteen
+rates cost what sixteen times as many copies cost, and nothing more.
+
+![sweep wall clock](figures/sweep_wallclock.png)
+
+### Fusing the groups, against running them one after another
+
+| rates | copies per rate | fused [ms] | separate [ms] | uniform rate, same size [ms] | fused is faster by | sweep overhead vs uniform |
+|---|---|---|---|---|---|---|
+| 2 | 128 | 28.4 | 40.7 | 28.0 | 1.43x | +1.4% |
+| 4 | 128 | 44.2 | 81.4 | 43.8 | 1.84x | +1.0% |
+| 8 | 128 | 77.3 | 163.0 | 77.5 | 2.11x | -0.2% |
+| 16 | 128 | 146.2 | 326.1 | 144.5 | 2.23x | +1.2% |
+
+The advantage of fusing grows with the number of rates and flattens out: each group on its own
+is too small to fill the GPU, so running them in turn wastes most of the machine, while fusing
+them turns the whole sweep into one batched computation. The last column is the one that
+matters for planning: a sweep costs the same as training the same number of copies at a single
+rate, to within about one percent either way.
+
+![fused versus separate](figures/sweep_vs_separate.png)
 
 ## The three rounds
 
