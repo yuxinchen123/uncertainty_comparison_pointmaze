@@ -18,7 +18,7 @@ sys.path.insert(0, str(BASE / "ppo" / "torch_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
-def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch"):
+def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False, capture_update=False, one_graph=False, tf32=False, env_backend="torch", timing="sync"):
     """Time full iterations and the rollout/update split for one copy count."""
     from torch_ppo_rnd import PPOConfig, PPORND, production_config
     # start from the ONE definition of the shipped configuration, then apply this run's
@@ -48,6 +48,21 @@ def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False
     torch.cuda.synchronize()
 
     t_roll = t_upd = 0.0
+    if timing == "pipelined" and one_graph:
+        # issue every iteration and wait once, so the host can run ahead of the device —
+        # the arrangement the jax benchmark uses, measured here for comparison
+        t0 = time.perf_counter()
+        for _ in range(iters):
+            trainer.iteration_captured()
+        torch.cuda.synchronize()
+        total = time.perf_counter() - t0
+        env_steps = trainer.cfg.num_steps * n_copies * trainer.cfg.n_envs * iters
+        return {"n_copies": n_copies, "style": style, "env_backend": env_backend,
+                "timing": timing, "iters_timed": iters, "sec_per_iteration": total / iters,
+                "rollout_sec_per_iter": None, "update_sec_per_iter": None,
+                "iterations_per_sec": iters / total, "env_steps_per_sec": env_steps / total,
+                "env_steps_per_sec_per_copy": env_steps / total / n_copies,
+                "peak_vram_mb": torch.cuda.max_memory_allocated() / 2 ** 20}
     t0 = time.perf_counter()
     for _ in range(iters):
         if one_graph:
@@ -66,13 +81,15 @@ def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False
     total = time.perf_counter() - t0
     env_steps = trainer.cfg.num_steps * n_copies * trainer.cfg.n_envs * iters
     return {
-        "n_copies": n_copies, "style": style, "env_backend": env_backend, "iters_timed": iters,
+        "n_copies": n_copies, "style": style, "env_backend": env_backend,
+        "timing": timing, "iters_timed": iters,
         "compile_post": cfg.compile_post, "tf32": cfg.tf32, "one_graph": cfg.one_graph,
         "sec_per_iteration": total / iters,
         "rollout_sec_per_iter": t_roll / iters, "update_sec_per_iter": t_upd / iters,
         "iterations_per_sec": iters / total,
         "env_steps_per_sec": env_steps / total,
         "env_steps_per_sec_per_copy": env_steps / total / n_copies,
+        "peak_vram_mb": torch.cuda.max_memory_allocated() / 2 ** 20,
     }
 
 
@@ -88,6 +105,7 @@ def main():
     ap.add_argument("--one-graph", action="store_true")
     ap.add_argument("--tf32", action="store_true")
     ap.add_argument("--env-backend", default="torch")
+    ap.add_argument("--timing", default="sync", choices=["sync", "pipelined"])
     ap.add_argument("--fused-adam", action="store_true")
     args = ap.parse_args()
 
@@ -102,15 +120,17 @@ def main():
         try:
             r = bench(c, args.style, args.iters, args.warmup, args.rollout_mode,
                       args.fused_adam, args.capture_update, args.one_graph, args.tf32,
-                      args.env_backend)
+                      args.env_backend, args.timing)
         except Exception as e:
             failures.append({"n_copies": c, "error": repr(e)[:400]})
             print(f"torch_ppo/{args.style} C={c:>4d}: FAILED {e!r}")
             break
         rows.append(r)
+        split = (f"(rollout {r['rollout_sec_per_iter']*1e3:.1f} + "
+                 f"update {r['update_sec_per_iter']*1e3:.1f}) "
+                 if r.get("rollout_sec_per_iter") is not None else f"({r['timing']}) ")
         print(f"torch_ppo/{args.style} C={c:>4d}: {r['sec_per_iteration']*1e3:.1f} ms/iter "
-              f"(rollout {r['rollout_sec_per_iter']*1e3:.1f} + update {r['update_sec_per_iter']*1e3:.1f}) "
-              f"= {r['env_steps_per_sec']:.3e} env-steps/s total")
+              f"{split}= {r['env_steps_per_sec']:.3e} env-steps/s total")
         out.write_text(json.dumps({"impl": "torch_ppo", "style": args.style, "git": git,
                                    "gpu": torch.cuda.get_device_name(0),
                                    "torch": torch.__version__, "rows": rows,

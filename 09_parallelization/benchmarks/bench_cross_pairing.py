@@ -11,11 +11,13 @@ Run under the lock with the JAX env python (it has jax; torch tensors come over 
 from a torch subprocess? No — this script uses jax + torch in ONE env, so it must run with
 a python that has BOTH. It creates a dedicated venv check first; see main().)
 """
+import json
 import sys
 import time
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
+RESULTS = Path(__file__).resolve().parent / "results"
 
 
 def main():
@@ -39,6 +41,7 @@ def main():
     from jax_pointmaze import JaxPointMaze
     from torch_pointmaze import TorchPointMaze
 
+    rows = []
     for total in (512, 65536, 1048576):
         jenv = JaxPointMaze(EnvConfig(), 1, total)
         jstate = jenv.reset()
@@ -86,9 +89,17 @@ def main():
         torch.cuda.synchronize()
         native_torch = (time.perf_counter() - t0) / k * 1e6
 
+        rows.append({"total_envs": total, "native_torch_us": native_torch,
+                     "native_jax_us": native_jax, "cross_framework_us": cross_us,
+                     "boundary_overhead_us": cross_us - native_jax})
         print(f"N={total:>8d}: native torch {native_torch:8.1f} us/step | "
               f"native jax {native_jax:8.1f} | torch<->jax dlpack boundary {cross_us:8.1f} "
               f"(overhead {cross_us - native_jax:+8.1f})")
+
+    RESULTS.mkdir(exist_ok=True)
+    out = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_cross_pairing.json"
+    out.write_text(json.dumps({"rows": rows}, indent=1))
+    print(f"wrote {out}")
 
 
 if __name__ == "__main__":
