@@ -219,18 +219,18 @@ the phases and is faster than this sum):
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
 environments, statistics, and optimizer.
 
-| style | copies | wall time [s] | total env-steps/s | copies at goal* | coverage mean | peak VRAM [MB] |
-|---|---|---|---|---|---|---|
-| epoch_minibatch | 8 | 529 | 1.55e5 | 2/8 | 0.973 | 146 |
-| epoch_minibatch | 16 | 552 | 2.97e5 | 4/16 | 0.821 | 163 |
-| epoch_minibatch | 32 | 571 | 5.74e5 | 11/32 | 0.867 | 198 |
-| epoch_minibatch | 64 | 615 | 1.07e6 | 19/64 | 0.879 | 268 |
-| epoch_minibatch | 128 | 732 | 1.79e6 | 27/128 | 0.767 | 432 |
-| full_batch | 8 | 369 | 2.22e5 | 3/8 | 0.826 | 156 |
-| full_batch | 16 | 384 | 4.27e5 | 0/16 | 0.753 | 183 |
-| full_batch | 32 | 389 | 8.42e5 | 8/32 | 0.781 | 238 |
-| full_batch | 64 | 412 | 1.59e6 | 9/64 | 0.748 | 348 |
-| full_batch | 128 | 489 | 2.68e6 | 12/128 | 0.746 | 546 |
+| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|
+| epoch_minibatch | 8 | 529 | 1.55e5 | 1.94e4 | 2/8 | 0.973 | 146 |
+| epoch_minibatch | 16 | 552 | 2.97e5 | 1.86e4 | 4/16 | 0.821 | 163 |
+| epoch_minibatch | 32 | 571 | 5.74e5 | 1.79e4 | 11/32 | 0.867 | 198 |
+| epoch_minibatch | 64 | 615 | 1.07e6 | 1.67e4 | 19/64 | 0.879 | 268 |
+| epoch_minibatch | 128 | 732 | 1.79e6 | 1.40e4 | 27/128 | 0.767 | 432 |
+| full_batch | 8 | 369 | 2.22e5 | 2.78e4 | 3/8 | 0.826 | 156 |
+| full_batch | 16 | 384 | 4.27e5 | 2.67e4 | 0/16 | 0.753 | 183 |
+| full_batch | 32 | 389 | 8.42e5 | 2.63e4 | 8/32 | 0.781 | 238 |
+| full_batch | 64 | 412 | 1.59e6 | 2.49e4 | 9/64 | 0.748 | 348 |
+| full_batch | 128 | 489 | 2.68e6 | 2.09e4 | 12/128 | 0.746 | 546 |
 
 *copies at goal = copies with a positive extrinsic-reward iteration inside the final 10%
 of training (the sparse goal is intermittently re-found; per-copy curves below).

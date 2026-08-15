@@ -503,8 +503,8 @@ def sec_campaign():
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
 environments, statistics, and optimizer.
 
-| style | copies | wall time [s] | total env-steps/s | copies at goal* | coverage mean | peak VRAM [MB] |
-|---|---|---|---|---|---|---|
+| style | copies | wall time [s] | total env-steps/s | env-steps/s per copy | copies at goal* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|
 """
     for (style, c) in sorted(recs, key=lambda k: (k[0], k[1])):
         r = recs[(style, c)]
@@ -517,7 +517,8 @@ environments, statistics, and optimizer.
             solved = sum(1 for v in per_copy if v > 0)
         cov = sum(r["final_coverage_per_copy"]) / c
         md += (f"| {style} | {c} | {r['train_seconds']:.0f} | "
-               f"{sci(r['env_steps_per_sec'])} | {solved}/{c} | {cov:.3f} | "
+               f"{sci(r['env_steps_per_sec'])} | {sci(r['env_steps_per_sec'] / c)} | "
+               f"{solved}/{c} | {cov:.3f} | "
                f"{r['peak_vram_mb']:.0f} |\n")
     md += """
 *copies at goal = copies with a positive extrinsic-reward iteration inside the final 10%
