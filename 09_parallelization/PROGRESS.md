@@ -126,3 +126,31 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   v' = (m*clip(v,±5) + h*g*clip(a,±1))/(m+h*d), q' = q + h*v'; hard-wall clamp within 1.4 mm
   of MuJoCo soft contact. Fixtures written. Next: serval05 env bootstrap + lock + research
   fan-out + torch env v0.
+
+- 2026-08-15 ~17:15 PT — a second processor node measured against jaguar03, and the earlier
+  processor numbers corrected. Node: jaguar02 (Intel Xeon Gold 6334, 16 cores / 32 threads,
+  the highest clock on this cluster), held exclusively; the Zen 4 serval machines could not be
+  used (one in maintenance, four carrying other users' multi-day jobs). Run folder
+  `analysis/2026-08-15-16-39_cpu-node-comparison-newer-processor-vs-jaguar03/`; section
+  generator `report/2026-08-15-pointmaze-gpu-parallelization/code/cpu_node_comparison.py`
+  (`sec_cpu_node_comparison()`), not yet wired into make_report.py.
+  **The five-iteration processor measurements are burst numbers, not sustained ones.** Repeating
+  them at 150 iterations drops jaguar03 by 27% at 112 workers and 68% at 224; jaguar02 is
+  unaffected. Two causes, both growing with worker count: jaguar03's clock settles from 3.52 to
+  2.60 GHz with every core busy (jaguar02 holds 3.56), and over seven iterations several hundred
+  processes are still starting at different moments, so the benchmark's sum of per-worker rates
+  describes a load that never existed.
+  Consequences: jaguar03's best setting is **112 workers, not 224** — filling all 224 hardware
+  threads is 11% WORSE (0.1276 -> 0.1138 million steps/s), where the burst numbers said it nearly
+  doubled. On jaguar02 the second thread is still worth +11%. Every worker count the argument
+  rests on was measured three times; the 224-worker point repeated to 0.1138 exactly.
+  At equal load (every physical core busy) jaguar02 gives 1.27 thousand steps/s per copy against
+  jaguar03's 1.16, but on a clock 37% higher — so jaguar03 does 1.24x as much work per clock
+  cycle. Cause traced to the last-level cache, measured on both nodes: at an 8 MiB working set one
+  dependent access takes 44.3 ns on jaguar02 and 15.6 on jaguar03, and jaguar03 has 4.57 MiB of
+  level-3 cache per core against 2.25. Not the vector units — the array library uses AVX512 on
+  jaguar02 and only AVX2 on jaguar03, and the AVX512 machine is the one doing less per cycle.
+  Extrapolation: scaled to 112 cores, jaguar02's per-core rate projects to 0.159 million steps/s,
+  about 125% of jaguar03's best (140% of jaguar03 at the same 224 threads) — but that assumes the
+  clock, the memory bandwidth per core and the cache per core all survive a sevenfold core
+  increase, and jaguar03 is itself the evidence that they do not. Read as an upper bound.
