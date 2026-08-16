@@ -210,8 +210,9 @@ def build(classes, jobs, probes):
             continue
         ranked.sort(key=lambda r: -r[0])
         _, cls, cell = ranked[0]
-        second = (f"{esc(ranked[1][1]['display_name'])}, {ranked[0][0] / ranked[1][0]:.2f}&times;"
-                  " slower" if len(ranked) > 1 else "N/A")
+        second = (f"{esc(ranked[1][1]['display_name'])}, "
+                  f"{ranked[0][0] / ranked[1][0]:.2f}&times; as long"
+                  if len(ranked) > 1 else "N/A")
         rows.append([f"{n_copies:,}", esc(cls["display_name"]),
                      f'<span class="mono">{esc(cls["name"])}</span>',
                      f"{10 * cell['hours_per_million_steps_per_copy']:.2f} h", second,
@@ -221,7 +222,7 @@ def build(classes, jobs, probes):
             '<p class="lede">Ten million steps per copy is the length of a real training run '
             "here, so the hours are quoted for that.</p>",
             table(["Copies", "Fastest card", "Node class", "Hours for 10M steps per copy",
-                   "Next best", "Cards that cannot hold it"], rows, numeric_from=3),
+                   "Next best card, and how much longer", "Cards that cannot hold it"], rows, numeric_from=3),
             "</section>"]
 
     # the per-copy-count tables

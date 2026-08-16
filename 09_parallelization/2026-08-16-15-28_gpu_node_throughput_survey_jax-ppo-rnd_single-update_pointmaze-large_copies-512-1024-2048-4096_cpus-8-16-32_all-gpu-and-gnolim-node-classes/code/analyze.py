@@ -375,7 +375,8 @@ def where_to_send_a_run(classes, jobs):
     ten million steps per copy would take — the length of a real training run in this project.
     """
     lines = ["| copies | fastest card | node class | hours for ten million<br>steps per copy | "
-             "next best, and how much<br>slower it is | cards that cannot<br>hold this run |",
+             "next best card, and how<br>much longer it takes | cards that cannot<br>"
+             "hold this run |",
              "|---|---|---|---|---|---|"]
     for n_copies in COPY_COUNTS:
         ranked = []
@@ -393,8 +394,10 @@ def where_to_send_a_run(classes, jobs):
         ranked.sort(key=lambda r: -r[0])
         _, best_cls, best_cell = ranked[0]
         hours = 10 * best_cell["hours_per_million_steps_per_copy"]
+        # stated as "as long", not "slower", so it compares directly with the hours column
         runner_up = (f"{ranked[1][1]['display_name']}, "
-                     f"{ranked[0][0] / ranked[1][0]:.2f}x slower" if len(ranked) > 1 else "N/A")
+                     f"{ranked[0][0] / ranked[1][0]:.2f} times as long"
+                     if len(ranked) > 1 else "N/A")
         lines.append(f"| {n_copies} | {best_cls['display_name']} | `{best_cls['name']}` | "
                      f"{hours:.2f} | {runner_up} | {no_room} |")
     return "\n".join(lines)

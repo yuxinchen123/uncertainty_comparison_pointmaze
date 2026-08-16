@@ -1,8 +1,8 @@
 # Throughput of the single-update JAX PPO+RND trainer on every graphics card of this cluster
 
-Written 2026-08-16 16:42 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
+Written 2026-08-16 16:43 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
 
-67 of 80 jobs have reported, giving 218 measured cells; 45 cells did not fit on their card. 13 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
+67 of 80 jobs have reported, giving 218 measured cells; 46 cells did not fit on their card. 13 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
 
 ## 1. What was measured
 
@@ -56,12 +56,12 @@ All 23 classes probed so far run the trainer: JAX 0.10.2 with the CUDA 12 plugin
 
 The tables in section 4 carry every card; this one carries the answer. Ten million steps per copy is the length of a real training run in this project, so the wall time is quoted for that.
 
-| copies | fastest card | node class | hours for ten million<br>steps per copy | next best, and how much<br>slower it is | cards that cannot<br>hold this run |
+| copies | fastest card | node class | hours for ten million<br>steps per copy | next best card, and how<br>much longer it takes | cards that cannot<br>hold this run |
 |---|---|---|---|---|---|
-| 512 | H100 NVL | `serval06-09` | 0.04 | A100, 1.72x slower | 0 |
-| 1024 | H100 NVL | `serval06-09` | 0.06 | A100, 1.72x slower | 0 |
-| 2048 | H100 NVL | `serval06-09` | 0.11 | A100, 1.78x slower | 3 |
-| 4096 | H100 NVL | `serval06-09` | 0.22 | A100, 1.71x slower | 14 |
+| 512 | H100 NVL | `serval06-09` | 0.04 | A100, 1.72 times as long | 0 |
+| 1024 | H100 NVL | `serval06-09` | 0.06 | A100, 1.72 times as long | 0 |
+| 2048 | H100 NVL | `serval06-09` | 0.11 | A100, 1.78 times as long | 3 |
+| 4096 | H100 NVL | `serval06-09` | 0.22 | A100, 1.71 times as long | 14 |
 
 ## 4.1 512 copies
 
