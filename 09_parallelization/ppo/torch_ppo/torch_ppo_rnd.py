@@ -96,6 +96,14 @@ class PPOConfig:
     # parameter instead, so every window is contiguous and every pass over it reaches the card's
     # full bandwidth — at the price of twenty-one programs per optimizer pass rather than one,
     # because a copy no longer owns a row. Requires gradient_buffer=False.
+    gather_into_place: bool = True   # write the per-epoch shuffle straight into its static
+                                     # buffer with torch.gather(..., out=), instead of letting
+                                     # the gather allocate a second copy of the whole shuffled
+                                     # batch and copying that across. The kernel profile at
+                                     # 4,096 copies names the copy it removes — 2.9 ms of
+                                     # device-to-device copying an iteration — but the two are
+                                     # measured against each other because a profile is not an
+                                     # end-to-end measurement.
     generated_rollout_matmul: bool = False
     # let the compiler generate the rollout step's matrix multiplications from its own templates
     # instead of calling the library's. The rollout's are the least efficient programs in the
@@ -1061,7 +1069,10 @@ class PPORND:
                 for key in self._U_KEYS:
                     t = self._U[key]
                     ix = idx.unsqueeze(-1).expand(C, Brows, t.shape[-1]) if t.dim() == 3 else idx
-                    torch.gather(t, 1, ix, out=self._UP[key])
+                    if cfg.gather_into_place:
+                        torch.gather(t, 1, ix, out=self._UP[key])
+                    else:
+                        self._UP[key].copy_(t.gather(1, ix))
                 for k in range(cfg.num_minibatches):
                     mb = {key: self._UP[key][:, k * mb_size:(k + 1) * mb_size]
                           for key in self._U_KEYS}
