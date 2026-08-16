@@ -1473,13 +1473,15 @@ def main():
     fig_sweep_scaling()
     fig_sweep_vs_separate()
     fig_uniform_vs_sweep()
+    import cpu_node_comparison as cnc
+    cnc.fig_cpu_node_comparison()
     import section_times as st
     body = [sec_correctness(), sec_module1(), sec_module2(), sec_module3(), sec_copies(),
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
             sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
-            sec_clean_node()]
+            sec_clean_node(), cnc.sec_cpu_node_comparison()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]
