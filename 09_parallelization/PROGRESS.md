@@ -72,8 +72,8 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits (121.8 ms and 29.5 GB with one
   update per batch; 407.0 ms and 27.4 GB with sixteen) on the 94 GB card.
 
-- Round 6 (2026-08-16, night): read the JAX trainer's own fifth round, which had finished after
-  this side's was written, and re-open 1,024 to 4,096 with the measurement method that round
+- Round 6 (2026-08-15 night, Pacific): read the JAX trainer's own fifth round, which had finished
+  after this side's was written, and re-open 1,024 to 4,096 with the measurement method that round
   arrived at. Its verdict rule — the paired, round-by-round sign test, both versions built in ONE
   process and timed round-robin — was adopted and is now `benchmarks/bench_torch_change.py`. Its
   two kept changes did not transfer: both are unroll factors, and the PyTorch update has no loop
@@ -83,6 +83,48 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   all of them removing passes over memory that round five's own work had created.
 
 ## State notes (newest first)
+
+- 2026-08-15 ~22:00 PT — round 6 complete, on branch `worktree-agent-a9d3932a1c6532feb`. The
+  question was what the JAX trainer's fifth round transferred to the PyTorch one, and whether
+  1,024 to 4,096 copies could be improved again. Everything below is measured on serval05 under
+  the exclusive lock, both frameworks waiting for every iteration.
+  - **The premise was checked first, and it held.** Re-measured in one session, PyTorch reproduces
+    round five's figures to within half a percent, and the JAX fifth round is worth **nothing at
+    these sizes** — its trainer is within a percent of what it was before that round at 1,024 to
+    4,096. Its two kept changes are unroll factors, and unrolling buys fewer, longer-running
+    programs, which is worth ten percent at 128 copies and nothing where bytes are the cost.
+  - **Its measurement method transferred and is now used here**: both versions built in ONE
+    process, timed round-robin with the order reversed on alternate rounds, verdict by the
+    round-by-round paired difference and a sign test (`benchmarks/bench_torch_change.py`).
+  - **Three changes kept**, chosen by a kernel-level profile at 4,096 copies: read the gradients
+    where the backward pass wrote them instead of copying them into one buffer; hold one
+    contiguous block per parameter instead of one buffer row per copy; and write the shuffled
+    batch straight into its buffer instead of building a second copy of it. Together **-7.0% at
+    4,096 copies and -6.9% at 1,024**, every step of the chain unanimous across eleven paired
+    rounds.
+  - **The first of them reverses sign below 512 copies** — +6.7% / +5.4% / +2.8% SLOWER at 8 / 32
+    / 128, and faster at every size from 512 up — so the trainer picks the form from the copy
+    count. That is the same regime split round five found, seen from the other direction, and it
+    is why every change is measured at both ends of the range.
+  - **Two things measured and not kept**: summing the squared gradients inside the copy (a real
+    gain over round five, but it loses to reading them in place when the two are compared
+    directly), and letting the compiler generate the multiplications, which is **42.6% slower**
+    once the library backend is removed so that the epilogue actually fuses — the answer round
+    five left open.
+  - **One measurement measured nothing and was caught by its own accuracy check**: the first
+    version of the epilogue probe swapped four compiled functions onto one trainer, and all four
+    came out bitwise identical and the same speed, because the compiler caches against the
+    function and the backend rather than against a surrounding context.
+  - **Correction to the record**: the trainer has twenty-one parameter tensors per copy, not the
+    nineteen every ledger and report sentence since round four has said.
+  - **Largest thing left, measured but not attempted**: of the rollout's 15.3 ms at 4,096 copies,
+    11.45 are matrix multiplications running at about 850 GB/s, because each of the 128 steps
+    multiplies four rows per copy against that copy's whole actor weights and those weights do not
+    fit the cache. The counted floor for the whole rollout is 2.8 ms.
+  - Report section: "Training a thousand to four thousand copies at once", subsection "Round six"
+    (`report/2026-08-15-pointmaze-gpu-parallelization/report.md`). Ledger: round 6 in
+    `ppo/torch_ppo/progress_and_changes.md`. Every result JSON is in `benchmarks/results/` in both
+    this branch and the main tree.
 
 - 2026-08-15 ~19:30 PT — round 5 complete, on branch `worktree-agent-ab3b4d042ce36522c`. The
   question was how the PyTorch trainer compares with the JAX one at 1,024 to 4,096 copies, and
