@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:25 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:56 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -974,8 +974,79 @@ The previous round was decided at 8 to 128 copies and recorded a 1.1 percent los
 
 A positive number means the previous round made it slower. The 512-copy loss was not an isolated size but the start of a trend, and the first of this round's changes is its repair.
 
+### What was changed
 
-*PENDING — waiting on the round-five paired comparisons.*
+Three changes, all of them removing passes over memory, none of them changing what the trainer
+computes.
+
+**Aligning the parameters.** The previous round put the nineteen parameter tensors of each copy
+into one buffer, as nineteen windows onto a row of 59,910 numbers. Neither that row length nor
+several of the window offsets is a multiple of four, so a given parameter's address for copy *c*
+is a multiple of sixteen bytes for almost no *c*, and the matrix library responded by selecting
+its kernels that load one number at a time instead of four. A profile of the previous build at
+1,024 copies found 18.8 of its 31.1 milliseconds of multiplication time in those unvectorised
+kernels. Padding each window and the row to a multiple of four numbers costs ten numbers per copy,
+is never read, and restores the vectorised kernels. This also explains a loss the previous round
+recorded but could not account for: measured against its own predecessor at 1,024 copies, that
+round was 19.2 percent slower with one update per batch and 7.1 percent slower with sixteen —
+a real regression at exactly the sizes the trainer is used at, invisible at the sizes it was
+tuned on.
+
+**Adding the bias after the multiplication.** Every layer was written as one library call that
+multiplies and adds the bias together. There is no batched multiplication that broadcasts a bias,
+so that call first writes the expanded bias into the output tensor and then asks the
+multiplication to accumulate on top of it; the activation function afterwards reads and writes the
+same tensor again. Five passes over the output. Written instead as "multiply, then add the bias
+and apply the activation in one expression", the compiler fuses the bias and the activation into
+a single pass and the output is touched three times. The result is bitwise identical — the same
+sum in the same precision, only computed by different programs — which the equivalence test
+records.
+
+**Writing gradients rather than accumulating them, and separating the gradient limit from the
+Adam step.** Two changes to the update stage with the same character. First: with a gradient
+tensor attached to each parameter, a backward pass *adds* into it, which reads and rewrites the
+whole gradient buffer, and the buffer then has to be zeroed before the next step — four passes
+over a buffer that holds a gigabyte at 4,096 copies. Asking the automatic-differentiation system
+for the gradients instead returns freshly written tensors that nothing has to be added to, and one
+call copies them into their windows. Second: the gradient limit and the Adam step were one
+compiled function, which the compiler fused into a single program that both reduces and updates;
+that program reached 2.4 of the card's 3.5 terabytes per second. Compiled separately, the
+reduction reaches 3.2 and the update 3.5.
+
+Each change was then measured on its own against the revision before it, at 1,024 copies with
+sixteen updates per batch, both sides built in their own process and run in the order A B B A so
+that the spread between two runs of the same side gives the noise floor.
+
+| change | before | after | difference | noise floor |
+|---|---|---|---|---|
+| aligning the<br>parameter windows | 82.48 ms | 73.14 ms | -9.34 ms (-11.3 percent) | 0.54 ms |
+| adding the bias after<br>the multiplication | 73.26 ms | 61.51 ms | -11.75 ms (-16.0 percent) | 0.50 ms |
+| writing gradients, and<br>splitting the gradient<br>limit from the Adam step | 61.45 ms | 57.07 ms | -4.38 ms (-7.1 percent) | 0.46 ms |
+
+### What was considered and not done, with the arithmetic that decided it
+
+Three further ideas were costed against the byte counts above and rejected without being built.
+Recording them is the point: two of them look obviously right until the bytes are counted.
+
+1. **Recompute the frozen RND target's features in every update step instead of storing them.**
+   This is what the JAX trainer does, and at these sizes it looks like the better trade, because
+   storing them spends memory traffic to save arithmetic and memory traffic is the constraint.
+   Counted per copy per iteration, storing costs 0.26 megabytes to write the features, 2.1 to
+   permute them once per epoch and 1.0 to read them across the sixteen steps: about 3.4 in total.
+   Recomputing stores nothing but writes and reads a 256-wide intermediate in every one of the
+   sixteen steps, about 6.4 megabytes, plus the target's own weights sixteen times. Storing wins
+   by nearly a factor of two.
+2. **Process the copies in groups small enough that a group's parameters, moments and gradients
+   stay in the 50-megabyte cache across all sixteen update steps.** That would remove fifteen
+   sixteenths of the parameter traffic, which is about a third of an iteration — by far the
+   largest remaining saving. A copy's working set is about 1.65 megabytes, so a group that fits
+   the cache holds about thirty copies, and a program with thirty pieces of work cannot fill the
+   card's 132 processing blocks. The two requirements cannot both be met at this network size.
+3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the eight
+   passes the optimiser makes, about 5 percent of an update step. It changes what the trainer
+   computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
+   rather than in this one.
+
 ### Why the JAX trainer is faster at these copy counts
 
 | update convention | copies | PyTorch | JAX | ratio |
