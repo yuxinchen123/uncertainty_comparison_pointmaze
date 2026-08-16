@@ -325,6 +325,35 @@ Every gate run on the graphics processor, none re-scoped:
 Two of these are stronger than they were: the captured update now agrees with the uncaptured one
 BITWISE in both styles, where round four's gate was a tolerance of 1e-5.
 
+### What the alignment change does to the arithmetic, exactly
+
+Running a whole iteration under the old and new revisions from one seed and comparing parameters
+gives 1.08e-3 absolute after ONE iteration — far more than the other two changes (7.0e-7 and
+3.0e-7). That measurement cannot be read as an equivalence check: an iteration samples actions,
+so a difference in the last bits of the first action sends the two runs down different
+trajectories and the number afterwards measures divergence, not error. The question has to be
+asked of the arithmetic in isolation, which `benchmarks/probe_alignment_numerics.py` does: the
+same weights read from an aligned window and from a window offset by two numbers, multiplied by
+the same input, on the trainer's real shapes.
+
+| layer | inner dimension | reduced precision (as shipped) | full single precision |
+|---|---|---|---|
+| actor and critic first layer, packed | 4 | 5.5e-4 relative | 0.0 |
+| actor second layer | 64 | 0.0 | 0.0 |
+| RND predictor first layer | 4 | 5.2e-4 relative | 0.0 |
+| RND predictor second layer | 256 | 0.0 | 0.0 |
+| RND predictor third layer | 128 | 0.0 | 0.0 |
+
+Read across: in full single precision the alignment changes nothing at all, anywhere. In the
+shipped configuration it changes the two layers whose inner dimension is four, by about 5e-4
+relative. The explanation follows from the two columns together — when those weights were
+misaligned the library could not use the reduced-precision matrix units for them and fell back to
+full single precision, and aligning them lets `tf32=True` apply where it previously could not.
+That is the configuration doing what it says: `PPOConfig.tf32` is documented as "faster, ~1e-3
+relative rounding", and 5e-4 is inside it. The change makes the trainer MORE consistent with its
+own setting rather than less, and it is not a silent precision loss: the same setting already
+governs every other multiplication in the program.
+
 ### Ideas costed and NOT taken, with the arithmetic that rejected them
 
 Recorded because the counting is the result, and because two of them look obviously right until

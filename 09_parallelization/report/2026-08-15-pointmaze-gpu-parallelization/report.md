@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 19:17 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 19:28 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -850,14 +850,14 @@ and above, and is recorded below.
 
 | phase | 128 copies | 1,024 copies | 4,096 copies |
 |---|---|---|---|
-| rollout (128 sequential environment steps) | 4.97 | 12.05 | 16.85 |
-| post-rollout processing | 1.30 | 8.76 | 35.30 |
-| update (16 minibatch steps) | 13.89 | 63.98 | 239.15 |
-| the whole iteration, recorded as one sequence | 20.31 | 81.59 | 290.58 |
+| rollout (128 sequential environment steps) | 4.97 | 12.05 | 15.28 |
+| post-rollout processing | 1.30 | 8.76 | 19.72 |
+| update (16 minibatch steps) | 13.89 | 63.98 | 169.29 |
+| the whole iteration, recorded as one sequence | 20.31 | 81.59 | 204.52 |
 
 *Milliseconds, sixteen updates per batch. The first three lines are the three phases timed as separately recorded sequences; the last is the shipped arrangement, which records all three together.*
 
-From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.4 and the update by a factor of 17.2. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
+From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.1 and the update by a factor of 12.2. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
 
 ### The two frameworks at the sizes in use
 
@@ -948,7 +948,7 @@ below — the gather, which reads rows in a random order — is 3 percent of an 
 iteration is not slow because any one of its programs is slow. It costs what it costs because of
 how many bytes pass through those programs.
 
-The same conclusion from the other side: every matrix multiplication of the update stage, timed on its own and summed, comes to 78 milliseconds at 4,096 copies, against 239 measured for the stage. One third of the stage is the multiplications; the other two thirds is moving activations, gradients and optimiser state between them.
+The same conclusion from the other side: every matrix multiplication of the update stage, timed on its own and summed, comes to 78 milliseconds at 4,096 copies, against 169 measured for the stage. One third of the stage is the multiplications; the other two thirds is moving activations, gradients and optimiser state between them.
 
 **The conclusion, and what follows from it.** At 128 copies the trainer was limited by the number
 of device programs; at 4,096 copies it is limited by memory traffic, with every program already at
@@ -956,8 +956,8 @@ or near the bandwidth the card delivers. A change that removes device programs �
 every optimisation in rounds one to four did — cannot help at this size. A change that removes
 *passes over memory* can, and the three changes below are all of that kind. For comparison, the
 same iteration's arithmetic would take 8.4 milliseconds if the matrix
-units ran at their marketed rate, 2.9 percent of the
-291 milliseconds measured; that figure is what the 128-copy analysis reported, and
+units ran at their marketed rate, 4.1 percent of the
+205 milliseconds measured; that figure is what the 128-copy analysis reported, and
 at this size it says only that the shapes are small, not that there is room in the arithmetic.
 
 One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
@@ -1061,6 +1061,36 @@ The previous round's loss at 512 copies was found only because the sizes it had 
 | PyTorch after | 128 | 6.1 | **10.76** | 84.0 | 0.003 | 0.7 |
 | PyTorch before | 512 | 17.5 | 15.02 | 29.3 | 0.009 | 2.1 |
 | PyTorch after | 512 | 11.2 | **23.33** | 45.6 | 0.006 | 2.3 |
+
+### Whether the three changes changed what the trainer computes
+
+The rule for the round was that they must not. Two of them are exactly neutral and one needs a
+sentence.
+
+Adding the bias after the multiplication is **bitwise identical**: the loss and all nineteen
+parameter gradients, computed from the same inputs both ways, agree to zero. Writing the
+gradients rather than accumulating them is arithmetically the same sequence of Adam steps; the
+only reordering is that the per-copy gradient limit now sums nineteen tensors' contributions in
+the same order as before but in its own program, and one optimiser step from identical inputs
+agrees with the previous form to 6.9e-6 relative on parameters that moved 3.0e-4.
+
+Aligning the parameters is the one that needs care. Comparing whole iterations of the two
+revisions from one seed gives a difference of 1.08e-3 after a single iteration, which looks
+alarming and means nothing: an iteration samples actions, so a difference in the last bits of the
+first action sends the two runs down different trajectories, and what is measured afterwards is
+divergence rather than error. Asked of the arithmetic in isolation — the same weights read from
+an aligned window and from one offset by two numbers, multiplied by the same input — the answer
+is exact and in two parts. In full single precision the alignment changes nothing anywhere, in
+every layer, to the last bit. In the configuration this trainer actually runs, which enables the
+card's reduced-precision matrix units, it changes the two layers whose inner dimension is four,
+by about 5e-4 relative. Those two facts together say what happened: when the weights were
+misaligned the library could not use the reduced-precision units for those layers and fell back
+to full precision, and aligning them lets the setting apply where it previously could not. The
+trainer's own configuration documents that setting as costing about 1e-3 of relative rounding,
+and it already governs every other multiplication in the program, so the change makes the trainer
+more consistent with its own setting rather than quietly less accurate. A run that needs full
+single precision throughout has always had to turn that setting off, and with it off the
+alignment is exactly neutral.
 
 ### What was considered and not done, with the arithmetic that decided it
 

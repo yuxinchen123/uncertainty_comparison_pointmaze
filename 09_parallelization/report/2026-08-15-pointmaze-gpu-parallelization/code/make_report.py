@@ -1980,7 +1980,37 @@ that the spread between two runs of the same side gives the noise floor.
                + throughput_table([("PyTorch before", small["before A"]),
                                    ("PyTorch after", small["after A"])],
                                   "full_batch", [8, 32, 128, 512]) + "\n\n")
-    md += """### What was considered and not done, with the arithmetic that decided it
+    md += """### Whether the three changes changed what the trainer computes
+
+The rule for the round was that they must not. Two of them are exactly neutral and one needs a
+sentence.
+
+Adding the bias after the multiplication is **bitwise identical**: the loss and all nineteen
+parameter gradients, computed from the same inputs both ways, agree to zero. Writing the
+gradients rather than accumulating them is arithmetically the same sequence of Adam steps; the
+only reordering is that the per-copy gradient limit now sums nineteen tensors' contributions in
+the same order as before but in its own program, and one optimiser step from identical inputs
+agrees with the previous form to 6.9e-6 relative on parameters that moved 3.0e-4.
+
+Aligning the parameters is the one that needs care. Comparing whole iterations of the two
+revisions from one seed gives a difference of 1.08e-3 after a single iteration, which looks
+alarming and means nothing: an iteration samples actions, so a difference in the last bits of the
+first action sends the two runs down different trajectories, and what is measured afterwards is
+divergence rather than error. Asked of the arithmetic in isolation — the same weights read from
+an aligned window and from one offset by two numbers, multiplied by the same input — the answer
+is exact and in two parts. In full single precision the alignment changes nothing anywhere, in
+every layer, to the last bit. In the configuration this trainer actually runs, which enables the
+card's reduced-precision matrix units, it changes the two layers whose inner dimension is four,
+by about 5e-4 relative. Those two facts together say what happened: when the weights were
+misaligned the library could not use the reduced-precision units for those layers and fell back
+to full precision, and aligning them lets the setting apply where it previously could not. The
+trainer's own configuration documents that setting as costing about 1e-3 of relative rounding,
+and it already governs every other multiplication in the program, so the change makes the trainer
+more consistent with its own setting rather than quietly less accurate. A run that needs full
+single precision throughout has always had to turn that setting off, and with it off the
+alignment is exactly neutral.
+
+### What was considered and not done, with the arithmetic that decided it
 
 Three further ideas were costed against the byte counts above and rejected without being built.
 Recording them is the point: two of them look obviously right until the bytes are counted.
