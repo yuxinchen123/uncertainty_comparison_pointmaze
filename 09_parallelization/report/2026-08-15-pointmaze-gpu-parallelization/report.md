@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 23:00 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 23:01 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1394,7 +1394,7 @@ Read the four rows together. Offering both backends reproduces round five's resu
 
 **A note on how this was measured, because the first attempt measured nothing.** The first version of the probe built ONE trainer and swapped four compiled versions of its loss onto it, each compiled inside a context that set the compiler's options. All four came out bitwise identical and within 0.1 percent of each other in time — one form measured four times, not four forms agreeing. The compiler caches its work against the function being compiled and against the backend the wrapper carries, and a setting applied through a surrounding context is part of neither. The probe now gives each arm its own trainer and passes the settings as options rather than around them, and it says so out loud when two arms agree to zero. The accuracy line it already printed is what caught it.
 
-#### The three together, against the revision the round started from
+#### The round end to end, against the revision it started from
 
 | setting | before | after | difference | noise floor |
 |---|---|---|---|---|

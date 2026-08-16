@@ -2416,7 +2416,7 @@ with the size rule replaced by the configuration's own answer.
                 ("4,096 copies,<br>one update per batch", r"ab_r6-all-C4096-styleA\.")]
     have = [(n, newest(p)) for n, p in combined]
     if any(d for _, d in have):
-        md += ("#### The three together, against the revision the round started from\n\n"
+        md += ("#### The round end to end, against the revision it started from\n\n"
                "| setting | before | after | difference | noise floor |\n|---|---|---|---|---|\n")
         for name, d in have:
             if not d:
