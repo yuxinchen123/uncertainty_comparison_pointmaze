@@ -1066,6 +1066,35 @@ def working_set_table(copies_list=(1, 4, 16, 64, 128, 256, 512)):
                  f"is twice the figure in the last column.*\n\n")
 
 
+def floor_split_table(style="full_batch", workers=112):
+    """The iteration split into its matrix work and everything else, rung by rung.
+
+    The matrix multiplies are the part that has to be there; everything else is the element-wise
+    work, the per-operation overhead and whatever waiting the memory system imposes. Splitting the
+    iteration between them says which of the two turns the curve over.
+    """
+    floors = floor_lookup()
+    rows = [r for r in ladder(style, workers) if (workers, r["n_copies"], style) in floors]
+    if len(rows) < 2:
+        return ""
+    md = ("| copies per worker | seconds per iteration | of which the matrix work (seconds) | "
+          "everything else (seconds) | matrix work against the rung below | "
+          "everything else against the rung below |\n|---|---|---|---|---|---|\n")
+    prev = None
+    for r in rows:
+        f = floors[(workers, r["n_copies"], style)]
+        rest = r["sec_per_iteration"] - f
+        grow_f = f"{f / prev[0]:.2f}x" if prev else ""
+        grow_r = f"{rest / prev[1]:.2f}x" if prev else ""
+        md += (f"| {r['n_copies']} | {r['sec_per_iteration']:.3f} | {f:.3f} | {rest:.3f} | "
+               f"{grow_f} | {grow_r} |\n")
+        prev = (f, rest)
+    return md + (f"\n*{workers} workers, "
+                 f"{'one update' if style == 'full_batch' else 'sixteen updates'} per batch. Every "
+                 f"rung holds twice the copies of the rung above it, so a column growing by two "
+                 f"is growing in proportion to the copies.*\n\n")
+
+
 def sec_cause():
     """Subsection: which resource ran out at the plateau, and the measurements that say so."""
     d = plateau()
@@ -1077,39 +1106,71 @@ def sec_cause():
     share = L3_BYTES_PER_SOCKET / CORES_PER_SOCKET
     md = f"""### 5.5 What ran out
 
-Three measurements, each isolating one candidate.
+The curve does not merely stop rising, it turns over, so something gets actively worse as the
+copies per worker grow. Four measurements separate the candidates.
 
-The first is competition. The same worker, holding the same copies, was run alone on the empty
-node, then as one of 112, then as one of 224. A worker alone has the whole memory system to
-itself, so the gap between its seconds per iteration and the same worker's inside a full machine
-is what competition costs; the gap between 112 workers and 224 is what sharing a core with a
-second hardware thread costs on top of that.
+**The iteration split into its matrix work and everything else.** Every matrix multiply of one
+iteration was timed on its own, with the same worker count on the same node, following the method
+the graphics-processor side of this report is measured by. The sum is what the iteration would
+cost if the matrix multiplies were the only work in it.
 
-{contention_table(d)}The second is the memory system's own rate. Independent processes moving
-arrays far larger than any cache were run on the empty node, one to 224 of them, and their summed
-rate is what the memory system delivers.
+{floor_split_table("full_batch", 112)}The matrix work grows in exact proportion to the copies —
+two times the copies, two times the time — at every rung from 32 upward. Everything else does not.
+Below 64 copies it grows more slowly than the copies, which is the whole reason packing copies
+helps: the fixed cost of an iteration is being shared among more of them. Above 64 it grows faster
+than the copies, and by 256 it is growing more than four times per doubling. The turnover is
+entirely in that column.
 
-{memory_saturation_table(d)}The third puts the two together: the same stream processes measured
-while the training load ran beside them. If the training load has the memory system full, the
-stream processes get a small fraction of what they get on an idle node.
+**Competition, isolated.** The same worker holding the same copies, run alone on the empty node,
+then as one of 112, then as one of 224.
 
-{memory_corun_table(d)}The arithmetic behind all three is the size of what a worker walks. One
-copy keeps the parameters, their gradients, the two optimiser moments, the flattened batch and its
-shuffled twin, and the rollout buffers, and the update touches all of it every iteration. The
+{contention_table(d)}Alone, an iteration at 128 copies costs 1.83 times one at 64 — less than
+twice, so a single worker on its own never sees the superlinear growth at all. It appears only
+when the machine is full, and it grows with the copies: competition costs 38% at one copy per
+worker and 182% at 128. So the thing that turns the curve over is a resource shared between
+workers, not anything inside a worker.
+
+**The memory system's rate, and what the load leaves of it.** Independent processes moving arrays
+far larger than any cache measure what the memory system delivers.
+
+{memory_saturation_table(d)}The node tops out near 310 gigabytes a second, and it is already there
+with 28 to 56 processes; the remaining 168 processes add nothing. That is the shared resource most
+likely to be the answer, so it was measured directly: the same stream processes run beside the
+training load.
+
+{memory_corun_table(d)}They get what they got on an idle node. The training load at the setting
+where its throughput peaks leaves the memory system's rate untouched, which puts an upper bound of
+roughly a fifth of the machine's bandwidth on what the training is using. **Memory bandwidth is
+not what runs out.**
+
+What is left is the memory system's latency and the cache. One copy keeps
+{working_set_bytes(1) / 1e6:.2f} MB of state that the update walks every iteration, and the
 last-level cache is {L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket shared by
 {CORES_PER_SOCKET} cores, that is {share / 1e6:.1f} MB a core.
 
-{working_set_table()}From four copies upward a worker keeps more than its share of the cache, so
-the update is reading from memory rather than from cache, and the copies-per-worker knob is really
-a knob on how much memory traffic each core makes.
+{working_set_table()}From four copies a worker keeps more than its share, and by the rung where
+the curve turns over it keeps twenty times its share. The element-wise work and the per-operation
+overhead — the "everything else" column — walk that whole set on every iteration, in scattered
+small pieces rather than in the long sequential runs the stream benchmark uses. Scattered access
+is limited by how long each miss takes, not by how many bytes a second the machine can move, and
+what makes each miss take longer is other cores missing at the same time. That is consistent with
+every measurement here: bandwidth spare, latency-bound work, and a cost that grows with how much
+each core is competing over.
 
-The two update conventions differ by exactly that. Sixteen updates per batch reads and writes the
-parameter-side buffers sixteen times per iteration where one update per batch does it once, for
-the same 512 environment steps per copy, so it asks the memory system for about sixteen times the
-parameter traffic per environment step — which is why it is the slower convention everywhere in
-the tables above and why it turns over at a quarter of the copies per worker.
+Two things this does not settle. It does not separate the last-level cache from the address
+translation caches, which are also exhausted at these sizes: a worker holding
+{working_set_bytes(256) / 1e6:,.0f} MB spans about
+{working_set_bytes(256) / (2 * 1024 * 1024):,.0f} large pages or
+{working_set_bytes(256) / 4096:,.0f} ordinary ones, against a translation cache holding a few
+thousand entries. And it does not rule out an allocator cost that grows with the size of a
+worker's heap. Both would show the same shape, and both are inside "everything else".
 
-"""
+**The two update conventions differ by exactly this.** Sixteen updates per batch reads and writes
+the parameter-side buffers sixteen times per iteration where one update does it once, for the same
+512 environment steps per copy. It therefore walks the working set sixteen times as often, gets no
+amortisation benefit at all past four copies per worker, and turns over at a quarter of the copies.
+
+{floor_split_table("epoch_minibatch", 112)}"""
     return md
 
 
