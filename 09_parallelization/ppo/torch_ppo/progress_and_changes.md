@@ -173,10 +173,11 @@ recorded a 1.1 percent loss at 512 copies as the one size where it was a loss. M
 its own predecessor at 1,024 copies, both sides pinned to their git revisions and run in the
 order A B B A:
 
-| update convention | before round four | after round four | difference | noise floor |
-|---|---|---|---|---|
-| one update per batch | 24.86 ms | 29.64 ms | round four 19.2% slower | 0.03 ms |
-| sixteen updates per batch | 77.24 ms | 82.73 ms | round four 7.1% slower | 0.52 ms |
+| copies | update convention | before round four | after round four | difference | noise floor |
+|---|---|---|---|---|---|
+| 1,024 | one update per batch | 24.86 ms | 29.64 ms | round four 19.2% slower | 0.03 ms |
+| 1,024 | sixteen updates per batch | 77.24 ms | 82.73 ms | round four 7.1% slower | 0.52 ms |
+| 4,096 | sixteen updates per batch | 275.12 ms | 290.97 ms | round four 5.8% slower | 0.18 ms |
 
 The 512-copy loss was not an isolated size; it was the beginning of a trend that reaches nearly a
 fifth of the iteration at the sizes in use. A kernel-level profile of the round-four build at
