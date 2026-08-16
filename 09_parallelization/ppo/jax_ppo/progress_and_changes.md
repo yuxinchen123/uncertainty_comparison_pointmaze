@@ -45,6 +45,61 @@ there; in JAX the mapped-over-copies structure makes the same thing free from th
 | full parity configuration (ms) | 6.86 | 11.93 | 25.18 | 81.70 |
 | noise floor (ms) | 0.06 | 0.10 | 0.33 | 1.09 |
 
+## Round 5 summary: where the iteration's time actually goes, and what moved it
+
+The round began by measuring instead of implementing, and that decided everything after it.
+The ceiling analysis, derived largely from the PyTorch side, named one large inexpensive item:
+hold every parameter in a single flat buffer so the gradient clip and the optimizer stop walking
+twenty-one separate arrays. Two of its other suggestions turned out to be **already implemented**
+in the JAX trainer — the sixteen minibatches are gathered once before the update rather than per
+step, and the sixteen optimizer steps already run as one `lax.scan` — which is why the analysis's
+predictions had to be checked against this code before any of them were acted on.
+
+Where a 13.45 ms iteration goes at 128 copies:
+
+| stage | milliseconds | share of the iteration |
+|---|---|---|
+| environment, 128 sequential steps | 3.63 | 27.0% |
+| policy and post-rollout processing | 1.45 | 10.8% |
+| sixteen gradients (forward and backward) | 5.79 | 43.1% |
+| gradient clip | 0.80 | 6.0% |
+| optimizer | 1.77 | 13.2% |
+
+The clip and the optimizer together are 19% — worth attacking, but not the dominant cost, and
+the flat buffer did not deliver them. It is **faster at 8 copies and slower at 128**, because a
+parameter's slice of a [copies, parameters] array is strided, so cutting it back out is a real
+copy: at 128 copies the sixteen unpacks per update move about a gigabyte, which costs more than
+the twenty-one kernel launches it saves. The prediction was right about the mechanism and wrong
+about the sign at the size that matters.
+
+What did move the iteration was a knob round 2 had already looked at and left at 4 because its
+measurement could not separate 4 from 8: the rollout scan's unroll factor. The gain is small per
+size but completely consistent — every size, both timing modes, 11 of 11 paired rounds.
+
+| measurement | C=8 | C=32 | C=128 |
+|---|---|---|---|
+| previous default (unroll 4), synchronised (ms) | 8.03 | 9.78 | 13.43 |
+| round 5, synchronised (ms) | 7.87 | 9.48 | 13.00 |
+| previous default (unroll 4), pipelined (ms) | 6.85 | 8.44 | 11.92 |
+| round 5, pipelined (ms) | **6.52** | **8.14** | **11.56** |
+| change, pipelined | -4.8% | -3.6% | -3.1% |
+| noise floor, pipelined (ms) | 0.06 | 0.04 | 0.06 |
+| rounds favouring round 5 | 11/11 | 11/11 | 11/11 |
+
+The methodological finding is worth as much as the speed. The verdict rule inherited from round 4
+compares two medians against the largest spread the SAME version shows across rounds, and by that
+rule this change was "within noise" at all three sizes. But the two versions are timed in the same
+round on the same machine, so the drift that moves one moves the other: comparing them round by
+round, the change won every round at every size. The statistic was hiding a real effect, and it
+has been replaced with the paired one.
+
+Against the analysis's floors, the 128-copy iteration is now 11.56 ms pipelined against a
+6.55 ms sum of the same matmuls measured in isolation — **1.77 times the matrix-work floor**,
+from 1.82 before. The remaining distance is not arithmetic: the gradients alone are 5.79 ms
+against roughly 0.35 ms of arithmetic at achievable rates, so the update is running about
+sixteen times above its arithmetic bound and is limited by how many separate operations the
+iteration issues, exactly as the analysis concluded.
+
 ## Notes
 
 - Deviations from the letter of the task/spec, with reasons:

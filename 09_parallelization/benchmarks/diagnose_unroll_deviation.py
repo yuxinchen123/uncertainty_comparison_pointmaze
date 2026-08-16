@@ -28,9 +28,10 @@ def rel(a, b):
     return float(np.abs(a - b).max() / max(np.abs(a).max(), np.abs(b).max(), 1e-12))
 
 
-def build(unroll, hoist=True):
-    """A trainer and its primed state at one unroll factor."""
-    t = JaxPPORND(PPOConfig(scan_unroll=unroll, hoist_rollout=hoist, **CFG))
+def build(unroll, hoist=True, update_unroll=1):
+    """A trainer and its primed state at one rollout unroll factor and one update unroll."""
+    t = JaxPPORND(PPOConfig(scan_unroll=unroll, hoist_rollout=hoist,
+                            update_unroll=update_unroll, **CFG))
     return t, t.prime_obs_rms(t.init_state(), jax.random.PRNGKey(5))
 
 
@@ -56,6 +57,15 @@ def main():
         tb, sb = build(hi, hoist=False)
         worst = max(rel(x, y) for x, y in zip(one_iteration(ta, sa), one_iteration(tb, sb)))
         print(f"  unroll {lo:>2} against {hi:>2}: worst relative parameter deviation {worst:.3e}")
+
+    # the sixteen-step update scan, unrolled: the steps are sequentially dependent, so a
+    # longer body should not let the compiler reorder any sum
+    print("\nchanging only the UPDATE scan's unroll factor:")
+    for lo, hi in [(1, 2), (1, 4)]:
+        ta, sa = build(0, update_unroll=lo)
+        tb, sb = build(0, update_unroll=hi)
+        worst = max(rel(x, y) for x, y in zip(one_iteration(ta, sa), one_iteration(tb, sb)))
+        print(f"  update unroll {lo} against {hi}: worst relative parameter deviation {worst:.3e}")
 
     print("\nthe round-two rollout-hoist comparison, measured at each unroll factor:")
     for u in (4, 16, 32):
