@@ -1686,6 +1686,13 @@ experiment; it changes the order in which the multiplication accumulates, so it 
 equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
 have.
 
+One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
+trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
+while the JAX trainer does so only when asked for it, and it was not asked here. That is a
+difference in what the two are computing, not in how well they compute it, and it is small — two
+integer conversions and a scatter over the stored rows — but it is on the PyTorch side of the
+ledger.
+
 """
     return md
 

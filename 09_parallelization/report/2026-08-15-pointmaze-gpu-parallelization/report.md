@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:23 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:24 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -967,4 +967,11 @@ instead of calling the library's. PyTorch can be asked to do this, and it is the
 experiment; it changes the order in which the multiplication accumulates, so it needs its own
 equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
 have.
+
+One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
+trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
+while the JAX trainer does so only when asked for it, and it was not asked here. That is a
+difference in what the two are computing, not in how well they compute it, and it is small — two
+integer conversions and a scatter over the stored rows — but it is on the PyTorch side of the
+ledger.
 
