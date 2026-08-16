@@ -169,6 +169,22 @@ def _style(ax):
         ax.spines[side].set_visible(False)
 
 
+def seed_band(ax, x, y, color, linestyle, label):
+    """One curve: the mean over copies, with the middle half of the copies shaded behind it.
+
+    The band is the spread ACROSS SEEDS, not the uncertainty of the mean. The question these
+    figures are for is whether two seed distributions agree, and at a thousand copies the mean's
+    own interval is about a sixteenth as wide as the spread — a band of that width would be a
+    line. The intervals for the means are in the tables, where they can be read as numbers.
+
+    before: y is [records, copies] of one rate group's per-iteration reward
+    after:  a mean line and a fill between the 25th and 75th percentile at every record
+    """
+    ax.plot(x, y.mean(axis=1), linestyle, color=color, linewidth=1.7, label=label)
+    ax.fill_between(x, np.percentile(y, 25, axis=1), np.percentile(y, 75, axis=1),
+                    color=color, alpha=0.13, linewidth=0)
+
+
 def fig_frameworks(all_data, figdir, name="learning_outcome_frameworks.png"):
     """PyTorch against JAX at three learning rates, both at reduced precision."""
     import matplotlib.pyplot as plt
@@ -184,12 +200,7 @@ def fig_frameworks(all_data, figdir, name="learning_outcome_frameworks.png"):
                 d = all_data[tag]
                 m = group_mask(d, ri)
                 x = d["steps_per_copy"] / 1e6
-                y = d[key][:, m]
-                mean = y.mean(axis=1)
-                half = 1.959964 * y.std(axis=1, ddof=1) / np.sqrt(m.sum())
-                ax.plot(x, mean, ls, color=c, linewidth=1.7,
-                        label=f"{side}, rate {rates[ri]:g}")
-                ax.fill_between(x, mean - half, mean + half, color=c, alpha=0.22, linewidth=0)
+                seed_band(ax, x, d[key][:, m], c, ls, f"{side}, rate {rates[ri]:g}")
     axes[0].set_ylabel("extrinsic reward per copy per iteration")
     axes[1].set_ylabel("maze coverage (fraction of open cells)")
     for ax in axes:
@@ -198,7 +209,7 @@ def fig_frameworks(all_data, figdir, name="learning_outcome_frameworks.png"):
     axes[0].legend(frameon=False, fontsize=8, ncol=2)
     per_rate = int(group_mask(all_data["torch_reduced"], picks[0]).sum())
     fig.suptitle(f"PyTorch (solid) and JAX (dashed), {per_rate:,} copies per learning rate, "
-                 "band = 95% interval for the mean", fontsize=11)
+                 "line = mean, band = middle half of the copies", fontsize=11)
     fig.tight_layout()
     fig.savefig(Path(figdir) / name)
     plt.close(fig)
@@ -222,12 +233,7 @@ def fig_precision(all_data, figdir, framework, name=None):
                 d = all_data[f"{framework}_{suffix}"]
                 m = group_mask(d, ri)
                 x = d["steps_per_copy"] / 1e6
-                y = d[key][:, m]
-                mean = y.mean(axis=1)
-                half = 1.959964 * y.std(axis=1, ddof=1) / np.sqrt(m.sum())
-                ax.plot(x, mean, ls, color=c, linewidth=1.7,
-                        label=f"{side}, rate {rates[ri]:g}")
-                ax.fill_between(x, mean - half, mean + half, color=c, alpha=0.22, linewidth=0)
+                seed_band(ax, x, d[key][:, m], c, ls, f"{side}, rate {rates[ri]:g}")
     axes[0].set_ylabel("extrinsic reward per copy per iteration")
     axes[1].set_ylabel("maze coverage (fraction of open cells)")
     for ax in axes:
@@ -236,7 +242,7 @@ def fig_precision(all_data, figdir, framework, name=None):
     axes[0].legend(frameon=False, fontsize=8, ncol=2)
     title = {"torch": "PyTorch", "jax": "JAX"}[framework]
     fig.suptitle(f"{title}: reduced precision (solid) against exact single precision (dashed), "
-                 "band = 95% interval for the mean", fontsize=11)
+                 "line = mean, band = middle half of the copies", fontsize=11)
     fig.tight_layout()
     fig.savefig(Path(figdir) / name)
     plt.close(fig)
