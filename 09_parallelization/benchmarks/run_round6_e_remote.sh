@@ -39,4 +39,11 @@ run q1_small_split "$W/benchmarks" "\
   $PYT ab_compare.py --name r6-all-C128-styleB-repeat --iters 60 --warmup 10 \
        --a '{\"__rev__\": \"$R5\", \"n_copies\": 128}' --b '{\"n_copies\": 128}'"
 
+# the compiler-generated multiplication once more: the accuracy columns of the previous run
+# compared weights each arm's own kernels had already moved, because forcing the compilation runs
+# a real update. The probe now puts the weights back.
+run q2_epilogue_restored "$W/benchmarks" "\
+  $PYT probe_epilogue_fusion.py --n-copies 4096 --rounds 7 \
+       --arms library generated generated_triton generated_tf32 --tag _pertrainer"
+
 echo "=== $(date -Is) BATCH E COMPLETE" >> "$LOGS/driver.log"

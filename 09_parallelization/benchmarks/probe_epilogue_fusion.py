@@ -113,7 +113,17 @@ def build_arm(name, n_copies, style):
     t._rollout_body()
     t._post_body()
     mb = {k: t._U[k][:, :Brows // t.cfg.num_minibatches] for k in t._U_KEYS}
+    # forcing the compilation runs a real update, which MOVES the parameters. Every arm would
+    # then read its accuracy from weights its own kernels had already changed, and the accuracy
+    # columns would compare two different problems rather than two sets of kernels.
+    snapshot = [w.detach().clone() for w in t.param_windows]
     t._update_body_captured()                       # force the compilation to happen here
+    with torch.no_grad():
+        for window, saved in zip(t.param_windows, snapshot):
+            window.copy_(saved)
+        t._m.zero_()
+        t._v.zero_()
+        t._adam_t.zero_()
     if tf32_everywhere:
         MMTemplateConfigMixin.get_extra_kwargs = original
     return t, mb
