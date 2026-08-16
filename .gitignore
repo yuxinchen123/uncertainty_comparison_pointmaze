@@ -201,3 +201,16 @@ core.*
 # .git, so committing them would nest one repository inside another; clone them again if needed.
 **/reference_autoresearch/
 **/reference_repos/
+
+# 10_jax_exploration_platform.
+# The `env/` rule near the top of this file (meant for a python virtual environment) also hides
+# the platform's `configs/env/` and `benchmarks/env/` folders, which hold code and must be tracked.
+!10_jax_exploration_platform/configs/env/
+!10_jax_exploration_platform/benchmarks/env/
+# A run folder's launch command is part of its permanent record; the blanket `*.txt` rule above
+# would drop it. The run's data shards (`data/*.jsonl`), its aggregated `metrics.jsonl`, its
+# `summary.json` and its `logs/` stay ignored — all four are regenerable from the shards, and the
+# shards themselves are large. `manifest.yaml`, `config_resolved.yaml` and
+# `experiment_background.md` are already tracked by the rules above.
+!10_jax_exploration_platform/runs/**/command.txt
+!10_jax_exploration_platform/benchmark_runs/**/command.txt
