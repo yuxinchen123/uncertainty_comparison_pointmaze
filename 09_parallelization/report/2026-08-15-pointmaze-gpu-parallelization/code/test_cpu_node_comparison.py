@@ -4,8 +4,9 @@ matplotlib.use("Agg")
 
 import pytest
 
-from cpu_node_comparison import (at_workers, best_config, median_per_worker_count,
-                                 per_core_l3_mib, size_to_mib, verdict_sentence)
+from cpu_node_comparison import (at_workers, best_config, burst_change, hardware, item,
+                                 largest_burst_change, median_per_worker_count, para,
+                                 per_core_l3_mib, size_to_mib, throughput_table, verdict_sentence)
 
 
 def row(workers, total):
@@ -62,22 +63,71 @@ def test_at_workers_finds_a_row_and_returns_none_when_absent():
     assert at_workers(rows, 64) is None
 
 
+def test_burst_change_measures_the_fall_from_short_to_sustained():
+    # 224 workers: 1,566 steps/s per copy in five iterations, 507 in 150, a fall of about 68%
+    short, long = [row(224, 350_784)], [row(224, 113_568)]
+    out = burst_change(short, long, 224)
+    assert out["burst"] == pytest.approx(1_566, abs=1)
+    assert out["sustained"] == pytest.approx(507, abs=1)
+    assert out["change"] == pytest.approx(-0.676, abs=1e-3)
+
+
+def test_burst_change_returns_none_for_a_worker_count_measured_only_one_way():
+    assert burst_change([row(224, 350_784)], [row(112, 129_574)], 224) is None
+
+
+def test_largest_burst_change_takes_the_biggest_move_either_way():
+    # 1 worker rises 4%, 16 workers fall 9%, and the 32-worker count measured only one way is
+    # ignored, so the biggest move is the fall
+    short = [row(1, 1_320), row(16, 21_120), row(32, 22_000)]
+    long = [row(1, 1_372), row(16, 19_200)]
+    assert largest_burst_change(short, long) == pytest.approx(-0.0909, abs=1e-3)
+
+
+def test_largest_burst_change_with_no_shared_worker_count():
+    assert largest_burst_change([row(1, 1_320)], [row(16, 20_320)]) is None
+
+
 def base_extrapolation(share_threads, share_best):
     """An extrapolation dictionary with only the fields the verdict sentence reads."""
     return {"share_of_big_at_threads": share_threads, "share_of_big_best": share_best,
-            "big_cores": 112, "big_threads": 224, "projected_total": 160_988,
-            "big_total_at_threads": 113_822, "big_best_total": 129_574, "big_best_workers": 112}
+            "big_cores": 112, "big_threads": 224, "projected_total": 158_900,
+            "big_total_at_threads": 113_822, "big_best_total": 127_600, "big_best_workers": 112}
 
 
-def test_verdict_says_yes_when_the_projection_wins():
-    text = verdict_sentence(base_extrapolation(1.41, 1.24))
-    assert "answer is yes" in text
-    assert "141%" in text and "124%" in text
+def test_verdict_says_it_beats_the_big_node_when_the_projection_wins():
+    text = verdict_sentence(base_extrapolation(1.40, 1.25))
+    assert "beats" in text
+    assert "140%" in text and "125%" in text
 
 
-def test_verdict_says_no_when_the_projection_loses():
+def test_verdict_says_it_falls_short_when_the_projection_loses():
     # the sentence must follow the numbers rather than a hand-written conclusion, because the
     # sustained measurements reversed what the short ones said
     text = verdict_sentence(base_extrapolation(0.45, 0.40))
-    assert "answer is no" in text
+    assert "falls short of" in text
     assert "45%" in text
+
+
+def test_para_never_breaks_a_hyphenated_word_across_two_lines():
+    # markdown rejoins wrapped lines with a space, so a break at the hyphen would render as
+    # "last- level cache"
+    text = para("filler " * 20 + "last-level cache " + "filler " * 20)
+    assert "last-\n" not in text
+    assert max(len(line) for line in text.splitlines()) <= 95
+
+
+def test_item_hangs_its_continuation_lines_under_the_number():
+    lines = item(2, "word " * 60).splitlines()
+    assert lines[0].startswith("2. ")
+    assert all(line.startswith("   ") for line in lines[1:])
+
+
+def test_throughput_table_keeps_the_columns_the_convention_requires():
+    if hardware() is None:
+        pytest.skip("the nodes' hardware record is not on this machine")
+    header = throughput_table().splitlines()[0]
+    for column in ("worker processes", "copies per worker", "copies in total",
+                   "seconds per iteration", "million steps per second",
+                   "thousand steps per second per copy", "hours per million steps per copy"):
+        assert column in header
