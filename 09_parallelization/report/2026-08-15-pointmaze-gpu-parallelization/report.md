@@ -25,27 +25,27 @@ the earlier sections' conclusions do not all carry over.
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| <span class="unread">[Environment correctness (all three implementations)](#environment-correctness-all-three-implementations)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Module 1 — environment throughput](#module-1-environment-throughput)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Profiling breakdown (C=128)](#profiling-breakdown-c128)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Final training campaign](#final-training-campaign)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[The first three rounds](#the-first-three-rounds)</span> | 2026-08-15 21:56 PT | 2026-08-15 21:56 PT | unread |
-| <span class="unread">[What made it fast (and what did not)](#what-made-it-fast-and-what-did-not)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Reproduction](#reproduction)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[How far from the hardware ceiling](#how-far-from-the-hardware-ceiling)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Feature parity between the two trainers](#feature-parity-between-the-two-trainers)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 23:01 PT | unread |
+| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT | read |
+| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT | read |
+| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT | read |
+| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT | read |
+| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT | read |
+| <span class="unread">[The first three rounds](#the-first-three-rounds)</span> | 2026-08-15 23:02 PT | 2026-08-15 23:02 PT | unread |
+| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| <span class="updated">[Reproduction](#reproduction)</span> | 2026-08-15 00:22 PT | 2026-08-15 19:38 PT | updated |
+| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| <span class="updated">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:10 PT | updated |
+| <span class="updated">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 20:02 PT | updated |
+| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| <span class="updated">[Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers)</span> | 2026-08-15 15:57 PT | 2026-08-15 23:02 PT | updated |
+| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 23:02 PT | updated |
+| <span class="updated">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-15 23:02 PT | updated |
+| <span class="updated">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 23:02 PT | updated |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 23:02 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -257,11 +257,11 @@ measured in the campaign itself):
 
 | copies C | before, style B | after, style B | after, style A |
 |---|---|---|---|
-| 8 | 5.27e3 | — | — |
-| 16 | 1.05e4 | — | — |
-| 32 | 2.11e4 | — | — |
-| 64 | 4.22e4 | — | — |
-| 128 | 8.43e4 | — | — |
+| 8 | 5.27e3 | 2.94e5 | 7.19e5 |
+| 16 | 1.05e4 | 5.50e5 | 1.29e6 |
+| 32 | 2.11e4 | 1.04e6 | 2.58e6 |
+| 64 | 4.22e4 | 1.89e6 | 4.72e6 |
+| 128 | 8.43e4 | 3.20e6 | 8.19e6 |
 
 (The before column uses the measured eager iteration time of 777 ms, which is flat across
 copy counts.) Phase split of one iteration, before vs after (C=128, style B; the "after"
@@ -288,9 +288,43 @@ iteration from 36.8 ms to 20.2 ms at 128 copies (paired measurements, noise floo
 Overall, one training iteration of 128 independent copies went from 777 ms to 20.2 ms — 38x —
 while every change was verified to compute the same thing.
 
-## Final training campaign
+## Final training campaign — 8 to 128 independent RND runs (PyTorch)
 
-*PENDING — waiting on final-run JSONs.*
+20,000 iterations per configuration = 10.24M environment steps per copy; PointMaze Large,
+sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
+environments, statistics, and optimizer. The campaign was run twice — once on the round-1 code
+and again on the round-2 code — so the improvement is visible on the deliverable itself and not
+only on the benchmarks. The table reports the round-2 run, with the round-1 throughput beside
+it for comparison.
+
+| style | copies | wall time [s] | total env-steps/s | round-1 rate | env-steps/s per copy | copies at goal, late* | copies at goal, ever* | coverage mean | peak VRAM [MB] |
+|---|---|---|---|---|---|---|---|---|---|
+| epoch_minibatch | 8 | 278 | 2.94e5 | 1.55e5 | 3.68e4 | 2/8 | 3/8 | 0.856 | 146 |
+| epoch_minibatch | 16 | 298 | 5.50e5 | 2.97e5 | 3.43e4 | 5/16 | 9/16 | 0.882 | 163 |
+| epoch_minibatch | 32 | 315 | 1.04e6 | 5.74e5 | 3.26e4 | 12/32 | 18/32 | 0.884 | 198 |
+| epoch_minibatch | 64 | 347 | 1.89e6 | 1.07e6 | 2.95e4 | 28/64 | 38/64 | 0.890 | 295 |
+| epoch_minibatch | 128 | 409 | 3.20e6 | 1.79e6 | 2.50e4 | 41/128 | 68/128 | 0.873 | 494 |
+| full_batch | 8 | 114 | 7.19e5 | 2.22e5 | 8.98e4 | 3/8 | 5/8 | 0.818 | 156 |
+| full_batch | 16 | 127 | 1.29e6 | 4.27e5 | 8.05e4 | 3/16 | 6/16 | 0.830 | 183 |
+| full_batch | 32 | 127 | 2.58e6 | 8.42e5 | 8.07e4 | 9/32 | 13/32 | 0.808 | 238 |
+| full_batch | 64 | 139 | 4.72e6 | 1.59e6 | 7.37e4 | 13/64 | 19/64 | 0.745 | 348 |
+| full_batch | 128 | 160 | 8.19e6 | 2.68e6 | 6.40e4 | 25/128 | 47/128 | 0.796 | 546 |
+
+The round-2 campaign also shows more copies reaching the goal and slightly higher coverage than
+the round-1 one. That is NOT an effect of the optimization: the algorithm is unchanged and every
+round-2 change was verified to compute the same function to within float32 rounding. What those
+tiny differences do is send the runs down different trajectories, and on a sparse-goal task the
+per-copy outcome is close to all-or-nothing, so the aggregate moves by more than one might
+expect. Treat the two campaigns as two samples of the same procedure, and read the throughput
+columns — not the goal columns — as the round's result.
+
+*Both goal columns count copies that scored a positive extrinsic reward in a SAMPLED
+iteration: "late" over the final 10% of samples, "ever" over all of them. Progress is sampled
+every 50 iterations (400 samples of 20,000), so a copy that reached the goal only in an
+unsampled iteration is missed and both columns are lower bounds. The gap between them is the
+sparse goal being found and lost again rather than held (per-copy curves below).
+
+![campaign curves](figures/campaign_curves.png)
 
 ## Sweeping learning rates across copy groups
 
@@ -329,6 +363,19 @@ per-iteration cost is dominated by kernel count rather than by arithmetic.
 
 A demonstration run of 5 rates x 32 copies (3.07M environment steps per copy, 140 seconds):
 
+| learning rate | copies | reward per iteration, last 20% | final coverage | copies that reached the goal |
+|---|---|---|---|---|
+| 1e-05 | 32 | 0.00 | 0.654 | 3/32 |
+| 0.0001 | 32 | 5.91 | 0.838 | 20/32 |
+| 0.0003 | 32 | 17.68 | 0.870 | 19/32 |
+| 0.001 | 32 | 8.32 | 0.810 | 11/32 |
+| 0.003 | 32 | 3.07 | 0.838 | 10/32 |
+
+The sweep recovers the expected shape — too small a rate barely learns, too large a rate is
+unstable, and the best value is the 3e-4 the project had been using — from a single run that
+cost the same as training those copies at one rate.
+
+![sweep curves](figures/sweep_curves.png)
 
 ### The configuration you asked about
 
@@ -558,7 +605,70 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
 
 ## How far from the hardware ceiling
 
-*PENDING — waiting on the ceiling measurements.*
+"An optimisation made it faster" is not the same as "it is now fast". This section asks what the
+machine could do in principle, and what fraction of that the implementations reach. Three separate
+analyses produced it, cross-checking each other; the full working is in `analysis/ceiling/`.
+
+### The environment
+
+One environment step moves 82 bytes and performs about 250 floating-point operations, counted from
+the kernel and then confirmed by compiling it and inspecting the generated instructions. Dividing
+the card's memory bandwidth by the bytes gives a ceiling of **48,000 million steps per second**.
+
+| implementation | million steps per second | share of the bandwidth ceiling |
+|---|---|---|
+| CUDA kernel | 19,300 | 40 percent |
+| JAX, many steps per call | 9,920 | 21 percent |
+| PyTorch, compiled | 4,166 | 9 percent |
+
+The bandwidth ceiling is, however, the wrong limit for the fastest implementation. The kernel needs
+about 12.8 machine instructions per byte it moves, while the processor can only issue about 7.7
+instructions per byte at full bandwidth — so it runs out of instruction issue before it runs out of
+memory. Its real ceiling is about 28,700 million steps per second, and it achieves **67 percent** of
+that.
+
+Two measurements from the project's own record settle which limit binds. Packing the state to cut
+memory traffic by 16 percent changed the time by 0.3 percent — if bandwidth were the limit, the time
+should have fallen by about 16 percent. Removing arithmetic, by contrast, gained 14 percent. That is
+a kernel limited by issuing instructions, not by moving bytes.
+
+### The training computation
+
+One iteration at 128 copies with sixteen updates per batch performs 110.2 thousand million
+floating-point operations. Measured against the card's matrix throughput:
+
+| measure | value |
+|---|---|
+| arithmetic in one iteration | 110.2 GFLOP |
+| time for that iteration (PyTorch) | 20.4 ms |
+| achieved rate | 5.4 TFLOP/s |
+| share of the card's peak matrix rate | 1.3 percent |
+| the largest matrix multiplication this card actually sustains | 265 TFLOP/s (64 percent of peak) |
+| every matrix multiplication in the iteration, timed on its own | 6.55 ms |
+
+A share of 1.3 percent sounds like failure and is not, for two reasons that the analysis makes
+precise. First, this algorithm's arithmetic intensity is about 11 operations per byte against a
+machine that balances at 106, so **no implementation of it could exceed about 10 percent** of the
+peak matrix rate. Second, and more usefully: adding up every matrix multiplication in the iteration,
+each timed in isolation, gives 6.55 milliseconds. That is the floor for the
+algorithm as written — the time if every other operation were free. The measured 20.4 milliseconds
+is **32 percent of that floor**, and the JAX implementation's 13.4
+milliseconds is 49 percent.
+
+So the honest statement of remaining headroom is not "ninety-nine percent is missing" but "at most
+about three times, and only by removing work that is not matrix multiplication".
+
+### Where that places the project
+
+Practitioners generally distinguish five stages: unoptimised; obvious waste removed; the limiting
+resource identified and the profile flat; at the hardware limit for the algorithm as written; and
+the algorithm itself reformulated to move the limit. On that scale the CUDA environment is at the
+fourth stage — its limiting resource is identified by experiment and it runs at two thirds of that
+limit — and the trainers are at the third, having gone from 0.8 percent to 2.0 percent of the peak
+matrix rate, which is roughly a third of the reachable ceiling for the algorithm as written. Two
+reformulations have already been made (batching the copies, fusing the sweep) and one was measured
+and declined because it changes the algorithm (a shorter horizon, worth three times).
+
 
 ## The same work on ordinary processor cores
 
@@ -738,53 +848,55 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | timing |
-|---|---|---|---|---|---|---|
-| 1 | 8 | 0.352 | 0.0015 | 1.45 | 0.191 | burst, 2s |
-| 1 | 112 | 0.453 | 0.0011 | 1.13 | 0.246 | burst, 2s |
-| 2 | 8 | 0.382 | 0.0027 | 1.34 | 0.207 | burst, 2s |
-| 2 | 112 | 0.636 | 0.0016 | 0.81 | 0.345 | burst, 3s |
-| 4 | 8 | 0.410 | 0.0050 | 1.25 | 0.223 | burst, 2s |
-| 4 | 112 | 0.568 | 0.0036 | 0.90 | 0.308 | burst, 3s |
-| 8 | 8 | 0.433 | 0.0095 | 1.18 | 0.235 | burst, 2s |
-| 8 | 112 | 0.686 | 0.0060 | 0.75 | 0.372 | burst, 3s |
-| 16 | 8 | 0.482 | 0.0170 | 1.06 | 0.261 | burst, 2s |
-| 16 | 112 | 0.665 | 0.0123 | 0.77 | 0.361 | burst, 3s |
-| 32 | 8 | 0.576 | 0.0284 | 0.89 | 0.313 | burst, 3s |
-| 32 | 112 | 0.764 | 0.0214 | 0.67 | 0.415 | burst, 4s |
-| 64 | 8 | 0.666 | 0.0492 | 0.77 | 0.361 | burst, 3s |
-| 64 | 112 | 0.824 | 0.0397 | 0.62 | 0.447 | burst, 4s |
-| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.67 | burst, 6s |
-| 128 | 112 | 1.229 | 0.0533 | 0.42 | 0.667 | burst, 6s |
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|
+| 1 | 8 | 0.399 | 0.0013 | 1.28 | 0.216 |
+| 1 | 112 | 0.658 | 0.0008 | 0.779 | 0.357 |
+| 2 | 8 | 0.427 | 0.0024 | 1.20 | 0.232 |
+| 2 | 112 | 0.655 | 0.0016 | 0.782 | 0.355 |
+| 4 | 8 | 0.470 | 0.0044 | 1.09 | 0.255 |
+| 4 | 112 | 0.772 | 0.0027 | 0.663 | 0.419 |
+| 8 | 8 | 0.516 | 0.0079 | 0.992 | 0.28 |
+| 8 | 112 | 0.884 | 0.0046 | 0.579 | 0.479 |
+| 16 | 8 | 0.532 | 0.0154 | 0.962 | 0.289 |
+| 16 | 112 | 0.782 | 0.0105 | 0.654 | 0.424 |
+| 32 | 8 | 0.843 | 0.0194 | 0.607 | 0.457 |
+| 32 | 112 | 1.082 | 0.0151 | 0.473 | 0.587 |
+| 64 | 8 | 1.245 | 0.0263 | 0.411 | 0.675 |
+| 64 | 112 | 1.020 | 0.0321 | 0.502 | 0.553 |
+| 128 | 8 | 1.988 | 0.0330 | 0.258 | 1.08 |
+| 128 | 112 | 1.813 | 0.0362 | 0.282 | 0.984 |
 
 *One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
-| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | timing |
-|---|---|---|---|---|---|---|---|---|
-| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 | not recorded | burst, 2s |
-| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 | not recorded | burst, 2s |
-| 112 | 1 | 112 | 0.511 | 0.1100 | 0.98 | 0.283 | 0.39 | sustained |
-| 224 | 1 | 224 | 1.132 | 0.0995 | 0.44 | 0.625 | 0.40 | sustained |
-| 112 | 4 | 448 | 0.647 | 0.3469 | 0.77 | 0.359 | 0.41 | sustained |
-| 224 | 4 | 896 | 1.376 | 0.3224 | 0.36 | 0.772 | 0.42 | sustained |
-| 112 | 16 | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 | 0.49 | sustained |
-| 112 | 32 | 3,584 | 4.841 | 0.3874 | 0.11 | 2.57 | 0.62 | sustained |
-| 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | sustained |
-| 112 | 64 | 7,168 | 9.423 | 0.3434 | 0.05 | 5.8 | 0.81 | sustained |
-| 224 | 32 | 7,168 | 9.403 | 0.3149 | 0.04 | 6.32 | 0.62 | sustained |
-| 112 | 128 | 14,336 | 21.210 | 0.2999 | 0.02 | 13.3 | 1.21 | sustained |
-| 224 | 64 | 14,336 | 22.614 | 0.2691 | 0.02 | 14.8 | 0.81 | sustained |
-| 112 | 256 | 28,672 | 57.335 | 0.1766 | 0.01 | 45.1 | 1.77 | sustained |
-| 224 | 128 | 28,672 | 44.921 | 0.1539 | 0.01 | 51.8 | 1.21 | sustained |
-| 224 | 256 | 57,344 | 142.228 | 0.1266 | 0.00 | 126 | 1.82 | sustained |
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) |
+|---|---|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.372 | 0.0109 | 1.36 | 0.204 | 0.40 |
+| 32 | 1 | 32 | 0.389 | 0.0417 | 1.30 | 0.213 | 0.39 |
+| 112 | 1 | 112 | 0.511 | 0.1100 | 0.982 | 0.283 | 0.39 |
+| 224 | 1 | 224 | 1.132 | 0.0995 | 0.444 | 0.625 | 0.40 |
+| 112 | 4 | 448 | 0.647 | 0.3469 | 0.774 | 0.359 | 0.41 |
+| 224 | 4 | 896 | 1.376 | 0.3224 | 0.360 | 0.772 | 0.42 |
+| 112 | 16 | 1,792 | 1.998 | 0.4554 | 0.254 | 1.09 | 0.49 |
+| 112 | 32 | 3,584 | 4.841 | 0.3874 | 0.108 | 2.57 | 0.62 |
+| 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.111 | 2.5 | 0.49 |
+| 112 | 64 | 7,168 | 9.423 | 0.3434 | 0.048 | 5.8 | 0.81 |
+| 224 | 32 | 7,168 | 9.403 | 0.3149 | 0.044 | 6.32 | 0.62 |
+| 112 | 128 | 14,336 | 21.210 | 0.2999 | 0.021 | 13.3 | 1.21 |
+| 224 | 64 | 14,336 | 22.614 | 0.2691 | 0.019 | 14.8 | 0.81 |
+| 112 | 256 | 28,672 | 57.335 | 0.1766 | 0.006 | 45.1 | 1.77 |
+| 224 | 128 | 28,672 | 44.921 | 0.1539 | 0.005 | 51.8 | 1.21 |
+| 112 | 512 | 57,344 | 184.859 | 0.0994 | 0.002 | 160 | 2.37 |
+| 224 | 256 | 57,344 | 142.228 | 0.1266 | 0.002 | 126 | 1.82 |
+| 224 | 512 | 114,688 | 408.169 | 0.0905 | 0.001 | 352 | 2.39 |
 
-*Independent single-thread processes. Sixteen updates per batch. Rows marked burst were timed for the seconds shown, which reads the opening seconds of the load rather than the rate a run gets; they are the measurements that have not been retaken yet.*
+*Independent single-thread processes. Sixteen updates per batch. Every row is timed over a window of about ninety seconds, with all workers synchronised so the rate is work the machine really did while carrying the full load.*
 
 ![processor against graphics processor](figures/cpu_vs_gpu.png)
 
-The two tables answer it. Independent processes reach 0.4554 million environment steps per second at 1,792 copies; one process with threads tops out at 0.0533 million. That is a factor of **9** on the same machine, running the same algorithm — the only difference is how the work was divided.
+The two tables answer it. Independent processes reach 0.4554 million environment steps per second at 1,792 copies; one process with threads tops out at 0.0362 million. That is a factor of **13** on the same machine, running the same algorithm — the only difference is how the work was divided.
 
-The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 7 of the 8 copy counts measured — 0.764 seconds per iteration against 0.576 at 32 copies; 0.824 seconds per iteration against 0.666 at 64 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
+The thread table also shows that adding threads does not help. Giving the single process 112 threads instead of 8 was slower at 6 of the 8 copy counts measured — 0.782 seconds per iteration against 0.532 at 16 copies; 1.082 seconds per iteration against 0.843 at 32 copies — and never faster by more than the measurement noise. 14 times as many threads bought nothing.
 
 The reason is the regrouping. One environment step is roughly forty small operations, each
 individually cheap, and the coordination after each one costs a fixed amount regardless of how
@@ -842,13 +954,14 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 
 | copies per worker | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | node memory in use (GB) |
 |---|---|---|---|---|---|---|---|
-| 1 | 224 | 1.015 | 0.1112 | 0.50 | 0.56 | 0.40 | 60 |
-| 4 | 896 | 1.076 | 0.4154 | 0.46 | 0.599 | 0.43 | 65 |
-| 16 | 3,584 | 1.395 | 1.27 | 0.35 | 0.783 | 0.56 | 88 |
-| 32 | 7,168 | 2.166 | 1.64 | 0.23 | 1.21 | 0.70 | 110 |
-| 64 | 14,336 | 3.974 | 1.77 | 0.12 | 2.25 | 0.98 | 155 |
-| 128 | 28,672 | 10.969 | 1.18 | 0.04 | 6.76 | 1.12 | 173 |
-| 256 | 57,344 | 45.656 | 0.4884 | 0.01 | 32.6 | 1.43 | 249 |
+| 1 | 224 | 1.015 | 0.1112 | 0.496 | 0.56 | 0.40 | 60 |
+| 4 | 896 | 1.076 | 0.4154 | 0.464 | 0.599 | 0.43 | 65 |
+| 16 | 3,584 | 1.395 | 1.27 | 0.355 | 0.783 | 0.56 | 88 |
+| 32 | 7,168 | 2.166 | 1.64 | 0.229 | 1.21 | 0.70 | 110 |
+| 64 | 14,336 | 3.974 | 1.77 | 0.124 | 2.25 | 0.98 | 155 |
+| 128 | 28,672 | 10.969 | 1.18 | 0.041 | 6.76 | 1.12 | 173 |
+| 256 | 57,344 | 45.656 | 0.4884 | 0.009 | 32.6 | 1.43 | 249 |
+| 512 | 114,688 | 91.042 | 0.3967 | 0.003 | 80.3 | 2.43 | 437 |
 
 *One update per batch, 224 independent single-thread workers.*
 
@@ -856,36 +969,38 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 |---|---|---|---|---|---|---|---|
 | 1 | 112 | 0.455 | 0.1236 | 1.10 | 0.252 | 0.40 | 35 |
 | 4 | 448 | 0.491 | 0.4550 | 1.02 | 0.273 | 0.43 | 38 |
-| 16 | 1,792 | 0.670 | 1.32 | 0.74 | 0.377 | 0.55 | 49 |
-| 32 | 3,584 | 1.055 | 1.71 | 0.48 | 0.581 | 0.70 | 60 |
-| 64 | 7,168 | 1.890 | 1.88 | 0.26 | 1.06 | 0.99 | 84 |
-| 128 | 14,336 | 4.441 | 1.56 | 0.11 | 2.55 | 1.12 | 91 |
-| 256 | 28,672 | 16.500 | 0.8237 | 0.03 | 9.67 | 1.43 | 128 |
-| 512 | 57,344 | 40.989 | 0.4426 | 0.01 | 36 | 2.41 | 228 |
+| 16 | 1,792 | 0.670 | 1.32 | 0.737 | 0.377 | 0.55 | 49 |
+| 32 | 3,584 | 1.055 | 1.71 | 0.478 | 0.581 | 0.70 | 60 |
+| 64 | 7,168 | 1.890 | 1.88 | 0.263 | 1.06 | 0.99 | 84 |
+| 128 | 14,336 | 4.441 | 1.56 | 0.109 | 2.55 | 1.12 | 91 |
+| 256 | 28,672 | 16.500 | 0.8237 | 0.029 | 9.67 | 1.43 | 128 |
+| 512 | 57,344 | 40.989 | 0.4426 | 0.008 | 36 | 2.41 | 228 |
 
 *One update per batch, 112 independent single-thread workers.*
 
 | copies per worker | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | node memory in use (GB) |
 |---|---|---|---|---|---|---|---|
-| 1 | 224 | 1.132 | 0.0995 | 0.44 | 0.625 | 0.40 | 59 |
-| 4 | 896 | 1.376 | 0.3224 | 0.36 | 0.772 | 0.42 | 62 |
-| 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | 76 |
-| 32 | 7,168 | 9.403 | 0.3149 | 0.04 | 6.32 | 0.62 | 89 |
-| 64 | 14,336 | 22.614 | 0.2691 | 0.02 | 14.8 | 0.81 | 123 |
-| 128 | 28,672 | 44.921 | 0.1539 | 0.01 | 51.8 | 1.21 | 184 |
-| 256 | 57,344 | 142.228 | 0.1266 | 0.00 | 126 | 1.82 | 308 |
+| 1 | 224 | 1.132 | 0.0995 | 0.444 | 0.625 | 0.40 | 59 |
+| 4 | 896 | 1.376 | 0.3224 | 0.360 | 0.772 | 0.42 | 62 |
+| 16 | 3,584 | 4.503 | 0.3988 | 0.111 | 2.5 | 0.49 | 76 |
+| 32 | 7,168 | 9.403 | 0.3149 | 0.044 | 6.32 | 0.62 | 89 |
+| 64 | 14,336 | 22.614 | 0.2691 | 0.019 | 14.8 | 0.81 | 123 |
+| 128 | 28,672 | 44.921 | 0.1539 | 0.005 | 51.8 | 1.21 | 184 |
+| 256 | 57,344 | 142.228 | 0.1266 | 0.002 | 126 | 1.82 | 308 |
+| 512 | 114,688 | 408.169 | 0.0905 | 0.001 | 352 | 2.39 | 419 |
 
 *Sixteen updates per batch, 224 independent single-thread workers.*
 
 | copies per worker | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | node memory in use (GB) |
 |---|---|---|---|---|---|---|---|
-| 1 | 112 | 0.511 | 0.1100 | 0.98 | 0.283 | 0.39 | 35 |
-| 4 | 448 | 0.647 | 0.3469 | 0.77 | 0.359 | 0.41 | 36 |
-| 16 | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 | 0.49 | 43 |
-| 32 | 3,584 | 4.841 | 0.3874 | 0.11 | 2.57 | 0.62 | 49 |
-| 64 | 7,168 | 9.423 | 0.3434 | 0.05 | 5.8 | 0.81 | 64 |
-| 128 | 14,336 | 21.210 | 0.2999 | 0.02 | 13.3 | 1.21 | 98 |
-| 256 | 28,672 | 57.335 | 0.1766 | 0.01 | 45.1 | 1.77 | 152 |
+| 1 | 112 | 0.511 | 0.1100 | 0.982 | 0.283 | 0.39 | 35 |
+| 4 | 448 | 0.647 | 0.3469 | 0.774 | 0.359 | 0.41 | 36 |
+| 16 | 1,792 | 1.998 | 0.4554 | 0.254 | 1.09 | 0.49 | 43 |
+| 32 | 3,584 | 4.841 | 0.3874 | 0.108 | 2.57 | 0.62 | 49 |
+| 64 | 7,168 | 9.423 | 0.3434 | 0.048 | 5.8 | 0.81 | 64 |
+| 128 | 14,336 | 21.210 | 0.2999 | 0.021 | 13.3 | 1.21 | 98 |
+| 256 | 28,672 | 57.335 | 0.1766 | 0.006 | 45.1 | 1.77 | 152 |
+| 512 | 57,344 | 184.859 | 0.0994 | 0.002 | 160 | 2.37 | 214 |
 
 *Sixteen updates per batch, 112 independent single-thread workers.*
 
@@ -893,16 +1008,29 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 
 | update convention | workers | best copies per worker | copies at the best setting | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | what ended the sweep |
 |---|---|---|---|---|---|---|---|---|---|
-| one update per batch | 112 | 64 | 7,168 | 1.890 | 1.88 | 0.26 | 1.06 | 0.99 | turned over |
-| one update per batch | 224 | 64 | 14,336 | 3.974 | 1.77 | 0.12 | 2.25 | 0.98 | turned over |
-| sixteen updates per batch | 112 | 16 | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 | 0.49 | turned over |
-| sixteen updates per batch | 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | turned over |
+| one update per batch | 112 | 64 | 7,168 | 1.890 | 1.88 | 0.263 | 1.06 | 0.99 | turned over |
+| one update per batch | 224 | 64 | 14,336 | 3.974 | 1.77 | 0.124 | 2.25 | 0.98 | turned over |
+| sixteen updates per batch | 112 | 16 | 1,792 | 1.998 | 0.4554 | 0.254 | 1.09 | 0.49 | turned over |
+| sixteen updates per batch | 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.111 | 2.5 | 0.49 | turned over |
 
 *The best rung of each series, and what stopped the series there. Every rung is in the four tables above.*
 
 **One update per batch.** Read from the table: packing more than 64 copies into a worker takes throughput away rather than merely stopping to add it, so that rung is not a soft boundary but the setting to use. The node's memory is not what stops it — at the best setting the whole node holds 84 GB of its 1,008 GB.
 
 **Sixteen updates per batch.** Read from the table: packing more than 16 copies into a worker takes throughput away rather than merely stopping to add it, so that rung is not a soft boundary but the setting to use. The node's memory is not what stops it — at the best setting the whole node holds 43 GB of its 1,008 GB.
+
+**Is there a reason to pack more copies into a worker than that?** No, and the reason is that nothing is being traded. A setting past the peak is worse for the queue that cares about total throughput and worse for the run whose owner cares how long one copy takes.
+
+| update convention | workers | copies per worker | million steps per second | thousand steps per second per copy | hours per million steps per copy | against the best rung |
+|---|---|---|---|---|---|---|
+| one update per batch, the best rung | 112 | 64 | 1.88 | 0.263 | 1.06 |  |
+| one update per batch, twice it | 112 | 128 | 1.56 | 0.109 | 2.55 | -17% total, -58% per copy |
+| one update per batch, the largest measured | 112 | 512 | 0.4426 | 0.008 | 36 | -76% total, -97% per copy |
+| sixteen updates per batch, the best rung | 112 | 16 | 0.4554 | 0.254 | 1.09 |  |
+| sixteen updates per batch, twice it | 112 | 32 | 0.3874 | 0.108 | 2.57 | -15% total, -57% per copy |
+| sixteen updates per batch, the largest measured | 112 | 512 | 0.0994 | 0.002 | 160 | -78% total, -99% per copy |
+
+*Both quantities fall together past the best rung, so packing more copies into a worker buys nothing on either count.*
 
 
 ## The best setup on each platform, at 4,096 copies or fewer
@@ -917,13 +1045,13 @@ one-copy-per-worker processor row, explained under the table.
 |---|---|---|---|---|---|
 | graphics processor, one update per batch | 4,096 | **0.087** | **24.1** | **5.90** | **0.0471** |
 | graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>0.15</u> |
-| processor, independent processes, one update | 3,584 | 1.055 | 1.71 | 0.48 | 0.581 |
-| processor, independent processes, sixteen updates | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 |
-| processor, independent processes, one update, one copy per worker | 224 | 1.015 | 0.1112 | 0.50 | 0.56 |
-| processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 0.49 |
-| processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 0.667 |
+| processor, independent processes, one update | 3,584 | 1.055 | 1.71 | 0.478 | 0.581 |
+| processor, independent processes, sixteen updates | 1,792 | 1.998 | 0.4554 | 0.254 | 1.09 |
+| processor, independent processes, one update, one copy per worker | 224 | 1.015 | 0.1112 | 0.496 | 0.56 |
+| processor, threads in one process, one update | 128 | 0.933 | 0.0702 | 0.548 | 0.506 |
+| processor, threads in one process, sixteen updates | 128 | 1.813 | 0.0362 | 0.282 | 0.984 |
 
-The 224-copy row is in the table for a claim that the sustained measurements withdrew. Giving every worker one copy was the setting that finished a single copy soonest when these numbers were read off two-second measurements. Measured over a long window it is not: it gives each copy 0.50 thousand steps per second, where processor, threads in one process, one update at 128 copies gives 0.57 thousand — a million steps per copy in 0.490 hours against 0.560 — while also reaching 1 times its total throughput. Packing copies into each worker is not a trade against single-copy speed on this machine; up to the plateau it is better at both.
+The 224-copy row is in the table for a claim that the sustained measurements withdrew. Giving every worker one copy was the setting that finished a single copy soonest when these numbers were read off two-second measurements. Measured over a long window it is not: it gives each copy 0.496 thousand steps per second, where processor, threads in one process, one update at 128 copies gives 0.548 thousand — a million steps per copy in 0.506 hours against 0.560 — while also reaching 1 times its total throughput. Packing copies into each worker is not a trade against single-copy speed on this machine; up to the plateau it is better at both.
 
 ![best setup](figures/best_setup.png)
 
@@ -939,7 +1067,70 @@ rates appear in every table and both curves in every figure.
 
 ## A processor with fewer, faster cores against the 224-thread node
 
-*PENDING — waiting on the two nodes' measurements.*
+jaguar02's Intel part has 16 fast cores against the 112 slower ones of jaguar03's AMD part.
+Both were held exclusively and ran this report's processor configuration: independent worker
+processes, one thread and one training copy each, one update per batch.
+
+**The processor numbers earlier in this report are too high.** They come from five timed
+iterations, about two seconds of work; at 150 iterations jaguar03 loses 28% per worker at 112
+workers (1.58 down to 1.14 thousand steps per second per copy) and 68% at 224 (1.57 down to
+0.508), while jaguar02 moves at most 4%. Both causes grow with the worker count: jaguar03's
+clock has not yet fallen to the 2.60 GHz it holds under load, and hundreds of processes are
+still starting, so each measures an emptier machine than a real run sees. Everything below is
+sustained.
+
+| characteristic | jaguar02 (fewer, faster cores) | jaguar03 (the big node) |
+|---|---|---|
+| model name | Intel(R) Xeon(R) Gold 6334 CPU @ 3.60GHz | AMD EPYC 7663 56-Core Processor |
+| physical cores / hardware threads | 16 / 32 | 112 / 224 |
+| cores / memory channels, per socket | 8 / 8 | 56 / not readable |
+| measured clock, one core busy / every core busy | 3.59 / 3.56 GHz | 3.52 / 2.60 GHz |
+| level-3 cache per core | **2.25 MiB** | **4.57 MiB** |
+| one dependent access, 8 MiB working set | **44.3 ns** | **15.6 ns** |
+
+| node | worker processes | copies per worker | copies in total | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|---|---|
+| jaguar02 | 16 | 1 | 16 | 0.379 | 0.0204 | 1.27 | 0.218 |
+| jaguar02 | 32 | 1 | 32 | 0.721 | 0.0227 | 0.709 | 0.392 |
+| jaguar03 | 112 | 1 | 112 | 0.451 | 0.1276 | 1.14 | 0.244 |
+| jaguar03 | 224 | 1 | 224 | 1.009 | 0.1138 | 0.508 | 0.547 |
+
+*Sustained: 150 timed iterations after 2 warm-up, median of three or four repeats; the figure carries the full sweeps. Every number in both tables was read on the machine it describes.*
+
+![Both nodes, total and per-copy](figures/cpu_node_comparison.png)
+
+**jaguar03's best setting is 112 workers, not 224.** One worker on every hardware thread costs
+11% of the total, 0.1276 down to 0.1138 million steps per second: two workers sharing a core
+keep only 45% each of a lone worker's rate, because what halves between them is the last-level
+cache this workload depends on. On jaguar02 each keeps 56% and the total rises 11%, so all 32
+threads is its best setting.
+
+### If the newer processor had 224 threads
+
+jaguar02's best setting delivers 1,419 steps per second per physical core, against 1,139 on
+jaguar03. Scaled to 112 cores that is 0.1589 million steps per second, which beats jaguar03:
+140% of the 0.1138 million it reaches at 224 threads, 125% of its 0.1276 million best. That is
+an upper bound: it assumes a core of this design would work as fast in a 112-core part as in a
+16-core one, and jaguar03 is the evidence against that.
+
+1. **The clock would not survive.** jaguar02 holds 3.56 GHz with 16 cores working; jaguar03
+   falls from 3.52 idle to 2.60 with 112; a 112-core jaguar02 would meet the same power limit.
+2. **Memory bandwidth per core would fall with the core count.** jaguar02's 8 memory channels
+   per socket feed 8 cores, one each; 56 cores on that same memory would leave each 14% of it.
+3. **The last-level cache per core would shrink the same way.** Dividing today's block among 56
+   cores per socket instead of 8 leaves 0.32 MiB each against 2.25, below what jaguar03 gives
+   its own cores — the same halving that costs jaguar03 11% at 224 threads.
+
+### What accounts for the difference
+
+Clock speed is not the answer: with every physical core busy jaguar02 runs at 3.56 GHz and
+gives one worker 1.27 thousand steps per second against jaguar03's 1.14 at 2.60 GHz — a 37%
+higher clock buying 12% more work, so jaguar03 does 1.23 times as much of it per clock cycle.
+The last-level cache is where the two part: one dependent access at an 8 MiB working set takes
+44.3 ns on jaguar02 against 15.6 on jaguar03, which also has 4.57 MiB of that cache per core
+against 2.25. That locates the difference without proving causation inside the training loop;
+proving it would need the processors' own performance counters, which this account cannot read
+on these nodes.
 
 ## Training a thousand to four thousand copies at once
 
