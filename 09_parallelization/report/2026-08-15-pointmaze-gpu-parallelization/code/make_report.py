@@ -1288,11 +1288,14 @@ largest for small batches (178 against 6.3 million steps per second at a thousan
 where the other implementations spend nearly all their time dispatching work rather than simulating.
 All three implementations pass identical exactness checks, so this is purely a speed choice.
 
-**Which trainer: they are close, and the choice is no longer mainly about speed.** After the round-four
-work (below), PyTorch is ahead at 8 copies with one update per batch and JAX leads by 10 to 22 percent
-elsewhere, measured the same way on both sides with each iteration waited for. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
-quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
-learning-rate sweep and per-copy progress recording.
+**Which trainer: it depends on the copy count, and the answer changes between 128 and 1,024.** At
+8 to 128 copies they are close: after the round-four work (below), PyTorch is ahead at 8 copies with
+one update per batch and JAX leads by 10 to 22 percent elsewhere, measured the same way on both
+sides with each iteration waited for. At 1,024 to 4,096 copies — where this trainer is actually run
+— the distance is much larger, JAX by 1.75 to 2.08 times, for a reason that only appears at those
+sizes; the last section of this document measures it and says why. Both compute the same algorithm
+and agree to 8.6e-7 on every intermediate quantity. PyTorch carries the resumable training driver
+and the campaign records; both now carry the learning-rate sweep and per-copy progress recording.
 
 **Which combination: keep the environment in the same framework as the trainer.** Substituting the
 CUDA kernel, twenty-four times faster on its own, into the PyTorch training loop changes the
