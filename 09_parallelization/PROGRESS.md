@@ -145,7 +145,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   doubled. On jaguar02 the second thread is still worth +11%. Every worker count the argument
   rests on was measured three times; the 224-worker point repeated to 0.1138 exactly.
   At equal load (every physical core busy) jaguar02 gives 1.27 thousand steps/s per copy against
-  jaguar03's 1.16, but on a clock 37% higher — so jaguar03 does 1.24x as much work per clock
+  jaguar03's 1.14, but on a clock 37% higher — so jaguar03 does 1.23x as much work per clock
   cycle. Cause traced to the last-level cache, measured on both nodes: at an 8 MiB working set one
   dependent access takes 44.3 ns on jaguar02 and 15.6 on jaguar03, and jaguar03 has 4.57 MiB of
   level-3 cache per core against 2.25. Not the vector units — the array library uses AVX512 on
