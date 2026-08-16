@@ -48,3 +48,15 @@ def test_derived_leaves_out_a_ratio_whose_counts_are_missing():
     r = derived(parse(SAMPLE)[1])
     assert "dtlb_load_miss_percent" not in r
     assert abs(r["instructions_per_cycle"] - 147005475006 / 76506552955) < 1e-12
+
+
+def test_derived_keeps_the_last_reading_of_a_repeated_event():
+    """A window counts in three passes, so an event can appear twice; the last pass wins."""
+    text = ("===== procs=112 copies=64 style=full_batch =====\n"
+            "   100      cycles\n"
+            "   200      instructions\n"
+            "   400      cycles\n"
+            "   800      instructions\n")
+    r = derived(parse(text)[0])
+    assert r["cycles"] == 400.0 and r["instructions"] == 800.0
+    assert r["instructions_per_cycle"] == 2.0

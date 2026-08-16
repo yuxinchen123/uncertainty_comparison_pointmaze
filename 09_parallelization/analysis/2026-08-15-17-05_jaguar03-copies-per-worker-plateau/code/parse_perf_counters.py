@@ -69,11 +69,13 @@ def derived(record):
 
 def main():
     """Parse the counter output and write one record per setting."""
-    # one record per setting, the later-settled job's reading replacing the earlier one, since
-    # its counting window is certainly inside the load's timed region
-    # before: four records from the first job and three from the second, overlapping at two
-    #         settings
-    # after:  five records, the overlapping two taken from the second job
+    # one record per setting, keeping whichever counting window caught the load actually running.
+    # The two jobs start counting at different points, so for any one setting one of them can have
+    # counted a window that overlapped the load's start-up or its end; the window that counted far
+    # more instructions is the one that was inside the load.
+    # before: the same setting counted twice, one window reporting 7.0 trillion instructions and
+    #         the other 7.3 billion, the second having caught the load after it finished
+    # after:  the 7.0 trillion record
     by_setting = {}
     for source in SOURCES:
         if not source.exists():
@@ -81,7 +83,10 @@ def main():
         for r in parse(source.read_text()):
             row = derived(r)
             row["settled"] = source.name.endswith("settled.txt")
-            by_setting[(row["workers"], row["n_copies"], row["style"])] = row
+            key = (row["workers"], row["n_copies"], row["style"])
+            held = by_setting.get(key)
+            if held is None or row.get("instructions", 0) > held.get("instructions", 0):
+                by_setting[key] = row
     records = sorted(by_setting.values(), key=lambda r: (r["style"], r["workers"], r["n_copies"]))
     OUT.write_text(json.dumps(records, indent=1))
     print(f"wrote {OUT} with {len(records)} records")

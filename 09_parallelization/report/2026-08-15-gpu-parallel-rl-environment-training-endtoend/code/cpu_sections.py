@@ -458,10 +458,18 @@ def thread_verdict(host, tr_proc, tr_thread):
     ex = sorted(slower)[-2:]
     cites = "; ".join(f"{both[c][high]:.3f} seconds per iteration against {both[c][low]:.3f} "
                       f"at {c} {'copy' if c == 1 else 'copies'}" for c in ex)
-    out += (f"The thread table also shows that adding threads does not help. Giving the single "
+    # where the extra threads did win, say so and by how much, rather than claiming they never do
+    faster = {c: v[low] / v[high] for c, v in both.items() if v[high] < v[low] * 0.98}
+    if faster:
+        best_c = max(faster, key=faster.get)
+        won = (f"At the {len(faster)} largest copy counts they were faster, by at most "
+               f"{100 * (faster[best_c] - 1):.0f}% at {best_c} copies, which is far less than the "
+               f"{high // low} times as many threads they use")
+    else:
+        won = "They were never faster by more than the measurement noise"
+    out += (f"The thread table also shows that adding threads barely helps. Giving the single "
             f"process {high} threads instead of {low} was slower at {len(slower)} of the "
-            f"{len(both)} copy counts measured — {cites} — and never faster by more than the "
-            f"measurement noise. {high // low} times as many threads bought nothing.")
+            f"{len(both)} copy counts measured — {cites}. {won}.")
     return out
 
 
@@ -520,28 +528,31 @@ def plateau_rung(rows, threshold=0.02):
 
 
 def correction_rows(host, workers, copies):
-    """The same setting read three ways, to separate the two things the old method got wrong.
+    """The same setting read four ways, to separate the two things the old method got wrong.
 
-    The three readings, in the order the corrections were applied:
-      five iterations, sum of rates     what the earlier sweep reported
-      ninety seconds, sum of rates      the same arithmetic on a settled load
-      ninety seconds, common window     the work the machine did while every worker was running
-    before: for (224 workers, 16 copies) there is a five-iteration file and a swept row
-    after:  one entry per update convention, carrying all three numbers
+    The first column is the number this report published, which is the fastest five-iteration
+    reading of that setting, because that is what the old selection kept. The second is the same
+    five-iteration measurement taken again in the sweep's own job, which shows how much a
+    two-second reading moves by itself. The last two are the sustained measurement with the old
+    arithmetic and with the shared window.
     """
     out = []
     for style, label in [("full_batch", "one update per batch"),
                          ("epoch_minibatch", "sixteen updates per batch")]:
         rows = [r for r in all_rows(r"trainbench_cpu_", host=host, mode="processes", style=style)
                 if r["workers"] == workers and r["n_copies"] == copies]
-        burst = [r for r in rows if not is_sustained(r)]
+        published = [r for r in rows if not is_sustained(r) and "burst_before" not in r["_file"]]
+        retaken = [r for r in rows if not is_sustained(r) and "burst_before" in r["_file"]]
         window = [r for r in rows if r.get("window_seconds") is not None]
-        if not (burst and window):
+        if not (published and window):
             continue
-        b, w = median_row(burst), median_row(window)
+        pub = max(published, key=lambda r: r["env_steps_per_sec"])
+        w = median_row(window)
         out.append({"style": style, "label": label,
-                    "burst": b["env_steps_per_sec"],
-                    "burst_seconds": timed_seconds(b),
+                    "published": pub["env_steps_per_sec"],
+                    "published_seconds": timed_seconds(pub),
+                    "retaken": (max(retaken, key=lambda r: r["env_steps_per_sec"])
+                                ["env_steps_per_sec"] if retaken else None),
                     "long_sum": w["env_steps_per_sec_sum_of_worker_rates"],
                     "window": w["env_steps_per_sec"],
                     "window_seconds": w["window_seconds"],
@@ -550,19 +561,21 @@ def correction_rows(host, workers, copies):
 
 
 def correction_table(host="jaguar03", workers=224, copies=16):
-    """The correction to the published processor numbers, as a table of the three readings."""
+    """The correction to the published processor numbers, as a table of the four readings."""
     rows = correction_rows(host, workers, copies)
     if not rows:
         return ""
-    md = (f"| update convention | five iterations, rates added up | "
-          f"ninety seconds, rates added up | ninety seconds, one shared window | "
-          f"what the correction removes |\n|---|---|---|---|---|\n")
+    md = ("| update convention | as published: five iterations, rates added up | "
+          "five iterations again | ninety seconds, rates added up | "
+          "ninety seconds, one shared window | what the correction removes |\n"
+          "|---|---|---|---|---|---|\n")
     for r in rows:
-        md += (f"| {r['label']} | {M(r['burst'])} | {M(r['long_sum'])} | {M(r['window'])} | "
-               f"{100 * (1 - r['window'] / r['burst']):.0f}% |\n")
+        again = M(r["retaken"]) if r["retaken"] else "not retaken"
+        md += (f"| {r['label']} | {M(r['published'])} | {again} | {M(r['long_sum'])} | "
+               f"{M(r['window'])} | {100 * (1 - r['window'] / r['published']):.0f}% |\n")
     return md + (f"\n*The same setting — {workers} workers holding {copies} copies each, "
-                 f"{workers * copies:,} copies — measured three ways on the same node in the same "
-                 f"job. Millions of environment steps per second.*\n\n")
+                 f"{workers * copies:,} copies — measured four ways on the same node. Millions of "
+                 f"environment steps per second.*\n\n")
 
 
 def repeat_table(host="jaguar03"):
@@ -581,8 +594,7 @@ def repeat_table(host="jaguar03"):
         return ""
     md = ("| update convention | workers | copies per worker | readings, million steps per "
           "second | spread |\n|---|---|---|---|---|\n")
-    for (style, workers, copies), members in sorted(repeated.items(),
-                                                    key=lambda kv: (kv[0][0], kv[0][1], kv[0][2])):
+    for (style, workers, copies), members in sorted(repeated.items()):
         vals = sorted(m["env_steps_per_sec"] for m in members)
         label = "one update" if style == "full_batch" else "sixteen updates"
         md += (f"| {label} | {workers} | {copies} | "
@@ -721,7 +733,7 @@ def fig_cpu_plateau():
     axes[2].set_ylabel("gigabytes of memory per worker")
     axes[2].set_title("What one worker holds", fontsize=10)
     for ax in axes:
-        ax.set_xlabel("total copies on the node, 224 workers throughout (log scale)")
+        ax.set_xlabel("total copies on the node (log scale)")
         ax.set_xscale("log", base=2)
         ax.set_yscale("log")
         ax.legend(frameon=False, fontsize=8)
@@ -809,11 +821,12 @@ def memory_corun_table(d):
           "share of the idle-node rate |\n|---|---|---|\n")
     md += f"| nothing | {idle:,.2f} | 1.00 |\n"
     for r in rows[1:]:
-        md += (f"| 216 training workers, {r['copies']} copies each | "
+        plural = "copy" if r["copies"] == 1 else "copies"
+        md += (f"| {r['train_procs']} training workers, {r['copies']} {plural} each | "
                f"{r['stream_gb_per_sec_per_process']:,.2f} | "
                f"{r['stream_gb_per_sec_per_process'] / idle:.2f} |\n")
     return md + ("\n*Eight stream processes, measured over twenty seconds after the training "
-                 "load had been running for twenty-five. One update per batch.*\n\n")
+                 "load had been running for thirty. One update per batch.*\n\n")
 
 
 def sec_correction():
@@ -822,7 +835,8 @@ def sec_correction():
     if not table:
         return ""
     rows = correction_rows("jaguar03", 224, 16)
-    worst = max(rows, key=lambda r: 1 - r["window"] / r["burst"])
+    worst = max([r for r in rows if r["retaken"]],
+                key=lambda r: 1 - r["window"] / r["published"])
     return f"""### 5.3 A correction to the processor numbers above
 
 The processor measurements in this section were taken with a benchmark that times five
@@ -842,10 +856,13 @@ up, and then to count only the work done inside the wall-clock window in which e
 running.
 
 {table}Both corrections point the same way and together they remove
-**{100 * (1 - worst['window'] / worst['burst']):.0f}%** of the reported rate at this setting.
-The middle column separates them: it is the old arithmetic applied to a settled load, so the
-step from the first column to the second is the clock, and the step from the second to the third
-is the overlap the old arithmetic assumed and did not have.
+**{100 * (1 - worst['window'] / worst['published']):.0f}%** of the published rate at this setting.
+The columns separate the causes. The second is the five-iteration measurement taken again, and it
+comes back {100 * abs(1 - worst['retaken'] / worst['published']):.0f}% away from the first, which
+is how unstable a two-second reading is by itself. The third is the old arithmetic applied to a
+settled load, so the step from the second column to the third is the clock, and the step from the
+third to the fourth is the overlap the old arithmetic assumed and did not have. The clock is by
+far the larger of the two.
 
 Every processor number in this section is now a sustained measurement over a shared window;
 where a setting has not been retaken, its row says so.
@@ -958,29 +975,55 @@ def consequence_table():
                  "into a worker buys nothing on either count.*\n\n")
 
 
-def plateau_sentences(style, label):
-    """The plateau, the peak and the memory for one update convention, all read from the rows."""
-    found = best_worker_count(style)
-    if not found:
+def plateau_sentences():
+    """The one paragraph the four tables need beside them: what the shape means, in both cases.
+
+    Both conventions turn over rather than flatten, and the memory figure is what says the node
+    was never the constraint, so the two facts are stated once for both rather than repeated per
+    convention.
+    """
+    said = []
+    for style, label in [("full_batch", "One update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")]:
+        found = best_worker_count(style)
+        if not found:
+            continue
+        winner, _ = found
+        rows = ladder(style, winner)
+        top = max(rows, key=lambda r: r["env_steps_per_sec"])
+        said.append((label, winner, top, what_ended_it(rows, plateau_rung(rows))))
+    if not said:
         return ""
-    winner, _ = found
-    rows = ladder(style, winner)
-    top = max(rows, key=lambda r: r["env_steps_per_sec"])
-    end = what_ended_it(rows, plateau_rung(rows))
-    if end == "turned over":
-        meaning = (f"packing more than {top['n_copies']} copies into a worker takes throughput "
-                   f"away rather than merely stopping to add it, so that rung is not a soft "
-                   f"boundary but the setting to use")
-    elif end == "flattened":
-        meaning = (f"past {top['n_copies']} copies a worker the machine does no more work while "
-                   f"every copy in it goes on getting slower, so nothing is bought by going "
-                   f"further")
-    else:
-        meaning = ("the curve had not stopped rising where the sweep ended, so the setting to "
-                   "use is the largest one measured and the ceiling is still above it")
-    return (f"**{label}.** Read from the table: {meaning}. The node's memory is not what stops "
-            f"it — at the best setting the whole node holds "
-            f"{top['node_peak_used_gb']:,.0f} GB of its 1,008 GB.")
+    parts = []
+    for label, winner, top, end in said:
+        verb = {"turned over": "peaks", "flattened": "stops gaining",
+                "still rising where the sweep stopped": "was still rising"}[end]
+        parts.append(f"{label} {verb} at **{top['n_copies']} copies a worker on {winner} "
+                     f"workers**")
+    ends = {e for _, _, _, e in said}
+    shape = ("Both curves turn over rather than level off, so the rungs above the peak are not "
+             "merely no better, they are worse."
+             if ends == {"turned over"} else
+             "The two curves end differently, which the last column of the summary table names "
+             "for each.")
+    memory = max(t["node_peak_used_gb"] for _, _, t, _ in said)
+    # the one-thread-per-core claim is checked against the rows rather than asserted: at the same
+    # copies per worker, is 112 workers ahead of 224 at every rung of both conventions?
+    beaten = []
+    for style in ("full_batch", "epoch_minibatch"):
+        one, two = by_copies(ladder(style, 112)), by_copies(ladder(style, 224))
+        beaten += [one[c]["env_steps_per_sec"] > two[c]["env_steps_per_sec"]
+                   for c in sorted(set(one) & set(two))]
+    threads = ("One worker per physical core beats two at the same copies per worker, at every "
+               "rung of both conventions, so the second hardware thread of a core is worth "
+               "nothing here." if all(beaten) else
+               f"One worker per physical core beats two at the same copies per worker at "
+               f"{sum(beaten)} of the {len(beaten)} rungs measured.")
+    return (f"{parts[0]}, and {parts[1]}. {shape} {threads} Memory is not what ends either curve: at the best setting the whole node holds "
+            f"{memory:,.0f} GB of its 1,008 GB, and even the largest rung measured, 512 copies a "
+            f"worker across 224 workers, holds 437 GB. The node would run out somewhere past "
+            f"1,000 copies a worker, four doublings beyond the point where throughput has already "
+            f"fallen by three quarters.")
 
 
 def sec_plateau():
@@ -1008,17 +1051,18 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
             if key in n:
                 md += ladder_table(n[key]["rows"],
                                    f"{label}, {workers} independent single-thread workers.", style)
+    # the section draws its own figure, so any report that includes the section gets it without
+    # that report's generator having to know about it
+    fig_cpu_plateau()
     md += "![copies per worker](figures/cpu_plateau.png)\n\n"
     md += plateau_summary_table()
     repeats = repeat_table()
     if repeats:
         md += ("Four settings were measured twice, to show how much a reading moves between two "
                "runs of the same thing.\n\n") + repeats
-    for style, label in [("full_batch", "One update per batch"),
-                         ("epoch_minibatch", "Sixteen updates per batch")]:
-        sentence = plateau_sentences(style, label)
-        if sentence:
-            md += sentence + "\n\n"
+    sentence = plateau_sentences()
+    if sentence:
+        md += sentence + "\n\n"
     consequence = consequence_table()
     if consequence:
         md += ("**Is there a reason to pack more copies into a worker than that?** No, and the "
@@ -1167,7 +1211,8 @@ roughly a fifth of the machine's bandwidth on what the training is using. **Memo
 not what runs out.**
 
 **The processor's own counters.** The performance counters are readable on this node, so the
-three points either side of the peak were counted directly while the load ran.
+rungs either side of the peak were counted directly while the load ran, with one worker
+alone for comparison.
 
 {counter_table(d)}Instructions per cycle falls by more than half between the peak setting and the
 one past it, so the cores are doing progressively less work per cycle rather than running out of
@@ -1269,6 +1314,28 @@ sequence, which is the same problem solved from the other end.
     return md
 
 
+def fastest_single_copy():
+    """The processor setting that finishes one copy soonest, over every setting the sweep measured.
+
+    The best-setup table cannot answer this on its own: it holds one row per configuration, chosen
+    by total throughput, so the setting that is best for a single copy need not appear in it.
+    """
+    rows = [r for style in ("full_batch", "epoch_minibatch") for w in (112, 224)
+            for r in ladder(style, w)]
+    if not rows:
+        return ""
+    best = max(rows, key=lambda r: r["env_steps_per_sec_per_copy"])
+    style = "one update" if best["_style"] == "full_batch" else "sixteen updates"
+    plural = "copy" if best["n_copies"] == 1 else "copies"
+    return (f"Across every processor setting in section 5.4, the one that finishes a single copy "
+            f"soonest is {best['workers']} workers holding {best['n_copies']} {plural} each, "
+            f"{style} per batch, at {K(best['env_steps_per_sec_per_copy'])} thousand steps per "
+            f"second per copy — a million steps in "
+            f"{hours_per_million(best['env_steps_per_sec_per_copy']):.3f} hours. Packing copies "
+            f"into a worker always costs single-copy speed; what it buys, up to the peak, is "
+            f"total throughput.")
+
+
 def sec_best(limit=4096):
     """Section: the best configuration on each platform within the range actually used."""
     rows = best_under(limit)
@@ -1277,9 +1344,10 @@ def sec_best(limit=4096):
     fastest = rows[0]
     md = f"""## 6. The best setup on each platform
 
-Throughput keeps rising with the number of copies well past the point most work needs, so the
-comparison below is restricted to **{limit:,} copies or fewer**, which is the range this project
-actually operates in. For every platform and configuration but one, the table gives the setting
+Graphics-processor throughput keeps rising with the number of copies well past the point most
+work needs, so the comparison below is restricted to **{limit:,} copies or fewer**, which is the
+range this project actually operates in. The processor is restricted by the same limit, though
+its own curve turns over inside it — section 5.4 has where. For every platform and configuration but one, the table gives the setting
 that reaches the highest total throughput inside that range; the exception is the
 one-copy-per-worker processor row, explained under the table.
 
@@ -1313,19 +1381,22 @@ one-copy-per-worker processor row, explained under the table.
                f"of a factor of {cpu[0]['total'] / solo['total']:.1f} in total throughput.\n")
     else:
         # measured over a long window rather than a two-second one, giving every worker a single
-        # copy stopped being the way to finish one copy soonest: the batched settings beat it on
-        # both counts, and the row stays in the table to show that
+        # copy stopped being the way to finish one copy soonest; the row stays in the table to
+        # show that, and the comparison is written so it stays true whichever way the totals fall
+        faster_total = quickest["total"] > solo["total"]
+        totals = (f"and it reaches {quickest['total'] / solo['total']:.1f} times its total "
+                  f"throughput as well" if faster_total else
+                  f"though it reaches only {quickest['total'] / solo['total']:.2f} times its "
+                  f"total throughput")
         md += (f"\nThe {solo['copies']:,}-copy row is in the table for a claim that the sustained "
-               f"measurements withdrew. Giving every worker one copy was the setting that "
-               f"finished a single copy soonest when these numbers were read off two-second "
+               f"measurements withdrew. Giving every worker one copy was the processor setting "
+               f"that finished a single copy soonest when these numbers were read off two-second "
                f"measurements. Measured over a long window it is not: it gives each copy "
-               f"{K(solo['per_copy'])} thousand steps per second, where "
-               f"{quickest['name']} at {quickest['copies']:,} copies gives "
-               f"{K(quickest['per_copy'])} thousand — a million steps per copy in "
-               f"{quickest['hours_1M']:.3f} hours against {solo['hours_1M']:.3f} — while also "
-               f"reaching {quickest['total'] / solo['total']:.0f} times its total throughput. "
-               f"Packing copies into each worker is not a trade against single-copy speed on this "
-               f"machine; up to the plateau it is better at both.\n")
+               f"{K(solo['per_copy'])} thousand steps per second, against "
+               f"{K(quickest['per_copy'])} thousand for {quickest['name']} at "
+               f"{quickest['copies']:,} copies — a million steps per copy in "
+               f"{quickest['hours_1M']:.3f} hours against {solo['hours_1M']:.3f} — {totals}. "
+               f"{fastest_single_copy()}\n")
     md += "\n![best setup](figures/best_setup.png)\n\n"
     if gpu and cpu:
         ratio = gpu[0]["total"] / cpu[0]["total"]
