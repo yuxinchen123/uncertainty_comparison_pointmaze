@@ -2677,10 +2677,15 @@ def sec_learning_outcome():
 **8 learning rates x {n_copies // len(rates):,} independent copies x {steps / 1e6:.0f} million environment steps per copy** —
 {{PyTorch, JAX}} x {{the card's reduced-precision matrix mode, exact single precision}} — asking whether
 the two implementations of one algorithm end up in the same place, and whether the precision of the
-matrix units moves where either of them ends up. A copy's score is its mean extrinsic reward per
-iteration over the last {s['final_records']} recorded iterations: the number of steps, out of the 512 an
-iteration runs, that it spent inside the goal radius. With {n_copies // len(rates):,} copies per rate the bar is not
-identical curves but overlapping seed distributions.
+matrix units moves where either of them ends up.
+
+Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected over the 512
+environment steps of recorded iteration $k$ — the number of those steps it spent inside the goal
+radius. Let $K$ be the last recorded iteration and let $m$ be {s['final_records']}. A copy's score is the mean
+over the last $m$ records, $s_c = \dfrac{{1}}{{m}}\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$, by which point
+the annealed learning rate is near zero and the policy has stopped moving; averaging $m$ records
+rather than reading the last one cuts the per-copy sampling noise without smearing the curve. With
+{n_copies // len(rates):,} copies per rate the bar is not identical curves but overlapping seed distributions.
 
 Parity between the two implementations was established before any card time was spent, item by
 item — initialisation distribution and gains, optimiser and its constants, advantage
@@ -2740,6 +2745,9 @@ Blocked by rate: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}
 ![every rate](figures/learning_outcome_by_rate.png)
 
 ### What the four runs cost, and the precision each actually used
+
+Define $r$ as the environment steps per second one copy gets; the last of the rate columns is that
+rate written as time, $\dfrac{{10^{{6}}}}{{3600 r}}$ hours per million steps for one copy.
 
 {a.throughput_table(s)}
 A knob that is silently ignored produces two identical curves, which reads exactly like the finding

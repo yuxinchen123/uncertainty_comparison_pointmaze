@@ -438,10 +438,13 @@ def main():
     md = [f"""# Do the two implementations learn the same thing, and does reduced precision change it?
 
 Four runs, each {len(rates)} learning rates x {per_rate_copies:,} independent copies x {first['steps_per_copy']:,} environment
-steps per copy: {{PyTorch, JAX}} x {{reduced precision, exact single precision}}. A copy's score is
-its mean extrinsic reward per iteration over the last {s['final_records']} recorded iterations, which is the
-number of steps out of {STEPS_PER_COPY_PER_ITER} it spends inside the goal radius. Parity between the two
-implementations was checked first and is written down in `../parity_check.md`.
+steps per copy: {{PyTorch, JAX}} x {{reduced precision, exact single precision}}.
+
+Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected over the
+{STEPS_PER_COPY_PER_ITER} environment steps of recorded iteration $k$ — the number of those steps it spent inside the
+goal radius. Let $K$ be the last recorded iteration and let $m$ be {s['final_records']}. A copy's score is
+$s_c = \dfrac{{1}}{{m}}\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$. Parity between the two implementations was
+checked first and is written down in `../parity_check.md`.
 
 ## What each configuration reached, per learning rate
 
