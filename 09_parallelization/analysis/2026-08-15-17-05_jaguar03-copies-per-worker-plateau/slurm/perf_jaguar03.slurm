@@ -35,7 +35,7 @@ echo "host $(hostname), $(nproc) processors visible, started $(date)"
 {
   echo "===== perf_event_paranoid ====="; cat /proc/sys/kernel/perf_event_paranoid
   echo "===== perf list, cache and memory events ====="
-  perf list 2>/dev/null | grep -iE "cache|l3|dram|memory|umc|data.fabric" | head -60
+  perf list 2>/dev/null | grep -iE "cache|l3|dram|memory|umc|data.fabric" | head -60 || true
 } > "$RUN/logs/perf_events.txt" 2>&1
 
 # --- one counting window per configuration: start the load, let it settle, count for 30 seconds.
@@ -59,7 +59,7 @@ window () {
   perf stat -a -e cache-misses,cache-references,instructions,cycles,page-faults \
     -- sleep 20 >> "$OUT" 2>&1 || echo "group 1 unavailable" >> "$OUT"
   echo "--- group 2: address translation ---" >> "$OUT"
-  perf stat -a -e dTLB-load-misses,dTLB-loads,dTLB-store-misses,dTLB-stores \
+  perf stat -a -e dTLB-load-misses,dTLB-loads,L1-dcache-load-misses,L1-dcache-loads \
     -- sleep 20 >> "$OUT" 2>&1 || echo "group 2 unavailable" >> "$OUT"
   echo "--- group 3: stalls ---" >> "$OUT"
   perf stat -a -e stalled-cycles-backend,stalled-cycles-frontend,cycles,instructions \
