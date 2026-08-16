@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:36 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:39 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -878,6 +878,7 @@ than the last word on that trainer.
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before | 1024 | 82.2 | 6.38 | 6.2 | 0.045 | 3.5 |
+| JAX | 1024 | 46.9 | **11.17** | 10.9 | 0.025 | 2.4 |
 | PyTorch before | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
 | PyTorch before | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
 
@@ -949,6 +950,7 @@ One further measurement worth recording: the optimiser's pass over the parameter
 | one update per batch | 1024 | 29.6 ms | 14.2 ms | 2.08 |
 | one update per batch | 2048 | 48.2 ms | 23.2 ms | 2.08 |
 | one update per batch | 4096 | 90.4 ms | 43.8 ms | 2.06 |
+| sixteen updates per batch | 1024 | 82.2 ms | 46.9 ms | 1.75 |
 
 The reason is not that any PyTorch program is slow. The table in the previous subsection times
 each of them on its real shape and finds them at 71 to 100 percent of the rate a plain copy

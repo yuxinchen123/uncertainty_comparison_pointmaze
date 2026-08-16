@@ -215,7 +215,7 @@ the bytes are counted.
    1.65 MB, so a tile that fits the cache holds about 30 copies — and a program with 30 pieces of
    work cannot fill 132 processing blocks. The two constraints are irreconcilable at this network
    size. NOT taken.
-3. **Keep the Adam moments in a narrower number format.** It would remove two of the nine passes
+3. **Keep the Adam moments in a narrower number format.** It would remove two of the eight passes
    the optimiser makes, about 5 percent of a minibatch step. It changes what the trainer computes,
    so it belongs in its own round with its own equivalence gate rather than inside a round whose
    rule is that the arithmetic must not change. NOT taken here.

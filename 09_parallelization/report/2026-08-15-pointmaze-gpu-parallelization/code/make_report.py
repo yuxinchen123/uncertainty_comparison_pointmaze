@@ -1959,7 +1959,7 @@ Recording them is the point: two of them look obviously right until the bytes ar
    largest remaining saving. A copy's working set is about 1.65 megabytes, so a group that fits
    the cache holds about thirty copies, and a program with thirty pieces of work cannot fill the
    card's 132 processing blocks. The two requirements cannot both be met at this network size.
-3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the nine
+3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the eight
    passes the optimiser makes, about 5 percent of an update step. It changes what the trainer
    computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
    rather than in this one.
