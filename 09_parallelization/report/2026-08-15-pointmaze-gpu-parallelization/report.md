@@ -34,12 +34,13 @@ what each round changed, then the training campaign and the sweep.
 | [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
 | [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
-| [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 16:35 PT | read |
+| <span class="updated">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 17:25 PT | updated |
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT | read |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT | read |
-| [End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT | read |
+| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 17:25 PT | updated |
 | [The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer) | 2026-08-15 16:08 PT | 2026-08-15 16:35 PT | read |
+| <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 17:28 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -688,6 +689,31 @@ End-to-end training on that node, one row per setting measured:
 | processes, full_batch | 224 | 224 | 0.326 | 0.3527 | 1.57 | 0.176 |
 | processes, full_batch | 224 | 3584 | 0.481 | 3.8047 | 1.06 | 0.262 |
 | threads, full_batch | 8 | 128 | 0.904 | 0.0725 | 0.57 | 0.49 |
+| processes, full_batch | 32 | 32 | 0.715 | 0.0227 | 0.71 | 0.392 |
+| processes, full_batch | 16 | 16 | 0.340 | 0.0243 | 1.52 | 0.183 |
+| processes, full_batch | 32 | 32 | 0.709 | 0.0227 | 0.71 | 0.392 |
+| processes, full_batch | 15 | 15 | 0.378 | 0.0202 | 1.35 | 0.206 |
+| processes, full_batch | 111 | 111 | 0.453 | 0.1253 | 1.13 | 0.246 |
+| processes, full_batch | 1 | 1 | 0.330 | 0.0016 | 1.55 | 0.179 |
+| processes, full_batch | 1 | 1 | 0.373 | 0.0014 | 1.37 | 0.202 |
+| processes, full_batch | 8 | 8 | 0.330 | 0.0124 | 1.55 | 0.179 |
+| processes, full_batch | 8 | 8 | 0.378 | 0.0108 | 1.35 | 0.205 |
+| processes, full_batch | 16 | 16 | 0.341 | 0.0242 | 1.51 | 0.184 |
+| processes, full_batch | 16 | 16 | 0.378 | 0.0205 | 1.28 | 0.217 |
+| processes, full_batch | 32 | 32 | 0.347 | 0.0472 | 1.47 | 0.188 |
+| processes, full_batch | 32 | 32 | 0.712 | 0.0230 | 0.72 | 0.387 |
+| processes, full_batch | 112 | 112 | 0.443 | 0.1296 | 1.16 | 0.24 |
+| processes, full_batch | 224 | 224 | 1.008 | 0.1138 | 0.51 | 0.547 |
+| processes, full_batch | 16 | 16 | 0.379 | 0.0204 | 1.27 | 0.218 |
+| processes, full_batch | 112 | 112 | 0.451 | 0.1276 | 1.14 | 0.244 |
+| processes, full_batch | 32 | 32 | 0.721 | 0.0226 | 0.71 | 0.393 |
+| processes, full_batch | 16 | 16 | 0.380 | 0.0204 | 1.27 | 0.218 |
+| processes, full_batch | 224 | 224 | 1.009 | 0.1138 | 0.51 | 0.547 |
+| processes, full_batch | 32 | 32 | 0.721 | 0.0227 | 0.71 | 0.392 |
+| processes, full_batch | 112 | 112 | 0.454 | 0.1270 | 1.13 | 0.245 |
+| processes, full_batch | 2 | 2 | 0.378 | 0.0027 | 1.36 | 0.205 |
+| processes, full_batch | 4 | 4 | 0.378 | 0.0054 | 1.36 | 0.205 |
+| processes, full_batch | 224 | 224 | 1.013 | 0.1133 | 0.51 | 0.549 |
 
 Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
 about forty small operations, and the regrouping after each one costs more than the work it
@@ -851,16 +877,16 @@ The measurements settle which is better, and the answer is not the obvious one.
 
 *One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
-| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
-|---|---|---|---|---|---|---|
-| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 |
-| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 |
-| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 | 0.201 |
-| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 |
-| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 |
-| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 | 0.252 |
-| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 | 0.386 |
-| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 | 0.472 |
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) |
+|---|---|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 | not recorded |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 | not recorded |
+| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 | 0.201 | not recorded |
+| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 | not recorded |
+| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 | not recorded |
+| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 | 0.252 | not recorded |
+| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 | 0.386 | not recorded |
+| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 | 0.472 | not recorded |
 
 *Independent single-thread processes. Sixteen updates per batch.*
 
@@ -910,3 +936,271 @@ arrangement is exactly what a work queue across many nodes would do. And a confi
 wins on total throughput is not the one that finishes any single copy soonest, which is why both
 rates appear in every table and both curves in every figure.
 
+
+## A processor with fewer, faster cores against the 224-thread node
+
+### The question
+
+The node measured everywhere else in this report, jaguar03, wins by having a great many cores.
+The opposite kind of machine also exists on this cluster: fewer cores, each clocked higher. Since
+this workload is one single-thread process per worker running a small policy network and a
+physics environment — many tiny dependent operations rather than large parallel arithmetic — the
+expectation going in was that the higher-clocked processor would give each worker more steps per
+second, and that the big node would win only on the total.
+
+jaguar02 was chosen to test that. It carries the highest clock printed on any processor in this
+cluster and the fewest cores per socket of its generation, and it was completely idle, so it
+could be held exclusively for the measurement exactly as jaguar03 was. The genuinely newer
+processors here, the Zen 4 parts in the serval machines, could not be used: one sits inside a
+maintenance reservation until the end of the month and the other four were each carrying another
+user's multi-day job, so none could be held exclusively.
+
+### The two processors side by side
+
+| characteristic | jaguar02 (fewer, faster cores) | jaguar03 (the big node) | where the number came from |
+|---|---|---|---|
+| model name | Intel(R) Xeon(R) Gold 6334 CPU @ 3.60GHz | AMD EPYC 7663 56-Core Processor | `lscpu` |
+| processor family / model / stepping | 6/106/6 | 25/1/1 | `lscpu` |
+| sockets | 2 | 2 | `lscpu` |
+| physical cores (whole node) | 16 | 112 | `lscpu` |
+| hardware threads per core | 2 | 2 | `lscpu` |
+| hardware threads (whole node) | 32 | 224 | `lscpu` |
+| clock printed in the model name | 3.6 GHz | none printed | `lscpu` model-name string |
+| **measured clock, one core busy** | **3.59 GHz** | **3.52 GHz** | dependent addition chain, run on the node |
+| **measured clock, every core busy** | **3.56 GHz** | **2.60 GHz** | same chain, run while the training workload occupied every other core |
+| level-1 data cache per core | 48K | 32K | `lscpu -C` |
+| level-2 cache per core | 1.3M | 512K | `lscpu -C` |
+| level-3 cache, one block | 18M | 32M | `lscpu -C` |
+| level-3 cache, whole node | 36M | 512M | `lscpu -C` |
+| cores sharing one level-3 block | 8 | 7 | cores divided by number of level-3 blocks |
+| **level-3 cache per core** | **2.25 MiB** | **4.57 MiB** | the two rows above |
+| memory type | Unbuffered-DDR4 | not readable | EDAC labels in `/sys` |
+| **memory channels per socket** | **8** | **not readable** | EDAC labels in `/sys` |
+| memory installed | 16 DIMMs | not readable | EDAC labels in `/sys` |
+| memory clock | not readable | not readable | `dmidecode` needs privileges this account does not have on these nodes |
+| memory regions the node reports | 2 | 2 | `lscpu` |
+| one dependent access, 24 KiB working set | 1.4 ns | 1.4 ns | random walk through a buffer, run on the node |
+| one dependent access, 384 KiB working set | 4.3 ns | 4.8 ns | random walk through a buffer, run on the node |
+| **one dependent access, 8 MiB working set** | **44.3 ns** | **15.6 ns** | random walk through a buffer, run on the node |
+| one dependent access, 256 MiB working set | 92.2 ns | 106.1 ns | random walk through a buffer, run on the node |
+| one core reading an 8 MiB working set | 33.6 GB/s | 61.8 GB/s | streaming read, run on the node |
+| one core reading main memory | 13.9 GB/s | 22.1 GB/s | streaming read, run on the node |
+| vector instructions the array library chose | AVX512 | AVX2 | `torch.backends.cpu.get_cpu_capability()` |
+
+*Everything above was read on the machine it describes, by the measurement job itself, not from a specification sheet. The memory clock needs privileges this account does not have on these nodes, so it is left as not readable rather than guessed. The microarchitecture names and their release years are not on the machine at all and so are not in this table either.*
+
+
+### What was measured, and why the measurement had to be made twice
+
+Independent worker processes, one thread each, one training copy each, one update per batch — the
+same configuration on both machines, and the same configuration the rest of this report's
+processor numbers use. The worker count runs from one up to each node's physical core count and
+then to its hardware thread count.
+
+Each point was measured with five timed iterations, about two seconds of work, and then again
+with 150 timed iterations, about a minute. That turned out to matter more than anything else in
+the setup. Two separate effects make a two-second measurement read high, and both of them grow
+with the worker count:
+
+1. **The clock has not settled.** A server processor runs above its sustained clock for the first
+   seconds of a load. With every core busy jaguar02 holds
+   3.56 GHz, essentially its idle
+   3.59 GHz, while jaguar03 settles from
+   3.52 GHz down to 2.60 GHz.
+   A machine with 16 cores can hold its clock with all of them working; one with 112 cannot.
+2. **The workers do not overlap.** The benchmark adds up each worker's own rate. Over seven
+   iterations, several hundred processes spend much of that time starting up at different
+   moments, so each one measures a machine that is emptier than the machine a real run sees, and
+   the sum describes a load that never existed. Over 150 iterations they all run together
+   throughout and the sum is honest.
+
+The result is that the short numbers are wrong in a way that gets worse exactly where the
+argument is decided:
+
+| node | workers | first seconds only, thousand steps/s per copy | sustained, thousand steps/s per copy | difference |
+|---|---|---|---|---|
+| jaguar02 | 1 | 1.32 | 1.37 | +4% |
+| jaguar02 | 2 | 1.35 | 1.36 | +1% |
+| jaguar02 | 4 | 1.33 | 1.36 | +2% |
+| jaguar02 | 8 | 1.36 | 1.35 | -0% |
+| jaguar02 | 16 | 1.32 | 1.27 | -4% |
+| jaguar02 | 32 | 0.71 | 0.71 | +0% |
+| jaguar03 | 1 | 1.54 | 1.55 | +1% |
+| jaguar03 | 8 | 1.68 | 1.55 | -8% |
+| jaguar03 | 16 | 1.52 | 1.51 | -1% |
+| jaguar03 | 32 | 1.59 | 1.47 | -7% |
+| jaguar03 | 112 | 1.58 | 1.14 | -28% |
+| jaguar03 | 224 | 1.57 | 0.51 | -68% |
+
+Everything from here on uses the sustained numbers, and every worker count the argument rests on
+was measured three or four times. The short measurements are kept in the figure, drawn faintly,
+because the earlier processor sections of this report were built from five-iteration runs and
+their figures for jaguar03 at high worker counts are therefore too high.
+
+### The measured comparison
+
+| node | workers (one per physical core) | measured clock while running | thousand steps per second per copy | hours per million steps per copy | steps per second per copy for each gigahertz of clock |
+|---|---|---|---|---|---|
+| jaguar02 | 16 | 3.56 GHz | 1.27 | 0.218 | 358 |
+| jaguar03 | 112 | 2.60 GHz | 1.14 | 0.244 | 439 |
+
+*This is the comparison at equal load: each machine has every one of its physical cores running one worker.*
+
+![Both nodes, total and per-copy](figures/cpu_node_comparison.png)
+
+Full sweeps, sustained:
+
+| worker processes | copies per worker | copies in total | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|---|
+| 1 | 1 | 1 | 0.373 | 0.0014 | 1.37 | 0.202 |
+| 2 | 1 | 2 | 0.378 | 0.0027 | 1.36 | 0.205 |
+| 4 | 1 | 4 | 0.378 | 0.0054 | 1.36 | 0.205 |
+| 8 | 1 | 8 | 0.378 | 0.0108 | 1.35 | 0.205 |
+| 16 | 1 | 16 | 0.379 | 0.0204 | 1.27 | 0.218 |
+| 32 | 1 | 32 | 0.721 | 0.0227 | 0.71 | 0.392 |
+
+*jaguar02: 16 physical cores, 32 hardware threads. Independent worker processes, one copy each, one update per batch, 150 timed iterations after 2 warm-up iterations.*
+
+| worker processes | copies per worker | copies in total | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
+|---|---|---|---|---|---|---|
+| 1 | 1 | 1 | 0.330 | 0.0016 | 1.55 | 0.179 |
+| 8 | 1 | 8 | 0.330 | 0.0124 | 1.55 | 0.179 |
+| 16 | 1 | 16 | 0.341 | 0.0242 | 1.51 | 0.184 |
+| 32 | 1 | 32 | 0.347 | 0.0472 | 1.47 | 0.188 |
+| 112 | 1 | 112 | 0.451 | 0.1276 | 1.14 | 0.244 |
+| 224 | 1 | 224 | 1.009 | 0.1138 | 0.51 | 0.547 |
+
+*jaguar03: 112 physical cores, 224 hardware threads. Same configuration.*
+
+### The second hardware thread per core
+
+Every core here can run two workers at once. Whether that is worth doing is where the two
+machines differ most, and it is the opposite of what the short measurements suggested.
+
+| node | one worker per physical core | one worker per hardware thread | what the second thread does to the total |
+|---|---|---|---|
+| jaguar02 | 16 workers, 0.0204 million steps/s | 32 workers, 0.0227 million steps/s | **+11%** |
+| jaguar03 | 112 workers, 0.1276 million steps/s | 224 workers, 0.1138 million steps/s | **-11%** |
+
+The arithmetic is simple: put two workers on a core and each of them keeps some fraction of what
+a lone worker on that core was getting. If that fraction is above one half the pair is worth it,
+and below one half it is not. On jaguar02 each of the two keeps
+56% — above half, so
+the total rises +11%. On jaguar03 each keeps only
+45% — below half, so
+the total falls -11%. **Filling all 224 of
+jaguar03's hardware threads is worse than using only its 112 physical cores.**
+That single fact decides the extrapolation below, and it is invisible in a two-second
+measurement, which reported the second thread as nearly doubling jaguar03's total.
+
+### If the newer processor had 224 threads
+
+Take jaguar02 in its best setting — 32 workers,
+0.0227 million environment steps per second across its 16
+physical cores, that is 1,419 steps per second for each physical core — and
+assume that per-core figure would survive if the same processor design had 112
+cores instead of 16. For comparison jaguar03 delivers
+1,139 steps per second per physical core in its own best setting.
+
+| what is being counted | projected jaguar02 at 112 cores | measured jaguar03 | share |
+|---|---|---|---|
+| against jaguar03 at 224 hardware threads | 0.1589 million steps/s | 0.1138 million steps/s | **140%** |
+| against jaguar03 at its best (112 workers) | 0.1589 million steps/s | 0.1276 million steps/s | **125%** |
+
+**The answer is yes.** Scaled to 112 cores and 224 hardware threads, jaguar02 projects to 0.1589 million environment steps per second, against 0.1138 million measured on jaguar03 at that same thread count — 140% of it. Comparing each machine in the setting that suits it best is fairer to jaguar03, whose best is 112 workers at 0.1276 million rather than 224 workers, and the projection still comes out ahead: 125% of jaguar03's best.
+
+**The assumption this rests on, stated plainly:** that a core in a 16-core version
+of this processor and a core in a 112-core version of it would do the same amount
+of work per second. Everything that is known about these two machines says that assumption is
+optimistic, and jaguar03 is itself the evidence, because jaguar03 *is* the experiment of
+putting 112 cores behind one memory system:
+
+1. **The clock would not survive.** Measured, not supposed. jaguar02 holds
+   3.56 GHz with 16 cores working;
+   jaguar03 falls to 2.60 GHz with 112
+   working, from 3.52 GHz idle. A 112-core version
+   of jaguar02 would meet the same power budget and give up clock the same way.
+2. **Memory bandwidth per core would fall sevenfold.** jaguar02 has
+   8 memory
+   channels feeding 8 cores on each socket, which is one channel per
+   core. Growing that socket to 56 cores without widening its memory
+   would leave each core a seventh of the bandwidth the measured part enjoys. (jaguar03's own
+   channel count cannot be read: it exposes no memory-controller entries in `/sys`, so this
+   point is made from jaguar02's readable figure alone rather than from a comparison.)
+3. **The shared cache per core would shrink the same way** — and this one is already visible in
+   the measurements. jaguar03's total *falls* when it goes from 112 workers to
+   224 precisely because each worker's share of the level-3 cache halves. A
+   112-core jaguar02 keeping today's 18M block per socket
+   would be dividing it among 56 cores instead of
+   8: 0.32 MiB
+   per core rather than 2.25, which is less than jaguar03 gives each of
+   its own cores.
+
+So the projection is an upper bound, not an estimate. The honest summary is that the two designs
+are closer than their core counts suggest, that jaguar02's cores are worth more each, and that
+scaling jaguar02 up to 112 cores would run into the very effects that are
+currently holding jaguar03 back. The one asymmetry to keep in mind: only one side of this table
+is a projection. jaguar03's numbers are measured on real workers on a real machine.
+
+### What accounts for the difference
+
+The starting expectation was that clock speed would decide this. The measurement says clock speed
+is real but secondary, and it says so twice.
+
+**Per worker, at equal load, the higher-clocked machine wins — by much less than its clock.**
+With every physical core busy, jaguar02 runs at 3.56 GHz and gives one
+worker 1.27 thousand steps per second; jaguar03 runs at
+2.60 GHz and gives one worker 1.14 thousand.
+jaguar02's clock is 37% higher but its
+per-worker rate is only 12% higher.
+Divide each rate by the clock it was reached at and jaguar03 does
+**1.23 times** as much of this work in every clock cycle. Its cores are
+individually the more effective ones at this workload; it gives most of that back by running them
+slower, which is the price of having 112 of them.
+
+**Which characteristic produces that?** The evidence points at the last-level cache — not the
+clock, not the vector units, not main memory:
+
+1. **The two are close in the small caches, and jaguar02 is ahead in main memory.** One
+   dependent access at a 24 KiB working set takes 1.4 ns on
+   jaguar02 against 1.4 on jaguar03; at 384 KiB,
+   4.3 against 4.8; in
+   main memory jaguar02 is the faster of the two,
+   92.2 ns against
+   106.1. jaguar02 also has more level-2 cache per core
+   (1.3M against 512K). None of that explains a per-cycle deficit.
+2. **At the last-level cache the order reverses, by a wide margin.** At an 8 MiB working set one
+   dependent access takes 44.3 ns on jaguar02 and
+   15.6 ns on jaguar03 — jaguar03 reaches data of that size
+   **2.8 times faster**. One
+   core streaming the same working set reads
+   34 GB/s on jaguar02 against
+   62 GB/s on jaguar03. And
+   jaguar03 has 2.0 times as much of that cache per
+   core (4.57 MiB against 2.25 MiB), because its
+   cache is cut into small blocks shared by 7 cores each rather
+   than one large block shared by 8.
+3. **The vector units are not the answer, and the measurement shows it.** The array library
+   compiled itself for AVX512 on jaguar02 and only
+   AVX2 on jaguar03 — the wider, more modern vector
+   instructions are on the machine that does *less* work per clock cycle. That is what a workload
+   of many small dependent operations looks like: the wide arithmetic has little to do, and the
+   processor that keeps a few megabytes close to the core wins instead.
+
+The same reading explains why jaguar03 loses throughput when its second hardware threads are
+used. Two workers on one core share that core's caches. jaguar02 has
+1.3M of level-2 cache per core to divide between the two, which still leaves each
+of them more than a jaguar03 core has to give a single worker (512K), so on
+jaguar02 the second worker is worth having. On jaguar03 the share being halved is the one the
+workload already depends on, and halving it costs more than the second worker brings.
+
+**One honest limit.** These measurements locate the difference — at the last-level cache rather
+than at the clock, the vector width, or main memory — by timing the memory system at each
+working-set size on both machines. They do not prove causation inside the training loop itself;
+that would need the processors' own performance counters during the run, which this account
+cannot read on these nodes. What can be said without qualification is what was measured directly:
+the higher-clocked processor wins per worker by far less than its clock advantage, it does less
+work per clock cycle, filling jaguar03's second hardware threads makes jaguar03 slower rather
+than faster, and a 224-thread version of jaguar02 projects
+125% of jaguar03's best — under an assumption that the evidence
+says is generous.

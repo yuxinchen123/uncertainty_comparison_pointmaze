@@ -212,11 +212,15 @@ def throughput_table(rows, note):
     """A throughput table in the project's standard columns, one row per worker count."""
     if not rows:
         return "\n*PENDING — waiting on the measurement.*\n"
-    md = ("| worker processes | copies | seconds per iteration | million steps per second | "
-          "thousand steps per second per copy | hours per million steps per copy |\n"
-          "|---|---|---|---|---|---|\n")
+    # the copies-per-worker column is 1 throughout this sweep, which is exactly why it is here:
+    # without it the copies column equals the worker count and a reader cannot tell whether it
+    # means copies in total or copies on each worker
+    md = ("| worker processes | copies per worker | copies in total | seconds per iteration | "
+          "million steps per second | thousand steps per second per copy | "
+          "hours per million steps per copy |\n|---|---|---|---|---|---|---|\n")
     for r in rows:
-        md += (f"| {r['workers']} | {r['total_copies']} | {r['sec_per_iteration']:.3f} | "
+        md += (f"| {r['workers']} | {r['total_copies'] // r['workers']} | {r['total_copies']} | "
+               f"{r['sec_per_iteration']:.3f} | "
                f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
                f"{H(r['env_steps_per_sec_per_copy'])} |\n")
     return md + f"\n*{note}*\n\n"
