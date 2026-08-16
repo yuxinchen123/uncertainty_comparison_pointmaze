@@ -1,8 +1,8 @@
 # Throughput of the single-update JAX PPO+RND trainer on every graphics card of this cluster
 
-Written 2026-08-16 16:37 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
+Written 2026-08-16 16:42 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
 
-66 of 80 jobs have reported, giving 214 measured cells; 44 cells did not fit on their card. 14 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
+67 of 80 jobs have reported, giving 218 measured cells; 45 cells did not fit on their card. 13 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
 
 ## 1. What was measured
 
@@ -24,14 +24,14 @@ One node per node class — nodes identical in card type, card memory, processor
 |---|---|---|---|---|---|---|---|
 | `serval03` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9534 | none yet | 0/12 |
 | `serval06-09` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9354 | 8, 16, 32 | 12/12 |
-| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16, 28 | 9/12 |
+| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16, 28 | 10/12 |
 | `cheetah04` | gpu | A100 | 8.0 | 81.1 | amd epyc 7742 | 8, 16, 32 | 12/12 |
 | `nekomata01` | gpu | RTX 5080 | 12.0 | 16.3 | icelake | 8, 16, 22 | 12/12 |
 | `jaguar01` | gpu | A40 | 8.6 | 46.1 | skylake | 8, 16, 32 | 12/12 |
 | `jaguar06` | gpu | A40 | 8.6 | 46.1 | icelake | 8, 16, 32 | 12/12 |
 | `cheetah02` | gpu | RTX 4000 Ada | 8.9 | 20.5 | skylake | 8, 16, 32 | 12/12 |
 | `jaguar03` | gpu | RTX A4500 | 8.6 | 20.5 | amd epyc 7663 | 8, 16, 32 | 12/12 |
-| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8 | 3/12 |
+| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8, 16 | 6/12 |
 | `jaguar02` | gpu | A16 | 8.6 | 15.4 | icelake | none yet | 0/12 |
 | `lotus` | gpu | Quadro RTX 6000 | 7.5 | 24.1 | skylake | 8, 16, 32 | 12/12 |
 | `affogato11` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8 | 3/12 |
@@ -61,7 +61,7 @@ The tables in section 4 carry every card; this one carries the answer. Ten milli
 | 512 | H100 NVL | `serval06-09` | 0.04 | A100, 1.72x slower | 0 |
 | 1024 | H100 NVL | `serval06-09` | 0.06 | A100, 1.72x slower | 0 |
 | 2048 | H100 NVL | `serval06-09` | 0.11 | A100, 1.78x slower | 3 |
-| 4096 | H100 NVL | `serval06-09` | 0.22 | A100, 1.71x slower | 13 |
+| 4096 | H100 NVL | `serval06-09` | 0.22 | A100, 1.71x slower | 14 |
 
 ## 4.1 512 copies
 
@@ -77,7 +77,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `jaguar03` | RTX A4500 | 32 | 0.0263 | 9.96 | 19,462 | 0.014 | 1.7 | 0.11% |
 | `jaguar06` | A40 | 16 | 0.0264 | 9.95 | 19,426 | 0.014 | 1.6 | 0.01% |
 | `lotus` | Quadro RTX 6000 | 16 | 0.0367 | 7.15 | 13,964 | 0.020 | 2.3 | 0.16% |
-| `cheetah08-09` | RTX A4000 | 8 | 0.0368 | 7.13 | 13,916 | 0.020 | 1.6 | 0.20% |
+| `cheetah08-09` | RTX A4000 | 16 | 0.0367 | 7.13 | 13,932 | 0.020 | 1.6 | 0.16% |
 | `cheetah03` | RTX 2080 Ti | 32 | 0.0381 | 6.88 | 13,443 | 0.021 | 2.3 | 0.22% |
 | `ai06` | RTX 2080 Ti | 30 | 0.0387 | 6.77 | 13,219 | 0.021 | 2.3 | 0.25% |
 | `ai01-04_lynx10` | RTX 2080 Ti | 8 | 0.0388 | 6.76 | 13,197 | 0.021 | 2.3 | 0.31% |
@@ -107,13 +107,13 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 |---|---|---|---|---|---|---|---|---|
 | `serval06-09` | H100 NVL | 8 | 0.0115 | **45.67** | 44,599 | **0.006** | 3.4 | 0.35% |
 | `cheetah04` | A100 | 32 | 0.0198 | <u>26.50</u> | 25,882 | <u>0.011</u> | 3.2 | 0.01% |
-| `cheetah01` | A100 | 16 | 0.0231 | 22.67 | 22,143 | 0.013 | 3.2 | 0.11% |
+| `cheetah01` | A100 | 28 | 0.0231 | 22.71 | 22,180 | 0.013 | 3.2 | 0.06% |
 | `nekomata01` | RTX 5080 | 8 | 0.0301 | 17.42 | 17,010 | 0.016 | 3.2 | 0.02% |
 | `jaguar06` | A40 | 8 | 0.0493 | 10.65 | 10,396 | 0.027 | 3.4 | 0.01% |
 | `jaguar01` | A40 | 32 | 0.0493 | 10.64 | 10,387 | 0.027 | 3.4 | 0.19% |
 | `jaguar03` | RTX A4500 | 32 | 0.0496 | 10.58 | 10,332 | 0.027 | 3.4 | 0.01% |
 | `lotus` | Quadro RTX 6000 | 8 | 0.0684 | 7.67 | 7,486 | 0.037 | 4.7 | 0.17% |
-| `cheetah08-09` | RTX A4000 | 8 | 0.0702 | 7.46 | 7,290 | 0.038 | 3.4 | 0.07% |
+| `cheetah08-09` | RTX A4000 | 16 | 0.0701 | 7.48 | 7,308 | 0.038 | 3.4 | 0.11% |
 | `cheetah03` | RTX 2080 Ti | 8 | 0.0714 | 7.34 | 7,171 | 0.039 | 4.7 | 0.13% |
 | `affogato11` | RTX 2080 Ti | 8 | 0.0726 | 7.22 | 7,048 | 0.039 | 4.7 | 0.15% |
 | `ai06` | RTX 2080 Ti | 8 | 0.0730 | 7.18 | 7,011 | 0.040 | 4.7 | 0.20% |
@@ -164,10 +164,10 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `lynx05-07` | Tesla P100 | 8 | 0.2395 | 4.38 | 2,138 | 0.130 | 9.5 | 0.02% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
-| `adriatic01-06` | Quadro RTX 4000 | — | — | **does not fit on this card** | — | — | — | — |
+| `adriatic01-06` | Quadro RTX 4000 | — | — | **does not fit** | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
-| `ai05_ai10` | GTX 1080 | — | — | **does not fit on this card** | — | — | — | — |
-| `jinx01-02` | GTX 1080 | — | — | **does not fit on this card** | — | — | — | — |
+| `ai05_ai10` | GTX 1080 | — | — | **does not fit** | — | — | — | — |
+| `jinx01-02` | GTX 1080 | — | — | **does not fit** | — | — | — | — |
 
 ![cards at 2048 copies](plots/card_ranking_copies-2048.png)
 
@@ -185,25 +185,25 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `jaguar01` | A40 | 16 | 0.1862 | 11.27 | 2,750 | 0.101 | 11.3 | 0.01% |
 | `jaguar03` | RTX A4500 | 8 | 0.1864 | 11.25 | 2,747 | 0.101 | 11.3 | 0.01% |
 | `lotus` | Quadro RTX 6000 | 32 | 0.2628 | 7.98 | 1,949 | 0.143 | 18.8 | 0.18% |
+| `cheetah08-09` | RTX A4000 | 8 | 0.2696 | 7.78 | 1,899 | 0.146 | 11.3 | 0.04% |
 | `cheetah02` | RTX 4000 Ada | 8 | 0.3265 | 6.42 | 1,568 | 0.177 | 11.3 | 0.03% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
-| `cheetah08-09` | RTX A4000 | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
-| `affogato11` | RTX 2080 Ti | — | — | not measured yet | — | — | — | — |
-| `ai01-04_lynx10` | RTX 2080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `ai06` | RTX 2080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `cheetah03` | RTX 2080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `adriatic01-06` | Quadro RTX 4000 | — | — | **does not fit on this card** | — | — | — | — |
+| `affogato11` | RTX 2080 Ti | — | — | **does not fit** | — | — | — | — |
+| `ai01-04_lynx10` | RTX 2080 Ti | — | — | **does not fit** | — | — | — | — |
+| `ai06` | RTX 2080 Ti | — | — | **does not fit** | — | — | — | — |
+| `cheetah03` | RTX 2080 Ti | — | — | **does not fit** | — | — | — | — |
+| `adriatic01-06` | Quadro RTX 4000 | — | — | **does not fit** | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
-| `lynx05-07` | Tesla P100 | — | — | **does not fit on this card** | — | — | — | — |
-| `lynx01` | Titan Xp | — | — | **does not fit on this card** | — | — | — | — |
-| `affogato13-15` | GTX 1080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `ai07-08` | GTX 1080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `ai09` | GTX 1080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `lynx02-04` | GTX 1080 Ti | — | — | **does not fit on this card** | — | — | — | — |
-| `ai05_ai10` | GTX 1080 | — | — | **does not fit on this card** | — | — | — | — |
-| `jinx01-02` | GTX 1080 | — | — | **does not fit on this card** | — | — | — | — |
-| `titanx03` | Titan X | — | — | **does not fit on this card** | — | — | — | — |
+| `lynx05-07` | Tesla P100 | — | — | **does not fit** | — | — | — | — |
+| `lynx01` | Titan Xp | — | — | **does not fit** | — | — | — | — |
+| `affogato13-15` | GTX 1080 Ti | — | — | **does not fit** | — | — | — | — |
+| `ai07-08` | GTX 1080 Ti | — | — | **does not fit** | — | — | — | — |
+| `ai09` | GTX 1080 Ti | — | — | **does not fit** | — | — | — | — |
+| `lynx02-04` | GTX 1080 Ti | — | — | **does not fit** | — | — | — | — |
+| `ai05_ai10` | GTX 1080 | — | — | **does not fit** | — | — | — | — |
+| `jinx01-02` | GTX 1080 | — | — | **does not fit** | — | — | — | — |
+| `titanx03` | Titan X | — | — | **does not fit** | — | — | — | — |
 
 ![cards at 4096 copies](plots/card_ranking_copies-4096.png)
 
@@ -215,7 +215,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 
 The trainer keeps its arrays on the card and the host only dispatches, so the expectation is that 8, 16 and 32 processors give the same iteration time.
 
-**It does not.** Over the 72 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
+**It does not.** Over the 74 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
 
 The table below is the evidence, one row per card and copy count; its last column is the span between the fastest and the slowest processor count as a fraction of the fastest. A count this node class cannot allocate reads N/A; one it can allocate but has not yet reported reads "not yet".
 
@@ -226,7 +226,7 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `serval06-09` | H100 NVL | 2048 | 20.9 | 20.8 | 20.6 | N/A | 1.4% |
 | `serval06-09` | H100 NVL | 4096 | 40.0 | 40.0 | 40.0 | N/A | 0.0% |
 | `cheetah01` | A100 | 512 | 13.9 | 14.0 | N/A | 28, 13.9 | 0.9% |
-| `cheetah01` | A100 | 1024 | 23.1 | 23.1 | N/A | 28, not yet | 0.1% |
+| `cheetah01` | A100 | 1024 | 23.1 | 23.1 | N/A | 28, 23.1 | 0.2% |
 | `cheetah01` | A100 | 2048 | 43.7 | 43.9 | N/A | 28, not yet | 0.5% |
 | `cheetah01` | A100 | 4096 | 82.0 | 82.2 | N/A | 28, not yet | 0.3% |
 | `cheetah04` | A100 | 512 | 12.5 | 12.4 | 12.4 | N/A | 0.4% |
@@ -253,6 +253,8 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `jaguar03` | RTX A4500 | 1024 | 49.6 | 49.6 | 49.6 | N/A | 0.2% |
 | `jaguar03` | RTX A4500 | 2048 | 95.1 | 95.1 | 95.2 | N/A | 0.1% |
 | `jaguar03` | RTX A4500 | 4096 | 186.4 | 186.4 | 186.5 | N/A | 0.1% |
+| `cheetah08-09` | RTX A4000 | 512 | 36.8 | 36.7 | not yet | N/A | 0.1% |
+| `cheetah08-09` | RTX A4000 | 1024 | 70.2 | 70.1 | not yet | N/A | 0.2% |
 | `lotus` | Quadro RTX 6000 | 512 | 36.7 | 36.7 | 36.8 | N/A | 0.4% |
 | `lotus` | Quadro RTX 6000 | 1024 | 68.4 | 68.4 | 68.5 | N/A | 0.2% |
 | `lotus` | Quadro RTX 6000 | 2048 | 133.4 | 132.8 | 133.5 | N/A | 0.5% |
@@ -298,32 +300,32 @@ The table below is the evidence, one row per card and copy count; its last colum
 
 Memory grows in proportion to the copy count — doubling the copies doubles the peak — so the cost per copy measured at any one count says where a card's ceiling is. The last column applies that: the card's memory, less about a gigabyte the driver and the compiled program hold outside the trainer's arrays, divided by the cost of one copy. That figure is a projection, not a measurement: on the largest cards it extrapolates several times past the biggest copy count anyone ran here, and it assumes the proportionality holds that far, which nothing in this survey checked.
 
-| node class | card | card memory<br>(GB) | 512 copies<br>(GB) | 1024 copies<br>(GB) | 2048 copies<br>(GB) | 4096 copies<br>(GB) | GB per<br>1,000 copies | largest copy count<br>that fits |
+| node class | card | card memory<br>(GB) | 512 copies<br>(GB) | 1024 copies<br>(GB) | 2048 copies<br>(GB) | 4096 copies<br>(GB) | GB per<br>1,000 copies | largest copy<br>count that fits |
 |---|---|---|---|---|---|---|---|---|
-| `serval06-09` | H100 NVL | 95.8 | 1.8 | 3.4 | 6.8 | 13.4 | 3.36 | all four; about 28,216 projected |
-| `cheetah01` | A100 | 41.0 | 1.6 | 3.2 | 5.8 | 11.3 | 2.96 | all four; about 13,490 projected |
-| `cheetah04` | A100 | 81.1 | 1.7 | 3.2 | 5.8 | 11.3 | 2.99 | all four; about 26,767 projected |
-| `nekomata01` | RTX 5080 | 16.3 | 1.7 | 3.2 | 6.6 | 11.3 | 3.09 | all four; about 4,945 projected |
-| `jaguar01` | A40 | 46.1 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; about 15,032 projected |
-| `jaguar06` | A40 | 46.1 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; about 15,044 projected |
-| `cheetah02` | RTX 4000 Ada | 20.5 | 1.6 | 3.6 | 5.8 | 11.3 | 3.06 | all four; about 6,359 projected |
-| `jaguar03` | RTX A4500 | 20.5 | 1.7 | 3.4 | 5.8 | 11.3 | 3.03 | all four; about 6,431 projected |
-| `cheetah08-09` | RTX A4000 | 16.4 | 1.6 | 3.4 | 5.8 | not yet | 3.08 | 2,048 so far; about 4,994 projected |
-| `lotus` | Quadro RTX 6000 | 24.1 | 2.3 | 4.7 | 9.5 | 18.8 | 4.60 | all four; about 5,018 projected |
-| `affogato11` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | not yet | 4.60 | 2,048 so far; about 2,140 projected |
-| `ai01-04_lynx10` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `ai06` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `cheetah03` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `adriatic01-06` | Quadro RTX 4000 | 7.8 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 measured; 2,048 does not fit |
-| `lynx05-07` | Tesla P100 | 12.2 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `lynx01` | Titan Xp | 12.2 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `affogato13-15` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `ai07-08` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `ai09` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `lynx02-04` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
-| `ai05_ai10` | GTX 1080 | 8.2 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 measured; 2,048 does not fit |
-| `jinx01-02` | GTX 1080 | 8.2 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 measured; 2,048 does not fit |
-| `titanx03` | Titan X | 12.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
+| `serval06-09` | H100 NVL | 95.8 | 1.8 | 3.4 | 6.8 | 13.4 | 3.36 | all four; ~28,216 |
+| `cheetah01` | A100 | 41.0 | 1.6 | 3.2 | 5.8 | 11.3 | 2.96 | all four; ~13,490 |
+| `cheetah04` | A100 | 81.1 | 1.7 | 3.2 | 5.8 | 11.3 | 2.99 | all four; ~26,767 |
+| `nekomata01` | RTX 5080 | 16.3 | 1.7 | 3.2 | 6.6 | 11.3 | 3.09 | all four; ~4,945 |
+| `jaguar01` | A40 | 46.1 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; ~15,032 |
+| `jaguar06` | A40 | 46.1 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; ~15,044 |
+| `cheetah02` | RTX 4000 Ada | 20.5 | 1.6 | 3.6 | 5.8 | 11.3 | 3.06 | all four; ~6,359 |
+| `jaguar03` | RTX A4500 | 20.5 | 1.7 | 3.4 | 5.8 | 11.3 | 3.03 | all four; ~6,431 |
+| `cheetah08-09` | RTX A4000 | 16.4 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; ~5,129 |
+| `lotus` | Quadro RTX 6000 | 24.1 | 2.3 | 4.7 | 9.5 | 18.8 | 4.60 | all four; ~5,018 |
+| `affogato11` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `ai01-04_lynx10` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `ai06` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `cheetah03` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `adriatic01-06` | Quadro RTX 4000 | 7.8 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 |
+| `lynx05-07` | Tesla P100 | 12.2 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `lynx01` | Titan Xp | 12.2 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `affogato13-15` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `ai07-08` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `ai09` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `lynx02-04` | GTX 1080 Ti | 11.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
+| `ai05_ai10` | GTX 1080 | 8.2 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 |
+| `jinx01-02` | GTX 1080 | 8.2 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 |
+| `titanx03` | Titan X | 12.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
 
 **The same run needs 66% more memory on an older card.** Every card at compute capability 8.0 and above — Ampere, Ada, Hopper, Blackwell — holds 4,096 copies in about 11.3 GB, while every Turing and Pascal card needs about 18.8 GB for exactly the same work, and the H100 sits slightly above its generation at 13.4 GB. The split follows the card generation and not the card's size or speed, so it is the compiler emitting a different program for the older architectures, not the trainer asking for more. What in that program costs the extra memory was not investigated here. The practical consequence is that the memory ceiling of an older card is reached about a third sooner than its size alone suggests.
 
@@ -335,18 +337,18 @@ The throughput figures above are steady-state: compilation and warm-up are disca
 
 | copies | building the trainer<br>(seconds) | compiling the iteration<br>(seconds) | total before the<br>first iteration | iterations that time would<br>buy on an H100 |
 |---|---|---|---|---|
-| 512 | 34 | 27 | 61 | 8,406 |
-| 1024 | 59 | 26 | 85 | 7,384 |
+| 512 | 33 | 27 | 60 | 8,345 |
+| 1024 | 59 | 27 | 85 | 7,419 |
 | 2048 | 114 | 30 | 144 | 6,891 |
-| 4096 | 216 | 39 | 255 | 6,367 |
+| 4096 | 217 | 39 | 255 | 6,388 |
 
-More processors do not shorten it. At 4,096 copies the build took 208 s on 8, 220 s on 16, 196 s on 22, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
+More processors do not shorten it. At 4,096 copies the build took 211 s on 8, 220 s on 16, 196 s on 22, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
 
 This is a fixed cost, so it decides whether splitting work across cards pays. Two jobs of 2,048 copies each pay the setup twice; one job of 4,096 pays it once. It also sets a floor under how short a useful run can be — at 4,096 copies the setup alone is about four minutes before a single environment step is taken.
 
 ## 9. How firm these numbers are
 
-Across all 214 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.53% in the worst 5%, and never worse than 1.11%. 214 of 214 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
+Across all 218 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.53% in the worst 5%, and never worse than 1.11%. 218 of 218 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
 
 ## 10. What is still missing
 
@@ -355,7 +357,6 @@ These jobs have not reported. Jobs pinned to a busy node stay queued on purpose 
 - `serval03` at 8 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `serval03` at 16 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `serval03` at 32 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
-- `cheetah08-09` at 16 processors (RTX A4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `cheetah08-09` at 32 processors (RTX A4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `jaguar02` at 8 processors (A16, partition gpu) — **this card is measured nowhere else**
 - `jaguar02` at 16 processors (A16, partition gpu) — **this card is measured nowhere else**

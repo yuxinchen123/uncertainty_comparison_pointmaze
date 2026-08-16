@@ -147,11 +147,11 @@ def throughput_table(classes, jobs, n_copies):
             f"{c['peak_device_memory_mb'] / 1000:.1f} | "
             f"{c['relative_spread_middle_half'] * 100:.2f}% |")
     for r in unmeasured:
-        note = {"out_of_memory": "**does not fit on this card**",
-                "not_attempted_smaller_count_ran_out_of_memory":
-                    "**does not fit on this card**",
-                "not_attempted_out_of_time": "job ran out of time",
-                "failed": "job failed — see the log"}.get(r["note"], r["note"])
+        # kept short: this table is nine columns wide and has to stay printable
+        note = {"out_of_memory": "**does not fit**",
+                "not_attempted_smaller_count_ran_out_of_memory": "**does not fit**",
+                "not_attempted_out_of_time": "ran out of time",
+                "failed": "failed — see log"}.get(r["note"], r["note"])
         lines.append(f"| `{r['cls']['name']}` | {r['cls']['display_name']} | — | — | {note} | "
                      "— | — | — | — |")
     return "\n".join(lines)
@@ -409,7 +409,7 @@ def memory_table(classes, jobs):
     """
     lines = ["| node class | card | card memory<br>(GB) | " +
              " | ".join(f"{c} copies<br>(GB)" for c in COPY_COUNTS) +
-             " | GB per<br>1,000 copies | largest copy count<br>that fits |",
+             " | GB per<br>1,000 copies | largest copy<br>count that fits |",
              "|---|---|---|---|---|---|---|---|---|"]
     for cls in classes:
         # three outcomes per copy count, and they must never be printed alike: a measured peak,
@@ -432,12 +432,13 @@ def memory_table(classes, jobs):
         # what the card could hold if the proportionality continues: its memory, less the ~1 GB
         # the driver and the compiled program hold outside the trainer's arrays
         ceiling = int((cls["gpu_mem_mb"] / 1000 - 1.0) / (per_thousand / 1000))
+        # short, because the row's own cells already say which counts did not fit
         if ran_out:
-            note = f"{max(measured):,} measured; {min(ran_out):,} does not fit"
+            note = f"{max(measured):,}"
         elif unknown:
-            note = f"{max(measured):,} so far; about {ceiling:,} projected"
+            note = f"{max(measured):,} so far"
         else:
-            note = f"all four; about {ceiling:,} projected"
+            note = f"all four; ~{ceiling:,}"
         cells = [f"{measured[c]:.1f}" if c in measured
                  else ("does not fit" if c in ran_out else "not yet") for c in COPY_COUNTS]
         lines.append(f"| `{cls['name']}` | {cls['display_name']} | "
