@@ -15,6 +15,7 @@ Run directly to write `analysis/analysis.md`, `analysis/plots/` and `data/summar
   /p/rlprojects/RND/.venvs/exploration/bin/python analyse.py
 """
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -32,11 +33,29 @@ LABEL = {"torch_reduced": "PyTorch, reduced precision",
          "jax_reduced": "JAX, reduced precision",
          "jax_exact": "JAX, exact single precision"}
 FINAL_RECORDS = 10          # the last ten recorded iterations define a copy's final score
-STEPS_PER_COPY_PER_ITER = 128 * 4
+NUM_STEPS = 128             # T: environment steps one iteration runs per environment
+N_ENVS = 4                  # N: environments per copy
+MAX_EPISODE_STEPS = 400     # every episode truncates here, and none ever terminates early
+STEPS_PER_COPY_PER_ITER = NUM_STEPS * N_ENVS
 
 # colour is the learning rate, an ordered quantity, so the three rates take one sequential ramp;
 # line style separates the two things being compared, per the plotting brief
 RAMP = ["#86b6ef", "#2a78d6", "#0d3a72"]
+
+
+def episode_phase(iteration):
+    """Where inside the episode an iteration's window starts, in environment steps.
+
+    Nothing in this environment terminates early — the task is continuing and the only episode
+    end is truncation at a fixed step count — and every copy's environments start together, so
+    all 8,192 copies share ONE episode clock. An iteration covers 128 of the episode's 400 steps,
+    so which part of the episode an iteration sees repeats every 400 / gcd(128, 400) = 25
+    iterations, and the reward an iteration collects depends on which part that is.
+
+    before: iteration 19400; after: phase 272, meaning that iteration covered episode steps
+    272 to 400
+    """
+    return ((iteration - 1) * NUM_STEPS) % MAX_EPISODE_STEPS
 
 
 def load(tag):
@@ -50,6 +69,7 @@ def load(tag):
     return {
         "record": record,
         "iteration": np.array([r["iteration"] for r in rows]),
+        "phase": np.array([episode_phase(r["iteration"]) for r in rows]),
         "steps_per_copy": np.array([r["global_step"] / record["n_copies"] for r in rows]),
         "reward": np.array([r["reward_ext_sum_per_copy"] for r in rows], dtype=float),
         "rint": np.array([r["rint_mean_per_copy"] for r in rows], dtype=float),
@@ -69,9 +89,24 @@ def group_mask(data, rate_index):
     return data["group"] == rate_index
 
 
+def dominant_phase_records(data):
+    """The row indices of the records that share the run's most common episode phase.
+
+    The recording cadence is a multiple of the 25-iteration phase cycle, so all but one of the
+    records land on the same phase; the single exception is the last iteration, which is not a
+    multiple of the cadence. Mixing it in compares one 128-step window of the episode against a
+    different one, which is what makes a run's final row look like a collapse — every
+    configuration reads about five reward lower there than in the record before it. Scores are
+    taken over records at the run's own dominant phase only.
+    """
+    phases, counts = np.unique(data["phase"], return_counts=True)
+    return np.where(data["phase"] == phases[np.argmax(counts)])[0]
+
+
 def final_scores(data, rate_index):
     """Per-copy final score for one learning-rate group, shape [copies in the group]."""
-    return data["reward"][-FINAL_RECORDS:, group_mask(data, rate_index)].mean(axis=0)
+    rows = dominant_phase_records(data)[-FINAL_RECORDS:]
+    return data["reward"][np.ix_(rows, np.where(group_mask(data, rate_index))[0])].mean(axis=0)
 
 
 def final_coverage(data, rate_index):
@@ -198,9 +233,11 @@ def fig_frameworks(all_data, figdir, name="learning_outcome_frameworks.png"):
         for ax, key in zip(axes, ["reward", "coverage"]):
             for tag, ls, side in [("torch_reduced", "-", "PyTorch"), ("jax_reduced", "--", "JAX")]:
                 d = all_data[tag]
+                rows = dominant_phase_records(d)
                 m = group_mask(d, ri)
-                x = d["steps_per_copy"] / 1e6
-                seed_band(ax, x, d[key][:, m], c, ls, f"{side}, rate {rates[ri]:g}")
+                x = d["steps_per_copy"][rows] / 1e6
+                seed_band(ax, x, d[key][np.ix_(rows, np.where(m)[0])], c, ls,
+                          f"{side}, rate {rates[ri]:g}")
     axes[0].set_ylabel("extrinsic reward per copy per iteration")
     axes[1].set_ylabel("maze coverage (fraction of open cells)")
     for ax in axes:
@@ -231,9 +268,11 @@ def fig_precision(all_data, figdir, framework, name=None):
         for ax, key in zip(axes, ["reward", "coverage"]):
             for suffix, ls, side in [("reduced", "-", "reduced"), ("exact", "--", "exact")]:
                 d = all_data[f"{framework}_{suffix}"]
+                rows = dominant_phase_records(d)
                 m = group_mask(d, ri)
-                x = d["steps_per_copy"] / 1e6
-                seed_band(ax, x, d[key][:, m], c, ls, f"{side}, rate {rates[ri]:g}")
+                x = d["steps_per_copy"][rows] / 1e6
+                seed_band(ax, x, d[key][np.ix_(rows, np.where(m)[0])], c, ls,
+                          f"{side}, rate {rates[ri]:g}")
     axes[0].set_ylabel("extrinsic reward per copy per iteration")
     axes[1].set_ylabel("maze coverage (fraction of open cells)")
     for ax in axes:
@@ -363,6 +402,33 @@ def _fmt(x, digits=3):
     return f"{x:.{digits}f}"
 
 
+def solved_table(s):
+    """The fraction of copies that reached the goal at all, for all four configurations.
+
+    Half the copies never reach the goal and the ones that do spread from a few reward to four
+    hundred, so the mean is set by a heavy tail and its interval is wide. Whether a copy solved
+    the maze at all is a bounded quantity with a binomial interval about three times tighter in
+    relative terms, and it is the thing an exploration run is really being asked about, so the
+    two summaries are reported side by side rather than one standing in for the other.
+    """
+    rates = s["rates"]
+    head = ("| learning<br>rate | " + " | ".join(wrap_label(s["configurations"][t]["label"])
+                                                 for t in TAGS if t in s["configurations"])
+            + " | widest gap between<br>the four | gap this run<br>could resolve |\n")
+    head += "|---" * (len(TAGS) + 3) + "|\n"
+    rows = []
+    for i, r in enumerate(rates):
+        fracs = [s["configurations"][t]["per_rate"][i]["solved_fraction"]
+                 for t in TAGS if t in s["configurations"]]
+        n = s["configurations"][TAGS[0]]["n_copies"] // len(rates)
+        # the half-width of a 95% interval for the difference of two of these proportions
+        half = 1.959964 * np.sqrt(sum(f * (1 - f) / n for f in (max(fracs), min(fracs))))
+        rows.append(f"| {r:g} | " + " | ".join(f"{f * 100:.1f}%" for f in fracs)
+                    + f" | {(max(fracs) - min(fracs)) * 100:.1f} points"
+                    + f" | {half * 100:.1f} points |")
+    return head + "\n".join(rows) + "\n"
+
+
 def wrap_label(label):
     """A configuration name folded at its comma, so a table column stays narrow enough to print."""
     # before: "PyTorch, exact single precision"; after: "PyTorch<br>exact single precision"
@@ -440,6 +506,13 @@ def main():
     picks = [rates[i] for i in s["chosen_rate_indices"]]
     first = next(iter(s["configurations"].values()))
     per_rate_copies = first["n_copies"] // len(rates)
+    phase_cycle = MAX_EPISODE_STEPS // math.gcd(NUM_STEPS, MAX_EPISODE_STEPS)
+    all_data = load_all()
+    phase_rows = "\n".join(
+        f"| {wrap_label(s['configurations'][t]['label'])} | "
+        f"{all_data[t]['reward'][dominant_phase_records(all_data[t])[-1]].mean():.3f} | "
+        f"{all_data[t]['reward'][-1].mean():.3f} |"
+        for t in TAGS if t in all_data)
     md = [f"""# Do the two implementations learn the same thing, and does reduced precision change it?
 
 Four runs, each {len(rates)} learning rates x {per_rate_copies:,} independent copies x {first['steps_per_copy']:,} environment
@@ -448,8 +521,24 @@ steps per copy: {{PyTorch, JAX}} x {{reduced precision, exact single precision}}
 Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected over the
 {STEPS_PER_COPY_PER_ITER} environment steps of recorded iteration $k$ — the number of those steps it spent inside the
 goal radius. Let $K$ be the last recorded iteration and let $m$ be {s['final_records']}. A copy's score is
-$s_c = \dfrac{{1}}{{m}}\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$. Parity between the two implementations was
-checked first and is written down in `../parity_check.md`.
+$s_c = \dfrac{{1}}{{m}}\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$, taken over records at one episode phase (below).
+Parity between the two implementations was checked first and is written down in
+`../parity_check.md`.
+
+## The metric has an episode clock in it
+
+Nothing in this task ever terminates early, so the only episode end is truncation at
+{MAX_EPISODE_STEPS} steps, and every copy's environments start together: all {first['n_copies']:,} copies share ONE
+episode clock. An iteration covers {NUM_STEPS} of those {MAX_EPISODE_STEPS} steps, so which part of the episode an
+iteration sees repeats every {phase_cycle} iterations, and the reward it collects depends on which part.
+Records were written every 200 iterations, a multiple of that cycle, so all but one of them sit at
+a single phase; the exception is the final iteration, which lands elsewhere and reads about five
+reward lower in every configuration. Scores and curves here use only the records at each run's
+dominant phase, so the comparison is like for like.
+
+| configuration | last record at the run's phase | final record, different phase |
+|---|---|---|
+{phase_rows}
 
 ## What each configuration reached, per learning rate
 
@@ -459,6 +548,12 @@ Mean over the {per_rate_copies:,} copies of a rate group.
 The three rates carried through the figures are {', '.join(f'{r:g}' for r in picks)} — the best of the
 eight and its two neighbours, chosen from all four configurations pooled.
 
+About half the copies never reach the goal at all and the ones that do spread from a few reward to
+four hundred, so the mean above is set by a heavy tail. The fraction that reached the goal at all
+is the bounded summary of the same distribution, and the four configurations agree on it at every
+rate by less than the width this run can resolve:
+
+{solved_table(s)}
 ## PyTorch against JAX, both at reduced precision
 
 {comparison_table(s['comparisons']['frameworks_reduced']) if 'frameworks_reduced' in s['comparisons'] else '*pending*'}

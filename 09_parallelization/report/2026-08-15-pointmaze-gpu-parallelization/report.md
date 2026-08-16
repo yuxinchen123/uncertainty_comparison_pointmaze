@@ -46,6 +46,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="updated">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-16 00:31 PT | updated |
 | <span class="updated">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 23:02 PT | updated |
 | <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 23:02 PT | unread |
+| <span class="unread">[Do the two implementations learn the same thing?](#do-the-two-implementations-learn-the-same-thing)</span> | 2026-08-16 01:45 PT | 2026-08-16 11:51 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1916,3 +1917,229 @@ difference in what the two are computing, not in how well they compute it, and i
 integer conversions and a scatter over the stored rows — but it is on the PyTorch side of the
 ledger.
 
+
+## Do the two implementations learn the same thing?
+
+Everything else in this report is speed. This section is about behaviour: four runs of
+**8 learning rates x 1,024 independent copies x 10 million environment steps per copy** —
+{PyTorch, JAX} x {the card's reduced-precision matrix mode, exact single precision} — asking whether
+the two implementations of one algorithm end up in the same place, and whether the precision of the
+matrix units moves where either of them ends up. 327 billion environment steps in all, 9.6 hours of
+card time.
+
+Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected during recorded
+iteration $k$ — the number of that iteration's 512 environment steps it spent inside the goal
+radius. Let $K$ be the last recorded iteration at the run's own episode phase (the paragraph below
+says why that qualification is needed) and let $m$ be 10. A copy's score is the mean over the
+last $m$ such records, $s_c = \dfrac{1}{m}\sum_{k=K-m+1}^{K} R_{c,k}$, by which point the
+annealed learning rate is near zero. With 1,024 copies per rate the bar is not identical curves but
+overlapping seed distributions.
+
+Parity between the two implementations was established before any card time was spent, item by
+item — initialisation distribution and gains, optimiser and its constants, advantage
+normalisation, the order in which the observation and intrinsic statistics update, episode
+boundaries, clipping, entropy, and what is recorded when. The full list, and the six
+differences that remain — of which one is the point of the experiment and the rest are last-bit —
+is in the run folder's `parity_check.md`. The environment is not merely equivalent between the
+two: its reset noise is a counter-based hash of the copy and episode indices, so copy k of the
+PyTorch run and copy k of the JAX run start every episode in the same place.
+
+### The metric has an episode clock in it
+
+The task is continuing — nothing ever terminates early — so the only way an episode ends is
+truncation at 400 steps, and every copy's environments start together. **All 8,192 copies
+therefore share one episode clock.** An iteration covers 128 of those 400 steps, so which part of
+the episode an iteration sees repeats every 400 / gcd(128, 400) = 25 iterations, and the reward it
+collects depends on which part. Two consequences, both of which look like results and are not:
+
+1. **A whole iteration can read exactly zero for every one of the 8,192 copies.** The per-iteration
+   status line in the run logs did that at four of its thirteen printings, at moments when about a
+   thousand copies were reaching the goal — because that iteration's window fell where no copy was
+   at the goal. Nothing was wrong with the run. The line has been rewritten to name the window it
+   is reporting (`reward in episode steps 272-400`) so it cannot be read as the run's standing, and
+   the recorded rows now carry the phase.
+2. **The recording cadence aliases with the clock.** Records were written every 200 iterations, and
+   200 is a multiple of 25, so **97 of the 98 records sit at exactly one phase** (272). The
+   remaining one is the final iteration, 19,531, which is not a multiple of 200 and lands at phase
+   240 — and it reads about five reward lower in every one of the four configurations:
+
+| configuration | last record at the run's phase | final record, different phase |
+|---|---|---|
+| PyTorch<br>reduced precision | 14.773 | 9.401 |
+| PyTorch<br>exact single precision | 14.026 | 9.064 |
+| JAX<br>reduced precision | 14.273 | 9.420 |
+| JAX<br>exact single precision | 13.869 | 9.150 |
+
+That is not a collapse at the end of training; it is a different 128-step window of the same
+episode. Every score and every curve below is taken from the 97 records at the run's own phase, so
+the comparison is like for like. A reader taking a single final row at face value would conclude
+all four runs fell apart in their last thousand iterations.
+
+### What each configuration reached
+
+Mean over the 1,024 copies of each rate group, at the end of training.
+
+| configuration | 3e-06 | 1e-05 | 3e-05 | 0.0001 | 0.0003 | 0.001 | 0.003 | 0.01 |
+|---|---|---|---|---|---|---|---|---|
+| PyTorch<br>reduced precision | 0.02 | 0.31 | 14.17 | 58.84 | 29.17 | 9.10 | 3.24 | 0.43 |
+| PyTorch<br>exact single precision | 0.02 | 0.28 | 14.23 | 58.83 | 25.00 | 6.48 | 3.50 | 0.21 |
+| JAX<br>reduced precision | 0.01 | 0.24 | 14.64 | 61.99 | 24.65 | 7.40 | 3.15 | 0.18 |
+| JAX<br>exact single precision | 0.02 | 0.25 | 12.38 | 57.28 | 27.71 | 7.77 | 3.60 | 0.46 |
+
+The useful range is narrow: the best rate is 0.0001, and the three carried through the figures
+below are 3e-05, 0.0001, 0.0003 — that rate and its two neighbours, chosen from all four
+configurations pooled rather than by hand.
+
+The distribution behind those means is bimodal. At the best rate about half the copies never reach
+the goal at all, and the ones that do run from a few reward to four hundred, so the mean is set by
+a heavy tail and its interval is wide. The fraction that reached the goal at all is the bounded
+summary of the same distribution, and it is about three times tighter in relative terms:
+
+| learning<br>rate | PyTorch<br>reduced precision | PyTorch<br>exact single precision | JAX<br>reduced precision | JAX<br>exact single precision | widest gap between<br>the four | gap this run<br>could resolve |
+|---|---|---|---|---|---|---|
+| 3e-06 | 1.5% | 1.4% | 0.7% | 1.3% | 0.8 points | 0.9 points |
+| 1e-05 | 13.7% | 12.5% | 11.9% | 12.1% | 1.8 points | 2.9 points |
+| 3e-05 | 38.4% | 36.6% | 38.2% | 36.1% | 2.2 points | 4.2 points |
+| 0.0001 | 52.6% | 51.1% | 53.7% | 53.2% | 2.6 points | 4.3 points |
+| 0.0003 | 34.9% | 31.5% | 31.1% | 35.4% | 4.3 points | 4.1 points |
+| 0.001 | 19.8% | 17.3% | 17.7% | 17.8% | 2.5 points | 3.4 points |
+| 0.003 | 11.2% | 12.1% | 12.3% | 13.2% | 2.0 points | 2.8 points |
+| 0.01 | 2.2% | 2.1% | 2.4% | 2.8% | 0.8 points | 1.3 points |
+
+At seven of the eight rates the widest gap between the four configurations is smaller than the gap
+this run could resolve. The exception is 0.0003, where the widest gap is 4.3 points against 4.1 —
+and the four values there split as 34.9% and 35.4% against
+31.5% and 31.1%, which pairs each framework with the OTHER framework's
+precision. No factor in the experiment produces that split; forty-eight pairwise comparisons at a
+95% bound produce about two like it.
+
+
+### PyTorch against JAX
+
+![PyTorch against JAX](figures/learning_outcome_frameworks.png)
+
+| learning<br>rate | A:<br>PyTorch<br>reduced precision | B:<br>JAX<br>reduced precision | difference<br>A − B | 95% interval<br>for the difference | rank<br>test p | P(A copy<br>above B copy) |
+|---|---|---|---|---|---|---|
+| 3e-06 | 0.020 | 0.010 | 0.010 | [-0.005, 0.025] | 0.0862 | 0.504 |
+| 1e-05 | 0.315 | 0.241 | 0.074 | [-0.026, 0.173] | 0.209 | 0.509 |
+| 3e-05 | 14.170 | 14.637 | -0.466 | [-3.209, 2.276] | 0.923 | 0.501 |
+| 0.0001 | 58.840 | 61.990 | -3.150 | [-11.014, 4.714] | 0.608 | 0.494 |
+| 0.0003 | 29.165 | 24.653 | 4.512 | [-0.405, 9.428] | 0.0663 | 0.520 |
+| 0.001 | 9.099 | 7.401 | 1.698 | [-0.478, 3.874] | 0.187 | 0.511 |
+| 0.003 | 3.238 | 3.154 | 0.084 | [-1.183, 1.351] | 0.487 | 0.495 |
+| 0.01 | 0.429 | 0.184 | 0.246 | [-0.078, 0.569] | 0.785 | 0.499 |
+| all rates, blocked | 14.410 | 14.034 | 0.376 | [-0.874, 1.626] | 0.357 | 0.504 |
+
+**Every one of the eight intervals contains zero.** Averaged over the rates and blocked by rate,
+the two differ by **+0.376** reward per copy per iteration, interval
+[-0.874, +1.626], against an interquartile spread across copies of 91.6 at the
+best rate — 0.004 of one interquartile range. A copy drawn at random from the PyTorch run
+scores above one drawn from the JAX run with probability **0.504**, where a half means the two
+distributions are interchangeable. The two implementations learn the same thing.
+
+
+### Reduced precision against exact single precision, inside PyTorch
+
+![PyTorch precision](figures/learning_outcome_precision_torch.png)
+
+| learning<br>rate | A:<br>PyTorch<br>reduced precision | B:<br>PyTorch<br>exact single precision | difference<br>A − B | 95% interval<br>for the difference | rank<br>test p | P(A copy<br>above B copy) |
+|---|---|---|---|---|---|---|
+| 3e-06 | 0.020 | 0.016 | 0.005 | [-0.010, 0.020] | 0.845 | 0.501 |
+| 1e-05 | 0.315 | 0.284 | 0.031 | [-0.075, 0.137] | 0.453 | 0.506 |
+| 3e-05 | 14.170 | 14.229 | -0.059 | [-2.737, 2.619] | 0.531 | 0.507 |
+| 0.0001 | 58.840 | 58.831 | 0.009 | [-7.697, 7.714] | 0.674 | 0.505 |
+| 0.0003 | 29.165 | 25.000 | 4.165 | [-0.852, 9.182] | 0.0907 | 0.518 |
+| 0.001 | 9.099 | 6.481 | 2.618 | [0.546, 4.690] | 0.0983 | 0.514 |
+| 0.003 | 3.238 | 3.501 | -0.263 | [-1.535, 1.009] | 0.501 | 0.495 |
+| 0.01 | 0.429 | 0.208 | 0.222 | [-0.116, 0.559] | 0.751 | 0.501 |
+| all rates, blocked | 14.410 | 13.569 | 0.841 | [-0.395, 2.077] | 0.195 | 0.506 |
+
+7 of the eight intervals contain zero. The exception is rate 0.001, where the interval is [+0.546, +4.690]. The rank test at that same rate gives p = 0.0983 and a probability of 0.514 that a reduced-precision copy scores above an exact one, so what moved is the mean's heavy tail rather than the distribution; one interval out of eight excluding zero at a 95% bound is what chance produces. Blocked by rate: **+0.841**, interval
+[-0.395, +2.077], probability 0.506 that a reduced-precision copy scores above an
+exact one. The run does not resolve a difference; what it can say is that an effect larger than
+about 1.24 reward per copy per iteration would have shown.
+
+
+### Reduced precision against exact single precision, inside JAX
+
+![JAX precision](figures/learning_outcome_precision_jax.png)
+
+| learning<br>rate | A:<br>JAX<br>reduced precision | B:<br>JAX<br>exact single precision | difference<br>A − B | 95% interval<br>for the difference | rank<br>test p | P(A copy<br>above B copy) |
+|---|---|---|---|---|---|---|
+| 3e-06 | 0.010 | 0.023 | -0.013 | [-0.031, 0.005] | 0.177 | 0.497 |
+| 1e-05 | 0.241 | 0.251 | -0.009 | [-0.108, 0.089] | 0.908 | 0.499 |
+| 3e-05 | 14.637 | 12.383 | 2.254 | [-0.443, 4.951] | 0.223 | 0.513 |
+| 0.0001 | 61.990 | 57.280 | 4.710 | [-3.080, 12.500] | 0.562 | 0.507 |
+| 0.0003 | 24.653 | 27.711 | -3.058 | [-7.783, 1.668] | 0.05 | 0.479 |
+| 0.001 | 7.401 | 7.774 | -0.373 | [-2.451, 1.706] | 0.899 | 0.499 |
+| 0.003 | 3.154 | 3.599 | -0.445 | [-1.697, 0.807] | 0.488 | 0.495 |
+| 0.01 | 0.184 | 0.461 | -0.278 | [-0.561, 0.006] | 0.564 | 0.498 |
+| all rates, blocked | 14.034 | 13.685 | 0.348 | [-0.878, 1.575] | 0.73 | 0.498 |
+
+8 of the eight intervals contain zero. Blocked by rate: **+0.348**, interval
+[-0.878, +1.575], probability 0.498 that a reduced-precision copy scores above an
+exact one. The run does not resolve a difference; what it can say is that an effect larger than
+about 1.23 reward per copy per iteration would have shown.
+
+
+### Every rate, and the seed distribution at the best one
+
+![every rate](figures/learning_outcome_by_rate.png)
+
+### What the four runs cost, and the precision each actually used
+
+Define $r$ as the environment steps per second one copy gets; the last of the rate columns is that
+rate written as time, $\dfrac{10^{6}}{3600 r}$ hours per million steps for one copy.
+
+| configuration | copies | seconds per<br>iteration | total million<br>steps per second | thousand steps per<br>second per copy | hours per million<br>steps per copy | peak memory<br>(MB) | whole run<br>(hours) |
+|---|---|---|---|---|---|---|---|
+| PyTorch<br>reduced precision | 8,192 | 0.384 | 10.93 | 1.33 | 0.21 | 26,006 | 2.08 |
+| PyTorch<br>exact single precision | 8,192 | 0.547 | 7.67 | 0.94 | 0.30 | 26,006 | 2.97 |
+| JAX<br>reduced precision | 8,192 | 0.336 | 12.49 | 1.52 | 0.18 | 18,317 | 1.82 |
+| JAX<br>exact single precision | 8,192 | 0.506 | 8.29 | 1.01 | 0.27 | 18,575 | 2.74 |
+
+Turning the reduced-precision matrix units off costs **43%** in PyTorch and
+**51%** in JAX at 8,192 copies — the only measured consequence of the precision choice in
+this whole experiment.
+
+A knob that is silently ignored produces two identical curves, which reads exactly like the finding
+"precision does not matter", so each run measured what the card was actually doing before it
+trained: a batched float32 matrix multiplication of the trainer's own shapes, differenced against
+the same product in double precision.
+
+| configuration | declared setting | largest relative error against float64 |
+|---|---|---|
+| PyTorch<br>reduced precision | high | 3.54e-04 |
+| PyTorch<br>exact single precision | highest | 3.59e-07 |
+| JAX<br>reduced precision | None | 3.62e-04 |
+| JAX<br>exact single precision | highest | 3.70e-07 |
+
+That gate is necessary but not sufficient, because the trainer's multiplications run inside a
+compiled function and, in PyTorch, inside a captured graph. So the knob was also checked through
+the real trainer: three iterations at 64 copies, one process per precision, comparing the
+parameters afterwards. The two precisions end 3.8e-03 apart in PyTorch on a largest parameter of
+7.5e-01, and 2.9e-03 apart in JAX; the same precision run twice is bitwise identical in PyTorch and
+2.3e-05 apart in JAX. The knob is doing something to the arithmetic. It is not doing anything to
+where training ends up.
+
+### What would make this wrong
+
+- **One seed family.** Every configuration used base seed 0, and copy k of all four met the same
+  environment reset stream. A different family could shift the absolute numbers; it would have to
+  shift the two frameworks differently to change the conclusion.
+- **One environment, one algorithm, one update convention, one step budget.** The agreement is
+  established for PPO with random network distillation on this maze at four epochs of four
+  minibatches, out to ten million steps per copy. It says nothing about a task where the
+  reduced-precision rounding compounds — a longer horizon, a sharper loss surface, or an optimiser
+  without Adam's rescaling.
+- **What the run could not have seen.** Blocked over the rates it resolves a difference of about
+  1.2 reward per copy per iteration, roughly 1% of the interquartile spread across seeds; per rate
+  it resolves about 4 points of solving fraction. Effects smaller than that are not ruled out.
+- **The score is one window of the episode.** Absolute values depend on which 128 steps of the
+  400-step episode the records land in. Every configuration was sampled at the same phase, so the
+  comparison does not depend on it, but the numbers are not "reward per 512 steps of behaviour" in
+  general.
+- **A JAX run is not reproducible process to process.** The compiler benchmarks matrix-multiply
+  algorithms when it builds and can choose differently in a different process, which moves a
+  parameter by 2.3e-05 after three iterations — far below the seed spread, but it means repeating
+  the JAX arms would not reproduce them to the last bit. PyTorch repeats bitwise.

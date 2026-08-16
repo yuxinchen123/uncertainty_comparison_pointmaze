@@ -2666,77 +2666,134 @@ def sec_learning_outcome():
     picks = [rates[i] for i in s["chosen_rate_indices"]]
     cfg = s["configurations"]
     ref = cfg["torch_reduced"]
-    steps = ref["steps_per_copy"]
-    n_copies = ref["n_copies"]
-    per_rate = ref["per_rate"]
-    best = max(per_rate, key=lambda r: r["mean"])
-    # the seed-to-seed spread at the best rate, as a yardstick for every difference below
-    spread = (best["q3"] - best["q1"])
+    per_rate_copies = ref["n_copies"] // len(rates)
+    best = max(ref["per_rate"], key=lambda r: r["mean"])
+    spread = best["q3"] - best["q1"]
 
     md = [head, f"""Everything else in this report is speed. This section is about behaviour: four runs of
-**8 learning rates x {n_copies // len(rates):,} independent copies x {steps / 1e6:.0f} million environment steps per copy** —
+**{len(rates)} learning rates x {per_rate_copies:,} independent copies x {ref['steps_per_copy'] / 1e6:.0f} million environment steps per copy** —
 {{PyTorch, JAX}} x {{the card's reduced-precision matrix mode, exact single precision}} — asking whether
 the two implementations of one algorithm end up in the same place, and whether the precision of the
-matrix units moves where either of them ends up.
+matrix units moves where either of them ends up. 327 billion environment steps in all, {sum(c['train_seconds'] for c in cfg.values()) / 3600:.1f} hours of
+card time.
 
-Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected over the 512
-environment steps of recorded iteration $k$ — the number of those steps it spent inside the goal
-radius. Let $K$ be the last recorded iteration and let $m$ be {s['final_records']}. A copy's score is the mean
-over the last $m$ records, $s_c = \dfrac{{1}}{{m}}\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$, by which point
-the annealed learning rate is near zero and the policy has stopped moving; averaging $m$ records
-rather than reading the last one cuts the per-copy sampling noise without smearing the curve. With
-{n_copies // len(rates):,} copies per rate the bar is not identical curves but overlapping seed distributions.
+Define $R$ with subscripts $c$ and $k$ as the extrinsic reward copy $c$ collected during recorded
+iteration $k$ — the number of that iteration's 512 environment steps it spent inside the goal
+radius. Let $K$ be the last recorded iteration at the run's own episode phase (the paragraph below
+says why that qualification is needed) and let $m$ be {s['final_records']}. A copy's score is the mean over the
+last $m$ such records, $s_c = \\dfrac{{1}}{{m}}\\sum_{{k=K-m+1}}^{{K}} R_{{c,k}}$, by which point the
+annealed learning rate is near zero. With {per_rate_copies:,} copies per rate the bar is not identical curves but
+overlapping seed distributions.
 
 Parity between the two implementations was established before any card time was spent, item by
 item — initialisation distribution and gains, optimiser and its constants, advantage
 normalisation, the order in which the observation and intrinsic statistics update, episode
 boundaries, clipping, entropy, and what is recorded when. The full list, and the six
 differences that remain — of which one is the point of the experiment and the rest are last-bit —
-is in the run folder's `parity_check.md`. The environment is not merely
-equivalent between the two: its reset noise is a counter-based hash of the copy and episode
-indices, so copy k of the PyTorch run and copy k of the JAX run start every episode in the same
-place.
+is in the run folder's `parity_check.md`. The environment is not merely equivalent between the
+two: its reset noise is a counter-based hash of the copy and episode indices, so copy k of the
+PyTorch run and copy k of the JAX run start every episode in the same place.
+
+### The metric has an episode clock in it
+
+The task is continuing — nothing ever terminates early — so the only way an episode ends is
+truncation at 400 steps, and every copy's environments start together. **All 8,192 copies
+therefore share one episode clock.** An iteration covers 128 of those 400 steps, so which part of
+the episode an iteration sees repeats every 400 / gcd(128, 400) = 25 iterations, and the reward it
+collects depends on which part. Two consequences, both of which look like results and are not:
+
+1. **A whole iteration can read exactly zero for every one of the 8,192 copies.** The per-iteration
+   status line in the run logs did that at four of its thirteen printings, at moments when about a
+   thousand copies were reaching the goal — because that iteration's window fell where no copy was
+   at the goal. Nothing was wrong with the run. The line has been rewritten to name the window it
+   is reporting (`reward in episode steps 272-400`) so it cannot be read as the run's standing, and
+   the recorded rows now carry the phase.
+2. **The recording cadence aliases with the clock.** Records were written every 200 iterations, and
+   200 is a multiple of 25, so **97 of the 98 records sit at exactly one phase** (272). The
+   remaining one is the final iteration, 19,531, which is not a multiple of 200 and lands at phase
+   240 — and it reads about five reward lower in every one of the four configurations:
+
+| configuration | last record at the run's phase | final record, different phase |
+|---|---|---|"""]
+    for tag in a.TAGS:
+        d = a.load(tag)
+        rows = a.dominant_phase_records(d)
+        md.append(f"| {a.wrap_label(cfg[tag]['label'])} | "
+                  f"{d['reward'][rows[-1]].mean():.3f} | {d['reward'][-1].mean():.3f} |")
+    md.append(f"""
+That is not a collapse at the end of training; it is a different 128-step window of the same
+episode. Every score and every curve below is taken from the {len(a.dominant_phase_records(a.load('torch_reduced')))} records at the run's own phase, so
+the comparison is like for like. A reader taking a single final row at face value would conclude
+all four runs fell apart in their last thousand iterations.
 
 ### What each configuration reached
 
-Mean over the {n_copies // len(rates):,} copies of each rate group, at the end of training.
+Mean over the {per_rate_copies:,} copies of each rate group, at the end of training.
 
 {a.per_rate_table(s)}
 The useful range is narrow: the best rate is {best['rate']:g}, and the three carried through the figures
 below are {', '.join(f'{r:g}' for r in picks)} — that rate and its two neighbours, chosen from all four
 configurations pooled rather than by hand.
-"""]
+
+The distribution behind those means is bimodal. At the best rate about half the copies never reach
+the goal at all, and the ones that do run from a few reward to four hundred, so the mean is set by
+a heavy tail and its interval is wide. The fraction that reached the goal at all is the bounded
+summary of the same distribution, and it is about three times tighter in relative terms:
+
+{a.solved_table(s)}
+At seven of the eight rates the widest gap between the four configurations is smaller than the gap
+this run could resolve. The exception is {rates[4]:g}, where the widest gap is 4.3 points against 4.1 —
+and the four values there split as {cfg['torch_reduced']['per_rate'][4]['solved_fraction'] * 100:.1f}% and {cfg['jax_exact']['per_rate'][4]['solved_fraction'] * 100:.1f}% against
+{cfg['torch_exact']['per_rate'][4]['solved_fraction'] * 100:.1f}% and {cfg['jax_reduced']['per_rate'][4]['solved_fraction'] * 100:.1f}%, which pairs each framework with the OTHER framework's
+precision. No factor in the experiment produces that split; forty-eight pairwise comparisons at a
+95% bound produce about two like it.
+""")
 
     cmpf = s["comparisons"]["frameworks_reduced"]
-    p, half, resolvable, in_spreads = _verdict(cmpf, spread)
+    p = cmpf["pooled"]
     md.append(f"""
 ### PyTorch against JAX
 
 ![PyTorch against JAX](figures/learning_outcome_frameworks.png)
 
 {a.comparison_table(cmpf)}
-Averaged over the eight rates, blocked by rate, the two differ by **{p['difference']:+.3f}** reward per copy per iteration,
-interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], against an interquartile spread across copies of
-{spread:.2f} at the best rate — {'a difference the run can resolve' if resolvable else 'a difference this run cannot resolve'}, and
-{in_spreads:.2f} of one interquartile range either way. A copy drawn at random from the PyTorch run scores above one
-drawn from the JAX run with probability {p['probability_a_above_b']:.3f}; {'0.5' if abs(p['probability_a_above_b'] - 0.5) < 0.02 else 'a half'} would mean the two
-distributions are interchangeable.
+**Every one of the eight intervals contains zero.** Averaged over the rates and blocked by rate,
+the two differ by **{p['difference']:+.3f}** reward per copy per iteration, interval
+[{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], against an interquartile spread across copies of {spread:.1f} at the
+best rate — {abs(p['difference']) / spread:.3f} of one interquartile range. A copy drawn at random from the PyTorch run
+scores above one drawn from the JAX run with probability **{p['probability_a_above_b']:.3f}**, where a half means the two
+distributions are interchangeable. The two implementations learn the same thing.
 """)
 
     for fw, key, title in [("torch", "precision_torch", "PyTorch"),
                            ("jax", "precision_jax", "JAX")]:
-        if key not in s["comparisons"]:
-            continue
         c = s["comparisons"][key]
-        p, half, resolvable, in_spreads = _verdict(c, spread)
+        p = c["pooled"]
+        half = (p["difference_hi"] - p["difference_lo"]) / 2
+        excludes = [r for r in c["per_rate"]
+                    if not (r["difference_lo"] <= 0 <= r["difference_hi"])]
+        n_zero = len(c["per_rate"]) - len(excludes)
+        # an interval that excludes zero at one rate out of eight is named rather than left for
+        # the reader to find, together with the rank statistic at the same rate, which is what
+        # says whether the distributions moved or only the mean's tail did
+        note = "" if not excludes else (
+            " The exception is rate " + ", ".join(f"{r['rate']:g}" for r in excludes)
+            + f", where the interval is [{excludes[0]['difference_lo']:+.3f}, "
+            f"{excludes[0]['difference_hi']:+.3f}]. The rank test at that same rate gives "
+            f"p = {excludes[0]['rank_test_p']:.3g} and a probability of "
+            f"{excludes[0]['probability_a_above_b']:.3f} that a reduced-precision copy scores above an "
+            "exact one, so what moved is the mean's heavy tail rather than the distribution; one "
+            "interval out of eight excluding zero at a 95% bound is what chance produces.")
         md.append(f"""
 ### Reduced precision against exact single precision, inside {title}
 
 ![{title} precision](figures/learning_outcome_precision_{fw}.png)
 
 {a.comparison_table(c)}
-Blocked by rate: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], probability
-{p['probability_a_above_b']:.3f} that a reduced-precision copy scores above an exact one. {'The run resolves this difference.' if resolvable else 'The run does not resolve this difference; what it can say is that any effect larger than about ' + f'{half:.3f}' + ' reward per copy per iteration would have shown.'}
+{n_zero} of the eight intervals contain zero.{note} Blocked by rate: **{p['difference']:+.3f}**, interval
+[{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], probability {p['probability_a_above_b']:.3f} that a reduced-precision copy scores above an
+exact one. The run does not resolve a difference; what it can say is that an effect larger than
+about {half:.2f} reward per copy per iteration would have shown.
 """)
 
     md.append(f"""
@@ -2747,13 +2804,17 @@ Blocked by rate: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}
 ### What the four runs cost, and the precision each actually used
 
 Define $r$ as the environment steps per second one copy gets; the last of the rate columns is that
-rate written as time, $\dfrac{{10^{{6}}}}{{3600 r}}$ hours per million steps for one copy.
+rate written as time, $\\dfrac{{10^{{6}}}}{{3600 r}}$ hours per million steps for one copy.
 
 {a.throughput_table(s)}
+Turning the reduced-precision matrix units off costs **{cfg['torch_exact']['sec_per_iteration'] / cfg['torch_reduced']['sec_per_iteration'] - 1:.0%}** in PyTorch and
+**{cfg['jax_exact']['sec_per_iteration'] / cfg['jax_reduced']['sec_per_iteration'] - 1:.0%}** in JAX at 8,192 copies — the only measured consequence of the precision choice in
+this whole experiment.
+
 A knob that is silently ignored produces two identical curves, which reads exactly like the finding
-"precision does not matter", so each run measured what the card was actually doing before it trained:
-a batched float32 matrix multiplication of the trainer's own shapes, differenced against the same
-product in double precision.
+"precision does not matter", so each run measured what the card was actually doing before it
+trained: a batched float32 matrix multiplication of the trainer's own shapes, differenced against
+the same product in double precision.
 
 | configuration | declared setting | largest relative error against float64 |
 |---|---|---|""")
@@ -2763,7 +2824,37 @@ product in double precision.
             pr = c["precision_probe"]
             md.append(f"| {a.wrap_label(c['label'])} | {pr['declared_setting']} | "
                       f"{pr['relative_error_against_float64']:.2e} |")
-    md.append("")
+    md.append("""
+That gate is necessary but not sufficient, because the trainer's multiplications run inside a
+compiled function and, in PyTorch, inside a captured graph. So the knob was also checked through
+the real trainer: three iterations at 64 copies, one process per precision, comparing the
+parameters afterwards. The two precisions end 3.8e-03 apart in PyTorch on a largest parameter of
+7.5e-01, and 2.9e-03 apart in JAX; the same precision run twice is bitwise identical in PyTorch and
+2.3e-05 apart in JAX. The knob is doing something to the arithmetic. It is not doing anything to
+where training ends up.
+
+### What would make this wrong
+
+- **One seed family.** Every configuration used base seed 0, and copy k of all four met the same
+  environment reset stream. A different family could shift the absolute numbers; it would have to
+  shift the two frameworks differently to change the conclusion.
+- **One environment, one algorithm, one update convention, one step budget.** The agreement is
+  established for PPO with random network distillation on this maze at four epochs of four
+  minibatches, out to ten million steps per copy. It says nothing about a task where the
+  reduced-precision rounding compounds — a longer horizon, a sharper loss surface, or an optimiser
+  without Adam's rescaling.
+- **What the run could not have seen.** Blocked over the rates it resolves a difference of about
+  1.2 reward per copy per iteration, roughly 1% of the interquartile spread across seeds; per rate
+  it resolves about 4 points of solving fraction. Effects smaller than that are not ruled out.
+- **The score is one window of the episode.** Absolute values depend on which 128 steps of the
+  400-step episode the records land in. Every configuration was sampled at the same phase, so the
+  comparison does not depend on it, but the numbers are not "reward per 512 steps of behaviour" in
+  general.
+- **A JAX run is not reproducible process to process.** The compiler benchmarks matrix-multiply
+  algorithms when it builds and can choose differently in a different process, which moves a
+  parameter by 2.3e-05 after three iterations — far below the seed spread, but it means repeating
+  the JAX arms would not reproduce them to the last bit. PyTorch repeats bitwise.
+""")
     return "\n".join(md)
 
 

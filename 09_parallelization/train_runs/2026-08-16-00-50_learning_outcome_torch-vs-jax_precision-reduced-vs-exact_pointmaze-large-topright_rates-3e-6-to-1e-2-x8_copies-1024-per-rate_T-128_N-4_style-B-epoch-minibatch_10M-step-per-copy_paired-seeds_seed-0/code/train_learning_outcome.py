@@ -124,13 +124,30 @@ def probe_jax(precision: str) -> dict:
 
 # ---------------- history rows ----------------
 
-def history_row(iteration, global_step, seconds, reward, rint, coverage):
+def episode_phase(iteration, num_steps, max_episode_steps):
+    """Where inside the episode this iteration's window starts, in environment steps.
+
+    The task is continuing — nothing ever terminates early — so the only episode end is
+    truncation at a fixed step count, and every copy's environments start together. All copies
+    therefore share ONE episode clock, and an iteration covering `num_steps` of a
+    `max_episode_steps` episode always sees the same part of it every
+    `max_episode_steps / gcd(num_steps, max_episode_steps)` iterations. The reward an iteration
+    collects depends on which part that is, so the phase is recorded with it.
+
+    before: iteration 19400, 128 steps, 400-step episodes; after: 272, meaning that iteration
+    covered episode steps 272 to 400
+    """
+    return ((iteration - 1) * num_steps) % max_episode_steps
+
+
+def history_row(iteration, global_step, seconds, reward, rint, coverage, phase):
     """One recorded iteration, rounded so the file stays a readable size.
 
     before: reward is a float32 sum of 0/1 rewards over 512 steps, e.g. 22.000000476837158
     after:  the integer count of steps that copy spent inside the goal radius, e.g. 22
     """
     return {"iteration": int(iteration), "global_step": int(global_step),
+            "episode_phase": int(phase),
             "seconds": round(float(seconds), 2),
             "reward_ext_sum_per_copy": [int(round(float(v))) for v in reward],
             "rint_mean_per_copy": [float(f"{float(v):.6g}") for v in rint],
@@ -208,6 +225,7 @@ def run_torch(args, outdir: Path, ckpt_dir: Path, log):
 
     # --stop-after ends the loop early WITHOUT changing the annealing denominator
     last = args.stop_after or args.iterations
+    T, EP = cfg.num_steps, trainer.env.cfg.max_episode_steps
     t0 = time.time()
     last_log = t0
     for it in range(start_iter + 1, last + 1):
@@ -220,9 +238,10 @@ def run_torch(args, outdir: Path, ckpt_dir: Path, log):
         # one device-to-host read serves all three, so a recorded iteration syncs once
         if record or checkpoint or status:
             rew, rint, cov = read_metrics()
+        phase = episode_phase(it, T, EP)
         if record:
             append_jsonl(outdir / "history.jsonl",
-                         history_row(it, trainer.global_step, now - t0, rew, rint, cov))
+                         history_row(it, trainer.global_step, now - t0, rew, rint, cov, phase))
         if checkpoint:
             save(it)
             append_jsonl(outdir / "progress.jsonl", {
@@ -233,8 +252,13 @@ def run_torch(args, outdir: Path, ckpt_dir: Path, log):
                 "coverage_mean": round(sum(cov) / len(cov), 5)})
         if status:
             last_log = now
+            # named literally: this is the reward collected in ONE window of the episode, not
+            # the run's standing. Every copy shares the episode clock, so a window that falls
+            # where no copy is at the goal reads exactly zero for all 8,192 of them, which looks
+            # like a collapse and is not one. The phase says which window it was.
             log(f"iter {it}/{args.iterations} step {trainer.global_step} "
-                f"reward/copy mean {sum(rew) / len(rew):.3f} max {max(rew):.0f} "
+                f"reward in episode steps {phase}-{phase + T}: "
+                f"mean {sum(rew) / len(rew):.3f} max {max(rew):.0f} "
                 f"coverage mean {sum(cov) / len(cov):.3f} elapsed {now - t0:.0f}s")
     seconds = time.time() - t0
 
@@ -310,6 +334,7 @@ def run_jax(args, outdir: Path, ckpt_dir: Path, log):
         truncate_jsonl_after(outdir / "progress.jsonl", start_iter)
 
     steps_per_iter = cfg.num_steps * cfg.n_copies * cfg.n_envs
+    T, EP = cfg.num_steps, trainer.env.cfg.max_episode_steps
     # --stop-after ends the loop early WITHOUT changing the annealing denominator
     last = args.stop_after or args.iterations
     t0 = time.time()
@@ -325,9 +350,10 @@ def run_jax(args, outdir: Path, ckpt_dir: Path, log):
             rew = np.asarray(metrics["reward_ext_sum"])
             rint = np.asarray(metrics["rint_mean"])
             cov = trainer.coverage(state)
+        phase = episode_phase(it, T, EP)
         if record:
             append_jsonl(outdir / "history.jsonl",
-                         history_row(it, it * steps_per_iter, now - t0, rew, rint, cov))
+                         history_row(it, it * steps_per_iter, now - t0, rew, rint, cov, phase))
         if checkpoint:
             save(state, it)
             append_jsonl(outdir / "progress.jsonl", {
@@ -338,8 +364,10 @@ def run_jax(args, outdir: Path, ckpt_dir: Path, log):
                 "coverage_mean": round(float(cov.mean()), 5)})
         if now - last_log >= args.log_every or it == last:
             last_log = now
+            # see the note on the same line in run_torch: this is one window of the episode
             log(f"iter {it}/{args.iterations} step {it * steps_per_iter} "
-                f"reward/copy mean {rew.mean():.3f} max {rew.max():.0f} "
+                f"reward in episode steps {phase}-{phase + T}: "
+                f"mean {rew.mean():.3f} max {rew.max():.0f} "
                 f"coverage mean {cov.mean():.3f} elapsed {now - t0:.0f}s")
     jax.block_until_ready(state.params)
     seconds = time.time() - t0

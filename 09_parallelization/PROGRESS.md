@@ -91,6 +91,45 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- 2026-08-16 ~11:55 PT — the first experiment here about BEHAVIOUR rather than speed, and the
+  answer to both of its questions is "no difference". Four runs on serval05 under the exclusive
+  lock: {PyTorch, JAX} x {the card's reduced-precision matrix mode, exact single precision},
+  each 8 learning rates x 1,024 copies x 10 million environment steps per copy — 327 billion
+  environment steps, 9.6 hours of card time. Run folder
+  `train_runs/2026-08-16-00-50_learning_outcome_torch-vs-jax_precision-reduced-vs-exact_pointmaze-large-topright_rates-3e-6-to-1e-2-x8_copies-1024-per-rate_T-128_N-4_style-B-epoch-minibatch_10M-step-per-copy_paired-seeds_seed-0`.
+  - **PyTorch and JAX learn the same thing.** All eight per-rate intervals contain zero; blocked
+    over the rates the difference is +0.376 reward per copy per iteration, interval
+    [-0.874, +1.626], against an interquartile spread across copies of 91.6 — four thousandths of
+    one interquartile range. A copy drawn from one run beats a copy drawn from the other with
+    probability 0.504.
+  - **Reduced precision does not change where either of them converges.** PyTorch +0.841,
+    [-0.395, +2.077]; JAX +0.348, [-0.878, +1.575]. The knob was verified per run against a
+    double-precision reference AND through the real trainer, where three iterations move the
+    parameters 3.8e-03 apart. It changes the arithmetic and not the outcome. Its only measured
+    consequence is speed: turning the reduced-precision units off costs 43% in PyTorch and 49% in
+    JAX at 8,192 copies.
+  - **The metric has an episode clock in it**, and two things that look like results are that
+    clock. Nothing terminates early, so every copy truncates at 400 steps together and all 8,192
+    share one episode clock; an iteration covers 128 of those steps, so what it sees repeats every
+    25 iterations. A whole iteration therefore reads exactly zero for every copy when its window
+    falls where no copy is at the goal — which the status line printed four times, looking like a
+    collapse. And the 200-iteration recording cadence is a multiple of 25, so 97 of the 98 records
+    sit at one phase and the final record sits at another and reads five reward lower in all four
+    runs. Scores and curves now block on phase; the status line names the window it reports; the
+    recorded rows carry the phase.
+  - **One defect fixed**: `PPOConfig.tf32` was applied only when it was ON, and the setting is
+    process-global, so a trainer asking for exact single precision inherited whatever the process
+    was last left in. No earlier result is affected, but this campaign's own precision check would
+    have compared reduced against reduced. Test `tests/test_tf32_knob.py`; ledger row in
+    `ppo/torch_ppo/progress_and_changes.md`.
+  - **One property recorded, not fixed**: two JAX processes with the same seed are not bitwise
+    identical (2.3e-05 after three iterations), because the compiler benchmarks matrix-multiply
+    algorithms at build time; with that off they agree exactly. PyTorch repeats bitwise, and so
+    does its resume. Ledger row in `ppo/jax_ppo/progress_and_changes.md`.
+  - Report section: "Do the two implementations learn the same thing?" (last section of
+    `report/2026-08-15-pointmaze-gpu-parallelization/report.md`). Parity audit, written before
+    any card time was spent: the run folder's `parity_check.md`.
+
 - 2026-08-15 ~22:00 PT — round 6 complete, on branch `worktree-agent-a9d3932a1c6532feb`. The
   question was what the JAX trainer's fifth round transferred to the PyTorch one, and whether
   1,024 to 4,096 copies could be improved again. Everything below is measured on serval05 under
