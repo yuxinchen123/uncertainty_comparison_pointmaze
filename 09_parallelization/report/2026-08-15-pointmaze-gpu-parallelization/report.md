@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:20 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:21 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -852,7 +852,12 @@ over all copies, the rate a single copy gets, the hours one copy needs to reach 
 environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
 timing the next, which is the stricter of the two protocols and the one used everywhere else in
 this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
-same trainer with this round's changes; the JAX trainer is unchanged by this round.
+same trainer with this round's changes.
+
+The JAX figures are for `ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at
+commit `7609297`). This round changed nothing in it, and a separate line of work was changing it
+while these measurements were taken, so its figures here are a snapshot of one revision rather
+than the last word on that trainer.
 
 **One update per batch.**
 

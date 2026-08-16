@@ -1603,7 +1603,12 @@ over all copies, the rate a single copy gets, the hours one copy needs to reach 
 environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
 timing the next, which is the stricter of the two protocols and the one used everywhere else in
 this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
-same trainer with this round's changes; the JAX trainer is unchanged by this round.
+same trainer with this round's changes.
+
+The JAX figures are for `ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at
+commit `7609297`). This round changed nothing in it, and a separate line of work was changing it
+while these measurements were taken, so its figures here are a snapshot of one revision rather
+than the last word on that trainer.
 
 """
     named_A = [("PyTorch before", src["before A"]), ("PyTorch after", src["after A"]),
