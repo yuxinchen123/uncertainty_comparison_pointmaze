@@ -85,7 +85,9 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
     which is what makes zeroing unnecessary. The alignment padding must also stay zero, since
     the optimiser reads the whole buffer including it.
     """
-    t = PPORND(PPOConfig(**SMALL), device="cpu")
+    # the buffer form specifically, which is no longer the default
+    t = PPORND(PPOConfig(gradient_buffer=True, parameter_layout="copy_major",
+                         **SMALL), device="cpu")
     torch.manual_seed(0)
     t.prime_obs_rms()
     batch = t.rollout()

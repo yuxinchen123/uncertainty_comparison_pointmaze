@@ -2261,9 +2261,9 @@ tensor. That is the largest single removable item, and it is what round five's o
             f"measured by the paired harness, which compares two configurations of one build.*"
             "\n\n")
     if grad_A:
-        md += ("The gradient change with one update per batch, where there is one update step "
-               "rather than sixteen and so one copy rather than sixteen:\n\n"
-               + paired_table(grad_A) + "\n\n")
+        md += ("The same change with one update per batch, where the iteration has one update "
+               "step rather than sixteen and so pays for the copy once rather than sixteen "
+               "times:\n\n" + paired_table(grad_A, "reading them in place") + "\n\n")
     if fused:
         md += ("A third form was measured because it removes a different pass: keep the buffer, "
                "but sum the squared gradients in the same program that copies them into it, so "
@@ -2347,6 +2347,27 @@ with the size rule replaced by the configuration's own answer.
                "is part of neither. The probe now gives each arm its own trainer and passes the "
                "settings as options rather than around them, and it says so out loud when two "
                "arms agree to zero. The accuracy line it already printed is what caught it.\n\n")
+    # the three kept changes together, against the revision the round started from
+    combined = [("4,096 copies,<br>sixteen updates per batch", r"ab_r6-all-C4096-styleB"),
+                ("4,096 copies,<br>one update per batch", r"ab_r6-all-C4096-styleA"),
+                ("128 copies,<br>sixteen updates per batch", r"ab_r6-all-C128-styleB"),
+                ("8 copies,<br>sixteen updates per batch", r"ab_r6-all-C8-styleB")]
+    have = [(n, newest(p)) for n, p in combined]
+    if any(d for _, d in have):
+        md += ("#### The three together, against the revision the round started from\n\n"
+               "| setting | before | after | difference | noise floor |\n|---|---|---|---|---|\n")
+        for name, d in have:
+            if not d:
+                continue
+            md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+                   f"{-d['difference_ms']:+.2f} ms "
+                   f"({-d['relative_change_percent']:+.1f} percent) | "
+                   f"{d['noise_floor_ms']:.2f} ms |\n")
+        md += ("\n*Both sides built in their own process and run in the order A B B A, so the "
+               "spread between two runs of the same side is the noise floor. At 8 and 128 copies "
+               "the trainer keeps the gradient buffer, so only the shuffle change applies "
+               "there.*\n\n")
+
     # the same check the previous round's loss at 512 copies made necessary: the sizes this round
     # did NOT optimise for, measured before and after rather than assumed unchanged
     small = {"before A": throughput_rows(r"trainbench_torch_full_batch_r6_before_styleA_small"),
@@ -2398,6 +2419,34 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
 | every parameter, moment and gradient window on a sixteen-byte boundary, both layouts, more than one copy | pass |
+
+#### The largest inefficiency left, measured but not attempted
+
+The kernel profile names one item that neither round went after, and it is not in the update
+stage. Of the rollout's 15.3 milliseconds at 4,096 copies, **11.45 are matrix multiplications
+running at about 850 gigabytes per second** — a fifth of the rate the update stage's
+multiplications reach, and the counted floor for the whole rollout is 2.8 milliseconds.
+
+The cause is structural rather than a missing optimisation. The rollout is 128 sequential
+environment steps, and each step multiplies **four rows per copy** — one per environment — against
+that copy's entire actor weights. Across 4,096 copies those weights are 75.6 megabytes, they do
+not fit the card's 50-megabyte cache, and they are therefore re-read from memory on all 128 steps
+to serve almost no arithmetic each time.
+
+| | rollout at 4,096 copies |
+|---|---|
+| measured | 15.33 ms |
+| of which matrix multiplications | 11.45 ms |
+| the rate those multiplications reach | ~850 GB/s |
+| the bytes the rollout requires, at the card's measured bandwidth | 2.80 ms |
+
+Two shapes of answer exist and neither is small. Processing the copies in groups whose weights fit
+the cache would make the re-reads come from there, at the price of doubling the program count in a
+stage that is already partly bound by it. Generating the multiplications for these four-row shapes
+instead of calling the library's, whose kernels are plainly not tuned for four rows, is the other
+— and this round's measurement of that route on the update stage's shapes, where it lost by 42
+percent, says nothing about these, which are a different problem. Recorded with its measurement
+rather than attempted at the end of a round.
 
 """
     return md

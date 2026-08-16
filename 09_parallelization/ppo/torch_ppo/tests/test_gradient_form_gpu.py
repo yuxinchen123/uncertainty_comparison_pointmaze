@@ -35,9 +35,13 @@ from torch_ppo_rnd import PPOConfig, PPORND  # noqa: E402
 CFG = dict(n_copies=8, n_envs=4, num_steps=32, obs_norm_init_iters=1,
            rollout_mode="compile-step", tf32=False, compile_opt=True)
 
+# the two buffer forms name the copy-major layout: a buffer needs a per-copy row for one
+# program to walk, which the parameter-major layout that now ships does not have
 FORMS = {
-    "copy then measure": dict(gradient_buffer=True, fuse_copy_and_limit=False),
-    "copy and measure": dict(gradient_buffer=True, fuse_copy_and_limit=True),
+    "copy then measure": dict(gradient_buffer=True, fuse_copy_and_limit=False,
+                              parameter_layout="copy_major"),
+    "copy and measure": dict(gradient_buffer=True, fuse_copy_and_limit=True,
+                             parameter_layout="copy_major"),
     "no buffer": dict(gradient_buffer=False),
 }
 

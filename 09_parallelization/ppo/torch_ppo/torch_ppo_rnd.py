@@ -72,7 +72,7 @@ class PPOConfig:
                                      # "distinct": every copy is its own seed
     compile_post: bool = False       # compile the post-rollout body (its filter and GAE are
                                      # python loops over T, so eager they are ~256 tiny kernels)
-    gradient_buffer: bool = True     # hold every gradient in ONE [C, P] buffer, so the gradient
+    gradient_buffer: bool = False    # True holds every gradient in ONE [C, P] buffer, so the gradient
                                      # limit and the Adam step are one program each. The
                                      # automatic-differentiation system writes its gradients into
                                      # fresh tensors, so this costs a copy of the whole buffer in
@@ -89,13 +89,19 @@ class PPOConfig:
                                      # then runs tensor by tensor, so it lands on exactly the
                                      # value the no-buffer form computes and a few last bits from
                                      # the one-row reduction's.
-    parameter_layout: str = "copy_major"
+    parameter_layout: str = "parameter_major"
     # "copy_major": one buffer row per copy, [C, P]. A parameter's window is a column slice, so
     # it is strided across copies, but the buffer is one contiguous array and a single program
     # can walk it applying a per-copy rate. "parameter_major": one contiguous block per
     # parameter instead, so every window is contiguous and every pass over it reaches the card's
     # full bandwidth — at the price of twenty-one programs per optimizer pass rather than one,
     # because a copy no longer owns a row. Requires gradient_buffer=False.
+    generated_rollout_matmul: bool = False
+    # let the compiler generate the rollout step's matrix multiplications from its own templates
+    # instead of calling the library's. The rollout's are the least efficient programs in the
+    # trainer: four rows per copy against a whole copy's weights, re-read on every one of the 128
+    # steps, and the library's kernels reach about 850 gigabytes per second on them where the
+    # update stage's reach 2,500 to 3,400.
     env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
                                      # (the single fused kernel from pointmaze/cuda_env)
 
@@ -120,13 +126,26 @@ def sweep_config(learning_rates, copies_per_rate, style="epoch_minibatch", **ove
 
 
 def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOConfig":
-    """The measured-best PyTorch configuration. One definition, so the benchmarks, the training
-    driver and the tests cannot drift apart: whole-iteration CUDA-graph capture, compiled
-    post-rollout body, TF32 matrix units, and the gradient limit and Adam step compiled as two
-    streaming passes over the flat parameter buffer.
+    """The measured-best PyTorch configuration for this copy count. One definition, so the
+    benchmarks, the training driver and the tests cannot drift apart: whole-iteration CUDA-graph
+    capture, compiled post-rollout body, TF32 matrix units, and a compiled gradient limit and
+    Adam step.
+
+    Where the gradients live is chosen from the copy count, because the measurement reverses.
+    Reading them where the backward pass wrote them removes a copy of the whole parameter buffer
+    from every update step and costs forty-two extra device programs: worth -2.5% at 512 copies
+    and -4.4% at 4,096, and worth +2.8% to +6.7% AGAINST it at 128 copies and below, where an
+    iteration's cost is the number of programs it issues rather than the bytes they move. The
+    buffer's layout follows: one block per parameter where the optimizer is twenty-one programs,
+    one row per copy where it is one.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
                 fused_adam=True, tf32=True, compile_post=True, compile_opt=True)
+    # before: n_copies=128  -> gradient_buffer True,  parameter_layout "copy_major"
+    # after:  n_copies=4096 -> gradient_buffer False, parameter_layout "parameter_major"
+    memory_bound = n_copies >= 512
+    base.update(gradient_buffer=not memory_bound,
+                parameter_layout="parameter_major" if memory_bound else "copy_major")
     base.update(overrides)                      # an explicit override always wins
     return PPOConfig(n_copies=n_copies, update_style=style, **base)
 
@@ -437,10 +456,17 @@ class PPORND:
         from pm_common import MAPS as _MAPS
         wall = _np.array(_MAPS[self.env.cfg.map_name]) == 1
         self._open_cells = torch.as_tensor(~wall.reshape(-1), device=dev)
-        # the per-step function used by _rollout_body: compiled for the GPU fast paths
+        # the per-step function used by _rollout_body: compiled for the GPU fast paths.
+        # The settings go to the compiler as options rather than around it, so that two trainers
+        # in one process — which is how this project measures a change — compile separately.
+        rollout_options = dict(max_autotune_gemm=True,
+                               max_autotune_gemm_backends="TRITON") \
+            if cfg.generated_rollout_matmul else None
         if cfg.rollout_mode in ("compile-step", "capture"):
-            self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False)
-            self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False)
+            self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False,
+                                           options=rollout_options)
+            self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False,
+                                            options=rollout_options)
         else:
             self._one_step = self._one_step_pure
             self._policy_fn = self._policy_part

@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:40 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:43 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1310,6 +1310,14 @@ tensor. That is the largest single removable item, and it is what round five's o
 
 *The second row is at the resolution limit of the cross-process harness — its noise floor here is 0.93 ms — which is why the program that disappears is quoted as well. This change cannot be a knob, so it cannot be measured by the paired harness, which compares two configurations of one build.*
 
+The same change with one update per batch, where the iteration has one update step rather than sixteen and so pays for the copy once rather than sixteen times:
+
+| copies | before | reading them in place | change | rounds favouring it | spread within a version |
+|---|---|---|---|---|---|
+| 128 | 6.09 ms | 6.10 ms | +0.1 percent | 0 of 11 | 0.01 ms |
+| 1024 | 18.05 ms | 17.95 ms | -0.6 percent | 11 of 11 | 0.15 ms |
+| 4096 | 63.43 ms | 62.65 ms | -1.2 percent | 11 of 11 | 0.97 ms |
+
 A third form was measured because it removes a different pass: keep the buffer, but sum the squared gradients in the same program that copies them into it, so the buffer is never read a second time for the gradient limit.
 
 | copies | before | with the limit fused into the copy | change | rounds favouring it | spread within a version |
@@ -1398,6 +1406,34 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
 | every parameter, moment and gradient window on a sixteen-byte boundary, both layouts, more than one copy | pass |
+
+#### The largest inefficiency left, measured but not attempted
+
+The kernel profile names one item that neither round went after, and it is not in the update
+stage. Of the rollout's 15.3 milliseconds at 4,096 copies, **11.45 are matrix multiplications
+running at about 850 gigabytes per second** — a fifth of the rate the update stage's
+multiplications reach, and the counted floor for the whole rollout is 2.8 milliseconds.
+
+The cause is structural rather than a missing optimisation. The rollout is 128 sequential
+environment steps, and each step multiplies **four rows per copy** — one per environment — against
+that copy's entire actor weights. Across 4,096 copies those weights are 75.6 megabytes, they do
+not fit the card's 50-megabyte cache, and they are therefore re-read from memory on all 128 steps
+to serve almost no arithmetic each time.
+
+| | rollout at 4,096 copies |
+|---|---|
+| measured | 15.33 ms |
+| of which matrix multiplications | 11.45 ms |
+| the rate those multiplications reach | ~850 GB/s |
+| the bytes the rollout requires, at the card's measured bandwidth | 2.80 ms |
+
+Two shapes of answer exist and neither is small. Processing the copies in groups whose weights fit
+the cache would make the re-reads come from there, at the price of doubling the program count in a
+stage that is already partly bound by it. Generating the multiplications for these four-row shapes
+instead of calling the library's, whose kernels are plainly not tuned for four rows, is the other
+— and this round's measurement of that route on the update stage's shapes, where it lost by 42
+percent, says nothing about these, which are a different problem. Recorded with its measurement
+rather than attempted at the end of a round.
 
 ### Why the JAX trainer is still faster at these copy counts
 

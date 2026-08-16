@@ -18,8 +18,11 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from torch_ppo_rnd import PPOConfig, PPORND  # noqa: E402
 
+# this test is about the buffer form specifically, so it asks for it rather than taking
+# the default, which is now the form that reads the gradients where they were written
 CFG = dict(n_copies=4, n_envs=4, num_steps=32, obs_norm_init_iters=1,
-           rollout_mode="compile-step", compile_opt=False)
+           rollout_mode="compile-step", compile_opt=False,
+           gradient_buffer=True, parameter_layout="copy_major")
 
 
 def reference_step(params, grads, m, v, t, lr, eps, max_norm):

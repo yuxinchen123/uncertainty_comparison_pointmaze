@@ -625,6 +625,34 @@ pay for them. Switching the matrix units back on changes nothing, so the note ro
 ("the kernels the compiler selects switch the units off") was a real observation about a form that
 was never going to pay anyway. NOT KEPT, and now with a number rather than a caveat.
 
+### The three kept changes, one after another at the two ends of the range
+
+Each row is the paired median of the arm that includes every change above it, so the chain reads
+downwards. Sixteen updates per batch.
+
+| build | 1,024 copies | 4,096 copies |
+|---|---|---|
+| the revision this round starts from | 57.19 ms | 208.45 ms |
+| + write the shuffled batch straight into its buffer | 56.56 ms | 204.75 ms |
+| + read the gradients where the backward pass wrote them | 54.11 ms | 195.19 ms |
+| + one contiguous block per parameter | 53.26 ms | 193.77 ms |
+| **together** | **-6.9%** | **-7.0%** |
+
+### What is left, and where it is
+
+The kernel profile after the round says where an iteration's remaining time sits, and one item
+stands out for the next round rather than this one. Of the rollout's 15.3 milliseconds at 4,096
+copies, **11.45 are matrix multiplications running at about 850 gigabytes per second** — a fifth
+of what the update stage's reach. The cause is structural: the rollout is 128 sequential steps and
+each one multiplies **four rows per copy** against that copy's whole actor weights, so the weights
+(75.6 megabytes across 4,096 copies) are re-read from memory on every step and each read serves
+almost no arithmetic. The counted floor for the whole rollout is 2.8 milliseconds against 15.3
+measured. Two shapes of answer exist and neither is small: process the copies in groups whose
+weights fit the 50-megabyte cache so the re-reads come from there (which doubles the program
+count, and the rollout is already partly bound by that), or generate the multiplications for these
+four-row shapes rather than calling the library's, which are clearly not tuned for them. Recorded
+here with its measurement rather than attempted at the end of a round.
+
 ### The paired comparison against the revision this round starts from is neutral
 
 The first change of the round is a refactor in its OFF position — the gradient path becomes a
