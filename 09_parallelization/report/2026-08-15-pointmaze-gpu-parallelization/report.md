@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:55 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:01 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -961,6 +961,8 @@ that distinction, and one change kept in an earlier round on the strength of 8-t
 turned out to be a loss at 1,024 and above. Every change below is therefore measured at both ends
 of the range before it is kept.
 
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as these two rounds found it and 63 after their changes, against 43 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
+
 ### Where an iteration's time goes as the copy count grows
 
 | phase | 128 copies | 1,024 copies | 4,096 copies |
@@ -997,9 +999,11 @@ was changing while it was measured, and those figures are superseded here.
 | PyTorch after round six | 1024 | 18.1 | <u>29.01</u> | 28.3 | 0.010 | 3.8 |
 | JAX | 1024 | 14.2 | **36.95** | 36.1 | 0.008 | 3.4 |
 | PyTorch before round five | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
-| PyTorch after round six | 2048 | 32.6 | **32.20** | 15.7 | 0.018 | 7.5 |
+| PyTorch after round six | 2048 | 32.6 | <u>32.20</u> | 15.7 | 0.018 | 7.5 |
+| JAX | 2048 | 23.3 | **45.01** | 22.0 | 0.013 | 6.8 |
 | PyTorch before round five | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
-| PyTorch after round six | 4096 | 63.3 | **33.11** | 8.1 | 0.034 | 14.8 |
+| PyTorch after round six | 4096 | 63.3 | <u>33.11</u> | 8.1 | 0.034 | 14.8 |
+| JAX | 4096 | 43.4 | **48.29** | 11.8 | 0.024 | 13.4 |
 
 **Sixteen updates per batch.**
 
@@ -1443,6 +1447,8 @@ rather than attempted at the end of a round.
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
 | one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
+| one update per batch | 2048 | 32.6 ms | 23.3 ms | 1.40 |
+| one update per batch | 4096 | 63.3 ms | 43.4 ms | 1.46 |
 | sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
 | sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.25 |
 | sixteen updates per batch | 4096 | 205.5 ms | 168.7 ms | 1.22 |
