@@ -223,8 +223,19 @@ class PPORND:
             object.__setattr__(cfg, "rollout_mode", "capture")
         self.cfg = cfg
         self.device = torch.device(device)
-        if cfg.tf32:
-            torch.set_float32_matmul_precision("high")
+        # The matrix precision is set in BOTH directions. Setting it only when tf32 is on left a
+        # tf32=False trainer running at whatever precision the process had last been put in, so
+        # in a process that had already built a tf32=True trainer, a run asking for exact single
+        # precision would silently get the reduced one — two configurations meant to differ would
+        # then produce the same numbers, which reads exactly like the finding "precision does not
+        # matter". The assert makes a knob that did not take a hard failure rather than a result.
+        # before: tf32=False -> whatever the global setting already was
+        # after:  tf32=False -> "highest" (exact float32); tf32=True -> "high" (the card's
+        #         reduced-precision matrix units)
+        want_precision = "high" if cfg.tf32 else "highest"
+        torch.set_float32_matmul_precision(want_precision)
+        assert torch.get_float32_matmul_precision() == want_precision, \
+            "the float32 matrix precision did not take"
         C = cfg.n_copies
         # per-copy learning rate and per-copy seed stream (a sweep gives each GROUP of copies
         # its own rate; paired seeding makes copy k of every group start from the same weights

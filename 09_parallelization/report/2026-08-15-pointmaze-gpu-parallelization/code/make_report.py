@@ -2598,13 +2598,15 @@ def main():
     import cpu_node_comparison as cnc
     cnc.fig_cpu_node_comparison()
     fig_large_scale()
+    fig_learning_outcome()
     import section_times as st
     body = [sec_correctness(), sec_module1(), sec_module2(), sec_module3(), sec_copies(),
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
             sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
-            sec_clean_node(), cnc.sec_cpu_node_comparison(), sec_large_scale()]
+            sec_clean_node(), cnc.sec_cpu_node_comparison(), sec_large_scale(),
+            sec_learning_outcome()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]
@@ -2617,3 +2619,146 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def learning_outcome_module():
+    """The learning-outcome campaign's own analysis module, imported rather than copied.
+
+    Both this report and the run folder's own `analysis/analysis.md` are built from it, so a
+    re-run of the campaign updates both and they cannot come to disagree.
+    """
+    runs = sorted(RUNS.glob("2026-08-16-*_learning_outcome_torch-vs-jax*"))
+    if not runs:
+        return None
+    sys.path.insert(0, str(runs[-1] / "code"))
+    import analyse
+    return analyse
+
+
+def fig_learning_outcome():
+    """Draw the learning-outcome figures into this report's figures folder."""
+    a = learning_outcome_module()
+    if a is None:
+        return pending("learning-outcome figures", "the campaign run folder")
+    for note in a.make_figures(FIGS):
+        PENDING.append(note)
+    return None
+
+
+def _verdict(cmp, spread):
+    """One sentence about a comparison: the difference, its interval, and what it rules out.
+
+    `spread` is the standard deviation across copies of the first side, so the difference can be
+    stated in units a reader can weigh — a difference of a tenth of the seed-to-seed spread is
+    small however many decimal places its interval has.
+    """
+    p = cmp["pooled"]
+    half = (p["difference_hi"] - p["difference_lo"]) / 2
+    resolvable = p["difference_lo"] > 0 or p["difference_hi"] < 0
+    return (p, half, resolvable, abs(p["difference"]) / spread if spread else float("nan"))
+
+
+def sec_learning_outcome():
+    """Whether the two implementations learn the same thing, and whether precision changes it."""
+    a = learning_outcome_module()
+    s = a.summary() if a else {}
+    head = "## Do the two implementations learn the same thing?\n"
+    if not s or "frameworks_reduced" not in s.get("comparisons", {}):
+        return head + pending("the learning-outcome section", "the four campaign runs")
+
+    rates = s["rates"]
+    picks = [rates[i] for i in s["chosen_rate_indices"]]
+    cfg = s["configurations"]
+    ref = cfg["torch_reduced"]
+    steps = ref["steps_per_copy"]
+    n_copies = ref["n_copies"]
+    per_rate = ref["per_rate"]
+    best = max(per_rate, key=lambda r: r["mean"])
+    # the seed-to-seed spread at the best rate, as a yardstick for every difference below
+    spread = (best["q3"] - best["q1"])
+
+    md = [head, f"""
+Everything else in this report is speed. This section is about behaviour: four runs of
+**8 learning rates x {n_copies // len(rates):,} independent copies x {steps / 1e6:.0f} million environment steps per copy** —
+{{PyTorch, JAX}} x {{the card's reduced-precision matrix mode, exact single precision}} — asking whether
+the two implementations of one algorithm end up in the same place, and whether the precision of the
+matrix units moves where either of them ends up. A copy's score is its mean extrinsic reward per
+iteration over the last {s['final_records']} recorded iterations: the number of steps, out of the 512 an
+iteration runs, that it spent inside the goal radius. With {n_copies // len(rates):,} copies per rate the bar is not
+identical curves but overlapping seed distributions.
+
+Parity between the two implementations was established before any card time was spent, item by
+item — initialisation distribution and gains, optimiser and its constants, advantage
+normalisation, the order in which the observation and intrinsic statistics update, episode
+boundaries, clipping, entropy, and what is recorded when. The full list, and the five last-bit
+differences that remain, is in the run folder's `parity_check.md`. The environment is not merely
+equivalent between the two: its reset noise is a counter-based hash of the copy and episode
+indices, so copy k of the PyTorch run and copy k of the JAX run start every episode in the same
+place.
+
+### What each configuration reached
+
+Mean over the {n_copies // len(rates):,} copies of each rate group, at the end of training.
+
+{a.per_rate_table(s)}
+The useful range is narrow: the best rate is {best['rate']:g}, and the three carried through the figures
+below are {', '.join(f'{r:g}' for r in picks)} — that rate and its two neighbours, chosen from all four
+configurations pooled rather than by hand.
+"""]
+
+    cmpf = s["comparisons"]["frameworks_reduced"]
+    p, half, resolvable, in_spreads = _verdict(cmpf, spread)
+    md.append(f"""
+### PyTorch against JAX
+
+![PyTorch against JAX](figures/learning_outcome_frameworks.png)
+
+{a.comparison_table(cmpf)}
+Pooled over all eight rates the two differ by **{p['difference']:+.3f}** reward per copy per iteration,
+interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], against an interquartile spread across copies of
+{spread:.2f} at the best rate — {'a difference the run can resolve' if resolvable else 'a difference this run cannot resolve'}, and
+{in_spreads:.2f} of one interquartile range either way. A copy drawn at random from the PyTorch run scores above one
+drawn from the JAX run with probability {p['probability_a_above_b']:.3f}; {'0.5' if abs(p['probability_a_above_b'] - 0.5) < 0.02 else 'a half'} would mean the two
+distributions are interchangeable.
+""")
+
+    for fw, key, title in [("torch", "precision_torch", "PyTorch"),
+                           ("jax", "precision_jax", "JAX")]:
+        if key not in s["comparisons"]:
+            continue
+        c = s["comparisons"][key]
+        p, half, resolvable, in_spreads = _verdict(c, spread)
+        md.append(f"""
+### Reduced precision against exact single precision, inside {title}
+
+![{title} precision](figures/learning_outcome_precision_{fw}.png)
+
+{a.comparison_table(c)}
+Pooled: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], probability
+{p['probability_a_above_b']:.3f} that a reduced-precision copy scores above an exact one. {'The run resolves this difference.' if resolvable else 'The run does not resolve this difference; what it can say is that any effect larger than about ' + f'{half:.3f}' + ' reward per copy per iteration would have shown.'}
+""")
+
+    md.append(f"""
+### Every rate, and the seed distribution at the best one
+
+![every rate](figures/learning_outcome_by_rate.png)
+
+### What the four runs cost, and the precision each actually used
+
+{a.throughput_table(s)}
+A knob that is silently ignored produces two identical curves, which reads exactly like the finding
+"precision does not matter", so each run measured what the card was actually doing before it trained:
+a batched float32 matrix multiplication of the trainer's own shapes, differenced against the same
+product in double precision.
+
+| configuration | declared setting | largest relative error against float64 |
+|---|---|---|
+""")
+    for tag in a.TAGS:
+        c = cfg.get(tag)
+        if c:
+            pr = c["precision_probe"]
+            md.append(f"| {c['label']} | {pr['declared_setting']} | "
+                      f"{pr['relative_error_against_float64']:.2e} |")
+    md.append("")
+    return "\n".join(md)
