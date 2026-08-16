@@ -1,8 +1,8 @@
 # Throughput of the single-update JAX PPO+RND trainer on every graphics card of this cluster
 
-Written 2026-08-16 16:29 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
+Written 2026-08-16 16:33 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
 
-63 of 80 jobs have reported, giving 202 measured cells; 36 cells did not fit on their card. 17 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
+65 of 80 jobs have reported, giving 211 measured cells; 39 cells did not fit on their card. 15 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
 
 ## 1. What was measured
 
@@ -22,17 +22,17 @@ One node per node class — nodes identical in card type, card memory, processor
 |---|---|---|---|---|---|---|---|
 | `serval03` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9534 | none yet | 0/12 |
 | `serval06-09` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9354 | 8, 16, 32 | 12/12 |
-| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16 | 7/12 |
+| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16 | 8/12 |
 | `cheetah04` | gpu | A100 | 8.0 | 81.1 | amd epyc 7742 | 8, 16, 32 | 12/12 |
 | `nekomata01` | gpu | RTX 5080 | 12.0 | 16.3 | icelake | 8, 16, 22 | 12/12 |
 | `jaguar01` | gpu | A40 | 8.6 | 46.1 | skylake | 8, 16, 32 | 12/12 |
 | `jaguar06` | gpu | A40 | 8.6 | 46.1 | icelake | 8, 16, 32 | 12/12 |
 | `cheetah02` | gpu | RTX 4000 Ada | 8.9 | 20.5 | skylake | 8, 16, 32 | 12/12 |
-| `jaguar03` | gpu | RTX A4500 | 8.6 | 20.5 | amd epyc 7663 | 8, 16, 32 | 11/12 |
-| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8 | 1/12 |
+| `jaguar03` | gpu | RTX A4500 | 8.6 | 20.5 | amd epyc 7663 | 8, 16, 32 | 12/12 |
+| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8 | 3/12 |
 | `jaguar02` | gpu | A16 | 8.6 | 15.4 | icelake | none yet | 0/12 |
 | `lotus` | gpu | Quadro RTX 6000 | 7.5 | 24.1 | skylake | 8, 16, 32 | 12/12 |
-| `affogato11` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8 | 1/12 |
+| `affogato11` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8 | 3/12 |
 | `ai01-04_lynx10` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8, 16, 30 | 9/12 |
 | `ai06` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8, 16, 30 | 9/12 |
 | `cheetah03` | gpu | RTX 2080 Ti | 7.5 | 10.9 | skylake | 8, 16, 32 | 9/12 |
@@ -45,8 +45,8 @@ One node per node class — nodes identical in card type, card memory, processor
 | `ai09` | gnolim | GTX 1080 Ti | 6.1 | 11.3 | skylake | 8, 16, 30 | 9/12 |
 | `lynx02-04` | gpu | GTX 1080 Ti | 6.1 | 11.3 | broadwell | 8, 16, 30 | 9/12 |
 | `ai05_ai10` | gnolim | GTX 1080 | 6.1 | 8.2 | skylake | 8, 16 | 4/12 |
-| `jinx01-02` | gnolim | GTX 1080 | 6.1 | 8.2 | haswell | 8, 16 | 4/12 |
-| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8 | 3/12 |
+| `jinx01-02` | gnolim | GTX 1080 | 6.1 | 8.2 | haswell | 8, 16, 22 | 6/12 |
+| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8, 16 | 4/12 |
 
 All 23 classes probed so far run the trainer: JAX 0.10.2 with the CUDA 12 plugin reaches every card generation here, from compute capability 6.0 (Tesla P100, 2016) to 12.0 (RTX 5080, 2025), so no node class had to be dropped for lack of support.
 
@@ -63,7 +63,7 @@ The tables in section 4 carry every card; this one carries the answer. Ten milli
 
 ## 4.1 512 copies
 
-Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate.
+Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate. Taking the fastest of a class's three processor counts flatters each row a little, since it is the smallest of three timings of what section 6 shows to be the same quantity; the effect is under 1%, which is the size of the gap between the processor counts themselves.
 
 | node class | card | processors | seconds per<br>iteration | total steps per second<br>(millions) &darr; | steps per second<br>per copy | hours per million<br>steps per copy | peak card<br>memory (GB) | spread of the<br>middle half |
 |---|---|---|---|---|---|---|---|---|
@@ -89,7 +89,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `affogato13-15` | GTX 1080 Ti | 8 | 0.0614 | 4.27 | 8,341 | 0.033 | 2.3 | 0.21% |
 | `titanx03` | Titan X | 8 | 0.0625 | 4.20 | 8,196 | 0.034 | 2.3 | 0.10% |
 | `lynx05-07` | Tesla P100 | 16 | 0.0678 | 3.87 | 7,550 | 0.037 | 2.3 | 0.03% |
-| `jinx01-02` | GTX 1080 | 8 | 0.0882 | 2.97 | 5,804 | 0.048 | 2.3 | 0.04% |
+| `jinx01-02` | GTX 1080 | 22 | 0.0882 | 2.97 | 5,805 | 0.048 | 2.3 | 0.03% |
 | `ai05_ai10` | GTX 1080 | 8 | 0.0884 | 2.96 | 5,790 | 0.048 | 2.3 | 0.06% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
@@ -99,7 +99,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 
 ## 4.2 1024 copies
 
-Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate.
+Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate. Taking the fastest of a class's three processor counts flatters each row a little, since it is the smallest of three timings of what section 6 shows to be the same quantity; the effect is under 1%, which is the size of the gap between the processor counts themselves.
 
 | node class | card | processors | seconds per<br>iteration | total steps per second<br>(millions) &darr; | steps per second<br>per copy | hours per million<br>steps per copy | peak card<br>memory (GB) | spread of the<br>middle half |
 |---|---|---|---|---|---|---|---|---|
@@ -111,7 +111,9 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `jaguar01` | A40 | 32 | 0.0493 | 10.64 | 10,387 | 0.027 | 3.4 | 0.19% |
 | `jaguar03` | RTX A4500 | 32 | 0.0496 | 10.58 | 10,332 | 0.027 | 3.4 | 0.01% |
 | `lotus` | Quadro RTX 6000 | 8 | 0.0684 | 7.67 | 7,486 | 0.037 | 4.7 | 0.17% |
+| `cheetah08-09` | RTX A4000 | 8 | 0.0702 | 7.46 | 7,290 | 0.038 | 3.4 | 0.07% |
 | `cheetah03` | RTX 2080 Ti | 8 | 0.0714 | 7.34 | 7,171 | 0.039 | 4.7 | 0.13% |
+| `affogato11` | RTX 2080 Ti | 8 | 0.0726 | 7.22 | 7,048 | 0.039 | 4.7 | 0.15% |
 | `ai06` | RTX 2080 Ti | 8 | 0.0730 | 7.18 | 7,011 | 0.040 | 4.7 | 0.20% |
 | `ai01-04_lynx10` | RTX 2080 Ti | 8 | 0.0730 | 7.18 | 7,009 | 0.040 | 4.7 | 0.50% |
 | `cheetah02` | RTX 4000 Ada | 8 | 0.0766 | 6.84 | 6,682 | 0.042 | 3.6 | 0.00% |
@@ -126,16 +128,14 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `jinx01-02` | GTX 1080 | 16 | 0.1692 | 3.10 | 3,026 | 0.092 | 4.7 | 0.06% |
 | `ai05_ai10` | GTX 1080 | 8 | 0.1699 | 3.09 | 3,014 | 0.092 | 4.7 | 0.17% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
-| `cheetah08-09` | RTX A4000 | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
-| `affogato11` | RTX 2080 Ti | — | — | not measured yet | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
 
 ![cards at 1024 copies](plots/card_ranking_copies-1024.png)
 
 ## 4.3 2048 copies
 
-Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate.
+Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate. Taking the fastest of a class's three processor counts flatters each row a little, since it is the smallest of three timings of what section 6 shows to be the same quantity; the effect is under 1%, which is the size of the gap between the processor counts themselves.
 
 | node class | card | processors | seconds per<br>iteration | total steps per second<br>(millions) &darr; | steps per second<br>per copy | hours per million<br>steps per copy | peak card<br>memory (GB) | spread of the<br>middle half |
 |---|---|---|---|---|---|---|---|---|
@@ -147,8 +147,10 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `jaguar01` | A40 | 16 | 0.0950 | 11.03 | 5,387 | 0.052 | 5.8 | 0.04% |
 | `jaguar03` | RTX A4500 | 16 | 0.0951 | 11.03 | 5,384 | 0.052 | 5.8 | 0.03% |
 | `lotus` | Quadro RTX 6000 | 16 | 0.1328 | 7.89 | 3,854 | 0.072 | 9.5 | 0.13% |
+| `cheetah08-09` | RTX A4000 | 8 | 0.1366 | 7.67 | 3,747 | 0.074 | 5.8 | 0.11% |
 | `cheetah03` | RTX 2080 Ti | 32 | 0.1388 | 7.56 | 3,690 | 0.075 | 9.5 | 0.16% |
 | `ai06` | RTX 2080 Ti | 30 | 0.1427 | 7.35 | 3,589 | 0.077 | 9.5 | 0.45% |
+| `affogato11` | RTX 2080 Ti | 8 | 0.1430 | 7.33 | 3,581 | 0.078 | 9.5 | 0.20% |
 | `ai01-04_lynx10` | RTX 2080 Ti | 16 | 0.1431 | 7.33 | 3,577 | 0.078 | 9.5 | 0.71% |
 | `cheetah02` | RTX 4000 Ada | 8 | 0.1536 | 6.83 | 3,334 | 0.083 | 5.8 | 0.03% |
 | `lynx01` | Titan Xp | 8 | 0.2036 | 5.15 | 2,515 | 0.110 | 9.5 | 1.04% |
@@ -159,9 +161,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `titanx03` | Titan X | 8 | 0.2340 | 4.48 | 2,188 | 0.127 | 9.5 | 0.52% |
 | `lynx05-07` | Tesla P100 | 8 | 0.2395 | 4.38 | 2,138 | 0.130 | 9.5 | 0.02% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
-| `cheetah08-09` | RTX A4000 | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
-| `affogato11` | RTX 2080 Ti | — | — | not measured yet | — | — | — | — |
 | `adriatic01-06` | Quadro RTX 4000 | — | — | **does not fit on this card** | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
 | `ai05_ai10` | GTX 1080 | — | — | **does not fit on this card** | — | — | — | — |
@@ -171,7 +171,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 
 ## 4.4 4096 copies
 
-Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate.
+Each class at whichever of its processor counts ran fastest. Best value in bold, second best underlined; the table is sorted by the aggregate rate. Taking the fastest of a class's three processor counts flatters each row a little, since it is the smallest of three timings of what section 6 shows to be the same quantity; the effect is under 1%, which is the size of the gap between the processor counts themselves.
 
 | node class | card | processors | seconds per<br>iteration | total steps per second<br>(millions) &darr; | steps per second<br>per copy | hours per million<br>steps per copy | peak card<br>memory (GB) | spread of the<br>middle half |
 |---|---|---|---|---|---|---|---|---|
@@ -222,6 +222,7 @@ The trainer keeps its arrays on the card and the host only dispatches, so the ex
 | `cheetah01` | A100 | 512 | 13.9 | 14.0 | N/A | 28, not yet | 0.9% |
 | `cheetah01` | A100 | 1024 | 23.1 | 23.1 | N/A | 28, not yet | 0.1% |
 | `cheetah01` | A100 | 2048 | 43.7 | 43.9 | N/A | 28, not yet | 0.5% |
+| `cheetah01` | A100 | 4096 | 82.0 | 82.2 | N/A | 28, not yet | 0.3% |
 | `cheetah04` | A100 | 512 | 12.5 | 12.4 | 12.4 | N/A | 0.4% |
 | `cheetah04` | A100 | 1024 | 20.1 | 20.0 | 19.8 | N/A | 1.6% |
 | `cheetah04` | A100 | 2048 | 36.8 | 36.7 | 36.7 | N/A | 0.3% |
@@ -245,7 +246,7 @@ The trainer keeps its arrays on the card and the host only dispatches, so the ex
 | `jaguar03` | RTX A4500 | 512 | 26.4 | 26.4 | 26.3 | N/A | 0.4% |
 | `jaguar03` | RTX A4500 | 1024 | 49.6 | 49.6 | 49.6 | N/A | 0.2% |
 | `jaguar03` | RTX A4500 | 2048 | 95.1 | 95.1 | 95.2 | N/A | 0.1% |
-| `jaguar03` | RTX A4500 | 4096 | 186.4 | 186.4 | not yet | N/A | 0.0% |
+| `jaguar03` | RTX A4500 | 4096 | 186.4 | 186.4 | 186.5 | N/A | 0.1% |
 | `lotus` | Quadro RTX 6000 | 512 | 36.7 | 36.7 | 36.8 | N/A | 0.4% |
 | `lotus` | Quadro RTX 6000 | 1024 | 68.4 | 68.4 | 68.5 | N/A | 0.2% |
 | `lotus` | Quadro RTX 6000 | 2048 | 133.4 | 132.8 | 133.5 | N/A | 0.5% |
@@ -281,8 +282,9 @@ The trainer keeps its arrays on the card and the host only dispatches, so the ex
 | `lynx02-04` | GTX 1080 Ti | 2048 | 226.1 | 223.2 | N/A | 30, 226.6 | 1.5% |
 | `ai05_ai10` | GTX 1080 | 512 | 88.4 | 88.5 | N/A | 30, not yet | 0.0% |
 | `ai05_ai10` | GTX 1080 | 1024 | 169.9 | 170.0 | N/A | 30, not yet | 0.1% |
-| `jinx01-02` | GTX 1080 | 512 | 88.2 | 88.2 | N/A | 22, not yet | 0.0% |
-| `jinx01-02` | GTX 1080 | 1024 | 169.4 | 169.2 | N/A | 22, not yet | 0.1% |
+| `jinx01-02` | GTX 1080 | 512 | 88.2 | 88.2 | N/A | 22, 88.2 | 0.0% |
+| `jinx01-02` | GTX 1080 | 1024 | 169.4 | 169.2 | N/A | 22, 169.3 | 0.1% |
+| `titanx03` | Titan X | 512 | 62.5 | 63.5 | N/A | 22, not yet | 1.6% |
 
 ## 7. Memory, and which cards cannot hold a run
 
@@ -298,9 +300,9 @@ Memory grows in proportion to the copy count — doubling the copies doubles the
 | `jaguar06` | A40 | 46.1 | 1.6 | 3.4 | 5.8 | 11.3 | 3.00 | all four; about 15,044 projected |
 | `cheetah02` | RTX 4000 Ada | 20.5 | 1.6 | 3.6 | 5.8 | 11.3 | 3.06 | all four; about 6,359 projected |
 | `jaguar03` | RTX A4500 | 20.5 | 1.7 | 3.4 | 5.8 | 11.3 | 3.03 | all four; about 6,431 projected |
-| `cheetah08-09` | RTX A4000 | 16.4 | 1.6 | not yet | not yet | not yet | 3.14 | 512 so far; about 4,889 projected |
+| `cheetah08-09` | RTX A4000 | 16.4 | 1.6 | 3.4 | 5.8 | not yet | 3.08 | 2,048 so far; about 4,994 projected |
 | `lotus` | Quadro RTX 6000 | 24.1 | 2.3 | 4.7 | 9.5 | 18.8 | 4.60 | all four; about 5,018 projected |
-| `affogato11` | RTX 2080 Ti | 10.9 | 2.3 | not yet | not yet | not yet | 4.58 | 512 so far; about 2,150 projected |
+| `affogato11` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | not yet | 4.60 | 2,048 so far; about 2,140 projected |
 | `ai01-04_lynx10` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
 | `ai06` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
 | `cheetah03` | RTX 2080 Ti | 10.9 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 measured; 4,096 does not fit |
@@ -319,28 +321,41 @@ Memory grows in proportion to the copy count — doubling the copies doubles the
 
 ![peak memory](plots/peak_memory.png)
 
-## 8. How firm these numbers are
+## 8. What a run pays before its first iteration
 
-Across all 202 measured cells the middle half of the timing rounds sat within 0.09% of the median in the typical cell, within 0.54% in the worst 5%, and never worse than 1.11%. 202 of 202 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
+The throughput figures above are steady-state: compilation and warm-up are discarded before any timing starts. A real run pays them once, and at large copy counts they are not small.
 
-## 9. What is still missing
+| copies | building the trainer<br>(seconds) | compiling the iteration<br>(seconds) | total before the<br>first iteration | iterations that time would<br>buy on an H100 |
+|---|---|---|---|---|
+| 512 | 33 | 27 | 60 | 8,339 |
+| 1024 | 58 | 26 | 84 | 7,335 |
+| 2048 | 112 | 30 | 142 | 6,793 |
+| 4096 | 216 | 39 | 255 | 6,367 |
+
+More processors do not shorten it. At 4,096 copies the build took 208 s on 8, 220 s on 16, 196 s on 22, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
+
+This is a fixed cost, so it decides whether splitting work across cards pays. Two jobs of 2,048 copies each pay the setup twice; one job of 4,096 pays it once. It also sets a floor under how short a useful run can be — at 4,096 copies the setup alone is about four minutes before a single environment step is taken.
+
+## 9. How firm these numbers are
+
+Across all 211 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.53% in the worst 5%, and never worse than 1.11%. 211 of 211 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
+
+## 10. What is still missing
 
 These jobs have not reported. Jobs pinned to a busy node stay queued on purpose and are collected when the node frees.
 
-- `serval03` at 8 processors (H100 NVL, partition gpu)
-- `serval03` at 16 processors (H100 NVL, partition gpu)
-- `serval03` at 32 processors (H100 NVL, partition gpu)
-- `cheetah01` at 28 processors (A100, partition gpu)
-- `cheetah08-09` at 16 processors (RTX A4000, partition gpu)
-- `cheetah08-09` at 32 processors (RTX A4000, partition gpu)
-- `jaguar02` at 8 processors (A16, partition gpu)
-- `jaguar02` at 16 processors (A16, partition gpu)
-- `jaguar02` at 30 processors (A16, partition gpu)
-- `affogato11` at 16 processors (RTX 2080 Ti, partition gpu)
-- `affogato11` at 30 processors (RTX 2080 Ti, partition gpu)
-- `jaguar05` at 8 processors (Quadro RTX 4000, partition gpu)
-- `jaguar05` at 14 processors (Quadro RTX 4000, partition gpu)
-- `ai05_ai10` at 30 processors (GTX 1080, partition gnolim)
-- `jinx01-02` at 22 processors (GTX 1080, partition gnolim)
-- `titanx03` at 16 processors (Titan X, partition gnolim)
-- `titanx03` at 22 processors (Titan X, partition gnolim)
+- `serval03` at 8 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `serval03` at 16 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `serval03` at 32 processors (H100 NVL, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `cheetah01` at 28 processors (A100, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `cheetah08-09` at 16 processors (RTX A4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `cheetah08-09` at 32 processors (RTX A4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `jaguar02` at 8 processors (A16, partition gpu) — **this card is measured nowhere else**
+- `jaguar02` at 16 processors (A16, partition gpu) — **this card is measured nowhere else**
+- `jaguar02` at 30 processors (A16, partition gpu) — **this card is measured nowhere else**
+- `affogato11` at 16 processors (RTX 2080 Ti, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `affogato11` at 30 processors (RTX 2080 Ti, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `jaguar05` at 8 processors (Quadro RTX 4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `jaguar05` at 14 processors (Quadro RTX 4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
+- `ai05_ai10` at 30 processors (GTX 1080, partition gnolim) — this card is already measured on another node class, so the gap is the host processor only
+- `titanx03` at 22 processors (Titan X, partition gnolim) — this card is already measured on another node class, so the gap is the host processor only

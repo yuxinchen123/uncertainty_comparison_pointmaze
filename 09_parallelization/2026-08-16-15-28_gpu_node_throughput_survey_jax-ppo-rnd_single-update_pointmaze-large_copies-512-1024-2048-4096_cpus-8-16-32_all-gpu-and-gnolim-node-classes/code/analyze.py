@@ -301,6 +301,51 @@ def memory_figure(classes, jobs):
     plt.close(fig)
 
 
+def startup_table(jobs):
+    """What a run pays before its first iteration, and whether processors shorten it.
+
+    Two separate costs: building the trainer (host-side, one orthogonal weight draw per copy per
+    layer) and compiling the iteration (once per copy count). Neither is part of the throughput
+    figures — both are discarded before timing — but both are part of a real run's wall clock.
+    """
+    build, compile_, by_cpus = {}, {}, {}
+    for job in jobs.values():
+        for cell in job["cells"]:
+            if cell.get("status") != "measured":
+                continue
+            build.setdefault(cell["n_copies"], []).append(cell["build_seconds"])
+            compile_.setdefault(cell["n_copies"], []).append(cell["compile_seconds"])
+            by_cpus.setdefault((cell["n_copies"], cell["visible_cpus"]), []).append(
+                cell["build_seconds"])
+    lines = ["| copies | building the trainer<br>(seconds) | compiling the iteration<br>"
+             "(seconds) | total before the<br>first iteration | iterations that time would<br>"
+             "buy on an H100 |",
+             "|---|---|---|---|---|"]
+    # the H100's own iteration time at each copy count, to say what the setup is worth in work
+    h100 = {c["n_copies"]: c["seconds_per_iteration"]
+            for (name, _), job in jobs.items() if name == "serval06-09"
+            for c in job["cells"] if c.get("status") == "measured"}
+    for n_copies in sorted(build):
+        b, c = float(np.median(build[n_copies])), float(np.median(compile_[n_copies]))
+        worth = f"{(b + c) / h100[n_copies]:,.0f}" if n_copies in h100 else "N/A"
+        lines.append(f"| {n_copies} | {b:.0f} | {c:.0f} | {b + c:.0f} | {worth} |")
+    return "\n".join(lines), by_cpus
+
+
+def startup_by_processors(by_cpus, n_copies=4096):
+    """Whether more processors shorten the build — one sentence, from the measurements."""
+    rows = sorted((cpus, float(np.median(v))) for (n, cpus), v in by_cpus.items()
+                  if n == n_copies and len(v) >= 1)
+    if len(rows) < 2:
+        return ""
+    listed = ", ".join(f"{seconds:.0f} s on {cpus}" for cpus, seconds in rows)
+    return (f"More processors do not shorten it. At {n_copies:,} copies the build took "
+            f"{listed} processors — the same time throughout, because the weights are drawn one "
+            "copy at a time in a single-threaded loop on the host, so the work never reaches "
+            "the other processors. It is the one part of a run that would gain from being "
+            "vectorised across copies rather than looped.")
+
+
 def where_to_send_a_run(classes, jobs):
     """The survey's practical answer: per copy count, the fastest card and what it costs.
 
@@ -398,14 +443,25 @@ def stability_summary(jobs):
 
 
 def missing_cells(classes, jobs):
-    """Every cell the survey still owes, so the report never reads as if it covered everything."""
+    """Every cell the survey still owes, and whether its card is covered elsewhere anyway.
+
+    A missing class does not always leave a gap: `serval03` carries the same H100 NVL as
+    `serval06-09` and differs only in its host processor, which section 6 shows does not move
+    the number. Saying so keeps a queued job from reading as an untested card.
+    """
+    measured_cards = {(c["display_name"], c["gpu_mem_mb"]) for c in classes
+                      if any((c["name"], n) in jobs for n in cpu_counts_for(c))}
     missing = []
     for cls in classes:
+        covered = (cls["display_name"], cls["gpu_mem_mb"]) in measured_cards
         for cpus in cpu_counts_for(cls):
             if (cls["name"], cpus) in jobs:
                 continue
+            note = (" — this card is already measured on another node class, so the gap is the "
+                    "host processor only" if covered else
+                    " — **this card is measured nowhere else**")
             missing.append(f"`{cls['name']}` at {cpus} processors "
-                           f"({cls['display_name']}, partition {cls['partition']})")
+                           f"({cls['display_name']}, partition {cls['partition']}){note}")
     return missing
 
 
@@ -425,6 +481,8 @@ def main():
                 if c.get("status", "").startswith(("out_of_memory", "not_attempted_smaller")))
     missing = missing_cells(classes, jobs)
     now = display_time(datetime.now().astimezone().isoformat())
+    startup_rows, by_cpus = startup_table(jobs)
+    startup_note = startup_by_processors(by_cpus)
 
     out = [
         "# Throughput of the single-update JAX PPO+RND trainer on every graphics card of "
@@ -488,7 +546,11 @@ def main():
     for n_copies in COPY_COUNTS:
         out += [f"## 4.{COPY_COUNTS.index(n_copies) + 1} {n_copies} copies", "",
                 "Each class at whichever of its processor counts ran fastest. Best value in "
-                "bold, second best underlined; the table is sorted by the aggregate rate.",
+                "bold, second best underlined; the table is sorted by the aggregate rate. "
+                "Taking the fastest of a class's three processor counts flatters each row a "
+                "little, since it is the smallest of three timings of what section 6 shows to "
+                "be the same quantity; the effect is under 1%, which is the size of the gap "
+                "between the processor counts themselves.",
                 "", throughput_table(classes, jobs, n_copies), "",
                 f"![cards at {n_copies} copies](plots/card_ranking_copies-{n_copies}.png)", ""]
 
@@ -530,11 +592,26 @@ def main():
         "",
         "![peak memory](plots/peak_memory.png)",
         "",
-        "## 8. How firm these numbers are",
+        "## 8. What a run pays before its first iteration",
+        "",
+        "The throughput figures above are steady-state: compilation and warm-up are discarded "
+        "before any timing starts. A real run pays them once, and at large copy counts they are "
+        "not small.",
+        "",
+        startup_rows,
+        "",
+        startup_note,
+        "",
+        "This is a fixed cost, so it decides whether splitting work across cards pays. Two jobs "
+        "of 2,048 copies each pay the setup twice; one job of 4,096 pays it once. It also sets "
+        "a floor under how short a useful run can be — at 4,096 copies the setup alone is about "
+        "four minutes before a single environment step is taken.",
+        "",
+        "## 9. How firm these numbers are",
         "",
         stability_summary(jobs),
         "",
-        "## 9. What is still missing",
+        "## 10. What is still missing",
         "",
     ]
     if missing:
