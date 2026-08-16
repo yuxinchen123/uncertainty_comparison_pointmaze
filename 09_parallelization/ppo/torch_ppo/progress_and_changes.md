@@ -219,6 +219,33 @@ written to memory, and memory traffic is what the iteration costs. JAX also hold
 these sizes (9.0 GB against 13.8 at 4,096 copies with sixteen updates), because the PyTorch
 trainer stores the frozen target's features and a second copy of the permuted batch.
 
+### The three changes, and what they bought
+
+| # | change | verdict |
+|---|---|---|
+| 21 | Pad every parameter window and the per-copy row to a multiple of four numbers, so every copy's parameters start on a sixteen-byte boundary and the multiplication library uses its four-at-a-time kernels instead of its scalar-load ones. Ten extra numbers per copy, never read: nothing writes a gradient into the padding, so its Adam step is exactly zero and it adds exactly zero to the gradient norm | KEEP |
+| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all nineteen gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | KEEP |
+| 23 | Stop accumulating gradients: ask autograd for them and copy them into the flat buffer in one call, which also makes the zeroing unnecessary; and compile the gradient limit separately from the Adam step, because compiled together the compiler emits one reduce-and-update program that reaches only 2.4 of the card's 3.5 TB/s where two programs reach 3.2 and 3.5 | KEEP |
+
+Measured together, both sides built by the same harness in the same session, each iteration
+waited for:
+
+| update convention | copies | before | after | faster by |
+|---|---|---|---|---|
+| one update per batch | 1,024 | 29.61 ms | 18.13 ms | 39% |
+| one update per batch | 2,048 | 48.23 ms | 32.40 ms | 33% |
+| one update per batch | 4,096 | 90.36 ms | 63.03 ms | 30% |
+| sixteen updates per batch | 1,024 | 82.24 ms | 57.00 ms | 31% |
+| sixteen updates per batch | 2,048 | 152.24 ms | 107.24 ms | 30% |
+| sixteen updates per batch | 4,096 | 290.60 ms | 206.91 ms | 29% |
+
+That is more than a repair of the round-four regression: at 1,024 copies with one update per batch
+the changed trainer is 27 percent faster than the pre-round-four build as well (18.13 against
+24.86 ms). Against the JAX trainer the distance falls from 2.06-2.08x to 1.27-1.44x with one
+update per batch, and from 1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits and was
+measured: 121.8 ms with one update per batch (29.5 GB) and 407.0 ms with sixteen (27.4 GB), on a
+94 GB card.
+
 ### Ideas costed and NOT taken, with the arithmetic that rejected them
 
 Recorded because the counting is the result, and because two of them look obviously right until
