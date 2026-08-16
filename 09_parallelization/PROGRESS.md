@@ -50,6 +50,22 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 - Round 3 (2026-08-15, afternoon): learning-rate sweep across copy groups, +1.0% against a
   uniform run and 1.84x faster than running the groups separately; demonstration run recovers
   the expected best rate.
+- Round 4 (2026-08-15, afternoon): close the distance to the JAX trainer at 8 to 128 copies —
+  one flat parameter buffer and one shuffle per epoch, 20.4 -> 16.3 ms at 128 copies, with a
+  1.1% loss at 512 copies recorded as the one size where it was a loss.
+- Round 5 (2026-08-15, evening): re-open the question at the copy counts the trainer is
+  actually used at, 1,024 to 4,096. Two findings before any change was made. First, the regime
+  is different: at 128 copies the iteration's cost is the number of device programs it issues,
+  at 1,024 and above it is the number of bytes it moves, and every individual program is
+  already at 71 to 100 percent of the bandwidth the card delivers. Second, round four is a
+  REGRESSION at these sizes — 19.2% slower at 1,024 copies with one update per batch, 7.1% with
+  sixteen, 5.8% at 4,096 with sixteen, each measured against its own predecessor revision — 
+  because packing the nineteen parameter windows tightly left every copy's parameters off a
+  sixteen-byte boundary and the multiplication library fell back to its scalar-load kernels.
+  Three exact changes followed: pad the windows; add each layer's bias after the multiplication
+  rather than folding it in; write gradients into the flat buffer instead of accumulating into
+  it, and compile the gradient limit separately from the Adam step. Head to head at 4,096
+  copies with one update per batch, before this round: PyTorch 90.4 ms against JAX 43.8.
 
 ## State notes (newest first)
 
