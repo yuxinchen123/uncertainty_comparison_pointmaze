@@ -116,8 +116,31 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
     print("ok test_gradients_land_in_the_flat_buffer_without_accumulating")
 
 
+def test_every_parameter_window_is_aligned():
+    """Every parameter and gradient window starts on a sixteen-byte boundary, for every copy.
+
+    This is what lets the matrix-multiply library use its four-numbers-at-a-time kernels. It
+    holds only if BOTH each window's offset and the per-copy row length are multiples of four
+    numbers, so the test checks the second copy's addresses as well as the first: a row length
+    that is not a multiple of four passes a check on copy 0 and fails on every other copy.
+    """
+    t = PPORND(PPOConfig(**SMALL), device="cpu")
+    per_copy = t._flat.shape[1]
+    assert per_copy % 4 == 0, f"the per-copy row is {per_copy} numbers, not a multiple of four"
+    for w, g in zip(t.trainable, t.grad_windows):
+        for tensor, what in ((w, "parameter"), (g, "gradient")):
+            for copy in range(min(2, tensor.shape[0])):
+                offset = ((tensor[copy].data_ptr() - t._flat.data_ptr())
+                          // t._flat.element_size())
+                assert (tensor[copy].data_ptr() % 16 == 0), \
+                    f"{what} window {tuple(tensor.shape)} copy {copy} at number {offset} " \
+                    f"is not on a sixteen-byte boundary"
+    print("ok test_every_parameter_window_is_aligned")
+
+
 if __name__ == "__main__":
     test_same_seed_bit_identical()
     test_copy_isolation()
     test_finite_and_learns_predictor()
     test_gradients_land_in_the_flat_buffer_without_accumulating()
+    test_every_parameter_window_is_aligned()
