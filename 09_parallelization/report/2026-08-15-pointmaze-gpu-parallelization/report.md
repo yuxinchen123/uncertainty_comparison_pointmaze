@@ -38,7 +38,7 @@ what each round changed, then the training campaign and the sweep.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:15 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:16 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -855,6 +855,7 @@ same trainer with this round's changes; the JAX trainer is unchanged by this rou
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
+| JAX | 1024 | 14.2 | **36.81** | 35.9 | 0.008 | 3.4 |
 | PyTorch before | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
 | PyTorch before | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
 

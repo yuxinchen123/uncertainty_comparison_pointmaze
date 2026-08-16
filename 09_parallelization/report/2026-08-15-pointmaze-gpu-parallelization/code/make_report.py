@@ -1854,6 +1854,31 @@ that the spread between two runs of the same side gives the noise floor.
                + throughput_table([("PyTorch before", small["before A"]),
                                    ("PyTorch after", small["after A"])],
                                   "full_batch", [8, 32, 128, 512]) + "\n\n")
+    md += """### What was considered and not done, with the arithmetic that decided it
+
+Three further ideas were costed against the byte counts above and rejected without being built.
+Recording them is the point: two of them look obviously right until the bytes are counted.
+
+1. **Recompute the frozen RND target's features in every update step instead of storing them.**
+   This is what the JAX trainer does, and at these sizes it looks like the better trade, because
+   storing them spends memory traffic to save arithmetic and memory traffic is the constraint.
+   Counted per copy per iteration, storing costs 0.26 megabytes to write the features, 2.1 to
+   permute them once per epoch and 1.0 to read them across the sixteen steps: about 3.4 in total.
+   Recomputing stores nothing but writes and reads a 256-wide intermediate in every one of the
+   sixteen steps, about 6.4 megabytes, plus the target's own weights sixteen times. Storing wins
+   by nearly a factor of two.
+2. **Process the copies in groups small enough that a group's parameters, moments and gradients
+   stay in the 50-megabyte cache across all sixteen update steps.** That would remove fifteen
+   sixteenths of the parameter traffic, which is about a third of an iteration — by far the
+   largest remaining saving. A copy's working set is about 1.65 megabytes, so a group that fits
+   the cache holds about thirty copies, and a program with thirty pieces of work cannot fill the
+   card's 132 processing blocks. The two requirements cannot both be met at this network size.
+3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the nine
+   passes the optimiser makes, about 5 percent of an update step. It changes what the trainer
+   computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
+   rather than in this one.
+
+"""
     return md
 
 
