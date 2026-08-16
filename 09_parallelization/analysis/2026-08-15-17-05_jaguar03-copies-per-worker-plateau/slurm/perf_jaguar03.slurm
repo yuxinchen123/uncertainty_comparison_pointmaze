@@ -38,34 +38,42 @@ echo "host $(hostname), $(nproc) processors visible, started $(date)"
   perf list 2>/dev/null | grep -iE "cache|l3|dram|memory|umc|data.fabric" | head -60
 } > "$RUN/logs/perf_events.txt" 2>&1
 
-# --- one counting window per configuration: start the load, let it settle, count for 30 seconds
+# --- one counting window per configuration: start the load, let it settle, count for 30 seconds.
+# --- Two counting passes with different event groups, so an event this kernel does not expose
+# --- costs only its own group rather than the whole measurement. The second group is the address
+# --- translation caches, which are the suspect once the memory system has been ruled out: a
+# --- worker holding hundreds of megabytes has far more pages than the translation cache holds.
 window () {
-  # goal: run one training configuration and count the whole machine while it is in steady state
-  local procs="$1" copies="$2" style="$3" iters="$4"
-  echo "===== procs=$procs copies=$copies style=$style iters=$iters $(date -Iseconds) =====" \
-    >> "$OUT"
-  $PY -u $LADDER --ladder "$copies" --procs "$procs" --style "$style" \
-    --tag "_perfload_p${procs}_c${copies}" --results-min-copies 999999 \
-    --est-first 2.0 > "$RUN/logs/perfload_p${procs}_c${copies}_${style}.log" 2>&1 &
+  # goal: run one training configuration and count the whole machine while it is in steady state.
+  # The fourth argument is the seconds-per-iteration estimate the sweep uses to choose how many
+  # iterations to time; it is set per setting here so that every load lasts comfortably longer
+  # than the ninety seconds of counting that follow it.
+  local procs="$1" copies="$2" style="$3" est="$4"
+  echo "===== procs=$procs copies=$copies style=$style est=$est $(date -Iseconds) =====" >> "$OUT"
+  $PY -u $LADDER --copies "$copies" --procs-list "$procs" --styles "$style" \
+    --tag "_perfload_p${procs}_c${copies}" --write-results 0 \
+    --est-first "$est" > "$RUN/logs/perfload_p${procs}_c${copies}_${style}.log" 2>&1 &
   local load=$!
-  sleep 45
+  sleep 30
+  echo "--- group 1: cache and instruction counts ---" >> "$OUT"
   perf stat -a -e cache-misses,cache-references,instructions,cycles,page-faults \
-    -- sleep 30 >> "$OUT" 2>&1 || echo "perf failed for procs=$procs copies=$copies" >> "$OUT"
+    -- sleep 20 >> "$OUT" 2>&1 || echo "group 1 unavailable" >> "$OUT"
+  echo "--- group 2: address translation ---" >> "$OUT"
+  perf stat -a -e dTLB-load-misses,dTLB-loads,dTLB-store-misses,dTLB-stores \
+    -- sleep 20 >> "$OUT" 2>&1 || echo "group 2 unavailable" >> "$OUT"
+  echo "--- group 3: stalls ---" >> "$OUT"
+  perf stat -a -e stalled-cycles-backend,stalled-cycles-frontend,cycles,instructions \
+    -- sleep 20 >> "$OUT" 2>&1 || echo "group 3 unavailable" >> "$OUT"
   wait $load || echo "load exited non-zero for procs=$procs copies=$copies" >> "$OUT"
 }
 
-# --- one worker alone on the node: the traffic one worker makes with nothing competing
-window 1 1 full_batch 60
-window 1 16 full_batch 60
-window 1 128 full_batch 20
+# --- one worker alone on the node: what one worker does with nothing competing
+window 1 64 full_batch 0.6
 
-# --- the full machine at three rungs of the ladder, one update per batch
-window 224 1 full_batch 90
-window 224 16 full_batch 60
-window 224 128 full_batch 20
-
-# --- the same full machine with sixteen updates per batch, which touches the parameters sixteen
-# --- times per iteration instead of once
-window 224 16 epoch_minibatch 40
+# --- the full machine at three rungs of the ladder, one update per batch: below the peak, at it,
+# --- and past it, so the counters can be compared across the turn
+window 112 16 full_batch 0.4
+window 112 64 full_batch 0.6
+window 112 256 full_batch 7.5
 
 echo "CPU_PLATEAU_PERF_DONE $(date)"
