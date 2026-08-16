@@ -1977,7 +1977,7 @@ def sec_large_scale_changes():
     prior_rows = [(n, ab(p)) for n, p in prior]
     prior_md = ""
     if any(d for _, d in prior_rows):
-        prior_md = ("### The previous round, measured where the trainer is used\n\n"
+        prior_md = ("### Round four, measured where the trainer is used\n\n"
                     "The previous round was decided at 8 to 128 copies and recorded a 1.1 percent "
                     "loss at 512 as the single size where it was a loss. Measured against its own "
                     "predecessor at the sizes in use, with both sides pinned to their revisions:\n"
@@ -1995,7 +1995,7 @@ def sec_large_scale_changes():
     if not any(d for _, d in got):
         return prior_md + pending("large-copy-count changes",
                                   "the round-five paired comparisons")
-    md = prior_md + """### What was changed
+    md = prior_md + """### Round five: what was changed
 
 Three changes, all of them removing passes over memory, none of them changing what the trainer
 computes.
@@ -2076,7 +2076,7 @@ that the spread between two runs of the same side gives the noise floor.
              "after B": throughput_rows(
                  r"trainbench_torch_epoch_minibatch_after_r5_styleB_small")}
     if small["after B"]:
-        md += ("### The small sizes, re-measured\n\nThe previous round's loss at 512 copies was "
+        md += ("### Round five: the small sizes, re-measured\n\nThe previous round's loss at 512 copies was "
                "found only because the sizes it had not optimised for were measured afterwards, "
                "so the same check is repeated here in the other direction.\n\n"
                "**Sixteen updates per batch.**\n\n"
@@ -2087,7 +2087,7 @@ that the spread between two runs of the same side gives the noise floor.
                + throughput_table([("PyTorch before", small["before A"]),
                                    ("PyTorch after", small["after A"])],
                                   "full_batch", [8, 32, 128, 512]) + "\n\n")
-    md += """### Whether the three changes changed what the trainer computes
+    md += """### Round five: whether the three changes changed what the trainer computes
 
 The rule for the round was that they must not. Two of them are exactly neutral and one needs a
 sentence.
@@ -2117,7 +2117,7 @@ more consistent with its own setting rather than quietly less accurate. A run th
 single precision throughout has always had to turn that setting off, and with it off the
 alignment is exactly neutral.
 
-### What was considered and not done, with the arithmetic that decided it
+### Round five: what was considered and not done, with the arithmetic that decided it
 
 Three further ideas were costed against the byte counts above and rejected without being built.
 Recording them is the point: two of them look obviously right until the bytes are counted.

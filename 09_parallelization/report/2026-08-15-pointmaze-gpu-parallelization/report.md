@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:54 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:55 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -961,8 +961,6 @@ that distinction, and one change kept in an earlier round on the strength of 8-t
 turned out to be a loss at 1,024 and above. Every change below is therefore measured at both ends
 of the range before it is kept.
 
-**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as these two rounds found it and 63 after their changes, against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
-
 ### Where an iteration's time goes as the copy count grows
 
 | phase | 128 copies | 1,024 copies | 4,096 copies |
@@ -997,13 +995,11 @@ was changing while it was measured, and those figures are superseded here.
 |---|---|---|---|---|---|---|
 | PyTorch before round five | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
 | PyTorch after round six | 1024 | 18.1 | <u>29.01</u> | 28.3 | 0.010 | 3.8 |
-| JAX | 1024 | 14.2 | **36.89** | 36.0 | 0.008 | 9.1 |
+| JAX | 1024 | 14.2 | **36.95** | 36.1 | 0.008 | 3.4 |
 | PyTorch before round five | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
-| PyTorch after round six | 2048 | 32.6 | <u>32.20</u> | 15.7 | 0.018 | 7.5 |
-| JAX | 2048 | 23.3 | **45.07** | 22.0 | 0.013 | 9.1 |
+| PyTorch after round six | 2048 | 32.6 | **32.20** | 15.7 | 0.018 | 7.5 |
 | PyTorch before round five | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
-| PyTorch after round six | 4096 | 63.3 | <u>33.11</u> | 8.1 | 0.034 | 14.8 |
-| JAX | 4096 | 43.7 | **48.01** | 11.7 | 0.024 | 13.4 |
+| PyTorch after round six | 4096 | 63.3 | **33.11** | 8.1 | 0.034 | 14.8 |
 
 **Sixteen updates per batch.**
 
@@ -1078,7 +1074,7 @@ at this size it says only that the shapes are small, not that there is room in t
 
 One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
 
-### The previous round, measured where the trainer is used
+### Round four, measured where the trainer is used
 
 The previous round was decided at 8 to 128 copies and recorded a 1.1 percent loss at 512 as the single size where it was a loss. Measured against its own predecessor at the sizes in use, with both sides pinned to their revisions:
 
@@ -1090,7 +1086,7 @@ The previous round was decided at 8 to 128 copies and recorded a 1.1 percent los
 
 A positive number means the previous round made it slower. The 512-copy loss was not an isolated size but the start of a trend, and the first of this round's changes is its repair.
 
-### What was changed
+### Round five: what was changed
 
 Three changes, all of them removing passes over memory, none of them changing what the trainer
 computes.
@@ -1148,7 +1144,7 @@ The three together, at the sizes in use and at the small ones the earlier rounds
 | 128 copies,<br>sixteen updates per batch | 16.18 ms | 12.54 ms | -3.64 ms (-22.5 percent) | 0.03 ms |
 | 8 copies,<br>sixteen updates per batch | 9.32 ms | 7.96 ms | -1.37 ms (-14.7 percent) | 0.09 ms |
 
-### The small sizes, re-measured
+### Round five: the small sizes, re-measured
 
 The previous round's loss at 512 copies was found only because the sizes it had not optimised for were measured afterwards, so the same check is repeated here in the other direction.
 
@@ -1178,7 +1174,7 @@ The previous round's loss at 512 copies was found only because the sizes it had 
 | PyTorch before | 512 | 17.5 | 15.02 | 29.3 | 0.009 | 2.1 |
 | PyTorch after | 512 | 11.2 | **23.33** | 45.6 | 0.006 | 2.3 |
 
-### Whether the three changes changed what the trainer computes
+### Round five: whether the three changes changed what the trainer computes
 
 The rule for the round was that they must not. Two of them are exactly neutral and one needs a
 sentence.
@@ -1208,7 +1204,7 @@ more consistent with its own setting rather than quietly less accurate. A run th
 single precision throughout has always had to turn that setting off, and with it off the
 alignment is exactly neutral.
 
-### What was considered and not done, with the arithmetic that decided it
+### Round five: what was considered and not done, with the arithmetic that decided it
 
 Three further ideas were costed against the byte counts above and rejected without being built.
 Recording them is the point: two of them look obviously right until the bytes are counted.
@@ -1447,8 +1443,6 @@ rather than attempted at the end of a round.
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
 | one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
-| one update per batch | 2048 | 32.6 ms | 23.3 ms | 1.40 |
-| one update per batch | 4096 | 63.3 ms | 43.7 ms | 1.45 |
 | sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
 | sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.25 |
 | sixteen updates per batch | 4096 | 205.5 ms | 168.7 ms | 1.22 |
