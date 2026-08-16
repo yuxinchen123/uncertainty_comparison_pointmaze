@@ -80,7 +80,14 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   to unroll; measured at these sizes the JAX round is worth nothing on its own side either
   (within a percent of its pre-round figures at 1,024 to 4,096), which is the same regime split
   seen from the other direction. A kernel-level profile at 4,096 copies then chose three changes,
-  all of them removing passes over memory that round five's own work had created.
+  all of them removing passes over memory that round five's own work had created. Measured end to
+  end against the revision it started from: -1.7% at 8 copies, -3.1% at 128, -4.9% at 512 and
+  -7.0% at 4,096 with sixteen updates per batch, and no size slower. Against JAX at 1,024 to
+  4,096, the distance falls from about 1.22x to about 1.13x with sixteen updates per batch. Two
+  of the changes reverse sign with the copy count, so the trainer chooses the form from it. The
+  round's own hypothesis — that PyTorch could be made to fold its element-wise work into its
+  multiplications the way the JAX compiler does — is answered NO: forcing the generated kernels
+  that would fuse an epilogue is 45.6% slower.
 
 ## State notes (newest first)
 
