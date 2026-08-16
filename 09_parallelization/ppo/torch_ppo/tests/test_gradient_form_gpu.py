@@ -56,11 +56,13 @@ def one_step(form):
     batch = t.rollout()
     loss = t._loss_fn(batch, style_a=False)
     grads = t._backward(loss)
-    before = t._flat.detach().clone()
+    # the parameters are snapshotted as separate tensors, not as the flat buffer: the forms no
+    # longer lay that buffer out the same way, and what has to agree is the parameters
+    before = [w.detach().clone() for w in t.param_windows]
     t._clip_per_copy_and_step(grads)
     used = [g.detach().clone() for g in
             (t.grad_windows if t.cfg.gradient_buffer else grads)]
-    return {"trainer": t, "params": [p.detach().clone() for p in t.param_windows],
+    return {"trainer": t, "params": [w.detach().clone() for w in t.param_windows],
             "before": before, "grads": used, "scale": t._scale.detach().clone()}
 
 
@@ -71,7 +73,8 @@ def main():
 
     # 3. every form started from the same weights, used the same gradients, and moved something
     for name, r in got.items():
-        assert torch.equal(ref["before"], r["before"]), f"{name} started from other weights"
+        assert all(torch.equal(a, b) for a, b in zip(ref["before"], r["before"])), \
+            f"{name} started from other weights"
         worst = max((a - b).abs().max().item() for a, b in zip(ref["grads"], r["grads"]))
         assert worst == 0.0, f"{name} produced different gradients ({worst:.3e})"
     assert got["copy then measure"]["trainer"]._flat_grad is not None, "no buffer was built"
@@ -79,7 +82,8 @@ def main():
     assert got["no buffer"]["trainer"]._flat_grad is None, "the no-buffer form holds a buffer"
     assert got["copy and measure"]["trainer"]._scale_fn is None, \
         "the fused form still runs a separate gradient-limit program"
-    moved = (ref["trainer"]._flat - ref["before"]).abs().max().item()
+    moved = max((a - b).abs().max().item()
+                for a, b in zip(ref["params"], ref["before"]))
     assert moved > 0, "the optimizer did not move the parameters, so nothing was compared"
     print(f"parameters moved by {moved:.3e}")
 
