@@ -1523,7 +1523,7 @@ def throughput_table(named_tables, style, copies=None):
             elif len(ranked) > 2 and r["total"] == ranked[1]:
                 cell = f"<u>{cell}</u>"
             md.append(f"| {name} | {c} | {r['ms']:.1f} | {cell} | {r['per_copy']:.1f} | "
-                      f"{r['hours']:.1f} | {r['vram']:.1f} |")
+                      f"{r['hours']:.3f} | {r['vram']:.1f} |")
     return "\n".join(md)
 
 
@@ -1609,6 +1609,154 @@ same trainer with this round's changes; the JAX trainer is unchanged by this rou
            "rate rises with the copy count while the rate each individual copy gets falls, so the "
            "hours column is the one that says how long a single training run actually takes.*\n\n")
     md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
+    md += sec_large_scale_limit()
+    md += sec_large_scale_changes()
+    return md
+
+
+def probe_row(pattern, name_fragment):
+    """One measured operation from an operation probe, matched by a fragment of its name."""
+    d = newest(pattern)
+    if not d:
+        return None
+    for r in d["rows"]:
+        if name_fragment in r["name"]:
+            return r
+    return None
+
+
+def sec_large_scale_limit():
+    """What sets the cost of an iteration at 4,096 copies, in bytes rather than operations."""
+    ref = probe_row(r"probe_update_ops_C4096", "copy one gibibyte")
+    adam = probe_row(r"probe_update_ops_C4096", "clip and Adam, compiled")
+    adam_eager = probe_row(r"probe_update_ops_C4096", "clip and Adam, eager")
+    if not ref:
+        return pending("large-copy-count limit", "the operation probe at 4,096 copies")
+    sys.path.insert(0, str(BASE / "benchmarks"))
+    import count_traffic as ct
+    counts = ct.counts("epoch_minibatch")
+    C = 4096
+    traffic = sum(v[1] for v in counts.values()) * C
+    arithmetic = sum(v[0] for v in counts.values()) * C
+    measured = (newest(r"profile_phases_C4096(?!.*preround)") or {}).get("one_graph_us", 0) / 1e6
+    achieved = traffic / measured if measured else 0.0
+    # the isolated matrix-multiply floor: every multiplication of the update stage timed on its
+    # own and summed. Reported for the update stage only — for the rollout the same instrument
+    # measures a four-row multiplication whose cost is dominated by the fixed cost of issuing it,
+    # so its "floor" comes out larger than the rollout actually takes inside a recorded sequence.
+    mm = newest(r"matmul_floor_scaled")
+    mmfloor = ""
+    if mm:
+        row = next((r for r in mm["rows"] if r["n_copies"] == 4096), None)
+        upd = (newest(r"profile_phases_C4096(?!.*preround)") or {}).get("phases_us", {})
+        upd_ms = next((v / 1e3 for k, v in upd.items() if k.startswith("update")), 0.0)
+        if row and upd_ms:
+            floor_ms = row["update_styleB"]["seconds"] * 1e3
+            mmfloor = (
+                f"\nThe same conclusion from the other side: every matrix multiplication of the "
+                f"update stage, timed on its own and summed, comes to {floor_ms:.0f} milliseconds "
+                f"at 4,096 copies, against {upd_ms:.0f} measured for the stage. One third of the "
+                f"stage is the multiplications; the other two thirds is moving activations, "
+                f"gradients and optimiser state between them.\n")
+
+    layers = [("actor and critic first layer, packed", "actor+critic layer 1"),
+              ("actor second layer", "actor layer 2"),
+              ("critic second layer", "critic layer 2"),
+              ("RND predictor first layer", "predictor layer 1"),
+              ("RND predictor second layer", "predictor layer 2"),
+              ("RND predictor third layer", "predictor layer 3")]
+    md = f"""### What limits the PyTorch trainer at 4,096 copies
+
+The ceiling section earlier in this document analysed the trainer at 128 copies and concluded that
+it was limited by the number of separate device programs it issues, not by arithmetic and not by
+memory traffic. At 4,096 copies that conclusion no longer holds. Three measurements say so.
+
+**First, arithmetic cannot be the constraint.** One iteration with sixteen updates per batch
+performs {arithmetic/1e12:.2f} million million floating-point operations, a figure that follows
+from the network shapes and is exact. Counting every tensor the iteration writes and every time a
+later operation reads it gives at least {traffic/1e9:.0f} gigabytes of memory traffic, which is a
+lower bound because it does not count intermediates the compiler has to materialise. The ratio is
+therefore at most {arithmetic/traffic:.1f} operations per byte. The card balances at about 106
+operations per byte when its matrix units are used and about 15 when they are not, so this
+computation sits far on the memory side of the balance whatever is done to it.
+
+**Second, the card's real bandwidth is {ref['gb_per_s']:,.0f} gigabytes per second**, measured by
+copying a gibibyte rather than quoted from the specification, which says 3,900.
+
+**Third, the operations the iteration is made of already run close to that rate.** Each was timed
+on its real shape at 4,096 copies:
+
+| operation | time | bytes | rate reached |
+|---|---|---|---|
+"""
+    for label, frag in layers:
+        r = probe_row(r"probe_update_ops_C4096", f"bmm alone, {frag}")
+        if r:
+            md += (f"| multiply, {label} | {r['seconds']*1e6:.0f} us | {r['bytes']/1e9:.2f} GB | "
+                   f"{r['gb_per_s']:,.0f} GB/s |\n")
+    for label, frag in [("gradient limit and Adam step, compiled", "clip and Adam, compiled"),
+                        ("gather one epoch's rows", "gather the cached target features"),
+                        ("plain copy, the reference", "copy one gibibyte")]:
+        r = probe_row(r"probe_update_ops_C4096", frag)
+        if r:
+            md += (f"| {label} | {r['seconds']*1e6:.0f} us | {r['bytes']/1e9:.2f} GB | "
+                   f"{r['gb_per_s']:,.0f} GB/s |\n")
+    md += f"""
+Nothing in that list is far from the reference. The multiplications reach 71 to 96 percent of the
+rate a plain copy gets, the optimiser's pass reaches all of it, and the one operation that is well
+below — the gather, which reads rows in a random order — is 3 percent of an iteration. So the
+iteration is not slow because any one of its programs is slow. It costs what it costs because of
+how many bytes pass through those programs.
+{mmfloor}
+**The conclusion, and what follows from it.** At 128 copies the trainer was limited by the number
+of device programs; at 4,096 copies it is limited by memory traffic, with every program already at
+or near the bandwidth the card delivers. A change that removes device programs — which is what
+every optimisation in rounds one to four did — cannot help at this size. A change that removes
+*passes over memory* can, and the three changes below are all of that kind. For comparison, the
+same iteration's arithmetic would take {arithmetic/417.5e12*1e3:.1f} milliseconds if the matrix
+units ran at their marketed rate, {arithmetic/417.5e12/measured*100:.1f} percent of the
+{measured*1e3:.0f} milliseconds measured; that figure is what the 128-copy analysis reported, and
+at this size it says only that the shapes are small, not that there is room in the arithmetic.
+
+"""
+    if adam and adam_eager:
+        md += (f"One further measurement worth recording: the optimiser's pass over the "
+               f"parameters, the moments and the gradients reaches {adam['gb_per_s']:,.0f} "
+               f"gigabytes per second compiled and {adam_eager['gb_per_s']:,.0f} uncompiled, so "
+               f"compiling it is worth a factor of "
+               f"{adam_eager['seconds']/adam['seconds']:.1f} and there is nothing left to win "
+               f"inside it.\n\n")
+    return md
+
+
+def sec_large_scale_changes():
+    """The three changes this round made, each with the paired measurement that decided it."""
+    def ab(pattern):
+        d = newest(pattern)
+        return d if d else None
+    rows = [("aligning every parameter window to sixteen bytes", r"ab_round5-align-C1024-styleB"),
+            ("adding the bias after the multiplication", r"ab_round5-bias-C1024-styleB"),
+            ("writing gradients instead of accumulating them, and splitting the gradient limit "
+             "from the Adam step", r"ab_round5-gradient-C1024-styleB")]
+    got = [(name, ab(pat)) for name, pat in rows]
+    if not any(d for _, d in got):
+        return pending("large-copy-count changes", "the round-five paired comparisons")
+    md = """### What was changed
+
+Each change was measured on its own against the revision before it, at 1,024 copies with sixteen
+updates per batch, both sides built in their own process and run in the order A B B A so that the
+spread between two runs of the same side gives the noise floor.
+
+| change | before | after | difference | noise floor |
+|---|---|---|---|---|
+"""
+    for name, d in got:
+        if not d:
+            continue
+        md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+               f"{-d['difference_ms']:+.2f} ms ({-d['relative_change_percent']:+.1f} percent) | "
+               f"{d['noise_floor_ms']:.2f} ms |\n")
+    md += "\n"
     return md
 
 
@@ -1637,12 +1785,14 @@ def main():
     fig_sweep_scaling()
     fig_sweep_vs_separate()
     fig_uniform_vs_sweep()
+    fig_large_scale()
     import section_times as st
     body = [sec_correctness(), sec_module1(), sec_module2(), sec_module3(), sec_copies(),
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
-            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4()]
+            sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
+            sec_large_scale()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]
