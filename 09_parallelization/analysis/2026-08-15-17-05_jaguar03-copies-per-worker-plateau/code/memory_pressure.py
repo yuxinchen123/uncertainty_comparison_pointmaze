@@ -107,14 +107,18 @@ def corun(train_procs, probe_procs, copies, style, iters, seconds, delay):
              + [("train", (copies, style, iters, 1))] * train_procs)
     with mp.get_context("spawn").Pool(train_procs + probe_procs) as pool:
         out = pool.map(role_worker, tasks)
+    from bench_copies_per_worker import iteration_times, median
     stream = [r for r in out if r["role"] == "stream"]
     train = [r for r in out if r["role"] == "train"]
     total = sum(r["bytes_per_sec"] for r in stream)
+    # the training workers report their iteration end stamps, not a rate; the median of their own
+    # medians is the seconds per iteration the load was running at while the stream measured
+    # before: a worker row carrying {"start": 1.0, "ends": [3.0, 5.2]}
+    # after:  that worker's iteration times [2.0, 2.2], median 2.2
     row = {"train_procs": train_procs, "probe_procs": probe_procs, "copies": copies,
            "style": style, "stream_total_gb_per_sec": total / 1e9,
            "stream_gb_per_sec_per_process": total / 1e9 / probe_procs,
-           "train_sec_per_iteration_median": sorted(
-               r["sec_per_iteration"] for r in train)[len(train) // 2],
+           "train_sec_per_iteration_median": median([median(iteration_times(r)) for r in train]),
            "train_peak_rss_mb_max": max(r["peak_rss_mb"] for r in train)}
     note(f"[corun] copies={copies} style={style} train_procs={train_procs} "
          f"probe_procs={probe_procs} stream={row['stream_gb_per_sec_per_process']:,.2f}GB/s "
