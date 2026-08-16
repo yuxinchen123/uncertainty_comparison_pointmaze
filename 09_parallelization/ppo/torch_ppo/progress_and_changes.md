@@ -165,3 +165,56 @@ shapes (`benchmarks/probe_update_ops.py`, 1,024 copies):
 The card delivers about 3.5 TB/s to a plain streaming kernel, against a specification figure of
 3.9. The compiled optimiser chain reaches 95 percent of that, so there is nothing to win inside
 it; the same chain uncompiled is 4.4 times slower, which is what `compile_opt` buys.
+
+### The previous round, re-measured where the trainer is actually used
+
+Round four kept the flat parameter buffer on the strength of 8-to-128-copy measurements and
+recorded a 1.1 percent loss at 512 copies as the one size where it was a loss. Measured against
+its own predecessor at 1,024 copies, both sides pinned to their git revisions and run in the
+order A B B A:
+
+| update convention | before round four | after round four | difference | noise floor |
+|---|---|---|---|---|
+| one update per batch | 24.86 ms | 29.64 ms | round four 19.2% slower | 0.03 ms |
+| sixteen updates per batch | 77.24 ms | 82.73 ms | round four 7.1% slower | 0.52 ms |
+
+The 512-copy loss was not an isolated size; it was the beginning of a trend that reaches nearly a
+fifth of the iteration at the sizes in use. A kernel-level profile of the round-four build at
+1,024 copies says why, and it is not the reason the round-four note guessed (memory bandwidth in
+the optimiser). Of the 31.1 milliseconds of matrix-multiplication time in one iteration,
+18.8 milliseconds were spent in the library's UNVECTORISED kernels — the ones whose names end in
+`align1`, which load one number at a time instead of four:
+
+| stage | multiplication time | of which unvectorised |
+|---|---|---|
+| rollout | 7.75 ms | 5.58 ms |
+| post-rollout | 3.26 ms | 1.17 ms |
+| update | 20.05 ms | 12.05 ms |
+
+The cause is the flat buffer's own layout, and it is arithmetic: the nineteen windows were packed
+tightly, so the per-copy row is 59,910 numbers long and several window offsets are odd multiples
+of two. A parameter's address for copy c is base + c x 59,910 x 4 bytes, which is a multiple of
+16 for almost no c, and the library selects its scalar-load kernels accordingly. Row 21 fixes it.
+
+### Ideas costed and NOT taken, with the arithmetic that rejected them
+
+Recorded because the counting is the result, and because two of them look obviously right until
+the bytes are counted.
+
+1. **Recompute the frozen RND target features in every minibatch step instead of caching them**
+   — which is what the JAX twin does, and which looks like the right trade at these sizes because
+   caching spends memory traffic to save arithmetic. Counted per copy per iteration: caching costs
+   0.26 MB to write the features, 2.1 MB to permute them once per epoch and 1.0 MB to read them
+   across the sixteen steps, about 3.4 MB. Recomputing costs nothing to store but writes and reads
+   a 256-wide hidden layer in every one of the sixteen steps, 0.26 MB each, about 6.4 MB, plus the
+   target's own weights sixteen times. Caching wins by nearly a factor of two. NOT taken.
+2. **Tile the update stage over copies so that a tile's parameters, moments and gradients stay in
+   the 50 MB cache across all sixteen minibatch steps.** That would remove fifteen sixteenths of
+   the parameter traffic, which is a third of the iteration. The per-copy working set is about
+   1.65 MB, so a tile that fits the cache holds about 30 copies — and a program with 30 pieces of
+   work cannot fill 132 processing blocks. The two constraints are irreconcilable at this network
+   size. NOT taken.
+3. **Keep the Adam moments in a narrower number format.** It would remove two of the nine passes
+   the optimiser makes, about 5 percent of a minibatch step. It changes what the trainer computes,
+   so it belongs in its own round with its own equivalence gate rather than inside a round whose
+   rule is that the arithmetic must not change. NOT taken here.

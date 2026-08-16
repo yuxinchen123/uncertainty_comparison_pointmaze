@@ -1757,6 +1757,49 @@ spread between two runs of the same side gives the noise floor.
                f"{-d['difference_ms']:+.2f} ms ({-d['relative_change_percent']:+.1f} percent) | "
                f"{d['noise_floor_ms']:.2f} ms |\n")
     md += "\n"
+
+    combined = [("the three together, 4,096 copies, sixteen updates per batch",
+                 r"ab_round5-all-C4096-styleB"),
+                ("the three together, 4,096 copies, one update per batch",
+                 r"ab_round5-all-C4096-styleA"),
+                ("the three together, 128 copies, sixteen updates per batch",
+                 r"ab_round5-all-C128-styleB"),
+                ("the three together, 8 copies, sixteen updates per batch",
+                 r"ab_round5-all-C8-styleB")]
+    have = [(n, ab(p)) for n, p in combined]
+    if any(d for _, d in have):
+        md += ("The three together, at the sizes in use and at the small ones the earlier rounds "
+               "optimised for:\n\n"
+               "| setting | before | after | difference | noise floor |\n|---|---|---|---|---|\n")
+        for name, d in have:
+            if not d:
+                continue
+            md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+                   f"{-d['difference_ms']:+.2f} ms "
+                   f"({-d['relative_change_percent']:+.1f} percent) | "
+                   f"{d['noise_floor_ms']:.2f} ms |\n")
+        md += "\n"
+
+    # the small-size check: the previous round's loss at 512 copies was found only because the
+    # sizes it did NOT optimise for were re-measured, so this round re-measures them too
+    small = {"before A": throughput_rows(r"trainbench_torch_full_batch_before_r5_styleA_small"),
+             "after A": throughput_rows(r"trainbench_torch_full_batch_after_r5_styleA_small"),
+             "before B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_before_r5_styleB_small"),
+             "after B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_after_r5_styleB_small")}
+    if small["after B"]:
+        md += ("### The small sizes, re-measured\n\nThe previous round's loss at 512 copies was "
+               "found only because the sizes it had not optimised for were measured afterwards, "
+               "so the same check is repeated here in the other direction.\n\n"
+               "**Sixteen updates per batch.**\n\n"
+               + throughput_table([("PyTorch before", small["before B"]),
+                                   ("PyTorch after", small["after B"])],
+                                  "epoch_minibatch", [8, 32, 128, 512]) + "\n\n"
+               "**One update per batch.**\n\n"
+               + throughput_table([("PyTorch before", small["before A"]),
+                                   ("PyTorch after", small["after A"])],
+                                  "full_batch", [8, 32, 128, 512]) + "\n\n")
     return md
 
 

@@ -85,8 +85,9 @@ def main():
     loss_old = losses_with_baddbmm(t, batch, style_a=False)
     grads_old = [g.detach().clone() for g in torch.autograd.grad(loss_old, t.trainable)]
 
-    d_loss = abs(float(loss_new) - float(loss_old))
-    rel_loss = d_loss / max(abs(float(loss_old)), 1e-12)
+    new_val, old_val = float(loss_new.detach()), float(loss_old.detach())
+    d_loss = abs(new_val - old_val)
+    rel_loss = d_loss / max(abs(old_val), 1e-12)
     worst_rel = 0.0
     moved = 0.0
     for gn, go in zip(grads_new, grads_old):
@@ -94,7 +95,7 @@ def main():
         scale = max(go.abs().max().item(), 1e-12)
         worst_rel = max(worst_rel, d / scale)
         moved = max(moved, go.abs().max().item())
-    print(f"loss: new {float(loss_new):.8f} old {float(loss_old):.8f} "
+    print(f"loss: new {new_val:.8f} old {old_val:.8f} "
           f"absolute {d_loss:.3e} relative {rel_loss:.3e}")
     print(f"gradients: worst relative difference over all nineteen tensors {worst_rel:.3e}")
     print(f"largest gradient magnitude {moved:.3e} (a zero here would make the test vacuous)")
