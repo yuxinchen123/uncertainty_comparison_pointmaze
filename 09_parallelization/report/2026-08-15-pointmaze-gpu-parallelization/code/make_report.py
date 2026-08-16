@@ -1063,7 +1063,7 @@ sparse goal being found and lost again rather than held (per-copy curves below).
 
 def sec_rounds():
     """What each round changed, and how it was measured."""
-    return """## The three rounds
+    return """## The first three rounds
 
 ### Round 1 — build it, and make it exact
 

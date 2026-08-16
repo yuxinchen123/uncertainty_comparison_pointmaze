@@ -34,7 +34,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[Final training campaign](#final-training-campaign)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[The three rounds](#the-three-rounds)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
+| <span class="unread">[The first three rounds](#the-first-three-rounds)</span> | 2026-08-15 21:56 PT | 2026-08-15 21:56 PT | unread |
 | <span class="unread">[What made it fast (and what did not)](#what-made-it-fast-and-what-did-not)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[Reproduction](#reproduction)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[How far from the hardware ceiling](#how-far-from-the-hardware-ceiling)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
@@ -448,7 +448,7 @@ Reading the two columns:
 So the practical answer is that a sweep is not a different regime from a uniform run — it is
 the same run with a vector where a scalar used to be, and it is priced accordingly.
 
-## The three rounds
+## The first three rounds
 
 ### Round 1 — build it, and make it exact
 
