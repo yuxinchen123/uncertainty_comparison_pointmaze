@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:41 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:43 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -833,7 +833,7 @@ optimisation that removes bytes moved helps at 4,096 and does nothing at 128. On
 the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
 and above, and is recorded below.
 
-**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 71 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
 
 ### Where an iteration's time goes as the copy count grows
 
@@ -922,7 +922,7 @@ on its real shape at 4,096 copies:
 | gather one epoch's rows | 1027 us | 2.15 GB | 2,091 GB/s |
 | plain copy, the reference | 607 us | 2.15 GB | 3,539 GB/s |
 
-Nothing in that list is far from the reference. The multiplications reach 71 to 96 percent of the
+Nothing in that list is far from the reference. The multiplications reach 72 to 96 percent of the
 rate a plain copy gets, the optimiser's pass reaches all of it, and the one operation that is well
 below — the gather, which reads rows in a random order — is 3 percent of an iteration. So the
 iteration is not slow because any one of its programs is slow. It costs what it costs because of
@@ -955,7 +955,7 @@ One further measurement worth recording: the optimiser's pass over the parameter
 | sixteen updates per batch | 2048 | 152.2 ms | 84.1 ms | 1.81 |
 
 The reason is not that any PyTorch program is slow. The table in the previous subsection times
-each of them on its real shape and finds them at 71 to 100 percent of the rate a plain copy
+each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
 reaches. The reason is that there are more of them, and every program writes its output to memory
 for the next one to read.
 

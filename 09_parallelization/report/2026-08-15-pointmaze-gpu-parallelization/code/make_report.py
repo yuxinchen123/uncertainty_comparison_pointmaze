@@ -1590,7 +1590,7 @@ and above, and is recorded below.
             f"{a_before[key]['ms']:.0f} milliseconds per iteration against "
             f"{a_jax[key]['ms']:.0f} for the JAX trainer")
         md += (f"**The two answers in one line.** {answer}. The distance is not made of any one "
-               f"slow program — each of PyTorch's runs at 71 to 100 percent of the rate a plain "
+               f"slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain "
                f"copy of memory reaches — but of how many intermediate results have to be "
                f"written to memory and read back between them.\n\n")
     md += """### Where an iteration's time goes as the copy count grows
@@ -1689,7 +1689,7 @@ def sec_large_scale_gap(src):
         md += f"| {label} | {c} | {pt:.1f} ms | {jx:.1f} ms | {pt/jx:.2f} |\n"
     md += """
 The reason is not that any PyTorch program is slow. The table in the previous subsection times
-each of them on its real shape and finds them at 71 to 100 percent of the rate a plain copy
+each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
 reaches. The reason is that there are more of them, and every program writes its output to memory
 for the next one to read.
 
@@ -1809,7 +1809,7 @@ on its real shape at 4,096 copies:
             md += (f"| {label} | {r['seconds']*1e6:.0f} us | {r['bytes']/1e9:.2f} GB | "
                    f"{r['gb_per_s']:,.0f} GB/s |\n")
     md += f"""
-Nothing in that list is far from the reference. The multiplications reach 71 to 96 percent of the
+Nothing in that list is far from the reference. The multiplications reach 72 to 96 percent of the
 rate a plain copy gets, the optimiser's pass reaches all of it, and the one operation that is well
 below — the gather, which reads rows in a random order — is 3 percent of an iteration. So the
 iteration is not slow because any one of its programs is slow. It costs what it costs because of
