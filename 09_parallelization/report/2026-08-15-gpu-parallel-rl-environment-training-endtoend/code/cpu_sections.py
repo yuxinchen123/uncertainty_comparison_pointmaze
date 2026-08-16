@@ -174,6 +174,23 @@ def gpu_train(style="epoch_minibatch"):
     return dedup(rows, "total_copies")
 
 
+def best_per_total(rows):
+    """The best setting for each total copy count, for a figure whose axis is the copy count.
+
+    Two settings can run the same number of copies — 112 workers of 32 copies and 224 workers of
+    16 — and a curve drawn against copies would show both as one zigzag. What the axis asks is
+    what the machine does with that many copies, so the better of the two answers it.
+    before: rows at (112, 32) reaching 1.9 and (224, 16) reaching 2.1 million steps per second
+    after:  one point at 3,584 copies, the 2.1 one
+    """
+    best = {}
+    for r in rows:
+        k = r["total_copies"]
+        if k not in best or r["env_steps_per_sec"] > best[k]["env_steps_per_sec"]:
+            best[k] = r
+    return sorted(best.values(), key=lambda r: r["total_copies"])
+
+
 def style_ax(ax):
     """Recessive grid, no top or right frame."""
     ax.grid(True, which="major", **GRID)
@@ -198,8 +215,12 @@ def fig_cpu_vs_gpu():
         return "the processor training measurements"
 
     fig, axes = plt.subplots(1, 2, figsize=(11.4, 4.4), dpi=160)
-    curves = [("processor, independent processes, sixteen updates", tr_proc, C_CPU_PROC, "o", "-"),
-              ("processor, independent processes, one update", tr_proc_a, C_CPU_OLD, "^", "-"),
+    # the axis is the copy count, so where two worker counts run the same number of copies the
+    # better of them is the point drawn
+    curves = [("processor, independent processes, sixteen updates", best_per_total(tr_proc),
+               C_CPU_PROC, "o", "-"),
+              ("processor, independent processes, one update", best_per_total(tr_proc_a),
+               C_CPU_OLD, "^", "-"),
               ("processor, threads in one process", tr_thread, C_CPU_THREAD, "s", "-"),
               ("graphics processor (reference)", tr_gpu, C_GPU, "x", "--")]
     # left panel is the aggregate rate, right panel the rate one copy gets; same curves on both
@@ -430,9 +451,25 @@ def thread_verdict(host, tr_proc, tr_thread):
 
 
 def plateau():
-    """The copies-per-worker sweep, or None when that measurement has not been taken yet."""
+    """The sweep's side measurements, or None when they have not been taken yet.
+
+    The ladder rungs themselves are ordinary result files and are read through `cpu_train`; this
+    file carries only what is not a throughput setting anyone would run — one worker alone on the
+    node, the memory system's own rate, and what the memory system had left under load.
+    """
     hits = sorted(RESULTS.glob("*_cpu_copies_per_worker_plateau.json"))
     return json.loads(hits[-1].read_text()) if hits else None
+
+
+def ladder(style, workers):
+    """One copies-per-worker ladder: the swept rungs at one worker count and update convention.
+
+    Only rows carrying a shared measurement window, that is only rows from the sweep, so the
+    ladder is one methodology from end to end and its rungs are comparable with each other.
+    """
+    rows = [r for r in cpu_train("jaguar03", "processes", style)
+            if r["workers"] == workers and r.get("window_seconds") is not None]
+    return sorted(rows, key=lambda r: r["n_copies"])
 
 
 def GB(mb):
@@ -465,6 +502,52 @@ def plateau_rung(rows, threshold=0.02):
         if g is not None and g < threshold:
             return row
     return None
+
+
+def correction_rows(host, workers, copies):
+    """The same setting read three ways, to separate the two things the old method got wrong.
+
+    The three readings, in the order the corrections were applied:
+      five iterations, sum of rates     what the earlier sweep reported
+      ninety seconds, sum of rates      the same arithmetic on a settled load
+      ninety seconds, common window     the work the machine did while every worker was running
+    before: for (224 workers, 16 copies) there is a five-iteration file and a swept row
+    after:  one entry per update convention, carrying all three numbers
+    """
+    out = []
+    for style, label in [("full_batch", "one update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")]:
+        rows = [r for r in all_rows(r"trainbench_cpu_", host=host, mode="processes", style=style)
+                if r["workers"] == workers and r["n_copies"] == copies]
+        burst = [r for r in rows if not is_sustained(r)]
+        window = [r for r in rows if r.get("window_seconds") is not None]
+        if not (burst and window):
+            continue
+        b, w = median_row(burst), median_row(window)
+        out.append({"style": style, "label": label,
+                    "burst": b["env_steps_per_sec"],
+                    "burst_seconds": timed_seconds(b),
+                    "long_sum": w["env_steps_per_sec_sum_of_worker_rates"],
+                    "window": w["env_steps_per_sec"],
+                    "window_seconds": w["window_seconds"],
+                    "repeats": w["_repeats"]})
+    return out
+
+
+def correction_table(host="jaguar03", workers=224, copies=16):
+    """The correction to the published processor numbers, as a table of the three readings."""
+    rows = correction_rows(host, workers, copies)
+    if not rows:
+        return ""
+    md = (f"| update convention | five iterations, rates added up | "
+          f"ninety seconds, rates added up | ninety seconds, one shared window | "
+          f"what the correction removes |\n|---|---|---|---|---|\n")
+    for r in rows:
+        md += (f"| {r['label']} | {M(r['burst'])} | {M(r['long_sum'])} | {M(r['window'])} | "
+               f"{100 * (1 - r['window'] / r['burst']):.0f}% |\n")
+    return md + (f"\n*The same setting — {workers} workers holding {copies} copies each, "
+                 f"{workers * copies:,} copies — measured three ways on the same node in the same "
+                 f"job. Millions of environment steps per second.*\n\n")
 
 
 def process_table(rows, caption):
@@ -532,24 +615,25 @@ def fig_cpu_plateau():
     a change of the machine. The third panel is memory, since copies per worker is what drives it
     and the question of whether the curve stops because the node fills up is answered there.
     """
-    d = plateau()
-    if not d:
-        return "the copies-per-worker sweep"
-    curves = [("one update per batch", d.get("ladder_full_batch", []), C_CPU_OLD, "^"),
-              ("sixteen updates per batch", d.get("ladder_epoch_minibatch", []), C_CPU_PROC, "o")]
-    if not any(rows for _, rows in [(a, b) for a, b, _, _ in curves]):
+    curves = [("one update, 224 workers", ladder("full_batch", 224), C_CPU_OLD, "^", "-"),
+              ("one update, 112 workers", ladder("full_batch", 112), C_CPU_OLD, "^", "--"),
+              ("sixteen updates, 224 workers", ladder("epoch_minibatch", 224), C_CPU_PROC,
+               "o", "-"),
+              ("sixteen updates, 112 workers", ladder("epoch_minibatch", 112), C_CPU_PROC,
+               "o", "--")]
+    if not any(rows for _, rows, _, _, _ in curves):
         return "the copies-per-worker sweep"
 
     fig, axes = plt.subplots(1, 3, figsize=(15.2, 4.4), dpi=160)
-    for label, rows, colour, marker in curves:
+    for label, rows, colour, marker, dash in curves:
         if not rows:
             continue
         x = [r["total_copies"] for r in rows]
-        axes[0].plot(x, [r["env_steps_per_sec"] / 1e6 for r in rows], "-", color=colour,
+        axes[0].plot(x, [r["env_steps_per_sec"] / 1e6 for r in rows], dash, color=colour,
                      linewidth=2, marker=marker, markersize=6, label=label)
-        axes[1].plot(x, [r["env_steps_per_sec_per_copy"] / 1e3 for r in rows], "-", color=colour,
+        axes[1].plot(x, [r["env_steps_per_sec_per_copy"] / 1e3 for r in rows], dash, color=colour,
                      linewidth=2, marker=marker, markersize=6, label=label)
-        axes[2].plot(x, [r["peak_rss_mb_max_worker"] / 1024 for r in rows], "-", color=colour,
+        axes[2].plot(x, [r["peak_rss_mb_max_worker"] / 1024 for r in rows], dash, color=colour,
                      linewidth=2, marker=marker, markersize=6, label=label)
         # the rung where the curve flattened, marked so the reader sees where the answer is
         flat = plateau_rung(rows)
@@ -576,18 +660,17 @@ def fig_cpu_plateau():
     return None
 
 
-def plateau_numbers(d):
-    """Every figure the copies-per-worker passage quotes, read from the sweep's own file."""
+def plateau_numbers():
+    """Every figure the copies-per-worker passage quotes, per convention and worker count."""
     out = {}
-    for style, key in [("full_batch", "ladder_full_batch"),
-                       ("epoch_minibatch", "ladder_epoch_minibatch")]:
-        rows = d.get(key, [])
-        if not rows:
-            continue
-        top = max(rows, key=lambda r: r["env_steps_per_sec"])
-        flat = plateau_rung(rows)
-        out[style] = {"rows": rows, "top": top, "flat": flat, "gains": gain(rows),
-                      "largest": rows[-1]}
+    for style in ("full_batch", "epoch_minibatch"):
+        for workers in (112, 224):
+            rows = ladder(style, workers)
+            if not rows:
+                continue
+            out[(style, workers)] = {
+                "rows": rows, "top": max(rows, key=lambda r: r["env_steps_per_sec"]),
+                "flat": plateau_rung(rows), "gains": gain(rows), "largest": rows[-1]}
     return out
 
 
@@ -660,36 +743,68 @@ def memory_corun_table(d):
                  "load had been running for twenty-five. One update per batch.*\n\n")
 
 
+def sec_correction():
+    """Subsection: the two defects in the earlier processor measurements, and their size."""
+    table = correction_table()
+    if not table:
+        return ""
+    rows = correction_rows("jaguar03", 224, 16)
+    worst = max(rows, key=lambda r: 1 - r["window"] / r["burst"])
+    return f"""### 5.3 A correction to the processor numbers above
+
+The processor measurements in this section were taken with a benchmark that times five
+iterations, about two seconds of work, and computes the machine's rate as the sum of each
+worker process's own rate. Both of those are wrong at large worker counts, for two separate
+reasons.
+
+The first is the processor. A server processor runs above its sustained clock for the first
+seconds of a load and then settles, so a two-second measurement reads the opening burst rather
+than the rate a training run of any length actually gets.
+
+The second is the arithmetic. Adding up each process's own rate assumes every process was
+running for the whole time the others were. Over five iterations, hundreds of processes are
+still starting at staggered moments, so the sum describes a load that never existed on the
+machine at one time. The fix is to hold every worker at a barrier until all of them have warmed
+up, and then to count only the work done inside the wall-clock window in which every worker was
+running.
+
+{table}Both corrections point the same way and together they remove
+**{100 * (1 - worst['window'] / worst['burst']):.0f}%** of the reported rate at this setting.
+The middle column separates them: it is the old arithmetic applied to a settled load, so the
+step from the first column to the second is the clock, and the step from the second to the third
+is the overlap the old arithmetic assumed and did not have.
+
+Every processor number in this section is now a sustained measurement over a shared window;
+where a setting has not been retaken, its row says so.
+
+"""
+
+
 def sec_plateau():
     """Subsection: how far the copies per worker go, and what stops them."""
-    d = plateau()
-    if not d:
-        return ""
-    n = plateau_numbers(d)
+    n = plateau_numbers()
     if not n:
         return ""
-    md = """### 5.3 How far the copies per worker go, and what stops them
+    md = """### 5.4 How far the copies per worker go, and what stops them
 
 The sweep above stops at 224 workers holding 16 copies each, and total throughput is still
 rising there, so it does not show the machine's ceiling. Workers cannot be added — 224 is the
 machine's logical-processor count — but each worker can hold more copies, so the ladder was
-continued on that knob alone, at 224 workers throughout, for both update conventions.
+continued on that knob, at two worker counts: 224, which uses both hardware threads of every
+core, and 112, which uses one thread per core and leaves the other idle.
 
-Two things are different about the measurements below. Every rung times about a minute of
-continuous work rather than the two or three seconds the earlier sweep timed, because this
-processor runs above its sustained clock for the first seconds of a load and a short measurement
-reads that opening burst rather than the rate a real run gets. And every rung records the peak
-resident memory of its workers, since copies per worker is what drives memory and the node has a
-fixed 1 TB of it.
+Every rung below times about ninety seconds of continuous work with every worker synchronised,
+as the correction above requires, and records the peak resident memory of its workers, since
+copies per worker is what drives memory and the node has a fixed 1 TB of it.
 
 """
-    for style, caption in [("full_batch", "One update per batch, 224 independent single-thread "
-                                          "workers, each rung timed for about a minute."),
-                           ("epoch_minibatch", "Sixteen updates per batch, 224 independent "
-                                               "single-thread workers, each rung timed for about "
-                                               "a minute.")]:
-        if style in n:
-            md += ladder_table(n[style]["rows"], caption)
+    for style, label in [("full_batch", "One update per batch"),
+                         ("epoch_minibatch", "Sixteen updates per batch")]:
+        for workers in (224, 112):
+            key = (style, workers)
+            if key in n:
+                md += ladder_table(n[key]["rows"],
+                                   f"{label}, {workers} independent single-thread workers.")
     return md
 
 
@@ -746,6 +861,7 @@ the optimisation work there fused those forty operations into a handful and reco
 sequence, which is the same problem solved from the other end.
 
 """
+    md += sec_correction()
     md += sec_plateau()
     return md
 
