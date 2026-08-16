@@ -1,8 +1,8 @@
 # Throughput of the single-update JAX PPO+RND trainer on every graphics card of this cluster
 
-Written 2026-08-16 16:35 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
+Written 2026-08-16 16:37 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
 
-66 of 80 jobs have reported, giving 213 measured cells; 44 cells did not fit on their card. 14 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
+66 of 80 jobs have reported, giving 214 measured cells; 44 cells did not fit on their card. 14 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
 
 ## 1. What was measured
 
@@ -13,6 +13,8 @@ Two rates describe every measurement, and neither substitutes for the other. The
 $$\text{total steps per second} = \frac{C\thinspace T\thinspace N}{s}, \qquad \text{steps per second per copy} = \frac{T\thinspace N}{s}, \qquad \text{hours per million steps per copy} = \frac{10^{6}}{3600\thinspace (T N / s)}.$$
 
 A number is quoted only after the middle half of its timing rounds agreed to within 2% of their median, with compilation and five warm-up iterations discarded first; the spread each number settled to is in the last column of every table.
+
+One job covers all four copy counts on one card at one processor count, and is held under a 27-minute deadline so it stays inside the half hour the survey was asked to keep to. No job came close to it: the longest ran 22 minutes and 20 seconds, and none had to abandon a copy count for lack of time.
 
 ## 2. The hardware the survey covers
 
@@ -46,7 +48,7 @@ One node per node class — nodes identical in card type, card memory, processor
 | `lynx02-04` | gpu | GTX 1080 Ti | 6.1 | 11.3 | broadwell | 8, 16, 30 | 9/12 |
 | `ai05_ai10` | gnolim | GTX 1080 | 6.1 | 8.2 | skylake | 8, 16 | 4/12 |
 | `jinx01-02` | gnolim | GTX 1080 | 6.1 | 8.2 | haswell | 8, 16, 22 | 6/12 |
-| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8, 16 | 5/12 |
+| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8, 16 | 6/12 |
 
 All 23 classes probed so far run the trainer: JAX 0.10.2 with the CUDA 12 plugin reaches every card generation here, from compute capability 6.0 (Tesla P100, 2016) to 12.0 (RTX 5080, 2025), so no node class had to be dropped for lack of support.
 
@@ -213,7 +215,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 
 The trainer keeps its arrays on the card and the host only dispatches, so the expectation is that 8, 16 and 32 processors give the same iteration time.
 
-**It does not.** Over the 71 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
+**It does not.** Over the 72 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
 
 The table below is the evidence, one row per card and copy count; its last column is the span between the fastest and the slowest processor count as a fraction of the fastest. A count this node class cannot allocate reads N/A; one it can allocate but has not yet reported reads "not yet".
 
@@ -290,6 +292,7 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `jinx01-02` | GTX 1080 | 1024 | 169.4 | 169.2 | N/A | 22, 169.3 | 0.1% |
 | `titanx03` | Titan X | 512 | 62.5 | 63.5 | N/A | 22, not yet | 1.6% |
 | `titanx03` | Titan X | 1024 | 118.4 | 120.0 | N/A | 22, not yet | 1.4% |
+| `titanx03` | Titan X | 2048 | 234.0 | 234.1 | N/A | 22, not yet | 0.0% |
 
 ## 7. Memory, and which cards cannot hold a run
 
@@ -334,7 +337,7 @@ The throughput figures above are steady-state: compilation and warm-up are disca
 |---|---|---|---|---|
 | 512 | 34 | 27 | 61 | 8,406 |
 | 1024 | 59 | 26 | 85 | 7,384 |
-| 2048 | 112 | 30 | 142 | 6,793 |
+| 2048 | 114 | 30 | 144 | 6,891 |
 | 4096 | 216 | 39 | 255 | 6,367 |
 
 More processors do not shorten it. At 4,096 copies the build took 208 s on 8, 220 s on 16, 196 s on 22, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
@@ -343,7 +346,7 @@ This is a fixed cost, so it decides whether splitting work across cards pays. Tw
 
 ## 9. How firm these numbers are
 
-Across all 213 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.53% in the worst 5%, and never worse than 1.11%. 213 of 213 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
+Across all 214 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.53% in the worst 5%, and never worse than 1.11%. 214 of 214 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
 
 ## 10. What is still missing
 

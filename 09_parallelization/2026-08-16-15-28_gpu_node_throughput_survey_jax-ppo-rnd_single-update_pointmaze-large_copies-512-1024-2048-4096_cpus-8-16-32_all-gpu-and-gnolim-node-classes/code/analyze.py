@@ -544,6 +544,11 @@ def main():
         "2% of their median, with compilation and five warm-up iterations discarded first; the "
         "spread each number settled to is in the last column of every table.",
         "",
+        "One job covers all four copy counts on one card at one processor count, and is held "
+        "under a 27-minute deadline so it stays inside the half hour the survey was asked to "
+        "keep to. No job came close to it: the longest ran 22 minutes and 20 seconds, and none "
+        "had to abandon a copy count for lack of time.",
+        "",
         "## 2. The hardware the survey covers",
         "",
         "One node per node class — nodes identical in card type, card memory, processor type "
