@@ -89,6 +89,13 @@ class PPOConfig:
                                      # then runs tensor by tensor, so it lands on exactly the
                                      # value the no-buffer form computes and a few last bits from
                                      # the one-row reduction's.
+    parameter_layout: str = "copy_major"
+    # "copy_major": one buffer row per copy, [C, P]. A parameter's window is a column slice, so
+    # it is strided across copies, but the buffer is one contiguous array and a single program
+    # can walk it applying a per-copy rate. "parameter_major": one contiguous block per
+    # parameter instead, so every window is contiguous and every pass over it reaches the card's
+    # full bandwidth — at the price of twenty-one programs per optimizer pass rather than one,
+    # because a copy no longer owns a row. Requires gradient_buffer=False.
     env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
                                      # (the single fused kernel from pointmaze/cuda_env)
 
@@ -283,43 +290,72 @@ class PPORND:
                 n *= d
             widths.append(n)
             strides.append(-(-n // ALIGN) * ALIGN)
-        per_copy = sum(strides)
-        self._flat = torch.zeros(C, per_copy, device=self.device)
-        # one Adam over the flat buffer serves both cases: the learning rate is a scalar for a
-        # uniform run and a per-copy column for a sweep, and the arithmetic is identical
+
+        # Two layouts of the same buffer, both keeping every copy's start on a sixteen-byte
+        # boundary. Which is better is a measurement, and it is the OPPOSITE of what round four
+        # assumed: the layout that lets the optimizer be one program is not the layout that lets
+        # it be fast when it is twenty-one.
+        #   "copy_major"       one row per copy, [C, P]. A parameter's window is a column slice,
+        #                      so it is strided across copies, but the buffer is one contiguous
+        #                      array and a single program can walk it applying a per-copy rate.
+        #   "parameter_major"  one contiguous block per parameter, C rows of n numbers each.
+        #                      Every window is contiguous, so every pass over it reaches the
+        #                      card's full bandwidth; the price is that a copy no longer owns a
+        #                      row of the buffer, so the gradient limit and the Adam step have to
+        #                      be twenty-one programs.
+        # before (copy_major, C=4): [[copy 0's 59,920 numbers], [copy 1's], [copy 2's], ...]
+        # after  (parameter_major): [W0 for copies 0..3][b0 for copies 0..3][W1 for copies 0..3]
+        copy_major = cfg.parameter_layout == "copy_major"
+        assert cfg.parameter_layout in ("copy_major", "parameter_major"), \
+            f"unknown parameter layout {cfg.parameter_layout!r}"
+        assert copy_major or not cfg.gradient_buffer, \
+            "a parameter-major buffer has no per-copy row for one program to walk, so the " \
+            "gradient buffer that exists to allow one buys nothing"
+        offsets, off = [], 0
+        for stride in strides:
+            offsets.append(off)
+            off += stride if copy_major else C * stride
+        per_copy = off
+        shape = (C, per_copy) if copy_major else (per_copy,)
+        self._flat = torch.zeros(*shape, device=self.device)
         self._m = torch.zeros_like(self._flat)
         self._v = torch.zeros_like(self._flat)
         # the gradient buffer exists only for the form that copies into it; the other form has
         # nothing to hold, which is 981 megabytes less on the card at 4,096 copies
-        self._flat_grad = torch.zeros(C, per_copy, device=self.device) \
-            if cfg.gradient_buffer else None
-        off = 0
-        self.trainable = []
-        self.grad_windows = []
+        self._flat_grad = torch.zeros(*shape, device=self.device) if cfg.gradient_buffer else None
+
+        def window(buf, i):
+            """Parameter i's view of one of the buffers, in whichever layout is in use."""
+            if copy_major:
+                return buf[:, offsets[i]:offsets[i] + widths[i]].view(C, *shapes[i][2][1:])
+            block = buf[offsets[i]:offsets[i] + C * strides[i]].view(C, strides[i])
+            return block[:, :widths[i]].view(C, *shapes[i][2][1:])
+
+        self.trainable, self.grad_windows = [], []
         self.param_windows, self.m_windows, self.v_windows = [], [], []
-        for (g, k, sh), n, stride in zip(shapes, widths, strides):
-            self._flat[:, off:off + n] = groups[g][k].reshape(C, n)
+        for i, (g, k, sh) in enumerate(shapes):
+            window(self._flat, i).copy_(groups[g][k])
             # detach makes the window a LEAF that shares storage. Its gradient is NOT attached
             # here: see _backward for why an attached gradient costs four extra passes over a
             # buffer that is a gigabyte at four thousand copies.
-            w = self._flat[:, off:off + n].view(C, *sh[1:]).detach().requires_grad_(True)
+            w = window(self._flat, i).detach().requires_grad_(True)
             groups[g][k] = w
             self.trainable.append(w)
             # the same storage seen WITHOUT a gradient, for the optimizer to write through:
             # writing into a leaf that requires a gradient from inside a compiled region does
             # not reliably reach the parameter (found in round 3 and fixed there the same way)
-            self.param_windows.append(self._flat[:, off:off + n].view(C, *sh[1:]))
-            self.m_windows.append(self._m[:, off:off + n].view(C, *sh[1:]))
-            self.v_windows.append(self._v[:, off:off + n].view(C, *sh[1:]))
+            self.param_windows.append(window(self._flat, i))
+            self.m_windows.append(window(self._m, i))
+            self.v_windows.append(window(self._v, i))
             if cfg.gradient_buffer:
-                self.grad_windows.append(self._flat_grad[:, off:off + n].view(C, *sh[1:]))
-            off += stride
-        assert off == per_copy, "the parameter windows do not tile the flat buffer"
-        assert per_copy % ALIGN == 0, "the per-copy row length must keep every copy aligned"
+                self.grad_windows.append(window(self._flat_grad, i))
+        assert per_copy % ALIGN == 0, "the buffer length must keep every copy aligned"
         base = self._flat.untyped_storage().data_ptr()
         end = base + self._flat.numel() * self._flat.element_size()
         for i, w in enumerate(self.trainable):
-            assert w.data_ptr() % (ALIGN * 4) == 0, "a parameter window lost its alignment"
+            for copy in range(min(2, C)):
+                assert w[copy].data_ptr() % (ALIGN * 4) == 0, \
+                    "a parameter window lost its alignment"
             assert base <= w.data_ptr() < end, "a parameter is not a window onto the buffer"
             assert self.param_windows[i].data_ptr() == w.data_ptr(), "a write window drifted"
             if cfg.gradient_buffer:

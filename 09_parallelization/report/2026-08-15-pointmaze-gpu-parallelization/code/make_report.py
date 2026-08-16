@@ -1742,6 +1742,7 @@ was changing while it was measured, and those figures are superseded here.
             f"does not matter; a thousand is the right setting when it does.\n\n")
     md += sec_large_scale_limit()
     md += sec_large_scale_changes()
+    md += sec_large_scale_round6()
     md += sec_large_scale_gap(src)
     return md
 
@@ -2147,62 +2148,113 @@ def sec_large_scale_round6():
     """Round six: what the JAX side's findings and method transferred to the PyTorch trainer."""
     grad_B = paired_change_rows(r"torch_change_gradient_buffer_epoch_minibatch_sync")
     grad_A = paired_change_rows(r"torch_change_gradient_buffer_full_batch_sync")
-    epi = epilogue_rows(r"probe_epilogue_C4096")
-    if not grad_B and not epi:
+    fused = paired_change_rows(r"torch_change_fuse_copy_and_limit_epoch_minibatch_sync")
+    versus = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_fused_vs_nobuffer")
+    gather = newest(r"ab_r6-gather-out-C4096-styleB")
+    epi = epilogue_rows(r"probe_epilogue_C4096_pertrainer") or epilogue_rows(r"probe_epilogue_C4096")
+    prog = newest(r"probe_gradient_form_C4096")
+    if not grad_B:
         return pending("the round-six subsection", "the round-six paired comparisons")
 
-    md = """### Round six: what transferred from the other framework, and what did not
+    md = """### Round six: what transferred from the other framework, and two more passes removed
 
-The JAX trainer's own fifth round finished after the PyTorch fifth round had been written, so its
-findings had never been read from this side. Two of them transferred and one did not.
+The JAX trainer's fifth round finished after this document's round-five section was written, so
+its findings had never been read from the PyTorch side. This subsection reports what transferred,
+what did not, and the changes that followed.
+
+#### What transferred, and what did not
 
 **The measurement method transferred.** That round found that comparing two medians against the
 largest spread a single version shows between rounds called a real three-percent effect "noise",
 because both versions drift together within a round. The two versions are timed in the same round
-on the same machine, so the difference should be taken round by round: a version that wins every
-round is faster whatever the between-round spread is. Every comparison below uses that statistic,
-through a new harness (`benchmarks/bench_torch_change.py`) that builds both versions in ONE
-process and times them round-robin with the order reversed on alternate rounds. Both the paired
-count and the older spread are reported, so the two can be compared.
+on the same machine, so the difference belongs round by round, and a version that wins every round
+is faster whatever the between-round spread is. Every comparison below uses that statistic, through
+a harness (`benchmarks/bench_torch_change.py`) that builds both versions in ONE process and times
+them round-robin with the order reversed on alternate rounds. The older spread is reported beside
+it, so the two rules can be compared on the same data.
 
-**The direction transferred.** Both of that round's gains came from making the compiler emit
-fewer, longer-running programs, which at these sizes means fewer round trips through memory for
-the same work. That is the same lever this side has been pulling since round five, and it chose
-what to look at next.
+**The direction transferred.** Both of that round's gains came from making the compiler emit fewer,
+longer-running programs, which at these sizes means fewer round trips through memory for the same
+work.
 
-**One finding did not transfer, and its absence is a result.** The JAX round's two kept changes
-are unroll factors on its two loops. The PyTorch trainer has no equivalent to unroll: its update
-already runs as one recorded sequence of programs with no loop overhead and nothing to issue at
-run time, so there is no loop for a compiler to emit more copies of. Measured at these sizes, the
-JAX round's changes are worth nothing here either: its own iteration at 1,024 to 4,096 copies is
-within a percent of what it was before that round, and the gains it reports are at 8 to 128
-copies. The two regimes cut both ways.
+**Its two kept changes did not, and that is a result.** Both are unroll factors on loops. The
+PyTorch trainer has no loop to unroll: its sixteen update steps are already emitted one after
+another into a single recorded sequence of device programs, so there is no loop for a compiler to
+emit more copies of. The JAX round is also worth nothing at these sizes on its own side — its
+trainer measures within a percent of what it did before that round at 1,024 to 4,096 copies, and
+the gains it reports are at 8 to 128 copies, where an iteration's cost is the number of programs
+it issues. The regime split cuts both ways.
+
+#### Where the update stage's time goes at 4,096 copies
+
+Every program of one iteration, named and summed by kind. This is what chose the changes below.
+
+| part of the update stage | time | share |
+|---|---|---|
+| matrix multiplications | 62.72 ms | 37.6% |
+| the Adam step | 31.94 ms | 19.1% |
+| copying the gradients into the flat buffer | 16.70 ms | 10.0% |
+| shuffling the batch once per epoch | 6.42 ms | 3.8% |
+| the per-copy gradient limit | 4.58 ms | 2.7% |
+| everything else (bias, activations, and their gradients) | 44.66 ms | 26.7% |
+
+*Sixteen updates per batch, 4,096 copies, the three stages timed without graph capture so the
+profiler can name each program (`benchmarks/profile_kernels.py`).*
+
+The Adam step and the gradient limit already run at the full 3,540 gigabytes per second a plain
+copy of memory reaches on this card, so there is nothing left inside them. The copy does not: it
+reaches 1,878, because its destination is a strided window of the buffer rather than a contiguous
+tensor. That is the largest single removable item, and it is what round five's own change created.
 
 """
+    md += """#### The changes, each measured against the revision before it
+
+"""
+    rows = []
     if grad_B:
-        md += """#### Reading the gradients where they were written
-
-Round five stopped accumulating gradients and started asking the automatic-differentiation system
-for them, then copied the twenty-one freshly written tensors into one buffer so that the gradient
-limit and the Adam step could each be a single program over one contiguous array. At 4,096 copies
-that copy reads and writes 981 megabytes in every one of the sixteen update steps. A kernel-level
-profile puts it at 9.8 percent of the update stage, and at 1,955 gigabytes per second — a little
-over half the rate a plain copy of memory reaches on this card, because the destination is a
-strided window rather than a contiguous tensor.
-
-The alternative is to read the gradients where they lie and pay for it in programs: twenty-one for
-the gradient limit and twenty-one for the Adam step instead of one each. Which is better is a
-question about how well the compiler's generated kernels handle a strided window, and it was
-measured rather than argued.
-
-"""
-        md += paired_table(grad_B) + "\n\n"
-        md += ("*Sixteen updates per batch. A positive change means the new form is slower.*\n\n")
-        if grad_A:
-            md += ("The same change with one update per batch:\n\n" + paired_table(grad_A)
-                   + "\n\n")
+        for c in sorted(grad_B):
+            r = grad_B[c]
+            rows.append(("read the gradients where the backward pass wrote them, "
+                         "instead of copying them into one buffer", c, r))
+    if gather:
+        rows.append(("write the shuffled batch straight into its buffer, instead of building a "
+                     "second copy of it and copying across", 4096, None))
+    md += ("| change | copies | before | after | change | rounds favouring it |\n"
+           "|---|---|---|---|---|---|\n")
+    for label, c, r in rows:
+        if r is None:
+            md += (f"| {label} | {c} | {gather['a_ms']:.2f} ms | {gather['b_ms']:.2f} ms | "
+                   f"{-gather['relative_change_percent']:+.1f} percent | "
+                   f"not paired by round (separate processes, "
+                   f"{gather['noise_floor_ms']:.2f} ms noise floor) |\n")
+        else:
+            md += (f"| {label} | {c} | {r['median_sec']['off']*1e3:.2f} ms | "
+                   f"{r['median_sec']['on']*1e3:.2f} ms | {r['change_percent']:+.1f} percent | "
+                   f"{r['rounds_favouring_on']} of {r['rounds']} |\n")
+    md += "\n*Sixteen updates per batch. A negative change is faster.*\n\n"
+    if grad_A:
+        md += ("The gradient change with one update per batch, where there is one update step "
+               "rather than sixteen and so one copy rather than sixteen:\n\n"
+               + paired_table(grad_A) + "\n\n")
+    if fused:
+        md += ("A third form was measured because it removes a different pass: keep the buffer, "
+               "but sum the squared gradients in the same program that copies them into it, so "
+               "the buffer is never read a second time for the gradient limit.\n\n"
+               + paired_table(fused, "with the limit fused into the copy") + "\n\n")
+    if versus:
+        md += ("The two new forms against each other, so the choice between them is measured "
+               "rather than inferred from their separate comparisons:\n\n"
+               + paired_table(versus, "no buffer at all") + "\n\n")
+    if prog:
+        md += ("Why they differ, program by program at 4,096 copies "
+               "(`benchmarks/probe_gradient_form.py`):\n\n"
+               "| program | time | bytes | rate |\n|---|---|---|---|\n")
+        for r in prog["rows"]:
+            md += (f"| {r['name']} | {r['microseconds']:,.0f} us | {r['bytes']/1e9:.2f} GB | "
+                   f"{r['gb_per_s']:,.0f} GB/s |\n")
+        md += "\n"
     if epi:
-        md += """#### Letting the compiler generate the multiplications, and why round five could not
+        md += """#### Tried and not kept: letting the compiler generate the multiplications
 
 Round five measured this and set it aside with the note that "the compiler's chosen kernels set
 `ALLOW_TF32=False`", so adopting it would silently stop using the card's reduced-precision matrix
@@ -2211,16 +2263,16 @@ heuristics: a generated multiplication is allowed those units only when it has a
 rows AND the smaller of its two inner dimensions is at least 512. Every multiplication in this
 trainer has an inner dimension of 4, 64, 128 or 256, so the rule refuses all of them — while the
 multiplication library is under no such rule and does use the units at an inner dimension of four,
-which is what round five's alignment measurement showed when it found those layers moving by
-5e-4 as the setting was switched.
+which is what round five's alignment measurement showed when it found those layers moving by 5e-4
+as the setting was switched on.
 
-So the form was measured three ways: as round five measured it, with the library backend removed
-so a generated kernel is used even where the library's is faster (which is what makes the bias and
-the activation fold into the multiplication), and with the size rule replaced by the
+So it was measured with the library backend removed, so that a generated kernel is used even where
+the library's is faster (which is what makes the bias and the activation fold into the
+multiplication instead of following it), and again with the size rule replaced by the
 configuration's own answer.
 
-| form | update stage at 4,096 copies | against the shipped form | rounds faster |
-|---|---|---|---|
+| form | update stage at 4,096 copies | against the shipped form | rounds faster | loss differs by |
+|---|---|---|---|---|
 """
         for name, label in [("library", "the library's multiplication, as shipped"),
                             ("generated", "the compiler's, both backends offered"),
@@ -2229,9 +2281,11 @@ configuration's own answer.
             r = epi.get(name)
             if not r:
                 continue
+            diff = ("—" if name == "library"
+                    else f"{r.get('relative_loss_difference', 0.0):.1e} relative")
             md += (f"| {label} | {r['median_us']/1000:.2f} ms | "
                    f"{r['change_percent_against_library']:+.1f} percent | "
-                   f"{r['rounds_faster_than_library']} of {r['rounds']} |\n")
+                   f"{r['rounds_faster_than_library']} of {r['rounds']} | {diff} |\n")
         md += "\n"
     return md
 

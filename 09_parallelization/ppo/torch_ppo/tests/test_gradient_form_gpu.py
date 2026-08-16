@@ -91,10 +91,15 @@ def main():
               f"{(ref['scale'] - r['scale']).abs().max().item():.3e}")
         assert worst_rel <= 1e-5, f"{name} computes different parameters"
 
-    # 2. the two forms that sum tensor by tensor add the same partial sums in the same order
-    assert torch.equal(got["copy and measure"]["scale"], got["no buffer"]["scale"]), \
-        "the two per-tensor sums disagree, so one of them is not doing what it says"
-    print("the two per-tensor forms' limiting factors agree bitwise")
+    # 2. the two forms that sum tensor by tensor write the same expression, so they must land on
+    # the same value to rounding. They are NOT bitwise equal on the graphics processor, and the
+    # reason is worth stating: one of them is a reduction on its own and the other rides along
+    # with a copy, so the compiler splits the two reductions differently and the partial sums are
+    # combined in a different order. They agree bitwise when neither is compiled.
+    a, b = got["copy and measure"]["scale"], got["no buffer"]["scale"]
+    per_tensor_gap = ((a - b).abs() / a.abs().clamp(min=1e-30)).max().item()
+    print(f"the two per-tensor forms' limiting factors agree to {per_tensor_gap:.3e} relative")
+    assert per_tensor_gap <= 1e-6, "the two per-tensor sums are not the same quantity"
 
     # 4. the same two norms in double precision, from the same gradients
     C = CFG["n_copies"]
