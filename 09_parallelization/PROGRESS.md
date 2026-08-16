@@ -64,8 +64,13 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   sixteen-byte boundary and the multiplication library fell back to its scalar-load kernels.
   Three exact changes followed: pad the windows; add each layer's bias after the multiplication
   rather than folding it in; write gradients into the flat buffer instead of accumulating into
-  it, and compile the gradient limit separately from the Adam step. Head to head at 4,096
-  copies with one update per batch, before this round: PyTorch 90.4 ms against JAX 43.8.
+  it, and compile the gradient limit separately from the Adam step. Worth 11.3, 16.0 and 7.1
+  percent respectively at 1,024 copies, and together 29 to 39 percent across 1,024 to 4,096 —
+  with NO size slower: 14.7 percent at 8 copies, 22.5 at 128, 31 at 512. Head to head at 4,096
+  copies with one update per batch: PyTorch 90.4 ms before, 63.0 after, against JAX 43.8; the
+  distance to JAX falls from 2.06-2.08x to 1.27-1.44x with one update per batch and from
+  1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits (121.8 ms and 29.5 GB with one
+  update per batch; 407.0 ms and 27.4 GB with sixteen) on the 94 GB card.
 
 ## State notes (newest first)
 
