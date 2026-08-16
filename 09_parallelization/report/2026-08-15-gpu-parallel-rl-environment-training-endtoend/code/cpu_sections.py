@@ -594,19 +594,50 @@ def process_table(rows, caption):
     return md + f"\n*{caption}{note}*\n\n"
 
 
-def ladder_table(rows, caption):
-    """One update convention's copies-per-worker ladder, with the memory every rung needed."""
+def floor_lookup():
+    """The matrix-work floor per setting, in seconds per iteration, or an empty table.
+
+    before: the side file's rows, each naming a worker count, a copy count and a convention
+    after:  {(224, 16, "full_batch"): 0.412, ...}
+    """
+    d = plateau()
+    if not d:
+        return {}
+    return {(r["workers"], r["n_copies"], r["style"]): r["floor_seconds_median_worker"]
+            for r in d.get("matmul_floor", [])}
+
+
+def ladder_table(rows, caption, style):
+    """One update convention's copies-per-worker ladder, with memory and distance from the floor.
+
+    The last column is the share of the iteration that the matrix work's own best case accounts
+    for: the same matrix multiplies timed on their own, with the same worker count on the same
+    node, divided by the iteration. The graphics-processor side of this report is measured the
+    same way, so the two platforms are judged by the same standard.
+    """
     if not rows:
         return ""
-    md = ("| copies per worker | total copies | seconds per iteration | "
-          "million steps per second | thousand steps per second per copy | "
-          "hours per million steps per copy | peak memory per worker (GB) | "
-          "node memory in use (GB) |\n|---|---|---|---|---|---|---|---|\n")
+    floors = floor_lookup()
+    any_floor = any((r["workers"], r["n_copies"], style) in floors for r in rows)
+    head = ("| copies per worker | total copies | seconds per iteration | "
+            "million steps per second | thousand steps per second per copy | "
+            "hours per million steps per copy | peak memory per worker (GB) | "
+            "node memory in use (GB) |")
+    rule = "|---|---|---|---|---|---|---|---|"
+    if any_floor:
+        head += " percent of the matrix-work floor |"
+        rule += "---|"
+    md = head + "\n" + rule + "\n"
     for r in rows:
-        md += (f"| {r['n_copies']} | {r['total_copies']:,} | {r['sec_per_iteration']:.3f} | "
-               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
-               f"{H(r['env_steps_per_sec_per_copy'])} | {GB(r['peak_rss_mb_max_worker'])} | "
-               f"{r['node_peak_used_gb']:,.0f} |\n")
+        cells = (f"| {r['n_copies']} | {r['total_copies']:,} | {r['sec_per_iteration']:.3f} | "
+                 f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
+                 f"{H(r['env_steps_per_sec_per_copy'])} | {GB(r['peak_rss_mb_max_worker'])} | "
+                 f"{r['node_peak_used_gb']:,.0f} |")
+        if any_floor:
+            f = floors.get((r["workers"], r["n_copies"], style))
+            cells += (f" {100 * f / r['sec_per_iteration']:.1f}% |" if f
+                      else " not measured |")
+        md += cells + "\n"
     return md + f"\n*{caption}*\n\n"
 
 
@@ -801,36 +832,76 @@ def best_worker_count(style):
     return winner, peaks
 
 
+def what_ended_it(rows, flat):
+    """Why the sweep stopped where it did for one series: a turnover, a flattening, or memory.
+
+    before: rows whose totals rise to 1.88 at 64 copies then fall to 1.56 at 128
+    after:  "turned over" — the curve is past its peak, not merely flat
+    """
+    top = max(rows, key=lambda r: r["env_steps_per_sec"])
+    if rows[-1]["env_steps_per_sec"] < 0.98 * top["env_steps_per_sec"]:
+        return "turned over"
+    if flat:
+        return "flattened"
+    return "still rising where the sweep stopped"
+
+
+def plateau_summary_table():
+    """The headline of the sweep: one row per update convention and worker count.
+
+    Every number a reader would compare or copy sits here rather than in the prose beside it.
+    """
+    rows = []
+    for style, label in [("full_batch", "one update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")]:
+        for workers in (112, 224):
+            series = ladder(style, workers)
+            if not series:
+                continue
+            top = max(series, key=lambda r: r["env_steps_per_sec"])
+            rows.append({"label": label, "workers": workers, "top": top, "largest": series[-1],
+                         "end": what_ended_it(series, plateau_rung(series))})
+    if not rows:
+        return ""
+    md = ("| update convention | workers | best copies per worker | copies at the best setting | "
+          "seconds per iteration | million steps per second | "
+          "thousand steps per second per copy | hours per million steps per copy | "
+          "peak memory per worker (GB) | what ended the sweep |\n"
+          "|---|---|---|---|---|---|---|---|---|---|\n")
+    for r in rows:
+        t = r["top"]
+        md += (f"| {r['label']} | {r['workers']} | {t['n_copies']} | {t['total_copies']:,} | "
+               f"{t['sec_per_iteration']:.3f} | {M(t['env_steps_per_sec'])} | "
+               f"{K(t['env_steps_per_sec_per_copy'])} | "
+               f"{H(t['env_steps_per_sec_per_copy'])} | {GB(t['peak_rss_mb_max_worker'])} | "
+               f"{r['end']} |\n")
+    return md + ("\n*The best rung of each series, and what stopped the series there. Every rung "
+                 "is in the four tables above.*\n\n")
+
+
 def plateau_sentences(style, label):
     """The plateau, the peak and the memory for one update convention, all read from the rows."""
     found = best_worker_count(style)
     if not found:
         return ""
-    winner, peaks = found
+    winner, _ = found
     rows = ladder(style, winner)
-    top, flat, largest = peaks[winner], plateau_rung(rows), rows[-1]
-    out = (f"**{label}.** The better worker count is **{winner}**, reaching "
-           f"**{M(top['env_steps_per_sec'])} million** environment steps per second at "
-           f"{top['n_copies']} copies per worker, that is {top['total_copies']:,} copies")
-    if len(peaks) > 1:
-        other = [w for w in peaks if w != winner][0]
-        out += (f", against {M(peaks[other]['env_steps_per_sec'])} million for {other} workers "
-                f"at their own best rung")
-    out += ". "
-    if flat:
-        prev = rows[rows.index(flat) - 1]
-        out += (f"The curve flattens at {flat['n_copies']} copies per worker: that rung bought "
-                f"{100 * (flat['env_steps_per_sec'] / prev['env_steps_per_sec'] - 1):.1f}% over "
-                f"the {prev['n_copies']}-copy rung, where the doubling before it bought more. ")
+    top = max(rows, key=lambda r: r["env_steps_per_sec"])
+    end = what_ended_it(rows, plateau_rung(rows))
+    if end == "turned over":
+        meaning = (f"packing more than {top['n_copies']} copies into a worker takes throughput "
+                   f"away rather than merely stopping to add it, so that rung is not a soft "
+                   f"boundary but the setting to use")
+    elif end == "flattened":
+        meaning = (f"past {top['n_copies']} copies a worker the machine does no more work while "
+                   f"every copy in it goes on getting slower, so nothing is bought by going "
+                   f"further")
     else:
-        out += "Every rung measured still gained more than 2% over the one below it. "
-    out += (f"At the largest rung measured, {largest['n_copies']} copies per worker "
-            f"({largest['total_copies']:,} copies), one copy gets "
-            f"{K(largest['env_steps_per_sec_per_copy'])} thousand steps per second against "
-            f"{K(rows[0]['env_steps_per_sec_per_copy'])} thousand at one copy per worker, and "
-            f"each worker holds {GB(largest['peak_rss_mb_max_worker'])} GB, "
-            f"{largest['node_peak_used_gb']:,.0f} GB across the node.")
-    return out
+        meaning = ("the curve had not stopped rising where the sweep ended, so the setting to "
+                   "use is the largest one measured and the ceiling is still above it")
+    return (f"**{label}.** Read from the table: {meaning}. The node's memory is not what stops "
+            f"it — at the best setting the whole node holds "
+            f"{top['node_peak_used_gb']:,.0f} GB of its 1,008 GB.")
 
 
 def sec_plateau():
@@ -857,8 +928,9 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
             key = (style, workers)
             if key in n:
                 md += ladder_table(n[key]["rows"],
-                                   f"{label}, {workers} independent single-thread workers.")
+                                   f"{label}, {workers} independent single-thread workers.", style)
     md += "![copies per worker](figures/cpu_plateau.png)\n\n"
+    md += plateau_summary_table()
     for style, label in [("full_batch", "One update per batch"),
                          ("epoch_minibatch", "Sixteen updates per batch")]:
         sentence = plateau_sentences(style, label)

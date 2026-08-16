@@ -43,6 +43,7 @@ def collect():
         "memory_probe_epoch_minibatch": load("memory_probe_epoch_minibatch.json"),
         "memory_saturation": load("memory_saturation.json"),
         "memory_corun": load("memory_corun.json"),
+        "matmul_floor": load("matmul_floor_cpu.json"),
     }
 
 
