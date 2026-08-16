@@ -133,19 +133,24 @@ def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOCon
 
     Where the gradients live is chosen from the copy count, because the measurement reverses.
     Reading them where the backward pass wrote them removes a copy of the whole parameter buffer
-    from every update step and costs forty-two device programs where there were two: worth -2.5%
-    at 512 copies and -4.4% at 4,096, and +2.8% to +6.7% AGAINST it at 128 copies and below,
-    where an iteration's cost is the number of programs it issues rather than the bytes they
-    move. The buffer's layout follows: one block per parameter where the optimizer is twenty-one
+    from every update step and costs forty-two device programs where there were two: worth -4.0%
+    at 1,024 copies and -4.4% at 4,096, and +2.8% to +6.7% AGAINST it at 128 copies and below,
+    where an iteration cost is set by how many programs it issues rather than the bytes they
+    move. The buffer layout follows it: one block per parameter where the optimizer is twenty-one
     programs, one row per copy where it is one.
+
+    Below the crossover the buffer stays and the gradient limit rides along with the copy, which
+    is worth -1.1% / -2.1% / -3.0% at 32 / 128 / 512 copies and +0.6% at 8 — small enough there,
+    against a 0.01 ms spread, to take the simpler rule.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
                 fused_adam=True, tf32=True, compile_post=True, compile_opt=True)
-    # before: n_copies=128  -> gradient_buffer True,  parameter_layout "copy_major"
-    # after:  n_copies=4096 -> gradient_buffer False, parameter_layout "parameter_major"
-    memory_bound = n_copies >= 512
+    # before: n_copies=128  -> the buffer, one row per copy, with the limit inside the copy
+    # after:  n_copies=4096 -> no buffer, one block per parameter, the limit its own program
+    memory_bound = n_copies >= 1024
     base.update(gradient_buffer=not memory_bound,
-                parameter_layout="parameter_major" if memory_bound else "copy_major")
+                parameter_layout="parameter_major" if memory_bound else "copy_major",
+                fuse_copy_and_limit=not memory_bound)
     base.update(overrides)                      # an explicit override always wins
     return PPOConfig(n_copies=n_copies, update_style=style, **base)
 
