@@ -389,6 +389,11 @@ def comparison_table(cmp):
     return head + "\n".join(rows) + "\n"
 
 
+def vram(mb):
+    """Peak memory for a table cell; JAX does not always report one."""
+    return f"{mb:,.0f}" if mb is not None else "not reported"
+
+
 def throughput_table(s):
     """Wall-clock cost of the four runs, in the project's throughput-table columns."""
     head = ("| configuration | copies | seconds per<br>iteration | total million<br>steps per second | "
@@ -404,7 +409,7 @@ def throughput_table(s):
                     f"{c['million_steps_per_second']:.2f} | "
                     f"{c['thousand_steps_per_second_per_copy']:.2f} | "
                     f"{c['hours_per_million_steps_per_copy']:.2f} | "
-                    f"{c['peak_vram_mb']:,.0f} | {c['train_seconds'] / 3600:.2f} |")
+                    f"{vram(c['peak_vram_mb'])} | {c['train_seconds'] / 3600:.2f} |")
     return head + "\n".join(rows) + "\n"
 
 
