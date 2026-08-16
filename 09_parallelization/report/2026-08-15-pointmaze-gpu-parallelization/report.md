@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:26 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:28 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -832,6 +832,8 @@ optimisation that removes device programs helps at 128 copies and does nothing a
 optimisation that removes bytes moved helps at 4,096 and does nothing at 128. One change kept in
 the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
 and above, and is recorded below.
+
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program: it is made of intermediate results that the PyTorch arrangement writes to memory and reads back, and the JAX one never writes at all.
 
 ### Where an iteration's time goes as the copy count grows
 

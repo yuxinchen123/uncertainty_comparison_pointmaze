@@ -1573,7 +1573,24 @@ optimisation that removes bytes moved helps at 4,096 and does nothing at 128. On
 the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
 and above, and is recorded below.
 
-### Where an iteration's time goes as the copy count grows
+"""
+    # the two questions, answered with numbers, before the reader reaches the tables
+    a_before, a_after, a_jax = src["before A"], src["after A"], src["jax A"]
+    key = ("full_batch", 4096)
+    if key in a_before and key in a_jax:
+        pt = (a_after or a_before)[key]["ms"]
+        answer = (
+            f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
+            f"{a_before[key]['ms']:.0f} milliseconds per iteration as this round found it and "
+            f"{pt:.0f} after this round's changes, against {a_jax[key]['ms']:.0f} for the JAX "
+            f"trainer" if a_after else
+            f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
+            f"{a_before[key]['ms']:.0f} milliseconds per iteration against "
+            f"{a_jax[key]['ms']:.0f} for the JAX trainer")
+        md += (f"**The two answers in one line.** {answer}. The distance is not made of any one "
+               f"slow program: it is made of intermediate results that the PyTorch arrangement "
+               f"writes to memory and reads back, and the JAX one never writes at all.\n\n")
+    md += """### Where an iteration's time goes as the copy count grows
 
 """
     ph = {c: phase_us(fr"profile_phases_C{c}(?!.*preround)") for c in (128, 1024, 4096)}
