@@ -1611,6 +1611,23 @@ same trainer with this round's changes; the JAX trainer is unchanged by this rou
            "rate rises with the copy count while the rate each individual copy gets falls, so the "
            "hours column is the one that says how long a single training run actually takes.*\n\n")
     md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
+    # the trade-off the two columns exist to show, stated with the measured numbers
+    best = src["after A"] or src["before A"]
+    if ("full_batch", 1024) in best and ("full_batch", 4096) in best:
+        lo, hi = best[("full_batch", 1024)], best[("full_batch", 4096)]
+        md += (
+            f"The two rate columns move in opposite directions and the choice between copy counts "
+            f"depends on which one matters. Going from 1,024 copies to 4,096 with one update per "
+            f"batch raises the aggregate rate from {lo['total']:.1f} to {hi['total']:.1f} million "
+            f"environment steps per second, a factor of {hi['total']/lo['total']:.2f}, while the "
+            f"rate an individual copy gets falls from {lo['per_copy']:.1f} to "
+            f"{hi['per_copy']:.1f} thousand per second, a factor of "
+            f"{lo['per_copy']/hi['per_copy']:.1f}. In time: one copy reaches ten million "
+            f"environment steps, the budget this project's training campaign used, in "
+            f"{lo['hours']*10*60:.0f} minutes at 1,024 copies and {hi['hours']*10*60:.0f} minutes "
+            f"at 4,096. Four thousand copies is the right setting "
+            f"when the science needs many independent runs and the wall time of any one of them "
+            f"does not matter; a thousand is the right setting when it does.\n\n")
     md += sec_large_scale_limit()
     md += sec_large_scale_changes()
     return md

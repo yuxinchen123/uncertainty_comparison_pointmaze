@@ -77,12 +77,12 @@ def counts(style):
     act_floats = rows * (128 + 64 + 64 + 2 + 2 + 256 + 128 + 128)
     per_step = F32 * (3 * act_floats                        # forward write, backward read+write
                       + 2 * TRAINED_P                       # weights read forward and backward
-                      + 2 * TRAINED_P                       # gradient accumulated: read + write
+                      + 2 * TRAINED_P                       # gradient written, then copied in
                       + rows * (4 + 2 + 1 + 1 + 1 + 1 + 1 + 4 + 128))   # the batch fields read
     # the optimiser: one reduction pass over the gradient, then one fused pass that reads the
-    # gradient, both moments and the parameters and writes both moments, the parameters and
-    # the zeroed gradient
-    per_step += F32 * TRAINED_P * (1 + 8)
+    # gradient, both moments and the parameters and writes both moments and the parameters.
+    # The gradient is not zeroed — the next backward pass overwrites it.
+    per_step += F32 * TRAINED_P * (1 + 7)
     upd_b = steps * per_step
     if style != "full_batch":
         # style B also permutes the whole batch into a second buffer once per epoch

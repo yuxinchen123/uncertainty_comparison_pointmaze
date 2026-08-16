@@ -38,7 +38,7 @@ what each round changed, then the training campaign and the sweep.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:09 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:12 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -868,6 +868,8 @@ same trainer with this round's changes; the JAX trainer is unchanged by this rou
 
 ![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)
 
+The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 17.7 to 23.2 million environment steps per second, a factor of 1.31, while the rate an individual copy gets falls from 17.3 to 5.7 thousand per second, a factor of 3.1. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 10 minutes at 1,024 copies and 29 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
+
 ### What limits the PyTorch trainer at 4,096 copies
 
 The ceiling section earlier in this document analysed the trainer at 128 copies and concluded that
@@ -877,9 +879,9 @@ memory traffic. At 4,096 copies that conclusion no longer holds. Three measureme
 **First, arithmetic cannot be the constraint.** One iteration with sixteen updates per batch
 performs 3.53 million million floating-point operations, a figure that follows
 from the network shapes and is exact. Counting every tensor the iteration writes and every time a
-later operation reads it gives at least 334 gigabytes of memory traffic, which is a
+later operation reads it gives at least 319 gigabytes of memory traffic, which is a
 lower bound because it does not count intermediates the compiler has to materialise. The ratio is
-therefore at most 10.5 operations per byte. The card balances at about 106
+therefore at most 11.1 operations per byte. The card balances at about 106
 operations per byte when its matrix units are used and about 15 when they are not, so this
 computation sits far on the memory side of the balance whatever is done to it.
 
