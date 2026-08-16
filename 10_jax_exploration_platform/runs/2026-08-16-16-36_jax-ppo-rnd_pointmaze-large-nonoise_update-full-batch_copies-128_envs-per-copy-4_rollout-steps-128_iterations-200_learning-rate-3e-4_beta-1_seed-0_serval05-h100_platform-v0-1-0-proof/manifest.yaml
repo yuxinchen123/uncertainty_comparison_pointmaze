@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-08-16-16-36_jax-ppo-rnd_pointmaze-large-nonoise_update-full-batch_copies-128_envs-per-copy-4_rollout-steps-128_iterations-200_learning-rate-3e-4_beta-1_seed-0_serval05-h100_platform-v0-1-0-proof
+description: "proof run of the extracted platform before any refactor: PPO with Random Network Distillation on the no-noise large PointMaze, 128 copies for 200 iterations on one H100"
+git:
+  commit: 63324033e00f42fc105dda258cefdb2f10781c67
+  dirty: true
+  version_tag: jax-rnd-baseline-v0.1.0-10-g6332403
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 128
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: distinct
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

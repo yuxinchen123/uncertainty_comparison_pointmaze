@@ -21,6 +21,7 @@ import argparse
 import json
 import os
 import platform
+import shlex
 import shutil
 import socket
 import subprocess
@@ -149,9 +150,14 @@ def parse_args() -> argparse.Namespace:
 
 def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
     """Write command.txt, config_resolved.yaml and manifest.yaml before the first iteration."""
-    # the exact command, so the run can be repeated without reconstructing it from prose
+    # the exact command, so the run can be repeated without reconstructing it from prose. Arguments
+    # are quoted the way a shell needs them, or an argument holding spaces (the description) would
+    # come back as several arguments.
+    # before: sys.argv = ["run_training.py", "--description", "a proof run"]
+    # after:  PYTHONNOUSERSITE=1 <python> run_training.py --description 'a proof run'
     (run_dir / "command.txt").write_text(
-        "PYTHONNOUSERSITE=1 " + sys.executable + " " + " ".join(sys.argv) + "\n")
+        "PYTHONNOUSERSITE=1 " + shlex.quote(sys.executable) + " "
+        + " ".join(shlex.quote(argument) for argument in sys.argv) + "\n")
 
     # the full configuration after defaults and overrides — what actually ran, not what was typed
     resolved = {"trainer": {field: getattr(config, field)
@@ -312,9 +318,11 @@ def main() -> None:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from aggregate_run import aggregate
     summary = aggregate(run_dir)
-    say(f"aggregated: {summary['records']} metric records, "
-        f"{summary['throughput']['total_env_steps_per_second']:.3e} env steps per second in total, "
-        f"{summary['throughput']['env_steps_per_second_per_copy']:.1f} per copy")
+    say(f"aggregated: {summary['records']} metric records, steady rate "
+        f"{summary['throughput']['total_env_steps_per_second_steady']:.3e} env steps per second in "
+        f"total and {summary['throughput']['env_steps_per_second_per_copy_steady']:.0f} per copy "
+        f"({summary['throughput']['hours_per_million_steps_per_copy_steady']:.2f} hours per million "
+        f"steps per copy)")
     log.close()
 
 

@@ -56,22 +56,39 @@ def aggregate(run_dir: Path) -> dict:
         for record in ordered:
             out.write(json.dumps(record) + "\n")
 
-    # throughput, reported both ways per the throughput rule: the whole machine's rate and the rate
-    # one copy gets, plus the per-copy rate written as hours per million steps
+    # throughput, always reported both ways: the whole machine's rate and the rate one copy gets,
+    # plus the per-copy rate written as hours per million steps, which is the unit a reader plans in.
+    # Two rates are given because the first iteration also compiles the program: the steady rate is
+    # what a long run gets, the wall-clock rate is what this run actually took from start to end.
+    # before: a unit record with 200 iterations, 20.6 s total of which 19.1 s was the first
+    #         iteration; after: steady 0.0075 s per iteration, so 8.7e6 steps per second, against
+    #         6.4e5 steps per second measured over the whole wall clock.
     copies = sum(r["copies"] for r in completions)
     seconds = max((r["seconds_total"] for r in completions), default=0.0)
     env_steps = sum(r["env_steps"] for r in completions)
-    per_copy_rate = (env_steps / seconds / copies) if seconds and copies else 0.0
+    steady_iteration_seconds = (
+        sum(r["seconds_per_iteration_steady"] for r in completions) / len(completions)
+        if completions else None)
+    steps_per_iteration = ((env_steps / sum(r["iterations"] for r in completions))
+                           if completions else 0.0)
+    steady_total_rate = ((steps_per_iteration / steady_iteration_seconds)
+                         if steady_iteration_seconds else 0.0)
+    steady_per_copy_rate = (steady_total_rate / copies) if copies else 0.0
+    wall_clock_total_rate = (env_steps / seconds) if seconds else 0.0
     throughput = {
         "copies": copies,
-        "seconds_total": seconds,
-        "seconds_per_iteration_steady": (
-            sum(r["seconds_per_iteration_steady"] for r in completions) / len(completions)
-            if completions else None),
+        "seconds_total_wall_clock": seconds,
+        "seconds_per_iteration_steady": steady_iteration_seconds,
         "total_env_steps": env_steps,
-        "total_env_steps_per_second": (env_steps / seconds) if seconds else 0.0,
-        "env_steps_per_second_per_copy": per_copy_rate,
-        "hours_per_million_steps_per_copy": (1e6 / (3600 * per_copy_rate)) if per_copy_rate else None,
+        "total_env_steps_per_second_steady": steady_total_rate,
+        "env_steps_per_second_per_copy_steady": steady_per_copy_rate,
+        "hours_per_million_steps_per_copy_steady": (
+            1e6 / (3600 * steady_per_copy_rate) if steady_per_copy_rate else None),
+        "total_env_steps_per_second_wall_clock": wall_clock_total_rate,
+        "env_steps_per_second_per_copy_wall_clock": (
+            (wall_clock_total_rate / copies) if copies else 0.0),
+        "seconds_first_iteration_with_compile": [
+            r["seconds_first_iteration_with_compile"] for r in completions],
     }
 
     # the end-of-run numbers a reader asks for first: how far learning got, and how much was seen

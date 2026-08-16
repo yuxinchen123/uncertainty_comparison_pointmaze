@@ -73,9 +73,9 @@ The full resolved configuration is in `config_resolved.yaml`, and the exact comm
 
 ## Git state
 
-Commit at launch: `d5c04ff8ea3e2cbe0e57a1e0e8f6b60de1f7bd52`
-(tag at that point: `jax-rnd-baseline-v0.1.0` plus the commits of this stage; the platform is tagged
-`jax-platform-v0.1.0` immediately after this run).
+Commit at launch: `63324033e00f42fc105dda258cefdb2f10781c67` — the same value `manifest.yaml` recorded
+from the repository itself when the run started (`git describe`: `jax-rnd-baseline-v0.1.0-10-g6332403`).
+The platform is tagged `jax-platform-v0.1.0` immediately after this run.
 
 Working tree at launch:
 
