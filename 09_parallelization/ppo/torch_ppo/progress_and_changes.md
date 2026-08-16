@@ -122,15 +122,15 @@ the measurements said is that the two regimes are not the same problem.
 
 ### Where the time goes at these sizes
 
-Milliseconds per phase, one iteration, sixteen updates per batch, measured as three separately
-captured graphs (`benchmarks/profile_phases.py`):
+Milliseconds per phase, one iteration, sixteen updates per batch, for the trainer AS THIS ROUND
+FOUND IT, measured as three separately captured graphs (`benchmarks/profile_phases.py`):
 
 | phase | 128 copies | 1,024 copies | 4,096 copies |
 |---|---|---|---|
 | rollout, 128 sequential steps | 4.97 | 12.05 | 16.85 |
 | post-rollout processing | 1.30 | 8.76 | 35.30 |
 | update, 16 minibatch steps | 13.89 | 63.98 | 239.15 |
-| the same iteration as one graph | 20.42 | 81.59 | 290.58 |
+| the same iteration as one graph | 20.31 | 81.59 | 290.58 |
 
 The rollout, which is a quarter of the iteration at 128 copies, is six percent of it at 4,096:
 it is a chain of 2,304 small operations whose cost barely grows with the copy count, so adding
