@@ -15,7 +15,9 @@ import re
 from pathlib import Path
 
 RUN = Path(__file__).resolve().parent.parent
-SOURCE = RUN / "logs" / "perf_counters.txt"
+# both counter jobs, the later-settled one last so its records win where they overlap
+SOURCES = [RUN / "logs" / "perf_counters.txt",
+           RUN / "logs" / "perf_counters_settled.txt"]
 OUT = RUN / "data" / "perf_counters.json"
 
 HEADER = re.compile(r"=====\s+procs=(\d+)\s+copies=(\d+)\s+style=(\S+)")
@@ -67,7 +69,20 @@ def derived(record):
 
 def main():
     """Parse the counter output and write one record per setting."""
-    records = [derived(r) for r in parse(SOURCE.read_text())]
+    # one record per setting, the later-settled job's reading replacing the earlier one, since
+    # its counting window is certainly inside the load's timed region
+    # before: four records from the first job and three from the second, overlapping at two
+    #         settings
+    # after:  five records, the overlapping two taken from the second job
+    by_setting = {}
+    for source in SOURCES:
+        if not source.exists():
+            continue
+        for r in parse(source.read_text()):
+            row = derived(r)
+            row["settled"] = source.name.endswith("settled.txt")
+            by_setting[(row["workers"], row["n_copies"], row["style"])] = row
+    records = sorted(by_setting.values(), key=lambda r: (r["style"], r["workers"], r["n_copies"]))
     OUT.write_text(json.dumps(records, indent=1))
     print(f"wrote {OUT} with {len(records)} records")
 

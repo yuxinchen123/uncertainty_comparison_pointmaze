@@ -44,6 +44,7 @@ def collect():
         "memory_saturation": load("memory_saturation.json"),
         "memory_corun": load("memory_corun.json"),
         "matmul_floor": load("matmul_floor_cpu.json"),
+        "perf_counters": load("perf_counters.json"),
     }
 
 

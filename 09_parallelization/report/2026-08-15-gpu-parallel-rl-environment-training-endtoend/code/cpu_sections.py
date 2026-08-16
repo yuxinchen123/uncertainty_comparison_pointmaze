@@ -1095,6 +1095,29 @@ def floor_split_table(style="full_batch", workers=112):
                  f"is growing in proportion to the copies.*\n\n")
 
 
+def counter_table(d, style="full_batch"):
+    """What the processor's own counters say at three points of the ladder.
+
+    Ratios rather than byte figures: the generic cache-miss event does not have one fixed meaning
+    on this processor, so a traffic figure derived from it would be a guess wearing a unit. The
+    ratios do not depend on that mapping.
+    """
+    rows = [r for r in d.get("perf_counters", []) if r["style"] == style]
+    if not rows:
+        return ""
+    md = ("| what was running | copies per worker | instructions per cycle | "
+          "address translations that missed | first-level data loads that missed | "
+          "cycles the back end was idle |\n|---|---|---|---|---|---|\n")
+    for r in sorted(rows, key=lambda r: (r["workers"], r["n_copies"])):
+        what = "one worker alone" if r["workers"] == 1 else f"{r['workers']} workers"
+        md += (f"| {what} | {r['n_copies']} | {r.get('instructions_per_cycle', 0):.2f} | "
+               f"{r.get('dtlb_load_miss_percent', 0):.2f}% | "
+               f"{r.get('l1_load_miss_percent', 0):.2f}% | "
+               f"{r.get('backend_stall_percent', 0):.2f}% |\n")
+    return md + ("\n*Counted across the whole machine while the load ran, one update per batch.*"
+                 "\n\n")
+
+
 def sec_cause():
     """Subsection: which resource ran out at the plateau, and the measurements that say so."""
     d = plateau()
@@ -1143,6 +1166,19 @@ where its throughput peaks leaves the memory system's rate untouched, which puts
 roughly a fifth of the machine's bandwidth on what the training is using. **Memory bandwidth is
 not what runs out.**
 
+**The processor's own counters.** The performance counters are readable on this node, so the
+three points either side of the peak were counted directly while the load ran.
+
+{counter_table(d)}Instructions per cycle falls by more than half between the peak setting and the
+one past it, so the cores are doing progressively less work per cycle rather than running out of
+anything they are asked to compute. The share of first-level data loads that miss barely moves,
+so the data is no less local in the small caches. What does move, by a factor of ten, is the share
+of address translations that miss: the page tables no longer fit the translation caches. A worker
+holding {working_set_bytes(256) / 1e6:,.0f} MB spans about {working_set_bytes(256) / 4096:,.0f}
+ordinary pages against a translation cache of a few thousand entries, and this node has large
+pages set to `madvise`, so the trainer's allocations get ordinary ones. Every missed translation
+is itself a chain of dependent memory accesses, which is latency spent, not bandwidth.
+
 What is left is the memory system's latency and the cache. One copy keeps
 {working_set_bytes(1) / 1e6:.2f} MB of state that the update walks every iteration, and the
 last-level cache is {L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket shared by
@@ -1157,13 +1193,13 @@ what makes each miss take longer is other cores missing at the same time. That i
 every measurement here: bandwidth spare, latency-bound work, and a cost that grows with how much
 each core is competing over.
 
-Two things this does not settle. It does not separate the last-level cache from the address
-translation caches, which are also exhausted at these sizes: a worker holding
-{working_set_bytes(256) / 1e6:,.0f} MB spans about
-{working_set_bytes(256) / (2 * 1024 * 1024):,.0f} large pages or
-{working_set_bytes(256) / 4096:,.0f} ordinary ones, against a translation cache holding a few
-thousand entries. And it does not rule out an allocator cost that grows with the size of a
-worker's heap. Both would show the same shape, and both are inside "everything else".
+What remains uncertain. The counters say address translation degrades sharply and the small
+caches do not, which points at the translation caches and the page walks they cause; they do not
+separate that from contention for the last-level cache, since both would lower instructions per
+cycle together, and they do not rule out an allocator cost that grows with a worker's heap. The
+test that would separate them was not run: give the trainer's allocations large pages and see
+whether the turnover moves. If it does, address translation is the binding constraint and this
+machine has a setting left to change; if it does not, the last-level cache is.
 
 **The two update conventions differ by exactly this.** Sixteen updates per batch reads and writes
 the parameter-side buffers sixteen times per iteration where one update does it once, for the same
