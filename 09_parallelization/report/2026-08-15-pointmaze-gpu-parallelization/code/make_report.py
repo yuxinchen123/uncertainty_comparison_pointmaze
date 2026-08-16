@@ -2286,8 +2286,24 @@ tensor. That is the largest single removable item, and it is what round five's o
             "not, for the reason the change exists: the multiplication library picks its kernel "
             "partly from the operand's layout, so a contiguous weight and a strided one go "
             "through different kernels, which sum the same products in a different order. One "
-            "iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.*\n\n")
-    if gather:
+            "iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest "
+            "gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative "
+            "terms.*\n\n")
+    shuffle = paired_change_rows(r"torch_change_gather_into_place_epoch_minibatch_sync")
+    if shuffle:
+        md += (
+            "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
+            "batch is permuted into a second buffer so that each of the four update steps is a "
+            "contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation "
+            "allocates a whole second copy of the batch and then copies it across; written as "
+            "`torch.gather(t, 1, ix, out=buffer)` it does not, and the 2.9 milliseconds of "
+            "device-to-device copying a kernel profile names at 4,096 copies goes with it. That "
+            "profile is what suggested the change; it is not what decided it, because naming the "
+            "program that disappears does not say what the iteration costs afterwards.\n\n"
+            + paired_table(shuffle, "straight into the buffer") + "\n\n"
+            "*It is on at every size: the 0.5 percent it costs at 8 copies is 0.04 ms, and a "
+            "third branch in the configuration for that is not worth its complexity.*\n\n")
+    elif gather:
         md += (
             "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
             "batch is permuted into a second buffer so that each of the four update steps is a "

@@ -517,7 +517,22 @@ updates per batch. "Rounds" is how many of the eleven favoured the change.
 |---|---|---|---|---|
 | 24 | **Read the gradients where the backward pass wrote them.** Round five asked the automatic-differentiation system for the gradients and copied the twenty-one fresh tensors into one [C, P] buffer, so that the gradient limit and the Adam step could each be a single program over one contiguous array. Reading them where they lie removes the copy and costs twenty-one programs per optimizer pass instead of one. It also removes the buffer: 981 megabytes less held on the card at 4,096 copies | 57.19 -> 54.89 ms, **-4.02%**, 11 of 11, floor 0.84 | 208.45 -> 199.23 ms, **-4.42%**, 11 of 11, floor 3.49 | KEEP |
 | 25 | **Sum the squared gradients in the same program that copies them into the buffer**, so the buffer is not read a second time for the gradient limit. Keeps the buffer and its single-program optimizer | 56.56 -> 54.17 ms, **-4.22%**, 11 of 11, floor 0.73 | 204.75 -> 197.83 ms, **-3.38%**, 11 of 11, floor 3.36 | measured, NOT the default: row 24 beats it (below) |
-| 26 | **Write the shuffled batch straight into its buffer.** `buffer.copy_(t.gather(...))` allocates a whole second copy of the shuffled batch and copies it across; `torch.gather(t, 1, ix, out=buffer)` does not | — | the 2.86 ms of device-to-device copying the kernel profile named is gone; one whole iteration 205.59 -> 204.57 ms against a 0.93 ms floor, which is that harness's resolution | KEEP |
+| 26 | **Write the shuffled batch straight into its buffer.** `buffer.copy_(t.gather(...))` allocates a whole second copy of the shuffled batch and copies it across; `torch.gather(t, 1, ix, out=buffer)` does not, and the 2.86 ms of device-to-device copying the kernel profile names disappears with it | 54.00 -> 53.25 ms, **-1.39%**, 11 of 11, floor 0.78 | 197.19 -> 193.56 ms, **-1.84%**, 11 of 11, floor 3.76 | KEEP |
+
+Row 26 was kept on a kernel profile first, and that was not enough. A profile names the program
+that disappears; it does not say what the iteration costs afterwards, and a cross-process
+comparison of the whole round could not resolve the difference. It was therefore made a
+configuration knob so the paired instrument could answer:
+
+| copies | second copy, then copy across | straight into the buffer | change | rounds | floor |
+|---|---|---|---|---|---|
+| 8 | 7.88 ms | 7.92 ms | +0.50% | 0 of 11 | 0.00 ms |
+| 128 | 12.24 ms | 12.12 ms | **-1.04%** | 11 of 11 | 0.02 ms |
+| 1,024 | 54.00 ms | 53.25 ms | **-1.39%** | 11 of 11 | 0.78 ms |
+| 4,096 | 197.19 ms | 193.56 ms | **-1.84%** | 11 of 11 | 3.76 ms |
+
+It is on everywhere: the 0.50 percent it costs at 8 copies is 0.04 ms, and a third branch in the
+configuration for that is not worth its complexity.
 
 ### Row 24 reverses sign below 512 copies, and the trainer chooses by copy count
 

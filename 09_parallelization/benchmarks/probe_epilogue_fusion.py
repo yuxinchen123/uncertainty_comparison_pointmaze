@@ -51,8 +51,13 @@ SPECS = {
     "generated": (dict(max_autotune_gemm=True), False),
     "generated_triton": (dict(max_autotune_gemm=True,
                               max_autotune_gemm_backends="TRITON"), False),
-    "generated_tf32": (dict(max_autotune_gemm=True,
-                            max_autotune_gemm_backends="TRITON"), True),
+    # force_disable_caches on this arm alone, for two reasons: its settings are otherwise
+    # identical to generated_triton's, so the compiler's stored code would be reused, and the
+    # size rule it replaces is a monkeypatch that is not part of the key that code is stored
+    # under. Without it this arm silently re-measures the one above — which is what the run of
+    # 2026-08-16-01-44 did, and its two arms agreeing to five digits is how that shows.
+    "generated_tf32": (dict(max_autotune_gemm=True, max_autotune_gemm_backends="TRITON",
+                            force_disable_caches=True), True),
 }
 
 

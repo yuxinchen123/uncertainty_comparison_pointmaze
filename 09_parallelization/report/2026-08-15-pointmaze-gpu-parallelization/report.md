@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:18 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:50 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -968,13 +968,13 @@ of the range before it is kept.
 | phase | 128 copies | 1,024 copies | 4,096 copies |
 |---|---|---|---|
 | rollout (128 sequential environment steps) | 4.97 | 12.05 | 15.33 |
-| post-rollout processing | 1.30 | 8.76 | 19.94 |
-| update (16 minibatch steps) | 13.89 | 63.98 | 168.44 |
-| the whole iteration, recorded as one sequence | 20.31 | 81.59 | 204.81 |
+| post-rollout processing | 1.30 | 8.76 | 19.89 |
+| update (16 minibatch steps) | 13.89 | 63.98 | 152.49 |
+| the whole iteration, recorded as one sequence | 20.31 | 81.59 | 189.59 |
 
 *Milliseconds, sixteen updates per batch. The first three lines are the three phases timed as separately recorded sequences; the last is the shipped arrangement, which records all three together.*
 
-From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.1 and the update by a factor of 12.1. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
+From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.1 and the update by a factor of 11.0. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
 
 ### The two frameworks at the sizes in use
 
@@ -1066,7 +1066,7 @@ below — the gather, which reads rows in a random order — is 3 percent of an 
 iteration is not slow because any one of its programs is slow. It costs what it costs because of
 how many bytes pass through those programs.
 
-The same conclusion from the other side: every matrix multiplication of the update stage, timed on its own and summed, comes to 78 milliseconds at 4,096 copies, against 168 measured for the stage. One third of the stage is the multiplications; the other two thirds is moving activations, gradients and optimiser state between them.
+The same conclusion from the other side: every matrix multiplication of the update stage, timed on its own and summed, comes to 78 milliseconds at 4,096 copies, against 152 measured for the stage. One third of the stage is the multiplications; the other two thirds is moving activations, gradients and optimiser state between them.
 
 **The conclusion, and what follows from it.** At 128 copies the trainer was limited by the number
 of device programs; at 4,096 copies it is limited by memory traffic, with every program already at
@@ -1074,8 +1074,8 @@ or near the bandwidth the card delivers. A change that removes device programs �
 every optimisation in rounds one to four did — cannot help at this size. A change that removes
 *passes over memory* can, and the three changes below are all of that kind. For comparison, the
 same iteration's arithmetic would take 8.4 milliseconds if the matrix
-units ran at their marketed rate, 4.1 percent of the
-205 milliseconds measured; that figure is what the 128-copy analysis reported, and
+units ran at their marketed rate, 4.5 percent of the
+190 milliseconds measured; that figure is what the 128-copy analysis reported, and
 at this size it says only that the shapes are small, not that there is room in the arithmetic.
 
 One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
@@ -1339,14 +1339,16 @@ The two new forms against each other, so the choice between them is measured rat
 
 *Both sides read the gradients where they were written, so the only difference is the layout. The same expressions run over the same numbers at different addresses, and on the processor the two train to bitwise equal parameters. On the card they do not, for the reason the change exists: the multiplication library picks its kernel partly from the operand's layout, so a contiguous weight and a strided one go through different kernels, which sum the same products in a different order. One iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.*
 
-**Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
+**Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across; written as `torch.gather(t, 1, ix, out=buffer)` it does not, and the 2.9 milliseconds of device-to-device copying a kernel profile names at 4,096 copies goes with it. That profile is what suggested the change; it is not what decided it, because naming the program that disappears does not say what the iteration costs afterwards.
 
-| measurement | before | after |
-|---|---|---|
-| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |
-| one whole iteration, 4,096 copies, separate processes | 205.59 ms | 204.57 ms |
+| copies | before | straight into the buffer | change | rounds<br>favouring it | spread within<br>a version |
+|---|---|---|---|---|---|
+| 8 | 7.88 ms | 7.92 ms | +0.5 percent | 0 of 11 | 0.00 ms |
+| 128 | 12.24 ms | 12.12 ms | -1.0 percent | 11 of 11 | 0.02 ms |
+| 1024 | 54.00 ms | 53.25 ms | -1.4 percent | 11 of 11 | 0.78 ms |
+| 4096 | 197.19 ms | 193.56 ms | -1.8 percent | 11 of 11 | 3.76 ms |
 
-*The second row is at the resolution limit of the cross-process harness — its noise floor here is 0.93 ms — which is why the program that disappears is quoted as well. This change cannot be a knob, so it cannot be measured by the paired harness, which compares two configurations of one build.*
+*It is on at every size: the 0.5 percent it costs at 8 copies is 0.04 ms, and a third branch in the configuration for that is not worth its complexity.*
 
 Why the gradient forms differ, program by program at 4,096 copies (`benchmarks/probe_gradient_form.py`):
 
@@ -1381,13 +1383,25 @@ with the size rule replaced by the configuration's own answer.
 
 | form | update stage at 4,096 copies | against the shipped form | rounds faster | loss differs by |
 |---|---|---|---|---|
-| the library's multiplication, as shipped | 164.94 ms | +0.0 percent | 0 of 7 | — |
-| the compiler's, library backend removed | 235.21 ms | +42.6 percent | 0 of 7 | 3.4e-03 relative |
-| the same, with the matrix units allowed | 235.40 ms | +42.7 percent | 0 of 7 | 3.5e-03 relative |
+| the library's multiplication, as shipped | 152.15 ms | +0.0 percent | 0 of 7 | — |
+| the compiler's, both backends offered | 148.00 ms | -2.7 percent | 7 of 7 | 4.7e-06 relative |
+| the compiler's, library backend removed | 221.49 ms | +45.6 percent | 0 of 7 | 9.1e-06 relative |
+| the same, with the matrix units allowed | 221.47 ms | +45.6 percent | 0 of 7 | 9.1e-06 relative |
 
 The generated kernels are not close. The selection log has the library's multiplication at 0.071 milliseconds against the best generated candidate's 0.078 on the first shape it tries, and the backward pass's transposed shapes are worse; the passes an epilogue would remove cannot pay for that. Switching the matrix units back on changes nothing, so round five's reason for setting this aside was a real observation about a form that was not going to pay anyway.
 
 **A note on how this was measured, because the first attempt measured nothing.** The first version of the probe built ONE trainer and swapped four compiled versions of its loss onto it, each compiled inside a context that set the compiler's options. All four came out bitwise identical and within 0.1 percent of each other in time — one form measured four times, not four forms agreeing. The compiler caches its work against the function being compiled and against the backend the wrapper carries, and a setting applied through a surrounding context is part of neither. The probe now gives each arm its own trainer and passes the settings as options rather than around them, and it says so out loud when two arms agree to zero. The accuracy line it already printed is what caught it.
+
+#### The three together, against the revision the round started from
+
+| setting | before | after | difference | noise floor |
+|---|---|---|---|---|
+| 4,096 copies,<br>sixteen updates per batch | 205.84 ms | 191.35 ms | -14.49 ms (-7.0 percent) | 0.69 ms |
+| 4,096 copies,<br>one update per batch | 63.19 ms | 62.33 ms | -0.86 ms (-1.4 percent) | 0.20 ms |
+| 128 copies,<br>sixteen updates per batch | 12.51 ms | 12.61 ms | +0.10 ms (+0.8 percent) | 0.01 ms |
+| 8 copies,<br>sixteen updates per batch | 7.96 ms | 7.82 ms | -0.14 ms (-1.7 percent) | 0.01 ms |
+
+*Both sides built in their own process and run in the order A B B A, so the spread between two runs of the same side is the noise floor. At 8 and 128 copies the trainer keeps the gradient buffer, so only the shuffle change applies there.*
 
 #### The small sizes, re-measured
 
