@@ -39,10 +39,10 @@ the earlier sections' conclusions do not all carry over.
 | <span class="updated">[Reproduction](#reproduction)</span> | 2026-08-15 00:22 PT | 2026-08-15 19:38 PT | updated |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
 | <span class="updated">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:10 PT | updated |
-| <span class="updated">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:38 PT | updated |
+| <span class="updated">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 20:02 PT | updated |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT | read |
-| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 19:38 PT | updated |
+| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 20:02 PT | updated |
 | <span class="updated">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-15 19:10 PT | updated |
 | <span class="updated">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 17:50 PT | updated |
 | <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 19:38 PT | unread |
@@ -712,8 +712,21 @@ All three implementations pass identical exactness checks, so this is purely a s
 one update per batch and JAX leads by 10 to 22 percent elsewhere, measured the same way on both
 sides with each iteration waited for. At 1,024 to 4,096 copies — where this trainer is actually run
 — the distance is much larger, JAX by 1.75 to 2.08 times, for a reason that only appears at those
-sizes; the last section of this document measures it and says why. Both compute the same algorithm
-and agree to 8.6e-7 on every intermediate quantity. PyTorch carries the resumable training driver
+sizes; the last section of this document measures it and says why. The two figures for JAX's lead
+predate the round-five PyTorch work in the last section, which closes much of it.
+
+Both compute the same algorithm, and the agreement between them depends on what the card is asked
+to do with a matrix multiply:
+
+| matmul precision | worst disagreement across every intermediate quantity |
+|---|---|
+| exact single precision on both sides | 1.2e-06 |
+| the precision both trainers actually ship with | 2.2e-03 |
+
+Both ship with the card's reduced-precision matrix mode — PyTorch asks for it, JAX takes it by
+default — so the second row is the one that describes the running trainers, and it is the rounding
+that mode is documented to cost rather than a difference between the two implementations.
+PyTorch carries the resumable training driver
 and the campaign records; both now carry the learning-rate sweep and per-copy progress recording.
 
 **Which combination: keep the environment in the same framework as the trainer.** Substituting the
@@ -944,6 +957,7 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 | 32 | 7,168 | 2.166 | 1.64 | 0.23 | 1.21 | 0.70 | 110 |
 | 64 | 14,336 | 3.974 | 1.77 | 0.12 | 2.25 | 0.98 | 155 |
 | 128 | 28,672 | 10.969 | 1.18 | 0.04 | 6.76 | 1.12 | 173 |
+| 256 | 57,344 | 45.656 | 0.4884 | 0.01 | 32.6 | 1.43 | 249 |
 
 *One update per batch, 224 independent single-thread workers.*
 

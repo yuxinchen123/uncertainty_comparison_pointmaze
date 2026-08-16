@@ -1309,8 +1309,21 @@ All three implementations pass identical exactness checks, so this is purely a s
 one update per batch and JAX leads by 10 to 22 percent elsewhere, measured the same way on both
 sides with each iteration waited for. At 1,024 to 4,096 copies — where this trainer is actually run
 — the distance is much larger, JAX by 1.75 to 2.08 times, for a reason that only appears at those
-sizes; the last section of this document measures it and says why. Both compute the same algorithm
-and agree to 8.6e-7 on every intermediate quantity. PyTorch carries the resumable training driver
+sizes; the last section of this document measures it and says why. The two figures for JAX's lead
+predate the round-five PyTorch work in the last section, which closes much of it.
+
+Both compute the same algorithm, and the agreement between them depends on what the card is asked
+to do with a matrix multiply:
+
+| matmul precision | worst disagreement across every intermediate quantity |
+|---|---|
+| exact single precision on both sides | 1.2e-06 |
+| the precision both trainers actually ship with | 2.2e-03 |
+
+Both ship with the card's reduced-precision matrix mode — PyTorch asks for it, JAX takes it by
+default — so the second row is the one that describes the running trainers, and it is the rounding
+that mode is documented to cost rather than a difference between the two implementations.
+PyTorch carries the resumable training driver
 and the campaign records; both now carry the learning-rate sweep and per-copy progress recording.
 
 **Which combination: keep the environment in the same framework as the trainer.** Substituting the

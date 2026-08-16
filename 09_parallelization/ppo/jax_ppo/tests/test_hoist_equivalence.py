@@ -44,6 +44,16 @@ def build(hoist):
     return t, st
 
 
+def build_unroll(update_unroll):
+    """A trainer and primed state differing only in the update scan's unroll factor.
+
+    The reference for what harmless reassociation costs: unrolling instructs the compiler how
+    many loop bodies to emit, and unroll 1 against 2 agrees to 3.7e-16 in double precision.
+    """
+    t = JaxPPORND(PPOConfig(update_unroll=update_unroll, **CFG))
+    return t, t.prime_obs_rms(t.init_state(), jax.random.PRNGKey(5))
+
+
 def batch_of(trainer, state, key):
     """The update batch one iteration produces, without applying the update."""
     cfg = trainer.cfg
@@ -93,25 +103,34 @@ def test_isolation():
     print("ok test_isolation")
 
 
-def test_drift_report():
-    """Three chained iterations; reported so the accumulation is on the record."""
-    ta, sa = build(False)
-    tb, sb = build(True)
-    for it in range(3):
+def chained_drift(ta, sa, tb, sb, iterations=3):
+    """Worst relative parameter deviation after running the same iterations through both."""
+    for it in range(iterations):
         key = jax.random.PRNGKey(100 + it)
         sa, _ = ta._iterate(sa, key, 3e-4)
         sb, _ = tb._iterate(sb, key, 3e-4)
-    leaves_a = jax.tree.leaves(sa.params)
-    leaves_b = jax.tree.leaves(sb.params)
-    worst = max(float(np.abs(np.asarray(x) - np.asarray(y)).max())
-                for x, y in zip(leaves_a, leaves_b))
-    worst_rel = max(rel(x, y) for x, y in zip(leaves_a, leaves_b))
-    print(f"drift after 3 iterations: worst parameter deviation {worst:.3e} "
-          f"({worst_rel:.3e} relative)")
-    assert worst_rel <= 1e-4, "parameters drifted more than accumulation explains"
-    print("ok test_drift_report")
+    return max(rel(x, y) for x, y in
+               zip(jax.tree.leaves(sa.params), jax.tree.leaves(sb.params)))
+
+
+def test_drift_against_a_control():
+    """Chained drift, judged against a change that provably computes the same function.
+
+    Training is a feedback loop, so ANY difference in float32 rounding grows from iteration to
+    iteration and a fixed bound says nothing on its own. Measured: a change already established
+    as the same function — the update scan at unroll 1 against unroll 2, which agree to 3.7e-16
+    in double precision — drifts 1.7e-03 over three iterations, seventeen times the 1e-4 bound
+    this test used to assert. So the control is measured here in the same run and the hoist is
+    required only to stay in its neighbourhood.
+    """
+    control = chained_drift(*build_unroll(1), *build_unroll(2))
+    hoisted = chained_drift(*build(False), *build(True))
+    print(f"drift after 3 iterations: hoist {hoisted:.3e}, "
+          f"same-function control {control:.3e} ({hoisted/control:.2f}x)")
+    assert hoisted <= 5 * control, "the hoist drifts far beyond float32 reassociation"
+    print("ok test_drift_against_a_control")
 
 
 if __name__ == "__main__":
     test_isolation()
-    test_drift_report()
+    test_drift_against_a_control()
