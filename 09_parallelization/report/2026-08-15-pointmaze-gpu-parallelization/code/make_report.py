@@ -2396,10 +2396,11 @@ with the size rule replaced by the configuration's own answer.
                "settings as options rather than around them, and it says so out loud when two "
                "arms agree to zero. The accuracy line it already printed is what caught it.\n\n")
     # the three kept changes together, against the revision the round started from
-    combined = [("4,096 copies,<br>sixteen updates per batch", r"ab_r6-all-C4096-styleB"),
-                ("4,096 copies,<br>one update per batch", r"ab_r6-all-C4096-styleA"),
-                ("128 copies,<br>sixteen updates per batch", r"ab_r6-all-C128-styleB"),
-                ("8 copies,<br>sixteen updates per batch", r"ab_r6-all-C8-styleB")]
+    combined = [("8 copies,<br>sixteen updates per batch", r"ab_r6-all-C8-styleB\."),
+                ("128 copies,<br>sixteen updates per batch", r"ab_r6-all-C128-styleB\."),
+                ("512 copies,<br>sixteen updates per batch", r"ab_r6-all-C512-styleB\."),
+                ("4,096 copies,<br>sixteen updates per batch", r"ab_r6-all-C4096-styleB\."),
+                ("4,096 copies,<br>one update per batch", r"ab_r6-all-C4096-styleA\.")]
     have = [(n, newest(p)) for n, p in combined]
     if any(d for _, d in have):
         md += ("#### The three together, against the revision the round started from\n\n"
@@ -2412,9 +2413,21 @@ with the size rule replaced by the configuration's own answer.
                    f"({-d['relative_change_percent']:+.1f} percent) | "
                    f"{d['noise_floor_ms']:.2f} ms |\n")
         md += ("\n*Both sides built in their own process and run in the order A B B A, so the "
-               "spread between two runs of the same side is the noise floor. At 8 and 128 copies "
-               "the trainer keeps the gradient buffer, so only the shuffle change applies "
-               "there.*\n\n")
+               "spread between two runs of the same side is the noise floor. No size is slower. "
+               "One update per batch gains least, and for the reason its own row gives: that "
+               "iteration has one update step rather than sixteen, so every change that removes "
+               "a pass inside an update step is paid for once instead of sixteen times.*\n\n"
+               "The first run of this table reported 8 copies 3.7 percent SLOWER and 128 copies "
+               "0.9 percent slower, against a within-side spread of 0.01 milliseconds. That was "
+               "the harness, not the trainer: it built each side by constructing the "
+               "configuration object directly from a fixed dictionary plus its defaults, which "
+               "was the shipped configuration until this round made the gradient's home depend "
+               "on the copy count — after which, at 8 and 128 copies, it timed the "
+               "large-copy-count form, which the trainer never chooses there. It now builds each "
+               "side through that revision's own `production_config`. The 4,096-copy readings "
+               "were never affected, because there the two agree. The defect was found only "
+               "because two instruments disagreed by more than either one's stated "
+               "resolution.\n\n")
 
     # the same check the previous round's loss at 512 copies made necessary: the sizes this round
     # did NOT optimise for, measured before and after rather than assumed unchanged

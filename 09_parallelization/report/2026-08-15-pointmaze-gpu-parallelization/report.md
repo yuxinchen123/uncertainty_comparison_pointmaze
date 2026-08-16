@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:50 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:54 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1396,12 +1396,15 @@ The generated kernels are not close. The selection log has the library's multipl
 
 | setting | before | after | difference | noise floor |
 |---|---|---|---|---|
+| 8 copies,<br>sixteen updates per batch | 7.96 ms | 7.82 ms | -0.14 ms (-1.7 percent) | 0.01 ms |
+| 128 copies,<br>sixteen updates per batch | 12.51 ms | 12.12 ms | -0.39 ms (-3.1 percent) | 0.01 ms |
+| 512 copies,<br>sixteen updates per batch | 30.35 ms | 28.86 ms | -1.48 ms (-4.9 percent) | 0.13 ms |
 | 4,096 copies,<br>sixteen updates per batch | 205.84 ms | 191.35 ms | -14.49 ms (-7.0 percent) | 0.69 ms |
 | 4,096 copies,<br>one update per batch | 63.19 ms | 62.33 ms | -0.86 ms (-1.4 percent) | 0.20 ms |
-| 128 copies,<br>sixteen updates per batch | 12.51 ms | 12.61 ms | +0.10 ms (+0.8 percent) | 0.01 ms |
-| 8 copies,<br>sixteen updates per batch | 7.96 ms | 7.82 ms | -0.14 ms (-1.7 percent) | 0.01 ms |
 
-*Both sides built in their own process and run in the order A B B A, so the spread between two runs of the same side is the noise floor. At 8 and 128 copies the trainer keeps the gradient buffer, so only the shuffle change applies there.*
+*Both sides built in their own process and run in the order A B B A, so the spread between two runs of the same side is the noise floor. No size is slower. One update per batch gains least, and for the reason its own row gives: that iteration has one update step rather than sixteen, so every change that removes a pass inside an update step is paid for once instead of sixteen times.*
+
+The first run of this table reported 8 copies 3.7 percent SLOWER and 128 copies 0.9 percent slower, against a within-side spread of 0.01 milliseconds. That was the harness, not the trainer: it built each side by constructing the configuration object directly from a fixed dictionary plus its defaults, which was the shipped configuration until this round made the gradient's home depend on the copy count — after which, at 8 and 128 copies, it timed the large-copy-count form, which the trainer never chooses there. It now builds each side through that revision's own `production_config`. The 4,096-copy readings were never affected, because there the two agree. The defect was found only because two instruments disagreed by more than either one's stated resolution.
 
 #### The small sizes, re-measured
 

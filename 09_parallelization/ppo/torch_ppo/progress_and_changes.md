@@ -662,24 +662,54 @@ of 4, 64, 128 or 256 — and then measured the form properly, with one whole tra
 
 | form | update stage, 4,096 copies | against the shipped form | rounds faster |
 |---|---|---|---|
-| the library's multiplication, as shipped | 164.94 ms | — | — |
-| the compiler's, library backend removed | 235.21 ms | **+42.6% slower** | 0 of 7 |
-| the same, with the size rule replaced so the matrix units apply | 235.40 ms | **+42.7% slower** | 0 of 7 |
+| the library's multiplication, as shipped | 152.15 ms | — | — |
+| the compiler's, both backends offered | 148.00 ms | **-2.7% faster** | 7 of 7 |
+| the compiler's, library backend removed | 221.49 ms | **+45.6% slower** | 0 of 7 |
+| the same, with the size rule replaced so the matrix units apply | 221.47 ms | +45.6% slower | 0 of 7 |
 
-The point of removing the library backend is that it is what makes the bias and the activation
-fold into the multiplication as an epilogue; leaving both backends offered means the library's
-kernel wins the selection on nearly every shape and no epilogue fuses. The measurement says the
-generated kernels are so much slower on these shapes — the selection log has the library's
-multiplication at 0.071 ms against the best generated candidate's 0.078 on the first shape alone,
-and the backward's transposed shapes are worse — that the passes the epilogue would remove cannot
-pay for them. Switching the matrix units back on changes nothing, so the note round five left
-("the kernels the compiler selects switch the units off") was a real observation about a form that
-was never going to pay anyway. NOT KEPT, and now with a number rather than a caveat.
+Read the four rows together. Offering both backends is round five's arm and reproduces its
+result: 2.7 percent faster on the update stage, 7 of 7 rounds, at the cost of changing the
+arithmetic — the loss moves 4.7e-06 relative and the worst gradient 5.0e-04 against a largest of
+8.8e-01, which are the same magnitudes round five recorded. But that arm does NOT fuse any
+epilogue: the library's kernel wins the selection on nearly every shape, so what it buys is a
+better kernel here and there, not the pass-removal this round was testing.
 
-### The three kept changes, one after another at the two ends of the range
+Removing the library backend is what forces a generated kernel and so what makes the bias and the
+activation fold into the multiplication. That form is **45.6 percent slower**, and switching the
+matrix units back on does not move it. The selection log says why: the library's multiplication
+runs the first shape in 0.071 ms against the best generated candidate's 0.078, and the backward
+pass's transposed shapes are worse. The passes an epilogue would remove cannot pay for kernels
+that much slower. NOT KEPT — and the hypothesis this round was built on, that PyTorch could be
+made to fold its element-wise work into its multiplications the way the JAX compiler does, is
+answered in the negative with a number.
 
-Each row is the paired median of the arm that includes every change above it, so the chain reads
-downwards. Sixteen updates per batch.
+One caveat on the last row, stated rather than hidden: its figures are identical to the row above
+it to five digits, which is the signature of the compiler handing it the row above's stored
+kernels — its settings differ only by a monkeypatch, which is not part of the key that code is
+stored under. The probe now disables that store for this arm. The verdict does not depend on it:
+the form it modifies is 45 percent slower whatever precision its multiplications use.
+
+### The round end to end, against the revision it started from
+
+Both sides built in their own process and run in the order A B B A, so the spread between two
+runs of the same side is the noise floor. Sixteen updates per batch unless the row says otherwise.
+Below 1,024 copies the trainer keeps the buffer and fuses the gradient limit into its copy; at
+1,024 and above it reads the gradients in place and holds one block per parameter.
+
+| copies | round five | round six | difference | noise floor |
+|---|---|---|---|---|
+| 8 | 7.96 ms | 7.82 ms | **-1.7%** | 0.01 ms |
+| 128 | 12.51 ms | 12.12 ms | **-3.1%** | 0.01 ms |
+| 512 | 30.35 ms | 28.86 ms | **-4.9%** | 0.13 ms |
+| 4,096 | 205.84 ms | 191.35 ms | **-7.0%** | 0.69 ms |
+| 4,096, one update per batch | 63.19 ms | 62.33 ms | **-1.4%** | 0.20 ms |
+
+**No size is slower.** One update per batch gains less for the reason its own row gives: the
+iteration has one update step rather than sixteen, so every change that removes a pass inside an
+update step is paid for once instead of sixteen times.
+
+And the chain at the sizes the round is about, each row the paired median of the arm that includes
+every change above it:
 
 | build | 1,024 copies | 4,096 copies |
 |---|---|---|
@@ -688,6 +718,30 @@ downwards. Sixteen updates per batch.
 | + read the gradients where the backward pass wrote them | 54.11 ms | 195.19 ms |
 | + one contiguous block per parameter | 53.26 ms | 193.77 ms |
 | **together** | **-6.9%** | **-7.0%** |
+
+### A second measurement that measured the wrong thing, and how it was found
+
+The first run of the table above reported 8 copies **3.7 percent SLOWER** and 128 copies 0.9
+percent slower, against a within-side spread of 0.01 ms. That disagreed with the paired
+instrument, which had the one knob that differs at 8 copies at +0.64 percent. Splitting the round
+in two through the cross-process instrument then blamed the shuffle change for 3.8 percent at 8
+copies — which the paired instrument, once the shuffle change was made a knob, put at 0.50
+percent, or 0.04 ms.
+
+The cause was the harness. `ab_compare.py` built each side by constructing `PPOConfig` directly
+from a fixed dictionary plus the dataclass defaults. That WAS the shipped configuration until this
+round made the gradient's home depend on the copy count; after that, at 8 and 128 copies it timed
+the large-copy-count form — the one the trainer never chooses there — and reported it as the
+round's result. It now builds each side through that revision's own `production_config`, which is
+what the rest of the project means by the shipped configuration, and the numbers above are from
+the rebuilt harness. The 4,096-copy readings were never affected: there the defaults and
+`production_config` agree.
+
+The lesson is the one this project keeps relearning in a new costume: **a measurement can be
+precise and still be of the wrong thing.** Its within-side spread was 0.01 ms — the instrument was
+extremely repeatable about a configuration nobody runs. What caught it was two instruments
+disagreeing by more than either one's stated resolution, which is the only signal such a defect
+gives.
 
 ### What is left, and where it is
 
