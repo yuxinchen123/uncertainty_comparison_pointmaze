@@ -42,6 +42,11 @@ class PPOConfig:
     n_envs: int = 4
     num_steps: int = 128
     update_style: str = "epoch_minibatch"  # or "full_batch"
+    # hold every parameter in ONE array of shape [copies, total parameters per copy] instead of
+    # twenty-one named arrays, so the gradient clip is one reduction and Adam is a handful of
+    # elementwise operations rather than twenty-one of each. The networks are unchanged: the
+    # array is cut back into the named tensors before every forward pass.
+    flat_params: bool = False
     update_epochs: int = 4
     num_minibatches: int = 4
     learning_rate: float = 3e-4
@@ -64,8 +69,17 @@ class PPOConfig:
     hoist_rollout: bool = True       # compute the critic values, the log-probability and the
                                      # RND bonus AFTER the rollout scan, in one wide pass each,
                                      # instead of once per step inside it (round 2, J1)
-    scan_unroll: int = 4             # unroll factor for the rollout scan; 4 and 8 measured
-                                     # equal, 4 chosen for lower compile time (round 2, J2)
+    scan_unroll: int = 0             # unroll factor for the rollout scan; 0 picks by copy count
+                                     # (round 5, J5): 32 at 8 copies, 16 above, each winning
+                                     # 11 of 11 paired rounds against the previous value of 4
+    update_unroll: int = 2           # unroll factor for the sixteen-step update scan (round 5,
+                                     # J6): 2 emits two steps per loop body, which gives the
+                                     # compiler one step's optimizer and the next step's
+                                     # gradient to overlap. 4 is not better than 2. Unlike the
+                                     # rollout scan this is NOT bit-neutral — it changes the
+                                     # order float32 accumulates in — but the same update in
+                                     # double precision agrees to 3.7e-16, so it computes the
+                                     # same function; single precision differs by 3.6e-07
     batch_stats_f32: bool = False    # reduce batch mean/variance in float32 before promoting
                                      # (round 2, J5) — changes the last bits of the statistics,
                                      # so it also breaks bit-agreement with the torch twin
@@ -230,6 +244,28 @@ class JaxPPORND:
                           [(Hh, 4, 2 ** 0.5), (F, Hh, 2 ** 0.5), (F, F, 2 ** 0.5)])
         self.init_params = {"actor": actor, "critic": critic, "predictor": predictor}
 
+        # layout for the one-array parameter form: where each named tensor lives inside the
+        # flat array. before: 21 arrays, e.g. actor W0 [C, 4, 64], actor b0 [C, 64], ...
+        # after:  one array [C, P] with P = 4*64 + 64 + ... , tensor i occupying columns
+        #         offsets[i] : offsets[i] + sizes[i], reshaped back to its own trailing shape.
+        leaves, self._treedef = jax.tree.flatten(self.init_params)
+        self._shapes = [leaf.shape for leaf in leaves]
+        self._sizes = [int(np.prod(leaf.shape[1:])) for leaf in leaves]
+        self._offsets = np.concatenate([[0], np.cumsum(self._sizes)])
+        self.flat_size = int(self._offsets[-1])
+
+        # how far to unroll the rollout scan. One rollout step does more work the more copies
+        # there are, so the point where a longer program stops paying moves with the copy count:
+        # at 8 copies unrolling 32 steps beat 16 in 11 of 11 paired rounds, while at 32 and 128
+        # copies 16 beat 32 in 11 of 11. Unrolling does not change the arithmetic, and the
+        # parameters after one iteration are bit-identical at 4, 16 and 32 — EXCEPT with the
+        # rollout hoist off, where the in-scan critic and log-probability fuse differently at 32
+        # (4 against 32 deviates 3.9e-04, 4 against 16 stays exact). So 32 is taken only where it
+        # is bit-neutral, which leaves every configuration computing what it did before.
+        # A value given explicitly is used as given.
+        self.scan_unroll = cfg.scan_unroll or (
+            32 if cfg.n_copies <= 8 and cfg.hoist_rollout else 16)
+
         # jitted entry points (style chosen HERE, never branched on inside a trace)
         update = self._update_full_batch if cfg.update_style == "full_batch" \
             else self._update_epoch_minibatch
@@ -238,13 +274,27 @@ class JaxPPORND:
         self._iterate = jax.jit(partial(self._iterate_impl, update), donate_argnums=(0,))
         self._prime = jax.jit(self._prime_impl)
 
+    def pack(self, tree):
+        """The 21 named parameter tensors -> one array [C, P], copies still on axis 0."""
+        return jnp.concatenate(
+            [leaf.reshape(leaf.shape[0], -1) for leaf in jax.tree.flatten(tree)[0]], axis=1)
+
+    def unpack(self, flat):
+        """One array [C, P] -> the 21 named parameter tensors, each with its own shape."""
+        # before: flat [C, P]; after: e.g. actor W0 = flat[:, 0:256] viewed as [C, 4, 64]
+        C = flat.shape[0]
+        parts = [flat[:, o:o + s].reshape((C,) + shape[1:])
+                 for o, s, shape in zip(self._offsets, self._sizes, self._shapes)]
+        return jax.tree.unflatten(self._treedef, parts)
+
     def init_state(self) -> TrainState:
         """Fresh TrainState: keyed weights, zero Adam moments, reset envs."""
         cfg = self.cfg
-        zeros_like_tree = jax.tree.map(jnp.zeros_like, self.init_params)
+        start = self.pack(self.init_params) if cfg.flat_params else self.init_params
+        zeros_like_tree = jax.tree.map(jnp.zeros_like, start)
         return TrainState(
-            params=self.init_params, opt_m=zeros_like_tree,
-            opt_v=jax.tree.map(jnp.zeros_like, self.init_params),
+            params=start, opt_m=zeros_like_tree,
+            opt_v=jax.tree.map(jnp.zeros_like, start),
             opt_t=jnp.zeros((), jnp.int32),
             env_state=self.env.reset(),
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
@@ -335,6 +385,10 @@ class JaxPPORND:
     def _losses(self, params, mb, style_a):
         """Scalar sum-over-copies loss on one (mini)batch dict (spec 9 + 11 correction)."""
         cfg = self.cfg
+        # in the one-array form the gradient is taken with respect to the flat array, so the
+        # named tensors the networks expect are cut out of it here
+        if cfg.flat_params:
+            params = self.unpack(params)
         a = mb["adv"]
         a_n = (a - a.mean(axis=1, keepdims=True)) / (a.std(axis=1, ddof=1, keepdims=True) + 1e-8)
 
@@ -407,7 +461,8 @@ class JaxPPORND:
             return (params, m, v, t), loss
 
         (params, m, v, t), losses = jax.lax.scan(
-            body, (state.params, state.opt_m, state.opt_v, state.opt_t), mbs)
+            body, (state.params, state.opt_m, state.opt_v, state.opt_t), mbs,
+            unroll=cfg.update_unroll)
         return state._replace(params=params, opt_m=m, opt_v=v, opt_t=t), losses[-1]
 
     # ---- one full iteration (rollout + statistics + GAE + update), jitted once ----
@@ -416,7 +471,8 @@ class JaxPPORND:
         """rollout T steps -> intrinsic filter -> GAE -> batch -> update (spec 6, 7, 11/12)."""
         cfg = self.cfg
         C, N, T = cfg.n_copies, cfg.n_envs, cfg.num_steps
-        params = state.params
+        # the rollout reads the networks by name, so the one-array form is cut apart once here
+        params = self.unpack(state.params) if cfg.flat_params else state.params
         obs_rms_old = state.obs_rms
         z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, 2), F32)
 
@@ -442,7 +498,7 @@ class JaxPPORND:
                 return (env_state, next_obs), out
 
             (env_state, obs_last), outs = jax.lax.scan(
-                body, (state.env_state, state.obs), z_all, unroll=cfg.scan_unroll)
+                body, (state.env_state, state.obs), z_all, unroll=self.scan_unroll)
             obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
 
             # log-probability of the sampled actions depends only on the noise and on logstd
@@ -475,7 +531,7 @@ class JaxPPORND:
                 return (env_state, next_obs), out
 
             (env_state, obs_last), outs = jax.lax.scan(
-                body, (state.env_state, state.obs), z_all, unroll=cfg.scan_unroll)
+                body, (state.env_state, state.obs), z_all, unroll=self.scan_unroll)
             (obs_buf, act_buf, logp_buf, vext_buf, vint_buf, nobs_buf, rext_buf,
              term_buf, done_buf, rint_buf) = outs
             nobs_flat = flat(nobs_buf)
