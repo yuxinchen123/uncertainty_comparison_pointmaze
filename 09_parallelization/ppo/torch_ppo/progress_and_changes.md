@@ -479,6 +479,91 @@ table, a profiling variant whose dead code was deleted, and now a compiler cache
 pattern is the same every time: the check that catches it is one that asserts the thing under
 test actually happened.
 
+### Where the update stage's time goes at 4,096 copies, program by program
+
+Every device program of one iteration, named and grouped by kind
+(`benchmarks/profile_kernels.py`, the three stages run without graph capture so the profiler can
+name them). This is what chose the round's changes; the update stage is 167.03 ms of it.
+
+| part of the update stage | time | share | rate reached |
+|---|---|---|---|
+| matrix multiplications | 62.72 ms | 37.6% | — |
+| the Adam step | 31.94 ms | 19.1% | 3,435 GB/s |
+| copying the gradients into the flat buffer | 16.70 ms | 10.0% | 1,878 GB/s |
+| shuffling the batch once per epoch | 6.42 ms | 3.8% | — |
+| the per-copy gradient limit | 4.58 ms | 2.7% | 3,430 GB/s |
+| everything else: bias, activations, and their gradients | 44.66 ms | 26.7% | — |
+
+The Adam step and the gradient limit already run at the full 3,540 GB/s a plain copy of memory
+reaches on this card. The copy does not, and the reason is the layout round four introduced: its
+destination is a strided window of the buffer, and the operation probe measures a write into a
+strided window at 2,022 GB/s against 3,588 for the same write into a contiguous tensor. It is the
+largest single removable item in the stage, and round five's own change created it.
+
+### The changes
+
+Each measured paired, round by round, in one process, at 1,024 and 4,096 copies with sixteen
+updates per batch. "Rounds" is how many of the eleven favoured the change.
+
+| # | change | 1,024 copies | 4,096 copies | verdict |
+|---|---|---|---|---|
+| 24 | **Read the gradients where the backward pass wrote them.** Round five asked the automatic-differentiation system for the gradients and copied the twenty-one fresh tensors into one [C, P] buffer, so that the gradient limit and the Adam step could each be a single program over one contiguous array. Reading them where they lie removes the copy and costs twenty-one programs per optimizer pass instead of one. It also removes the buffer: 981 megabytes less held on the card at 4,096 copies | 57.19 -> 54.89 ms, **-4.02%**, 11 of 11, floor 0.84 | 208.45 -> 199.23 ms, **-4.42%**, 11 of 11, floor 3.49 | KEEP |
+| 25 | **Sum the squared gradients in the same program that copies them into the buffer**, so the buffer is not read a second time for the gradient limit. Keeps the buffer and its single-program optimizer | 56.56 -> 54.17 ms, **-4.22%**, 11 of 11, floor 0.73 | 204.75 -> 197.83 ms, **-3.38%**, 11 of 11, floor 3.36 | measured, NOT the default: row 24 beats it (below) |
+| 26 | **Write the shuffled batch straight into its buffer.** `buffer.copy_(t.gather(...))` allocates a whole second copy of the shuffled batch and copies it across; `torch.gather(t, 1, ix, out=buffer)` does not | — | the 2.86 ms of device-to-device copying the kernel profile named is gone; one whole iteration 205.59 -> 204.57 ms against a 0.93 ms floor, which is that harness's resolution | KEEP |
+
+Rows 24 and 25 remove different passes and cannot both apply, so they were also measured against
+each other rather than compared through their separate baselines:
+
+| copies | with the limit fused into the copy | reading the gradients in place | difference | rounds |
+|---|---|---|---|---|
+| 1,024 | 54.38 ms | 54.11 ms | -0.5% | 11 of 11 |
+| 4,096 | 198.34 ms | 195.18 ms | -1.6% | 11 of 11 |
+
+And the programs themselves, timed on their real shapes at 4,096 copies
+(`benchmarks/probe_gradient_form.py`), which is what the whole-iteration difference is made of:
+
+| program | time | bytes | rate |
+|---|---|---|---|
+| copy the gradients into the buffer, buffer form | 861 us | 1.96 GB | 2,280 GB/s |
+| the gradient limit over the buffer, buffer form | 290 us | 0.98 GB | 3,385 GB/s |
+| Adam over the buffer, buffer form | 1,972 us | 6.87 GB | 3,486 GB/s |
+| the gradient limit over the twenty-one gradients, no-buffer form | 341 us | 0.98 GB | 2,883 GB/s |
+| Adam over the twenty-one windows, no-buffer form | 2,214 us | 6.87 GB | 3,104 GB/s |
+
+Per minibatch step that is 3,123 us against 2,554, so 569 us, so **9.1 ms over the sixteen steps
+of an iteration** — which is the 9.2 ms the whole-iteration comparison measured. The decomposition
+also says what the no-buffer form gives back: its Adam reaches 3,104 GB/s where the buffer form's
+reaches 3,486, because it walks twenty-one strided windows instead of one contiguous array. That
+is 4 ms an iteration handed back, and it is what the layout change below goes after.
+
+### Row 27: the buffer's layout, which round four got the wrong way round for this regime
+
+Round four put every parameter in one buffer with **one row per copy**, [copies, parameters]. That
+is the layout a single-program optimizer needs, because a copy then owns a contiguous row and one
+kernel can walk the whole array applying that copy's rate. Row 24 replaced the single-program
+optimizer with twenty-one programs, and for twenty-one programs the same layout is the wrong one:
+a parameter's window of a copy-major buffer is strided across copies, and the operation probe
+measures a pass over a strided window at 2,022 GB/s against 3,588 for the same pass over a
+contiguous tensor.
+
+`parameter_layout="parameter_major"` holds **one contiguous block per parameter** instead — all
+copies of the first weight, then all copies of the first bias, and so on. Every window a
+multiplication or the optimizer touches is then contiguous. Alignment is kept the same way, by
+padding each block's per-copy length to a multiple of four numbers; only four of the twenty-one
+need it (both value-head biases, the actor's output bias and the log standard deviation, six
+numbers per copy in total) and none of them is a multiplication operand.
+
+| copies | copy-major | parameter-major | change | rounds | floor |
+|---|---|---|---|---|---|
+| 128 | 12.71 ms | 12.61 ms | **-0.80%** | 11 of 11 | 0.04 ms |
+| 1,024 | 54.06 ms | 53.26 ms | **-1.49%** | 11 of 11 | 0.98 ms |
+| 4,096 | 195.19 ms | 193.77 ms | **-0.73%** | 11 of 11 | 3.92 ms |
+
+Both sides read the gradients where they were written, so the only difference is the layout.
+**Bitwise identical**: the same numbers at different addresses, run through the same programs, and
+a test trains the trainer for two iterations in each layout and requires exact equality on every
+parameter. KEEP.
+
 ### The paired comparison against the revision this round starts from is neutral
 
 The first change of the round is a refactor in its OFF position — the gradient path becomes a

@@ -1630,19 +1630,21 @@ def sec_large_scale():
 
 An earlier section did measure the trainer past a thousand copies, but its figures come from the
 first and second optimisation rounds and its JAX figures from the first, and — more importantly —
-every optimisation decision recorded anywhere in this document was taken by measuring 8 to 128
-copies. The trainer is used at 1,024 to 4,096. This section re-opens the question at those sizes,
-with the current code on both sides: what the two frameworks cost there, what limits the PyTorch
-one, and what changed once the limit was identified.
+every optimisation decision recorded anywhere in this document up to that point was taken by
+measuring 8 to 128 copies. The trainer is used at 1,024 to 4,096. Two rounds of work re-opened the
+question at those sizes; this section reports both, with the current code on both sides: what the
+two frameworks cost there, what limits the PyTorch one, and what changed once the limit was
+identified.
 
 The short answer is that the two ranges are different problems. At 128 copies the iteration is a
 long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
 above the same programs each carry eight to thirty-two times as much data, the data no longer fits
 in any cache, and the cost is set by how many bytes move between the chip and its memory. An
 optimisation that removes device programs helps at 128 copies and does nothing at 4,096; an
-optimisation that removes bytes moved helps at 4,096 and does nothing at 128. One change kept in
-the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
-and above, and is recorded below.
+optimisation that removes bytes moved helps at 4,096 and does nothing at 128. Both rounds turned on
+that distinction, and one change kept in an earlier round on the strength of 8-to-128 measurements
+turned out to be a loss at 1,024 and above. Every change below is therefore measured at both ends
+of the range before it is kept.
 
 """
     # the two questions, answered with numbers, before the reader reaches the tables
@@ -1761,55 +1763,63 @@ def sec_large_scale_gap(src):
                 rows.append((label, c, after[(style, c)]["ms"], jax[(style, c)]["ms"]))
     if not rows:
         return ""
-    md = """### Why the JAX trainer is faster at these copy counts
+    md = """### Why the JAX trainer is still faster at these copy counts
 
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
 """
     for label, c, pt, jx in rows:
         md += f"| {label} | {c} | {pt:.1f} ms | {jx:.1f} ms | {pt/jx:.2f} |\n"
+
+    # both trainers run the same algorithm on the same shapes, so the counted traffic is the
+    # same for both and the ratio to it says how much of each one's cost is avoidable
+    sys.path.insert(0, str(BASE / "benchmarks"))
+    import count_traffic as ct
+    counts = ct.counts("epoch_minibatch")
+    floor_ms = sum(v[1] for v in counts.values()) * 4096 / ct.BW * 1e3
+    pt4096 = next((p for l, c, p, _ in rows if c == 4096 and "sixteen" in l), None)
+    jx4096 = next((j for l, c, _, j in rows if c == 4096 and "sixteen" in l), None)
+    floor_md = ""
+    if pt4096 and jx4096:
+        floor_md = (
+            f"\nBoth trainers implement the same algorithm on the same shapes, so the bytes the "
+            f"algorithm itself requires are the same for both, and the distance each one sits "
+            f"above that figure is comparable:\n\n"
+            f"| | milliseconds per iteration | times the counted traffic floor |\n|---|---|---|\n"
+            f"| the bytes the algorithm requires, at the card's measured bandwidth | "
+            f"{floor_ms:.0f} | 1.00 |\n"
+            f"| JAX | {jx4096:.0f} | {jx4096/floor_ms:.2f} |\n"
+            f"| PyTorch | {pt4096:.0f} | {pt4096/floor_ms:.2f} |\n\n"
+            f"*4,096 copies, sixteen updates per batch. The floor counts every tensor the "
+            f"algorithm writes and every later read of it (`benchmarks/count_traffic.py`); it "
+            f"does not count intermediates a particular implementation has to materialise, which "
+            f"is exactly the quantity the two frameworks differ in.*\n")
     md += """
-The reason is not that any PyTorch program is slow. The table in the previous subsection times
-each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
-reaches. The reason is that there are more of them, and every program writes its output to memory
-for the next one to read.
+The reason is not that any PyTorch program is slow. Each is timed on its real shape in the
+subsection above and reaches 72 to 100 percent of the rate a plain copy of memory gets. The reason
+is that there are more of them, and every program writes its output to memory for the next one to
+read.
 
-The two frameworks arrange an iteration differently. The PyTorch trainer records the iteration as
-a sequence of separate device programs — a multiplication, then a program that adds the bias and
-applies the activation, then the next multiplication, and so on — and every intermediate between
-them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
-that emits far fewer programs, folding chains of element-wise work into the loops that produce
-and consume them, so a number of the intermediates PyTorch writes and re-reads are never written
-at all. At 128 copies that difference showed up as a difference in the number of programs issued,
-worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
-what the iteration costs, so the same difference is worth about a factor of two.
-
-Closing it would mean folding the bias and the activation into the multiplication itself rather
-than leaving them as a following pass — that is, having the compiler generate the multiplication
-instead of calling the library's. PyTorch can be asked to do this, so it was measured rather than
-guessed at: the update stage at 1,024 copies takes 45.8 milliseconds with the library's
-multiplication and 44.5 with the compiler's, and 46.8 against 44.8 in a second run, so 3 to 4
-percent of that stage and 2 to 3 percent of an iteration — real, but small, and the two runs
-disagree by more than the spread within either of them. It also has a cost: the kernels the
-compiler selects switch the reduced-precision matrix units off, so the loss it computes differs
-by 2.6e-6 relative and the worst gradient by 6.5e-4 against a largest gradient of 0.87, and
-compilation takes substantially longer. It was therefore not adopted in this round, whose rule
-was that the arithmetic must not change, and it is the first candidate for a round that allows
+The two frameworks arrange an iteration differently. The PyTorch trainer records it as a sequence
+of separate device programs — a multiplication, then a program that adds the bias and applies the
+activation, then the next multiplication — and every intermediate between them is written to
+memory and read back. The JAX trainer hands the whole iteration to a compiler that emits fewer
+programs, folding chains of element-wise work into the loops that produce and consume them, so a
+number of the intermediates PyTorch writes and re-reads are never written at all.
+""" + floor_md + """
+Round six measured the obvious way to close that difference — having PyTorch's compiler generate
+the multiplications so that the bias and the activation fold into them as an epilogue — and the
+answer is in the previous subsection. It is not the missing piece. What is left is spread across
+every program the iteration issues, and the arrangement of separate library calls is what produces
 it.
 
-What the measurement says more broadly is that the remaining distance is not one missing
-optimisation. It is distributed across every program the iteration issues, and closing it would
-mean giving up the arrangement of separate library calls in favour of generating the whole
-iteration — which is what the JAX trainer already is.
-
 The peak memory in the tables above points the same way. At 4,096 copies with sixteen updates per
-batch the PyTorch trainer holds 13.8 gigabytes and the JAX trainer 9.0. The difference is two
-deliberate choices on the PyTorch side that trade memory for programs: it stores the frozen
-target network's features for the whole batch rather than recomputing them in each update step,
-and it keeps a second copy of the batch in shuffled order so that each update step is a
-contiguous slice rather than its own gather. Both were the right trade at 128 copies. At these
-sizes they are close to neutral — the stored features still win on the byte count, as the
-arithmetic in the next subsection shows — but they are no longer free.
+batch the PyTorch trainer holds 12.8 gigabytes after this round (13.8 before it) and the JAX
+trainer 9.1. Two deliberate PyTorch choices account for most of the difference: it stores the
+frozen target network's features for the whole batch rather than recomputing them in each update
+step, and it keeps a second copy of the batch in shuffled order so that each update step is a
+contiguous slice rather than its own gather. Both were the right trade at 128 copies and both are
+still the right trade on the byte count here, but they are no longer free.
 
 One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
 trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
@@ -2150,6 +2160,7 @@ def sec_large_scale_round6():
     grad_A = paired_change_rows(r"torch_change_gradient_buffer_full_batch_sync")
     fused = paired_change_rows(r"torch_change_fuse_copy_and_limit_epoch_minibatch_sync")
     versus = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_fused_vs_nobuffer")
+    layout = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_layout")
     gather = newest(r"ab_r6-gather-out-C4096-styleB")
     epi = epilogue_rows(r"probe_epilogue_C4096_pertrainer") or epilogue_rows(r"probe_epilogue_C4096")
     prog = newest(r"probe_gradient_form_C4096")
@@ -2210,28 +2221,29 @@ tensor. That is the largest single removable item, and it is what round five's o
     md += """#### The changes, each measured against the revision before it
 
 """
-    rows = []
-    if grad_B:
-        for c in sorted(grad_B):
-            r = grad_B[c]
-            rows.append(("read the gradients where the backward pass wrote them, "
-                         "instead of copying them into one buffer", c, r))
+    md += ("**Reading the gradients where the backward pass wrote them**, instead of copying "
+           "them into one buffer so that the gradient limit and the Adam step can each be a "
+           "single program over one contiguous array. The price is twenty-one programs per "
+           "optimizer pass instead of one; the measurement is whether that costs more than the "
+           "copy it removes.\n\n")
+    md += paired_table(grad_B, "reading them in place") + "\n\n"
+    md += "*Sixteen updates per batch. A negative change is faster.*\n\n"
     if gather:
-        rows.append(("write the shuffled batch straight into its buffer, instead of building a "
-                     "second copy of it and copying across", 4096, None))
-    md += ("| change | copies | before | after | change | rounds favouring it |\n"
-           "|---|---|---|---|---|---|\n")
-    for label, c, r in rows:
-        if r is None:
-            md += (f"| {label} | {c} | {gather['a_ms']:.2f} ms | {gather['b_ms']:.2f} ms | "
-                   f"{-gather['relative_change_percent']:+.1f} percent | "
-                   f"not paired by round (separate processes, "
-                   f"{gather['noise_floor_ms']:.2f} ms noise floor) |\n")
-        else:
-            md += (f"| {label} | {c} | {r['median_sec']['off']*1e3:.2f} ms | "
-                   f"{r['median_sec']['on']*1e3:.2f} ms | {r['change_percent']:+.1f} percent | "
-                   f"{r['rounds_favouring_on']} of {r['rounds']} |\n")
-    md += "\n*Sixteen updates per batch. A negative change is faster.*\n\n"
+        md += (
+            "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
+            "batch is permuted into a second buffer so that each of the four update steps is a "
+            "contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation "
+            "allocates a whole second copy of the batch and then copies it across. Written as "
+            "`torch.gather(t, 1, ix, out=buffer)` it does not.\n\n"
+            "| measurement | before | after |\n|---|---|---|\n"
+            "| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |\n"
+            f"| one whole iteration, 4,096 copies, separate processes | {gather['a_ms']:.2f} ms |"
+            f" {gather['b_ms']:.2f} ms |\n\n"
+            f"*The second row is at the resolution limit of the cross-process harness — its "
+            f"noise floor here is {gather['noise_floor_ms']:.2f} ms — which is why the program "
+            f"that disappears is quoted as well. This change cannot be a knob, so it cannot be "
+            f"measured by the paired harness, which compares two configurations of one build.*"
+            "\n\n")
     if grad_A:
         md += ("The gradient change with one update per batch, where there is one update step "
                "rather than sixteen and so one copy rather than sixteen:\n\n"
@@ -2245,8 +2257,25 @@ tensor. That is the largest single removable item, and it is what round five's o
         md += ("The two new forms against each other, so the choice between them is measured "
                "rather than inferred from their separate comparisons:\n\n"
                + paired_table(versus, "no buffer at all") + "\n\n")
+    if layout:
+        md += (
+            "**One contiguous block per parameter, instead of one buffer row per copy.** The "
+            "round-four buffer holds [copies, parameters]: the layout a single-program optimizer "
+            "needs, because a copy then owns a contiguous row and one kernel can walk the whole "
+            "array applying that copy's rate. With the optimizer now twenty-one programs, that "
+            "is the wrong layout — a parameter's window of it is strided across copies, and a "
+            "pass over a strided window reaches 2,022 gigabytes per second against 3,588 for the "
+            "same pass over a contiguous tensor. Holding one block per parameter instead makes "
+            "every window a multiplication or the optimizer touches contiguous, and keeps every "
+            "copy on a sixteen-byte boundary by padding each block's per-copy length to a "
+            "multiple of four numbers. Only four of the twenty-one need that padding, and none "
+            "of them is a multiplication operand.\n\n"
+            + paired_table(layout, "one block per parameter") + "\n\n"
+            "*Both sides read the gradients where they were written, so the only difference is "
+            "the layout. The two are bitwise identical: the same numbers at different "
+            "addresses.*\n\n")
     if prog:
-        md += ("Why they differ, program by program at 4,096 copies "
+        md += ("Why the gradient forms differ, program by program at 4,096 copies "
                "(`benchmarks/probe_gradient_form.py`):\n\n"
                "| program | time | bytes | rate |\n|---|---|---|---|\n")
         for r in prog["rows"]:
@@ -2287,6 +2316,38 @@ configuration's own answer.
                    f"{r['change_percent_against_library']:+.1f} percent | "
                    f"{r['rounds_faster_than_library']} of {r['rounds']} | {diff} |\n")
         md += "\n"
+    md += """#### Whether round six changed what the trainer computes
+
+One change is exactly neutral and two are not, and the two that are not are the same change to the
+same sum, so there is one thing to establish rather than three.
+
+Writing the shuffled batch straight into its buffer moves the same rows in the same order to the
+same place; nothing about the arithmetic differs, and the capture test still reports the recorded
+iteration as bitwise equal to the uncaptured one.
+
+Holding one contiguous block per parameter instead of one row per copy is **bitwise identical**:
+the same numbers at different addresses, run through the same programs. A test trains the trainer
+for two iterations in each layout and requires exact equality on every parameter.
+
+Reading the gradients where the backward pass wrote them changes the order in which the per-copy
+gradient limit adds its squares: one contiguous reduction over a row of 59,920 numbers becomes
+twenty-one sub-reductions summed. That is a reassociation of a float32 sum, so it cannot be
+bitwise neutral, and the question is whether it is the same quantity. It is: recomputed in double
+precision from the same gradients, the two norms agree to **1.4e-16 relative**. In single
+precision one optimizer step from byte-identical inputs moves the parameters by 3.0e-4 and the two
+forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
+
+| gate | result |
+|---|---|
+| the two gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
+| the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
+| the two buffer layouts, two iterations of training | bitwise equal |
+| the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
+| the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
+| six learning-rate-sweep gates | all pass |
+| every parameter, moment and gradient window on a sixteen-byte boundary, both layouts, more than one copy | pass |
+
+"""
     return md
 
 

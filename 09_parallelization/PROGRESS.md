@@ -72,6 +72,16 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits (121.8 ms and 29.5 GB with one
   update per batch; 407.0 ms and 27.4 GB with sixteen) on the 94 GB card.
 
+- Round 6 (2026-08-16, night): read the JAX trainer's own fifth round, which had finished after
+  this side's was written, and re-open 1,024 to 4,096 with the measurement method that round
+  arrived at. Its verdict rule — the paired, round-by-round sign test, both versions built in ONE
+  process and timed round-robin — was adopted and is now `benchmarks/bench_torch_change.py`. Its
+  two kept changes did not transfer: both are unroll factors, and the PyTorch update has no loop
+  to unroll; measured at these sizes the JAX round is worth nothing on its own side either
+  (within a percent of its pre-round figures at 1,024 to 4,096), which is the same regime split
+  seen from the other direction. A kernel-level profile at 4,096 copies then chose three changes,
+  all of them removing passes over memory that round five's own work had created.
+
 ## State notes (newest first)
 
 - 2026-08-15 ~19:30 PT — round 5 complete, on branch `worktree-agent-ab3b4d042ce36522c`. The

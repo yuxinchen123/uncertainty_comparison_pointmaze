@@ -305,18 +305,17 @@ class PPORND:
         #                      be twenty-one programs.
         # before (copy_major, C=4): [[copy 0's 59,920 numbers], [copy 1's], [copy 2's], ...]
         # after  (parameter_major): [W0 for copies 0..3][b0 for copies 0..3][W1 for copies 0..3]
-        copy_major = cfg.parameter_layout == "copy_major"
         assert cfg.parameter_layout in ("copy_major", "parameter_major"), \
             f"unknown parameter layout {cfg.parameter_layout!r}"
+        copy_major = cfg.parameter_layout == "copy_major"
         assert copy_major or not cfg.gradient_buffer, \
             "a parameter-major buffer has no per-copy row for one program to walk, so the " \
             "gradient buffer that exists to allow one buys nothing"
-        offsets, off = [], 0
+        offsets, length = [], 0
         for stride in strides:
-            offsets.append(off)
-            off += stride if copy_major else C * stride
-        per_copy = off
-        shape = (C, per_copy) if copy_major else (per_copy,)
+            offsets.append(length)
+            length += stride if copy_major else C * stride
+        shape = (C, length) if copy_major else (length,)
         self._flat = torch.zeros(*shape, device=self.device)
         self._m = torch.zeros_like(self._flat)
         self._v = torch.zeros_like(self._flat)
@@ -349,7 +348,7 @@ class PPORND:
             self.v_windows.append(window(self._v, i))
             if cfg.gradient_buffer:
                 self.grad_windows.append(window(self._flat_grad, i))
-        assert per_copy % ALIGN == 0, "the buffer length must keep every copy aligned"
+        assert length % ALIGN == 0, "the buffer length must keep every copy aligned"
         base = self._flat.untyped_storage().data_ptr()
         end = base + self._flat.numel() * self._flat.element_size()
         for i, w in enumerate(self.trainable):

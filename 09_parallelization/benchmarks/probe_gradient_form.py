@@ -81,7 +81,7 @@ def main():
         rows.append({"name": name, "microseconds": seconds_us, "bytes": nbytes,
                      "gb_per_s": nbytes / (seconds_us * 1e-6) / 1e9})
         print(f"  {seconds_us:9.1f} us  {nbytes/1e9:6.3f} GB  {rows[-1]['gb_per_s']:7.0f} GB/s  "
-              f"{name}")
+              f"{name}", flush=True)
 
     F32 = 4
     print(f"\n== the programs the gradient forms differ in, {C} copies, "
