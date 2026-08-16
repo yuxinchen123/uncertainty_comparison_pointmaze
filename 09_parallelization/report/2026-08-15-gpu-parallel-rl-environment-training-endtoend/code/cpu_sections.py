@@ -688,8 +688,8 @@ def contention_table(d):
     two is what sharing a core costs.
     """
     alone = by_copies(d.get("alone_full_batch", []))
-    one = by_copies(d.get("one_core_full_batch", []))
-    full = by_copies(d.get("ladder_full_batch", []))
+    one = by_copies(ladder("full_batch", 112))
+    full = by_copies(ladder("full_batch", 224))
     shared = sorted(set(alone) & set(one) & set(full))
     if not shared:
         return ""
@@ -780,6 +780,55 @@ where a setting has not been retaken, its row says so.
 """
 
 
+def best_worker_count(style):
+    """Which worker count reaches the higher total throughput for one update convention.
+
+    before: 224 workers peaking at 1.55 and 112 workers at 1.71 million steps per second
+    after:  (112, its peak row, the 224 peak row)
+    """
+    peaks = {}
+    for workers in (112, 224):
+        rows = ladder(style, workers)
+        if rows:
+            peaks[workers] = max(rows, key=lambda r: r["env_steps_per_sec"])
+    if not peaks:
+        return None
+    winner = max(peaks, key=lambda w: peaks[w]["env_steps_per_sec"])
+    return winner, peaks
+
+
+def plateau_sentences(style, label):
+    """The plateau, the peak and the memory for one update convention, all read from the rows."""
+    found = best_worker_count(style)
+    if not found:
+        return ""
+    winner, peaks = found
+    rows = ladder(style, winner)
+    top, flat, largest = peaks[winner], plateau_rung(rows), rows[-1]
+    out = (f"**{label}.** The better worker count is **{winner}**, reaching "
+           f"**{M(top['env_steps_per_sec'])} million** environment steps per second at "
+           f"{top['n_copies']} copies per worker, that is {top['total_copies']:,} copies")
+    if len(peaks) > 1:
+        other = [w for w in peaks if w != winner][0]
+        out += (f", against {M(peaks[other]['env_steps_per_sec'])} million for {other} workers "
+                f"at their own best rung")
+    out += ". "
+    if flat:
+        prev = rows[rows.index(flat) - 1]
+        out += (f"The curve flattens at {flat['n_copies']} copies per worker: that rung bought "
+                f"{100 * (flat['env_steps_per_sec'] / prev['env_steps_per_sec'] - 1):.1f}% over "
+                f"the {prev['n_copies']}-copy rung, where the doubling before it bought more. ")
+    else:
+        out += "Every rung measured still gained more than 2% over the one below it. "
+    out += (f"At the largest rung measured, {largest['n_copies']} copies per worker "
+            f"({largest['total_copies']:,} copies), one copy gets "
+            f"{K(largest['env_steps_per_sec_per_copy'])} thousand steps per second against "
+            f"{K(rows[0]['env_steps_per_sec_per_copy'])} thousand at one copy per worker, and "
+            f"each worker holds {GB(largest['peak_rss_mb_max_worker'])} GB, "
+            f"{largest['node_peak_used_gb']:,.0f} GB across the node.")
+    return out
+
+
 def sec_plateau():
     """Subsection: how far the copies per worker go, and what stops them."""
     n = plateau_numbers()
@@ -805,6 +854,12 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
             if key in n:
                 md += ladder_table(n[key]["rows"],
                                    f"{label}, {workers} independent single-thread workers.")
+    md += "![copies per worker](figures/cpu_plateau.png)\n\n"
+    for style, label in [("full_batch", "One update per batch"),
+                         ("epoch_minibatch", "Sixteen updates per batch")]:
+        sentence = plateau_sentences(style, label)
+        if sentence:
+            md += sentence + "\n\n"
     return md
 
 

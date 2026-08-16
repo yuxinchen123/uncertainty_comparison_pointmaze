@@ -1,10 +1,10 @@
-"""Collect this run's measurements into one file the report's generator reads.
+"""Collect this run's side measurements into one file the report's generator reads.
 
-The ladder rungs at 32 copies per worker and above are already written one file each, in the
-schema the report's existing loader reads. This script gathers everything else — the rungs below
-32, the two contention separations, the memory-system measurements — into a single file under a
-name that loader does not match, so the report can quote them without them appearing as extra
-points in the tables and figures that are about throughput settings.
+The ladder rungs are already written one result file each, in the schema the report's own loader
+reads, so they need no help. What this gathers is everything that is NOT a throughput setting
+anyone would run — one worker alone on an otherwise empty node, the memory system's own rate, and
+what the memory system had left while the training load ran — under a file name the throughput
+loader does not match, so they cannot appear as extra points in the throughput tables.
 
 Usage:
   python publish_ladder.py
@@ -28,21 +28,17 @@ def load(name):
 
 
 def collect():
-    """Every measurement this run produced, in one dictionary."""
+    """Every side measurement this run produced, in one dictionary."""
     return {
         "host": platform.node(),
-        "measurement": "copies per worker ladder, jaguar03, independent worker processes",
-        "workers": 224,
+        "measurement": ("side measurements of the copies-per-worker sweep on jaguar03: one worker "
+                        "alone, the memory system's rate, and the memory system under load"),
         "steps_per_copy_per_iteration": 512,
-        "timing": ("each point times about 60 seconds of continuous work, so the rate is the "
-                   "settled one rather than the opening seconds of the load"),
         "run_folder": str(RUN),
         "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                               capture_output=True, text=True).stdout.strip(),
-        "ladder_full_batch": load("ladder_full_batch_p224_plateau_j3_styleA.json"),
-        "ladder_epoch_minibatch": load("ladder_epoch_minibatch_p224_plateau_j3.json"),
-        "alone_full_batch": load("ladder_full_batch_p1_alone_j3_styleA.json"),
-        "one_core_full_batch": load("ladder_full_batch_p112_onecore_j3_styleA.json"),
+        "alone_full_batch": load("ladder_full_batch_p1_alone_j3.json"),
+        "alone_epoch_minibatch": load("ladder_epoch_minibatch_p1_alone_j3.json"),
         "memory_probe_full_batch": load("memory_probe_full_batch.json"),
         "memory_probe_epoch_minibatch": load("memory_probe_epoch_minibatch.json"),
         "memory_saturation": load("memory_saturation.json"),
@@ -51,7 +47,7 @@ def collect():
 
 
 def main():
-    """Write the collected measurements to the results directory, one file per publication."""
+    """Write the collected side measurements to the results directory."""
     out = RESULTS / (f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_cpu_copies_per_worker_plateau.json")
     out.write_text(json.dumps(collect(), indent=1))
     print(f"wrote {out}")
