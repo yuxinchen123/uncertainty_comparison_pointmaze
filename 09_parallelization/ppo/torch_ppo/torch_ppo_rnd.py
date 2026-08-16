@@ -133,11 +133,11 @@ def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOCon
 
     Where the gradients live is chosen from the copy count, because the measurement reverses.
     Reading them where the backward pass wrote them removes a copy of the whole parameter buffer
-    from every update step and costs forty-two extra device programs: worth -2.5% at 512 copies
-    and -4.4% at 4,096, and worth +2.8% to +6.7% AGAINST it at 128 copies and below, where an
-    iteration's cost is the number of programs it issues rather than the bytes they move. The
-    buffer's layout follows: one block per parameter where the optimizer is twenty-one programs,
-    one row per copy where it is one.
+    from every update step and costs forty-two device programs where there were two: worth -2.5%
+    at 512 copies and -4.4% at 4,096, and +2.8% to +6.7% AGAINST it at 128 copies and below,
+    where an iteration's cost is the number of programs it issues rather than the bytes they
+    move. The buffer's layout follows: one block per parameter where the optimizer is twenty-one
+    programs, one row per copy where it is one.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
                 fused_adam=True, tf32=True, compile_post=True, compile_opt=True)

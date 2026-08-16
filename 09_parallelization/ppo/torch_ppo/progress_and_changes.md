@@ -529,7 +529,7 @@ rounds were tuned on. Sixteen updates per batch, eleven paired rounds each:
 
 Every one of the eight is unanimous across its eleven rounds, in one direction below 512 copies
 and in the other at 512 and above. The reason is the regime split this round and the last are both
-about: forty-two extra device programs per update step is a bad trade for one copy of a buffer
+about: forty-two device programs per update step where there were two is a bad trade for one copy of a buffer
 that is 2 to 31 megabytes at 8 to 128 copies, and a good one for the same copy at 123 megabytes to
 a gigabyte. `production_config` therefore picks the form from the copy count, and the buffer's
 layout follows it — one block per parameter where the optimizer is twenty-one programs, one row

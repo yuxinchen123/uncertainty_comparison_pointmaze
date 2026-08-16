@@ -2243,7 +2243,7 @@ tensor. That is the largest single removable item, and it is what round five's o
     md += ("*Sixteen updates per batch. A negative change is faster.*\n\n"
            "**The sign reverses, and where it reverses is the whole point of this section.** At "
            "8 to 128 copies an iteration costs what it costs because of how many device programs "
-           "it issues, and forty-two extra programs per update step is a bad trade for one copy "
+           "it issues, and forty-two programs per update step where there were two is a bad trade for one copy "
            "of a buffer that is only 2 to 31 megabytes there. At 512 and above the same copy is "
            "123 megabytes to a gigabyte and the programs are large enough that their number "
            "stops mattering. The trainer therefore chooses between the two forms by copy count "
