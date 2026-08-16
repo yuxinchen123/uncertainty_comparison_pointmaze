@@ -221,11 +221,14 @@ trainer stores the frozen target's features and a second copy of the permuted ba
 
 ### The three changes, and what they bought
 
-| # | change | verdict |
-|---|---|---|
-| 21 | Pad every parameter window and the per-copy row to a multiple of four numbers, so every copy's parameters start on a sixteen-byte boundary and the multiplication library uses its four-at-a-time kernels instead of its scalar-load ones. Ten extra numbers per copy, never read: nothing writes a gradient into the padding, so its Adam step is exactly zero and it adds exactly zero to the gradient norm | KEEP |
-| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all nineteen gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | KEEP |
-| 23 | Stop accumulating gradients: ask autograd for them and copy them into the flat buffer in one call, which also makes the zeroing unnecessary; and compile the gradient limit separately from the Adam step, because compiled together the compiler emits one reduce-and-update program that reaches only 2.4 of the card's 3.5 TB/s where two programs reach 3.2 and 3.5 | KEEP |
+Each measured against the revision before it, at 1,024 copies with sixteen updates per batch,
+in the order A B B A with the spread between two runs of the same side as the noise floor.
+
+| # | change | measured | verdict |
+|---|---|---|---|
+| 21 | Pad every parameter window and the per-copy row to a multiple of four numbers, so every copy's parameters start on a sixteen-byte boundary and the multiplication library uses its four-at-a-time kernels instead of its scalar-load ones. Ten extra numbers per copy, never read: nothing writes a gradient into the padding, so its Adam step is exactly zero and it adds exactly zero to the gradient norm | 82.48 -> 73.14 ms, 11.3% faster, noise floor 0.54 ms | KEEP |
+| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all nineteen gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | 73.26 -> 61.51 ms, 16.0% faster, noise floor 0.50 ms | KEEP |
+| 23 | Stop accumulating gradients: ask autograd for them and copy them into the flat buffer in one call, which also makes the zeroing unnecessary; and compile the gradient limit separately from the Adam step, because compiled together the compiler emits one reduce-and-update program that reaches only 2.4 of the card's 3.5 TB/s where two programs reach 3.2 and 3.5 | 61.45 -> 57.07 ms, 7.1% faster, noise floor 0.46 ms | KEEP |
 
 Measured together, both sides built by the same harness in the same session, each iteration
 waited for:
