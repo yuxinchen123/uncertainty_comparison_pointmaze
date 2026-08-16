@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:56 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 19:08 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1022,6 +1022,15 @@ that the spread between two runs of the same side gives the noise floor.
 | aligning the<br>parameter windows | 82.48 ms | 73.14 ms | -9.34 ms (-11.3 percent) | 0.54 ms |
 | adding the bias after<br>the multiplication | 73.26 ms | 61.51 ms | -11.75 ms (-16.0 percent) | 0.50 ms |
 | writing gradients, and<br>splitting the gradient<br>limit from the Adam step | 61.45 ms | 57.07 ms | -4.38 ms (-7.1 percent) | 0.46 ms |
+
+The three together, at the sizes in use and at the small ones the earlier rounds optimised for:
+
+| setting | before | after | difference | noise floor |
+|---|---|---|---|---|
+| 4,096 copies,<br>sixteen updates per batch | 290.94 ms | 205.36 ms | -85.58 ms (-29.4 percent) | 0.44 ms |
+| 4,096 copies,<br>one update per batch | 89.93 ms | 63.06 ms | -26.87 ms (-29.9 percent) | 0.11 ms |
+| 128 copies,<br>sixteen updates per batch | 16.18 ms | 12.54 ms | -3.64 ms (-22.5 percent) | 0.03 ms |
+| 8 copies,<br>sixteen updates per batch | 9.32 ms | 7.96 ms | -1.37 ms (-14.7 percent) | 0.09 ms |
 
 ### What was considered and not done, with the arithmetic that decided it
 
