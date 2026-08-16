@@ -479,6 +479,14 @@ table, a profiling variant whose dead code was deleted, and now a compiler cache
 pattern is the same every time: the check that catches it is one that asserts the thing under
 test actually happened.
 
+### The paired comparison against the revision this round starts from is neutral
+
+The first change of the round is a refactor in its OFF position — the gradient path becomes a
+knob, and the old behaviour is one setting of it. Before measuring the new setting, the refactor
+itself was measured: at 1,024 copies with sixteen updates per batch, the round-five revision took
+57.02 ms and the refactored working tree 56.85, a difference of 0.16 ms against a 0.30 ms noise
+floor. Whatever the knob is worth, it is not being credited with the refactor.
+
 ### Where the update stage's time goes at 4,096 copies, program by program
 
 Every device program of one iteration, named and grouped by kind
@@ -658,11 +666,3 @@ weights fit the 50-megabyte cache so the re-reads come from there (which doubles
 count, and the rollout is already partly bound by that), or generate the multiplications for these
 four-row shapes rather than calling the library's, which are clearly not tuned for them. Recorded
 here with its measurement rather than attempted at the end of a round.
-
-### The paired comparison against the revision this round starts from is neutral
-
-The first change of the round is a refactor in its OFF position — the gradient path becomes a
-knob, and the old behaviour is one setting of it. Before measuring the new setting, the refactor
-itself was measured: at 1,024 copies with sixteen updates per batch, the round-five revision took
-57.02 ms and the refactored working tree 56.85, a difference of 0.16 ms against a 0.30 ms noise
-floor. Whatever the knob is worth, it is not being credited with the refactor.
