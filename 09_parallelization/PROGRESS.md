@@ -103,6 +103,22 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 5. **Record the losses.** The 512-copy regression, the discarded pairing numbers, and the
    experiments that produced no effect are in the ledgers beside the wins; a ledger of only
    successes would have hidden the stream defect for good.
+6. **An optimisation is only established at the sizes it was measured at.** Round 4 was decided
+   at 8 to 128 copies, recorded a 1.1% loss at 512 as an isolated exception, and is in fact a
+   19.2% regression at 1,024 — the size the trainer is actually used at. Before keeping a change,
+   measure it where the code runs, not only where it was developed.
+7. **Read the names of the programs, not just their times.** The round-4 regression is invisible
+   in a phase breakdown and unmistakable in a kernel-level profile: 18.8 of 31.1 milliseconds of
+   multiplication time sat in the library's scalar-load kernels, whose names end in `align1`,
+   because a buffer layout had moved every copy's parameters off a sixteen-byte boundary.
+8. **Two compiled functions can beat one.** Compiling the gradient limit and the Adam step
+   together let the compiler emit a single reduce-and-update program that reached 2.4 of the
+   card's 3.5 terabytes per second; compiled separately they reach 3.2 and 3.5. Fusion is not
+   free at every size.
+9. **A driver held by the session dies with it.** On a graphics processor shared with two other
+   agents, a batch spends more time queueing than running, and a background driver in the session
+   is killed after an hour. The round-5 batch was moved onto the machine itself (`setsid`, logs on
+   shared storage) so the queue could outlast the session that started it.
 
 - 2026-08-15 ~18:40 — processor comparison. End-to-end training measured on jaguar03 (AMD EPYC
   7663, 224 logical processors, 1 TB) held EXCLUSIVELY inside reservation sl5nw_156, chosen as
