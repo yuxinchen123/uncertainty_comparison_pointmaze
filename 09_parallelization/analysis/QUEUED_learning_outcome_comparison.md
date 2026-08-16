@@ -81,3 +81,18 @@ anything read.
   `jax.config.update("jax_default_matmul_precision", "highest")` for exact single precision, and its
   default for reduced. Verify each run actually used the precision it claims — a configuration that
   silently ignored the knob would produce a null result that looks like a finding.
+
+---
+
+## Executed 2026-08-16
+
+Run folder: `train_runs/2026-08-16-00-50_learning_outcome_torch-vs-jax_precision-reduced-vs-exact_pointmaze-large-topright_rates-3e-6-to-1e-2-x8_copies-1024-per-rate_T-128_N-4_style-B-epoch-minibatch_10M-step-per-copy_paired-seeds_seed-0`
+(parity audit in its `parity_check.md`, written analysis in `analysis/analysis.md`, driver and
+analysis code in `code/`). Report section: "Do the two implementations learn the same thing?",
+last section of `report/2026-08-15-pointmaze-gpu-parallelization/report.md`.
+
+Answer to both questions: **no difference the run can resolve.** PyTorch against JAX, blocked over
+the eight rates, +0.376 reward per copy per iteration with interval [-0.874, +1.626] against an
+interquartile spread across copies of 91.6. Reduced against exact single precision: PyTorch +0.841
+[-0.395, +2.077], JAX +0.348 [-0.878, +1.575]. Reduced precision's only measured consequence is
+speed — 43% in PyTorch and 49% in JAX at 8,192 copies.
