@@ -74,6 +74,34 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 
 ## State notes (newest first)
 
+- 2026-08-15 ~19:30 PT — round 5 complete, on branch `worktree-agent-ab3b4d042ce36522c`. The
+  question was how the PyTorch trainer compares with the JAX one at 1,024 to 4,096 copies, and
+  whether it can be improved there. Answers, all measured on serval05 under the exclusive lock,
+  both frameworks waiting for every iteration:
+  - **The limit is different at these sizes.** At 128 copies the iteration costs what it costs
+    because of how many device programs it issues; at 4,096 it is memory traffic, and every
+    individual program already reaches 72 to 100 percent of the 3,539 GB/s a plain copy of
+    memory gets on this card. Optimisations that remove programs cannot help here; ones that
+    remove passes over memory can.
+  - **Round four was a regression here**, 19.2 percent at 1,024 copies with one update per batch,
+    measured against its own predecessor revision. Its flat parameter buffer packed the nineteen
+    windows tightly, leaving every copy's parameters off a sixteen-byte boundary, and the
+    multiplication library answered with its scalar-load kernels: 18.8 of 31.1 milliseconds of
+    multiplication time in one iteration.
+  - **Three exact changes**, worth 11.3, 16.0 and 7.1 percent at 1,024 copies and 29 to 39
+    percent together across 1,024 to 4,096, with no size slower (14.7 percent at 8 copies, 22.5
+    at 128, 31 at 512). The unvectorised multiplication time falls from 18.8 milliseconds to
+    zero.
+  - **Against JAX**: the distance falls from 2.06-2.08x to 1.27-1.44x with one update per batch
+    and from 1.75-1.81x to 1.21-1.27x with sixteen. What remains is that PyTorch issues separate
+    programs whose intermediates go to memory, where the JAX compiler folds them together;
+    measured, letting PyTorch's compiler generate the multiplications recovers 3 to 4 percent of
+    the update stage but turns off the reduced-precision matrix units, so it was not adopted.
+  - Report section: "Training a thousand to four thousand copies at once" (last section of
+    `report/2026-08-15-pointmaze-gpu-parallelization/report.md`). Ledger: round 5 in
+    `ppo/torch_ppo/progress_and_changes.md`. Every result JSON is in `benchmarks/results/` in
+    both this branch and the main tree.
+
 - Round 4 (2026-08-15 afternoon, Pacific): two branches merged.
   - `feature/torch-speed`: one flat parameter buffer (the nineteen parameter tensors become
     windows onto one buffer, so the per-copy gradient clip is one reduction and the optimizer
