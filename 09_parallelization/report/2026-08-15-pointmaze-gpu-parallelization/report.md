@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:46 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:49 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1013,7 +1013,8 @@ was changing while it was measured, and those figures are superseded here.
 | PyTorch after round six | 1024 | 56.7 | <u>9.24</u> | 9.0 | 0.031 | 3.5 |
 | JAX | 1024 | 47.2 | **11.11** | 10.9 | 0.026 | 2.4 |
 | PyTorch before round five | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
-| PyTorch after round six | 2048 | 107.1 | **9.79** | 4.8 | 0.058 | 6.9 |
+| PyTorch after round six | 2048 | 107.1 | <u>9.79</u> | 4.8 | 0.058 | 6.9 |
+| JAX | 2048 | 86.0 | **12.20** | 6.0 | 0.047 | 4.7 |
 | PyTorch before round five | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
 | PyTorch after round six | 4096 | 205.5 | **10.20** | 2.5 | 0.111 | 13.8 |
 
@@ -1297,16 +1298,7 @@ tensor. That is the largest single removable item, and it is what round five's o
 
 *Sixteen updates per batch. A negative change is faster.*
 
-**The sign reverses, and where it reverses is the whole point of this section.** At 8 to 128 copies an iteration costs what it costs because of how many device programs it issues, and forty-two extra programs per update step is a bad trade for one copy of a buffer that is only 2 to 31 megabytes there. At 512 and above the same copy is 123 megabytes to a gigabyte and the programs are large enough that their number stops mattering. The trainer therefore chooses between the two forms by copy count (`production_config`), which is the same shape of answer the previous round arrived at from the other direction.
-
-**Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
-
-| measurement | before | after |
-|---|---|---|
-| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |
-| one whole iteration, 4,096 copies, separate processes | 205.59 ms | 204.57 ms |
-
-*The second row is at the resolution limit of the cross-process harness — its noise floor here is 0.93 ms — which is why the program that disappears is quoted as well. This change cannot be a knob, so it cannot be measured by the paired harness, which compares two configurations of one build.*
+**The sign reverses, and where it reverses is the whole point of this section.** At 8 to 128 copies an iteration costs what it costs because of how many device programs it issues, and forty-two programs per update step where there were two is a bad trade for one copy of a buffer that is only 2 to 31 megabytes there. At 512 and above the same copy is 123 megabytes to a gigabyte and the programs are large enough that their number stops mattering. The trainer therefore chooses between the two forms by copy count (`production_config`), which is the same shape of answer the previous round arrived at from the other direction.
 
 The same change with one update per batch, where the iteration has one update step rather than sixteen and so pays for the copy once rather than sixteen times:
 
@@ -1339,6 +1331,15 @@ The two new forms against each other, so the choice between them is measured rat
 | 4096 | 195.19 ms | 193.77 ms | -0.7 percent | 11 of 11 | 3.92 ms |
 
 *Both sides read the gradients where they were written, so the only difference is the layout. The two are bitwise identical: the same numbers at different addresses.*
+
+**Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
+
+| measurement | before | after |
+|---|---|---|
+| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |
+| one whole iteration, 4,096 copies, separate processes | 205.59 ms | 204.57 ms |
+
+*The second row is at the resolution limit of the cross-process harness — its noise floor here is 0.93 ms — which is why the program that disappears is quoted as well. This change cannot be a knob, so it cannot be measured by the paired harness, which compares two configurations of one build.*
 
 Why the gradient forms differ, program by program at 4,096 copies (`benchmarks/probe_gradient_form.py`):
 
@@ -1448,6 +1449,7 @@ rather than attempted at the end of a round.
 | one update per batch | 2048 | 32.6 ms | 23.3 ms | 1.40 |
 | one update per batch | 4096 | 63.3 ms | 43.7 ms | 1.45 |
 | sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
+| sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.25 |
 
 The reason is not that any PyTorch program is slow. Each is timed on its real shape in the
 subsection above and reaches 72 to 100 percent of the rate a plain copy of memory gets. The reason

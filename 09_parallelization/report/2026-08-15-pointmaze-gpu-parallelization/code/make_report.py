@@ -2249,22 +2249,6 @@ tensor. That is the largest single removable item, and it is what round five's o
            "stops mattering. The trainer therefore chooses between the two forms by copy count "
            "(`production_config`), which is the same shape of answer the previous round arrived "
            "at from the other direction.\n\n")
-    if gather:
-        md += (
-            "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
-            "batch is permuted into a second buffer so that each of the four update steps is a "
-            "contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation "
-            "allocates a whole second copy of the batch and then copies it across. Written as "
-            "`torch.gather(t, 1, ix, out=buffer)` it does not.\n\n"
-            "| measurement | before | after |\n|---|---|---|\n"
-            "| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |\n"
-            f"| one whole iteration, 4,096 copies, separate processes | {gather['a_ms']:.2f} ms |"
-            f" {gather['b_ms']:.2f} ms |\n\n"
-            f"*The second row is at the resolution limit of the cross-process harness — its "
-            f"noise floor here is {gather['noise_floor_ms']:.2f} ms — which is why the program "
-            f"that disappears is quoted as well. This change cannot be a knob, so it cannot be "
-            f"measured by the paired harness, which compares two configurations of one build.*"
-            "\n\n")
     if grad_A:
         md += ("The same change with one update per batch, where the iteration has one update "
                "step rather than sixteen and so pays for the copy once rather than sixteen "
@@ -2295,6 +2279,22 @@ tensor. That is the largest single removable item, and it is what round five's o
             "*Both sides read the gradients where they were written, so the only difference is "
             "the layout. The two are bitwise identical: the same numbers at different "
             "addresses.*\n\n")
+    if gather:
+        md += (
+            "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
+            "batch is permuted into a second buffer so that each of the four update steps is a "
+            "contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation "
+            "allocates a whole second copy of the batch and then copies it across. Written as "
+            "`torch.gather(t, 1, ix, out=buffer)` it does not.\n\n"
+            "| measurement | before | after |\n|---|---|---|\n"
+            "| device-to-device copying in the update stage, 4,096 copies | 2.86 ms | absent |\n"
+            f"| one whole iteration, 4,096 copies, separate processes | {gather['a_ms']:.2f} ms |"
+            f" {gather['b_ms']:.2f} ms |\n\n"
+            f"*The second row is at the resolution limit of the cross-process harness — its "
+            f"noise floor here is {gather['noise_floor_ms']:.2f} ms — which is why the program "
+            f"that disappears is quoted as well. This change cannot be a knob, so it cannot be "
+            f"measured by the paired harness, which compares two configurations of one build.*"
+            "\n\n")
     if prog:
         md += ("Why the gradient forms differ, program by program at 4,096 copies "
                "(`benchmarks/probe_gradient_form.py`):\n\n"
