@@ -58,8 +58,9 @@
 \newcommand{\runref}[1]{\textbf{[#1]}}
 
 % Grid-style hyperparameter tables (shared skill rnd-experiment-tex-track): grey rules between the
-% rows of one category, black rules between categories and around the table, and a grey vertical
-% between every pair of columns so the extent of a "same" \multicolumn span is unambiguous.
+% rows of one category and between a category banner row and its first row, black rules between
+% categories and around the table, and a grey vertical between every pair of columns so the extent
+% of a "same" \multicolumn span is unambiguous.
 % Needs xcolor[table] (above) for \arrayrulecolor, and array. WARNING: \arrayrulecolor is a GLOBAL
 % switch — only use it through the two rule macros below, which both end with the color on black.
 % A \multicolumn that is NOT the last cell of its row must end its spec with ? (e.g. {c?}), or the
@@ -4154,6 +4155,7 @@ configuration has \(\ge 30\) finished seeds.}
 \textbf{\texttt{rnd\_\allowbreak next\_\allowbreak state} (RND)} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Environment}} \\
+\greyrule
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
 \greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
@@ -4167,6 +4169,7 @@ configuration has \(\ge 30\) finished seeds.}
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as run~2)}} \\
+\greyrule
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
 \greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
@@ -4182,6 +4185,7 @@ configuration has \(\ge 30\) finished seeds.}
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard)}} \\
+\greyrule
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; training-episode reward)} \\
 \greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
@@ -4189,6 +4193,7 @@ configuration has \(\ge 30\) finished seeds.}
 \texttt{log\_distance} & \multicolumn{4}{c}{False} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept}} \\
+\greyrule
 \(\beta\) (\texttt{beta}) & \multicolumn{4}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\)} \\
 \greyrule
 \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & --- \\
@@ -4196,6 +4201,7 @@ configuration has \(\ge 30\) finished seeds.}
 input (\texttt{elliptical\_\allowbreak feature\_\allowbreak input}) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(s'\) (fixed) \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
+\greyrule
 feature normalization & unit & unit & unit & --- \\
 \greyrule
 \(d_\varphi\) (\texttt{feature\_dim}) & 128 & 128 & 128 & --- \\
@@ -4878,6 +4884,7 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 \textbf{Reference: run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2)}} \\
+\greyrule
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
 \greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
@@ -4891,6 +4898,7 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as runs 3.1.1/3.1.2)}} \\
+\greyrule
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
 \greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
@@ -4906,6 +4914,7 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard: training-reward only)}} \\
+\greyrule
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; scored on the training-episode reward)} \\
 \greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
@@ -4913,6 +4922,7 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 \texttt{log\_distance} & \multicolumn{4}{c}{False (distance-to-GT deferred to the winner rerun)} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept (values in Table~\ref{tab:trainrun3-2-1-sweep})}} \\
+\greyrule
 \(\beta\) (\texttt{beta}) & \multicolumn{3}{c?}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\)} & \(\{10^{-3},\dots,10^{3}\}\) (7; as run 3.1.1) \\
 \greyrule
 readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \sout{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)}\claudeedit{\(\mathcal{B}_{\mathrm{l2}}\) only} & \multicolumn{2}{c?}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
@@ -4922,6 +4932,7 @@ readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \sout{\(\{\math
 \(t_0\) (\texttt{rnd\_sgd\_t0}) & --- & --- & \(\{10^{3},10^{4}\}\) & --- \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
+\greyrule
 RND input (\texttt{algorithm}) & \multicolumn{4}{c}{\texttt{rnd\_\allowbreak next\_\allowbreak state} (\(s'\))} \\
 \greyrule
 RND output dim \(m\) (\texttt{rnd\_output\_dim}) & \multicolumn{4}{c}{128} \\
@@ -5661,6 +5672,7 @@ stopped configurations end near the 10-seed floor.
 \textbf{Reference: \runref{run-3.2.2 benchmark}} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2/3.2.1)}} \\
+\greyrule
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
 \greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
@@ -5674,6 +5686,7 @@ stopped configurations end near the 10-seed floor.
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as runs 3.1.1/3.1.2/3.2.1)}} \\
+\greyrule
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
 \greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
@@ -5689,6 +5702,7 @@ stopped configurations end near the 10-seed floor.
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard: training-reward only)}} \\
+\greyrule
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; scored on the training-episode reward)} \\
 \greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
@@ -5696,6 +5710,7 @@ stopped configurations end near the 10-seed floor.
 \texttt{log\_distance} & \multicolumn{4}{c}{False} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept}} \\
+\greyrule
 \(\beta\) (\texttt{beta}) & \(\{10^{-4},\dots,10^{4}\}\) (9 decades) &
 \multicolumn{2}{c?}{\(\{10^{-5},\dots,10^{4}\}\) (10 decades)} & \(10^{2}\) (fixed) \\
 \greyrule
@@ -5712,6 +5727,7 @@ readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \(\mathcal{B}_{
 Random seed (\texttt{a\_seed}) & \multicolumn{3}{c?}{\(0\)--\(99\) (100-seed cap, adaptive allocation)} & \(100\)--\(199\) (\(n=100\), run 3.2.2) \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
+\greyrule
 reward norm.\ (\texttt{rnd\_\allowbreak reward\_\allowbreak norm}) & True (\(\gamma_{\mathrm{norm}}=0.99\)) & \multicolumn{2}{c?}{False} & False \\
 \greyrule
 RND input (\texttt{algorithm}) & \multicolumn{4}{c}{\texttt{rnd\_\allowbreak next\_\allowbreak state} (\(s'\))} \\
@@ -6298,6 +6314,7 @@ dashed callouts. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the
 \claudecell{\small(the same stack, one knob moved, at two rates)} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{RL algorithm \& environments}} \\
+\greyrule
 algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{4}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
 \greyrule
 parallel envs & $128$ & $128$ & $1$ & \multicolumn{4}{c}{$1$} \\
@@ -6305,6 +6322,7 @@ parallel envs & $128$ & $128$ & $1$ & \multicolumn{4}{c}{$1$} \\
 on/off-policy & on-policy & on-policy & off-policy replay & \multicolumn{4}{c}{off-policy replay} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{RND input \& preprocessing}} \\
+\greyrule
 RND input & next frame $s'$ ($84{\times}84$) & next frame $s'$ & concat$(s,a)$, current &
   \multicolumn{2}{c?}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) & \claudecell{same} \\
 \greyrule
@@ -6312,6 +6330,7 @@ preprocessing & grayscale, sticky $0.25$ & grayscale, sticky $0.25$ & --- &
   \multicolumn{4}{c}{--- (raw state)} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Network architecture \& initialization}} \\
+\greyrule
 target net & conv$\times$3$\to$fc$512$ & conv$\times$3$\to$fc$512$ &
   $(s,a)\to256\to256\to256\to256$ &
   \multicolumn{2}{c?}{$s'\!\to\!256\!\to\!128$} &
@@ -6333,6 +6352,7 @@ weight init & orthogonal $\sqrt2$ & orthogonal $\sqrt2$ & Xavier/Glorot &
 bias init & zero & zero & zero & \multicolumn{4}{c}{zero} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{State normalization}} \\
+\greyrule
 obs norm & RMS, clip $\pm5$ & RMS, clip $\pm5$ & none &
   \multicolumn{4}{c}{RMS, clip $\pm5$ (denom $\mathrm{var}{+}10^{-8}$)} \\
 \greyrule
@@ -6340,16 +6360,19 @@ warm-up & $6400$ steps ($128{\times}50$) & $6400$ ($50{\times}128$) & --- &
   \multicolumn{2}{c?}{$200$ obs-space draws} & $6400$ env steps (fresh env) & \claudecell{same} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Bonus readout}} \\
+\greyrule
 readout & $\tfrac1m\sum_j e_j^2$ & $\tfrac12\sum_j e_j^2$ & $\tfrac1m\sum_j e_j^2\times\mathrm{coeff}$ &
   \multicolumn{2}{c?}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ & \claudecell{same} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Reward normalization}} \\
+\greyrule
 reward norm (Eq.~\eqref{eq:rwd-norm}) & running std, $\gamma_{\mathrm{int}}{=}0.99$ & running std, $\gamma_{\mathrm{int}}{=}0.99$ & none &
   no & $\gamma_{\mathrm{int}}{=}0.99$ & $\gamma_{\mathrm{int}}{=}0.99$ & \claudecell{same} \\
 \greyrule
 non-episodic filter & yes & yes & --- & --- & yes & yes & \claudecell{same} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Predictor optimizer \& update}} \\
+\greyrule
 optimizer & Adam $10^{-4}$ & Adam $10^{-4}$ & Adam $3{\times}10^{-4}$ &
   \multicolumn{2}{c?}{Adam $10^{-3}$} & Adam $10^{-4}$ &
   \claudecell{\criticalknob{Adam $10^{-3}$ or $10^{-2}$ --- the one knob this column moves}} \\
@@ -6363,6 +6386,7 @@ update proportion & $0.25$ (paper); $1.0$ (repo code) & $0.25$ & $1.0$ (batch $1
 gradient clip & none & $0.5$ & none & \multicolumn{2}{c?}{none} & none & \claudecell{same} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Value heads}} \\
+\greyrule
 value heads & dual ($V^{\mathrm{int}}\!/\!V^{\mathrm{ext}}$) & dual & single (bonus $\to$ reward) &
   \multicolumn{4}{c}{single ($r^{\mathrm{ext}}{+}\beta r^{\mathrm{int}}$)} \\
 \greyrule
@@ -6379,6 +6403,7 @@ adv.\ weighting & ext $2$ : int $1$ & ext $2$ : int $1$ & coeff $1.0$ &
   Table~\ref{tab:pm-am-trainrun1-algos}} \\
 \blackrule
 \multicolumn{8}{@{}l}{\textit{Fixed env \& SAC block (project columns)}} \\
+\greyrule
 env & Atari & Atari & D4RL antmaze/adroit & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}, top-right} \\
 \greyrule
 SAC / steps & --- & --- & UTD $20$ & \multicolumn{4}{c}{SB3 defaults (lr $3{\times}10^{-4}$), $10^{6}$ steps} \\
@@ -6753,6 +6778,7 @@ as the sweep advances.}
 \claudecell{\textbf{algorithm 2.2}} & \claudecell{\textbf{algorithm 2.3}} \\
 \blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{RL algorithm \& environment}}} \\
+\greyrule
 \claudecell{environment} & \claudecell{PointMaze Large top-right, cap 400, $\gamma{=}0.999$, raw
   sparse reward} & \multicolumn{4}{c}{\claudecell{same}} \\
 \greyrule
@@ -6760,6 +6786,7 @@ as the sweep advances.}
   \multicolumn{4}{c}{\claudecell{same}} \\
 \blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{RND input \& networks}}} \\
+\greyrule
 \claudecell{RND input} & \claudecell{next state $s'$ (4-d)} & \multicolumn{4}{c}{\claudecell{same}} \\
 \greyrule
 \claudecell{networks} & \claudecell{target $+$ predictor ($+1$ layer, width 128, LeakyReLU 0.2)} &
@@ -6768,6 +6795,7 @@ as the sweep advances.}
   2.1, $+$ LayerNorm after every hidden Linear}} \\
 \blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{Predictor training \& bonus}}} \\
+\greyrule
 \claudecell{predictor optimizer} & \claudecell{Adam $10^{-4}$} & \claudecell{\criticalknob{plain
   SGD, constant rate, swept $\{10^{-3}, 10^{-2}\}$}} & \multicolumn{3}{c}{\claudecell{same}} \\
 \greyrule
@@ -6787,6 +6815,7 @@ as the sweep advances.}
 \claudecell{state-norm warm-up} & \claudecell{env steps, 6400} & \multicolumn{4}{c}{\claudecell{same}} \\
 \blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{Sweep \& race}}} \\
+\greyrule
 \claudecell{bonus weight $\beta$} & \claudecell{$10^{3}$ (its run-5 winner)} &
   \multicolumn{4}{c}{\claudecell{the 15-value grid $10^{-3}$ to $10^{4}$ at 1 and 3 per decade}} \\
 \greyrule
@@ -7109,6 +7138,7 @@ seed} $0$--$29$), and each seed re-draws only the initialization realization.
 \textbf{Hyperparameter (code arg)} & \textbf{Adam arm} & \textbf{SGD-$1/t$ arm} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Point sets (each a separate run; Figure~\ref{fig:convergence-run1-point-sets})}} \\
+\greyrule
 env 1.1 center square & \multicolumn{2}{c}{$10\times10$ midpoints of $[-0.5, 0.5]^2$; $100$ points} \\
 \greyrule
 env 1.2 top-right cell & \multicolumn{2}{c}{$10\times10$ midpoints of cell $(1, 10)$; $100$ points} \\
@@ -7118,6 +7148,7 @@ env 2 cell midpoints & \multicolumn{2}{c}{all $9\times12$ cell midpoints; $108$ 
 velocities & \multicolumn{2}{c}{$v_x = v_y = 0$ for every point} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Distillation --- fixed}} \\
+\greyrule
 networks & \multicolumn{2}{c}{$4 \to 256 \to \mathrm{ReLU} \to 128$, target frozen} \\
 \greyrule
 objective & \multicolumn{2}{c}{$L^{\mathrm{mse}}$, full batch (all $P$ points per step)} \\
@@ -7133,6 +7164,7 @@ logged readout & \multicolumn{2}{c}{$\mathcal{B}_{\mathrm{l2}}$ per point (exact
 device, precision & \multicolumn{2}{c}{cpu, float32} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Swept}} \\
+\greyrule
 init scheme (\texttt{rnd\_\allowbreak weight\_\allowbreak init}, \texttt{rnd\_\allowbreak bias\_\allowbreak init}) & \multicolumn{2}{c}{zero-bias, pytorch-bias, pytorch-full, normal-0.5 ($4$ schemes)} \\
 \greyrule
 optimizer configuration & $3$ (Table~\ref{tab:convergence-run1-optimizers}) & $9$ (Table~\ref{tab:convergence-run1-optimizers}) \\
@@ -7140,6 +7172,7 @@ optimizer configuration & $3$ (Table~\ref{tab:convergence-run1-optimizers}) & $9
 random seed (\texttt{a\_\allowbreak seed}) & \multicolumn{2}{c}{$0$--$29$ ($30$ seeds; each re-draws only the initialization)} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Totals}} \\
+\greyrule
 configurations & $3 \times 4 \times 3 = 36$ & $3 \times 4 \times 9 = 108$ \\
 \greyrule
 runs ($\times 30$ seeds) & $1080$ & $3240$ \\
@@ -7353,6 +7386,7 @@ whole run.
 & \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+\greyrule
 agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
 \greyrule
 state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
@@ -7366,6 +7400,7 @@ goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak
 action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Maze}} \\
+\greyrule
 map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
   \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
   \newline Medium $8\times8$ \newline Large $9\times12$ \\
@@ -7373,6 +7408,7 @@ map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Me
 cell size & $1$~m & $4$~m \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
+\greyrule
 max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
   Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
   \newline Large $1000$ \\
@@ -7386,6 +7422,7 @@ reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
 at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Start and goal}} \\
+\greyrule
 goal reset & never --- one fixed goal cell, exact center, whole run; the goal cannot move
   mid-episode & same \\
 \greyrule
@@ -7524,6 +7561,7 @@ record of what train run~1.1 used.
 & \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+\greyrule
 agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
 \greyrule
 state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
@@ -7537,6 +7575,7 @@ goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak
 action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Maze}} \\
+\greyrule
 map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
   \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
   \newline Medium $8\times8$ \newline Large $9\times12$ \\
@@ -7544,6 +7583,7 @@ map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Me
 cell size & $1$~m & $4$~m \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
+\greyrule
 max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
   Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
   \newline Large $1000$ \\
@@ -7557,6 +7597,7 @@ reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
 at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Start and goal (only set (1) is used in this run)}} \\
+\greyrule
 goal reset & never --- one fixed goal cell, exact center, whole run & same \\
 \greyrule
 start $\to$ goal & UMaze: bottom-left $(3,1) \to$ top-left $(1,1)$ \newline Open: bottom-left
@@ -7613,6 +7654,7 @@ column reuses the \runref{run-5 original RND, Adam $10^{-4}$} RND stack unchange
 & \small(SB3) & \small(run 5 stack) & \small(PointMaze) & \small(AntMaze) & \small(AntMaze) \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{RL algorithm \& environments}} \\
+\greyrule
 base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} \\
 \greyrule
 runs on & the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
@@ -7624,6 +7666,7 @@ runs on & the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
 total env steps & $10^{6}$ & \multicolumn{4}{c}{same} \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{SAC}} \\
+\greyrule
 discount & $0.99$ (knob; the previous PointMaze-Large runs used $0.999$) &
   \multicolumn{4}{c}{same} \\
 \greyrule
@@ -7639,6 +7682,7 @@ train freq / gradient steps / learning starts & $1$ / $1$ / $100$ (SB3 defaults)
   \multicolumn{4}{c}{same} \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
 bonus input & N/A & next state ($4$-d PointMaze / $29$-d AntMaze) &
   (position $1$~m cell, velocity bin) of the next state; velocity binned $10\times10$ over
   $[-5,5]^2$ & $4$~m maze cell of the next $(x, y)$ & $1$~m square of the next $(x, y)$ \\
@@ -7660,12 +7704,14 @@ where the bonus enters & N/A & replay buffer stores extrinsic $+\ \beta \times$ 
   pipeline) & \multicolumn{3}{c}{same} \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{Bonus weight}} \\
+\greyrule
 \sout{beta sweep}\claudeedit{bonus weight $\beta$ --- the values run} & N/A & \multicolumn{4}{>{\raggedright\arraybackslash}p{12.0cm}}{$\{10^{-3},
   3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2}, 10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2},
   3{\times}10^{2}, 10^{3}, 3{\times}10^{3}, 10^{4}\}$ --- $15$ values (the same for the RND and the
   three ground-truth columns)} \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
+\greyrule
 configs in this column & $8$(env configs) $= 8$ & $8$(env configs) $\times$ $15$(bonus weight)
   $= 120$ & $4$(PointMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
   $4$(AntMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
@@ -8127,6 +8173,7 @@ writes no model checkpoints.
   \claudecell{\small(the learning-rate addendum, two rates; its own sweep)} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
+\greyrule
 base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c?}{same} & \claudecell{same} \\
 \greyrule
 environments & AntMaze UMaze and Medium, \texttt{start\_\allowbreak bottom\_\allowbreak left} &
@@ -8140,6 +8187,7 @@ device / partitions & cuda on the gpu partition; cpu on gnolim ($20$-day jobs) &
   \claudecell{cpu only (cpu and nolim; no gpu, gnolim or reservation)} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{SAC (every value as in Table~\ref{tab:pm-am-trainrun1-algos})}} \\
+\greyrule
 discount & $0.99$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
 \greyrule
 optimizer, batch, tau, buffer & Adam $3{\times}10^{-4}$, $256$, $0.005$, $10^{6}$ (SB3 defaults) &
@@ -8150,6 +8198,7 @@ networks, entropy, train freq, gradient steps, learning starts & $2\times256$ Re
   \claudecell{same} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
 bonus input & next state ($29$-d) & \multicolumn{4}{c?}{same} & \claudecell{same} \\
 \greyrule
 networks & target $+$ predictor & same & \criticalknob{$+$ a frozen copy of the predictor taken
@@ -8196,6 +8245,7 @@ predictor optimizer & \criticalknob{Adam $10^{-4}$} & \criticalknob{plain SGD at
 update proportion & $1.0$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
+\greyrule
 bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$ (UMaze),
   $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{10.3cm}?}{the $15$-value grid of
   Table~\ref{tab:pm-am-trainrun1-algos}: $\{$$10^{-3}$, $3{\times}10^{-3}$, $10^{-2}$,
@@ -8206,6 +8256,7 @@ bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$
 SGD learning rate & N/A & \multicolumn{4}{c?}{$\{10^{-3}, 10^{-2}\}$} & \claudecell{N/A (Adam)} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{Seeds, pruning, checkpointing}} \\
+\greyrule
 seeds & $100$ per environment, all at $10^{7}$ steps & race to $100$ at $10^{6}$ steps; prune
   checks from $n \ge 30$ & \multicolumn{3}{c?}{same} &
   \claudecell{race to $300$ at $10^{6}$ steps; checks from $n \ge 30$; \texttt{a\_\allowbreak seed}
@@ -8220,6 +8271,7 @@ checkpoints & none --- every run completes inside one Slurm job & \multicolumn{4
   \claudecell{same} \\
 \blackrule
 \multicolumn{7}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
+\greyrule
 configs in this column & $2$(env configs) $\times$ $1$(fixed bonus weight) $= 2$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
@@ -8729,6 +8781,7 @@ remaining rows are the whole of the difference between the two implementations.
   \small(\runref{run-5 original RND, Adam $10^{-4}$}, \Cref{tab:pm-am-trainrun1-algos}) \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Base learner and environment}} \\
+\greyrule
 base RL algorithm & PPO, on-policy, $128$ parallel environment copies & SAC, off-policy, one
   environment copy, replay buffer $10^{6}$ \\
 \greyrule
@@ -8739,6 +8792,7 @@ observation the bonus sees & newest frame of a $4\times84\times84$ \texttt{uint8
   $1\times84\times84$ & the full state vector: $4$-d PointMaze, $29$-d AntMaze \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Bonus input}} \\
+\greyrule
 what the bonus is computed on & next observation $s'$ & same \\
 \greyrule
 whitening & running mean/std per pixel, clip $[-5,5]$, denominator $\sqrt{\sigma^2}$ & running
@@ -8749,6 +8803,7 @@ warm-up before training & $50 \times 128 = 6400$ rollout steps of a random agent
   throwaway} environment so the training visit counts stay clean \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Networks}} \\
+\greyrule
 target network & $3$ convolutions ($32,64,64$) $\to$ flatten $\to$ linear $512$; frozen & linear
   $4\to256\to128$; frozen \\
 \greyrule
@@ -8767,6 +8822,7 @@ weight initialization & orthogonal, gain $\sqrt2$ & same \\
 bias initialization & zero & same \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Readout and predictor training}} \\
+\greyrule
 bonus readout & $b = \tfrac12\sum_{j=1}^{m} e_j^2$ (half sum over $512$ dimensions) & $b =
   \tfrac1m\sum_{j=1}^{m} e_j^2$ (mean over $128$ dimensions) \\
 \greyrule
@@ -8785,6 +8841,7 @@ optimizer & Adam, learning rate $10^{-4}$, $\epsilon = 10^{-5}$, \textbf{shared 
   \textbf{its own optimizer}; no gradient clipping \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic reward}} \\
+\greyrule
 reward normalization & divide by the running standard deviation $\sigma_F$ of a non-episodic forward
   filter $F_t = \gamma_{\mathrm{int}} F_{t-1} + b$, no mean subtracted & same mechanism, same
   $\gamma = 0.99$ \\
@@ -8803,6 +8860,7 @@ bonus weight & fixed by $\mathtt{int\_coef}=1.0$ and $\mathtt{ext\_coef}=2.0$; n
   swept over $15$ values from $10^{-3}$ to $10^{4}$ \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Run scale}} \\
+\greyrule
 environment steps per run & $2\times10^{9}$ & $10^{6}$ \\
 \greyrule
 seeds & $1$ published; $30$ in this run & $100$ to $300$ per arm \\
@@ -8870,6 +8928,7 @@ comes from, so the environment can be rebuilt from the table alone.
 \textbf{Where the value comes from} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
+\greyrule
 environment id & \texttt{Montezuma\allowbreak Revenge-v5} & passed by CleanRL; the benchmark script's
   only environment \\
 \greyrule
@@ -8889,6 +8948,7 @@ action space & \texttt{Discrete(18)} & the ALE minimal action set, which for thi
 parallel copies & $128$ & \texttt{num\_envs}, passed \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Preprocessing}} \\
+\greyrule
 frame skip & $4$ emulator frames per agent step, rewards summed & envpool default
   \texttt{frame\_skip=4} \\
 \greyrule
@@ -8905,6 +8965,7 @@ sticky actions & repeat-action probability $0.25$, applied by the ALE itself & p
   matching the original RND paper \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
+\greyrule
 episodic life & \texttt{done} is raised on every life lost, not only on game over & passed
   (\texttt{episodic\_life=True}); the underlying game is not reset on a life loss \\
 \greyrule
@@ -8917,6 +8978,7 @@ auto-reset & next-step: the terminating step returns the terminal observation, a
   step is consumed by the reset & envpool, fixed --- the defect this run corrects \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Reward}} \\
+\greyrule
 reward seen by the agent & clipped to its sign, so $\{-1,0,+1\}$ & passed
   (\texttt{reward\_clip=True}) \\
 \greyrule
@@ -8961,6 +9023,7 @@ follow the table.
 \textbf{Source and note} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{RL algorithm}} \\
+\greyrule
 algorithm & PPO with two value heads & CleanRL default \\
 \greyrule
 policy and value network & $3$ convolutions ($32,64,64$) $\to$ $3136 \to 256 \to 448$, then a
@@ -8994,6 +9057,7 @@ extrinsic discount & $\gamma = 0.999$ & CleanRL default \\
 GAE $\lambda$ & $0.95$ & CleanRL default \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
 bonus & Random Network Distillation & N/A --- the run has one arm \\
 \greyrule
 intrinsic discount & $\gamma_{\mathrm{int}} = 0.99$, non-episodic & CleanRL default \\
@@ -9008,6 +9072,7 @@ observation-normalization warm-up & $50$ rollouts of a random agent, $6400$ step
 RND stack & as the left column of \Cref{tab:cleanrl-vs-project-rnd} & read from the source \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+\greyrule
 environment steps per run & $2\times10^{9}$ & CleanRL's benchmark value \\
 \greyrule
 seeds & $30$, \texttt{a\_seed} $= 1 \dots 30$ & this run; CleanRL published one seed \\
@@ -9016,6 +9081,7 @@ configs in this table & $1$(algorithm) $\times$ $1$(environment) $\times$ $30$(s
   N/A --- no hyperparameter is swept \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Changes this run makes to the code, not to the algorithm}} \\
+\greyrule
 environment auto-reset defect & corrected & the consumed rows are carried through the advantage and
   dropped from the batch; the only change that alters what the optimizer sees \\
 \blackrule
@@ -9062,6 +9128,7 @@ predictor update proportion & $0.25$ & $0.25$ & \criticalknob{$1.0$} & $0.25$ & 
 predictor blocks beyond the target & $2$ & $2$ & $2$ & \criticalknob{$1$} & \criticalknob{$1$} \\
 \blackrule
 \multicolumn{6}{@{}l}{\textit{What each departure moves toward}} \\
+\greyrule
 matches this project's RND & N/A & \cmark\ (no predictor clip) & \cmark\ (proportion $1.0$) &
   \cmark\ (one block deeper) & \cmark\ (all three) \\
 \greyrule
