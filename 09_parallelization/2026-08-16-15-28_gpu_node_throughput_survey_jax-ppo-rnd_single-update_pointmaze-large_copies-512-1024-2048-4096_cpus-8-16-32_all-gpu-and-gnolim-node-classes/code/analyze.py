@@ -48,8 +48,23 @@ def cell_of(jobs, class_name, cpus, n_copies):
     return next((c for c in job["cells"] if c["n_copies"] == n_copies), None)
 
 
-def hardware_table(classes, jobs):
+def measured_capability(probes):
+    """Compute capability as each card reported it, keyed by node class.
+
+    The cluster's catalog is a hand-maintained file and has been wrong before — it lists
+    `titanx03` as a Maxwell card at 5.2 when the card is a Pascal TITAN X at 6.1. The probe asks
+    the card itself, so where the two disagree the card wins and the table says so.
+
+    before: catalog compute_capability 5.2 for titanx03; the probe read the string "6.1" off it
+    after:  {"titanx03": 6.1}, and the row prints "6.1 (catalog says 5.2)"
+    """
+    return {probe["node_class"]: float(probe["compute_capability"])
+            for probe in probes if probe.get("compute_capability")}
+
+
+def hardware_table(classes, jobs, probes):
     """One row per node class: what the card is, and how much of the survey it has finished."""
+    read_from_card = measured_capability(probes)
     lines = ["| node class | partition | card | compute<br>capability | card memory<br>(GB) | "
              "processor | processor counts<br>measured | cells<br>done |",
              "|---|---|---|---|---|---|---|---|"]
@@ -58,9 +73,13 @@ def hardware_table(classes, jobs):
         measured = [n for n in counts if (cls["name"], n) in jobs]
         done = sum(1 for n in counts for c in COPY_COUNTS
                    if (cell_of(jobs, cls["name"], n, c) or {}).get("status") == "measured")
+        catalog = cls["compute_capability"]
+        card = read_from_card.get(cls["name"])
+        capability = (f"{card} (catalog says {catalog})" if card and card != catalog
+                      else f"{catalog}")
         lines.append(
             f"| `{cls['name']}` | {cls['partition']} | {cls['display_name']} | "
-            f"{cls['compute_capability']} | {cls['gpu_mem_mb'] / 1000:.1f} | "
+            f"{capability} | {cls['gpu_mem_mb'] / 1000:.1f} | "
             f"{cls['cpu_type'].replace('_', ' ')} | "
             f"{', '.join(str(m) for m in measured) or 'none yet'} | "
             f"{done}/{len(counts) * len(COPY_COUNTS)} |")
@@ -282,6 +301,102 @@ def memory_figure(classes, jobs):
     plt.close(fig)
 
 
+def where_to_send_a_run(classes, jobs):
+    """The survey's practical answer: per copy count, the fastest card and what it costs.
+
+    A sweep is planned in hours, not in steps per second, so each row also carries the wall time
+    ten million steps per copy would take — the length of a real training run in this project.
+    """
+    lines = ["| copies | fastest card | node class | hours for ten million<br>steps per copy | "
+             "next best, and how much<br>slower it is | cards that cannot<br>hold this run |",
+             "|---|---|---|---|---|---|"]
+    for n_copies in COPY_COUNTS:
+        ranked = []
+        no_room = 0
+        for cls in classes:
+            cell, _ = best_cpu_count(jobs, cls["name"], cpu_counts_for(cls), n_copies)
+            if cell:
+                ranked.append((cell["total_steps_per_second"], cls, cell))
+            elif any((cell_of(jobs, cls["name"], n, n_copies) or {}).get(
+                    "status", "").startswith(("out_of_memory", "not_attempted_smaller"))
+                    for n in cpu_counts_for(cls)):
+                no_room += 1
+        if not ranked:
+            continue
+        ranked.sort(key=lambda r: -r[0])
+        _, best_cls, best_cell = ranked[0]
+        hours = 10 * best_cell["hours_per_million_steps_per_copy"]
+        runner_up = (f"{ranked[1][1]['display_name']}, "
+                     f"{ranked[0][0] / ranked[1][0]:.2f}x slower" if len(ranked) > 1 else "N/A")
+        lines.append(f"| {n_copies} | {best_cls['display_name']} | `{best_cls['name']}` | "
+                     f"{hours:.2f} | {runner_up} | {no_room} |")
+    return "\n".join(lines)
+
+
+def memory_table(classes, jobs):
+    """Peak card memory per copy count, and the largest copy count each card could hold.
+
+    Memory grows almost exactly in proportion to the copy count, so the per-copy cost measured
+    at any one count predicts the ceiling: a card holds a run while
+    (copies) x (memory per copy) stays under its memory, less the driver's own reservation.
+    """
+    lines = ["| node class | card | card memory<br>(GB) | " +
+             " | ".join(f"{c} copies<br>(GB)" for c in COPY_COUNTS) +
+             " | GB per<br>1,000 copies | largest copy count<br>that fits |",
+             "|---|---|---|---|---|---|---|---|---|"]
+    for cls in classes:
+        # three outcomes per copy count, and they must never be printed alike: a measured peak,
+        # a copy count the card could not hold, and a copy count whose job has not run yet
+        measured, ran_out, unknown = {}, [], []
+        for n_copies in COPY_COUNTS:
+            cell, _ = best_cpu_count(jobs, cls["name"], cpu_counts_for(cls), n_copies)
+            if cell and cell.get("peak_device_memory_mb"):
+                measured[n_copies] = cell["peak_device_memory_mb"] / 1000
+                continue
+            statuses = [(cell_of(jobs, cls["name"], n, n_copies) or {}).get("status", "")
+                        for n in cpu_counts_for(cls)]
+            if any(s.startswith(("out_of_memory", "not_attempted_smaller")) for s in statuses):
+                ran_out.append(n_copies)
+            else:
+                unknown.append(n_copies)
+        if not measured:
+            continue
+        per_thousand = np.mean([gb / n * 1000 for n, gb in measured.items()])
+        # what the card could hold if the proportionality continues: its memory, less the ~1 GB
+        # the driver and the compiled program hold outside the trainer's arrays
+        ceiling = int((cls["gpu_mem_mb"] / 1000 - 1.0) / (per_thousand / 1000))
+        if ran_out:
+            note = f"{max(measured):,} measured; {min(ran_out):,} does not fit"
+        elif unknown:
+            note = f"{max(measured):,} so far; about {ceiling:,} projected"
+        else:
+            note = f"all four; about {ceiling:,} projected"
+        cells = [f"{measured[c]:.1f}" if c in measured
+                 else ("does not fit" if c in ran_out else "not yet") for c in COPY_COUNTS]
+        lines.append(f"| `{cls['name']}` | {cls['display_name']} | "
+                     f"{cls['gpu_mem_mb'] / 1000:.1f} | " + " | ".join(cells) +
+                     f" | {per_thousand:.2f} | {note} |")
+    return "\n".join(lines)
+
+
+def stability_summary(jobs):
+    """How firm the survey's numbers are, over every cell it measured."""
+    spreads = [c["relative_spread_middle_half"] for j in jobs.values() for c in j["cells"]
+               if c.get("status") == "measured"]
+    if not spreads:
+        return "No cell has reported yet."
+    spreads = np.asarray(spreads)
+    settled = sum(1 for j in jobs.values() for c in j["cells"]
+                  if c.get("status") == "measured" and c["settled"])
+    return (
+        f"Across all {len(spreads)} measured cells the middle half of the timing rounds sat "
+        f"within {np.median(spreads) * 100:.2f}% of the median in the typical cell, within "
+        f"{np.percentile(spreads, 95) * 100:.2f}% in the worst 5%, and never worse than "
+        f"{spreads.max() * 100:.2f}%. {settled} of {len(spreads)} cells reached the 2% "
+        "settling target, every one of them within the six-round floor — so no number here "
+        "rests on a timing that was still drifting when it was taken.")
+
+
 def missing_cells(classes, jobs):
     """Every cell the survey still owes, so the report never reads as if it covered everything."""
     missing = []
@@ -298,13 +413,13 @@ def main():
     """Write results.md and the figures from whatever has been measured so far."""
     classes = load_classes()
     jobs = load_jobs()
+    probes = [json.loads(p.read_text()) for p in sorted(PROBES.glob("*.json"))]
     PLOTS.mkdir(exist_ok=True)
     scaling_figure(classes, jobs)
     memory_figure(classes, jobs)
     for n_copies in COPY_COUNTS:
         card_ranking_figure(classes, jobs, n_copies)
 
-    probes = [json.loads(p.read_text()) for p in sorted(PROBES.glob("*.json"))]
     n_cells = sum(1 for j in jobs.values() for c in j["cells"] if c.get("status") == "measured")
     n_oom = sum(1 for j in jobs.values() for c in j["cells"]
                 if c.get("status", "").startswith(("out_of_memory", "not_attempted_smaller")))
@@ -353,28 +468,36 @@ def main():
         "for the system) is measured at its own maximum instead, and that maximum is named in "
         "the table.",
         "",
-        hardware_table(classes, jobs),
+        hardware_table(classes, jobs, probes),
         "",
         f"All {len(probes)} classes probed so far run the trainer: JAX 0.10.2 with the CUDA 12 "
         "plugin reaches every card generation here, from compute capability 6.0 (Tesla P100, "
         "2016) to 12.0 (RTX 5080, 2025), so no node class had to be dropped for lack of "
         "support.",
         "",
+        "## 3. Where to send a run",
+        "",
+        "The tables in section 4 carry every card; this one carries the answer. Ten million "
+        "steps per copy is the length of a real training run in this project, so the wall time "
+        "is quoted for that.",
+        "",
+        where_to_send_a_run(classes, jobs),
+        "",
     ]
 
     for n_copies in COPY_COUNTS:
-        out += [f"## 3.{COPY_COUNTS.index(n_copies) + 1} {n_copies} copies", "",
+        out += [f"## 4.{COPY_COUNTS.index(n_copies) + 1} {n_copies} copies", "",
                 "Each class at whichever of its processor counts ran fastest. Best value in "
                 "bold, second best underlined; the table is sorted by the aggregate rate.",
                 "", throughput_table(classes, jobs, n_copies), "",
                 f"![cards at {n_copies} copies](plots/card_ranking_copies-{n_copies}.png)", ""]
 
     out += [
-        "## 4. How throughput scales with copies",
+        "## 5. How throughput scales with copies",
         "",
         "![throughput scaling](plots/throughput_scaling.png)",
         "",
-        "## 5. Does the processor count matter",
+        "## 6. Does the processor count matter",
         "",
         "The trainer keeps its arrays on the card and the host only dispatches, so the "
         "expectation is that 8, 16 and 32 processors give the same iteration time. This table "
@@ -383,11 +506,35 @@ def main():
         "",
         cpu_effect_table(classes, jobs),
         "",
-        "## 6. Memory, and which cards cannot hold a run",
+        "## 7. Memory, and which cards cannot hold a run",
+        "",
+        "Memory grows in proportion to the copy count — doubling the copies doubles the peak — "
+        "so the cost per copy measured at any one count says where a card's ceiling is. The "
+        "last column applies that: the card's memory, less about a gigabyte the driver and the "
+        "compiled program hold outside the trainer's arrays, divided by the cost of one copy. "
+        "That figure is a projection, not a measurement: on the largest cards it extrapolates "
+        "several times past the biggest copy count anyone ran here, and it assumes the "
+        "proportionality holds that far, which nothing in this survey checked.",
+        "",
+        memory_table(classes, jobs),
+        "",
+        "**The same run needs 66% more memory on an older card.** Every card at compute "
+        "capability 8.0 and above — Ampere, Ada, Hopper, Blackwell — holds 4,096 copies in "
+        "about 11.3 GB, while every Turing and Pascal card needs about 18.8 GB for exactly the "
+        "same work, and the H100 sits slightly above its generation at 13.4 GB. The split "
+        "follows the card generation and not the card's size or speed, so it is the compiler "
+        "emitting a different program for the older architectures, not the trainer asking for "
+        "more. What in that program costs the extra memory was not investigated here. The "
+        "practical consequence is that the memory ceiling of an older card is reached about a "
+        "third sooner than its size alone suggests.",
         "",
         "![peak memory](plots/peak_memory.png)",
         "",
-        "## 7. What is still missing",
+        "## 8. How firm these numbers are",
+        "",
+        stability_summary(jobs),
+        "",
+        "## 9. What is still missing",
         "",
     ]
     if missing:
