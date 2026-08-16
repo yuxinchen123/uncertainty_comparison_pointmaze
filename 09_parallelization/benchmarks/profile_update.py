@@ -39,6 +39,8 @@ def cuda_time(fn, reps=30, warmup=8):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-copies", type=int, default=128)
+    ap.add_argument("--tag", default="", help="suffix for the result file, to keep a "
+                                              "before-and-after pair apart")
     args = ap.parse_args()
     from torch_ppo_rnd import PPORND, production_config
 
@@ -68,52 +70,25 @@ def main():
         return t._loss_fn(batch, style_a=False)
 
     def fwd_bwd():
-        t._loss_fn(batch, style_a=False).backward()
+        t._backward_into_flat(t._loss_fn(batch, style_a=False))
 
     # gradients must exist before the clip can be timed on its own
     fwd_bwd()
 
-    if hasattr(t, "_opt_fn"):
-        # the flat-buffer build: clip, Adam and zeroing are one chain over one buffer
-        parts = {
-            "gather the minibatch (9 tensors)": cuda_time(gather_one),
-            "forward": cuda_time(fwd),
-            "forward and backward": cuda_time(fwd_bwd),
-            "clip, Adam and zero over the flat buffer": cuda_time(lambda: t._opt_fn()),
-            "Adam step": 0.0,
-            "zero the gradients (19 tensors)": 0.0,
-        }
-    else:
-        def clip_only():
-            g2 = torch.zeros(C, device=t.device)
-            for p in t.trainable:
-                g2 = g2 + p.grad.reshape(C, -1).square().sum(1)
-            scale = (cfg.max_grad_norm / (g2.sqrt() + 1e-6)).clamp(max=1.0)
-            for p in t.trainable:
-                p.grad.mul_(scale.view(C, *([1] * (p.dim() - 1))))
-
-        def adam_only():
-            t.opt.step()
-
-        def zero_only():
-            for p in t.trainable:
-                p.grad.zero_()
-
-        parts = {
-            "gather the minibatch (9 tensors)": cuda_time(gather_one),
-            "forward": cuda_time(fwd),
-            "forward and backward": cuda_time(fwd_bwd),
-            "clip the per-copy gradient norm (walks 19 tensors twice)": cuda_time(clip_only),
-            "Adam step": cuda_time(adam_only),
-            "zero the gradients (19 tensors)": cuda_time(zero_only),
-        }
+    # the gradient limit and the Adam step are two streaming passes over the flat buffer, timed
+    # together because they always run together; the gradient is not zeroed at all any more
+    parts = {
+        "gather the minibatch (9 tensors)": cuda_time(gather_one),
+        "forward": cuda_time(fwd),
+        "forward and backward": cuda_time(fwd_bwd),
+        "limit the gradient and step Adam over the flat buffer":
+            cuda_time(lambda: t._clip_per_copy_and_step()),
+    }
     parts["backward alone (difference)"] = parts["forward and backward"] - parts["forward"]
 
-    clip_key = ("clip, Adam and zero over the flat buffer"
-                if "clip, Adam and zero over the flat buffer" in parts
-                else "clip the per-copy gradient norm (walks 19 tensors twice)")
+    clip_key = "limit the gradient and step Adam over the flat buffer"
     per_step = (parts["gather the minibatch (9 tensors)"] + parts["forward and backward"]
-                + parts[clip_key] + parts["Adam step"] + parts["zero the gradients (19 tensors)"])
+                + parts[clip_key])
     print(f"\n== one minibatch step at {C} copies, {mb} rows per copy ==")
     for k, v in sorted(parts.items(), key=lambda kv: -kv[1]):
         print(f"  {v:9.1f} us  {k}")
@@ -122,12 +97,10 @@ def main():
     print(f"\nShare of one step: "
           f"gather {parts['gather the minibatch (9 tensors)']/per_step*100:.0f}%, "
           f"forward+backward {parts['forward and backward']/per_step*100:.0f}%, "
-          f"clip+Adam+zero {parts[clip_key]/per_step*100:.0f}%, "
-          f"Adam {parts['Adam step']/per_step*100:.0f}%, "
-          f"zero {parts['zero the gradients (19 tensors)']/per_step*100:.0f}%")
+          f"gradient limit and Adam {parts[clip_key]/per_step*100:.0f}%")
 
     RESULTS.mkdir(exist_ok=True)
-    out = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_profile_update_C{C}.json"
+    out = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_profile_update_C{C}{args.tag}.json"
     out.write_text(json.dumps({"n_copies": C, "rows_per_minibatch": mb, "steps": steps,
                                "parts_us": parts, "per_step_us": per_step}, indent=1))
     print(f"wrote {out}")

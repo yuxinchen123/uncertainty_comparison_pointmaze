@@ -20,6 +20,21 @@ sys.path.insert(0, str(BASE / "ppo" / "jax_ppo"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
+def peak_device_mb():
+    """Peak device memory the JAX allocator has held in this process, in mebibytes.
+
+    JAX reports a high-water mark per device, never reset within a process, so a benchmark
+    that walks copy counts in ASCENDING order gets the right per-row peak (each row's own
+    peak exceeds every earlier row's), while a descending or mixed order would not.
+    """
+    import jax
+    stats = jax.local_devices()[0].memory_stats()
+    if stats is None or "peak_bytes_in_use" not in stats:
+        raise RuntimeError("this jax build reports no device memory statistics; peak memory "
+                           "cannot be recorded, so the comparison table would be incomplete")
+    return stats["peak_bytes_in_use"] / 2 ** 20
+
+
 def bench(n_copies, style, repeats=5, num_steps=128, n_envs=4, timing="pipelined"):
     """Median seconds per training iteration (rollout + update) for one config."""
     import jax
@@ -64,6 +79,8 @@ def bench(n_copies, style, repeats=5, num_steps=128, n_envs=4, timing="pipelined
         "sec_per_iteration_median": med,
         "iterations_per_sec": 1.0 / med,
         "env_steps_per_sec": env_steps / med,
+        "env_steps_per_sec_per_copy": env_steps / med / n_copies,
+        "peak_vram_mb": peak_device_mb(),
     }
 
 
@@ -75,26 +92,35 @@ def main():
     ap.add_argument("--timing", default="pipelined", choices=["pipelined", "sync"])
     ap.add_argument("--num-steps", type=int, default=128)
     ap.add_argument("--n-envs", type=int, default=4)
+    ap.add_argument("--repeats", type=int, default=5)
     args = ap.parse_args()
 
     import jax
     git = subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                          capture_output=True, text=True).stdout.strip()
-    rows = []
-    for style in args.styles:
-        for c in args.n_copies:
-            r = bench(c, style, num_steps=args.num_steps, n_envs=args.n_envs, timing=args.timing)
-            rows.append(r)
-            print(f"jax_ppo/{style} C={c:>4d}: {r['iterations_per_sec']:.2f} iter/s  "
-                  f"{r['env_steps_per_sec']:.3e} env-steps/s  early={r['early_iteration_seconds']}")
-
     RESULTS.mkdir(exist_ok=True)
     stamp = time.strftime("%Y-%m-%d-%H-%M-%S")
     out = RESULTS / f"{stamp}_trainbench_jax_ppo{args.tag}.json"
-    out.write_text(json.dumps({
-        "impl": "jax_ppo", "git": git, "jax": jax.__version__,
-        "devices": [str(d) for d in jax.devices()], "rows": rows,
-    }, indent=1))
+    rows, failures = [], []
+    for style in args.styles:
+        for c in args.n_copies:
+            # one copy count running out of memory must not lose the rows already measured,
+            # so every row is written as soon as it exists and the failure is recorded
+            try:
+                r = bench(c, style, repeats=args.repeats, num_steps=args.num_steps,
+                          n_envs=args.n_envs, timing=args.timing)
+            except Exception as e:
+                failures.append({"n_copies": c, "style": style, "error": repr(e)[:400]})
+                print(f"jax_ppo/{style} C={c:>4d}: FAILED {e!r}")
+                break
+            rows.append(r)
+            print(f"jax_ppo/{style} C={c:>4d}: {r['sec_per_iteration_median']*1e3:.2f} ms/iter  "
+                  f"{r['env_steps_per_sec']:.3e} env-steps/s  "
+                  f"{r['peak_vram_mb']:.0f} MB peak  early={r['early_iteration_seconds']}")
+            out.write_text(json.dumps({
+                "impl": "jax_ppo", "git": git, "jax": jax.__version__,
+                "devices": [str(d) for d in jax.devices()], "rows": rows,
+                "failures": failures}, indent=1))
     print(f"wrote {out}")
 
 

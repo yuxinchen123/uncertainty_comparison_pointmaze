@@ -668,9 +668,13 @@ baseline, one change, measure, keep or revert, write a row:
 | Round 1 | build everything: exact GPU environments in PyTorch, fused CUDA and JAX; the batched multi-copy PPO+RND trainer in PyTorch and JAX; end-to-end capture | 777 -> 36.6 ms per training iteration at 128 copies |
 | Round 2 | improve on the finished system, with a measurement protocol that can tell a small change from drift | 36.8 -> 20.2 ms, a further 1.8x |
 | Round 3 | new capability: train copy groups at DIFFERENT learning rates in one run | a sweep costs 1.0% more than a uniform run of the same size |
+| Round 4 | close the distance to the JAX trainer at 8 to 128 copies | 20.4 -> 16.3 ms at 128 copies, and a loss at 512 that round 5 traced |
+| Round 5 | re-open the question at the copy counts the trainer is used at, 1,024 to 4,096 | the limit changes from the number of device programs to memory traffic, and the previous round's loss turns out to be a regression of up to 19 percent there |
 
 Reading order: what was built and why it is correct, then the module-by-module numbers, then
-what each round changed, then the training campaign and the sweep.
+what each round changed, then the training campaign and the sweep. The last section is the
+newest and stands somewhat apart: it is about the sizes the trainer is actually run at, where
+the earlier sections' conclusions do not all carry over.
 """
 
 
@@ -1300,11 +1304,14 @@ largest for small batches (178 against 6.3 million steps per second at a thousan
 where the other implementations spend nearly all their time dispatching work rather than simulating.
 All three implementations pass identical exactness checks, so this is purely a speed choice.
 
-**Which trainer: they are close, and the choice is no longer mainly about speed.** After the round-four
-work (below), PyTorch is ahead at 8 copies with one update per batch and JAX leads by 10 to 22 percent
-elsewhere, measured the same way on both sides with each iteration waited for. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
-quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
-learning-rate sweep and per-copy progress recording.
+**Which trainer: it depends on the copy count, and the answer changes between 128 and 1,024.** At
+8 to 128 copies they are close: after the round-four work (below), PyTorch is ahead at 8 copies with
+one update per batch and JAX leads by 10 to 22 percent elsewhere, measured the same way on both
+sides with each iteration waited for. At 1,024 to 4,096 copies — where this trainer is actually run
+— the distance is much larger, JAX by 1.75 to 2.08 times, for a reason that only appears at those
+sizes; the last section of this document measures it and says why. Both compute the same algorithm
+and agree to 8.6e-7 on every intermediate quantity. PyTorch carries the resumable training driver
+and the campaign records; both now carry the learning-rate sweep and per-copy progress recording.
 
 **Which combination: keep the environment in the same framework as the trainer.** Substituting the
 CUDA kernel, twenty-four times faster on its own, into the PyTorch training loop changes the
@@ -1431,6 +1438,633 @@ hand-written operation, which is a larger undertaking and was left as a decision
     return md
 
 
+def throughput_rows(pattern):
+    """{(update style, copies): throughput figures} from one benchmark file, {} if absent.
+
+    Both benchmark programs write one row per measured setting; the torch one calls the time
+    `sec_per_iteration` and the jax one `sec_per_iteration_median`, so both names are read.
+    Every row carries the five figures a throughput table must report.
+    before: {"n_copies": 4096, "style": "full_batch", "sec_per_iteration": 0.0868, ...}
+    after:  {("full_batch", 4096): {"ms": 86.8, "total": 24.1, "per_copy": 5.9,
+                                    "hours": 47.1, "vram": 13.7}}
+    """
+    d = newest(pattern)
+    if not d:
+        return {}
+    out = {}
+    for r in d["rows"]:
+        sec = r.get("sec_per_iteration") or r.get("sec_per_iteration_median")
+        per_copy = r["env_steps_per_sec"] / r["n_copies"]
+        out[(r.get("style"), r["n_copies"])] = {
+            "ms": sec * 1e3,
+            "total": r["env_steps_per_sec"] / 1e6,          # millions of steps per second
+            "per_copy": per_copy / 1e3,                     # thousands per second, one copy
+            "hours": 1e6 / (3600.0 * per_copy),             # hours for one copy to reach 1e6 steps
+            "vram": r.get("peak_vram_mb", 0.0) / 1024.0,    # gibibytes
+        }
+    return out
+
+
+# 8,192 is past the range asked about and was measured only for the changed PyTorch build, to
+# see whether the card still holds it; rows with no measurement are simply absent from the tables
+LARGE_COPIES = [1024, 2048, 4096, 8192]
+
+
+def large_scale_sources():
+    """The six measurement files the large-copy-count section reads, as named row tables."""
+    return {
+        "before A": throughput_rows(r"trainbench_torch_full_batch_base_r5_styleA_large"),
+        "before B": throughput_rows(r"trainbench_torch_epoch_minibatch_base_r5_styleB_large"),
+        "after A": throughput_rows(r"trainbench_torch_full_batch_after_r5_styleA_large"),
+        "after B": throughput_rows(r"trainbench_torch_epoch_minibatch_after_r5_styleB_large"),
+        "jax A": throughput_rows(r"trainbench_jax_ppo_base_r5_styleA_large_sync"),
+        "jax B": throughput_rows(r"trainbench_jax_ppo_base_r5_styleB_large_sync"),
+    }
+
+
+def fig_large_scale():
+    """Aggregate and per-copy throughput at 1024-4096 copies, both frameworks, both styles."""
+    src = large_scale_sources()
+    if not src["before B"] and not src["before A"]:
+        return pending("large-copy-count figure", "the 1024-4096 benchmark JSONs")
+
+    series = [("PyTorch before this round", C_TORCH, "--", "o"),
+              ("PyTorch after this round", C_TORCH, "-", "o"),
+              ("JAX", C_JAX, "-", "^")]
+    fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0), dpi=160)
+    for row, (style, style_name) in enumerate([("full_batch", "one update per batch"),
+                                               ("epoch_minibatch", "sixteen updates per batch")]):
+        tag = "A" if style == "full_batch" else "B"
+        tables = [src[f"before {tag}"], src[f"after {tag}"], src[f"jax {tag}"]]
+        for col, (key, ylabel) in enumerate(
+                [("total", "TOTAL environment steps / second (millions)"),
+                 ("per_copy", "per-copy environment steps / second (thousands)")]):
+            ax = axes[row][col]
+            for (label, color, ls, mk), table in zip(series, tables):
+                xs = [c for c in LARGE_COPIES if (style, c) in table]
+                if not xs:
+                    continue
+                ax.plot(xs, [table[(style, c)][key] for c in xs], ls, color=color,
+                        linewidth=2, marker=mk, markersize=6, label=label,
+                        alpha=0.55 if ls == "--" else 1.0)
+            ax.set_xscale("log", base=2)
+            ax.set_xticks(LARGE_COPIES)
+            ax.set_xticklabels([str(c) for c in LARGE_COPIES])
+            ax.set_xlabel("independent training copies")
+            ax.set_ylabel(ylabel)
+            ax.set_title(style_name, fontsize=10)
+            ax.legend(frameon=False, fontsize=8)
+            style_ax(ax)
+    fig.suptitle("Throughput at the copy counts the trainer is used at (T=128, N=4)", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "large_scale.png")
+    plt.close(fig)
+    return None
+
+
+def throughput_table(named_tables, style, copies=None):
+    """Render one throughput table: one row per (implementation, copy count).
+
+    named_tables: [(row label, {(style, copies): figures}), ...] in the order to display.
+    Every row carries the five figures the throughput convention requires — copies, time for one
+    iteration, aggregate rate, per-copy rate, and the hours one copy needs for a million steps —
+    plus the peak memory, which is what decides whether a setting fits on the card at all.
+    """
+    copies = copies or LARGE_COPIES
+    # headers are wrapped with line breaks: seven columns of full-length prose would push the
+    # table past the right edge of a printed page, where there is no scroll bar to recover it
+    md = ["| implementation | copies | milliseconds<br>per iteration | total steps<br>per second"
+          "<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million"
+          "<br>steps per copy | peak<br>memory (GB) |",
+          "|---|---|---|---|---|---|---|"]
+    # bold the best and underline the second best per copy count, on the aggregate rate
+    for c in copies:
+        present = [(name, t[(style, c)]) for name, t in named_tables if (style, c) in t]
+        if not present:
+            continue
+        ranked = sorted((r["total"] for _, r in present), reverse=True)
+        for name, r in present:
+            cell = f"{r['total']:.2f}"
+            if len(ranked) > 1 and r["total"] == ranked[0]:
+                cell = f"**{cell}**"
+            elif len(ranked) > 2 and r["total"] == ranked[1]:
+                cell = f"<u>{cell}</u>"
+            md.append(f"| {name} | {c} | {r['ms']:.1f} | {cell} | {r['per_copy']:.1f} | "
+                      f"{r['hours']:.3f} | {r['vram']:.1f} |")
+    return "\n".join(md)
+
+
+def phase_us(pattern):
+    """The three phase times and the whole-iteration time of one phase profile, in milliseconds."""
+    d = newest(pattern)
+    if not d:
+        return None
+    order = ["rollout", "post-rollout", "update"]
+    out = {}
+    for key, us in d["phases_us"].items():
+        for name in order:
+            if key.startswith(name):
+                out[name] = us / 1000.0
+    out["one graph"] = d["one_graph_us"] / 1000.0
+    return out
+
+
+def sec_large_scale():
+    """Round five: the copy counts the trainer is actually used at, 1,024 to 4,096."""
+    src = large_scale_sources()
+    if not src["before B"] and not src["before A"]:
+        return "## Training a thousand to four thousand copies at once\n" + pending(
+            "the large-copy-count section", "the 1024-4096 benchmark JSONs")
+
+    md = """## Training a thousand to four thousand copies at once
+
+An earlier section did measure the trainer past a thousand copies, but its figures come from the
+first and second optimisation rounds and its JAX figures from the first, and — more importantly —
+every optimisation decision recorded anywhere in this document was taken by measuring 8 to 128
+copies. The trainer is used at 1,024 to 4,096. This section re-opens the question at those sizes,
+with the current code on both sides: what the two frameworks cost there, what limits the PyTorch
+one, and what changed once the limit was identified.
+
+The short answer is that the two ranges are different problems. At 128 copies the iteration is a
+long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
+above the same programs each carry eight to thirty-two times as much data, the data no longer fits
+in any cache, and the cost is set by how many bytes move between the chip and its memory. An
+optimisation that removes device programs helps at 128 copies and does nothing at 4,096; an
+optimisation that removes bytes moved helps at 4,096 and does nothing at 128. One change kept in
+the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
+and above, and is recorded below.
+
+"""
+    # the two questions, answered with numbers, before the reader reaches the tables
+    a_before, a_after, a_jax = src["before A"], src["after A"], src["jax A"]
+    key = ("full_batch", 4096)
+    if key in a_before and key in a_jax:
+        pt = (a_after or a_before)[key]["ms"]
+        answer = (
+            f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
+            f"{a_before[key]['ms']:.0f} milliseconds per iteration as this round found it and "
+            f"{pt:.0f} after this round's changes, against {a_jax[key]['ms']:.0f} for the JAX "
+            f"trainer" if a_after else
+            f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
+            f"{a_before[key]['ms']:.0f} milliseconds per iteration against "
+            f"{a_jax[key]['ms']:.0f} for the JAX trainer")
+        md += (f"**The two answers in one line.** {answer}. The distance is not made of any one "
+               f"slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain "
+               f"copy of memory reaches — but of how many intermediate results have to be "
+               f"written to memory and read back between them.\n\n")
+    md += """### Where an iteration's time goes as the copy count grows
+
+"""
+    ph = {c: phase_us(fr"profile_phases_C{c}(?!.*preround)") for c in (128, 1024, 4096)}
+    if all(ph.values()):
+        md += ("| phase | 128 copies | 1,024 copies | 4,096 copies |\n|---|---|---|---|\n")
+        for name, label in [("rollout", "rollout (128 sequential environment steps)"),
+                            ("post-rollout", "post-rollout processing"),
+                            ("update", "update (16 minibatch steps)"),
+                            ("one graph", "the whole iteration, recorded as one sequence")]:
+            md += (f"| {label} | " +
+                   " | ".join(f"{ph[c][name]:.2f}" for c in (128, 1024, 4096)) + " |\n")
+        md += ("\n*Milliseconds, sixteen updates per batch. The first three lines are the three "
+               "phases timed as separately recorded sequences; the last is the shipped "
+               "arrangement, which records all three together.*\n\n")
+        grow_roll = ph[4096]["rollout"] / ph[128]["rollout"]
+        grow_upd = ph[4096]["update"] / ph[128]["update"]
+        md += (f"From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a "
+               f"factor of {grow_roll:.1f} and the update by a factor of {grow_upd:.1f}. The "
+               f"rollout is a chain of about 2,300 small programs whose cost hardly depends on "
+               f"how much data each one carries, so adding copies is very nearly free for it. The "
+               f"update grows in proportion to the copies, which is what a computation limited by "
+               f"memory traffic does.\n\n")
+
+    md += """### The two frameworks at the sizes in use
+
+The two tables below report, for each setting, the time one iteration takes, the aggregate rate
+over all copies, the rate a single copy gets, the hours one copy needs to reach a million
+environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
+timing the next, which is the stricter of the two protocols and the one used everywhere else in
+this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
+same trainer with this round's changes.
+
+The JAX figures are for `ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at
+commit `7609297`). This round changed nothing in it, and a separate line of work was changing it
+while these measurements were taken, so its figures here are a snapshot of one revision rather
+than the last word on that trainer.
+
+"""
+    named_A = [("PyTorch before", src["before A"]), ("PyTorch after", src["after A"]),
+               ("JAX", src["jax A"])]
+    named_B = [("PyTorch before", src["before B"]), ("PyTorch after", src["after B"]),
+               ("JAX", src["jax B"])]
+    md += "**One update per batch.**\n\n" + throughput_table(named_A, "full_batch") + "\n\n"
+    md += ("**Sixteen updates per batch.**\n\n" + throughput_table(named_B, "epoch_minibatch")
+           + "\n\n")
+    md += ("*Best aggregate rate per copy count in bold, second best underlined. The aggregate "
+           "rate rises with the copy count while the rate each individual copy gets falls, so the "
+           "hours column is the one that says how long a single training run actually takes. "
+           "8,192 copies is past the range this section is about and was measured only for the "
+           "changed PyTorch build, to see whether the card still holds it.*\n\n")
+    md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
+    # the trade-off the two columns exist to show, stated with the measured numbers
+    best = src["after A"] or src["before A"]
+    if ("full_batch", 1024) in best and ("full_batch", 4096) in best:
+        lo, hi = best[("full_batch", 1024)], best[("full_batch", 4096)]
+        md += (
+            f"The two rate columns move in opposite directions and the choice between copy counts "
+            f"depends on which one matters. Going from 1,024 copies to 4,096 with one update per "
+            f"batch raises the aggregate rate from {lo['total']:.1f} to {hi['total']:.1f} million "
+            f"environment steps per second, a factor of {hi['total']/lo['total']:.2f}, while the "
+            f"rate an individual copy gets falls from {lo['per_copy']:.1f} to "
+            f"{hi['per_copy']:.1f} thousand per second, a factor of "
+            f"{lo['per_copy']/hi['per_copy']:.1f}. In time: one copy reaches ten million "
+            f"environment steps, the budget this project's training campaign used, in "
+            f"{lo['hours']*10*60:.0f} minutes at 1,024 copies and {hi['hours']*10*60:.0f} minutes "
+            f"at 4,096. Four thousand copies is the right setting "
+            f"when the science needs many independent runs and the wall time of any one of them "
+            f"does not matter; a thousand is the right setting when it does.\n\n")
+    md += sec_large_scale_limit()
+    md += sec_large_scale_changes()
+    md += sec_large_scale_gap(src)
+    return md
+
+
+def sec_large_scale_gap(src):
+    """Why the JAX trainer is faster at these copy counts, and what closing it would take."""
+    rows = []
+    for style, label in (("full_batch", "one update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")):
+        tag = "A" if style == "full_batch" else "B"
+        after, jax = src[f"after {tag}"] or src[f"before {tag}"], src[f"jax {tag}"]
+        for c in LARGE_COPIES:
+            if (style, c) in after and (style, c) in jax:
+                rows.append((label, c, after[(style, c)]["ms"], jax[(style, c)]["ms"]))
+    if not rows:
+        return ""
+    md = """### Why the JAX trainer is faster at these copy counts
+
+| update convention | copies | PyTorch | JAX | ratio |
+|---|---|---|---|---|
+"""
+    for label, c, pt, jx in rows:
+        md += f"| {label} | {c} | {pt:.1f} ms | {jx:.1f} ms | {pt/jx:.2f} |\n"
+    md += """
+The reason is not that any PyTorch program is slow. The table in the previous subsection times
+each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
+reaches. The reason is that there are more of them, and every program writes its output to memory
+for the next one to read.
+
+The two frameworks arrange an iteration differently. The PyTorch trainer records the iteration as
+a sequence of separate device programs — a multiplication, then a program that adds the bias and
+applies the activation, then the next multiplication, and so on — and every intermediate between
+them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
+that emits far fewer programs, folding chains of element-wise work into the loops that produce
+and consume them, so a number of the intermediates PyTorch writes and re-reads are never written
+at all. At 128 copies that difference showed up as a difference in the number of programs issued,
+worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
+what the iteration costs, so the same difference is worth about a factor of two.
+
+Closing it would mean folding the bias and the activation into the multiplication itself rather
+than leaving them as a following pass — that is, having the compiler generate the multiplication
+instead of calling the library's. PyTorch can be asked to do this, so it was measured rather than
+guessed at: the update stage at 1,024 copies takes 45.8 milliseconds with the library's
+multiplication and 44.5 with the compiler's, and 46.8 against 44.8 in a second run, so 3 to 4
+percent of that stage and 2 to 3 percent of an iteration — real, but small, and the two runs
+disagree by more than the spread within either of them. It also has a cost: the kernels the
+compiler selects switch the reduced-precision matrix units off, so the loss it computes differs
+by 2.6e-6 relative and the worst gradient by 6.5e-4 against a largest gradient of 0.87, and
+compilation takes substantially longer. It was therefore not adopted in this round, whose rule
+was that the arithmetic must not change, and it is the first candidate for a round that allows
+it.
+
+What the measurement says more broadly is that the remaining distance is not one missing
+optimisation. It is distributed across every program the iteration issues, and closing it would
+mean giving up the arrangement of separate library calls in favour of generating the whole
+iteration — which is what the JAX trainer already is.
+
+The peak memory in the tables above points the same way. At 4,096 copies with sixteen updates per
+batch the PyTorch trainer holds 13.8 gigabytes and the JAX trainer 9.0. The difference is two
+deliberate choices on the PyTorch side that trade memory for programs: it stores the frozen
+target network's features for the whole batch rather than recomputing them in each update step,
+and it keeps a second copy of the batch in shuffled order so that each update step is a
+contiguous slice rather than its own gather. Both were the right trade at 128 copies. At these
+sizes they are close to neutral — the stored features still win on the byte count, as the
+arithmetic in the next subsection shows — but they are no longer free.
+
+One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
+trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
+while the JAX trainer does so only when asked for it, and it was not asked here. That is a
+difference in what the two are computing, not in how well they compute it, and it is small — two
+integer conversions and a scatter over the stored rows — but it is on the PyTorch side of the
+ledger.
+
+"""
+    return md
+
+
+def probe_row(pattern, name_fragment):
+    """One measured operation from an operation probe, matched by a fragment of its name."""
+    d = newest(pattern)
+    if not d:
+        return None
+    for r in d["rows"]:
+        if name_fragment in r["name"]:
+            return r
+    return None
+
+
+def sec_large_scale_limit():
+    """What sets the cost of an iteration at 4,096 copies, in bytes rather than operations."""
+    ref = probe_row(r"probe_update_ops_C4096", "copy one gibibyte")
+    adam = probe_row(r"probe_update_ops_C4096", "clip and Adam, compiled")
+    adam_eager = probe_row(r"probe_update_ops_C4096", "clip and Adam, eager")
+    if not ref:
+        return pending("large-copy-count limit", "the operation probe at 4,096 copies")
+    sys.path.insert(0, str(BASE / "benchmarks"))
+    import count_traffic as ct
+    counts = ct.counts("epoch_minibatch")
+    C = 4096
+    traffic = sum(v[1] for v in counts.values()) * C
+    arithmetic = sum(v[0] for v in counts.values()) * C
+    measured = (newest(r"profile_phases_C4096(?!.*preround)") or {}).get("one_graph_us", 0) / 1e6
+    achieved = traffic / measured if measured else 0.0
+    # the isolated matrix-multiply floor: every multiplication of the update stage timed on its
+    # own and summed. Reported for the update stage only — for the rollout the same instrument
+    # measures a four-row multiplication whose cost is dominated by the fixed cost of issuing it,
+    # so its "floor" comes out larger than the rollout actually takes inside a recorded sequence.
+    mm = newest(r"matmul_floor_scaled")
+    mmfloor = ""
+    if mm:
+        row = next((r for r in mm["rows"] if r["n_copies"] == 4096), None)
+        upd = (newest(r"profile_phases_C4096(?!.*preround)") or {}).get("phases_us", {})
+        upd_ms = next((v / 1e3 for k, v in upd.items() if k.startswith("update")), 0.0)
+        if row and upd_ms:
+            floor_ms = row["update_styleB"]["seconds"] * 1e3
+            mmfloor = (
+                f"\nThe same conclusion from the other side: every matrix multiplication of the "
+                f"update stage, timed on its own and summed, comes to {floor_ms:.0f} milliseconds "
+                f"at 4,096 copies, against {upd_ms:.0f} measured for the stage. One third of the "
+                f"stage is the multiplications; the other two thirds is moving activations, "
+                f"gradients and optimiser state between them.\n")
+
+    layers = [("actor and critic first layer, packed", "actor+critic layer 1"),
+              ("actor second layer", "actor layer 2"),
+              ("critic second layer", "critic layer 2"),
+              ("RND predictor first layer", "predictor layer 1"),
+              ("RND predictor second layer", "predictor layer 2"),
+              ("RND predictor third layer", "predictor layer 3")]
+    md = f"""### What limits the PyTorch trainer at 4,096 copies
+
+The ceiling section earlier in this document analysed the trainer at 128 copies and concluded that
+it was limited by the number of separate device programs it issues, not by arithmetic and not by
+memory traffic. At 4,096 copies that conclusion no longer holds. Three measurements say so.
+
+**First, arithmetic cannot be the constraint.** One iteration with sixteen updates per batch
+performs {arithmetic/1e12:.2f} million million floating-point operations, a figure that follows
+from the network shapes and is exact. Counting every tensor the iteration writes and every time a
+later operation reads it gives at least {traffic/1e9:.0f} gigabytes of memory traffic, which is a
+lower bound because it does not count intermediates the compiler has to materialise. The ratio is
+therefore at most {arithmetic/traffic:.1f} operations per byte. The card balances at about 106
+operations per byte when its matrix units are used and about 15 when they are not, so this
+computation sits far on the memory side of the balance whatever is done to it.
+
+**Second, the card's real bandwidth is {ref['gb_per_s']:,.0f} gigabytes per second**, measured by
+copying a gibibyte rather than quoted from the specification, which says 3,900.
+
+**Third, the operations the iteration is made of already run close to that rate.** Each was timed
+on its real shape at 4,096 copies:
+
+| operation | time | bytes | rate reached |
+|---|---|---|---|
+"""
+    for label, frag in layers:
+        r = probe_row(r"probe_update_ops_C4096", f"bmm alone, {frag}")
+        if r:
+            md += (f"| multiply, {label} | {r['seconds']*1e6:,.0f} us | {r['bytes']/1e9:.2f} GB | "
+                   f"{r['gb_per_s']:,.0f} GB/s |\n")
+    for label, frag in [("gradient limit and Adam step, compiled", "clip and Adam, compiled"),
+                        ("gather one epoch's rows", "gather the cached target features"),
+                        ("plain copy, the reference", "copy one gibibyte")]:
+        r = probe_row(r"probe_update_ops_C4096", frag)
+        if r:
+            md += (f"| {label} | {r['seconds']*1e6:,.0f} us | {r['bytes']/1e9:.2f} GB | "
+                   f"{r['gb_per_s']:,.0f} GB/s |\n")
+    md += f"""
+Nothing in that list is far from the reference. The multiplications reach 72 to 96 percent of the
+rate a plain copy gets, the optimiser's pass reaches all of it, and the one operation that is well
+below — the gather, which reads rows in a random order — is 3 percent of an iteration. So the
+iteration is not slow because any one of its programs is slow. It costs what it costs because of
+how many bytes pass through those programs.
+{mmfloor}
+**The conclusion, and what follows from it.** At 128 copies the trainer was limited by the number
+of device programs; at 4,096 copies it is limited by memory traffic, with every program already at
+or near the bandwidth the card delivers. A change that removes device programs — which is what
+every optimisation in rounds one to four did — cannot help at this size. A change that removes
+*passes over memory* can, and the three changes below are all of that kind. For comparison, the
+same iteration's arithmetic would take {arithmetic/417.5e12*1e3:.1f} milliseconds if the matrix
+units ran at their marketed rate, {arithmetic/417.5e12/measured*100:.1f} percent of the
+{measured*1e3:.0f} milliseconds measured; that figure is what the 128-copy analysis reported, and
+at this size it says only that the shapes are small, not that there is room in the arithmetic.
+
+"""
+    if adam and adam_eager:
+        md += (f"One further measurement worth recording: the optimiser's pass over the "
+               f"parameters, the moments and the gradients reaches {adam['gb_per_s']:,.0f} "
+               f"gigabytes per second compiled and {adam_eager['gb_per_s']:,.0f} uncompiled, so "
+               f"compiling it is worth a factor of "
+               f"{adam_eager['seconds']/adam['seconds']:.1f} and there is nothing left to win "
+               f"inside it.\n\n")
+    return md
+
+
+def sec_large_scale_changes():
+    """The three changes this round made, each with the paired measurement that decided it."""
+    def ab(pattern):
+        d = newest(pattern)
+        return d if d else None
+    rows = [("aligning the<br>parameter windows", r"ab_round5-align-C1024-styleB"),
+            ("adding the bias after<br>the multiplication", r"ab_round5-bias-C1024-styleB"),
+            ("writing gradients, and<br>splitting the gradient<br>limit from the Adam step",
+             r"ab_round5-gradient-C1024-styleB")]
+    got = [(name, ab(pat)) for name, pat in rows]
+    # the previous round measured against its own predecessor, which is what identified the
+    # layout defect the first change fixes; it belongs here whether or not the per-change
+    # comparisons have landed
+    prior = [("1,024 copies,<br>one update per batch",
+              r"ab_round4-against-predecessor-C1024-styleA"),
+             ("1,024 copies,<br>sixteen updates per batch",
+              r"ab_round4-against-predecessor-C1024-styleB"),
+             ("4,096 copies,<br>sixteen updates per batch",
+              r"ab_round4-against-predecessor-C4096-styleB")]
+    prior_rows = [(n, ab(p)) for n, p in prior]
+    prior_md = ""
+    if any(d for _, d in prior_rows):
+        prior_md = ("### The previous round, measured where the trainer is used\n\n"
+                    "The previous round was decided at 8 to 128 copies and recorded a 1.1 percent "
+                    "loss at 512 as the single size where it was a loss. Measured against its own "
+                    "predecessor at the sizes in use, with both sides pinned to their revisions:\n"
+                    "\n| setting | before that round | after it | difference | noise floor |\n"
+                    "|---|---|---|---|---|\n")
+        for name, d in prior_rows:
+            if not d:
+                continue
+            prior_md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+                         f"that round {d['relative_change_percent']*-1:+.1f} percent | "
+                         f"{d['noise_floor_ms']:.2f} ms |\n")
+        prior_md += ("\nA positive number means the previous round made it slower. The 512-copy "
+                     "loss was not an isolated size but the start of a trend, and the first of "
+                     "this round's changes is its repair.\n\n")
+    if not any(d for _, d in got):
+        return prior_md + pending("large-copy-count changes",
+                                  "the round-five paired comparisons")
+    md = prior_md + """### What was changed
+
+Three changes, all of them removing passes over memory, none of them changing what the trainer
+computes.
+
+**Aligning the parameters.** The previous round put the nineteen parameter tensors of each copy
+into one buffer, as nineteen windows onto a row of 59,910 numbers. Neither that row length nor
+several of the window offsets is a multiple of four, so a given parameter's address for copy *c*
+is a multiple of sixteen bytes for almost no *c*, and the matrix library responded by selecting
+its kernels that load one number at a time instead of four. A profile of the previous build at
+1,024 copies found 18.8 of its 31.1 milliseconds of multiplication time in those unvectorised
+kernels. Padding each window and the row to a multiple of four numbers costs ten numbers per copy,
+is never read, and restores the vectorised kernels. This also explains a loss the previous round
+recorded but could not account for: measured against its own predecessor at 1,024 copies, that
+round was 19.2 percent slower with one update per batch and 7.1 percent slower with sixteen —
+a real regression at exactly the sizes the trainer is used at, invisible at the sizes it was
+tuned on.
+
+**Adding the bias after the multiplication.** Every layer was written as one library call that
+multiplies and adds the bias together. There is no batched multiplication that broadcasts a bias,
+so that call first writes the expanded bias into the output tensor and then asks the
+multiplication to accumulate on top of it; the activation function afterwards reads and writes the
+same tensor again. Five passes over the output. Written instead as "multiply, then add the bias
+and apply the activation in one expression", the compiler fuses the bias and the activation into
+a single pass and the output is touched three times. The result is bitwise identical — the same
+sum in the same precision, only computed by different programs — which the equivalence test
+records.
+
+**Writing gradients rather than accumulating them, and separating the gradient limit from the
+Adam step.** Two changes to the update stage with the same character. First: with a gradient
+tensor attached to each parameter, a backward pass *adds* into it, which reads and rewrites the
+whole gradient buffer, and the buffer then has to be zeroed before the next step — four passes
+over a buffer that holds a gigabyte at 4,096 copies. Asking the automatic-differentiation system
+for the gradients instead returns freshly written tensors that nothing has to be added to, and one
+call copies them into their windows. Second: the gradient limit and the Adam step were one
+compiled function, which the compiler fused into a single program that both reduces and updates;
+that program reached 2.4 of the card's 3.5 terabytes per second. Compiled separately, the
+reduction reaches 3.2 and the update 3.5.
+
+Each change was then measured on its own against the revision before it, at 1,024 copies with
+sixteen updates per batch, both sides built in their own process and run in the order A B B A so
+that the spread between two runs of the same side gives the noise floor.
+
+| change | before | after | difference | noise floor |
+|---|---|---|---|---|
+"""
+    for name, d in got:
+        if not d:
+            continue
+        md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+               f"{-d['difference_ms']:+.2f} ms ({-d['relative_change_percent']:+.1f} percent) | "
+               f"{d['noise_floor_ms']:.2f} ms |\n")
+    md += "\n"
+
+    combined = [("4,096 copies,<br>sixteen updates per batch", r"ab_round5-all-C4096-styleB"),
+                ("4,096 copies,<br>one update per batch", r"ab_round5-all-C4096-styleA"),
+                ("128 copies,<br>sixteen updates per batch", r"ab_round5-all-C128-styleB"),
+                ("8 copies,<br>sixteen updates per batch", r"ab_round5-all-C8-styleB")]
+    have = [(n, ab(p)) for n, p in combined]
+    if any(d for _, d in have):
+        md += ("The three together, at the sizes in use and at the small ones the earlier rounds "
+               "optimised for:\n\n"
+               "| setting | before | after | difference | noise floor |\n|---|---|---|---|---|\n")
+        for name, d in have:
+            if not d:
+                continue
+            md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+                   f"{-d['difference_ms']:+.2f} ms "
+                   f"({-d['relative_change_percent']:+.1f} percent) | "
+                   f"{d['noise_floor_ms']:.2f} ms |\n")
+        md += "\n"
+
+    # the small-size check: the previous round's loss at 512 copies was found only because the
+    # sizes it did NOT optimise for were re-measured, so this round re-measures them too
+    small = {"before A": throughput_rows(r"trainbench_torch_full_batch_before_r5_styleA_small"),
+             "after A": throughput_rows(r"trainbench_torch_full_batch_after_r5_styleA_small"),
+             "before B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_before_r5_styleB_small"),
+             "after B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_after_r5_styleB_small")}
+    if small["after B"]:
+        md += ("### The small sizes, re-measured\n\nThe previous round's loss at 512 copies was "
+               "found only because the sizes it had not optimised for were measured afterwards, "
+               "so the same check is repeated here in the other direction.\n\n"
+               "**Sixteen updates per batch.**\n\n"
+               + throughput_table([("PyTorch before", small["before B"]),
+                                   ("PyTorch after", small["after B"])],
+                                  "epoch_minibatch", [8, 32, 128, 512]) + "\n\n"
+               "**One update per batch.**\n\n"
+               + throughput_table([("PyTorch before", small["before A"]),
+                                   ("PyTorch after", small["after A"])],
+                                  "full_batch", [8, 32, 128, 512]) + "\n\n")
+    md += """### Whether the three changes changed what the trainer computes
+
+The rule for the round was that they must not. Two of them are exactly neutral and one needs a
+sentence.
+
+Adding the bias after the multiplication is **bitwise identical**: the loss and all nineteen
+parameter gradients, computed from the same inputs both ways, agree to zero. Writing the
+gradients rather than accumulating them is arithmetically the same sequence of Adam steps; the
+only reordering is that the per-copy gradient limit now sums nineteen tensors' contributions in
+the same order as before but in its own program, and one optimiser step from identical inputs
+agrees with the previous form to 6.9e-6 relative on parameters that moved 3.0e-4.
+
+Aligning the parameters is the one that needs care. Comparing whole iterations of the two
+revisions from one seed gives a difference of 1.08e-3 after a single iteration, which looks
+alarming and means nothing: an iteration samples actions, so a difference in the last bits of the
+first action sends the two runs down different trajectories, and what is measured afterwards is
+divergence rather than error. Asked of the arithmetic in isolation — the same weights read from
+an aligned window and from one offset by two numbers, multiplied by the same input — the answer
+is exact and in two parts. In full single precision the alignment changes nothing anywhere, in
+every layer, to the last bit. In the configuration this trainer actually runs, which enables the
+card's reduced-precision matrix units, it changes the two layers whose inner dimension is four,
+by about 5e-4 relative. Those two facts together say what happened: when the weights were
+misaligned the library could not use the reduced-precision units for those layers and fell back
+to full precision, and aligning them lets the setting apply where it previously could not. The
+trainer's own configuration documents that setting as costing about 1e-3 of relative rounding,
+and it already governs every other multiplication in the program, so the change makes the trainer
+more consistent with its own setting rather than quietly less accurate. A run that needs full
+single precision throughout has always had to turn that setting off, and with it off the
+alignment is exactly neutral.
+
+### What was considered and not done, with the arithmetic that decided it
+
+Three further ideas were costed against the byte counts above and rejected without being built.
+Recording them is the point: two of them look obviously right until the bytes are counted.
+
+1. **Recompute the frozen RND target's features in every update step instead of storing them.**
+   This is what the JAX trainer does, and at these sizes it looks like the better trade, because
+   storing them spends memory traffic to save arithmetic and memory traffic is the constraint.
+   Counted per copy per iteration, storing costs 0.26 megabytes to write the features, 2.1 to
+   permute them once per epoch and 1.0 to read them across the sixteen steps: about 3.4 in total.
+   Recomputing stores nothing but writes and reads a 256-wide intermediate in every one of the
+   sixteen steps, about 6.4 megabytes, plus the target's own weights sixteen times. Storing wins
+   by nearly a factor of two.
+2. **Process the copies in groups small enough that a group's parameters, moments and gradients
+   stay in the 50-megabyte cache across all sixteen update steps.** That would remove fifteen
+   sixteenths of the parameter traffic, which is about a third of an iteration — by far the
+   largest remaining saving. A copy's working set is about 1.65 megabytes, so a group that fits
+   the cache holds about thirty copies, and a program with thirty pieces of work cannot fill the
+   card's 132 processing blocks. The two requirements cannot both be met at this network size.
+3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the eight
+   passes the optimiser makes, about 5 percent of an update step. It changes what the trainer
+   computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
+   rather than in this one.
+
+"""
+    return md
+
+
 def sec_repro():
     return """## Reproduction
 
@@ -1441,6 +2075,14 @@ def sec_repro():
    each `tests/`.
 3. Benchmarks: `benchmarks/bench_env_step*.py`, `bench_train*.py`,
    `profile_breakdown.py`; every JSON in `benchmarks/results/` carries the git hash.
+   For the last section: `profile_kernels.py` (device time per individual program),
+   `probe_update_ops.py` (each operation of the update stage against the bandwidth a plain copy
+   reaches), `matmul_floor_scaled.py` (every matrix multiplication timed on its own, at any copy
+   count), `count_traffic.py` (arithmetic and bytes per iteration, no device needed),
+   `compare_revisions.py` (two revisions run from one seed, worst parameter difference), and
+   `run_round5_remote.sh` (the batch, run from the machine itself). `bench_train.py`,
+   `profile_phases.py` and `profile_kernels.py` all take `--rev` so a past revision can be
+   measured by the same harness in the same session.
 4. Final campaign: `train_runs/run_final.py` (resumable, one process per copy count);
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.
@@ -1487,13 +2129,14 @@ def main():
     fig_uniform_vs_sweep()
     import cpu_node_comparison as cnc
     cnc.fig_cpu_node_comparison()
+    fig_large_scale()
     import section_times as st
     body = [sec_correctness(), sec_module1(), sec_module2(), sec_module3(), sec_copies(),
             sec_profile(), sec_before_after(), sec_campaign(), sec_sweep(), sec_sweep_scaling(),
             sec_uniform_vs_sweep(), sec_rounds(), sec_techniques(), sec_repro(),
             # sections added later in the project go at the end, in the order they were added
             sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
-            sec_clean_node(), cnc.sec_cpu_node_comparison()]
+            sec_clean_node(), cnc.sec_cpu_node_comparison(), sec_large_scale()]
     sections = st.split_sections("\n".join(body))
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
     order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]

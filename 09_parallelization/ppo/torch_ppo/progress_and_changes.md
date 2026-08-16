@@ -113,3 +113,289 @@ forward and backward, not in the surrounding machinery — XLA fuses that into f
 inductor plus autograd do. Closing it would mean writing the loss and its gradient as one fused
 kernel rather than composing framework operations, which is a larger change than this round and
 should be entered with a go/no-go probe rather than begun speculatively.
+
+## Round 5 — the copy counts the trainer is actually used at (1,024 to 4,096)
+
+Rounds 1 to 4 optimised, and every ledger row above was decided at, 8 to 128 copies. The trainer
+is used at 1,024 to 4,096. This round re-opened the question at those sizes, and the first thing
+the measurements said is that the two regimes are not the same problem.
+
+### Where the time goes at these sizes
+
+Milliseconds per phase, one iteration, sixteen updates per batch, for the trainer AS THIS ROUND
+FOUND IT, measured as three separately captured graphs (`benchmarks/profile_phases.py`):
+
+| phase | 128 copies | 1,024 copies | 4,096 copies |
+|---|---|---|---|
+| rollout, 128 sequential steps | 4.97 | 12.05 | 16.85 |
+| post-rollout processing | 1.30 | 8.76 | 35.30 |
+| update, 16 minibatch steps | 13.89 | 63.98 | 239.15 |
+| the same iteration as one graph | 20.31 | 81.59 | 290.58 |
+
+The rollout, which is a quarter of the iteration at 128 copies, is six percent of it at 4,096:
+it is a chain of 2,304 small operations whose cost barely grows with the copy count, so adding
+copies makes it nearly free. Everything else grows in proportion to the copy count, which is the
+signature of a computation limited by memory traffic rather than by the number of operations.
+**At 128 copies this trainer is launch-bound; at 1,024 and above it is memory-bandwidth-bound.**
+Optimisations chosen for the first regime are not the ones the second regime wants, and one of
+them turned out to be a loss there (row 20).
+
+Microseconds inside ONE minibatch step (`benchmarks/profile_update.py`):
+
+| part of a minibatch step | 1,024 copies | 4,096 copies |
+|---|---|---|
+| forward | 1,272 | 4,637 |
+| backward | 1,620 | 5,797 |
+| clip, Adam and zero over the flat buffer | 1,068 | 3,913 |
+| gather the minibatch | 166 | 372 |
+| one step | 4,127 | 14,720 |
+
+### What one byte of memory traffic costs here
+
+Every candidate below was judged against measurements of the individual operations on their real
+shapes (`benchmarks/probe_update_ops.py`, 1,024 copies):
+
+| operation | time | bytes | rate |
+|---|---|---|---|
+| copy one gibibyte, the reference a streaming kernel reaches | 606 us | 2.15 GB | 3,543 GB/s |
+| clip and Adam over the flat buffer, compiled | 580 us | 1.96 GB | 3,382 GB/s |
+| clip and Adam over the flat buffer, not compiled | 2,562 us | 1.96 GB | 766 GB/s |
+| gather the cached target features | 267 us | 0.54 GB | 2,009 GB/s |
+
+The card delivers about 3.5 TB/s to a plain streaming kernel, against a specification figure of
+3.9. The compiled optimiser chain reaches 95 percent of that, so there is nothing to win inside
+it; the same chain uncompiled is 4.4 times slower, which is what `compile_opt` buys.
+
+### The previous round, re-measured where the trainer is actually used
+
+Round four kept the flat parameter buffer on the strength of 8-to-128-copy measurements and
+recorded a 1.1 percent loss at 512 copies as the one size where it was a loss. Measured against
+its own predecessor at 1,024 copies, both sides pinned to their git revisions and run in the
+order A B B A:
+
+| copies | update convention | before round four | after round four | difference | noise floor |
+|---|---|---|---|---|---|
+| 1,024 | one update per batch | 24.86 ms | 29.64 ms | round four 19.2% slower | 0.03 ms |
+| 1,024 | sixteen updates per batch | 77.24 ms | 82.73 ms | round four 7.1% slower | 0.52 ms |
+| 4,096 | sixteen updates per batch | 275.12 ms | 290.97 ms | round four 5.8% slower | 0.18 ms |
+
+The 512-copy loss was not an isolated size; it was the beginning of a trend that reaches nearly a
+fifth of the iteration at the sizes in use. A kernel-level profile of the round-four build at
+1,024 copies says why, and it is not the reason the round-four note guessed (memory bandwidth in
+the optimiser). Of the 31.1 milliseconds of matrix-multiplication time in one iteration,
+18.8 milliseconds were spent in the library's UNVECTORISED kernels — the ones whose names end in
+`align1`, which load one number at a time instead of four:
+
+| stage | multiplication time | of which unvectorised |
+|---|---|---|
+| rollout | 7.75 ms | 5.58 ms |
+| post-rollout | 3.26 ms | 1.17 ms |
+| update | 20.05 ms | 12.05 ms |
+
+The cause is the flat buffer's own layout, and it is arithmetic: the nineteen windows were packed
+tightly, so the per-copy row is 59,910 numbers long and several window offsets are odd multiples
+of two. A parameter's address for copy c is base + c x 59,910 x 4 bytes, which is a multiple of
+16 for almost no c, and the library selects its scalar-load kernels accordingly. Row 21 fixes it.
+
+### Against the JAX trainer at these sizes, before this round's changes
+
+Both waiting for every iteration (`--timing sync`), milliseconds per iteration. The JAX side is
+`ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at commit `7609297`); a
+separate line of work was changing it while these were measured.
+
+| update convention | copies | PyTorch | JAX | JAX faster by |
+|---|---|---|---|---|
+| one update per batch | 1,024 | 29.61 | 14.24 | 2.08x |
+| one update per batch | 2,048 | 48.23 | 23.20 | 2.08x |
+| one update per batch | 4,096 | 90.36 | 43.76 | 2.06x |
+| sixteen updates per batch | 1,024 | 82.24 | 46.94 | 1.75x |
+| sixteen updates per batch | 2,048 | 152.24 | 84.10 | 1.81x |
+| sixteen updates per batch | 4,096 | 290.60 | 164.10 | 1.77x |
+
+This is a much larger distance than the round-4 note reports at 128 copies (JAX ahead by 10 to
+22 percent), and it is the same cause seen through the other regime: at 128 copies XLA's fusion
+means fewer device programs, worth tens of percent; at these sizes it means fewer intermediates
+written to memory, and memory traffic is what the iteration costs. JAX also holds less memory at
+these sizes (9.0 GB against 13.8 at 4,096 copies with sixteen updates), because the PyTorch
+trainer stores the frozen target's features and a second copy of the permuted batch.
+
+### The three changes, and what they bought
+
+Each measured against the revision before it, at 1,024 copies with sixteen updates per batch,
+in the order A B B A with the spread between two runs of the same side as the noise floor.
+
+| # | change | measured | verdict |
+|---|---|---|---|
+| 21 | Pad every parameter window and the per-copy row to a multiple of four numbers, so every copy's parameters start on a sixteen-byte boundary and the multiplication library uses its four-at-a-time kernels instead of its scalar-load ones. Ten extra numbers per copy, never read: nothing writes a gradient into the padding, so its Adam step is exactly zero and it adds exactly zero to the gradient norm | 82.48 -> 73.14 ms, 11.3% faster, noise floor 0.54 ms | KEEP |
+| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all nineteen gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | 73.26 -> 61.51 ms, 16.0% faster, noise floor 0.50 ms | KEEP |
+| 23 | Stop accumulating gradients: ask autograd for them and copy them into the flat buffer in one call, which also makes the zeroing unnecessary; and compile the gradient limit separately from the Adam step, because compiled together the compiler emits one reduce-and-update program that reaches only 2.4 of the card's 3.5 TB/s where two programs reach 3.2 and 3.5 | 61.45 -> 57.07 ms, 7.1% faster, noise floor 0.46 ms | KEEP |
+
+Measured together, both sides built by the same harness in the same session, each iteration
+waited for:
+
+| update convention | copies | before | after | faster by |
+|---|---|---|---|---|
+| one update per batch | 1,024 | 29.61 ms | 18.13 ms | 39% |
+| one update per batch | 2,048 | 48.23 ms | 32.40 ms | 33% |
+| one update per batch | 4,096 | 90.36 ms | 63.03 ms | 30% |
+| sixteen updates per batch | 1,024 | 82.24 ms | 57.00 ms | 31% |
+| sixteen updates per batch | 2,048 | 152.24 ms | 107.24 ms | 30% |
+| sixteen updates per batch | 4,096 | 290.60 ms | 206.91 ms | 29% |
+
+And paired against the round-four revision directly, which also covers the sizes the earlier
+rounds were tuned on:
+
+| setting | before | after | faster by | noise floor |
+|---|---|---|---|---|
+| 4,096 copies, sixteen updates per batch | 290.94 ms | 205.36 ms | 29.4% | 0.44 ms |
+| 4,096 copies, one update per batch | 89.93 ms | 63.06 ms | 29.9% | 0.11 ms |
+| 128 copies, sixteen updates per batch | 16.18 ms | 12.54 ms | 22.5% | 0.03 ms |
+| 8 copies, sixteen updates per batch | 9.32 ms | 7.96 ms | 14.7% | 0.09 ms |
+
+**No size measured is slower.** That is worth stating because the previous round's honest loss at
+512 copies is exactly the shape of defect this round was looking for in the other direction: the
+three changes remove passes over memory, which matters most where the tensors are large, and
+remove device programs as a side effect (nineteen gradient additions and one zeroing per update
+step), which is what the small sizes reward.
+
+That is more than a repair of the round-four regression: at 1,024 copies with one update per batch
+the changed trainer is 27 percent faster than the pre-round-four build as well (18.13 against
+24.86 ms). Against the JAX trainer the distance falls from 2.06-2.08x to 1.27-1.44x with one
+update per batch, and from 1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits and was
+measured: 121.8 ms with one update per batch (29.5 GB) and 407.0 ms with sixteen (27.4 GB), on a
+94 GB card.
+
+### The same profiles, after
+
+Every measurement that chose the changes, repeated on the changed trainer.
+
+Kernel-level, one iteration at 1,024 copies with sixteen updates per batch:
+
+| | device time | multiplications | of which unvectorised |
+|---|---|---|---|
+| before | 79.58 ms | 31.06 ms | 18.80 ms |
+| after | 52.26 ms | 21.49 ms | **0.00 ms** |
+
+The unvectorised kernels are gone, and the multiplications that remain cost 9.6 ms less — which
+is more than alignment alone can explain, because the bias change also removed one library call
+per layer.
+
+Phases of one iteration at 4,096 copies, sixteen updates per batch:
+
+| phase | before | after |
+|---|---|---|
+| rollout | 16.85 ms | 15.28 ms |
+| post-rollout processing | 35.30 ms | 19.72 ms |
+| update | 239.15 ms | 169.29 ms |
+| the whole iteration as one graph | 290.58 ms | 204.52 ms |
+
+Inside one minibatch step at 4,096 copies:
+
+| part | before | after |
+|---|---|---|
+| forward | 4,637 us | 2,583 us |
+| backward | 5,797 us | 4,786 us |
+| gradient limit and Adam | 3,913 us | 2,308 us |
+| gather the minibatch | 372 us | 371 us |
+| one step | 14,720 us | 10,048 us |
+
+The forward is 44 percent cheaper, which is the bias change; the gradient limit and Adam 41
+percent, which is the separated compilation and the removed zeroing; the backward 17 percent,
+which is the removed accumulation. The post-rollout stage falls by 44 percent for the same reason
+as the forward — it is four wide passes through the same layers.
+
+### Correctness, after all three changes
+
+Every gate run on the graphics processor, none re-scoped:
+
+| gate | result |
+|---|---|
+| rollout capture against the uncaptured compiled step | bitwise equal |
+| captured update against the uncaptured update, one update per batch | worst parameter difference 0.000e+00 |
+| captured update against the uncaptured update, sixteen updates per batch | worst parameter difference 0.000e+00 |
+| the annealed rate reaches the captured graph; a zero-rate group stays frozen | movement exactly 0.000e+00 |
+| flat optimiser against the per-tensor form, one step from identical inputs | worst relative 6.9e-06 on parameters that moved 3.0e-04 |
+| hoist equivalence, three iterations | worst parameter deviation 0.000e+00 |
+| compiled post-rollout body, isolated | worst relative field deviation 2.1e-07 |
+| six learning-rate-sweep gates (uniform matches plain, zero-rate frozen, groups independent, paired and distinct seeding, and the same under capture) | all pass |
+| bias form, loss and all nineteen gradients from identical inputs | 0.000e+00 — bitwise |
+| gradients land in the flat buffer, nothing accumulates, padding stays zero (new) | pass |
+| every parameter and gradient window on a sixteen-byte boundary, checked on more than one copy (new) | pass |
+
+Two of these are stronger than they were: the captured update now agrees with the uncaptured one
+BITWISE in both styles, where round four's gate was a tolerance of 1e-5.
+
+### What the alignment change does to the arithmetic, exactly
+
+Running a whole iteration under the old and new revisions from one seed and comparing parameters
+gives 1.08e-3 absolute after ONE iteration — far more than the other two changes (7.0e-7 and
+3.0e-7). That measurement cannot be read as an equivalence check: an iteration samples actions,
+so a difference in the last bits of the first action sends the two runs down different
+trajectories and the number afterwards measures divergence, not error. The question has to be
+asked of the arithmetic in isolation, which `benchmarks/probe_alignment_numerics.py` does: the
+same weights read from an aligned window and from a window offset by two numbers, multiplied by
+the same input, on the trainer's real shapes.
+
+| layer | inner dimension | reduced precision (as shipped) | full single precision |
+|---|---|---|---|
+| actor and critic first layer, packed | 4 | 5.5e-4 relative | 0.0 |
+| actor second layer | 64 | 0.0 | 0.0 |
+| RND predictor first layer | 4 | 5.2e-4 relative | 0.0 |
+| RND predictor second layer | 256 | 0.0 | 0.0 |
+| RND predictor third layer | 128 | 0.0 | 0.0 |
+
+Read across: in full single precision the alignment changes nothing at all, anywhere. In the
+shipped configuration it changes the two layers whose inner dimension is four, by about 5e-4
+relative. The explanation follows from the two columns together — when those weights were
+misaligned the library could not use the reduced-precision matrix units for them and fell back to
+full single precision, and aligning them lets `tf32=True` apply where it previously could not.
+That is the configuration doing what it says: `PPOConfig.tf32` is documented as "faster, ~1e-3
+relative rounding", and 5e-4 is inside it. The change makes the trainer MORE consistent with its
+own setting rather than less, and it is not a silent precision loss: the same setting already
+governs every other multiplication in the program.
+
+### Tried and NOT adopted: letting the compiler generate the multiplications
+
+The report names this as the obvious next step, so it was measured rather than left as a guess
+(`benchmarks/probe_autotune.py`). One trainer is built, the update stage is timed with the loss
+compiled as it ships, the loss is rebuilt with the compiler's own multiplication templates
+enabled — which lets it fold the bias and the activation into the multiplication instead of
+leaving them as a following pass — and the stage is timed again, alternating between the two.
+
+| run | shipped form | compiler-generated | difference | spread within a form |
+|---|---|---|---|---|
+| first | 46.77 ms | 44.80 ms | 4.4% faster | 0.58 ms |
+| second, after correcting the probe's difference measure | 45.80 ms | 44.48 ms | 3.0% faster | 0.79 ms |
+
+So: real, small — 3 to 4 percent of the update stage, which is 2 to 3 percent of an iteration —
+and the two runs disagree by more than either spread, which is itself a statement about how well
+this harness resolves an effect of that size. Against that, the compiler's chosen kernels set
+`ALLOW_TF32=False`, so the trainer would silently stop using the reduced-precision matrix units
+for the layers it generates; the loss it computes differs by 2.6e-6 relative and the worst
+gradient by 6.5e-4 absolute against a largest gradient of 8.7e-1; and compilation takes
+substantially longer because every shape is benchmarked. NOT adopted in this round, whose rule
+was that the arithmetic must not change. It is the right first candidate for a round that allows
+it, and it now has a number attached rather than an expectation.
+
+### Ideas costed and NOT taken, with the arithmetic that rejected them
+
+Recorded because the counting is the result, and because two of them look obviously right until
+the bytes are counted.
+
+1. **Recompute the frozen RND target features in every minibatch step instead of caching them**
+   — which is what the JAX twin does, and which looks like the right trade at these sizes because
+   caching spends memory traffic to save arithmetic. Counted per copy per iteration: caching costs
+   0.26 MB to write the features, 2.1 MB to permute them once per epoch and 1.0 MB to read them
+   across the sixteen steps, about 3.4 MB. Recomputing costs nothing to store but writes and reads
+   a 256-wide hidden layer in every one of the sixteen steps, 0.26 MB each, about 6.4 MB, plus the
+   target's own weights sixteen times. Caching wins by nearly a factor of two. NOT taken.
+2. **Tile the update stage over copies so that a tile's parameters, moments and gradients stay in
+   the 50 MB cache across all sixteen minibatch steps.** That would remove fifteen sixteenths of
+   the parameter traffic, which is a third of the iteration. The per-copy working set is about
+   1.65 MB, so a tile that fits the cache holds about 30 copies — and a program with 30 pieces of
+   work cannot fill 132 processing blocks. The two constraints are irreconcilable at this network
+   size. NOT taken.
+3. **Keep the Adam moments in a narrower number format.** It would remove two of the eight passes
+   the optimiser makes, about 5 percent of a minibatch step. It changes what the trainer computes,
+   so it belongs in its own round with its own equivalence gate rather than inside a round whose
+   rule is that the arithmetic must not change. NOT taken here.

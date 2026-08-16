@@ -13,6 +13,7 @@ BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 from jax_ppo_rnd import RMSState, JaxPPORND, PPOConfig  # noqa: E402
 
+import jax  # noqa: E402
 import jax.numpy as jnp  # noqa: E402
 
 FIX = Path("/tmp/rnd09_cross_impl/forward_fixture.npz")
@@ -27,6 +28,12 @@ def rel_err(a, b):
 
 
 def main():
+    # This gate asks whether the two frameworks compute the SAME FUNCTION, so both sides must
+    # compute it the same way. JAX's default on this card runs float32 matmuls in reduced
+    # precision (TF32), while the fixture was produced exactly on processor cores; comparing the
+    # two that way measures the card's matmul mode, not the algorithm, and puts every quantity
+    # about 3e-4 out. Asking for exact float32 here brings the whole forward pass to ~1e-7.
+    jax.config.update("jax_default_matmul_precision", "highest")
     d = np.load(FIX)
     # import torch parameters into the jax structure — weights are [C, in, out] in BOTH
     net = lambda name, keys: {k: jnp.asarray(d[f"param__{name}__{k}"]) for k in keys}
@@ -58,6 +65,15 @@ def main():
         print(f"{status} {name:10s} max rel err {e:.3e}")
         assert e <= 1e-5, name
     print(f"cross-framework forward agreement: PASS (worst {worst:.3e})")
+
+    # The shipped trainer does NOT run at this precision — it takes the card's reduced-precision
+    # default, as the torch trainer does with tf32 enabled. Report what that costs, so the number
+    # is on the record rather than discovered again later as a mysterious gate failure.
+    jax.config.update("jax_default_matmul_precision", "default")
+    shipped = max(rel_err(np.asarray(t._actor_mean(actor, obs)), d["act_mean"]),
+                  rel_err(np.asarray(t._critic_values(critic, obs)[0]), d["vext"]))
+    print(f"same comparison at the shipped matmul precision: {shipped:.3e} "
+          f"(reduced precision, expected near 1e-3; not a gate)")
 
 
 if __name__ == "__main__":

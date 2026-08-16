@@ -50,8 +50,57 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 - Round 3 (2026-08-15, afternoon): learning-rate sweep across copy groups, +1.0% against a
   uniform run and 1.84x faster than running the groups separately; demonstration run recovers
   the expected best rate.
+- Round 4 (2026-08-15, afternoon): close the distance to the JAX trainer at 8 to 128 copies —
+  one flat parameter buffer and one shuffle per epoch, 20.4 -> 16.3 ms at 128 copies, with a
+  1.1% loss at 512 copies recorded as the one size where it was a loss.
+- Round 5 (2026-08-15, evening): re-open the question at the copy counts the trainer is
+  actually used at, 1,024 to 4,096. Two findings before any change was made. First, the regime
+  is different: at 128 copies the iteration's cost is the number of device programs it issues,
+  at 1,024 and above it is the number of bytes it moves, and every individual program is
+  already at 72 to 100 percent of the bandwidth the card delivers. Second, round four is a
+  REGRESSION at these sizes — 19.2% slower at 1,024 copies with one update per batch, 7.1% with
+  sixteen, 5.8% at 4,096 with sixteen, each measured against its own predecessor revision — 
+  because packing the nineteen parameter windows tightly left every copy's parameters off a
+  sixteen-byte boundary and the multiplication library fell back to its scalar-load kernels.
+  Three exact changes followed: pad the windows; add each layer's bias after the multiplication
+  rather than folding it in; write gradients into the flat buffer instead of accumulating into
+  it, and compile the gradient limit separately from the Adam step. Worth 11.3, 16.0 and 7.1
+  percent respectively at 1,024 copies, and together 29 to 39 percent across 1,024 to 4,096 —
+  with NO size slower: 14.7 percent at 8 copies, 22.5 at 128, 31 at 512. Head to head at 4,096
+  copies with one update per batch: PyTorch 90.4 ms before, 63.0 after, against JAX 43.8; the
+  distance to JAX falls from 2.06-2.08x to 1.27-1.44x with one update per batch and from
+  1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits (121.8 ms and 29.5 GB with one
+  update per batch; 407.0 ms and 27.4 GB with sixteen) on the 94 GB card.
 
 ## State notes (newest first)
+
+- 2026-08-15 ~19:30 PT — round 5 complete, on branch `worktree-agent-ab3b4d042ce36522c`. The
+  question was how the PyTorch trainer compares with the JAX one at 1,024 to 4,096 copies, and
+  whether it can be improved there. Answers, all measured on serval05 under the exclusive lock,
+  both frameworks waiting for every iteration:
+  - **The limit is different at these sizes.** At 128 copies the iteration costs what it costs
+    because of how many device programs it issues; at 4,096 it is memory traffic, and every
+    individual program already reaches 72 to 100 percent of the 3,539 GB/s a plain copy of
+    memory gets on this card. Optimisations that remove programs cannot help here; ones that
+    remove passes over memory can.
+  - **Round four was a regression here**, 19.2 percent at 1,024 copies with one update per batch,
+    measured against its own predecessor revision. Its flat parameter buffer packed the nineteen
+    windows tightly, leaving every copy's parameters off a sixteen-byte boundary, and the
+    multiplication library answered with its scalar-load kernels: 18.8 of 31.1 milliseconds of
+    multiplication time in one iteration.
+  - **Three exact changes**, worth 11.3, 16.0 and 7.1 percent at 1,024 copies and 29 to 39
+    percent together across 1,024 to 4,096, with no size slower (14.7 percent at 8 copies, 22.5
+    at 128, 31 at 512). The unvectorised multiplication time falls from 18.8 milliseconds to
+    zero.
+  - **Against JAX**: the distance falls from 2.06-2.08x to 1.27-1.44x with one update per batch
+    and from 1.75-1.81x to 1.21-1.27x with sixteen. What remains is that PyTorch issues separate
+    programs whose intermediates go to memory, where the JAX compiler folds them together;
+    measured, letting PyTorch's compiler generate the multiplications recovers 3 to 4 percent of
+    the update stage but turns off the reduced-precision matrix units, so it was not adopted.
+  - Report section: "Training a thousand to four thousand copies at once" (last section of
+    `report/2026-08-15-pointmaze-gpu-parallelization/report.md`). Ledger: round 5 in
+    `ppo/torch_ppo/progress_and_changes.md`. Every result JSON is in `benchmarks/results/` in
+    both this branch and the main tree.
 
 - Round 4 (2026-08-15 afternoon, Pacific): two branches merged.
   - `feature/torch-speed`: one flat parameter buffer (the nineteen parameter tensors become
@@ -87,6 +136,22 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
 5. **Record the losses.** The 512-copy regression, the discarded pairing numbers, and the
    experiments that produced no effect are in the ledgers beside the wins; a ledger of only
    successes would have hidden the stream defect for good.
+6. **An optimisation is only established at the sizes it was measured at.** Round 4 was decided
+   at 8 to 128 copies, recorded a 1.1% loss at 512 as an isolated exception, and is in fact a
+   19.2% regression at 1,024 — the size the trainer is actually used at. Before keeping a change,
+   measure it where the code runs, not only where it was developed.
+7. **Read the names of the programs, not just their times.** The round-4 regression is invisible
+   in a phase breakdown and unmistakable in a kernel-level profile: 18.8 of 31.1 milliseconds of
+   multiplication time sat in the library's scalar-load kernels, whose names end in `align1`,
+   because a buffer layout had moved every copy's parameters off a sixteen-byte boundary.
+8. **Two compiled functions can beat one.** Compiling the gradient limit and the Adam step
+   together let the compiler emit a single reduce-and-update program that reached 2.4 of the
+   card's 3.5 terabytes per second; compiled separately they reach 3.2 and 3.5. Fusion is not
+   free at every size.
+9. **A driver held by the session dies with it.** On a graphics processor shared with two other
+   agents, a batch spends more time queueing than running, and a background driver in the session
+   is killed after an hour. The round-5 batch was moved onto the machine itself (`setsid`, logs on
+   shared storage) so the queue could outlast the session that started it.
 
 - 2026-08-15 ~18:40 — processor comparison. End-to-end training measured on jaguar03 (AMD EPYC
   7663, 224 logical processors, 1 TB) held EXCLUSIVELY inside reservation sl5nw_156, chosen as

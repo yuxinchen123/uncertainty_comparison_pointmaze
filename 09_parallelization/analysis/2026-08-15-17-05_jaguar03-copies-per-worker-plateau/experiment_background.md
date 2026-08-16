@@ -64,7 +64,7 @@ and are written to `benchmarks/results/`, where the report's loader reads them.
 
 ## Git state
 
-Commit: `d920832` (branch `Use-RLexplore-RND`).
+Commit: `b535f39` (branch `Use-RLexplore-RND`).
 
 The working tree carries other sessions' in-flight work in other folders; only this run folder's
 code, its Slurm script and this file were committed for this run.

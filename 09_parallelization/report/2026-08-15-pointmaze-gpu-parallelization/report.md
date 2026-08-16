@@ -13,9 +13,13 @@ baseline, one change, measure, keep or revert, write a row:
 | Round 1 | build everything: exact GPU environments in PyTorch, fused CUDA and JAX; the batched multi-copy PPO+RND trainer in PyTorch and JAX; end-to-end capture | 777 -> 36.6 ms per training iteration at 128 copies |
 | Round 2 | improve on the finished system, with a measurement protocol that can tell a small change from drift | 36.8 -> 20.2 ms, a further 1.8x |
 | Round 3 | new capability: train copy groups at DIFFERENT learning rates in one run | a sweep costs 1.0% more than a uniform run of the same size |
+| Round 4 | close the distance to the JAX trainer at 8 to 128 copies | 20.4 -> 16.3 ms at 128 copies, and a loss at 512 that round 5 traced |
+| Round 5 | re-open the question at the copy counts the trainer is used at, 1,024 to 4,096 | the limit changes from the number of device programs to memory traffic, and the previous round's loss turns out to be a regression of up to 19 percent there |
 
 Reading order: what was built and why it is correct, then the module-by-module numbers, then
-what each round changed, then the training campaign and the sweep.
+what each round changed, then the training campaign and the sweep. The last section is the
+newest and stands somewhat apart: it is about the sizes the trainer is actually run at, where
+the earlier sections' conclusions do not all carry over.
 
 ## Contents
 
@@ -32,15 +36,16 @@ what each round changed, then the training campaign and the sweep.
 | [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT | read |
 | [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT | read |
 | [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
-| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| <span class="updated">[Reproduction](#reproduction)</span> | 2026-08-15 00:22 PT | 2026-08-15 19:38 PT | updated |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
 | <span class="updated">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:10 PT | updated |
-| [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT | read |
+| <span class="updated">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:38 PT | updated |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT | read |
-| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 19:10 PT | updated |
+| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-15 19:38 PT | updated |
 | <span class="updated">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-15 19:10 PT | updated |
 | <span class="updated">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 17:50 PT | updated |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 19:38 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -586,6 +591,14 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
    each `tests/`.
 3. Benchmarks: `benchmarks/bench_env_step*.py`, `bench_train*.py`,
    `profile_breakdown.py`; every JSON in `benchmarks/results/` carries the git hash.
+   For the last section: `profile_kernels.py` (device time per individual program),
+   `probe_update_ops.py` (each operation of the update stage against the bandwidth a plain copy
+   reaches), `matmul_floor_scaled.py` (every matrix multiplication timed on its own, at any copy
+   count), `count_traffic.py` (arithmetic and bytes per iteration, no device needed),
+   `compare_revisions.py` (two revisions run from one seed, worst parameter difference), and
+   `run_round5_remote.sh` (the batch, run from the machine itself). `bench_train.py`,
+   `profile_phases.py` and `profile_kernels.py` all take `--rev` so a past revision can be
+   measured by the same harness in the same session.
 4. Final campaign: `train_runs/run_final.py` (resumable, one process per copy count);
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.
@@ -694,11 +707,14 @@ largest for small batches (178 against 6.3 million steps per second at a thousan
 where the other implementations spend nearly all their time dispatching work rather than simulating.
 All three implementations pass identical exactness checks, so this is purely a speed choice.
 
-**Which trainer: they are close, and the choice is no longer mainly about speed.** After the round-four
-work (below), PyTorch is ahead at 8 copies with one update per batch and JAX leads by 10 to 22 percent
-elsewhere, measured the same way on both sides with each iteration waited for. Both compute the same algorithm and agree to 8.6e-7 on every intermediate
-quantity. PyTorch carries the resumable training driver and the campaign records; both now carry the
-learning-rate sweep and per-copy progress recording.
+**Which trainer: it depends on the copy count, and the answer changes between 128 and 1,024.** At
+8 to 128 copies they are close: after the round-four work (below), PyTorch is ahead at 8 copies with
+one update per batch and JAX leads by 10 to 22 percent elsewhere, measured the same way on both
+sides with each iteration waited for. At 1,024 to 4,096 copies — where this trainer is actually run
+— the distance is much larger, JAX by 1.75 to 2.08 times, for a reason that only appears at those
+sizes; the last section of this document measures it and says why. Both compute the same algorithm
+and agree to 8.6e-7 on every intermediate quantity. PyTorch carries the resumable training driver
+and the campaign records; both now carry the learning-rate sweep and per-copy progress recording.
 
 **Which combination: keep the environment in the same framework as the trainer.** Substituting the
 CUDA kernel, twenty-four times faster on its own, into the PyTorch training loop changes the
@@ -853,7 +869,10 @@ The measurements settle which is better, and the answer is not the obvious one.
 | 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | sustained |
 | 112 | 64 | 7,168 | 9.423 | 0.3434 | 0.05 | 5.8 | 0.81 | sustained |
 | 224 | 32 | 7,168 | 9.403 | 0.3149 | 0.04 | 6.32 | 0.62 | sustained |
+| 112 | 128 | 14,336 | 21.210 | 0.2999 | 0.02 | 13.3 | 1.21 | sustained |
 | 224 | 64 | 14,336 | 22.614 | 0.2691 | 0.02 | 14.8 | 0.81 | sustained |
+| 112 | 256 | 28,672 | 57.335 | 0.1766 | 0.01 | 45.1 | 1.77 | sustained |
+| 224 | 128 | 28,672 | 44.921 | 0.1539 | 0.01 | 51.8 | 1.21 | sustained |
 
 *Independent single-thread processes. Sixteen updates per batch. Rows marked burst were timed for the seconds shown, which reads the opening seconds of the load rather than the rate a run gets; they are the measurements that have not been retaken yet.*
 
@@ -924,6 +943,7 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 | 16 | 3,584 | 1.395 | 1.27 | 0.35 | 0.783 | 0.56 | 88 |
 | 32 | 7,168 | 2.166 | 1.64 | 0.23 | 1.21 | 0.70 | 110 |
 | 64 | 14,336 | 3.974 | 1.77 | 0.12 | 2.25 | 0.98 | 155 |
+| 128 | 28,672 | 10.969 | 1.18 | 0.04 | 6.76 | 1.12 | 173 |
 
 *One update per batch, 224 independent single-thread workers.*
 
@@ -935,6 +955,7 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 | 32 | 3,584 | 1.055 | 1.71 | 0.48 | 0.581 | 0.70 | 60 |
 | 64 | 7,168 | 1.890 | 1.88 | 0.26 | 1.06 | 0.99 | 84 |
 | 128 | 14,336 | 4.441 | 1.56 | 0.11 | 2.55 | 1.12 | 91 |
+| 256 | 28,672 | 16.500 | 0.8237 | 0.03 | 9.67 | 1.43 | 128 |
 
 *One update per batch, 112 independent single-thread workers.*
 
@@ -945,6 +966,7 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 | 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | 76 |
 | 32 | 7,168 | 9.403 | 0.3149 | 0.04 | 6.32 | 0.62 | 89 |
 | 64 | 14,336 | 22.614 | 0.2691 | 0.02 | 14.8 | 0.81 | 123 |
+| 128 | 28,672 | 44.921 | 0.1539 | 0.01 | 51.8 | 1.21 | 184 |
 
 *Sixteen updates per batch, 224 independent single-thread workers.*
 
@@ -955,14 +977,25 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
 | 16 | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 | 0.49 | 43 |
 | 32 | 3,584 | 4.841 | 0.3874 | 0.11 | 2.57 | 0.62 | 49 |
 | 64 | 7,168 | 9.423 | 0.3434 | 0.05 | 5.8 | 0.81 | 64 |
+| 128 | 14,336 | 21.210 | 0.2999 | 0.02 | 13.3 | 1.21 | 98 |
+| 256 | 28,672 | 57.335 | 0.1766 | 0.01 | 45.1 | 1.77 | 152 |
 
 *Sixteen updates per batch, 112 independent single-thread workers.*
 
 ![copies per worker](figures/cpu_plateau.png)
 
-**One update per batch.** The better worker count is **112**, reaching **1.88 million** environment steps per second at 64 copies per worker, that is 7,168 copies, against 1.77 million for 224 workers at their own best rung. The curve flattens at 128 copies per worker: that rung bought -17.0% over the 64-copy rung, where the doubling before it bought more. At the largest rung measured, 128 copies per worker (14,336 copies), one copy gets 0.11 thousand steps per second against 1.10 thousand at one copy per worker, and each worker holds 1.12 GB, 91 GB across the node.
+| update convention | workers | best copies per worker | copies at the best setting | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | what ended the sweep |
+|---|---|---|---|---|---|---|---|---|---|
+| one update per batch | 112 | 64 | 7,168 | 1.890 | 1.88 | 0.26 | 1.06 | 0.99 | turned over |
+| one update per batch | 224 | 64 | 14,336 | 3.974 | 1.77 | 0.12 | 2.25 | 0.98 | turned over |
+| sixteen updates per batch | 112 | 16 | 1,792 | 1.998 | 0.4554 | 0.25 | 1.09 | 0.49 | turned over |
+| sixteen updates per batch | 224 | 16 | 3,584 | 4.503 | 0.3988 | 0.11 | 2.5 | 0.49 | turned over |
 
-**Sixteen updates per batch.** The better worker count is **112**, reaching **0.4554 million** environment steps per second at 16 copies per worker, that is 1,792 copies, against 0.3988 million for 224 workers at their own best rung. The curve flattens at 32 copies per worker: that rung bought -14.9% over the 16-copy rung, where the doubling before it bought more. At the largest rung measured, 64 copies per worker (7,168 copies), one copy gets 0.05 thousand steps per second against 0.98 thousand at one copy per worker, and each worker holds 0.81 GB, 64 GB across the node.
+*The best rung of each series, and what stopped the series there. Every rung is in the four tables above.*
+
+**One update per batch.** Read from the table: packing more than 64 copies into a worker takes throughput away rather than merely stopping to add it, so that rung is not a soft boundary but the setting to use. The node's memory is not what stops it — at the best setting the whole node holds 84 GB of its 1,008 GB.
+
+**Sixteen updates per batch.** Read from the table: packing more than 16 copies into a worker takes throughput away rather than merely stopping to add it, so that rung is not a soft boundary but the setting to use. The node's memory is not what stops it — at the best setting the whole node holds 43 GB of its 1,008 GB.
 
 
 ## The best setup on each platform, at 4,096 copies or fewer
@@ -1063,3 +1096,354 @@ The last-level cache is where the two part: one dependent access at an 8 MiB wor
 against 2.25. That locates the difference without proving causation inside the training loop;
 proving it would need the processors' own performance counters, which this account cannot read
 on these nodes.
+
+## Training a thousand to four thousand copies at once
+
+An earlier section did measure the trainer past a thousand copies, but its figures come from the
+first and second optimisation rounds and its JAX figures from the first, and — more importantly —
+every optimisation decision recorded anywhere in this document was taken by measuring 8 to 128
+copies. The trainer is used at 1,024 to 4,096. This section re-opens the question at those sizes,
+with the current code on both sides: what the two frameworks cost there, what limits the PyTorch
+one, and what changed once the limit was identified.
+
+The short answer is that the two ranges are different problems. At 128 copies the iteration is a
+long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
+above the same programs each carry eight to thirty-two times as much data, the data no longer fits
+in any cache, and the cost is set by how many bytes move between the chip and its memory. An
+optimisation that removes device programs helps at 128 copies and does nothing at 4,096; an
+optimisation that removes bytes moved helps at 4,096 and does nothing at 128. One change kept in
+the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
+and above, and is recorded below.
+
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as this round found it and 63 after this round's changes, against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
+
+### Where an iteration's time goes as the copy count grows
+
+| phase | 128 copies | 1,024 copies | 4,096 copies |
+|---|---|---|---|
+| rollout (128 sequential environment steps) | 4.97 | 12.05 | 15.28 |
+| post-rollout processing | 1.30 | 8.76 | 19.72 |
+| update (16 minibatch steps) | 13.89 | 63.98 | 169.29 |
+| the whole iteration, recorded as one sequence | 20.31 | 81.59 | 204.52 |
+
+*Milliseconds, sixteen updates per batch. The first three lines are the three phases timed as separately recorded sequences; the last is the shipped arrangement, which records all three together.*
+
+From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.1 and the update by a factor of 12.2. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
+
+### The two frameworks at the sizes in use
+
+The two tables below report, for each setting, the time one iteration takes, the aggregate rate
+over all copies, the rate a single copy gets, the hours one copy needs to reach a million
+environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
+timing the next, which is the stricter of the two protocols and the one used everywhere else in
+this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
+same trainer with this round's changes.
+
+The JAX figures are for `ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at
+commit `7609297`). This round changed nothing in it, and a separate line of work was changing it
+while these measurements were taken, so its figures here are a snapshot of one revision rather
+than the last word on that trainer.
+
+**One update per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
+| PyTorch after | 1024 | 18.1 | <u>28.90</u> | 28.2 | 0.010 | 3.8 |
+| JAX | 1024 | 14.2 | **36.81** | 35.9 | 0.008 | 3.4 |
+| PyTorch before | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
+| PyTorch after | 2048 | 32.4 | <u>32.36</u> | 15.8 | 0.018 | 7.5 |
+| JAX | 2048 | 23.2 | **45.20** | 22.1 | 0.013 | 6.8 |
+| PyTorch before | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
+| PyTorch after | 4096 | 63.0 | <u>33.27</u> | 8.1 | 0.034 | 14.8 |
+| JAX | 4096 | 43.8 | **47.93** | 11.7 | 0.024 | 13.4 |
+| PyTorch after | 8192 | 121.8 | 34.43 | 4.2 | 0.066 | 29.5 |
+
+**Sixteen updates per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 1024 | 82.2 | 6.38 | 6.2 | 0.045 | 3.5 |
+| PyTorch after | 1024 | 57.0 | <u>9.20</u> | 9.0 | 0.031 | 3.5 |
+| JAX | 1024 | 46.9 | **11.17** | 10.9 | 0.025 | 2.4 |
+| PyTorch before | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
+| PyTorch after | 2048 | 107.2 | <u>9.78</u> | 4.8 | 0.058 | 6.9 |
+| JAX | 2048 | 84.1 | **12.47** | 6.1 | 0.046 | 4.6 |
+| PyTorch before | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
+| PyTorch after | 4096 | 206.9 | <u>10.14</u> | 2.5 | 0.112 | 13.8 |
+| JAX | 4096 | 164.1 | **12.78** | 3.1 | 0.089 | 8.8 |
+| PyTorch after | 8192 | 407.0 | 10.31 | 1.3 | 0.221 | 27.4 |
+
+*Best aggregate rate per copy count in bold, second best underlined. The aggregate rate rises with the copy count while the rate each individual copy gets falls, so the hours column is the one that says how long a single training run actually takes. 8,192 copies is past the range this section is about and was measured only for the changed PyTorch build, to see whether the card still holds it.*
+
+![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)
+
+The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 28.9 to 33.3 million environment steps per second, a factor of 1.15, while the rate an individual copy gets falls from 28.2 to 8.1 thousand per second, a factor of 3.5. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 6 minutes at 1,024 copies and 21 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
+
+### What limits the PyTorch trainer at 4,096 copies
+
+The ceiling section earlier in this document analysed the trainer at 128 copies and concluded that
+it was limited by the number of separate device programs it issues, not by arithmetic and not by
+memory traffic. At 4,096 copies that conclusion no longer holds. Three measurements say so.
+
+**First, arithmetic cannot be the constraint.** One iteration with sixteen updates per batch
+performs 3.53 million million floating-point operations, a figure that follows
+from the network shapes and is exact. Counting every tensor the iteration writes and every time a
+later operation reads it gives at least 319 gigabytes of memory traffic, which is a
+lower bound because it does not count intermediates the compiler has to materialise. The ratio is
+therefore at most 11.1 operations per byte. The card balances at about 106
+operations per byte when its matrix units are used and about 15 when they are not, so this
+computation sits far on the memory side of the balance whatever is done to it.
+
+**Second, the card's real bandwidth is 3,539 gigabytes per second**, measured by
+copying a gibibyte rather than quoted from the specification, which says 3,900.
+
+**Third, the operations the iteration is made of already run close to that rate.** Each was timed
+on its real shape at 4,096 copies:
+
+| operation | time | bytes | rate reached |
+|---|---|---|---|
+| multiply, actor and critic first layer, packed | 112 us | 0.29 GB | 2,536 GB/s |
+| multiply, actor second layer | 106 us | 0.34 GB | 3,178 GB/s |
+| multiply, critic second layer | 106 us | 0.34 GB | 3,172 GB/s |
+| multiply, RND predictor first layer | 217 us | 0.56 GB | 2,594 GB/s |
+| multiply, RND predictor second layer | 394 us | 1.34 GB | 3,405 GB/s |
+| multiply, RND predictor third layer | 256 us | 0.81 GB | 3,147 GB/s |
+| gradient limit and Adam step, compiled | 2,218 us | 7.85 GB | 3,540 GB/s |
+| gather one epoch's rows | 1,027 us | 2.15 GB | 2,091 GB/s |
+| plain copy, the reference | 607 us | 2.15 GB | 3,539 GB/s |
+
+Nothing in that list is far from the reference. The multiplications reach 72 to 96 percent of the
+rate a plain copy gets, the optimiser's pass reaches all of it, and the one operation that is well
+below — the gather, which reads rows in a random order — is 3 percent of an iteration. So the
+iteration is not slow because any one of its programs is slow. It costs what it costs because of
+how many bytes pass through those programs.
+
+The same conclusion from the other side: every matrix multiplication of the update stage, timed on its own and summed, comes to 78 milliseconds at 4,096 copies, against 169 measured for the stage. One third of the stage is the multiplications; the other two thirds is moving activations, gradients and optimiser state between them.
+
+**The conclusion, and what follows from it.** At 128 copies the trainer was limited by the number
+of device programs; at 4,096 copies it is limited by memory traffic, with every program already at
+or near the bandwidth the card delivers. A change that removes device programs — which is what
+every optimisation in rounds one to four did — cannot help at this size. A change that removes
+*passes over memory* can, and the three changes below are all of that kind. For comparison, the
+same iteration's arithmetic would take 8.4 milliseconds if the matrix
+units ran at their marketed rate, 4.1 percent of the
+205 milliseconds measured; that figure is what the 128-copy analysis reported, and
+at this size it says only that the shapes are small, not that there is room in the arithmetic.
+
+One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
+
+### The previous round, measured where the trainer is used
+
+The previous round was decided at 8 to 128 copies and recorded a 1.1 percent loss at 512 as the single size where it was a loss. Measured against its own predecessor at the sizes in use, with both sides pinned to their revisions:
+
+| setting | before that round | after it | difference | noise floor |
+|---|---|---|---|---|
+| 1,024 copies,<br>one update per batch | 24.86 ms | 29.64 ms | that round +19.2 percent | 0.03 ms |
+| 1,024 copies,<br>sixteen updates per batch | 77.24 ms | 82.73 ms | that round +7.1 percent | 0.52 ms |
+| 4,096 copies,<br>sixteen updates per batch | 275.12 ms | 290.97 ms | that round +5.8 percent | 0.18 ms |
+
+A positive number means the previous round made it slower. The 512-copy loss was not an isolated size but the start of a trend, and the first of this round's changes is its repair.
+
+### What was changed
+
+Three changes, all of them removing passes over memory, none of them changing what the trainer
+computes.
+
+**Aligning the parameters.** The previous round put the nineteen parameter tensors of each copy
+into one buffer, as nineteen windows onto a row of 59,910 numbers. Neither that row length nor
+several of the window offsets is a multiple of four, so a given parameter's address for copy *c*
+is a multiple of sixteen bytes for almost no *c*, and the matrix library responded by selecting
+its kernels that load one number at a time instead of four. A profile of the previous build at
+1,024 copies found 18.8 of its 31.1 milliseconds of multiplication time in those unvectorised
+kernels. Padding each window and the row to a multiple of four numbers costs ten numbers per copy,
+is never read, and restores the vectorised kernels. This also explains a loss the previous round
+recorded but could not account for: measured against its own predecessor at 1,024 copies, that
+round was 19.2 percent slower with one update per batch and 7.1 percent slower with sixteen —
+a real regression at exactly the sizes the trainer is used at, invisible at the sizes it was
+tuned on.
+
+**Adding the bias after the multiplication.** Every layer was written as one library call that
+multiplies and adds the bias together. There is no batched multiplication that broadcasts a bias,
+so that call first writes the expanded bias into the output tensor and then asks the
+multiplication to accumulate on top of it; the activation function afterwards reads and writes the
+same tensor again. Five passes over the output. Written instead as "multiply, then add the bias
+and apply the activation in one expression", the compiler fuses the bias and the activation into
+a single pass and the output is touched three times. The result is bitwise identical — the same
+sum in the same precision, only computed by different programs — which the equivalence test
+records.
+
+**Writing gradients rather than accumulating them, and separating the gradient limit from the
+Adam step.** Two changes to the update stage with the same character. First: with a gradient
+tensor attached to each parameter, a backward pass *adds* into it, which reads and rewrites the
+whole gradient buffer, and the buffer then has to be zeroed before the next step — four passes
+over a buffer that holds a gigabyte at 4,096 copies. Asking the automatic-differentiation system
+for the gradients instead returns freshly written tensors that nothing has to be added to, and one
+call copies them into their windows. Second: the gradient limit and the Adam step were one
+compiled function, which the compiler fused into a single program that both reduces and updates;
+that program reached 2.4 of the card's 3.5 terabytes per second. Compiled separately, the
+reduction reaches 3.2 and the update 3.5.
+
+Each change was then measured on its own against the revision before it, at 1,024 copies with
+sixteen updates per batch, both sides built in their own process and run in the order A B B A so
+that the spread between two runs of the same side gives the noise floor.
+
+| change | before | after | difference | noise floor |
+|---|---|---|---|---|
+| aligning the<br>parameter windows | 82.48 ms | 73.14 ms | -9.34 ms (-11.3 percent) | 0.54 ms |
+| adding the bias after<br>the multiplication | 73.26 ms | 61.51 ms | -11.75 ms (-16.0 percent) | 0.50 ms |
+| writing gradients, and<br>splitting the gradient<br>limit from the Adam step | 61.45 ms | 57.07 ms | -4.38 ms (-7.1 percent) | 0.46 ms |
+
+The three together, at the sizes in use and at the small ones the earlier rounds optimised for:
+
+| setting | before | after | difference | noise floor |
+|---|---|---|---|---|
+| 4,096 copies,<br>sixteen updates per batch | 290.94 ms | 205.36 ms | -85.58 ms (-29.4 percent) | 0.44 ms |
+| 4,096 copies,<br>one update per batch | 89.93 ms | 63.06 ms | -26.87 ms (-29.9 percent) | 0.11 ms |
+| 128 copies,<br>sixteen updates per batch | 16.18 ms | 12.54 ms | -3.64 ms (-22.5 percent) | 0.03 ms |
+| 8 copies,<br>sixteen updates per batch | 9.32 ms | 7.96 ms | -1.37 ms (-14.7 percent) | 0.09 ms |
+
+### The small sizes, re-measured
+
+The previous round's loss at 512 copies was found only because the sizes it had not optimised for were measured afterwards, so the same check is repeated here in the other direction.
+
+**Sixteen updates per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 8 | 9.3 | 0.44 | 55.0 | 0.005 | 0.1 |
+| PyTorch after | 8 | 8.0 | **0.51** | 64.4 | 0.004 | 0.1 |
+| PyTorch before | 32 | 10.7 | 1.53 | 47.7 | 0.006 | 0.3 |
+| PyTorch after | 32 | 9.0 | **1.82** | 56.9 | 0.005 | 0.3 |
+| PyTorch before | 128 | 16.2 | 4.04 | 31.6 | 0.009 | 0.7 |
+| PyTorch after | 128 | 12.5 | **5.23** | 40.9 | 0.007 | 0.7 |
+| PyTorch before | 512 | 44.0 | 5.96 | 11.6 | 0.024 | 2.0 |
+| PyTorch after | 512 | 30.3 | **8.65** | 16.9 | 0.016 | 2.0 |
+
+**One update per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 8 | 5.3 | 0.77 | 95.7 | 0.003 | 0.2 |
+| PyTorch after | 8 | 4.5 | **0.90** | 112.6 | 0.002 | 0.2 |
+| PyTorch before | 32 | 6.1 | 2.68 | 83.9 | 0.003 | 0.3 |
+| PyTorch after | 32 | 5.1 | **3.21** | 100.3 | 0.003 | 0.3 |
+| PyTorch before | 128 | 7.8 | 8.42 | 65.8 | 0.004 | 0.7 |
+| PyTorch after | 128 | 6.1 | **10.76** | 84.0 | 0.003 | 0.7 |
+| PyTorch before | 512 | 17.5 | 15.02 | 29.3 | 0.009 | 2.1 |
+| PyTorch after | 512 | 11.2 | **23.33** | 45.6 | 0.006 | 2.3 |
+
+### Whether the three changes changed what the trainer computes
+
+The rule for the round was that they must not. Two of them are exactly neutral and one needs a
+sentence.
+
+Adding the bias after the multiplication is **bitwise identical**: the loss and all nineteen
+parameter gradients, computed from the same inputs both ways, agree to zero. Writing the
+gradients rather than accumulating them is arithmetically the same sequence of Adam steps; the
+only reordering is that the per-copy gradient limit now sums nineteen tensors' contributions in
+the same order as before but in its own program, and one optimiser step from identical inputs
+agrees with the previous form to 6.9e-6 relative on parameters that moved 3.0e-4.
+
+Aligning the parameters is the one that needs care. Comparing whole iterations of the two
+revisions from one seed gives a difference of 1.08e-3 after a single iteration, which looks
+alarming and means nothing: an iteration samples actions, so a difference in the last bits of the
+first action sends the two runs down different trajectories, and what is measured afterwards is
+divergence rather than error. Asked of the arithmetic in isolation — the same weights read from
+an aligned window and from one offset by two numbers, multiplied by the same input — the answer
+is exact and in two parts. In full single precision the alignment changes nothing anywhere, in
+every layer, to the last bit. In the configuration this trainer actually runs, which enables the
+card's reduced-precision matrix units, it changes the two layers whose inner dimension is four,
+by about 5e-4 relative. Those two facts together say what happened: when the weights were
+misaligned the library could not use the reduced-precision units for those layers and fell back
+to full precision, and aligning them lets the setting apply where it previously could not. The
+trainer's own configuration documents that setting as costing about 1e-3 of relative rounding,
+and it already governs every other multiplication in the program, so the change makes the trainer
+more consistent with its own setting rather than quietly less accurate. A run that needs full
+single precision throughout has always had to turn that setting off, and with it off the
+alignment is exactly neutral.
+
+### What was considered and not done, with the arithmetic that decided it
+
+Three further ideas were costed against the byte counts above and rejected without being built.
+Recording them is the point: two of them look obviously right until the bytes are counted.
+
+1. **Recompute the frozen RND target's features in every update step instead of storing them.**
+   This is what the JAX trainer does, and at these sizes it looks like the better trade, because
+   storing them spends memory traffic to save arithmetic and memory traffic is the constraint.
+   Counted per copy per iteration, storing costs 0.26 megabytes to write the features, 2.1 to
+   permute them once per epoch and 1.0 to read them across the sixteen steps: about 3.4 in total.
+   Recomputing stores nothing but writes and reads a 256-wide intermediate in every one of the
+   sixteen steps, about 6.4 megabytes, plus the target's own weights sixteen times. Storing wins
+   by nearly a factor of two.
+2. **Process the copies in groups small enough that a group's parameters, moments and gradients
+   stay in the 50-megabyte cache across all sixteen update steps.** That would remove fifteen
+   sixteenths of the parameter traffic, which is about a third of an iteration — by far the
+   largest remaining saving. A copy's working set is about 1.65 megabytes, so a group that fits
+   the cache holds about thirty copies, and a program with thirty pieces of work cannot fill the
+   card's 132 processing blocks. The two requirements cannot both be met at this network size.
+3. **Hold the optimiser's two moments in a narrower number format.** It removes two of the eight
+   passes the optimiser makes, about 5 percent of an update step. It changes what the trainer
+   computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
+   rather than in this one.
+
+### Why the JAX trainer is faster at these copy counts
+
+| update convention | copies | PyTorch | JAX | ratio |
+|---|---|---|---|---|
+| one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
+| one update per batch | 2048 | 32.4 ms | 23.2 ms | 1.40 |
+| one update per batch | 4096 | 63.0 ms | 43.8 ms | 1.44 |
+| sixteen updates per batch | 1024 | 57.0 ms | 46.9 ms | 1.21 |
+| sixteen updates per batch | 2048 | 107.2 ms | 84.1 ms | 1.27 |
+| sixteen updates per batch | 4096 | 206.9 ms | 164.1 ms | 1.26 |
+
+The reason is not that any PyTorch program is slow. The table in the previous subsection times
+each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
+reaches. The reason is that there are more of them, and every program writes its output to memory
+for the next one to read.
+
+The two frameworks arrange an iteration differently. The PyTorch trainer records the iteration as
+a sequence of separate device programs — a multiplication, then a program that adds the bias and
+applies the activation, then the next multiplication, and so on — and every intermediate between
+them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
+that emits far fewer programs, folding chains of element-wise work into the loops that produce
+and consume them, so a number of the intermediates PyTorch writes and re-reads are never written
+at all. At 128 copies that difference showed up as a difference in the number of programs issued,
+worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
+what the iteration costs, so the same difference is worth about a factor of two.
+
+Closing it would mean folding the bias and the activation into the multiplication itself rather
+than leaving them as a following pass — that is, having the compiler generate the multiplication
+instead of calling the library's. PyTorch can be asked to do this, so it was measured rather than
+guessed at: the update stage at 1,024 copies takes 45.8 milliseconds with the library's
+multiplication and 44.5 with the compiler's, and 46.8 against 44.8 in a second run, so 3 to 4
+percent of that stage and 2 to 3 percent of an iteration — real, but small, and the two runs
+disagree by more than the spread within either of them. It also has a cost: the kernels the
+compiler selects switch the reduced-precision matrix units off, so the loss it computes differs
+by 2.6e-6 relative and the worst gradient by 6.5e-4 against a largest gradient of 0.87, and
+compilation takes substantially longer. It was therefore not adopted in this round, whose rule
+was that the arithmetic must not change, and it is the first candidate for a round that allows
+it.
+
+What the measurement says more broadly is that the remaining distance is not one missing
+optimisation. It is distributed across every program the iteration issues, and closing it would
+mean giving up the arrangement of separate library calls in favour of generating the whole
+iteration — which is what the JAX trainer already is.
+
+The peak memory in the tables above points the same way. At 4,096 copies with sixteen updates per
+batch the PyTorch trainer holds 13.8 gigabytes and the JAX trainer 9.0. The difference is two
+deliberate choices on the PyTorch side that trade memory for programs: it stores the frozen
+target network's features for the whole batch rather than recomputing them in each update step,
+and it keeps a second copy of the batch in shuffled order so that each update step is a
+contiguous slice rather than its own gather. Both were the right trade at 128 copies. At these
+sizes they are close to neutral — the stored features still win on the byte count, as the
+arithmetic in the next subsection shows — but they are no longer free.
+
+One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
+trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
+while the JAX trainer does so only when asked for it, and it was not asked here. That is a
+difference in what the two are computing, not in how well they compute it, and it is small — two
+integer conversions and a scatter over the stored rows — but it is on the PyTorch side of the
+ledger.
+
