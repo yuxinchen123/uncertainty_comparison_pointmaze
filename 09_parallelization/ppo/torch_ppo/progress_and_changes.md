@@ -558,6 +558,22 @@ each other rather than compared through their separate baselines:
 | 1,024 | 54.38 ms | 54.11 ms | -0.5% | 11 of 11 |
 | 4,096 | 198.34 ms | 195.18 ms | -1.6% | 11 of 11 |
 
+Row 25 was then measured at the small sizes too, because that is where row 24 loses and something
+has to be right there:
+
+| copies | plain buffer | with the limit fused into the copy | change | rounds | floor |
+|---|---|---|---|---|---|
+| 8 | 7.87 ms | 7.93 ms | +0.64% | 0 of 11 | 0.01 ms |
+| 32 | 8.95 ms | 8.85 ms | **-1.10%** | 11 of 11 | 0.01 ms |
+| 128 | 12.38 ms | 12.12 ms | **-2.07%** | 11 of 11 | 0.01 ms |
+| 512 | 30.06 ms | 29.17 ms | **-2.97%** | 11 of 11 | 0.67 ms |
+
+So row 25 IS the default below the crossover, and row 24 above it. The crossover is set at 1,024
+rather than 512: at 1,024 the two were compared directly and row 24 wins by 0.5 percent in 11 of
+11 rounds, while at 512 row 25 is the one that measured better against their shared baseline
+(29.17 against 29.29 ms). The 0.64 percent row 25 costs at 8 copies is 0.05 ms against a 0.01 ms
+spread — unanimous, but small enough to take the simpler two-branch rule rather than a third.
+
 And the programs themselves, timed on their real shapes at 4,096 copies
 (`benchmarks/probe_gradient_form.py`), which is what the whole-iteration difference is made of:
 

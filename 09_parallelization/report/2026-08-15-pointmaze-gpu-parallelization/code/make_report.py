@@ -2168,7 +2168,10 @@ def sec_large_scale_round6():
     """Round six: what the JAX side's findings and method transferred to the PyTorch trainer."""
     grad_B = paired_change_rows(r"torch_change_gradient_buffer_epoch_minibatch_sync")
     grad_A = paired_change_rows(r"torch_change_gradient_buffer_full_batch_sync")
+    # two invocations cover different sizes: 1,024 and 4,096 by knob name, 8 to 512 through the
+    # multi-knob form because those arms also have to name the copy-major layout
     fused = paired_change_rows(r"torch_change_fuse_copy_and_limit_epoch_minibatch_sync")
+    fused.update(paired_change_rows(r"torch_change_set_epoch_minibatch_sync_small"))
     versus = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_fused_vs_nobuffer")
     layout = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_layout")
     gather = newest(r"ab_r6-gather-out-C4096-styleB")
@@ -2256,7 +2259,8 @@ tensor. That is the largest single removable item, and it is what round five's o
     if fused:
         md += ("A third form was measured because it removes a different pass: keep the buffer, "
                "but sum the squared gradients in the same program that copies them into it, so "
-               "the buffer is never read a second time for the gradient limit.\n\n"
+               "the buffer is never read a second time for the gradient limit. This is the form "
+               "the trainer uses below the crossover, where the buffer stays.\n\n"
                + paired_table(fused, "with the limit fused into the copy") + "\n\n")
     if versus:
         md += ("The two new forms against each other, so the choice between them is measured "

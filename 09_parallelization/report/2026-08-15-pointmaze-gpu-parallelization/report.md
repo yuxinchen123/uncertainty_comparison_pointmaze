@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:01 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:05 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1309,10 +1309,14 @@ The same change with one update per batch, where the iteration has one update st
 | 1024 | 18.05 ms | 17.95 ms | -0.6 percent | 11 of 11 | 0.15 ms |
 | 4096 | 63.43 ms | 62.65 ms | -1.2 percent | 11 of 11 | 0.97 ms |
 
-A third form was measured because it removes a different pass: keep the buffer, but sum the squared gradients in the same program that copies them into it, so the buffer is never read a second time for the gradient limit.
+A third form was measured because it removes a different pass: keep the buffer, but sum the squared gradients in the same program that copies them into it, so the buffer is never read a second time for the gradient limit. This is the form the trainer uses below the crossover, where the buffer stays.
 
 | copies | before | with the limit fused into the copy | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
+| 8 | 7.87 ms | 7.93 ms | +0.6 percent | 0 of 11 | 0.01 ms |
+| 32 | 8.95 ms | 8.85 ms | -1.1 percent | 11 of 11 | 0.01 ms |
+| 128 | 12.38 ms | 12.12 ms | -2.1 percent | 11 of 11 | 0.01 ms |
+| 512 | 30.06 ms | 29.17 ms | -3.0 percent | 11 of 11 | 0.67 ms |
 | 1024 | 56.56 ms | 54.17 ms | -4.2 percent | 11 of 11 | 0.73 ms |
 | 4096 | 204.75 ms | 197.83 ms | -3.4 percent | 11 of 11 | 3.36 ms |
 
