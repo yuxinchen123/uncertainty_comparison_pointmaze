@@ -743,6 +743,26 @@ extremely repeatable about a configuration nobody runs. What caught it was two i
 disagreeing by more than either one's stated resolution, which is the only signal such a defect
 gives.
 
+### Against the JAX trainer, both measured in this session with the code as it now stands
+
+| update convention | copies | PyTorch | JAX | JAX ahead by | before this round |
+|---|---|---|---|---|---|
+| one update per batch | 1,024 | 17.79 ms | 14.19 ms | 1.25x | 1.27x |
+| one update per batch | 2,048 | 31.76 ms | 23.30 ms | 1.36x | 1.40x |
+| one update per batch | 4,096 | 61.97 ms | 43.43 ms | 1.43x | 1.45x |
+| sixteen updates per batch | 1,024 | 52.82 ms | 47.18 ms | **1.12x** | 1.20x |
+| sixteen updates per batch | 2,048 | 98.96 ms | 85.97 ms | **1.15x** | 1.25x |
+| sixteen updates per batch | 4,096 | 190.74 ms | 168.71 ms | **1.13x** | 1.22x |
+
+Peak memory at 4,096 copies with sixteen updates per batch: 12.9 GB against 9.1, from 13.8 before
+this round — dropping the gradient buffer is 981 megabytes of that. With one update per batch the
+two are within four percent of each other (13.9 against 13.4).
+
+The convention this round moved is the one it was about. With sixteen updates per batch each
+change is paid for sixteen times an iteration, and the distance falls from about 1.22x to about
+1.13x; with one update per batch each is paid for once, and the distance is essentially where it
+was.
+
 ### What is left, and where it is
 
 The kernel profile after the round says where an iteration's remaining time sits, and one item
