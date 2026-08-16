@@ -1,7 +1,7 @@
-# RND run-id & local-JSON logging convention — generic part in the SHARED submit-cpu-sweep skill (2026-07-11); RND specifics kept here
+# RND run-id & local-JSON logging convention — generic part in the SHARED uva-submit-cpu-sweep skill (2026-07-11); RND specifics kept here
 
 The generic work-queue convention lives in the SHARED skill
-`/p/rlprojects/.claude/skills/submit-cpu-sweep/SKILL.md` (moved 2026-07-11; readable by every
+`/p/rlprojects/.claude/skills/uva-submit-cpu-sweep/SKILL.md` (moved 2026-07-11; readable by every
 rlprojects member). It covers: `sweep_id` = `<YYYY-MM-DD-HH-MM>_<tag>` scoping
 (`queue/<sweep_id>/{pending,running,done,failed}/`, `data/<sweep_id>/local/`,
 `slurm/submitted_jobids_<sweep_id>.txt`, the `data/SWEEPS.md` manifest), seed-outermost run ids

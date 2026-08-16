@@ -2607,10 +2607,14 @@ def main():
             sec_ceiling(), sec_cpu(), sec_choices(), sec_parity(), sec_round4(),
             sec_clean_node(), cnc.sec_cpu_node_comparison(), sec_large_scale(),
             sec_learning_outcome()]
-    sections = st.split_sections("\n".join(body))
+    body_md = "\n".join(body)
+    # the manifest is stamped on the UNNUMBERED text, so that renumbering the document does not
+    # make every section look new and wipe the reader's marks
+    sections = st.split_sections(body_md)
     manifest = st.stamp({k: v for k, v in sections.items() if k != "(title and introduction)"})
-    order = [ln[3:].strip() for ln in "\n".join(body).splitlines() if ln.startswith("## ")]
-    md = "\n".join([sec_overview(), st.table_of_contents(order, manifest)] + body)
+    numbered = st.number_headings(body_md)
+    order = [ln[3:].strip() for ln in numbered.splitlines() if ln.startswith("## ")]
+    md = "\n".join([sec_overview(), st.table_of_contents(order, manifest), numbered])
     (REPORT / "report.md").write_text(md)
     print(f"wrote {REPORT/'report.md'} and figures")
     for p in PENDING:

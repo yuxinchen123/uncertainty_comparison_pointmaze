@@ -100,6 +100,35 @@ def stamp(sections: dict, now: str = None) -> dict:
     return manifest
 
 
+def number_headings(md: str) -> str:
+    """Number the level-two and level-three headings of an assembled document.
+
+    Numbering is applied to the finished text rather than written into each section, so the
+    manifest keeps its unnumbered heading names and a reader's read/unread marks survive a
+    renumbering — inserting a section would otherwise make every later section look brand new.
+    before: "## The environment\n### Results"   after: "## 3. The environment\n### 3.1 Results"
+    """
+    out, section, sub = [], 0, 0
+    for line in md.splitlines():
+        if line.startswith("### "):
+            sub += 1
+            line = f"### {section}.{sub} {line[4:].strip()}"
+        elif line.startswith("## "):
+            section += 1
+            sub = 0
+            line = f"## {section}. {line[3:].strip()}"
+        out.append(line)
+    return "\n".join(out)
+
+
+def unnumber(heading: str) -> str:
+    """A numbered heading back to the name the manifest knows it by.
+
+    before: "7. How far from the hardware ceiling"   after: "How far from the hardware ceiling"
+    """
+    return re.sub(r"^\d+(\.\d+)*\.?\s+", "", heading)
+
+
 def anchor(heading: str) -> str:
     """The in-page link target a markdown renderer gives a heading."""
     slug = re.sub(r"[^a-z0-9 -]", "", heading.lower()).replace(" ", "-")
@@ -201,8 +230,11 @@ def table_of_contents(order, manifest) -> str:
     for name in order:
         if name == "(title and introduction)":
             continue
-        t = manifest.get(name, {})
-        st = state(name, manifest)
+        # the contents entry SHOWS the numbered heading but looks the section up by its
+        # unnumbered name, which is what the manifest and the read snapshot are keyed on
+        key = unnumber(name)
+        t = manifest.get(key, {})
+        st = state(key, manifest)
         link = f"[{name}](#{anchor(name)})"
         title = link if st == "read" else f'<span class="{st}">{link}</span>'
         md.append(f"| {title} | {short(t.get('first_added'))} "
@@ -248,9 +280,14 @@ def changed_blocks(current: str, previously_read: str) -> set:
 
     before: read "A\n\nB", current "A\n\nB2\n\nC"   after: {1, 2}
     """
+    # headings are numbered at assembly time, so the same heading reads "## 7. X" now and "## X"
+    # in a snapshot taken before numbering; compare them unnumbered, or every section would report
+    # its own heading as changed text the first time the document is numbered
+    strip = lambda b: ("## " + unnumber(b[3:]) if b.startswith("## ") and not b.startswith("### ")
+                       else "### " + unnumber(b[4:]) if b.startswith("### ") else b)
     # an opcode carries a range in each sequence; the ones that matter here are j1..j2, the
     # positions in the CURRENT text, since those are the blocks about to be rendered
-    now, before = blocks(current), blocks(previously_read)
+    now, before = [strip(b) for b in blocks(current)], [strip(b) for b in blocks(previously_read)]
     changed = set()
     for tag, _, _, j1, j2 in SequenceMatcher(None, before, now, autojunk=False).get_opcodes():
         if tag in ("replace", "insert"):

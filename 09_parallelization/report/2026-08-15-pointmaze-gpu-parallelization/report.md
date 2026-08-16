@@ -25,34 +25,34 @@ the earlier sections' conclusions do not all carry over.
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Environment correctness (all three implementations)](#environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
-| [Module 1 — environment throughput](#module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT | read |
-| [Module 2 — batched multi-copy trainer throughput](#module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
-| [Module 3 — end-to-end fusion and the pairing grid](#module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT | read |
-| [Scaling the number of independent training copies](#scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT | read |
-| [Profiling breakdown (C=128)](#profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT | read |
-| [Before/after optimization at the final-run sizes (8-128 copies)](#beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
-| [Final training campaign — 8 to 128 independent RND runs (PyTorch)](#final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
-| [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT | read |
-| <span class="unread">[The first three rounds](#the-first-three-rounds)</span> | 2026-08-15 23:02 PT | 2026-08-15 23:02 PT | unread |
-| [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
-| <span class="updated">[Reproduction](#reproduction)</span> | 2026-08-15 00:22 PT | 2026-08-15 19:38 PT | updated |
-| [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
-| <span class="updated">[The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:10 PT | updated |
-| <span class="updated">[Which implementation to use](#which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 20:02 PT | updated |
-| [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
-| <span class="updated">[Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers)</span> | 2026-08-15 15:57 PT | 2026-08-15 23:02 PT | updated |
-| <span class="updated">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-16 00:32 PT | updated |
-| <span class="updated">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-16 00:31 PT | updated |
-| <span class="updated">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 23:02 PT | updated |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 23:02 PT | unread |
-| <span class="unread">[Do the two implementations learn the same thing?](#do-the-two-implementations-learn-the-same-thing)</span> | 2026-08-16 01:45 PT | 2026-08-16 11:51 PT | unread |
+| [1. Environment correctness (all three implementations)](#1-environment-correctness-all-three-implementations) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [2. Module 1 — environment throughput](#2-module-1-environment-throughput) | 2026-08-15 00:22 PT | 2026-08-15 15:46 PT | read |
+| [3. Module 2 — batched multi-copy trainer throughput](#3-module-2-batched-multi-copy-trainer-throughput) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| [4. Module 3 — end-to-end fusion and the pairing grid](#4-module-3-end-to-end-fusion-and-the-pairing-grid) | 2026-08-15 00:22 PT | 2026-08-15 10:53 PT | read |
+| [5. Scaling the number of independent training copies](#5-scaling-the-number-of-independent-training-copies) | 2026-08-15 00:22 PT | 2026-08-15 11:54 PT | read |
+| [6. Profiling breakdown (C=128)](#6-profiling-breakdown-c128) | 2026-08-15 00:22 PT | 2026-08-15 01:35 PT | read |
+| [7. Before/after optimization at the final-run sizes (8-128 copies)](#7-beforeafter-optimization-at-the-final-run-sizes-8-128-copies) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [8. Final training campaign — 8 to 128 independent RND runs (PyTorch)](#8-final-training-campaign-8-to-128-independent-rnd-runs-pytorch) | 2026-08-15 01:35 PT | 2026-08-15 11:54 PT | read |
+| [9. Sweeping learning rates across copy groups](#9-sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 16:35 PT | read |
+| <span class="unread">[10. The first three rounds](#10-the-first-three-rounds)</span> | 2026-08-15 23:02 PT | 2026-08-15 23:02 PT | unread |
+| [11. What made it fast (and what did not)](#11-what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT | read |
+| <span class="updated">[12. Reproduction](#12-reproduction)</span> | 2026-08-15 00:22 PT | 2026-08-15 19:38 PT | updated |
+| [13. How far from the hardware ceiling](#13-how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| <span class="updated">[14. The same work on ordinary processor cores](#14-the-same-work-on-ordinary-processor-cores)</span> | 2026-08-15 15:46 PT | 2026-08-15 19:10 PT | updated |
+| <span class="updated">[15. Which implementation to use](#15-which-implementation-to-use)</span> | 2026-08-15 15:46 PT | 2026-08-15 20:02 PT | updated |
+| [16. Feature parity between the two trainers](#16-feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT | read |
+| <span class="updated">[17. Round four — closing the distance between the two trainers](#17-round-four-closing-the-distance-between-the-two-trainers)</span> | 2026-08-15 15:57 PT | 2026-08-15 23:02 PT | updated |
+| <span class="updated">[18. End-to-end training on a dedicated processor node](#18-end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 16:08 PT | 2026-08-16 00:32 PT | updated |
+| <span class="updated">[19. The best setup on each platform, at 4,096 copies or fewer](#19-the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 16:08 PT | 2026-08-16 00:31 PT | updated |
+| <span class="updated">[20. A processor with fewer, faster cores against the 224-thread node](#20-a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 17:25 PT | 2026-08-15 23:02 PT | updated |
+| <span class="unread">[21. Training a thousand to four thousand copies at once](#21-training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 19:38 PT | 2026-08-15 23:02 PT | unread |
+| <span class="unread">[22. Do the two implementations learn the same thing?](#22-do-the-two-implementations-learn-the-same-thing)</span> | 2026-08-16 01:45 PT | 2026-08-16 11:51 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
 *Status is computed by comparing each section against the text last marked read: an **unread** section is written in blue, title and body; in an **updated** section the text that changed since you read it is written in dark brown, and the rest is left alone.*
 
-## Environment correctness (all three implementations)
+## 1. Environment correctness (all three implementations)
 
 The environments are not approximations: MuJoCo's exact per-step update was extracted and
 verified, including the contact model (solref/solimp force law, margin semantics, and the
@@ -71,7 +71,7 @@ joint two-contact solve, all probe-verified against the solver's internal arrays
 5. A 256-episode random-policy comparison against the reference env passes (visit
    distribution total-variation distance 0.026, gate 0.05).
 
-## Module 1 — environment throughput
+## 2. Module 1 — environment throughput
 
 | implementation | 1e3 envs | 1e5 envs | 1e6 envs | 3e6 envs | peak |
 |---|---|---|---|---|---|
@@ -103,7 +103,7 @@ env-step, jax scan 14.8 ns, jax jit 79 ns, torch compiled 158 ns. All fall towar
 bandwidth limit as the batch grows: at 3e6 envs the CUDA kernel spends 57 picoseconds per
 env-step (171.7 us for the whole batch).
 
-## Module 2 — batched multi-copy trainer throughput
+## 3. Module 2 — batched multi-copy trainer throughput
 
 Both trainers implement the same algorithm (spec: `ppo/research/ppo_rnd_algorithm_spec.md`),
 verified by bitwise copy-isolation tests in each framework and a cross-framework forward
@@ -124,7 +124,7 @@ iter/s (style B) at C=128. A LABELED algorithm variant (T=32, N=16 — same 512 
 GAE horizon) reaches 226 iter/s = 1.48e7 env-steps/s in jax style A; it is recorded as a
 variant, not the default, because it changes the algorithm.
 
-## Module 3 — end-to-end fusion and the pairing grid
+## 4. Module 3 — end-to-end fusion and the pairing grid
 
 - torch env + torch trainer: the production path. The environment's pure `step_core`
   composes into the compiled per-step function; one CUDA graph captures the WHOLE iteration
@@ -152,7 +152,7 @@ variant, not the default, because it changes the algorithm.
   CUDA-graph capture and XLA scan fusion. They are documented as non-production paths
   (`benchmarks/bench_cross_pairing.py`).
 
-## Scaling the number of independent training copies
+## 5. Scaling the number of independent training copies
 
 The task's two questions, answered by measurement (style B, T=128, N=4, final config):
 
@@ -194,7 +194,7 @@ around 2,048-4,096 copies.
 
 ![copy scaling](figures/copy_scaling.png)
 
-## Profiling breakdown (C=128)
+## 6. Profiling breakdown (C=128)
 
 Production view — what one training iteration actually pays with the capture
 configuration measured (separate rollout/update graphs, eager post-processing; the
@@ -237,7 +237,7 @@ why compiling/fusing the env step was the first large win; after fusion the thre
 phases are nearly balanced, and the remaining bottleneck at small C is fixed kernel time
 in the 128 sequential rollout steps.
 
-## Before/after optimization at the final-run sizes (8-128 copies)
+## 7. Before/after optimization at the final-run sizes (8-128 copies)
 
 Environment-only throughput at the exact env-batch sizes the final runs use
 (batch = C copies x 4 envs), env steps per second. "Eager" is the CURRENT physics code run
@@ -289,7 +289,7 @@ iteration from 36.8 ms to 20.2 ms at 128 copies (paired measurements, noise floo
 Overall, one training iteration of 128 independent copies went from 777 ms to 20.2 ms — 38x —
 while every change was verified to compute the same thing.
 
-## Final training campaign — 8 to 128 independent RND runs (PyTorch)
+## 8. Final training campaign — 8 to 128 independent RND runs (PyTorch)
 
 20,000 iterations per configuration = 10.24M environment steps per copy; PointMaze Large,
 sparse goal, run-6 setup. Every copy is an independent seed with its own networks,
@@ -327,7 +327,7 @@ sparse goal being found and lost again rather than held (per-copy curves below).
 
 ![campaign curves](figures/campaign_curves.png)
 
-## Sweeping learning rates across copy groups
+## 9. Sweeping learning rates across copy groups
 
 The trainer's copies were identical apart from their seed. They can now be split into groups,
 each group training at its own learning rate, in one batched run — the inputs are exactly the
@@ -343,7 +343,7 @@ switches to a hand-written batched Adam with torch's formula and a per-copy rate
 of every group starts from the same weights and meets the same environments (paired seeding),
 so a difference between groups is the rate's doing. Full description: `ppo/torch_ppo/SWEEP.md`.
 
-### Which layout is best
+### 9.1 Which layout is best
 
 Three ways to arrange G groups of K copies, measured at 4 rates x 128 copies = 512 copies:
 
@@ -360,7 +360,7 @@ the same number of copies at a single rate. Running the groups separately is slo
 reason the whole project rests on: each group alone is too small to fill the GPU, and the
 per-iteration cost is dominated by kernel count rather than by arithmetic.
 
-### It finds the right answer
+### 9.2 It finds the right answer
 
 A demonstration run of 5 rates x 32 copies (3.07M environment steps per copy, 140 seconds):
 
@@ -378,7 +378,7 @@ cost the same as training those copies at one rate.
 
 ![sweep curves](figures/sweep_curves.png)
 
-### The configuration you asked about
+### 9.3 The configuration you asked about
 
 Sixteen learning rates with 128 independent copies each — 2,048 copies in one run — takes
 **144 ms per iteration**: 7.29e6
@@ -386,7 +386,7 @@ environment steps per second in total, 3560 per copy,
 890 per environment, in 6.3 GB.
 Training all 2,048 of them for 10 million environment steps each takes **0.78 hours**, against 1.77 hours if the sixteen groups were trained one after another (2.23x).
 
-### How it scales
+### 9.4 How it scales
 
 Two knobs grow a sweep: the number of learning rates, and the copies behind each rate. Both
 were measured, and they give the same curve — because both only change the total copy count,
@@ -418,7 +418,7 @@ Per-environment throughput is the per-copy column divided by the four environmen
 holds; it is drawn as the right-hand scale of the second panel rather than as its own curve,
 because it is the same measurement in different units.
 
-### Does the number of rates cost anything by itself?
+### 9.5 Does the number of rates cost anything by itself?
 
 No. Holding the total at 2048 copies and splitting them into more and
 more groups leaves the time per iteration flat and the memory byte-identical:
@@ -445,7 +445,7 @@ rates cost what sixteen times as many copies cost, and nothing more.
 
 ![sweep wall clock](figures/sweep_wallclock.png)
 
-### Fusing the groups, against running them one after another
+### 9.6 Fusing the groups, against running them one after another
 
 | rates | copies per rate | fused [ms] | separate [ms] | uniform rate, same size [ms] | fused is faster by | sweep overhead vs uniform |
 |---|---|---|---|---|---|---|
@@ -462,7 +462,7 @@ rate, to within about one percent either way.
 
 ![fused versus separate](figures/sweep_vs_separate.png)
 
-### One rate for everything, against a sweep
+### 9.7 One rate for everything, against a sweep
 
 Comparing a uniform run with a swept run mixes two changes, so they are measured apart. Giving
 each copy its own learning rate makes the rate a VECTOR, and torch's fused Adam takes one
@@ -496,9 +496,9 @@ Reading the two columns:
 So the practical answer is that a sweep is not a different regime from a uniform run — it is
 the same run with a vector where a scalar used to be, and it is priced accordingly.
 
-## The first three rounds
+## 10. The first three rounds
 
-### Round 1 — build it, and make it exact
+### 10.1 Round 1 — build it, and make it exact
 
 The environments are not approximations of the reference: MuJoCo's per-step update and its
 whole contact pipeline were extracted and verified to machine precision (correctness section
@@ -511,7 +511,7 @@ replay per iteration.
 Round one compared configurations by running each once. That was good enough for changes worth
 3x and useless for changes worth 3%.
 
-### Round 2 — improve it, with a protocol that can tell a real change from drift
+### 10.2 Round 2 — improve it, with a protocol that can tell a real change from drift
 
 Every round-two change is measured by running both variants in ABBA order in separate
 processes, comparing against the change's own predecessor git revision, and reporting the
@@ -546,11 +546,11 @@ path stripped out entirely — verified bitwise identical, then timed in ABBA or
 0.05 to 0.08%, against a 0.01 ms noise floor. The two styles were already separate compiled
 functions, so the captured graph contains only the selected path either way.
 
-### Round 3 — sweep hyperparameters across copy groups
+### 10.3 Round 3 — sweep hyperparameters across copy groups
 
 Described in its own section below.
 
-## What made it fast (and what did not)
+## 11. What made it fast (and what did not)
 
 Kept (each row measured in a ledger; see the per-module `progress_and_changes.md` files):
 
@@ -583,7 +583,7 @@ The full extra-step review against the prior joint-replenishment efficiency camp
 protocol gaps it flagged, several of which were fixed: incremental benchmark JSON writes,
 the capturable-Adam coupling, finer env-count ladders near the knee).
 
-## Reproduction
+## 12. Reproduction
 
 1. Environments: `pointmaze/{torch_env,cuda_env,jax_env}`; shared exact-physics spec and
    fixtures in `pointmaze/common/` (`physics_spec.md`, checker
@@ -604,13 +604,13 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.
 
-## How far from the hardware ceiling
+## 13. How far from the hardware ceiling
 
 "An optimisation made it faster" is not the same as "it is now fast". This section asks what the
 machine could do in principle, and what fraction of that the implementations reach. Three separate
 analyses produced it, cross-checking each other; the full working is in `analysis/ceiling/`.
 
-### The environment
+### 13.1 The environment
 
 One environment step moves 82 bytes and performs about 250 floating-point operations, counted from
 the kernel and then confirmed by compiling it and inspecting the generated instructions. Dividing
@@ -633,7 +633,7 @@ memory traffic by 16 percent changed the time by 0.3 percent — if bandwidth we
 should have fallen by about 16 percent. Removing arithmetic, by contrast, gained 14 percent. That is
 a kernel limited by issuing instructions, not by moving bytes.
 
-### The training computation
+### 13.2 The training computation
 
 One iteration at 128 copies with sixteen updates per batch performs 110.2 thousand million
 floating-point operations. Measured against the card's matrix throughput:
@@ -659,7 +659,7 @@ milliseconds is 49 percent.
 So the honest statement of remaining headroom is not "ninety-nine percent is missing" but "at most
 about three times, and only by removing work that is not matrix multiplication".
 
-### Where that places the project
+### 13.3 Where that places the project
 
 Practitioners generally distinguish five stages: unoptimised; obvious waste removed; the limiting
 resource identified and the profile flat; at the hardware limit for the algorithm as written; and
@@ -671,7 +671,7 @@ reformulations have already been made (batching the copies, fusing the sweep) an
 and declined because it changes the algorithm (a shorter horizon, worth three times).
 
 
-## The same work on ordinary processor cores
+## 14. The same work on ordinary processor cores
 
 To give the graphics-processor numbers a scale, the same code was run on a processor node of the
 same cluster (puma01: two sockets of forty cores, 160 hardware threads, 246 GB of memory), inside a
@@ -698,7 +698,7 @@ coordinates once the threads are many. The process-parallel form never pays that
 measurements later in this report put numbers on the difference and settle the choice.
 
 
-## Which implementation to use
+## 15. Which implementation to use
 
 Three practical questions, each answered from the measurements above. The tables that justify these
 can be reproduced with `python benchmarks/decide.py`.
@@ -740,7 +740,7 @@ that is only environment simulation — generating data, evaluating a fixed poli
 trainer.
 
 
-## Feature parity between the two trainers
+## 16. Feature parity between the two trainers
 
 The learning-rate sweep and per-copy progress recording were first built in PyTorch. They were then
 added to JAX, under the requirement that they cost nothing.
@@ -770,7 +770,7 @@ to 0.06 to 0.10 milliseconds. Small effects measured with the per-process harnes
 report rest on a noisier instrument than that.
 
 
-## Round four — closing the distance between the two trainers
+## 17. Round four — closing the distance between the two trainers
 
 Round three left the PyTorch trainer measurably behind the JAX one: level with one update per
 batch, but 52 to 70 percent slower with sixteen. Round four attacked that, under the same rule as
@@ -819,9 +819,9 @@ automatic differentiation do together. Closing that means writing the loss and i
 hand-written operation, which is a larger undertaking and was left as a decision rather than begun.
 
 
-## End-to-end training on a dedicated processor node
+## 18. End-to-end training on a dedicated processor node
 
-### Why this comparison is here
+### 18.1 Why this comparison is here
 
 Every number so far came from a graphics processor. A reader deciding where to run this work
 needs to know what the alternative gives, so the same end-to-end training loop was measured on
@@ -836,7 +836,7 @@ optimisation work relied on — recording an iteration as a replayable sequence,
 reduced-precision matrix mode, the fused optimiser — do not exist on a processor, so the
 processor runs the same code in its plain form.
 
-### Two ways to use many cores, and why they differ so much
+### 18.2 Two ways to use many cores, and why they differ so much
 
 A processor has many cores, and the work has to be divided among them. There are two ways:
 
@@ -907,7 +907,7 @@ processes never pay it. This is also why the graphics processor needed the oppos
 the optimisation work there fused those forty operations into a handful and recorded the whole
 sequence, which is the same problem solved from the other end.
 
-### A correction to the processor numbers above
+### 18.3 A correction to the processor numbers above
 
 The processor measurements in this section were taken with a benchmark that times five
 iterations, about two seconds of work, and computes the machine's rate as the sum of each
@@ -944,7 +944,7 @@ far the larger of the two.
 Every processor number in this section is now a sustained measurement over a shared window;
 where a setting has not been retaken, its row says so.
 
-### How far the copies per worker go, and what stops them
+### 18.4 How far the copies per worker go, and what stops them
 
 The sweep above stops at 224 workers holding 16 copies each, and total throughput is still
 rising there, so it does not show the machine's ceiling. Workers cannot be added — 224 is the
@@ -1046,7 +1046,7 @@ One update per batch peaks at **64 copies a worker on 112 workers**, and sixteen
 
 *Both quantities fall together past the best rung, so packing more copies into a worker buys nothing on either count.*
 
-### What ran out
+### 18.5 What ran out
 
 The curve does not merely stop rising, it turns over, so something gets actively worse as the
 copies per worker grow. Four measurements separate the candidates.
@@ -1201,7 +1201,7 @@ amortisation benefit at all past four copies per worker, and turns over at a qua
 *112 workers, sixteen updates per batch. Every rung holds twice the copies of the rung above it, so a column growing by two is growing in proportion to the copies.*
 
 
-## The best setup on each platform, at 4,096 copies or fewer
+## 19. The best setup on each platform, at 4,096 copies or fewer
 
 Graphics-processor throughput keeps rising with the number of copies well past the point most
 work needs, so the comparison below is restricted to **4,096 copies or fewer**, which is the
@@ -1234,7 +1234,7 @@ wins on total throughput is not the one that finishes any single copy soonest, w
 rates appear in every table and both curves in every figure.
 
 
-## A processor with fewer, faster cores against the 224-thread node
+## 20. A processor with fewer, faster cores against the 224-thread node
 
 jaguar02's Intel part has 16 fast cores against the 112 slower ones of jaguar03's AMD part.
 Both were held exclusively and ran this report's processor configuration: independent worker
@@ -1274,7 +1274,7 @@ keep only 45% each of a lone worker's rate, because what halves between them is 
 cache this workload depends on. On jaguar02 each keeps 56% and the total rises 11%, so all 32
 threads is its best setting.
 
-### If the newer processor had 224 threads
+### 20.1 If the newer processor had 224 threads
 
 jaguar02's best setting delivers 1,419 steps per second per physical core, against 1,139 on
 jaguar03. Scaled to 112 cores that is 0.1589 million steps per second, which beats jaguar03:
@@ -1290,7 +1290,7 @@ an upper bound: it assumes a core of this design would work as fast in a 112-cor
    cores per socket instead of 8 leaves 0.32 MiB each against 2.25, below what jaguar03 gives
    its own cores — the same halving that costs jaguar03 11% at 224 threads.
 
-### What accounts for the difference
+### 20.2 What accounts for the difference
 
 Clock speed is not the answer: with every physical core busy jaguar02 runs at 3.56 GHz and
 gives one worker 1.27 thousand steps per second against jaguar03's 1.14 at 2.60 GHz — a 37%
@@ -1301,7 +1301,7 @@ against 2.25. That locates the difference without proving causation inside the t
 proving it would need the processors' own performance counters, which this account cannot read
 on these nodes.
 
-## Training a thousand to four thousand copies at once
+## 21. Training a thousand to four thousand copies at once
 
 An earlier section did measure the trainer past a thousand copies, but its figures come from the
 first and second optimisation rounds and its JAX figures from the first, and — more importantly —
@@ -1323,7 +1323,7 @@ of the range before it is kept.
 
 **The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as these two rounds found it and 62 after their changes, against 43 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
 
-### Where an iteration's time goes as the copy count grows
+### 21.1 Where an iteration's time goes as the copy count grows
 
 | phase | 128 copies | 1,024 copies | 4,096 copies |
 |---|---|---|---|
@@ -1336,7 +1336,7 @@ of the range before it is kept.
 
 From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a factor of 3.1 and the update by a factor of 11.0. The rollout is a chain of about 2,300 small programs whose cost hardly depends on how much data each one carries, so adding copies is very nearly free for it. The update grows in proportion to the copies, which is what a computation limited by memory traffic does.
 
-### The two frameworks at the sizes in use
+### 21.2 The two frameworks at the sizes in use
 
 The two tables below report, for each setting, the time one iteration takes, the aggregate rate
 over all copies, the rate a single copy gets, the hours one copy needs to reach a million
@@ -1387,7 +1387,7 @@ was changing while it was measured, and those figures are superseded here.
 
 The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 29.5 to 33.8 million environment steps per second, a factor of 1.15, while the rate an individual copy gets falls from 28.8 to 8.3 thousand per second, a factor of 3.5. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 6 minutes at 1,024 copies and 20 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
 
-### What limits the PyTorch trainer at 4,096 copies
+### 21.3 What limits the PyTorch trainer at 4,096 copies
 
 The ceiling section earlier in this document analysed the trainer at 128 copies and concluded that
 it was limited by the number of separate device programs it issues, not by arithmetic and not by
@@ -1440,7 +1440,7 @@ at this size it says only that the shapes are small, not that there is room in t
 
 One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
 
-### Round four, measured where the trainer is used
+### 21.4 Round four, measured where the trainer is used
 
 The previous round was decided at 8 to 128 copies and recorded a 1.1 percent loss at 512 as the single size where it was a loss. Measured against its own predecessor at the sizes in use, with both sides pinned to their revisions:
 
@@ -1452,7 +1452,7 @@ The previous round was decided at 8 to 128 copies and recorded a 1.1 percent los
 
 A positive number means the previous round made it slower. The 512-copy loss was not an isolated size but the start of a trend, and the first of this round's changes is its repair.
 
-### Round five: what was changed
+### 21.5 Round five: what was changed
 
 Three changes, all of them removing passes over memory, none of them changing what the trainer
 computes.
@@ -1510,7 +1510,7 @@ The three together, at the sizes in use and at the small ones the earlier rounds
 | 128 copies,<br>sixteen updates per batch | 16.18 ms | 12.54 ms | -3.64 ms (-22.5 percent) | 0.03 ms |
 | 8 copies,<br>sixteen updates per batch | 9.32 ms | 7.96 ms | -1.37 ms (-14.7 percent) | 0.09 ms |
 
-### Round five: the small sizes, re-measured
+### 21.6 Round five: the small sizes, re-measured
 
 The previous round's loss at 512 copies was found only because the sizes it had not optimised for were measured afterwards, so the same check is repeated here in the other direction.
 
@@ -1540,7 +1540,7 @@ The previous round's loss at 512 copies was found only because the sizes it had 
 | PyTorch before | 512 | 17.5 | 15.02 | 29.3 | 0.009 | 2.1 |
 | PyTorch after | 512 | 11.2 | **23.33** | 45.6 | 0.006 | 2.3 |
 
-### Round five: whether the three changes changed what the trainer computes
+### 21.7 Round five: whether the three changes changed what the trainer computes
 
 The rule for the round was that they must not. Two of them are exactly neutral and one needs a
 sentence.
@@ -1570,7 +1570,7 @@ more consistent with its own setting rather than quietly less accurate. A run th
 single precision throughout has always had to turn that setting off, and with it off the
 alignment is exactly neutral.
 
-### Round five: what was considered and not done, with the arithmetic that decided it
+### 21.8 Round five: what was considered and not done, with the arithmetic that decided it
 
 Three further ideas were costed against the byte counts above and rejected without being built.
 Recording them is the point: two of them look obviously right until the bytes are counted.
@@ -1594,7 +1594,7 @@ Recording them is the point: two of them look obviously right until the bytes ar
    computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
    rather than in this one.
 
-### Round six: what transferred from the other framework, and where the bytes went next
+### 21.9 Round six: what transferred from the other framework, and where the bytes went next
 
 The JAX trainer's fifth round finished after this document's round-five section was written, so
 its findings had never been read from the PyTorch side. This subsection reports what transferred,
@@ -1863,7 +1863,7 @@ instead of calling the library's, whose kernels are plainly not tuned for four r
 percent, says nothing about these, which are a different problem. Recorded with its measurement
 rather than attempted at the end of a round.
 
-### Why the JAX trainer is still faster at these copy counts
+### 21.10 Why the JAX trainer is still faster at these copy counts
 
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
@@ -1918,7 +1918,7 @@ integer conversions and a scatter over the stored rows — but it is on the PyTo
 ledger.
 
 
-## Do the two implementations learn the same thing?
+## 22. Do the two implementations learn the same thing?
 
 Everything else in this report is speed. This section is about behaviour: four runs of
 **8 learning rates x 1,024 independent copies x 10 million environment steps per copy** —
@@ -1944,7 +1944,7 @@ is in the run folder's `parity_check.md`. The environment is not merely equivale
 two: its reset noise is a counter-based hash of the copy and episode indices, so copy k of the
 PyTorch run and copy k of the JAX run start every episode in the same place.
 
-### The metric has an episode clock in it
+### 22.1 The metric has an episode clock in it
 
 The task is continuing — nothing ever terminates early — so the only way an episode ends is
 truncation at 400 steps, and every copy's environments start together. **All 8,192 copies
@@ -1975,7 +1975,7 @@ episode. Every score and every curve below is taken from the 97 records at the r
 the comparison is like for like. A reader taking a single final row at face value would conclude
 all four runs fell apart in their last thousand iterations.
 
-### What each configuration reached
+### 22.2 What each configuration reached
 
 Mean over the 1,024 copies of each rate group, at the end of training.
 
@@ -2014,7 +2014,7 @@ precision. No factor in the experiment produces that split; forty-eight pairwise
 95% bound produce about two like it.
 
 
-### PyTorch against JAX
+### 22.3 PyTorch against JAX
 
 ![PyTorch against JAX](figures/learning_outcome_frameworks.png)
 
@@ -2038,7 +2038,7 @@ scores above one drawn from the JAX run with probability **0.504**, where a half
 distributions are interchangeable. The two implementations learn the same thing.
 
 
-### Reduced precision against exact single precision, inside PyTorch
+### 22.4 Reduced precision against exact single precision, inside PyTorch
 
 ![PyTorch precision](figures/learning_outcome_precision_torch.png)
 
@@ -2060,7 +2060,7 @@ exact one. The run does not resolve a difference; what it can say is that an eff
 about 1.24 reward per copy per iteration would have shown.
 
 
-### Reduced precision against exact single precision, inside JAX
+### 22.5 Reduced precision against exact single precision, inside JAX
 
 ![JAX precision](figures/learning_outcome_precision_jax.png)
 
@@ -2082,11 +2082,11 @@ exact one. The run does not resolve a difference; what it can say is that an eff
 about 1.23 reward per copy per iteration would have shown.
 
 
-### Every rate, and the seed distribution at the best one
+### 22.6 Every rate, and the seed distribution at the best one
 
 ![every rate](figures/learning_outcome_by_rate.png)
 
-### What the four runs cost, and the precision each actually used
+### 22.7 What the four runs cost, and the precision each actually used
 
 Define $r$ as the environment steps per second one copy gets; the last of the rate columns is that
 rate written as time, $\dfrac{10^{6}}{3600 r}$ hours per million steps for one copy.
@@ -2122,7 +2122,7 @@ parameters afterwards. The two precisions end 3.8e-03 apart in PyTorch on a larg
 2.3e-05 apart in JAX. The knob is doing something to the arithmetic. It is not doing anything to
 where training ends up.
 
-### What would make this wrong
+### 22.8 What would make this wrong
 
 - **One seed family.** Every configuration used base seed 0, and copy k of all four met the same
   environment reset stream. A different family could shift the absolute numbers; it would have to

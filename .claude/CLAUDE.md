@@ -20,7 +20,7 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 
 ## Slurm
 - **Large CPU sweeps follow the SHARED skill
-  `/p/rlprojects/.claude/skills/submit-cpu-sweep/SKILL.md`** (moved there 2026-07-11; readable by
+  `/p/rlprojects/.claude/skills/uva-submit-cpu-sweep/SKILL.md`** (moved there 2026-07-11; readable by
   every rlprojects member): how to submit (reservation discovery per user, partition buckets, gpu
   allowlist filled lowest-GPU-capability first, job shapes, `srun --wait=0`, capacity planning
   over each user's own pools) plus the local file work queue (sweep ids, seed-outermost run ids,
@@ -35,7 +35,7 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 - The old `wandb agent` fan-out convention (`.claude/rules/slurm.md`) was deleted 2026-07-08 —
   superseded by the work-queue convention above.
 - Shared cluster hardware/network facts (jaguar03 specs, gpu-partition CPU sizing): the global
-  `cluster-slurm.md` rule.
+  `uva-cluster-slurm.md` rule.
 
 ## Reproducible seeding
 - Seed arg is **`--a_seed`** (sweep range 0–99); it seeds `random`, `numpy`, `torch`, and CUDA

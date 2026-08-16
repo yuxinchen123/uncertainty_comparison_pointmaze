@@ -193,3 +193,11 @@ reference_repos/
 # keep the validation fixtures (small, regenerable, but they anchor all GPU env checks)
 !09_parallelization/pointmaze/common/fixtures/*.npz
 !09_parallelization/pointmaze/common/fixtures/*.json
+
+# Core dumps written beside a crashed training job — gigabytes each, never wanted in git
+core.*
+
+# Reference repositories cloned inside an analysis folder for comparison. They carry their own
+# .git, so committing them would nest one repository inside another; clone them again if needed.
+**/reference_autoresearch/
+**/reference_repos/

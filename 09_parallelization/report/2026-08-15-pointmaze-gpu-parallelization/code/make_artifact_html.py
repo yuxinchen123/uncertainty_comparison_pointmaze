@@ -58,7 +58,9 @@ def render_document(md: str) -> str:
     out = []
     for name, text in st.split_sections(md).items():
         # the contents table carries the state of everything else and has none of its own
-        status = "read" if name == "Contents" or name not in manifest else st.state(name, manifest)
+        # the document's headings are numbered; the manifest is keyed on the plain names
+        key = st.unnumber(name)
+        status = "read" if name == "Contents" or key not in manifest else st.state(key, manifest)
         if status == "read":
             # a read section can still hold a figure that was redrawn since it was read
             out.append("\n".join(label_redrawn(render(b), b, redrawn) for b in st.blocks(text)))
@@ -66,7 +68,7 @@ def render_document(md: str) -> str:
             # nothing here has been seen before, so the whole section carries the colour
             out.append(f'<div class="unread">{render(text)}</div>')
         else:
-            changed = st.changed_blocks(text, snapshot.get(name, ""))
+            changed = st.changed_blocks(text, snapshot.get(key, ""))
             pieces = []
             for i, block in enumerate(st.blocks(text)):
                 html_block = label_redrawn(render(block), block, redrawn)
