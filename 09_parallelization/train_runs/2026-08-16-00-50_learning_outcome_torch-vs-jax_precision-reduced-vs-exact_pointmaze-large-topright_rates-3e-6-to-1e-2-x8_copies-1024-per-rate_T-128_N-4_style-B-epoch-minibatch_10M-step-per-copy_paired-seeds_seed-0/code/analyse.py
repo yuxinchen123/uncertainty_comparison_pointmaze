@@ -106,6 +106,44 @@ def compare(a, b):
             "n_a": int(a.size), "n_b": int(b.size)}
 
 
+def pooled_over_rates(a_groups, b_groups):
+    """One verdict over all eight learning rates, blocked BY rate rather than concatenated.
+
+    Concatenating would pool distributions whose means differ by a factor of a hundred, so the
+    spread of the pooled sample would be dominated by which rate a copy belongs to and every
+    difference would drown in it. Blocking asks the same question inside each rate and then
+    combines: the difference is the mean of the eight per-rate differences, and the rank statistic
+    is the sum of the eight rank sums against its own null variance (the stratified rank test with
+    equal weights). No tie correction is applied, which makes the p-value conservative — the
+    scores are integer counts, so ties are common and correcting for them would only shrink the
+    null variance.
+    """
+    diffs, variances, u_total, e_total, var_total, pairs = [], [], 0.0, 0.0, 0.0, 0
+    for a, b in zip(a_groups, b_groups):
+        a, b = np.asarray(a, float), np.asarray(b, float)
+        diffs.append(a.mean() - b.mean())
+        variances.append(a.var(ddof=1) / a.size + b.var(ddof=1) / b.size)
+        u, _ = stats.mannwhitneyu(a, b, alternative="two-sided")
+        n1, n2 = a.size, b.size
+        u_total += u
+        e_total += n1 * n2 / 2
+        var_total += n1 * n2 * (n1 + n2 + 1) / 12
+        pairs += n1 * n2
+    k = len(diffs)
+    diff = float(np.mean(diffs))
+    se = float(np.sqrt(np.sum(variances)) / k)
+    z = (u_total - e_total) / np.sqrt(var_total)
+    mean_b = float(np.mean([np.mean(b) for b in b_groups]))
+    return {"mean_a": float(np.mean([np.mean(a) for a in a_groups])), "mean_b": mean_b,
+            "difference": diff, "difference_lo": diff - 1.959964 * se,
+            "difference_hi": diff + 1.959964 * se,
+            "relative_difference": diff / mean_b if mean_b else float("nan"),
+            "rank_test_p": float(2 * stats.norm.sf(abs(z))),
+            "probability_a_above_b": float(u_total / pairs),
+            "n_a": int(sum(len(a) for a in a_groups)),
+            "n_b": int(sum(len(b) for b in b_groups))}
+
+
 def chosen_rates(all_data):
     """Three of the eight rates, spanning the useful range: the best and its two neighbours.
 
@@ -305,10 +343,9 @@ def summary():
             "per_rate": [dict(compare(final_scores(all_data[ta], i),
                                       final_scores(all_data[tb], i)), rate=rates[i])
                          for i in range(len(rates))],
-            "pooled": compare(np.concatenate([final_scores(all_data[ta], i)
-                                              for i in range(len(rates))]),
-                              np.concatenate([final_scores(all_data[tb], i)
-                                              for i in range(len(rates))])),
+            "pooled": pooled_over_rates(
+                [final_scores(all_data[ta], i) for i in range(len(rates))],
+                [final_scores(all_data[tb], i) for i in range(len(rates))]),
         }
     return out
 
@@ -339,7 +376,7 @@ def comparison_table(cmp):
                     f"{_fmt(r['difference_hi'])}] | {r['rank_test_p']:.3g} | "
                     f"{_fmt(r['probability_a_above_b'])} |")
     p = cmp["pooled"]
-    rows.append(f"| all eight pooled | {_fmt(p['mean_a'])} | {_fmt(p['mean_b'])} | "
+    rows.append(f"| all rates, blocked | {_fmt(p['mean_a'])} | {_fmt(p['mean_b'])} | "
                 f"{_fmt(p['difference'])} | [{_fmt(p['difference_lo'])}, "
                 f"{_fmt(p['difference_hi'])}] | {p['rank_test_p']:.3g} | "
                 f"{_fmt(p['probability_a_above_b'])} |")

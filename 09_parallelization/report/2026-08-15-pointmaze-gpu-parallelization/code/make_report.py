@@ -2673,8 +2673,7 @@ def sec_learning_outcome():
     # the seed-to-seed spread at the best rate, as a yardstick for every difference below
     spread = (best["q3"] - best["q1"])
 
-    md = [head, f"""
-Everything else in this report is speed. This section is about behaviour: four runs of
+    md = [head, f"""Everything else in this report is speed. This section is about behaviour: four runs of
 **8 learning rates x {n_copies // len(rates):,} independent copies x {steps / 1e6:.0f} million environment steps per copy** —
 {{PyTorch, JAX}} x {{the card's reduced-precision matrix mode, exact single precision}} — asking whether
 the two implementations of one algorithm end up in the same place, and whether the precision of the
@@ -2686,8 +2685,9 @@ identical curves but overlapping seed distributions.
 Parity between the two implementations was established before any card time was spent, item by
 item — initialisation distribution and gains, optimiser and its constants, advantage
 normalisation, the order in which the observation and intrinsic statistics update, episode
-boundaries, clipping, entropy, and what is recorded when. The full list, and the five last-bit
-differences that remain, is in the run folder's `parity_check.md`. The environment is not merely
+boundaries, clipping, entropy, and what is recorded when. The full list, and the six
+differences that remain — of which one is the point of the experiment and the rest are last-bit —
+is in the run folder's `parity_check.md`. The environment is not merely
 equivalent between the two: its reset noise is a counter-based hash of the copy and episode
 indices, so copy k of the PyTorch run and copy k of the JAX run start every episode in the same
 place.
@@ -2710,7 +2710,7 @@ configurations pooled rather than by hand.
 ![PyTorch against JAX](figures/learning_outcome_frameworks.png)
 
 {a.comparison_table(cmpf)}
-Pooled over all eight rates the two differ by **{p['difference']:+.3f}** reward per copy per iteration,
+Averaged over the eight rates, blocked by rate, the two differ by **{p['difference']:+.3f}** reward per copy per iteration,
 interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], against an interquartile spread across copies of
 {spread:.2f} at the best rate — {'a difference the run can resolve' if resolvable else 'a difference this run cannot resolve'}, and
 {in_spreads:.2f} of one interquartile range either way. A copy drawn at random from the PyTorch run scores above one
@@ -2730,7 +2730,7 @@ distributions are interchangeable.
 ![{title} precision](figures/learning_outcome_precision_{fw}.png)
 
 {a.comparison_table(c)}
-Pooled: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], probability
+Blocked by rate: **{p['difference']:+.3f}**, interval [{p['difference_lo']:+.3f}, {p['difference_hi']:+.3f}], probability
 {p['probability_a_above_b']:.3f} that a reduced-precision copy scores above an exact one. {'The run resolves this difference.' if resolvable else 'The run does not resolve this difference; what it can say is that any effect larger than about ' + f'{half:.3f}' + ' reward per copy per iteration would have shown.'}
 """)
 
@@ -2748,13 +2748,12 @@ a batched float32 matrix multiplication of the trainer's own shapes, differenced
 product in double precision.
 
 | configuration | declared setting | largest relative error against float64 |
-|---|---|---|
-""")
+|---|---|---|""")
     for tag in a.TAGS:
         c = cfg.get(tag)
         if c:
             pr = c["precision_probe"]
-            md.append(f"| {c['label']} | {pr['declared_setting']} | "
+            md.append(f"| {a.wrap_label(c['label'])} | {pr['declared_setting']} | "
                       f"{pr['relative_error_against_float64']:.2e} |")
     md.append("")
     return "\n".join(md)
