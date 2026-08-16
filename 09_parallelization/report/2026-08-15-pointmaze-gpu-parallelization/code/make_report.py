@@ -1799,14 +1799,14 @@ on its real shape at 4,096 copies:
     for label, frag in layers:
         r = probe_row(r"probe_update_ops_C4096", f"bmm alone, {frag}")
         if r:
-            md += (f"| multiply, {label} | {r['seconds']*1e6:.0f} us | {r['bytes']/1e9:.2f} GB | "
+            md += (f"| multiply, {label} | {r['seconds']*1e6:,.0f} us | {r['bytes']/1e9:.2f} GB | "
                    f"{r['gb_per_s']:,.0f} GB/s |\n")
     for label, frag in [("gradient limit and Adam step, compiled", "clip and Adam, compiled"),
                         ("gather one epoch's rows", "gather the cached target features"),
                         ("plain copy, the reference", "copy one gibibyte")]:
         r = probe_row(r"probe_update_ops_C4096", frag)
         if r:
-            md += (f"| {label} | {r['seconds']*1e6:.0f} us | {r['bytes']/1e9:.2f} GB | "
+            md += (f"| {label} | {r['seconds']*1e6:,.0f} us | {r['bytes']/1e9:.2f} GB | "
                    f"{r['gb_per_s']:,.0f} GB/s |\n")
     md += f"""
 Nothing in that list is far from the reference. The multiplications reach 72 to 96 percent of the
