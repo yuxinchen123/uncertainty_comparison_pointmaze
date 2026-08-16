@@ -59,7 +59,9 @@ the profiling-job exception to the usual "request the maximum walltime" rule.
 
 - New shared environment `/p/rlprojects/RND/.venvs/jax_gpu` (Python 3.11, JAX 0.10.2 with the
   CUDA 12 plugin). The project's existing `jax_bench` environment is a symlink into a private
-  home directory and reaches no graphics card; `exploration` has no JAX at all.
+  home directory and reaches no graphics card; `exploration` has no JAX at all. (`jax_bench` was
+  deleted on 2026-08-16 at the owner's request; the platform's canonical JAX environment is the one
+  registered in `/p/rlprojects/RND/.venvs/ENVS.md`, currently `/p/rlprojects/RND/.venvs/platform_jax`.)
 - The CUDA libraries had to be installed into the environment explicitly
   (`jax-cuda12-plugin[with-cuda]`). The first install resolved them as already satisfied from
   the user-site directory `~/.local`, which every job hides with `PYTHONNOUSERSITE=1`, so the

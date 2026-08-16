@@ -124,7 +124,7 @@ def throughput_table(classes, jobs, n_copies):
             f"{c['seconds_per_iteration']:.4f} | "
             f"{mark(c['total_steps_per_second'] / 1e6, [t / 1e6 for t in top_total], '{:.2f}')} | "
             f"{c['steps_per_second_per_copy']:,.0f} | "
-            f"{mark(c['hours_per_million_steps_per_copy'], top_hours, '{:.2f}')} | "
+            f"{mark(c['hours_per_million_steps_per_copy'], top_hours, '{:.3f}')} | "
             f"{c['peak_device_memory_mb'] / 1000:.1f} | "
             f"{c['relative_spread_middle_half'] * 100:.2f}% |")
     for r in unmeasured:
@@ -156,20 +156,40 @@ def cpu_effect_table(classes, jobs):
                      if c and c.get("status") == "measured"}
             if len(timed) < 2:
                 continue
-            fixed = [f"{timed[n]:.1f}" if n in timed else "—" for n in (8, 16, 32)]
+            # a count this node class cannot allocate reads "N/A"; one it can but has not yet
+            # reported reads "not yet" — the two mean different things and must not share a mark
+            fixed = [f"{timed[n]:.1f}" if n in timed
+                     else ("not yet" if n in counts else "N/A") for n in (8, 16, 32)]
             extra = [n for n in counts if n not in (8, 16, 32)]
-            extra_cell = (f"{extra[0]}, {timed[extra[0]]:.1f}"
-                          if extra and extra[0] in timed else "N/A")
+            extra_cell = ("N/A" if not extra else
+                          f"{extra[0]}, {timed[extra[0]]:.1f}" if extra[0] in timed
+                          else f"{extra[0]}, not yet")
             span = (max(timed.values()) - min(timed.values())) / min(timed.values())
             lines.append(f"| `{cls['name']}` | {cls['display_name']} | {n_copies} | "
                          + " | ".join(fixed) + f" | {extra_cell} | {span * 100:.1f}% |")
     return "\n".join(lines)
 
 
+def series_style(index):
+    """A colour, marker and dash pattern per card, so twenty-odd lines stay tellable apart.
+
+    Matplotlib's default cycle repeats after ten colours, which puts two different cards on the
+    same blue line and makes the legend useless. Twenty distinct colours crossed with four
+    markers and three dash patterns give every series its own appearance.
+    """
+    colours = plt.get_cmap("tab20").colors
+    markers = ("o", "s", "^", "D")
+    dashes = ("-", "--", ":")
+    return {"color": colours[index % len(colours)],
+            "marker": markers[(index // len(colours)) % len(markers)],
+            "linestyle": dashes[(index // len(colours)) % len(dashes)],
+            "markersize": 4.5, "linewidth": 1.4}
+
+
 def scaling_figure(classes, jobs):
     """Two panels: aggregate steps per second against copies, and the rate one copy gets."""
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.5))
-    for cls in classes:
+    fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+    for index, cls in enumerate(classes):
         xs, total, per_copy = [], [], []
         for n_copies in COPY_COUNTS:
             cell, _ = best_cpu_count(jobs, cls["name"], cpu_counts_for(cls), n_copies)
@@ -180,8 +200,8 @@ def scaling_figure(classes, jobs):
         if not xs:
             continue
         label = f"{cls['display_name']} ({cls['name']})"
-        axes[0].plot(xs, total, marker="o", label=label)
-        axes[1].plot(xs, per_copy, marker="o", label=label)
+        axes[0].plot(xs, total, label=label, **series_style(index))
+        axes[1].plot(xs, per_copy, label=label, **series_style(index))
     for ax, ylabel, title in (
             (axes[0], "million environment steps per second",
              "all copies together"),
@@ -195,11 +215,15 @@ def scaling_figure(classes, jobs):
         ax.set_ylabel(ylabel)
         ax.set_title(title)
         ax.grid(True, which="both", alpha=0.3)
-    axes[1].legend(fontsize=6.5, ncol=2, loc="lower left")
+    # the legend sits outside both panels: with this many cards it would otherwise cover the
+    # very curves a reader is trying to follow
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, fontsize=7.5, loc="center left",
+               bbox_to_anchor=(1.0, 0.5), frameon=False)
     fig.suptitle("JAX PPO+RND, single update per rollout, PointMaze Large — "
                  "throughput by graphics card")
     fig.tight_layout()
-    fig.savefig(PLOTS / "throughput_scaling.png", dpi=160)
+    fig.savefig(PLOTS / "throughput_scaling.png", dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -234,8 +258,8 @@ def card_ranking_figure(classes, jobs, n_copies):
 
 def memory_figure(classes, jobs):
     """Peak card memory against copies — what decides whether a card can hold a run at all."""
-    fig, ax = plt.subplots(figsize=(8, 5.5))
-    for cls in classes:
+    fig, ax = plt.subplots(figsize=(9, 6))
+    for index, cls in enumerate(classes):
         xs, mem = [], []
         for n_copies in COPY_COUNTS:
             cell, _ = best_cpu_count(jobs, cls["name"], cpu_counts_for(cls), n_copies)
@@ -243,8 +267,8 @@ def memory_figure(classes, jobs):
                 xs.append(n_copies)
                 mem.append(cell["peak_device_memory_mb"] / 1000)
         if xs:
-            ax.plot(xs, mem, marker="o", alpha=0.7,
-                    label=f"{cls['display_name']} ({cls['name']})")
+            ax.plot(xs, mem, label=f"{cls['display_name']} ({cls['name']})",
+                    **series_style(index))
     ax.set_xscale("log", base=2)
     ax.set_xticks(COPY_COUNTS)
     ax.set_xticklabels([str(c) for c in COPY_COUNTS])
@@ -252,9 +276,9 @@ def memory_figure(classes, jobs):
     ax.set_ylabel("peak card memory in use (GB)")
     ax.set_title("Memory the trainer actually touches")
     ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=6.5, ncol=2)
+    ax.legend(fontsize=7.5, loc="center left", bbox_to_anchor=(1.02, 0.5), frameon=False)
     fig.tight_layout()
-    fig.savefig(PLOTS / "peak_memory.png", dpi=160)
+    fig.savefig(PLOTS / "peak_memory.png", dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 

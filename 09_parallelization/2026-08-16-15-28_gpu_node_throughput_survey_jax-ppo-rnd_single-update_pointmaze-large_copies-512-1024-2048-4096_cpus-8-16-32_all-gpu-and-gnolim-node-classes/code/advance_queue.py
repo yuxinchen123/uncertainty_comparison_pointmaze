@@ -31,17 +31,32 @@ CAPS = {"gpu": {"gpus": 40, "cpus": 400}, "gnolim": {"gpus": 20, "cpus": 80}}
 
 
 def own_job_states():
-    """State and name of every job this survey has ever submitted, from its own id file only."""
+    """State and name of every job this survey has ever submitted, from its own id file only.
+
+    Both queue readers are used, because they answer at different speeds. `sacct` writes to an
+    accounting database that lags a submission by seconds, so a job submitted moments ago can be
+    absent from it entirely; `squeue` shows it at once but drops it as soon as it ends. Reading
+    sacct first and letting squeue overwrite gives a picture that is complete for finished jobs
+    and immediate for live ones. Without this, two ticks in quick succession submit the same
+    cell twice, and the two jobs land on the same machine and spoil each other's timing — which
+    happened once on jaguar03 and cost that measurement.
+    """
     ids = [line.split()[0] for line in ID_FILE.read_text().splitlines() if line.strip()]
     if not ids:
         return {}
-    out = subprocess.run(
+    states = {}
+    accounted = subprocess.run(
         ["sacct", "-j", ",".join(ids), "-X", "--noheader", "--parsable2",
          "--format=JobID,JobName,State"], capture_output=True, text=True).stdout
-    states = {}
-    for line in out.splitlines():
+    for line in accounted.splitlines():
         job_id, name, state = line.split("|")[:3]
         states[job_id] = {"name": name, "state": state.split()[0]}
+    queued = subprocess.run(
+        ["squeue", "-j", ",".join(ids), "--noheader", "-o", "%i|%j|%T"],
+        capture_output=True, text=True).stdout
+    for line in queued.splitlines():
+        job_id, name, state = line.strip().split("|")[:3]
+        states[job_id] = {"name": name, "state": state}
     return states
 
 

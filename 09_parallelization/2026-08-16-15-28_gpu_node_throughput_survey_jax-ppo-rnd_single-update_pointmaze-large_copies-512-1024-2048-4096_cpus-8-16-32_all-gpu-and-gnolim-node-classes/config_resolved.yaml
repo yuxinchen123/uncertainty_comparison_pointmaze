@@ -1,0 +1,51 @@
+# The trainer and environment configuration every cell ran with. The ONLY field that
+# differs between cells is n_copies (512, 1024, 2048, 4096); the processor count is a
+# Slurm allocation, not a trainer knob.
+
+trainer:
+  n_copies: 8
+  n_envs: 4
+  num_steps: 128
+  update_style: "full_batch"
+  flat_params: false
+  update_epochs: 4
+  num_minibatches: 4
+  learning_rate: 0.0003
+  adam_eps: 1e-05
+  anneal_lr: true
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  gae_lambda: 0.95
+  clip_coef: 0.2
+  ent_coef: 0.0
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  int_coef: 1.0
+  ext_coef: 2.0
+  rnd_feature_dim: 128
+  rnd_hidden: 256
+  obs_norm_init_iters: 10
+  bootstrap_on_truncation: true
+  base_seed: 0
+  hoist_rollout: true
+  scan_unroll: 0
+  update_unroll: 2
+  batch_stats_f32: false
+  learning_rates: []
+  copies_per_rate: []
+  sweep_seed_mode: "paired"
+  track_coverage: false
+
+environment:
+  map_name: "large"
+  start_cell: [7, 1]
+  goal_cell: [1, 10]
+  position_noise: 0.0
+  max_episode_steps: 400
+  continuing_task: true
+  reward_shift: 0.0
+  goal_radius: 0.45
+
+swept:
+  n_copies: [512, 1024, 2048, 4096]
+  slurm_cpus_per_task: [8, 16, 32]  # or the node class's own maximum where 32 is unallocatable
