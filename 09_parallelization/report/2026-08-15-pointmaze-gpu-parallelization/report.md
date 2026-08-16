@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:02 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:03 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1000,6 +1000,15 @@ instead of calling the library's. PyTorch can be asked to do this, and it is the
 experiment; it changes the order in which the multiplication accumulates, so it needs its own
 equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
 have.
+
+The peak memory in the tables above points the same way. At 4,096 copies with sixteen updates per
+batch the PyTorch trainer holds 13.8 gigabytes and the JAX trainer 9.0. The difference is two
+deliberate choices on the PyTorch side that trade memory for programs: it stores the frozen
+target network's features for the whole batch rather than recomputing them in each update step,
+and it keeps a second copy of the batch in shuffled order so that each update step is a
+contiguous slice rather than its own gather. Both were the right trade at 128 copies. At these
+sizes they are close to neutral — the stored features still win on the byte count, as the
+arithmetic in the next subsection shows — but they are no longer free.
 
 One asymmetry in the comparison, stated so it is not mistaken for part of the gap: the PyTorch
 trainer maintains a per-copy map of which maze cells each copy has visited on every iteration,
