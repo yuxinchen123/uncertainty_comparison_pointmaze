@@ -36,7 +36,7 @@ the earlier sections' conclusions do not all carry over.
 | [Sweeping learning rates across copy groups](#sweeping-learning-rates-across-copy-groups) | 2026-08-15 10:39 PT | 2026-08-15 17:02 PT |
 | [The three rounds](#the-three-rounds) | 2026-08-15 10:49 PT | 2026-08-15 10:49 PT |
 | [What made it fast (and what did not)](#what-made-it-fast-and-what-did-not) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
-| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 00:22 PT |
+| [Reproduction](#reproduction) | 2026-08-15 00:22 PT | 2026-08-15 17:46 PT |
 | [How far from the hardware ceiling](#how-far-from-the-hardware-ceiling) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [The same work on ordinary processor cores](#the-same-work-on-ordinary-processor-cores) | 2026-08-15 15:46 PT | 2026-08-15 17:02 PT |
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
@@ -586,6 +586,14 @@ the capturable-Adam coupling, finer env-count ladders near the knee).
    each `tests/`.
 3. Benchmarks: `benchmarks/bench_env_step*.py`, `bench_train*.py`,
    `profile_breakdown.py`; every JSON in `benchmarks/results/` carries the git hash.
+   For the last section: `profile_kernels.py` (device time per individual program),
+   `probe_update_ops.py` (each operation of the update stage against the bandwidth a plain copy
+   reaches), `matmul_floor_scaled.py` (every matrix multiplication timed on its own, at any copy
+   count), `count_traffic.py` (arithmetic and bytes per iteration, no device needed),
+   `compare_revisions.py` (two revisions run from one seed, worst parameter difference), and
+   `run_round5_remote.sh` (the batch, run from the machine itself). `bench_train.py`,
+   `profile_phases.py` and `profile_kernels.py` all take `--rev` so a past revision can be
+   measured by the same harness in the same session.
 4. Final campaign: `train_runs/run_final.py` (resumable, one process per copy count);
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.

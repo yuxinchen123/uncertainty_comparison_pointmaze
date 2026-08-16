@@ -1978,6 +1978,14 @@ def sec_repro():
    each `tests/`.
 3. Benchmarks: `benchmarks/bench_env_step*.py`, `bench_train*.py`,
    `profile_breakdown.py`; every JSON in `benchmarks/results/` carries the git hash.
+   For the last section: `profile_kernels.py` (device time per individual program),
+   `probe_update_ops.py` (each operation of the update stage against the bandwidth a plain copy
+   reaches), `matmul_floor_scaled.py` (every matrix multiplication timed on its own, at any copy
+   count), `count_traffic.py` (arithmetic and bytes per iteration, no device needed),
+   `compare_revisions.py` (two revisions run from one seed, worst parameter difference), and
+   `run_round5_remote.sh` (the batch, run from the machine itself). `bench_train.py`,
+   `profile_phases.py` and `profile_kernels.py` all take `--rev` so a past revision can be
+   measured by the same harness in the same session.
 4. Final campaign: `train_runs/run_final.py` (resumable, one process per copy count);
    run folder `train_runs/2026-08-15-02-56_final_...` with `experiment_background.md`.
 5. This report: `report/.../code/make_report.py` regenerates `report.md` and all figures.
