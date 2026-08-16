@@ -96,9 +96,10 @@ def sweep_config(learning_rates, copies_per_rate, style="epoch_minibatch", **ove
 
 
 def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOConfig":
-    """The measured-best PyTorch configuration (round 2). One definition, so the benchmarks,
-    the training driver and the tests cannot drift apart:
-    whole-iteration CUDA-graph capture, compiled post-rollout body, TF32, fused capturable Adam.
+    """The measured-best PyTorch configuration. One definition, so the benchmarks, the training
+    driver and the tests cannot drift apart: whole-iteration CUDA-graph capture, compiled
+    post-rollout body, TF32 matrix units, and the gradient limit and Adam step compiled as two
+    streaming passes over the flat parameter buffer.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
                 fused_adam=True, tf32=True, compile_post=True, compile_opt=True)
