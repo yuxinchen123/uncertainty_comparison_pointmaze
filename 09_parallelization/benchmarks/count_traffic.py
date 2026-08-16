@@ -39,8 +39,15 @@ def gemm(m, k, n):
     return 2 * m * k * n
 
 
-def counts(style):
-    """(arithmetic, bytes moved) per COPY for one iteration in the given update style."""
+def counts(style, gradient_buffer=False):
+    """(arithmetic, bytes moved) per COPY for one iteration in the given update style.
+
+    gradient_buffer=True counts the form that copies every gradient into one [C, P]
+    buffer before the optimizer reads it (round five's form): the gradient is written
+    by the backward pass, then read and written again by the copy. False counts the
+    form that reads the gradients where they were written, which is what the trainer
+    ships at these copy counts.
+    """
     # ---- rollout: T sequential steps of the actor on N rows, plus the environment ----
     # arithmetic: three actor layers per step
     roll_f = T * (gemm(N, 4, 64) + gemm(N, 64, 64) + gemm(N, 64, 2))
@@ -77,7 +84,9 @@ def counts(style):
     act_floats = rows * (128 + 64 + 64 + 2 + 2 + 256 + 128 + 128)
     per_step = F32 * (3 * act_floats                        # forward write, backward read+write
                       + 2 * TRAINED_P                       # weights read forward and backward
-                      + 2 * TRAINED_P                       # gradient written, then copied in
+                      # the gradient: written by the backward pass, and read and
+                      # written again if it is copied into the flat buffer
+                      + (3 if gradient_buffer else 1) * TRAINED_P
                       + rows * (4 + 2 + 1 + 1 + 1 + 1 + 1 + 4 + 128))   # the batch fields read
     # the optimiser: one reduction pass over the gradient, then one fused pass that reads the
     # gradient, both moments and the parameters and writes both moments and the parameters.
@@ -94,12 +103,14 @@ def counts(style):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-copies", type=int, nargs="+", default=[1024, 2048, 4096])
+    ap.add_argument("--gradient-buffer", action="store_true",
+                    help="count the form that copies every gradient into one buffer")
     args = ap.parse_args()
     print(f"trainable parameters per copy: {TRAINED_P:,}  "
           f"(actor {ACTOR_P:,}, critic {CRITIC_P:,}, predictor {PRED_P:,}); "
           f"frozen target {TARGET_P:,}")
     for style in ("full_batch", "epoch_minibatch"):
-        c = counts(style)
+        c = counts(style, gradient_buffer=args.gradient_buffer)
         print(f"\n=== {style} ===")
         for C in args.n_copies:
             tf = sum(v[0] for v in c.values()) * C

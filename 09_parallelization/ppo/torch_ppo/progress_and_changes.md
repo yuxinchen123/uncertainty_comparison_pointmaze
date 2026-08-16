@@ -399,3 +399,90 @@ the bytes are counted.
    the optimiser makes, about 5 percent of a minibatch step. It changes what the trainer computes,
    so it belongs in its own round with its own equivalence gate rather than inside a round whose
    rule is that the arithmetic must not change. NOT taken here.
+
+## Round 6 — the JAX side's fifth round, read from here; and 1,024 to 4,096 again
+
+The JAX trainer's own fifth round finished after this side's fifth round was written, so its
+findings had never been available here. This round read them, took what transferred, and re-opened
+the copy counts the trainer is used at with the measurement method that round arrived at.
+
+### The premise, checked before anything was changed
+
+The brief for this round carried a head-to-head table whose JAX figures came from BEFORE its fifth
+round. Both sides were therefore re-measured in one session, the PyTorch side pinned to the
+revision this round starts from (`7287209`) and the JAX side taken from the merged trainer, each
+waiting for every iteration (`--timing sync`):
+
+| update convention | copies | PyTorch | JAX | JAX ahead by |
+|---|---|---|---|---|
+| one update per batch | 1,024 | 18.07 ms | 14.21 ms | 1.27x |
+| one update per batch | 2,048 | 32.57 ms | 23.27 ms | 1.40x |
+| one update per batch | 4,096 | 63.33 ms | 43.68 ms | 1.45x |
+| sixteen updates per batch | 1,024 | 56.72 ms | 47.02 ms | 1.21x |
+| sixteen updates per batch | 2,048 | 107.09 ms | 86.02 ms | 1.24x |
+| sixteen updates per batch | 4,096 | 205.51 ms | 167.76 ms | 1.23x |
+
+Two things follow. The PyTorch figures reproduce round five's to within half a percent, so that
+round's state is intact. And **the JAX fifth round moved nothing at these sizes**: its trainer is
+within a percent of the figures the stale table carried (14.24 / 23.20 / 43.76 and 46.94 / 84.10 /
+164.10). Its two kept changes are unroll factors on its two loops, and unrolling buys fewer,
+longer-running programs — worth about ten percent at 128 copies, where the iteration's cost is the
+number of programs it issues, and nothing at 1,024 and above, where the cost is bytes moved. The
+regime split round five found on this side cuts the same way on the other one.
+
+### What transferred
+
+1. **The measurement method.** The JAX round found that its verdict rule — two medians against the
+   largest spread a single version shows between rounds — called a real three-percent effect
+   "noise", because both versions drift together within a round. They are timed in the same round
+   on the same machine, so the difference belongs round by round; the change it was hiding won 11
+   of 11 rounds at every size. `benchmarks/bench_torch_change.py` is that harness for this side:
+   both configurations built in ONE process, timed round-robin with the order reversed on
+   alternate rounds, verdict by the paired count, with the old spread reported beside it.
+2. **The direction.** Both JAX gains came from making the compiler emit fewer, longer-running
+   programs. At these sizes that means fewer round trips through memory for the same work, which
+   is the lever round five was already pulling.
+
+### What did not transfer, and why that is a result
+
+The JAX round's two kept changes are unroll factors. **The PyTorch trainer has no loop to unroll.**
+Its sixteen update steps are already emitted one after another into a single recorded sequence of
+device programs — the python loop is gone at run time, there is no scan, and no compiler is
+choosing how many loop bodies to emit. Its rejected change, the flat parameter buffer, this side
+already has, and round five reached a compatible verdict from the other direction: round four's
+flat buffer was a regression at 1,024 to 4,096 copies until round five aligned its windows.
+
+### A correction to the record
+
+The trainer holds **twenty-one** trainable tensors per copy, not the nineteen every ledger entry,
+code comment and report sentence since round four has said (actor 7, critic 8, predictor 6). The
+JAX ledger had it right. Every occurrence is corrected, and the alignment test now counts the
+addresses it checked so it cannot pass by iterating an empty list.
+
+### A measurement that measured nothing, caught by its own accuracy check
+
+The first version of `benchmarks/probe_epilogue_fusion.py` built ONE trainer and swapped four
+compiled versions of its loss onto it, each compiled inside a context that set the compiler's
+options. All four came out **bitwise identical** — loss and every gradient agreeing to
+0.000e+00 — and within 0.1 percent of each other in time. That is not four forms agreeing; it is
+one form measured four times. The compiler caches its work against the FUNCTION being compiled
+and against the backend the wrapper carries, and a setting applied through a surrounding context
+is part of neither, so the second, third and fourth compilations were handed the first one's
+kernels and the settings never applied.
+
+The probe was rebuilt to give each arm **its own trainer** and to pass the settings to the
+compiler as options rather than around it, which makes the arms compile separately for two
+independent reasons. The accuracy line the probe already printed is what caught it, and it now
+says so explicitly when two arms agree to zero. This is the fourth instance in this project of a
+number that was measuring nothing (an empty captured graph, a module missing from the module
+table, a profiling variant whose dead code was deleted, and now a compiler cache), and the
+pattern is the same every time: the check that catches it is one that asserts the thing under
+test actually happened.
+
+### The paired comparison against the revision this round starts from is neutral
+
+The first change of the round is a refactor in its OFF position — the gradient path becomes a
+knob, and the old behaviour is one setting of it. Before measuring the new setting, the refactor
+itself was measured: at 1,024 copies with sixteen updates per batch, the round-five revision took
+57.02 ms and the refactored working tree 56.85, a difference of 0.16 ms against a 0.30 ms noise
+floor. Whatever the knob is worth, it is not being credited with the refactor.

@@ -177,7 +177,8 @@ def main():
         print(f"C={c:>5d} {args.style} {args.timing}: off {row['median_sec']['off']*1e3:8.2f} ms  "
               f"on {row['median_sec']['on']*1e3:8.2f} ms  "
               f"{row['change_percent']:+6.2f}%  floor {row['noise_floor_sec']*1e3:.2f} ms  "
-              f"{row['rounds_favouring_on']}/{row['rounds']} rounds favour on -> {row['verdict']}")
+              f"{row['rounds_favouring_on']}/{row['rounds']} rounds favour on -> {row['verdict']}",
+              flush=True)
 
     RESULTS.mkdir(exist_ok=True)
     stamp = time.strftime("%Y-%m-%d-%H-%M-%S")
