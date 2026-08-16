@@ -354,6 +354,29 @@ relative rounding", and 5e-4 is inside it. The change makes the trainer MORE con
 own setting rather than less, and it is not a silent precision loss: the same setting already
 governs every other multiplication in the program.
 
+### Tried and NOT adopted: letting the compiler generate the multiplications
+
+The report names this as the obvious next step, so it was measured rather than left as a guess
+(`benchmarks/probe_autotune.py`). One trainer is built, the update stage is timed with the loss
+compiled as it ships, the loss is rebuilt with the compiler's own multiplication templates
+enabled — which lets it fold the bias and the activation into the multiplication instead of
+leaving them as a following pass — and the stage is timed again, alternating between the two.
+
+| run | shipped form | compiler-generated | difference | spread within a form |
+|---|---|---|---|---|
+| first | 46.77 ms | 44.80 ms | 4.4% faster | 0.58 ms |
+| second, after correcting the probe's difference measure | 45.80 ms | 44.48 ms | 3.0% faster | 0.79 ms |
+
+So: real, small — 3 to 4 percent of the update stage, which is 2 to 3 percent of an iteration —
+and the two runs disagree by more than either spread, which is itself a statement about how well
+this harness resolves an effect of that size. Against that, the compiler's chosen kernels set
+`ALLOW_TF32=False`, so the trainer would silently stop using the reduced-precision matrix units
+for the layers it generates; the loss it computes differs by 2.6e-6 relative and the worst
+gradient by 6.5e-4 absolute against a largest gradient of 8.7e-1; and compilation takes
+substantially longer because every shape is benchmarked. NOT adopted in this round, whose rule
+was that the arithmetic must not change. It is the right first candidate for a round that allows
+it, and it now has a number attached rather than an expectation.
+
 ### Ideas costed and NOT taken, with the arithmetic that rejected them
 
 Recorded because the counting is the result, and because two of them look obviously right until

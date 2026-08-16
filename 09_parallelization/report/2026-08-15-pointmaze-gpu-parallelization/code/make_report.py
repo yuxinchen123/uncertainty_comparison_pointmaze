@@ -1708,10 +1708,21 @@ what the iteration costs, so the same difference is worth about a factor of two.
 
 Closing it would mean folding the bias and the activation into the multiplication itself rather
 than leaving them as a following pass — that is, having the compiler generate the multiplication
-instead of calling the library's. PyTorch can be asked to do this, and it is the obvious next
-experiment; it changes the order in which the multiplication accumulates, so it needs its own
-equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
-have.
+instead of calling the library's. PyTorch can be asked to do this, so it was measured rather than
+guessed at: the update stage at 1,024 copies takes 45.8 milliseconds with the library's
+multiplication and 44.5 with the compiler's, and 46.8 against 44.8 in a second run, so 3 to 4
+percent of that stage and 2 to 3 percent of an iteration — real, but small, and the two runs
+disagree by more than the spread within either of them. It also has a cost: the kernels the
+compiler selects switch the reduced-precision matrix units off, so the loss it computes differs
+by 2.6e-6 relative and the worst gradient by 6.5e-4 against a largest gradient of 0.87, and
+compilation takes substantially longer. It was therefore not adopted in this round, whose rule
+was that the arithmetic must not change, and it is the first candidate for a round that allows
+it.
+
+What the measurement says more broadly is that the remaining distance is not one missing
+optimisation. It is distributed across every program the iteration issues, and closing it would
+mean giving up the arrangement of separate library calls in favour of generating the whole
+iteration — which is what the JAX trainer already is.
 
 The peak memory in the tables above points the same way. At 4,096 copies with sixteen updates per
 batch the PyTorch trainer holds 13.8 gigabytes and the JAX trainer 9.0. The difference is two

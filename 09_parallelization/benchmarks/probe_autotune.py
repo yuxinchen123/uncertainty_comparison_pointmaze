@@ -79,8 +79,12 @@ def main():
     g_generated = [g.detach().clone() for g in torch.autograd.grad(loss_generated, t.trainable)]
     rel_loss = (abs(float(loss_shipped.detach()) - float(loss_generated.detach()))
                 / max(abs(float(loss_shipped.detach())), 1e-12))
-    worst_rel = max((a - b).abs().max().item() / max(a.abs().max().item(), 1e-12)
-                    for a, b in zip(g_shipped, g_generated))
+    # scaled by the largest gradient anywhere, not by each tensor's own largest: a tensor whose
+    # gradient is essentially zero would otherwise divide a tiny difference by a tinier number
+    # and report a meaningless ratio
+    biggest = max(a.abs().max().item() for a in g_shipped)
+    worst_abs = max((a - b).abs().max().item() for a, b in zip(g_shipped, g_generated))
+    worst_rel = worst_abs / max(biggest, 1e-12)
 
     # alternate the two forms so a drift in the machine's state shows up as disagreement
     times = {"shipped": [], "generated": []}
@@ -100,7 +104,8 @@ def main():
     print(f"  difference {(med['shipped']-med['generated'])/1000:+.2f} ms "
           f"({(med['shipped']/med['generated']-1)*100:+.1f} percent), "
           f"spread within a form {spread/1000:.2f} ms")
-    print(f"  loss differs by {rel_loss:.3e} relative; worst gradient {worst_rel:.3e} relative")
+    print(f"  loss differs by {rel_loss:.3e} relative; worst gradient {worst_abs:.3e} "
+          f"absolute, {worst_rel:.3e} against the largest gradient {biggest:.3e}")
 
     RESULTS.mkdir(exist_ok=True)
     p = RESULTS / f"{time.strftime('%Y-%m-%d-%H-%M-%S')}_probe_autotune_C{C}{args.tag}.json"
@@ -111,7 +116,9 @@ def main():
         "shipped_us": med["shipped"], "generated_us": med["generated"],
         "spread_us": spread, "all_us": times,
         "relative_loss_difference": rel_loss,
-        "worst_relative_gradient_difference": worst_rel}, indent=1))
+        "worst_relative_gradient_difference": worst_rel,
+        "worst_absolute_gradient_difference": worst_abs,
+        "largest_gradient": biggest}, indent=1))
     print(f"wrote {p}")
 
 
