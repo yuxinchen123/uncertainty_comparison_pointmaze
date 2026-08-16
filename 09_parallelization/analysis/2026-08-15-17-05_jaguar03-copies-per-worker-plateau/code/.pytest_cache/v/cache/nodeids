@@ -1,0 +1,16 @@
+[
+  "test_bench_copies_per_worker.py::test_aggregate_reports_the_opening_three_iterations_separately",
+  "test_bench_copies_per_worker.py::test_common_window_counts_only_iterations_inside_the_shared_window",
+  "test_bench_copies_per_worker.py::test_common_window_is_lower_than_the_sum_of_worker_rates_when_workers_are_staggered",
+  "test_bench_copies_per_worker.py::test_iteration_times_are_the_gaps_between_the_stamps",
+  "test_bench_copies_per_worker.py::test_iters_for_hits_the_upper_bound_on_a_fast_point",
+  "test_bench_copies_per_worker.py::test_iters_for_never_goes_below_the_floor",
+  "test_bench_copies_per_worker.py::test_iters_for_respects_the_ceiling_on_a_very_slow_point",
+  "test_bench_copies_per_worker.py::test_iters_for_times_about_the_target_on_a_slow_point",
+  "test_bench_copies_per_worker.py::test_memory_model_fits_a_line_through_the_end_points",
+  "test_bench_copies_per_worker.py::test_memory_model_survives_a_single_repeated_copy_count",
+  "test_bench_copies_per_worker.py::test_predicted_node_gb_extrapolates_from_the_two_largest_points",
+  "test_bench_copies_per_worker.py::test_predicted_node_gb_with_one_measured_copy_count_returns_that_reading",
+  "test_bench_copies_per_worker.py::test_predicted_point_gb_multiplies_by_the_worker_count",
+  "test_bench_copies_per_worker.py::test_warmup_runs_about_twenty_seconds"
+]

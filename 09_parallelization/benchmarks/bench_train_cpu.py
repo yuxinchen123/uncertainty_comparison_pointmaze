@@ -121,6 +121,12 @@ def main():
         "host": platform.node(), "logical_processors": os.cpu_count(), "mode": args.mode,
         "style": args.style, "compiled": args.compile, "threads": args.threads,
         "copies_per_proc": args.copies_per_proc, "steps_per_copy_per_iteration": steps_per_copy,
+        # the methodology on the record: how many iterations were timed, how long the warm-up was,
+        # and how the machine's rate was arrived at. Without these a five-iteration file and a
+        # hundred-and-fifty-iteration file are indistinguishable from their contents, and the two
+        # differ by tens of percent at large worker counts.
+        "iters": args.iters, "warmup": args.warmup,
+        "aggregate": "sum of each process's own rate, no common window",
         "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                               capture_output=True, text=True).stdout.strip(),
         "rows": rows}, indent=1))
