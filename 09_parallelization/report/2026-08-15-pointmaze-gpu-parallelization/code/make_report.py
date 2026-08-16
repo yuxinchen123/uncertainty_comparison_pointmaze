@@ -2617,10 +2617,6 @@ def main():
         print("PENDING:", p)
 
 
-if __name__ == "__main__":
-    main()
-
-
 def learning_outcome_module():
     """The learning-outcome campaign's own analysis module, imported rather than copied.
 
@@ -2762,3 +2758,7 @@ product in double precision.
                       f"{pr['relative_error_against_float64']:.2e} |")
     md.append("")
     return "\n".join(md)
+
+
+if __name__ == "__main__":
+    main()
