@@ -2183,7 +2183,7 @@ def sec_large_scale_round6():
     if not grad_B:
         return pending("the round-six subsection", "the round-six paired comparisons")
 
-    md = """### Round six: what transferred from the other framework, and two more passes removed
+    md = """### Round six: what transferred from the other framework, and where the bytes went next
 
 The JAX trainer's fifth round finished after this document's round-five section was written, so
 its findings had never been read from the PyTorch side. This subsection reports what transferred,
@@ -2379,12 +2379,25 @@ with the size rule replaced by the configuration's own answer.
             md += (f"| {label} | {r['median_us']/1000:.2f} ms | "
                    f"{r['change_percent_against_library']:+.1f} percent | "
                    f"{r['rounds_faster_than_library']} of {r['rounds']} | {diff} |\n")
-        md += ("\nThe generated kernels are not close. The selection log has the library's "
-               "multiplication at 0.071 milliseconds against the best generated candidate's "
-               "0.078 on the first shape it tries, and the backward pass's transposed shapes are "
-               "worse; the passes an epilogue would remove cannot pay for that. Switching the "
-               "matrix units back on changes nothing, so round five's reason for setting this "
-               "aside was a real observation about a form that was not going to pay anyway.\n\n"
+        md += ("\nRead the four rows together. Offering both backends reproduces round five's "
+               "result — 2.7 percent faster on the update stage, 7 of 7 rounds, at the cost of "
+               "moving the loss 4.7e-06 relative — but that arm fuses no epilogue, so what it "
+               "buys is a better kernel here and there, not the pass-removal this round was "
+               "testing. Removing the library backend is what forces the fusion, and that form "
+               "is 45.6 percent SLOWER. The selection log says why: the library's multiplication "
+               "runs the first shape it tries in 0.071 milliseconds against the best generated "
+               "candidate's 0.078, and the backward pass's transposed shapes are worse. The "
+               "passes an epilogue would remove cannot pay for kernels that much slower, and "
+               "switching the matrix units back on does not move it. **The hypothesis this round "
+               "was built on — that PyTorch could be made to fold its element-wise work into its "
+               "multiplications the way the JAX compiler does — is answered in the negative, "
+               "with a number.**\n\n"
+               "*The last row's figures are identical to the row above it to five digits, which "
+               "is the signature of the compiler handing it that row's stored kernels: its "
+               "settings differ only by a patch to the size rule, which is not part of the key "
+               "that code is stored under. The probe now disables the store for that arm. The "
+               "verdict does not depend on it — the form it modifies is 45 percent slower "
+               "whatever precision its multiplications use.*\n\n"
                "**A note on how this was measured, because the first attempt measured nothing.** "
                "The first version of the probe built ONE trainer and swapped four compiled "
                "versions of its loss onto it, each compiled inside a context that set the "

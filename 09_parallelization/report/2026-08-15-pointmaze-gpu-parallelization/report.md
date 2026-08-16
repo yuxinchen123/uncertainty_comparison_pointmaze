@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:54 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 23:00 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1234,7 +1234,7 @@ Recording them is the point: two of them look obviously right until the bytes ar
    computes, so it belongs in a round whose rule permits that, with its own equivalence gate,
    rather than in this one.
 
-### Round six: what transferred from the other framework, and two more passes removed
+### Round six: what transferred from the other framework, and where the bytes went next
 
 The JAX trainer's fifth round finished after this document's round-five section was written, so
 its findings had never been read from the PyTorch side. This subsection reports what transferred,
@@ -1388,7 +1388,9 @@ with the size rule replaced by the configuration's own answer.
 | the compiler's, library backend removed | 221.49 ms | +45.6 percent | 0 of 7 | 9.1e-06 relative |
 | the same, with the matrix units allowed | 221.47 ms | +45.6 percent | 0 of 7 | 9.1e-06 relative |
 
-The generated kernels are not close. The selection log has the library's multiplication at 0.071 milliseconds against the best generated candidate's 0.078 on the first shape it tries, and the backward pass's transposed shapes are worse; the passes an epilogue would remove cannot pay for that. Switching the matrix units back on changes nothing, so round five's reason for setting this aside was a real observation about a form that was not going to pay anyway.
+Read the four rows together. Offering both backends reproduces round five's result — 2.7 percent faster on the update stage, 7 of 7 rounds, at the cost of moving the loss 4.7e-06 relative — but that arm fuses no epilogue, so what it buys is a better kernel here and there, not the pass-removal this round was testing. Removing the library backend is what forces the fusion, and that form is 45.6 percent SLOWER. The selection log says why: the library's multiplication runs the first shape it tries in 0.071 milliseconds against the best generated candidate's 0.078, and the backward pass's transposed shapes are worse. The passes an epilogue would remove cannot pay for kernels that much slower, and switching the matrix units back on does not move it. **The hypothesis this round was built on — that PyTorch could be made to fold its element-wise work into its multiplications the way the JAX compiler does — is answered in the negative, with a number.**
+
+*The last row's figures are identical to the row above it to five digits, which is the signature of the compiler handing it that row's stored kernels: its settings differ only by a patch to the size rule, which is not part of the key that code is stored under. The probe now disables the store for that arm. The verdict does not depend on it — the form it modifies is 45 percent slower whatever precision its multiplications use.*
 
 **A note on how this was measured, because the first attempt measured nothing.** The first version of the probe built ONE trainer and swapped four compiled versions of its loss onto it, each compiled inside a context that set the compiler's options. All four came out bitwise identical and within 0.1 percent of each other in time — one form measured four times, not four forms agreeing. The compiler caches its work against the function being compiled and against the backend the wrapper carries, and a setting applied through a surrounding context is part of neither. The probe now gives each arm its own trainer and passes the settings as options rather than around them, and it says so out loud when two arms agree to zero. The accuracy line it already printed is what caught it.
 
