@@ -29,6 +29,9 @@ def bench(n_copies, style, iters, warmup, rollout_mode="eager", fused_adam=False
     from ab_compare import load_module
     mod = load_module(rev)
     PPOConfig, PPORND, production_config = mod.PPOConfig, mod.PPORND, mod.production_config
+    # the peak-memory reading is a process-wide high-water mark, so without this reset a run
+    # that walks several copy counts would report the largest one's peak for every later row
+    torch.cuda.reset_peak_memory_stats()
     # start from the ONE definition of the shipped configuration, then apply this run's
     # overrides; building the config by hand here is how a benchmark silently stops measuring
     # what actually ships (it happened once: compile_post was left off)
