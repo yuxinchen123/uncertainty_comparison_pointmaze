@@ -29,9 +29,9 @@ run () {  # run <logname> <working dir> <one command string>
   echo "=== $(date -Is) END   $name rc=$?" >> "$LOGS/driver.log"
 }
 
-run g1_tests "$T" "$PYT test_flat_optimizer_gpu.py; echo '--- capture ---'; $PYT test_capture_gpu.py; echo '--- sweep ---'; $PYT test_sweep.py; echo '--- hoist ---'; $PYT test_hoist_equivalence_gpu.py; echo '--- compile post ---'; $PYT test_compile_post_gpu.py"
-
 run g4_curves "$B" "$PYT bench_train.py --style full_batch --n-copies 1024 2048 4096 8192 --iters 20 --warmup 5 $CAP --tag _after_r5_styleA_large; $PYT bench_train.py --style epoch_minibatch --n-copies 1024 2048 4096 8192 --iters 20 --warmup 5 $CAP --tag _after_r5_styleB_large"
+
+run g1_tests "$T" "$PYT test_flat_optimizer_gpu.py; echo '--- capture ---'; $PYT test_capture_gpu.py; echo '--- sweep ---'; $PYT test_sweep.py; echo '--- hoist ---'; $PYT test_hoist_equivalence_gpu.py; echo '--- compile post ---'; $PYT test_compile_post_gpu.py"
 
 run g2_ab_each "$B" "$PYT ab_compare.py --name round5-align-C1024-styleB --iters 40 --warmup 8 --a '{\"__rev__\":\"$R0\",\"n_copies\":1024}' --b '{\"__rev__\":\"$R1\",\"n_copies\":1024}'; $PYT ab_compare.py --name round5-bias-C1024-styleB --iters 40 --warmup 8 --a '{\"__rev__\":\"$R1\",\"n_copies\":1024}' --b '{\"__rev__\":\"$R2\",\"n_copies\":1024}'; $PYT ab_compare.py --name round5-gradient-C1024-styleB --iters 40 --warmup 8 --a '{\"__rev__\":\"$R2\",\"n_copies\":1024}' --b '{\"__rev__\":\"$R3\",\"n_copies\":1024}'"
 
