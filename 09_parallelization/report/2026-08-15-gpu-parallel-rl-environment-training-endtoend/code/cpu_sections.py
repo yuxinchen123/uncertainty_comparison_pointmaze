@@ -394,16 +394,20 @@ def thread_table(host):
     before: rows = [{copies:1,threads:8,...}, {copies:1,threads:112,...}, {copies:2,threads:8,...}]
     after:  copies 1 / 8 threads, copies 1 / 112 threads, copies 2 / 8 threads, ...
     """
-    rows = all_rows(r"trainbench_cpu_threads", host=host, style="epoch_minibatch")
+    rows = cpu_train(host, "threads", "epoch_minibatch")
     if not rows:
         return ""
+    any_burst = any(not r.get("_sustained") for r in rows)
     md = ("| copies | threads | seconds per iteration | million steps per second | "
-          "thousand steps per second per copy | hours per million steps per copy |\n"
-          "|---|---|---|---|---|---|\n")
+          "thousand steps per second per copy | hours per million steps per copy |"
+          + (" timing |\n" if any_burst else "\n")
+          + ("|---|---|---|---|---|---|---|\n" if any_burst else "|---|---|---|---|---|---|\n"))
     for r in sorted(rows, key=lambda r: (r["total_copies"], r["workers"])):
         md += (f"| {r['total_copies']} | {r['workers']} | {r['sec_per_iteration']:.3f} | "
                f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
-               f"{H(r['env_steps_per_sec_per_copy'])} |\n")
+               f"{H(r['env_steps_per_sec_per_copy'])} |"
+               + ((" sustained |\n" if r.get("_sustained")
+                   else f" burst, {r['_timed_seconds']:.0f}s |\n") if any_burst else "\n"))
     md += ("\n*One process holding every copy, the array library given 8 or 112 threads. "
            "Sixteen updates per batch.*\n\n")
     return md
@@ -428,7 +432,7 @@ def thread_verdict(host, tr_proc, tr_thread):
            f"difference is how the work was divided.\n\n")
 
     # the second claim: more threads did not help. Compare the two thread settings copy by copy.
-    rows = all_rows(r"trainbench_cpu_threads", host=host, style="epoch_minibatch")
+    rows = cpu_train(host, "threads", "epoch_minibatch")
     settings = sorted({r["workers"] for r in rows})
     if len(settings) < 2:
         return out
