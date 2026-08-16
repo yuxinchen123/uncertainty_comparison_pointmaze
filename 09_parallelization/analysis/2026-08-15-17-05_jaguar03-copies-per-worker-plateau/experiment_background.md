@@ -33,6 +33,37 @@ This run answers three questions:
 | trainer configuration | `bench_train_cpu.cpu_config`: no recorded operation sequence, no reduced-precision matrix mode, no fused optimiser, no compiler |
 | memory guard | a point is refused if its predicted memory exceeds 70% of the node's memory or would leave less than 150 GB free |
 
+## What actually ran
+
+Eleven Slurm jobs, all on jaguar03 held exclusively, all recorded in
+`slurm/submitted_jobids_cpu_plateau.txt`:
+
+| job | what it measured | outcome |
+|---|---|---|
+| 6537916 | first attempt at the ladder | cancelled by me after the memory probe, when the aggregate defect below was found |
+| 6537922 | the ladder: 8 copy counts x 2 worker counts x 2 update conventions, plus the five-iteration before-measurement | 32 rungs measured; cancelled by me after the grid, before its own repeat pass, so the explanation could be measured first |
+| 6537924 | the settings the ladder leaves out: 8 and 32 workers, and the whole thread table at 150 iterations | completed |
+| 6537956 | the matrix-work floor, 7 copy counts x 2 worker counts x 2 conventions | completed |
+| 6538052 | first attempt at the side measurements | the stream saturation curve completed, then the co-running test failed on a field the rewritten worker no longer returns |
+| 6538058 | the side measurements again: co-running test, one worker alone, repeats of the peak rungs | completed |
+| 6538061, 6538062, 6538076 | the counter windows | the first two cancelled and resubmitted after their load durations and a closed pipe were fixed; 6538076 completed |
+| 6538077 | the counter windows again, counting 150 seconds into the load rather than 30 | completed |
+
+## The two defects in the inherited method, and what replaced them
+
+The benchmark this sweep started from times five iterations, about two seconds of work, and
+computes the machine's rate as the sum of each worker process's own rate. Both are wrong at large
+worker counts. A server processor runs above its sustained clock for the first seconds of a load;
+and over five iterations hundreds of processes are still starting at staggered moments, so a sum
+of their own rates describes a load that never existed on the machine at one time. Measured on the
+same setting in the same job, the two together account for 67% of the published figure at one
+update per batch and 81% at sixteen.
+
+What replaced them: a warm-up of about twenty seconds, then every worker held at a barrier, then
+the aggregate taken as the work done inside the wall-clock window in which every worker was
+running. Every row carries the old sum-of-rates figure beside the new one, and every result file
+now records its iteration count, its warm-up and how its aggregate was computed.
+
 ## Code and config changes
 
 - `code/bench_copies_per_worker.py` (new). Runs the copies-per-worker ladder at a fixed worker
@@ -48,6 +79,11 @@ This run answers three questions:
     still running above its sustained clock;
   - both readings from one run — the median over the first three iterations (the opening burst,
     comparable with the earlier short measurements) and the median over all of them.
+- `code/matmul_floor_cpu.py` (new). The processor analogue of `analysis/ceiling/code/matmul_floor.py`:
+  every matrix multiply of one iteration timed on its own, with the same worker count on the same
+  node, summed. The ladder tables give each rung as a percent of it.
+- `code/parse_perf_counters.py` (new). Reads the counter jobs' `perf stat` output back into
+  records, keeping for each setting whichever counting window caught the load running.
 - `code/memory_pressure.py` (new). Two measurements of whether the memory system is the limit: the
   rate the node delivers to a growing number of stream processes run alone, and the rate those same
   stream processes get while the training load runs beside them at a small and a large
