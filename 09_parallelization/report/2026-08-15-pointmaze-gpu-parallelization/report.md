@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:03 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:25 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -844,7 +844,7 @@ optimisation that removes bytes moved helps at 4,096 and does nothing at 128. On
 the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
 and above, and is recorded below.
 
-**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as this round found it and 63 after this round's changes, against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
 
 ### Where an iteration's time goes as the copy count grows
 
@@ -878,28 +878,36 @@ than the last word on that trainer.
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
+| PyTorch after | 1024 | 18.1 | <u>28.90</u> | 28.2 | 0.010 | 3.8 |
 | JAX | 1024 | 14.2 | **36.81** | 35.9 | 0.008 | 3.4 |
 | PyTorch before | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
+| PyTorch after | 2048 | 32.4 | <u>32.36</u> | 15.8 | 0.018 | 7.5 |
 | JAX | 2048 | 23.2 | **45.20** | 22.1 | 0.013 | 6.8 |
 | PyTorch before | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
+| PyTorch after | 4096 | 63.0 | <u>33.27</u> | 8.1 | 0.034 | 14.8 |
 | JAX | 4096 | 43.8 | **47.93** | 11.7 | 0.024 | 13.4 |
+| PyTorch after | 8192 | 121.8 | 34.43 | 4.2 | 0.066 | 29.5 |
 
 **Sixteen updates per batch.**
 
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before | 1024 | 82.2 | 6.38 | 6.2 | 0.045 | 3.5 |
+| PyTorch after | 1024 | 57.0 | <u>9.20</u> | 9.0 | 0.031 | 3.5 |
 | JAX | 1024 | 46.9 | **11.17** | 10.9 | 0.025 | 2.4 |
 | PyTorch before | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
+| PyTorch after | 2048 | 107.2 | <u>9.78</u> | 4.8 | 0.058 | 6.9 |
 | JAX | 2048 | 84.1 | **12.47** | 6.1 | 0.046 | 4.6 |
 | PyTorch before | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
+| PyTorch after | 4096 | 206.9 | <u>10.14</u> | 2.5 | 0.112 | 13.8 |
 | JAX | 4096 | 164.1 | **12.78** | 3.1 | 0.089 | 8.8 |
+| PyTorch after | 8192 | 407.0 | 10.31 | 1.3 | 0.221 | 27.4 |
 
 *Best aggregate rate per copy count in bold, second best underlined. The aggregate rate rises with the copy count while the rate each individual copy gets falls, so the hours column is the one that says how long a single training run actually takes. 8,192 copies is past the range this section is about and was measured only for the changed PyTorch build, to see whether the card still holds it.*
 
 ![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)
 
-The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 17.7 to 23.2 million environment steps per second, a factor of 1.31, while the rate an individual copy gets falls from 17.3 to 5.7 thousand per second, a factor of 3.1. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 10 minutes at 1,024 copies and 29 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
+The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 28.9 to 33.3 million environment steps per second, a factor of 1.15, while the rate an individual copy gets falls from 28.2 to 8.1 thousand per second, a factor of 3.5. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 6 minutes at 1,024 copies and 21 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
 
 ### What limits the PyTorch trainer at 4,096 copies
 
@@ -972,12 +980,12 @@ A positive number means the previous round made it slower. The 512-copy loss was
 
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
-| one update per batch | 1024 | 29.6 ms | 14.2 ms | 2.08 |
-| one update per batch | 2048 | 48.2 ms | 23.2 ms | 2.08 |
-| one update per batch | 4096 | 90.4 ms | 43.8 ms | 2.06 |
-| sixteen updates per batch | 1024 | 82.2 ms | 46.9 ms | 1.75 |
-| sixteen updates per batch | 2048 | 152.2 ms | 84.1 ms | 1.81 |
-| sixteen updates per batch | 4096 | 290.6 ms | 164.1 ms | 1.77 |
+| one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
+| one update per batch | 2048 | 32.4 ms | 23.2 ms | 1.40 |
+| one update per batch | 4096 | 63.0 ms | 43.8 ms | 1.44 |
+| sixteen updates per batch | 1024 | 57.0 ms | 46.9 ms | 1.21 |
+| sixteen updates per batch | 2048 | 107.2 ms | 84.1 ms | 1.27 |
+| sixteen updates per batch | 4096 | 206.9 ms | 164.1 ms | 1.26 |
 
 The reason is not that any PyTorch program is slow. The table in the previous subsection times
 each of them on its real shape and finds them at 72 to 100 percent of the rate a plain copy
