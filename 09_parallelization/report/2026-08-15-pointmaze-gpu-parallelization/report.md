@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 19:08 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 19:17 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1031,6 +1031,36 @@ The three together, at the sizes in use and at the small ones the earlier rounds
 | 4,096 copies,<br>one update per batch | 89.93 ms | 63.06 ms | -26.87 ms (-29.9 percent) | 0.11 ms |
 | 128 copies,<br>sixteen updates per batch | 16.18 ms | 12.54 ms | -3.64 ms (-22.5 percent) | 0.03 ms |
 | 8 copies,<br>sixteen updates per batch | 9.32 ms | 7.96 ms | -1.37 ms (-14.7 percent) | 0.09 ms |
+
+### The small sizes, re-measured
+
+The previous round's loss at 512 copies was found only because the sizes it had not optimised for were measured afterwards, so the same check is repeated here in the other direction.
+
+**Sixteen updates per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 8 | 9.3 | 0.44 | 55.0 | 0.005 | 0.1 |
+| PyTorch after | 8 | 8.0 | **0.51** | 64.4 | 0.004 | 0.1 |
+| PyTorch before | 32 | 10.7 | 1.53 | 47.7 | 0.006 | 0.3 |
+| PyTorch after | 32 | 9.0 | **1.82** | 56.9 | 0.005 | 0.3 |
+| PyTorch before | 128 | 16.2 | 4.04 | 31.6 | 0.009 | 0.7 |
+| PyTorch after | 128 | 12.5 | **5.23** | 40.9 | 0.007 | 0.7 |
+| PyTorch before | 512 | 44.0 | 5.96 | 11.6 | 0.024 | 2.0 |
+| PyTorch after | 512 | 30.3 | **8.65** | 16.9 | 0.016 | 2.0 |
+
+**One update per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| PyTorch before | 8 | 5.3 | 0.77 | 95.7 | 0.003 | 0.2 |
+| PyTorch after | 8 | 4.5 | **0.90** | 112.6 | 0.002 | 0.2 |
+| PyTorch before | 32 | 6.1 | 2.68 | 83.9 | 0.003 | 0.3 |
+| PyTorch after | 32 | 5.1 | **3.21** | 100.3 | 0.003 | 0.3 |
+| PyTorch before | 128 | 7.8 | 8.42 | 65.8 | 0.004 | 0.7 |
+| PyTorch after | 128 | 6.1 | **10.76** | 84.0 | 0.003 | 0.7 |
+| PyTorch before | 512 | 17.5 | 15.02 | 29.3 | 0.009 | 2.1 |
+| PyTorch after | 512 | 11.2 | **23.33** | 45.6 | 0.006 | 2.3 |
 
 ### What was considered and not done, with the arithmetic that decided it
 
