@@ -60,7 +60,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   already at 72 to 100 percent of the bandwidth the card delivers. Second, round four is a
   REGRESSION at these sizes — 19.2% slower at 1,024 copies with one update per batch, 7.1% with
   sixteen, 5.8% at 4,096 with sixteen, each measured against its own predecessor revision — 
-  because packing the nineteen parameter windows tightly left every copy's parameters off a
+  because packing the twenty-one parameter windows tightly left every copy's parameters off a
   sixteen-byte boundary and the multiplication library fell back to its scalar-load kernels.
   Three exact changes followed: pad the windows; add each layer's bias after the multiplication
   rather than folding it in; write gradients into the flat buffer instead of accumulating into
@@ -84,7 +84,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
     memory gets on this card. Optimisations that remove programs cannot help here; ones that
     remove passes over memory can.
   - **Round four was a regression here**, 19.2 percent at 1,024 copies with one update per batch,
-    measured against its own predecessor revision. Its flat parameter buffer packed the nineteen
+    measured against its own predecessor revision. Its flat parameter buffer packed the twenty-one
     windows tightly, leaving every copy's parameters off a sixteen-byte boundary, and the
     multiplication library answered with its scalar-load kernels: 18.8 of 31.1 milliseconds of
     multiplication time in one iteration.
@@ -103,7 +103,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
     both this branch and the main tree.
 
 - Round 4 (2026-08-15 afternoon, Pacific): two branches merged.
-  - `feature/torch-speed`: one flat parameter buffer (the nineteen parameter tensors become
+  - `feature/torch-speed`: one flat parameter buffer (the twenty-one parameter tensors become
     windows onto one buffer, so the per-copy gradient clip is one reduction and the optimizer
     one chain) plus shuffling once per epoch instead of gathering inside every update step.
     C=128 sixteen-updates 20.4 -> 16.3 ms; C=8 13.8 -> 9.3 ms; one-update-per-batch at C=8 now

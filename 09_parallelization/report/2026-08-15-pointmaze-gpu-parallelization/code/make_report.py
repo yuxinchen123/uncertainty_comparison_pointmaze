@@ -1418,12 +1418,12 @@ every other change — the computation must not change.
 
 Two changes produced this.
 
-**One flat parameter buffer.** The trainer holds nineteen parameter tensors per copy. The per-copy
-gradient limit had to walk all nineteen, and so did the optimiser, sixteen times per iteration. The
-nineteen remain separate names, but their storage is now nineteen windows onto a single buffer, with
+**One flat parameter buffer.** The trainer holds twenty-one parameter tensors per copy. The per-copy
+gradient limit had to walk all twenty-one, and so did the optimiser, sixteen times per iteration. The
+twenty-one remain separate names, but their storage is now twenty-one windows onto a single buffer, with
 the gradients likewise. The limit becomes one reduction and the optimiser one chain: that part of a
 minibatch step fell from 1,183 to 122 microseconds. The forward and backward passes also got faster,
-which was not the intent — assigning the gradient windows up front removes nineteen memory
+which was not the intent — assigning the gradient windows up front removes twenty-one memory
 allocations per backward pass.
 
 **Shuffling once per epoch.** The data was previously gathered into position inside each of the
@@ -1483,15 +1483,50 @@ def throughput_rows(pattern):
 LARGE_COPIES = [1024, 2048, 4096, 8192]
 
 
+def paired_change_rows(pattern):
+    """{copies: row} from one paired round-by-round comparison, {} if the file is absent.
+
+    Written by `benchmarks/bench_torch_change.py`: both configurations built in one process and
+    timed round-robin, the order reversed on alternate rounds, so each round yields one paired
+    difference and the verdict is how many rounds favoured the change.
+    """
+    d = newest(pattern)
+    return {r["n_copies"]: r for r in d["rows"]} if d else {}
+
+
+def epilogue_rows(pattern):
+    """{arm name: row} from one compiler-generated-multiplication probe, {} if absent."""
+    d = newest(pattern)
+    return {r["arm"]: r for r in d["rows"]} if d else {}
+
+
 def large_scale_sources():
-    """The six measurement files the large-copy-count section reads, as named row tables."""
+    """The measurement files the large-copy-count section reads, as named row tables.
+
+    Three PyTorch states are named because the section covers two rounds of work at these
+    sizes: what round five found, what it left, and what round six left. The JAX side is read
+    from one file per round — round five measured a revision that a separate line of work was
+    changing at the time, and round six re-measured the merged trainer, so both are kept and
+    the head-to-head uses the later one.
+    """
     return {
         "before A": throughput_rows(r"trainbench_torch_full_batch_base_r5_styleA_large"),
         "before B": throughput_rows(r"trainbench_torch_epoch_minibatch_base_r5_styleB_large"),
         "after A": throughput_rows(r"trainbench_torch_full_batch_after_r5_styleA_large"),
         "after B": throughput_rows(r"trainbench_torch_epoch_minibatch_after_r5_styleB_large"),
+        "r6 base A": throughput_rows(r"trainbench_torch_full_batch_r6_base_styleA_large"),
+        "r6 base B": throughput_rows(r"trainbench_torch_epoch_minibatch_r6_base_styleB_large"),
+        "r6 after A": throughput_rows(r"trainbench_torch_full_batch_r6_after_styleA_large"),
+        "r6 after B": throughput_rows(r"trainbench_torch_epoch_minibatch_r6_after_styleB_large"),
         "jax A": throughput_rows(r"trainbench_jax_ppo_base_r5_styleA_large_sync"),
         "jax B": throughput_rows(r"trainbench_jax_ppo_base_r5_styleB_large_sync"),
+        # one file per update style: JAX reports peak device memory as a process high-water mark
+        # that is never reset, so a process measuring both styles gives the second one the first
+        # one's peak. The combined file is the fallback when the split ones are absent.
+        "jax r6 A": (throughput_rows(r"trainbench_jax_ppo_r6_base_styleA_large_sync")
+                     or throughput_rows(r"trainbench_jax_ppo_r6_base_large_sync")),
+        "jax r6 B": (throughput_rows(r"trainbench_jax_ppo_r6_base_styleB_large_sync")
+                     or throughput_rows(r"trainbench_jax_ppo_r6_base_large_sync")),
     }
 
 
@@ -1501,14 +1536,16 @@ def fig_large_scale():
     if not src["before B"] and not src["before A"]:
         return pending("large-copy-count figure", "the 1024-4096 benchmark JSONs")
 
-    series = [("PyTorch before this round", C_TORCH, "--", "o"),
-              ("PyTorch after this round", C_TORCH, "-", "o"),
+    series = [("PyTorch before round five", C_TORCH, "--", "o"),
+              ("PyTorch after round six", C_TORCH, "-", "o"),
               ("JAX", C_JAX, "-", "^")]
     fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0), dpi=160)
     for row, (style, style_name) in enumerate([("full_batch", "one update per batch"),
                                                ("epoch_minibatch", "sixteen updates per batch")]):
         tag = "A" if style == "full_batch" else "B"
-        tables = [src[f"before {tag}"], src[f"after {tag}"], src[f"jax {tag}"]]
+        tables = [src[f"before {tag}"],
+                  src[f"r6 after {tag}"] or src[f"r6 base {tag}"] or src[f"after {tag}"],
+                  src[f"jax r6 {tag}"] or src[f"jax {tag}"]]
         for col, (key, ylabel) in enumerate(
                 [("total", "TOTAL environment steps / second (millions)"),
                  ("per_copy", "per-copy environment steps / second (thousands)")]):
@@ -1609,14 +1646,16 @@ and above, and is recorded below.
 
 """
     # the two questions, answered with numbers, before the reader reaches the tables
-    a_before, a_after, a_jax = src["before A"], src["after A"], src["jax A"]
+    a_before = src["before A"]
+    a_after = src["r6 after A"] or src["r6 base A"] or src["after A"]
+    a_jax = src["jax r6 A"] or src["jax A"]
     key = ("full_batch", 4096)
     if key in a_before and key in a_jax:
         pt = (a_after or a_before)[key]["ms"]
         answer = (
             f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
-            f"{a_before[key]['ms']:.0f} milliseconds per iteration as this round found it and "
-            f"{pt:.0f} after this round's changes, against {a_jax[key]['ms']:.0f} for the JAX "
+            f"{a_before[key]['ms']:.0f} milliseconds per iteration as these two rounds found it "
+            f"and {pt:.0f} after their changes, against {a_jax[key]['ms']:.0f} for the JAX "
             f"trainer" if a_after else
             f"At 4,096 copies with one update per batch, the PyTorch trainer takes "
             f"{a_before[key]['ms']:.0f} milliseconds per iteration against "
@@ -1655,19 +1694,26 @@ The two tables below report, for each setting, the time one iteration takes, the
 over all copies, the rate a single copy gets, the hours one copy needs to reach a million
 environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
 timing the next, which is the stricter of the two protocols and the one used everywhere else in
-this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
-same trainer with this round's changes.
+this document.
 
-The JAX figures are for `ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at
-commit `7609297`). This round changed nothing in it, and a separate line of work was changing it
-while these measurements were taken, so its figures here are a snapshot of one revision rather
-than the last word on that trainer.
+The rows are three states of the work: "PyTorch before round five" is where the two rounds at
+these sizes began, "PyTorch after round six" is where they ended, and "JAX" is
+`ppo/jax_ppo/jax_ppo_rnd.py` as it stands after its own fifth round. Every PyTorch and JAX row in
+these two tables was measured in one session on the same machine, so the comparison is like for
+like — the earlier version of this section reported a JAX revision that a separate line of work
+was changing while it was measured, and those figures are superseded here.
 
 """
-    named_A = [("PyTorch before", src["before A"]), ("PyTorch after", src["after A"]),
-               ("JAX", src["jax A"])]
-    named_B = [("PyTorch before", src["before B"]), ("PyTorch after", src["after B"]),
-               ("JAX", src["jax B"])]
+    # the last row of each table is whichever PyTorch state is latest, so a round that keeps no
+    # change still shows the state it left rather than an empty column
+    latest_A = src["r6 after A"] or src["r6 base A"] or src["after A"]
+    latest_B = src["r6 after B"] or src["r6 base B"] or src["after B"]
+    jax_A = src["jax r6 A"] or src["jax A"]
+    jax_B = src["jax r6 B"] or src["jax B"]
+    named_A = [("PyTorch before round five", src["before A"]),
+               ("PyTorch after round six", latest_A), ("JAX", jax_A)]
+    named_B = [("PyTorch before round five", src["before B"]),
+               ("PyTorch after round six", latest_B), ("JAX", jax_B)]
     md += "**One update per batch.**\n\n" + throughput_table(named_A, "full_batch") + "\n\n"
     md += ("**Sixteen updates per batch.**\n\n" + throughput_table(named_B, "epoch_minibatch")
            + "\n\n")
@@ -1678,7 +1724,7 @@ than the last word on that trainer.
            "changed PyTorch build, to see whether the card still holds it.*\n\n")
     md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
     # the trade-off the two columns exist to show, stated with the measured numbers
-    best = src["after A"] or src["before A"]
+    best = src["r6 after A"] or src["r6 base A"] or src["after A"] or src["before A"]
     if ("full_batch", 1024) in best and ("full_batch", 4096) in best:
         lo, hi = best[("full_batch", 1024)], best[("full_batch", 4096)]
         md += (
@@ -1706,7 +1752,9 @@ def sec_large_scale_gap(src):
     for style, label in (("full_batch", "one update per batch"),
                          ("epoch_minibatch", "sixteen updates per batch")):
         tag = "A" if style == "full_batch" else "B"
-        after, jax = src[f"after {tag}"] or src[f"before {tag}"], src[f"jax {tag}"]
+        after = (src[f"r6 after {tag}"] or src[f"r6 base {tag}"] or src[f"after {tag}"]
+                 or src[f"before {tag}"])
+        jax = src[f"jax r6 {tag}"] or src[f"jax {tag}"]
         for c in LARGE_COPIES:
             if (style, c) in after and (style, c) in jax:
                 rows.append((label, c, after[(style, c)]["ms"], jax[(style, c)]["ms"]))
@@ -1933,8 +1981,8 @@ def sec_large_scale_changes():
 Three changes, all of them removing passes over memory, none of them changing what the trainer
 computes.
 
-**Aligning the parameters.** The previous round put the nineteen parameter tensors of each copy
-into one buffer, as nineteen windows onto a row of 59,910 numbers. Neither that row length nor
+**Aligning the parameters.** The previous round put the twenty-one parameter tensors of each copy
+into one buffer, as twenty-one windows onto a row of 59,910 numbers. Neither that row length nor
 several of the window offsets is a multiple of four, so a given parameter's address for copy *c*
 is a multiple of sixteen bytes for almost no *c*, and the matrix library responded by selecting
 its kernels that load one number at a time instead of four. A profile of the previous build at
@@ -2025,10 +2073,10 @@ that the spread between two runs of the same side gives the noise floor.
 The rule for the round was that they must not. Two of them are exactly neutral and one needs a
 sentence.
 
-Adding the bias after the multiplication is **bitwise identical**: the loss and all nineteen
+Adding the bias after the multiplication is **bitwise identical**: the loss and all twenty-one
 parameter gradients, computed from the same inputs both ways, agree to zero. Writing the
 gradients rather than accumulating them is arithmetically the same sequence of Adam steps; the
-only reordering is that the per-copy gradient limit now sums nineteen tensors' contributions in
+only reordering is that the per-copy gradient limit now sums twenty-one tensors' contributions in
 the same order as before but in its own program, and one optimiser step from identical inputs
 agrees with the previous form to 6.9e-6 relative on parameters that moved 3.0e-4.
 

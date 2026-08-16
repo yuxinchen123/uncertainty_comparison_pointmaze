@@ -70,7 +70,8 @@ def main():
         return t._loss_fn(batch, style_a=False)
 
     def fwd_bwd():
-        t._backward_into_flat(t._loss_fn(batch, style_a=False))
+        # kept so the optimizer below reads the gradients this step produced
+        t._last_grads = t._backward(t._loss_fn(batch, style_a=False))
 
     # gradients must exist before the clip can be timed on its own
     fwd_bwd()
@@ -82,7 +83,7 @@ def main():
         "forward": cuda_time(fwd),
         "forward and backward": cuda_time(fwd_bwd),
         "limit the gradient and step Adam over the flat buffer":
-            cuda_time(lambda: t._clip_per_copy_and_step()),
+            cuda_time(lambda: t._clip_per_copy_and_step(t._last_grads)),
     }
     parts["backward alone (difference)"] = parts["forward and backward"] - parts["forward"]
 

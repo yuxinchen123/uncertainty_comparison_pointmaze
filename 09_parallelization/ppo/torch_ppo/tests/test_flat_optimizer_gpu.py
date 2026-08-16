@@ -1,6 +1,6 @@
 """GPU-only: the flat-buffer clip and Adam must compute what the previous per-tensor form did.
 
-The previous form walked nineteen parameter tensors — summing squared gradients per tensor for
+The previous form walked twenty-one parameter tensors — summing squared gradients per tensor for
 the per-copy norm, rescaling each one, then handing them to torch.optim.Adam. The new form does
 the same arithmetic over one [C, P] buffer. Rewriting a reduction changes the order in which
 floating-point numbers are added, so the two cannot be bitwise equal; what must hold is that a
@@ -51,7 +51,7 @@ def main():
 
     # produce a real set of gradients, through the trainer's own gradient path
     loss = t._loss_fn(batch, style_a=False)
-    t._backward_into_flat(loss)
+    grad_source = t._backward(loss)
 
     # snapshot the inputs the two forms will share
     params_before = [p.detach().clone() for p in t.trainable]
@@ -64,7 +64,7 @@ def main():
                          t=1, lr=t.cfg.learning_rate, eps=t.cfg.adam_eps,
                          max_norm=t.cfg.max_grad_norm)
 
-    t._clip_per_copy_and_step()                 # the flat form, same inputs, moments start at 0
+    t._clip_per_copy_and_step(grad_source)      # the flat form, same inputs, moments start at 0
 
     worst_abs = worst_rel = 0.0
     for p, r in zip(t.trainable, ref):

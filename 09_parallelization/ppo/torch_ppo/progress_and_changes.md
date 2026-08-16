@@ -56,7 +56,7 @@ Measured breakdown of ONE minibatch step at 128 copies before any round-4 change
 
 | # | change | result | verdict |
 |---|---|---|---|
-| 17 | ROUND 4. One flat parameter buffer. The nineteen parameters stay separate leaf tensors, but their storage is nineteen windows onto a single [C, P] buffer and their gradients are windows onto a single [C, P] gradient buffer, assigned up front. The per-copy norm becomes one reduction, Adam one chain, zeroing one kernel; torch.optim is dropped entirely, so one optimizer now serves both the uniform and the swept case | Update-stage parts at 128 copies: clip+Adam+zero 1,183 -> 122 us. Unexpectedly, forward and backward ALSO fell, 1,720 -> 1,012 us, because pre-assigning the gradient windows removes nineteen allocations per backward. Whole iteration, paired against the predecessor revision: C=8 13.89 -> 9.80 ms (+29.4%), C=128 20.54 -> 16.96 ms (+17.5%), noise floor 0.04-0.05 ms | KEEP |
+| 17 | ROUND 4. One flat parameter buffer. The twenty-one parameters stay separate leaf tensors, but their storage is twenty-one windows onto a single [C, P] buffer and their gradients are windows onto a single [C, P] gradient buffer, assigned up front. The per-copy norm becomes one reduction, Adam one chain, zeroing one kernel; torch.optim is dropped entirely, so one optimizer now serves both the uniform and the swept case | Update-stage parts at 128 copies: clip+Adam+zero 1,183 -> 122 us. Unexpectedly, forward and backward ALSO fell, 1,720 -> 1,012 us, because pre-assigning the gradient windows removes twenty-one allocations per backward. Whole iteration, paired against the predecessor revision: C=8 13.89 -> 9.80 ms (+29.4%), C=128 20.54 -> 16.96 ms (+17.5%), noise floor 0.04-0.05 ms | KEEP |
 | 18 | ROUND 4. Write the clip-and-Adam chain functionally (one expression, then copy back) instead of a sequence of in-place operations, so the compiler fuses it into one pass over the buffer | No change: C=128 +16.9% against the same baseline, versus +17.5% for the in-place form — the two are within the noise floor of each other. Kept for readability, not for speed | KEEP (no effect) |
 | 19 | ROUND 4. Shuffle the whole batch once per epoch into a static buffer, so each minibatch is a contiguous slice instead of its own gather. Nine gather kernels per epoch instead of nine per step: 36 per iteration instead of 144 | C=128 16.96 -> 16.31 ms (cumulative +20.5% against the predecessor); C=512 regression narrowed from -2.5% to -1.1%. Exact: identical rows in identical order | KEEP |
 
@@ -192,7 +192,7 @@ the optimiser). Of the 31.1 milliseconds of matrix-multiplication time in one it
 | post-rollout | 3.26 ms | 1.17 ms |
 | update | 20.05 ms | 12.05 ms |
 
-The cause is the flat buffer's own layout, and it is arithmetic: the nineteen windows were packed
+The cause is the flat buffer's own layout, and it is arithmetic: the twenty-one windows were packed
 tightly, so the per-copy row is 59,910 numbers long and several window offsets are odd multiples
 of two. A parameter's address for copy c is base + c x 59,910 x 4 bytes, which is a multiple of
 16 for almost no c, and the library selects its scalar-load kernels accordingly. Row 21 fixes it.
@@ -227,7 +227,7 @@ in the order A B B A with the spread between two runs of the same side as the no
 | # | change | measured | verdict |
 |---|---|---|---|
 | 21 | Pad every parameter window and the per-copy row to a multiple of four numbers, so every copy's parameters start on a sixteen-byte boundary and the multiplication library uses its four-at-a-time kernels instead of its scalar-load ones. Ten extra numbers per copy, never read: nothing writes a gradient into the padding, so its Adam step is exactly zero and it adds exactly zero to the gradient norm | 82.48 -> 73.14 ms, 11.3% faster, noise floor 0.54 ms | KEEP |
-| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all nineteen gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | 73.26 -> 61.51 ms, 16.0% faster, noise floor 0.50 ms | KEEP |
+| 22 | Add each layer's bias AFTER the multiplication, in the same expression as the activation, instead of folding it into the multiplication call. The library has no batched multiply that broadcasts a bias, so it materialises the bias into the output tensor and accumulates on top of it, and the activation then reads and writes the same tensor: five passes over every activation where three suffice. BITWISE identical — loss and all twenty-one gradients agree to 0.000e+00 (`tests/test_bias_form_gpu.py`) | 73.26 -> 61.51 ms, 16.0% faster, noise floor 0.50 ms | KEEP |
 | 23 | Stop accumulating gradients: ask autograd for them and copy them into the flat buffer in one call, which also makes the zeroing unnecessary; and compile the gradient limit separately from the Adam step, because compiled together the compiler emits one reduce-and-update program that reaches only 2.4 of the card's 3.5 TB/s where two programs reach 3.2 and 3.5 | 61.45 -> 57.07 ms, 7.1% faster, noise floor 0.46 ms | KEEP |
 
 Measured together, both sides built by the same harness in the same session, each iteration
@@ -255,7 +255,7 @@ rounds were tuned on:
 **No size measured is slower.** That is worth stating because the previous round's honest loss at
 512 copies is exactly the shape of defect this round was looking for in the other direction: the
 three changes remove passes over memory, which matters most where the tensors are large, and
-remove device programs as a side effect (nineteen gradient additions and one zeroing per update
+remove device programs as a side effect (twenty-one gradient additions and one zeroing per update
 step), which is what the small sizes reward.
 
 That is more than a repair of the round-four regression: at 1,024 copies with one update per batch
@@ -318,7 +318,7 @@ Every gate run on the graphics processor, none re-scoped:
 | hoist equivalence, three iterations | worst parameter deviation 0.000e+00 |
 | compiled post-rollout body, isolated | worst relative field deviation 2.1e-07 |
 | six learning-rate-sweep gates (uniform matches plain, zero-rate frozen, groups independent, paired and distinct seeding, and the same under capture) | all pass |
-| bias form, loss and all nineteen gradients from identical inputs | 0.000e+00 — bitwise |
+| bias form, loss and all twenty-one gradients from identical inputs | 0.000e+00 — bitwise |
 | gradients land in the flat buffer, nothing accumulates, padding stays zero (new) | pass |
 | every parameter and gradient window on a sixteen-byte boundary, checked on more than one copy (new) | pass |
 

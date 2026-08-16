@@ -110,10 +110,10 @@ def main():
     comp["update: loss forward"] = cuda_time(lambda: trainer._loss_fn(mb, style_a=False)) * 16
     def fwd_bwd():
         loss = trainer._loss_fn(mb, style_a=False)
-        loss.backward()
+        trainer._last_grads = trainer._backward(loss)
     comp["update: forward + backward"] = cuda_time(fwd_bwd) * 16
     comp["update: per-copy clip + Adam step"] = cuda_time(
-        lambda: trainer._clip_per_copy_and_step()) * 16
+        lambda: trainer._clip_per_copy_and_step(trainer._last_grads)) * 16
 
     # ---- production view: captured phase totals ----
     prod = {}

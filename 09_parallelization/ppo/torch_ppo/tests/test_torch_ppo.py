@@ -92,7 +92,7 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
 
     loss = t._losses(batch, style_a=False)
     reference = [g.detach().clone() for g in torch.autograd.grad(loss, t.trainable)]
-    t._backward_into_flat(t._losses(batch, style_a=False))
+    t._backward(t._losses(batch, style_a=False))
     assert all(p.grad is None for p in t.trainable), "a parameter still carries a gradient"
     for window, ref in zip(t.grad_windows, reference):
         assert torch.equal(window, ref), "the flat buffer does not hold what autograd produced"
@@ -110,7 +110,7 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
     assert float(flat_base[~covered.reshape(-1)].abs().max()) == 0.0, "padding was written"
 
     # a second pass from identical inputs must overwrite, not double
-    t._backward_into_flat(t._losses(batch, style_a=False))
+    t._backward(t._losses(batch, style_a=False))
     for window, ref in zip(t.grad_windows, reference):
         assert torch.equal(window, ref), "the second backward pass accumulated instead of writing"
     print("ok test_gradients_land_in_the_flat_buffer_without_accumulating")
@@ -127,14 +127,21 @@ def test_every_parameter_window_is_aligned():
     t = PPORND(PPOConfig(**SMALL), device="cpu")
     per_copy = t._flat.shape[1]
     assert per_copy % 4 == 0, f"the per-copy row is {per_copy} numbers, not a multiple of four"
-    for w, g in zip(t.trainable, t.grad_windows):
-        for tensor, what in ((w, "parameter"), (g, "gradient")):
+    # counted rather than zipped: a zip against an empty list checks nothing and still passes,
+    # and the gradient buffer is now optional, so the count is what makes the test non-vacuous
+    assert len(t.trainable) == 21, f"{len(t.trainable)} parameters, not twenty-one"
+    assert len(t.grad_windows) == 21, "the buffer form built no gradient windows"
+    checked = 0
+    for group in (t.trainable, t.param_windows, t.grad_windows):
+        for tensor in group:
             for copy in range(min(2, tensor.shape[0])):
                 offset = ((tensor[copy].data_ptr() - t._flat.data_ptr())
                           // t._flat.element_size())
                 assert (tensor[copy].data_ptr() % 16 == 0), \
-                    f"{what} window {tuple(tensor.shape)} copy {copy} at number {offset} " \
+                    f"window {tuple(tensor.shape)} copy {copy} at number {offset} " \
                     f"is not on a sixteen-byte boundary"
+                checked += 1
+    assert checked == 3 * 21 * 2, f"only {checked} addresses were checked"
     print("ok test_every_parameter_window_is_aligned")
 
 

@@ -7,7 +7,7 @@ into one pass. The arithmetic is the same sum in the same precision, but the two
 separate library calls and may select different multiplication algorithms, so this test measures
 how far apart they are rather than assuming they are identical.
 
-It checks two things from byte-identical inputs: the loss value, and every one of the nineteen
+It checks two things from byte-identical inputs: the loss value, and every one of the twenty-one
 parameter gradients the backward pass produces. A test of the loss alone would pass even if the
 backward pass had been broken.
 
@@ -97,7 +97,7 @@ def main():
         moved = max(moved, go.abs().max().item())
     print(f"loss: new {new_val:.8f} old {old_val:.8f} "
           f"absolute {d_loss:.3e} relative {rel_loss:.3e}")
-    print(f"gradients: worst relative difference over all nineteen tensors {worst_rel:.3e}")
+    print(f"gradients: worst relative difference over all twenty-one tensors {worst_rel:.3e}")
     print(f"largest gradient magnitude {moved:.3e} (a zero here would make the test vacuous)")
     assert moved > 0, "no gradient was produced, so nothing was compared"
     assert rel_loss <= 1e-6, "the two bias forms compute different losses"
