@@ -100,6 +100,26 @@ against roughly 0.35 ms of arithmetic at achievable rates, so the update is runn
 sixteen times above its arithmetic bound and is limited by how many separate operations the
 iteration issues, exactly as the analysis concluded.
 
+### Throughput of the trainer as it now stands
+
+Both rates, for each timing mode. Each copy collects `num_steps` x `n_envs` = 512 environment
+steps per iteration, so the total rate is that times the copy count over the iteration time. The
+last column restates the per-copy rate as the time one copy would need for a million steps.
+
+| timing mode | copies | seconds per<br>iteration | total steps per<br>second (millions) | steps per second<br>per copy (thousands) | hours per million<br>steps per copy |
+|---|---|---|---|---|---|
+| synchronised | 8 | 0.00784 | 0.522 | 65.28 | 0.0043 |
+| synchronised | 32 | 0.00941 | 1.742 | 54.43 | 0.0051 |
+| synchronised | 128 | 0.01271 | 5.155 | 40.27 | 0.0069 |
+| pipelined | 8 | 0.00650 | 0.630 | 78.74 | 0.0035 |
+| pipelined | 32 | 0.00804 | 2.037 | 63.67 | 0.0044 |
+| pipelined | 128 | 0.01154 | 5.681 | 44.38 | 0.0063 |
+
+Going from 8 to 128 copies multiplies the total rate by 9.0 (pipelined) while the rate each
+copy gets falls to 56% of its 8-copy value — the usual trade of per-copy latency for aggregate
+throughput, and the reason the copy count is chosen from how many runs are wanted rather than
+from how fast one run should be.
+
 ## Notes
 
 - Deviations from the letter of the task/spec, with reasons:
