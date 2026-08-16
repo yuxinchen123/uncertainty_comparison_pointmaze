@@ -121,6 +121,33 @@ def short(iso: str, seconds: bool = False) -> str:
     return when.strftime("%Y-%m-%d %H:%M:%S PT" if seconds else "%Y-%m-%d %H:%M PT")
 
 
+def figure_digests() -> dict:
+    """A fingerprint of every figure file, so a redrawn plot can be told from an unchanged one.
+
+    The markdown that places a figure never changes when the figure is redrawn, so the text
+    comparison that marks prose cannot see it. The image bytes can.
+    before: figures/cpu_vs_gpu.png on disk; after: {"cpu_vs_gpu.png": "3f9a1c4d..."}
+    """
+    figs = HERE.parent / "figures"
+    if not figs.exists():
+        return {}
+    return {p.name: hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+            for p in sorted(figs.glob("*.png"))}
+
+
+def changed_figures() -> set:
+    """Names of the figures whose image differs from the version last marked read.
+
+    A snapshot taken before figures were tracked holds no record of them at all. That is not
+    evidence every figure changed — it is no evidence either way — so nothing is marked until
+    the reader next marks the document read and a baseline exists.
+    """
+    was = read_text().get("__figures__")
+    if not was:
+        return set()
+    return {name for name, d in figure_digests().items() if was.get(name) != d}
+
+
 def read_text() -> dict:
     """Each section's text as it stood when the reader last marked it read."""
     return json.loads(SNAPSHOT.read_text()) if SNAPSHOT.exists() else {}
@@ -153,7 +180,9 @@ def mark_all_read(sections: dict, now: str = None) -> dict:
                                            "digest": _digest(text)})
         entry.update(read_digest=_digest(text), read_at=now)
     MANIFEST.write_text(json.dumps(manifest, indent=1))
-    SNAPSHOT.write_text(json.dumps(sections, indent=1))
+    # the figures go under a reserved key beside the sections: they are part of what the reader
+    # just read, and their images are the only way to tell later that a plot was redrawn
+    SNAPSHOT.write_text(json.dumps(dict(sections, __figures__=figure_digests()), indent=1))
     return manifest
 
 

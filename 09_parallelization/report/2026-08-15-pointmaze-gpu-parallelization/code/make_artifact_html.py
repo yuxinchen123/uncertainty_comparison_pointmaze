@@ -27,6 +27,21 @@ def render(md: str) -> str:
     return markdown.markdown(md, extensions=["tables", "fenced_code"])
 
 
+def label_redrawn(html_block: str, md_block: str, redrawn: set) -> str:
+    """Put an "updated" label under a figure whose image changed since the document was read.
+
+    A figure's markdown does not change when its plot is redrawn, so the text comparison that
+    marks prose cannot see it; the image digest can. The label sits directly beneath the image,
+    where a reader who has seen that plot before will be looking.
+    before: "![x](figures/cpu_vs_gpu.png)" while cpu_vs_gpu.png has changed
+    after:  the same image, followed by a blue "updated" label
+    """
+    names = re.findall(r"figures/([^)\s]+\.png)", md_block)
+    if not any(n in redrawn for n in names):
+        return html_block
+    return html_block + '\n<p class="fig-updated">updated</p>'
+
+
 def render_document(md: str) -> str:
     """The document as HTML, with unread sections in blue and changed text in dark brown.
 
@@ -39,12 +54,14 @@ def render_document(md: str) -> str:
     after:  ...<div class="updated"><p>that paragraph</p></div>... and the rest plain
     """
     manifest, snapshot = st.load(), st.read_text()
+    redrawn = st.changed_figures()
     out = []
     for name, text in st.split_sections(md).items():
         # the contents table carries the state of everything else and has none of its own
         status = "read" if name == "Contents" or name not in manifest else st.state(name, manifest)
         if status == "read":
-            out.append(render(text))
+            # a read section can still hold a figure that was redrawn since it was read
+            out.append("\n".join(label_redrawn(render(b), b, redrawn) for b in st.blocks(text)))
         elif status == "unread":
             # nothing here has been seen before, so the whole section carries the colour
             out.append(f'<div class="unread">{render(text)}</div>')
@@ -52,7 +69,7 @@ def render_document(md: str) -> str:
             changed = st.changed_blocks(text, snapshot.get(name, ""))
             pieces = []
             for i, block in enumerate(st.blocks(text)):
-                html_block = render(block)
+                html_block = label_redrawn(render(block), block, redrawn)
                 pieces.append(f'<div class="updated">{html_block}</div>' if i in changed
                               else html_block)
             out.append("\n".join(pieces))
@@ -133,6 +150,12 @@ img { max-width: 100%; height: auto; display: block; margin: 1.25rem 0; }
 .updated, .updated p, .updated li, .updated td, .updated th, .updated h2, .updated h3,
 .updated em, .updated strong, .updated a { color: var(--updated); }
 .updated table th { border-bottom-color: var(--updated); }
+/* a figure whose plot was redrawn since the reader last marked the document read */
+.fig-updated {
+  color: var(--unread); font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+  margin: -0.6rem 0 1.5rem;
+}
 ol, ul { padding-left: 1.4rem; }
 li { margin: 0.3rem 0; }
 em { color: var(--ink-2); }

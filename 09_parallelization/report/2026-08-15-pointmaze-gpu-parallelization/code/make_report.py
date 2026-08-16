@@ -1256,20 +1256,28 @@ array, with each operation split across threads — which requires every thread 
 next operation starts. **Process-parallel** means many independent programs, each with its own share
 of the work and no coordination at all.
 
-End-to-end training on that node, one row per setting measured:
+End-to-end training on processor cores, the best setting of each kind:
 
 | way of using the cores | workers | copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
 |---|---|---|---|---|---|---|
 """
-    # one row per benchmark file, at that file's fastest point; both the aggregate rate and the
-    # rate a single copy gets are shown, because a setting that wins on one can lose on the other,
-    # and the per-copy rate again as the time one copy takes over a million steps
+    # One row per (way of using the cores, update convention) rather than one per benchmark file:
+    # the file count grew past forty as the sweeps were repeated and re-measured, and a table of
+    # forty near-duplicate rows hides the four settings that actually differ. The full curves are
+    # in the dedicated-node section below.
+    # before: 47 rows, several of them the same configuration measured again
+    # after:  4 rows, each the highest total its kind reached
+    kinds = {}
     for d in trains:
-        best = max(d["rows"], key=lambda r: r["env_steps_per_sec"])
-        md += (f"| {d['mode']}, {d.get('style')} | {best['workers']} | {best['total_copies']} | "
-               f"{best['sec_per_iteration']:.3f} | {best['env_steps_per_sec']/1e6:.4f} | "
-               f"{best['env_steps_per_sec_per_copy']/1e3:,.2f} | "
-               f"{H(best['env_steps_per_sec_per_copy'])} |\n")
+        for r in d["rows"]:
+            key = (d["mode"], d.get("style"))
+            if key not in kinds or r["env_steps_per_sec"] > kinds[key]["env_steps_per_sec"]:
+                kinds[key] = r
+    for (mode, style), r in sorted(kinds.items(), key=lambda kv: -kv[1]["env_steps_per_sec"]):
+        md += (f"| {mode}, {style} | {r['workers']} | {r['total_copies']:,} | "
+               f"{r['sec_per_iteration']:.3f} | {r['env_steps_per_sec']/1e6:.4f} | "
+               f"{r['env_steps_per_sec_per_copy']/1e3:,.2f} | "
+               f"{H(r['env_steps_per_sec_per_copy'])} |\n")
     md += """
 Thread-parallel peaks at a handful of threads and then stops improving: one environment step is
 about forty small operations, and the regrouping after each one costs more than the work it
@@ -1448,7 +1456,11 @@ def sec_clean_node():
     """
     # the module writes its figures into its own report by default; redirect them into this one
     cpu_sections.FIGS = FIGS
-    for note in (cpu_sections.fig_cpu_vs_gpu(), cpu_sections.fig_best_setup()):
+    # every figure that module draws, found by name rather than listed by hand: it is edited by
+    # whoever is measuring the processor nodes, and a figure added there but not drawn here leaves
+    # the page referencing an image file that does not exist
+    for fig_name in sorted(n for n in dir(cpu_sections) if n.startswith("fig_")):
+        note = getattr(cpu_sections, fig_name)()
         if note:
             PENDING.append(note)
     md = cpu_sections.sec_cpu() + "\n" + cpu_sections.sec_best()

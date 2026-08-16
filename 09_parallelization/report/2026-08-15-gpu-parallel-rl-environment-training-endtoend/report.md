@@ -480,39 +480,39 @@ A processor has many cores, and the work has to be divided among them. There are
 
 The measurements settle which is better, and the answer is not the obvious one.
 
-| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
-|---|---|---|---|---|---|
-| 1 | 8 | 0.352 | 0.0015 | 1.45 | 0.191 |
-| 1 | 112 | 0.453 | 0.0011 | 1.13 | 0.246 |
-| 2 | 8 | 0.382 | 0.0027 | 1.34 | 0.207 |
-| 2 | 112 | 0.636 | 0.0016 | 0.81 | 0.345 |
-| 4 | 8 | 0.410 | 0.0050 | 1.25 | 0.223 |
-| 4 | 112 | 0.568 | 0.0036 | 0.90 | 0.308 |
-| 8 | 8 | 0.433 | 0.0095 | 1.18 | 0.235 |
-| 8 | 112 | 0.686 | 0.0060 | 0.75 | 0.372 |
-| 16 | 8 | 0.482 | 0.0170 | 1.06 | 0.261 |
-| 16 | 112 | 0.665 | 0.0123 | 0.77 | 0.361 |
-| 32 | 8 | 0.576 | 0.0284 | 0.89 | 0.313 |
-| 32 | 112 | 0.764 | 0.0214 | 0.67 | 0.415 |
-| 64 | 8 | 0.666 | 0.0492 | 0.77 | 0.361 |
-| 64 | 112 | 0.824 | 0.0397 | 0.62 | 0.447 |
-| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.67 |
-| 128 | 112 | 1.229 | 0.0533 | 0.42 | 0.667 |
+| copies | threads | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | timing |
+|---|---|---|---|---|---|---|
+| 1 | 8 | 0.352 | 0.0015 | 1.45 | 0.191 | burst, 2s |
+| 1 | 112 | 0.453 | 0.0011 | 1.13 | 0.246 | burst, 2s |
+| 2 | 8 | 0.382 | 0.0027 | 1.34 | 0.207 | burst, 2s |
+| 2 | 112 | 0.636 | 0.0016 | 0.81 | 0.345 | burst, 3s |
+| 4 | 8 | 0.410 | 0.0050 | 1.25 | 0.223 | burst, 2s |
+| 4 | 112 | 0.568 | 0.0036 | 0.90 | 0.308 | burst, 3s |
+| 8 | 8 | 0.433 | 0.0095 | 1.18 | 0.235 | burst, 2s |
+| 8 | 112 | 0.686 | 0.0060 | 0.75 | 0.372 | burst, 3s |
+| 16 | 8 | 0.482 | 0.0170 | 1.06 | 0.261 | burst, 2s |
+| 16 | 112 | 0.665 | 0.0123 | 0.77 | 0.361 | burst, 3s |
+| 32 | 8 | 0.576 | 0.0284 | 0.89 | 0.313 | burst, 3s |
+| 32 | 112 | 0.764 | 0.0214 | 0.67 | 0.415 | burst, 4s |
+| 64 | 8 | 0.666 | 0.0492 | 0.77 | 0.361 | burst, 3s |
+| 64 | 112 | 0.824 | 0.0397 | 0.62 | 0.447 | burst, 4s |
+| 128 | 8 | 1.235 | 0.0531 | 0.41 | 0.67 | burst, 6s |
+| 128 | 112 | 1.229 | 0.0533 | 0.42 | 0.667 | burst, 6s |
 
 *One process holding every copy, the array library given 8 or 112 threads. Sixteen updates per batch.*
 
-| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy |
-|---|---|---|---|---|---|---|
-| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 |
-| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 |
-| 112 | 1 | 112 | 0.370 | 0.1551 | 1.38 | 0.201 |
-| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 |
-| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 |
-| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 | 0.252 |
-| 112 | 16 | 1792 | 0.712 | 1.29 | 0.72 | 0.386 |
-| 224 | 16 | 3584 | 0.881 | 2.11 | 0.59 | 0.472 |
+| workers | copies each | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | timing |
+|---|---|---|---|---|---|---|---|---|
+| 8 | 1 | 8 | 0.349 | 0.0117 | 1.46 | 0.19 | not recorded | burst, 2s |
+| 32 | 1 | 32 | 0.370 | 0.0445 | 1.39 | 0.2 | not recorded | burst, 2s |
+| 112 | 1 | 112 | 0.511 | 0.1100 | 0.98 | 0.283 | 0.39 | sustained |
+| 224 | 1 | 224 | 0.379 | 0.3007 | 1.34 | 0.207 | not recorded | burst, 2s |
+| 112 | 4 | 448 | 0.464 | 0.4967 | 1.11 | 0.251 | not recorded | burst, 2s |
+| 224 | 4 | 896 | 0.456 | 0.9887 | 1.10 | 0.252 | not recorded | burst, 2s |
+| 112 | 16 | 1,792 | 0.712 | 1.29 | 0.72 | 0.386 | not recorded | burst, 4s |
+| 224 | 16 | 3,584 | 0.881 | 2.11 | 0.59 | 0.472 | not recorded | burst, 4s |
 
-*Independent single-thread processes. Sixteen updates per batch.*
+*Independent single-thread processes. Sixteen updates per batch. Rows marked burst were timed for the seconds shown, which reads the opening seconds of the load rather than the rate a run gets; they are the measurements that have not been retaken yet.*
 
 ![processor against graphics processor](figures/cpu_vs_gpu.png)
 
@@ -527,6 +527,36 @@ handful of threads the coordination costs more than the work it coordinates. Ind
 processes never pay it. This is also why the graphics processor needed the opposite treatment:
 the optimisation work there fused those forty operations into a handful and recorded the whole
 sequence, which is the same problem solved from the other end.
+
+### 5.4 How far the copies per worker go, and what stops them
+
+The sweep above stops at 224 workers holding 16 copies each, and total throughput is still
+rising there, so it does not show the machine's ceiling. Workers cannot be added — 224 is the
+machine's logical-processor count — but each worker can hold more copies, so the ladder was
+continued on that knob, at two worker counts: 224, which uses both hardware threads of every
+core, and 112, which uses one thread per core and leaves the other idle.
+
+Every rung below times about ninety seconds of continuous work with every worker synchronised,
+as the correction above requires, and records the peak resident memory of its workers, since
+copies per worker is what drives memory and the node has a fixed 1 TB of it.
+
+| copies per worker | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | node memory in use (GB) |
+|---|---|---|---|---|---|---|---|
+| 1 | 112 | 0.455 | 0.1236 | 1.10 | 0.252 | 0.40 | 35 |
+
+*One update per batch, 112 independent single-thread workers.*
+
+| copies per worker | total copies | seconds per iteration | million steps per second | thousand steps per second per copy | hours per million steps per copy | peak memory per worker (GB) | node memory in use (GB) |
+|---|---|---|---|---|---|---|---|
+| 1 | 112 | 0.511 | 0.1100 | 0.98 | 0.283 | 0.39 | 35 |
+
+*Sixteen updates per batch, 112 independent single-thread workers.*
+
+![copies per worker](figures/cpu_plateau.png)
+
+**One update per batch.** The better worker count is **112**, reaching **0.1236 million** environment steps per second at 1 copies per worker, that is 112 copies. Every rung measured still gained more than 2% over the one below it. At the largest rung measured, 1 copies per worker (112 copies), one copy gets 1.10 thousand steps per second against 1.10 thousand at one copy per worker, and each worker holds 0.40 GB, 35 GB across the node.
+
+**Sixteen updates per batch.** The better worker count is **112**, reaching **0.1100 million** environment steps per second at 1 copies per worker, that is 112 copies. Every rung measured still gained more than 2% over the one below it. At the largest rung measured, 1 copies per worker (112 copies), one copy gets 0.98 thousand steps per second against 0.98 thousand at one copy per worker, and each worker holds 0.39 GB, 35 GB across the node.
 
 
 ## 6. The best setup on each platform
@@ -543,11 +573,11 @@ one-copy-per-worker processor row, explained under the table.
 | graphics processor, sixteen updates per batch | 4,096 | <u>0.277</u> | <u>7.57</u> | <u>1.85</u> | <u>0.15</u> |
 | processor, independent processes, one update | 3,584 | 0.481 | 3.80 | 1.06 | 0.262 |
 | processor, independent processes, sixteen updates | 3,584 | 0.881 | 2.11 | 0.59 | 0.472 |
-| processor, independent processes, one update, one copy per worker | 224 | 0.326 | 0.3527 | 1.57 | 0.176 |
+| processor, independent processes, one update, one copy per worker | 224 | 1.009 | 0.1138 | 0.51 | 0.547 |
 | processor, threads in one process, one update | 128 | 0.904 | 0.0725 | 0.57 | 0.49 |
 | processor, threads in one process, sixteen updates | 128 | 1.229 | 0.0533 | 0.42 | 0.667 |
 
-The 224-copy row is the exception: it is the processor setting that finishes any single copy soonest, giving each copy 1.57 thousand steps per second against 1.06 thousand for the processor setting that wins on total throughput — a million steps per copy in 0.176 hours instead of 0.262 — at the price of a factor of 10.8 in total throughput.
+The 224-copy row is in the table for a claim that the sustained measurements withdrew. Giving every worker one copy was the setting that finished a single copy soonest when these numbers were read off two-second measurements. Measured over a long window it is not: it gives each copy 0.51 thousand steps per second, where processor, independent processes, one update at 3,584 copies gives 1.06 thousand — a million steps per copy in 0.262 hours against 0.547 — while also reaching 33 times its total throughput. Packing copies into each worker is not a trade against single-copy speed on this machine; up to the plateau it is better at both.
 
 ![best setup](figures/best_setup.png)
 
