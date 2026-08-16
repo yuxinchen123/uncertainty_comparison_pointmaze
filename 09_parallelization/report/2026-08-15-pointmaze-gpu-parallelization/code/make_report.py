@@ -1568,9 +1568,10 @@ The short answer is that the two ranges are different problems. At 128 copies th
 long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
 above the same programs each carry eight to thirty-two times as much data, the data no longer fits
 in any cache, and the cost is set by how many bytes move between the chip and its memory. An
-optimisation that removes device programs helps the first case and does nothing for the second;
-an optimisation that removes bytes does the opposite. One change kept in the previous round on the
-strength of the 8-to-128 measurements is a loss at 1,024 and above, and is recorded below.
+optimisation that removes device programs helps at 128 copies and does nothing at 4,096; an
+optimisation that removes bytes moved helps at 4,096 and does nothing at 128. One change kept in
+the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
+and above, and is recorded below.
 
 ### Where an iteration's time goes as the copy count grows
 
