@@ -700,13 +700,13 @@ class PPORND:
         """Produce every parameter gradient and place it in the flat gradient buffer.
 
         `loss.backward()` with a gradient already attached to each parameter ADDS the new
-        gradient into it, which reads the whole gradient buffer and writes it back, and then
-        the buffer has to be zeroed again before the next step: three extra passes over a
-        buffer that holds 245 megabytes at 1,024 copies and a gigabyte at 4,096. Asking
-        autograd for the gradients instead returns nineteen freshly written tensors that
-        nothing has to be added to, and one call copies them into their windows, so the
-        gradient is written once and read twice (the norm, then the Adam step) and never
-        zeroed. The nineteen small accumulation programs disappear as well.
+        gradient into it — reading the freshly produced gradient, reading the buffer and
+        writing it back, three passes — and the buffer then has to be zeroed before the next
+        step, a fourth. That buffer holds 245 megabytes at 1,024 copies and a gigabyte at
+        4,096. Asking autograd for the gradients instead returns nineteen freshly written
+        tensors that nothing has to be added to, and one call copies them into their windows,
+        so the gradient is written, copied once, and read twice (the norm, then the Adam step),
+        and never zeroed. The nineteen small addition programs disappear with it.
         """
         grads = torch.autograd.grad(loss, self.trainable)
         torch._foreach_copy_(self.grad_windows, list(grads))
