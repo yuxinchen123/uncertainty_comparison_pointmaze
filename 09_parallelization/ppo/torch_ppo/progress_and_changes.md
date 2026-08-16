@@ -536,6 +536,12 @@ layout follows it — one block per parameter where the optimizer is twenty-one 
 per copy where it is one. This is the same shape of answer round five arrived at from the other
 direction, and it is the reason both rounds measure every change at both ends of the range.
 
+With ONE update per batch the same change is worth much less, which is the same arithmetic seen
+from another angle: there is one update step per iteration rather than sixteen, so the copy is
+paid for once rather than sixteen times. 128 copies +0.13% (0 of 11, against a 0.01 ms floor —
+nothing), 1,024 copies -0.58% (11 of 11), 4,096 copies -1.23% (11 of 11). The size rule is the
+same for both conventions.
+
 Rows 24 and 25 remove different passes and cannot both apply, so they were also measured against
 each other rather than compared through their separate baselines:
 

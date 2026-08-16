@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:43 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:46 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1011,13 +1011,11 @@ was changing while it was measured, and those figures are superseded here.
 |---|---|---|---|---|---|---|
 | PyTorch before round five | 1024 | 82.2 | 6.38 | 6.2 | 0.045 | 3.5 |
 | PyTorch after round six | 1024 | 56.7 | <u>9.24</u> | 9.0 | 0.031 | 3.5 |
-| JAX | 1024 | 47.0 | **11.15** | 10.9 | 0.026 | 2.4 |
+| JAX | 1024 | 47.2 | **11.11** | 10.9 | 0.026 | 2.4 |
 | PyTorch before round five | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
-| PyTorch after round six | 2048 | 107.1 | <u>9.79</u> | 4.8 | 0.058 | 6.9 |
-| JAX | 2048 | 86.0 | **12.19** | 6.0 | 0.047 | 4.7 |
+| PyTorch after round six | 2048 | 107.1 | **9.79** | 4.8 | 0.058 | 6.9 |
 | PyTorch before round five | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
-| PyTorch after round six | 4096 | 205.5 | <u>10.20</u> | 2.5 | 0.111 | 13.8 |
-| JAX | 4096 | 167.8 | **12.50** | 3.1 | 0.091 | 9.1 |
+| PyTorch after round six | 4096 | 205.5 | **10.20** | 2.5 | 0.111 | 13.8 |
 
 *Best aggregate rate per copy count in bold, second best underlined. The aggregate rate rises with the copy count while the rate each individual copy gets falls, so the hours column is the one that says how long a single training run actually takes. 8,192 copies is past the range this section is about and was measured only for the changed PyTorch build, to see whether the card still holds it.*
 
@@ -1286,7 +1284,7 @@ tensor. That is the largest single removable item, and it is what round five's o
 
 **Reading the gradients where the backward pass wrote them**, instead of copying them into one buffer so that the gradient limit and the Adam step can each be a single program over one contiguous array. The price is twenty-one programs per optimizer pass instead of one; the measurement is whether that costs more than the copy it removes.
 
-| copies | before | reading them in place | change | rounds favouring it | spread within a version |
+| copies | before | reading them in place | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
 | 8 | 7.88 ms | 8.41 ms | +6.7 percent | 0 of 11 | 0.01 ms |
 | 32 | 8.95 ms | 9.43 ms | +5.4 percent | 0 of 11 | 0.03 ms |
@@ -1312,7 +1310,7 @@ tensor. That is the largest single removable item, and it is what round five's o
 
 The same change with one update per batch, where the iteration has one update step rather than sixteen and so pays for the copy once rather than sixteen times:
 
-| copies | before | reading them in place | change | rounds favouring it | spread within a version |
+| copies | before | reading them in place | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
 | 128 | 6.09 ms | 6.10 ms | +0.1 percent | 0 of 11 | 0.01 ms |
 | 1024 | 18.05 ms | 17.95 ms | -0.6 percent | 11 of 11 | 0.15 ms |
@@ -1320,21 +1318,21 @@ The same change with one update per batch, where the iteration has one update st
 
 A third form was measured because it removes a different pass: keep the buffer, but sum the squared gradients in the same program that copies them into it, so the buffer is never read a second time for the gradient limit.
 
-| copies | before | with the limit fused into the copy | change | rounds favouring it | spread within a version |
+| copies | before | with the limit fused into the copy | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
 | 1024 | 56.56 ms | 54.17 ms | -4.2 percent | 11 of 11 | 0.73 ms |
 | 4096 | 204.75 ms | 197.83 ms | -3.4 percent | 11 of 11 | 3.36 ms |
 
 The two new forms against each other, so the choice between them is measured rather than inferred from their separate comparisons:
 
-| copies | before | no buffer at all | change | rounds favouring it | spread within a version |
+| copies | before | no buffer at all | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
 | 1024 | 54.38 ms | 54.11 ms | -0.5 percent | 11 of 11 | 0.63 ms |
 | 4096 | 198.34 ms | 195.18 ms | -1.6 percent | 11 of 11 | 3.57 ms |
 
 **One contiguous block per parameter, instead of one buffer row per copy.** The round-four buffer holds [copies, parameters]: the layout a single-program optimizer needs, because a copy then owns a contiguous row and one kernel can walk the whole array applying that copy's rate. With the optimizer now twenty-one programs, that is the wrong layout — a parameter's window of it is strided across copies, and a pass over a strided window reaches 2,022 gigabytes per second against 3,588 for the same pass over a contiguous tensor. Holding one block per parameter instead makes every window a multiplication or the optimizer touches contiguous, and keeps every copy on a sixteen-byte boundary by padding each block's per-copy length to a multiple of four numbers. Only four of the twenty-one need that padding, and none of them is a multiplication operand.
 
-| copies | before | one block per parameter | change | rounds favouring it | spread within a version |
+| copies | before | one block per parameter | change | rounds<br>favouring it | spread within<br>a version |
 |---|---|---|---|---|---|
 | 128 | 12.71 ms | 12.61 ms | -0.8 percent | 11 of 11 | 0.04 ms |
 | 1024 | 54.06 ms | 53.26 ms | -1.5 percent | 11 of 11 | 0.98 ms |
@@ -1344,10 +1342,17 @@ The two new forms against each other, so the choice between them is measured rat
 
 Why the gradient forms differ, program by program at 4,096 copies (`benchmarks/probe_gradient_form.py`):
 
-| program | time | bytes | rate |
-|---|---|---|---|
-| gradient limit over the twenty-one gradients (read 1), no-buffer form | 342 us | 0.98 GB | 2,868 GB/s |
-| Adam over the twenty-one windows (read 4, write 3), no-buffer form | 2,102 us | 6.87 GB | 3,268 GB/s |
+| program | form | time | bytes | rate |
+|---|---|---|---|---|
+| copy the gradients into the flat buffer (read 1, write 1) | buffer form | 861 us | 1.96 GB | 2,280 GB/s |
+| gradient limit over the flat buffer (read 1) | buffer form | 290 us | 0.98 GB | 3,385 GB/s |
+| Adam over the flat buffer (read 4, write 3) | buffer form | 1,972 us | 6.87 GB | 3,486 GB/s |
+| gradient limit over the twenty-one gradients (read 1) | no-buffer form | 340 us | 0.98 GB | 2,883 GB/s |
+| Adam over the twenty-one windows (read 4, write 3) | no-buffer form | 2,213 us | 6.87 GB | 3,104 GB/s |
+| gradient limit over the twenty-one gradients (read 1) | no-buffer form, one block per parameter | 342 us | 0.98 GB | 2,868 GB/s |
+| Adam over the twenty-one windows (read 4, write 3) | no-buffer form, one block per parameter | 2,102 us | 6.87 GB | 3,268 GB/s |
+
+Per minibatch step the buffer form's three programs come to 3,123 microseconds and the other form's two to 2,554, so 569 microseconds a step and 9.1 milliseconds over the sixteen steps of an iteration — which is what the whole-iteration comparison above measures. The decomposition also says what the change gives back: reading the gradients in place means the Adam step walks twenty-one windows instead of one contiguous array, and the layout change recovers about a third of that.
 
 #### Tried and not kept: letting the compiler generate the multiplications
 
@@ -1405,7 +1410,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
-| every parameter, moment and gradient window on a sixteen-byte boundary, both layouts, more than one copy | pass |
+| every parameter, moment and gradient window on a sixteen-byte<br>boundary, in both layouts, checked on more than one copy | pass |
 
 #### The largest inefficiency left, measured but not attempted
 
@@ -1442,9 +1447,7 @@ rather than attempted at the end of a round.
 | one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
 | one update per batch | 2048 | 32.6 ms | 23.3 ms | 1.40 |
 | one update per batch | 4096 | 63.3 ms | 43.7 ms | 1.45 |
-| sixteen updates per batch | 1024 | 56.7 ms | 47.0 ms | 1.21 |
-| sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.24 |
-| sixteen updates per batch | 4096 | 205.5 ms | 167.8 ms | 1.23 |
+| sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
 
 The reason is not that any PyTorch program is slow. Each is timed on its real shape in the
 subsection above and reaches 72 to 100 percent of the rate a plain copy of memory gets. The reason
@@ -1457,16 +1460,6 @@ activation, then the next multiplication — and every intermediate between them
 memory and read back. The JAX trainer hands the whole iteration to a compiler that emits fewer
 programs, folding chains of element-wise work into the loops that produce and consume them, so a
 number of the intermediates PyTorch writes and re-reads are never written at all.
-
-Both trainers implement the same algorithm on the same shapes, so the bytes the algorithm itself requires are the same for both, and the distance each one sits above that figure is comparable:
-
-| | milliseconds per iteration | times the counted traffic floor |
-|---|---|---|
-| the bytes the algorithm requires, at the card's measured bandwidth | 77 | 1.00 |
-| JAX | 168 | 2.18 |
-| PyTorch | 206 | 2.67 |
-
-*4,096 copies, sixteen updates per batch. The floor counts every tensor the algorithm writes and every later read of it (`benchmarks/count_traffic.py`); it does not count intermediates a particular implementation has to materialise, which is exactly the quantity the two frameworks differ in.*
 
 Round six measured the obvious way to close that difference — having PyTorch's compiler generate
 the multiplications so that the bias and the activation fold into them as an epilogue — and the

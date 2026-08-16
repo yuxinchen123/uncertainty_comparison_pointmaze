@@ -2148,8 +2148,10 @@ Recording them is the point: two of them look obviously right until the bytes ar
 def paired_table(rows, label, copies=None):
     """One paired round-by-round comparison rendered as a table, newest measurement per size."""
     copies = copies or sorted(rows)
-    md = [f"| copies | before | {label} | change | rounds favouring it | spread within a "
-          "version |", "|---|---|---|---|---|---|"]
+    # the two long headers are wrapped: a table wider than about a hundred characters runs
+    # off the right edge of a printed page, where there is no scroll bar to recover it
+    md = [f"| copies | before | {label} | change | rounds<br>favouring it | "
+          "spread within<br>a version |", "|---|---|---|---|---|---|"]
     for c in copies:
         r = rows.get(c)
         if not r:
@@ -2171,7 +2173,10 @@ def sec_large_scale_round6():
     layout = paired_change_rows(r"torch_change_set_epoch_minibatch_sync_layout")
     gather = newest(r"ab_r6-gather-out-C4096-styleB")
     epi = epilogue_rows(r"probe_epilogue_C4096_pertrainer") or epilogue_rows(r"probe_epilogue_C4096")
-    prog = newest(r"probe_gradient_form_C4096")
+    # anchored on the extension: the same probe also writes a parameter-major file, and that one
+    # holds only the no-buffer programs, because the buffer form does not exist in that layout
+    prog = newest(r"probe_gradient_form_C4096\.json")
+    prog_pm = newest(r"probe_gradient_form_C4096_parameter_major\.json")
     if not grad_B:
         return pending("the round-six subsection", "the round-six paired comparisons")
 
@@ -2293,11 +2298,30 @@ tensor. That is the largest single removable item, and it is what round five's o
     if prog:
         md += ("Why the gradient forms differ, program by program at 4,096 copies "
                "(`benchmarks/probe_gradient_form.py`):\n\n"
-               "| program | time | bytes | rate |\n|---|---|---|---|\n")
+               "| program | form | time | bytes | rate |\n|---|---|---|---|---|\n")
         for r in prog["rows"]:
-            md += (f"| {r['name']} | {r['microseconds']:,.0f} us | {r['bytes']/1e9:.2f} GB | "
-                   f"{r['gb_per_s']:,.0f} GB/s |\n")
-        md += "\n"
+            # the probe names each program as "what it does, which form it belongs to"; the two
+            # halves become two columns so neither cell runs off the edge of a printed page
+            what, _, form = r["name"].rpartition(", ")
+            md += (f"| {what} | {form} | {r['microseconds']:,.0f} us | "
+                   f"{r['bytes']/1e9:.2f} GB | {r['gb_per_s']:,.0f} GB/s |\n")
+        if prog_pm:
+            for r in prog_pm["rows"]:
+                what, _, form = r["name"].rpartition(", ")
+                md += (f"| {what} | {form}, one block per parameter | "
+                       f"{r['microseconds']:,.0f} us | {r['bytes']/1e9:.2f} GB | "
+                       f"{r['gb_per_s']:,.0f} GB/s |\n")
+        md += ("\nPer minibatch step the buffer form's three programs come to "
+               f"{prog['per_step_us']['buffer form']:,.0f} microseconds and the other form's two "
+               f"to {prog['per_step_us']['no-buffer form']:,.0f}, so "
+               f"{prog['per_step_us']['buffer form'] - prog['per_step_us']['no-buffer form']:,.0f} "
+               f"microseconds a step and "
+               f"{(prog['per_step_us']['buffer form'] - prog['per_step_us']['no-buffer form']) * 16 / 1000:.1f}"
+               " milliseconds over the sixteen steps of an iteration — which is what the "
+               "whole-iteration comparison above measures. The decomposition also says what the "
+               "change gives back: reading the gradients in place means the Adam step walks "
+               "twenty-one windows instead of one contiguous array, and the layout change "
+               "recovers about a third of that.\n\n")
     if epi:
         md += """#### Tried and not kept: letting the compiler generate the multiplications
 
@@ -2418,7 +2442,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
-| every parameter, moment and gradient window on a sixteen-byte boundary, both layouts, more than one copy | pass |
+| every parameter, moment and gradient window on a sixteen-byte<br>boundary, in both layouts, checked on more than one copy | pass |
 
 #### The largest inefficiency left, measured but not attempted
 
