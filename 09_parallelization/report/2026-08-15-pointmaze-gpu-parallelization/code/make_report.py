@@ -1588,8 +1588,9 @@ and above, and is recorded below.
             f"{a_before[key]['ms']:.0f} milliseconds per iteration against "
             f"{a_jax[key]['ms']:.0f} for the JAX trainer")
         md += (f"**The two answers in one line.** {answer}. The distance is not made of any one "
-               f"slow program: it is made of intermediate results that the PyTorch arrangement "
-               f"writes to memory and reads back, and the JAX one never writes at all.\n\n")
+               f"slow program — each of PyTorch's runs at 71 to 100 percent of the rate a plain "
+               f"copy of memory reaches — but of how many intermediate results have to be "
+               f"written to memory and read back between them.\n\n")
     md += """### Where an iteration's time goes as the copy count grows
 
 """
@@ -1692,8 +1693,9 @@ The two frameworks arrange an iteration differently. The PyTorch trainer records
 a sequence of separate device programs — a multiplication, then a program that adds the bias and
 applies the activation, then the next multiplication, and so on — and every intermediate between
 them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
-that emits far fewer programs, so intermediates that PyTorch writes and re-reads never leave the
-chip. At 128 copies that difference showed up as a difference in the number of programs issued,
+that emits far fewer programs, folding chains of element-wise work into the loops that produce
+and consume them, so a number of the intermediates PyTorch writes and re-reads are never written
+at all. At 128 copies that difference showed up as a difference in the number of programs issued,
 worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
 what the iteration costs, so the same difference is worth about a factor of two.
 

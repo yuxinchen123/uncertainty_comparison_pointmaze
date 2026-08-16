@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:28 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:29 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -833,7 +833,7 @@ optimisation that removes bytes moved helps at 4,096 and does nothing at 128. On
 the previous round on the strength of the 8-to-128 measurements turns out to be a loss at 1,024
 and above, and is recorded below.
 
-**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program: it is made of intermediate results that the PyTorch arrangement writes to memory and reads back, and the JAX one never writes at all.
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration against 44 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 71 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
 
 ### Where an iteration's time goes as the copy count grows
 
@@ -959,8 +959,9 @@ The two frameworks arrange an iteration differently. The PyTorch trainer records
 a sequence of separate device programs — a multiplication, then a program that adds the bias and
 applies the activation, then the next multiplication, and so on — and every intermediate between
 them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
-that emits far fewer programs, so intermediates that PyTorch writes and re-reads never leave the
-chip. At 128 copies that difference showed up as a difference in the number of programs issued,
+that emits far fewer programs, folding chains of element-wise work into the loops that produce
+and consume them, so a number of the intermediates PyTorch writes and re-reads are never written
+at all. At 128 copies that difference showed up as a difference in the number of programs issued,
 worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
 what the iteration costs, so the same difference is worth about a factor of two.
 
