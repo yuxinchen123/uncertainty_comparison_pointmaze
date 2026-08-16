@@ -126,8 +126,11 @@ def median_row(rows):
     before: three repeats at 2.10, 2.12 and 2.11 million steps per second
     after:  the 2.11 row, carrying repeats 3 and a spread of 0.010
     """
+    # the lower of the two middles when the count is even, so a pair of repeats reports the
+    # slower of the two rather than the faster: taking the upper middle would make every
+    # twice-measured setting the best of two, which is the bias a median is meant to avoid
     ordered = sorted(rows, key=lambda r: r["env_steps_per_sec"])
-    chosen = dict(ordered[len(ordered) // 2])
+    chosen = dict(ordered[(len(ordered) - 1) // 2])
     lo, hi = ordered[0]["env_steps_per_sec"], ordered[-1]["env_steps_per_sec"]
     chosen["_repeats"] = len(ordered)
     chosen["_spread"] = hi / lo - 1.0 if lo > 0 else 0.0
@@ -562,6 +565,33 @@ def correction_table(host="jaguar03", workers=224, copies=16):
                  f"job. Millions of environment steps per second.*\n\n")
 
 
+def repeat_table(host="jaguar03"):
+    """Every setting measured more than once the same way, with each reading and the spread.
+
+    before: two runs of 224 workers at 64 copies each, 1.77 and 1.76 million steps per second
+    after:  one row naming both and the 0.8% between them
+    """
+    groups = {}
+    for r in all_rows(r"trainbench_cpu_", host=host, mode="processes"):
+        if r.get("window_seconds") is None:
+            continue
+        groups.setdefault((r["_style"], r["workers"], r["n_copies"]), []).append(r)
+    repeated = {k: v for k, v in groups.items() if len(v) > 1}
+    if not repeated:
+        return ""
+    md = ("| update convention | workers | copies per worker | readings, million steps per "
+          "second | spread |\n|---|---|---|---|---|\n")
+    for (style, workers, copies), members in sorted(repeated.items(),
+                                                    key=lambda kv: (kv[0][0], kv[0][1], kv[0][2])):
+        vals = sorted(m["env_steps_per_sec"] for m in members)
+        label = "one update" if style == "full_batch" else "sixteen updates"
+        md += (f"| {label} | {workers} | {copies} | "
+               f"{', '.join(M(v) for v in vals)} | "
+               f"{100 * (vals[-1] / vals[0] - 1):.1f}% |\n")
+    return md + ("\n*Repeats of the same setting under the same method. The tables above report "
+                 "the lower reading where a setting was measured twice.*\n\n")
+
+
 def process_table(rows, caption):
     """The independent-process table: both rates, the memory a worker held, and how it was timed.
 
@@ -980,6 +1010,10 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
                                    f"{label}, {workers} independent single-thread workers.", style)
     md += "![copies per worker](figures/cpu_plateau.png)\n\n"
     md += plateau_summary_table()
+    repeats = repeat_table()
+    if repeats:
+        md += ("Four settings were measured twice, to show how much a reading moves between two "
+               "runs of the same thing.\n\n") + repeats
     for style, label in [("full_batch", "One update per batch"),
                          ("epoch_minibatch", "Sixteen updates per batch")]:
         sentence = plateau_sentences(style, label)
