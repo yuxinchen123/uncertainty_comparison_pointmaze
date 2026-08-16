@@ -1553,10 +1553,12 @@ def sec_large_scale():
 
     md = """## Training a thousand to four thousand copies at once
 
-Every measurement in the sections above was taken at 8 to 128 independent training copies, and
-every optimisation recorded there was chosen by what those sizes rewarded. The trainer is used at
-1,024 to 4,096 copies. This section re-opens the question at those sizes: what the two frameworks
-cost there, what limits the PyTorch one, and what changed once the limit was identified.
+An earlier section did measure the trainer past a thousand copies, but its figures come from the
+first and second optimisation rounds and its JAX figures from the first, and — more importantly —
+every optimisation decision recorded anywhere in this document was taken by measuring 8 to 128
+copies. The trainer is used at 1,024 to 4,096. This section re-opens the question at those sizes,
+with the current code on both sides: what the two frameworks cost there, what limits the PyTorch
+one, and what changed once the limit was identified.
 
 The short answer is that the two ranges are different problems. At 128 copies the iteration is a
 long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
