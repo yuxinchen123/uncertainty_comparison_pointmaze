@@ -155,3 +155,26 @@ def test_best_per_total_keeps_the_better_of_two_settings_at_one_copy_count():
     out = c.best_per_total(rows)
     assert [r["total_copies"] for r in out] == [3584, 7168]
     assert out[0]["workers"] == 224
+
+
+def test_thousands_cell_keeps_three_decimals_on_a_slow_copy():
+    """A copy getting single-digit steps per second must not print as zero."""
+    assert c.K(1104.0) == "1.10"
+    assert c.K(263.0) == "0.263"
+    assert c.K(8.0) == "0.008"
+    assert c.K(37000.0) == "37"
+
+
+def test_what_ended_it_names_a_turnover_a_flattening_or_neither():
+    """A series past its peak has turned over; one that merely stopped gaining has flattened."""
+    fell = [{"env_steps_per_sec": 1.0e6, "n_copies": 16},
+            {"env_steps_per_sec": 1.9e6, "n_copies": 64},
+            {"env_steps_per_sec": 1.5e6, "n_copies": 128}]
+    assert c.what_ended_it(fell, c.plateau_rung(fell)) == "turned over"
+    flat = [{"env_steps_per_sec": 1.0e6, "n_copies": 16},
+            {"env_steps_per_sec": 1.9e6, "n_copies": 64},
+            {"env_steps_per_sec": 1.905e6, "n_copies": 128}]
+    assert c.what_ended_it(flat, c.plateau_rung(flat)) == "flattened"
+    rising = [{"env_steps_per_sec": 1.0e6, "n_copies": 16},
+              {"env_steps_per_sec": 1.9e6, "n_copies": 64}]
+    assert c.what_ended_it(rising, c.plateau_rung(rising)) == "still rising where the sweep stopped"

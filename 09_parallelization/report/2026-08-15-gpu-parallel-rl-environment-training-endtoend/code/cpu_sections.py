@@ -356,9 +356,17 @@ def M(x):
 
 
 def K(x):
-    """Thousands, formatted for a table cell."""
+    """Thousands, formatted for a table cell.
+
+    Three decimals below a thousand steps per second, because the largest settings of the
+    copies-per-worker sweep give a copy single-digit steps per second and two decimals would
+    print every one of them as 0.00.
+    before: 1,104 -> "1.10";  263 -> "0.263";  8 -> "0.008"
+    """
     v = x / 1e3
-    return f"{v:,.0f}" if v >= 10 else f"{v:.2f}"
+    if v >= 10:
+        return f"{v:,.0f}"
+    return f"{v:.2f}" if v >= 1 else f"{v:.3f}"
 
 
 def hours_per_million(per_copy_rate):
@@ -879,6 +887,47 @@ def plateau_summary_table():
                  "is in the four tables above.*\n\n")
 
 
+def consequence_table():
+    """What packing past the best rung costs, on both counts, for each update convention.
+
+    The question the curve raises is whether there is ever a reason to put more copies in a
+    worker than the best rung. The answer is in the two loss columns: past the peak the machine
+    does less total work AND every copy in it runs slower, so nothing is traded for anything.
+    """
+    rows = []
+    for style, label in [("full_batch", "one update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")]:
+        found = best_worker_count(style)
+        if not found:
+            continue
+        winner, _ = found
+        series = ladder(style, winner)
+        top = max(series, key=lambda r: r["env_steps_per_sec"])
+        beyond = [r for r in series if r["n_copies"] > top["n_copies"]]
+        if not beyond:
+            continue
+        rows.append({"label": label, "workers": winner, "top": top, "next": beyond[0],
+                     "last": beyond[-1]})
+    if not rows:
+        return ""
+    md = ("| update convention | workers | copies per worker | million steps per second | "
+          "thousand steps per second per copy | hours per million steps per copy | "
+          "against the best rung |\n|---|---|---|---|---|---|---|\n")
+    for r in rows:
+        for tag, row in [("the best rung", r["top"]), ("twice it", r["next"]),
+                         ("the largest measured", r["last"])]:
+            change = ("" if tag == "the best rung" else
+                      f"{100 * (row['env_steps_per_sec'] / r['top']['env_steps_per_sec'] - 1):.0f}% "
+                      f"total, "
+                      f"{100 * (row['env_steps_per_sec_per_copy'] / r['top']['env_steps_per_sec_per_copy'] - 1):.0f}% "
+                      f"per copy")
+            md += (f"| {r['label']}, {tag} | {r['workers']} | {row['n_copies']} | "
+                   f"{M(row['env_steps_per_sec'])} | {K(row['env_steps_per_sec_per_copy'])} | "
+                   f"{H(row['env_steps_per_sec_per_copy'])} | {change} |\n")
+    return md + ("\n*Both quantities fall together past the best rung, so packing more copies "
+                 "into a worker buys nothing on either count.*\n\n")
+
+
 def plateau_sentences(style, label):
     """The plateau, the peak and the memory for one update convention, all read from the rows."""
     found = best_worker_count(style)
@@ -936,6 +985,12 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
         sentence = plateau_sentences(style, label)
         if sentence:
             md += sentence + "\n\n"
+    consequence = consequence_table()
+    if consequence:
+        md += ("**Is there a reason to pack more copies into a worker than that?** No, and the "
+               "reason is that nothing is being traded. A setting past the peak is worse for the "
+               "queue that cares about total throughput and worse for the run whose owner cares "
+               "how long one copy takes.\n\n") + consequence
     return md
 
 
