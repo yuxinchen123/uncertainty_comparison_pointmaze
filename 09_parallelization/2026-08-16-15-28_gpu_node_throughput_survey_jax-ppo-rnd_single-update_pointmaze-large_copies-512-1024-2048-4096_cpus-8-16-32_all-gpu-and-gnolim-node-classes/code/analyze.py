@@ -450,6 +450,49 @@ def memory_table(classes, jobs):
     return "\n".join(lines)
 
 
+def memory_by_generation(jobs, probes):
+    """How much card memory a copy costs, split by the card's generation — computed, not assumed.
+
+    The split is by compute capability read off the card itself: 8.0 and above is Ampere and
+    newer, below it is Turing and Pascal. Both the per-copy cost and the figure at the largest
+    copy count are quoted, because they are different ratios and the difference matters when
+    the claim is repeated.
+    """
+    capability = {p["device_kind"]: float(p["compute_capability"]) for p in probes
+                  if p.get("compute_capability")}
+    per_thousand, at_largest = {"older": [], "newer": []}, {"older": [], "newer": []}
+    for job in jobs.values():
+        for cell in job["cells"]:
+            if cell.get("status") != "measured" or cell["device_kind"] not in capability:
+                continue
+            group = "newer" if capability[cell["device_kind"]] >= 8.0 else "older"
+            gb = cell["peak_device_memory_mb"] / 1000
+            per_thousand[group].append(gb / cell["n_copies"] * 1000)
+            if cell["n_copies"] == max(COPY_COUNTS):
+                at_largest[group].append(gb)
+    if not per_thousand["older"] or not per_thousand["newer"]:
+        return ""
+    old, new = np.mean(per_thousand["older"]), np.mean(per_thousand["newer"])
+    largest = ""
+    if at_largest["older"] and at_largest["newer"]:
+        o, n = np.mean(at_largest["older"]), np.mean(at_largest["newer"])
+        largest = (f" At {max(COPY_COUNTS):,} copies, the size where it bites, that is "
+                   f"{o:.1f} GB against {n:.1f} GB — {o / n - 1:.0%} more.")
+    return (
+        f"**The same run costs about half as much memory again on an older card.** A thousand "
+        f"copies take {old:.2f} GB on every Turing and Pascal card measured and {new:.2f} GB on "
+        f"every Ampere, Ada, Hopper and Blackwell card — {old / new - 1:.0%} more on the older "
+        f"generation.{largest} The older cards are also the more uniform group: their per-copy "
+        f"cost sits between {min(per_thousand['older']):.2f} and "
+        f"{max(per_thousand['older']):.2f} GB across three distinct architectures, while the "
+        f"newer ones range from {min(per_thousand['newer']):.2f} to "
+        f"{max(per_thousand['newer']):.2f} GB. The split follows the card generation and not "
+        "the card's size or speed, so it is the compiler emitting a different program for the "
+        "older architectures, not the trainer asking for more. What in that program costs the "
+        "extra memory was not investigated here. The practical consequence is that an older "
+        "card reaches its ceiling sooner than its size alone suggests.")
+
+
 def stability_summary(jobs):
     """How firm the survey's numbers are, over every cell it measured."""
     spreads = [c["relative_spread_middle_half"] for j in jobs.values() for c in j["cells"]
@@ -620,15 +663,7 @@ def main():
         "",
         memory_table(classes, jobs),
         "",
-        "**The same run needs 66% more memory on an older card.** Every card at compute "
-        "capability 8.0 and above — Ampere, Ada, Hopper, Blackwell — holds 4,096 copies in "
-        "about 11.3 GB, while every Turing and Pascal card needs about 18.8 GB for exactly the "
-        "same work, and the H100 sits slightly above its generation at 13.4 GB. The split "
-        "follows the card generation and not the card's size or speed, so it is the compiler "
-        "emitting a different program for the older architectures, not the trainer asking for "
-        "more. What in that program costs the extra memory was not investigated here. The "
-        "practical consequence is that the memory ceiling of an older card is reached about a "
-        "third sooner than its size alone suggests.",
+        memory_by_generation(jobs, probes),
         "",
         "![peak memory](plots/peak_memory.png)",
         "",

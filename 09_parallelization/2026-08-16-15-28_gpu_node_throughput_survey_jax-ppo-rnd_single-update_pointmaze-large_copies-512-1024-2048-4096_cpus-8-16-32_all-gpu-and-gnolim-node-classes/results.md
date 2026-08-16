@@ -1,8 +1,8 @@
 # Throughput of the single-update JAX PPO+RND trainer on every graphics card of this cluster
 
-Written 2026-08-16 16:46 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
+Written 2026-08-16 16:56 PT. Times in this document are Pacific; the cluster's machines run Eastern, so every machine timestamp is converted where it is displayed.
 
-68 of 80 jobs have reported, giving 221 measured cells; 46 cells did not fit on their card. 12 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
+69 of 80 jobs have reported, giving 227 measured cells; 49 cells did not fit on their card. 11 jobs are still queued or unrun — every number below is what has arrived, not a complete survey.
 
 ## 1. What was measured
 
@@ -24,14 +24,14 @@ One node per node class — nodes identical in card type, card memory, processor
 |---|---|---|---|---|---|---|---|
 | `serval03` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9534 | none yet | 0/12 |
 | `serval06-09` | gpu | H100 NVL | 9.0 | 95.8 | amd epyc 9354 | 8, 16, 32 | 12/12 |
-| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16, 28 | 11/12 |
+| `cheetah01` | gpu | A100 | 8.0 | 41.0 | amd epyc 7252 | 8, 16, 28 | 12/12 |
 | `cheetah04` | gpu | A100 | 8.0 | 81.1 | amd epyc 7742 | 8, 16, 32 | 12/12 |
 | `nekomata01` | gpu | RTX 5080 | 12.0 | 16.3 | icelake | 8, 16, 22 | 12/12 |
 | `jaguar01` | gpu | A40 | 8.6 | 46.1 | skylake | 8, 16, 32 | 12/12 |
 | `jaguar06` | gpu | A40 | 8.6 | 46.1 | icelake | 8, 16, 32 | 12/12 |
 | `cheetah02` | gpu | RTX 4000 Ada | 8.9 | 20.5 | skylake | 8, 16, 32 | 12/12 |
 | `jaguar03` | gpu | RTX A4500 | 8.6 | 20.5 | amd epyc 7663 | 8, 16, 32 | 12/12 |
-| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8, 16 | 7/12 |
+| `cheetah08-09` | gpu | RTX A4000 | 8.6 | 16.4 | skylake | 8, 16 | 8/12 |
 | `jaguar02` | gpu | A16 | 8.6 | 15.4 | icelake | none yet | 0/12 |
 | `lotus` | gpu | Quadro RTX 6000 | 7.5 | 24.1 | skylake | 8, 16, 32 | 12/12 |
 | `affogato11` | gpu | RTX 2080 Ti | 7.5 | 10.9 | broadwell | 8 | 3/12 |
@@ -46,9 +46,9 @@ One node per node class — nodes identical in card type, card memory, processor
 | `ai07-08` | gnolim | GTX 1080 Ti | 6.1 | 11.3 | skylake | 8, 16, 30 | 9/12 |
 | `ai09` | gnolim | GTX 1080 Ti | 6.1 | 11.3 | skylake | 8, 16, 30 | 9/12 |
 | `lynx02-04` | gpu | GTX 1080 Ti | 6.1 | 11.3 | broadwell | 8, 16, 30 | 9/12 |
-| `ai05_ai10` | gnolim | GTX 1080 | 6.1 | 8.2 | skylake | 8, 16 | 4/12 |
+| `ai05_ai10` | gnolim | GTX 1080 | 6.1 | 8.2 | skylake | 8, 16, 30 | 6/12 |
 | `jinx01-02` | gnolim | GTX 1080 | 6.1 | 8.2 | haswell | 8, 16, 22 | 6/12 |
-| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8, 16, 22 | 7/12 |
+| `titanx03` | gnolim | Titan X | 6.1 (catalog says 5.2) | 12.3 | haswell | 8, 16, 22 | 9/12 |
 
 All 23 classes probed so far run the trainer: JAX 0.10.2 with the CUDA 12 plugin reaches every card generation here, from compute capability 6.0 (Tesla P100, 2016) to 12.0 (RTX 5080, 2025), so no node class had to be dropped for lack of support.
 
@@ -92,7 +92,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `titanx03` | Titan X | 8 | 0.0625 | 4.20 | 8,196 | 0.034 | 2.3 | 0.10% |
 | `lynx05-07` | Tesla P100 | 16 | 0.0678 | 3.87 | 7,550 | 0.037 | 2.3 | 0.03% |
 | `jinx01-02` | GTX 1080 | 22 | 0.0882 | 2.97 | 5,805 | 0.048 | 2.3 | 0.03% |
-| `ai05_ai10` | GTX 1080 | 8 | 0.0884 | 2.96 | 5,790 | 0.048 | 2.3 | 0.06% |
+| `ai05_ai10` | GTX 1080 | 30 | 0.0883 | 2.97 | 5,799 | 0.048 | 2.3 | 0.05% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
@@ -127,8 +127,8 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 | `affogato13-15` | GTX 1080 Ti | 8 | 0.1160 | 4.52 | 4,412 | 0.063 | 4.7 | 0.15% |
 | `titanx03` | Titan X | 8 | 0.1184 | 4.43 | 4,326 | 0.064 | 4.7 | 0.22% |
 | `lynx05-07` | Tesla P100 | 16 | 0.1246 | 4.21 | 4,108 | 0.068 | 4.7 | 0.02% |
+| `ai05_ai10` | GTX 1080 | 30 | 0.1664 | 3.15 | 3,077 | 0.090 | 4.7 | 0.23% |
 | `jinx01-02` | GTX 1080 | 16 | 0.1692 | 3.10 | 3,026 | 0.092 | 4.7 | 0.06% |
-| `ai05_ai10` | GTX 1080 | 8 | 0.1699 | 3.09 | 3,014 | 0.092 | 4.7 | 0.17% |
 | `serval03` | H100 NVL | — | — | not measured yet | — | — | — | — |
 | `jaguar02` | A16 | — | — | not measured yet | — | — | — | — |
 | `jaguar05` | Quadro RTX 4000 | — | — | not measured yet | — | — | — | — |
@@ -215,7 +215,7 @@ Each class at whichever of its processor counts ran fastest. Best value in bold,
 
 The trainer keeps its arrays on the card and the host only dispatches, so the expectation is that 8, 16 and 32 processors give the same iteration time.
 
-**It does not.** Over the 75 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
+**It does not.** Over the 76 card-and-copy-count combinations measured at two or more processor counts, the slowest processor count was slower than the fastest by 0.2% in the typical case and 2.6% at the very worst — the size of the measurement's own noise, and with no consistent direction: more processors are as often marginally slower as marginally faster. Eight processors is therefore the right request for this trainer, and the processors beyond that are free to carry other work.
 
 The table below is the evidence, one row per card and copy count; its last column is the span between the fastest and the slowest processor count as a fraction of the fastest. A count this node class cannot allocate reads N/A; one it can allocate but has not yet reported reads "not yet".
 
@@ -228,7 +228,7 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `cheetah01` | A100 | 512 | 13.9 | 14.0 | N/A | 28, 13.9 | 0.9% |
 | `cheetah01` | A100 | 1024 | 23.1 | 23.1 | N/A | 28, 23.1 | 0.2% |
 | `cheetah01` | A100 | 2048 | 43.7 | 43.9 | N/A | 28, 43.9 | 0.5% |
-| `cheetah01` | A100 | 4096 | 82.0 | 82.2 | N/A | 28, not yet | 0.3% |
+| `cheetah01` | A100 | 4096 | 82.0 | 82.2 | N/A | 28, 82.1 | 0.3% |
 | `cheetah04` | A100 | 512 | 12.5 | 12.4 | 12.4 | N/A | 0.4% |
 | `cheetah04` | A100 | 1024 | 20.1 | 20.0 | 19.8 | N/A | 1.6% |
 | `cheetah04` | A100 | 2048 | 36.8 | 36.7 | 36.7 | N/A | 0.3% |
@@ -256,6 +256,7 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `cheetah08-09` | RTX A4000 | 512 | 36.8 | 36.7 | not yet | N/A | 0.1% |
 | `cheetah08-09` | RTX A4000 | 1024 | 70.2 | 70.1 | not yet | N/A | 0.2% |
 | `cheetah08-09` | RTX A4000 | 2048 | 136.6 | 136.8 | not yet | N/A | 0.1% |
+| `cheetah08-09` | RTX A4000 | 4096 | 269.6 | 269.9 | not yet | N/A | 0.1% |
 | `lotus` | Quadro RTX 6000 | 512 | 36.7 | 36.7 | 36.8 | N/A | 0.4% |
 | `lotus` | Quadro RTX 6000 | 1024 | 68.4 | 68.4 | 68.5 | N/A | 0.2% |
 | `lotus` | Quadro RTX 6000 | 2048 | 133.4 | 132.8 | 133.5 | N/A | 0.5% |
@@ -289,13 +290,13 @@ The table below is the evidence, one row per card and copy count; its last colum
 | `lynx02-04` | GTX 1080 Ti | 512 | 60.5 | 60.6 | N/A | 30, 61.5 | 1.6% |
 | `lynx02-04` | GTX 1080 Ti | 1024 | 113.4 | 114.3 | N/A | 30, 113.7 | 0.8% |
 | `lynx02-04` | GTX 1080 Ti | 2048 | 226.1 | 223.2 | N/A | 30, 226.6 | 1.5% |
-| `ai05_ai10` | GTX 1080 | 512 | 88.4 | 88.5 | N/A | 30, not yet | 0.0% |
-| `ai05_ai10` | GTX 1080 | 1024 | 169.9 | 170.0 | N/A | 30, not yet | 0.1% |
+| `ai05_ai10` | GTX 1080 | 512 | 88.4 | 88.5 | N/A | 30, 88.3 | 0.2% |
+| `ai05_ai10` | GTX 1080 | 1024 | 169.9 | 170.0 | N/A | 30, 166.4 | 2.2% |
 | `jinx01-02` | GTX 1080 | 512 | 88.2 | 88.2 | N/A | 22, 88.2 | 0.0% |
 | `jinx01-02` | GTX 1080 | 1024 | 169.4 | 169.2 | N/A | 22, 169.3 | 0.1% |
 | `titanx03` | Titan X | 512 | 62.5 | 63.5 | N/A | 22, 62.7 | 1.6% |
-| `titanx03` | Titan X | 1024 | 118.4 | 120.0 | N/A | 22, not yet | 1.4% |
-| `titanx03` | Titan X | 2048 | 234.0 | 234.1 | N/A | 22, not yet | 0.0% |
+| `titanx03` | Titan X | 1024 | 118.4 | 120.0 | N/A | 22, 118.7 | 1.4% |
+| `titanx03` | Titan X | 2048 | 234.0 | 234.1 | N/A | 22, 234.3 | 0.1% |
 
 ## 7. Memory, and which cards cannot hold a run
 
@@ -328,7 +329,7 @@ Memory grows in proportion to the copy count — doubling the copies doubles the
 | `jinx01-02` | GTX 1080 | 8.2 | 2.3 | 4.7 | does not fit | does not fit | 4.58 | 1,024 |
 | `titanx03` | Titan X | 12.3 | 2.3 | 4.7 | 9.5 | does not fit | 4.60 | 2,048 |
 
-**The same run needs 66% more memory on an older card.** Every card at compute capability 8.0 and above — Ampere, Ada, Hopper, Blackwell — holds 4,096 copies in about 11.3 GB, while every Turing and Pascal card needs about 18.8 GB for exactly the same work, and the H100 sits slightly above its generation at 13.4 GB. The split follows the card generation and not the card's size or speed, so it is the compiler emitting a different program for the older architectures, not the trainer asking for more. What in that program costs the extra memory was not investigated here. The practical consequence is that the memory ceiling of an older card is reached about a third sooner than its size alone suggests.
+**The same run costs about half as much memory again on an older card.** A thousand copies take 4.60 GB on every Turing and Pascal card measured and 3.07 GB on every Ampere, Ada, Hopper and Blackwell card — 50% more on the older generation. At 4,096 copies, the size where it bites, that is 18.8 GB against 11.6 GB — 62% more. The older cards are also the more uniform group: their per-copy cost sits between 4.58 and 4.65 GB across three distinct architectures, while the newer ones range from 2.75 to 3.54 GB. The split follows the card generation and not the card's size or speed, so it is the compiler emitting a different program for the older architectures, not the trainer asking for more. What in that program costs the extra memory was not investigated here. The practical consequence is that an older card reaches its ceiling sooner than its size alone suggests.
 
 ![peak memory](plots/peak_memory.png)
 
@@ -338,18 +339,18 @@ The throughput figures above are steady-state: compilation and warm-up are disca
 
 | copies | building the trainer<br>(seconds) | compiling the iteration<br>(seconds) | total before the<br>first iteration | iterations that time would<br>buy on an H100 |
 |---|---|---|---|---|
-| 512 | 34 | 27 | 61 | 8,406 |
-| 1024 | 59 | 27 | 85 | 7,419 |
-| 2048 | 114 | 30 | 144 | 6,895 |
-| 4096 | 217 | 39 | 255 | 6,388 |
+| 512 | 34 | 27 | 61 | 8,467 |
+| 1024 | 59 | 26 | 85 | 7,403 |
+| 2048 | 117 | 30 | 147 | 7,046 |
+| 4096 | 218 | 43 | 260 | 6,512 |
 
-More processors do not shorten it. At 4,096 copies the build took 211 s on 8, 220 s on 16, 196 s on 22, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
+More processors do not shorten it. At 4,096 copies the build took 211 s on 8, 220 s on 16, 196 s on 22, 500 s on 28, 218 s on 32 processors — the same time throughout, because the weights are drawn one copy at a time in a single-threaded loop on the host, so the work never reaches the other processors. It is the one part of a run that would gain from being vectorised across copies rather than looped.
 
 This is a fixed cost, so it decides whether splitting work across cards pays. Two jobs of 2,048 copies each pay the setup twice; one job of 4,096 pays it once. It also sets a floor under how short a useful run can be — at 4,096 copies the setup alone is about four minutes before a single environment step is taken.
 
 ## 9. How firm these numbers are
 
-Across all 221 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.52% in the worst 5%, and never worse than 1.11%. 221 of 221 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
+Across all 227 measured cells the middle half of the timing rounds sat within 0.10% of the median in the typical cell, within 0.52% in the worst 5%, and never worse than 1.11%. 227 of 227 cells reached the 2% settling target, every one of them within the six-round floor — so no number here rests on a timing that was still drifting when it was taken.
 
 ## 10. What is still missing
 
@@ -366,4 +367,3 @@ These jobs have not reported. Jobs pinned to a busy node stay queued on purpose 
 - `affogato11` at 30 processors (RTX 2080 Ti, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `jaguar05` at 8 processors (Quadro RTX 4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
 - `jaguar05` at 14 processors (Quadro RTX 4000, partition gpu) — this card is already measured on another node class, so the gap is the host processor only
-- `ai05_ai10` at 30 processors (GTX 1080, partition gnolim) — this card is already measured on another node class, so the gap is the host processor only

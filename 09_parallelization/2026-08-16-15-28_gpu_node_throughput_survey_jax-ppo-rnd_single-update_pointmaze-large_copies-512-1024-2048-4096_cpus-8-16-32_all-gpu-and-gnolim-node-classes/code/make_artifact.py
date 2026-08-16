@@ -145,8 +145,34 @@ def mark(value, ranked, fmt):
     return text
 
 
+def memory_split(jobs, probes):
+    """Card memory per thousand copies, split at compute capability 8.0 — the same numbers the
+    markdown report computes, so the two never drift apart."""
+    capability = {p["device_kind"]: float(p["compute_capability"]) for p in probes
+                  if p.get("compute_capability")}
+    per_thousand = {"older": [], "newer": []}
+    largest = {"older": [], "newer": []}
+    for job in jobs.values():
+        for cell in job["cells"]:
+            if cell.get("status") != "measured" or cell["device_kind"] not in capability:
+                continue
+            group = "newer" if capability[cell["device_kind"]] >= 8.0 else "older"
+            gb = cell["peak_device_memory_mb"] / 1000
+            per_thousand[group].append(gb / cell["n_copies"] * 1000)
+            if cell["n_copies"] == max(COPY_COUNTS):
+                largest[group].append(gb)
+    out = {"older": float(np.mean(per_thousand["older"])),
+           "newer": float(np.mean(per_thousand["newer"]))}
+    out["ratio"] = out["older"] / out["newer"]
+    if largest["older"] and largest["newer"]:
+        out["largest_older"] = float(np.mean(largest["older"]))
+        out["largest_newer"] = float(np.mean(largest["newer"]))
+    return out
+
+
 def build(classes, jobs, probes):
     """The whole page."""
+    mem = memory_split(jobs, probes)
     now = datetime.now().astimezone(PACIFIC).strftime("%Y-%m-%d %H:%M PT")
     n_cells = sum(1 for j in jobs.values() for c in j["cells"] if c.get("status") == "measured")
     n_oom = sum(1 for j in jobs.values() for c in j["cells"]
@@ -281,13 +307,18 @@ def build(classes, jobs, probes):
             "percent, with no consistent direction. The trainer keeps its arrays on the card "
             "and the host only dispatches. <strong>Ask for eight</strong>; the rest are free to "
             "carry other work.</p></div>",
-            '<div class="finding"><h3>The same run needs 66% more memory on an older card</h3>'
-            "<p>Ampere and newer hold 4,096 copies in about 11.3&nbsp;GB; every Turing and "
-            "Pascal card needs about 18.8&nbsp;GB for identical work. The split follows the "
-            "card generation, not its size or speed, so it is the compiler emitting a different "
-            "program &mdash; not the trainer asking for more. <strong>An older card reaches its "
-            "ceiling about a third sooner than its size suggests.</strong> What in that program "
-            "costs the extra memory was not investigated here.</p></div>",
+            '<div class="finding"><h3>An older card spends about half as much memory again on '
+            "the same run</h3>"
+            f"<p>A thousand copies take {mem['older']:.2f}&nbsp;GB on every Turing and Pascal "
+            f"card measured and {mem['newer']:.2f}&nbsp;GB on every Ampere, Ada, Hopper and "
+            f"Blackwell card &mdash; {mem['ratio'] - 1:.0%} more on the older generation"
+            + (f", and {mem['largest_older']:.1f}&nbsp;GB against "
+               f"{mem['largest_newer']:.1f}&nbsp;GB at 4,096 copies, where it bites"
+               if mem.get("largest_older") else "")
+            + ". The split follows the card generation, not its size or speed, so it is the "
+            "compiler emitting a different program &mdash; not the trainer asking for more. "
+            "<strong>An older card reaches its ceiling sooner than its size suggests.</strong> "
+            "What in that program costs the extra memory was not investigated here.</p></div>",
             "</section>"]
 
     # what is still missing, stated plainly
