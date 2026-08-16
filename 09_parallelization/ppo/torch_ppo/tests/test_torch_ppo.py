@@ -75,7 +75,49 @@ def test_finite_and_learns_predictor():
     print("ok test_finite_and_learns_predictor")
 
 
+def test_gradients_land_in_the_flat_buffer_without_accumulating():
+    """The gradient path writes the flat buffer, never accumulates, and never touches padding.
+
+    Three things must hold, and each one would hide a real defect if it did not:
+    no parameter carries an attached gradient (an attached one would make autograd ADD, which
+    is the cost this path exists to avoid); the flat buffer holds exactly what autograd
+    produced; and a second backward pass from the same inputs OVERWRITES rather than doubles,
+    which is what makes zeroing unnecessary. The alignment padding must also stay zero, since
+    the optimiser reads the whole buffer including it.
+    """
+    t = PPORND(PPOConfig(**SMALL), device="cpu")
+    torch.manual_seed(0)
+    t.prime_obs_rms()
+    batch = t.rollout()
+
+    loss = t._losses(batch, style_a=False)
+    reference = [g.detach().clone() for g in torch.autograd.grad(loss, t.trainable)]
+    t._backward_into_flat(t._losses(batch, style_a=False))
+    assert all(p.grad is None for p in t.trainable), "a parameter still carries a gradient"
+    for window, ref in zip(t.grad_windows, reference):
+        assert torch.equal(window, ref), "the flat buffer does not hold what autograd produced"
+    assert max(float(r.abs().max()) for r in reference) > 0, "no gradient, nothing was compared"
+
+    # the padding: everything in the buffer that no window covers must still be zero
+    covered = torch.zeros_like(t._flat_grad, dtype=torch.bool)
+    flat_base = t._flat_grad.reshape(-1)
+    for window in t.grad_windows:
+        start = (window.data_ptr() - t._flat_grad.data_ptr()) // t._flat_grad.element_size()
+        rows, per_row = window.shape[0], window.numel() // window.shape[0]
+        for c in range(rows):
+            covered.reshape(-1)[start + c * t._flat.shape[1]:
+                                start + c * t._flat.shape[1] + per_row] = True
+    assert float(flat_base[~covered.reshape(-1)].abs().max()) == 0.0, "padding was written"
+
+    # a second pass from identical inputs must overwrite, not double
+    t._backward_into_flat(t._losses(batch, style_a=False))
+    for window, ref in zip(t.grad_windows, reference):
+        assert torch.equal(window, ref), "the second backward pass accumulated instead of writing"
+    print("ok test_gradients_land_in_the_flat_buffer_without_accumulating")
+
+
 if __name__ == "__main__":
     test_same_seed_bit_identical()
     test_copy_isolation()
     test_finite_and_learns_predictor()
+    test_gradients_land_in_the_flat_buffer_without_accumulating()

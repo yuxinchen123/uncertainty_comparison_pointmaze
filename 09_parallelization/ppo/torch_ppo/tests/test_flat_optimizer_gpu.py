@@ -49,13 +49,13 @@ def main():
     t.prime_obs_rms()
     batch = t.rollout()
 
-    # produce a real set of gradients
+    # produce a real set of gradients, through the trainer's own gradient path
     loss = t._loss_fn(batch, style_a=False)
-    loss.backward()
+    t._backward_into_flat(loss)
 
     # snapshot the inputs the two forms will share
     params_before = [p.detach().clone() for p in t.trainable]
-    grads = [p.grad.detach().clone() for p in t.trainable]
+    grads = [g.detach().clone() for g in t.grad_windows]
     flat_before = t._flat.detach().clone()
 
     ref = reference_step(params_before, grads,
@@ -64,7 +64,7 @@ def main():
                          t=1, lr=t.cfg.learning_rate, eps=t.cfg.adam_eps,
                          max_norm=t.cfg.max_grad_norm)
 
-    t._clip_and_adam_flat()                     # the flat form, same inputs, moments start at 0
+    t._clip_per_copy_and_step()                 # the flat form, same inputs, moments start at 0
 
     worst_abs = worst_rel = 0.0
     for p, r in zip(t.trainable, ref):

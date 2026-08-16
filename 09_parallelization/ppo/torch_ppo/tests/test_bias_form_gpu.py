@@ -79,15 +79,11 @@ def main():
 
     # the shipped form
     loss_new = t._losses(batch, style_a=False)
-    loss_new.backward()
-    grads_new = [p.grad.detach().clone() for p in t.trainable]
-    t._flat_grad.zero_()
+    grads_new = [g.detach().clone() for g in torch.autograd.grad(loss_new, t.trainable)]
 
     # the previous form, from the same parameters and the same batch
     loss_old = losses_with_baddbmm(t, batch, style_a=False)
-    loss_old.backward()
-    grads_old = [p.grad.detach().clone() for p in t.trainable]
-    t._flat_grad.zero_()
+    grads_old = [g.detach().clone() for g in torch.autograd.grad(loss_old, t.trainable)]
 
     d_loss = abs(float(loss_new) - float(loss_old))
     rel_loss = d_loss / max(abs(float(loss_old)), 1e-12)

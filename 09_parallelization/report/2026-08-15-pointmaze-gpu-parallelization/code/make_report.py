@@ -1415,6 +1415,203 @@ hand-written operation, which is a larger undertaking and was left as a decision
     return md
 
 
+def throughput_rows(pattern):
+    """{(update style, copies): throughput figures} from one benchmark file, {} if absent.
+
+    Both benchmark programs write one row per measured setting; the torch one calls the time
+    `sec_per_iteration` and the jax one `sec_per_iteration_median`, so both names are read.
+    Every row carries the five figures a throughput table must report.
+    before: {"n_copies": 4096, "style": "full_batch", "sec_per_iteration": 0.0868, ...}
+    after:  {("full_batch", 4096): {"ms": 86.8, "total": 24.1, "per_copy": 5.9,
+                                    "hours": 47.1, "vram": 13.7}}
+    """
+    d = newest(pattern)
+    if not d:
+        return {}
+    out = {}
+    for r in d["rows"]:
+        sec = r.get("sec_per_iteration") or r.get("sec_per_iteration_median")
+        per_copy = r["env_steps_per_sec"] / r["n_copies"]
+        out[(r.get("style"), r["n_copies"])] = {
+            "ms": sec * 1e3,
+            "total": r["env_steps_per_sec"] / 1e6,          # millions of steps per second
+            "per_copy": per_copy / 1e3,                     # thousands per second, one copy
+            "hours": 1e6 / (3600.0 * per_copy),             # hours for one copy to reach 1e6 steps
+            "vram": r.get("peak_vram_mb", 0.0) / 1024.0,    # gibibytes
+        }
+    return out
+
+
+LARGE_COPIES = [1024, 2048, 4096]
+
+
+def large_scale_sources():
+    """The six measurement files the large-copy-count section reads, as named row tables."""
+    return {
+        "before A": throughput_rows(r"trainbench_torch_full_batch_base_r5_styleA_large"),
+        "before B": throughput_rows(r"trainbench_torch_epoch_minibatch_base_r5_styleB_large"),
+        "after A": throughput_rows(r"trainbench_torch_full_batch_after_r5_styleA_large"),
+        "after B": throughput_rows(r"trainbench_torch_epoch_minibatch_after_r5_styleB_large"),
+        "jax A": throughput_rows(r"trainbench_jax_ppo_base_r5_styleA_large_sync"),
+        "jax B": throughput_rows(r"trainbench_jax_ppo_base_r5_styleB_large_sync"),
+    }
+
+
+def fig_large_scale():
+    """Aggregate and per-copy throughput at 1024-4096 copies, both frameworks, both styles."""
+    src = large_scale_sources()
+    if not src["before B"] and not src["before A"]:
+        return pending("large-copy-count figure", "the 1024-4096 benchmark JSONs")
+
+    series = [("PyTorch before this round", C_TORCH, "--", "o"),
+              ("PyTorch after this round", C_TORCH, "-", "o"),
+              ("JAX", C_JAX, "-", "^")]
+    fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0), dpi=160)
+    for row, (style, style_name) in enumerate([("full_batch", "one update per batch"),
+                                               ("epoch_minibatch", "sixteen updates per batch")]):
+        tag = "A" if style == "full_batch" else "B"
+        tables = [src[f"before {tag}"], src[f"after {tag}"], src[f"jax {tag}"]]
+        for col, (key, ylabel) in enumerate(
+                [("total", "TOTAL environment steps / second (millions)"),
+                 ("per_copy", "per-copy environment steps / second (thousands)")]):
+            ax = axes[row][col]
+            for (label, color, ls, mk), table in zip(series, tables):
+                xs = [c for c in LARGE_COPIES if (style, c) in table]
+                if not xs:
+                    continue
+                ax.plot(xs, [table[(style, c)][key] for c in xs], ls, color=color,
+                        linewidth=2, marker=mk, markersize=6, label=label,
+                        alpha=0.55 if ls == "--" else 1.0)
+            ax.set_xscale("log", base=2)
+            ax.set_xticks(LARGE_COPIES)
+            ax.set_xticklabels([str(c) for c in LARGE_COPIES])
+            ax.set_xlabel("independent training copies")
+            ax.set_ylabel(ylabel)
+            ax.set_title(style_name, fontsize=10)
+            ax.legend(frameon=False, fontsize=8)
+            style_ax(ax)
+    fig.suptitle("Throughput at the copy counts the trainer is used at (T=128, N=4)", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "large_scale.png")
+    plt.close(fig)
+    return None
+
+
+def throughput_table(named_tables, style, copies=None):
+    """Render one throughput table: one row per (implementation, copy count).
+
+    named_tables: [(row label, {(style, copies): figures}), ...] in the order to display.
+    Every row carries the five figures the throughput convention requires — copies, time for one
+    iteration, aggregate rate, per-copy rate, and the hours one copy needs for a million steps —
+    plus the peak memory, which is what decides whether a setting fits on the card at all.
+    """
+    copies = copies or LARGE_COPIES
+    md = ["| implementation | copies | milliseconds per iteration | total environment steps "
+          "per second (millions) | environment steps per second per copy (thousands) | hours per "
+          "million steps per copy | peak memory (GB) |",
+          "|---|---|---|---|---|---|---|"]
+    # bold the best and underline the second best per copy count, on the aggregate rate
+    for c in copies:
+        present = [(name, t[(style, c)]) for name, t in named_tables if (style, c) in t]
+        if not present:
+            continue
+        ranked = sorted((r["total"] for _, r in present), reverse=True)
+        for name, r in present:
+            cell = f"{r['total']:.2f}"
+            if len(ranked) > 1 and r["total"] == ranked[0]:
+                cell = f"**{cell}**"
+            elif len(ranked) > 2 and r["total"] == ranked[1]:
+                cell = f"<u>{cell}</u>"
+            md.append(f"| {name} | {c} | {r['ms']:.1f} | {cell} | {r['per_copy']:.1f} | "
+                      f"{r['hours']:.1f} | {r['vram']:.1f} |")
+    return "\n".join(md)
+
+
+def phase_us(pattern):
+    """The three phase times and the whole-iteration time of one phase profile, in milliseconds."""
+    d = newest(pattern)
+    if not d:
+        return None
+    order = ["rollout", "post-rollout", "update"]
+    out = {}
+    for key, us in d["phases_us"].items():
+        for name in order:
+            if key.startswith(name):
+                out[name] = us / 1000.0
+    out["one graph"] = d["one_graph_us"] / 1000.0
+    return out
+
+
+def sec_large_scale():
+    """Round five: the copy counts the trainer is actually used at, 1,024 to 4,096."""
+    src = large_scale_sources()
+    if not src["before B"] and not src["before A"]:
+        return "## Training a thousand to four thousand copies at once\n" + pending(
+            "the large-copy-count section", "the 1024-4096 benchmark JSONs")
+
+    md = """## Training a thousand to four thousand copies at once
+
+Every measurement in the sections above was taken at 8 to 128 independent training copies, and
+every optimisation recorded there was chosen by what those sizes rewarded. The trainer is used at
+1,024 to 4,096 copies. This section re-opens the question at those sizes: what the two frameworks
+cost there, what limits the PyTorch one, and what changed once the limit was identified.
+
+The short answer is that the two ranges are different problems. At 128 copies the iteration is a
+long chain of small device programs and its cost is set by how many there are. At 1,024 copies and
+above the same programs each carry eight to thirty-two times as much data, the data no longer fits
+in any cache, and the cost is set by how many bytes move between the chip and its memory. An
+optimisation that removes device programs helps the first case and does nothing for the second;
+an optimisation that removes bytes does the opposite. One change kept in the previous round on the
+strength of the 8-to-128 measurements is a loss at 1,024 and above, and is recorded below.
+
+### Where an iteration's time goes as the copy count grows
+
+"""
+    ph = {c: phase_us(fr"profile_phases_C{c}(?!.*preround)") for c in (128, 1024, 4096)}
+    if all(ph.values()):
+        md += ("| phase | 128 copies | 1,024 copies | 4,096 copies |\n|---|---|---|---|\n")
+        for name, label in [("rollout", "rollout (128 sequential environment steps)"),
+                            ("post-rollout", "post-rollout processing"),
+                            ("update", "update (16 minibatch steps)"),
+                            ("one graph", "the whole iteration, recorded as one sequence")]:
+            md += (f"| {label} | " +
+                   " | ".join(f"{ph[c][name]:.2f}" for c in (128, 1024, 4096)) + " |\n")
+        md += ("\n*Milliseconds, sixteen updates per batch. The first three lines are the three "
+               "phases timed as separately recorded sequences; the last is the shipped "
+               "arrangement, which records all three together.*\n\n")
+        grow_roll = ph[4096]["rollout"] / ph[128]["rollout"]
+        grow_upd = ph[4096]["update"] / ph[128]["update"]
+        md += (f"From 128 copies to 4,096 — thirty-two times the work — the rollout grows by a "
+               f"factor of {grow_roll:.1f} and the update by a factor of {grow_upd:.1f}. The "
+               f"rollout is a chain of about 2,300 small programs whose cost hardly depends on "
+               f"how much data each one carries, so adding copies is very nearly free for it. The "
+               f"update grows in proportion to the copies, which is what a computation limited by "
+               f"memory traffic does.\n\n")
+
+    md += """### The two frameworks at the sizes in use
+
+The two tables below report, for each setting, the time one iteration takes, the aggregate rate
+over all copies, the rate a single copy gets, the hours one copy needs to reach a million
+environment steps, and the peak memory. Both frameworks wait for every iteration to finish before
+timing the next, which is the stricter of the two protocols and the one used everywhere else in
+this document. "PyTorch before" is the trainer as this round found it; "PyTorch after" is the
+same trainer with this round's changes; the JAX trainer is unchanged by this round.
+
+"""
+    named_A = [("PyTorch before", src["before A"]), ("PyTorch after", src["after A"]),
+               ("JAX", src["jax A"])]
+    named_B = [("PyTorch before", src["before B"]), ("PyTorch after", src["after B"]),
+               ("JAX", src["jax B"])]
+    md += "**One update per batch.**\n\n" + throughput_table(named_A, "full_batch") + "\n\n"
+    md += ("**Sixteen updates per batch.**\n\n" + throughput_table(named_B, "epoch_minibatch")
+           + "\n\n")
+    md += ("*Best aggregate rate per copy count in bold, second best underlined. The aggregate "
+           "rate rises with the copy count while the rate each individual copy gets falls, so the "
+           "hours column is the one that says how long a single training run actually takes.*\n\n")
+    md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
+    return md
+
+
 def sec_repro():
     return """## Reproduction
 
