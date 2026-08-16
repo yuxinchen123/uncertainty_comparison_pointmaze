@@ -1506,9 +1506,11 @@ def throughput_table(named_tables, style, copies=None):
     plus the peak memory, which is what decides whether a setting fits on the card at all.
     """
     copies = copies or LARGE_COPIES
-    md = ["| implementation | copies | milliseconds per iteration | total environment steps "
-          "per second (millions) | environment steps per second per copy (thousands) | hours per "
-          "million steps per copy | peak memory (GB) |",
+    # headers are wrapped with line breaks: seven columns of full-length prose would push the
+    # table past the right edge of a printed page, where there is no scroll bar to recover it
+    md = ["| implementation | copies | milliseconds<br>per iteration | total steps<br>per second"
+          "<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million"
+          "<br>steps per copy | peak<br>memory (GB) |",
           "|---|---|---|---|---|---|---|"]
     # bold the best and underline the second best per copy count, on the aggregate rate
     for c in copies:
@@ -1734,18 +1736,55 @@ def sec_large_scale_changes():
     def ab(pattern):
         d = newest(pattern)
         return d if d else None
-    rows = [("aligning every parameter window to sixteen bytes", r"ab_round5-align-C1024-styleB"),
-            ("adding the bias after the multiplication", r"ab_round5-bias-C1024-styleB"),
-            ("writing gradients instead of accumulating them, and splitting the gradient limit "
-             "from the Adam step", r"ab_round5-gradient-C1024-styleB")]
+    rows = [("aligning the<br>parameter windows", r"ab_round5-align-C1024-styleB"),
+            ("adding the bias after<br>the multiplication", r"ab_round5-bias-C1024-styleB"),
+            ("writing gradients, and<br>splitting the gradient<br>limit from the Adam step",
+             r"ab_round5-gradient-C1024-styleB")]
     got = [(name, ab(pat)) for name, pat in rows]
     if not any(d for _, d in got):
         return pending("large-copy-count changes", "the round-five paired comparisons")
     md = """### What was changed
 
-Each change was measured on its own against the revision before it, at 1,024 copies with sixteen
-updates per batch, both sides built in their own process and run in the order A B B A so that the
-spread between two runs of the same side gives the noise floor.
+Three changes, all of them removing passes over memory, none of them changing what the trainer
+computes.
+
+**Aligning the parameters.** The previous round put the nineteen parameter tensors of each copy
+into one buffer, as nineteen windows onto a row of 59,910 numbers. Neither that row length nor
+several of the window offsets is a multiple of four, so a given parameter's address for copy *c*
+is a multiple of sixteen bytes for almost no *c*, and the matrix library responded by selecting
+its kernels that load one number at a time instead of four. A profile of the previous build at
+1,024 copies found 18.8 of its 31.1 milliseconds of multiplication time in those unvectorised
+kernels. Padding each window and the row to a multiple of four numbers costs ten numbers per copy,
+is never read, and restores the vectorised kernels. This also explains a loss the previous round
+recorded but could not account for: measured against its own predecessor at 1,024 copies, that
+round was 19.2 percent slower with one update per batch and 7.1 percent slower with sixteen —
+a real regression at exactly the sizes the trainer is used at, invisible at the sizes it was
+tuned on.
+
+**Adding the bias after the multiplication.** Every layer was written as one library call that
+multiplies and adds the bias together. There is no batched multiplication that broadcasts a bias,
+so that call first writes the expanded bias into the output tensor and then asks the
+multiplication to accumulate on top of it; the activation function afterwards reads and writes the
+same tensor again. Five passes over the output. Written instead as "multiply, then add the bias
+and apply the activation in one expression", the compiler fuses the bias and the activation into
+a single pass and the output is touched three times. The result is bitwise identical — the same
+sum in the same precision, only computed by different programs — which the equivalence test
+records.
+
+**Writing gradients rather than accumulating them, and separating the gradient limit from the
+Adam step.** Two changes to the update stage with the same character. First: with a gradient
+tensor attached to each parameter, a backward pass *adds* into it, which reads and rewrites the
+whole gradient buffer, and the buffer then has to be zeroed before the next step — four passes
+over a buffer that holds a gigabyte at 4,096 copies. Asking the automatic-differentiation system
+for the gradients instead returns freshly written tensors that nothing has to be added to, and one
+call copies them into their windows. Second: the gradient limit and the Adam step were one
+compiled function, which the compiler fused into a single program that both reduces and updates;
+that program reached 2.4 of the card's 3.5 terabytes per second. Compiled separately, the
+reduction reaches 3.2 and the update 3.5.
+
+Each change was then measured on its own against the revision before it, at 1,024 copies with
+sixteen updates per batch, both sides built in their own process and run in the order A B B A so
+that the spread between two runs of the same side gives the noise floor.
 
 | change | before | after | difference | noise floor |
 |---|---|---|---|---|
@@ -1758,14 +1797,10 @@ spread between two runs of the same side gives the noise floor.
                f"{d['noise_floor_ms']:.2f} ms |\n")
     md += "\n"
 
-    combined = [("the three together, 4,096 copies, sixteen updates per batch",
-                 r"ab_round5-all-C4096-styleB"),
-                ("the three together, 4,096 copies, one update per batch",
-                 r"ab_round5-all-C4096-styleA"),
-                ("the three together, 128 copies, sixteen updates per batch",
-                 r"ab_round5-all-C128-styleB"),
-                ("the three together, 8 copies, sixteen updates per batch",
-                 r"ab_round5-all-C8-styleB")]
+    combined = [("4,096 copies,<br>sixteen updates per batch", r"ab_round5-all-C4096-styleB"),
+                ("4,096 copies,<br>one update per batch", r"ab_round5-all-C4096-styleA"),
+                ("128 copies,<br>sixteen updates per batch", r"ab_round5-all-C128-styleB"),
+                ("8 copies,<br>sixteen updates per batch", r"ab_round5-all-C8-styleB")]
     have = [(n, ab(p)) for n, p in combined]
     if any(d for _, d in have):
         md += ("The three together, at the sizes in use and at the small ones the earlier rounds "
