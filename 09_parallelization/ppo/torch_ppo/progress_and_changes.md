@@ -242,6 +242,22 @@ waited for:
 | sixteen updates per batch | 2,048 | 152.24 ms | 107.24 ms | 30% |
 | sixteen updates per batch | 4,096 | 290.60 ms | 206.91 ms | 29% |
 
+And paired against the round-four revision directly, which also covers the sizes the earlier
+rounds were tuned on:
+
+| setting | before | after | faster by | noise floor |
+|---|---|---|---|---|
+| 4,096 copies, sixteen updates per batch | 290.94 ms | 205.36 ms | 29.4% | 0.44 ms |
+| 4,096 copies, one update per batch | 89.93 ms | 63.06 ms | 29.9% | 0.11 ms |
+| 128 copies, sixteen updates per batch | 16.18 ms | 12.54 ms | 22.5% | 0.03 ms |
+| 8 copies, sixteen updates per batch | 9.32 ms | 7.96 ms | 14.7% | 0.09 ms |
+
+**No size measured is slower.** That is worth stating because the previous round's honest loss at
+512 copies is exactly the shape of defect this round was looking for in the other direction: the
+three changes remove passes over memory, which matters most where the tensors are large, and
+remove device programs as a side effect (nineteen gradient additions and one zeroing per update
+step), which is what the small sizes reward.
+
 That is more than a repair of the round-four regression: at 1,024 copies with one update per batch
 the changed trainer is 27 percent faster than the pre-round-four build as well (18.13 against
 24.86 ms). Against the JAX trainer the distance falls from 2.06-2.08x to 1.27-1.44x with one
