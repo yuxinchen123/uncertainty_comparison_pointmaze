@@ -10,7 +10,9 @@ each group at its own learning rate. The properties that make the result trustwo
      environments, so a difference between groups is the rate's doing and nothing else,
   5. distinct seeding gives every copy its own stream, as before.
 
-Run: PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/jax_bench/bin/python test_sweep_jax.py  (CPU)
+Run with the platform's canonical JAX environment registered in
+/p/rlprojects/RND/.venvs/ENVS.md (currently /p/rlprojects/RND/.venvs/platform_jax):
+PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python test_sweep_jax.py  (CPU)
 """
 import sys
 from pathlib import Path

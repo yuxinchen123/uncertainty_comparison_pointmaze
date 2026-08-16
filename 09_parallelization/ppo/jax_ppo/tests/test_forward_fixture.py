@@ -1,8 +1,10 @@
 """Cross-framework Test 1 (spec section 17): load the torch forward fixture and assert the
 jax forwards reproduce every output within 1e-5 relative.
 
-Run dump_forward_fixture.py (torch env) first, then:
-PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/jax_bench/bin/python test_forward_fixture.py
+Run dump_forward_fixture.py (torch env) first, then run this file with the platform's canonical
+JAX environment registered in /p/rlprojects/RND/.venvs/ENVS.md (currently
+/p/rlprojects/RND/.venvs/platform_jax):
+PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python test_forward_fixture.py
 """
 import sys
 from pathlib import Path

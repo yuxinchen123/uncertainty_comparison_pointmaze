@@ -1,6 +1,8 @@
 """JAX PPO+RND tests: determinism, copy isolation, both update styles (spec section 17).
 
-Run: PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/jax_bench/bin/python test_jax_ppo.py  (CPU)
+Run with the platform's canonical JAX environment registered in
+/p/rlprojects/RND/.venvs/ENVS.md (currently /p/rlprojects/RND/.venvs/platform_jax):
+PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python test_jax_ppo.py  (CPU)
 """
 import sys
 from pathlib import Path
