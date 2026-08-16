@@ -959,12 +959,29 @@ one-copy-per-worker processor row, explained under the table.
     # the pinned row is in the table for the rate one copy gets, so say what it costs against the
     # processor row that wins on total; both sides are read from the rows the table just printed
     solo = [r for r in rows if r["pinned"]][0]
-    md += (f"\nThe {solo['copies']:,}-copy row is the exception: it is the processor setting that "
-           f"finishes any single copy soonest, giving each copy {K(solo['per_copy'])} thousand "
-           f"steps per second against {K(cpu[0]['per_copy'])} thousand for the processor setting "
-           f"that wins on total throughput — a million steps per copy in {solo['hours_1M']:.3f} "
-           f"hours instead of {cpu[0]['hours_1M']:.3f} — at the price of a factor of "
-           f"{cpu[0]['total'] / solo['total']:.1f} in total throughput.\n")
+    quickest = max(cpu, key=lambda r: r["per_copy"])
+    if quickest is solo:
+        md += (f"\nThe {solo['copies']:,}-copy row is the exception: it is the processor setting "
+               f"that finishes any single copy soonest, giving each copy {K(solo['per_copy'])} "
+               f"thousand steps per second against {K(cpu[0]['per_copy'])} thousand for the "
+               f"processor setting that wins on total throughput — a million steps per copy in "
+               f"{solo['hours_1M']:.3f} hours instead of {cpu[0]['hours_1M']:.3f} — at the price "
+               f"of a factor of {cpu[0]['total'] / solo['total']:.1f} in total throughput.\n")
+    else:
+        # measured over a long window rather than a two-second one, giving every worker a single
+        # copy stopped being the way to finish one copy soonest: the batched settings beat it on
+        # both counts, and the row stays in the table to show that
+        md += (f"\nThe {solo['copies']:,}-copy row is in the table for a claim that the sustained "
+               f"measurements withdrew. Giving every worker one copy was the setting that "
+               f"finished a single copy soonest when these numbers were read off two-second "
+               f"measurements. Measured over a long window it is not: it gives each copy "
+               f"{K(solo['per_copy'])} thousand steps per second, where "
+               f"{quickest['name']} at {quickest['copies']:,} copies gives "
+               f"{K(quickest['per_copy'])} thousand — a million steps per copy in "
+               f"{quickest['hours_1M']:.3f} hours against {solo['hours_1M']:.3f} — while also "
+               f"reaching {quickest['total'] / solo['total']:.0f} times its total throughput. "
+               f"Packing copies into each worker is not a trade against single-copy speed on this "
+               f"machine; up to the plateau it is better at both.\n")
     md += "\n![best setup](figures/best_setup.png)\n\n"
     if gpu and cpu:
         ratio = gpu[0]["total"] / cpu[0]["total"]
