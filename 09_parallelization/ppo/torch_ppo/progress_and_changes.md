@@ -197,6 +197,28 @@ tightly, so the per-copy row is 59,910 numbers long and several window offsets a
 of two. A parameter's address for copy c is base + c x 59,910 x 4 bytes, which is a multiple of
 16 for almost no c, and the library selects its scalar-load kernels accordingly. Row 21 fixes it.
 
+### Against the JAX trainer at these sizes, before this round's changes
+
+Both waiting for every iteration (`--timing sync`), milliseconds per iteration. The JAX side is
+`ppo/jax_ppo/jax_ppo_rnd.py` as this round found it (last changed at commit `7609297`); a
+separate line of work was changing it while these were measured.
+
+| update convention | copies | PyTorch | JAX | JAX faster by |
+|---|---|---|---|---|
+| one update per batch | 1,024 | 29.61 | 14.24 | 2.08x |
+| one update per batch | 2,048 | 48.23 | 23.20 | 2.08x |
+| one update per batch | 4,096 | 90.36 | 43.76 | 2.06x |
+| sixteen updates per batch | 1,024 | 82.24 | 46.94 | 1.75x |
+| sixteen updates per batch | 2,048 | 152.24 | 84.10 | 1.81x |
+| sixteen updates per batch | 4,096 | 290.60 | 164.10 | 1.77x |
+
+This is a much larger distance than the round-4 note reports at 128 copies (JAX ahead by 10 to
+22 percent), and it is the same cause seen through the other regime: at 128 copies XLA's fusion
+means fewer device programs, worth tens of percent; at these sizes it means fewer intermediates
+written to memory, and memory traffic is what the iteration costs. JAX also holds less memory at
+these sizes (9.0 GB against 13.8 at 4,096 copies with sixteen updates), because the PyTorch
+trainer stores the frozen target's features and a second copy of the permuted batch.
+
 ### Ideas costed and NOT taken, with the arithmetic that rejected them
 
 Recorded because the counting is the result, and because two of them look obviously right until
