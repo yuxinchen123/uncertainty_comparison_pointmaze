@@ -54,8 +54,9 @@ class PPOConfig:
                                      # capture = whole-rollout CUDA-graph replay of the
                                      # compiled per-step function (fused kernels, no python)
     fused_adam: bool = False         # accepted for compatibility and no longer used: the
-                                     # optimizer is one chain over the flat parameter buffer,
-                                     # which is faster here than torch's multi-tensor kernels
+                                     # optimizer is two streaming passes over the flat
+                                     # parameter buffer, which is faster here than torch's
+                                     # multi-tensor kernels
     compile_opt: bool = False        # compile the gradient limit and the Adam step over the
                                      # flat buffer (as two separate programs)
     capture_update: bool = False     # CUDA-graph the whole update phase (implies capturable Adam)
@@ -273,7 +274,7 @@ class PPORND:
         for (g, k, sh), n, stride in zip(shapes, widths, strides):
             self._flat[:, off:off + n] = groups[g][k].reshape(C, n)
             # detach makes the window a LEAF that shares storage. Its gradient is NOT attached
-            # here: see _backward_into_flat for why an attached gradient costs three extra
+            # here: see _backward_into_flat for why an attached gradient costs four extra
             # passes over a buffer that is a gigabyte at four thousand copies.
             w = self._flat[:, off:off + n].view(C, *sh[1:]).detach().requires_grad_(True)
             groups[g][k] = w
