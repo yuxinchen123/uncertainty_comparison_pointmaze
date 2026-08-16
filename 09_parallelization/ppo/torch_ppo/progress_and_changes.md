@@ -246,6 +246,27 @@ update per batch, and from 1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies a
 measured: 121.8 ms with one update per batch (29.5 GB) and 407.0 ms with sixteen (27.4 GB), on a
 94 GB card.
 
+### Correctness, after all three changes
+
+Every gate run on the graphics processor, none re-scoped:
+
+| gate | result |
+|---|---|
+| rollout capture against the uncaptured compiled step | bitwise equal |
+| captured update against the uncaptured update, one update per batch | worst parameter difference 0.000e+00 |
+| captured update against the uncaptured update, sixteen updates per batch | worst parameter difference 0.000e+00 |
+| the annealed rate reaches the captured graph; a zero-rate group stays frozen | movement exactly 0.000e+00 |
+| flat optimiser against the per-tensor form, one step from identical inputs | worst relative 6.9e-06 on parameters that moved 3.0e-04 |
+| hoist equivalence, three iterations | worst parameter deviation 0.000e+00 |
+| compiled post-rollout body, isolated | worst relative field deviation 2.1e-07 |
+| six learning-rate-sweep gates (uniform matches plain, zero-rate frozen, groups independent, paired and distinct seeding, and the same under capture) | all pass |
+| bias form, loss and all nineteen gradients from identical inputs | 0.000e+00 — bitwise |
+| gradients land in the flat buffer, nothing accumulates, padding stays zero (new) | pass |
+| every parameter and gradient window on a sixteen-byte boundary, checked on more than one copy (new) | pass |
+
+Two of these are stronger than they were: the captured update now agrees with the uncaptured one
+BITWISE in both styles, where round four's gate was a tolerance of 1e-5.
+
 ### Ideas costed and NOT taken, with the arithmetic that rejected them
 
 Recorded because the counting is the result, and because two of them look obviously right until
