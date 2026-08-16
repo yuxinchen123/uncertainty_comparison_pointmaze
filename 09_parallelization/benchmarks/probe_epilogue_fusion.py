@@ -92,6 +92,11 @@ def build_arm(name, n_copies, style):
     from torch._inductor.template_heuristics.triton import MMTemplateConfigMixin
     flags, tf32_everywhere = SPECS[name]
     original = patch_allow_tf32() if tf32_everywhere else None
+    # the same seed for every arm, so every trainer primes its statistics from the same random
+    # actions and collects the same rollout. Without this each arm's batch is different and the
+    # loss comparison below measures different data rather than different kernels
+    torch.manual_seed(11)
+    torch.cuda.manual_seed(11)
     # graph capture off: the recording would freeze this arm's programs and the probe wants to
     # time the update stage on its own
     t = PPORND(production_config(n_copies, style=style, one_graph=False, capture_update=False),

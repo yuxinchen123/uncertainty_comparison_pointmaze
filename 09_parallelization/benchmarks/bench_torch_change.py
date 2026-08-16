@@ -160,7 +160,21 @@ def main():
     # one child process per copy count, so an out-of-memory failure at one size does not lose
     # the sizes already measured
     import torch  # noqa: F401  (imported only for the version recorded below)
-    rows = []
+    RESULTS.mkdir(exist_ok=True)
+    stamp = time.strftime("%Y-%m-%d-%H-%M-%S")
+    out = RESULTS / f"{stamp}_torch_change_{args.knob}_{args.style}_{args.timing}{args.tag}.json"
+    rows, failures = [], []
+
+    def write():
+        """Save what has been measured so far, so a later size failing cannot lose it."""
+        out.write_text(json.dumps({
+            "knob": args.knob, "off": args.off, "on": args.on, "style": args.style,
+            "timing": args.timing, "rounds": args.rounds, "iters": args.iters,
+            "torch": torch.__version__,
+            "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
+                                  capture_output=True, text=True).stdout.strip(),
+            "rows": rows, "failures": failures}, indent=1))
+
     for c in args.copies:
         cmd = [sys.executable, __file__, "--child", "--knob", args.knob, "--off", args.off,
                "--on", args.on, "--copies", str(c), "--iters", str(args.iters),
@@ -168,10 +182,14 @@ def main():
                "--timing", args.timing, "--rounds", str(args.rounds)]
         proc = subprocess.run(cmd, capture_output=True, text=True)
         line = next((l for l in proc.stdout.splitlines() if l.startswith("RESULT ")), None)
+        # one copy count running out of memory must not lose the sizes already measured, so the
+        # failure is recorded and the file is rewritten rather than the run raising
         if line is None:
-            print(proc.stdout[-3000:])
-            print(proc.stderr[-4000:], file=sys.stderr)
-            raise RuntimeError(f"the child measuring {c} copies produced no result")
+            print(proc.stderr[-1500:], file=sys.stderr)
+            failures.append({"n_copies": c, "stderr_tail": proc.stderr[-1500:]})
+            print(f"C={c:>5d} FAILED, see the recorded tail", flush=True)
+            write()
+            continue
         row = json.loads(line[len("RESULT "):])
         rows.append(row)
         print(f"C={c:>5d} {args.style} {args.timing}: off {row['median_sec']['off']*1e3:8.2f} ms  "
@@ -179,17 +197,7 @@ def main():
               f"{row['change_percent']:+6.2f}%  floor {row['noise_floor_sec']*1e3:.2f} ms  "
               f"{row['rounds_favouring_on']}/{row['rounds']} rounds favour on -> {row['verdict']}",
               flush=True)
-
-    RESULTS.mkdir(exist_ok=True)
-    stamp = time.strftime("%Y-%m-%d-%H-%M-%S")
-    out = RESULTS / f"{stamp}_torch_change_{args.knob}_{args.style}_{args.timing}{args.tag}.json"
-    out.write_text(json.dumps({
-        "knob": args.knob, "off": args.off, "on": args.on, "style": args.style,
-        "timing": args.timing, "rounds": args.rounds, "iters": args.iters,
-        "torch": __import__("torch").__version__,
-        "git": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
-                              capture_output=True, text=True).stdout.strip(),
-        "rows": rows}, indent=1))
+        write()
     print(f"wrote {out}")
 
 

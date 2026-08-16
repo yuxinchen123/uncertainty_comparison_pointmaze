@@ -1484,14 +1484,22 @@ LARGE_COPIES = [1024, 2048, 4096, 8192]
 
 
 def paired_change_rows(pattern):
-    """{copies: row} from one paired round-by-round comparison, {} if the file is absent.
+    """{copies: row} from EVERY paired comparison matching the pattern, newest winning per size.
 
     Written by `benchmarks/bench_torch_change.py`: both configurations built in one process and
     timed round-robin, the order reversed on alternate rounds, so each round yields one paired
-    difference and the verdict is how many rounds favoured the change.
+    difference and the verdict is how many rounds favoured the change. One comparison is often
+    run over several copy counts in several invocations — the sizes a first pass covered and the
+    sizes a later one filled in — so all the matching files are read in filename order and a
+    later measurement of a size replaces an earlier one.
+    before: two files, one with copies 1024 and 4096, one with 8, 32, 128, 512, 2048, 8192
+    after:  one table with all eight sizes
     """
-    d = newest(pattern)
-    return {r["n_copies"]: r for r in d["rows"]} if d else {}
+    out = {}
+    for p in sorted(q for q in RESULTS.glob("*.json") if re.search(pattern, q.name)):
+        for r in json.loads(p.read_text())["rows"]:
+            out[r["n_copies"]] = r
+    return out
 
 
 def epilogue_rows(pattern):
@@ -2227,7 +2235,15 @@ tensor. That is the largest single removable item, and it is what round five's o
            "optimizer pass instead of one; the measurement is whether that costs more than the "
            "copy it removes.\n\n")
     md += paired_table(grad_B, "reading them in place") + "\n\n"
-    md += "*Sixteen updates per batch. A negative change is faster.*\n\n"
+    md += ("*Sixteen updates per batch. A negative change is faster.*\n\n"
+           "**The sign reverses, and where it reverses is the whole point of this section.** At "
+           "8 to 128 copies an iteration costs what it costs because of how many device programs "
+           "it issues, and forty-two extra programs per update step is a bad trade for one copy "
+           "of a buffer that is only 2 to 31 megabytes there. At 512 and above the same copy is "
+           "123 megabytes to a gigabyte and the programs are large enough that their number "
+           "stops mattering. The trainer therefore chooses between the two forms by copy count "
+           "(`production_config`), which is the same shape of answer the previous round arrived "
+           "at from the other direction.\n\n")
     if gather:
         md += (
             "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
@@ -2296,9 +2312,9 @@ which is what round five's alignment measurement showed when it found those laye
 as the setting was switched on.
 
 So it was measured with the library backend removed, so that a generated kernel is used even where
-the library's is faster (which is what makes the bias and the activation fold into the
-multiplication instead of following it), and again with the size rule replaced by the
-configuration's own answer.
+the library's is faster — which is the point, because leaving both backends offered means the
+library's kernel wins the selection on nearly every shape and no epilogue fuses at all — and again
+with the size rule replaced by the configuration's own answer.
 
 | form | update stage at 4,096 copies | against the shipped form | rounds faster | loss differs by |
 |---|---|---|---|---|
@@ -2315,7 +2331,43 @@ configuration's own answer.
             md += (f"| {label} | {r['median_us']/1000:.2f} ms | "
                    f"{r['change_percent_against_library']:+.1f} percent | "
                    f"{r['rounds_faster_than_library']} of {r['rounds']} | {diff} |\n")
-        md += "\n"
+        md += ("\nThe generated kernels are not close. The selection log has the library's "
+               "multiplication at 0.071 milliseconds against the best generated candidate's "
+               "0.078 on the first shape it tries, and the backward pass's transposed shapes are "
+               "worse; the passes an epilogue would remove cannot pay for that. Switching the "
+               "matrix units back on changes nothing, so round five's reason for setting this "
+               "aside was a real observation about a form that was not going to pay anyway.\n\n"
+               "**A note on how this was measured, because the first attempt measured nothing.** "
+               "The first version of the probe built ONE trainer and swapped four compiled "
+               "versions of its loss onto it, each compiled inside a context that set the "
+               "compiler's options. All four came out bitwise identical and within 0.1 percent "
+               "of each other in time — one form measured four times, not four forms agreeing. "
+               "The compiler caches its work against the function being compiled and against the "
+               "backend the wrapper carries, and a setting applied through a surrounding context "
+               "is part of neither. The probe now gives each arm its own trainer and passes the "
+               "settings as options rather than around them, and it says so out loud when two "
+               "arms agree to zero. The accuracy line it already printed is what caught it.\n\n")
+    # the same check the previous round's loss at 512 copies made necessary: the sizes this round
+    # did NOT optimise for, measured before and after rather than assumed unchanged
+    small = {"before A": throughput_rows(r"trainbench_torch_full_batch_r6_before_styleA_small"),
+             "after A": throughput_rows(r"trainbench_torch_full_batch_r6_after_styleA_small"),
+             "before B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_r6_before_styleB_small"),
+             "after B": throughput_rows(
+                 r"trainbench_torch_epoch_minibatch_r6_after_styleB_small")}
+    if small["after B"]:
+        md += ("#### The small sizes, re-measured\n\nThe trainer picks the gradient form from the "
+               "copy count, so 8 to 512 copies keep the buffer and get only the shuffle change. "
+               "The whole round is measured there anyway, because that is how the previous "
+               "round's loss at 512 copies was found.\n\n"
+               "**Sixteen updates per batch.**\n\n"
+               + throughput_table([("before round six", small["before B"]),
+                                   ("after round six", small["after B"])],
+                                  "epoch_minibatch", [8, 32, 128, 512]) + "\n\n"
+               "**One update per batch.**\n\n"
+               + throughput_table([("before round six", small["before A"]),
+                                   ("after round six", small["after A"])],
+                                  "full_batch", [8, 32, 128, 512]) + "\n\n")
     md += """#### Whether round six changed what the trainer computes
 
 One change is exactly neutral and two are not, and the two that are not are the same change to the

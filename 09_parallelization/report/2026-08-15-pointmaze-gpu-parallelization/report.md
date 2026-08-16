@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:28 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:40 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1288,10 +1288,18 @@ tensor. That is the largest single removable item, and it is what round five's o
 
 | copies | before | reading them in place | change | rounds favouring it | spread within a version |
 |---|---|---|---|---|---|
+| 8 | 7.88 ms | 8.41 ms | +6.7 percent | 0 of 11 | 0.01 ms |
+| 32 | 8.95 ms | 9.43 ms | +5.4 percent | 0 of 11 | 0.03 ms |
+| 128 | 12.38 ms | 12.73 ms | +2.8 percent | 0 of 11 | 0.03 ms |
+| 512 | 30.03 ms | 29.29 ms | -2.4 percent | 11 of 11 | 0.69 ms |
 | 1024 | 57.19 ms | 54.89 ms | -4.0 percent | 11 of 11 | 0.84 ms |
+| 2048 | 105.69 ms | 100.19 ms | -5.2 percent | 11 of 11 | 1.85 ms |
 | 4096 | 208.45 ms | 199.23 ms | -4.4 percent | 11 of 11 | 3.49 ms |
+| 8192 | 404.39 ms | 385.10 ms | -4.8 percent | 11 of 11 | 6.36 ms |
 
 *Sixteen updates per batch. A negative change is faster.*
+
+**The sign reverses, and where it reverses is the whole point of this section.** At 8 to 128 copies an iteration costs what it costs because of how many device programs it issues, and forty-two extra programs per update step is a bad trade for one copy of a buffer that is only 2 to 31 megabytes there. At 512 and above the same copy is 123 megabytes to a gigabyte and the programs are large enough that their number stops mattering. The trainer therefore chooses between the two forms by copy count (`production_config`), which is the same shape of answer the previous round arrived at from the other direction.
 
 **Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
 
@@ -1330,11 +1338,8 @@ Why the gradient forms differ, program by program at 4,096 copies (`benchmarks/p
 
 | program | time | bytes | rate |
 |---|---|---|---|
-| copy the gradients into the flat buffer (read 1, write 1), buffer form | 861 us | 1.96 GB | 2,280 GB/s |
-| gradient limit over the flat buffer (read 1), buffer form | 290 us | 0.98 GB | 3,385 GB/s |
-| Adam over the flat buffer (read 4, write 3), buffer form | 1,972 us | 6.87 GB | 3,486 GB/s |
-| gradient limit over the twenty-one gradients (read 1), no-buffer form | 340 us | 0.98 GB | 2,883 GB/s |
-| Adam over the twenty-one windows (read 4, write 3), no-buffer form | 2,213 us | 6.87 GB | 3,104 GB/s |
+| gradient limit over the twenty-one gradients (read 1), no-buffer form | 342 us | 0.98 GB | 2,868 GB/s |
+| Adam over the twenty-one windows (read 4, write 3), no-buffer form | 2,102 us | 6.87 GB | 3,268 GB/s |
 
 #### Tried and not kept: letting the compiler generate the multiplications
 
@@ -1349,16 +1354,19 @@ which is what round five's alignment measurement showed when it found those laye
 as the setting was switched on.
 
 So it was measured with the library backend removed, so that a generated kernel is used even where
-the library's is faster (which is what makes the bias and the activation fold into the
-multiplication instead of following it), and again with the size rule replaced by the
-configuration's own answer.
+the library's is faster — which is the point, because leaving both backends offered means the
+library's kernel wins the selection on nearly every shape and no epilogue fuses at all — and again
+with the size rule replaced by the configuration's own answer.
 
 | form | update stage at 4,096 copies | against the shipped form | rounds faster | loss differs by |
 |---|---|---|---|---|
-| the library's multiplication, as shipped | 163.33 ms | +0.0 percent | 0 of 7 | — |
-| the compiler's, both backends offered | 163.22 ms | -0.1 percent | 4 of 7 | 0.0e+00 relative |
-| the compiler's, library backend removed | 163.31 ms | -0.0 percent | 4 of 7 | 0.0e+00 relative |
-| the same, with the matrix units allowed | 163.31 ms | -0.0 percent | 3 of 7 | 0.0e+00 relative |
+| the library's multiplication, as shipped | 164.94 ms | +0.0 percent | 0 of 7 | — |
+| the compiler's, library backend removed | 235.21 ms | +42.6 percent | 0 of 7 | 3.4e-03 relative |
+| the same, with the matrix units allowed | 235.40 ms | +42.7 percent | 0 of 7 | 3.5e-03 relative |
+
+The generated kernels are not close. The selection log has the library's multiplication at 0.071 milliseconds against the best generated candidate's 0.078 on the first shape it tries, and the backward pass's transposed shapes are worse; the passes an epilogue would remove cannot pay for that. Switching the matrix units back on changes nothing, so round five's reason for setting this aside was a real observation about a form that was not going to pay anyway.
+
+**A note on how this was measured, because the first attempt measured nothing.** The first version of the probe built ONE trainer and swapped four compiled versions of its loss onto it, each compiled inside a context that set the compiler's options. All four came out bitwise identical and within 0.1 percent of each other in time — one form measured four times, not four forms agreeing. The compiler caches its work against the function being compiled and against the backend the wrapper carries, and a setting applied through a surrounding context is part of neither. The probe now gives each arm its own trainer and passes the settings as options rather than around them, and it says so out loud when two arms agree to zero. The accuracy line it already printed is what caught it.
 
 #### Whether round six changed what the trainer computes
 

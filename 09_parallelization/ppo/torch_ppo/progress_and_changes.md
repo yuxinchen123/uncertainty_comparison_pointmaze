@@ -511,6 +511,31 @@ updates per batch. "Rounds" is how many of the eleven favoured the change.
 | 25 | **Sum the squared gradients in the same program that copies them into the buffer**, so the buffer is not read a second time for the gradient limit. Keeps the buffer and its single-program optimizer | 56.56 -> 54.17 ms, **-4.22%**, 11 of 11, floor 0.73 | 204.75 -> 197.83 ms, **-3.38%**, 11 of 11, floor 3.36 | measured, NOT the default: row 24 beats it (below) |
 | 26 | **Write the shuffled batch straight into its buffer.** `buffer.copy_(t.gather(...))` allocates a whole second copy of the shuffled batch and copies it across; `torch.gather(t, 1, ix, out=buffer)` does not | — | the 2.86 ms of device-to-device copying the kernel profile named is gone; one whole iteration 205.59 -> 204.57 ms against a 0.93 ms floor, which is that harness's resolution | KEEP |
 
+### Row 24 reverses sign below 512 copies, and the trainer chooses by copy count
+
+The change was decided at 1,024 and 4,096, so it was then measured at every size the earlier
+rounds were tuned on. Sixteen updates per batch, eleven paired rounds each:
+
+| copies | with the buffer | reading them in place | change | rounds favouring it | floor |
+|---|---|---|---|---|---|
+| 8 | 7.88 ms | 8.41 ms | **+6.72%** | 0 of 11 | 0.01 ms |
+| 32 | 8.95 ms | 9.43 ms | **+5.40%** | 0 of 11 | 0.03 ms |
+| 128 | 12.38 ms | 12.73 ms | **+2.84%** | 0 of 11 | 0.03 ms |
+| 512 | 30.03 ms | 29.29 ms | **-2.45%** | 11 of 11 | 0.69 ms |
+| 1,024 | 57.19 ms | 54.89 ms | **-4.02%** | 11 of 11 | 0.84 ms |
+| 2,048 | 105.69 ms | 100.19 ms | **-5.20%** | 11 of 11 | 1.85 ms |
+| 4,096 | 208.45 ms | 199.23 ms | **-4.42%** | 11 of 11 | 3.49 ms |
+| 8,192 | 404.39 ms | 385.10 ms | **-4.77%** | 11 of 11 | 6.36 ms |
+
+Every one of the eight is unanimous across its eleven rounds, in one direction below 512 copies
+and in the other at 512 and above. The reason is the regime split this round and the last are both
+about: forty-two extra device programs per update step is a bad trade for one copy of a buffer
+that is 2 to 31 megabytes at 8 to 128 copies, and a good one for the same copy at 123 megabytes to
+a gigabyte. `production_config` therefore picks the form from the copy count, and the buffer's
+layout follows it — one block per parameter where the optimizer is twenty-one programs, one row
+per copy where it is one. This is the same shape of answer round five arrived at from the other
+direction, and it is the reason both rounds measure every change at both ends of the range.
+
 Rows 24 and 25 remove different passes and cannot both apply, so they were also measured against
 each other rather than compared through their separate baselines:
 
@@ -563,6 +588,42 @@ Both sides read the gradients where they were written, so the only difference is
 **Bitwise identical**: the same numbers at different addresses, run through the same programs, and
 a test trains the trainer for two iterations in each layout and requires exact equality on every
 parameter. KEEP.
+
+The programs again, at 4,096 copies, to see how much of the strided penalty the layout recovers:
+
+| Adam over the twenty-one windows | time | rate |
+|---|---|---|
+| copy-major (a parameter's window strided across copies) | 2,214 us | 3,104 GB/s |
+| parameter-major (each window contiguous) | 2,102 us | 3,268 GB/s |
+| for comparison, one program over the contiguous buffer (the buffer form) | 1,972 us | 3,486 GB/s |
+
+So the layout recovers about a third of what the twenty-one-program optimizer gave back, and the
+rest is the twenty-one launches themselves rather than the addresses they touch. 112 us a step is
+1.8 ms an iteration, against the 1.4 ms the whole-iteration comparison measured.
+
+### Row 28, tried and NOT kept: letting the compiler generate the multiplications
+
+Round five measured this and set it aside because the generated kernels switch the
+reduced-precision matrix units off. This round found why — a size rule in the compiler's template
+heuristics allows those units only when a multiplication has at least sixteen rows AND the smaller
+of its two inner dimensions is at least 512, and every multiplication here has an inner dimension
+of 4, 64, 128 or 256 — and then measured the form properly, with one whole trainer per arm.
+
+| form | update stage, 4,096 copies | against the shipped form | rounds faster |
+|---|---|---|---|
+| the library's multiplication, as shipped | 164.94 ms | — | — |
+| the compiler's, library backend removed | 235.21 ms | **+42.6% slower** | 0 of 7 |
+| the same, with the size rule replaced so the matrix units apply | 235.40 ms | **+42.7% slower** | 0 of 7 |
+
+The point of removing the library backend is that it is what makes the bias and the activation
+fold into the multiplication as an epilogue; leaving both backends offered means the library's
+kernel wins the selection on nearly every shape and no epilogue fuses. The measurement says the
+generated kernels are so much slower on these shapes — the selection log has the library's
+multiplication at 0.071 ms against the best generated candidate's 0.078 on the first shape alone,
+and the backward's transposed shapes are worse — that the passes the epilogue would remove cannot
+pay for them. Switching the matrix units back on changes nothing, so the note round five left
+("the kernels the compiler selects switch the units off") was a real observation about a form that
+was never going to pay anyway. NOT KEPT, and now with a number rather than a caveat.
 
 ### The paired comparison against the revision this round starts from is neutral
 
