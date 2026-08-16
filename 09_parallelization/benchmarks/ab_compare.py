@@ -74,7 +74,13 @@ def run_one(overrides, iters, warmup):
     if dropped:
         print(f"NOTE revision {rev} has no field(s) {dropped}; using its defaults",
               file=sys.stderr)
-    cfg = PPOConfig(**merged)
+    # built through the revision's OWN production_config, so each side is what that revision
+    # ships at this copy count. Building PPOConfig directly would use the dataclass defaults,
+    # and once those stopped being what ships at every size — round six chooses the gradient's
+    # home from the copy count — that silently measured a configuration nobody runs.
+    n_copies = merged.pop("n_copies")
+    style = merged.pop("update_style")
+    cfg = mod.production_config(n_copies, style=style, **merged)
     trainer = PPORND(cfg, device="cuda")
     trainer.prime_obs_rms()
     trainer._build_iteration_graph()

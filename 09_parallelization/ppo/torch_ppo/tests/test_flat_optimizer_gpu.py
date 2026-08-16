@@ -1,6 +1,6 @@
 """GPU-only: the flat-buffer clip and Adam must compute what the previous per-tensor form did.
 
-The previous form walked nineteen parameter tensors — summing squared gradients per tensor for
+The previous form walked twenty-one parameter tensors — summing squared gradients per tensor for
 the per-copy norm, rescaling each one, then handing them to torch.optim.Adam. The new form does
 the same arithmetic over one [C, P] buffer. Rewriting a reduction changes the order in which
 floating-point numbers are added, so the two cannot be bitwise equal; what must hold is that a
@@ -18,8 +18,11 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from torch_ppo_rnd import PPOConfig, PPORND  # noqa: E402
 
+# this test is about the buffer form specifically, so it asks for it rather than taking
+# the default, which is now the form that reads the gradients where they were written
 CFG = dict(n_copies=4, n_envs=4, num_steps=32, obs_norm_init_iters=1,
-           rollout_mode="compile-step", compile_opt=False)
+           rollout_mode="compile-step", compile_opt=False,
+           gradient_buffer=True, parameter_layout="copy_major")
 
 
 def reference_step(params, grads, m, v, t, lr, eps, max_norm):
@@ -51,7 +54,7 @@ def main():
 
     # produce a real set of gradients, through the trainer's own gradient path
     loss = t._loss_fn(batch, style_a=False)
-    t._backward_into_flat(loss)
+    grad_source = t._backward(loss)
 
     # snapshot the inputs the two forms will share
     params_before = [p.detach().clone() for p in t.trainable]
@@ -64,7 +67,7 @@ def main():
                          t=1, lr=t.cfg.learning_rate, eps=t.cfg.adam_eps,
                          max_norm=t.cfg.max_grad_norm)
 
-    t._clip_per_copy_and_step()                 # the flat form, same inputs, moments start at 0
+    t._clip_per_copy_and_step(grad_source)      # the flat form, same inputs, moments start at 0
 
     worst_abs = worst_rel = 0.0
     for p, r in zip(t.trainable, ref):

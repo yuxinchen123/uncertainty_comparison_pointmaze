@@ -72,6 +72,44 @@ class PPOConfig:
                                      # "distinct": every copy is its own seed
     compile_post: bool = False       # compile the post-rollout body (its filter and GAE are
                                      # python loops over T, so eager they are ~256 tiny kernels)
+    gradient_buffer: bool = False    # True holds every gradient in ONE [C, P] buffer, so the gradient
+                                     # limit and the Adam step are one program each. The
+                                     # automatic-differentiation system writes its gradients into
+                                     # fresh tensors, so this costs a copy of the whole buffer in
+                                     # every update step — 981 megabytes read and 981 written at
+                                     # 4,096 copies. False reads the gradients where they were
+                                     # written: twenty-one programs instead of one for each of the
+                                     # two optimizer passes, no copy, and no buffer to hold.
+                                     # Which is better depends on the copy count, so
+                                     # production_config chooses it from there.
+    fuse_copy_and_limit: bool = False  # with the buffer on: sum the squared gradients in the
+                                     # SAME program that copies them into it, instead of reading
+                                     # the whole buffer again afterwards. One pass over 981
+                                     # megabytes less per update step at 4,096 copies. The sum
+                                     # then runs tensor by tensor, so it lands on exactly the
+                                     # value the no-buffer form computes and a few last bits from
+                                     # the one-row reduction's.
+    parameter_layout: str = "parameter_major"
+    # "copy_major": one buffer row per copy, [C, P]. A parameter's window is a column slice, so
+    # it is strided across copies, but the buffer is one contiguous array and a single program
+    # can walk it applying a per-copy rate. "parameter_major": one contiguous block per
+    # parameter instead, so every window is contiguous and every pass over it reaches the card's
+    # full bandwidth — at the price of twenty-one programs per optimizer pass rather than one,
+    # because a copy no longer owns a row. Requires gradient_buffer=False.
+    gather_into_place: bool = True   # write the per-epoch shuffle straight into its static
+                                     # buffer with torch.gather(..., out=), instead of letting
+                                     # the gather allocate a second copy of the whole shuffled
+                                     # batch and copying that across. The kernel profile at
+                                     # 4,096 copies names the copy it removes — 2.9 ms of
+                                     # device-to-device copying an iteration — but the two are
+                                     # measured against each other because a profile is not an
+                                     # end-to-end measurement.
+    generated_rollout_matmul: bool = False
+    # let the compiler generate the rollout step's matrix multiplications from its own templates
+    # instead of calling the library's. The rollout's are the least efficient programs in the
+    # trainer: four rows per copy against a whole copy's weights, re-read on every one of the 128
+    # steps, and the library's kernels reach about 850 gigabytes per second on them where the
+    # update stage's reach 2,500 to 3,400.
     env_backend: str = "torch"       # "torch" (env fused into the compiled step) or "cuda"
                                      # (the single fused kernel from pointmaze/cuda_env)
 
@@ -96,13 +134,31 @@ def sweep_config(learning_rates, copies_per_rate, style="epoch_minibatch", **ove
 
 
 def production_config(n_copies, style="epoch_minibatch", **overrides) -> "PPOConfig":
-    """The measured-best PyTorch configuration. One definition, so the benchmarks, the training
-    driver and the tests cannot drift apart: whole-iteration CUDA-graph capture, compiled
-    post-rollout body, TF32 matrix units, and the gradient limit and Adam step compiled as two
-    streaming passes over the flat parameter buffer.
+    """The measured-best PyTorch configuration for this copy count. One definition, so the
+    benchmarks, the training driver and the tests cannot drift apart: whole-iteration CUDA-graph
+    capture, compiled post-rollout body, TF32 matrix units, and a compiled gradient limit and
+    Adam step.
+
+    Where the gradients live is chosen from the copy count, because the measurement reverses.
+    Reading them where the backward pass wrote them removes a copy of the whole parameter buffer
+    from every update step and costs forty-two device programs where there were two: worth -4.0%
+    at 1,024 copies and -4.4% at 4,096, and +2.8% to +6.7% AGAINST it at 128 copies and below,
+    where an iteration cost is set by how many programs it issues rather than the bytes they
+    move. The buffer layout follows it: one block per parameter where the optimizer is twenty-one
+    programs, one row per copy where it is one.
+
+    Below the crossover the buffer stays and the gradient limit rides along with the copy, which
+    is worth -1.1% / -2.1% / -3.0% at 32 / 128 / 512 copies and +0.6% at 8 — small enough there,
+    against a 0.01 ms spread, to take the simpler rule.
     """
     base = dict(rollout_mode="capture", capture_update=True, one_graph=True,
                 fused_adam=True, tf32=True, compile_post=True, compile_opt=True)
+    # before: n_copies=128  -> the buffer, one row per copy, with the limit inside the copy
+    # after:  n_copies=4096 -> no buffer, one block per parameter, the limit its own program
+    memory_bound = n_copies >= 1024
+    base.update(gradient_buffer=not memory_bound,
+                parameter_layout="parameter_major" if memory_bound else "copy_major",
+                fuse_copy_and_limit=not memory_bound)
     base.update(overrides)                      # an explicit override always wins
     return PPOConfig(n_copies=n_copies, update_style=style, **base)
 
@@ -233,13 +289,13 @@ class PPORND:
                                [(Hh, 4, 2 ** 0.5), (F, Hh, 2 ** 0.5), (F, F, 2 ** 0.5)])
 
         # ---- every trainable tensor is a window onto ONE flat buffer ----
-        # The parameters stay nineteen separate leaf tensors, because that is what the forward
-        # pass and autograd want, but their storage is nineteen windows onto a single [C, P]
+        # The parameters stay twenty-one separate leaf tensors, because that is what the forward
+        # pass and autograd want, but their storage is twenty-one windows onto a single [C, P]
         # buffer, and their gradients are windows onto a single [C, P] gradient buffer. The
-        # optimizer side then touches one tensor instead of nineteen: the per-copy gradient
+        # optimizer side then touches one tensor instead of twenty-one: the per-copy gradient
         # norm is one reduction, the Adam step is one kernel, and zeroing is one kernel.
         # Measured before this change: the clip alone was 31% of a minibatch step, because it
-        # walked all nineteen tensors twice.
+        # walked all twenty-one tensors twice.
         # before: 19 separately allocated tensors, each with its own gradient
         # after:  19 windows onto _flat [C, P] and _flat_grad [C, P]
         spec = ([("actor", k) for k in ["W0", "b0", "W1", "b1", "W2", "b2", "logstd"]]
@@ -266,41 +322,83 @@ class PPORND:
                 n *= d
             widths.append(n)
             strides.append(-(-n // ALIGN) * ALIGN)
-        per_copy = sum(strides)
-        self._flat = torch.zeros(C, per_copy, device=self.device)
-        self._flat_grad = torch.zeros(C, per_copy, device=self.device)
-        off = 0
-        self.trainable = []
-        self.grad_windows = []
-        for (g, k, sh), n, stride in zip(shapes, widths, strides):
-            self._flat[:, off:off + n] = groups[g][k].reshape(C, n)
+
+        # Two layouts of the same buffer, both keeping every copy's start on a sixteen-byte
+        # boundary. Which is better is a measurement, and it is the OPPOSITE of what round four
+        # assumed: the layout that lets the optimizer be one program is not the layout that lets
+        # it be fast when it is twenty-one.
+        #   "copy_major"       one row per copy, [C, P]. A parameter's window is a column slice,
+        #                      so it is strided across copies, but the buffer is one contiguous
+        #                      array and a single program can walk it applying a per-copy rate.
+        #   "parameter_major"  one contiguous block per parameter, C rows of n numbers each.
+        #                      Every window is contiguous, so every pass over it reaches the
+        #                      card's full bandwidth; the price is that a copy no longer owns a
+        #                      row of the buffer, so the gradient limit and the Adam step have to
+        #                      be twenty-one programs.
+        # before (copy_major, C=4): [[copy 0's 59,920 numbers], [copy 1's], [copy 2's], ...]
+        # after  (parameter_major): [W0 for copies 0..3][b0 for copies 0..3][W1 for copies 0..3]
+        assert cfg.parameter_layout in ("copy_major", "parameter_major"), \
+            f"unknown parameter layout {cfg.parameter_layout!r}"
+        copy_major = cfg.parameter_layout == "copy_major"
+        assert copy_major or not cfg.gradient_buffer, \
+            "a parameter-major buffer has no per-copy row for one program to walk, so the " \
+            "gradient buffer that exists to allow one buys nothing"
+        offsets, length = [], 0
+        for stride in strides:
+            offsets.append(length)
+            length += stride if copy_major else C * stride
+        shape = (C, length) if copy_major else (length,)
+        self._flat = torch.zeros(*shape, device=self.device)
+        self._m = torch.zeros_like(self._flat)
+        self._v = torch.zeros_like(self._flat)
+        # the gradient buffer exists only for the form that copies into it; the other form has
+        # nothing to hold, which is 981 megabytes less on the card at 4,096 copies
+        self._flat_grad = torch.zeros(*shape, device=self.device) if cfg.gradient_buffer else None
+
+        def window(buf, i):
+            """Parameter i's view of one of the buffers, in whichever layout is in use."""
+            if copy_major:
+                return buf[:, offsets[i]:offsets[i] + widths[i]].view(C, *shapes[i][2][1:])
+            block = buf[offsets[i]:offsets[i] + C * strides[i]].view(C, strides[i])
+            return block[:, :widths[i]].view(C, *shapes[i][2][1:])
+
+        self.trainable, self.grad_windows = [], []
+        self.param_windows, self.m_windows, self.v_windows = [], [], []
+        for i, (g, k, sh) in enumerate(shapes):
+            window(self._flat, i).copy_(groups[g][k])
             # detach makes the window a LEAF that shares storage. Its gradient is NOT attached
-            # here: see _backward_into_flat for why an attached gradient costs four extra
-            # passes over a buffer that is a gigabyte at four thousand copies.
-            w = self._flat[:, off:off + n].view(C, *sh[1:]).detach().requires_grad_(True)
+            # here: see _backward for why an attached gradient costs four extra passes over a
+            # buffer that is a gigabyte at four thousand copies.
+            w = window(self._flat, i).detach().requires_grad_(True)
             groups[g][k] = w
             self.trainable.append(w)
-            self.grad_windows.append(self._flat_grad[:, off:off + n].view(C, *sh[1:]))
-            off += stride
-        assert off == per_copy, "the parameter windows do not tile the flat buffer"
-        assert per_copy % ALIGN == 0, "the per-copy row length must keep every copy aligned"
+            # the same storage seen WITHOUT a gradient, for the optimizer to write through:
+            # writing into a leaf that requires a gradient from inside a compiled region does
+            # not reliably reach the parameter (found in round 3 and fixed there the same way)
+            self.param_windows.append(window(self._flat, i))
+            self.m_windows.append(window(self._m, i))
+            self.v_windows.append(window(self._v, i))
+            if cfg.gradient_buffer:
+                self.grad_windows.append(window(self._flat_grad, i))
+        assert length % ALIGN == 0, "the buffer length must keep every copy aligned"
         base = self._flat.untyped_storage().data_ptr()
         end = base + self._flat.numel() * self._flat.element_size()
-        for w, gw in zip(self.trainable, self.grad_windows):
-            assert w.data_ptr() % (ALIGN * 4) == 0, "a parameter window lost its alignment"
-            assert gw.data_ptr() % (ALIGN * 4) == 0, "a gradient window lost its alignment"
+        for i, w in enumerate(self.trainable):
+            for copy in range(min(2, C)):
+                assert w[copy].data_ptr() % (ALIGN * 4) == 0, \
+                    "a parameter window lost its alignment"
             assert base <= w.data_ptr() < end, "a parameter is not a window onto the buffer"
-            assert (gw.untyped_storage().data_ptr()
-                    == self._flat_grad.untyped_storage().data_ptr()), "a gradient escaped"
+            assert self.param_windows[i].data_ptr() == w.data_ptr(), "a write window drifted"
+            if cfg.gradient_buffer:
+                gw = self.grad_windows[i]
+                assert gw.data_ptr() % (ALIGN * 4) == 0, "a gradient window lost its alignment"
+                assert (gw.untyped_storage().data_ptr()
+                        == self._flat_grad.untyped_storage().data_ptr()), "a gradient escaped"
 
         self._lr_t = torch.tensor(cfg.learning_rate, device=self.device)
         # lr_scale is the annealing factor; the per-copy rates are multiplied by it, so one
         # device tensor drives every group and the captured graph reads the current value
         self._lr_scale = torch.ones((), device=self.device)
-        # one Adam over the flat buffer serves both cases: the learning rate is a scalar for a
-        # uniform run and a per-copy column for a sweep, and the arithmetic is identical
-        self._m = torch.zeros_like(self._flat)
-        self._v = torch.zeros_like(self._flat)
         self._adam_t = torch.zeros((), device=self.device)
         # the decay constants live on the device: building them per step would be a
         # host-to-device copy, which graph capture forbids
@@ -311,6 +409,15 @@ class PPORND:
         # the gradient-limiting factor lives in its own buffer, so the reduction that produces
         # it and the Adam step that consumes it are two separate programs (see _grad_scale)
         self._scale = torch.ones(C, 1, device=self.device)
+        # the two per-copy columns reshaped once for each parameter's rank, so the per-tensor
+        # optimizer's inner loop does no shape work — and so no view of an expanded tensor is
+        # attempted inside a compiled region, which `view` refuses
+        # before: scale [C, 1] and a parameter [C, 256, 128]
+        # after:  scale [C, 1, 1], broadcasting over both of the parameter's own axes
+        self._scale_views = [self._scale.view(-1, *((1,) * (p.dim() - 1)))
+                             for p in self.param_windows]
+        self._lr_views = [self._lr_col.reshape(-1, *((1,) * (p.dim() - 1)))
+                          for p in self.param_windows]
         self.opt = None
 
         # per-copy running statistics (spec 4.2, 5.2) and the intrinsic forward filter
@@ -362,10 +469,17 @@ class PPORND:
         from pm_common import MAPS as _MAPS
         wall = _np.array(_MAPS[self.env.cfg.map_name]) == 1
         self._open_cells = torch.as_tensor(~wall.reshape(-1), device=dev)
-        # the per-step function used by _rollout_body: compiled for the GPU fast paths
+        # the per-step function used by _rollout_body: compiled for the GPU fast paths.
+        # The settings go to the compiler as options rather than around it, so that two trainers
+        # in one process — which is how this project measures a change — compile separately.
+        rollout_options = dict(max_autotune_gemm=True,
+                               max_autotune_gemm_backends="TRITON") \
+            if cfg.generated_rollout_matmul else None
         if cfg.rollout_mode in ("compile-step", "capture"):
-            self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False)
-            self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False)
+            self._one_step = torch.compile(self._one_step_pure, fullgraph=True, dynamic=False,
+                                           options=rollout_options)
+            self._policy_fn = torch.compile(self._policy_part, fullgraph=True, dynamic=False,
+                                            options=rollout_options)
         else:
             self._one_step = self._one_step_pure
             self._policy_fn = self._policy_part
@@ -373,10 +487,27 @@ class PPORND:
         # streaming pass over the flat buffer and each then runs at the card's full bandwidth,
         # whereas compiling them together produces one reduce-and-update program that runs at
         # two thirds of it (measured, `benchmarks/profile_kernels.py`)
-        self._scale_fn = torch.compile(self._grad_scale, dynamic=False) \
-            if cfg.compile_opt else self._grad_scale
-        self._adam_fn = torch.compile(self._adam_flat, dynamic=False) \
-            if cfg.compile_opt else self._adam_flat
+        assert cfg.gradient_buffer or not cfg.fuse_copy_and_limit, \
+            "there is no copy for the gradient limit to ride along with when there is no buffer"
+        # how the gradients get from the backward pass to the optimizer, chosen once here so the
+        # update loop itself has no branch in it
+        self._place_fn = (self._place_where_written if not cfg.gradient_buffer
+                          else self._place_and_measure if cfg.fuse_copy_and_limit
+                          else self._place_by_copying)
+        adam_impl = self._adam_flat if cfg.gradient_buffer else self._adam_per_tensor
+        self._adam_fn = torch.compile(adam_impl, dynamic=False) \
+            if cfg.compile_opt else adam_impl
+        # the gradient limit is its own program EXCEPT when it rides along with the copy: with
+        # the buffer it reads one contiguous row, without it the twenty-one gradients
+        if cfg.fuse_copy_and_limit:
+            copy_impl = self._copy_and_measure
+            self._copy_measure_fn = torch.compile(copy_impl, dynamic=False) \
+                if cfg.compile_opt else copy_impl
+            self._scale_fn = None
+        else:
+            scale_impl = self._grad_scale if cfg.gradient_buffer else self._grad_scale_per_tensor
+            self._scale_fn = torch.compile(scale_impl, dynamic=False) \
+                if cfg.compile_opt else scale_impl
         # the post-rollout body, compiled when asked (fuses the T-step scans)
         self._post_fn = torch.compile(self._post_body_impl, fullgraph=True, dynamic=False) \
             if cfg.compile_post else self._post_body_impl
@@ -698,29 +829,60 @@ class PPORND:
 
     # ---- update phase ----
 
-    def _backward_into_flat(self, loss):
-        """Produce every parameter gradient and place it in the flat gradient buffer.
+    def _backward(self, loss):
+        """Produce every parameter gradient and return it in the form the optimizer reads.
 
         `loss.backward()` with a gradient already attached to each parameter ADDS the new
         gradient into it — reading the freshly produced gradient, reading the buffer and
         writing it back, three passes — and the buffer then has to be zeroed before the next
         step, a fourth. That buffer holds 245 megabytes at 1,024 copies and a gigabyte at
-        4,096. Asking autograd for the gradients instead returns nineteen freshly written
-        tensors that nothing has to be added to, and one call copies them into their windows,
-        so the gradient is written, copied once, and read twice (the norm, then the Adam step),
-        and never zeroed. The nineteen small addition programs disappear with it.
-        """
-        grads = torch.autograd.grad(loss, self.trainable)
-        torch._foreach_copy_(self.grad_windows, list(grads))
+        4,096. Asking autograd for the gradients instead returns twenty-one freshly written
+        tensors that nothing has to be added to, and never zeroed.
 
-    def _clip_per_copy_and_step(self):
+        What happens to them next is one of three things, chosen at build time (see the
+        `gradient_buffer` and `fuse_copy_and_limit` fields).
+        """
+        return self._place_fn(list(torch.autograd.grad(loss, self.trainable)))
+
+    def _place_where_written(self, grads):
+        """No buffer: the optimizer reads the gradients where the backward pass wrote them."""
+        return grads
+
+    def _place_by_copying(self, grads):
+        """Copy every gradient into the flat buffer; the gradient limit reads it afterwards."""
+        torch._foreach_copy_(self.grad_windows, grads)
+        return self._flat_grad
+
+    def _place_and_measure(self, grads):
+        """Copy every gradient into the flat buffer and sum its squares in the same pass."""
+        self._copy_measure_fn(grads)
+        return self._flat_grad
+
+    def _copy_and_measure(self, grads):
+        """Write the gradients into their windows and set the limiting factor, reading each once.
+
+        Copying and then measuring touches every gradient three times per update step: the copy
+        reads the fresh tensor and writes the window, and the limit reads the whole buffer again.
+        Doing both jobs in one program removes that third pass — 981 megabytes per step at 4,096
+        copies. The sum is the same one _grad_scale_per_tensor computes.
+        """
+        C = self.cfg.n_copies
+        total = grads[0].reshape(C, 1, -1).square().sum(2)
+        self.grad_windows[0].copy_(grads[0])
+        for window, g in zip(self.grad_windows[1:], grads[1:]):
+            total = total + g.reshape(C, 1, -1).square().sum(2)
+            window.copy_(g)
+        self._scale.copy_(
+            (self.cfg.max_grad_norm / (total.sqrt() + 1e-6)).clamp(max=1.0))
+
+    def _clip_per_copy_and_step(self, grads):
         """Per-copy gradient-norm clip (spec 10), then one Adam step over all copies.
 
-        Every parameter's gradient is a window onto one buffer, so the whole stage is two
-        streaming passes over that buffer rather than a walk over nineteen tensors.
+        The limit is already set when it rode along with the copy, so there is nothing to run.
         """
-        self._scale_fn()
-        self._adam_fn()
+        if self._scale_fn is not None:
+            self._scale_fn(grads)
+        self._adam_fn(grads)
 
     def _reset_optimizer_state(self):
         """Zero the optimizer moments and step count (after a graph build's warmup passes)."""
@@ -728,7 +890,7 @@ class PPORND:
         self._v.zero_()
         self._adam_t.zero_()
 
-    def _grad_scale(self):
+    def _grad_scale(self, g):
         """The per-copy factor that limits the gradient norm: one reduction over the buffer.
 
         Kept as its own compiled function, separate from the Adam step below. Written together
@@ -736,12 +898,25 @@ class PPORND:
         program reaches only 2.4 of the card's 3.5 terabytes per second; as two programs, the
         reduction runs at 3.2 and the update at 3.5. The arithmetic is identical either way.
         """
-        g = self._flat_grad
         self._scale.copy_(
             (self.cfg.max_grad_norm / (g.square().sum(1, keepdim=True).sqrt() + 1e-6)
              ).clamp(max=1.0))
 
-    def _adam_flat(self):
+    def _grad_scale_per_tensor(self, grads):
+        """The same factor summed over the twenty-one separate gradients instead of one buffer.
+
+        The sum runs over the same numbers in a different order, so the result differs in the
+        last bits of float32; tests/test_gradient_form_gpu.py repeats both in double precision,
+        where they agree, and measures the single-precision distance.
+        """
+        C = self.cfg.n_copies
+        total = grads[0].reshape(C, 1, -1).square().sum(2)
+        for g in grads[1:]:
+            total = total + g.reshape(C, 1, -1).square().sum(2)
+        self._scale.copy_(
+            (self.cfg.max_grad_norm / (total.sqrt() + 1e-6)).clamp(max=1.0))
+
+    def _adam_flat(self, g):
         """One Adam step over the whole flat buffer, with the gradients already limited.
 
         Adam is elementwise, so the C rows of the buffer are C independent Adams. The learning
@@ -762,8 +937,8 @@ class PPORND:
             # gradient, the two moments and the parameters once and writes three of them back.
             # At large copy counts this buffer is hundreds of megabytes, so the number of
             # passes over it — not the number of kernels — is what sets the cost. The gradient
-            # is NOT zeroed here: the next backward pass overwrites it (_backward_into_flat).
-            gs = self._flat_grad * self._scale
+            # is NOT zeroed here: the next backward pass overwrites it (_backward).
+            gs = g * self._scale
             m_new = self._m * b1 + gs * (1.0 - b1)
             v_new = self._v * b2 + gs * gs * (1.0 - b2)
             step = (m_new / bc1) * (self._lr_col * self._lr_scale) / \
@@ -771,6 +946,31 @@ class PPORND:
             self._m.copy_(m_new)
             self._v.copy_(v_new)
             self._flat.sub_(step)
+
+    def _adam_per_tensor(self, grads):
+        """The same Adam step, one program per parameter, reading the gradients where they lie.
+
+        Identical arithmetic to _adam_flat: the moments and the parameters are the same windows
+        onto the same two buffers, the same expression chain runs over each one, and the
+        padding between windows is simply never visited instead of being multiplied by a zero
+        gradient. Only the gradient's home differs.
+        """
+        cfg = self.cfg
+        b1, b2 = 0.9, 0.999
+        self._adam_t.add_(1)
+        bc1 = 1.0 - torch.pow(self._b1, self._adam_t)
+        bc2 = 1.0 - torch.pow(self._b2, self._adam_t)
+        with torch.no_grad():
+            for p, g, m, v, scale, lr in zip(self.param_windows, grads, self.m_windows,
+                                             self.v_windows, self._scale_views, self._lr_views):
+                gs = g * scale
+                m_new = m * b1 + gs * (1.0 - b1)
+                v_new = v * b2 + gs * gs * (1.0 - b2)
+                step = (m_new / bc1) * (lr * self._lr_scale) / \
+                       ((v_new / bc2).sqrt() + cfg.adam_eps)
+                m.copy_(m_new)
+                v.copy_(v_new)
+                p.sub_(step)
 
     def _losses(self, mb, style_a):
         """Per-copy losses on one (mini)batch dict; returns the scalar sum over copies.
@@ -810,8 +1010,8 @@ class PPORND:
     def update_full_batch(self, batch):
         """Style A: one gradient step on all T*N rows per copy, then discard (spec 11)."""
         loss = self._loss_fn(batch, style_a=True)
-        self._backward_into_flat(loss)
-        self._clip_per_copy_and_step()
+        grads = self._backward(loss)
+        self._clip_per_copy_and_step(grads)
         return loss.detach()
 
     def update_epoch_minibatch(self, batch):
@@ -832,8 +1032,8 @@ class PPORND:
                     ix = idx.unsqueeze(-1).expand(C, mb_size, t.shape[-1]) if t.dim() == 3 else idx
                     mb[key] = t.gather(1, ix)
                 loss = self._loss_fn(mb, style_a=False)
-                self._backward_into_flat(loss)
-                self._clip_per_copy_and_step()
+                grads = self._backward(loss)
+                self._clip_per_copy_and_step(grads)
                 last = loss.detach()
         return last
 
@@ -850,8 +1050,8 @@ class PPORND:
         C = cfg.n_copies
         if cfg.update_style == "full_batch":
             loss = self._loss_fn(self._U, style_a=True)
-            self._backward_into_flat(loss)
-            self._clip_per_copy_and_step()
+            grads = self._backward(loss)
+            self._clip_per_copy_and_step(grads)
         else:
             Brows = cfg.num_steps * cfg.n_envs
             mb_size = Brows // cfg.num_minibatches
@@ -860,17 +1060,25 @@ class PPORND:
                 # are then contiguous slices of it, which cost nothing. Before: nine gather
                 # kernels in every one of the sixteen steps. After: nine per epoch. The rows
                 # and their order are identical either way, so this is exact.
+                # The gather writes STRAIGHT INTO the static buffer. Written as
+                # `buffer.copy_(t.gather(...))` it allocates a whole second copy of the shuffled
+                # batch and then copies it across: 1.2 gigabytes written and read again in every
+                # epoch at 4,096 copies, which a kernel profile shows as 2.9 milliseconds of
+                # device-to-device copying per iteration.
                 idx = self._perm[e]
                 for key in self._U_KEYS:
                     t = self._U[key]
                     ix = idx.unsqueeze(-1).expand(C, Brows, t.shape[-1]) if t.dim() == 3 else idx
-                    self._UP[key].copy_(t.gather(1, ix))
+                    if cfg.gather_into_place:
+                        torch.gather(t, 1, ix, out=self._UP[key])
+                    else:
+                        self._UP[key].copy_(t.gather(1, ix))
                 for k in range(cfg.num_minibatches):
                     mb = {key: self._UP[key][:, k * mb_size:(k + 1) * mb_size]
                           for key in self._U_KEYS}
                     loss = self._loss_fn(mb, style_a=False)
-                    self._backward_into_flat(loss)
-                    self._clip_per_copy_and_step()
+                    grads = self._backward(loss)
+                    self._clip_per_copy_and_step(grads)
         self._loss_out.copy_(loss.detach())
 
     def _build_update_graph(self, example_batch=None):

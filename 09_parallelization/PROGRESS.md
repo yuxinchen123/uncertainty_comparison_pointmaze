@@ -60,7 +60,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   already at 72 to 100 percent of the bandwidth the card delivers. Second, round four is a
   REGRESSION at these sizes — 19.2% slower at 1,024 copies with one update per batch, 7.1% with
   sixteen, 5.8% at 4,096 with sixteen, each measured against its own predecessor revision — 
-  because packing the nineteen parameter windows tightly left every copy's parameters off a
+  because packing the twenty-one parameter windows tightly left every copy's parameters off a
   sixteen-byte boundary and the multiplication library fell back to its scalar-load kernels.
   Three exact changes followed: pad the windows; add each layer's bias after the multiplication
   rather than folding it in; write gradients into the flat buffer instead of accumulating into
@@ -72,7 +72,83 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies also fits (121.8 ms and 29.5 GB with one
   update per batch; 407.0 ms and 27.4 GB with sixteen) on the 94 GB card.
 
+- Round 6 (2026-08-15 night, Pacific): read the JAX trainer's own fifth round, which had finished
+  after this side's was written, and re-open 1,024 to 4,096 with the measurement method that round
+  arrived at. Its verdict rule — the paired, round-by-round sign test, both versions built in ONE
+  process and timed round-robin — was adopted and is now `benchmarks/bench_torch_change.py`. Its
+  two kept changes did not transfer: both are unroll factors, and the PyTorch update has no loop
+  to unroll; measured at these sizes the JAX round is worth nothing on its own side either
+  (within a percent of its pre-round figures at 1,024 to 4,096), which is the same regime split
+  seen from the other direction. A kernel-level profile at 4,096 copies then chose three changes,
+  all of them removing passes over memory that round five's own work had created. Measured end to
+  end against the revision it started from: -1.7% at 8 copies, -3.1% at 128, -4.9% at 512 and
+  -7.0% at 4,096 with sixteen updates per batch, and no size slower. Against JAX at 1,024 to
+  4,096, the distance falls from about 1.22x to about 1.13x with sixteen updates per batch. Two
+  of the changes reverse sign with the copy count, so the trainer chooses the form from it. The
+  round's own hypothesis — that PyTorch could be made to fold its element-wise work into its
+  multiplications the way the JAX compiler does — is answered NO: forcing the generated kernels
+  that would fuse an epilogue is 45.6% slower.
+
 ## State notes (newest first)
+
+- 2026-08-15 ~22:00 PT — round 6 complete, on branch `worktree-agent-a9d3932a1c6532feb`. The
+  question was what the JAX trainer's fifth round transferred to the PyTorch one, and whether
+  1,024 to 4,096 copies could be improved again. Everything below is measured on serval05 under
+  the exclusive lock, both frameworks waiting for every iteration.
+  - **The premise was checked first, and it held.** Re-measured in one session, PyTorch reproduces
+    round five's figures to within half a percent, and the JAX fifth round is worth **nothing at
+    these sizes** — its trainer is within a percent of what it was before that round at 1,024 to
+    4,096. Its two kept changes are unroll factors, and unrolling buys fewer, longer-running
+    programs, which is worth ten percent at 128 copies and nothing where bytes are the cost.
+  - **Its measurement method transferred and is now used here**: both versions built in ONE
+    process, timed round-robin with the order reversed on alternate rounds, verdict by the
+    round-by-round paired difference and a sign test (`benchmarks/bench_torch_change.py`).
+  - **Four changes kept**, chosen by a kernel-level profile at 4,096 copies: read the gradients
+    where the backward pass wrote them instead of copying them into one buffer; hold one
+    contiguous block per parameter instead of one buffer row per copy; sum the gradient limit
+    inside the copy where the buffer is kept; and write the shuffled batch straight into its
+    buffer instead of building a second copy of it. End to end against the revision the round
+    started from: **-1.7% at 8 copies, -3.1% at 128, -4.9% at 512 and -7.0% at 4,096** with
+    sixteen updates per batch, -1.4% at 4,096 with one. **No size is slower.**
+  - **Two of them reverse sign with the copy count**, so the trainer picks the form from it:
+    reading the gradients in place is +6.7% / +5.4% / +2.8% SLOWER at 8 / 32 / 128 copies and
+    -2.5% to -5.2% faster from 512 up, and the crossover is set at 1,024 because that is where
+    the two candidate forms were compared directly. That is the same regime split round five
+    found, seen from the other direction, and it is why every change is measured at both ends of
+    the range.
+  - **The hypothesis the round was built on is answered in the negative.** Letting PyTorch's
+    compiler generate the multiplications so the bias and the activation fold into them, which is
+    what the JAX compiler does for free, is **45.6% SLOWER** once the library backend is removed
+    so that an epilogue actually fuses — the generated kernels are far enough behind the
+    library's on these shapes that the passes they would remove cannot pay for them. Offering
+    both backends reproduces round five's 3% gain, but that arm fuses no epilogue: the library's
+    kernel simply wins the selection nearly everywhere.
+  - **Three measurements measured the wrong thing, and all three were caught.** The first
+    version of the epilogue probe swapped four compiled functions onto one trainer, and all four
+    came out bitwise identical and the same speed, because the compiler caches against the
+    function and the backend rather than against a surrounding context. The rebuilt probe then
+    read its accuracy from weights each arm's own kernels had already moved, because forcing a
+    compilation runs a real update. And the cross-process comparison built its sides from the
+    dataclass defaults rather than through `production_config`, so once this round made the
+    gradient's home depend on the copy count it timed, at 8 and 128 copies, a configuration the
+    trainer never chooses there — and reported the round as a 3.7% REGRESSION at 8 copies when
+    it is a 1.7% gain. Its within-side spread was 0.01 ms: precise, and about the wrong thing.
+    All three were found the same way, by a check that asks whether the thing under test actually
+    happened.
+  - **Correction to the record**: the trainer has twenty-one parameter tensors per copy, not the
+    nineteen every ledger and report sentence since round four has said.
+  - **Largest thing left, measured but not attempted**: of the rollout's 15.3 ms at 4,096 copies,
+    11.45 are matrix multiplications running at about 850 GB/s, because each of the 128 steps
+    multiplies four rows per copy against that copy's whole actor weights and those weights do not
+    fit the cache. The counted floor for the whole rollout is 2.8 ms.
+  - **Against JAX**: with both trainers measured in one session, the distance at 1,024 / 2,048 /
+    4,096 copies falls from 1.20x / 1.25x / 1.22x to **1.12x / 1.15x / 1.13x** with sixteen
+    updates per batch, and stands at 1.25x / 1.36x / 1.43x with one. JAX's own fifth round moved
+    none of those numbers.
+  - Report section: "Training a thousand to four thousand copies at once", subsection "Round six"
+    (`report/2026-08-15-pointmaze-gpu-parallelization/report.md`). Ledger: round 6 in
+    `ppo/torch_ppo/progress_and_changes.md`. Every result JSON is in `benchmarks/results/` in both
+    this branch and the main tree.
 
 - 2026-08-15 ~19:30 PT — round 5 complete, on branch `worktree-agent-ab3b4d042ce36522c`. The
   question was how the PyTorch trainer compares with the JAX one at 1,024 to 4,096 copies, and
@@ -84,7 +160,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
     memory gets on this card. Optimisations that remove programs cannot help here; ones that
     remove passes over memory can.
   - **Round four was a regression here**, 19.2 percent at 1,024 copies with one update per batch,
-    measured against its own predecessor revision. Its flat parameter buffer packed the nineteen
+    measured against its own predecessor revision. Its flat parameter buffer packed the twenty-one
     windows tightly, leaving every copy's parameters off a sixteen-byte boundary, and the
     multiplication library answered with its scalar-load kernels: 18.8 of 31.1 milliseconds of
     multiplication time in one iteration.
@@ -103,7 +179,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
     both this branch and the main tree.
 
 - Round 4 (2026-08-15 afternoon, Pacific): two branches merged.
-  - `feature/torch-speed`: one flat parameter buffer (the nineteen parameter tensors become
+  - `feature/torch-speed`: one flat parameter buffer (the twenty-one parameter tensors become
     windows onto one buffer, so the per-copy gradient clip is one reduction and the optimizer
     one chain) plus shuffling once per epoch instead of gathering inside every update step.
     C=128 sixteen-updates 20.4 -> 16.3 ms; C=8 13.8 -> 9.3 ms; one-update-per-batch at C=8 now

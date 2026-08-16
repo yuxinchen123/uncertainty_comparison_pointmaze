@@ -39,7 +39,7 @@ def run_revision(rev, n_copies, style, iters, seed):
         trainer.iteration_captured()
     torch.cuda.synchronize()
     # the parameters are returned as separate tensors, not as the flat buffer, because two
-    # revisions may lay the buffer out differently while holding the same nineteen parameters
+    # revisions may lay the buffer out differently while holding the same twenty-one parameters
     out = [p.detach().clone() for p in trainer.trainable]
     del trainer
     torch.cuda.empty_cache()
@@ -60,7 +60,7 @@ def main():
     # each revision runs in its own subprocess: two revisions of the same module name cannot
     # both be compiled in one process without the compiler reusing the first one's artifacts.
     # The parameters travel through a file on local disk rather than through the pipe, because
-    # nineteen tensors at a thousand copies are tens of millions of numbers.
+    # twenty-one tensors at a thousand copies are tens of millions of numbers.
     scratch = Path("/localtmp/sl5nw/compare_revisions")
     scratch.mkdir(parents=True, exist_ok=True)
     outs = {}

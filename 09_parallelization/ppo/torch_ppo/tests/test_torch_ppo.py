@@ -85,14 +85,16 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
     which is what makes zeroing unnecessary. The alignment padding must also stay zero, since
     the optimiser reads the whole buffer including it.
     """
-    t = PPORND(PPOConfig(**SMALL), device="cpu")
+    # the buffer form specifically, which is no longer the default
+    t = PPORND(PPOConfig(gradient_buffer=True, parameter_layout="copy_major",
+                         **SMALL), device="cpu")
     torch.manual_seed(0)
     t.prime_obs_rms()
     batch = t.rollout()
 
     loss = t._losses(batch, style_a=False)
     reference = [g.detach().clone() for g in torch.autograd.grad(loss, t.trainable)]
-    t._backward_into_flat(t._losses(batch, style_a=False))
+    t._backward(t._losses(batch, style_a=False))
     assert all(p.grad is None for p in t.trainable), "a parameter still carries a gradient"
     for window, ref in zip(t.grad_windows, reference):
         assert torch.equal(window, ref), "the flat buffer does not hold what autograd produced"
@@ -110,32 +112,66 @@ def test_gradients_land_in_the_flat_buffer_without_accumulating():
     assert float(flat_base[~covered.reshape(-1)].abs().max()) == 0.0, "padding was written"
 
     # a second pass from identical inputs must overwrite, not double
-    t._backward_into_flat(t._losses(batch, style_a=False))
+    t._backward(t._losses(batch, style_a=False))
     for window, ref in zip(t.grad_windows, reference):
         assert torch.equal(window, ref), "the second backward pass accumulated instead of writing"
     print("ok test_gradients_land_in_the_flat_buffer_without_accumulating")
 
 
 def test_every_parameter_window_is_aligned():
-    """Every parameter and gradient window starts on a sixteen-byte boundary, for every copy.
+    """Every parameter window starts on a sixteen-byte boundary, for every copy, in both layouts.
 
-    This is what lets the matrix-multiply library use its four-numbers-at-a-time kernels. It
-    holds only if BOTH each window's offset and the per-copy row length are multiples of four
-    numbers, so the test checks the second copy's addresses as well as the first: a row length
-    that is not a multiple of four passes a check on copy 0 and fails on every other copy.
+    This is what lets the matrix-multiply library use its four-numbers-at-a-time kernels. In the
+    copy-major layout it holds only if BOTH each window's offset and the per-copy row length are
+    multiples of four numbers; in the parameter-major layout only if each block's per-copy length
+    is. Either way the second copy's addresses are the ones that catch a wrong row length, so the
+    test checks them as well as the first copy's.
     """
-    t = PPORND(PPOConfig(**SMALL), device="cpu")
-    per_copy = t._flat.shape[1]
-    assert per_copy % 4 == 0, f"the per-copy row is {per_copy} numbers, not a multiple of four"
-    for w, g in zip(t.trainable, t.grad_windows):
-        for tensor, what in ((w, "parameter"), (g, "gradient")):
-            for copy in range(min(2, tensor.shape[0])):
-                offset = ((tensor[copy].data_ptr() - t._flat.data_ptr())
-                          // t._flat.element_size())
-                assert (tensor[copy].data_ptr() % 16 == 0), \
-                    f"{what} window {tuple(tensor.shape)} copy {copy} at number {offset} " \
-                    f"is not on a sixteen-byte boundary"
+    for layout, buffer in (("copy_major", True), ("copy_major", False),
+                           ("parameter_major", False)):
+        t = PPORND(PPOConfig(parameter_layout=layout, gradient_buffer=buffer, **SMALL),
+                   device="cpu")
+        # counted rather than zipped: a zip against an empty list checks nothing and still
+        # passes, and the gradient buffer is optional, so the count is what makes this
+        # non-vacuous
+        assert len(t.trainable) == 21, f"{len(t.trainable)} parameters, not twenty-one"
+        groups = [t.trainable, t.param_windows, t.m_windows, t.v_windows]
+        if buffer:
+            assert len(t.grad_windows) == 21, "the buffer form built no gradient windows"
+            groups.append(t.grad_windows)
+        checked = 0
+        for group in groups:
+            for tensor in group:
+                for copy in range(min(2, tensor.shape[0])):
+                    assert tensor[copy].data_ptr() % 16 == 0, \
+                        (f"{layout}: window {tuple(tensor.shape)} copy {copy} is not on a "
+                         f"sixteen-byte boundary")
+                    checked += 1
+        assert checked == len(groups) * 21 * 2, f"only {checked} addresses were checked"
     print("ok test_every_parameter_window_is_aligned")
+
+
+def test_the_two_buffer_layouts_train_identically():
+    """The parameter-major layout must be BITWISE equal to the copy-major one, no-buffer both.
+
+    The two hold the same numbers in a different order and run the same twenty-one programs over
+    them, so nothing about the arithmetic changes and there is no tolerance to argue about. A
+    difference here would mean a window points at the wrong numbers.
+    """
+    out = {}
+    for layout in ("copy_major", "parameter_major"):
+        torch.manual_seed(5)
+        t = PPORND(PPOConfig(parameter_layout=layout, gradient_buffer=False, **SMALL),
+                   device="cpu")
+        t.prime_obs_rms()
+        for _ in range(2):
+            t.update_epoch_minibatch(t.rollout())
+        out[layout] = [p.detach().clone() for p in t.trainable]
+    moved = max(float(p.abs().max()) for p in out["copy_major"])
+    assert moved > 0, "the parameters are all zero, so nothing was compared"
+    for a, b in zip(out["copy_major"], out["parameter_major"]):
+        assert torch.equal(a, b), "the two layouts trained to different parameters"
+    print("ok test_the_two_buffer_layouts_train_identically")
 
 
 if __name__ == "__main__":
@@ -144,3 +180,4 @@ if __name__ == "__main__":
     test_finite_and_learns_predictor()
     test_gradients_land_in_the_flat_buffer_without_accumulating()
     test_every_parameter_window_is_aligned()
+    test_the_two_buffer_layouts_train_identically()

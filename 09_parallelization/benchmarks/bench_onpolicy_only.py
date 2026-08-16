@@ -94,8 +94,7 @@ def make_stripped_source() -> str:
     i = s.index("        if cfg.update_style == \"full_batch\":")
     j = s.index("        self._loss_out.copy_(loss.detach())", i)
     body = '''        loss = self._loss_fn(self._U)
-        loss.backward()
-        self._clip_per_copy_and_step()
+        self._clip_per_copy_and_step(self._backward(loss))
 '''
     s = s[:i] + body + s[j:]
 
