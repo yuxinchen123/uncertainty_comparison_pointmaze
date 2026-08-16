@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:21 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:23 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -868,6 +868,7 @@ than the last word on that trainer.
 | PyTorch before | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
 | JAX | 2048 | 23.2 | **45.20** | 22.1 | 0.013 | 6.8 |
 | PyTorch before | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
+| JAX | 4096 | 43.8 | **47.93** | 11.7 | 0.024 | 13.4 |
 
 **Sixteen updates per batch.**
 
@@ -938,3 +939,32 @@ One further measurement worth recording: the optimiser's pass over the parameter
 
 
 *PENDING — waiting on the round-five paired comparisons.*
+### Why the JAX trainer is faster at these copy counts
+
+| update convention | copies | PyTorch | JAX | ratio |
+|---|---|---|---|---|
+| one update per batch | 1024 | 29.6 ms | 14.2 ms | 2.08 |
+| one update per batch | 2048 | 48.2 ms | 23.2 ms | 2.08 |
+| one update per batch | 4096 | 90.4 ms | 43.8 ms | 2.06 |
+
+The reason is not that any PyTorch program is slow. The table in the previous subsection times
+each of them on its real shape and finds them at 71 to 100 percent of the rate a plain copy
+reaches. The reason is that there are more of them, and every program writes its output to memory
+for the next one to read.
+
+The two frameworks arrange an iteration differently. The PyTorch trainer records the iteration as
+a sequence of separate device programs — a multiplication, then a program that adds the bias and
+applies the activation, then the next multiplication, and so on — and every intermediate between
+them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
+that emits far fewer programs, so intermediates that PyTorch writes and re-reads never leave the
+chip. At 128 copies that difference showed up as a difference in the number of programs issued,
+worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
+what the iteration costs, so the same difference is worth about a factor of two.
+
+Closing it would mean folding the bias and the activation into the multiplication itself rather
+than leaving them as a following pass — that is, having the compiler generate the multiplication
+instead of calling the library's. PyTorch can be asked to do this, and it is the obvious next
+experiment; it changes the order in which the multiplication accumulates, so it needs its own
+equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
+have.
+

@@ -1641,6 +1641,52 @@ than the last word on that trainer.
             f"does not matter; a thousand is the right setting when it does.\n\n")
     md += sec_large_scale_limit()
     md += sec_large_scale_changes()
+    md += sec_large_scale_gap(src)
+    return md
+
+
+def sec_large_scale_gap(src):
+    """Why the JAX trainer is faster at these copy counts, and what closing it would take."""
+    rows = []
+    for style, label in (("full_batch", "one update per batch"),
+                         ("epoch_minibatch", "sixteen updates per batch")):
+        tag = "A" if style == "full_batch" else "B"
+        after, jax = src[f"after {tag}"] or src[f"before {tag}"], src[f"jax {tag}"]
+        for c in LARGE_COPIES:
+            if (style, c) in after and (style, c) in jax:
+                rows.append((label, c, after[(style, c)]["ms"], jax[(style, c)]["ms"]))
+    if not rows:
+        return ""
+    md = """### Why the JAX trainer is faster at these copy counts
+
+| update convention | copies | PyTorch | JAX | ratio |
+|---|---|---|---|---|
+"""
+    for label, c, pt, jx in rows:
+        md += f"| {label} | {c} | {pt:.1f} ms | {jx:.1f} ms | {pt/jx:.2f} |\n"
+    md += """
+The reason is not that any PyTorch program is slow. The table in the previous subsection times
+each of them on its real shape and finds them at 71 to 100 percent of the rate a plain copy
+reaches. The reason is that there are more of them, and every program writes its output to memory
+for the next one to read.
+
+The two frameworks arrange an iteration differently. The PyTorch trainer records the iteration as
+a sequence of separate device programs — a multiplication, then a program that adds the bias and
+applies the activation, then the next multiplication, and so on — and every intermediate between
+them is written to memory and read back. The JAX trainer hands the whole iteration to a compiler
+that emits far fewer programs, so intermediates that PyTorch writes and re-reads never leave the
+chip. At 128 copies that difference showed up as a difference in the number of programs issued,
+worth 10 to 22 percent. At these sizes it shows up as a difference in bytes moved, and bytes are
+what the iteration costs, so the same difference is worth about a factor of two.
+
+Closing it would mean folding the bias and the activation into the multiplication itself rather
+than leaving them as a following pass — that is, having the compiler generate the multiplication
+instead of calling the library's. PyTorch can be asked to do this, and it is the obvious next
+experiment; it changes the order in which the multiplication accumulates, so it needs its own
+equivalence gate and its own tolerance rather than the bitwise agreement this round's changes
+have.
+
+"""
     return md
 
 
