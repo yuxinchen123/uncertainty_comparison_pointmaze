@@ -59,6 +59,8 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 - The `analysis/` subfolder follows the global `analysis-folder.md` rule: `analysis.md` + `plots/`
   committed; `data/` + `code/` gitignored.
 - wandb remains the live-metrics surface; `train_runs/` is the durable, reproducible record.
+- Launching a run also means adding its writeup block to the development document — the SHARED
+  skill `rnd-experiment-tex-track` (see "Paper / writeup" below).
 
 ## Domain (07_reconstruction)
 - SAC (Stable-Baselines3, `MlpPolicy`) on Gymnasium-Robotics **`PointMaze_Large-v3`** (fixed start +
@@ -69,6 +71,12 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
 ## Paper / writeup
 - `development_document/` holds the NeurIPS-style writeup (fresh template). Build it with the global
   paper skills: `latex-build-tinytex`, `generate-latex-table`, `claude-edit-latex`.
+- **Every new train run adds its writeup block per the SHARED skill
+  `/p/rlprojects/.claude/skills/rnd-experiment-tex-track/SKILL.md`**: an env-spec table (new
+  environments only), a what-is-swept table, a best-configuration results table, and a
+  training-curve figure, in the grid table style; the skill's `example.tex` is the compilable
+  style reference. Load it at run launch (together with `experiment-background`) and whenever a
+  run's results go into the document.
 
 ## Collaboration
 - `/p/rlprojects/RND` is one git repo shared with a collaborator (`slurm_yuxin/`, owner

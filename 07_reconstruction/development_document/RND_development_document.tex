@@ -19,7 +19,7 @@
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{amsthm}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}  % [table] loads colortbl -> \arrayrulecolor (grid-style hyperparameter tables)
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage{float}
@@ -56,6 +56,21 @@
 % (\runref{run-5 original RND, Adam $10^{-4}$}, \runref{run-3.2.2 benchmark}, \runref{run-3.2.3 reward-norm}, \runref{run-3.2.1 winner 1}/2, ...)
 % is set bold inside square brackets so it can be found at a glance.
 \newcommand{\runref}[1]{\textbf{[#1]}}
+
+% Grid-style hyperparameter tables (shared skill rnd-experiment-tex-track): grey rules between the
+% rows of one category, black rules between categories and around the table, and a grey vertical
+% between every pair of columns so the extent of a "same" \multicolumn span is unambiguous.
+% Needs xcolor[table] (above) for \arrayrulecolor, and array. WARNING: \arrayrulecolor is a GLOBAL
+% switch — only use it through the two rule macros below, which both end with the color on black.
+% A \multicolumn that is NOT the last cell of its row must end its spec with ? (e.g. {c?}), or the
+% grey vertical on its right edge disappears. Style reference:
+% /p/rlprojects/.claude/skills/rnd-experiment-tex-track/example.tex
+\setlength{\arrayrulewidth}{0.5pt}                 % \hline/\vline only; booktabs rules unaffected
+\definecolor{tabgrey}{gray}{0.65}
+\newcommand{\greyvline}{{\color{tabgrey}\vline}}   % braces keep the color inside the rule
+\newcolumntype{?}{!{\greyvline}}                   % column separator: one grey vertical rule
+\newcommand{\greyrule}{\arrayrulecolor{tabgrey}\hline\arrayrulecolor{black}} % between rows of one category
+\newcommand{\blackrule}{\arrayrulecolor{black}\hline}                        % category boundary / frame
 
 % Python code listings (used in the "When statistics are updated" design block).
 \usepackage{listings}
@@ -882,20 +897,28 @@ and \texttt{reset\_target}$=$False the goal is fixed and the agent is not reset 
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{3.0cm} ?>{\raggedright\arraybackslash}p{6.7cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 \texttt{env\_name} & \texttt{PointMaze\_Large-v3} & Gymnasium-Robotics maze id. \\
+\greyrule
 \texttt{continuing\_task} & True & Agent keeps acting after reaching the goal. \\
+\greyrule
 \texttt{reset\_target} & False & Goal stays fixed across resets. \\
+\greyrule
 \texttt{max\_episode\_steps} & 400 (sweep); 300 (scripts 01--03) & Episode horizon, via \texttt{env\_max\_episode}. \\
+\greyrule
 Position grid & $9\times12$ cells & Maze rows $\times$ columns; each cell $1.0\times1.0$. \\
+\greyrule
 Position range & $x\in[-6,6]$, $y\in[-4.5,4.5]$ & Continuous coordinate bounds. \\
+\greyrule
 Velocity range & $v_x,v_y\in[-5,5]$ & Clipped before binning. \\
+\greyrule
 Observation & Dict$\{$obs $\mathbb{R}^4$, goals $\mathbb{R}^2\}$ & Before goal removal / flatten. \\
+\greyrule
 Action & $a\in[-1,1]^2$ & Continuous 2-D force. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Base PointMaze task hyperparameters.}
 \label{tab:env-base}
@@ -934,16 +957,20 @@ and the goal removed from the observation.
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{6.1cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{3.6cm} ?>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 \texttt{goal\_position} & \texttt{top\_right} (sweep); \texttt{bottom\_left} (script default) & Which corner is the goal: \texttt{bottom\_left} / \texttt{top\_right} / \texttt{random}. \\
+\greyrule
 \texttt{goal\_cell} & corner cell (row, col) & Goal cell, selected from \texttt{goal\_position}. \\
+\greyrule
 \texttt{start\_cell} & opposite corner (or seeded) & Fixed start; opposite corner, or seed-chosen when \texttt{random}. \\
+\greyrule
 \texttt{a\_seed} & $0$--$99$ (sweep) & RNG seed; also picks start/goal when \texttt{random}. \\
+\greyrule
 \texttt{remove\_keys} & \{desired\_goal, achieved\_goal\} & Observation keys dropped by \texttt{RemoveGoalWrapper}. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Fixed start/goal navigation hyperparameters.}
 \label{tab:env-nav}
@@ -960,17 +987,22 @@ and the ground-truth field for the distance metrics.
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{3.0cm} ?>{\raggedright\arraybackslash}p{6.7cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 Position grid & $9\times12$ & Cells for position-only counts. \\
+\greyrule
 Velocity bins & $10$ per axis & $(v_x,v_y)$ binning over $[-5,5]$. \\
+\greyrule
 Position count shape & $(9,12)$ & \texttt{gt\_position} count array. \\
+\greyrule
 Pos+vel count shape & $(9,12,10,10)$ & \texttt{gt\_position\_velocity} count array (the GT). \\
+\greyrule
 \texttt{update\_counts} & True (train) / False (eval) & Whether stepping increments counts. \\
+\greyrule
 \texttt{count\_map\_ref} & None (train) / train counts (eval) & Eval reuses the training count array. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Visit-count instrumentation hyperparameters.}
 \label{tab:env-count}
@@ -987,17 +1019,22 @@ in \texttt{info}; the bonus is added to the SAC reward inside the replay buffer
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{6.1cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{3.6cm} ?>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 \texttt{beta} ($\beta$) & $\{10^{-4},\dots,10^{3}\}$ (sweep) & Weight on the intrinsic bonus. \\
+\greyrule
 \texttt{algorithm} & one of Table~\ref{tab:methods} & Which intrinsic method supplies $r^{\mathrm{int}}$. \\
+\greyrule
 \texttt{rnd\_obs\_norm} & True & Enable RND input normalization. \\
+\greyrule
 \texttt{rnd\_distance} & \texttt{mse} & RND per-output distance (\texttt{mse}/\texttt{abs}). \\
+\greyrule
 \texttt{rnd\_output\_dim} ($m$) & 128 & RND target/predictor output size. \\
+\greyrule
 \texttt{n\_predictors} ($N$) & 1 & RND ensemble size. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Intrinsic-reward wrapper hyperparameters.}
 \label{tab:env-intrinsic}
@@ -1013,12 +1050,12 @@ termination, so a timeout ends the episode as a full termination rather than a t
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{6.3cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} ?>{\raggedright\arraybackslash}p{3.0cm} ?>{\raggedright\arraybackslash}p{6.3cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 \texttt{apply\_termination\_wrapper} & False (sweep / 04); True (script 03) & Treat truncation as termination when on. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Time-limit termination hyperparameters.}
 \label{tab:env-term}
@@ -1034,18 +1071,24 @@ The SAC training and evaluation loop is shared across environments; its hyperpar
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{6.7cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} ?>{\raggedright\arraybackslash}p{2.8cm} ?>{\raggedright\arraybackslash}p{6.7cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Value} & \textbf{Meaning} \\
-\midrule
+\blackrule
 \texttt{total\_timesteps} & $2{\times}10^{6}$ & Training environment steps per run. \\
+\greyrule
 \texttt{discount\_factor} ($\gamma$) & 0.999 & SAC discount. \\
+\greyrule
 \texttt{eval\_freq} & 50000 & Evaluate every this many steps. \\
+\greyrule
 \texttt{n\_eval\_episodes} & 100 & Episodes per mid-training evaluation. \\
+\greyrule
 \texttt{n\_eval\_episodes\_final} & 10000 & Episodes at the final evaluation. \\
+\greyrule
 \texttt{device} & cpu (sweep) & Compute device. \\
+\greyrule
 Policy & SAC (\texttt{MlpPolicy}) & Stable-Baselines3 agent. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Training and evaluation loop hyperparameters.}
 \label{tab:env-loop}
@@ -2115,32 +2158,46 @@ aggregates below.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{3.9cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} ?>{\raggedright\arraybackslash}p{4.6cm} ?>{\raggedright\arraybackslash}p{3.9cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Value} \\
-\midrule
+\blackrule
 Environment & \texttt{env\_name} & \texttt{PointMaze\_Large-v3} \\
+\greyrule
 Goal corner & \texttt{goal\_position} & \texttt{bottom\_right} \\
+\greyrule
 Continuing task & \texttt{continuing\_task} & True \\
+\greyrule
 Reset target on goal & \texttt{reset\_target} & False \\
+\greyrule
 Max episode steps & \texttt{env\_max\_episode} & $400$ \\
+\greyrule
 Time-limit $\to$ termination & \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & False \\
-\midrule
+\blackrule
 Training steps & \texttt{total\_timesteps} & $2\times10^{6}$ \\
+\greyrule
 Discount factor & $\gamma$ & $0.999$ \\
+\greyrule
 Policy / agent & --- & SAC (\texttt{MlpPolicy}) \\
+\greyrule
 Compute device & \texttt{device} & \texttt{cpu} \\
+\greyrule
 Evaluation frequency & \texttt{eval\_freq} & every $50000$ steps \\
+\greyrule
 Eval episodes (mid-training) & \texttt{n\_eval\_episodes} & $100$ \\
+\greyrule
 Eval episodes (final) & \texttt{n\_eval\_\allowbreak episodes\_\allowbreak final} & $10^{4}$ \\
-\midrule
+\blackrule
 RND input normalization & \texttt{rnd\_obs\_norm} & True \\
+\greyrule
 RND distance & \texttt{rnd\_distance} & \texttt{mse} \\
+\greyrule
 RND output dimension & $m$ & $128$ \\
+\greyrule
 RND ensemble size & $N$ & $1$ \\
-\midrule\midrule
+\blackrule\blackrule
 Elliptical feature normalization & \texttt{feature\_\allowbreak normal\allowbreak ization} & \texttt{none} (raw features). \emph{Caveat:} this run predates unit-norm feature normalization, now the \texttt{rnd\_\allowbreak elliptical} default, so its elliptical bonus used unnormalized features. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Fixed (non-swept) hyperparameters of train run~1 (\texttt{y24vyh06}), held
 constant across the grid of Table~\ref{tab:trainrun1-sweep}. Values are read from the
@@ -2157,14 +2214,16 @@ used raw features, predating the unit-norm default.}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{7.0cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{2.1cm} ?>{\raggedright\arraybackslash}p{7.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Swept values} \\
-\midrule
+\blackrule
 Intrinsic-bonus method & \texttt{algorithm} & Ten of the methods of Table~\ref{tab:methods} (this run predates \texttt{rnd\_\allowbreak elliptical\_\allowbreak global}): \texttt{no\_exploration}; \texttt{gt\_position}, \texttt{gt\_position\_velocity}; \texttt{rnd\_next\_state}, \texttt{rnd\_next\_state\_position\_only}, \texttt{rnd\_state}, \texttt{rnd\_state\_action}, \texttt{rnd\_state\_action\_next\_state}, \texttt{rnd\_linear\_next\_state}; \texttt{rnd\_elliptical}. \\
+\greyrule
 Intrinsic coefficient & $\beta$ & $\{10^{-4},\,10^{-3},\,10^{-2},\,10^{-1},\,1,\,10,\,10^{2},\,10^{3}\}$ ($8$ values; forced to $0$ for \texttt{no\_exploration}). \\
+\greyrule
 Random seed & \texttt{a\_seed} & $0$--$99$; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together ($\approx 40$ finished seeds per (\texttt{algorithm}, $\beta$) group). \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Swept axes of train run~1 (\texttt{y24vyh06}). The grid is
 \texttt{algorithm} $\times\,\beta\,\times$ \texttt{a\_seed}; all other knobs are the
@@ -2288,32 +2347,46 @@ AND\_\allowbreak RESUME.md}.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{3.9cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} ?>{\raggedright\arraybackslash}p{4.6cm} ?>{\raggedright\arraybackslash}p{3.9cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Value} \\
-\midrule
+\blackrule
 Environment & \texttt{env\_name} & \texttt{PointMaze\_Large-v3} \\
+\greyrule
 Goal corner & \texttt{goal\_position} & \texttt{top\_right} \\
+\greyrule
 Continuing task & \texttt{continuing\_task} & True \\
+\greyrule
 Reset target on goal & \texttt{reset\_target} & False \\
+\greyrule
 Max episode steps & \texttt{env\_max\_episode} & $400$ \\
+\greyrule
 Time-limit $\to$ termination & \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & False \\
-\midrule
+\blackrule
 Training steps & \texttt{total\_timesteps} & $1\times10^{6}$ \\
+\greyrule
 Discount factor & $\gamma$ & $0.999$ \\
+\greyrule
 Policy / agent & --- & SAC (\texttt{MlpPolicy}) \\
+\greyrule
 Compute device & \texttt{device} & \texttt{cpu} \\
+\greyrule
 Evaluation frequency & \texttt{eval\_freq} & every $50000$ steps \\
+\greyrule
 Eval episodes (mid-training) & \texttt{n\_eval\_episodes} & $100$ \\
+\greyrule
 Eval episodes (final) & \texttt{n\_eval\_\allowbreak episodes\_\allowbreak final} & $100$ \\
-\midrule
+\blackrule
 RND input normalization & \texttt{rnd\_obs\_norm} & True \\
+\greyrule
 RND distance & \texttt{rnd\_distance} & \texttt{mse} \\
+\greyrule
 RND output dimension & $m$ & $128$ \\
+\greyrule
 RND ensemble size & $N$ & $1$ \\
-\midrule\midrule
+\blackrule\blackrule
 Elliptical feature normalization & \texttt{feature\_\allowbreak normal\allowbreak ization} & \texttt{none} (raw features). \emph{Caveat:} this run predates unit-norm feature normalization, now the \texttt{rnd\_\allowbreak elliptical} default, so its elliptical bonus used unnormalized features. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Fixed (non-swept) hyperparameters of train run~2, held constant across the axes of
 Table~\ref{tab:trainrun2-sweep}. Values match the run-1 configuration (Table~\ref{tab:trainrun1-fixed})
@@ -2329,15 +2402,18 @@ bonus in this run used raw features, predating the unit-norm default.}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{7.0cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{2.1cm} ?>{\raggedright\arraybackslash}p{7.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Symbol} & \textbf{Values} \\
-\midrule
+\blackrule
 Intrinsic-bonus method & \texttt{algorithm} & The three best methods of Train run~1: \texttt{gt\_\allowbreak position\_\allowbreak velocity}, \texttt{rnd\_\allowbreak elliptical}, \texttt{rnd\_\allowbreak state}. \\
+\greyrule
 Intrinsic coefficient & $\beta$ & Pinned per algorithm to its run-1 $\beta^\star$: \texttt{gt\_\allowbreak position\_\allowbreak velocity} $\beta{=}1$, \texttt{rnd\_\allowbreak elliptical} $\beta{=}0.01$, \texttt{rnd\_\allowbreak state} $\beta{=}100$ (not swept). \\
+\greyrule
 Random seed & \texttt{a\_seed} & $0$--$199$ ($200$ seeds; seeds \texttt{random}, \texttt{numpy}, \texttt{torch}, CUDA together). \\
+\greyrule
 Logging / dispatch & --- & Local file work queue; per-run JSON only, no wandb. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Axes of train run~2. Each algorithm is run at its single best-tuned coefficient $\beta^\star$
 (from Table~\ref{tab:trainrun1-best}) across $200$ seeds; the grid is therefore
@@ -2754,13 +2830,13 @@ aggressiveness, not a distinct statistical idea.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{4.7cm}
->{\raggedright\arraybackslash}p{5.8cm}
->{\raggedright\arraybackslash}p{1.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{4.7cm}
+?>{\raggedright\arraybackslash}p{5.8cm}
+?>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\nu_\varphi\) &
 Feature normalization &
 \(\{\mathbf{\mathrm{unit\text{-}norm}},
@@ -2770,28 +2846,28 @@ Unit-norm features make the ridge interpretable and bound the initial bonus.
 RMS-unit additionally equalizes feature coordinates.  No normalization is only a
 diagnostic. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(d_\varphi\) &
 Feature dimension &
 \(\{\mathbf{128},256,\textcolor{gray}{64}\}\) &
 The current value is \(128\).  A larger value tests richer random features but
 increases storage as \(O(d_\varphi^2)\) and Cholesky cost as \(O(d_\varphi^3)\). &
 try \\
-\midrule
+\greyrule
 \(\epsilon_{\mathrm{chol}}\) &
 Cholesky jitter &
 Fixed adaptive rule: \(\mathbf{0}\), retry \(10^{-8}\) only on failure &
 This is not a statistical hyperparameter.  It only protects the Cholesky
 factorization from floating-point failure. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\epsilon_q\) &
 Quadratic-form floor &
 Fixed \(\mathbf{0}\); use \(10^{-12}\) only if strict positivity is needed &
 The exact quadratic form is nonnegative.  The floor only prevents an invalid
 square root under round-off. &
 \textcolor{gray}{less interesting} \\
-\midrule
+\greyrule
 \(r_{\max}^{\mathcal{E}}\) &
 Bonus clip &
 \(\{\mathbf{5},\infty\}\) &
@@ -2799,7 +2875,7 @@ The default clips the bonus to \(5\), bounding the rare large rewards an
 under-covered feature direction can produce (a small ridge makes the raw bonus
 large).  \(\infty\) tests the unclipped formula. &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Common numerical settings for all elliptical methods.  The main first-stage
@@ -2856,13 +2932,13 @@ Therefore the batch elliptical is a baseline, not the main count-like method.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{4.7cm}
->{\raggedright\arraybackslash}p{5.8cm}
->{\raggedright\arraybackslash}p{1.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{4.7cm}
+?>{\raggedright\arraybackslash}p{5.8cm}
+?>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-4},10^{-3},\mathbf{10^{-2}},10^{-1},1\}\) &
@@ -2870,7 +2946,7 @@ Train run~1 selected \(\beta^\star=10^{-2}\) for
 \texttt{rnd\_elliptical}.  The batch elliptical is the closest method to that implementation, so the
 grid is centered on \(10^{-2}\) and kept logarithmic. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\lambda\) &
 Ridge regularizer &
 \(\{\mathbf{10^{-2}},1,\textcolor{gray}{10^{-4}}\}\) &
@@ -2878,7 +2954,7 @@ The batch covariance is averaged by \(1/b\), so \(\lambda=10^{-2}\) is a sharp b
 stable default.  \(\lambda=1\) checks whether the bonus becomes too flat.  The
 gray value is only a diagnostic. &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Batch elliptical sweep.  The batch elliptical is the baseline for comparing local minibatch
@@ -2944,13 +3020,13 @@ kept only as an optional sweep point, not the default.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{4.7cm}
->{\raggedright\arraybackslash}p{5.8cm}
->{\raggedright\arraybackslash}p{1.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{4.7cm}
+?>{\raggedright\arraybackslash}p{5.8cm}
+?>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
@@ -2958,7 +3034,7 @@ After unit normalization, the raw bonus is on approximately the
 same scale as a count bonus.  Therefore the grid is centered near the
 count-oracle coefficient rather than the old batch-elliptical coefficient. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\lambda\) &
 Ridge regularizer &
 \(\{\mathbf{10^{-2}},1,\textcolor{gray}{10^{-4}}\}\) &
@@ -2966,7 +3042,7 @@ Ridge regularizer &
 \(\lambda=1\) is the count-prior value for unit-norm cumulative features.  The gray
 value tests near-singular behavior and should not be in the main grid. &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Global elliptical sweep.  The global elliptical is the main count-like elliptical method.}
@@ -3020,13 +3096,13 @@ helpful.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{4.7cm}
->{\raggedright\arraybackslash}p{5.8cm}
->{\raggedright\arraybackslash}p{1.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{4.7cm}
+?>{\raggedright\arraybackslash}p{5.8cm}
+?>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\rho_\Lambda\) &
 Covariance discount &
 \(\{0.999,\mathbf{0.9995},1,\textcolor{gray}{0.99}\}\) &
@@ -3034,21 +3110,21 @@ Covariance discount &
 \(2{\cdot}10^3\) covariance updates.  \(\rho_\Lambda=1\) recovers the global elliptical.  \(0.99\)
 is a short-memory diagnostic. &
 try \\
-\midrule
+\greyrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
 Use the same count-scale grid as the global elliptical.  Discounting changes memory, not the intended
 reward scale. &
 try \\
-\midrule
+\greyrule
 \(\lambda\) &
 Ridge regularizer &
 \(\{\mathbf{1},10^{-2}\}\) &
 Use the same reduced ridge choices as the global elliptical.  The ridge must also be re-injected by
 \((1-\rho_\Lambda)\lambda I\). &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Discounted global elliptical sweep.  The discounted global elliptical is a second-stage test of whether
@@ -3124,13 +3200,13 @@ global methods.  They are not part of the main mixed sweep.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{4.7cm}
->{\raggedright\arraybackslash}p{5.8cm}
->{\raggedright\arraybackslash}p{1.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{4.7cm}
+?>{\raggedright\arraybackslash}p{5.8cm}
+?>{\raggedright\arraybackslash}p{1.7cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\omega\) &
 Global mixture weight &
 \(\{\mathbf{0.5},0.75,\textcolor{gray}{0.25},
@@ -3138,27 +3214,27 @@ Global mixture weight &
 \(\omega=0.5\) is the symmetric test of complementarity.  \(\omega=0.75\) favors
 the count-like global term.  The endpoints duplicate the batch and global ellipticals. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-2},10^{-1},\mathbf{1},3,10\}\) &
 RMS normalization puts the mixed bonus on an approximately unit scale, so the
 count-scale grid is appropriate. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\tau_{\mathrm{rms}}\) &
 RMS time constant &
 \(\{\mathbf{10^4},10^5\}\) &
 A shorter time constant adapts faster; a longer one gives a stabler scale.  Do
 not cross many RMS constants with the main grid. &
 try \\
-\midrule
+\greyrule
 \(\epsilon_{\mathrm{rms}}\) &
 RMS denominator constant &
 Fixed \(\mathbf{10^{-8}}\) &
 This is a numerical guard, not a statistical parameter. &
 \textcolor{gray}{less interesting} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Mixed elliptical sweep.  The mixed elliptical tests whether local minibatch novelty and
@@ -3235,19 +3311,19 @@ for cross-checking.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.6cm}
->{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}p{3.1cm}
->{\raggedright\arraybackslash}p{2.2cm}
->{\raggedright\arraybackslash}p{4.6cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.6cm}
+?>{\raggedright\arraybackslash}p{3.1cm}
+?>{\raggedright\arraybackslash}p{2.2cm}
+?>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Code argument} & \textbf{Default} & \textbf{Note} \\
-\midrule
+\blackrule
 \(d_\varphi\) &
 Feature dimension &
 \texttt{feature\_\allowbreak dim} &
 \(128\) &
 Output size of the frozen random \((s,a)\) encoder \(z_\varphi\). \\
-\midrule
+\greyrule
 \(\nu_\varphi\) &
 Feature normalization &
 \texttt{feature\_\allowbreak normal\allowbreak ization} &
@@ -3255,20 +3331,20 @@ Feature normalization &
 \(\varphi=z_\varphi/(\lVert z_\varphi\rVert_2+\epsilon_\varphi)\), so \(\lVert\varphi\rVert_2\le1\)
 and the ridge \(\lambda\) is interpretable.  Options \texttt{rms\_\allowbreak unit}
 (coordinate RMS then unit) and \texttt{none} (raw features). \\
-\midrule
+\greyrule
 \(\epsilon_\varphi\) &
 Feature-norm constant &
 \texttt{feature\_\allowbreak norm\_\allowbreak eps} &
 \(10^{-8}\) &
 Denominator constant in the feature normalization. \\
-\midrule
+\greyrule
 \(\lambda\) &
 Ridge regularizer &
 \texttt{regular\allowbreak ization} &
 \(10^{-2}\) &
 Diagonal prior in the covariance \(\Lambda\); same default for the batch and
 global elliptical methods. \\
-\midrule
+\greyrule
 --- &
 Quadratic-form solver &
 \texttt{bonus\_\allowbreak method} &
@@ -3276,35 +3352,35 @@ Quadratic-form solver &
 Inverse-free Cholesky factor plus triangular solve,
 \(\widehat q=\lVert L^{-1}\varphi\rVert_2^2\).  The explicit-inverse path
 \texttt{inverse} is kept but is not the default. \\
-\midrule
+\greyrule
 \(\epsilon_{\mathrm{chol}}\) &
 Cholesky jitter &
 \texttt{cholesky\_\allowbreak jitter} &
 \(0\) &
 Diagonal correction added before factorization; set \(10^{-8}\) only if the
 Cholesky factorization fails. \\
-\midrule
+\greyrule
 \(\epsilon_q\) &
 Quadratic-form floor &
 \texttt{quadratic\_\allowbreak floor} &
 \(10^{-12}\) &
 Floor in \(\sqrt{\max(\widehat q,\epsilon_q)}\) guarding the square root against
 round-off. \\
-\midrule
+\greyrule
 \(r_{\max}^{\mathcal{E}}\) &
 Bonus clip &
 \texttt{bonus\_\allowbreak clip} &
 \(5\) &
 Clips the bonus, \(r=\min(\sqrt{\max(\widehat q,\epsilon_q)},\,r_{\max}^{\mathcal{E}})\);
 \(\infty\) disables clipping. \\
-\midrule
+\greyrule
 --- &
 Update timing &
 \texttt{update\_\allowbreak timing} &
 \texttt{sample} &
 Whether the covariance rule fires in \texttt{update()} (on a sampled replay
 minibatch, the default) or \texttt{observe()} (on each freshly added transition). \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Elliptical-bonus hyperparameters as implemented in the
@@ -3421,13 +3497,13 @@ readout scale alone explains the gap.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{4.4cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{1.8cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{4.4cm}
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{mse}}},
@@ -3435,7 +3511,7 @@ Bonus readout &
 \(\mathcal{B}_{\mathrm{mse}}\) is the canonical RND baseline.
 \(\mathcal{B}_{\mathrm{l2}}\) is the count-scale ablation. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
@@ -3443,7 +3519,7 @@ Train run~1 selected \(\beta^\star=10^2\) for \texttt{rnd\_state}.  The L2
 readout changes the reward scale, so the grid spans \(10^{-3}\)--\(10^{4}\)
 around the old optimum. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\eta_{\mathrm{Adam}}\) &
 Adam learning rate &
 \(10^{-3}\) (PyTorch default) &
@@ -3451,26 +3527,26 @@ Not swept: fixed at the PyTorch Adam default.  (The original RND-style
 implementations often use \(10^{-4}\); this project's separate predictor Adam
 already uses \(10^{-3}\), Table~\ref{tab:opt-used}.) &
 fixed \\
-\midrule
+\greyrule
 \((\rho_1,\rho_2)\) &
 Adam moment rates &
 \((0.9,0.999)\) (PyTorch default) &
 Not swept: fixed at the PyTorch Adam default. &
 fixed \\
-\midrule
+\greyrule
 \(\epsilon_{\mathrm{Adam}}\) &
 Adam denominator constant &
 \(10^{-8}\) (PyTorch default) &
 Not swept: fixed at the PyTorch Adam default. &
 fixed \\
-\midrule
+\greyrule
 \(g_{\max}\) &
 Gradient clipping norm &
 \(\infty\) (no clipping) &
 Not swept: no gradient clipping, matching this project's previous RND
 implementation (the predictor update never clipped). &
 fixed \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Adam RND sweep.  Adam-MSE and Adam-L2 are both required: the first is the
@@ -3516,13 +3592,13 @@ count-memory optimizer.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{4.4cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{1.8cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{4.4cm}
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
@@ -3530,14 +3606,14 @@ Bonus readout &
 The L2 readout is the count-scale readout.  MSE is kept only as an
 ablation. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\eta_{\mathrm{Ada}}\) &
 AdaGrad learning rate &
 \(10^{-2}\) (PyTorch default) &
 Not swept: fixed at the PyTorch AdaGrad default.  (This is also \(10\times\) the
 Adam learning rate, as AdaGrad's shrinking steps require.) &
 fixed \\
-\midrule
+\greyrule
 \(c_0\) &
 Initial accumulator &
 \(0\) (PyTorch default) &
@@ -3545,20 +3621,20 @@ Not swept: fixed at the PyTorch AdaGrad default
 (\texttt{initial\_\allowbreak accumulator\_\allowbreak value=0}), the pure
 AdaGrad rule. &
 fixed \\
-\midrule
+\greyrule
 \(\epsilon_{\mathrm{Ada}}\) &
 AdaGrad denominator constant &
 \(10^{-10}\) (PyTorch default) &
 Not swept: fixed at the PyTorch AdaGrad default. &
 fixed \\
-\midrule
+\greyrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
 The optimizer changes the residual scale; the intrinsic coefficient must be
 re-tuned rather than copied from Adam-RND. &
 \textbf{must try} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{AdaGrad RND sweep.  This is the main cumulative-gradient-memory
@@ -3631,13 +3707,13 @@ less adaptive than Adam or AdaGrad.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{4.4cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{1.8cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{4.4cm}
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
@@ -3646,21 +3722,21 @@ Both readouts are run.  The method is designed to produce a residual-norm scale
 \(O(1/\sqrt{n})\), which \(\mathcal{B}_{\mathrm{l2}}\) reports directly;
 \(\mathcal{B}_{\mathrm{mse}}\) reports the variance-scale \(O(1/n)\) quantity. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\beta\) &
 Intrinsic coefficient &
 \(\{10^{-3},\allowbreak 10^{-2},\allowbreak 10^{-1},\allowbreak 1,\allowbreak 10,\allowbreak 10^2,\allowbreak 10^3,\allowbreak 10^4\}\) &
 The optimizer changes the residual scale; the intrinsic coefficient must be
 re-tuned rather than copied from Adam-RND. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\eta_0\) &
 Initial learning rate &
 \(\{10^{-3},\allowbreak 3{\cdot}10^{-3},\allowbreak 10^{-2},\allowbreak 3{\cdot}10^{-2},\allowbreak 10^{-1}\}\) &
 A decaying schedule needs a larger initial learning rate than constant Adam
 because the effective step shrinks over training. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(t_0\) &
 Schedule offset &
 \(\{10^3,10^4\}\) &
@@ -3673,7 +3749,7 @@ because decay would begin \(\sim\!100\) updates in --- the same order as
 \(10^5\) is dropped because the whole run would decay only \(11\times\),
 nearly a constant rate, redundant with the Adam baseline. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\eta_{\min}\) &
 Learning-rate floor &
 \(0\) (no floor) &
@@ -3682,7 +3758,7 @@ grid above, a \(10^{-5}\) floor would bind only in the
 smallest-\(\eta_0\)/smallest-\(t_0\) corner and a \(10^{-6}\) floor essentially
 never; revisit only if the logged predictor loss shows freezing. &
 fixed \\
-\midrule
+\greyrule
 \(g_{\max}\) &
 Gradient clipping norm &
 \(\infty\) (no clipping) &
@@ -3691,7 +3767,7 @@ implementation.  (Note SGD has no adaptive denominator, so a rare large residual
 gradient reaches the parameters unbuffered; watch the logged predictor loss for
 spikes.) &
 fixed \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{SGD-\(1/t\) RND sweep.  This is the main decreasing-step optimizer.}
@@ -3736,19 +3812,19 @@ tests whether readout averaging alone stabilizes the RND bonus.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{4.4cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{1.8cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{4.4cm}
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \(t_{\mathrm{avg}}\) &
 Averaging start &
 \(\{0,10^3,10^4,5{\cdot}10^4\}\) &
 Delayed averaging removes bias from the initially untrained predictor. &
 try \\
-\midrule
+\greyrule
 \(\alpha_t\) &
 Averaging rule &
 \(\{\mathbf{1/(t-t_{\mathrm{avg}}+1)},\allowbreak
@@ -3756,20 +3832,20 @@ Averaging rule &
 Uniform Polyak averaging is the principled rule.  Fixed-rate EMA is a diagnostic,
 not the main method. &
 try \\
-\midrule
+\greyrule
 \(\eta_{\mathrm{Adam}}\) &
 Adam learning rate &
 \(10^{-3}\) (PyTorch default) &
 Not swept: fixed at the PyTorch Adam default, matching the Adam method. &
 fixed \\
-\midrule
+\greyrule
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{l2}}},
 \mathcal{B}_{\mathrm{mse}}\}\) &
 The averaged predictor is mainly useful if the readout is on count scale. &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Adam-PR sweep.  This is a cheap averaging diagnostic, not the main
@@ -3812,39 +3888,39 @@ tracking and should be used only for reward readout, not for further training.
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.5cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{4.4cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{1.8cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{4.4cm}
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{1.8cm}@{}}
+\blackrule
 \textbf{Symbol} & \textbf{Name} & \textbf{Values to sweep} & \textbf{Reason} & \textbf{Priority} \\
-\midrule
+\blackrule
 \((\eta_0,t_0)\) &
 SGD-\(1/t\) schedule &
 Best two settings from Table~\ref{tab:trainrun3-sgd1t-sweep} &
 Do not re-cross the full SGD-\(1/t\) grid.  First identify a stable decreasing
 schedule, then test averaging. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(t_{\mathrm{avg}}\) &
 Averaging start &
 \(\{0,10^3,10^4,5{\cdot}10^4\}\) &
 Polyak--Ruppert averaging can be biased by early iterates; delayed averaging is
 the main stabilization knob. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\mathcal{B}\) &
 Bonus readout &
 \(\{\mathbf{\mathcal{B}_{\mathrm{l2}}}\}\) &
 This method is designed specifically for count-scale residual norms. &
 \textbf{must try} \\
-\midrule
+\greyrule
 \(\eta_{\min}\) &
 Learning-rate floor &
 \(\{\mathbf{0},10^{-6}\}\) &
 The zero value is the pure theory.  A small floor is a robustness check. &
 try \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{SGD-\(1/t\)-PR sweep.  This is the most theory-aligned RND optimizer
@@ -4037,16 +4113,20 @@ Table~\ref{tab:trainrun3-1-1-fixed} and the swept axes in Table~\ref{tab:trainru
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{6.4cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} ?>{\raggedright\arraybackslash}p{3.2cm} ?>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\blackrule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
-\midrule
+\blackrule
 Intrinsic-bonus method & \texttt{algorithm} & \texttt{rnd\_\allowbreak elliptical} (batch); \texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (sample-/add-time update); \texttt{rnd\_\allowbreak next\_\allowbreak state} (RND). \\
+\greyrule
 Intrinsic coefficient & \(\beta\) & \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\) (7; all 4 methods). \\
+\greyrule
 Ridge regularizer & \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,\,10^{-2}\}\) (elliptical only; RND has none). \\
+\greyrule
 Elliptical feature input & \texttt{elliptical\_\allowbreak feature\_\allowbreak input} & \(\{(s,a),\ s'\}\): state\,+\,action, or next-state only (elliptical only; RND uses next-state). \\
+\greyrule
 Random seed & \texttt{a\_seed} & \(0\)--\(99\) (100 seeds). \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Train run~3.1.1 swept axes. The grid is per-method: each of the three elliptical methods is
 \(\beta\,(7)\times\lambda\,(2)\times\text{input}\,(2)=28\) configurations, and RND is \(\beta\,(7)\),
@@ -4062,54 +4142,76 @@ configuration has \(\ge 30\) finished seeds.}
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.5cm}
->{\raggedright\arraybackslash}p{2.9cm}
->{\raggedright\arraybackslash}p{2.9cm}
->{\raggedright\arraybackslash}p{2.9cm}
->{\raggedright\arraybackslash}p{2.9cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{2.9cm}@{}}
+\blackrule
 \textbf{Hyperparameter (code arg)} &
 \textbf{\texttt{rnd\_\allowbreak elliptical} (batch, sample)} &
 \textbf{\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, sample)} &
 \textbf{\texttt{rnd\_\allowbreak elliptical\_\allowbreak global} (global, add)} &
 \textbf{\texttt{rnd\_\allowbreak next\_\allowbreak state} (RND)} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Environment}} \\
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
+\greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
+\greyrule
 \texttt{continuing\_task}, \texttt{reset\_target} & \multicolumn{4}{c}{True, False} \\
+\greyrule
 \texttt{env\_max\_episode} & \multicolumn{4}{c}{400} \\
+\greyrule
 \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & \multicolumn{4}{c}{False} \\
+\greyrule
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as run~2)}} \\
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
+\greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
+\greyrule
 \texttt{batch\_size}, \texttt{learning\_starts} & \multicolumn{4}{c}{256, 100} \\
+\greyrule
 \(\tau\), \texttt{ent\_coef} & \multicolumn{4}{c}{0.005, auto} \\
+\greyrule
 \texttt{net\_arch} & \multicolumn{4}{c}{\([256,256]\)} \\
+\greyrule
 \texttt{train\_freq}, \texttt{gradient\_steps} & \multicolumn{4}{c}{1, 1} \\
+\greyrule
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard)}} \\
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; training-episode reward)} \\
+\greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
+\greyrule
 \texttt{log\_distance} & \multicolumn{4}{c}{False} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept}} \\
 \(\beta\) (\texttt{beta}) & \multicolumn{4}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3}\}\)} \\
+\greyrule
 \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & \(\{1,10^{-2}\}\) & --- \\
+\greyrule
 input (\texttt{elliptical\_\allowbreak feature\_\allowbreak input}) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(\{(s,a),s'\}\) & \(s'\) (fixed) \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
 feature normalization & unit & unit & unit & --- \\
+\greyrule
 \(d_\varphi\) (\texttt{feature\_dim}) & 128 & 128 & 128 & --- \\
+\greyrule
 \texttt{bonus\_method}, \texttt{bonus\_clip} & cholesky, 5 & cholesky, 5 & cholesky, 5 & --- \\
+\greyrule
 covariance rule & batch replace & global cumulative & global cumulative & --- \\
+\greyrule
 \texttt{elliptical\_\allowbreak update\_\allowbreak timing} & sample & sample & add & --- \\
+\greyrule
 RND output dim \(m\) & --- & --- & --- & 128 \\
+\greyrule
 \texttt{rnd\_obs\_norm}, \texttt{rnd\_distance} & --- & --- & --- & True, mse \\
+\greyrule
 \texttt{n\_predictors}, RND \texttt{lr} & --- & --- & --- & 1, \(10^{-3}\) \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Train run~3.1.1 fixed (non-swept) hyperparameters per method (columns are the four methods, rows
@@ -4219,16 +4321,20 @@ nodes.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.0cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} ?>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\blackrule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
-\midrule
+\blackrule
 Feature normalization & \(\nu_\varphi\) (\texttt{elliptical\_\allowbreak feature\_\allowbreak normalization}) & \texttt{none} (raw, as run~2), \texttt{unit} (as run~3.1.1). \\
+\greyrule
 Ridge regularizer & \(\lambda\) (\texttt{elliptical\_\allowbreak regularization}) & \(\{10^{-6},\,10^{-4},\,10^{-2}\}\) (run~2 used \(10^{-6}\); run~3.1.1 swept \(\{10^{-2},1\}\); \(10^{-4}\) probes the ridge-ratio hypothesis). \\
+\greyrule
 Bonus clip & \(r^{\mathcal{E}}_{\max}\) (\texttt{elliptical\_\allowbreak bonus\_\allowbreak clip}) & \(\{\infty\ (\text{no clip, as run 2}),\ 5\ (\text{as run 3.1.1})\}\). \\
+\greyrule
 Intrinsic coefficient & \(\beta\) & \(\{10^{-3},\,10^{-2},\,10^{-1}\}\) (run-2's \(\beta^\star{=}10^{-2}\) centered). \\
+\greyrule
 Random seed & \texttt{a\_seed} & \(0\)--\(49\); even seeds run on Slurm arm~A, odd on arm~B. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Train run~3.1.2 swept axes: a full \(2\times3\times2\) factorial over the three implementation
 deltas between run-2's and run-3.1.1's elliptical bonus, \(\times\,3\) coefficients \(\times\,50\) seeds
@@ -4713,24 +4819,29 @@ Table~\ref{tab:trainrun3-2-1-sweep}.}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{6.0cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.8cm} ?>{\raggedright\arraybackslash}p{3.4cm} ?>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\blackrule
 \textbf{Swept axis} & \textbf{Symbol / arg} & \textbf{Values} \\
-\midrule
+\blackrule
 Optimizer method & \texttt{rnd\_optimizer} & Adam; AdaGrad; SGD-\(1/t\)
 with \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\). \\
+\greyrule
 Bonus readout & \(\mathcal{B}\) (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) &
 \(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\) \sout{(all three methods)}\claudeedit{(AdaGrad and SGD-\(1/t\); Adam runs \(\mathcal{B}_{\mathrm{l2}}\) only --- its mse cell is the run-3.1.1 reference arm, not re-run)}. \\
+\greyrule
 Intrinsic coefficient & \(\beta\) &
 \(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\) (8; all methods; Train
 run~1's \(\beta^\star=10^{2}\) for \texttt{rnd\_next\_state} sits inside the grid,
 and \(10^{-3}\) matches the low end used by runs 3.1.1/3.1.2). \\
+\greyrule
 SGD-\(1/t\) initial learning rate & \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) &
 \(\{10^{-3},3{\cdot}10^{-3},10^{-2},3{\cdot}10^{-2},10^{-1}\}\) (5; SGD-\(1/t\) only). \\
+\greyrule
 SGD-\(1/t\) schedule offset & \(t_0\) (\texttt{rnd\_sgd\_t0}) &
 \(\{10^{3},10^{4}\}\) (2; SGD-\(1/t\) only). \\
+\greyrule
 Random seed & \texttt{a\_seed} & \(0\)--\(49\) \sout{(50 seeds, every configuration)}\claudeedit{(50-seed cap; seeds are allocated adaptively by the controller --- see the seed-allocation paragraph above)}. \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Train run~3.2.1 swept axes. The grid is per-method: Adam is
 \sout{readout\,(2)\,\(\times\,\beta\)\,(8) \(=16\) configurations}\claudeedit{readout\,(1: l2)\,\(\times\,\beta\)\,(8) \(=8\) configurations}, AdaGrad \sout{likewise}\claudeedit{is} \(16\),
@@ -4755,54 +4866,76 @@ seeds by design, so ``every configuration \(\ge 20\)'' would never be reached. Q
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{3.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{3.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter (code arg)} &
 \textbf{Adam} &
 \textbf{AdaGrad} &
 \textbf{SGD-\(1/t\)} &
 \textbf{Reference: run-3.1.1 \texttt{rnd\_\allowbreak next\_\allowbreak state}} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2)}} \\
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
+\greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
+\greyrule
 \texttt{continuing\_task}, \texttt{reset\_target} & \multicolumn{4}{c}{True, False} \\
+\greyrule
 \texttt{env\_max\_episode} & \multicolumn{4}{c}{400} \\
+\greyrule
 \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & \multicolumn{4}{c}{False} \\
+\greyrule
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as runs 3.1.1/3.1.2)}} \\
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
+\greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
+\greyrule
 \texttt{batch\_size}, \texttt{learning\_starts} & \multicolumn{4}{c}{256, 100} \\
+\greyrule
 \(\tau\), \texttt{ent\_coef} & \multicolumn{4}{c}{0.005, auto} \\
+\greyrule
 \texttt{net\_arch} & \multicolumn{4}{c}{\([256,256]\)} \\
+\greyrule
 \texttt{train\_freq}, \texttt{gradient\_steps} & \multicolumn{4}{c}{1, 1} \\
+\greyrule
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard: training-reward only)}} \\
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; scored on the training-episode reward)} \\
+\greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
+\greyrule
 \texttt{log\_distance} & \multicolumn{4}{c}{False (distance-to-GT deferred to the winner rerun)} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept (values in Table~\ref{tab:trainrun3-2-1-sweep})}} \\
-\(\beta\) (\texttt{beta}) & \multicolumn{3}{c}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\)} & \(\{10^{-3},\dots,10^{3}\}\) (7; as run 3.1.1) \\
-readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \sout{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)}\claudeedit{\(\mathcal{B}_{\mathrm{l2}}\) only} & \multicolumn{2}{c}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
+\(\beta\) (\texttt{beta}) & \multicolumn{3}{c?}{\(\{10^{-3},10^{-2},10^{-1},1,10,10^{2},10^{3},10^{4}\}\)} & \(\{10^{-3},\dots,10^{3}\}\) (7; as run 3.1.1) \\
+\greyrule
+readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \sout{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)}\claudeedit{\(\mathcal{B}_{\mathrm{l2}}\) only} & \multicolumn{2}{c?}{\(\{\mathcal{B}_{\mathrm{mse}},\ \mathcal{B}_{\mathrm{l2}}\}\)} & \(\mathcal{B}_{\mathrm{mse}}\) (canonical) \\
+\greyrule
 \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) & --- & --- & \(\{10^{-3},3{\cdot}10^{-3},10^{-2},\) \(3{\cdot}10^{-2},10^{-1}\}\) & --- \\
+\greyrule
 \(t_0\) (\texttt{rnd\_sgd\_t0}) & --- & --- & \(\{10^{3},10^{4}\}\) & --- \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
 RND input (\texttt{algorithm}) & \multicolumn{4}{c}{\texttt{rnd\_\allowbreak next\_\allowbreak state} (\(s'\))} \\
+\greyrule
 RND output dim \(m\) (\texttt{rnd\_output\_dim}) & \multicolumn{4}{c}{128} \\
+\greyrule
 \texttt{rnd\_obs\_norm}, \texttt{rnd\_distance} & \multicolumn{4}{c}{True, mse} \\
+\greyrule
 \texttt{n\_predictors} & \multicolumn{4}{c}{1} \\
+\greyrule
 predictor optimizer & Adam & AdaGrad & SGD, \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\) & Adam \\
+\greyrule
 optimizer constants & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) (PyTorch defaults) & \(\eta_{\mathrm{Ada}}=10^{-2}\), \(c_0=0\), \(\epsilon_{\mathrm{Ada}}=10^{-10}\) (PyTorch defaults) & \(\eta_{\min}=0\) (no floor) & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) \\
+\greyrule
 \(g_{\max}\) (gradient clipping) & \multicolumn{4}{c}{\(\infty\) (no clipping)} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Train run~3.2.1 hyperparameters per optimizer method (columns are the
@@ -5516,61 +5649,87 @@ stopped configurations end near the 10-seed floor.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{3.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{3.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter (code arg)} &
 \textbf{Adam \(+\) reward norm} &
 \textbf{Adam\(\times\)init} &
 \textbf{SGD-\(1/t\)\(\times\)init} &
 \textbf{Reference: \runref{run-3.2.2 benchmark}} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Environment (as runs 3.1.1/3.1.2/3.2.1)}} \\
 \texttt{env\_name} & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}} \\
+\greyrule
 \texttt{goal\_position} & \multicolumn{4}{c}{\texttt{top\_right}} \\
+\greyrule
 \texttt{continuing\_task}, \texttt{reset\_target} & \multicolumn{4}{c}{True, False} \\
+\greyrule
 \texttt{env\_max\_episode} & \multicolumn{4}{c}{400} \\
+\greyrule
 \texttt{apply\_\allowbreak termination\_\allowbreak wrapper} & \multicolumn{4}{c}{False} \\
+\greyrule
 \(\gamma\) (\texttt{discount\_factor}) & \multicolumn{4}{c}{0.999} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{SAC (SB3 \texttt{MlpPolicy} defaults, as runs 3.1.1/3.1.2/3.2.1)}} \\
 \texttt{learning\_rate} & \multicolumn{4}{c}{\(3\times10^{-4}\)} \\
+\greyrule
 \texttt{buffer\_size} & \multicolumn{4}{c}{\(10^{6}\)} \\
+\greyrule
 \texttt{batch\_size}, \texttt{learning\_starts} & \multicolumn{4}{c}{256, 100} \\
+\greyrule
 \(\tau\), \texttt{ent\_coef} & \multicolumn{4}{c}{0.005, auto} \\
+\greyrule
 \texttt{net\_arch} & \multicolumn{4}{c}{\([256,256]\)} \\
+\greyrule
 \texttt{train\_freq}, \texttt{gradient\_steps} & \multicolumn{4}{c}{1, 1} \\
+\greyrule
 \texttt{device}, \texttt{total\_timesteps} & \multicolumn{4}{c}{cpu, \(10^{6}\)} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Logging (run-3.1.1 standard: training-reward only)}} \\
 \texttt{eval\_standalone} & \multicolumn{4}{c}{False (no rollout; scored on the training-episode reward)} \\
+\greyrule
 \texttt{eval\_freq}, \texttt{n\_eval\_episodes} & \multicolumn{4}{c}{50000, 100} \\
+\greyrule
 \texttt{log\_distance} & \multicolumn{4}{c}{False} \\
-\midrule
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- swept}} \\
 \(\beta\) (\texttt{beta}) & \(\{10^{-4},\dots,10^{4}\}\) (9 decades) &
-\multicolumn{2}{c}{\(\{10^{-5},\dots,10^{4}\}\) (10 decades)} & \(10^{2}\) (fixed) \\
+\multicolumn{2}{c?}{\(\{10^{-5},\dots,10^{4}\}\) (10 decades)} & \(10^{2}\) (fixed) \\
+\greyrule
 bias init (\texttt{rnd\_\allowbreak bias\_\allowbreak init}) & zero &
-\multicolumn{2}{c}{\{\texttt{pytorch\_\allowbreak default}, \texttt{normal\_\allowbreak 0.5} \(=\mathcal{N}(0,0.5^{2})\)\}} & zero \\
+\multicolumn{2}{c?}{\{\texttt{pytorch\_\allowbreak default}, \texttt{normal\_\allowbreak 0.5} \(=\mathcal{N}(0,0.5^{2})\)\}} & zero \\
+\greyrule
 readout (\texttt{rnd\_\allowbreak bonus\_\allowbreak readout}) & \(\mathcal{B}_{\mathrm{mse}}\) &
-\multicolumn{2}{c}{\(\mathcal{B}_{\mathrm{l2}}\) only} & \(\mathcal{B}_{\mathrm{mse}}\) \\
+\multicolumn{2}{c?}{\(\mathcal{B}_{\mathrm{l2}}\) only} & \(\mathcal{B}_{\mathrm{mse}}\) \\
+\greyrule
 \(\eta_0\) (\texttt{rnd\_sgd\_eta0}) & --- & --- & \(\{10^{-3},10^{-2},10^{-1}\}\) & --- \\
+\greyrule
 \(t_0\) (\texttt{rnd\_sgd\_t0}) & --- & --- & \(\{10^{3},10^{4}\}\) & --- \\
-Random seed (\texttt{a\_seed}) & \multicolumn{3}{c}{\(0\)--\(99\) (100-seed cap, adaptive allocation)} & \(100\)--\(199\) (\(n=100\), run 3.2.2) \\
-\midrule
+\greyrule
+Random seed (\texttt{a\_seed}) & \multicolumn{3}{c?}{\(0\)--\(99\) (100-seed cap, adaptive allocation)} & \(100\)--\(199\) (\(n=100\), run 3.2.2) \\
+\blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic --- fixed}} \\
-reward norm.\ (\texttt{rnd\_\allowbreak reward\_\allowbreak norm}) & True (\(\gamma_{\mathrm{norm}}=0.99\)) & \multicolumn{2}{c}{False} & False \\
+reward norm.\ (\texttt{rnd\_\allowbreak reward\_\allowbreak norm}) & True (\(\gamma_{\mathrm{norm}}=0.99\)) & \multicolumn{2}{c?}{False} & False \\
+\greyrule
 RND input (\texttt{algorithm}) & \multicolumn{4}{c}{\texttt{rnd\_\allowbreak next\_\allowbreak state} (\(s'\))} \\
+\greyrule
 RND output dim \(m\) (\texttt{rnd\_output\_dim}) & \multicolumn{4}{c}{128} \\
+\greyrule
 \texttt{rnd\_obs\_norm}, \texttt{rnd\_distance} & \multicolumn{4}{c}{True, mse} \\
+\greyrule
 \texttt{n\_predictors} & \multicolumn{4}{c}{1} \\
+\greyrule
 weight initialization & \multicolumn{4}{c}{orthogonal, gain \(\sqrt{2}\) (never modified by the bias schemes)} \\
+\greyrule
 predictor optimizer & Adam & Adam & SGD, \(\eta_t=\max(\eta_{\min},\,\eta_0/(1+t/t_0))\) & Adam \\
-optimizer constants & \multicolumn{2}{c}{\(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) (PyTorch defaults)} & \(\eta_{\min}=0\) (no floor) & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) \\
+\greyrule
+optimizer constants & \multicolumn{2}{c?}{\(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) (PyTorch defaults)} & \(\eta_{\min}=0\) (no floor) & \(\eta=10^{-3}\), betas \((0.9,0.999)\), \(\epsilon=10^{-8}\) \\
+\greyrule
 \(g_{\max}\) (gradient clipping) & \multicolumn{4}{c}{\(\infty\) (no clipping)} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Train run~3.2.3 hyperparameters per arm (columns are the three swept
@@ -5737,26 +5896,38 @@ without colliding with earlier data.
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.0cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} ?>{\raggedright\arraybackslash}p{4.0cm} ?>{\raggedright\arraybackslash}p{4.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter} & \textbf{Train run 2} & \textbf{Train run 4} \\
-\midrule
+\blackrule
 Agent backend & SAC (Stable-Baselines3, torch) & SAC (\texttt{sbx}, JAX/XLA) \\
+\greyrule
 \texttt{rnd\_\allowbreak state} intrinsic & torch RND & JAX RND (\texttt{jax\_\allowbreak rnd.JaxRND}) \\
+\greyrule
 Intrinsic recompute & sample time (per sampled batch) & sample time (per sampled batch) \\
+\greyrule
 Algorithms ($\beta$) & gt\_\allowbreak pos\_\allowbreak vel ($1$), rnd\_\allowbreak ell ($0.01$), rnd\_\allowbreak state ($100$) & gt\_\allowbreak pos\_\allowbreak vel ($1$), rnd\_\allowbreak ell ($0.01$), rnd\_\allowbreak state ($100$) \\
+\greyrule
 Seeds & $0$--$199$ ($200$) & $0$--$199$ ($200$) \\
+\greyrule
 Training steps & $1\times10^{6}$ & $5\times10^{5}$ \\
+\greyrule
 Discount $\gamma$ & $0.999$ & $0.999$ \\
+\greyrule
 Learning rate / batch / $\tau$ & $3{\times}10^{-4}$ / $256$ / $0.005$ & $3{\times}10^{-4}$ / $256$ / $0.005$ \\
+\greyrule
 Buffer / learning starts & $10^{6}$ / $100$ & $10^{6}$ / $100$ \\
+\greyrule
 \texttt{train\_\allowbreak freq} / \texttt{gradient\_\allowbreak steps} & $1$ / $1$ & $1$ / $1$ \\
+\greyrule
 Eval freq / \texttt{n\_\allowbreak eval\_\allowbreak episodes} & $50$k / $100$ & $50$k / $100$ \\
+\greyrule
 Final-eval episodes & $100$ (\texttt{\ldots\_final}) & $100$ (no special case) \\
+\greyrule
 Episode-level train log & --- & \texttt{train\_\allowbreak episode\_\allowbreak history} \\
-\midrule\midrule
+\blackrule\blackrule
 Elliptical feature normalization & \texttt{none} (raw features) & \texttt{none} (raw features) \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Train run~4 against Train run~2, hyperparameter by hyperparameter. Only a few values
 differ: run~4 swaps the agent and RND backends to JAX, runs $5\times10^{5}$ steps
@@ -6106,16 +6277,16 @@ dashed callouts. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.4cm}
->{\raggedright\arraybackslash}p{2.4cm}
->{\raggedright\arraybackslash}p{2.9cm}
->{\raggedright\arraybackslash}p{2.9cm}@{}}
-\toprule
-& & & & \multicolumn{2}{c}{\textbf{train run 3 RND}} & \multicolumn{2}{c}{\textbf{run 5 (this work)}} \\
-\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.4cm}
+?>{\raggedright\arraybackslash}p{2.4cm}
+?>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{2.9cm}@{}}
+\blackrule
+& & & & \multicolumn{2}{c?}{\textbf{train run 3 RND}} & \multicolumn{2}{c}{\textbf{run 5 (this work)}} \\
+\cline{5-6}\cline{7-8}
 \textbf{Hyperparameter} &
 \textbf{RND paper} &
 \textbf{CleanRL} &
@@ -6125,64 +6296,79 @@ dashed callouts. The \runref{run-5 original RND, Adam $10^{-4}$} arm follows the
 & \small(Burda 2019, Atari) & \small(Huang 2022, Atari) & \small(Li 2023, state) &
 \small(no norm) & \small(reward norm) & \small(\runref{run-5 original RND, Adam $10^{-4}$}) &
 \claudecell{\small(the same stack, one knob moved, at two rates)} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{RL algorithm \& environments}} \\
 algorithm & PPO & PPO & RLPD (SAC $+$ prior data) & \multicolumn{4}{c}{SAC (SB3 \texttt{MlpPolicy})} \\
+\greyrule
 parallel envs & $128$ & $128$ & $1$ & \multicolumn{4}{c}{$1$} \\
+\greyrule
 on/off-policy & on-policy & on-policy & off-policy replay & \multicolumn{4}{c}{off-policy replay} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{RND input \& preprocessing}} \\
 RND input & next frame $s'$ ($84{\times}84$) & next frame $s'$ & concat$(s,a)$, current &
-  \multicolumn{2}{c}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) & \claudecell{same} \\
+  \multicolumn{2}{c?}{next state $s'$ ($4$-d)} & next state $s'$ ($4$-d) & \claudecell{same} \\
+\greyrule
 preprocessing & grayscale, sticky $0.25$ & grayscale, sticky $0.25$ & --- &
   \multicolumn{4}{c}{--- (raw state)} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Network architecture \& initialization}} \\
 target net & conv$\times$3$\to$fc$512$ & conv$\times$3$\to$fc$512$ &
   $(s,a)\to256\to256\to256\to256$ &
-  \multicolumn{2}{c}{$s'\!\to\!256\!\to\!128$} &
+  \multicolumn{2}{c?}{$s'\!\to\!256\!\to\!128$} &
   $s'\!\to\!256\!\to\!\mathrm{LReLU}\!\to\!128$ & \claudecell{same} \\
+\greyrule
 predictor net & conv$\times$3$\to$fc$512$\allowbreak$\to$$512$$\to$$512$ (2 deeper) &
   same (2 deeper) & same as target (symmetric) &
-  \multicolumn{2}{c}{$=$ target (symmetric)} &
+  \multicolumn{2}{c?}{$=$ target (symmetric)} &
   $\dots128\!\to\!\mathrm{LReLU}\!\to\!128$ (\textbf{1 deeper}) & \claudecell{same} \\
-output dim $m$ & $512$ & $512$ & $256$ & \multicolumn{2}{c}{$128$} & $128$ & \claudecell{same} \\
-activation & LeakyReLU $0.2$ & LeakyReLU $0.01$ & ReLU & \multicolumn{2}{c}{ReLU} & LeakyReLU $0.2$ &
+\greyrule
+output dim $m$ & $512$ & $512$ & $256$ & \multicolumn{2}{c?}{$128$} & $128$ & \claudecell{same} \\
+\greyrule
+activation & LeakyReLU $0.2$ & LeakyReLU $0.01$ & ReLU & \multicolumn{2}{c?}{ReLU} & LeakyReLU $0.2$ &
   \claudecell{same} \\
+\greyrule
 weight init & orthogonal $\sqrt2$ & orthogonal $\sqrt2$ & Xavier/Glorot &
   \multicolumn{4}{c}{orthogonal $\sqrt2$} \\
+\greyrule
 bias init & zero & zero & zero & \multicolumn{4}{c}{zero} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{State normalization}} \\
 obs norm & RMS, clip $\pm5$ & RMS, clip $\pm5$ & none &
   \multicolumn{4}{c}{RMS, clip $\pm5$ (denom $\mathrm{var}{+}10^{-8}$)} \\
+\greyrule
 warm-up & $6400$ steps ($128{\times}50$) & $6400$ ($50{\times}128$) & --- &
-  \multicolumn{2}{c}{$200$ obs-space draws} & $6400$ env steps (fresh env) & \claudecell{same} \\
-\midrule
+  \multicolumn{2}{c?}{$200$ obs-space draws} & $6400$ env steps (fresh env) & \claudecell{same} \\
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Bonus readout}} \\
 readout & $\tfrac1m\sum_j e_j^2$ & $\tfrac12\sum_j e_j^2$ & $\tfrac1m\sum_j e_j^2\times\mathrm{coeff}$ &
-  \multicolumn{2}{c}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ & \claudecell{same} \\
-\midrule
+  \multicolumn{2}{c?}{$\tfrac12\sum_j e_j^2$} & $\tfrac1m\sum_j e_j^2$ & \claudecell{same} \\
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Reward normalization}} \\
 reward norm (Eq.~\eqref{eq:rwd-norm}) & running std, $\gamma_{\mathrm{int}}{=}0.99$ & running std, $\gamma_{\mathrm{int}}{=}0.99$ & none &
   no & $\gamma_{\mathrm{int}}{=}0.99$ & $\gamma_{\mathrm{int}}{=}0.99$ & \claudecell{same} \\
+\greyrule
 non-episodic filter & yes & yes & --- & --- & yes & yes & \claudecell{same} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Predictor optimizer \& update}} \\
 optimizer & Adam $10^{-4}$ & Adam $10^{-4}$ & Adam $3{\times}10^{-4}$ &
-  \multicolumn{2}{c}{Adam $10^{-3}$} & Adam $10^{-4}$ &
+  \multicolumn{2}{c?}{Adam $10^{-3}$} & Adam $10^{-4}$ &
   \claudecell{\criticalknob{Adam $10^{-3}$ or $10^{-2}$ --- the one knob this column moves}} \\
-Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c}{$10^{-8}$} & $10^{-8}$ &
+\greyrule
+Adam $\epsilon$ & $10^{-8}$ & $10^{-5}$ & $10^{-8}$ & \multicolumn{2}{c?}{$10^{-8}$} & $10^{-8}$ &
   \claudecell{same} \\
+\greyrule
 update proportion & $0.25$ (paper); $1.0$ (repo code) & $0.25$ & $1.0$ (batch $1$) &
-  \multicolumn{2}{c}{$1.0$} & $1.0$ & \claudecell{same} \\
-gradient clip & none & $0.5$ & none & \multicolumn{2}{c}{none} & none & \claudecell{same} \\
-\midrule
+  \multicolumn{2}{c?}{$1.0$} & $1.0$ & \claudecell{same} \\
+\greyrule
+gradient clip & none & $0.5$ & none & \multicolumn{2}{c?}{none} & none & \claudecell{same} \\
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Value heads}} \\
 value heads & dual ($V^{\mathrm{int}}\!/\!V^{\mathrm{ext}}$) & dual & single (bonus $\to$ reward) &
   \multicolumn{4}{c}{single ($r^{\mathrm{ext}}{+}\beta r^{\mathrm{int}}$)} \\
+\greyrule
 $\gamma_{\mathrm{int}}/\gamma_{\mathrm{ext}}$ & $0.99/0.99$ (paper $0.999$) & $0.99/0.999$ & $-/0.99$ &
   \multicolumn{4}{c}{$-/0.999$} \\
+\greyrule
 adv.\ weighting & ext $2$ : int $1$ & ext $2$ : int $1$ & coeff $1.0$ &
   $\beta{=}100$ & $\beta{=}10^{4}$ &
   \sout{$\beta$ swept; $0.5$ faithful}\claudecell{$8$ values of $\beta$: $\{10^{-2},$ $10^{-1},$
@@ -6191,13 +6377,15 @@ adv.\ weighting & ext $2$ : int $1$ & ext $2$ : int $1$ & coeff $1.0$ &
   $3{\times}10^{-3},$ $10^{-2},$ $3{\times}10^{-2},$ $10^{-1},$ $3{\times}10^{-1},$ $1,$ $3,$ $10,$
   $30,$ $10^{2},$ $3{\times}10^{2},$ $10^{3},$ $3{\times}10^{3},$ $10^{4}\}$ --- the grid of
   Table~\ref{tab:pm-am-trainrun1-algos}} \\
-\midrule
+\blackrule
 \multicolumn{8}{@{}l}{\textit{Fixed env \& SAC block (project columns)}} \\
 env & Atari & Atari & D4RL antmaze/adroit & \multicolumn{4}{c}{\texttt{PointMaze\_\allowbreak Large-v3}, top-right} \\
+\greyrule
 SAC / steps & --- & --- & UTD $20$ & \multicolumn{4}{c}{SB3 defaults (lr $3{\times}10^{-4}$), $10^{6}$ steps} \\
+\greyrule
 seeds & --- & --- & --- & $100$--$199$ & $0$--$99$/$500$--$599$ & $600$--$899$ &
   \claudecell{$900$--$999$} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Train run~5 hyperparameters by source. Columns are the two Atari references (the RND paper
@@ -6553,55 +6741,65 @@ as the sweep advances.}
 \renewcommand{\arraystretch}{1.15}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}p{3.2cm}
->{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}p{2.6cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.2cm}
+?>{\raggedright\arraybackslash}p{2.6cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.6cm}
+?>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\blackrule
 \claudecell{\textbf{Hyperparameter}} &
 \claudecell{\textbf{run-5 original RND (reference, not re-run)}} &
 \claudecell{\textbf{algorithm 1}} & \claudecell{\textbf{algorithm 2.1}} &
 \claudecell{\textbf{algorithm 2.2}} & \claudecell{\textbf{algorithm 2.3}} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{RL algorithm \& environment}}} \\
 \claudecell{environment} & \claudecell{PointMaze Large top-right, cap 400, $\gamma{=}0.999$, raw
   sparse reward} & \multicolumn{4}{c}{\claudecell{same}} \\
+\greyrule
 \claudecell{base RL algorithm} & \claudecell{SB3 SAC \texttt{MlpPolicy} (defaults)} &
   \multicolumn{4}{c}{\claudecell{same}} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{RND input \& networks}}} \\
 \claudecell{RND input} & \claudecell{next state $s'$ (4-d)} & \multicolumn{4}{c}{\claudecell{same}} \\
+\greyrule
 \claudecell{networks} & \claudecell{target $+$ predictor ($+1$ layer, width 128, LeakyReLU 0.2)} &
   \claudecell{same} & \claudecell{\criticalknob{$+$ a frozen copy of the predictor at
   initialization}} & \claudecell{\criticalknob{same as 2.1}} & \claudecell{\criticalknob{same as
   2.1, $+$ LayerNorm after every hidden Linear}} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{Predictor training \& bonus}}} \\
 \claudecell{predictor optimizer} & \claudecell{Adam $10^{-4}$} & \claudecell{\criticalknob{plain
   SGD, constant rate, swept $\{10^{-3}, 10^{-2}\}$}} & \multicolumn{3}{c}{\claudecell{same}} \\
+\greyrule
 \claudecell{bonus readout} & \claudecell{mse-mean over the 128 dims} &
   \claudecell{\criticalknob{$\lVert e \rVert_2$}} & \claudecell{\criticalknob{ratio $\lVert e
   \rVert_2 / (\lVert e_0 \rVert_2 + 10^{-8})$}} & \multicolumn{2}{c}{\claudecell{same as 2.1}} \\
+\greyrule
 \claudecell{training loss} & \claudecell{plain MSE} & \claudecell{same} & \claudecell{same} &
   \claudecell{\criticalknob{MSE normalized by the frozen-init error}} & \claudecell{plain MSE} \\
+\greyrule
 \claudecell{bias initialization} & \claudecell{zero} & \claudecell{\criticalknob{normal 0.5}} &
   \multicolumn{3}{c}{\claudecell{same}} \\
+\greyrule
 \claudecell{reward normalization} & \claudecell{ON ($\gamma{=}0.99$)} &
   \claudecell{\criticalknob{OFF}} & \multicolumn{3}{c}{\claudecell{same}} \\
+\greyrule
 \claudecell{state-norm warm-up} & \claudecell{env steps, 6400} & \multicolumn{4}{c}{\claudecell{same}} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\claudecell{\textit{Sweep \& race}}} \\
 \claudecell{bonus weight $\beta$} & \claudecell{$10^{3}$ (its run-5 winner)} &
   \multicolumn{4}{c}{\claudecell{the 15-value grid $10^{-3}$ to $10^{4}$ at 1 and 3 per decade}} \\
+\greyrule
 \claudecell{seeds} & \claudecell{600--899 (run 5, final, $n{=}300$)} &
   \multicolumn{4}{c}{\claudecell{1200--1499, up to 300}} \\
+\greyrule
 \claudecell{truncation} & \claudecell{N/A (it IS the bar: 38.6412)} &
   \multicolumn{4}{c}{\claudecell{phase 1 from $n \ge 20$ vs the bar; phase 2 at $n = 100$:
   best per arm $\to$ 300}} \\
+\greyrule
 \claudecell{configs in this column} & \claudecell{0 (reference only)} &
   \claudecell{$2 \times 15 = 30$} & \claudecell{30} & \claudecell{30} & \claudecell{30} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{\claudeedit{Algorithms for train run~6. ``same'' collapses a value shared with the
@@ -6864,20 +7062,28 @@ arms.
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{4.4cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm} ?>{\raggedright\arraybackslash}p{4.4cm} ?>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\blackrule
 \textbf{Hyperparameter (code arg)} & \textbf{Adam} & \textbf{SGD-$1/t$} \\
-\midrule
+\blackrule
 update rule & constant-rate Adam step & plain SGD, $\eta_t = \max(\eta_{\min},\, \eta_0/(1+t/t_0))$ \\
+\greyrule
 learning rate (\texttt{rnd\_\allowbreak lr}) & $\{10^{-3}\ \text{(default)},\, 10^{-4},\, 10^{-5}\}$ (swept) & --- (set by the schedule) \\
+\greyrule
 $\eta_0$ (\texttt{rnd\_\allowbreak sgd\_\allowbreak eta0}) & --- & $\{10^{-3},\, 10^{-2},\, 10^{-1}\}$ (swept) \\
+\greyrule
 $t_0$ (\texttt{rnd\_\allowbreak sgd\_\allowbreak t0}) & --- & $\{10^{2},\, 10^{3},\, 10^{4}\}$ (swept) \\
+\greyrule
 $\eta_{\min}$ & --- & $0$ (no floor) \\
+\greyrule
 betas, eps & $(0.9,\, 0.999)$, $10^{-8}$ & --- \\
+\greyrule
 momentum, weight decay & ---, $0$ & $0$, $0$ \\
+\greyrule
 gradient clipping & \multicolumn{2}{c}{none (no clipping, both arms)} \\
+\greyrule
 optimizer configurations & $3$ & $9$ \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Convergence run~1 optimizer arms (the style of
 Table~\ref{tab:trainrun3-2-3-fixed}).  Adam sweeps only its learning rate --- the default
@@ -6898,35 +7104,48 @@ seed} $0$--$29$), and each seed re-draws only the initialization realization.
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{4.5cm}@{}}
-\toprule
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} ?>{\raggedright\arraybackslash}p{4.5cm} ?>{\raggedright\arraybackslash}p{4.5cm}@{}}
+\blackrule
 \textbf{Hyperparameter (code arg)} & \textbf{Adam arm} & \textbf{SGD-$1/t$ arm} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Point sets (each a separate run; Figure~\ref{fig:convergence-run1-point-sets})}} \\
 env 1.1 center square & \multicolumn{2}{c}{$10\times10$ midpoints of $[-0.5, 0.5]^2$; $100$ points} \\
+\greyrule
 env 1.2 top-right cell & \multicolumn{2}{c}{$10\times10$ midpoints of cell $(1, 10)$; $100$ points} \\
+\greyrule
 env 2 cell midpoints & \multicolumn{2}{c}{all $9\times12$ cell midpoints; $108$ points} \\
+\greyrule
 velocities & \multicolumn{2}{c}{$v_x = v_y = 0$ for every point} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Distillation --- fixed}} \\
 networks & \multicolumn{2}{c}{$4 \to 256 \to \mathrm{ReLU} \to 128$, target frozen} \\
+\greyrule
 objective & \multicolumn{2}{c}{$L^{\mathrm{mse}}$, full batch (all $P$ points per step)} \\
+\greyrule
 steps & \multicolumn{2}{c}{$4096$} \\
+\greyrule
 input (\texttt{rnd\_\allowbreak obs\_\allowbreak norm}) & \multicolumn{2}{c}{raw $[x, y, 0, 0]$; normalization off} \\
+\greyrule
 reward norm.\ (\texttt{rnd\_\allowbreak reward\_\allowbreak norm}) & \multicolumn{2}{c}{off} \\
+\greyrule
 logged readout & \multicolumn{2}{c}{$\mathcal{B}_{\mathrm{l2}}$ per point (exact norm)} \\
+\greyrule
 device, precision & \multicolumn{2}{c}{cpu, float32} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Swept}} \\
 init scheme (\texttt{rnd\_\allowbreak weight\_\allowbreak init}, \texttt{rnd\_\allowbreak bias\_\allowbreak init}) & \multicolumn{2}{c}{zero-bias, pytorch-bias, pytorch-full, normal-0.5 ($4$ schemes)} \\
+\greyrule
 optimizer configuration & $3$ (Table~\ref{tab:convergence-run1-optimizers}) & $9$ (Table~\ref{tab:convergence-run1-optimizers}) \\
+\greyrule
 random seed (\texttt{a\_\allowbreak seed}) & \multicolumn{2}{c}{$0$--$29$ ($30$ seeds; each re-draws only the initialization)} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Totals}} \\
 configurations & $3 \times 4 \times 3 = 36$ & $3 \times 4 \times 9 = 108$ \\
+\greyrule
 runs ($\times 30$ seeds) & $1080$ & $3240$ \\
+\greyrule
 all runs & \multicolumn{2}{c}{$4320$} \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{Convergence run~1 sweep grid, per arm (the style of
 Table~\ref{tab:trainrun3-2-3-fixed}).  Rows spanning both columns are shared; ``---'' does not
@@ -7125,46 +7344,55 @@ whole run.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{6.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\blackrule
 \textbf{Parameter} &
 \textbf{PointMaze} &
 \textbf{AntMaze} \\
 & \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
 agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
+\greyrule
 state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
   orientation (4) $+$ joint angles (8) $+$ velocities (14); contact forces off \\
+\greyrule
 goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak goal} discarded
   (goal never observed) & both goal keys discarded (goal never observed), but $x, y$ are first
   re-attached from \texttt{achieved\_\allowbreak goal}, because AntMaze strips them out of
   \texttt{observation} \\
+\greyrule
 action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Maze}} \\
 map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
   \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
   \newline Medium $8\times8$ \newline Large $9\times12$ \\
+\greyrule
 cell size & $1$~m & $4$~m \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
 max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
   Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
   \newline Large $1000$ \\
+\greyrule
 reward & $-1$ per step; $0$ on the goal-reaching step (sparse reward $-1$, ExPLORe convention) &
   same \\
+\greyrule
 reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
   (\texttt{continuing\_task=False}) & same \\
+\greyrule
 at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Start and goal}} \\
 goal reset & never --- one fixed goal cell, exact center, whole run; the goal cannot move
   mid-episode & same \\
+\greyrule
 set (1): start $\to$ goal & UMaze: bottom-left $(3,1) \to$ top-left $(1,1)$ \newline Open:
   bottom-left $(3,1) \to$ top-right $(1,5)$ \newline Medium: $(6,1) \to (1,6)$ \newline Large:
   $(7,1) \to (1,10)$ & same cells (identical maps) \\
+\greyrule
 set (1) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
   bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
   start\_\allowbreak bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
@@ -7175,9 +7403,11 @@ set (1) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start
   left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
   bottom\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
   start\_\allowbreak bottom\_\allowbreak left} \\
+\greyrule
 set (2): start $\to$ goal & UMaze: top-left $(1,1) \to$ bottom-left $(3,1)$ \newline Open: top-left
   $(1,1) \to$ bottom-right $(3,5)$ \newline Medium: $(1,1) \to (6,6)$ \newline Large:
   $(1,1) \to (7,10)$ & same cells (identical maps) \\
+\greyrule
 set (2) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
   top\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
   start\_\allowbreak top\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
@@ -7188,7 +7418,7 @@ set (2) config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start
   left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
   top\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
   start\_\allowbreak top\_\allowbreak left} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Environment specification for the $16$ named configurations ($8$ base environments $\times$
@@ -7285,45 +7515,54 @@ record of what train run~1.1 used.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
->{\raggedright\arraybackslash}p{6.0cm}
->{\raggedright\arraybackslash}p{6.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{6.0cm}
+?>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\blackrule
 \textbf{Parameter} &
 \textbf{PointMaze} &
 \textbf{AntMaze} \\
 & \small(v3: UMaze / Open / Medium / Large) & \small(v5: UMaze / Open / Medium / Large) \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
 agent body & 2-D ball, force-actuated & quadruped Ant (torso $+$ 4 two-segment legs) \\
+\greyrule
 state passed to the network & $4$-d: $x$, $y$, $v_x$, $v_y$ & $29$-d: $x, y$ $+$ $z$ $+$ torso
   orientation (4) $+$ joint angles (8) $+$ velocities (14); contact forces off \\
+\greyrule
 goal keys & \texttt{desired\_\allowbreak goal} and \texttt{achieved\_\allowbreak goal} discarded
   (goal never observed) & both goal keys discarded (goal never observed), but $x, y$ are first
   re-attached from \texttt{achieved\_\allowbreak goal}, because AntMaze strips them out of
   \texttt{observation} \\
+\greyrule
 action & $2$-d force in $[-1,1]$ & $8$-d joint torques in $[-1,1]$ \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Maze}} \\
 map (rows $\times$ cols) & UMaze $5\times5$ \newline Open $5\times7$ \newline Medium $8\times8$
   \newline Large $9\times12$ & identical maps: \newline UMaze $5\times5$ \newline Open $5\times7$
   \newline Medium $8\times8$ \newline Large $9\times12$ \\
+\greyrule
 cell size & $1$~m & $4$~m \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
 max episode steps (registered default, not overridden) & UMaze $300$ \newline Open $300$ \newline
   Medium $600$ \newline Large $800$ & UMaze $700$ \newline Open $700$ \newline Medium $1000$
   \newline Large $1000$ \\
+\greyrule
 reward & $-1$ per step; $0$ on the goal-reaching step (sparse reward $-1$, ExPLORe convention) &
   same \\
+\greyrule
 reaching the goal & \texttt{terminated=True} at distance $\le 0.45$~m
   (\texttt{continuing\_task=False}) & same \\
+\greyrule
 at the time limit & \texttt{truncated=True}; SAC bootstraps the value (timeout handling) & same \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Start and goal (only set (1) is used in this run)}} \\
 goal reset & never --- one fixed goal cell, exact center, whole run & same \\
+\greyrule
 start $\to$ goal & UMaze: bottom-left $(3,1) \to$ top-left $(1,1)$ \newline Open: bottom-left
   $(3,1) \to$ top-right $(1,5)$ \newline Medium: $(6,1) \to (1,6)$ \newline Large:
   $(7,1) \to (1,10)$ & same cells (identical maps) \\
+\greyrule
 config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allowbreak
   bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak Open-v3\_\allowbreak
   start\_\allowbreak bottom\_\allowbreak left} \newline \texttt{PointMaze\_\allowbreak
@@ -7334,7 +7573,7 @@ config name & \texttt{PointMaze\_\allowbreak UMaze-v3\_\allowbreak start\_\allow
   left} \newline \texttt{AntMaze\_\allowbreak Medium-v5\_\allowbreak start\_\allowbreak
   bottom\_\allowbreak left} \newline \texttt{AntMaze\_\allowbreak Large-v5\_\allowbreak
   start\_\allowbreak bottom\_\allowbreak left} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Environments used by train run~1.1: the $8$ set-(1) \texttt{start\_\allowbreak
@@ -7359,12 +7598,12 @@ column reuses the \runref{run-5 original RND, Adam $10^{-4}$} RND stack unchange
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}p{2.1cm}
->{\raggedright\arraybackslash}p{3.7cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{2.7cm}
->{\raggedright\arraybackslash}p{2.7cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{2.1cm}
+?>{\raggedright\arraybackslash}p{3.7cm}
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{2.7cm}
+?>{\raggedright\arraybackslash}p{2.7cm}@{}}
+\blackrule
 \textbf{Hyperparameter} &
 \textbf{SAC} &
 \textbf{SAC $+$ RND} &
@@ -7372,59 +7611,72 @@ column reuses the \runref{run-5 original RND, Adam $10^{-4}$} RND stack unchange
 \textbf{SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak maze\_\allowbreak cell}} &
 \textbf{SAC $+$ \texttt{gt\_\allowbreak position\_\allowbreak 1m}} \\
 & \small(SB3) & \small(run 5 stack) & \small(PointMaze) & \small(AntMaze) & \small(AntMaze) \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{RL algorithm \& environments}} \\
 base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} \\
+\greyrule
 runs on & the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
   the $8$ \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
   the $4$ PointMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
   the $4$ AntMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs &
   the $4$ AntMaze \texttt{start\_\allowbreak bottom\_\allowbreak left} configs \\
+\greyrule
 total env steps & $10^{6}$ & \multicolumn{4}{c}{same} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{SAC}} \\
 discount & $0.99$ (knob; the previous PointMaze-Large runs used $0.999$) &
   \multicolumn{4}{c}{same} \\
+\greyrule
 optimizer, learning rate & Adam $3{\times}10^{-4}$ (SB3 default) & \multicolumn{4}{c}{same} \\
+\greyrule
 batch size / tau / buffer & $256$ / $0.005$ / $10^{6}$ (SB3 defaults) & \multicolumn{4}{c}{same} \\
+\greyrule
 networks & $2\times256$ ReLU (SB3 default) & \multicolumn{4}{c}{same} \\
+\greyrule
 entropy & auto temperature, target $-\dim(A)$ (SB3 default) & \multicolumn{4}{c}{same} \\
+\greyrule
 train freq / gradient steps / learning starts & $1$ / $1$ / $100$ (SB3 defaults) &
   \multicolumn{4}{c}{same} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{Intrinsic bonus}} \\
 bonus input & N/A & next state ($4$-d PointMaze / $29$-d AntMaze) &
   (position $1$~m cell, velocity bin) of the next state; velocity binned $10\times10$ over
   $[-5,5]^2$ & $4$~m maze cell of the next $(x, y)$ & $1$~m square of the next $(x, y)$ \\
+\greyrule
 bonus form & N/A & RND distillation error, \runref{run-5 original RND, Adam $10^{-4}$} stack (next row) &
   count bonus $\min(1, 1/\sqrt{n})$ (decay rate $-0.5$) & $\min(1, 1/\sqrt{n})$ &
   $\min(1, 1/\sqrt{n})$ \\
+\greyrule
 RND stack & N/A & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper;
   output $128$; orthogonal $\sqrt2$ init, zero bias; obs norm RMS clip $\pm5$ with $6400$-step
   fresh-env warm-up; readout mean squared error over the $128$ dims; reward norm by running std
   (discount $0.99$, non-episodic); Adam $10^{-4}$, $\epsilon\,10^{-8}$; trained on each SAC replay
   batch (proportion $1.0$) --- identical to train run~5 & N/A & N/A & N/A \\
+\greyrule
 count table shape & N/A & N/A & (rows $\times$ cols) position $\times\,10\times10$ velocity &
   (rows $\times$ cols) of the map & ($4\cdot$rows $\times\,4\cdot$cols) $1$~m squares \\
+\greyrule
 where the bonus enters & N/A & replay buffer stores extrinsic $+\ \beta \times$ intrinsic (existing
   pipeline) & \multicolumn{3}{c}{same} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{Bonus weight}} \\
 \sout{beta sweep}\claudeedit{bonus weight $\beta$ --- the values run} & N/A & \multicolumn{4}{>{\raggedright\arraybackslash}p{12.0cm}}{$\{10^{-3},
   3{\times}10^{-3}, 10^{-2}, 3{\times}10^{-2}, 10^{-1}, 3{\times}10^{-1}, 1, 3, 10, 30, 10^{2},
   3{\times}10^{2}, 10^{3}, 3{\times}10^{3}, 10^{4}\}$ --- $15$ values (the same for the RND and the
   three ground-truth columns)} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
 configs in this column & $8$(env configs) $= 8$ & $8$(env configs) $\times$ $15$(bonus weight)
   $= 120$ & $4$(PointMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
   $4$(AntMaze env configs) $\times$ $15$(bonus weight) $= 60$ &
   $4$(AntMaze env configs) $\times$ $15$(bonus weight) $= 60$ \\
+\greyrule
 total configs in this table & \multicolumn{5}{c}{$8 + 120 + 60 + 60 + 60 = \mathbf{308}$} \\
+\greyrule
 seeds & \multicolumn{5}{>{\raggedright\arraybackslash}p{14.2cm}}{racing: initial $20$ seeds per
   config (prune floor); survivors race to $100$; then only the best config of each
   (env, algorithm) cell continues to $300$} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Algorithms for train run~1.1. Columns are the five algorithm arms; rows are hyperparameters
@@ -7856,13 +8108,13 @@ writes no model checkpoints.
 \renewcommand{\arraystretch}{1.0}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.5cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{3.0cm}
->{\raggedright\arraybackslash}p{2.2cm}
->{\raggedright\arraybackslash}p{2.3cm}
->{\raggedright\arraybackslash}p{2.8cm}
->{\raggedright\arraybackslash}p{3.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{3.0cm}
+?>{\raggedright\arraybackslash}p{2.2cm}
+?>{\raggedright\arraybackslash}p{2.3cm}
+?>{\raggedright\arraybackslash}p{2.8cm}
+?>{\raggedright\arraybackslash}p{3.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter} &
 \textbf{SAC $+$ RND baseline} &
 \textbf{SAC $+$ algorithm 1} &
@@ -7873,80 +8125,100 @@ writes no model checkpoints.
 & \small(the \runref{run-5 original RND, Adam $10^{-4}$} stack; task R) & \small(this work; task S) &
   \small(this work; task S) & \small(this work; task S) & \small(this work; task S) &
   \claudecell{\small(the learning-rate addendum, two rates; its own sweep)} \\
-\midrule
+\blackrule
 \multicolumn{7}{@{}l}{\textit{RL algorithm \& environments}} \\
-base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c}{same} & \claudecell{same} \\
+base RL algorithm & SB3 SAC \texttt{MlpPolicy} & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
 environments & AntMaze UMaze and Medium, \texttt{start\_\allowbreak bottom\_\allowbreak left} &
-  \multicolumn{4}{c}{same} & \claudecell{same} \\
+  \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
 total env steps & $10^{7}$, in one stage & $10^{6}$ (stage $1$; stage $2$ deferred) &
-  \multicolumn{3}{c}{same} & \claudecell{$10^{6}$, in one stage} \\
+  \multicolumn{3}{c?}{same} & \claudecell{$10^{6}$, in one stage} \\
+\greyrule
 device / partitions & cuda on the gpu partition; cpu on gnolim ($20$-day jobs) &
-  cpu only (cpu, nolim, reserved jaguar03) & \multicolumn{3}{c}{same} &
+  cpu only (cpu, nolim, reserved jaguar03) & \multicolumn{3}{c?}{same} &
   \claudecell{cpu only (cpu and nolim; no gpu, gnolim or reservation)} \\
-\midrule
+\blackrule
 \multicolumn{7}{@{}l}{\textit{SAC (every value as in Table~\ref{tab:pm-am-trainrun1-algos})}} \\
-discount & $0.99$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
+discount & $0.99$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
 optimizer, batch, tau, buffer & Adam $3{\times}10^{-4}$, $256$, $0.005$, $10^{6}$ (SB3 defaults) &
-  \multicolumn{4}{c}{same} & \claudecell{same} \\
+  \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
 networks, entropy, train freq, gradient steps, learning starts & $2\times256$ ReLU; auto
-  temperature, target $-\dim(A)$; $1$, $1$, $100$ (SB3 defaults) & \multicolumn{4}{c}{same} &
+  temperature, target $-\dim(A)$; $1$, $1$, $100$ (SB3 defaults) & \multicolumn{4}{c?}{same} &
   \claudecell{same} \\
-\midrule
+\blackrule
 \multicolumn{7}{@{}l}{\textit{Intrinsic bonus}} \\
-bonus input & next state ($29$-d) & \multicolumn{4}{c}{same} & \claudecell{same} \\
+bonus input & next state ($29$-d) & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
 networks & target $+$ predictor & same & \criticalknob{$+$ a frozen copy of the predictor taken
-  at initialization} & \multicolumn{2}{c}{\criticalknob{same}} &
+  at initialization} & \multicolumn{2}{c?}{\criticalknob{same}} &
   \claudecell{target $+$ predictor, as the RND baseline} \\
+\greyrule
 bonus readout & \criticalknob{\texttt{mse\_\allowbreak mean}: mean squared error over the $128$
   dims} & \criticalknob{\texttt{l2}: $\lVert e_\theta(s) \rVert_2$} & \criticalknob{ratio $B(s)$,
-  $\varepsilon = 10^{-8}$ (formula above)} & \multicolumn{2}{c}{\criticalknob{same}} &
+  $\varepsilon = 10^{-8}$ (formula above)} & \multicolumn{2}{c?}{\criticalknob{same}} &
   \claudecell{\criticalknob{\texttt{mse\_\allowbreak mean}, as the RND baseline}} \\
-predictor training loss & $L_{\mathrm{original}}$ (formula above) & \multicolumn{2}{c}{same} &
+\greyrule
+predictor training loss & $L_{\mathrm{original}}$ (formula above) & \multicolumn{2}{c?}{same} &
   \criticalknob{$L_{\mathrm{normalized}}$ (formula above), $\delta = 10^{-8}$} &
   \criticalknob{$L_{\mathrm{original}}$} & \claudecell{$L_{\mathrm{original}}$} \\
+\greyrule
 architecture & target $256 \to$ LeakyReLU($0.2$) $\to 128$; predictor one $128$ block deeper &
-  \multicolumn{3}{c}{same} & \criticalknob{same $+$ LayerNorm after every hidden Linear of both
+  \multicolumn{3}{c?}{same} & \criticalknob{same $+$ LayerNorm after every hidden Linear of both
   nets (the predictor's extra block included); no output LayerNorm} &
   \claudecell{as the RND baseline (no LayerNorm)} \\
-output dim & $128$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
-weight init & orthogonal, gain $\sqrt2$ & \multicolumn{3}{c}{same} & same, Linear layers only;
+\greyrule
+output dim & $128$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
+weight init & orthogonal, gain $\sqrt2$ & \multicolumn{3}{c?}{same} & same, Linear layers only;
   LayerNorm affine at identity & \claudecell{orthogonal, gain $\sqrt2$} \\
+\greyrule
 bias init & zero, both nets & \criticalknob{\texttt{normal\_\allowbreak 0.5}, both nets} &
-  \multicolumn{2}{c}{\criticalknob{same}} & \criticalknob{same, Linear biases only} &
+  \multicolumn{2}{c?}{\criticalknob{same}} & \criticalknob{same, Linear biases only} &
   \claudecell{\criticalknob{zero, both nets --- as the RND baseline}} \\
-state norm & running RMS, clip $\pm5$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
-state-norm warm-up & $6400$ env steps on a fresh throwaway env & \multicolumn{4}{c}{same} &
+\greyrule
+state norm & running RMS, clip $\pm5$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\greyrule
+state-norm warm-up & $6400$ env steps on a fresh throwaway env & \multicolumn{4}{c?}{same} &
   \claudecell{same} \\
+\greyrule
 reward norm & \criticalknob{on (running std, discount $0.99$)} &
-  \multicolumn{4}{c}{\criticalknob{off}} &
+  \multicolumn{4}{c?}{\criticalknob{off}} &
   \claudecell{\criticalknob{on (running std, discount $0.99$) --- as the RND baseline}} \\
+\greyrule
 predictor optimizer & \criticalknob{Adam $10^{-4}$} & \criticalknob{plain SGD at a constant rate
-  (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c}{\criticalknob{same}} &
+  (swept), momentum $0$, weight decay $0$, no schedule} & \multicolumn{3}{c?}{\criticalknob{same}} &
   \claudecell{\criticalknob{Adam $10^{-3}$ and Adam $10^{-2}$ --- the one knob that separates
   this column from the RND baseline, swept at two values}} \\
-update proportion & $1.0$ & \multicolumn{4}{c}{same} & \claudecell{same} \\
-\midrule
+\greyrule
+update proportion & $1.0$ & \multicolumn{4}{c?}{same} & \claudecell{same} \\
+\blackrule
 \multicolumn{7}{@{}l}{\textit{Bonus weight \& learning-rate sweep}} \\
 bonus weight $\beta$ & \criticalknob{fixed at the train-run-1.1 winner: $10^{4}$ (UMaze),
-  $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{10.3cm}}{the $15$-value grid of
+  $3{\times}10^{3}$ (Medium)} & \multicolumn{4}{>{\raggedright\arraybackslash}p{10.3cm}?}{the $15$-value grid of
   Table~\ref{tab:pm-am-trainrun1-algos}: $\{$$10^{-3}$, $3{\times}10^{-3}$, $10^{-2}$,
   $3{\times}10^{-2}$, $10^{-1}$, $3{\times}10^{-1}$, $1$, $3$, $10$, $30$, $10^{2}$,
   $3{\times}10^{2}$, $10^{3}$, $3{\times}10^{3}$, $10^{4}$$\}$} &
   \claudecell{the same $15$-value grid} \\
-SGD learning rate & N/A & \multicolumn{4}{c}{$\{10^{-3}, 10^{-2}\}$} & \claudecell{N/A (Adam)} \\
-\midrule
+\greyrule
+SGD learning rate & N/A & \multicolumn{4}{c?}{$\{10^{-3}, 10^{-2}\}$} & \claudecell{N/A (Adam)} \\
+\blackrule
 \multicolumn{7}{@{}l}{\textit{Seeds, pruning, checkpointing}} \\
 seeds & $100$ per environment, all at $10^{7}$ steps & race to $100$ at $10^{6}$ steps; prune
-  checks from $n \ge 30$ & \multicolumn{3}{c}{same} &
+  checks from $n \ge 30$ & \multicolumn{3}{c?}{same} &
   \claudecell{race to $300$ at $10^{6}$ steps; checks from $n \ge 30$; \texttt{a\_\allowbreak seed}
   $0$--$299$, the same seeds at both rates} \\
+\greyrule
 pruning & never (benchmark arm) & stage-1 frozen-bar racing (rules above) &
-  \multicolumn{3}{c}{same} &
+  \multicolumn{3}{c?}{same} &
   \claudecell{same rule and same frozen bars ($-689.7404$ UMaze, $-998.4678$ Medium), so this
   column is scored against the $10^{-4}$ result exactly as the four algorithm columns are} \\
-checkpoints & none --- every run completes inside one Slurm job & \multicolumn{4}{c}{same} &
+\greyrule
+checkpoints & none --- every run completes inside one Slurm job & \multicolumn{4}{c?}{same} &
   \claudecell{same} \\
-\midrule
+\blackrule
 \multicolumn{7}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
 configs in this column & $2$(env configs) $\times$ $1$(fixed bonus weight) $= 2$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
@@ -7954,9 +8226,10 @@ configs in this column & $2$(env configs) $\times$ $1$(fixed bonus weight) $= 2$
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   $2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$ &
   \claudecell{$2$(env configs) $\times$ $2$(learning rate) $\times$ $15$(bonus weight) $= 60$} \\
-total configs in this table & \multicolumn{5}{c}{$2 + 4 \times 60 = \mathbf{242}$} &
+\greyrule
+total configs in this table & \multicolumn{5}{c?}{$2 + 4 \times 60 = \mathbf{242}$} &
   \claudecell{$+\,60$ in a separate sweep} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Algorithms for train run~1.2. ``same'' collapses a value shared with the columns to its
@@ -8446,77 +8719,96 @@ remaining rows are the whole of the difference between the two implementations.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
->{\raggedright\arraybackslash}p{5.6cm}
->{\raggedright\arraybackslash}p{5.6cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{5.6cm}
+?>{\raggedright\arraybackslash}p{5.6cm}@{}}
+\blackrule
 \textbf{Knob} &
 \textbf{CleanRL PPO $+$ RND} &
 \textbf{This project's SAC $+$ RND} \\
 & \small(\texttt{ppo\_\allowbreak rnd\_\allowbreak envpool.py} @ \texttt{fe8d8a0}) &
   \small(\runref{run-5 original RND, Adam $10^{-4}$}, \Cref{tab:pm-am-trainrun1-algos}) \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Base learner and environment}} \\
 base RL algorithm & PPO, on-policy, $128$ parallel environment copies & SAC, off-policy, one
   environment copy, replay buffer $10^{6}$ \\
+\greyrule
 domain & Atari from pixels: \texttt{Montezuma\allowbreak Revenge-v5} via envpool & PointMaze and
   AntMaze from coordinates \\
+\greyrule
 observation the bonus sees & newest frame of a $4\times84\times84$ \texttt{uint8} stack, so
   $1\times84\times84$ & the full state vector: $4$-d PointMaze, $29$-d AntMaze \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Bonus input}} \\
 what the bonus is computed on & next observation $s'$ & same \\
+\greyrule
 whitening & running mean/std per pixel, clip $[-5,5]$, denominator $\sqrt{\sigma^2}$ & running
   mean/std per dimension, clip $[-5,5]$, denominator $\sqrt{\sigma^2+10^{-8}}$ \\
+\greyrule
 warm-up before training & $50 \times 128 = 6400$ rollout steps of a random agent, on the
   \emph{training} environments & $6400$ environment steps of a random agent, on a \emph{fresh
   throwaway} environment so the training visit counts stay clean \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Networks}} \\
 target network & $3$ convolutions ($32,64,64$) $\to$ flatten $\to$ linear $512$; frozen & linear
   $4\to256\to128$; frozen \\
+\greyrule
 predictor network & the same $3$ convolutions $\to$ linear $512 \to 512 \to 512$, i.e.\ \textbf{two}
   fully-connected blocks deeper than the target & the same trunk \textbf{one} $128$-wide block
   deeper: $4\to256\to128\to128$ \\
+\greyrule
 output width $m$ & $512$ & $128$ \\
+\greyrule
 activation & LeakyReLU on the convolutions, PyTorch default negative slope $0.01$; ReLU on the
   predictor's extra blocks & LeakyReLU throughout, negative slope $0.2$ (the TensorFlow default the
   original paper used) \\
+\greyrule
 weight initialization & orthogonal, gain $\sqrt2$ & same \\
+\greyrule
 bias initialization & zero & same \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Readout and predictor training}} \\
 bonus readout & $b = \tfrac12\sum_{j=1}^{m} e_j^2$ (half sum over $512$ dimensions) & $b =
   \tfrac1m\sum_{j=1}^{m} e_j^2$ (mean over $128$ dimensions) \\
+\greyrule
 predictor loss & squared error, mean over the output width, then masked and averaged over the
   minibatch & squared error, mean over the output width, averaged over the replay batch \\
+\greyrule
 update proportion & $0.25$ --- a random quarter of each minibatch trains the predictor, following
   the paper's Table 5 & $1.0$ --- the whole batch trains the predictor, following the original
   repository code \\
+\greyrule
 predictor input at update time & the \emph{stored current} observation of the rollout, not the next
   observation the bonus was computed on & the next observation, the same input the bonus used \\
+\greyrule
 optimizer & Adam, learning rate $10^{-4}$, $\epsilon = 10^{-5}$, \textbf{shared with the policy};
   gradients clipped at global norm $0.5$ & Adam, learning rate $10^{-4}$, $\epsilon = 10^{-8}$,
   \textbf{its own optimizer}; no gradient clipping \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic reward}} \\
 reward normalization & divide by the running standard deviation $\sigma_F$ of a non-episodic forward
   filter $F_t = \gamma_{\mathrm{int}} F_{t-1} + b$, no mean subtracted & same mechanism, same
   $\gamma = 0.99$ \\
+\greyrule
 forward-filter discount & $\gamma_{\mathrm{int}} = 0.99$ & $0.99$ \\
+\greyrule
 how the bonus enters the objective & a \textbf{second value head} with its own non-episodic return
   at $\gamma = 0.99$; the two advantages are combined as $A = 1.0\,A^{\mathrm{int}} +
   2.0\,A^{\mathrm{ext}}$ & a \textbf{single reward stream}: the replay buffer stores $r^{\mathrm{ext}}
   + \beta\,r^{\mathrm{int}}$, so there is no intrinsic value head \\
+\greyrule
 episodic treatment of the bonus & the intrinsic return never resets at an episode boundary & the
   bonus is inside the one reward, so it inherits SAC's episodic treatment \\
+\greyrule
 bonus weight & fixed by $\mathtt{int\_coef}=1.0$ and $\mathtt{ext\_coef}=2.0$; not swept & $\beta$
   swept over $15$ values from $10^{-3}$ to $10^{4}$ \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Run scale}} \\
 environment steps per run & $2\times10^{9}$ & $10^{6}$ \\
+\greyrule
 seeds & $1$ published; $30$ in this run & $100$ to $300$ per arm \\
+\greyrule
 discount on the extrinsic stream & $0.999$ & $0.99$ in \Cref{sec:pm-am} \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{The two RND implementations knob by knob. The left column is CleanRL's
@@ -8570,54 +8862,67 @@ comes from, so the environment can be rebuilt from the table alone.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}
->{\raggedright\arraybackslash}p{5.0cm}
->{\raggedright\arraybackslash}p{5.4cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{5.0cm}
+?>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\blackrule
 \textbf{Parameter} &
 \textbf{Value} &
 \textbf{Where the value comes from} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Identity and spaces}} \\
 environment id & \texttt{Montezuma\allowbreak Revenge-v5} & passed by CleanRL; the benchmark script's
   only environment \\
+\greyrule
 task and ROM & \texttt{montezuma\_\allowbreak revenge}, ROM shipped inside the envpool wheel &
   derived from the id; the ROM ships inside the envpool wheel \\
+\greyrule
 observation space & \texttt{Box(0, 255, (4, 84, 84), uint8)} & envpool defaults
   \texttt{stack\_num=4}, \texttt{img\_height=\allowbreak img\_width=84},
   \texttt{gray\_scale=True} \\
+\greyrule
 channel order & oldest frame first, so index $3$ is the most recent frame & envpool layout; the RND
   bonus uses index $3$ only \\
+\greyrule
 action space & \texttt{Discrete(18)} & the ALE minimal action set, which for this game is the full
   set \\
+\greyrule
 parallel copies & $128$ & \texttt{num\_envs}, passed \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Preprocessing}} \\
 frame skip & $4$ emulator frames per agent step, rewards summed & envpool default
   \texttt{frame\_skip=4} \\
+\greyrule
 max-pooling & element-wise maximum of the last two of the four skipped frames & envpool, fixed \\
+\greyrule
 grayscale and resize & ALE palette grayscale, then $210\times160 \to 84\times84$ with OpenCV
   \texttt{INTER\_AREA} & envpool defaults \texttt{gray\_scale=True},
   \texttt{use\_inter\_area\_resize=True} \\
+\greyrule
 no-ops at reset & uniform on $\{0,\dots,29\}$, then one FIRE frame & envpool default
   \texttt{noop\_max=30}; FIRE is unconditional in $0.6.6$ when FIRE is in the minimal action set \\
+\greyrule
 sticky actions & repeat-action probability $0.25$, applied by the ALE itself & passed by CleanRL,
   matching the original RND paper \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Episode}} \\
 episodic life & \texttt{done} is raised on every life lost, not only on game over & passed
   (\texttt{episodic\_life=True}); the underlying game is not reset on a life loss \\
+\greyrule
 max episode steps & $108{,}000$ agent steps, so $432{,}000$ emulator frames & envpool's
   \texttt{registration.py} for every \texttt{-v5} id; in practice non-binding \\
+\greyrule
 termination rule & game over, or the step cap, or a life lost & envpool \texttt{atari\_env.h} \\
+\greyrule
 auto-reset & next-step: the terminating step returns the terminal observation, and the following
   step is consumed by the reset & envpool, fixed --- the defect this run corrects \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Reward}} \\
 reward seen by the agent & clipped to its sign, so $\{-1,0,+1\}$ & passed
   (\texttt{reward\_clip=True}) \\
+\greyrule
 reward recorded for scoring & the raw unclipped game score, kept in \texttt{info["reward"]} & envpool
   preserves it; this is what the episodic return in the run record accumulates \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Environment specification for train run~1, in the style of \Cref{tab:pm-am-envspec}. Every
@@ -8648,51 +8953,72 @@ follow the table.
 \renewcommand{\arraystretch}{1.2}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm}
->{\raggedright\arraybackslash}p{4.6cm}
->{\raggedright\arraybackslash}p{6.0cm}@{}}
-\toprule
+?>{\raggedright\arraybackslash}p{4.6cm}
+?>{\raggedright\arraybackslash}p{6.0cm}@{}}
+\blackrule
 \textbf{Hyperparameter} &
 \textbf{Value} &
 \textbf{Source and note} \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{RL algorithm}} \\
 algorithm & PPO with two value heads & CleanRL default \\
+\greyrule
 policy and value network & $3$ convolutions ($32,64,64$) $\to$ $3136 \to 256 \to 448$, then a
   $448\to448$ extra block; actor $448\to448\to18$; two critics $448\to1$ & CleanRL default \\
+\greyrule
 parallel environments & $128$ & CleanRL default \\
+\greyrule
 rollout length & $128$ steps, so a batch of $16{,}384$ & CleanRL default \\
+\greyrule
 minibatches per epoch & $4$ & CleanRL default \\
+\greyrule
 update epochs & $4$ & CleanRL default \\
+\greyrule
 learning rate & $10^{-4}$, annealed linearly to $0$ & CleanRL default, shared by the policy and the
   RND predictor \\
+\greyrule
 optimizer & Adam, $\epsilon = 10^{-5}$ & CleanRL default \\
+\greyrule
 clip coefficient & $0.1$; value loss clipped & CleanRL default \\
+\greyrule
 entropy coefficient & $0.001$ & CleanRL default \\
+\greyrule
 value coefficient & $0.5$ & CleanRL default \\
+\greyrule
 gradient clipping & global norm $0.5$ & CleanRL default \\
+\greyrule
 advantage normalization & per minibatch & CleanRL default \\
+\greyrule
 extrinsic discount & $\gamma = 0.999$ & CleanRL default \\
+\greyrule
 GAE $\lambda$ & $0.95$ & CleanRL default \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
 bonus & Random Network Distillation & N/A --- the run has one arm \\
+\greyrule
 intrinsic discount & $\gamma_{\mathrm{int}} = 0.99$, non-episodic & CleanRL default \\
+\greyrule
 extrinsic and intrinsic weights & $\mathtt{ext\_coef} = 2.0$, $\mathtt{int\_coef} = 1.0$ & CleanRL
   default; no sweep \\
+\greyrule
 update proportion & $0.25$ & CleanRL default \\
+\greyrule
 observation-normalization warm-up & $50$ rollouts of a random agent, $6400$ steps & CleanRL default \\
+\greyrule
 RND stack & as the left column of \Cref{tab:cleanrl-vs-project-rnd} & read from the source \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
 environment steps per run & $2\times10^{9}$ & CleanRL's benchmark value \\
+\greyrule
 seeds & $30$, \texttt{a\_seed} $= 1 \dots 30$ & this run; CleanRL published one seed \\
+\greyrule
 configs in this table & $1$(algorithm) $\times$ $1$(environment) $\times$ $30$(seed) $= 30$ &
   N/A --- no hyperparameter is swept \\
-\midrule
+\blackrule
 \multicolumn{3}{@{}l}{\textit{Changes this run makes to the code, not to the algorithm}} \\
 environment auto-reset defect & corrected & the consumed rows are carried through the advantage and
   dropped from the batch; the only change that alters what the optimizer sees \\
-\bottomrule
+\blackrule
 \end{tabular}%
 }
 \caption{Hyperparameters of train run~1, in the style of \Cref{tab:pm-am-trainrun1-algos}. ``N/A''
@@ -8718,25 +9044,29 @@ only come from the marked knobs.
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.95cm}
->{\centering\arraybackslash}p{1.9cm}
->{\centering\arraybackslash}p{1.9cm}
->{\centering\arraybackslash}p{1.9cm}
->{\centering\arraybackslash}p{1.9cm}
->{\centering\arraybackslash}p{1.9cm}@{}}
-\toprule
+?>{\centering\arraybackslash}p{1.9cm}
+?>{\centering\arraybackslash}p{1.9cm}
+?>{\centering\arraybackslash}p{1.9cm}
+?>{\centering\arraybackslash}p{1.9cm}
+?>{\centering\arraybackslash}p{1.9cm}@{}}
+\blackrule
 \textbf{Knob} & \textbf{Arm 1} & \textbf{Arm 2} & \textbf{Arm 3} & \textbf{Arm 4} & \textbf{Arm 5} \\
 & \small(original) & \small(no RND clip) & \small(full update) & \small(shallower) & \small(all three) \\
-\midrule
+\blackrule
 policy gradient clipping, global norm & $0.5$ & $0.5$ & $0.5$ & $0.5$ & $0.5$ \\
+\greyrule
 RND predictor gradient clipping & joint & \criticalknob{none} & joint & joint & \criticalknob{none} \\
+\greyrule
 predictor update proportion & $0.25$ & $0.25$ & \criticalknob{$1.0$} & $0.25$ & \criticalknob{$1.0$} \\
+\greyrule
 predictor blocks beyond the target & $2$ & $2$ & $2$ & \criticalknob{$1$} & \criticalknob{$1$} \\
-\midrule
+\blackrule
 \multicolumn{6}{@{}l}{\textit{What each departure moves toward}} \\
 matches this project's RND & N/A & \cmark\ (no predictor clip) & \cmark\ (proportion $1.0$) &
   \cmark\ (one block deeper) & \cmark\ (all three) \\
+\greyrule
 seeds & $30$ & $30$ & $30$ & $30$ & $30$ \\
-\bottomrule
+\blackrule
 \end{tabular}
 \caption{The five arms of train run~1. Blue marks the knob each arm changes from arm~1. The
 \emph{policy} is clipped at a global norm of $0.5$ in every arm, including arms~2 and~5: what those
