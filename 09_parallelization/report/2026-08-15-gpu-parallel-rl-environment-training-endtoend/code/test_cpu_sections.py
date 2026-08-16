@@ -139,3 +139,19 @@ def test_choose_per_setting_falls_back_to_a_burst_row_when_nothing_else_exists()
              "sec_per_iteration": 0.349}]
     chosen, = c.choose_per_setting(rows, lambda r: (r["workers"], r["n_copies"]))
     assert not chosen["_sustained"]
+
+
+def test_working_set_bytes_matches_the_trainer_tensors():
+    """One copy keeps 1,583,200 bytes: parameters four times over, the batch twice, the rollout."""
+    assert c.working_set_bytes(1) == 1583200
+    assert c.working_set_bytes(64) == 64 * 1583200
+
+
+def test_best_per_total_keeps_the_better_of_two_settings_at_one_copy_count():
+    """Two worker counts can run the same copies; the figure's axis takes the better of them."""
+    rows = [{"total_copies": 3584, "env_steps_per_sec": 1.9e6, "workers": 112},
+            {"total_copies": 3584, "env_steps_per_sec": 2.1e6, "workers": 224},
+            {"total_copies": 7168, "env_steps_per_sec": 2.4e6, "workers": 224}]
+    out = c.best_per_total(rows)
+    assert [r["total_copies"] for r in out] == [3584, 7168]
+    assert out[0]["workers"] == 224

@@ -867,6 +867,78 @@ copies per worker is what drives memory and the node has a fixed 1 TB of it.
     return md
 
 
+# the trainer's own tensors, counted once so the working-set arithmetic below is checkable:
+# 59,910 parameters per copy held in four buffers (the parameters, their gradients and the two
+# optimiser moments), a flattened batch of 512 rows whose nine tensors are 143 values wide in
+# total and which is held twice (the batch and its shuffled twin), and the rollout buffers.
+PARAMS_PER_COPY = 59910
+ROWS_PER_COPY = 512
+BATCH_VALUES_PER_ROW = 143
+ROLLOUT_VALUES_PER_COPY = 9728
+BYTES_PER_VALUE = 4
+L3_BYTES_PER_SOCKET = 256 * 1024 * 1024
+CORES_PER_SOCKET = 56
+
+
+def working_set_bytes(copies):
+    """The state one worker keeps for its copies, which is what its update walks each iteration.
+
+    before: copies = 1
+    after:  4 x 59,910 + 2 x 512 x 143 + 9,728 = 395,800 values, that is 1,583,200 bytes
+    """
+    per_copy = (4 * PARAMS_PER_COPY + 2 * ROWS_PER_COPY * BATCH_VALUES_PER_ROW
+                + ROLLOUT_VALUES_PER_COPY)
+    return copies * per_copy * BYTES_PER_VALUE
+
+
+def sec_cause():
+    """Subsection: which resource ran out at the plateau, and the measurements that say so."""
+    d = plateau()
+    if not d:
+        return ""
+    tables = (contention_table(d) + memory_saturation_table(d) + memory_corun_table(d))
+    if not tables.strip():
+        return ""
+    share = L3_BYTES_PER_SOCKET / CORES_PER_SOCKET
+    md = f"""### 5.5 What ran out
+
+Three measurements, each isolating one candidate.
+
+The first is competition. The same worker, holding the same copies, was run alone on the empty
+node, then as one of 112, then as one of 224. A worker alone has the whole memory system to
+itself, so the gap between its seconds per iteration and the same worker's inside a full machine
+is what competition costs; the gap between 112 workers and 224 is what sharing a core with a
+second hardware thread costs on top of that.
+
+{contention_table(d)}The second is the memory system's own rate. Independent processes moving
+arrays far larger than any cache were run on the empty node, one to 224 of them, and their summed
+rate is what the memory system delivers.
+
+{memory_saturation_table(d)}The third puts the two together: the same stream processes measured
+while the training load ran beside them. If the training load has the memory system full, the
+stream processes get a small fraction of what they get on an idle node.
+
+{memory_corun_table(d)}The arithmetic behind all three is the size of what a worker walks. One
+copy keeps {working_set_bytes(1) / 1e6:.2f} MB of state — the parameters, their gradients, the two
+optimiser moments, the flattened batch and its shuffled twin, and the rollout buffers — and the
+update touches all of it every iteration. The last-level cache is
+{L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket shared by {CORES_PER_SOCKET} cores, that is
+{share / 1e6:.1f} MB a core. So a worker holding four copies already keeps more than its share of
+the cache, one holding 64 keeps {working_set_bytes(64) / share:.0f} times its share, and one
+holding 256 keeps {working_set_bytes(256) / share:.0f} times. From a handful of copies upward the
+update is reading from memory, not from cache, and the copies-per-worker knob is really a knob on
+how much memory traffic each core makes.
+
+The two update conventions differ by exactly that. Sixteen updates per batch reads and writes the
+parameter-side buffers sixteen times per iteration where one update per batch does it once, for
+the same 512 environment steps per copy, so it asks the memory system for about sixteen times the
+parameter traffic per environment step — which is why it is the slower convention everywhere in
+the tables above and why it runs into the ceiling at a lower setting.
+
+"""
+    return md
+
+
 def sec_cpu():
     """Section: the same work on ordinary processor cores."""
     tr_proc = cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes")
@@ -922,6 +994,7 @@ sequence, which is the same problem solved from the other end.
 """
     md += sec_correction()
     md += sec_plateau()
+    md += sec_cause()
     return md
 
 
