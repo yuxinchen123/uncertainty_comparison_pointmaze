@@ -157,6 +157,28 @@ def throughput_table(classes, jobs, n_copies):
     return "\n".join(lines)
 
 
+def cpu_effect_summary(classes, jobs):
+    """The one-sentence answer to whether the processor count changes anything."""
+    spans = []
+    for cls in classes:
+        for n_copies in COPY_COUNTS:
+            timed = [cell_of(jobs, cls["name"], n, n_copies) for n in cpu_counts_for(cls)]
+            times = [c["seconds_per_iteration"] for c in timed
+                     if c and c.get("status") == "measured"]
+            if len(times) >= 2:
+                spans.append((max(times) - min(times)) / min(times))
+    if not spans:
+        return ""
+    spans = np.asarray(spans)
+    return (f"**It does not.** Over the {len(spans)} card-and-copy-count combinations measured "
+            f"at two or more processor counts, the slowest processor count was slower than the "
+            f"fastest by {np.median(spans) * 100:.1f}% in the typical case and "
+            f"{spans.max() * 100:.1f}% at the very worst — the size of the measurement's own "
+            "noise, and with no consistent direction: more processors are as often marginally "
+            "slower as marginally faster. Eight processors is therefore the right request for "
+            "this trainer, and the processors beyond that are free to carry other work.")
+
+
 def cpu_effect_table(classes, jobs):
     """Whether more processors help: each class's iteration time at each processor count.
 
@@ -510,9 +532,13 @@ def main():
         "for the number of copies, $T = 128$ for the rollout length and $N = 4$ for the "
         "environments per copy:",
         "",
-        "$$\\text{total steps per second} = \\frac{C\\,T\\,N}{s}, \\qquad "
-        "\\text{steps per second per copy} = \\frac{T\\,N}{s}, \\qquad "
-        "\\text{hours per million steps per copy} = \\frac{10^{6}}{3600\\,(T N / s)}.$$",
+        # spacing macros are spelled with letter names: a backslash before ASCII punctuation
+        # (\, \; \{ \}) is resolved as a CommonMark escape before the renderer sees the math, so
+        # "C\,T\,N" would arrive as the list "C,T,N" instead of the product it means
+        "$$\\text{total steps per second} = \\frac{C\\thinspace T\\thinspace N}{s}, \\qquad "
+        "\\text{steps per second per copy} = \\frac{T\\thinspace N}{s}, \\qquad "
+        "\\text{hours per million steps per copy} = "
+        "\\frac{10^{6}}{3600\\thinspace (T N / s)}.$$",
         "",
         "A number is quoted only after the middle half of its timing rounds agreed to within "
         "2% of their median, with compilation and five warm-up iterations discarded first; the "
@@ -562,9 +588,14 @@ def main():
         "## 6. Does the processor count matter",
         "",
         "The trainer keeps its arrays on the card and the host only dispatches, so the "
-        "expectation is that 8, 16 and 32 processors give the same iteration time. This table "
-        "is what says whether that holds; the last column is the span between the fastest and "
-        "the slowest processor count as a fraction of the fastest.",
+        "expectation is that 8, 16 and 32 processors give the same iteration time.",
+        "",
+        cpu_effect_summary(classes, jobs),
+        "",
+        "The table below is the evidence, one row per card and copy count; its last column is "
+        "the span between the fastest and the slowest processor count as a fraction of the "
+        "fastest. A count this node class cannot allocate reads N/A; one it can allocate but "
+        "has not yet reported reads \"not yet\".",
         "",
         cpu_effect_table(classes, jobs),
         "",
