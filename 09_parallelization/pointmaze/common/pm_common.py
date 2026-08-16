@@ -79,7 +79,12 @@ class EnvConfig:
     map_name: str = "large"
     start_cell: Tuple[int, int] = (7, 1)     # (row, col), row 0 at top
     goal_cell: Tuple[int, int] = (1, 10)
-    position_noise: float = 0.25             # uniform(-x, +x) added per axis at every reset (start AND goal)
+    # uniform(-x, +x) added per axis at every reset, to both the start and the goal. Zero since
+    # 2026-08-16: every episode now begins exactly at the start cell's centre and the goal sits
+    # exactly at its own centre, so the only randomness left in an episode is the policy's own
+    # sampling. The draw is still made and still costs the same (it is multiplied by this), so
+    # setting it to zero changes what the environment does, not how fast it runs.
+    position_noise: float = 0.0
     max_episode_steps: int = 400
     continuing_task: bool = True             # True: never terminated (only truncated at the cap)
     reward_shift: float = 0.0                # added to every step's reward (-1 = ExPLORe convention)
