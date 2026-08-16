@@ -656,8 +656,8 @@ downwards. Sixteen updates per batch.
 
 The kernel profile after the round says where an iteration's remaining time sits, and one item
 stands out for the next round rather than this one. Of the rollout's 15.3 milliseconds at 4,096
-copies, **11.45 are matrix multiplications running at about 850 gigabytes per second** — a fifth
-of what the update stage's reach. The cause is structural: the rollout is 128 sequential steps and
+copies, **11.45 are matrix multiplications running at about 850 gigabytes per second** — about a
+quarter of what the update stage's multiplications reach (2,500 to 3,400 on the same card). The cause is structural: the rollout is 128 sequential steps and
 each one multiplies **four rows per copy** against that copy's whole actor weights, so the weights
 (75.6 megabytes across 4,096 copies) are re-read from memory on every step and each read serves
 almost no arithmetic. The counted floor for the whole rollout is 2.8 milliseconds against 15.3

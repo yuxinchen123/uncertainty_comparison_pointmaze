@@ -2448,7 +2448,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 
 The kernel profile names one item that neither round went after, and it is not in the update
 stage. Of the rollout's 15.3 milliseconds at 4,096 copies, **11.45 are matrix multiplications
-running at about 850 gigabytes per second** — a fifth of the rate the update stage's
+running at about 850 gigabytes per second** — about a quarter of the rate the update stage's
 multiplications reach, and the counted floor for the whole rollout is 2.8 milliseconds.
 
 The cause is structural rather than a missing optimisation. The rollout is 128 sequential

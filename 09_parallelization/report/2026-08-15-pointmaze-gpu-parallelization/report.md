@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:49 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:54 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1016,7 +1016,8 @@ was changing while it was measured, and those figures are superseded here.
 | PyTorch after round six | 2048 | 107.1 | <u>9.79</u> | 4.8 | 0.058 | 6.9 |
 | JAX | 2048 | 86.0 | **12.20** | 6.0 | 0.047 | 4.7 |
 | PyTorch before round five | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
-| PyTorch after round six | 4096 | 205.5 | **10.20** | 2.5 | 0.111 | 13.8 |
+| PyTorch after round six | 4096 | 205.5 | <u>10.20</u> | 2.5 | 0.111 | 13.8 |
+| JAX | 4096 | 168.7 | **12.43** | 3.0 | 0.092 | 9.1 |
 
 *Best aggregate rate per copy count in bold, second best underlined. The aggregate rate rises with the copy count while the rate each individual copy gets falls, so the hours column is the one that says how long a single training run actually takes. 8,192 copies is past the range this section is about and was measured only for the changed PyTorch build, to see whether the card still holds it.*
 
@@ -1417,7 +1418,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 
 The kernel profile names one item that neither round went after, and it is not in the update
 stage. Of the rollout's 15.3 milliseconds at 4,096 copies, **11.45 are matrix multiplications
-running at about 850 gigabytes per second** — a fifth of the rate the update stage's
+running at about 850 gigabytes per second** — about a quarter of the rate the update stage's
 multiplications reach, and the counted floor for the whole rollout is 2.8 milliseconds.
 
 The cause is structural rather than a missing optimisation. The rollout is 128 sequential
@@ -1450,6 +1451,7 @@ rather than attempted at the end of a round.
 | one update per batch | 4096 | 63.3 ms | 43.7 ms | 1.45 |
 | sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
 | sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.25 |
+| sixteen updates per batch | 4096 | 205.5 ms | 168.7 ms | 1.22 |
 
 The reason is not that any PyTorch program is slow. Each is timed on its real shape in the
 subsection above and reaches 72 to 100 percent of the rate a plain copy of memory gets. The reason
@@ -1462,6 +1464,16 @@ activation, then the next multiplication — and every intermediate between them
 memory and read back. The JAX trainer hands the whole iteration to a compiler that emits fewer
 programs, folding chains of element-wise work into the loops that produce and consume them, so a
 number of the intermediates PyTorch writes and re-reads are never written at all.
+
+Both trainers implement the same algorithm on the same shapes, so the bytes the algorithm itself requires are the same for both, and the distance each one sits above that figure is comparable:
+
+| | milliseconds per iteration | times the counted traffic floor |
+|---|---|---|
+| the bytes the algorithm requires, at the card's measured bandwidth | 77 | 1.00 |
+| JAX | 169 | 2.19 |
+| PyTorch | 206 | 2.67 |
+
+*4,096 copies, sixteen updates per batch. The floor counts every tensor the algorithm writes and every later read of it (`benchmarks/count_traffic.py`); it does not count intermediates a particular implementation has to materialise, which is exactly the quantity the two frameworks differ in.*
 
 Round six measured the obvious way to close that difference — having PyTorch's compiler generate
 the multiplications so that the bias and the activation fold into them as an epilogue — and the
