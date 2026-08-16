@@ -265,6 +265,45 @@ update per batch, and from 1.75-1.81x to 1.21-1.27x with sixteen. 8,192 copies a
 measured: 121.8 ms with one update per batch (29.5 GB) and 407.0 ms with sixteen (27.4 GB), on a
 94 GB card.
 
+### The same profiles, after
+
+Every measurement that chose the changes, repeated on the changed trainer.
+
+Kernel-level, one iteration at 1,024 copies with sixteen updates per batch:
+
+| | device time | multiplications | of which unvectorised |
+|---|---|---|---|
+| before | 79.58 ms | 31.06 ms | 18.80 ms |
+| after | 52.26 ms | 21.49 ms | **0.00 ms** |
+
+The unvectorised kernels are gone, and the multiplications that remain cost 9.6 ms less — which
+is more than alignment alone can explain, because the bias change also removed one library call
+per layer.
+
+Phases of one iteration at 4,096 copies, sixteen updates per batch:
+
+| phase | before | after |
+|---|---|---|
+| rollout | 16.85 ms | 15.28 ms |
+| post-rollout processing | 35.30 ms | 19.72 ms |
+| update | 239.15 ms | 169.29 ms |
+| the whole iteration as one graph | 290.58 ms | 204.52 ms |
+
+Inside one minibatch step at 4,096 copies:
+
+| part | before | after |
+|---|---|---|
+| forward | 4,637 us | 2,583 us |
+| backward | 5,797 us | 4,786 us |
+| gradient limit and Adam | 3,913 us | 2,308 us |
+| gather the minibatch | 372 us | 371 us |
+| one step | 14,720 us | 10,048 us |
+
+The forward is 44 percent cheaper, which is the bias change; the gradient limit and Adam 41
+percent, which is the separated compilation and the removed zeroing; the backward 17 percent,
+which is the removed accumulation. The post-rollout stage falls by 44 percent for the same reason
+as the forward — it is four wide passes through the same layers.
+
 ### Correctness, after all three changes
 
 Every gate run on the graphics processor, none re-scoped:
