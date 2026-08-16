@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:15 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:18 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -1337,7 +1337,7 @@ The two new forms against each other, so the choice between them is measured rat
 | 1024 | 54.06 ms | 53.26 ms | -1.5 percent | 11 of 11 | 0.98 ms |
 | 4096 | 195.19 ms | 193.77 ms | -0.7 percent | 11 of 11 | 3.92 ms |
 
-*Both sides read the gradients where they were written, so the only difference is the layout. The same expressions run over the same numbers at different addresses, and on the processor the two train to bitwise equal parameters. On the card they do not, for the reason the change exists: the multiplication library picks its kernel partly from the operand's layout, so a contiguous weight and a strided one go through different kernels, which sum the same products in a different order. One iteration from identical inputs puts the gradients 4.5e-08 apart.*
+*Both sides read the gradients where they were written, so the only difference is the layout. The same expressions run over the same numbers at different addresses, and on the processor the two train to bitwise equal parameters. On the card they do not, for the reason the change exists: the multiplication library picks its kernel partly from the operand's layout, so a contiguous weight and a strided one go through different kernels, which sum the same products in a different order. One iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.*
 
 **Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
 
@@ -1391,7 +1391,7 @@ The generated kernels are not close. The selection log has the library's multipl
 
 #### The small sizes, re-measured
 
-The trainer picks the gradient form from the copy count, so 8 to 512 copies keep the buffer and get only the shuffle change. The whole round is measured there anyway, because that is how the previous round's loss at 512 copies was found.
+The trainer picks the gradient form from the copy count, so 8 to 512 copies keep the buffer, with the gradient limit summed inside the copy, and the shuffle change. The whole round is measured there anyway, because that is how the previous round's loss at 512 copies was found. No size is slower.
 
 **Sixteen updates per batch.**
 
@@ -1410,8 +1410,14 @@ The trainer picks the gradient form from the copy count, so 8 to 512 copies keep
 
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
-| after round six | 8 | 4.6 | 0.90 | 112.1 | 0.002 | 0.2 |
-| after round six | 32 | 5.1 | 3.21 | 100.3 | 0.003 | 0.3 |
+| before round six | 8 | 4.6 | 0.89 | 111.6 | 0.002 | 0.2 |
+| after round six | 8 | 4.6 | **0.90** | 112.1 | 0.002 | 0.2 |
+| before round six | 32 | 5.1 | 3.21 | 100.2 | 0.003 | 0.3 |
+| after round six | 32 | 5.1 | **3.21** | 100.3 | 0.003 | 0.3 |
+| before round six | 128 | 6.1 | **10.74** | 83.9 | 0.003 | 0.7 |
+| after round six | 128 | 6.1 | 10.73 | 83.8 | 0.003 | 0.7 |
+| before round six | 512 | 11.2 | 23.32 | 45.5 | 0.006 | 2.1 |
+| after round six | 512 | 11.2 | **23.45** | 45.8 | 0.006 | 2.1 |
 
 #### Whether round six changed what the trainer computes
 
@@ -1428,8 +1434,8 @@ test trains the trainer for two iterations in each layout and requires exact equ
 parameter. On the card it is not, because the multiplication library picks its kernel partly from
 the operand layout: a contiguous weight and a strided one go through different kernels, which sum
 the same products in a different order. That is the change working rather than a caveat around it,
-and one iteration from identical inputs puts the gradients 4.5e-08 apart and the parameters under
-1e-05 relative.
+and one iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest
+gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.
 
 Reading the gradients where the backward pass wrote them changes the order in which the per-copy
 gradient limit adds its squares: one contiguous reduction over a row of 59,920 numbers becomes
@@ -1444,7 +1450,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the two gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
 | the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
 | the two buffer layouts, two iterations of training on the processor | bitwise equal |
-| the two buffer layouts, one iteration on the card | gradients 4.5e-08; parameters under 1e-05 relative |
+| the two buffer layouts, one iteration on the card | gradients 4.5e-08 of a largest 8.6e-01; parameters 7.8e-11 relative |
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |

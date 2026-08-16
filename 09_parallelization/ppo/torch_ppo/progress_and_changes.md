@@ -621,7 +621,8 @@ equality. On the CARD they are not bitwise equal, and the reason is the point of
 than a caveat around it: the multiplication library chooses its kernel partly from the operand's
 layout, so a contiguous weight and a strided one are multiplied by different kernels, which sum
 the same products in a different order. Measured on one iteration from identical inputs, the
-gradients differ by 4.5e-08 and the parameters by less than 1e-05 relative
+gradients differ by 4.5e-08 against a largest gradient of 8.6e-01, and the parameters after a
+step by 7.8e-11 relative
 (`tests/test_parameter_layout_gpu.py`). KEEP.
 
 The programs again, at 4,096 copies, to see how much of the strided penalty the layout recovers:

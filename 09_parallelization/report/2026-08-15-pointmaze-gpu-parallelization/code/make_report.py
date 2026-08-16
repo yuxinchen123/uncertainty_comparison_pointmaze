@@ -2286,7 +2286,7 @@ tensor. That is the largest single removable item, and it is what round five's o
             "not, for the reason the change exists: the multiplication library picks its kernel "
             "partly from the operand's layout, so a contiguous weight and a strided one go "
             "through different kernels, which sum the same products in a different order. One "
-            "iteration from identical inputs puts the gradients 4.5e-08 apart.*\n\n")
+            "iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.*\n\n")
     if gather:
         md += (
             "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
@@ -2410,9 +2410,10 @@ with the size rule replaced by the configuration's own answer.
                  r"trainbench_torch_epoch_minibatch_r6_after_styleB_small")}
     if small["after B"]:
         md += ("#### The small sizes, re-measured\n\nThe trainer picks the gradient form from the "
-               "copy count, so 8 to 512 copies keep the buffer and get only the shuffle change. "
-               "The whole round is measured there anyway, because that is how the previous "
-               "round's loss at 512 copies was found.\n\n"
+               "copy count, so 8 to 512 copies keep the buffer, with the gradient limit summed "
+               "inside the copy, and the shuffle change. The whole round is measured there "
+               "anyway, because that is how the previous round's loss at 512 copies was found. "
+               "No size is slower.\n\n"
                "**Sixteen updates per batch.**\n\n"
                + throughput_table([("before round six", small["before B"]),
                                    ("after round six", small["after B"])],
@@ -2436,8 +2437,8 @@ test trains the trainer for two iterations in each layout and requires exact equ
 parameter. On the card it is not, because the multiplication library picks its kernel partly from
 the operand layout: a contiguous weight and a strided one go through different kernels, which sum
 the same products in a different order. That is the change working rather than a caveat around it,
-and one iteration from identical inputs puts the gradients 4.5e-08 apart and the parameters under
-1e-05 relative.
+and one iteration from identical inputs puts the gradients 4.5e-08 apart, against a largest
+gradient of 8.6e-01, and the parameters after a step 7.8e-11 apart in relative terms.
 
 Reading the gradients where the backward pass wrote them changes the order in which the per-copy
 gradient limit adds its squares: one contiguous reduction over a row of 59,920 numbers becomes
@@ -2452,7 +2453,7 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 | the two gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
 | the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
 | the two buffer layouts, two iterations of training on the processor | bitwise equal |
-| the two buffer layouts, one iteration on the card | gradients 4.5e-08; parameters under 1e-05 relative |
+| the two buffer layouts, one iteration on the card | gradients 4.5e-08 of a largest 8.6e-01; parameters 7.8e-11 relative |
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
