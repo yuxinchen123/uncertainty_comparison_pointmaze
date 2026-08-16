@@ -1018,6 +1018,20 @@ def working_set_bytes(copies):
     return copies * per_copy * BYTES_PER_VALUE
 
 
+def working_set_table(copies_list=(1, 4, 16, 64, 128, 256, 512)):
+    """What a worker keeps, against the share of the last-level cache one core has."""
+    share = L3_BYTES_PER_SOCKET / CORES_PER_SOCKET
+    md = ("| copies per worker | state the worker keeps (MB) | times one core's share of the "
+          "last-level cache |\n|---|---|---|\n")
+    for c in copies_list:
+        b = working_set_bytes(c)
+        md += f"| {c} | {b / 1e6:,.1f} | {b / share:,.1f} |\n"
+    return md + (f"\n*One core's share of the last-level cache is {share / 1e6:.1f} MB "
+                 f"({L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket over {CORES_PER_SOCKET} "
+                 f"cores). At 224 workers two workers share one core, so the demand on that share "
+                 f"is twice the figure in the last column.*\n\n")
+
+
 def sec_cause():
     """Subsection: which resource ran out at the plateau, and the measurements that say so."""
     d = plateau()
@@ -1046,21 +1060,20 @@ while the training load ran beside them. If the training load has the memory sys
 stream processes get a small fraction of what they get on an idle node.
 
 {memory_corun_table(d)}The arithmetic behind all three is the size of what a worker walks. One
-copy keeps {working_set_bytes(1) / 1e6:.2f} MB of state — the parameters, their gradients, the two
-optimiser moments, the flattened batch and its shuffled twin, and the rollout buffers — and the
-update touches all of it every iteration. The last-level cache is
-{L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket shared by {CORES_PER_SOCKET} cores, that is
-{share / 1e6:.1f} MB a core. So a worker holding four copies already keeps more than its share of
-the cache, one holding 64 keeps {working_set_bytes(64) / share:.0f} times its share, and one
-holding 256 keeps {working_set_bytes(256) / share:.0f} times. From a handful of copies upward the
-update is reading from memory, not from cache, and the copies-per-worker knob is really a knob on
-how much memory traffic each core makes.
+copy keeps the parameters, their gradients, the two optimiser moments, the flattened batch and its
+shuffled twin, and the rollout buffers, and the update touches all of it every iteration. The
+last-level cache is {L3_BYTES_PER_SOCKET // (1024 * 1024)} MB per socket shared by
+{CORES_PER_SOCKET} cores, that is {share / 1e6:.1f} MB a core.
+
+{working_set_table()}From four copies upward a worker keeps more than its share of the cache, so
+the update is reading from memory rather than from cache, and the copies-per-worker knob is really
+a knob on how much memory traffic each core makes.
 
 The two update conventions differ by exactly that. Sixteen updates per batch reads and writes the
 parameter-side buffers sixteen times per iteration where one update per batch does it once, for
 the same 512 environment steps per copy, so it asks the memory system for about sixteen times the
 parameter traffic per environment step — which is why it is the slower convention everywhere in
-the tables above and why it runs into the ceiling at a lower setting.
+the tables above and why it turns over at a quarter of the copies per worker.
 
 """
     return md
