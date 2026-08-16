@@ -1849,9 +1849,37 @@ def sec_large_scale_changes():
             ("writing gradients, and<br>splitting the gradient<br>limit from the Adam step",
              r"ab_round5-gradient-C1024-styleB")]
     got = [(name, ab(pat)) for name, pat in rows]
+    # the previous round measured against its own predecessor, which is what identified the
+    # layout defect the first change fixes; it belongs here whether or not the per-change
+    # comparisons have landed
+    prior = [("1,024 copies,<br>one update per batch",
+              r"ab_round4-against-predecessor-C1024-styleA"),
+             ("1,024 copies,<br>sixteen updates per batch",
+              r"ab_round4-against-predecessor-C1024-styleB"),
+             ("4,096 copies,<br>sixteen updates per batch",
+              r"ab_round4-against-predecessor-C4096-styleB")]
+    prior_rows = [(n, ab(p)) for n, p in prior]
+    prior_md = ""
+    if any(d for _, d in prior_rows):
+        prior_md = ("### The previous round, measured where the trainer is used\n\n"
+                    "The previous round was decided at 8 to 128 copies and recorded a 1.1 percent "
+                    "loss at 512 as the single size where it was a loss. Measured against its own "
+                    "predecessor at the sizes in use, with both sides pinned to their revisions:\n"
+                    "\n| setting | before that round | after it | difference | noise floor |\n"
+                    "|---|---|---|---|---|\n")
+        for name, d in prior_rows:
+            if not d:
+                continue
+            prior_md += (f"| {name} | {d['a_ms']:.2f} ms | {d['b_ms']:.2f} ms | "
+                         f"that round {d['relative_change_percent']*-1:+.1f} percent | "
+                         f"{d['noise_floor_ms']:.2f} ms |\n")
+        prior_md += ("\nA positive number means the previous round made it slower. The 512-copy "
+                     "loss was not an isolated size but the start of a trend, and the first of "
+                     "this round's changes is its repair.\n\n")
     if not any(d for _, d in got):
-        return pending("large-copy-count changes", "the round-five paired comparisons")
-    md = """### What was changed
+        return prior_md + pending("large-copy-count changes",
+                                  "the round-five paired comparisons")
+    md = prior_md + """### What was changed
 
 Three changes, all of them removing passes over memory, none of them changing what the trainer
 computes.

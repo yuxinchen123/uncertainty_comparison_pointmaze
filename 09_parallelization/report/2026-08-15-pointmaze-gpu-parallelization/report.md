@@ -42,7 +42,7 @@ the earlier sections' conclusions do not all carry over.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 17:54 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:47 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 18:02 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -953,6 +953,18 @@ units ran at their marketed rate, 2.9 percent of the
 at this size it says only that the shapes are small, not that there is room in the arithmetic.
 
 One further measurement worth recording: the optimiser's pass over the parameters, the moments and the gradients reaches 3,540 gigabytes per second compiled and 775 uncompiled, so compiling it is worth a factor of 4.6 and there is nothing left to win inside it.
+
+### The previous round, measured where the trainer is used
+
+The previous round was decided at 8 to 128 copies and recorded a 1.1 percent loss at 512 as the single size where it was a loss. Measured against its own predecessor at the sizes in use, with both sides pinned to their revisions:
+
+| setting | before that round | after it | difference | noise floor |
+|---|---|---|---|---|
+| 1,024 copies,<br>one update per batch | 24.86 ms | 29.64 ms | that round +19.2 percent | 0.03 ms |
+| 1,024 copies,<br>sixteen updates per batch | 77.24 ms | 82.73 ms | that round +7.1 percent | 0.52 ms |
+| 4,096 copies,<br>sixteen updates per batch | 275.12 ms | 290.97 ms | that round +5.8 percent | 0.18 ms |
+
+A positive number means the previous round made it slower. The 512-copy loss was not an isolated size but the start of a trend, and the first of this round's changes is its repair.
 
 
 *PENDING — waiting on the round-five paired comparisons.*
