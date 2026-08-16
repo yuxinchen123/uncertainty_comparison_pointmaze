@@ -46,6 +46,10 @@ def all_rows(pattern, **filters):
             row["_mode"] = d.get("mode", "gpu")
             row["_style"] = d.get("style", "epoch_minibatch")
             row["_threads"] = d.get("threads")
+            # the methodology fields, absent from every file written before they were added
+            row["_iters"] = d.get("iters")
+            row["_aggregate"] = d.get("aggregate")
+            row["_file"] = p.name
             out.append(row)
     return out
 
@@ -60,10 +64,105 @@ def dedup(rows, key):
     return sorted(best.values(), key=lambda r: r[key])
 
 
+# a measurement that timed less than this many seconds of work is an opening burst: this
+# processor runs above its sustained clock for the first seconds of a load, and a benchmark that
+# adds up hundreds of processes' own rates over so short a window describes a load that never
+# existed on the machine at one time. Both effects grow with the worker count.
+SUSTAINED_SECONDS = 45.0
+DEFAULT_ITERS = 5      # what every file written before the iteration count was recorded used
+# two sets of files were measured at 150 iterations before the benchmark recorded its iteration
+# count, and their names are the only record of it: the `sustained_` and `confirm_` runs of the
+# node-comparison job (its slurm scripts pass --iters 150). Named here so those rows are read as
+# what they are rather than as five-iteration bursts.
+LONG_RUN_TAGS = ("sustained", "confirm")
+LONG_RUN_ITERS = 150
+
+
+def declared_iters(row):
+    """The iteration count a row was measured with, from the file or from the run that wrote it."""
+    if row.get("_iters") is not None:
+        return row["_iters"]
+    if any(tag in row.get("_file", "") for tag in LONG_RUN_TAGS):
+        return LONG_RUN_ITERS
+    return DEFAULT_ITERS
+
+
+def timed_seconds(row):
+    """How many seconds of work a row's measurement actually timed.
+
+    Three cases, one rule. A row from the barrier-synchronised sweep carries the length of its
+    own window. A row from the plain benchmark carries its iteration count, so the length is that
+    count times the seconds an iteration took. A row from a file written before the iteration
+    count was recorded gets the benchmark's default of five.
+    before: {"window_seconds": 92.4} / {"_iters": 150, "sec_per_iteration": 0.443} / {}
+    after:  92.4 / 66.5 / 5 x its own seconds per iteration
+    """
+    if row.get("window_seconds") is not None:
+        return row["window_seconds"]
+    return declared_iters(row) * row["sec_per_iteration"]
+
+
+def is_sustained(row):
+    """Whether a row is a settled rate rather than the opening seconds of a load."""
+    return timed_seconds(row) >= SUSTAINED_SECONDS
+
+
+def method_rank(row):
+    """How much a row's methodology is to be trusted, highest first.
+
+    Sustained beats burst, because a burst reading is inflated by tens of percent at large worker
+    counts. Within that, a rate measured over one wall-clock window shared by every worker beats
+    a sum of each worker's own rate, which assumes an overlap it does not check.
+    """
+    return (is_sustained(row), row.get("window_seconds") is not None)
+
+
+def median_row(rows):
+    """The middle row of a set of repeats by total throughput, with the spread recorded.
+
+    A median rather than the fastest: repeats of the same configuration differ by a fraction of a
+    percent when the methodology is the same, and taking the best of them would bias every number
+    upward by the size of the run-to-run noise.
+    before: three repeats at 2.10, 2.12 and 2.11 million steps per second
+    after:  the 2.11 row, carrying repeats 3 and a spread of 0.010
+    """
+    ordered = sorted(rows, key=lambda r: r["env_steps_per_sec"])
+    chosen = dict(ordered[len(ordered) // 2])
+    lo, hi = ordered[0]["env_steps_per_sec"], ordered[-1]["env_steps_per_sec"]
+    chosen["_repeats"] = len(ordered)
+    chosen["_spread"] = hi / lo - 1.0 if lo > 0 else 0.0
+    chosen["_sustained"] = is_sustained(chosen)
+    chosen["_timed_seconds"] = timed_seconds(chosen)
+    return chosen
+
+
+def choose_per_setting(rows, keyfn):
+    """One row per setting: the best methodology measured for it, and the median of its repeats.
+
+    before: for (224 workers, 16 copies) there are two five-iteration files and three
+            ninety-second ones
+    after:  one row, the median of the three ninety-second ones, marked sustained
+    """
+    groups = {}
+    for r in rows:
+        groups.setdefault(keyfn(r), []).append(r)
+    out = []
+    for key, members in groups.items():
+        best = max(method_rank(m) for m in members)
+        out.append(median_row([m for m in members if method_rank(m) == best]))
+    return out
+
+
 def cpu_train(host, mode, style="epoch_minibatch"):
-    """Processor training rows for one host, parallelisation style and update convention."""
+    """Processor training rows for one host, parallelisation style and update convention.
+
+    One row per setting, where a setting is a worker count with a copy count — not a total copy
+    count, since 112 workers of 32 copies and 224 workers of 16 are different settings that
+    happen to run the same number of copies.
+    """
     rows = [r for r in all_rows(r"trainbench_cpu_", host=host, mode=mode, style=style)]
-    return dedup(rows, "total_copies")
+    chosen = choose_per_setting(rows, lambda r: (r["workers"], r["n_copies"]))
+    return sorted(chosen, key=lambda r: (r["total_copies"], r["workers"]))
 
 
 def gpu_train(style="epoch_minibatch"):
@@ -91,13 +190,16 @@ def fig_cpu_vs_gpu():
     lowers the second — so a reader choosing a setting needs both curves.
     """
     tr_proc = cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes")
+    tr_proc_a = (cpu_train("jaguar03", "processes", "full_batch")
+                 or cpu_train("puma01", "processes", "full_batch"))
     tr_thread = cpu_train("jaguar03", "threads") or cpu_train("puma01", "threads")
     tr_gpu = gpu_train("epoch_minibatch")
     if not (tr_proc or tr_thread):
         return "the processor training measurements"
 
     fig, axes = plt.subplots(1, 2, figsize=(11.4, 4.4), dpi=160)
-    curves = [("processor, independent processes", tr_proc, C_CPU_PROC, "o", "-"),
+    curves = [("processor, independent processes, sixteen updates", tr_proc, C_CPU_PROC, "o", "-"),
+              ("processor, independent processes, one update", tr_proc_a, C_CPU_OLD, "^", "-"),
               ("processor, threads in one process", tr_thread, C_CPU_THREAD, "s", "-"),
               ("graphics processor (reference)", tr_gpu, C_GPU, "x", "--")]
     # left panel is the aggregate rate, right panel the rate one copy gets; same curves on both
@@ -327,6 +429,270 @@ def thread_verdict(host, tr_proc, tr_thread):
     return out
 
 
+def plateau():
+    """The copies-per-worker sweep, or None when that measurement has not been taken yet."""
+    hits = sorted(RESULTS.glob("*_cpu_copies_per_worker_plateau.json"))
+    return json.loads(hits[-1].read_text()) if hits else None
+
+
+def GB(mb):
+    """Megabytes as a gigabyte figure for a table cell."""
+    return f"{mb / 1024:.2f}"
+
+
+def gain(rows):
+    """Each rung's total throughput as a fraction of the rung below it.
+
+    before: rows = totals [2.0, 3.0, 3.03] million steps per second
+    after:  [None, 0.500, 0.010] — the first rung has nothing below it to gain over
+    """
+    out = [None]
+    for prev, cur in zip(rows, rows[1:]):
+        out.append(cur["env_steps_per_sec"] / prev["env_steps_per_sec"] - 1.0)
+    return out
+
+
+def plateau_rung(rows, threshold=0.02):
+    """The rung past which total throughput no longer rises: the first gain under the threshold.
+
+    Returns the rung at which the curve has flattened, that is the first one that bought less
+    than the threshold over the rung below it. None means every rung measured still gained more
+    than that, so the curve had not flattened where the sweep stopped.
+    before: totals [2.0, 3.0, 3.03, 3.04] with a threshold of 0.02
+    after:  the third rung, which gained 1% over the second
+    """
+    for row, g in zip(rows, gain(rows)):
+        if g is not None and g < threshold:
+            return row
+    return None
+
+
+def process_table(rows, caption):
+    """The independent-process table: both rates, the memory a worker held, and how it was timed.
+
+    The timing column appears only while some row is still a five-iteration measurement. Once
+    every setting has been measured over a long window the column would say the same thing on
+    every row, so it disappears on its own and the caption carries the fact instead.
+    """
+    any_burst = any(not r.get("_sustained") for r in rows)
+    head = ("| workers | copies each | total copies | seconds per iteration | "
+            "million steps per second | thousand steps per second per copy | "
+            "hours per million steps per copy | peak memory per worker (GB) |")
+    rule = "|---|---|---|---|---|---|---|---|"
+    if any_burst:
+        head += " timing |"
+        rule += "---|"
+    md = head + "\n" + rule + "\n"
+    for r in rows:
+        # a row measured before this sweep recorded no memory; "not recorded" is what the report
+        # says elsewhere for a measurement that was not taken, and a back-filled guess would be
+        # indistinguishable from a measured figure
+        mem = (GB(r["peak_rss_mb_max_worker"]) if r.get("peak_rss_mb_max_worker")
+               else "not recorded")
+        cells = (f"| {r['workers']} | {r['n_copies']} | {r['total_copies']:,} | "
+                 f"{r['sec_per_iteration']:.3f} | {M(r['env_steps_per_sec'])} | "
+                 f"{K(r['env_steps_per_sec_per_copy'])} | "
+                 f"{H(r['env_steps_per_sec_per_copy'])} | {mem} |")
+        if any_burst:
+            cells += (" sustained |" if r.get("_sustained")
+                      else f" burst, {r['_timed_seconds']:.0f}s |")
+        md += cells + "\n"
+    note = (" Rows marked burst were timed for the seconds shown, which reads the opening seconds "
+            "of the load rather than the rate a run gets; they are the measurements that have not "
+            "been retaken yet."
+            if any_burst else
+            " Every row is timed over a window of about ninety seconds, with all workers "
+            "synchronised so the rate is work the machine really did while carrying the full "
+            "load.")
+    return md + f"\n*{caption}{note}*\n\n"
+
+
+def ladder_table(rows, caption):
+    """One update convention's copies-per-worker ladder, with the memory every rung needed."""
+    if not rows:
+        return ""
+    md = ("| copies per worker | total copies | seconds per iteration | "
+          "million steps per second | thousand steps per second per copy | "
+          "hours per million steps per copy | peak memory per worker (GB) | "
+          "node memory in use (GB) |\n|---|---|---|---|---|---|---|---|\n")
+    for r in rows:
+        md += (f"| {r['n_copies']} | {r['total_copies']:,} | {r['sec_per_iteration']:.3f} | "
+               f"{M(r['env_steps_per_sec'])} | {K(r['env_steps_per_sec_per_copy'])} | "
+               f"{H(r['env_steps_per_sec_per_copy'])} | {GB(r['peak_rss_mb_max_worker'])} | "
+               f"{r['node_peak_used_gb']:,.0f} |\n")
+    return md + f"\n*{caption}*\n\n"
+
+
+def fig_cpu_plateau():
+    """The copies-per-worker ladder: what the machine delivers, what one copy gets, what it costs.
+
+    A figure of its own rather than more points on the earlier one, because every rung here was
+    timed for about a minute and the earlier sweep's points were timed for two or three seconds.
+    Drawing them as one curve would show a step at the join that is a change of measurement, not
+    a change of the machine. The third panel is memory, since copies per worker is what drives it
+    and the question of whether the curve stops because the node fills up is answered there.
+    """
+    d = plateau()
+    if not d:
+        return "the copies-per-worker sweep"
+    curves = [("one update per batch", d.get("ladder_full_batch", []), C_CPU_OLD, "^"),
+              ("sixteen updates per batch", d.get("ladder_epoch_minibatch", []), C_CPU_PROC, "o")]
+    if not any(rows for _, rows in [(a, b) for a, b, _, _ in curves]):
+        return "the copies-per-worker sweep"
+
+    fig, axes = plt.subplots(1, 3, figsize=(15.2, 4.4), dpi=160)
+    for label, rows, colour, marker in curves:
+        if not rows:
+            continue
+        x = [r["total_copies"] for r in rows]
+        axes[0].plot(x, [r["env_steps_per_sec"] / 1e6 for r in rows], "-", color=colour,
+                     linewidth=2, marker=marker, markersize=6, label=label)
+        axes[1].plot(x, [r["env_steps_per_sec_per_copy"] / 1e3 for r in rows], "-", color=colour,
+                     linewidth=2, marker=marker, markersize=6, label=label)
+        axes[2].plot(x, [r["peak_rss_mb_max_worker"] / 1024 for r in rows], "-", color=colour,
+                     linewidth=2, marker=marker, markersize=6, label=label)
+        # the rung where the curve flattened, marked so the reader sees where the answer is
+        flat = plateau_rung(rows)
+        if flat:
+            axes[0].plot([flat["total_copies"]], [flat["env_steps_per_sec"] / 1e6], "o",
+                         markersize=13, markerfacecolor="none", markeredgecolor=colour,
+                         markeredgewidth=1.6)
+    axes[0].set_ylabel("million environment steps per second")
+    axes[0].set_title("Total across all copies", fontsize=10)
+    axes[1].set_ylabel("thousand environment steps per second per copy")
+    axes[1].set_title("What one copy gets", fontsize=10)
+    axes[2].set_ylabel("gigabytes of memory per worker")
+    axes[2].set_title("What one worker holds", fontsize=10)
+    for ax in axes:
+        ax.set_xlabel("total copies on the node, 224 workers throughout (log scale)")
+        ax.set_xscale("log", base=2)
+        ax.set_yscale("log")
+        ax.legend(frameon=False, fontsize=8)
+        style_ax(ax)
+    fig.suptitle("Copies per worker on jaguar03: where total throughput stops rising", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(FIGS / "cpu_plateau.png")
+    plt.close(fig)
+    return None
+
+
+def plateau_numbers(d):
+    """Every figure the copies-per-worker passage quotes, read from the sweep's own file."""
+    out = {}
+    for style, key in [("full_batch", "ladder_full_batch"),
+                       ("epoch_minibatch", "ladder_epoch_minibatch")]:
+        rows = d.get(key, [])
+        if not rows:
+            continue
+        top = max(rows, key=lambda r: r["env_steps_per_sec"])
+        flat = plateau_rung(rows)
+        out[style] = {"rows": rows, "top": top, "flat": flat, "gains": gain(rows),
+                      "largest": rows[-1]}
+    return out
+
+
+def by_copies(rows):
+    """The rows of one sweep indexed by the copies each worker held."""
+    return {r["n_copies"]: r for r in rows}
+
+
+def contention_table(d):
+    """The same copy count run alone, one worker per core, and two workers per core.
+
+    A worker alone on the node has the whole memory system to itself, so its seconds per
+    iteration is the cost with no competition at all. The gap between that and the same worker
+    inside a full machine is what competition costs, and the gap between one worker per core and
+    two is what sharing a core costs.
+    """
+    alone = by_copies(d.get("alone_full_batch", []))
+    one = by_copies(d.get("one_core_full_batch", []))
+    full = by_copies(d.get("ladder_full_batch", []))
+    shared = sorted(set(alone) & set(one) & set(full))
+    if not shared:
+        return ""
+    md = ("| copies per worker | seconds per iteration, one worker alone | "
+          "seconds per iteration, 112 workers | seconds per iteration, 224 workers | "
+          "slowdown at 112 workers | slowdown at 224 workers | "
+          "million steps per second, 112 workers | million steps per second, 224 workers |\n"
+          "|---|---|---|---|---|---|---|---|\n")
+    for c in shared:
+        a, o, f = alone[c], one[c], full[c]
+        md += (f"| {c} | {a['sec_per_iteration']:.3f} | {o['sec_per_iteration']:.3f} | "
+               f"{f['sec_per_iteration']:.3f} | "
+               f"{o['sec_per_iteration'] / a['sec_per_iteration']:.2f}x | "
+               f"{f['sec_per_iteration'] / a['sec_per_iteration']:.2f}x | "
+               f"{M(o['env_steps_per_sec'])} | {M(f['env_steps_per_sec'])} |\n")
+    return md + ("\n*One update per batch. The slowdown columns are against the same worker "
+                 "running alone on the node.*\n\n")
+
+
+def memory_saturation_table(d):
+    """What the node's memory system delivers as more processes ask it for traffic at once."""
+    rows = d.get("memory_saturation", [])
+    if not rows:
+        return ""
+    md = ("| processes asking at once | total gigabytes per second | "
+          "gigabytes per second each | share of the rate one process gets alone |\n"
+          "|---|---|---|---|\n")
+    solo = rows[0]["gb_per_sec_per_process"]
+    for r in rows:
+        md += (f"| {r['processes']} | {r['total_gb_per_sec']:,.1f} | "
+               f"{r['gb_per_sec_per_process']:,.2f} | "
+               f"{r['gb_per_sec_per_process'] / solo:.2f} |\n")
+    return md + ("\n*Independent processes, each moving arrays far larger than any cache, run "
+                 "with nothing else on the node.*\n\n")
+
+
+def memory_corun_table(d):
+    """What a stream of memory traffic gets while the training load runs beside it."""
+    rows = d.get("memory_corun", [])
+    if len(rows) < 2:
+        return ""
+    idle = rows[0]["stream_gb_per_sec_per_process"]
+    md = ("| what else was running | gigabytes per second each stream process got | "
+          "share of the idle-node rate |\n|---|---|---|\n")
+    md += f"| nothing | {idle:,.2f} | 1.00 |\n"
+    for r in rows[1:]:
+        md += (f"| 216 training workers, {r['copies']} copies each | "
+               f"{r['stream_gb_per_sec_per_process']:,.2f} | "
+               f"{r['stream_gb_per_sec_per_process'] / idle:.2f} |\n")
+    return md + ("\n*Eight stream processes, measured over twenty seconds after the training "
+                 "load had been running for twenty-five. One update per batch.*\n\n")
+
+
+def sec_plateau():
+    """Subsection: how far the copies per worker go, and what stops them."""
+    d = plateau()
+    if not d:
+        return ""
+    n = plateau_numbers(d)
+    if not n:
+        return ""
+    md = """### 5.3 How far the copies per worker go, and what stops them
+
+The sweep above stops at 224 workers holding 16 copies each, and total throughput is still
+rising there, so it does not show the machine's ceiling. Workers cannot be added — 224 is the
+machine's logical-processor count — but each worker can hold more copies, so the ladder was
+continued on that knob alone, at 224 workers throughout, for both update conventions.
+
+Two things are different about the measurements below. Every rung times about a minute of
+continuous work rather than the two or three seconds the earlier sweep timed, because this
+processor runs above its sustained clock for the first seconds of a load and a short measurement
+reads that opening burst rather than the rate a real run gets. And every rung records the peak
+resident memory of its workers, since copies per worker is what drives memory and the node has a
+fixed 1 TB of it.
+
+"""
+    for style, caption in [("full_batch", "One update per batch, 224 independent single-thread "
+                                          "workers, each rung timed for about a minute."),
+                           ("epoch_minibatch", "Sixteen updates per batch, 224 independent "
+                                               "single-thread workers, each rung timed for about "
+                                               "a minute.")]:
+        if style in n:
+            md += ladder_table(n[style]["rows"], caption)
+    return md
+
+
 def sec_cpu():
     """Section: the same work on ordinary processor cores."""
     tr_proc = cpu_train("jaguar03", "processes") or cpu_train("puma01", "processes")
@@ -365,15 +731,8 @@ The measurements settle which is better, and the answer is not the obvious one.
 """
     md += thread_table(host)
     if tr_proc:
-        md += ("| workers | copies each | total copies | seconds per iteration | "
-               "million steps per second | thousand steps per second per copy | "
-               "hours per million steps per copy |\n|---|---|---|---|---|---|---|\n")
-        for r in tr_proc:
-            md += (f"| {r['workers']} | {r['n_copies']} | {r['total_copies']} | "
-                   f"{r['sec_per_iteration']:.3f} | {M(r['env_steps_per_sec'])} | "
-                   f"{K(r['env_steps_per_sec_per_copy'])} | "
-                   f"{H(r['env_steps_per_sec_per_copy'])} |\n")
-        md += "\n*Independent single-thread processes. Sixteen updates per batch.*\n\n"
+        md += process_table(tr_proc, "Independent single-thread processes. Sixteen updates per "
+                                     "batch.")
     md += f"""![processor against graphics processor](figures/cpu_vs_gpu.png)
 
 The two tables answer it. {thread_verdict(host, tr_proc, tr_thread)}
@@ -387,6 +746,7 @@ the optimisation work there fused those forty operations into a handful and reco
 sequence, which is the same problem solved from the other end.
 
 """
+    md += sec_plateau()
     return md
 
 
