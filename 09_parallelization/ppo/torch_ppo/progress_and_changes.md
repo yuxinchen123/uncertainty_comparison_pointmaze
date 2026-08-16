@@ -799,3 +799,59 @@ weights fit the 50-megabyte cache so the re-reads come from there (which doubles
 count, and the rollout is already partly bound by that), or generate the multiplications for these
 four-row shapes rather than calling the library's, which are clearly not tuned for them. Recorded
 here with its measurement rather than attempted at the end of a round.
+
+## A knob that could stop being applied (2026-08-16, the learning-outcome campaign)
+
+Found while preparing the campaign that compares the card's reduced-precision matrix mode against
+exact single precision (`train_runs/2026-08-16-00-50_learning_outcome_.../parity_check.md`).
+
+`PPOConfig.tf32` chooses whether the reduced-precision matrix units are used. It was applied only
+when it was ON:
+
+```python
+if cfg.tf32:
+    torch.set_float32_matmul_precision("high")
+```
+
+`torch.set_float32_matmul_precision` is process-global, so a trainer built with `tf32=False` did
+not get exact single precision — it got whatever the process had last been put in. A fresh process
+starts at `"highest"`, which is why **no earlier result in this project is affected**: every
+production configuration sets `tf32=True`, and every benchmark here runs one process per arm. But
+the first thing that builds both precisions in one process is the campaign's own precision check,
+and it would have compared a reduced-precision trainer against another reduced-precision trainer
+while reporting one of them as exact — a null result that reads exactly like the finding
+"precision does not matter".
+
+Fixed by setting the precision in both directions and asserting it took:
+
+```python
+want_precision = "high" if cfg.tf32 else "highest"
+torch.set_float32_matmul_precision(want_precision)
+assert torch.get_float32_matmul_precision() == want_precision, \
+    "the float32 matrix precision did not take"
+```
+
+Test: `tests/test_tf32_knob.py` — the two build orders in one process, and four hostile starting
+states including `"medium"`.
+
+**Evidence that the knob reaches the trainer's real path**, which is compiled and graph-captured
+and so is not the same dispatch as a bare multiplication: three iterations of the actual trainer at
+64 copies, one process per precision, comparing the parameters afterwards.
+
+| measurement | result |
+|---|---|
+| the two precisions, largest parameter difference | 3.8e-03 on a largest parameter of 7.5e-01 |
+| the same precision twice, two processes | bitwise identical |
+| a batched multiplication of the trainer's shapes against float64, reduced | 3.5e-04 relative |
+| the same, exact single precision | 3.6e-07 relative |
+
+**What exact single precision costs, at the size the trainer is used at.** Measured on the campaign
+itself, 8,192 copies, sixteen updates per batch, forty timed iterations after warm-up:
+
+| precision | seconds per iteration |
+|---|---|
+| reduced | 0.376 |
+| exact | 0.537 |
+
+so turning the reduced-precision matrix units off costs **43 percent**. The JAX trainer pays 49
+percent for the same change (0.345 to 0.512).

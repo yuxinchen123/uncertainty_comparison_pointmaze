@@ -176,3 +176,39 @@ Everything else passes: `test_jax_ppo.py`, `test_sweep_jax.py`, and the new
 - Next optimization candidates (not yet tried): donate_argnums on the TrainState in
   `_iterate` (removes a state copy per iteration), fusing the priming loop into one jit,
   jnp.compress-free minibatch gather layouts, larger N with fewer T per spec section 14.
+
+## Two processes with the same seed are not the same run (2026-08-16, the learning-outcome campaign)
+
+Found while checking that the campaign's resume is correct
+(`train_runs/2026-08-16-00-50_learning_outcome_.../parity_check.md`).
+
+`tests/test_jax_ppo.py`'s `test_same_seed_bit_identical` passes, and it is right to: two trainers
+built with the same seed in ONE process end bitwise identical. Across two PROCESSES they do not.
+Three iterations of the real trainer at 64 copies, same seed, same configuration, one process each:
+the parameters end **2.3e-05** apart. The PyTorch trainer under the same test is bitwise identical.
+
+**Cause, confirmed by probe.** The compiler benchmarks matrix-multiply algorithms when it builds and
+can choose differently in different processes. Repeating the comparison with that turned off
+(`XLA_FLAGS=--xla_gpu_autotune_level=0`) gives a difference of **exactly 0.0** — bitwise identical.
+
+| arm | largest parameter difference, two processes, three iterations |
+|---|---|
+| as shipped (algorithm benchmarking on) | 2.3e-05 |
+| `--xla_gpu_autotune_level=0` | 0.0 (bitwise) |
+
+**What it means.**
+
+- A resumed JAX run is not bit-for-bit the run it would have been. Measured on the campaign's
+  pilot: a run stopped at iteration 20 and continued to 60 diverges from an uninterrupted
+  60-iteration run — and the two also diverge BEFORE the resume point, which is what says the
+  resume is not the cause. The dynamics are chaotic, so a 2e-05 difference in a parameter becomes
+  visibly different trajectories within ten iterations (the worst copy's maze coverage differed by
+  0.15). The PyTorch resume, by contrast, is bitwise exact.
+- It does not threaten the campaign's conclusions, which are distributional over 1,024 copies per
+  learning rate, and it is **127 times smaller** than the effect being measured against it: changing
+  the matrix precision moves the same parameters by 2.9e-03.
+- It does mean a single JAX run is not a reproducible artifact the way a single PyTorch run is.
+
+Recorded rather than fixed. Turning the benchmarking off costs speed on every matrix multiplication
+in the trainer, and no result in this project rests on one JAX run being reproducible to the last
+bit. Anything that ever does should set the flag and say so.
