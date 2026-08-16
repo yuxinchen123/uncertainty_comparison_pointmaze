@@ -57,7 +57,7 @@ phase advances; per-subtask experiment logs live in each subtask's `progress_and
   actually used at, 1,024 to 4,096. Two findings before any change was made. First, the regime
   is different: at 128 copies the iteration's cost is the number of device programs it issues,
   at 1,024 and above it is the number of bytes it moves, and every individual program is
-  already at 71 to 100 percent of the bandwidth the card delivers. Second, round four is a
+  already at 72 to 100 percent of the bandwidth the card delivers. Second, round four is a
   REGRESSION at these sizes — 19.2% slower at 1,024 copies with one update per batch, 7.1% with
   sixteen, 5.8% at 4,096 with sixteen, each measured against its own predecessor revision — 
   because packing the nineteen parameter windows tightly left every copy's parameters off a
