@@ -1446,7 +1446,9 @@ def throughput_rows(pattern):
     return out
 
 
-LARGE_COPIES = [1024, 2048, 4096]
+# 8,192 is past the range asked about and was measured only for the changed PyTorch build, to
+# see whether the card still holds it; rows with no measurement are simply absent from the tables
+LARGE_COPIES = [1024, 2048, 4096, 8192]
 
 
 def large_scale_sources():
@@ -1639,7 +1641,9 @@ than the last word on that trainer.
            + "\n\n")
     md += ("*Best aggregate rate per copy count in bold, second best underlined. The aggregate "
            "rate rises with the copy count while the rate each individual copy gets falls, so the "
-           "hours column is the one that says how long a single training run actually takes.*\n\n")
+           "hours column is the one that says how long a single training run actually takes. "
+           "8,192 copies is past the range this section is about and was measured only for the "
+           "changed PyTorch build, to see whether the card still holds it.*\n\n")
     md += ("![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)\n\n")
     # the trade-off the two columns exist to show, stated with the measured numbers
     best = src["after A"] or src["before A"]
