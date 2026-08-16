@@ -42,7 +42,11 @@ FORMS = {
                               parameter_layout="copy_major"),
     "copy and measure": dict(gradient_buffer=True, fuse_copy_and_limit=True,
                              parameter_layout="copy_major"),
-    "no buffer": dict(gradient_buffer=False),
+    # every form names copy_major: this test is about where the gradients live, and the buffer's
+    # layout is a separate question with its own gate (test_parameter_layout_gpu.py). Left to the
+    # default the no-buffer form would also be parameter-major, and the two would then differ by
+    # the multiplication library picking a different kernel for a contiguous operand
+    "no buffer": dict(gradient_buffer=False, parameter_layout="copy_major"),
 }
 
 

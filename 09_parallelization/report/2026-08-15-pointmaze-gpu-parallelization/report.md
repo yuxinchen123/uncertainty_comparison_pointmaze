@@ -45,7 +45,7 @@ the earlier sections' conclusions do not all carry over.
 | <span class="unread">[End-to-end training on a dedicated processor node](#end-to-end-training-on-a-dedicated-processor-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[The best setup on each platform, at 4,096 copies or fewer](#the-best-setup-on-each-platform-at-4096-copies-or-fewer)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
 | <span class="unread">[A processor with fewer, faster cores against the 224-thread node](#a-processor-with-fewer-faster-cores-against-the-224-thread-node)</span> | 2026-08-15 21:17 PT | 2026-08-15 21:17 PT | unread |
-| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:05 PT | unread |
+| <span class="unread">[Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once)</span> | 2026-08-15 21:17 PT | 2026-08-15 22:15 PT | unread |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -961,7 +961,7 @@ that distinction, and one change kept in an earlier round on the strength of 8-t
 turned out to be a loss at 1,024 and above. Every change below is therefore measured at both ends
 of the range before it is kept.
 
-**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as these two rounds found it and 63 after their changes, against 43 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
+**The two answers in one line.** At 4,096 copies with one update per batch, the PyTorch trainer takes 90 milliseconds per iteration as these two rounds found it and 62 after their changes, against 43 for the JAX trainer. The distance is not made of any one slow program — each of PyTorch's runs at 72 to 100 percent of the rate a plain copy of memory reaches — but of how many intermediate results have to be written to memory and read back between them.
 
 ### Where an iteration's time goes as the copy count grows
 
@@ -996,34 +996,36 @@ was changing while it was measured, and those figures are superseded here.
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before round five | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
-| PyTorch after round six | 1024 | 18.1 | <u>29.01</u> | 28.3 | 0.010 | 3.8 |
+| PyTorch after round six | 1024 | 17.8 | <u>29.47</u> | 28.8 | 0.010 | 3.5 |
 | JAX | 1024 | 14.2 | **36.95** | 36.1 | 0.008 | 3.4 |
 | PyTorch before round five | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
-| PyTorch after round six | 2048 | 32.6 | <u>32.20</u> | 15.7 | 0.018 | 7.5 |
+| PyTorch after round six | 2048 | 31.8 | <u>33.01</u> | 16.1 | 0.017 | 7.0 |
 | JAX | 2048 | 23.3 | **45.01** | 22.0 | 0.013 | 6.8 |
 | PyTorch before round five | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
-| PyTorch after round six | 4096 | 63.3 | <u>33.11</u> | 8.1 | 0.034 | 14.8 |
+| PyTorch after round six | 4096 | 62.0 | <u>33.84</u> | 8.3 | 0.034 | 13.9 |
 | JAX | 4096 | 43.4 | **48.29** | 11.8 | 0.024 | 13.4 |
+| PyTorch after round six | 8192 | 119.9 | 34.98 | 4.3 | 0.065 | 27.7 |
 
 **Sixteen updates per batch.**
 
 | implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
 |---|---|---|---|---|---|---|
 | PyTorch before round five | 1024 | 82.2 | 6.38 | 6.2 | 0.045 | 3.5 |
-| PyTorch after round six | 1024 | 56.7 | <u>9.24</u> | 9.0 | 0.031 | 3.5 |
+| PyTorch after round six | 1024 | 52.8 | <u>9.93</u> | 9.7 | 0.029 | 3.3 |
 | JAX | 1024 | 47.2 | **11.11** | 10.9 | 0.026 | 2.4 |
 | PyTorch before round five | 2048 | 152.2 | 6.89 | 3.4 | 0.083 | 6.9 |
-| PyTorch after round six | 2048 | 107.1 | <u>9.79</u> | 4.8 | 0.058 | 6.9 |
+| PyTorch after round six | 2048 | 99.0 | <u>10.60</u> | 5.2 | 0.054 | 6.5 |
 | JAX | 2048 | 86.0 | **12.20** | 6.0 | 0.047 | 4.7 |
 | PyTorch before round five | 4096 | 290.6 | 7.22 | 1.8 | 0.158 | 13.8 |
-| PyTorch after round six | 4096 | 205.5 | <u>10.20</u> | 2.5 | 0.111 | 13.8 |
+| PyTorch after round six | 4096 | 190.7 | <u>10.99</u> | 2.7 | 0.103 | 12.9 |
 | JAX | 4096 | 168.7 | **12.43** | 3.0 | 0.092 | 9.1 |
+| PyTorch after round six | 8192 | 376.1 | 11.15 | 1.4 | 0.204 | 25.6 |
 
 *Best aggregate rate per copy count in bold, second best underlined. The aggregate rate rises with the copy count while the rate each individual copy gets falls, so the hours column is the one that says how long a single training run actually takes. 8,192 copies is past the range this section is about and was measured only for the changed PyTorch build, to see whether the card still holds it.*
 
 ![Throughput at 1,024 to 4,096 copies](figures/large_scale.png)
 
-The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 29.0 to 33.1 million environment steps per second, a factor of 1.14, while the rate an individual copy gets falls from 28.3 to 8.1 thousand per second, a factor of 3.5. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 6 minutes at 1,024 copies and 21 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
+The two rate columns move in opposite directions and the choice between copy counts depends on which one matters. Going from 1,024 copies to 4,096 with one update per batch raises the aggregate rate from 29.5 to 33.8 million environment steps per second, a factor of 1.15, while the rate an individual copy gets falls from 28.8 to 8.3 thousand per second, a factor of 3.5. In time: one copy reaches ten million environment steps, the budget this project's training campaign used, in 6 minutes at 1,024 copies and 20 minutes at 4,096. Four thousand copies is the right setting when the science needs many independent runs and the wall time of any one of them does not matter; a thousand is the right setting when it does.
 
 ### What limits the PyTorch trainer at 4,096 copies
 
@@ -1335,7 +1337,7 @@ The two new forms against each other, so the choice between them is measured rat
 | 1024 | 54.06 ms | 53.26 ms | -1.5 percent | 11 of 11 | 0.98 ms |
 | 4096 | 195.19 ms | 193.77 ms | -0.7 percent | 11 of 11 | 3.92 ms |
 
-*Both sides read the gradients where they were written, so the only difference is the layout. The two are bitwise identical: the same numbers at different addresses.*
+*Both sides read the gradients where they were written, so the only difference is the layout. The same expressions run over the same numbers at different addresses, and on the processor the two train to bitwise equal parameters. On the card they do not, for the reason the change exists: the multiplication library picks its kernel partly from the operand's layout, so a contiguous weight and a strided one go through different kernels, which sum the same products in a different order. One iteration from identical inputs puts the gradients 4.5e-08 apart.*
 
 **Writing the shuffled batch straight into its buffer.** Once per epoch the whole batch is permuted into a second buffer so that each of the four update steps is a contiguous slice of it. Written as `buffer.copy_(t.gather(...))` the permutation allocates a whole second copy of the batch and then copies it across. Written as `torch.gather(t, 1, ix, out=buffer)` it does not.
 
@@ -1387,6 +1389,30 @@ The generated kernels are not close. The selection log has the library's multipl
 
 **A note on how this was measured, because the first attempt measured nothing.** The first version of the probe built ONE trainer and swapped four compiled versions of its loss onto it, each compiled inside a context that set the compiler's options. All four came out bitwise identical and within 0.1 percent of each other in time — one form measured four times, not four forms agreeing. The compiler caches its work against the function being compiled and against the backend the wrapper carries, and a setting applied through a surrounding context is part of neither. The probe now gives each arm its own trainer and passes the settings as options rather than around them, and it says so out loud when two arms agree to zero. The accuracy line it already printed is what caught it.
 
+#### The small sizes, re-measured
+
+The trainer picks the gradient form from the copy count, so 8 to 512 copies keep the buffer and get only the shuffle change. The whole round is measured there anyway, because that is how the previous round's loss at 512 copies was found.
+
+**Sixteen updates per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| before round six | 8 | 8.0 | 0.52 | 64.4 | 0.004 | 0.1 |
+| after round six | 8 | 7.8 | **0.52** | 65.5 | 0.004 | 0.1 |
+| before round six | 32 | 9.0 | 1.82 | 57.0 | 0.005 | 0.3 |
+| after round six | 32 | 8.8 | **1.85** | 57.9 | 0.005 | 0.3 |
+| before round six | 128 | 12.6 | 5.22 | 40.8 | 0.007 | 0.6 |
+| after round six | 128 | 12.2 | **5.39** | 42.1 | 0.007 | 0.6 |
+| before round six | 512 | 30.5 | 8.60 | 16.8 | 0.017 | 2.0 |
+| after round six | 512 | 29.0 | **9.03** | 17.6 | 0.016 | 2.0 |
+
+**One update per batch.**
+
+| implementation | copies | milliseconds<br>per iteration | total steps<br>per second<br>(millions) | steps per second<br>per copy<br>(thousands) | hours per million<br>steps per copy | peak<br>memory (GB) |
+|---|---|---|---|---|---|---|
+| after round six | 8 | 4.6 | 0.90 | 112.1 | 0.002 | 0.2 |
+| after round six | 32 | 5.1 | 3.21 | 100.3 | 0.003 | 0.3 |
+
 #### Whether round six changed what the trainer computes
 
 One change is exactly neutral and two are not, and the two that are not are the same change to the
@@ -1396,9 +1422,14 @@ Writing the shuffled batch straight into its buffer moves the same rows in the s
 same place; nothing about the arithmetic differs, and the capture test still reports the recorded
 iteration as bitwise equal to the uncaptured one.
 
-Holding one contiguous block per parameter instead of one row per copy is **bitwise identical**:
-the same numbers at different addresses, run through the same programs. A test trains the trainer
-for two iterations in each layout and requires exact equality on every parameter.
+Holding one contiguous block per parameter instead of one row per copy runs the same expressions
+over the same numbers at different addresses. On the processor that is bitwise identical, and a
+test trains the trainer for two iterations in each layout and requires exact equality on every
+parameter. On the card it is not, because the multiplication library picks its kernel partly from
+the operand layout: a contiguous weight and a strided one go through different kernels, which sum
+the same products in a different order. That is the change working rather than a caveat around it,
+and one iteration from identical inputs puts the gradients 4.5e-08 apart and the parameters under
+1e-05 relative.
 
 Reading the gradients where the backward pass wrote them changes the order in which the per-copy
 gradient limit adds its squares: one contiguous reduction over a row of 59,920 numbers becomes
@@ -1412,7 +1443,8 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 |---|---|
 | the two gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
 | the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
-| the two buffer layouts, two iterations of training | bitwise equal |
+| the two buffer layouts, two iterations of training on the processor | bitwise equal |
+| the two buffer layouts, one iteration on the card | gradients 4.5e-08; parameters under 1e-05 relative |
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
@@ -1450,12 +1482,12 @@ rather than attempted at the end of a round.
 
 | update convention | copies | PyTorch | JAX | ratio |
 |---|---|---|---|---|
-| one update per batch | 1024 | 18.1 ms | 14.2 ms | 1.27 |
-| one update per batch | 2048 | 32.6 ms | 23.3 ms | 1.40 |
-| one update per batch | 4096 | 63.3 ms | 43.4 ms | 1.46 |
-| sixteen updates per batch | 1024 | 56.7 ms | 47.2 ms | 1.20 |
-| sixteen updates per batch | 2048 | 107.1 ms | 86.0 ms | 1.25 |
-| sixteen updates per batch | 4096 | 205.5 ms | 168.7 ms | 1.22 |
+| one update per batch | 1024 | 17.8 ms | 14.2 ms | 1.25 |
+| one update per batch | 2048 | 31.8 ms | 23.3 ms | 1.36 |
+| one update per batch | 4096 | 62.0 ms | 43.4 ms | 1.43 |
+| sixteen updates per batch | 1024 | 52.8 ms | 47.2 ms | 1.12 |
+| sixteen updates per batch | 2048 | 99.0 ms | 86.0 ms | 1.15 |
+| sixteen updates per batch | 4096 | 190.7 ms | 168.7 ms | 1.13 |
 
 The reason is not that any PyTorch program is slow. Each is timed on its real shape in the
 subsection above and reaches 72 to 100 percent of the rate a plain copy of memory gets. The reason
@@ -1475,7 +1507,7 @@ Both trainers implement the same algorithm on the same shapes, so the bytes the 
 |---|---|---|
 | the bytes the algorithm requires, at the card's measured bandwidth | 77 | 1.00 |
 | JAX | 169 | 2.19 |
-| PyTorch | 206 | 2.67 |
+| PyTorch | 191 | 2.48 |
 
 *4,096 copies, sixteen updates per batch. The floor counts every tensor the algorithm writes and every later read of it (`benchmarks/count_traffic.py`); it does not count intermediates a particular implementation has to materialise, which is exactly the quantity the two frameworks differ in.*
 

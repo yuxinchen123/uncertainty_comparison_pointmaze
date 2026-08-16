@@ -614,10 +614,15 @@ numbers per copy in total) and none of them is a multiplication operand.
 | 1,024 | 54.06 ms | 53.26 ms | **-1.49%** | 11 of 11 | 0.98 ms |
 | 4,096 | 195.19 ms | 193.77 ms | **-0.73%** | 11 of 11 | 3.92 ms |
 
-Both sides read the gradients where they were written, so the only difference is the layout.
-**Bitwise identical**: the same numbers at different addresses, run through the same programs, and
-a test trains the trainer for two iterations in each layout and requires exact equality on every
-parameter. KEEP.
+Both sides read the gradients where they were written, so the only difference is the layout. The
+same expressions run over the same numbers at different addresses, and on the PROCESSOR the two
+train to bitwise equal parameters — a test runs two iterations in each layout and requires exact
+equality. On the CARD they are not bitwise equal, and the reason is the point of the change rather
+than a caveat around it: the multiplication library chooses its kernel partly from the operand's
+layout, so a contiguous weight and a strided one are multiplied by different kernels, which sum
+the same products in a different order. Measured on one iteration from identical inputs, the
+gradients differ by 4.5e-08 and the parameters by less than 1e-05 relative
+(`tests/test_parameter_layout_gpu.py`). KEEP.
 
 The programs again, at 4,096 copies, to see how much of the strided penalty the layout recovers:
 

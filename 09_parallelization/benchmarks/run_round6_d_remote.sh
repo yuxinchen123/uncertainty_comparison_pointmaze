@@ -19,6 +19,8 @@ run () {  # run <logname> <working dir> <one command string>
 
 # the gradient-form gate compared the flat buffer, which the three forms no longer lay out the
 # same way; it now compares the parameters, which is what has to agree
-run p1_gradient_form_gate "$W/ppo/torch_ppo" "$PYT tests/test_gradient_form_gpu.py"
+run p1_gradient_form_gate "$W/ppo/torch_ppo" "\
+  $PYT tests/test_gradient_form_gpu.py; \
+  $PYT tests/test_parameter_layout_gpu.py"
 
 echo "=== $(date -Is) BATCH D COMPLETE" >> "$LOGS/driver.log"

@@ -2281,8 +2281,12 @@ tensor. That is the largest single removable item, and it is what round five's o
             "of them is a multiplication operand.\n\n"
             + paired_table(layout, "one block per parameter") + "\n\n"
             "*Both sides read the gradients where they were written, so the only difference is "
-            "the layout. The two are bitwise identical: the same numbers at different "
-            "addresses.*\n\n")
+            "the layout. The same expressions run over the same numbers at different addresses, "
+            "and on the processor the two train to bitwise equal parameters. On the card they do "
+            "not, for the reason the change exists: the multiplication library picks its kernel "
+            "partly from the operand's layout, so a contiguous weight and a strided one go "
+            "through different kernels, which sum the same products in a different order. One "
+            "iteration from identical inputs puts the gradients 4.5e-08 apart.*\n\n")
     if gather:
         md += (
             "**Writing the shuffled batch straight into its buffer.** Once per epoch the whole "
@@ -2426,9 +2430,14 @@ Writing the shuffled batch straight into its buffer moves the same rows in the s
 same place; nothing about the arithmetic differs, and the capture test still reports the recorded
 iteration as bitwise equal to the uncaptured one.
 
-Holding one contiguous block per parameter instead of one row per copy is **bitwise identical**:
-the same numbers at different addresses, run through the same programs. A test trains the trainer
-for two iterations in each layout and requires exact equality on every parameter.
+Holding one contiguous block per parameter instead of one row per copy runs the same expressions
+over the same numbers at different addresses. On the processor that is bitwise identical, and a
+test trains the trainer for two iterations in each layout and requires exact equality on every
+parameter. On the card it is not, because the multiplication library picks its kernel partly from
+the operand layout: a contiguous weight and a strided one go through different kernels, which sum
+the same products in a different order. That is the change working rather than a caveat around it,
+and one iteration from identical inputs puts the gradients 4.5e-08 apart and the parameters under
+1e-05 relative.
 
 Reading the gradients where the backward pass wrote them changes the order in which the per-copy
 gradient limit adds its squares: one contiguous reduction over a row of 59,920 numbers becomes
@@ -2442,7 +2451,8 @@ forms land 3.0e-8 apart, which is 2.9e-7 of the largest parameter.
 |---|---|
 | the two gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
 | the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
-| the two buffer layouts, two iterations of training | bitwise equal |
+| the two buffer layouts, two iterations of training on the processor | bitwise equal |
+| the two buffer layouts, one iteration on the card | gradients 4.5e-08; parameters under 1e-05 relative |
 | the recorded iteration against the uncaptured one, both update conventions | 0.000e+00 |
 | the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
 | six learning-rate-sweep gates | all pass |
