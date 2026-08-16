@@ -22,7 +22,7 @@ Goal metric (speed): training iterations/second on the serval05 H100
 | 14 | ROUND 5 (J2). The ceiling analysis's headline item: hold every parameter in ONE array [copies, parameters per copy] instead of twenty-one named tensors, so the clip is one reduction and Adam a handful of elementwise operations, with the array cut back into named tensors before each forward pass (`flat_params`). | **Size-dependent, and it reverses.** Synchronised, paired: **-5.5% at 8 copies** (7.97 -> 7.53 ms, floor 0.07), within noise at 32, and **+14.4% SLOWER at 128 copies** (13.20 -> 15.11 ms, floor 0.26). The cause is that a parameter's slice of a [copies, parameters] array is strided, so cutting it out is a real copy: at 128 copies the sixteen unpacks per update move about a gigabyte, which costs more than the twenty-one saved kernel launches. Accuracy: the loss is BIT-IDENTICAL and, repeated in double precision, the gradient agrees to 4.2e-16 — the two forms compute the same function, and the single-precision difference is the backward pass accumulating in a different order. | REVERT the default (`flat_params=False`). The flag and its test stay so the 8-copy gain is available and the measurement is reproducible |
 | 15 | ROUND 5 (J3). Re-sweep the rollout scan's unroll factor, which round 2 set to 4 on a measurement that could not separate 4 from 8. | Unroll 16 beats 4 in **11 of 11 paired rounds at every size**: **-1.2% / -3.0% / -3.2%** at 8 / 32 / 128 copies (paired differences +0.08 / +0.30 / +0.39 ms against floors of 0.12 / 0.21 / 0.15). Unroll 32 beats 16 at 8 copies (**-2.4%**, 11 of 11) but LOSES at 32 and 128 (0 of 11 and 1 of 11), because one rollout step does more work the more copies there are. Accuracy: unroll is a compiler instruction, not an arithmetic change, and on the default hoisted path the parameters after one iteration are **bit-identical** at 4, 16 and 32. With the hoist turned OFF the in-scan critic and log-probability fuse differently at 32 (4 against 32 deviates 3.87e-04; 4 against 16 stays exact), so 32 is taken only where it is bit-neutral. | KEEP, choosing by copy count: 32 at 8 copies or fewer with the hoist on, 16 otherwise — every configuration still computes exactly what it did before |
 | 16 | ROUND 5 (J4), measurement method. The verdict rule inherited from round 4 compares two medians against the worst spread the SAME version shows between rounds. That throws away the pairing the design already provides: the two versions are timed in the same round on the same machine, so whatever drift moves one moves the other. | On the unroll change the median-against-spread rule returned "within noise" at all three sizes (-1.3% / -3.3% / -2.8% against floors of 0.11 / 0.73 / 0.47 ms), while the round-by-round differences were positive in **11 of 11 rounds at every size** — a sign test at p = 0.001. The effect was real and the statistic was hiding it. | KEEP the paired statistic; report both it and the floor |
-| 17 | ROUND 5, inherited. The round-two rollout-hoist gate `test_hoist_equivalence.py` FAILS on the merged trainer BEFORE any round-five change: worst relative field deviation 2.62e-05 against its own 1e-5 threshold, verified by stashing every round-five edit. It is not caused by this round's work, and the unroll change does not affect it (the hoist comparison measures 2.44e-04 on parameters at unroll 4, 16 and 32 alike). | Not measured further — outside this round's scope. | REPORT to the parent session; the gate needs its threshold re-derived or the hoist re-examined |
+| 17 | ROUND 5, inherited. TWO gates fail on the merged trainer BEFORE any round-five change, both verified by stashing every round-five edit: `test_hoist_equivalence.py` (worst relative field deviation 2.62e-05 against its own 1e-5 threshold) and `test_forward_fixture.py` (`act_mean` at 7.80e-05 against 1e-5, after regenerating the fixture file, which was absent from the machine). Neither is caused by this round's work; the unroll change does not affect the hoist comparison, which measures 2.44e-04 on parameters at unroll 4, 16 and 32 alike. | Not investigated further — outside this round's scope. | REPORT to the parent session; both gates need their thresholds re-derived or the underlying agreement re-examined |
 
 ## Round 4 summary: what the two parity features cost
 
@@ -44,6 +44,7 @@ there; in JAX the mapped-over-copies structure makes the same thing free from th
 | uniform baseline, pipelined (ms) | 6.90 | 11.93 | 25.16 | 81.78 |
 | full parity configuration (ms) | 6.86 | 11.93 | 25.18 | 81.70 |
 | noise floor (ms) | 0.06 | 0.10 | 0.33 | 1.09 |
+| 18 | ROUND 5 (J6). Unroll the SIXTEEN-STEP UPDATE scan, which had never been unrolled — the profile put 62% of the iteration in the update stage, so the loop that runs it sixteen times was the obvious next place to look. Two steps per loop body gives the compiler one step's optimizer and the next step's gradient to overlap. | The largest single gain of the round: **-3.6% / -4.2% / -8.5%** at 8 / 32 / 128 copies synchronised (13.11 -> 12.00 ms at 128, paired difference +1.11 ms against a 0.14 ms floor), **11 of 11 paired rounds at every size**. Unroll 4 is NOT better than 2 (slower or mixed at every size, 0 to 3 rounds of 11). Accuracy: unlike the rollout scan this is not bit-neutral — one update stage differs by **3.6e-07 absolute** (6.8e-05 relative, inflated by tensors that start at zero) — but the SAME update in double precision agrees to **3.7e-16**, so the two compute the same function and single precision is merely accumulating in a different order. The cross-framework forward fixture is unaffected: it compares forward passes, which the update scan does not touch. | KEEP at 2 |
 
 ## Round 5 summary: where the iteration's time actually goes, and what moved it
 
@@ -55,7 +56,7 @@ in the JAX trainer — the sixteen minibatches are gathered once before the upda
 step, and the sixteen optimizer steps already run as one `lax.scan` — which is why the analysis's
 predictions had to be checked against this code before any of them were acted on.
 
-Where a 13.45 ms iteration goes at 128 copies:
+Where a 13.45 ms iteration went at 128 copies, before this round's changes:
 
 | stage | milliseconds | share of the iteration |
 |---|---|---|
@@ -65,40 +66,62 @@ Where a 13.45 ms iteration goes at 128 copies:
 | gradient clip | 0.80 | 6.0% |
 | optimizer | 1.77 | 13.2% |
 
-The clip and the optimizer together are 19% — worth attacking, but not the dominant cost, and
-the flat buffer did not deliver them. It is **faster at 8 copies and slower at 128**, because a
-parameter's slice of a [copies, parameters] array is strided, so cutting it back out is a real
-copy: at 128 copies the sixteen unpacks per update move about a gigabyte, which costs more than
-the twenty-one kernel launches it saves. The prediction was right about the mechanism and wrong
-about the sign at the size that matters.
+The flat parameter buffer, the analysis's headline item, was **rejected**. It is faster at 8
+copies and 14.4% SLOWER at 128, because a parameter's slice of a [copies, parameters] array is
+strided, so cutting it back out is a real copy: at 128 copies the sixteen unpacks per update move
+about a gigabyte, which costs more than the twenty-one kernel launches it saves. The prediction
+was right about the mechanism and wrong about the sign at the size that matters.
 
-What did move the iteration was a knob round 2 had already looked at and left at 4 because its
-measurement could not separate 4 from 8: the rollout scan's unroll factor. The gain is small per
-size but completely consistent — every size, both timing modes, 11 of 11 paired rounds.
+What did move the iteration was neither of the things the analysis pointed at. Both kept changes
+are unroll factors on the two scans, and the larger one is on the scan nobody had looked at:
+
+1. **The rollout scan**, which round 2 left at 4 because its measurement could not separate 4
+   from 8. Sixteen is better at every size, and 32 better still at 8 copies.
+2. **The sixteen-step update scan**, which had never been unrolled at all. The profile put 62%
+   of the iteration in the update stage, and emitting two steps per loop body — giving the
+   compiler one step's optimizer and the next step's gradient to overlap — is the single largest
+   gain of the round, worth 8.5% at 128 copies on its own.
+
+Together, against the round-4 configuration, on the same machine in the same process:
 
 | measurement | C=8 | C=32 | C=128 |
 |---|---|---|---|
-| previous default (unroll 4), synchronised (ms) | 8.03 | 9.78 | 13.43 |
-| round 5, synchronised (ms) | 7.87 | 9.48 | 13.00 |
-| previous default (unroll 4), pipelined (ms) | 6.85 | 8.44 | 11.92 |
-| round 5, pipelined (ms) | **6.52** | **8.14** | **11.56** |
-| change, pipelined | -4.8% | -3.6% | -3.1% |
-| noise floor, pipelined (ms) | 0.06 | 0.04 | 0.06 |
-| rounds favouring round 5 | 11/11 | 11/11 | 11/11 |
+| round 4, synchronised (ms) | 7.97 | 9.73 | 13.26 |
+| round 5, synchronised (ms) | **7.35** | **9.00** | **11.97** |
+| change, synchronised | -7.8% | -7.5% | -9.7% |
+| noise floor, synchronised (ms) | 0.20 | 0.31 | 0.61 |
+| round 4, pipelined (ms) | 6.87 | 8.44 | 11.99 |
+| round 5, pipelined (ms) | **5.97** | **7.63** | **10.55** |
+| change, pipelined | -13.0% | -9.6% | -12.1% |
+| noise floor, pipelined (ms) | 0.07 | 0.04 | 0.07 |
+| rounds favouring round 5, either mode | 11/11 | 11/11 | 11/11 |
+
+One update per batch (style A), which has no update scan and so gains only from the rollout,
+synchronised: 5.50 -> 5.29, 5.88 -> 5.69 and 6.57 -> 6.32 ms at 8 / 32 / 128 copies.
 
 The methodological finding is worth as much as the speed. The verdict rule inherited from round 4
 compares two medians against the largest spread the SAME version shows across rounds, and by that
-rule this change was "within noise" at all three sizes. But the two versions are timed in the same
-round on the same machine, so the drift that moves one moves the other: comparing them round by
-round, the change won every round at every size. The statistic was hiding a real effect, and it
-has been replaced with the paired one.
+rule the rollout-unroll change was "within noise" at all three sizes. But the two versions are
+timed in the same round on the same machine, so the drift that moves one moves the other:
+comparing them round by round, the change won every round at every size. The statistic was hiding
+a real effect, and it has been replaced with the paired one.
 
-Against the analysis's floors, the 128-copy iteration is now 11.56 ms pipelined against a
-6.55 ms sum of the same matmuls measured in isolation — **1.77 times the matrix-work floor**,
-from 1.82 before. The remaining distance is not arithmetic: the gradients alone are 5.79 ms
-against roughly 0.35 ms of arithmetic at achievable rates, so the update is running about
-sixteen times above its arithmetic bound and is limited by how many separate operations the
-iteration issues, exactly as the analysis concluded.
+Accuracy. The rollout unroll is **bit-identical** — unrolling is an instruction about how many
+copies of the loop body to emit, not a change to the arithmetic — and it is taken to 32 only where
+that holds, so every configuration computes exactly what it did before. The update-scan unroll is
+NOT bit-identical: it lets the compiler fuse across steps, so float32 accumulates in a different
+order and one update stage lands 3.6e-07 away. That it is nonetheless the SAME function was
+established the only way that settles such a question, by repeating the comparison in double
+precision, where the two agree to 3.7e-16.
+
+Against the analysis's floors, the 128-copy iteration is now 10.55 ms pipelined against a 6.55 ms
+sum of the same matmuls measured in isolation — **1.61 times the matrix-work floor**, from 1.83
+before. The remaining distance is not arithmetic: the sixteen gradients alone were 5.79 ms against
+roughly 0.35 ms of arithmetic at achievable rates, so the update runs about sixteen times above
+its arithmetic bound and is limited by how many separate operations the iteration issues, exactly
+as the analysis concluded. Both of this round's gains came from making the compiler emit fewer,
+longer-running programs rather than from doing less arithmetic, which is what that diagnosis
+predicts should work.
 
 ### Throughput of the trainer as it now stands
 
@@ -108,17 +131,37 @@ last column restates the per-copy rate as the time one copy would need for a mil
 
 | timing mode | copies | seconds per<br>iteration | total steps per<br>second (millions) | steps per second<br>per copy (thousands) | hours per million<br>steps per copy |
 |---|---|---|---|---|---|
-| synchronised | 8 | 0.00784 | 0.522 | 65.28 | 0.0043 |
-| synchronised | 32 | 0.00941 | 1.742 | 54.43 | 0.0051 |
-| synchronised | 128 | 0.01271 | 5.155 | 40.27 | 0.0069 |
-| pipelined | 8 | 0.00650 | 0.630 | 78.74 | 0.0035 |
-| pipelined | 32 | 0.00804 | 2.037 | 63.67 | 0.0044 |
-| pipelined | 128 | 0.01154 | 5.681 | 44.38 | 0.0063 |
+| synchronised | 8 | 0.00765 | 0.535 | 66.93 | 0.0042 |
+| synchronised | 32 | 0.00906 | 1.809 | 56.54 | 0.0049 |
+| synchronised | 128 | 0.01198 | 5.472 | 42.75 | 0.0065 |
+| pipelined | 8 | 0.00624 | 0.656 | 81.99 | 0.0034 |
+| pipelined | 32 | 0.00782 | 2.096 | 65.49 | 0.0042 |
+| pipelined | 128 | 0.01073 | 6.107 | 47.71 | 0.0058 |
 
-Going from 8 to 128 copies multiplies the total rate by 9.0 (pipelined) while the rate each
-copy gets falls to 56% of its 8-copy value — the usual trade of per-copy latency for aggregate
-throughput, and the reason the copy count is chosen from how many runs are wanted rather than
-from how fast one run should be.
+Going from 8 to 128 copies multiplies the total rate by 9.3 (pipelined) while the rate each copy
+gets falls to 58% of its 8-copy value — the usual trade of per-copy latency for aggregate
+throughput, and the reason the copy count is chosen from how many runs are wanted rather than from
+how fast one run should be.
+
+### Two inherited gates fail, and neither is caused by this round
+
+Both were verified by stashing every round-five edit and re-running:
+
+1. `test_hoist_equivalence.py` — worst relative field deviation 2.62e-05 against its own 1e-5
+   threshold. The unroll change does not affect it (the hoist comparison measures 2.44e-04 on
+   parameters at unroll 4, 16 and 32 alike).
+2. `test_forward_fixture.py` — fails on `act_mean` at **7.80e-05** relative against a 1e-5 gate,
+   comparing the JAX forward against a fixture dumped from the PyTorch twin. The fixture had to be
+   regenerated because the file it reads was absent from the machine, and it fails identically
+   with and without this round's changes. Worth the parent session's attention: this file's own
+   notes record that quantity historically agreeing to 8.6e-07 under a mixed tolerance, and the
+   actor head it comes from is the gain-0.01 layer whose outputs sit near 1e-3, where a pure
+   relative measure is inflated by float32 accumulation noise — so the failure may be the gate's
+   form rather than a real divergence, but the ninety-fold move from the recorded value is not
+   explained by that alone.
+
+Everything else passes: `test_jax_ppo.py`, `test_sweep_jax.py`, and the new
+`test_flat_params_equivalence.py`.
 
 ## Notes
 

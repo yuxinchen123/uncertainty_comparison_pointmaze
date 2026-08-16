@@ -12,6 +12,11 @@ harness serves every round-five change:
 
   python bench_jax_change.py --knob flat_params --off False --on True --copies 8 32 128
 
+Several knobs at once, for comparing whole configurations, by naming the knob "set":
+
+  python bench_jax_change.py --knob set --off scan_unroll=4,update_unroll=1 \
+                                        --on  scan_unroll=0,update_unroll=2
+
 Both timing modes are reported by running it twice (--timing sync, --timing pipelined); they
 measure different things and are never compared against each other.
 """
@@ -29,7 +34,7 @@ RESULTS = Path(__file__).resolve().parent / "results"
 
 
 def as_value(text):
-    """A command-line knob value as the python value it names."""
+    """A command-line knob value as the python value it names (strings pass through)."""
     if text in ("True", "False"):
         return text == "True"
     try:
@@ -38,11 +43,24 @@ def as_value(text):
         return text
 
 
+def as_settings(knob, value):
+    """One arm's config fields, from either the single-knob or the several-knob form.
+
+    before: knob "scan_unroll", value 4            -> {"scan_unroll": 4}
+    before: knob "set", value "scan_unroll=4,update_unroll=1"
+    after:  {"scan_unroll": 4, "update_unroll": 1}
+    """
+    if knob != "set":
+        return {knob: value}
+    return {part.split("=")[0]: as_value(part.split("=")[1])
+            for part in str(value).split(",")}
+
+
 def build(knob, value, total_copies, style):
-    """A trainer and its primed state, with one config field set to the given value."""
+    """A trainer and its primed state, with one or several config fields set."""
     import jax
     from jax_ppo_rnd import PPOConfig, JaxPPORND
-    cfg = PPOConfig(n_copies=total_copies, update_style=style, **{knob: value})
+    cfg = PPOConfig(n_copies=total_copies, update_style=style, **as_settings(knob, value))
     trainer = JaxPPORND(cfg)
     state = trainer.init_state()
     state = trainer.prime_obs_rms(state, jax.random.PRNGKey(0))

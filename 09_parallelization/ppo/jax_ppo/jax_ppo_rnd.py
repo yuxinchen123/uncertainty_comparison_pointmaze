@@ -72,8 +72,14 @@ class PPOConfig:
     scan_unroll: int = 0             # unroll factor for the rollout scan; 0 picks by copy count
                                      # (round 5, J5): 32 at 8 copies, 16 above, each winning
                                      # 11 of 11 paired rounds against the previous value of 4
-    update_unroll: int = 1           # unroll factor for the sixteen-step update scan (round 5,
-                                     # J6); 1 leaves the scan as a loop over one body
+    update_unroll: int = 2           # unroll factor for the sixteen-step update scan (round 5,
+                                     # J6): 2 emits two steps per loop body, which gives the
+                                     # compiler one step's optimizer and the next step's
+                                     # gradient to overlap. 4 is not better than 2. Unlike the
+                                     # rollout scan this is NOT bit-neutral — it changes the
+                                     # order float32 accumulates in — but the same update in
+                                     # double precision agrees to 3.7e-16, so it computes the
+                                     # same function; single precision differs by 3.6e-07
     batch_stats_f32: bool = False    # reduce batch mean/variance in float32 before promoting
                                      # (round 2, J5) — changes the last bits of the statistics,
                                      # so it also breaks bit-agreement with the torch twin
