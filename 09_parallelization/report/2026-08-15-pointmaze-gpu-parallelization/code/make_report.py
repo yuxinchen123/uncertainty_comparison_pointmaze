@@ -648,9 +648,13 @@ baseline, one change, measure, keep or revert, write a row:
 | Round 1 | build everything: exact GPU environments in PyTorch, fused CUDA and JAX; the batched multi-copy PPO+RND trainer in PyTorch and JAX; end-to-end capture | 777 -> 36.6 ms per training iteration at 128 copies |
 | Round 2 | improve on the finished system, with a measurement protocol that can tell a small change from drift | 36.8 -> 20.2 ms, a further 1.8x |
 | Round 3 | new capability: train copy groups at DIFFERENT learning rates in one run | a sweep costs 1.0% more than a uniform run of the same size |
+| Round 4 | close the distance to the JAX trainer at 8 to 128 copies | 20.4 -> 16.3 ms at 128 copies, and a loss at 512 that round 5 traced |
+| Round 5 | re-open the question at the copy counts the trainer is used at, 1,024 to 4,096 | the limit changes from the number of device programs to memory traffic, and the previous round's loss turns out to be a regression of up to 19 percent there |
 
 Reading order: what was built and why it is correct, then the module-by-module numbers, then
-what each round changed, then the training campaign and the sweep.
+what each round changed, then the training campaign and the sweep. The last section is the
+newest and stands somewhat apart: it is about the sizes the trainer is actually run at, where
+the earlier sections' conclusions do not all carry over.
 """
 
 

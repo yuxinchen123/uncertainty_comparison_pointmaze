@@ -13,9 +13,13 @@ baseline, one change, measure, keep or revert, write a row:
 | Round 1 | build everything: exact GPU environments in PyTorch, fused CUDA and JAX; the batched multi-copy PPO+RND trainer in PyTorch and JAX; end-to-end capture | 777 -> 36.6 ms per training iteration at 128 copies |
 | Round 2 | improve on the finished system, with a measurement protocol that can tell a small change from drift | 36.8 -> 20.2 ms, a further 1.8x |
 | Round 3 | new capability: train copy groups at DIFFERENT learning rates in one run | a sweep costs 1.0% more than a uniform run of the same size |
+| Round 4 | close the distance to the JAX trainer at 8 to 128 copies | 20.4 -> 16.3 ms at 128 copies, and a loss at 512 that round 5 traced |
+| Round 5 | re-open the question at the copy counts the trainer is used at, 1,024 to 4,096 | the limit changes from the number of device programs to memory traffic, and the previous round's loss turns out to be a regression of up to 19 percent there |
 
 Reading order: what was built and why it is correct, then the module-by-module numbers, then
-what each round changed, then the training campaign and the sweep.
+what each round changed, then the training campaign and the sweep. The last section is the
+newest and stands somewhat apart: it is about the sizes the trainer is actually run at, where
+the earlier sections' conclusions do not all carry over.
 
 ## Contents
 
@@ -38,7 +42,7 @@ what each round changed, then the training campaign and the sweep.
 | [Which implementation to use](#which-implementation-to-use) | 2026-08-15 15:46 PT | 2026-08-15 15:57 PT |
 | [Feature parity between the two trainers](#feature-parity-between-the-two-trainers) | 2026-08-15 15:46 PT | 2026-08-15 15:46 PT |
 | [Round four — closing the distance between the two trainers](#round-four-closing-the-distance-between-the-two-trainers) | 2026-08-15 15:57 PT | 2026-08-15 15:57 PT |
-| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:16 PT |
+| [Training a thousand to four thousand copies at once](#training-a-thousand-to-four-thousand-copies-at-once) | 2026-08-15 17:02 PT | 2026-08-15 17:20 PT |
 
 *Times are when a section's text first appeared in this document and when it last changed, taken from the document's version history. A section whose numbers were re-measured shows a later change time. All times are Pacific (PT); the machines that produced them run on Eastern Time and the values are converted for display.*
 
@@ -857,6 +861,7 @@ same trainer with this round's changes; the JAX trainer is unchanged by this rou
 | PyTorch before | 1024 | 29.6 | 17.71 | 17.3 | 0.016 | 3.8 |
 | JAX | 1024 | 14.2 | **36.81** | 35.9 | 0.008 | 3.4 |
 | PyTorch before | 2048 | 48.2 | 21.74 | 10.6 | 0.026 | 7.5 |
+| JAX | 2048 | 23.2 | **45.20** | 22.1 | 0.013 | 6.8 |
 | PyTorch before | 4096 | 90.4 | 23.21 | 5.7 | 0.049 | 14.8 |
 
 **Sixteen updates per batch.**
