@@ -763,6 +763,28 @@ change is paid for sixteen times an iteration, and the distance falls from about
 1.13x; with one update per batch each is paid for once, and the distance is essentially where it
 was.
 
+### Correctness, on the code as the round leaves it
+
+Every gate, run on the graphics card against the shipped configuration. Twenty-two passes, none
+re-scoped, none failing.
+
+| gate | result |
+|---|---|
+| the three gradient forms, one step from identical inputs | 3.0e-08 absolute, 2.9e-07 relative |
+| the same two gradient norms, recomputed in double precision | 1.4e-16 relative |
+| the two per-tensor gradient limits against each other | 9.4e-08 relative |
+| the two buffer layouts, two iterations of training on the processor | bitwise equal |
+| the two buffer layouts, one iteration on the card | gradients 4.5e-08 of a largest 8.6e-01; parameters 7.8e-11 relative |
+| the flat optimizer against the per-tensor form, one step | 6.9e-06 relative on parameters that moved 3.0e-04 |
+| bias after the multiply, loss and all twenty-one gradients | 0.000e+00 — bitwise |
+| the recorded rollout against the uncaptured compiled step | bitwise equal |
+| the recorded update against the uncaptured one, both conventions | 0.000e+00 |
+| the annealed rate reaches the recorded graph; a zero-rate group stays frozen | 0.000e+00 |
+| six learning-rate-sweep gates, including under capture | all pass |
+| the hoist comparison, three iterations | 0.000e+00 |
+| the compiled post-rollout body, isolated | 2.1e-07 relative |
+| every parameter, moment and gradient window on a sixteen-byte boundary, both layouts | pass |
+
 ### What is left, and where it is
 
 The kernel profile after the round says where an iteration's remaining time sits, and one item
