@@ -61,3 +61,12 @@ fixed sixteen-step gradient probe from the real update, which is one step under 
 its clip and optimizer rows come out negative in that style. Use
 `benchmarks/bonus/profile_visit_count_phases.py`, which times each piece instead of subtracting
 unlike things.
+
+## Open request from train run 1.1
+
+**Record the step inside an episode at which a copy first reaches the goal.** The results table of
+train run 1.1 asks for steps to goal on successful episodes, and the trainer does not produce it:
+the goal step is never read back to the host, so that column of the table says "not recorded in this
+run". Add it the way the metric-registry rule prescribes — a fixed-shape accumulator in the
+`TrainState` behind a static configuration flag, read on the host only at the recording cadence,
+never a per-step host synchronisation — and not by changing the trainer mid-campaign.

@@ -5,6 +5,10 @@ run-level files are never written by a unit — they are computed here from ever
 shard and every `slurm/jobs/*/hardware.json`, and they are what reports and document generators
 read. Re-running this is safe: both output files are rewritten from the shards each time.
 
+This is the generic layer: it collects the records, keeps the latest attempt of each, and reports
+throughput and the run's headline numbers. A run that needs per-configuration science scores adds
+them in its own `monitoring/aggregate.py`, which calls this first.
+
 Run:
   PYTHONNOUSERSITE=1 <python> aggregate_run.py <run folder>
 """
@@ -16,7 +20,7 @@ from pathlib import Path
 def read_shards(run_dir: Path) -> list:
     """Every record of every shard, in shard-name order, each tagged with its shard file.
 
-    before: data/unit_0000.jsonl holding job / iteration / unit_complete lines;
+    before: data/unit-1.jsonl holding job / unit_start / episode_window / unit_complete lines;
     after:  one flat list of those dictionaries, each with a "shard" field naming its file.
     """
     records = []
@@ -36,24 +40,31 @@ def read_job_hardware(run_dir: Path) -> list:
             for path in sorted((run_dir / "slurm" / "jobs").glob("*/hardware.json"))]
 
 
+def latest_windows(records: list) -> list:
+    """The episode-window records, one per (unit, window), keeping the latest attempt's line.
+
+    before: two attempts of unit-1 both holding the window ending at iteration 200;
+    after:  one record, the one written later in the shard.
+    """
+    latest = {}
+    for record in records:
+        if record.get("record") == "episode_window":
+            latest[(record["unit_id"], record["last_iteration"])] = record
+    return [latest[key] for key in sorted(latest)]
+
+
 def aggregate(run_dir: Path) -> dict:
     """Write metrics.jsonl and summary.json from the shards; return the summary."""
     run_dir = Path(run_dir)
     records = read_shards(run_dir)
-    iterations = [r for r in records if r.get("record") == "iteration"]
+    windows = latest_windows(records)
     completions = [r for r in records if r.get("record") == "unit_complete"]
+    starts = {r["unit_id"]: r for r in records if r.get("record") == "unit_start"}
     hardware = ([r for r in records if r.get("record") == "job"]
                 + read_job_hardware(run_dir))
 
-    # the run's metric stream: every unit's iteration records, ordered by unit and then iteration,
-    # with the last record kept when a unit was attempted more than once at the same iteration
-    # before: two attempts of unit_0000 both holding iteration 10; after: one line, the later one
-    latest = {}
-    for record in iterations:
-        latest[(record["unit_id"], record["iteration"])] = record
-    ordered = [latest[key] for key in sorted(latest)]
     with open(run_dir / "metrics.jsonl", "w") as out:
-        for record in ordered:
+        for record in windows:
             out.write(json.dumps(record) + "\n")
 
     # throughput, always reported both ways: the whole machine's rate and the rate one copy gets,
@@ -91,22 +102,29 @@ def aggregate(run_dir: Path) -> dict:
             r["seconds_first_iteration_with_compile"] for r in completions],
     }
 
-    # the end-of-run numbers a reader asks for first: how far learning got, and how much was seen
-    final = [r for r in ordered
-             if r["iteration"] == max((x["iteration"] for x in ordered if
-                                       x["unit_id"] == r["unit_id"]), default=-1)]
-    rewards = [value for r in final for value in r["reward_ext_sum_per_copy"]]
-    coverage = [value for r in final for value in r.get("coverage_per_copy", [])]
+    # the end-of-run numbers a reader asks for first. The reward a window carries is a SUM over the
+    # window, so it is divided by the window's episode count to become a mean episode return.
+    # before: a last window of 200 iterations, 256 episodes per copy, per-copy sums around 512;
+    # after:  a mean episode return around 2.0 per copy.
+    per_unit_last = {}
+    for record in windows:
+        per_unit_last[record["unit_id"]] = record
+    returns, coverage = [], []
+    for record in per_unit_last.values():
+        episodes = record["episodes_per_copy_in_window"]
+        returns += [value / episodes for value in record["reward_ext_sum_per_copy"]]
+        coverage += record.get("coverage_per_copy", [])
     summary = {
         "run_id": run_dir.name,
         "units_complete": len(completions),
-        "units_seen": len({r["unit_id"] for r in records if "unit_id" in r}),
-        "records": len(ordered),
+        "units_seen": len(starts) or len({r["unit_id"] for r in records if "unit_id" in r}),
+        "units": sorted(starts),
+        "records": len(windows),
         "throughput": throughput,
-        "final_extrinsic_reward_per_copy": {
-            "mean": (sum(rewards) / len(rewards)) if rewards else None,
-            "min": min(rewards) if rewards else None,
-            "max": max(rewards) if rewards else None,
+        "last_window_episode_return_per_copy": {
+            "mean": (sum(returns) / len(returns)) if returns else None,
+            "min": min(returns) if returns else None,
+            "max": max(returns) if returns else None,
         },
         "final_maze_coverage_per_copy": {
             "mean": (sum(coverage) / len(coverage)) if coverage else None,

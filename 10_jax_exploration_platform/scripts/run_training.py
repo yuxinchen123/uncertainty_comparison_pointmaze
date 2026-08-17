@@ -1,21 +1,38 @@
-"""Run one training configuration and write the platform's standard run folder.
+"""Run one training work unit and write its shard into the platform's standard run folder.
 
 One call = one work unit. A run folder may hold many units (that is what a sweep is); this script
 writes one shard, `data/<unit_id>.jsonl`, one line per record, flushed as it goes, and then calls
 the aggregator so the run-level `metrics.jsonl` and `summary.json` exist even for a single unit.
 
+A unit may itself be a sweep across copy groups: `--learning-rates` and `--intrinsic-weights` take
+the cross product, `--copies-per-cell` says how many copies each cell gets, and the copies of one
+cell are seeded in pairs with the copies of every other cell, so a difference between two cells is
+the swept values' doing.
+
+Records are PHASE-BLOCKED EPISODE WINDOWS. The task is continuing, so an episode ends only at the
+400-step truncation and every copy shares one episode clock; an iteration collects 128 of those 400
+steps, so where inside the episode an iteration looks — its `episode_phase`, `((iteration - 1) *
+rollout_steps) % episode_steps` — cycles with period 25 iterations. One iteration's extrinsic reward
+is therefore a sample of one 128-step window of the episode and can read zero for every copy while
+copies are solving. A record here covers a WINDOW of iterations spanning a whole number of those
+25-iteration cycles, and reports the reward SUMMED over the window per copy, so the episode clock
+cancels out and the whole run's episode returns are recomputable exactly from about a hundred
+records instead of nineteen thousand. Each record still carries its own `episode_phase` values, per
+the learning-outcome campaign's convention.
+
 The launch-time files (`manifest.yaml`, `config_resolved.yaml`, `command.txt`) are written before
 the first iteration, per the `experiment-background` skill. `experiment_background.md` is written by
 hand at the same moment and is not this script's job.
 
-No model state is saved: checkpoints are off by default on this platform. A unit that dies part way
-therefore cannot resume mid-run — re-running it starts a new attempt, and the aggregator keeps the
-last complete attempt.
+No model state is saved: checkpoints are off by default on this platform. Resuming is therefore per
+UNIT: a unit whose shard already ends in a `unit_complete` record is skipped, so re-running the same
+command continues a job at the first unfinished unit and never repeats finished work.
 
 Example:
   PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python run_training.py \
-    --run-dir <runs/...> --unit-id unit_0000 --copies 128 --iterations 200 \
-    --update-style full_batch --record-every 10 --track-coverage
+    --run-dir <runs/...> --unit-id unit-1 --bonus rnd_next_state \
+    --learning-rates 1e-3,1e-4,1e-5 --intrinsic-weights 1e-5,1e-4 --copies-per-cell 256 \
+    --iterations 19531 --phase-iterations 200 --track-coverage
 """
 import argparse
 import json
@@ -125,9 +142,19 @@ def hardware_record() -> dict:
         "interpreter": sys.executable,
         "devices": [str(d) for d in devices],
         "device_kind": devices[0].device_kind,
+        "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""),
         "nvidia_smi": (smi.stdout.strip() if smi and smi.returncode == 0
                        else "no nvidia-smi on this host"),
     }
+
+
+def number_list(text: str) -> tuple:
+    """Parse a comma-separated list of numbers; an empty string is an empty list.
+
+    before: "1e-3,1e-4,1e-5" ; after: (0.001, 0.0001, 1e-05)
+    before: ""               ; after: ()
+    """
+    return tuple(float(part) for part in text.split(",") if part.strip())
 
 
 def parse_args() -> argparse.Namespace:
@@ -136,20 +163,31 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--run-dir", required=True, help="the run folder; created if missing")
     parser.add_argument("--unit-id", default="unit_0000", help="names this unit's data shard")
     parser.add_argument("--description", default="", help="the human sentence for the manifest")
-    parser.add_argument("--copies", type=int, default=128)
+    parser.add_argument("--copies", type=int, default=128,
+                        help="copies, when neither knob is swept; a sweep derives the count")
     parser.add_argument("--envs-per-copy", type=int, default=4)
     parser.add_argument("--rollout-steps", type=int, default=128)
     parser.add_argument("--iterations", type=int, default=200)
     parser.add_argument("--update-style", default="full_batch",
                         choices=["full_batch", "epoch_minibatch"])
-    parser.add_argument("--learning-rate", type=float, default=3e-4)
-    parser.add_argument("--intrinsic-coefficient", type=float, default=1.0)
+    parser.add_argument("--learning-rate", type=float, default=3e-4,
+                        help="the single rate, used when --learning-rates is empty")
+    parser.add_argument("--learning-rates", default="",
+                        help="comma-separated rates to sweep, e.g. 1e-3,1e-4,1e-5")
+    parser.add_argument("--intrinsic-coefficient", type=float, default=1.0,
+                        help="the single intrinsic weight, used when --intrinsic-weights is empty")
+    parser.add_argument("--intrinsic-weights", default="",
+                        help="comma-separated weights on the intrinsic advantage to sweep")
+    parser.add_argument("--copies-per-cell", type=int, default=0,
+                        help="copies each (rate, weight) cell gets; required for a sweep")
     parser.add_argument("--bonus", default="rnd_next_state",
                         help="which intrinsic-reward family; see bonuses/registry.py")
     parser.add_argument("--base-seed", type=int, default=0)
     parser.add_argument("--run-seed", type=int, default=0)
-    parser.add_argument("--record-every", type=int, default=10,
-                        help="write a record every this many iterations")
+    parser.add_argument("--window-iterations", type=int, default=200,
+                        help="iterations per recorded episode window; one record covers one window")
+    parser.add_argument("--episode-steps", type=int, default=400,
+                        help="the environment's truncation cap, which sets the episode clock")
     parser.add_argument("--track-coverage", action="store_true",
                         help="keep a per-copy visited-cell map on the device")
     return parser.parse_args()
@@ -165,6 +203,26 @@ def specs_of(bonus: str) -> dict:
         raise ValueError(f"no update schedule recorded for bonus {bonus!r}; add it to "
                          f"UPDATE_SCHEDULES so the run's manifest names one")
     return {**SPECS, "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
+
+
+def build_config(args: argparse.Namespace):
+    """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
+    from exploration_platform.agents.ppo.config import PPOConfig
+    from exploration_platform.training.sweep import sweep_config
+    rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
+    common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
+                  base_seed=args.base_seed, track_coverage=args.track_coverage)
+    # a sweep derives its copy count from the cells; a single configuration takes --copies
+    if rates or weights:
+        if args.copies_per_cell <= 0:
+            raise ValueError("a sweep needs --copies-per-cell")
+        return sweep_config(learning_rates=rates, betas=weights,
+                            copies_per_group=args.copies_per_cell, style=args.update_style,
+                            learning_rate=args.learning_rate, int_coef=args.intrinsic_coefficient,
+                            **common)
+    return PPOConfig(n_copies=args.copies, update_style=args.update_style,
+                     learning_rate=args.learning_rate, int_coef=args.intrinsic_coefficient,
+                     **common)
 
 
 def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
@@ -183,11 +241,13 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
                             for field in sorted(config.__dataclass_fields__)},
                 "environment": {"specification": SPECS["env"],
                                 "map_name": "large", "start_cell": "(7, 1)", "goal_cell": "(1, 10)",
-                                "position_noise": 0.0, "max_episode_steps": 400,
+                                "position_noise": 0.0, "max_episode_steps": args.episode_steps,
                                 "continuing_task": True, "goal_radius": 0.45,
                                 "reward_shift": 0.0},
                 "runtime": {"interpreter": sys.executable, "unit_id": args.unit_id,
-                            "record_every": args.record_every, "run_seed": args.run_seed}}
+                            "iterations": args.iterations,
+                            "window_iterations": args.window_iterations,
+                            "run_seed": args.run_seed}}
     (run_dir / "config_resolved.yaml").write_text(as_yaml(resolved) + "\n")
 
     # machine-readable identity of the run: which code, which component versions, which shape
@@ -204,7 +264,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
             "dtype": "float32", "stats_dtype": "float64",
         },
         "seeding": {"base_seed": config.base_seed, "run_seed": args.run_seed,
-                    "mode": "distinct"},
+                    "mode": config.sweep_seed_mode if config.copies_per_group else "distinct"},
         "artifacts": {"metrics": "metrics.jsonl", "summary": "summary.json",
                       "shards": "data/*.jsonl"},
     }
@@ -212,21 +272,19 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
 
 
 def main() -> None:
-    """Create the run folder, train, write one shard line per record, then aggregate."""
+    """Create the run folder, train, write one record per phase, then aggregate."""
     args = parse_args()
     run_dir = Path(args.run_dir).resolve()
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
 
-    from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.training.runner import Runner
     import jax
+    import jax.numpy as jnp
 
-    config = PPOConfig(n_copies=args.copies, n_envs=args.envs_per_copy,
-                       num_steps=args.rollout_steps, update_style=args.update_style,
-                       learning_rate=args.learning_rate, int_coef=args.intrinsic_coefficient,
-                       base_seed=args.base_seed, track_coverage=args.track_coverage)
-    write_launch_files(run_dir, args, config)
+    config = build_config(args)
+    if not (run_dir / "manifest.yaml").exists():
+        write_launch_files(run_dir, args, config)
 
     shard = run_dir / "data" / f"{args.unit_id}.jsonl"
     log = open(run_dir / "logs" / f"{args.unit_id}.log", "a", buffering=1)
@@ -237,14 +295,16 @@ def main() -> None:
         print(line, flush=True)
         log.write(line + "\n")
 
-    # a shard whose last line says the unit finished is left alone: re-running is then a no-op
+    # a shard whose last line says the unit finished is left alone: re-running is then a no-op, and
+    # that is what makes a job's command resumable — it restarts at the first unfinished unit
     if shard.exists():
         existing = [json.loads(line) for line in shard.read_text().splitlines() if line.strip()]
         if any(record.get("record") == "unit_complete" for record in existing):
-            say(f"{args.unit_id} is already complete in {shard}; nothing to do")
+            say(f"resume: {args.unit_id} is already complete in {shard.name} "
+                f"({len(existing)} records on disk); skipping it")
             return
-        say(f"{args.unit_id} has a partial shard; this is a new attempt appended to it "
-            f"(no model state is saved, so the earlier attempt cannot be continued)")
+        say(f"resume: {args.unit_id} has a partial shard with {len(existing)} records; no model "
+            f"state is saved, so this is a fresh attempt appended to the same file")
 
     # one line per record, opened for appending and flushed immediately, so the file is the live
     # progress signal and a re-run never truncates what is already there
@@ -262,56 +322,118 @@ def main() -> None:
     emit(hardware)
     say(f"unit {args.unit_id} on {hardware['host']} / {hardware['device_kind']}, "
         f"jax {hardware['jax']}")
-    say(f"{config.n_copies} copies x {config.n_envs} environments x {config.num_steps} steps, "
-        f"{args.iterations} iterations, update style {config.update_style}")
 
     # build the trainer, then time the compilation of the first iteration separately from the rest,
     # because the first iteration pays for compiling the whole program
+    build_start = time.time()
     trainer = Runner(config, bonus=args.bonus)
+    sweep = trainer.sweep
+    steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
+    steps_per_copy_per_iteration = config.num_steps * config.n_envs
+    episodes_per_copy_per_iteration = steps_per_copy_per_iteration / args.episode_steps
+    # the episode clock: how many iterations it takes for the 128-step window to return to the
+    # same place inside the 400-step episode. A window spanning a whole number of these carries
+    # every part of the episode exactly once, so its reward sum is free of the clock.
+    clock_iterations = int(args.episode_steps // np.gcd(config.num_steps, args.episode_steps))
+
+    def episode_phase(iteration: int) -> int:
+        """Where inside the episode this iteration's rollout window begins, in environment steps.
+
+        before: iteration 19400, 128-step rollouts, 400-step episodes
+        after:  272 — that iteration covered episode steps 272 to 400 and then 0 to 128 of the next
+        """
+        return ((iteration - 1) * config.num_steps) % args.episode_steps
+
+    # the unit's own identity card: which cell each copy belongs to, so the aggregator can group
+    # the per-copy arrays of every later record without re-deriving the sweep
+    emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
+          "copies": config.n_copies, "envs_per_copy": config.n_envs,
+          "rollout_steps": config.num_steps, "iterations": args.iterations,
+          "window_iterations": args.window_iterations, "episode_steps": args.episode_steps,
+          "episode_clock_iterations": int(clock_iterations),
+          "copies_per_cell": config.copies_per_group,
+          "cell_settings": [list(setting) for setting in sweep.group_settings],
+          "copy_cell": sweep.copy_group.tolist(),
+          "copy_seed_index": list(sweep.copy_seed_index),
+          "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
+          "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
+          "steps_per_iteration": steps_per_iteration})
+    say(f"{config.n_copies} copies x {config.n_envs} environments x {config.num_steps} steps, "
+        f"{args.iterations} iterations, update style {config.update_style}, "
+        f"{len(sweep.group_settings)} cells of {config.copies_per_group or config.n_copies} copies")
+
     state = trainer.init_state(run_seed=args.run_seed)
     prime_start = time.time()
     state = trainer.prime(state)
     jax.block_until_ready(state.obs)
-    say(f"priming done in {time.time() - prime_start:.1f}s")
+    say(f"building and priming done in {time.time() - build_start:.1f}s "
+        f"(priming alone {time.time() - prime_start:.1f}s)")
 
-    steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
+    # the window accumulators live on the device: adding to them is dispatched without waiting, so
+    # the loop never synchronises except on the iterations that close a window
+    reward_in_window = jnp.zeros((config.n_copies,))
+    rint_in_window = jnp.zeros((config.n_copies,))
     start = time.time()
     first_iteration_seconds = None
+    window_index = 0
+    window_first_iteration = 1
     for iteration in range(1, args.iterations + 1):
         iteration_start = time.time()
         state, metrics = trainer.iterate(state,
                                          trainer.lr_argument(iteration, args.iterations))
+        reward_in_window = reward_in_window + metrics["reward_ext_sum"]
+        rint_in_window = rint_in_window + metrics["rint_mean"]
         if iteration == 1:
             jax.block_until_ready(metrics["loss"])
             first_iteration_seconds = time.time() - iteration_start
             say(f"first iteration (includes compiling the program) "
                 f"{first_iteration_seconds:.1f}s")
 
-        # a record every `record_every` iterations and always at the end; those are the only
+        # one record per window, and always one at the last iteration; those are the only
         # iterations that wait for the device, so recording does not serialise the loop
-        if iteration % args.record_every == 0 or iteration == args.iterations:
+        if iteration % args.window_iterations == 0 or iteration == args.iterations:
             jax.block_until_ready(metrics["loss"])
+            iterations_in_window = iteration - window_first_iteration + 1
             elapsed = time.time() - start
-            reward = np.asarray(metrics["reward_ext_sum"])
+            reward = np.asarray(reward_in_window)
             record = {
-                "record": "iteration",
+                "record": "episode_window",
                 "unit_id": args.unit_id,
-                "iteration": iteration,
+                "window_index": window_index,
+                "first_iteration": window_first_iteration,
+                "last_iteration": iteration,
+                "iterations_in_window": iterations_in_window,
+                "episode_phase_first_iteration": episode_phase(window_first_iteration),
+                "episode_phase_last_iteration": episode_phase(iteration),
+                "episode_clock_cycles_in_window": iterations_in_window / clock_iterations,
+                # a window covering a whole number of clock cycles sees every part of the episode
+                # the same number of times, so its reward sum carries no episode-clock artifact;
+                # a window that does not is excluded from every score
+                "phase_blocked": iterations_in_window % clock_iterations == 0,
+                "episodes_per_copy_in_window":
+                    iterations_in_window * episodes_per_copy_per_iteration,
+                "episodes_per_copy_cumulative": iteration * episodes_per_copy_per_iteration,
                 "seconds_since_first_iteration": elapsed,
                 "env_steps": iteration * steps_per_iteration,
-                "env_steps_per_copy": iteration * config.num_steps * config.n_envs,
+                "env_steps_per_copy": iteration * steps_per_copy_per_iteration,
                 "loss": float(np.asarray(metrics["loss"])),
                 "reward_ext_sum_per_copy": reward.tolist(),
-                "rint_mean_per_copy": np.asarray(metrics["rint_mean"]).tolist(),
+                "rint_mean_per_copy":
+                    (np.asarray(rint_in_window) / iterations_in_window).tolist(),
             }
             if config.track_coverage:
                 record["coverage_per_copy"] = trainer.coverage(state).tolist()
             emit(record)
             coverage_note = (f", maze coverage mean {np.mean(record['coverage_per_copy']):.3f}"
                              if config.track_coverage else "")
-            say(f"iteration {iteration}/{args.iterations} loss {record['loss']:.4f}, "
-                f"extrinsic reward per copy mean {reward.mean():.3f}{coverage_note}, "
-                f"elapsed {elapsed:.1f}s")
+            say(f"window {window_index} (iterations {window_first_iteration}-{iteration} of "
+                f"{args.iterations}, phase blocked {record['phase_blocked']}) "
+                f"loss {record['loss']:.4f}, extrinsic reward per copy summed over the window "
+                f"mean {reward.mean():.3f}{coverage_note}, elapsed {elapsed:.1f}s")
+            reward_in_window = jnp.zeros((config.n_copies,))
+            rint_in_window = jnp.zeros((config.n_copies,))
+            window_index += 1
+            window_first_iteration = iteration + 1
 
     jax.block_until_ready(state.agent_params)
     total_seconds = time.time() - start
@@ -322,10 +444,13 @@ def main() -> None:
         "record": "unit_complete",
         "unit_id": args.unit_id,
         "iterations": args.iterations,
+        "windows": window_index,
         "env_steps": args.iterations * steps_per_iteration,
-        "env_steps_per_copy": args.iterations * config.num_steps * config.n_envs,
+        "env_steps_per_copy": args.iterations * steps_per_copy_per_iteration,
+        "episodes_per_copy": args.iterations * episodes_per_copy_per_iteration,
         "copies": config.n_copies,
         "seconds_total": total_seconds,
+        "seconds_build_and_prime": start - build_start,
         "seconds_first_iteration_with_compile": first_iteration_seconds,
         "seconds_per_iteration_steady": steady_seconds / steady_iterations,
         "attempt_finished": datetime.now().astimezone().isoformat(),
@@ -337,7 +462,7 @@ def main() -> None:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from aggregate_run import aggregate
     summary = aggregate(run_dir)
-    say(f"aggregated: {summary['records']} metric records, steady rate "
+    say(f"aggregated: {summary['records']} episode-window records, steady rate "
         f"{summary['throughput']['total_env_steps_per_second_steady']:.3e} env steps per second in "
         f"total and {summary['throughput']['env_steps_per_second_per_copy_steady']:.0f} per copy "
         f"({summary['throughput']['hours_per_million_steps_per_copy_steady']:.2f} hours per million "

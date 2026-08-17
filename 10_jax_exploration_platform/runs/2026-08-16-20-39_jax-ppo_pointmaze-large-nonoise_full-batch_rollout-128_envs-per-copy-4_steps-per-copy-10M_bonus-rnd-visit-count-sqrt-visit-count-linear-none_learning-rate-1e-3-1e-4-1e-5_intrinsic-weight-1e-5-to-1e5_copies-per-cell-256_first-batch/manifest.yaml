@@ -1,0 +1,64 @@
+schema_version: 1
+run_id: 2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+description: >
+  The platform's first science run. Four algorithm arms on the no-noise large PointMaze, each a
+  separate compiled program and a separate work unit: random network distillation, the two oracle
+  visit-count bonuses, and no bonus at all. Every arm sweeps three learning rates; the three arms
+  that have a bonus also sweep eleven weights on it. 256 copies per cell, seeded in pairs across
+  cells, 10,035,200 environment steps per copy.
+git:
+  commit: 76a06d0a0dd7ff3f2d7a5b5d3a3a3f0000000000
+  dirty: false
+  version_tag: filled at launch
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1 + gt_position_velocity_sqrt@1 + gt_position_velocity_linear@1 + none@1
+  update_schedule: post_rollout_update@1 for the visit-count arms, per_rollout@1 for random network distillation, none@1 for the arm with no bonus
+compile_signature:
+  copies: 8448 for each bonus arm, 768 for the arm with no bonus
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: not applicable — full_batch takes one gradient step on the whole rollout
+  minibatches: not applicable — full_batch takes one gradient step on the whole rollout
+  dtype: float32
+  stats_dtype: float64
+  iterations: 19600
+  window_iterations: 200
+  env_steps_per_copy: 10035200
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+  note: copy k of every cell starts from the same weights and meets the same environment draws
+sweep:
+  learning_rates:
+    - 0.001
+    - 0.0001
+    - 1.0e-05
+  intrinsic_weights:
+    - 1.0e-05
+    - 0.0001
+    - 0.001
+    - 0.01
+    - 0.1
+    - 1.0
+    - 10.0
+    - 100.0
+    - 1000.0
+    - 10000.0
+    - 100000.0
+  copies_per_cell: 256
+  cells: 33 per bonus arm, 3 for the arm with no bonus, 102 in total
+units:
+  - unit-1_rnd-next-state_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_copies-8448
+  - unit-2_gt-position-velocity-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_copies-8448
+  - unit-3_gt-position-velocity-linear_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_copies-8448
+  - unit-4_none_learning-rate-1e-3-1e-4-1e-5_no-intrinsic-weight_copies-per-cell-256_copies-768
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+  aggregator: code/aggregate.py
+checkpoints: none — this platform saves no model state, so a unit resumes by being re-run whole

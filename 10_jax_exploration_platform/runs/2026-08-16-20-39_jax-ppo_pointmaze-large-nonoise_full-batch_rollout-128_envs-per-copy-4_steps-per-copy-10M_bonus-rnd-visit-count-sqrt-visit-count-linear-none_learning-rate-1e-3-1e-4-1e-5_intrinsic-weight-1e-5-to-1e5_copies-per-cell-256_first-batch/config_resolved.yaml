@@ -1,0 +1,81 @@
+trainer_bonus_arms:
+  adam_eps: 1e-05
+  anneal_lr: true
+  base_seed: 0
+  batch_stats_f32: false
+  betas: (1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0)
+  bootstrap_on_truncation: true
+  clip_coef: 0.2
+  copies_per_group: 256
+  ent_coef: 0.0
+  ext_coef: 2.0
+  flat_params: false
+  gae_lambda: 0.95
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  hoist_rollout: true
+  int_coef: 1.0
+  learning_rate: 0.0003
+  learning_rates: (0.001, 0.0001, 1e-05)
+  max_grad_norm: 0.5
+  n_copies: 8448
+  n_envs: 4
+  num_minibatches: 4
+  num_steps: 128
+  prime_iterations: 10
+  scan_unroll: 0
+  sweep_seed_mode: paired
+  track_coverage: true
+  update_epochs: 4
+  update_style: full_batch
+  update_unroll: 2
+  vf_coef: 0.5
+trainer_no_bonus_arm:
+  adam_eps: 1e-05
+  anneal_lr: true
+  base_seed: 0
+  batch_stats_f32: false
+  betas: ()
+  bootstrap_on_truncation: true
+  clip_coef: 0.2
+  copies_per_group: 256
+  ent_coef: 0.0
+  ext_coef: 2.0
+  flat_params: false
+  gae_lambda: 0.95
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  hoist_rollout: true
+  int_coef: 1.0
+  learning_rate: 0.0003
+  learning_rates: (0.001, 0.0001, 1e-05)
+  max_grad_norm: 0.5
+  n_copies: 768
+  n_envs: 4
+  num_minibatches: 4
+  num_steps: 128
+  prime_iterations: 10
+  scan_unroll: 0
+  sweep_seed_mode: paired
+  track_coverage: true
+  update_epochs: 4
+  update_style: full_batch
+  update_unroll: 2
+  vf_coef: 0.5
+environment:
+  continuing_task: True
+  goal_cell: (1, 10)
+  goal_radius: 0.45
+  map_name: large
+  max_episode_steps: 400
+  position_noise: 0.0
+  reward_shift: 0.0
+  start_cell: (7, 1)
+  specification: pointmaze_large_cont400_nonoise@1
+runtime:
+  interpreter: /p/rlprojects/RND/.venvs/platform_jax/bin/python
+  iterations: 19600
+  window_iterations: 200
+  run_seed: 0
+  compilation_cache_dir: /localtmp/$USER/platform_jax_cache
+  checkpoints: none
