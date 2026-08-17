@@ -207,3 +207,71 @@ were cancelled from its own id file. Nothing of it is used as science here. Two 
 as measurement, and both are named where they are used: its canary rates at 8,192 copies are the
 `ARM_ANCHORS` of `code/plan_submission.py` (the fallback path, which the probes then displaced), and
 its `infra_history.md` records the missing-argument guards this run re-tested.
+
+## Closing summary (written when the queue drained)
+
+The queue drained at **2026-08-17 03:44 PT**, 4 hours 26 minutes after the first job started at
+2026-08-16 23:19 PT. All five chunks completed on their first attempt; nothing was requeued and
+nothing failed. The run moved $4.096 \times 10^{12}$ environment steps over 4,096 copies and wrote
+48,830 window records, every one of them phase-blocked, so no record had to be dropped from a score.
+
+| chunk | card | copies | seconds per iteration | total steps per second (millions) | steps per second per copy | hours per million steps per copy | build and prime (s) | wall clock (h) | planned (h) |
+|---|---|---|---|---|---|---|---|---|---|
+| unit-1 `rnd_next_state` chunk 1 of 2 | serval06 | 512 | 0.00811 | 32.33 | 63,150 | 0.0044 | 21 | 4.40 | 5.31 |
+| unit-1 chunk 2 of 2 | serval06 | 512 | 0.00811 | 32.34 | 63,156 | 0.0044 | 21 | 4.40 | 5.31 |
+| unit-2 `gt_position_velocity_sqrt` | serval08 | 1,024 | 0.00696 | 75.32 | 73,555 | 0.0038 | 16 | 3.78 | 4.58 |
+| unit-3 `gt_position_velocity_linear` | serval07 | 1,024 | 0.00702 | 74.71 | 72,961 | 0.0038 | 15 | 3.81 | 4.60 |
+| unit-4 `none` | serval09 | 1,024 | 0.00692 | 75.77 | 73,996 | 0.0038 | 16 | 3.75 | 4.54 |
+
+**The makespan came in at 4.43 hours against a planned 5.31**, 17 per cent early, and every chunk
+beat its own estimate by the same proportion. The estimate was built from 200-iteration canaries,
+which carry the first iterations' transients in their steady rate; over 1.95 million iterations the
+rate settles a little faster. An estimate wrong in this direction costs nothing, and the ORDERING
+the plan rests on was right: the two 512-copy distillation chunks set the finish, exactly as the
+plan said they would, and the three whole units finished 35 to 39 minutes earlier.
+
+### What the run found
+
+| arm | whole-run reward | last-window reward | success rate | maze-cell coverage % |
+|---|---|---|---|---|
+| `rnd_next_state`, $\beta = 10$ | 1.795 ± 0.101 | 1.242 ± 0.286 | 0.999 | 99.58 ± 0.06 |
+| `gt_position_velocity_sqrt`, $\beta = 1$ | 0.658 ± 0.024 | 0.185 ± 0.118 | 0.999 | 99.07 ± 0.06 |
+| `gt_position_velocity_linear`, $\beta = 1$ | 0.331 ± 0.030 | 0.171 ± 0.095 | 0.804 | 94.50 ± 0.35 |
+| `no_exploration` | 0.001 ± 0.001 | 0.000 ± 0.000 | 0.016 | 33.36 ± 0.53 |
+
+Two things the hundred-fold budget shows that ten million steps could not.
+
+1. **Every arm's reward is a transient, and the parent measured its peak.** Mean episode return
+   rises to a maximum inside the first 10 to 15 million steps and then decays for the remaining 985
+   million: the $1/\sqrt{n}$ oracle arm peaks at 31.4 at 10M and ends at 0.19; distillation peaks at
+   25.8 at 15M and ends at 1.24; the $1/n$ oracle arm peaks at 7.2 at 11M and ends at 0.17. Maze
+   coverage meanwhile stays at 99 per cent and the success rate at 0.999 — the copies still reach
+   every part of the maze and nearly all of them have reached the goal at some point, so this is not
+   forgetting where the goal is. It is the same effect the parent's fourth finding named across the
+   intrinsic weight, now seen across time: the bonus keeps paying after the goal is known, and the
+   policy keeps chasing novelty instead of the reward.
+2. **The ordering between the two leading arms reverses, and the reversal is not marginal.** At 10
+   million steps the $1/\sqrt{n}$ oracle bonus beats distillation, 31.4 against 21.5. The curves
+   cross at about 20 million steps and distillation is ahead for the remaining 98 per cent of the
+   run, ending 6.7 times higher on the whole-run mean (1.795 ± 0.101 against 0.658 ± 0.024, a gap of
+   more than 10 standard errors). The parent's conclusion that the oracle bonus bounds distillation
+   from above holds only at the budget the parent used.
+
+Neither of the two arms that lost at 10 million steps catches up. The $1/n$ oracle arm is below
+distillation at every point of the run. The arm with no bonus never leaves the floor: 1.6 per cent
+of its copies ever reach the goal, against 99.9 per cent for both leading arms, and it covers a
+third of the maze against 99 per cent — a hundred times the budget does not make the sparse reward
+findable without a bonus.
+
+### Where the artifacts are
+
+- `data/*.jsonl` (5 shards, 1.4 GB), `metrics.jsonl` (48,830 window records) and `summary.json`,
+  written by `code/aggregate.py` from the shards.
+- `analysis/plots/pm_jax_run11_reward_curves.pdf` and its `.png`, written by
+  `analysis/code/make_reward_curves.py`.
+- `../../development_document/platform_development_document.tex` subsection 1.1, whose results table
+  is written by
+  `development_document/code/2026-08-16-22-27_pm-jax-run11-extension-tables/make_all.py`.
+- `code/submission_plan.json` for the plan and every alternative it rejected,
+  `code/measured_cells.json` for the rates that priced it, `canary_estimate_vs_actual.md` for the
+  canary phase, `infra_history.md` for the incidents.

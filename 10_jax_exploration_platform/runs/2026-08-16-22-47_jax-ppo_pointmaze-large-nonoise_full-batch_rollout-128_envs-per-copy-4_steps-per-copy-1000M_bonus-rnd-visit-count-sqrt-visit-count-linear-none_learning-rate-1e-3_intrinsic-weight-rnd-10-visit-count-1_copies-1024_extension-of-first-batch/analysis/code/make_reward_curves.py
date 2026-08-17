@@ -76,10 +76,16 @@ def main() -> None:
         axes.fill_between(steps, mean - error, mean + error, color=colour, alpha=0.18,
                           linewidth=0)
 
-    axes.set_xlabel("environment steps per copy (millions)")
+    # the step axis is logarithmic, which the parent run's figure did not need. Every arm rises to
+    # its peak inside the first 15 million steps and then decays over the remaining 985 million, so
+    # on a linear axis the whole rise is squeezed into the first per cent of the width and the
+    # figure shows a spike against a flat line. A log axis puts the rise and the decay both in view,
+    # which is the shape this run exists to show.
+    axes.set_xscale("log")
+    axes.set_xlabel("environment steps per copy (millions, logarithmic)")
     axes.set_ylabel("mean episode return")
     axes.set_title("PointMaze large, no reset noise — each arm's best configuration, 1000M steps")
-    axes.grid(alpha=0.25, linewidth=0.6)
+    axes.grid(alpha=0.25, linewidth=0.6, which="both")
     axes.legend(loc="upper left", fontsize=8, framealpha=0.9)
     figure.tight_layout()
     for suffix in ("pdf", "png"):

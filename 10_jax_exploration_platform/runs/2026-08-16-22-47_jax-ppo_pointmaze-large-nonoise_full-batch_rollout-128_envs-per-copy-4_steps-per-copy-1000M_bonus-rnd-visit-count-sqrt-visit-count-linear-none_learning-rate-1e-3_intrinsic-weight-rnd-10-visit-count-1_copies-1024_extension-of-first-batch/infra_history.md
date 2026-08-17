@@ -55,3 +55,22 @@ shared survey alone would have been wrong in two ways, both of which would have 
 The plan that went out is 5 chunks on 5 H100 cards with a computed makespan of 5.31 hours. Under the
 first, wrong model the same combination read 4.20 hours, so the measurement also removed an estimate
 that would have looked like a 25 per cent overrun later.
+
+## 2026-08-17 03:44 PT — the queue drained, and the watchers had died before it
+
+All five chunks completed on their first attempt. Jobs 6538662, 6538663 and 6538664 (the three whole
+units) finished between 03:05 and 03:09 PT at 3 h 47 m to 3 h 50 m elapsed, and jobs 6538660 and
+6538661 (the two distillation chunks) at 03:44 PT at 4 h 26 m. Nothing was requeued, nothing failed,
+and `queue/done/` holds all five.
+
+The session's own watchers — the 20-minute monitor and the drain waiter — stopped at about 00:25 PT
+when the session hit its usage limit. **The jobs were unaffected**, which is the point of running
+generation work as detached scheduler jobs: a watcher is not a job, and none of the five noticed.
+Every window record between 00:25 and 03:44 PT is on disk. Nothing was restarted on account of the
+watchers stopping, per the standing rule that a stopped watcher is never a reason to restart a job.
+
+One measurement worth keeping: the makespan came in at 4 h 26 m against the plan's 5 h 19 m. The
+plan's per-chunk estimates were built from 200-iteration canaries, whose steady rate still carries
+the first iterations' transients; over 1.95 million iterations every chunk ran about 17 per cent
+faster than its canary projected. The error is uniform across chunks, so the plan's ordering — which
+is what the assignment actually rests on — was unaffected.

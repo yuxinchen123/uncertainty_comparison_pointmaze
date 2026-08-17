@@ -282,13 +282,27 @@ seeds & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{$256$ copies pe
   environment draws, so a difference between two configurations is the swept values' doing and not
   a difference between seeds} \\
 \blackrule
+\multicolumn{5}{@{}l}{\textit{Extension}} \\
+\greyrule
+extended at a larger scale & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{the best
+  configuration of each of these four arms --- every one of them at the learning rate $10^{-3}$,
+  at $\beta = 10^{1}$ for \texttt{rnd\allowbreak\_next\allowbreak\_state} and $\beta = 10^{0}$ for
+  the two oracle arms --- was re-run at $1{,}024$ copies for $1{,}000{,}038{,}400$ environment
+  steps per copy, that is $1{,}953{,}200$ iterations and $9{,}766$ recording windows: $4$ times the
+  copies of one cell above and about $100$ times its step budget. The extension's results are the
+  rows below the double rule of \Cref{tab:pm-jax-run11-results}, and its curves are the ones
+  \Cref{fig:pm-jax-run11-curves} draws. Run folder \texttt{runs/\allowbreak
+  2026-08-16-22-47\allowbreak\_jax-ppo\allowbreak\_pointmaze-large-nonoise\allowbreak\_full-batch\allowbreak\_rollout-128\allowbreak\_envs-per-copy-4\allowbreak\_steps-per-copy-1000M\allowbreak\_bonus-rnd-visit-count-sqrt-visit-count-linear-none\allowbreak\_learning-rate-1e-3\allowbreak\_intrinsic-weight-rnd-10-visit-count-1\allowbreak\_copies-1024\allowbreak\_extension-of-first-batch}} \\
+\blackrule
 \end{tabular}%
 }
-\caption{What train run 1.1 sweeps. ``same'' collapses a value shared with the columns to its
+\caption{What train run 1.1 sweeps, and what its extension re-ran. ``same'' collapses a value
+shared with the columns to its
 left; the grey verticals make each span's extent visible. ``N/A'' marks a knob that does not apply
 --- \texttt{no\allowbreak\_exploration} has no bonus, so it has no bonus knobs and no intrinsic
 weight to sweep. The two oracle columns repeat their shared values rather than writing ``same'',
-because the column to their left is the one arm the value does not apply to.}
+because the column to their left is the one arm the value does not apply to. The last row is the
+extension's; every row above it describes the original sweep and is unchanged from its launch.}
 \label{tab:pm-jax-run11-swept}
 \end{table}
 
@@ -305,6 +319,20 @@ and by \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\all
 in the run folder; both import the run's own aggregation module,
 \texttt{code/\allowbreak aggregate.py}, rather than re-deriving any number, so the two cannot name
 different winners.
+
+\textbf{The extension is also complete.} The four winning configurations above were re-run at
+$1{,}024$ copies for $1{,}000{,}038{,}400$ environment steps per copy --- a hundred times the budget
+--- on 2026-08-16 between 23:19 PT and 2026-08-17 03:44 PT, on five H100 NVL cards of the
+\texttt{gpu} partition. The distillation arm ran as two chunks of $512$ copies holding copy indices
+$0$--$511$ and $512$--$1023$; the other three ran as one chunk of $1{,}024$ each. Every chunk wrote
+its $9{,}766$ recorded windows and its completion record, all $48{,}830$ windows are phase-blocked,
+and the chunks' copy-index ranges were checked to partition each arm's $1{,}024$ copies exactly
+once, so every extension row is a mean over the full $1{,}024$. The run folder is
+\texttt{runs/\allowbreak 2026-08-16-22-47\allowbreak\_jax-ppo\allowbreak\_\ldots\allowbreak\_copies-1024\allowbreak\_extension-of-first-batch}
+(named in full in the last row of \Cref{tab:pm-jax-run11-swept}), and its rows are the ones below
+the double rule of \Cref{tab:pm-jax-run11-results}. The figure now shows the extension's curves;
+which cards each chunk went to, and what every rejected alternative would have cost, is
+\texttt{code/\allowbreak submission\allowbreak\_plan.json} in that folder.
 
 \paragraph{How to read the metrics tables.}
 Define a \emph{configuration} as one (learning rate, intrinsic weight) cell of one algorithm arm,
@@ -384,34 +412,55 @@ error; $N$ is how many completed copies that mean is taken over.
 \texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & \underline{$7.866 \pm 0.723$} & \underline{$17.070 \pm 1.464$} & \underline{$0.926$} & {\boldmath $96.86 \pm 0.48$} & not recorded & $256$ \\
 \texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $2.423 \pm 0.464$ & $5.654 \pm 1.026$ & $0.500$ & $80.06 \pm 1.35$ & not recorded & $256$ \\
 \texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.005 \pm 0.005$ & $0.019 \pm 0.019$ & $0.004$ & $24.07 \pm 0.89$ & not recorded & $256$ \\
+\midrule\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & {\boldmath $1.795 \pm 0.101$} & {\boldmath $1.242 \pm 0.286$} & {\boldmath $0.999$} & {\boldmath $99.58 \pm 0.06$} & not recorded & $1{,}024$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & \underline{$0.658 \pm 0.024$} & \underline{$0.185 \pm 0.118$} & {\boldmath $0.999$} & \underline{$99.07 \pm 0.06$} & not recorded & $1{,}024$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $0.331 \pm 0.030$ & $0.171 \pm 0.095$ & \underline{$0.804$} & $94.50 \pm 0.35$ & not recorded & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.001 \pm 0.001$ & $0.000 \pm 0.000$ & $0.016$ & $33.36 \pm 0.53$ & not recorded & $1{,}024$ \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-jax-run11-results
 }
 \caption{Best configuration per algorithm arm, ranked by whole-run reward (the only arrowed
-column). Cells are mean $\pm$ standard error over the configuration's completed copies; $N$ is how
-many completed copies, and every unit finished, so $N$ is the full $256$ everywhere. Best per metric
-column \textbf{bold}, second best \underline{underlined}; higher is better in every column that
-carries a number. Steps to goal would be the one column where lower is better, and this trainer does
-not record it --- the cell says so rather than being left empty.}
+column). \textbf{The double rule separates the two budgets.} Above it are the four winners of the
+original sweep, $256$ copies each over $10{,}035{,}200$ environment steps per copy; below it are
+the same four configurations as the extension re-ran them, $1{,}024$ copies each over
+$1{,}000{,}038{,}400$ steps per copy. Cells are mean $\pm$ standard error over the configuration's
+completed copies; $N$ is how many completed copies, and every unit of both runs finished, so $N$ is
+the full $256$ above the double rule and the full $1{,}024$ below it. Best per metric column
+\textbf{bold}, second best \underline{underlined}, computed \emph{within} each block --- the two
+blocks are different step budgets over different copy counts, so a cell of one is not comparable
+with a cell of the other. Higher is better in every column that carries a number. Steps to goal
+would be the one column where lower is better, and this trainer does not record it --- the cell says
+so rather than being left empty.}
 \label{tab:pm-jax-run11-results}
 \end{table}
 
 % ARTIFACT 4 --- the training-curve figure. Drawn by <run>/analysis/code/make_reward_curves.py,
 % which imports the same best_per_arm the results table above uses, and regenerated with it. The
 % run folder's name carries underscores, so the path is wrapped in \detokenize.
+% The extension replaced the curves rather than adding to them: the path now names the EXTENSION
+% run folder, whose script writes the same file name into its own analysis/plots/. The original
+% run's plot is untouched in the original run folder and is its record of the shorter budget.
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
-\caption{Mean episode return against environment steps for the best configuration of each algorithm
-arm, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. Each point is one recorded
-window of $256$ episodes per copy; the curve is the mean over that configuration's $256$ copies and
-the band is plus or minus one standard error over them. Solid black is the best
-random-network-distillation configuration, the reference the other arms are measured against; every
-other arm has its own colour and its own line style. The legend names each winner's learning rate
-$\alpha$ and, where the arm has a bonus, its intrinsic weight $\beta$. Drawn by
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-16-22-47_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-1024_extension-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
+\caption{Mean episode return against environment steps for each algorithm arm's best
+configuration, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. \textbf{The
+budget shown is the extension's}: every curve runs to $1{,}000{,}038{,}400$ environment steps per
+copy and is the mean over that configuration's $1{,}024$ copies, with the band plus or minus one
+standard error over them; each point is one recorded window of $256$ episodes per copy.
+\textbf{The step axis is logarithmic}, which the original sweep's figure did not need: every arm
+reaches its peak inside the first $15$ million steps and then decays over the remaining $985$
+million, so on a linear axis the whole rise would occupy the first per cent of the width. The
+original sweep's $10$-million-step curves over $256$ copies are not drawn beside them --- two
+budgets of one arm in one panel read as two algorithms --- and stay in the original run folder's
+own plot. Solid black is the best random-network-distillation configuration, the reference the
+other arms are measured against; every other arm keeps the colour and line style it had in the
+original run. The legend names each winner's learning rate $\alpha$ and, where the arm has a
+bonus, its intrinsic weight $\beta$. Drawn by
 \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\allowbreak\_curves.py} in the
-run folder.}
+extension run folder.}
 \label{fig:pm-jax-run11-curves}
 \end{figure}
 
