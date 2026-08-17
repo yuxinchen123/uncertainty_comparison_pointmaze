@@ -16,8 +16,12 @@ from .config import RNDConfig
 from .networks import features, init_predictor, init_target, whiten
 
 
-def build(cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index):
-    """Bind this bonus to one run's copy count, seeds and statistics setting."""
+def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index):
+    """Bind this bonus to one run's copy count, seeds and statistics setting.
+
+    env_cfg is unused: this family reads the observation as four numbers and needs to know
+    nothing else about the environment it came from.
+    """
     # the target is a constant of the program, not a parameter: it is drawn once here and never
     # appears in any gradient
     target = init_target(rnd_cfg, n_copies, base_seed, copy_seed_index)

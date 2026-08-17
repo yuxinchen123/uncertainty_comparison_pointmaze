@@ -14,8 +14,6 @@ import numpy as np
 from .. import F32
 from ..agents.ppo.config import PPOConfig
 from ..agents.ppo.update import opt_init
-from ..bonuses.rnd.config import RNDConfig
-from ..bonuses.rnd.implementation import build as build_rnd
 from ..envs.pointmaze.jax_pointmaze import EnvState
 from ..evaluation.coverage import coverage_fraction
 from ..statistics import rms_init
@@ -23,20 +21,16 @@ from .compose import Composition
 from .state import TrainState, put_params
 
 
-def rnd_factory(rnd_cfg: RNDConfig = None):
-    """A bonus factory for random network distillation with the given widths."""
-    settings = rnd_cfg or RNDConfig()
-    return lambda cfg, n_copies, base_seed, copy_seed_index: build_rnd(
-        cfg, settings, n_copies, base_seed, copy_seed_index)
-
-
 class Runner:
     """Static configuration plus two compiled programs; all mutable state lives in a TrainState."""
 
-    def __init__(self, cfg: PPOConfig, bonus_factory=None, env_cfg=None):
-        """Compose this configuration's environment, agent and bonus, and compile the programs."""
+    def __init__(self, cfg: PPOConfig, bonus="rnd_next_state", env_cfg=None):
+        """Compose this configuration's environment, agent and bonus, and compile the programs.
+
+        `bonus` is a preset name from `bonuses/registry.py`, or a factory passed straight in.
+        """
         self.cfg = cfg
-        self.composition = Composition(cfg, bonus_factory or rnd_factory(), env_cfg)
+        self.composition = Composition(cfg, bonus, env_cfg)
         self.env = self.composition.env
         self.bonus = self.composition.bonus
         self.sweep = self.composition.sweep

@@ -10,6 +10,7 @@ rather than nominally cheaper.
 import jax
 
 from ..agents.ppo.networks import init_agent_params
+from ..bonuses.registry import make_bonus
 from ..envs.pointmaze.jax_pointmaze import JaxPointMaze
 from ..envs.pointmaze.pm_common import EnvConfig
 from ..evaluation.coverage import open_cell_mask
@@ -21,11 +22,12 @@ from .train_step import build_iteration, build_prime_step, build_total_loss
 class Composition:
     """One assembled run: the environment, the bonus, the parameter layout, and two programs."""
 
-    def __init__(self, cfg, bonus_factory, env_cfg: EnvConfig = None):
+    def __init__(self, cfg, bonus, env_cfg: EnvConfig = None):
         """Build the environment and the bonus for this configuration, then compile both programs.
 
-        bonus_factory(cfg, n_copies, base_seed, copy_seed_index) -> BonusFunctions, so the family
-        binds to this run's copy count and seeds before anything is traced.
+        `bonus` is a preset name from the registry, or a factory
+        `(cfg, env_cfg, n_copies, base_seed, copy_seed_index) -> BonusFunctions` passed straight
+        in, so the family binds to this run before anything is traced.
         """
         self.cfg = cfg
         self.env_cfg = env_cfg or EnvConfig()
@@ -38,7 +40,8 @@ class Composition:
         self.open_cells, self.n_cells = open_cell_mask(self.env_cfg.map_name)
 
         # the bonus binds to this run before anything is traced
-        self.bonus = bonus_factory(cfg, cfg.n_copies, cfg.base_seed, self.sweep.copy_seed_index)
+        self.bonus = make_bonus(bonus)(cfg, self.env_cfg, cfg.n_copies, cfg.base_seed,
+                                       self.sweep.copy_seed_index)
         self.init_agent_params = init_agent_params(cfg.n_copies, cfg.base_seed,
                                                    self.sweep.copy_seed_index)
         self.init_bonus_params, self.init_bonus_state = self.bonus.init()
