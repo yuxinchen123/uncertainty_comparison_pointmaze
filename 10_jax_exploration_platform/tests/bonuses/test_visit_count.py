@@ -134,8 +134,28 @@ def test_the_two_presets_differ():
     print("ok test_the_two_presets_differ")
 
 
+def test_scoring_inside_the_rollout_is_refused():
+    """This family cannot score one step at a time, and says so when the program is built.
+
+    Its bonus is read from a table that has to have counted the whole rollout first, so composing
+    it with the rollout hoist turned off has no correct answer. The composer refuses at build
+    time rather than quietly computing something else.
+    """
+    from exploration_platform.training.runner import Runner
+    try:
+        Runner(PPOConfig(n_copies=2, n_envs=2, num_steps=8, hoist_rollout=False),
+               bonus="gt_position_velocity_sqrt")
+    except ValueError as error:
+        assert "hoist_rollout=False" in str(error), f"unhelpful message: {error}"
+        print(f"refused as expected: {error}")
+    else:
+        raise AssertionError("the visit-count bonus was composed with the rollout hoist off")
+    print("ok test_scoring_inside_the_rollout_is_refused")
+
+
 if __name__ == "__main__":
     test_first_rollout_matches_the_reference()
     test_repeated_rollouts_match_the_reference()
     test_wall_and_clip_cases()
     test_the_two_presets_differ()
+    test_scoring_inside_the_rollout_is_refused()
