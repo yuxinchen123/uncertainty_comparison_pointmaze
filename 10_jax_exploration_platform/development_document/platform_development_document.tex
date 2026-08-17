@@ -1,0 +1,384 @@
+\documentclass{article}
+
+% Pass the round citation option to natbib BEFORE the NeurIPS style auto-loads it.
+% The style loads natbib itself, so a second \usepackage[round]{natbib} would cause
+% an "Option clash for package natbib" error; passing the option here avoids it.
+\PassOptionsToPackage{round}{natbib}
+
+% Keep the same paper style when the NeurIPS style file is available.
+\IfFileExists{neurips_2026.sty}{\usepackage[preprint]{neurips_2026}}{}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+% natbib is loaded by the NeurIPS style above (with the round option passed via
+% \PassOptionsToPackage near \documentclass); do not load it again here.
+\usepackage[hidelinks,colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+
+% >>> BEGIN COPY INTO A DOCUMENT PREAMBLE >>>
+% Copied verbatim from the shared skill's style reference
+% /p/rlprojects/.claude/skills/rnd-experiment-tex-track/example.tex (its marked block).
+% WARNING: \arrayrulecolor is a GLOBAL switch — only use it through the two rule macros below,
+% which both end with the color on black. A \multicolumn that is NOT the last cell of its row
+% must end its spec with ? (e.g. {c?}), or the grey vertical on its right edge disappears.
+\usepackage[table]{xcolor}  % [table] loads colortbl -> \arrayrulecolor
+\usepackage{array}
+\setlength{\arrayrulewidth}{0.5pt}                 % \hline/\vline only; booktabs rules unaffected
+\definecolor{tabgrey}{gray}{0.65}
+\newcommand{\greyvline}{{\color{tabgrey}\vline}}   % braces keep the color inside the rule
+\newcolumntype{?}{!{\greyvline}}                   % column separator: one grey vertical rule
+\newcommand{\greyrule}{\arrayrulecolor{tabgrey}\hline\arrayrulecolor{black}} % between rows of one category
+\newcommand{\blackrule}{\arrayrulecolor{black}\hline}                        % category boundary / frame
+% <<< END COPY <<<
+
+% The NeurIPS style sets \flushbottom, which stretches a page's vertical spacing until the text
+% reaches the bottom margin. This document's pages are mostly one tall table each, so a page that
+% a table did not fit on gets its few paragraphs spread across the whole height with large gaps
+% between them. \raggedbottom leaves that space at the bottom instead.
+\raggedbottom
+
+\title{Exploration Bonuses on the JAX Training Platform:\\ Environment and Train-Run Development Document}
+
+\author{%
+  Anonymous Author(s)\\
+  Affiliation\\
+  \texttt{email}
+}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\clearpage
+
+%==============================================================================
+\section{PointMaze on the JAX platform}
+\label{sec:pm-jax}
+% The environment is subsection 1.0 and the first train run is 1.1, so a later run on the same
+% environment becomes 1.2 and the shared environment specification keeps the .0 slot.
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:pm-jax-envspec}
+
+The platform trains on one environment: the large PointMaze with the reset noise switched off.
+Every episode begins at exactly the same point and aims at exactly the same goal, so two copies
+that differ only by their policy sampling see the same task, and a difference between two
+configurations is not a difference between two randomly drawn start positions.
+\Cref{tab:pm-jax-env} states it knob by knob.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+?>{\raggedright\arraybackslash}p{6.4cm}
+?>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{PointMaze large, no reset noise} & \textbf{Where the value is set} \\
+& \small(the platform's only environment so far) & \small(field of the copied code) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Identity and provenance}} \\
+\greyrule
+specification name & \texttt{pointmaze\allowbreak\_large\allowbreak\_cont400\allowbreak\_nonoise@1} &
+  the name a run manifest carries \\
+\greyrule
+provenance & extracted from \texttt{09\allowbreak\_parallelization} at tag
+  \texttt{jax-rnd-baseline-v0.1.0}; nothing but import paths changed on the copy &
+  \texttt{ORIGIN.md} \\
+\greyrule
+implementation & \texttt{envs/pointmaze/\allowbreak jax\allowbreak\_pointmaze.py} (the stepper) and
+  \texttt{pm\allowbreak\_common.py} (physics constants, maps, configuration) &
+  \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak pointmaze/} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Maze and spaces}} \\
+\greyrule
+maze map & \texttt{large}: 12 columns $\times$ 9 rows of 1\,m cells, walls on the border,
+  46 open cells & \texttt{EnvConfig.\allowbreak map\allowbreak\_name} \\
+\greyrule
+world extent & $x \in [-6, 6]$, $y \in [-4.5, 4.5]$; the origin is the maze centre and row $0$ is
+  the top row & \texttt{pm\allowbreak\_common.\allowbreak cell\allowbreak\_center} \\
+\greyrule
+agent body & 2-D ball, force-actuated, radius $0.1$\,m & \texttt{pm\allowbreak\_common} physics
+  constants \\
+\greyrule
+observation & $4$-d: $x$, $y$, $v_x$, $v_y$. The goal is \emph{not} observed &
+  \texttt{jax\allowbreak\_pointmaze.\allowbreak step} \\
+\greyrule
+action & $2$-d force, each component clipped to $[-1, 1]$ &
+  \texttt{pm\allowbreak\_common.\allowbreak ACT\allowbreak\_CLIP} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Start and goal}} \\
+\greyrule
+start cell & row $7$, column $1$ (row $0$ is the top); world position $(-4.5, -3.0)$ &
+  \texttt{EnvConfig.\allowbreak start\allowbreak\_cell} \\
+\greyrule
+goal cell & row $1$, column $10$; world position $(4.5, 3.0)$ &
+  \texttt{EnvConfig.\allowbreak goal\allowbreak\_cell} \\
+\greyrule
+reset position noise & $0$. Every episode starts exactly at the start cell's centre and the goal
+  sits exactly at its own centre; the only randomness left in an episode is the policy's own
+  sampling & \texttt{EnvConfig.\allowbreak position\allowbreak\_noise} \\
+\greyrule
+initial velocity & $(0, 0)$ at every reset &
+  \texttt{jax\allowbreak\_pointmaze.\allowbreak \_spawn} \\
+\greyrule
+goal radius & $0.45$\,m: a step whose distance to the goal is at most this earns reward $1$ &
+  \texttt{EnvConfig.\allowbreak goal\allowbreak\_radius} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Episode and reward}} \\
+\greyrule
+episode length cap & $400$ steps; one step is one $0.01$\,s integrator step &
+  \texttt{EnvConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+\greyrule
+task type & continuing: an episode is never terminated at the goal, only truncated at the cap, so
+  a copy that reaches the goal keeps collecting reward until the cap &
+  \texttt{EnvConfig.\allowbreak continuing\allowbreak\_task} \\
+\greyrule
+reward & sparse: $1$ on a step inside the goal radius, $0$ otherwise; no shift is added &
+  \texttt{EnvConfig.\allowbreak reward\allowbreak\_shift} \\
+\greyrule
+discount, extrinsic & $0.999$ & \texttt{PPOConfig.\allowbreak gamma\allowbreak\_ext} \\
+\greyrule
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) &
+  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+\blackrule
+\end{tabular}%
+}
+\caption{The environment every train run in this section uses. The two discounts are the trainer's
+defaults rather than environment fields, and are listed here because they define the objective the
+environment is optimised against. Long typewriter names break after every escaped underscore
+(\texttt{\textbackslash allowbreak}).}
+\label{tab:pm-jax-env}
+\end{table}
+
+\subsection{Train run 1.1: the first algorithm batch}
+\label{sec:pm-jax-run11}
+
+Four algorithm arms run at once: random network distillation, no exploration bonus at all, and the
+two oracle visit-count bonuses that differ only in how fast their bonus falls with the count. Each
+arm is swept over three learning rates, and each arm that has a bonus is swept over eleven weights
+on that bonus.
+
+\paragraph{Hypotheses.}
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{Random network distillation beats no exploration bonus.} At every one of the three
+  learning rates, \texttt{rnd\allowbreak\_next\allowbreak\_state} at its best intrinsic weight
+  reaches a higher maze-cell coverage and a higher whole-run reward than
+  \texttt{no\allowbreak\_exploration} at the same learning rate.
+\item \textbf{The oracle bonuses bound random network distillation from above.} The visit-count
+  arms are given the true novelty signal that random network distillation has to estimate from a
+  predictor's error, so at their best intrinsic weight they reach at least the coverage and reward
+  that the best random-network-distillation configuration reaches.
+\item \textbf{The two decays trade coverage against reward differently.} $1/\sqrt{n}$ keeps paying
+  for a state long after $1/n$ has stopped, so the $1/\sqrt{n}$ arm reaches the higher coverage and
+  the $1/n$ arm reaches the higher reward once the goal has been found.
+\item \textbf{Reward against intrinsic weight is single-peaked.} For every bonus arm, whole-run
+  reward as a function of the intrinsic weight rises and then falls: a weight far below the peak
+  leaves the agent exploring too little to find the goal, and a weight far above it drowns the
+  sparse extrinsic reward in the bonus, so the agent keeps chasing novelty after the goal is known.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+% Widths: the arm columns are sized by their content, and every spanning cell's width is the sum
+% of the columns it covers (11.3 = 3.1+2.3+2.95+2.95, 5.9 = 2.95+2.95).
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{3.1cm}
+?>{\raggedright\arraybackslash}p{2.3cm}
+?>{\raggedright\arraybackslash}p{2.95cm}
+?>{\raggedright\arraybackslash}p{2.95cm}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{\texttt{rnd\allowbreak\_next\allowbreak\_state}} &
+\textbf{\texttt{no\allowbreak\_exploration}} &
+\textbf{\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_sqrt}} &
+\textbf{\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_linear}} \\
+& \small(random network distillation) & \small(no intrinsic bonus) &
+\small(oracle counts, $1/\sqrt{n}$) & \small(oracle counts, $1/n$) \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Environment and RL algorithm}} \\
+\greyrule
+environment specification & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{the
+  no-noise large PointMaze of \Cref{tab:pm-jax-env}; this run adds no new
+  environment-specification table} \\
+\greyrule
+base RL algorithm & proximal policy optimisation, this platform's JAX trainer &
+  \multicolumn{3}{c}{same} \\
+\greyrule
+update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) &
+  \multicolumn{3}{c}{same} \\
+\greyrule
+rollout length $T$ & $128$ steps & \multicolumn{3}{c}{same} \\
+\greyrule
+environments per copy $N$ & $4$, so one iteration collects $T \times N = 512$ transitions per copy &
+  \multicolumn{3}{c}{same} \\
+\greyrule
+environment steps per copy & $10^{7}$ & \multicolumn{3}{c}{same} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+bonus signal & the prediction error of a trained network against a fixed random target & N/A &
+  \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{the oracle count of the discrete next
+  state} \\
+\greyrule
+bonus input & the next state $(x, y, v_x, v_y)$ & N/A &
+  \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{the next state's maze cell and its two
+  velocity bins} \\
+\greyrule
+bonus value & the squared prediction error, whitened by its running standard deviation & N/A &
+  $\min(1, n^{-1/2})$ at count~$n$ & $\min(1, n^{-1})$ at count~$n$ \\
+\greyrule
+what the bonus holds & a predictor network trained with the agent: 2 hidden layers of $256$, $128$
+  outputs & nothing & \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{one integer count table
+  per copy, $9 \times 12 \times 100 = 10{,}800$ entries; a wall or unvisited cell scores $1$} \\
+\greyrule
+when the bonus updates & every gradient step, as a term of the joint loss & N/A &
+  \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{once per rollout: one scatter that counts
+  it, one gather that scores it} \\
+\greyrule
+where the bonus enters & the advantage: $\beta \times$ intrinsic $+\ 2 \times$ extrinsic & N/A &
+  \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{the advantage: $\beta \times$ intrinsic
+  $+\ 2 \times$ extrinsic} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Swept knobs}} \\
+\greyrule
+learning rate & \multicolumn{4}{c}{$10^{-3}$, $10^{-4}$, $10^{-5}$ --- 3 values} \\
+\greyrule
+intrinsic weight $\beta$ & $10^{-5}$ to $10^{5}$ in factor-of-ten steps --- 11 values & N/A &
+  \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{$10^{-5}$ to $10^{5}$ in factor-of-ten
+  steps --- 11 values} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Run bookkeeping (sweep config counts)}} \\
+\greyrule
+configs in this column & $3$(learning rate) $\times$ $11$(intrinsic weight) $=33$ &
+  $3$(learning rate) $=3$ & $3$(learning rate) $\times$ $11$(intrinsic weight) $=33$ &
+  $3$(learning rate) $\times$ $11$(intrinsic weight) $=33$ \\
+\greyrule
+total configs in this table & \multicolumn{4}{c}{$33+3+33+33=\mathbf{102}$} \\
+\greyrule
+copies in this column & $33 \times 256 = 8{,}448$ & $3 \times 256 = 768$ &
+  $33 \times 256 = 8{,}448$ & $33 \times 256 = 8{,}448$ \\
+\greyrule
+seeds & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{$256$ copies per configuration,
+  seeded in pairs: copy $k$ of every configuration starts from the same weights and meets the same
+  environment draws, so a difference between two configurations is the swept values' doing and not
+  a difference between seeds} \\
+\blackrule
+\end{tabular}%
+}
+\caption{What train run 1.1 sweeps. ``same'' collapses a value shared with the columns to its
+left; the grey verticals make each span's extent visible. ``N/A'' marks a knob that does not apply
+--- \texttt{no\allowbreak\_exploration} has no bonus, so it has no bonus knobs and no intrinsic
+weight to sweep. The two oracle columns repeat their shared values rather than writing ``same'',
+because the column to their left is the one arm the value does not apply to.}
+\label{tab:pm-jax-run11-swept}
+\end{table}
+
+\paragraph{Results --- status.}
+The run has not launched yet: no work unit has been claimed and no record has been written, so
+\Cref{tab:pm-jax-run11-results} below holds column headers and no numbers, and the training-curve
+figure that belongs after it does not exist yet. Both are written by the run's own generator
+(\texttt{development\allowbreak\_document/code/\allowbreak <timestamp>\allowbreak\_<run>-tables/\allowbreak make\allowbreak\_all.py}),
+which imports the run's status and metrics modules rather than re-deriving any number, and both
+are regenerated at every refresh once completed records exist. A record whose \texttt{completed}
+flag is false may feed a truncated curve but never a table number.
+
+\paragraph{How to read the metrics tables.}
+Define a \emph{configuration} as one (learning rate, intrinsic weight) cell of one algorithm arm,
+and define $C$ as the number of copies it is given, $C = 256$ here; index the copies by
+$k = 1, \dots, C$. Define $E_k$ as the number of episodes copy $k$ finishes within its $10^{7}$
+environment steps, and $R_{k,e}$ as the extrinsic return of its episode $e$ --- the sum of that
+episode's sparse rewards, which is the number of steps the copy spent inside the goal radius,
+because the task is continuing and the episode is not ended by reaching the goal. Define $O$ as
+the number of open cells of the maze map, $O = 46$ for the large map. Every table cell is the mean
+over the configuration's completed copies plus or minus its standard error; $N$ is how many
+completed copies that mean is taken over.
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Whole-run reward} (higher is better; the column the table is sorted by) --- copy
+  $k$'s mean episode return over its whole run,
+  $\bar{R}_k = \dfrac{1}{E_k} \sum_{e=1}^{E_k} R_{k,e}$.
+\item \textbf{Last-100 reward} (higher is better) --- the same mean over that copy's last
+  $\min(100, E_k)$ episodes, $\bar{R}^{\,100}_k = \dfrac{1}{\min(100, E_k)}
+  \sum_{e = E_k - \min(100, E_k) + 1}^{E_k} R_{k,e}$. It separates a configuration that ends its
+  run at the goal from one that reached the goal early and then wandered off.
+\item \textbf{Success rate} (higher is better) --- the fraction of the configuration's copies that
+  reached the goal at least once, $s = \dfrac{1}{C} \sum_{k=1}^{C} \mathbf{1}\!\left[\sum_{e=1}^{E_k}
+  R_{k,e} > 0\right]$. A copy that never enters the goal radius collects exactly zero, because
+  reaching the goal is the only thing this environment pays for.
+\item \textbf{Maze-cell coverage \%} (higher is better) --- define $V_k$ as the number of distinct
+  open maze cells copy $k$ has entered at least once over its whole run; the metric is
+  $c_k = 100 \times \dfrac{V_k}{O}$.
+\item \textbf{Steps to goal} (lower is better) --- define $S_k$ as the set of copy $k$'s episodes
+  that reach the goal, and $g_{k,e}$ as the index of the first step of episode $e$ that earns
+  reward $1$. The metric is $\bar{g}_k = \dfrac{1}{|S_k|} \sum_{e \in S_k} g_{k,e}$, the mean over
+  successful episodes only. When fewer than $N$ copies have any successful episode, the cell
+  prints how many it was averaged over.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+% Auto-generated by code/<YYYY-MM-DD-HH-MM>_<run-slug>-tables/make_all.py once completed records
+% exist. Everything between the two markers is replaced wholesale; the caption, the label and the
+% sizing stay outside them. Until then the block below holds the final column headers and one row
+% saying the run has not produced a record yet.
+% >>> AUTO-GENERATED TABLE START: pm-jax-run11-results
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r r r@{}}
+\toprule
+\textbf{algorithm --- best configuration} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-100\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{maze-cell\\coverage \%}} &
+\textbf{\shortstack[c]{steps\\to goal}} &
+\textbf{$N$} \\
+\midrule
+\multicolumn{7}{@{}l}{\textbf{\texttt{pointmaze\allowbreak\_large\allowbreak\_cont400\allowbreak\_nonoise@1}}} \\
+\multicolumn{7}{@{}l}{not launched --- no completed record exists yet} \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-run11-results
+}
+\caption{Best configuration per algorithm arm, ranked by whole-run reward (the only arrowed
+column). Cells are mean $\pm$ standard error over the configuration's completed copies; $N$ is how
+many completed copies. Best per metric column \textbf{bold}, second best \underline{underlined};
+steps to goal is the one column where lower is better.}
+\label{tab:pm-jax-run11-results}
+\end{table}
+
+% ARTIFACT 4 --- the training-curve figure, written by <run>/analysis/code/ once completed records
+% exist, and regenerated with the results table above. Replace this comment block with the figure:
+%
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=\textwidth]{<run>/analysis/plots/pm_jax_run11_reward_curves.pdf}
+% \caption{Whole-run reward against environment steps for the best configuration of each algorithm
+% arm, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. Curve = mean over that
+% configuration's completed copies, band = plus or minus one standard error. Solid black is the
+% best random-network-distillation configuration, the reference the other arms are measured
+% against; every other arm has its own colour and its own line style, fixed across panels. Drawn by
+% <run>/analysis/code/make_reward_curves.py.}
+% \label{fig:pm-jax-run11-curves}
+% \end{figure}
+
+\end{document}

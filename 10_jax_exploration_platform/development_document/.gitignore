@@ -1,0 +1,26 @@
+# LaTeX build artifacts (the repository root already ignores *.log and *.pdf)
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.bcf
+*.run.xml
+*.xdv
+_minted-*/
+
+# Python bytecode (table generators)
+*.pyc
+**/__pycache__/
