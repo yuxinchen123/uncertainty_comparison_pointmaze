@@ -68,3 +68,37 @@ stage — on the processor (18:44 to 19:05 PT) and on the H100 NVL under the ser
 | `parity_07/test_visit_count_against_07.py` | pass, 0 of 10,800 table entries differ | pass, 0 of 10,800 |
 | `copy_isolation/test_bonus_copy_isolation.py` | pass, all four families, both update styles | pass, all four families, both update styles |
 | `integration/test_jit_eager_equivalence.py` | pass, worst 1.3e-06 by the mixed rule | not run (uncompiled execution on the card is very slow) |
+
+## The whole test suite at the visit-count throughput gate
+
+Run again at the end of the `algo/visit-count` fork's round 1, on 2026-08-16 — on the processor
+(20:16 to 20:29 PT) and on the H100 NVL under the serval05 lock (20:22 to 20:25 PT). Both ended
+with exit code 0, 0 failed. **No source file changed in that round**, so this is the same code the
+row above tested; the point of re-running it is that a fork does not merge on a remembered green.
+
+One command runs the whole suite now: `bash tests/run_all.sh` on the processor,
+`bash tests/run_all.sh gpu` on the card (through the lock). Each test runs in its own interpreter,
+so one test's device buffers cannot reach the next. The card skips the four agent-only checks,
+whose results do not depend on the device, and the uncompiled-execution comparison, which takes
+very long there.
+
+| file | processor | graphics card |
+|---|---|---|
+| `golden_09/test_golden_parity.py` | pass, worst difference 0.0 | pass, worst difference 0.0 |
+| `agents/test_jax_ppo.py` | pass | skipped (device-independent) |
+| `agents/test_sweep_jax.py` | pass | skipped (device-independent) |
+| `agents/test_hoist_equivalence.py` | pass | skipped (device-independent) |
+| `agents/test_flat_params_equivalence.py` | pass | skipped (device-independent) |
+| `bonuses/test_registry.py` | pass | pass |
+| `bonuses/test_none_has_no_bonus_arithmetic.py` | pass | pass, 115 matrix multiplications with the bonus against 105 without |
+| `bonuses/test_visit_count.py` | pass | pass |
+| `bonuses/test_visit_count_learning_sanity.py` | pass | pass, intrinsic reward 0.1932 to 0.0600 for `1/sqrt(n)` and 0.0503 to 0.0070 for `1/n`, coverage 0.049 to 0.141 in both |
+| `parity_07/test_visit_count_against_07.py` | pass | pass, 0 of 10,800 table entries differ, worst bonus difference 9.93e-09 |
+| `copy_isolation/test_bonus_copy_isolation.py` | pass | pass, all four families, both update styles |
+| `integration/test_jit_eager_equivalence.py` | pass | skipped (uncompiled execution on the card is very slow) |
+
+The card's run took 2.6 minutes against the 20 of the earlier one, because jax's persistent
+compilation cache was switched on for this work
+(`JAX_COMPILATION_CACHE_DIR=/localtmp/sl5nw/platform_jax_cache`, node-local on serval05). The cache
+key is the compiled program, so a changed source recompiles; it saves repeats of an unchanged one,
+which at 8,448 copies was 500 seconds a program.
