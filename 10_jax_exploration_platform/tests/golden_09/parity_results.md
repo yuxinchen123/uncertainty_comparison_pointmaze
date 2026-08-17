@@ -13,6 +13,8 @@ seed 17, both update styles (`full_batch` and `epoch_minibatch`), the platform's
 | 2026-08-16 16:31 PT | the copied single module | H100 NVL on serval05, under the lock | `/localtmp/sl5nw/venvs/rnd09_jax/bin/python` (jax 0.11.0, node-local) | every array bit-identical | 0.0 |
 | 2026-08-16 16:34 PT | the copied single module | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0, the shared platform environment) | every array bit-identical | 0.0 |
 | 2026-08-16 17:05 PT | after the split into environment / agent / bonus / composition | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 17:41 PT | after the bonus registry and the `none` family | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 17:41 PT | after the bonus registry and the `none` family | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 
 "Bit-identical" is the literal comparison the test makes: the raw bytes of every array in the
 starting state, the primed state, and each iteration's metrics and state are compared, so a
