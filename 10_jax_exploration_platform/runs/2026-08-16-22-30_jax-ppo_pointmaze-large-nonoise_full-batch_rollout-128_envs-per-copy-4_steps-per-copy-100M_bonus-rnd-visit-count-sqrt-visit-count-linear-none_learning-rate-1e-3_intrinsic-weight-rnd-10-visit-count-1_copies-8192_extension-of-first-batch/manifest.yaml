@@ -1,0 +1,73 @@
+schema_version: 1
+run_id: 2026-08-16-22-30_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-100M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-8192_extension-of-first-batch
+kind: extension
+extends:
+  parent_run: 2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  parent_run_path: runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  what_changed: "each arm's best configuration of the parent run, re-run at 8,192 copies for 100,044,800 environment steps per copy: 32 times the copies of one parent cell and 10 times its step budget"
+  configurations_extended:
+    rnd_next_state:
+      learning_rate: 0.001
+      intrinsic_weight: 10.0
+      parent_copies: 256
+      extension_copies: 8192
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 100044800
+    gt_position_velocity_sqrt:
+      learning_rate: 0.001
+      intrinsic_weight: 1.0
+      parent_copies: 256
+      extension_copies: 8192
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 100044800
+    gt_position_velocity_linear:
+      learning_rate: 0.001
+      intrinsic_weight: 1.0
+      parent_copies: 256
+      extension_copies: 8192
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 100044800
+    none:
+      learning_rate: 0.001
+      intrinsic_weight: none — this arm has no bonus
+      parent_copies: 256
+      extension_copies: 8192
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 100044800
+description: "The extension of train run 1.1. Four work units, one per algorithm arm, each holding the single configuration that arm won with in the parent run: random network distillation at intrinsic weight 10, the two oracle visit-count bonuses at intrinsic weight 1, and no bonus at all, every one at learning rate 1e-3. 8,192 copies per unit, seeded 0 to 8,191, 100,044,800 environment steps per copy."
+git:
+  commit: 8c7cc546c80de9cc1f4818ffb9f4ef7fea0b0744
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1 + gt_position_velocity_sqrt@1 + gt_position_velocity_linear@1 + none@1
+  update_schedule: post_rollout_update@1 for the visit-count arms, per_rollout@1 for random network distillation, none@1 for the arm with no bonus
+compile_signature:
+  copies: 8192
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: not applicable — full_batch takes one gradient step on the whole rollout
+  minibatches: not applicable — full_batch takes one gradient step on the whole rollout
+  dtype: float32
+  stats_dtype: float64
+  iterations: 195400
+  window_iterations: 200
+  windows: 977
+  env_steps_per_copy: 100044800
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+  note: one cell per unit, so the 8,192 copies of a unit differ only by seed
+units:
+  - unit-1_rnd-next-state_learning-rate-1e-3_intrinsic-weight-10_copies-8192
+  - unit-2_gt-position-velocity-sqrt_learning-rate-1e-3_intrinsic-weight-1_copies-8192
+  - unit-3_gt-position-velocity-linear_learning-rate-1e-3_intrinsic-weight-1_copies-8192
+  - unit-4_none_learning-rate-1e-3_no-intrinsic-weight_copies-8192
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+  aggregator: code/aggregate.py
+checkpoints: none — this platform saves no model state, so a unit resumes by being re-run whole
