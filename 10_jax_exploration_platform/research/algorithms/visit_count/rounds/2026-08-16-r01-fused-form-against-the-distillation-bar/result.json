@@ -1,0 +1,190 @@
+{
+ "round": "2026-08-16-r01-fused-form-against-the-distillation-bar",
+ "family": "visit_count",
+ "device": [
+  "cuda:0"
+ ],
+ "jax": "0.11.0",
+ "git": "f3fd9682672add73d6ae6a8578f0341034494bb8",
+ "measured_at": [
+  "2026-08-16T22:24:02.853654-04:00",
+  "2026-08-16T22:30:07.608916-04:00",
+  "2026-08-16T22:38:52.791861-04:00",
+  "2026-08-16T22:44:28.698672-04:00",
+  "2026-08-16T23:21:16.722147-04:00"
+ ],
+ "protocol": {
+  "paired": "the arms alternate round by round in one process on one card, the order flips every round, every iteration is waited for",
+  "rounds": 11,
+  "iterations_per_round": 10,
+  "peak_memory": "measured in separate one-arm processes, because the allocator's high-water mark belongs to the process",
+  "shape": "the shipped sweep: learning rates x intrinsic weights x 256 copies per cell, one update per batch, 128 rollout steps of 4 environments"
+ },
+ "gate_at_8448_copies_visit_count_sqrt": [
+  {
+   "bonus": "rnd_next_state",
+   "copies": 8448,
+   "seconds_per_iteration": 0.08402356120059266,
+   "total_env_steps_per_second": 51478132.30236533,
+   "env_steps_per_second_per_copy": 6093.528918367108,
+   "hours_per_million_steps_per_copy": 0.04558569943608544,
+   "peak_device_mib_measured_alone": 28831.185546875,
+   "is_the_bar": true,
+   "throughput_ratio_against_bar": 1.0,
+   "paired_rounds_faster_than_bar": null,
+   "rounds": 11,
+   "passes_gate": null
+  },
+  {
+   "bonus": "gt_position_velocity_sqrt",
+   "copies": 8448,
+   "seconds_per_iteration": 0.034497194399591535,
+   "total_env_steps_per_second": 125383413.79005635,
+   "env_steps_per_second_per_copy": 14841.786670224474,
+   "hours_per_million_steps_per_copy": 0.018715925781028393,
+   "peak_device_mib_measured_alone": 7964.296142578125,
+   "is_the_bar": false,
+   "throughput_ratio_against_bar": 2.4356636144760673,
+   "paired_rounds_faster_than_bar": 11,
+   "rounds": 11,
+   "passes_gate": true
+  }
+ ],
+ "gate_at_8448_copies_visit_count_linear": [
+  {
+   "bonus": "rnd_next_state",
+   "copies": 8448,
+   "seconds_per_iteration": 0.08393676329869777,
+   "total_env_steps_per_second": 51531365.161266655,
+   "env_steps_per_second_per_copy": 6099.830156399936,
+   "hours_per_million_steps_per_copy": 0.04553860856049141,
+   "peak_device_mib_measured_alone": 28831.185546875,
+   "is_the_bar": true,
+   "throughput_ratio_against_bar": 1.0,
+   "paired_rounds_faster_than_bar": null,
+   "rounds": 11,
+   "passes_gate": null
+  },
+  {
+   "bonus": "gt_position_velocity_linear",
+   "copies": 8448,
+   "seconds_per_iteration": 0.03427209759829566,
+   "total_env_steps_per_second": 126206923.50663415,
+   "env_steps_per_second_per_copy": 14939.266513569382,
+   "hours_per_million_steps_per_copy": 0.018593802950464224,
+   "peak_device_mib_measured_alone": 7057.785888671875,
+   "is_the_bar": false,
+   "throughput_ratio_against_bar": 2.449128275792256,
+   "paired_rounds_faster_than_bar": 11,
+   "rounds": 11,
+   "passes_gate": true
+  }
+ ],
+ "gate_at_768_copies_no_bonus": [
+  {
+   "bonus": "rnd_next_state",
+   "copies": 768,
+   "seconds_per_iteration": 0.011157120403368026,
+   "total_env_steps_per_second": 35243502.42570645,
+   "env_steps_per_second_per_copy": 45889.977116805276,
+   "hours_per_million_steps_per_copy": 0.006053125218841161,
+   "peak_device_mib_measured_alone": 3054.123046875,
+   "is_the_bar": true,
+   "throughput_ratio_against_bar": 1.0,
+   "paired_rounds_faster_than_bar": null,
+   "rounds": 11,
+   "passes_gate": null
+  },
+  {
+   "bonus": "none",
+   "copies": 768,
+   "seconds_per_iteration": 0.006987543299328536,
+   "total_env_steps_per_second": 56273855.224308364,
+   "env_steps_per_second_per_copy": 73273.24898998484,
+   "hours_per_million_steps_per_copy": 0.0037909848629169574,
+   "peak_device_mib_measured_alone": 781.36474609375,
+   "is_the_bar": false,
+   "throughput_ratio_against_bar": 1.5967157447797373,
+   "paired_rounds_faster_than_bar": 11,
+   "rounds": 11,
+   "passes_gate": true
+  }
+ ],
+ "phase_profile_seconds_at_8448_copies": {
+  "whole iteration, visit count": 0.03380249999463558,
+  "whole iteration, no bonus": 0.0335663435398601,
+  "the bonus's whole share (visit count minus no bonus)": 0.00023615645477548242,
+  "update stage alone (one gradient step and the optimizer)": 0.013536299986299127,
+  "rollout and post-processing (whole minus update)": 0.020266200008336455,
+  "index arithmetic alone": 0.000179464987013489,
+  "index and scatter": 0.0003830714849755168,
+  "index, scatter, gather and power": 0.0004126900457777083
+ },
+ "phase_profile_seconds_every_run": [
+  {
+   "whole iteration, visit count": 0.033858487964607775,
+   "whole iteration, no bonus": 0.03344132145866752,
+   "the bonus's whole share (visit count minus no bonus)": 0.0004171665059402585,
+   "update stage alone (one gradient step and the optimizer)": 0.013614066469017416,
+   "rollout and post-processing (whole minus update)": 0.02024442149559036,
+   "index arithmetic alone": 0.00017829355783760548,
+   "index and scatter": 0.0003798964899033308,
+   "index, scatter, gather and power": 0.00041154847713187337
+  },
+  {
+   "whole iteration, visit count": 0.03380249999463558,
+   "whole iteration, no bonus": 0.0335663435398601,
+   "the bonus's whole share (visit count minus no bonus)": 0.00023615645477548242,
+   "update stage alone (one gradient step and the optimizer)": 0.013536299986299127,
+   "rollout and post-processing (whole minus update)": 0.020266200008336455,
+   "index arithmetic alone": 0.000179464987013489,
+   "index and scatter": 0.0003830714849755168,
+   "index, scatter, gather and power": 0.0004126900457777083
+  }
+ ],
+ "phase_profile_context": {
+  "bonus": "gt_position_velocity_sqrt",
+  "copies": 8448,
+  "update_style": "full_batch",
+  "table_entries_per_copy": 10800,
+  "rows_scattered_per_copy": 512,
+  "distinct_indices_per_copy_mean": 19.647058823529413
+ },
+ "ran_check": {
+  "visit_count_sqrt": {
+   "rnd_next_state": {
+    "iterations_run": 113,
+    "rows_per_copy": 57856,
+    "intrinsic_reward_mean_over_copies": 1.3393200635910034,
+    "intrinsic_reward_min": 0.0002641922328621149,
+    "intrinsic_reward_max": 9.335506439208984
+   },
+   "gt_position_velocity_sqrt": {
+    "iterations_run": 113,
+    "rows_per_copy": 57856,
+    "count_table_total_per_copy_min": 57856,
+    "count_table_total_per_copy_max": 57856,
+    "count_table_nonzero_entries_per_copy_mean": 239.0887784090909,
+    "intrinsic_reward_mean_over_copies": 0.026088982820510864,
+    "intrinsic_reward_min": 0.006565866991877556,
+    "intrinsic_reward_max": 0.19630709290504456
+   }
+  },
+  "no_bonus": {
+   "rnd_next_state": {
+    "iterations_run": 113,
+    "rows_per_copy": 57856,
+    "intrinsic_reward_mean_over_copies": 1.354530692100525,
+    "intrinsic_reward_min": 0.0013638674281537533,
+    "intrinsic_reward_max": 7.775362491607666
+   },
+   "none": {
+    "iterations_run": 113,
+    "rows_per_copy": 57856,
+    "intrinsic_reward_mean_over_copies": 0.0,
+    "intrinsic_reward_min": 0.0,
+    "intrinsic_reward_max": 0.0
+   }
+  }
+ }
+}

@@ -214,3 +214,7 @@ core.*
 # `experiment_background.md` are already tracked by the rules above.
 !10_jax_exploration_platform/runs/**/command.txt
 !10_jax_exploration_platform/benchmark_runs/**/command.txt
+# A research round's `result.json` is the round's permanent record — the few numbers its verdict
+# rests on, small, and useless to regenerate because the card and the session it was measured in
+# are gone. The raw benchmark output it was assembled from stays ignored under `benchmark_runs/`.
+!10_jax_exploration_platform/research/**/result.json
