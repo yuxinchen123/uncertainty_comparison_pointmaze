@@ -40,6 +40,15 @@
 \newcommand{\blackrule}{\arrayrulecolor{black}\hline}                        % category boundary / frame
 % <<< END COPY <<<
 
+% Visible-edit markup of the shared skill claude-edit-latex: a replacement of author text is
+% \sout{old}\claudeedit{new} (struck original + brown replacement), and a rationale annotation is
+% \claudecomment{...} (dark green). Both macros stay defined across every acceptance stage.
+\usepackage[normalem]{ulem}
+\definecolor{claude-brown}{RGB}{133,45,15}        % brown --- replacement-text color
+\definecolor{claude-green}{RGB}{0,100,0}          % dark green --- annotation color
+\newcommand{\claudeedit}[1]{{\color{claude-brown}\,#1}}
+\newcommand{\claudecomment}[1]{({\color{claude-green} {Claude: #1}})}
+
 % The NeurIPS style sets \flushbottom, which stretches a page's vertical spacing until the text
 % reaches the bottom margin. This document's pages are mostly one tall table each, so a page that
 % a table did not fit on gets its few paragraphs spread across the whole height with large gaps
@@ -229,9 +238,9 @@ rollout length $T$ & $128$ steps & \multicolumn{3}{c}{same} \\
 environments per copy $N$ & $4$, so one iteration collects $T \times N = 512$ transitions per copy &
   \multicolumn{3}{c}{same} \\
 \greyrule
-environment steps per copy & $10{,}035{,}200$: $19{,}600$ iterations of $512$ steps. That is $10^{7}$
-  to within $0.35$ per cent, and unlike $10^{7}$ it is a whole number of $200$-iteration recording
-  windows & \multicolumn{3}{c}{same} \\
+environment steps per copy & \sout{$10{,}035{,}200$: $19{,}600$ iterations of $512$ steps. That is
+  $10^{7}$ to within $0.35$ per cent, and unlike $10^{7}$ it is a whole number of $200$-iteration
+  recording windows}\claudeedit{$10$M} & \multicolumn{3}{c}{same} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic bonus}} \\
 \greyrule
@@ -284,15 +293,15 @@ seeds & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{$256$ copies pe
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Extension}} \\
 \greyrule
-extended at a larger scale & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{the best
-  configuration of each of these four arms --- every one of them at the learning rate $10^{-3}$,
-  at $\beta = 10^{1}$ for \texttt{rnd\allowbreak\_next\allowbreak\_state} and $\beta = 10^{0}$ for
-  the two oracle arms --- was re-run at $1{,}024$ copies for $1{,}000{,}038{,}400$ environment
-  steps per copy, that is $1{,}953{,}200$ iterations and $9{,}766$ recording windows: $4$ times the
-  copies of one cell above and about $100$ times its step budget. The extension's results are the
-  rows below the double rule of \Cref{tab:pm-jax-run11-results}, and its curves are the ones
-  \Cref{fig:pm-jax-run11-curves} draws. Run folder \texttt{runs/\allowbreak
-  2026-08-16-22-47\allowbreak\_jax-ppo\allowbreak\_pointmaze-large-nonoise\allowbreak\_full-batch\allowbreak\_rollout-128\allowbreak\_envs-per-copy-4\allowbreak\_steps-per-copy-1000M\allowbreak\_bonus-rnd-visit-count-sqrt-visit-count-linear-none\allowbreak\_learning-rate-1e-3\allowbreak\_intrinsic-weight-rnd-10-visit-count-1\allowbreak\_copies-1024\allowbreak\_extension-of-first-batch}} \\
+extended at a larger scale & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{\sout{the
+  best configuration of each of these four arms --- every one of them at the learning rate
+  $10^{-3}$, at $\beta = 10^{1}$ for \texttt{rnd\allowbreak\_next\allowbreak\_state} and
+  $\beta = 10^{0}$ for the two oracle arms --- was re-run at $1{,}024$ copies for
+  $1{,}000{,}038{,}400$ environment steps per copy, that is $1{,}953{,}200$ iterations and $9{,}766$
+  recording windows: $4$ times the copies of one cell above and about $100$ times its step
+  budget.}\claudeedit{each arm's best configuration --- ranked at $10$M steps off curves that were
+  still rising --- re-run at $1{,}024$ copies for $1000$M steps per copy; results below the double
+  rule of \Cref{tab:pm-jax-run11-results}}} \\
 \blackrule
 \end{tabular}%
 }
@@ -305,6 +314,18 @@ because the column to their left is the one arm the value does not apply to. The
 extension's; every row above it describes the original sweep and is unchanged from its launch.}
 \label{tab:pm-jax-run11-swept}
 \end{table}
+
+\noindent\claudecomment{Two edits in \Cref{tab:pm-jax-run11-swept}, both under the shared skill
+\texttt{rl-experiment-writing}: the step-budget row now reads $10$M, and the extension row is cut
+from $118$ words to $24$. Every exact figure the two rows carried --- $10{,}035{,}200$ steps per
+copy over $19{,}600$ iterations for the sweep, $1{,}000{,}038{,}400$ over $1{,}953{,}200$ for the
+extension --- is recorded in the runs' own \texttt{manifest.yaml} files
+(\texttt{compile\allowbreak\_signature}, and \texttt{extends.\allowbreak
+configurations\allowbreak\_extended} in the extension's), which is where a reader checking
+reproducibility looks. The extension's $200$-character run-folder path was deleted outright rather
+than struck through, because rule~2 of that skill keeps run-folder paths out of the document
+entirely; the run is named by date in the status paragraph below and in the caption of
+\Cref{tab:pm-jax-run11-results}.}
 
 \paragraph{Results --- status.}
 The run is complete. All four work units finished on 2026-08-16 between 21:04 and 21:36 PT: the two
@@ -321,18 +342,30 @@ in the run folder; both import the run's own aggregation module,
 different winners.
 
 \textbf{The extension is also complete.} The four winning configurations above were re-run at
-$1{,}024$ copies for $1{,}000{,}038{,}400$ environment steps per copy --- a hundred times the budget
+$1{,}024$ copies for \sout{$1{,}000{,}038{,}400$ environment}\claudeedit{$1000$M} steps per copy ---
+a hundred times the budget
 --- on 2026-08-16 between 23:19 PT and 2026-08-17 03:44 PT, on five H100 NVL cards of the
 \texttt{gpu} partition. The distillation arm ran as two chunks of $512$ copies holding copy indices
 $0$--$511$ and $512$--$1023$; the other three ran as one chunk of $1{,}024$ each. Every chunk wrote
-its $9{,}766$ recorded windows and its completion record, all $48{,}830$ windows are phase-blocked,
+\sout{its $9{,}766$ recorded windows}\claudeedit{all of its recorded windows} and its completion
+record, all $48{,}830$ windows are phase-blocked,
 and the chunks' copy-index ranges were checked to partition each arm's $1{,}024$ copies exactly
-once, so every extension row is a mean over the full $1{,}024$. The run folder is
-\texttt{runs/\allowbreak 2026-08-16-22-47\allowbreak\_jax-ppo\allowbreak\_\ldots\allowbreak\_copies-1024\allowbreak\_extension-of-first-batch}
-(named in full in the last row of \Cref{tab:pm-jax-run11-swept}), and its rows are the ones below
+once, so every extension row is a mean over the full $1{,}024$. \claudeedit{Its} rows are the ones
+below
 the double rule of \Cref{tab:pm-jax-run11-results}. The figure now shows the extension's curves;
 which cards each chunk went to, and what every rejected alternative would have cost, is
-\texttt{code/\allowbreak submission\allowbreak\_plan.json} in that folder.
+\texttt{code/\allowbreak submission\allowbreak\_plan.json} in \sout{that}\claudeedit{the extension
+run} folder.
+\claudecomment{Rounding and path removal under the shared skill \texttt{rl-experiment-writing}:
+the exact budget ($1{,}000{,}038{,}400$ steps per copy, $1{,}953{,}200$ iterations, $9{,}766$
+windows per chunk) is recorded in the extension run's \texttt{manifest.yaml}, section
+\texttt{compile\allowbreak\_signature}, and repeated in its
+\texttt{experiment\allowbreak\_background.md}. The sentence naming the run folder was deleted
+outright rather than struck through, since rule~2 of that skill keeps such paths out of the
+document entirely; the run is identified here by its dates and in the caption of
+\Cref{tab:pm-jax-run11-results}. The counts kept exact are the ones whose exactness is the claim
+--- that all $48{,}830$ windows are phase-blocked and that the chunks partition the $1{,}024$
+copies once each.}
 
 \paragraph{How to read the metrics tables.}
 Define a \emph{configuration} as one (learning rate, intrinsic weight) cell of one algorithm arm,
@@ -423,16 +456,24 @@ error; $N$ is how many completed copies that mean is taken over.
 }
 \caption{Best configuration per algorithm arm, ranked by whole-run reward (the only arrowed
 column). \textbf{The double rule separates the two budgets.} Above it are the four winners of the
-original sweep, $256$ copies each over $10{,}035{,}200$ environment steps per copy; below it are
-the same four configurations as the extension re-ran them, $1{,}024$ copies each over
-$1{,}000{,}038{,}400$ steps per copy. Cells are mean $\pm$ standard error over the configuration's
+original sweep, $256$ copies each over \sout{$10{,}035{,}200$ environment}\claudeedit{$10$M} steps
+per copy; below it are
+the same four configurations as the extension \claudeedit{of 2026-08-16} re-ran them, $1{,}024$
+copies each over
+\sout{$1{,}000{,}038{,}400$}\claudeedit{$1000$M} steps per copy. Cells are mean $\pm$ standard error over the configuration's
 completed copies; $N$ is how many completed copies, and every unit of both runs finished, so $N$ is
 the full $256$ above the double rule and the full $1{,}024$ below it. Best per metric column
 \textbf{bold}, second best \underline{underlined}, computed \emph{within} each block --- the two
 blocks are different step budgets over different copy counts, so a cell of one is not comparable
 with a cell of the other. Higher is better in every column that carries a number. Steps to goal
 would be the one column where lower is better, and this trainer does not record it --- the cell says
-so rather than being left empty.}
+so rather than being left empty.
+\claudecomment{Budgets rounded and the run named by date, under the shared skill
+\texttt{rl-experiment-writing}: the exact budgets are $10{,}035{,}200$ steps per copy for the
+original sweep and $1{,}000{,}038{,}400$ for the extension, recorded in each run's
+\texttt{manifest.yaml} (\texttt{compile\allowbreak\_signature.\allowbreak
+env\allowbreak\_steps\allowbreak\_per\allowbreak\_copy}). The date added here is the extension
+run's, and it replaces the run-folder path that the what-is-swept table used to carry.}}
 \label{tab:pm-jax-run11-results}
 \end{table}
 
@@ -447,7 +488,8 @@ so rather than being left empty.}
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-16-22-47_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-1024_extension-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
 \caption{Mean episode return against environment steps for each algorithm arm's best
 configuration, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. \textbf{The
-budget shown is the extension's}: every curve runs to $1{,}000{,}038{,}400$ environment steps per
+budget shown is the extension's}: every curve runs to
+\sout{$1{,}000{,}038{,}400$ environment}\claudeedit{$1000$M} steps per
 copy and is the mean over that configuration's $1{,}024$ copies, with the band plus or minus one
 standard error over them; each point is one recorded window of $256$ episodes per copy.
 \textbf{The step axis is logarithmic}, which the original sweep's figure did not need: every arm
@@ -460,7 +502,11 @@ other arms are measured against; every other arm keeps the colour and line style
 original run. The legend names each winner's learning rate $\alpha$ and, where the arm has a
 bonus, its intrinsic weight $\beta$. Drawn by
 \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\allowbreak\_curves.py} in the
-extension run folder.}
+extension run folder.
+\claudecomment{The budget is written round under the shared skill
+\texttt{rl-experiment-writing}; the exact $1{,}000{,}038{,}400$ steps per copy is in the extension
+run's \texttt{manifest.yaml}. The figure file's own path is unchanged --- it is the
+\texttt{\textbackslash includegraphics} argument the build needs, not prose.}}
 \label{fig:pm-jax-run11-curves}
 \end{figure}
 
@@ -501,49 +547,14 @@ extension run folder.}
   should sweep upward from $10^{-3}$ rather than downward from it.
 \end{enumerate}
 
-\paragraph{Training cost.}
-\Cref{tab:pm-jax-run11-cost} records what the run cost on each card. The whole sweep is
-$2.62 \times 10^{11}$ environment steps over $26{,}112$ copies, and it finished $32$ minutes after
-the first job started: the three scheduler jobs ran at once and together moved $305$ million
-environment steps per second, and the distillation unit set the finish time on its own. The unit
-with no bonus ran on the unscheduled machine \texttt{serval05} and cost nothing in queue time. Each
-card's build and compile is paid once per job and shows the compiled-program cache working: the
-canary on the same card compiled cold in $242$ to $350$ seconds and wrote the cache, so the real
-job's build fell to $101$ to $175$ seconds and its first iteration to about one second.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} l r r r r r r r@{}}
-\toprule
-\textbf{algorithm arm} & \textbf{card} & \textbf{copies} &
-\textbf{\shortstack[c]{seconds per\\iteration}} &
-\textbf{\shortstack[c]{total steps\\per second\\(millions)}} &
-\textbf{\shortstack[c]{steps per\\second\\per copy}} &
-\textbf{\shortstack[c]{hours per\\million steps\\per copy}} &
-\textbf{\shortstack[c]{build and\\compile (s)}} &
-\textbf{\shortstack[c]{wall clock\\(minutes)}} \\
-\midrule
-\texttt{rnd\allowbreak\_next\allowbreak\_state} & serval07 & $8{,}448$ & $0.0864$ & $50.03$ &
-  $5{,}923$ & $0.0469$ & $175$ & $28.5$ \\
-\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_sqrt} & serval07 & $8{,}448$ &
-  $0.0341$ & $126.90$ & $15{,}021$ & $0.0185$ & $101$ & $11.1$ \\
-\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_linear} & serval08 & $8{,}448$ &
-  $0.0337$ & $128.24$ & $15{,}180$ & $0.0183$ & $103$ & $11.0$ \\
-\texttt{no\allowbreak\_exploration} & serval05 & $768$ & $0.0062$ & $63.14$ & $82{,}211$ &
-  $0.0034$ & $25$ & $2.1$ \\
-\bottomrule
-\end{tabular}%
-}
-\caption{What each work unit cost. Every card is an H100 NVL. Seconds per iteration is the steady
-rate with the compiling first iteration excluded; the two rate columns are the same measurement seen
-two ways --- what the card does in total, and what one of its copies gets --- and the last rate
-column restates the per-copy rate in the unit a run is planned in. Build and compile is the time
-before the first iteration, paid once per job. The three scheduler jobs overlapped, so the sweep's
-wall clock is the largest of these, not their sum.}
-\label{tab:pm-jax-run11-cost}
-\end{table}
+\claudecomment{A \textbf{Training cost} paragraph and a table of what the run cost on each
+card --- seconds per iteration, total and per-copy step rates, hours per million steps, build
+and compile time, wall clock --- stood here and were deleted, not struck through: rule~3 of the
+shared skill \texttt{rl-experiment-writing} keeps infrastructure telemetry out of a development
+document unless the reader asks for it. The measurements are unchanged and still live in the run
+folder's \texttt{summary.json} and \texttt{infra\allowbreak\_history.md}, and the extension run's
+\texttt{code/\allowbreak submission\allowbreak\_plan.json} holds the per-card plan. The table
+carried no number that any other part of this document cites, and its label
+\texttt{tab:pm-jax-run11-cost} was referenced only from inside the deleted paragraph.}
 
 \end{document}
