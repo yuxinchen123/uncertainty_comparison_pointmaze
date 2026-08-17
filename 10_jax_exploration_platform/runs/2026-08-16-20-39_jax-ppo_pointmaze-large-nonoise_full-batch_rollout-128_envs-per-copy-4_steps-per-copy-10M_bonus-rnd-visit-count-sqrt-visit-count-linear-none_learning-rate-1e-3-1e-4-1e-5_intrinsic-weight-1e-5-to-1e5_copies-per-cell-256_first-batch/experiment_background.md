@@ -100,7 +100,10 @@ its compiles and its shards for no change in the sweep's finish time.
 
 ## Git state
 
-Commit at launch: filled in below by the launch step.
+Code commit at launch: `88244861dd25ed16a4b4e7fef40f7287d2be2d9d` (`git describe`: `jax-platform-v0.1.0-18-g8824486`), branch `Use-RLexplore-RND`,
+pushed before the first submission. The working tree of `10_jax_exploration_platform/` was
+clean at that commit; other folders of the shared repository carried unrelated uncommitted
+work from other sessions, which was left untouched.
 
 ## Deviation from the canary rule, and why
 

@@ -7,9 +7,9 @@ description: >
   that have a bonus also sweep eleven weights on it. 256 copies per cell, seeded in pairs across
   cells, 10,035,200 environment steps per copy.
 git:
-  commit: 76a06d0a0dd7ff3f2d7a5b5d3a3a3f0000000000
+  commit: 88244861dd25ed16a4b4e7fef40f7287d2be2d9d
   dirty: false
-  version_tag: filled at launch
+  version_tag: jax-platform-v0.1.0-18-g8824486
 specs:
   env: pointmaze_large_cont400_nonoise@1
   agent: ppo_full_batch@1
