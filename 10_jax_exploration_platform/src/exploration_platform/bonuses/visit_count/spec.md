@@ -77,5 +77,6 @@ guarantees, and the batch form is the one that fuses.
 |---|---|
 | the fused form and a plain python loop agree on the same supplied trajectories | `tests/bonuses/test_visit_count.py` |
 | the count table and the bonuses agree with `07_reconstruction`'s own wrapper on a fixed trajectory, its code run in its own interpreter | `tests/parity_07/test_visit_count_against_07.py` |
-| one copy's table never moves another copy's | `tests/copy_isolation/test_visit_count_isolation.py` |
+| one copy's table never moves another copy's | `tests/copy_isolation/test_bonus_copy_isolation.py` |
+| the fused form and the uncompiled form agree | `tests/integration/test_jit_eager_equivalence.py` |
 | the bonus falls where visits accumulate, and coverage grows | `tests/bonuses/test_visit_count_learning_sanity.py` |
