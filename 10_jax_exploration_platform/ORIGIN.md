@@ -31,14 +31,50 @@ file under a different name.
 | `benchmarks/bench_train_jax.py` | `benchmarks/harness/bench_train_jax.py` | one import-path line |
 | `benchmarks/profile_jax_phases.py` | `benchmarks/harness/profile_jax_phases.py` | one import-path line |
 
-Nothing else changed. That matters: the golden-parity gate
-(`tests/golden_09/test_golden_parity.py`) loads the copied trainer and the original
+Nothing else changed at copy time. That mattered: the golden-parity gate
+(`tests/golden_09/test_golden_parity.py`) runs the platform's trainer and the original
 `09_parallelization/ppo/jax_ppo/jax_ppo_rnd.py` side by side in one process and requires the two to
-produce bit-identical outputs and bit-identical parameters, so any edit beyond an import path would
-show up as a test failure.
+produce bit-identical outputs and bit-identical state, so any edit beyond an import path would show
+up as a test failure.
 
-`jax_ppo_rnd.py` stays ONE module for now. Splitting it into environment / agent / bonus / composition
-is the next stage, and every commit of that stage has to keep the golden-parity gate green.
+## What has changed since the copy
+
+`jax_ppo_rnd.py` no longer exists here. It was split into environment / agent / bonus /
+composition on 2026-08-16, and the file was deleted rather than kept as a second copy of the same
+code. The gate is what makes that safe: it still runs against the frozen single module in
+`09_parallelization/`, and it still requires bit-identical results, so the split is checked against
+the baseline rather than against itself.
+
+| the single module held | it now lives in |
+|---|---|
+| `PPOConfig` | `src/exploration_platform/agents/ppo/config.py` |
+| the actor and critic, their keyed initialisation, their forwards | `agents/ppo/networks.py` (the keyed draw itself is `exploration_platform/networks.py`, shared with the bonuses) |
+| `_losses`, minus the bonus's term | `agents/ppo/losses.py` |
+| `_clip_per_copy`, `_adam_step`, both update styles | `agents/ppo/update.py` |
+| `RMSState`, `rms_init`, `rms_update` | `exploration_platform/statistics.py` (the agent and the bonus both keep such statistics) |
+| the target and predictor networks, `_whiten`, `_rnd_features`, the intrinsic-reward line, the predictor loss | `bonuses/rnd/` |
+| `TrainState`, `pack` / `unpack` | `training/state.py` |
+| `_iterate_impl`, `_prime_impl` | `training/train_step.py` |
+| the sweep's per-copy vectors, `sweep_config` | `training/sweep.py` |
+| the `JaxPPORND` constructor's assembly and its two `jax.jit` calls | `training/compose.py` |
+| `train`, `prime_obs_rms`, `lr_argument`, `coverage`, `main` | `training/runner.py` (as the class `Runner`) |
+
+Two deliberate differences from the baseline, both visible in the state rather than in the
+arithmetic:
+
+- The run key and the iteration counter now live IN the state (`rng`, `step`), so one iteration is
+  `iterate(state, learning_rate)` and the driver keeps no counter beside it. Iteration k folds k
+  into the run's key exactly as the baseline's driver did, so the keys — and therefore every
+  random draw — are the same.
+- `obs_norm_init_iters` is now `prime_iterations`. The warm-up rollouts exist so that a bonus which
+  needs statistics of the observations has them before it scores anything; that is the bonus's
+  business, not the observation normaliser's, and a bonus with no warm-up hook runs none of them.
+
+One knob's behaviour is slightly more consistent than the baseline's, and the gate does not cover
+it: with `batch_stats_f32=True` the baseline reduced the warm-up rollouts' statistics in double
+precision while reducing the training rollouts' in single, because its priming call did not pass
+the flag. The platform passes it in both places. Every gate run uses the default, `False`, where
+the two are identical.
 
 ## The environment specification this platform starts from
 

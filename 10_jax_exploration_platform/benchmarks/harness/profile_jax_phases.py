@@ -27,7 +27,7 @@ import time
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(BASE / "src" / "exploration_platform" / "agents" / "ppo"))
+sys.path.insert(0, str(BASE / "src"))
 RESULTS = Path(__file__).resolve().parent / "results"
 
 
@@ -96,15 +96,17 @@ def main():
 
     import jax
     import jax.numpy as jnp
-    from jax_ppo_rnd import PPOConfig, JaxPPORND
+    from exploration_platform.agents.ppo.config import PPOConfig
+    from exploration_platform.agents.ppo.update import build_update, clip_per_copy
+    from exploration_platform.training.runner import Runner
+    from exploration_platform.training.state import stored_params
 
     cfg = PPOConfig(n_copies=args.n_copies, update_style=args.style)
-    tr = JaxPPORND(cfg)
-    state = tr.init_state()
+    tr = Runner(cfg)
+    state = tr.prime(tr.init_state(run_seed=0))
     key = jax.random.PRNGKey(0)
-    state = tr.prime_obs_rms(state, jax.random.fold_in(key, 1))
     lr = jnp.asarray(cfg.learning_rate, jnp.float32)
-    state, _ = tr._iterate(state, jax.random.fold_in(key, 2), lr)   # a representative state
+    state, _ = tr.iterate(state, lr)   # a representative state
 
     batch = make_batch(cfg, jax.random.fold_in(key, 3))
     ukey = jax.random.fold_in(key, 4)
@@ -112,11 +114,9 @@ def main():
     n_steps = cfg.update_epochs * cfg.num_minibatches
     mb_size = (cfg.num_steps * cfg.n_envs) // cfg.num_minibatches
 
-    # the real update stage
-    if args.style == "epoch_minibatch":
-        upd = jax.jit(lambda s, b: tr._update_epoch_minibatch(s, b, lr, ukey))
-    else:
-        upd = jax.jit(lambda s, b: tr._update_full_batch(s, b, lr, ukey))
+    # the real update stage, the same function the compiled iteration calls
+    update_fn = build_update(cfg, tr.total_loss, tr.sweep.lr_per_copy)
+    upd = jax.jit(lambda p, o, b: update_fn(p, o, b, lr, ukey))
 
     # the same sixteen steps, stopping after the gradient, and after the gradient plus clip
     def steps_only(params, batch, with_clip):
@@ -127,9 +127,9 @@ def main():
                for k, v in batch.items()}
 
         def body(carry, mb):
-            g = jax.grad(lambda p: tr._losses(p, mb, style_a=False))(params)
+            g = jax.grad(lambda p: tr.total_loss(p, mb, style_a=False))(params)
             if with_clip:
-                g = tr._clip_per_copy(g)
+                g = clip_per_copy(g, C, cfg.max_grad_norm)
             # consume EVERY leaf: taking only one lets the compiler delete the computation of
             # the others as dead code, which would credit their cost to whatever runs next
             return carry + sum(l.sum() for l in jax.tree.leaves(g)), None
@@ -142,15 +142,14 @@ def main():
 
     # the iteration consumes its state, so it is timed by carrying the state forward; the
     # remaining timings use the state it leaves behind and do not consume anything
-    t_whole, state = timed_stateful(
-        lambda s: tr._iterate(s, jax.random.fold_in(key, 5), lr)[0], state)
-    t_update = timed(lambda: upd(state, batch))
+    t_whole, state = timed_stateful(lambda s: tr.iterate(s, lr)[0], state)
+    t_update = timed(lambda: upd(stored_params(state, tr.layout), state.opt, batch))
     # the priming pass runs the same T environment steps with random actions and no networks,
     # so it isolates the environment's share of the rollout
     t_env_only, state = timed_stateful(
-        lambda s: tr._prime(s, jax.random.fold_in(key, 6)), state)
-    t_grad = timed(lambda: grad_only(state.params, batch))
-    t_gradclip = timed(lambda: grad_clip(state.params, batch))
+        lambda s: tr.prime_step(s, jax.random.fold_in(key, 6)), state)
+    t_grad = timed(lambda: grad_only(stored_params(state, tr.layout), batch))
+    t_gradclip = timed(lambda: grad_clip(stored_params(state, tr.layout), batch))
 
     rows = {
         "whole_iteration": t_whole,

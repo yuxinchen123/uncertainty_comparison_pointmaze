@@ -4,14 +4,15 @@ What `test_golden_parity.py` reported, run by run. Times are Pacific with a `PT`
 machines run on Eastern and the times were converted for display).
 
 Configuration in every run: 4 copies, 4 environments per copy, 32 rollout steps, 3 iterations,
-seed 17, both update styles (`full_batch` and `epoch_minibatch`), the copied trainer against
+seed 17, both update styles (`full_batch` and `epoch_minibatch`), the platform's trainer against
 `09_parallelization/ppo/jax_ppo/jax_ppo_rnd.py` at tag `jax-rnd-baseline-v0.1.0`.
 
-| when | device | interpreter | result | worst absolute difference |
-|---|---|---|---|---|
-| 2026-08-16 16:22 PT | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
-| 2026-08-16 16:31 PT | H100 NVL on serval05, under the lock | `/localtmp/sl5nw/venvs/rnd09_jax/bin/python` (jax 0.11.0, node-local) | every array bit-identical | 0.0 |
-| 2026-08-16 16:34 PT | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0, the shared platform environment) | every array bit-identical | 0.0 |
+| when | platform side | device | interpreter | result | worst absolute difference |
+|---|---|---|---|---|---|
+| 2026-08-16 16:22 PT | the copied single module | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 16:31 PT | the copied single module | H100 NVL on serval05, under the lock | `/localtmp/sl5nw/venvs/rnd09_jax/bin/python` (jax 0.11.0, node-local) | every array bit-identical | 0.0 |
+| 2026-08-16 16:34 PT | the copied single module | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0, the shared platform environment) | every array bit-identical | 0.0 |
+| 2026-08-16 17:05 PT | after the split into environment / agent / bonus / composition | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 
 "Bit-identical" is the literal comparison the test makes: the raw bytes of every array in the
 starting state, the primed state, and each iteration's metrics and state are compared, so a

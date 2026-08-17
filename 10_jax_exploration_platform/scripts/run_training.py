@@ -32,8 +32,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 PLATFORM_ROOT = Path(__file__).resolve().parent.parent
-TRAINER_DIR = PLATFORM_ROOT / "src" / "exploration_platform" / "agents" / "ppo"
-sys.path.insert(0, str(TRAINER_DIR))
+sys.path.insert(0, str(PLATFORM_ROOT / "src"))
 
 import numpy as np
 
@@ -199,7 +198,8 @@ def main() -> None:
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
 
-    from jax_ppo_rnd import JaxPPORND, PPOConfig  # the copied trainer, one module for now
+    from exploration_platform.agents.ppo.config import PPOConfig
+    from exploration_platform.training.runner import Runner
     import jax
 
     config = PPOConfig(n_copies=args.copies, n_envs=args.envs_per_copy,
@@ -247,11 +247,10 @@ def main() -> None:
 
     # build the trainer, then time the compilation of the first iteration separately from the rest,
     # because the first iteration pays for compiling the whole program
-    trainer = JaxPPORND(config)
-    state = trainer.init_state()
-    key = jax.random.PRNGKey(args.run_seed + 1_000_003 * config.base_seed)
+    trainer = Runner(config)
+    state = trainer.init_state(run_seed=args.run_seed)
     prime_start = time.time()
-    state = trainer.prime_obs_rms(state, jax.random.fold_in(key, 999999937))
+    state = trainer.prime(state)
     jax.block_until_ready(state.obs)
     say(f"priming done in {time.time() - prime_start:.1f}s")
 
@@ -260,8 +259,8 @@ def main() -> None:
     first_iteration_seconds = None
     for iteration in range(1, args.iterations + 1):
         iteration_start = time.time()
-        state, metrics = trainer._iterate(state, jax.random.fold_in(key, iteration),
-                                          trainer.lr_argument(iteration, args.iterations))
+        state, metrics = trainer.iterate(state,
+                                         trainer.lr_argument(iteration, args.iterations))
         if iteration == 1:
             jax.block_until_ready(metrics["loss"])
             first_iteration_seconds = time.time() - iteration_start
@@ -294,7 +293,7 @@ def main() -> None:
                 f"extrinsic reward per copy mean {reward.mean():.3f}{coverage_note}, "
                 f"elapsed {elapsed:.1f}s")
 
-    jax.block_until_ready(state.params)
+    jax.block_until_ready(state.agent_params)
     total_seconds = time.time() - start
     # the steady-state rate excludes the first iteration, which paid for compiling the program
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)

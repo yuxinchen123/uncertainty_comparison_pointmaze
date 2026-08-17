@@ -1,18 +1,19 @@
 # Sweeping a hyperparameter across copy groups (JAX)
 
-The same feature as `../torch_ppo/SWEEP.md`, in the JAX trainer. The copies normally differ
+The copies normally differ
 only by their seed; a sweep splits them into groups and gives each group its own learning
 rate, so one run answers "which rate is best" instead of one run per rate.
 
 ## Using it
 
 ```python
-from jax_ppo_rnd import JaxPPORND, sweep_config
+from exploration_platform.training.runner import Runner
+from exploration_platform.training.sweep import sweep_config
 
 # 4 learning rates, 128 independent copies each -> 512 copies in one run
 cfg = sweep_config(learning_rates=[1e-4, 3e-4, 1e-3, 3e-3], copies_per_rate=128)
-trainer = JaxPPORND(cfg)
-state, stats = trainer.train(num_iterations=20000, history_every=50)
+runner = Runner(cfg)
+state, stats = runner.train(num_iterations=20000, history_every=50)
 ```
 
 `copies_per_rate` may also be a list, one count per rate, when the groups should differ in

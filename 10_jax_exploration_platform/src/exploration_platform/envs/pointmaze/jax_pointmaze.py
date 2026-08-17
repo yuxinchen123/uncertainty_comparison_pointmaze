@@ -5,18 +5,15 @@ same FROZEN reset RNG (two fmix32 rounds; bit-identical resets across torch/CUDA
 State is a NamedTuple of arrays [C, N, ...]; step is a pure function meant to be jit-ed
 with donated state. `make_step_batch` exposes the raw dynamics for the fixture checker.
 """
-import sys
-from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))  # pm_common.py sits beside this file
-from pm_common import (ACT_CLIP, B_REF, H, INV_MHD, K_OVER_D, M, MARGIN, NEIGHBOR_OFFSETS, R,
-                       SOL_D0, SOL_DMAX, SOL_MID, SOL_WIDTH, VEL_CLIP, EnvConfig,
-                       build_geometry, cell_center)
-from pm_common import D as D_DAMP
-from pm_common import G as G_GEAR
+from .pm_common import (ACT_CLIP, B_REF, H, INV_MHD, K_OVER_D, M, MARGIN, NEIGHBOR_OFFSETS, R,
+                        SOL_D0, SOL_DMAX, SOL_MID, SOL_WIDTH, VEL_CLIP, EnvConfig,
+                        build_geometry, cell_center)
+from .pm_common import D as D_DAMP
+from .pm_common import G as G_GEAR
 
 import jax
 import jax.numpy as jnp

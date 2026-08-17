@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 BASE = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(BASE / "src" / "exploration_platform" / "agents" / "ppo"))
+sys.path.insert(0, str(BASE / "src"))
 
 RESULTS = Path(__file__).resolve().parent / "results"
 
@@ -39,20 +39,19 @@ def bench(n_copies, style, repeats=5, num_steps=128, n_envs=4, timing="pipelined
     """Median seconds per training iteration (rollout + update) for one config."""
     import jax
     import jax.numpy as jnp
-    from jax_ppo_rnd import PPOConfig, JaxPPORND
+    from exploration_platform.agents.ppo.config import PPOConfig
+    from exploration_platform.training.runner import Runner
 
     cfg = PPOConfig(n_copies=n_copies, update_style=style, num_steps=num_steps, n_envs=n_envs)
-    tr = JaxPPORND(cfg)
-    state = tr.init_state()
-    key = jax.random.PRNGKey(1)
-    state = tr.prime_obs_rms(state, jax.random.fold_in(key, 999999937))
+    tr = Runner(cfg)
+    state = tr.prime(tr.init_state(run_seed=1))
     lr = jnp.asarray(cfg.learning_rate, jnp.float32)
 
     # warmup (includes the one compilation) + individual early timings
     early = []
     for it in range(1, 6):
         t0 = time.perf_counter()
-        state, m = tr._iterate(state, jax.random.fold_in(key, it), lr)
+        state, m = tr.iterate(state, lr)
         jax.block_until_ready(m["loss"])
         early.append(time.perf_counter() - t0)
 
@@ -62,7 +61,7 @@ def bench(n_copies, style, repeats=5, num_steps=128, n_envs=4, timing="pipelined
     for rep in range(repeats):
         t0 = time.perf_counter()
         for it in range(it0, it0 + k):
-            state, m = tr._iterate(state, jax.random.fold_in(key, it), lr)
+            state, m = tr.iterate(state, lr)
             # "sync" waits for each iteration, so the number includes any host-side gap;
             # "pipelined" waits once per block, letting the host run ahead of the device
             if timing == "sync":

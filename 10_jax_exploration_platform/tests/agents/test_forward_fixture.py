@@ -11,9 +11,10 @@ from pathlib import Path
 
 import numpy as np
 
-BASE = Path(__file__).resolve().parent.parent.parent / "src" / "exploration_platform"
-sys.path.insert(0, str(BASE / "agents" / "ppo"))
-from jax_ppo_rnd import RMSState, JaxPPORND, PPOConfig  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "src"))
+from exploration_platform.agents.ppo.networks import actor_mean, critic_values  # noqa: E402
+from exploration_platform.bonuses.rnd.networks import features, whiten  # noqa: E402
+from exploration_platform.statistics import RMSState  # noqa: E402
 
 import jax  # noqa: E402
 import jax.numpy as jnp  # noqa: E402
@@ -44,17 +45,13 @@ def main():
     target = net("target", ["W0", "b0", "W1", "b1"])
     predictor = net("predictor", ["W0", "b0", "W1", "b1", "W2", "b2"])
 
-    t = JaxPPORND(PPOConfig(n_copies=3, n_envs=2, num_steps=8))
-    t.target = target
-    params = {"actor": actor, "critic": critic, "predictor": predictor}
-
     obs = jnp.asarray(d["obs"])
     rms = RMSState(jnp.asarray(d["rms_mean"]), jnp.asarray(d["rms_var"]),
                    jnp.full((3, 1), 1.0, jnp.float64))
-    act_mean = t._actor_mean(actor, obs)
-    vext, vint = t._critic_values(critic, obs)
-    rnd_in = t._whiten(obs, rms)
-    tf, pf = t._rnd_features(predictor, rnd_in)
+    act_mean = actor_mean(actor, obs)
+    vext, vint = critic_values(critic, obs)
+    rnd_in = whiten(obs, rms)
+    tf, pf = features(target, predictor, rnd_in)
     bonus = 0.5 * ((pf - tf) ** 2).sum(-1)
 
     checks = [("act_mean", act_mean), ("logstd", actor["logstd"]), ("vext", vext),
@@ -72,8 +69,8 @@ def main():
     # default, as the torch trainer does with tf32 enabled. Report what that costs, so the number
     # is on the record rather than discovered again later as a mysterious gate failure.
     jax.config.update("jax_default_matmul_precision", "default")
-    shipped = max(rel_err(np.asarray(t._actor_mean(actor, obs)), d["act_mean"]),
-                  rel_err(np.asarray(t._critic_values(critic, obs)[0]), d["vext"]))
+    shipped = max(rel_err(np.asarray(actor_mean(actor, obs)), d["act_mean"]),
+                  rel_err(np.asarray(critic_values(critic, obs)[0]), d["vext"]))
     print(f"same comparison at the shipped matmul precision: {shipped:.3e} "
           f"(reduced precision, expected near 1e-3; not a gate)")
 
