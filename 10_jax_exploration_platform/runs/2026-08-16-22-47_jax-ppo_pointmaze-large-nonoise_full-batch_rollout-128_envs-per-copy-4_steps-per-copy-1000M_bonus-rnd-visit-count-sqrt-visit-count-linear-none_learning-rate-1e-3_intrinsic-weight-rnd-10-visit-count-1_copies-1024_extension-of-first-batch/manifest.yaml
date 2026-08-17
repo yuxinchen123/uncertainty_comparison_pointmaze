@@ -1,0 +1,93 @@
+schema_version: 1
+run_id: 2026-08-16-22-47_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-1024_extension-of-first-batch
+kind: extension
+extends:
+  parent_run: 2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  parent_run_path: runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  what_changed: "each arm's best configuration of the parent run, re-run at 1024 copies for 1000038400 environment steps per copy: 4 times the copies of one parent cell and about 100 times its step budget"
+  configurations_extended:
+    rnd_next_state:
+      learning_rate: 0.001
+      intrinsic_weight: 10.0
+      parent_copies: 256
+      extension_copies: 1024
+      extension_chunks: 2
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+    gt_position_velocity_sqrt:
+      learning_rate: 0.001
+      intrinsic_weight: 1.0
+      parent_copies: 256
+      extension_copies: 1024
+      extension_chunks: 1
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+    gt_position_velocity_linear:
+      learning_rate: 0.001
+      intrinsic_weight: 1.0
+      parent_copies: 256
+      extension_copies: 1024
+      extension_chunks: 1
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+    none:
+      learning_rate: 0.001
+      intrinsic_weight: none — this arm has no bonus
+      parent_copies: 256
+      extension_copies: 1024
+      extension_chunks: 1
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+description: "The extension of train run 1.1 at a thousand million environment steps per copy. Four algorithm arms, each at the single configuration it won with in the parent run: random network distillation at intrinsic weight 10, the two oracle visit-count bonuses at intrinsic weight 1, and no bonus at all, every one at learning rate 1e-3. 1,024 copies per arm, seeded 0 to 1,023, 1,000,038,400 environment steps per copy. A unit is cut into chunks by copy index where the submission plan's arithmetic says that finishes the whole set sooner."
+git:
+  commit: dfda24df3717adf6171fad10bf1de2afbee8d1ac
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1 + gt_position_velocity_sqrt@1 + gt_position_velocity_linear@1 + none@1
+  update_schedule: post_rollout_update@1 for the visit-count arms, per_rollout@1 for random network distillation, none@1 for the arm with no bonus
+compile_signature:
+  copies_per_unit: 1024
+  copies_per_chunk:
+    - 512
+    - 1024
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: not applicable — full_batch takes one gradient step on the whole rollout
+  minibatches: not applicable — full_batch takes one gradient step on the whole rollout
+  dtype: float32
+  stats_dtype: float64
+  iterations: 1953200
+  window_iterations: 200
+  windows: 9766
+  env_steps_per_copy: 1000038400
+seeding:
+  base_seed: 0
+  mode: paired
+  run_seed: the chunk index, so two chunks of one unit never draw the same action noise
+  copy_seed_offset: the chunk's first copy index, so the chunks of a unit partition copies 0..1023 and copy i of the union has the weights and the environment draws copy i of a single 1,024-copy run would have
+submission_plan:
+  generated_at_pacific: 2026-08-16 23:08 PT
+  makespan_hours: 5.308
+  chunk_count: 5
+  splits_per_unit:
+    - 2
+    - 1
+    - 1
+    - 1
+  written_by: code/plan_submission.py, recorded in code/submission_plan.json
+units:
+  - unit-1_rnd-next-state_learning-rate-1e-3_intrinsic-weight-10_chunk-1-of-2_copies-512_copy-index-0-511
+  - unit-1_rnd-next-state_learning-rate-1e-3_intrinsic-weight-10_chunk-2-of-2_copies-512_copy-index-512-1023
+  - unit-2_gt-position-velocity-sqrt_learning-rate-1e-3_intrinsic-weight-1_chunk-1-of-1_copies-1024_copy-index-0-1023
+  - unit-3_gt-position-velocity-linear_learning-rate-1e-3_intrinsic-weight-1_chunk-1-of-1_copies-1024_copy-index-0-1023
+  - unit-4_none_learning-rate-1e-3_no-intrinsic-weight_chunk-1-of-1_copies-1024_copy-index-0-1023
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+  aggregator: code/aggregate.py
+  plan: code/submission_plan.json
+  own_rate_measurements: code/measured_cells.json
+checkpoints: none — this platform saves no model state, so a chunk resumes by being re-run whole

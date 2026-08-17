@@ -65,5 +65,12 @@ class PPOConfig:
     sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
                                      # so groups differ ONLY by the swept value;
                                      # "distinct": every copy is its own seed
+    copy_seed_offset: int = 0        # shift added to every copy's seed index, so one logical run
+                                     # of many copies can be CUT INTO CHUNKS that run on separate
+                                     # cards: chunk j of k asks for offset j x (copies / k) and
+                                     # its copies are then exactly copies j x (copies/k) onward of
+                                     # the whole run, with no seed shared with another chunk.
+                                     # 0 is the whole-run case and leaves every existing run's
+                                     # draws bit-identical
     track_coverage: bool = False     # maintain a per-copy visited-cell map on the device, so
                                      # per-copy exploration curves can be recorded (round 4)

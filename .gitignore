@@ -218,7 +218,17 @@ core.*
 # rests on, small, and useless to regenerate because the card and the session it was measured in
 # are gone. The raw benchmark output it was assembled from stays ignored under `benchmark_runs/`.
 !10_jax_exploration_platform/research/**/result.json
+# A run's submission plan and its own rate measurements are part of its permanent record: the plan
+# says which cards each work unit was sent to and what every rejected alternative would have cost,
+# and the measurements are what priced it. Both are small, and neither can be regenerated — the
+# cards that were free and the machines the rates were measured on are gone by the next day.
+!10_jax_exploration_platform/runs/**/code/submission_plan.json
+!10_jax_exploration_platform/runs/**/code/measured_cells.json
 # A platform run's canary folder: throwaway short runs that prove the card, the compiled-program
 # cache and the resume before the real submission. Its numbers live in the run's own
 # canary_estimate_vs_actual.md, which IS tracked.
 10_jax_exploration_platform/runs/**/canary/
+# A platform run's rate-probe folder: short runs that measure the arms at each copy count the
+# submission plan might choose. Its numbers live in the run's code/measured_cells.json, which IS
+# tracked; the folder itself is scratch, like canary/.
+10_jax_exploration_platform/runs/**/probe/

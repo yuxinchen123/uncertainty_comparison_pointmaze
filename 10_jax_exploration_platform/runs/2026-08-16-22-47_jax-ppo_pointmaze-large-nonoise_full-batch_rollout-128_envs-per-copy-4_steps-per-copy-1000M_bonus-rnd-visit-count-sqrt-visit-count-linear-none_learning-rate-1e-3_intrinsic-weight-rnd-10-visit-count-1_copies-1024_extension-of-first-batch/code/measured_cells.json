@@ -1,0 +1,276 @@
+{
+  "cells": [
+    {
+      "arm": "gt_position_velocity_linear",
+      "node_class": "serval06-09",
+      "copies": 1024,
+      "seconds_per_iteration": 0.008418549245326363,
+      "total_steps_per_second": 62277713.73922454,
+      "steps_per_second_per_copy": 60818.07982346146,
+      "hours_per_million_steps_per_copy": 0.004567355276327237,
+      "build_and_prime_seconds": 15.394911527633667,
+      "first_iteration_with_compile_seconds": 14.842863082885742,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-linear_copies-1024_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_linear",
+      "node_class": "serval06-09",
+      "copies": 256,
+      "seconds_per_iteration": 0.005974060326964412,
+      "total_steps_per_second": 21940186.87899681,
+      "steps_per_second_per_copy": 85703.8549960813,
+      "hours_per_million_steps_per_copy": 0.0032411351600284354,
+      "build_and_prime_seconds": 8.802258968353271,
+      "first_iteration_with_compile_seconds": 14.890098094940186,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-linear_copies-256_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_linear",
+      "node_class": "serval06-09",
+      "copies": 512,
+      "seconds_per_iteration": 0.006701939070045049,
+      "total_steps_per_second": 39114649.84390524,
+      "steps_per_second_per_copy": 76395.80047637742,
+      "hours_per_million_steps_per_copy": 0.003636034651717149,
+      "build_and_prime_seconds": 12.264819145202637,
+      "first_iteration_with_compile_seconds": 15.135912656784058,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-linear_copies-512_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_sqrt",
+      "node_class": "serval06-09",
+      "copies": 1024,
+      "seconds_per_iteration": 0.008366988531908199,
+      "total_steps_per_second": 62661493.79798772,
+      "steps_per_second_per_copy": 61192.865037097385,
+      "hours_per_million_steps_per_copy": 0.004539381798995334,
+      "build_and_prime_seconds": 15.408193349838257,
+      "first_iteration_with_compile_seconds": 15.285476207733154,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-sqrt_copies-1024_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_sqrt",
+      "node_class": "cheetah01",
+      "copies": 256,
+      "seconds_per_iteration": 0.011611332246406593,
+      "total_steps_per_second": 11288282.620675452,
+      "steps_per_second_per_copy": 44094.853987013485,
+      "hours_per_million_steps_per_copy": 0.006299550914934133,
+      "build_and_prime_seconds": 24.441041946411133,
+      "first_iteration_with_compile_seconds": 64.26112985610962,
+      "source": {
+        "host": "cheetah01",
+        "slurm_job_id": "6538653",
+        "unit_id": "probe_gt-position-velocity-sqrt_copies-256_cheetah01",
+        "device_kind": "NVIDIA A100-PCIE-40GB"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_sqrt",
+      "node_class": "serval06-09",
+      "copies": 256,
+      "seconds_per_iteration": 0.00603147367736203,
+      "total_steps_per_second": 21731339.14054096,
+      "steps_per_second_per_copy": 84888.04351773813,
+      "hours_per_million_steps_per_copy": 0.0032722838961382543,
+      "build_and_prime_seconds": 8.798730611801147,
+      "first_iteration_with_compile_seconds": 14.854382753372192,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-sqrt_copies-256_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_sqrt",
+      "node_class": "cheetah01",
+      "copies": 512,
+      "seconds_per_iteration": 0.01191914740519308,
+      "total_steps_per_second": 21993519.426212136,
+      "steps_per_second_per_copy": 42956.09262932058,
+      "hours_per_million_steps_per_copy": 0.006466551326602149,
+      "build_and_prime_seconds": 35.6338472366333,
+      "first_iteration_with_compile_seconds": 65.04576230049133,
+      "source": {
+        "host": "cheetah01",
+        "slurm_job_id": "6538653",
+        "unit_id": "probe_gt-position-velocity-sqrt_copies-512_cheetah01",
+        "device_kind": "NVIDIA A100-PCIE-40GB"
+      }
+    },
+    {
+      "arm": "gt_position_velocity_sqrt",
+      "node_class": "serval06-09",
+      "copies": 512,
+      "seconds_per_iteration": 0.006708775333423711,
+      "total_steps_per_second": 39074791.89144634,
+      "steps_per_second_per_copy": 76317.95291298113,
+      "hours_per_million_steps_per_copy": 0.0036397435619703288,
+      "build_and_prime_seconds": 12.739148378372192,
+      "first_iteration_with_compile_seconds": 15.129630088806152,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_gt-position-velocity-sqrt_copies-512_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "none",
+      "node_class": "serval06-09",
+      "copies": 1024,
+      "seconds_per_iteration": 0.008303343950204514,
+      "total_steps_per_second": 63141789.99980925,
+      "steps_per_second_per_copy": 61661.90429668872,
+      "hours_per_million_steps_per_copy": 0.0045048524035397755,
+      "build_and_prime_seconds": 15.289467334747314,
+      "first_iteration_with_compile_seconds": 15.058855056762695,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_none_copies-1024_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "none",
+      "node_class": "cheetah01",
+      "copies": 256,
+      "seconds_per_iteration": 0.010920002232843907,
+      "total_steps_per_second": 12002927.948657094,
+      "steps_per_second_per_copy": 46886.43729944177,
+      "hours_per_million_steps_per_copy": 0.005924480378062016,
+      "build_and_prime_seconds": 16.599624395370483,
+      "first_iteration_with_compile_seconds": 45.510035037994385,
+      "source": {
+        "host": "cheetah01",
+        "slurm_job_id": "6538653",
+        "unit_id": "probe_none_copies-256_cheetah01",
+        "device_kind": "NVIDIA A100-PCIE-40GB"
+      }
+    },
+    {
+      "arm": "none",
+      "node_class": "serval06-09",
+      "copies": 256,
+      "seconds_per_iteration": 0.005911172933913954,
+      "total_steps_per_second": 22173602.678413525,
+      "steps_per_second_per_copy": 86615.63546255283,
+      "hours_per_million_steps_per_copy": 0.0032070165657085256,
+      "build_and_prime_seconds": 8.710630416870117,
+      "first_iteration_with_compile_seconds": 15.159661531448364,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_none_copies-256_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "none",
+      "node_class": "cheetah01",
+      "copies": 512,
+      "seconds_per_iteration": 0.011554132154838524,
+      "total_steps_per_second": 22688333.185649253,
+      "steps_per_second_per_copy": 44313.1507532212,
+      "hours_per_million_steps_per_copy": 0.006268517879144165,
+      "build_and_prime_seconds": 23.59317708015442,
+      "first_iteration_with_compile_seconds": 47.49672603607178,
+      "source": {
+        "host": "cheetah01",
+        "slurm_job_id": "6538653",
+        "unit_id": "probe_none_copies-512_cheetah01",
+        "device_kind": "NVIDIA A100-PCIE-40GB"
+      }
+    },
+    {
+      "arm": "none",
+      "node_class": "serval06-09",
+      "copies": 512,
+      "seconds_per_iteration": 0.006683114785045834,
+      "total_steps_per_second": 39224823.818165526,
+      "steps_per_second_per_copy": 76610.98401985454,
+      "hours_per_million_steps_per_copy": 0.0036258218234840683,
+      "build_and_prime_seconds": 12.34364128112793,
+      "first_iteration_with_compile_seconds": 14.980000972747803,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_none_copies-512_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "rnd_next_state",
+      "node_class": "serval06-09",
+      "copies": 1024,
+      "seconds_per_iteration": 0.013839435337775916,
+      "total_steps_per_second": 37883626.55005955,
+      "steps_per_second_per_copy": 36995.72905279253,
+      "hours_per_million_steps_per_copy": 0.007508374206692663,
+      "build_and_prime_seconds": 35.23300218582153,
+      "first_iteration_with_compile_seconds": 31.88839864730835,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_rnd-next-state_copies-1024_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "rnd_next_state",
+      "node_class": "serval06-09",
+      "copies": 256,
+      "seconds_per_iteration": 0.00771028791839753,
+      "total_steps_per_second": 16999624.577864192,
+      "steps_per_second_per_copy": 66404.783507282,
+      "hours_per_million_steps_per_copy": 0.00418309891406116,
+      "build_and_prime_seconds": 23.198665857315063,
+      "first_iteration_with_compile_seconds": 26.827518463134766,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_rnd-next-state_copies-256_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    },
+    {
+      "arm": "rnd_next_state",
+      "node_class": "serval06-09",
+      "copies": 512,
+      "seconds_per_iteration": 0.0097097224326589,
+      "total_steps_per_second": 26998094.108053174,
+      "steps_per_second_per_copy": 52730.652554791355,
+      "hours_per_million_steps_per_copy": 0.005267861562857476,
+      "build_and_prime_seconds": 21.268890619277954,
+      "first_iteration_with_compile_seconds": 27.989962339401245,
+      "source": {
+        "host": "serval06",
+        "slurm_job_id": "6538652",
+        "unit_id": "probe_rnd-next-state_copies-512_serval06",
+        "device_kind": "NVIDIA H100 NVL"
+      }
+    }
+  ]
+}

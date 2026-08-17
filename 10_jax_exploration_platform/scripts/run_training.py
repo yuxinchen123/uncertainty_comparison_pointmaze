@@ -186,6 +186,10 @@ def parse_args() -> argparse.Namespace:
                         help="which intrinsic-reward family; see bonuses/registry.py")
     parser.add_argument("--base-seed", type=int, default=0)
     parser.add_argument("--run-seed", type=int, default=0)
+    parser.add_argument("--copy-seed-offset", type=int, default=0,
+                        help="shift on every copy's seed index, so one logical run's copies can "
+                             "be cut into chunks that run on separate cards; chunk j of k passes "
+                             "j x (copies / k) and holds that slice of the copies")
     parser.add_argument("--window-iterations", type=int, default=200,
                         help="iterations per recorded episode window; one record covers one window")
     parser.add_argument("--episode-steps", type=int, default=400,
@@ -213,7 +217,8 @@ def build_config(args: argparse.Namespace):
     from exploration_platform.training.sweep import sweep_config
     rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
     common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
-                  base_seed=args.base_seed, track_coverage=args.track_coverage)
+                  base_seed=args.base_seed, track_coverage=args.track_coverage,
+                  copy_seed_offset=args.copy_seed_offset)
     # a sweep derives its copy count from the cells; a single configuration takes --copies
     if rates or weights:
         if args.copies_per_cell <= 0:
@@ -357,6 +362,11 @@ def main() -> None:
           "cell_settings": [list(setting) for setting in sweep.group_settings],
           "copy_cell": sweep.copy_group.tolist(),
           "copy_seed_index": list(sweep.copy_seed_index),
+          # the slice of a chunked run this process holds; 0 and the whole count for an unchunked
+          # run, so an aggregator can tell chunks apart and check that they cover the run exactly
+          "copy_seed_offset": config.copy_seed_offset,
+          "copy_seed_index_first": int(min(sweep.copy_seed_index)),
+          "copy_seed_index_last": int(max(sweep.copy_seed_index)),
           "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
           "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
           "steps_per_iteration": steps_per_iteration})

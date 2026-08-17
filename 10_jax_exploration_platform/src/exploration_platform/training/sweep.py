@@ -51,8 +51,9 @@ def build_sweep(cfg) -> SweepVectors:
     C = cfg.n_copies
     sweeps_rate, sweeps_beta = bool(cfg.learning_rates), bool(cfg.betas)
     if not (sweeps_rate or sweeps_beta):
-        return SweepVectors(False, None, None, list(range(C)), np.zeros(C, dtype=int),
-                            ((cfg.learning_rate, cfg.int_coef),))
+        return SweepVectors(False, None, None,
+                            list(range(cfg.copy_seed_offset, cfg.copy_seed_offset + C)),
+                            np.zeros(C, dtype=int), ((cfg.learning_rate, cfg.int_coef),))
 
     rates = tuple(cfg.learning_rates) if sweeps_rate else (cfg.learning_rate,)
     betas = tuple(cfg.betas) if sweeps_beta else (cfg.int_coef,)
@@ -63,12 +64,21 @@ def build_sweep(cfg) -> SweepVectors:
         f"{len(rates)} learning rates x {len(betas)} intrinsic weights x {per_group} copies "
         f"per group is {len(settings) * per_group} copies, but n_copies is {C}")
 
+    # the seed index of a copy keys BOTH its initial weights and the environment draws it meets,
+    # so shifting it by `copy_seed_offset` moves this process onto a different slice of one
+    # logical run's copies. That is what lets a 1,024-copy unit be cut into chunks that run on
+    # separate cards: chunk j of k passes offset j x per_group and holds copies j x per_group
+    # onward, sharing no seed with any other chunk.
+    # before: per_group=3, offset=0 -> seeds [0,1,2] per group
+    # after:  per_group=3, offset=3 -> seeds [3,4,5] per group
+    offset = cfg.copy_seed_offset
     lr_list, beta_list, seed_list, group_list = [], [], [], []
     for g, (rate, beta) in enumerate(settings):
         lr_list += [rate] * per_group
         beta_list += [beta] * per_group
-        seed_list += (list(range(per_group)) if cfg.sweep_seed_mode == "paired"
-                      else list(range(len(seed_list), len(seed_list) + per_group)))
+        seed_list += (list(range(offset, offset + per_group)) if cfg.sweep_seed_mode == "paired"
+                      else list(range(offset + len(seed_list),
+                                      offset + len(seed_list) + per_group)))
         group_list += [g] * per_group
 
     # device CONSTANTS, so the annealed rate stays one scalar argument per iteration and no

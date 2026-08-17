@@ -105,16 +105,32 @@ skill's roughly-20-minute threshold, so distributing is warranted. **Unit 1 sets
 each finishes inside that floor; a fifth card would buy nothing.
 
 Live availability at 2026-08-16 22:20 PT: 5 free H100 NVL cards (serval07 both, serval06, serval08
-and serval09 one each), 2 free A100-PCIE-40GB on cheetah01, 0 free A100-SXM4-80GB. The H100
-allowance of `uva-submit-gpu-sweep` is $\max(2, F-2) = 3$ at $F = 5$ free and $H = 0$ held, so at
-most three H100 cards may be taken and two are left for other users.
+and serval09 one each), 2 free A100-PCIE-40GB on cheetah01, 0 free A100-SXM4-80GB.
+
+**The H100 allowance: the fused case applies, so there is no cap.** `uva-submit-gpu-sweep`'s
+allowance was amended on 2026-08-17 (commit `20ee693` of the shared `.claude` repository) to
+depend on the kind of run. A **fused** run — one whose jobs each occupy their whole card with one
+compiled program, which is exactly what this platform's units are, thousands of copies inside a
+single executable — may hold as many free H100 cards as the work actually benefits from; the
+$\max(2, F-2)$ cap now applies only to unfused sweeps of many small single-copy processes packed
+onto cards. The limit here is therefore usefulness, not a reserve.
+
+Usefulness gives the same four-card assignment the old cap would have given, for a different
+reason. **Unit 1 cannot be split** — it is one compiled program — so it sets a floor of about 4.6
+hours whatever else is done, and a card only earns its place if it moves some other unit off a
+timeline that would otherwise cross that floor. Every unit here already has a card of its own, and
+the slowest of the other three finishes at most 3.9 hours in, so a fourth H100 would shorten
+nothing and a fifth card less than that. The plan below was formed under the old cap and re-checked
+against the amended rule at 2026-08-16 22:29 PT with live availability re-read; it is unchanged,
+and no job was cancelled or resubmitted to reshuffle cards, which would have cost a queue re-entry
+and a cold compile for no gain.
 
 | unit | card | why |
 |---|---|---|
 | 1 `rnd_next_state` | serval07 (H100 NVL) | the only class with the memory, and the longest unit belongs on the fastest card; serval07 was fully idle, so the longest unit shares its node with nobody |
 | 2 `gt_position_velocity_sqrt` | serval08 (H100 NVL) | 1.9 h, inside the floor |
 | 3 `gt_position_velocity_linear` | serval09 (H100 NVL) | 1.9 h, inside the floor |
-| 4 `none` | cheetah01 (A100-PCIE-40GB) | the H100 allowance is spent; the A100 runs at 0.488 of the H100's rate on this trainer (25.58 against 52.44 million steps per second at 4,096 copies), so even the upper-bound estimate — `none` costing what a visit-count unit costs — is 3.86 h, inside the 4.6 h floor |
+| 4 `none` | cheetah01 (A100-PCIE-40GB) | the A100 runs at 0.488 of the H100's rate on this trainer (25.58 against 52.44 million steps per second at 4,096 copies), so even the upper-bound estimate — `none` costing what a visit-count unit costs — is 3.86 h, inside the 4.6 h floor. A fourth H100 would finish this unit sooner without finishing the SET sooner, so it was not taken |
 
 Unit 4 rather than unit 2 or 3 goes on the slower card because it has the most headroom: its cost
 is bounded above by a visit-count unit's, so putting it there cannot make the makespan worse than
