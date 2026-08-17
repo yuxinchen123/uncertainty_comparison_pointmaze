@@ -229,7 +229,9 @@ rollout length $T$ & $128$ steps & \multicolumn{3}{c}{same} \\
 environments per copy $N$ & $4$, so one iteration collects $T \times N = 512$ transitions per copy &
   \multicolumn{3}{c}{same} \\
 \greyrule
-environment steps per copy & $10^{7}$ & \multicolumn{3}{c}{same} \\
+environment steps per copy & $10{,}035{,}200$: $19{,}600$ iterations of $512$ steps. That is $10^{7}$
+  to within $0.35$ per cent, and unlike $10^{7}$ it is a whole number of $200$-iteration recording
+  windows & \multicolumn{3}{c}{same} \\
 \blackrule
 \multicolumn{5}{@{}l}{\textit{Intrinsic bonus}} \\
 \greyrule
@@ -291,45 +293,69 @@ because the column to their left is the one arm the value does not apply to.}
 \end{table}
 
 \paragraph{Results --- status.}
-The run has not launched yet: no work unit has been claimed and no record has been written, so
-\Cref{tab:pm-jax-run11-results} below holds column headers and no numbers, and the training-curve
-figure that belongs after it does not exist yet. Both are written by the run's own generator
-(\texttt{development\allowbreak\_document/code/\allowbreak <timestamp>\allowbreak\_<run>-tables/\allowbreak make\allowbreak\_all.py}),
-which imports the run's status and metrics modules rather than re-deriving any number, and both
-are regenerated at every refresh once completed records exist. A record whose \texttt{completed}
-flag is false may feed a truncated curve but never a table number.
+The run is complete. All four work units finished on 2026-08-16 between 21:04 and 21:36 PT: the two
+oracle visit-count units and the distillation unit on three H100 NVL cards of the scheduler's
+\texttt{gpu} partition, and the unit with no bonus on the unscheduled H100 machine
+\texttt{serval05}. Every unit wrote its $98$ recorded windows and its completion record, so all
+$102$ configurations of the sweep --- $26{,}112$ copies --- are scored, and every window used is
+phase-blocked. \Cref{tab:pm-jax-run11-results} and \Cref{fig:pm-jax-run11-curves} are written by the
+run's generator
+(\texttt{development\allowbreak\_document/code/\allowbreak 2026-08-16-21-00\allowbreak\_pm-jax-run11-tables/\allowbreak make\allowbreak\_all.py})
+and by \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\allowbreak\_curves.py}
+in the run folder; both import the run's own aggregation module,
+\texttt{code/\allowbreak aggregate.py}, rather than re-deriving any number, so the two cannot name
+different winners.
 
 \paragraph{How to read the metrics tables.}
 Define a \emph{configuration} as one (learning rate, intrinsic weight) cell of one algorithm arm,
 and define $C$ as the number of copies it is given, $C = 256$ here; index the copies by
-$k = 1, \dots, C$. Define $E_k$ as the number of episodes copy $k$ finishes within its $10^{7}$
-environment steps, and $R_{k,e}$ as the extrinsic return of its episode $e$ --- the sum of that
-episode's sparse rewards, which is the number of steps the copy spent inside the goal radius,
-because the task is continuing and the episode is not ended by reaching the goal. Define $O$ as
-the number of open cells of the maze map, $O = 46$ for the large map. Every table cell is the mean
-over the configuration's completed copies plus or minus its standard error; $N$ is how many
-completed copies that mean is taken over.
+$k = 1, \dots, C$. Define $O$ as the number of open cells of the maze map, $O = 46$ for the large
+map.
+
+The task is continuing, so an episode ends only at the $400$-step truncation, a copy's four
+environments are reset together, and one iteration collects $T \times N = 512$ environment steps
+per copy --- $128$ steps in each of the four. Define the \emph{episode phase} of iteration $i$ as
+$\phi_i = ((i - 1)\,T) \bmod 400$, the point inside the episode at which that iteration's rollout
+begins. It cycles with period $400 / \gcd(128, 400) = 25$ iterations, so one iteration's extrinsic
+reward is the reward collected in one $128$-step slice of the episode and can read exactly zero for
+every copy while copies are reaching the goal. No single iteration is therefore a score. Define a
+\emph{recorded window} as a block of $200$ consecutive iterations --- eight whole turns of that
+cycle, and exactly $E = 256$ complete episodes per copy --- and define $W = 98$ as the number of
+windows in the run. A window covers every part of the episode the same number of times, so the
+phase cancels out of its total. Define $S_{k,w}$ as the extrinsic reward copy $k$ collects over the
+whole of window $w$; that total, per copy, is what the trainer records, and it is the only quantity
+the metrics below are built from.
+
+Every table cell is the mean over the configuration's completed copies plus or minus its standard
+error; $N$ is how many completed copies that mean is taken over.
 
 \begin{itemize}[leftmargin=*]
 \item \textbf{Whole-run reward} (higher is better; the column the table is sorted by) --- copy
   $k$'s mean episode return over its whole run,
-  $\bar{R}_k = \dfrac{1}{E_k} \sum_{e=1}^{E_k} R_{k,e}$.
-\item \textbf{Last-100 reward} (higher is better) --- the same mean over that copy's last
-  $\min(100, E_k)$ episodes, $\bar{R}^{\,100}_k = \dfrac{1}{\min(100, E_k)}
-  \sum_{e = E_k - \min(100, E_k) + 1}^{E_k} R_{k,e}$. It separates a configuration that ends its
-  run at the goal from one that reached the goal early and then wandered off.
+  $\bar{R}_k = \dfrac{1}{W E} \sum_{w=1}^{W} S_{k,w}$.
+\item \textbf{Last-window reward} (higher is better) --- the same mean over the final window alone,
+  $\bar{R}^{\,\mathrm{last}}_k = \dfrac{S_{k,W}}{E}$, that is over copy $k$'s last $256$ episodes.
+  It separates a configuration that ends its run at the goal from one that reached the goal early
+  and then wandered off. It stands in for the last-$100$-episode mean a per-episode record would
+  allow: this trainer records whole windows, and $256$ episodes is the shortest window whose total
+  is free of the episode phase.
 \item \textbf{Success rate} (higher is better) --- the fraction of the configuration's copies that
-  reached the goal at least once, $s = \dfrac{1}{C} \sum_{k=1}^{C} \mathbf{1}\!\left[\sum_{e=1}^{E_k}
-  R_{k,e} > 0\right]$. A copy that never enters the goal radius collects exactly zero, because
-  reaching the goal is the only thing this environment pays for.
+  reached the goal at least once,
+  $s = \dfrac{1}{C} \sum_{k=1}^{C} \mathbf{1}\!\left[\sum_{w=1}^{W} S_{k,w} > 0\right]$. A copy that
+  never enters the goal radius collects exactly zero, because reaching the goal is the only thing
+  this environment pays for.
 \item \textbf{Maze-cell coverage \%} (higher is better) --- define $V_k$ as the number of distinct
   open maze cells copy $k$ has entered at least once over its whole run; the metric is
   $c_k = 100 \times \dfrac{V_k}{O}$.
-\item \textbf{Steps to goal} (lower is better) --- define $S_k$ as the set of copy $k$'s episodes
-  that reach the goal, and $g_{k,e}$ as the index of the first step of episode $e$ that earns
-  reward $1$. The metric is $\bar{g}_k = \dfrac{1}{|S_k|} \sum_{e \in S_k} g_{k,e}$, the mean over
-  successful episodes only. When fewer than $N$ copies have any successful episode, the cell
-  prints how many it was averaged over.
+\item \textbf{Steps to goal} (lower is better) --- \textbf{not recorded in this run.} The metric is
+  the mean, over a copy's successful episodes only, of the step inside the episode at which it first
+  earns reward $1$. This trainer never reads that step back to the host: the goal step is a
+  per-step quantity, and a per-step host synchronisation would slow every iteration of every one of
+  the $8{,}448$ copies. Recording it needs a fixed-shape accumulator in the training state behind a
+  static configuration flag, read once per window --- the pattern maze-cell coverage already uses.
+  That was not added mid-campaign; the request is logged in the platform's
+  \texttt{research/\allowbreak README.md}, and the column prints ``not recorded'' rather than an
+  empty cell.
 \end{itemize}
 
 \begin{table}[H]
@@ -347,38 +373,128 @@ completed copies that mean is taken over.
 \toprule
 \textbf{algorithm --- best configuration} &
 \textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
-\textbf{\shortstack[c]{last-100\\reward}} &
+\textbf{\shortstack[c]{last-window\\reward}} &
 \textbf{\shortstack[c]{success\\rate}} &
 \textbf{\shortstack[c]{maze-cell\\coverage \%}} &
 \textbf{\shortstack[c]{steps\\to goal}} &
 \textbf{$N$} \\
 \midrule
-\multicolumn{7}{@{}l}{\textbf{\texttt{pointmaze\allowbreak\_large\allowbreak\_cont400\allowbreak\_nonoise@1}}} \\
-\multicolumn{7}{@{}l}{not launched --- no completed record exists yet} \\
+\multicolumn{7}{@{}l}{\textbf{\texttt{pointmaze\_\allowbreak large\_\allowbreak cont400\_\allowbreak nonoise@1}}} \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & {\boldmath $14.608 \pm 0.981$} & {\boldmath $31.339 \pm 1.915$} & {\boldmath $0.945$} & \underline{$96.51 \pm 0.48$} & not recorded & $256$ \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & \underline{$7.866 \pm 0.723$} & \underline{$17.070 \pm 1.464$} & \underline{$0.926$} & {\boldmath $96.86 \pm 0.48$} & not recorded & $256$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $2.423 \pm 0.464$ & $5.654 \pm 1.026$ & $0.500$ & $80.06 \pm 1.35$ & not recorded & $256$ \\
+\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.005 \pm 0.005$ & $0.019 \pm 0.019$ & $0.004$ & $24.07 \pm 0.89$ & not recorded & $256$ \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-jax-run11-results
 }
 \caption{Best configuration per algorithm arm, ranked by whole-run reward (the only arrowed
 column). Cells are mean $\pm$ standard error over the configuration's completed copies; $N$ is how
-many completed copies. Best per metric column \textbf{bold}, second best \underline{underlined};
-steps to goal is the one column where lower is better.}
+many completed copies, and every unit finished, so $N$ is the full $256$ everywhere. Best per metric
+column \textbf{bold}, second best \underline{underlined}; higher is better in every column that
+carries a number. Steps to goal would be the one column where lower is better, and this trainer does
+not record it --- the cell says so rather than being left empty.}
 \label{tab:pm-jax-run11-results}
 \end{table}
 
-% ARTIFACT 4 --- the training-curve figure, written by <run>/analysis/code/ once completed records
-% exist, and regenerated with the results table above. Replace this comment block with the figure:
-%
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=\textwidth]{<run>/analysis/plots/pm_jax_run11_reward_curves.pdf}
-% \caption{Whole-run reward against environment steps for the best configuration of each algorithm
-% arm, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. Curve = mean over that
-% configuration's completed copies, band = plus or minus one standard error. Solid black is the
-% best random-network-distillation configuration, the reference the other arms are measured
-% against; every other arm has its own colour and its own line style, fixed across panels. Drawn by
-% <run>/analysis/code/make_reward_curves.py.}
-% \label{fig:pm-jax-run11-curves}
-% \end{figure}
+% ARTIFACT 4 --- the training-curve figure. Drawn by <run>/analysis/code/make_reward_curves.py,
+% which imports the same best_per_arm the results table above uses, and regenerated with it. The
+% run folder's name carries underscores, so the path is wrapped in \detokenize.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
+\caption{Mean episode return against environment steps for the best configuration of each algorithm
+arm, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. Each point is one recorded
+window of $256$ episodes per copy; the curve is the mean over that configuration's $256$ copies and
+the band is plus or minus one standard error over them. Solid black is the best
+random-network-distillation configuration, the reference the other arms are measured against; every
+other arm has its own colour and its own line style. The legend names each winner's learning rate
+$\alpha$ and, where the arm has a bonus, its intrinsic weight $\beta$. Drawn by
+\texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\allowbreak\_curves.py} in the
+run folder.}
+\label{fig:pm-jax-run11-curves}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{H1 holds wherever reward can separate the arms.} At the learning rate $10^{-3}$
+  \texttt{rnd\allowbreak\_next\allowbreak\_state} at its best weight reaches a whole-run reward of
+  $7.866 \pm 0.723$ against $0.005 \pm 0.005$ for \texttt{no\allowbreak\_exploration}, and $0.926$
+  of its copies reach the goal at least once against $0.004$. At $10^{-4}$ the gap is
+  $0.174 \pm 0.031$ against $0.000 \pm 0.000$. At $10^{-5}$ neither arm ever reaches the goal, so
+  reward is exactly zero on both sides and cannot separate them --- but coverage still can:
+  $42.58 \pm 0.82$ per cent of the maze against $29.69 \pm 0.60$. The bonus is working there; the
+  sparse reward is simply not yet reporting it.
+\item \textbf{H2 is refuted as stated: only one of the two oracle bonuses bounds distillation from
+  above.} The $1/\sqrt{n}$ arm does, and by a wide margin --- $14.608 \pm 0.981$ against
+  $7.866 \pm 0.723$. The $1/n$ arm does not: $2.423 \pm 0.464$, well below distillation. And even the
+  winning oracle arm does not bound distillation on coverage: $96.51 \pm 0.48$ against
+  $96.86 \pm 0.48$, a difference smaller than either standard error. Having the true novelty signal
+  is therefore not sufficient on its own; how fast the bonus decays with the count decides whether
+  the signal is worth more than a predictor's error.
+\item \textbf{H3 is refuted: the two decays do not trade coverage against reward, one is simply
+  better.} The prediction was that $1/\sqrt{n}$ would take the coverage and $1/n$ the reward. The
+  $1/\sqrt{n}$ arm takes both, $96.51 \pm 0.48$ against $80.06 \pm 1.35$ on coverage and
+  $14.608 \pm 0.981$ against $2.423 \pm 0.464$ on reward. On this maze $1/n$ stops paying for a
+  state too early to finish exploring it.
+\item \textbf{H4 half-holds: there is one interior peak and a sharp decline above it, but no rise
+  below it.} At $10^{-3}$ the distillation arm goes $2.15$ at $\beta = 10^{0}$, $7.87$ at $10^{1}$,
+  $2.34$ at $10^{2}$, $0.22$ at $10^{3}$; the $1/\sqrt{n}$ arm goes $1.68$, $14.61$, $7.30$, $0.39$
+  over $\beta = 10^{-1}$ to $10^{2}$. Below the peak, though, every weight at or under $10^{-2}$
+  sits on the zero floor in every arm, so the ordering there is noise rather than a rise. The
+  decline above the peak behaves exactly as the hypothesis said it would: coverage stays saturated
+  at $97$ to $99\%$ while reward collapses, which is the agent still chasing novelty after the goal
+  is known.
+\item \textbf{A finding outside the hypotheses: the learning rate decides more than the bonus does.}
+  Only $10^{-3}$ produces a configuration that solves the maze. At $10^{-4}$ the best arm reaches
+  $0.174$, and at $10^{-5}$ every one of the four arms reaches exactly zero. The three rates are
+  therefore not three comparable settings of one experiment --- one of them works, and the next run
+  should sweep upward from $10^{-3}$ rather than downward from it.
+\end{enumerate}
+
+\paragraph{Training cost.}
+\Cref{tab:pm-jax-run11-cost} records what the run cost on each card. The whole sweep is
+$2.62 \times 10^{11}$ environment steps over $26{,}112$ copies, and it finished $32$ minutes after
+the first job started: the three scheduler jobs ran at once and together moved $305$ million
+environment steps per second, and the distillation unit set the finish time on its own. The unit
+with no bonus ran on the unscheduled machine \texttt{serval05} and cost nothing in queue time. Each
+card's build and compile is paid once per job and shows the compiled-program cache working: the
+canary on the same card compiled cold in $242$ to $350$ seconds and wrote the cache, so the real
+job's build fell to $101$ to $175$ seconds and its first iteration to about one second.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.0cm} l r r r r r r r@{}}
+\toprule
+\textbf{algorithm arm} & \textbf{card} & \textbf{copies} &
+\textbf{\shortstack[c]{seconds per\\iteration}} &
+\textbf{\shortstack[c]{total steps\\per second\\(millions)}} &
+\textbf{\shortstack[c]{steps per\\second\\per copy}} &
+\textbf{\shortstack[c]{hours per\\million steps\\per copy}} &
+\textbf{\shortstack[c]{build and\\compile (s)}} &
+\textbf{\shortstack[c]{wall clock\\(minutes)}} \\
+\midrule
+\texttt{rnd\allowbreak\_next\allowbreak\_state} & serval07 & $8{,}448$ & $0.0864$ & $50.03$ &
+  $5{,}923$ & $0.0469$ & $175$ & $28.5$ \\
+\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_sqrt} & serval07 & $8{,}448$ &
+  $0.0341$ & $126.90$ & $15{,}021$ & $0.0185$ & $101$ & $11.1$ \\
+\texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_linear} & serval08 & $8{,}448$ &
+  $0.0337$ & $128.24$ & $15{,}180$ & $0.0183$ & $103$ & $11.0$ \\
+\texttt{no\allowbreak\_exploration} & serval05 & $768$ & $0.0062$ & $63.14$ & $82{,}211$ &
+  $0.0034$ & $25$ & $2.1$ \\
+\bottomrule
+\end{tabular}%
+}
+\caption{What each work unit cost. Every card is an H100 NVL. Seconds per iteration is the steady
+rate with the compiling first iteration excluded; the two rate columns are the same measurement seen
+two ways --- what the card does in total, and what one of its copies gets --- and the last rate
+column restates the per-copy rate in the unit a run is planned in. Build and compile is the time
+before the first iteration, paid once per job. The three scheduler jobs overlapped, so the sweep's
+wall clock is the largest of these, not their sum.}
+\label{tab:pm-jax-run11-cost}
+\end{table}
 
 \end{document}

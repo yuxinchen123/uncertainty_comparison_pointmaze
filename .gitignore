@@ -218,3 +218,7 @@ core.*
 # rests on, small, and useless to regenerate because the card and the session it was measured in
 # are gone. The raw benchmark output it was assembled from stays ignored under `benchmark_runs/`.
 !10_jax_exploration_platform/research/**/result.json
+# A platform run's canary folder: throwaway short runs that prove the card, the compiled-program
+# cache and the resume before the real submission. Its numbers live in the run's own
+# canary_estimate_vs_actual.md, which IS tracked.
+10_jax_exploration_platform/runs/**/canary/

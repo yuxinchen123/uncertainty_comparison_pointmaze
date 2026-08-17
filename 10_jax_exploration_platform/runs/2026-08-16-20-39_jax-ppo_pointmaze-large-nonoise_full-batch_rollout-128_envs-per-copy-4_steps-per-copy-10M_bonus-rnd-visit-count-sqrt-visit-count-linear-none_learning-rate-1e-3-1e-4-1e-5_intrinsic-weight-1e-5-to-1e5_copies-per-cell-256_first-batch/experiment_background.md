@@ -114,3 +114,46 @@ served by canarying every (unit, node class) pairing that is actually planned �
 per pairing, each at the unit's full copy count so the memory it proves is the memory the real unit
 will use, and each with a short iteration limit. The canary also proves the compiled-program cache
 and the resume.
+
+## Closing summary (written when the queue drained)
+
+The queue drained at 2026-08-16 21:36 PT, 32 minutes after the first job of the science submission
+started. All four units completed; nothing was requeued and nothing failed on the second attempt.
+
+| unit | card | job | wall clock | windows written |
+|---|---|---|---|---|
+| 1 `rnd_next_state` | serval07 H100 NVL | 6538605 | 28.5 min | 98 |
+| 2 `gt_position_velocity_sqrt` | serval07 H100 NVL | 6538606 | 11.1 min | 98 |
+| 3 `gt_position_velocity_linear` | serval08 H100 NVL | 6538607 | 11.0 min | 98 |
+| 4 `none` | serval05 H100 NVL (no scheduler) | not a scheduler job | 2.1 min | 98 |
+
+All 102 configurations are scored over 26,112 copies and 2.62e11 environment steps. Every one of the
+392 window records is phase-blocked, so none had to be dropped from a score.
+
+The best configuration of each arm, ranked by whole-run reward (mean episode return over the whole
+run, mean and standard error over the cell's 256 copies):
+
+| arm | learning rate | intrinsic weight | whole-run reward | last-window reward | success rate | maze-cell coverage % |
+|---|---|---|---|---|---|---|
+| `gt_position_velocity_sqrt` | 1e-3 | 1 | 14.608 ± 0.981 | 31.339 ± 1.915 | 0.945 | 96.51 ± 0.48 |
+| `rnd_next_state` | 1e-3 | 10 | 7.866 ± 0.723 | 17.070 ± 1.464 | 0.926 | 96.86 ± 0.48 |
+| `gt_position_velocity_linear` | 1e-3 | 1 | 2.423 ± 0.464 | 5.654 ± 1.026 | 0.500 | 80.06 ± 1.35 |
+| `no_exploration` | 1e-3 | none | 0.005 ± 0.005 | 0.019 ± 0.019 | 0.004 | 24.07 ± 0.89 |
+
+The five findings, including which hypotheses the run refutes, are written out in subsection 1.1 of
+`development_document/platform_development_document.tex`. In short: the bonus beats no bonus wherever
+the sparse reward can show it; only the 1/sqrt(n) oracle bonus bounds distillation from above, the
+1/n one falls well below it; the predicted coverage-against-reward trade-off between the two decays
+is absent (1/sqrt(n) wins both); reward against intrinsic weight has one interior peak and a sharp
+decline above it but no rise below it; and the learning rate decides more than the bonus does — only
+1e-3 solves the maze at all.
+
+Where the artifacts are:
+
+- `metrics.jsonl` (392 window records, 112 MB) and `summary.json` (every cell's score), both written
+  by `code/aggregate.py` from the shards in `data/`.
+- `analysis/plots/pm_jax_run11_reward_curves.pdf` and its `.png`, written by
+  `analysis/code/make_reward_curves.py`.
+- `../../development_document/platform_development_document.tex` subsection 1.1, whose results table
+  is written by `development_document/code/2026-08-16-21-00_pm-jax-run11-tables/make_all.py`.
+- `canary_estimate_vs_actual.md` for the canary phase, `infra_history.md` for the one incident.

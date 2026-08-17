@@ -68,20 +68,20 @@ def inject_table(tex_path: Path, table_name: str, tabular_block: str) -> None:
 
 
 def power_of_ten(value: float) -> str:
-    """A swept value written the way the sweep names it: a power of ten, not a decimal string.
+    """A swept value's exponent, for use INSIDE a math span; the caller adds the dollar signs.
 
-    before: 1e-05 ; after: "$10^{-5}$"
+    before: 1e-05 ; after: "10^{-5}"
     """
     from math import log10
-    return f"$10^{{{int(round(log10(value)))}}}$"
+    return f"10^{{{int(round(log10(value)))}}}"
 
 
 def row_label(row: dict) -> str:
     """The arm's name plus the configuration that won, spelled out rather than abbreviated."""
     weight = ("no intrinsic weight" if row["bonus"] == "none"
-              else f"$\\beta = ${power_of_ten(row['intrinsic_weight'])}")
+              else f"$\\beta = {power_of_ten(row['intrinsic_weight'])}$")
     return (f"\\texttt{{{ARM_LABEL[row['bonus']]}}}\\newline "
-            f"\\small learning rate {power_of_ten(row['learning_rate'])}, {weight}")
+            f"\\small learning rate ${power_of_ten(row['learning_rate'])}$, {weight}")
 
 
 def cell(mean, error, precision: int) -> str:
@@ -106,8 +106,10 @@ def mark(rows: list, cells: list) -> None:
         best = values[0]
         second = values[1] if len(values) > 1 else None
         for index, value in present:
+            # \textbf around a math span leaves the math unbolded, so the best cell uses \boldmath,
+            # which switches the math font itself; the group keeps the switch inside the cell
             if value == best:
-                cells[index][key] = f"\\textbf{{{cells[index][key]}}}"
+                cells[index][key] = f"{{\\boldmath {cells[index][key]}}}"
             elif second is not None and value == second:
                 cells[index][key] = f"\\underline{{{cells[index][key]}}}"
 

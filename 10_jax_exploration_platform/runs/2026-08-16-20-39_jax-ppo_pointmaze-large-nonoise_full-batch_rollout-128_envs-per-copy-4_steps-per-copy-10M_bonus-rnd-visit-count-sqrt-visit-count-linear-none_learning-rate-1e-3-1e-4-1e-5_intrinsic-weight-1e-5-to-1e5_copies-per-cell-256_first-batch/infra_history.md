@@ -28,3 +28,15 @@ put back in `queue/pending/`. No science record was affected: none had been writ
 
 **Cost.** About four minutes, and the compiled-program cache on serval07 and serval08 was left warm
 by the canaries, so the resubmission's build and prime fell from 350 seconds to 11.
+
+## 2026-08-16 21:36 PT — the queue drained
+
+Jobs 6538605, 6538606 and 6538607 completed on their first attempt, and the unscheduled `serval05`
+unit finished at 21:07 PT. Nothing was requeued. The 20-minute monitoring ended here, with all four
+units in `queue/done/` and every unit's completion record on disk.
+
+One measurement worth keeping: the compiled-program cache in `/localtmp/$USER/platform_jax_cache`
+turned the build-and-prime of the 8,448-copy programs from 241 to 350 seconds (the canary, cache
+cold) into 101 to 175 seconds (the real job, cache warm), and the first iteration from 15 to 77
+seconds into about one second. Pinning each real job to the node its canary ran on is what made that
+possible, because the cache is node-local.
