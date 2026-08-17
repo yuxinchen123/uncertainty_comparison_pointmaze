@@ -48,15 +48,22 @@ if [ -z "$UNIT_FILE" ]; then echo "no queue entry for unit $UNIT_ID"; exit 2; fi
     --unit-file "$UNIT_FILE" --job-dir "$JOB_DIR" --mode "$MODE"
 cat "$JOB_DIR/hardware.json"
 
+# the unit's own arguments come from its queue entry, so the job script never restates them. This
+# happens BEFORE the claim below, because claiming RENAMES the entry and would leave this path
+# pointing at a file that no longer exists — the job would then start with the runner's defaults
+# instead of the unit's arguments, which is exactly what happened on 2026-08-16 at 21:01 PT.
+mapfile -t UNIT_ARGS < <("$PLATFORM_PYTHON" -c "
+import json, sys
+print('\n'.join(json.load(open(sys.argv[1]))['arguments']))" "$UNIT_FILE")
+if [ "${#UNIT_ARGS[@]}" -lt 4 ]; then
+  echo "read no arguments from $UNIT_FILE; refusing to start with the runner's defaults"
+  exit 3
+fi
+
 # claim the unit: a claim is a rename, so two jobs cannot both take it. A canary claims nothing.
 if [ "$MODE" = "real" ] && [ -f "$RUN_DIR/queue/pending/$UNIT_ID.json" ]; then
   mv "$RUN_DIR/queue/pending/$UNIT_ID.json" "$RUN_DIR/queue/running/$UNIT_ID.json"
 fi
-
-# the unit's own arguments come from its queue entry, so the job script never restates them
-mapfile -t UNIT_ARGS < <("$PLATFORM_PYTHON" -c "
-import json, sys
-print('\n'.join(json.load(open(sys.argv[1]))['arguments']))" "$UNIT_FILE")
 
 echo "running: $PLATFORM_PYTHON $PLATFORM_ROOT/scripts/run_training.py --run-dir $OUTPUT_DIR ${UNIT_ARGS[*]} $*"
 "$PLATFORM_PYTHON" "$PLATFORM_ROOT/scripts/run_training.py" --run-dir "$OUTPUT_DIR" \

@@ -161,7 +161,9 @@ def parse_args() -> argparse.Namespace:
     """Every knob this run exposes; the defaults are the trainer's own."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", required=True, help="the run folder; created if missing")
-    parser.add_argument("--unit-id", default="unit_0000", help="names this unit's data shard")
+    # required, and deliberately without a default: a job that loses its arguments must fail rather
+    # than write a shard full of the runner's defaults under a plausible-looking name
+    parser.add_argument("--unit-id", required=True, help="names this unit's data shard")
     parser.add_argument("--description", default="", help="the human sentence for the manifest")
     parser.add_argument("--copies", type=int, default=128,
                         help="copies, when neither knob is swept; a sweep derives the count")
