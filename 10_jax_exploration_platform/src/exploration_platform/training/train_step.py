@@ -169,7 +169,12 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             (rext_buf, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
              boot_mask, done_buf), reverse=True)
 
-        adv = cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf
+        # the weight on the intrinsic advantage: one scalar for every copy, or — when a sweep
+        # varies it — one value per copy broadcast along the copy axis of [T, C, N]
+        if sweep.beta_per_copy is None:
+            adv = cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf
+        else:
+            adv = sweep.beta_per_copy.reshape(1, C, 1) * aint_buf + cfg.ext_coef * aext_buf
         ret_ext = aext_buf + vext_buf
         ret_int = aint_buf + vint_buf
 

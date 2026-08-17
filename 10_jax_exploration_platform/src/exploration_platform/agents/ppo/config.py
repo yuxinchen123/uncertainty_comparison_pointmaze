@@ -58,7 +58,10 @@ class PPOConfig:
                                      # so it also breaks bit-agreement with the torch twin
     learning_rates: tuple = ()       # sweep: the learning rates to try; empty means every copy
                                      # uses `learning_rate` (round 4)
-    copies_per_rate: tuple = ()      # sweep: copies each rate gets (must sum to n_copies)
+    betas: tuple = ()                # sweep: the weights on the intrinsic advantage to try;
+                                     # empty means every copy uses `int_coef`
+    copies_per_group: int = 0        # sweep: copies each (learning rate, beta) cell gets; the
+                                     # groups are the cross product of the two lists
     sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
                                      # so groups differ ONLY by the swept value;
                                      # "distinct": every copy is its own seed

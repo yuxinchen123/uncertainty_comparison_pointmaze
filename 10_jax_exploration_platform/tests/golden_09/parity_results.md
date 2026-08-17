@@ -17,6 +17,7 @@ seed 17, both update styles (`full_batch` and `epoch_minibatch`), the platform's
 | 2026-08-16 17:41 PT | after the bonus registry and the `none` family | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 | 2026-08-16 18:20 PT | after the visit-count family | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 | 2026-08-16 18:20 PT | after the visit-count family | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 18:52 PT | after the sweep over learning rates and intrinsic weights | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 
 "Bit-identical" is the literal comparison the test makes: the raw bytes of every array in the
 starting state, the primed state, and each iteration's metrics and state are compared, so a

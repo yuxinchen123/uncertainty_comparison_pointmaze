@@ -84,11 +84,13 @@ class Runner:
     def lr_argument(self, iteration: int, num_iterations: int):
         """The scalar passed to one iteration, given the annealing schedule.
 
-        Without a sweep it is the rate itself; with a sweep the per-copy rates are already a
-        device constant, so it is the annealing multiplier that scales all of them together.
+        Without a rate sweep it is the rate itself; with one the per-copy rates are already a
+        device constant, so it is the annealing multiplier that scales all of them together. A
+        sweep over the intrinsic weight alone does not touch this: the rate stays a scalar.
         """
         frac = (1.0 - (iteration - 1.0) / num_iterations) if self.cfg.anneal_lr else 1.0
-        return jnp.asarray(frac if self.sweep.is_sweep else self.cfg.learning_rate * frac, F32)
+        sweeps_rate = self.sweep.lr_per_copy is not None
+        return jnp.asarray(frac if sweeps_rate else self.cfg.learning_rate * frac, F32)
 
     def coverage(self, state: TrainState):
         """Fraction of the open maze cells each copy has visited, [C] — device to host."""
@@ -135,8 +137,11 @@ class Runner:
                        "seconds": time.time() - t0,
                        "bonus": self.bonus.name,
                        "learning_rate_per_copy": (np.asarray(self.sweep.lr_per_copy).tolist()
-                                                  if self.sweep.is_sweep else None),
+                                                  if self.sweep.lr_per_copy is not None else None),
+                       "beta_per_copy": (np.asarray(self.sweep.beta_per_copy).tolist()
+                                         if self.sweep.beta_per_copy is not None else None),
                        "group_index": self.sweep.copy_group.tolist(),
+                       "group_settings": [list(s) for s in self.sweep.group_settings],
                        "sweep_seed_mode": cfg.sweep_seed_mode if self.sweep.is_sweep else None,
                        "history": history}
 
