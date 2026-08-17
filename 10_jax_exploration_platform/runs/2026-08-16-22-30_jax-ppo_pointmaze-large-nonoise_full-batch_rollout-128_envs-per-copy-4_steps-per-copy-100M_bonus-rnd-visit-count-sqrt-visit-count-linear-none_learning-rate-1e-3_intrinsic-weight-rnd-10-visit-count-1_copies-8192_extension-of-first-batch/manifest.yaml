@@ -36,7 +36,7 @@ extends:
       extension_env_steps_per_copy: 100044800
 description: "The extension of train run 1.1. Four work units, one per algorithm arm, each holding the single configuration that arm won with in the parent run: random network distillation at intrinsic weight 10, the two oracle visit-count bonuses at intrinsic weight 1, and no bonus at all, every one at learning rate 1e-3. 8,192 copies per unit, seeded 0 to 8,191, 100,044,800 environment steps per copy."
 git:
-  commit: 8c7cc546c80de9cc1f4818ffb9f4ef7fea0b0744
+  commit: 4cd78643a6b4f3467e16b56160ce837f29cbbfc8
 specs:
   env: pointmaze_large_cont400_nonoise@1
   agent: ppo_full_batch@1

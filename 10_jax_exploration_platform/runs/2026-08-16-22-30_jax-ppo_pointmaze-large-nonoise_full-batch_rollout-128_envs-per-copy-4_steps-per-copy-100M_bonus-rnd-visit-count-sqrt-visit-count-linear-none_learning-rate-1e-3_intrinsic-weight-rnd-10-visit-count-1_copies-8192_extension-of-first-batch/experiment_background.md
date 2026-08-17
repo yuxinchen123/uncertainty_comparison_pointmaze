@@ -138,9 +138,12 @@ the resume. Measurements: `canary_estimate_vs_actual.md`.
 
 ## Git state
 
-Code commit at launch: `TO BE FILLED AT LAUNCH`, branch `Use-RLexplore-RND`, pushed before the
-first submission. Other folders of the shared repository carried unrelated uncommitted work from
-other sessions, which was left untouched.
+Code commit at launch: `4cd78643a6b4f3467e16b56160ce837f29cbbfc8` (`git describe`:
+`jax-platform-v0.1.0-22-g4cd7864`), branch `Use-RLexplore-RND`, pushed before the first
+submission. The working tree of `10_jax_exploration_platform/` was clean at that commit; other
+folders of the shared repository carried unrelated uncommitted work from other sessions — the
+graphics-card throughput survey of `09_parallelization/`, whose jobs were still writing into it —
+which was left untouched.
 
 ## Walltime
 
