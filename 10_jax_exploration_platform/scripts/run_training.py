@@ -43,8 +43,14 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 SPECS = {
     "env": "pointmaze_large_cont400_nonoise@1",
     "agent": "ppo_full_batch@1",
-    "bonus": "rnd_next_state@1",
-    "update_schedule": "per_rollout@1",
+}
+
+# the update schedule each bonus family follows, for the manifest's record
+UPDATE_SCHEDULES = {
+    "rnd_next_state": "per_rollout@1",
+    "none": "none@1",
+    "gt_position_velocity_sqrt": "post_rollout_update@1",
+    "gt_position_velocity_linear": "post_rollout_update@1",
 }
 
 
@@ -138,6 +144,8 @@ def parse_args() -> argparse.Namespace:
                         choices=["full_batch", "epoch_minibatch"])
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--intrinsic-coefficient", type=float, default=1.0)
+    parser.add_argument("--bonus", default="rnd_next_state",
+                        help="which intrinsic-reward family; see bonuses/registry.py")
     parser.add_argument("--base-seed", type=int, default=0)
     parser.add_argument("--run-seed", type=int, default=0)
     parser.add_argument("--record-every", type=int, default=10,
@@ -145,6 +153,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--track-coverage", action="store_true",
                         help="keep a per-copy visited-cell map on the device")
     return parser.parse_args()
+
+
+def specs_of(bonus: str) -> dict:
+    """The component identities of this run, with the bonus and its update schedule filled in."""
+    # an older name for a family records the family's own name, so two runs written against
+    # different vocabularies are still comparable by their manifests
+    from exploration_platform.bonuses.registry import ALIASES
+    name = ALIASES.get(bonus, bonus)
+    if name not in UPDATE_SCHEDULES:
+        raise ValueError(f"no update schedule recorded for bonus {bonus!r}; add it to "
+                         f"UPDATE_SCHEDULES so the run's manifest names one")
+    return {**SPECS, "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
 
 
 def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
@@ -176,7 +196,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
         "run_id": run_dir.name,
         "description": args.description or "one training unit on the JAX exploration platform",
         "git": git_state(PLATFORM_ROOT.parent),
-        "specs": SPECS,
+        "specs": specs_of(args.bonus),
         "compile_signature": {
             "copies": config.n_copies, "envs_per_copy": config.n_envs,
             "rollout_steps": config.num_steps, "update_style": config.update_style,
@@ -247,7 +267,7 @@ def main() -> None:
 
     # build the trainer, then time the compilation of the first iteration separately from the rest,
     # because the first iteration pays for compiling the whole program
-    trainer = Runner(config)
+    trainer = Runner(config, bonus=args.bonus)
     state = trainer.init_state(run_seed=args.run_seed)
     prime_start = time.time()
     state = trainer.prime(state)

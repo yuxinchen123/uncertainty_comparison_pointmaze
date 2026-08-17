@@ -25,3 +25,26 @@ Environment: `/p/rlprojects/RND/.venvs/platform_jax` (python 3.12, `jax[cuda12]`
 as canonical for this folder in `/p/rlprojects/RND/.venvs/ENVS.md`. Every python invocation sets
 `PYTHONNOUSERSITE=1`. Graphics-card work on serval05 goes through the lock:
 `bash /p/rlprojects/RND/09_parallelization/locks/gpu_run.sh "<command>"`.
+
+## Running one
+
+`src/` is a package, not a set of loose files: put `src` on the path and import
+`exploration_platform`.
+
+```python
+import sys; sys.path.insert(0, "<this folder>/src")
+from exploration_platform.agents.ppo.config import PPOConfig
+from exploration_platform.training.runner import Runner
+
+runner = Runner(PPOConfig(n_copies=128, update_style="full_batch"), bonus="rnd_next_state")
+state, stats = runner.train(num_iterations=200, history_every=10)
+```
+
+The bonus is chosen by name, on the host, before anything is compiled — `rnd_next_state`, `none`,
+`gt_position_velocity_sqrt`, `gt_position_velocity_linear`, or `07_reconstruction`'s own names for
+the same families. The composed program then contains that one bonus and no branch that chooses
+between bonuses; `tests/bonuses/test_none_has_no_bonus_arithmetic.py` checks that directly, in the
+compiled program.
+
+`scripts/run_training.py` is the same thing as a command, writing the platform's standard run
+folder.
