@@ -30,7 +30,7 @@ def clip_per_copy(grads, n_copies: int, max_grad_norm: float):
     """Per-copy gradient-norm clip: the norm runs over each copy's own slice of every tensor."""
     # before: grads is a tree of [C, ...] arrays; after: each is scaled by that copy's own factor
     leaves = jax.tree.leaves(grads)
-    g2 = sum(leaf.reshape(n_copies, -1).astype(F32).__pow__(2).sum(axis=1) for leaf in leaves)
+    g2 = sum((leaf.reshape(n_copies, -1).astype(F32) ** 2).sum(axis=1) for leaf in leaves)
     scale = jnp.minimum(1.0, max_grad_norm / (jnp.sqrt(g2) + 1e-6))
     return jax.tree.map(lambda g: g * scale.reshape((n_copies,) + (1,) * (g.ndim - 1)), grads)
 
