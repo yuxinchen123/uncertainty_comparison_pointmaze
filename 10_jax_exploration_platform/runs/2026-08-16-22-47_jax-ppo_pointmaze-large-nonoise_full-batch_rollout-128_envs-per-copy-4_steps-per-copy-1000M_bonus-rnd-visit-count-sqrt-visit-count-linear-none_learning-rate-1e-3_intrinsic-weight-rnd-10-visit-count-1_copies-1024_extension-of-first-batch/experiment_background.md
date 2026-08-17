@@ -181,8 +181,11 @@ durations an under-set walltime is the most common way a long run dies near the 
 
 ## Git state
 
-Code commit at launch: `TO BE FILLED AT LAUNCH`, branch `Use-RLexplore-RND`, pushed before the first
-science submission.
+Code commit at launch: `1e7c4495c39fc229ceb82f3c23f5f017042b19bc` (`git describe`:
+`jax-platform-v0.1.0-24-g1e7c449`), branch `Use-RLexplore-RND`, pushed before the first science
+submission. The working tree of `10_jax_exploration_platform/` was clean at that commit apart from
+the development document, which is edited after a run's numbers exist; other folders of the shared
+repository carried unrelated uncommitted work from other sessions and were left untouched.
 
 ## Deviation from the canary rule, and why
 
