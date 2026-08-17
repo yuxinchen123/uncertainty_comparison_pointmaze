@@ -8,6 +8,8 @@ compiler: there is no place in a compiled program where an algorithm is chosen.
 from .none import build as build_none
 from .rnd.config import RNDConfig
 from .rnd.implementation import build as build_rnd
+from .visit_count.config import VisitCountConfig
+from .visit_count.implementation import build as build_visit_count
 
 
 def rnd_preset(rnd_cfg: RNDConfig):
@@ -16,16 +18,29 @@ def rnd_preset(rnd_cfg: RNDConfig):
         cfg, env_cfg, rnd_cfg, n_copies, base_seed, copy_seed_index)
 
 
+def visit_count_preset(vc_cfg: VisitCountConfig, name: str):
+    """A factory for the oracle visit-count bonus at the given decay."""
+    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index: build_visit_count(
+        cfg, env_cfg, vc_cfg, name, n_copies, base_seed, copy_seed_index)
+
+
 BONUS_REGISTRY = {
     "none": build_none,
     "rnd_next_state": rnd_preset(RNDConfig()),
+    # decay -0.5 is 1/sqrt(n), decay -1 is 1/n
+    "gt_position_velocity_sqrt": visit_count_preset(VisitCountConfig(decay=-0.5),
+                                                    "gt_position_velocity_sqrt"),
+    "gt_position_velocity_linear": visit_count_preset(VisitCountConfig(decay=-1.0),
+                                                      "gt_position_velocity_linear"),
 }
 
 # 07_reconstruction's names for the same families, so a configuration written against that
-# project selects the same thing here rather than failing on an unknown name
+# project selects the same thing here rather than failing on an unknown name. That project's
+# `gt_position_velocity` defaults to decay -0.5, which is the sqrt preset.
 ALIASES = {
     "no_exploration": "none",
     "rnd_state": "rnd_next_state",
+    "gt_position_velocity": "gt_position_velocity_sqrt",
 }
 
 

@@ -15,6 +15,8 @@ seed 17, both update styles (`full_batch` and `epoch_minibatch`), the platform's
 | 2026-08-16 17:05 PT | after the split into environment / agent / bonus / composition | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 | 2026-08-16 17:41 PT | after the bonus registry and the `none` family | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 | 2026-08-16 17:41 PT | after the bonus registry and the `none` family | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 18:20 PT | after the visit-count family | processor (`JAX_PLATFORMS=cpu`), login node | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
+| 2026-08-16 18:20 PT | after the visit-count family | H100 NVL on serval05, under the lock | `/p/rlprojects/RND/.venvs/platform_jax/bin/python` (jax 0.11.0) | every array bit-identical | 0.0 |
 
 "Bit-identical" is the literal comparison the test makes: the raw bytes of every array in the
 starting state, the primed state, and each iteration's metrics and state are compared, so a
@@ -22,10 +24,10 @@ not-a-number in the same place counts as equal and a negative zero against a pos
 different. No tolerance is involved anywhere.
 
 The automatic-algorithm-selection workaround (`GOLDEN_PARITY_AUTOTUNE_OFF=1`, which sets
-`XLA_FLAGS=--xla_gpu_autotune_level=0`) was **not needed**: all three runs passed with the compiler's
-default settings.
+`XLA_FLAGS=--xla_gpu_autotune_level=0`) was **not needed**: every run above passed with the
+compiler's default settings.
 
-## The losses printed by the three runs
+## The losses printed by the first three runs
 
 The gate is that the two modules agree with each other, and they do, exactly, in every run. The
 numbers themselves move slightly between devices and between environment builds, which is expected
