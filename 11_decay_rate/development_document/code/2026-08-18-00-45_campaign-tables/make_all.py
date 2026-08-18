@@ -168,6 +168,71 @@ def validation_table() -> str:
     return "\n".join(out)
 
 
+
+
+NEURAL_ROWS = [  # (experiment folder, block, row label) for the phase-2 neural table
+    ("exp_037_cfn_adam1e-4", "maze + AntMaze states (uniform)", "gradient coin-flip net, Adam $10^{-4}$ (paper rate)"),
+    ("exp_039_cfn_adam1e-2", "maze + AntMaze states (uniform)", "gradient coin-flip net, Adam $10^{-2}$ (best gradient variant)"),
+    ("exp_052_cfnreplay_vectors", "maze + AntMaze states (uniform)", "replay-buffer coin-flip net (4 Adam steps/visit)"),
+    ("exp_048_deepshrink_vectors", "maze + AntMaze states (uniform)", "deep trunk + exact shrink head"),
+    ("exp_049_deepcfn_vectors", "maze + AntMaze states (uniform)", "deep trunk + exact coin-flip head"),
+    ("exp_044_cfnconv_adam1e-4_atari", "Atari frames (uniform)", "gradient coin-flip conv net, Adam $10^{-4}$"),
+    ("exp_045_cfnconv_adam1e-3_atari", "Atari frames (uniform)", "gradient coin-flip conv net, Adam $10^{-3}$"),
+    ("exp_046_cfnconv_adagrad1e-2_atari", "Atari frames (uniform)", "gradient coin-flip conv net, AdaGrad $10^{-2}$"),
+    ("exp_050_deepshrink_atari", "Atari frames (uniform)", "conv trunk + exact shrink head"),
+    ("exp_051_deepcfn_atari", "Atari frames (uniform)", "conv trunk + exact coin-flip head"),
+    ("exp_053_deepshrink_heldout_vectors", "held-out 20\\% (vectors)", "deep trunk + exact shrink head"),
+    ("exp_054_deepcfn_heldout_vectors", "held-out 20\\% (vectors)", "deep trunk + exact coin-flip head"),
+    ("exp_057_deepshrink_heldout_atari", "held-out 20\\% (Atari)", "conv trunk + exact shrink head"),
+    ("exp_058_deepcfn_heldout_atari", "held-out 20\\% (Atari)", "conv trunk + exact coin-flip head"),
+    ("exp_056_deepshrink_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact shrink head"),
+    ("exp_055_deepcfn_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact coin-flip head"),
+]
+
+
+def neural_table() -> str:
+    """The phase-2 neural-ladder table: blocks by domain/regime, rows sorted by dev_worst."""
+    blocks = {}
+    for exp, block, label in NEURAL_ROWS:
+        path = os.path.join(CAMPAIGN, exp, "metrics.json")
+        if not os.path.exists(path):
+            print(f"neural_table: MISSING {exp} (skipped)")
+            continue
+        with open(path) as fh:
+            blocks.setdefault(block, []).append((label, json.load(fh)))
+    out = [r"\begin{table}[H]", r"\centering", r"\footnotesize",
+           r"\setlength{\tabcolsep}{4pt}",
+           r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.4cm} r r r r@{}}",
+           r"\toprule",
+           r"method & dev\_worst $\downarrow$ & dev\_mean & slope & slope std \\"]
+    order = ["maze + AntMaze states (uniform)", "Atari frames (uniform)",
+             "held-out 20\\% (vectors)", "held-out 20\\% (Atari)",
+             "nonuniform visitation (vectors)"]
+    for block in order:
+        rows = blocks.get(block, [])
+        if not rows:
+            continue
+        rows.sort(key=lambda t: t[1]["dev_worst"])
+        out.append(r"\midrule")
+        out.append(r"\multicolumn{5}{@{}l}{\textbf{" + block + r"} (10 seeds)} \\")
+        dw = _mark([r[1]["dev_worst"] for r in rows], "%.3f")
+        dm = _mark([r[1]["dev_mean"] for r in rows], "%.3f")
+        for (label, m), a, b in zip(rows, dw, dm):
+            out.append(f"{label} & {a} & {b} & "
+                       f"{m.get('slope_mean', float('nan')):.3f} & "
+                       f"{m.get('slope_std', float('nan')):.3f} \\\\")
+    out += [r"\bottomrule", r"\end{tabular}",
+            r"\caption{The phase-2 neural ladder. Blocks are domain--regime combinations;"
+            r" within each block rows are sorted by dev\_worst (lower is better; best and"
+            r" second-best dev\_worst and dev\_mean bold and underlined). Every method"
+            r" starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the"
+            r" metric scores trained states against their counts AND the never-trained"
+            r" 20\\% against the constant oracle value 1, so it punishes a bonus that"
+            r" generalizes the decay onto states never actually visited.}",
+            r"\label{tab:neural}", r"\end{table}"]
+    return "\n".join(out)
+
+
 def latex_escape(s: str) -> str:
     """Escape the characters that appear in ledger descriptions."""
     return (s.replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
@@ -275,6 +340,7 @@ def fig_adagrad_diagnostics() -> None:
 if __name__ == "__main__":
     inject_table("ledger", ledger_table())
     inject_table("validation", validation_table())
+    inject_table("neural", neural_table())
     fig_champion_curves()
     fig_nonuniform_scatter()
     fig_adagrad_diagnostics()
