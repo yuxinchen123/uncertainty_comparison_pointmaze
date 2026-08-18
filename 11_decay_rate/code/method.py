@@ -52,28 +52,34 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Adam baseline: predictor distilled to a frozen random target by full-batch MSE; bonus =
-    raw l2 residual norm (the canonical RND construction of the prior convergence runs)."""
+    """SGD-1/t baseline: the prior work's best decay configuration (zero-bias init, plain SGD
+    with the shifted 1/t schedule eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2); bonus = raw l2
+    residual norm. Convergence run 1 fitted aggregate slope -0.503 for exactly this cell."""
 
-    name = "adam_baseline"
+    name = "sgd1t_baseline"
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build target + predictor (4 -> 256 -> ReLU -> 128) and the constant-rate Adam."""
+        """Build target + predictor (4 -> 256 -> ReLU -> 128) and plain SGD (schedule in update)."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
         for p in self.target.parameters():
             p.requires_grad_(False)
-        self.opt = torch.optim.Adam(self.predictor.parameters(), lr=1e-3)
+        self.eta0, self.t0 = 1e-2, 1e2
+        self.t = 0  # 0-based optimizer-step counter for the schedule
+        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.eta0)
 
     def update(self, x: torch.Tensor) -> None:
-        """One optimizer step on the batch: MSE distillation loss (the prior work's L^mse)."""
-        # loss = mean over batch of 0.5 * ||g(x) - f(x)||^2 — identical to RND.update's objective
+        """One SGD step at the scheduled rate: MSE distillation loss (the prior work's L^mse)."""
+        # shifted 1/t schedule: nearly constant before t0, then an eta0*t0/t tail
+        for group in self.opt.param_groups:
+            group["lr"] = self.eta0 / (1.0 + self.t / self.t0)
         e = self.predictor(x) - self.target(x)
         loss = 0.5 * e.pow(2).sum(dim=1).mean()
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
+        self.t += 1
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
         """Per-point l2 residual norm ||g(x_i) - f(x_i)||_2 (exact norm, no clamp), float64."""
