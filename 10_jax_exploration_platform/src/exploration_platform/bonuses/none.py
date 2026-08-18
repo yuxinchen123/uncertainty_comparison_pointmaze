@@ -17,7 +17,8 @@ from .. import F32
 from .protocol import BonusFunctions
 
 
-def build(cfg, env_cfg, n_copies: int, base_seed: int, copy_seed_index):
+def build(cfg, env_cfg, n_copies: int, base_seed: int, copy_seed_index,
+          obs_dim: int = 4):
     """Bind this bonus to one run. Nothing about it actually depends on the run."""
     def init():
         """No parameters and no state."""

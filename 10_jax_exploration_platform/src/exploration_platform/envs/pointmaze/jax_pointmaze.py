@@ -48,11 +48,17 @@ def _hash_uniform(key: jnp.ndarray) -> jnp.ndarray:
 class JaxPointMaze:
     """Holds the static config/geometry and exposes pure reset/step functions."""
 
+    # the platform composer reads these to size the agent, the bonus and the noise draws
+    obs_dim = 4
+    act_dim = 2
+
     def __init__(self, cfg: EnvConfig, n_copies: int, n_envs: int, base_seed: int = 0,
                  dtype=jnp.float32, copy_seed_index=None):
         self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
         geo = build_geometry(cfg.map_name)
         self.rows, self.cols = geo["rows"], geo["cols"]
+        self.n_cells = self.rows * self.cols
+        self.open_cells = jnp.asarray(geo["wall"].reshape(-1) == 0)
         self.nb_mask = jnp.asarray(geo["nb_mask"].reshape(-1).astype(np.int32))
         self.start_center = cell_center(cfg.start_cell, self.rows, self.cols)
         self.goal_center = cell_center(cfg.goal_cell, self.rows, self.cols)
@@ -88,6 +94,27 @@ class JaxPointMaze:
         rc = jnp.zeros((self.C, self.N), dtype=jnp.int32)
         pos, vel, goal = self._spawn(rc)
         return EnvState(pos, vel, goal, jnp.zeros((self.C, self.N), jnp.int32), rc)
+
+    def respawn(self, state: EnvState):
+        """Fresh spawns at the carried reset generation, step counts zeroed.
+
+        The runner calls this once after the warm-up rollouts, so the first training episode is
+        a full-length one (mirroring the reset the torch twin performs).
+        """
+        rc = state.reset_count
+        pos, vel, goal = self._spawn(rc)
+        return (EnvState(pos, vel, goal, jnp.zeros_like(state.step_count), rc),
+                jnp.concatenate([pos, vel], -1))
+
+    def cell_index(self, obs_flat):
+        """Flat maze-cell index of [C, M, 4] observations -> [C, M] int32, for coverage.
+
+        before: obs_flat[..., 0:2] world metres, e.g. large-map spawn (-4.5, -3.0)
+        after:  row 7 * 12 cols + col 1 = 85
+        """
+        jj = jnp.clip((obs_flat[..., 0] + self.cols / 2.0).astype(jnp.int32), 0, self.cols - 1)
+        ii = jnp.clip((self.rows / 2.0 - obs_flat[..., 1]).astype(jnp.int32), 0, self.rows - 1)
+        return ii * self.cols + jj
 
     def dynamics_step(self, pos, vel, act):
         """Pure physics, transliterated from the torch twin (probe-verified exact)."""

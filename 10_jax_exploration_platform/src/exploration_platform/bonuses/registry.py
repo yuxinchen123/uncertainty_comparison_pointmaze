@@ -1,6 +1,7 @@
 """Named bonus presets: the string a run's configuration carries, and the family it selects.
 
-A preset is a factory — `(cfg, env_cfg, n_copies, base_seed, copy_seed_index) -> BonusFunctions` —
+A preset is a factory — `(cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim=4)
+-> BonusFunctions` —
 so the family binds to the run's environment, copy count and seeds before anything is traced. The
 name is resolved on the host, in Python, and only the resulting concrete functions ever reach the
 compiler: there is no place in a compiled program where an algorithm is chosen.
@@ -14,14 +15,15 @@ from .visit_count.implementation import build as build_visit_count
 
 def rnd_preset(rnd_cfg: RNDConfig):
     """A factory for random network distillation at the given network widths."""
-    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index: build_rnd(
-        cfg, env_cfg, rnd_cfg, n_copies, base_seed, copy_seed_index)
+    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim=4: build_rnd(
+        cfg, env_cfg, rnd_cfg, n_copies, base_seed, copy_seed_index, obs_dim)
 
 
 def visit_count_preset(vc_cfg: VisitCountConfig, name: str):
     """A factory for the oracle visit-count bonus at the given decay."""
-    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index: build_visit_count(
-        cfg, env_cfg, vc_cfg, name, n_copies, base_seed, copy_seed_index)
+    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim=4: (
+        build_visit_count(cfg, env_cfg, vc_cfg, name, n_copies, base_seed, copy_seed_index,
+                          obs_dim))
 
 
 BONUS_REGISTRY = {

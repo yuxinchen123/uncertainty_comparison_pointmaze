@@ -11,19 +11,19 @@ from ... import F32
 from ...networks import stacked_orthogonal
 
 
-def init_target(rnd_cfg, n_copies: int, base_seed: int, copy_seed_index):
+def init_target(rnd_cfg, n_copies: int, base_seed: int, copy_seed_index, obs_dim: int = 4):
     """The fixed target network: two layers, never trained, one draw per copy."""
     return stacked_orthogonal(
         "rnd_target",
-        [(rnd_cfg.hidden, 4, 2 ** 0.5), (rnd_cfg.feature_dim, rnd_cfg.hidden, 2 ** 0.5)],
+        [(rnd_cfg.hidden, obs_dim, 2 ** 0.5), (rnd_cfg.feature_dim, rnd_cfg.hidden, 2 ** 0.5)],
         n_copies, base_seed, copy_seed_index)
 
 
-def init_predictor(rnd_cfg, n_copies: int, base_seed: int, copy_seed_index):
+def init_predictor(rnd_cfg, n_copies: int, base_seed: int, copy_seed_index, obs_dim: int = 4):
     """The trained predictor: three layers, one draw per copy."""
     return stacked_orthogonal(
         "rnd_predictor",
-        [(rnd_cfg.hidden, 4, 2 ** 0.5), (rnd_cfg.feature_dim, rnd_cfg.hidden, 2 ** 0.5),
+        [(rnd_cfg.hidden, obs_dim, 2 ** 0.5), (rnd_cfg.feature_dim, rnd_cfg.hidden, 2 ** 0.5),
          (rnd_cfg.feature_dim, rnd_cfg.feature_dim, 2 ** 0.5)],
         n_copies, base_seed, copy_seed_index)
 

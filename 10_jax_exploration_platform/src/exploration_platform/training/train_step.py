@@ -72,7 +72,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         params = named_params(stored_params(state, layout), layout)
         agent_params, bonus_params = params["agent"], params["bonus"]
         bonus_state_old = state.bonus_state
-        z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, 2), F32)
+        z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, env.act_dim), F32)
 
         logstd = agent_params["actor"]["logstd"]
         # before: a rollout buffer [T, C, N, k]; after: [C, T*N, k], one row per copy per step
@@ -186,13 +186,10 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
 
         # cumulative visited-cell map, kept on the device so no iteration synchronises; the
         # driver reads it only on the iterations it records
-        # before: nobs_flat [C, T*N, 4] world coordinates; after: visited [C, rows*cols] bool
+        # before: nobs_flat [C, T*N, obs] world coordinates; after: visited [C, rows*cols] bool
         visited = state.visited
         if cfg.track_coverage:
-            cols, rows = env.cols, env.rows
-            jj = jnp.clip((nobs_flat[..., 0] + cols / 2.0).astype(jnp.int32), 0, cols - 1)
-            ii = jnp.clip((rows / 2.0 - nobs_flat[..., 1]).astype(jnp.int32), 0, rows - 1)
-            visited = visited.at[jnp.arange(C)[:, None], ii * cols + jj].set(True)
+            visited = visited.at[jnp.arange(C)[:, None], env.cell_index(nobs_flat)].set(True)
 
         state = state._replace(
             env_state=env_state, obs=obs_last, bonus_state=bonus_state, visited=visited,
@@ -223,7 +220,7 @@ def build_prime_step(cfg, env, bonus, layout):
 
     def prime_step(state, key):
         """One warm-up rollout (spec 4.3): random actions, the bonus's statistics updated."""
-        acts = jax.random.uniform(key, (T, C, N, 2), F32, -1.0, 1.0)
+        acts = jax.random.uniform(key, (T, C, N, env.act_dim), F32, -1.0, 1.0)
 
         def body(carry, a):
             """One environment step with a random action; only the next observation is kept."""
@@ -232,10 +229,10 @@ def build_prime_step(cfg, env, bonus, layout):
             return env_state, final_obs
 
         env_state, nobs = jax.lax.scan(body, state.env_state, acts)
-        # before: nobs [T, C, N, 4]; after: [C, T*N, 4], the shape the statistics consume
+        # before: nobs [T, C, N, obs]; after: [C, T*N, obs], the shape the statistics consume
         bonus_params = named_params(stored_params(state, layout), layout)["bonus"]
         bonus_state = bonus.prime(bonus_params, state.bonus_state,
-                                  nobs.transpose(1, 0, 2, 3).reshape(C, T * N, 4))
+                                  nobs.transpose(1, 0, 2, 3).reshape(C, T * N, env.obs_dim))
         return state._replace(env_state=env_state, bonus_state=bonus_state)
 
     return prime_step

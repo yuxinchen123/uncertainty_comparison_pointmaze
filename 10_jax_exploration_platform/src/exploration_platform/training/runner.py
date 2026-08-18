@@ -14,7 +14,6 @@ import numpy as np
 from .. import F32
 from ..agents.ppo.config import PPOConfig
 from ..agents.ppo.update import opt_init
-from ..envs.pointmaze.jax_pointmaze import EnvState
 from ..evaluation.coverage import coverage_fraction
 from ..statistics import rms_init
 from .compose import Composition
@@ -53,7 +52,7 @@ class Runner:
         stored = self.layout.pack(trainable) if self.layout.packed else trainable
         state = TrainState(
             env_state=self.env.reset(),
-            obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
+            obs=jnp.zeros((cfg.n_copies, cfg.n_envs, self.env.obs_dim), F32),
             agent_params={}, bonus_params={},
             opt=opt_init(stored),
             agent_state={"int_filter": jnp.zeros((cfg.n_copies, cfg.n_envs), F32),
@@ -76,10 +75,8 @@ class Runner:
         if self.prime_step is not None:
             for i in range(self.cfg.prime_iterations):
                 state = self.prime_step(state, jax.random.fold_in(key, i))
-        rc = state.env_state.reset_count
-        pos, vel, goal = self.env._spawn(rc)
-        env_state = EnvState(pos, vel, goal, jnp.zeros_like(state.env_state.step_count), rc)
-        return state._replace(env_state=env_state, obs=jnp.concatenate([pos, vel], -1))
+        env_state, obs = self.env.respawn(state.env_state)
+        return state._replace(env_state=env_state, obs=obs)
 
     def lr_argument(self, iteration: int, num_iterations: int):
         """The scalar passed to one iteration, given the annealing schedule.

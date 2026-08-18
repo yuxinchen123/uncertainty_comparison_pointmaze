@@ -577,4 +577,145 @@ folder's \texttt{summary.json} and \texttt{infra\allowbreak\_history.md}, and th
 carried no number that any other part of this document cites, and its label
 \texttt{tab:pm-jax-run11-cost} was referenced only from inside the deleted paragraph.}
 
+%==============================================================================
+\section{AntMaze on the JAX platform}
+\label{sec:am-jax}
+% The environment specification is subsection 2.0, so a first train run on this family becomes
+% 2.1 and the shared specification keeps the .0 slot, exactly as in the PointMaze section.
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:am-jax-envspec}
+
+The platform's second environment family replaces the force-actuated ball with the Gymnasium Ant
+--- a quadruped of eight torque-actuated joints on a free-floating torso --- in the same three
+maze grids, scaled from $1$\,m to $4$\,m cells. The ant is real articulated rigid-body physics,
+so the stepper is not hand-derived as PointMaze's is: the model is the vendored Gymnasium
+\texttt{ant.xml} plus the maze walls, compiled through MuJoCo MJX so that the physics, the agent
+and the bonus fuse into the platform's usual single compiled iteration. Resets are fully
+deterministic --- the reference already zeroes the ant's joint noise, and this platform pins the
+start and goal cells and zeroes the cell noise, the same convention the PointMaze specification
+adopted --- so the environment holds no random number generator at all, and the only randomness
+in an episode is the policy's own sampling. Where the fused model deviates from the reference
+(the integrator and solver budget, the merged wall boxes, the flat observation) the deviation and
+the measurement that justifies it are recorded in the family's
+\texttt{envs/antmaze/\allowbreak spec.md}, and the correctness gates in
+\texttt{tests/envs/} hold the fused stepper against the C-MuJoCo reference of the same model.
+\Cref{tab:am-jax-env} states the three mazes knob by knob.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.4cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{AntMaze umaze} & \textbf{AntMaze medium} & \textbf{AntMaze large} &
+  \textbf{Where the value is set} \\
+& \small(reference \texttt{AntMaze\allowbreak\_UMaze-v5}) &
+  \small(reference \texttt{AntMaze\allowbreak\_Medium-v5}) &
+  \small(reference \texttt{AntMaze\allowbreak\_Large-v5}) & \small(field of the platform code) \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Identity and provenance}} \\
+\greyrule
+specification name &
+  \texttt{antmaze\allowbreak\_umaze\allowbreak\_cont700\allowbreak\_nonoise@1} &
+  \texttt{antmaze\allowbreak\_medium\allowbreak\_cont1000\allowbreak\_nonoise@1} &
+  \texttt{antmaze\allowbreak\_large\allowbreak\_cont1000\allowbreak\_nonoise@1} &
+  the name a run manifest carries \\
+\greyrule
+provenance & Gymnasium-Robotics 1.3.1 \texttt{AntMaze\allowbreak\_UMaze-v5} semantics over the
+  Gymnasium 1.2.3 \texttt{ant.xml}, vendored byte for byte & same & same &
+  \texttt{envs/antmaze/\allowbreak spec.md} \\
+\greyrule
+implementation & \texttt{mjx\allowbreak\_antmaze.py} (the MJX stepper) and
+  \texttt{am\allowbreak\_common.py} (maps, configuration, model builder), MuJoCo MJX 3.11.0 &
+  same & same & \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak antmaze/} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Robot and spaces}} \\
+\greyrule
+agent body & the Gymnasium Ant: free-floating torso, four legs, $15$ position and $14$ velocity
+  coordinates & same & same & \texttt{assets/\allowbreak ant.xml} \\
+\greyrule
+observation & $29$-d: the full \texttt{qpos} ($15$, torso $x$, $y$ included) then \texttt{qvel}
+  ($14$). The goal is \emph{not} observed & same & same &
+  \texttt{mjx\allowbreak\_antmaze.\allowbreak \_obs} \\
+\greyrule
+action & $8$-d joint torques, each component clipped to $[-1, 1]$ & same & same &
+  \texttt{mjx\allowbreak\_antmaze.\allowbreak step} \\
+\greyrule
+control cadence & one environment step is $5$ physics steps of $0.01$\,s, i.e.\ $20$\,Hz control
+  & same & same & \texttt{AntMazeConfig.\allowbreak frame\allowbreak\_skip} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Maze}} \\
+\greyrule
+maze map & $5 \times 5$ cells of $4$\,m, $7$ open & $8 \times 8$ cells, $26$ open &
+  $9 \times 12$ cells, $46$ open (the PointMaze large grid) &
+  \texttt{AntMazeConfig.\allowbreak map\allowbreak\_name} \\
+\greyrule
+world extent & $x, y \in [-10, 10]$ & $x, y \in [-16, 16]$ &
+  $x \in [-24, 24]$, $y \in [-18, 18]$ & \texttt{am\allowbreak\_common.\allowbreak
+  cell\allowbreak\_center} \\
+\greyrule
+walls & $2$\,m boxes; horizontal wall runs merged into single boxes, an identical union
+  ($18$ cells $\to 8$ boxes) & $38 \to 20$ boxes & $62 \to 31$ boxes &
+  \texttt{am\allowbreak\_common.\allowbreak merged\allowbreak\_wall\allowbreak\_boxes} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Start and goal}} \\
+\greyrule
+start cell & row $3$, column $1$ (row $0$ is the top); world $(-4, -4)$ &
+  row $6$, column $1$; world $(-10, -10)$ & row $7$, column $1$; world $(-18, -12)$ &
+  \texttt{AntMazeConfig.\allowbreak start\allowbreak\_cell} \\
+\greyrule
+goal cell & row $1$, column $1$; world $(-4, 4)$ & row $1$, column $6$; world $(10, 10)$ &
+  row $1$, column $10$; world $(18, 12)$ & \texttt{AntMazeConfig.\allowbreak
+  goal\allowbreak\_cell} \\
+\greyrule
+reset noise & $0$: the cells are pinned, and the reference's joint-reset noise is already
+  zero --- every reset is bit-identical & same & same & \texttt{spec.md} deviation 1 \\
+\greyrule
+goal radius & $0.45$\,m: a step whose torso-to-goal distance is at most this earns reward $1$ &
+  same & same & \texttt{AntMazeConfig.\allowbreak goal\allowbreak\_radius} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Episode and reward}} \\
+\greyrule
+episode length cap & $700$ steps & $1{,}000$ steps & $1{,}000$ steps &
+  \texttt{AntMazeConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+\greyrule
+task type & continuing: never terminated at the goal, only truncated at the cap; the goal
+  never moves. A flipped ant is not terminated either (the reference discards the Ant's health
+  termination) & same & same & \texttt{AntMazeConfig.\allowbreak
+  continuing\allowbreak\_task} \\
+\greyrule
+reward & sparse: $1$ on a step inside the goal radius, $0$ otherwise; no shift is added & same &
+  same & \texttt{AntMazeConfig.\allowbreak reward\allowbreak\_shift} \\
+\greyrule
+discount, extrinsic & $0.999$ & same & same & \texttt{PPOConfig.\allowbreak
+  gamma\allowbreak\_ext} \\
+\greyrule
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) & same & same &
+  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Physics implementation}} \\
+\greyrule
+integrator and solver & \texttt{implicitfast}, Newton, $4$ iterations, $8$ line-search,
+  float32; the reference runs RK4 at the full solver budget in float64 ---
+  \texttt{spec.md} deviations 3 and 6, gates in \texttt{tests/envs/} & same & same &
+  \texttt{AntMazeConfig.\allowbreak integrator}, \texttt{.solver\allowbreak\_iterations} \\
+\blackrule
+\end{tabular}%
+}
+\caption{The three AntMaze environments, knob by knob. ``same'' means the value equals the
+column to its left; the grey verticals make each row's extent visible. Long typewriter names
+break after every escaped underscore (\texttt{\textbackslash allowbreak}). The two discounts are
+the trainer's defaults rather than environment fields, listed because they define the objective
+the environment is optimised against.}
+\label{tab:am-jax-env}
+\end{table}
+
 \end{document}

@@ -19,8 +19,14 @@ from .config import VisitCountConfig
 
 
 def build(cfg, env_cfg, vc_cfg: VisitCountConfig, name: str, n_copies: int, base_seed: int,
-          copy_seed_index):
+          copy_seed_index, obs_dim: int = 4):
     """Bind this bonus to one run's maze, copy count and decay; `name` is the preset it came from."""
+    # this family reads the observation as PointMaze's (x, y, vx, vy) in cell units and bins it
+    # into that maze's own table, so it is defined for the PointMaze family only
+    if obs_dim != 4:
+        raise ValueError(
+            f"the {name} bonus bins PointMaze's 4-d observation and cannot score a "
+            f"{obs_dim}-d one; it is not defined for this environment")
     # the maze decides which cells exist and which are walls; the table covers every cell,
     # including walls, so the index arithmetic stays a plain multiply-add
     wall = np.asarray(MAPS[env_cfg.map_name])
