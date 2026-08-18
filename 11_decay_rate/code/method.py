@@ -21,6 +21,7 @@ methods is the git history of this file plus results.tsv).
 """
 import copy
 import hashlib
+import os
 
 import numpy as np
 import torch
@@ -134,6 +135,10 @@ class Method:
             self.opt = torch.optim.SGD(self.net.parameters(), lr=self.OPTIMIZER[1])
         else:
             raise ValueError(f"unknown optimizer kind {kind!r}")
+        # device: METHOD_DEVICE=cuda for GPU jobs (conv/atari); default cpu
+        self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
+        self.net.to(self.device)
+        self.prior_raw.to(self.device)
 
     def _whiten(self, x: torch.Tensor, update: bool) -> torch.Tensor:
         """Running mean/std whitening with a +-5 clip; the image branch adds the channel dim.
@@ -167,10 +172,10 @@ class Method:
             eta0, t0 = self.OPTIMIZER[1], self.OPTIMIZER[2]
             for group in self.opt.param_groups:
                 group["lr"] = eta0 / (1.0 + (self.t - 1) / t0)
-        z = self._whiten(x, update=True)
+        z = self._whiten(x.to(self.device), update=True)
         with torch.no_grad():
-            c = torch.randint(0, 2, (x.shape[0], self.d), generator=self.coin_gen,
-                              dtype=torch.float32) * 2.0 - 1.0
+            c = (torch.randint(0, 2, (x.shape[0], self.d), generator=self.coin_gen,
+                               dtype=torch.float32) * 2.0 - 1.0).to(self.device)
             p = self.prior_raw(z)
             p = float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
             tgt = c - p
@@ -183,7 +188,7 @@ class Method:
     def bonus(self, x: torch.Tensor) -> np.ndarray:
         """||f-hat(x) + prior(x)|| / sqrt(d) on whitened inputs (whitener NOT updated)."""
         with torch.no_grad():
-            z = self._whiten(x, update=False)
+            z = self._whiten(x.to(self.device), update=False)
             p = self.prior_raw(z)
             p = float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
             out = self.net(z) + p
