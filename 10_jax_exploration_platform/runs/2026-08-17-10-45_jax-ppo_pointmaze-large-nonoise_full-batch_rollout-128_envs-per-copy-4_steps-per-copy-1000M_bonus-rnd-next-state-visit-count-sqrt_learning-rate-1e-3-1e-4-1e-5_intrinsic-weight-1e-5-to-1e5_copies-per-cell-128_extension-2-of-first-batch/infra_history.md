@@ -113,3 +113,8 @@ finishes, and its projected finish is inside the rest of the run's.
 
 The per-user allowance was full at 40 of 40 graphics cards while both jobs were queued, which is why
 the chunk was moved rather than added: cancelling first freed the slot the new job needed.
+
+That chunk's queue entry was repriced to the card it actually holds — 4.60 hours from this run's
+own probe of the oracle arm on an A100-SXM4 at 528 copies, with the serval03 plan kept beside it
+under `reassigned_from` — so the 20-minute tick stops reporting it as a canary off plan every tick
+for a card it never went to.
