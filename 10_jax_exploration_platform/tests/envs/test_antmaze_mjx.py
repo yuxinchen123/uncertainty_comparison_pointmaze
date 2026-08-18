@@ -140,6 +140,23 @@ def test_cell_index_and_open_cells():
     print("ok test_cell_index_and_open_cells")
 
 
+def test_nan_guard():
+    """An environment whose physics state goes non-finite is respawned, counted, pays 0."""
+    env = JaxAntMaze(preset("umaze"), 1, 2)
+    s = env.reset()
+    qpos = np.asarray(s.data.qpos).copy()
+    qpos[0, 3] = np.nan   # env 0: poison one coordinate; env 1 stays healthy
+    s = s._replace(data=s.data.replace(qpos=jnp.asarray(qpos)))
+    s, obs, rew, term, trunc, final = jax.jit(env.step)(s, jnp.zeros((1, 2, 8), jnp.float32))
+    assert bool(trunc[0, 0]) and not bool(term[0, 0])
+    assert float(rew[0, 0]) == 0.0
+    assert bool(jnp.isfinite(final).all()) and bool(jnp.isfinite(obs).all())
+    np.testing.assert_array_equal(np.asarray(s.data.qpos[0]), np.asarray(env.init_qpos))
+    assert int(s.nan_count[0, 0]) == 1 and int(s.nan_count[0, 1]) == 0
+    assert bool(jnp.isfinite(s.data.qpos[1]).all())  # the healthy env kept its state
+    print("ok test_nan_guard")
+
+
 def test_preset_connectivity():
     """In every preset the goal is reachable from the start through open cells."""
     for name in ("umaze", "medium", "large"):
@@ -167,4 +184,5 @@ if __name__ == "__main__":
     test_truncation_and_autoreset()
     test_x64_boundary()
     test_cell_index_and_open_cells()
+    test_nan_guard()
     test_preset_connectivity()

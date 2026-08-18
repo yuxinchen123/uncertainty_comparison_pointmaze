@@ -61,6 +61,14 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
    compiled physics is float32 (the reference's C MuJoCo is float64). The parity gate bounds
    the resulting drift.
 
+7. **Non-finite states respawn.** A float32 contact solve can fail on a knife-edge state and
+   leave NaNs — measured at order one event per hundred thousand copy-iterations under a
+   training policy, and not reproducible (the card's non-deterministic reductions decide
+   whether the edge tips). Such an environment is treated as an infrastructure truncation:
+   respawned at the spawn, reward forced to 0 for that step, its observation sanitised so the
+   networks never see a NaN, and counted in the state's `nan_count` so a run can report how
+   often it happened. The C-MuJoCo reference in float64 does not need this.
+
 ## Correctness gates
 
 Run by `tests/envs/test_antmaze_mjx.py` (fast, CPU) and
