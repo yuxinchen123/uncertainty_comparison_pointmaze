@@ -172,3 +172,49 @@ commit-before-submit rule.
 | job ids of this run | `slurm/submitted_jobids.txt` — the only file a cancel may read from |
 | run-level aggregate | `summary.json`, written by `code/aggregate.py` |
 | what happened | `infra_history.md` |
+
+## Closing summary (written when the queue drained)
+
+The run finished at 2026-08-18 08:00 PT, 11 h 48 m after its first chunk started. All 44 chunks
+completed on their own shard and wrote their completion records; `queue/failed/` is empty. 429,704
+window records, every one phase-blocked, and both arms' chunks were checked to partition their 128
+copies per configuration exactly once, so all 66 configurations are scored over the full 128.
+
+The plan's makespan was 8.05 hours. The extra 3 h 45 m is jaguar03 failing at 23:03 PT with eight
+chunks on it — 41 per cent of the run's copies — and the re-placement that followed, which
+`infra_history.md` records in full. 248 card-hours over 14 nodes of 12 classes, from an H100 NVL
+down to an RTX 2080 Ti.
+
+### What the run found
+
+1. **The configuration a 10M-step sweep selects is not the configuration that wins at 1000M
+   steps, and this holds for both arms.** Given its whole grid at the long budget, random network
+   distillation wins at learning rate $10^{-4}$ and intrinsic weight $10^{2}$, scoring
+   52.500 ± 3.368; the oracle $1/\sqrt{n}$ bonus wins at $10^{-4}$ and $10^{1}$, scoring
+   38.199 ± 3.216. The configurations the parent's 10M sweep chose — both at learning rate
+   $10^{-3}$ — score 1.795 ± 0.101 and 0.658 ± 0.024 over the same 1000M steps, which is 29 and 58
+   times worse than their own arm's best.
+2. **Both arms move the same way**: one step down in learning rate, one step up in intrinsic
+   weight. A change that is identical across two arms whose bonuses share no machinery is a
+   property of the budget, not of either bonus.
+3. **The ordering between the arms is unchanged and no longer rests on borrowed configurations.**
+   Distillation leads the oracle bonus by about four standard errors when each is given its own
+   best. Neither arm is separated on the other metrics: both reach the goal in every one of their
+   128 copies and both cover 99.85 per cent of the maze.
+4. **Not every configuration rises then falls.** 20 of 66 do; 16 never reach the goal, 14 are
+   still rising at 1000M steps, 13 decline throughout and 3 rise then flatten. The label is
+   unchanged under all nine threshold variants for 53 of the 66, and every one of the ten
+   highest-scoring configurations is unanimous — the instability is confined to configurations
+   scoring 10.4 or below.
+5. **An aggregate's shape need not be its copies' shape.** Of the 128 copies behind each named
+   configuration, 76 and 84 share the aggregate label of the two winners, but only 6 share the
+   oracle arm's rise-then-plateau exception, where 90 of its copies rise and fall on their own.
+
+### What would make the conclusions wrong
+
+Finding 1 rests on 128 copies per configuration against the parent's 256 and the first extension's
+1,024, so its standard errors are the widest of the three runs. The gap it reports is 15 to 58
+times the standard error, so no plausible sampling error closes it, but a reader comparing a
+1000M-step cell with a 10M-step one is comparing different copy counts as well as different
+budgets. Finding 3's four-standard-error gap is the one number here that a larger sample could
+move.
