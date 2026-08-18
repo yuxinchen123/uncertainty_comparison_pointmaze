@@ -35,7 +35,24 @@ cost next to the maze families?
 
 ## Where this family stands — environment step alone (H100 NVL, serval05)
 
-(to be filled by `benchmarks/env/bench_montezuma_env.py` in round 1)
+Measured 2026-08-18 04:35–04:50 PT by `benchmarks/env/bench_montezuma_env.py` (medians over 11
+rounds of 10 env steps, random actions, the state donated, two-call warm-up; result JSON
+`benchmarks/env/results/2026-08-18_montezuma_env_h100nvl_serval05.json`). One env step is 4
+game frames plus the observation stack and the explicit auto-reset. n_envs = 1, so copies =
+environments:
+
+| copies | seconds per env step | total env steps per second | env steps per second per copy | hours per million steps per copy | peak device memory |
+|---|---|---|---|---|---|
+| 512 | 0.000664 | 0.77 M | 1,505.9 | 0.18 | 0.07 GiB |
+| 1,024 | 0.000672 | 1.52 M | 1,487.1 | 0.19 | 0.07 GiB |
+| 2,048 | 0.000643 | 3.18 M | 1,554.9 | 0.18 | 0.08 GiB |
+| 4,096 | 0.000781 | 5.24 M | 1,280.3 | 0.22 | 0.10 GiB |
+
+The game logic scales almost perfectly with the copy count — per-copy speed is flat at about
+1,300–1,550 steps per second while the total climbs to 5.2 M at 4,096 copies — because the
+state is a few hundred integers per environment and the whole step is elementwise arithmetic;
+compare the ant's contact solve, which costs about 25 times more per step and saturates the
+card far earlier. Compile time is 9–10 s per shape.
 
 ## Where this family stands — whole training iteration (H100 NVL, serval05)
 
