@@ -667,6 +667,28 @@ Three validation-only observations:
   for the overlap-count inflation.
 \end{enumerate}
 
+\subsection{Ablations and horizon stress}
+\label{sec:ablations}
+
+Five single-knob probes bound the champions' sensitivities, each at $10$ seeds
+(\Cref{tab:ledger}'s protocol):
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Coin dimension} ($d = 128$ against $512$): dev\_mean doubles ($0.060$ against
+  $0.030$) --- the chi floor scales as $\sqrt{1/(2d)}$, exactly as computed in
+  \Cref{sec:metrics}.
+\item \textbf{Dictionary insertion radius} ($0.2$ against $0.05$): a dictionary coarser than
+  the finest point spacing cannot separate the center square's positions and the score
+  collapses ($1.06$ uniform, $0.99$ nonuniform). The insertion radius must sit below the
+  finest state spacing the bonus should resolve.
+\item \textbf{Elliptical bandwidth} ($\sigma \le 0.2 / 0.35 / 0.75$): dev\_worst improves
+  monotonically toward orthogonality ($0.077 / 0.114 / 0.202$) --- the overlap-count
+  inflation is the whole remaining error of the closed-form readout.
+\item \textbf{Horizon} ($32{,}768$ steps, $8\times$ the protocol): the residual-encoded
+  shrink holds slope $-0.500000$ with deviation $0.033$ over four and a half decades;
+  AdaGrad drifts to slope $-0.63$ with deviation $1.30$ --- the optimizer family's
+  calibration does not survive longer horizons.
+\end{enumerate}
+
 %==============================================================================
 \section{Findings}
 \label{sec:findings}
@@ -716,17 +738,97 @@ Three validation-only observations:
 \section{Literature}
 \label{sec:literature}
 
-% (written after the bibliography verification pass; see literature/ for the full notes)
+Full per-paper notes live in the campaign's \texttt{literature/} folder (six commissioned
+surveys); this section keeps what the campaign used.
+
+\paragraph{Why the decay rate is position-dependent.}
+The linearized analysis behind \Cref{sec:mechanism-one} is the neural-tangent-kernel
+description of gradient descent \citep{jacot2018neural_neurips}, whose per-eigenmode
+convergence rates were made explicit for overparameterized two-layer networks by
+\citet{arora2019fine_icml}, with global-convergence guarantees for exactly our
+shallow-wide regime in \citet{du2019gradient_iclr}. The spectral bias phenomenon --- low
+kernel modes learn first --- is documented empirically in \citet{rahaman2019spectral_icml}
+and quantified per frequency in \citet{basri2019convergence_neurips}; the extension to
+non-uniform data density \citep{basri2020frequency_icml} proves the local convergence time
+scales with one over the local density, which is why plain gradient methods are already
+mildly count-sensitive under non-uniform visitation (\runref{exp 012}). The radial pattern
+in our diagnostics is the arc-cosine kernel's growing diagonal
+\citep{cho2009kernel_neurips}. Fourier input features reshape the composed kernel toward a
+stationary one \citep{tancik2020fourier_neurips} --- the delocalization route to uniformity
+that our sphere-projection attempt (\runref{exp 008}) approximated poorly.
+
+\paragraph{Schedules, averaging, and adaptive optimizers.}
+The $1/t$-schedule and iterate-averaging theory the parent project leaned on is the
+stochastic-approximation line of \citet{polyak1992acceleration}, with the non-asymptotic
+constant-step least-squares rate of \citet{bach2013non_neurips} and the tail-averaging
+refinement of \citet{jain2017parallelizing_jmlr}. All of these give $O(1/n)$ \emph{expected
+squared error under gradient noise}; our base regime is deterministic full-batch descent,
+where the averaged iterate decays as $1/n$ per mode only past each mode's own transient
+(\runref{exp 004}). AdaGrad's cumulative accumulator \citep{duchi2011adaptive} is the
+count-like member of the adaptive family, and Adam's forgetting \citep{kingma2014adam} is
+why the canonical RND bonus saturates.
+
+\paragraph{Count-style bonus constructions.}
+The coin-flip construction the campaign made exact is the pseudo-count estimator of
+\citet{lobel2023flipping_icml}; the pseudo-count idea originates with density models
+\citep{bellemare2016unifying_neurips, ostrovski2017count_icml}, and the closed-form
+elliptical readout is the episodic elliptical bonus family \citep{henaff2022exploration_neurips}
+built on the linear-bandit confidence width \citep{abbasi2011online}. The bridge the
+campaign exploits --- fitting random targets estimates a posterior width that a ridge
+accumulator computes exactly --- is the prior-network posterior connection of
+\citet{ciosek2019conservative}, with randomized prior functions
+\citep{osband2018randomized_neurips} as the never-visited baseline mechanism. Two recent
+RND descendants document the exact defects this campaign scores: distributional RND names
+the unequal initial bonus (``initial bonus inconsistency'')
+\citep{yang2024exploration}, and random-distribution distillation injects fresh target
+noise to convert optimization decay into statistical decay \citep{fang2025exploration} ---
+mechanism two in this document's terms.
+
+\paragraph{Making per-point rates uniform on purpose.}
+Natural-gradient/Gauss-Newton steps contract every residual mode at the same rate
+\citep{zhang2019fast_neurips}; the campaign's minimum-change interpolation update is the
+exact-solve limit of that idea with the schedule replaced by a residual-encoded map. The
+only prior work we found whose stated goal is equalizing per-point residual decay is the
+physics-informed-network line, where per-point loss weights are tuned to balance decay
+rates \citep{chen2025selfadaptive_journal_of_computational_physics}; our inverse-error
+reweighting probe (\runref{exp 006}) is a crude member of that family and inherited its
+limitation (diagonal preconditioning cannot fix off-diagonal coupling).
+
+\paragraph{The landscape question the user raised.}
+\citet{li2018visualizing_neurips} shows loss-landscape chaos growing with \emph{depth} in
+plain networks and disappearing with skip connections or width. A $4 \to 256 \to 128$
+network sits in the shallow-wide regime that the paper itself, and the two-layer
+convergence theory \citep{du2019gradient_iclr}, classify as benign --- so residual
+connections are not the lever for this problem; the kernel spectrum is
+(\Cref{sec:mechanism-one}). The original bonus construction remains
+\citet{burda2019exploration}.
 
 %==============================================================================
 \section{What this document does not settle}
 \label{sec:limitations}
 
 \begin{enumerate}[leftmargin=*]
-\item \textbf{Off-support behavior.} The metric evaluates on the visited point set. The
-  winning constructions generalize through their features (kernel dictionary, prior
-  network), but how the bonus field behaves \emph{between} training positions --- the
-  quantity an exploring agent actually queries --- is unmeasured here.
+\item \textbf{Off-support behavior --- measured, and the metric does not score it.} The
+  campaign metric evaluates on the visited point set; \Cref{fig:offsupport} shows what the
+  three champions read \emph{between} the trained positions after $256$ uniform visits. The
+  residual-encoded shrink produces a flat field (off-support mean $0.0625$ against
+  on-support $0.0624$): its global features generalize the decay everywhere, so an exploring
+  agent would find nothing marked novel anywhere. The coin-flip dictionary keeps elevated
+  bonus between cells (off-support mean $0.096$, maximum $0.71$). The unit-normalized
+  elliptical readout also flattens (maximum $0.0624$): normalizing the features erases the
+  far-from-every-center signal that would otherwise mark unvisited space. A bonus that is
+  perfect \emph{on} the support and blind \emph{off} it is not yet an exploration bonus;
+  scoring the off-support field is the natural next metric.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/offsupport_fields.pdf}
+\caption{The bonus field on a quarter-cell grid after $256$ uniform full-batch visits to the
+$108$ cell midpoints (white dots), one panel per champion. The visited-cell level is
+$(257)^{-1/2} \approx 0.062$ everywhere; the panels differ in what they claim about the
+space in between.}
+\label{fig:offsupport}
+\end{figure}
 \item \textbf{The full reinforcement-learning loop.} The campaign isolates the bonus from
   policy feedback on purpose. Inside a SAC or PPO loop the visitation law is itself driven
   by the bonus; whether the count-exact methods improve exploration end to end is the

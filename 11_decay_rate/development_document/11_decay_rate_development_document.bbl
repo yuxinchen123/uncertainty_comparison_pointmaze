@@ -1,8 +1,138 @@
-\begin{thebibliography}{0}
+\begin{thebibliography}{26}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abbasi-Yadkori et~al.(2011)Abbasi-Yadkori, P{\'a}l, and Szepesv{\'a}ri]{abbasi2011online}
+Yasin Abbasi-Yadkori, D{\'a}vid P{\'a}l, and Csaba Szepesv{\'a}ri.
+\newblock Online least squares estimation with self-normalized processes: An application to bandit problems.
+\newblock \emph{arXiv preprint arXiv:1102.2670}, 2011.
+
+\bibitem[Arora et~al.(2019)Arora, Du, Hu, Li, and Wang]{arora2019fine_icml}
+Sanjeev Arora, Simon~S. Du, Wei Hu, Zhiyuan Li, and Ruosong Wang.
+\newblock Fine-grained analysis of optimization and generalization for overparameterized two-layer neural networks.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2019.
+
+\bibitem[Bach and Moulines(2013)]{bach2013non_neurips}
+Francis~R. Bach and Eric Moulines.
+\newblock Non-strongly-convex smooth stochastic approximation with convergence rate o(1/n).
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2013.
+
+\bibitem[Basri et~al.(2019)Basri, Jacobs, Kasten, and Kritchman]{basri2019convergence_neurips}
+Ronen Basri, David~W. Jacobs, Yoni Kasten, and Shira Kritchman.
+\newblock The convergence rate of neural networks for learned functions of different frequencies.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2019.
+
+\bibitem[Basri et~al.(2020)Basri, Galun, Geifman, Jacobs, Kasten, and Kritchman]{basri2020frequency_icml}
+Ronen Basri, Meirav Galun, Amnon Geifman, David~W. Jacobs, Yoni Kasten, and Shira Kritchman.
+\newblock Frequency bias in neural networks for input of non-uniform density.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2020.
+
+\bibitem[Bellemare et~al.(2016)Bellemare, Srinivasan, Ostrovski, Schaul, Saxton, and Munos]{bellemare2016unifying_neurips}
+Marc~G. Bellemare, Sriram Srinivasan, Georg Ostrovski, Tom Schaul, David Saxton, and R{\'{e}}mi Munos.
+\newblock Unifying count-based exploration and intrinsic motivation.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2016.
+
+\bibitem[Burda et~al.(2019)Burda, Edwards, Storkey, and Klimov]{burda2019exploration}
+Yuri Burda, Harrison Edwards, Amos Storkey, and Oleg Klimov.
+\newblock Exploration by random network distillation.
+\newblock In \emph{Seventh International Conference on Learning Representations}, 2019.
+
+\bibitem[Chen et~al.(2025)Chen, Howard, and Stinis]{chen2025selfadaptive_journal_of_computational_physics}
+Wenqian Chen, Amanda~A. Howard, and Panos Stinis.
+\newblock Self-adaptive weights based on balanced residual decay rate for physics-informed neural networks and deep operator networks.
+\newblock \emph{Journal of Computational Physics}, 2025.
+
+\bibitem[Cho and Saul(2009)]{cho2009kernel_neurips}
+Youngmin Cho and Lawrence~K. Saul.
+\newblock Kernel methods for deep learning.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2009.
+
+\bibitem[Ciosek et~al.(2019)Ciosek, Fortuin, Tomioka, Hofmann, and Turner]{ciosek2019conservative}
+Kamil Ciosek, Vincent Fortuin, Ryota Tomioka, Katja Hofmann, and Richard Turner.
+\newblock Conservative uncertainty estimation by fitting prior networks.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+
+\bibitem[Du et~al.(2019)Du, Zhai, P{\'{o}}czos, and Singh]{du2019gradient_iclr}
+Simon~S. Du, Xiyu Zhai, Barnab{\'{a}}s P{\'{o}}czos, and Aarti Singh.
+\newblock Gradient descent provably optimizes over-parameterized neural networks.
+\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2019.
+
+\bibitem[Duchi et~al.(2011)Duchi, Hazan, and Singer]{duchi2011adaptive}
+John Duchi, Elad Hazan, and Yoram Singer.
+\newblock Adaptive subgradient methods for online learning and stochastic optimization.
+\newblock \emph{Journal of machine learning research}, 2011.
+
+\bibitem[Fang et~al.(2025)Fang, Yang, Tao, Lyu, Li, Shen, and Li]{fang2025exploration}
+Zhirui Fang, Kai Yang, Jian Tao, Jiafei Lyu, Lusong Li, Li~Shen, and Xiu Li.
+\newblock Exploration by random distribution distillation.
+\newblock \emph{arXiv preprint arXiv:2505.11044}, 2025.
+
+\bibitem[Henaff et~al.(2022)Henaff, Raileanu, Jiang, and Rockt{\"{a}}schel]{henaff2022exploration_neurips}
+Mikael Henaff, Roberta Raileanu, Minqi Jiang, and Tim Rockt{\"{a}}schel.
+\newblock Exploration via elliptical episodic bonuses.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2022.
+
+\bibitem[Jacot et~al.(2018)Jacot, Gabriel, and Hongler]{jacot2018neural_neurips}
+Arthur Jacot, Franck Gabriel, and Cl{\'{e}}ment Hongler.
+\newblock Neural tangent kernel: Convergence and generalization in neural networks.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2018.
+
+\bibitem[Jain et~al.(2017)Jain, Kakade, Kidambi, Netrapalli, and Sidford]{jain2017parallelizing_jmlr}
+Prateek Jain, Sham~M. Kakade, Rahul Kidambi, Praneeth Netrapalli, and Aaron Sidford.
+\newblock Parallelizing stochastic gradient descent for least squares regression: Mini-batching, averaging, and model misspecification.
+\newblock \emph{Journal of Machine Learning Research (JMLR)}, 2017.
+
+\bibitem[Kingma and Ba(2015)]{kingma2014adam}
+Diederik~P. Kingma and Jimmy Ba.
+\newblock Adam: {A} method for stochastic optimization.
+\newblock In \emph{Proceedings of the International Conference on Learning Representations}, 2015.
+
+\bibitem[Li et~al.(2018)Li, Xu, Taylor, Studer, and Goldstein]{li2018visualizing_neurips}
+Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, and Tom Goldstein.
+\newblock Visualizing the loss landscape of neural nets.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2018.
+
+\bibitem[Lobel et~al.(2023)Lobel, Bagaria, and Konidaris]{lobel2023flipping_icml}
+Sam Lobel, Akhil Bagaria, and George Konidaris.
+\newblock Flipping coins to estimate pseudocounts for exploration in reinforcement learning.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2023.
+
+\bibitem[Osband et~al.(2018)Osband, Aslanides, and Cassirer]{osband2018randomized_neurips}
+Ian Osband, John Aslanides, and Albin Cassirer.
+\newblock Randomized prior functions for deep reinforcement learning.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2018.
+
+\bibitem[Ostrovski et~al.(2017)Ostrovski, Bellemare, van~den Oord, and Munos]{ostrovski2017count_icml}
+Georg Ostrovski, Marc~G. Bellemare, A{\"a}ron van~den Oord, and R{\'e}mi Munos.
+\newblock Count-based exploration with neural density models.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2017.
+
+\bibitem[Polyak and Juditsky(1992)]{polyak1992acceleration}
+Boris~T Polyak and Anatoli~B Juditsky.
+\newblock Acceleration of stochastic approximation by averaging.
+\newblock \emph{SIAM journal on control and optimization}, 1992.
+
+\bibitem[Rahaman et~al.(2019)Rahaman, Baratin, Arpit, Draxler, Lin, Hamprecht, Bengio, and Courville]{rahaman2019spectral_icml}
+Nasim Rahaman, Aristide Baratin, Devansh Arpit, Felix Draxler, Min Lin, Fred~A. Hamprecht, Yoshua Bengio, and Aaron~C. Courville.
+\newblock On the spectral bias of neural networks.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2019.
+
+\bibitem[Tancik et~al.(2020)Tancik, Srinivasan, Mildenhall, Fridovich-Keil, Raghavan, Singhal, Ramamoorthi, Barron, and Ng]{tancik2020fourier_neurips}
+Matthew Tancik, Pratul~P. Srinivasan, Ben Mildenhall, Sara Fridovich-Keil, Nithin Raghavan, Utkarsh Singhal, Ravi Ramamoorthi, Jonathan~T. Barron, and Ren Ng.
+\newblock Fourier features let networks learn high frequency functions in low dimensional domains.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2020.
+
+\bibitem[Yang et~al.(2024)Yang, Tao, Lyu, and Li]{yang2024exploration}
+Kai Yang, Jian Tao, Jiafei Lyu, and Xiu Li.
+\newblock Exploration and anti-exploration with distributional random network distillation.
+\newblock In \emph{Proceedings of the 41st International Conference on Machine Learning}, pages 56397--56421, 2024.
+
+\bibitem[Zhang et~al.(2019)Zhang, Martens, and Grosse]{zhang2019fast_neurips}
+Guodong Zhang, James Martens, and Roger~B Grosse.
+\newblock Fast convergence of natural gradient descent for over-parameterized neural networks.
+\newblock In \emph{Conference on Neural Information Processing Systems (NeurIPS)}, 2019.
 
 \end{thebibliography}
