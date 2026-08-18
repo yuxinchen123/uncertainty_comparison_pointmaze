@@ -1,0 +1,26 @@
+schema_version: 1
+run_id: 2026-08-17-22-05_autoresearch_uniform-fullbatch_cellmid108-center100_4096step_seed0-9
+description: >
+  Iteration phase of the 11_decay_rate autoresearch campaign: repeated small distillation
+  experiments (one per edit of code/method.py) under the fixed protocol, scored by dev_worst
+  (worst-position RMS log deviation from the count-oracle curve min(1, m^{-1/2})).
+git:
+  branch: Use-RLexplore-RND
+  commit: recorded per experiment in /p/rlprojects/RND/11_decay_rate/results.tsv
+  dirty: false
+specs:
+  harness: 11_decay_rate/code/decay_harness@1
+  runner: 11_decay_rate/code/run_experiment.py@1
+  method: 11_decay_rate/code/method.py@per-experiment-commit
+compile_signature:
+  point_sets: [cell_midpoints, center_square]
+  n_steps: 4096
+  regime: uniform_fullbatch
+  seeds: 10
+  dtype: float32
+seeding:
+  base_seed: 0
+  mode: distinct
+artifacts:
+  ledger: /p/rlprojects/RND/11_decay_rate/results.tsv
+  per_experiment: exp_NNN_<method>/metrics.json

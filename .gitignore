@@ -232,3 +232,18 @@ core.*
 # submission plan might choose. Its numbers live in the run's code/measured_cells.json, which IS
 # tracked; the folder itself is scratch, like canary/.
 10_jax_exploration_platform/runs/**/probe/
+
+# 11_decay_rate: the cloned reference repo (karpathy/autoresearch, kept for reference only) and
+# the iteration-loop experiment outputs (per-experiment JSON records + plots, regenerable from
+# method.py at the logged commit; the tracked ledger is 11_decay_rate/results.tsv).
+11_decay_rate/autoresearch/
+# code/slurm/ holds SUBMISSION SCRIPTS (not job output) — un-hide it from **/slurm/
+!11_decay_rate/code/slurm/
+# experiments/: ignore records and logs but keep each campaign's launch-time identity files
+# (a bare directory exclude would stop git descending, so the negations below need the /* form)
+11_decay_rate/experiments/*
+!11_decay_rate/experiments/*/
+11_decay_rate/experiments/*/*
+!11_decay_rate/experiments/*/experiment_background.md
+!11_decay_rate/experiments/*/manifest.yaml
+!11_decay_rate/experiments/*/command.txt
