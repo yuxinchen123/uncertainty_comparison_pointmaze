@@ -81,116 +81,95 @@ def make_trunk(obs_dim, out_dim: int, seed: int, stream: str) -> nn.Module:
     return net
 
 
+
+
+def add_trunk_biases(net: nn.Module, sigma: float, seed: int, stream: str) -> None:
+    """Overwrite a trunk's zero biases with keyed N(0, sigma^2) draws (used for LOW-dimensional
+    inputs, whose bias-free ReLU features are homogeneous and nearly collinear)."""
+    idx = 0
+    for layer in net:
+        if isinstance(layer, (nn.Linear, nn.Conv2d)):
+            with torch.no_grad():
+                layer.bias.copy_(sigma * torch.randn(
+                    layer.bias.shape, generator=keyed_gen(seed, stream, "bias", idx)))
+        idx += 1
+
+
 class Method:
-    """Gradient-trained coin-flip network (the published construction of Lobel, Bagaria and
-    Konidaris, ICML 2023, in this campaign's exact-start form): a NEURAL, RND-pluggable
-    counting bonus.
+    """Deep random features + exact last-layer shrink head: the RND-pluggable NEURAL form of
+    the campaign's exact construction.
 
-    The trainable network f-hat (vector MLP or RND conv trunk, head zero-initialized via a
-    final zero Linear) is trained by plain gradient steps toward fresh Rademacher coins c per
-    visit: loss = mean ||f-hat(x) - (c - prior(x))||^2, with a frozen same-architecture prior
-    unit-normalized per input, so the bonus ||f-hat(x) + prior(x)|| / sqrt(d) is exactly 1 at
-    every never-visited input. If optimization tracks the running least-squares optimum, the
-    bonus at a state visited m times behaves as m^(-1/2) with that state's own count —
-    statistically, at every state, under any visitation. THE question this experiment
-    measures: how closely gradient training tracks that optimum per state. Observations pass
-    through the method's own running whitener (mean/std over visited batches, clip +-5) — the
-    standard RND input treatment, required for the heterogeneous-scale AntMaze dimensions.
-    Optimizer: this variant uses OPTIMIZER below (the CFN paper trains with Adam 1e-4)."""
+    A frozen deep trunk (vector MLP or RND conv stack; random biases N(0, 0.5^2) added only
+    for low-dimensional inputs, which need them to break ReLU homogeneity) produces 256-d
+    features phi(x); a frozen deep target f(x) (128-d) plays RND's target role. The bonus is
+    r(x) = ||W phi(x) - f(x)|| / ||f(x)|| with the head W zero-initialized, so r = 1 exactly
+    at every never-visited input. Each visit applies the residual-encoded per-visit map
+    r -> r / sqrt(1 + r^2) to the visited samples, realized by the minimum-Frobenius-change
+    head update dW = E^T (Phi Phi^T + 1e-8 I)^{-1} Phi in float64 — a functional step that
+    does not pass through the kernel spectrum, self-correcting under capacity stress and
+    feature collinearity (the campaign's exps 010/023). Inputs pass through a whitener frozen
+    after the first visited batch (stationarity for the convergence measurement; the online
+    version would keep updating it)."""
 
-    name = "cfn_neural_adam1e-4"
+    name = "deep_lastlayer_shrink"
 
-    D_COINS = 512
-    OPTIMIZER = ("adam", 1e-4)      # ("adam", lr) | ("adagrad", lr) | ("sgd1t", eta0, t0)
-    ZERO_HEAD = True
+    RIDGE = 1e-8
+    BIAS_SIGMA_LOWDIM = 0.5   # trunk/target bias scale for inputs of dimension <= 8
 
     def __init__(self, seed: int, obs_dim=4):
-        """Trainable net (zero head), frozen unit-normalized prior, whitener, optimizer."""
+        """Frozen trunk + frozen target (+ low-dim biases), zero head, whitener state."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.is_image = not isinstance(obs_dim, int)
-        d = self.D_COINS if not self.is_image else 256
-        self.d = d
-        self.net = make_trunk(obs_dim, d, seed, "predictor")
-        # zero the OUTPUT layer so f-hat is exactly 0 at initialization (start-at-1 exactness)
-        last = [m for m in self.net if isinstance(m, (nn.Linear, nn.Conv2d))][-1]
-        if self.ZERO_HEAD:
-            nn.init.zeros_(last.weight)
-            nn.init.zeros_(last.bias)
-        self.prior_raw = make_trunk(obs_dim, d, seed, "prior")
-        for p in self.prior_raw.parameters():
-            p.requires_grad_(False)
-        # running whitener over visited batches (RND's obs treatment): mean/var per input dim
-        self._count = 1e-4
+        self.trunk = make_trunk(obs_dim, 256, seed, "feat")
+        self.target = make_trunk(obs_dim, 128, seed, "target")
+        if not self.is_image and obs_dim <= 8:
+            add_trunk_biases(self.trunk, self.BIAS_SIGMA_LOWDIM, seed, "feat")
+            add_trunk_biases(self.target, self.BIAS_SIGMA_LOWDIM, seed, "target")
+        for net in (self.trunk, self.target):
+            for p in net.parameters():
+                p.requires_grad_(False)
+        self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
+        self.trunk.to(self.device)
+        self.target.to(self.device)
+        self.W = torch.zeros(128, 256, dtype=torch.float64, device=self.device)
         self._mean = None
         self._var = None
-        self.coin_gen = keyed_gen(seed, "coins")
-        self.t = 0
-        # device BEFORE the optimizer: AdaGrad initializes its accumulator eagerly on the
-        # params' current device, so the net must already live on METHOD_DEVICE
-        self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
-        self.net.to(self.device)
-        self.prior_raw.to(self.device)
-        kind = self.OPTIMIZER[0]
-        if kind == "adam":
-            self.opt = torch.optim.Adam(self.net.parameters(), lr=self.OPTIMIZER[1])
-        elif kind == "adagrad":
-            self.opt = torch.optim.Adagrad(self.net.parameters(), lr=self.OPTIMIZER[1],
-                                           eps=1e-10, initial_accumulator_value=0)
-        elif kind == "sgd1t":
-            self.opt = torch.optim.SGD(self.net.parameters(), lr=self.OPTIMIZER[1])
-        else:
-            raise ValueError(f"unknown optimizer kind {kind!r}")
 
-    def _whiten(self, x: torch.Tensor, update: bool) -> torch.Tensor:
-        """Running mean/std whitening with a +-5 clip; the image branch adds the channel dim.
-        before: antmaze rows with qvel entries in the tens; after: zero-mean unit-var, clipped"""
-        z = x
-        if update:
-            with torch.no_grad():
-                b_mean = z.mean(dim=0)
-                b_var = z.var(dim=0, unbiased=False)
-                n = float(z.shape[0])
-                if self._mean is None:
-                    self._mean, self._var = b_mean.clone(), b_var.clone() + 1e-8
-                    self._count = n
-                else:
-                    tot = self._count + n
-                    delta = b_mean - self._mean
-                    self._mean = self._mean + delta * (n / tot)
-                    self._var = (self._var * self._count + b_var * n
-                                 + delta.pow(2) * self._count * n / tot) / tot
-                    self._count = tot
+    def _whiten(self, x: torch.Tensor) -> torch.Tensor:
+        """Whitener frozen at the FIRST update batch; identity before it; clip +-5."""
+        z = x.to(self.device)
+        if self._mean is not None:
+            z = ((z - self._mean) / (self._var + 1e-8).sqrt()).clamp(-5.0, 5.0)
+        return z.unsqueeze(1) if self.is_image else z
+
+    def _freeze_whitener(self, x: torch.Tensor) -> None:
+        """Initialize the whitener from the first visited batch, then never move it."""
         if self._mean is None:
-            out = z
-        else:
-            out = ((z - self._mean) / (self._var + 1e-8).sqrt()).clamp(-5.0, 5.0)
-        return out.unsqueeze(1) if self.is_image else out
+            with torch.no_grad():
+                z = x.to(self.device)
+                self._mean = z.mean(dim=0)
+                self._var = z.var(dim=0, unbiased=False) + 1e-8
 
     def update(self, x: torch.Tensor) -> None:
-        """One optimizer step toward fresh Rademacher coins (whitener updated first)."""
-        self.t += 1
-        if self.OPTIMIZER[0] == "sgd1t":
-            eta0, t0 = self.OPTIMIZER[1], self.OPTIMIZER[2]
-            for group in self.opt.param_groups:
-                group["lr"] = eta0 / (1.0 + (self.t - 1) / t0)
-        z = self._whiten(x.to(self.device), update=True)
+        """Shrink the visited samples' residuals by 1/sqrt(1 + r^2) via the min-change solve."""
         with torch.no_grad():
-            c = (torch.randint(0, 2, (x.shape[0], self.d), generator=self.coin_gen,
-                               dtype=torch.float32) * 2.0 - 1.0).to(self.device)
-            p = self.prior_raw(z)
-            p = float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
-            tgt = c - p
-        e = self.net(z) - tgt
-        loss = 0.5 * e.pow(2).sum(dim=1).mean()
-        self.opt.zero_grad()
-        loss.backward()
-        self.opt.step()
+            self._freeze_whitener(x)
+            z = self._whiten(x)
+            phi = self.trunk(z).double()                     # (B, 256)
+            f = self.target(z).double()                      # (B, 128)
+            e = phi @ self.W.T - f                           # residual vectors (B, 128)
+            r = e.norm(dim=1) / f.norm(dim=1).clamp(min=1e-12)
+            s = 1.0 / torch.sqrt(1.0 + r.pow(2))             # per-visit shrink (B,)
+            E = (s - 1.0).unsqueeze(1) * e
+            G = phi @ phi.T + self.RIDGE * torch.eye(phi.shape[0], dtype=torch.float64,
+                                                     device=self.device)
+            self.W += E.T @ torch.linalg.solve(G, phi)
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """||f-hat(x) + prior(x)|| / sqrt(d) on whitened inputs (whitener NOT updated)."""
+        """r(x) = ||W phi(x) - f(x)|| / ||f(x)|| (exactly 1 at initialization)."""
         with torch.no_grad():
-            z = self._whiten(x.to(self.device), update=False)
-            p = self.prior_raw(z)
-            p = float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
-            out = self.net(z) + p
-            return (out.norm(dim=1) / float(np.sqrt(self.d))).cpu().numpy().astype(np.float64)
+            z = self._whiten(x)
+            phi = self.trunk(z).double()
+            f = self.target(z).double()
+            e = (phi @ self.W.T - f).norm(dim=1)
+            return (e / f.norm(dim=1).clamp(min=1e-12)).cpu().numpy()
