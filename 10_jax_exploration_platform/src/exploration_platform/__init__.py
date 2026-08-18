@@ -1,4 +1,4 @@
-"""The JAX exploration platform: PointMaze environments, a PPO agent, and swappable bonuses.
+"""The JAX exploration platform: maze environment families, a PPO agent, and swappable bonuses.
 
 Double precision is switched on here rather than in one module because it is a property of the
 whole platform: the running mean/variance accumulators are float64 (algorithm specification 4.2)

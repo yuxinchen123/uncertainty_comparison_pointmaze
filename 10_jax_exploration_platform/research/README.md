@@ -79,7 +79,10 @@ one-step agreement away from contacts (4.4e-16 in float64, 1.8e-6 in float32), c
 documented collision-function differences only inside contact events, and exactly shared
 resting equilibria (z = 0.38248 m both, cross-handover drift 3.7e-11). End-to-end PPO training
 composes and runs for `rnd_next_state` and `none`; the PointMaze-only visit-count family is
-refused at composition. Throughput tables: the family ledger.
+refused at composition. On the H100 the environment step alone reaches 0.08–0.23 M env steps
+per second in total from 512 to 4,096 copies (155–57 per copy) once the MJX contact budget is
+capped at 32 slots — the cap numerics needed a workaround for an MJX 3.11 read-by-id bug the
+round-2 notes record. Throughput tables: the family ledger.
 
 ## Open request from train run 1.1
 
