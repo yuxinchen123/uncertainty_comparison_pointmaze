@@ -66,6 +66,18 @@ def run_cell(args) -> str:
     # nonuniform regime: fixed sampling law + its own keyed numpy stream, so the visit sequence
     # is reproducible per (env, seed) and independent of the method's own randomness
     probs = nonuniform_probabilities(pts) if regime == "nonuniform" else None
+    # heldout_uniform (generalization regime): train full-batch on a FIXED 80% of the points;
+    # the other 20% are never trained, their counts stay 0, so the metric scores whether the
+    # bonus STAYS at the count-oracle value 1 off the training support.
+    # before: P = 108 -> after: train_idx = 87 points (every index not hit by the seeded
+    # permutation's first fifth), heldout = 21 points
+    if regime == "heldout_uniform":
+        import hashlib as _h
+        hseed = int(_h.sha256(f"{env}::heldout".encode()).hexdigest(), 16) & 0x7FFFFFFF
+        perm = np.random.default_rng(hseed).permutation(pts.shape[0])
+        train_idx = np.sort(perm[pts.shape[0] // 5:])
+    else:
+        train_idx = None
     # keyed stream (reproducible-seeding rule): builtin hash() is salted per process, so the
     # seed comes from sha256 of the stable cell identity instead
     import hashlib
@@ -104,6 +116,8 @@ def run_cell(args) -> str:
         # the regime picks the batch; the method only ever sees the batch tensor
         if regime == "uniform_fullbatch":
             batch_idx = np.arange(pts.shape[0])
+        elif regime == "heldout_uniform":
+            batch_idx = train_idx
         else:
             batch_idx = rng.choice(pts.shape[0], size=NONUNIFORM_BATCH, p=probs)
         counts[batch_idx] += 1
@@ -128,7 +142,7 @@ def main() -> None:
     p.add_argument("--seeds", type=int, default=10)
     p.add_argument("--n_steps", type=int, default=4096)
     p.add_argument("--regime", type=str, default="uniform_fullbatch",
-                   choices=["uniform_fullbatch", "nonuniform"])
+                   choices=["uniform_fullbatch", "nonuniform", "heldout_uniform"])
     p.add_argument("--procs", type=int, default=16)
     args = p.parse_args()
 

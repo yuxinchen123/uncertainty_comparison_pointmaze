@@ -552,14 +552,14 @@ exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
 034 & scrambled-Hadamard coin sequences on the adaptive dictionary & 0.000 & 0.000 & 0.00 & 0.000 & 0.000 \\
 035 & Hadamard coins + per-block column permutation (val\_114-115) & 0.314 & 0.008 & 0.00 & -0.501 & 0.001 \\
 036 & collision-free block spikes & 0.033 & 0.003 & 0.00 & -0.500 & 0.000 \\
-? & abl 201 coin-flip d=128 & 0.108 & 0.060 & 0.00 & -0.506 & 0.000 \\
-? & abl 202 coin-flip insertion radius 0.2 (uniform) & 1.062 & 0.531 & 0.00 & -0.701 & 0.000 \\
-? & abl 203 same, nonuniform & 0.994 & 0.435 & 0.00 & -0.761 & 0.000 \\
-? & abl 204 elliptical bandwidth cap 0.2 & 0.077 & 0.043 & 0.00 & -0.500 & 0.000 \\
-? & hor 301 shrink at 32768 steps & 0.033 & 0.033 & 0.00 & -0.500 & 0.000 \\
-? & hor 303 AdaGrad 3e-3 at 32768 steps & 1.296 & 0.322 & 0.00 & -0.631 & 0.000 \\
-? & hor 302 coin-flip adaptive at 32768 steps & 0.049 & 0.030 & 0.00 & -0.502 & 0.003 \\
-? & val 118 collision-free Hadamard on dense\_grid, 30 seeds & 0.054 & 0.003 & 0.00 & -0.500 & 0.000 \\
+abl 201 & coin-flip d=128 & 0.108 & 0.060 & 0.00 & -0.506 & 0.000 \\
+abl 202 & coin-flip insertion radius 0.2 (uniform) & 1.062 & 0.531 & 0.00 & -0.701 & 0.000 \\
+abl 203 & same, nonuniform & 0.994 & 0.435 & 0.00 & -0.761 & 0.000 \\
+abl 204 & elliptical bandwidth cap 0.2 & 0.077 & 0.043 & 0.00 & -0.500 & 0.000 \\
+hor 301 & shrink at 32768 steps & 0.033 & 0.033 & 0.00 & -0.500 & 0.000 \\
+hor 303 & AdaGrad 3e-3 at 32768 steps & 1.296 & 0.322 & 0.00 & -0.631 & 0.000 \\
+hor 302 & coin-flip adaptive at 32768 steps & 0.049 & 0.030 & 0.00 & -0.502 & 0.003 \\
+val 118 & collision-free Hadamard on dense\_grid, 30 seeds & 0.054 & 0.003 & 0.00 & -0.500 & 0.000 \\
 037 & gradient CFN, Adam 1e-4 (paper rate), maze+antmaze (discarded) & 2.202 & 1.849 & 0.00 & -0.648 & 0.347 \\
 038 & gradient CFN Adam 1e-3 (discarded) & 1.424 & 1.123 & 0.00 & -0.790 & 0.230 \\
 039 & gradient CFN Adam 1e-2 (discarded) & 1.148 & 1.159 & 0.00 & -0.696 & 0.264 \\
@@ -584,13 +584,14 @@ exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
 058 & deep coin-flip, HELDOUT atari & 1.771 & 1.202 & 0.00 & -0.900 & 0.168 \\
 059 & deep shrink head, 1024 image features, atari & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
 060 & deep coin-flip head, 1024 image features, atari & 0.578 & 0.064 & 0.00 & -0.504 & 0.006 \\
-? & val 201 deep shrink, vectors uniform, 30 seeds & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
-? & val 202 deep coin-flip, vectors uniform, 30 seeds & 0.055 & 0.030 & 0.00 & -0.502 & 0.003 \\
-? & val 203 deep coin-flip nonuniform 30 seeds WITH THE ABSOLU\,\ldots (discarded) & 1.675 & 0.702 & 0.00 & -1.125 & 0.495 \\
-? & val 206 capped coin-flip head, NONUNIFORM vectors, 30 seeds & 0.405 & 0.143 & 0.00 & -0.651 & 0.131 \\
-? & val 207 capped coin-flip head, 1024 image features, atari \,\ldots & 0.578 & 0.064 & 0.00 & -0.504 & 0.006 \\
-? & val 208 capped+wide coin-flip head, atari NONUNIFORM & 0.734 & 0.068 & 0.00 & -0.865 & 0.219 \\
-? & val 209 capped coin-flip head, HELDOUT vectors, 30 seeds & 1.866 & 0.279 & 0.00 & -0.680 & 0.528 \\
+val 201 & deep shrink, vectors uniform, 30 seeds & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
+val 202 & deep coin-flip, vectors uniform, 30 seeds & 0.055 & 0.030 & 0.00 & -0.502 & 0.003 \\
+val 203 & deep coin-flip nonuniform 30 seeds WITH THE ABSOLUTE 1e-8 \,\ldots (discarded) & 1.675 & 0.702 & 0.00 & -1.125 & 0.495 \\
+val 206 & capped coin-flip head, NONUNIFORM vectors, 30 seeds & 0.405 & 0.143 & 0.00 & -0.651 & 0.131 \\
+val 207 & capped coin-flip head, 1024 image features, atari uniform & 0.578 & 0.064 & 0.00 & -0.504 & 0.006 \\
+val 208 & capped+wide coin-flip head, atari NONUNIFORM & 0.734 & 0.068 & 0.00 & -0.865 & 0.219 \\
+val 209 & capped coin-flip head, HELDOUT vectors, 30 seeds & 1.866 & 0.279 & 0.00 & -0.680 & 0.528 \\
+val 210 & capped+wide coin-flip head, HELDOUT atari & 3.006 & 0.191 & 0.00 & -0.678 & 0.412 \\
 \bottomrule
 \end{longtable}}
 % >>> AUTO-GENERATED TABLE END: ledger
@@ -758,8 +759,9 @@ deep trunk + capped coin-flip head (30 seeds) & \underline{1.866} & \underline{0
 deep trunk + exact shrink head & 1.935 & 0.292 & -0.944 & 1.282 \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{held-out 20\% (Atari)} (10 seeds)} \\
-conv trunk + exact shrink head & \textbf{1.652} & \textbf{1.202} & -2.293 & 1.048 \\
-conv trunk + exact coin-flip head & \underline{1.771} & \underline{1.202} & -0.900 & 0.168 \\
+conv trunk + exact shrink head & \textbf{1.652} & \underline{1.202} & -2.293 & 1.048 \\
+conv trunk + exact coin-flip head & \underline{1.771} & 1.202 & -0.900 & 0.168 \\
+conv trunk (1024 feat.) + capped coin-flip head & 3.006 & \textbf{0.191} & -0.678 & 0.412 \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{nonuniform visitation (vectors)} (10 seeds)} \\
 deep trunk + capped coin-flip head (30 seeds) & \textbf{0.405} & \underline{0.143} & -0.651 & 0.131 \\
@@ -807,7 +809,12 @@ Four findings, all visible in \Cref{tab:neural}:
   ones \emph{should} inherit part of their familiarity. The metric takes the strict view; a
   deployment choosing bandwidth or trunk width is choosing a point on this dial, and the
   off-support fields of \Cref{fig:offsupport} are the same trade-off seen from the other
-  side.
+  side. The Atari held-out cell makes the point sharply (\runref{val 210}): the widened
+  trunk keeps every trained frame on its count curve (dev\_mean $0.19$ against $1.20$ at
+  $256$ features), and the single worst state of the whole matrix is a held-out frame
+  nearly identical to a trained one, which inherits the trained frame's full decay --- the
+  strict-count metric maxing out on exactly the state the pseudo-count reading calls
+  familiar.
 \item \textbf{Two deployment rules the counting head needs.} A validation rerun on a
   different node exposed both. First, the head's ridge must scale with the accumulated
   feature energy: with an absolute $10^{-8}$ ridge the early, rank-deficient normal

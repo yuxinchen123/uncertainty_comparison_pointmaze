@@ -1,5 +1,9 @@
 # 11_decay_rate campaign state
 
+CAMPAIGN_COMPLETE (2026-08-18 03:05 PT). The phase-2 evaluation matrix is complete and
+validated; the development document (21 pages) is built and committed; the monitoring cron
+may be deleted. Every job this campaign ever submitted has terminated; nothing is running.
+
 All times Pacific (PT), converted from machines running Eastern.
 
 ## Status

@@ -76,9 +76,13 @@ def ledger_table() -> str:
            r"\midrule\endhead"]
     for r in rows:
         desc = r["description"]
-        num = desc.split()[1] if desc.startswith("exp ") else "?"
-        # method slug = text between "exp NNN " and the first ":" (fall back to 40 chars)
-        text = desc.split(" ", 2)[2] if desc.startswith("exp ") else desc
+        words = desc.split()
+        # rows are named "exp NNN ...", "abl NNN ...", "hor NNN ...", or "val NNN ..."
+        if words and words[0] in ("exp", "abl", "hor", "val") and len(words) > 2:
+            num = f"{words[0]} {words[1]}" if words[0] != "exp" else words[1]
+            text = desc.split(" ", 2)[2]
+        else:
+            num, text = "?", desc
         slug = text.split(":")[0]
         slug = (slug[:58] + "\\,\\ldots") if len(slug) > 60 else slug
         mark = "" if r["status"] == "keep" else " (discarded)"
