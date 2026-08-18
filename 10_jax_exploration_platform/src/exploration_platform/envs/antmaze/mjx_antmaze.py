@@ -33,6 +33,7 @@ class EnvState(NamedTuple):
     data: object               # mjx.Data, every array leading axis [C*N]
     step_count: jnp.ndarray    # [C, N] int32, steps since this environment's last reset
     reset_count: jnp.ndarray   # [C, N] int32, completed episodes (deterministic resets: metric only)
+    nan_count: jnp.ndarray     # [C, N] int32, episodes ended by a non-finite physics state
 
 
 class JaxAntMaze:
@@ -87,6 +88,7 @@ class JaxAntMaze:
         compiled iteration, and donation refuses a buffer that appears twice in the tree.
         """
         return EnvState(self._spawned_data(), jnp.zeros((self.C, self.N), jnp.int32),
+                        jnp.zeros((self.C, self.N), jnp.int32),
                         jnp.zeros((self.C, self.N), jnp.int32))
 
     def _obs(self, data):
@@ -106,7 +108,7 @@ class JaxAntMaze:
         episodes, mirroring the PointMaze respawn.
         """
         state = EnvState(self._spawned_data(), jnp.zeros_like(state.step_count),
-                         state.reset_count)
+                         state.reset_count, state.nan_count)
         return state, self._obs(state.data)
 
     def step(self, state: EnvState, act):
@@ -127,18 +129,29 @@ class JaxAntMaze:
 
             step_count = state.step_count + 1
 
+            # a float32 contact solve can fail on a knife-edge state and leave NaNs — rare
+            # (order one event in a hundred thousand copy-iterations, and not reproducible:
+            # the card's non-deterministic reductions decide whether the edge tips), but one
+            # poisoned copy would otherwise train on garbage forever. Such an environment is
+            # respawned like a truncation, pays no reward, and is counted.
+            bad = (~jnp.isfinite(data.qpos).all(-1) | ~jnp.isfinite(data.qvel).all(-1)
+                   ).reshape(self.C, self.N)
+
             # sparse goal reward on the torso's xy after the step
             delta = data.qpos[:, 0:2].reshape(self.C, self.N, 2) - self.goal
             at_goal = (delta * delta).sum(-1) <= self.cfg.goal_radius ** 2
-            reward = at_goal.astype(F32) + self.cfg.reward_shift
+            reward = jnp.where(bad, 0.0, at_goal.astype(F32) + self.cfg.reward_shift)
             if self.cfg.continuing_task:
                 terminated = jnp.zeros_like(at_goal)
             else:
-                terminated = at_goal
-            truncated = (step_count >= self.cfg.max_episode_steps) & ~terminated
+                terminated = at_goal & ~bad
+            truncated = ((step_count >= self.cfg.max_episode_steps) | bad) & ~terminated
             done = terminated | truncated
 
-            final_obs = self._obs(data)
+            # a broken environment's observation is sanitised to its spawn, so the batch the
+            # networks see never carries a NaN
+            spawn_obs = jnp.concatenate([self.init_qpos, self.init_qvel])
+            final_obs = jnp.where(bad[..., None], spawn_obs, self._obs(data))
 
             # deterministic auto-reset: put finished environments back at the spawn. Only the
             # state the next physics step reads is reset — positions, velocities, the solver
@@ -151,9 +164,10 @@ class JaxAntMaze:
                 time=jnp.where(done_b[:, 0], 0.0, data.time))
             step_count = jnp.where(done, 0, step_count)
             reset_count = state.reset_count + done.astype(jnp.int32)
+            nan_count = state.nan_count + bad.astype(jnp.int32)
 
             obs = self._obs(data)
-            return (EnvState(data, step_count, reset_count),
+            return (EnvState(data, step_count, reset_count, nan_count),
                     obs, reward, terminated, truncated, final_obs)
 
     def cell_index(self, obs_flat):
