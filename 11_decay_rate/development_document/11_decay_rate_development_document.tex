@@ -1,0 +1,594 @@
+\documentclass{article}
+
+% Pass the round citation option to natbib BEFORE the NeurIPS style auto-loads it.
+\PassOptionsToPackage{round}{natbib}
+\IfFileExists{neurips_2026.sty}{\usepackage[preprint]{neurips_2026}}{}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage[table]{xcolor}  % [table] loads colortbl -> \arrayrulecolor (grid-style tables)
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage[hidelinks,colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+\usepackage{subcaption}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+% Provenance-name marker (house convention): every reference to a named experiment of this
+% campaign (\runref{exp 010}, \runref{exp 020}, ...) is set bold inside square brackets.
+\newcommand{\runref}[1]{\textbf{[#1]}}
+
+% Grid-style hyperparameter tables (shared skill rnd-experiment-tex-track).
+\setlength{\arrayrulewidth}{0.5pt}                 % \hline/\vline only; booktabs rules unaffected
+\definecolor{tabgrey}{gray}{0.65}
+\newcommand{\greyvline}{{\color{tabgrey}\vline}}   % braces keep the color inside the rule
+\newcolumntype{?}{!{\greyvline}}                   % column separator: one grey vertical rule
+\newcommand{\greyrule}{\arrayrulecolor{tabgrey}\hline\arrayrulecolor{black}} % within a category
+\newcommand{\blackrule}{\arrayrulecolor{black}\hline}                        % category boundary
+
+\mathtoolsset{showonlyrefs}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Uniform $1/\sqrt{n}$ Bonus Decay at Every Position:\\ Development Document}
+
+\author{%
+  Anonymous Author(s)\\
+  Affiliation\\
+  \texttt{email}
+}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\clearpage
+
+%==============================================================================
+\section{Goal}
+\label{sec:goal}
+
+Random Network Distillation reads its exploration bonus off the residual between a trainable
+predictor and a frozen random target. The count-based reading of that bonus treats it as a
+stand-in for $\min(1, 1/\sqrt{n})$ at a state visited $n$ times, and the convergence-rate runs
+of the parent project measured how far the real bonus is from that reading: with the best
+learning-rate schedule the \emph{aggregate} decay matched $n^{-1/2}$ almost exactly
+(fitted slope $-0.503$), but different maze positions started from different values and
+decayed at visibly different rates. This campaign's goal is a training method whose
+per-position bonus $b_i(n)$ satisfies, at \emph{every} position $i$ simultaneously:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Start at one.} $b_i(0) = 1$ at every position --- exactly, or through a
+  normalization that an online implementation could compute (no oracle knowledge, no
+  knowledge of the evaluation set).
+\item \textbf{Decay as one over the square root of the visit count.}
+  $b_i(n) \approx \min\!\bigl(1, m_i(n)^{-1/2}\bigr)$, where $m_i(n)$ is the number of times
+  position $i$ has been trained on after $n$ update steps. In the uniform full-batch regime
+  $m_i(n) = n$ for every $i$; under non-uniform visitation each position must follow its
+  \emph{own} count.
+\end{enumerate}
+The campaign ran as an autonomous experiment loop in the style of the
+\texttt{autoresearch} repository\footnote{\url{https://github.com/karpathy/autoresearch},
+cloned into the project for reference.}: one editable method file, a fixed measurement
+protocol and metric, one commit and one ledger row per experiment. Thirty-plus experiments later, the answer has three layers, developed in
+\Cref{sec:iteration-experiments,sec:nonuniform,sec:capacity}: an exact construction that
+solves the uniform regime to the achievable limit, a statistical construction that tracks
+per-position counts under arbitrary visitation, and a precise account of \emph{why} ordinary
+optimizers cannot do either.
+
+%==============================================================================
+\section{Notation}
+\label{sec:notation}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}l l@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$x_i$ & evaluation position $i$ (input $[x, y, 0, 0]$; \Cref{sec:platform} lists the sets) \\
+$P$ & number of positions in a point set \\
+$n$ & update-step index ($0$ = at initialization) \\
+$m_i(n)$ & number of times position $i$ was in a training batch during steps $1 \ldots n$ \\
+$f$ & frozen random target network \\
+$g_n$ & trained predictor after $n$ steps ($g_0$ = at initialization) \\
+$b_i(n)$ & the method's bonus readout at position $i$ after $n$ steps \\
+$T_i(n)$ & target curve $\min\!\bigl(1, m_i(n)^{-1/2}\bigr)$ (the count oracle's bonus) \\
+$K$ & tangent-kernel Gram matrix over a point set; eigenvalues $\lambda_j$, eigenvectors $v_j$ \\
+$\eta_t$ & learning rate (or shrink factor) at step $t$ \\
+$\phi(x)$ & feature vector of a linear-head method; $\hat\phi = \phi / \lVert \phi \rVert_2$ \\
+$d$ & output dimension of the predictor (or of the coin vector) \\
+$S$ & number of seeds of an experiment (each seed re-draws every initialization) \\
+\bottomrule
+\end{tabular}
+\caption{Symbols used throughout. Machine timestamps in run records are Eastern; every time
+displayed in this document is Pacific, marked PT.}
+\label{tab:notation}
+\end{table}
+
+%==============================================================================
+\section{Metrics}
+\label{sec:metrics}
+
+Define the fit window as the checkpoint steps $2 \le n \le 4096$ (the parent project's
+burn-in convention: step $0$ is the starting value, step $1$ is excluded, nothing else is
+trimmed). Define, for seed $s$ and position $i$, the per-position deviation
+\begin{align}
+\label{eq:dev}
+\mathrm{dev}_{s,i}
+\;=\;
+\sqrt{\;\frac{1}{|\mathcal{W}|}\sum_{n \in \mathcal{W}}
+\bigl(\log b_{s,i}(n) - \log T_i(n)\bigr)^2\;},
+\end{align}
+where $\mathcal{W}$ is the set of in-window checkpoint steps and $T_i(n) = \min(1,
+m_i(n)^{-1/2})$. The deviation is a root mean square in log space, so it penalizes a wrong
+level and a wrong slope together, and a method scores well only if its curve sits \emph{on}
+the count oracle's curve, not merely parallel to it. The campaign's metrics, in ranking
+order:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{dev\_worst} $= \frac{1}{S}\sum_s \max_i \mathrm{dev}_{s,i}$ --- the primary
+  metric. ``Every position at the same time'' means the worst position is the score.
+\item \textbf{dev\_mean} $= \operatorname{mean}_{s,i} \mathrm{dev}_{s,i}$ --- the tiebreak.
+\item \textbf{start\_dev} $= \sqrt{\operatorname{mean}_{s,i} (\log b_{s,i}(0))^2}$ ---
+  requirement (1) in one number ($0$ exactly when every curve starts at $1$).
+\item \textbf{The slope battery.} Every per-position curve (seed-mean) is fitted with the
+  parent project's floored power model $y(n) = c + a\,(n + n_0)^{-\alpha}$ (nonlinear least
+  squares on $\log y$, bounded, multi-start); the reported slope is $-\alpha$. The battery
+  reports the mean, standard deviation, minimum and maximum of the per-position slopes, and
+  the aggregate-curve slope in both the raw and the normalize-then-average convention of the
+  parent project (so the numbers are comparable to its $-0.503$).
+\end{enumerate}
+Two floors bound what any method can score. A method whose state cannot distinguish ``never
+visited'' from ``visited once'' produces $(m+1)^{-1/2}$ instead of $\min(1, m^{-1/2})$; over
+this window that off-by-one contributes a deviation of $0.0381$, identical at every position.
+A method that estimates the count statistically from $d$ independent draws carries a
+chi-type fluctuation of relative standard deviation about $\sqrt{1/(2d)}$ on the readout
+norm ($\approx 3\%$ at $d = 512$), which enters dev\_worst through the maximum over
+positions.
+
+%==============================================================================
+\section{Why the decay rate depends on the position}
+\label{sec:mechanism}
+
+\subsection{Mechanism one: optimization against a fixed target}
+\label{sec:mechanism-one}
+
+Recall $K$ is the tangent-kernel Gram matrix over the point set, with eigenvalues
+$\lambda_j$ and eigenvectors $v_j$, and $\eta_t$ the learning rate. In the linearized
+regime, full-batch gradient descent on the squared distillation loss evolves the residual
+vector $r$ as $r_{n} = \prod_{t \le n}(I - \eta_t K)\, r_{0}$. Define the mixture weight
+$w_{ij} = v_{j,i}^2$ (the squared $i$-th entry of eigenvector $j$); each row of this
+evolution gives the per-position law
+\begin{align}
+\label{eq:per-position-law}
+b_i(n)^2 \;\approx\; \sum_j w_{ij}\, r_j(0)^2 \prod_{t \le n} (1 - \eta_t \lambda_j)^{2},
+\qquad \sum_j w_{ij} = 1 ,
+\end{align}
+so each position carries its own probability distribution over the eigenvalues while the
+aggregate uses the uniform mixture --- which is precisely how an aggregate slope can look
+clean while positions disagree. Three consequences:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{A constant rate gives geometric decay, then saturation.} Each mode contracts
+  by $(1 - \eta\lambda_j)$ per step; fast modes vanish, the residual settles onto the
+  flattest surviving mode and the curve flattens. This is the parent project's constant-rate
+  Adam observation (aggregate slope about $-0.8$, then saturating).
+\item \textbf{A $1/t$ schedule gives every mode its own power law.} With $\eta_t = a/t$,
+  mode $j$ decays as $n^{-a\lambda_j}$: the exponent is \emph{proportional to the
+  eigenvalue}. A position's curve is a mixture of power laws, its fitted slope depends on its
+  eigenvector mixture and drifts with the window. The parent project's aggregate $-0.503$ is
+  the schedule constant placing the spectrum's bulk near $a\bar\lambda \approx 1/2$ --- a
+  calibration, not a mechanism.
+\item \textbf{No global schedule can equalize the positions.} For any schedule, mode $j$'s
+  log-decay is $\approx -\lambda_j \sum_{t\le n}\eta_t$: the \emph{ratio} of two modes'
+  log-decays is pinned at $\lambda_j / \lambda_k$ whatever $\{\eta_t\}$ is. Equal
+  per-position rates therefore require either a flat spectrum ($K \propto I$), delocalized
+  eigenvectors ($w_{ij}$ identical for all $i$), or a step that does not pass through $K$ at
+  all. The measured tangent kernel of this project's $4 \to 256 \to \mathrm{ReLU} \to 128$
+  network on a $10\times10$ grid has condition number $5.6 \times 10^{5}$, so the spectrum
+  is very far from flat.
+\end{enumerate}
+Two further facts locate the heterogeneity in space. A bias-free ReLU network is positively
+homogeneous, so the kernel diagonal grows with the input radius ($K_{ii} \propto
+\lVert x_i \rVert^2$ up to a constant): the maze corners hold the largest inputs, train
+fastest, and were exactly the worst positions in the AdaGrad diagnostics of
+\Cref{sec:iteration-experiments}. And the same homogeneity makes the \emph{initial} bonus
+position-dependent --- in the wide limit $\mathbb{E}\lVert g_0(x) - f(x)\rVert^2$ is
+proportional to the kernel diagonal --- which is requirement (1)'s obstacle: the untrained
+bonus field is a bowl centered near the coordinate origin.
+
+\subsection{Mechanism two: statistical averaging of fresh random targets}
+\label{sec:mechanism-two}
+
+If the target presented at position $i$ on each visit is a \emph{fresh} independent draw
+with mean $\mu(x_i)$ and per-coordinate variance $\sigma^2$ (rather than a fixed value), the
+least-squares optimum at a position visited $m_i$ times is that position's own running mean
+of draws, and the expected squared residual is $\sigma^2 d / m_i$ \emph{exactly} --- an
+identity about sample means, involving no curvature, no learning rate, and no other
+position. The residual norm then decays as $m_i^{-1/2}$ with the same exponent and the same
+constant at every position, using each position's own count, under any visitation pattern.
+This is the coin-flip pseudo-count construction of Lobel, Bagaria and Konidaris (ICML 2023);
+\Cref{sec:iteration-experiments} builds its exact-least-squares version. The cost is a
+statistical fluctuation floor (the chi-type noise of \Cref{sec:metrics}) and a
+representation requirement: the function class must be able to hold a distinct running mean
+per position, which \Cref{sec:iteration-experiments} shows is a real constraint, not a
+formality.
+
+\subsection{The three knobs}
+\label{sec:three-knobs}
+
+Every method the campaign tested decomposes into three independent choices:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Who shares a rate} --- whether the update passes through the tangent kernel
+  (per-mode rates, position-dependent), through a function-space step (one shared rate), or
+  through per-position statistics (each position its own count).
+\item \textbf{The shape} --- what turns the shared rate into $n^{-1/2}$: a shrink schedule
+  whose cumulative product is $n^{-1/2}$; a per-visit map applied to the bonus value itself;
+  the sample-mean identity; or a quartic loss whose constant-step dynamics integrate to
+  $n^{-1/2}$.
+\item \textbf{The level} --- what makes the curve start at $1$: a frozen copy of the initial
+  predictor as a per-position denominator; a zero-initialized head with a unit-normalized
+  target or prior; or a Rademacher draw whose norm is $\sqrt{d}$ exactly.
+\end{enumerate}
+
+%==============================================================================
+\section{Experiment platform}
+\label{sec:platform}
+
+The campaign adapts the \texttt{autoresearch} loop: a fixed harness owns the protocol and
+the metrics; one editable method file owns everything about how the bonus is produced
+(networks, initialization, optimizer, loss, readout, auxiliary state); each experiment is
+one edit, one commit, one Slurm job, one ledger row. The loop may not modify the harness,
+may not read the step counter or visit counts in the \emph{readout} (a learning-rate
+schedule may use the step counter --- the optimizer may know the time, the readout may not),
+and may not key a lookup table by training-set index (methods must be functions of the input
+coordinates). One experiment runs its point-set--seed cells as parallel single-thread
+workers and finishes in about half a minute, which is what made a thirty-experiment campaign
+practical in one night.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} ?>{\raggedright\arraybackslash}p{9.6cm}@{}}
+\blackrule
+\textbf{Protocol knob} & \textbf{Value (fixed for every experiment)} \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Point sets (evaluation = training support)}} \\
+\greyrule
+\texttt{cell\_\allowbreak midpoints} & the midpoint of every cell of the $9 \times 12$ maze, walls included; $108$ points (primary set) \\
+\greyrule
+\texttt{center\_\allowbreak square} & $10\times10$ sub-cell midpoints of the $1\times1$ square at the maze center, spacing $0.1$; $100$ points \\
+\greyrule
+\texttt{top\_\allowbreak right\_\allowbreak cell} & the same discretization of the top-right goal cell; $100$ points (validation runs only) \\
+\greyrule
+\texttt{dense\_\allowbreak grid} & $2\times2$ sub-cell midpoints of every cell; $432$ points --- more positions than a $256$-wide feature layer (capacity stress, added mid-campaign) \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Training regimes}} \\
+\greyrule
+\texttt{uniform\_\allowbreak fullbatch} & one update per step on the full point set; $m_i(n) = n$ \\
+\greyrule
+\texttt{nonuniform} & each step trains on $32$ points sampled i.i.d.\ from a fixed law spanning one decade of probability across the maze's $x$ extent; targets use realized counts \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Measurement}} \\
+\greyrule
+steps, checkpoints & $4096$ steps; readout stored at step $0$ and the $79$ log-spaced steps $\mathrm{round}(2^{j/8})$ \\
+\greyrule
+input & raw $[x, y, 0, 0]$, no observation normalization \\
+\greyrule
+seeds & $10$ per iteration experiment, $30$ per validation run \\
+\greyrule
+metrics & \Cref{sec:metrics}; records atomically checkpointed, diverged cells excluded and counted \\
+\blackrule
+\end{tabular}
+\caption{The fixed protocol. Grid-style table: grey rules separate rows within a category,
+black rules separate categories.}
+\label{tab:protocol}
+\end{table}
+
+\clearpage
+%==============================================================================
+\section{Iteration experiments}
+\label{sec:iteration-experiments}
+
+Thirty-three experiments ran under the fixed protocol on 2026-08-17/18 (PT); every experiment
+is one row of \Cref{tab:ledger} and one commit of the method file. This section walks the
+five method families in the order the campaign discovered them; \Cref{sec:nonuniform} and
+\Cref{sec:capacity} then stress the winners. Experiment numbers in brackets
+(\runref{exp 010}) name the ledger rows.
+
+\subsection{Baselines: the optimizer family}
+\label{sec:baselines}
+
+Four experiments established the board. Constant-rate Adam \runref{exp 001} reproduces the
+parent project's finding at $10$ seeds: slope mean $-0.86$, too fast everywhere, and an
+initial bonus spread of $1.37$ in log (the untrained bowl). The parent project's best
+schedule, SGD with $\eta_t = \eta_0/(1 + t/t_0)$ \runref{exp 002}, exposes what its
+aggregate $-0.503$ hid: the normalized aggregate slope is $-0.80$ on the cell midpoints but
+$-0.38$ on the center square --- the pooled aggregate averaged heterogeneous point sets.
+Normalizing the readout by a frozen copy of the initial predictor \runref{exp 003} sets
+start\_dev to exactly $0$ (requirement (1) is that cheap: one stored network) while leaving
+every slope unchanged, cleanly separating the level problem from the rate problem.
+
+AdaGrad is the best of the family, consistent with its cumulative (never-forgetting)
+accumulator: at learning rate $10^{-2}$ \runref{exp 007} the aggregate slopes are $-0.51$
+and $-0.50$ on the two point sets with per-position spread $0.11$; at $3\times10^{-3}$
+\runref{exp 009} dev\_mean drops to $0.32$, the best of any pure-gradient method. Its two
+defects are visible in \Cref{fig:adagrad-diagnostics}: every curve falls to about $0.55$
+on the very first step (the oracle stays at $1$ until the first visit), and the maze
+corners --- the largest-radius inputs, with the largest kernel diagonal
+(\Cref{sec:mechanism-one}) --- decay about $0.17$ too fast.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/adagrad_diagnostics.pdf}
+\caption{AdaGrad diagnostics on the cell midpoints (\runref{exp 007}, seed-mean). Left to
+right: per-position deviation over the maze (hatched cells are walls), per-position fitted
+slope, the six worst positions' curves against $\min(1, n^{-1/2})$ (grey), and the
+per-position slope histogram. The worst positions are the four corners; the first-step drop
+and the too-steep tail are the two visible defects.}
+\label{fig:adagrad-diagnostics}
+\end{figure}
+
+\subsection{Global schedules and averaging cannot fix the spread}
+\label{sec:global-attempts}
+
+Four experiments tested repairs that keep the update passing through the tangent kernel;
+all four fail in the way \Cref{sec:mechanism-one} predicts.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Polyak-averaged readout} \runref{exp 004}: constant-step SGD with a uniformly
+  averaged parameter copy and a square-root readout. Averaging does make every mode's
+  asymptotic decay $1/n$, but each mode enters that regime only after its own transient
+  $n \gtrsim 1/(\eta\lambda_j)$; within the window the center square barely decays
+  (aggregate $-0.10$) while the cell midpoints reach $-0.46$.
+\item \textbf{Inverse-squared-error loss reweighting} \runref{exp 006}: weighting each
+  sample's loss by the inverse of its own detached squared error should equalize relative
+  progress, but the weights act through the kernel's off-diagonals and the spread survives
+  (slope standard deviation $0.69$).
+\item \textbf{Per-sample shrink targets fitted by inner gradient descent} \runref{exp 013}:
+  the mean slope lands on $-0.51$ but the slow kernel modes stay under-shrunk (center-square
+  aggregate $-0.22$) --- inner gradient fitting cannot realize a functional step on modes it
+  cannot reach, which is the same spectrum problem one level down.
+\item \textbf{Quartic loss} \runref{exp 030}: minimizing the fourth power of the normalized
+  residual norm at a constant step has the closed-form diagonal dynamics
+  $b(n) = (2\eta\kappa n + b(0)^{-2})^{-1/2}$ --- exponent $-1/2$ by construction, no
+  schedule, no counter, and the initial value is forgotten. The coupled kernel slows the
+  real network to a slope nearer $-0.4$ with a two-fold level spread; it is the best
+  \emph{schedule-free pure-gradient} approximation, and not more.
+\end{enumerate}
+One failed experiment earned its place in the mechanism story: realizing a functional
+shrink with inner \emph{Adam} steps \runref{exp 005} produced slope $-1.8$ --- Adam's
+step magnitude does not scale with the distance to the (very close) inner target, so each
+inner loop overshoots it toward the frozen target and the method degenerates to fast
+distillation. Inner fitting must contract (gradient steps proportional to the residual), or
+be replaced by a solve.
+
+\subsection{The exact construction: a residual-encoded per-visit map, realized by a solve}
+\label{sec:exact-construction}
+
+The count oracle's curve satisfies a one-step recurrence that never mentions the count.
+Define $r$ as the current normalized bonus at a position; if $r = (m+1)^{-1/2}$ after $m$
+visits, then after one more visit
+\begin{align}
+\label{eq:shrink-map}
+r' \;=\; \frac{r}{\sqrt{1 + r^2}} \;=\; (m+2)^{-1/2},
+\end{align}
+so the map $r \mapsto r/\sqrt{1+r^2}$, applied once per visit, walks $1 \to 1/\sqrt{2} \to
+1/\sqrt{3} \to \cdots$ \emph{The bonus value itself is a sufficient statistic for the visit
+count}: no counter, no clock, valid under any visitation pattern.
+
+\runref{exp 010} realizes the map exactly. The predictor is a linear head $W$ on the frozen
+first layer's features $\phi(x)$; one update computes each visited sample's normalized
+residual $r_i$, forms the shrunk residual targets $s_i e_i$ with $s_i = 1/\sqrt{1+r_i^2}$,
+and applies the minimum-Frobenius-change head update that interpolates the batch constraints
+exactly:
+\begin{align}
+\label{eq:min-change}
+\Delta W = E^\top G^{-1} \Phi,
+\qquad
+G = \Phi\Phi^\top + 10^{-8} I,
+\qquad
+E_i = (s_i - 1)\, e_i ,
+\end{align}
+with $\Phi$ the batch feature matrix and $e_i$ the residual vectors. On the uniform
+benchmark the result is the achievable limit: fitted slope $-0.500000$ at every one of the
+$208$ positions (standard deviation $4\times10^{-6}$ over positions), start exactly $1$, and
+deviation $0.0381$ = the off-by-one floor of \Cref{sec:metrics}, identical at every
+position. In the three-knob language of \Cref{sec:three-knobs}: the solve decides who shares
+a rate (everyone), the map decides the shape, the initial-copy denominator decides the
+level.
+
+Two follow-ups located the construction's strength and its weakness. On the dense grid ---
+$432$ positions against $256$ features, where exact interpolation is impossible ---
+\runref{exp 023} still scores $0.0383$ with slope spread $4\times10^{-5}$: the map reads the
+\emph{achieved} state, so whatever the solve under-delivers on one visit is corrected on the
+next; the construction is self-correcting under capacity stress. Under non-uniform
+minibatch visitation, however, it fails completely (\Cref{sec:nonuniform}).
+
+\subsection{The statistical construction: coin flips with an exact least-squares head}
+\label{sec:statistical-construction}
+
+The coin-flip construction (mechanism two) replaces the fixed target by a fresh Rademacher
+vector $c \in \{-1,+1\}^d$ per visit and reads the bonus off the norm of the learned
+running mean. Three campaign choices make it exact at the edges: the head is solved by
+ridge least squares on accumulated normal equations (so the optimization gap of the
+gradient-descent version is zero); the head starts at zero with a frozen prior network
+unit-normalized per input ($\lVert p(x)\rVert = \sqrt{d}$ exactly), so the bonus is exactly
+$1$ at every never-visited input; and a Rademacher first draw has norm $\sqrt{d}$ exactly,
+so the bonus is also exactly $1$ after the first visit --- matching $\min(1, m^{-1/2})$ at
+$m = 0$ and $1$ with no off-by-one.
+
+The first attempt \runref{exp 014} failed for a reason worth recording: the project's
+default zero-bias ReLU features are homogeneous half-plane hinges whose span on the $108$
+cell midpoints has numerical rank $106$ and condition number $10^{10}$ --- the least-squares
+optimum cannot reach per-position running means, and the readout saturates on the
+unrepresentable component. Swapping in $256$ Gaussian radial-basis features (bandwidth
+$0.75$, Gram condition about $10^{2}$) \runref{exp 016} restored the construction on the
+cell midpoints (aggregate slope $-0.5013$) but under-resolved the $0.1$-spaced center
+square. The fix that closed both gaps is a \emph{growing, data-dependent dictionary}
+\runref{exp 019}: every visited state farther than $0.05$ from the dictionary becomes a new
+center whose bandwidth is half its nearest-center distance at insertion, and the
+normal-equation state grows with it. Resolution concentrates where states are visited, at
+the spacing they are visited at; the uniform benchmark lands at dev\_worst $0.053$ ---
+essentially the chi fluctuation floor at $d = 512$.
+
+\subsection{The closed-form count: an elliptical posterior readout}
+\label{sec:elliptical-readout}
+
+The deterministic ideal of the coin-flip family drops the coins entirely: keep the running
+second-moment matrix $A = I + \sum_{\text{visits}} \hat\phi\hat\phi^\top$ of unit-normalized
+features on the same adaptive dictionary and read out the posterior standard deviation
+\begin{align}
+\label{eq:elliptical}
+b(x) \;=\; \sqrt{\hat\phi(x)^\top A^{-1} \hat\phi(x)} ,
+\end{align}
+which is exactly $1$ before any visit and exactly $(1+m_i)^{-1/2}$ for mutually orthogonal
+features --- the elliptical bonus of the parent project, repurposed as the bonus itself.
+\runref{exp 027} measures dev\_worst $0.202$ (uniform): the slope is near-perfect
+($-0.499 \pm 0.002$) and the entire remaining deviation is neighboring-cell feature overlap
+inflating effective counts --- generalization itself, showing up as a level shift. The
+bandwidth cap is the dial between per-position exactness and spatial generalization
+(\runref{exp 032}/\runref{exp 033} probe a tighter cap).
+
+% >>> AUTO-GENERATED TABLE START: ledger
+{\footnotesize
+\begin{longtable}{@{}r >{\raggedright\arraybackslash}p{5.2cm} r r r r r@{}}
+\caption{The campaign ledger: every iteration experiment, in submission order. Columns are the primary and secondary deviation metrics, the start deviation, the per-position slope mean and standard deviation (\Cref{sec:metrics}); (discarded) marks abandoned directions. Numbers are the experiment's own 10-seed metrics; the exact method per row is the method file at the ledger's commit.}\label{tab:ledger}\\
+\toprule
+exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
+\midrule\endfirsthead
+\toprule
+exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
+\midrule\endhead
+001 & adam baseline (constant Adam 1e-3, raw l2 readout) & 1.618 & 1.214 & 1.37 & -0.862 & 0.133 \\
+002 & sgd1t baseline (eta0 1e-2, t0 1e2) & 2.471 & 1.918 & 1.37 & -0.969 & 0.776 \\
+003 & sgd1t + initial-copy readout norm & 2.634 & 1.407 & 0.00 & -0.867 & 0.564 \\
+004 & const SGD + Polyak-averaged sqrt readout & 2.541 & 2.025 & 0.00 & -0.453 & 0.441 \\
+005 & functional shrink w/ sqrt schedule (discarded) & 1.686 & 0.776 & 0.00 & -1.801 & 0.508 \\
+006 & SGD-1/t + inverse-squared-error reweighting (discarded) & 2.393 & 1.802 & 0.00 & -0.765 & 0.689 \\
+007 & AdaGrad + initial-copy readout & 1.227 & 0.761 & 0.00 & -0.568 & 0.106 \\
+008 & sphere-projected inputs + AdaGrad (discarded) & 1.585 & 1.188 & 0.00 & -1.043 & 0.598 \\
+009 & AdaGrad lr 3e-3 & 1.609 & 0.323 & 0.00 & -0.736 & 0.201 \\
+010 & linear head + exact min-change interpolation + residual-en\,\ldots & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
+011 & = exp-010 method under NONUNIFORM visitation & 1.467 & 0.809 & 0.00 & -0.500 & 0.000 \\
+012 & AdaGrad 3e-3 under NONUNIFORM & 1.412 & 0.676 & 0.00 & -0.782 & 0.217 \\
+013 & MLP + per-sample shrink targets + inner SGD (discarded) & 2.402 & 1.170 & 0.00 & -0.514 & 0.283 \\
+014 & coin-flip RLS on zero-bias ReLU features, uniform (discarded) & 2.535 & 1.247 & 0.00 & -0.901 & 0.267 \\
+015 & same under nonuniform (discarded) & 1.905 & 0.780 & 0.00 & -1.201 & 0.994 \\
+016 & coin-flip RLS on RBF features (sigma 0.75), uniform & 1.008 & 0.333 & 0.00 & -0.574 & 0.126 \\
+017 & same under NONUNIFORM & 0.885 & 0.350 & 0.00 & -0.635 & 0.109 \\
+018 & shrink on fixed RBF, NONUNIFORM & 1.076 & 0.588 & 0.00 & -0.512 & 0.074 \\
+019 & coin-flip + adaptive dictionary, uniform & 0.053 & 0.030 & 0.00 & -0.503 & 0.004 \\
+020 & same, NONUNIFORM & 0.455 & 0.143 & 0.00 & -0.624 & 0.106 \\
+021 & same, dense\_grid 432 points & 0.059 & 0.030 & 0.00 & -0.503 & 0.004 \\
+022 & coin-flip fixed-RBF on dense\_grid & 1.397 & 0.271 & 0.00 & -0.555 & 0.055 \\
+023 & shrink + global ReLU on dense\_grid (432 > 256 features) & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
+024 & shrink + adaptive dictionary, uniform & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
+025 & same, NONUNIFORM & 1.310 & 0.522 & 0.00 & -0.576 & 0.199 \\
+026 & same, dense\_grid & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
+027 & closed-form elliptical posterior on adaptive dictionary, u\,\ldots & 0.202 & 0.054 & 0.00 & -0.499 & 0.002 \\
+028 & same, NONUNIFORM & 0.535 & 0.258 & 0.00 & -0.564 & 0.080 \\
+\bottomrule
+\end{longtable}}
+% >>> AUTO-GENERATED TABLE END: ledger
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/champion_curves.pdf}
+\caption{Per-position bonus curves on the cell midpoints (uniform full batch, seed-mean; one
+thin line per position, $108$ per panel; grey line $= \min(1, n^{-1/2})$). Left to right:
+constant-rate Adam \runref{exp 001} (raw readout: spread starts and too-fast decay), AdaGrad
+$3\times10^{-3}$ with the initial-copy readout \runref{exp 009} (starts at $1$, first-step
+drop and corner spread remain), the residual-encoded shrink \runref{exp 010} (every curve on
+the oracle), and coin-flip counting on the adaptive dictionary \runref{exp 019} (every curve
+on the oracle up to the chi fluctuation).}
+\label{fig:champion-curves}
+\end{figure}
+
+%==============================================================================
+\section{Non-uniform visitation}
+\label{sec:nonuniform}
+
+The nonuniform regime samples $32$ positions per step from a law spanning one decade of
+probability across the maze, and scores each position against its \emph{own} realized count.
+This is where the two exact uniform-regime constructions separate:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{The shrink map does not track counts} \runref{exp 011}. Every position's curve
+  is the same aggregate curve (per-position slopes $-0.5002 \pm 0.0004$ against the
+  \emph{global} step): the min-change solve moves the head globally, unvisited positions'
+  residuals are dragged along through shared features, and the recurrence --- whose state is
+  the corrupted bonus value itself --- integrates the interference. Localizing the features
+  (\runref{exp 018}, \runref{exp 025}) reduces but does not remove the drift; the
+  multiplicative recurrence amplifies whatever leaks through.
+\item \textbf{Coin statistics track counts} \runref{exp 020}. The least-squares running mean
+  is a batch statistic, not a recurrence: interference perturbs individual solves but
+  averages out. With the adaptive dictionary the score is dev\_worst $0.455$, dev\_mean
+  $0.143$ --- each position visibly following its own count.
+\item \textbf{The closed-form elliptical readout is close behind} \runref{exp 028}
+  (dev\_worst $0.535$): zero statistical noise, but the feature-overlap count inflation of
+  \Cref{sec:elliptical-readout} costs more under heterogeneous counts.
+\item \textbf{Gradient-descent baselines sit in between}: AdaGrad \runref{exp 012} is mildly
+  count-sensitive (slope mean $-0.78$ against the global step) --- consistent with the
+  density-dependent convergence times of the linearized theory --- and the quartic loss
+  \runref{exp 031} inherits its uniform-regime level spread.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/nonuniform_scatter.pdf}
+\caption{Final bonus against final realized visit count, one dot per cell-midpoint position
+(nonuniform regime, seed-mean, log--log; grey line $= m^{-1/2}$). The shrink construction
+\runref{exp 011} collapses to a single bonus value regardless of the position's count; the
+coin-flip construction \runref{exp 020} falls on the count oracle's line.}
+\label{fig:nonuniform-scatter}
+\end{figure}
+
+%==============================================================================
+\section{Capacity stress}
+\label{sec:capacity}
+
+The dense grid holds $432$ distinct positions against $256$-dimensional feature layers, so
+exact interpolation across the whole set is impossible and every method must degrade
+somehow. The measured degradations rank the mechanisms:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item The residual-encoded shrink \runref{exp 023} does not degrade at all
+  (dev\_worst $0.0383$, slope spread $4\times10^{-5}$): the map's self-correction converts
+  the solve's per-step realization error into a bounded wobble instead of a drift.
+\item The adaptive dictionary \runref{exp 021}, \runref{exp 026} grows to $432$ centers and
+  absorbs the stress ($0.059$ and $0.038$).
+\item The fixed-bandwidth basis \runref{exp 022} hits the wall it cannot grow past
+  (dev\_worst $1.40$): under-resolution is a resolution property, not a point-count
+  property.
+\end{enumerate}
+
+\clearpage
+%==============================================================================
+% (validation runs, findings, and literature sections are appended above this line)
+\bibliographystyle{plainnat}
+\bibliography{bibliography}
+
+\end{document}

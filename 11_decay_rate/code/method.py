@@ -53,36 +53,51 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Closed-form elliptical posterior readout on unit-normalized adaptive-dictionary
-    features (the deterministic ideal of the coin-flip family).
+    """Coin-flip counting + exact RLS head on a GROWING data-dependent kernel dictionary.
 
-    No residual and no training at all: the method keeps the running feature second-moment
-    matrix A = I + sum over visits of phihat phihat^T with phihat(x) = phi(x)/||phi(x)|| the
-    unit-normalized features on the growing dictionary of exp 019, and reads out the
-    Gaussian-process posterior standard deviation b(x) = sqrt(phihat(x)^T A^{-1} phihat(x)).
-    Before any visit A = I so b = ||phihat|| = 1 exactly at every input; for mutually
-    orthogonal features a position visited m times reads exactly (1 + m)^{-1/2} — the count
-    lives in A, which is precisely the elliptical-bonus matrix the project already studies.
-    Ash et al. (ICLR 2022) is the bridge: this quantity is what coin-flip regression estimates
-    by sampling, with the chi fluctuation removed. This variant caps the bandwidth at 0.35 (was 0.75): exp 027 showed neighboring-cell feature overlap inflates effective counts and shifts levels (dev_worst 0.20 uniform); near-orthogonal features at 1-cell spacing should remove that at the cost of less generalization off the visited set."""
+    exp 016/017 showed the coin-flip construction works once the basis can represent
+    per-position running means, but a fixed bandwidth cannot serve both the cell-scale set and
+    the 0.1-spaced center square. Here the basis adapts: the dictionary starts empty, and each
+    visited state farther than 0.05 world units from every existing center is inserted as a new
+    center whose bandwidth is half its nearest-center distance at insertion (clipped to
+    [0.05, 0.75]); the normal-equation state grows with the dictionary (new rows start at
+    zero). Resolution therefore concentrates exactly where states are visited, at the spacing
+    they are visited at — the online analog of a growing radial-basis network. Coins, prior,
+    and readout as exp 016 (fresh Rademacher per visit, unit-normalized frozen prior, zero
+    head: bonus exactly 1 before and at the first visit)."""
 
-    name = "elliptical_adaptive_sigma035"
+    name = "coinflip_hadamard_adaptive"
 
-    TAU_ADD = 0.05
-    SIGMA_MAX = 0.35
+    D_COINS = 512
+    TAU_ADD = 0.05      # insert a visited state as a center beyond this distance
+    SIGMA_MAX = 0.75    # bandwidth clip range for inserted centers
     SIGMA_MIN = 0.05
     MAX_CENTERS = 1024
+    RIDGE = 1e-8
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Empty dictionary and an empty accumulator (grown with the dictionary)."""
-        torch.manual_seed(seed)  # draws nothing; the method has no random state of its own
+        """Empty dictionary, frozen unit-normalized prior, empty normal-equation state."""
+        torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.centers = torch.zeros(0, 2, dtype=torch.float64)
         self.sigmas = torch.zeros(0, dtype=torch.float64)
-        self.A = torch.zeros(0, 0, dtype=torch.float64)  # holds A - I (grown with zeros)
+        self.prior_raw = make_mlp(obs_dim, 256, self.D_COINS, seed, "prior")
+        for p in self.prior_raw.parameters():
+            p.requires_grad_(False)
+        self.Lam = torch.zeros(0, 0, dtype=torch.float64)
+        self.Bmat = torch.zeros(0, self.D_COINS, dtype=torch.float64)
+        self.coin_gen = keyed_gen(seed, "coins")
+        # scrambled-Hadamard coin state (exp 034): rows of H within one block are mutually
+        # orthogonal, so a position's first n coins sum to squared norm exactly n*d and the
+        # independent-coin chi fluctuation vanishes within a block. One visit counter and one
+        # per-block sign vector per center (dictionary state, like the normal equations).
+        from scipy.linalg import hadamard
+        self.H = torch.as_tensor(hadamard(self.D_COINS), dtype=torch.float64)
+        self.hvisits = []
+        self.block_signs = []
 
     def _grow(self, z: torch.Tensor) -> None:
-        """Insert new centers for batch rows far from the dictionary (as exp 019); the
-        accumulator gains zero rows/columns (its identity part is added at readout)."""
+        """Insert new centers for batch rows far from the dictionary (sequentially, so a row
+        inserted first can cover later rows of the same batch)."""
         for row in z:
             if self.centers.shape[0] >= self.MAX_CENTERS:
                 return
@@ -91,37 +106,68 @@ class Method:
             else:
                 d_nn = float(((self.centers - row) ** 2).sum(-1).min().sqrt())
             if d_nn > self.TAU_ADD:
+                # bandwidth = half the nearest-center distance at insertion, clipped
+                # before: first center -> d_nn = inf -> sigma = SIGMA_MAX (0.75)
+                # after: a center_square point 0.1 from its neighbor -> sigma = 0.05
                 sig = min(self.SIGMA_MAX, max(self.SIGMA_MIN, 0.5 * d_nn))
                 self.centers = torch.cat([self.centers, row[None, :]])
                 self.sigmas = torch.cat([self.sigmas,
                                          torch.tensor([sig], dtype=torch.float64)])
-                k = self.A.shape[0]
-                a = torch.zeros(k + 1, k + 1, dtype=torch.float64)
-                a[:k, :k] = self.A
-                self.A = a
+                # grow the normal-equation state with zero rows/columns for the new feature
+                k = self.Lam.shape[0]
+                lam = torch.zeros(k + 1, k + 1, dtype=torch.float64)
+                lam[:k, :k] = self.Lam
+                self.Lam = lam
+                self.Bmat = torch.cat([self.Bmat,
+                                       torch.zeros(1, self.D_COINS, dtype=torch.float64)])
+                self.hvisits.append(0)
+                self.block_signs.append(None)
 
-    def feat_hat(self, x: torch.Tensor) -> torch.Tensor:
-        """Unit-normalized per-center Gaussian features (norm 1 at every input, so the
-        never-visited readout is exactly 1)."""
+    def feat(self, x: torch.Tensor) -> torch.Tensor:
+        """Per-center Gaussian features with per-center bandwidths."""
         z = x[:, :2].double()
         d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
-        phi = torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
-        return phi / phi.norm(dim=1, keepdim=True)
+        return torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
+
+    def prior(self, x: torch.Tensor) -> torch.Tensor:
+        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input."""
+        p = self.prior_raw(x).double()
+        return float(np.sqrt(self.D_COINS)) * p / p.norm(dim=1, keepdim=True)
 
     def update(self, x: torch.Tensor) -> None:
-        """Grow the dictionary, then accumulate the visited features' second moments."""
+        """Grow the dictionary from the batch, then accumulate coin normal equations."""
         with torch.no_grad():
             self._grow(x[:, :2].double())
-            ph = self.feat_hat(x)
-            self.A += ph.T @ ph
+            phi = self.feat(x)
+            # per-row coin: the nearest center's next scrambled-Hadamard row; a fresh random
+            # sign vector scrambles each new 512-row block (and the first visit).
+            # before: center j at visit k=0,1,2 -> rows H[0]*s, H[1]*s, H[2]*s (orthogonal)
+            z = x[:, :2].double()
+            d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
+            nearest = d2.argmin(dim=1)
+            rows = []
+            for j in nearest.tolist():
+                k = self.hvisits[j]
+                if k % self.D_COINS == 0:
+                    self.block_signs[j] = (torch.randint(0, 2, (self.D_COINS,),
+                                           generator=self.coin_gen, dtype=torch.float64)
+                                           * 2.0 - 1.0)
+                rows.append(self.H[k % self.D_COINS] * self.block_signs[j])
+                self.hvisits[j] = k + 1
+            c = torch.stack(rows)
+            tgt = c - self.prior(x)
+            self.Lam += phi.T @ phi
+            self.Bmat += phi.T @ tgt
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """sqrt(phihat^T (I + A)^{-1} phihat), exactly 1 over an empty dictionary."""
+        """||head(x) + prior(x)|| / sqrt(d); the prior alone before any visit."""
         with torch.no_grad():
+            pr = self.prior(x)
             if self.centers.shape[0] == 0:
-                return torch.ones(x.shape[0], dtype=torch.float64).numpy()
-            ph = self.feat_hat(x)
-            lam = self.A + torch.eye(self.A.shape[0], dtype=torch.float64)
-            sol = torch.linalg.solve(lam, ph.T)                    # (K, B)
-            q = (ph * sol.T).sum(dim=1).clamp(min=0.0)
-            return q.sqrt().cpu().numpy()
+                out = pr
+            else:
+                phi = self.feat(x)
+                lam = self.Lam + self.RIDGE * torch.eye(self.Lam.shape[0], dtype=torch.float64)
+                W = torch.linalg.solve(lam, self.Bmat)
+                out = phi @ W + pr
+            return (out.norm(dim=1) / float(np.sqrt(self.D_COINS))).cpu().numpy()

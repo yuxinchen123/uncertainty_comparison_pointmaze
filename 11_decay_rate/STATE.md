@@ -73,8 +73,24 @@ One experiment runs in ~22 s on jaguar03 (job ids in the folder's `slurm/submitt
      encodes the count; no counter, no clock), realized exactly by a minimum-Frobenius-change
      head update. Slope -0.500000 at every position, dev 0.038 = the (n+1 vs n) off-by-one,
      identical at all 208 positions.
-- Open frontier (wave 4 in flight): exp 011 = exp-010 method under nonuniform visitation
-  (feature-interference is the question); exp 012 = AdaGrad 3e-3 nonuniform baseline;
-  exp 013 = gradient-only MLP analog of exp 010 (per-sample shrink targets + inner SGD with
-  per-position tolerance). Later: capacity stress (more points than features), 30-seed
-  validation, development document.
+- 2026-08-18 00:30 PT — waves 4–7 done (exps 011–031; exps 032–033 in flight). The picture:
+  1. UNIFORM regime is solved twice over: the residual-encoded shrink (exp 010/023/024/026,
+     dev 0.038 = the (n+1 vs n) off-by-one, slope -0.500000, self-correcting under capacity
+     stress) and coin-flip + adaptive dictionary (exp 019/021, dev 0.053, statistical floor).
+  2. NONUNIFORM regime ranking: coin-flip adaptive 0.455 > elliptical closed form 0.535 >
+     shrink adaptive 1.31 (the multiplicative recurrence integrates minibatch interference
+     drift; least-squares statistics average it out).
+  3. Deep-RL-practical gradient-only methods: AdaGrad 3e-3 best of the optimizer family
+     (dev_mean 0.32 uniform); quartic loss = slope -0.4-ish with level spread (exps 030/031
+     pending); MLP inner-SGD shrink fails on slow kernel modes (exp 013).
+  4. Literature sweep digested (6 agents, notes in literature/): the per-position law
+     b_i^2 = sum_j w_ij (1-eta lambda_j)^{2n}; no global schedule can equalize (mode
+     log-decay ratios are fixed at lambda_k/lambda_j); measured NTK condition 5.6e5;
+     coin-flip = CFN (Lobel et al. ICML 2023); the level-vs-slope decomposition; DRND names
+     "initial bonus inconsistency"; PINN line (Chen/Howard/Stinis) is the only prior work
+     targeting per-point rate equalization; Li et al. landscape/ResNet story does NOT apply
+     at this width/depth (answer to the user's pointer).
+- Remaining plan: exps 032-033 (tighter elliptical bandwidth); 30-seed validation runs of the
+  champions (shrink, coinflip-adaptive, elliptical, AdaGrad baseline) on all three fixed point
+  sets + nonuniform; NTK-diagnostic figure (predicted vs measured per-position slope);
+  development document (in progress); bibliography workflow; final report.
