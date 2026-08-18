@@ -179,14 +179,18 @@ NEURAL_ROWS = [  # (experiment folder, block, row label) for the phase-2 neural 
     ("exp_044_cfnconv_adam1e-4_atari", "Atari frames (uniform)", "gradient coin-flip conv net, Adam $10^{-4}$"),
     ("exp_045_cfnconv_adam1e-3_atari", "Atari frames (uniform)", "gradient coin-flip conv net, Adam $10^{-3}$"),
     ("exp_046_cfnconv_adagrad1e-2_atari", "Atari frames (uniform)", "gradient coin-flip conv net, AdaGrad $10^{-2}$"),
-    ("exp_050_deepshrink_atari", "Atari frames (uniform)", "conv trunk + exact shrink head"),
-    ("exp_051_deepcfn_atari", "Atari frames (uniform)", "conv trunk + exact coin-flip head"),
+    ("exp_050_deepshrink_atari", "Atari frames (uniform)", "conv trunk (256 feat.) + exact shrink head"),
+    ("exp_051_deepcfn_atari", "Atari frames (uniform)", "conv trunk (256 feat.) + exact coin-flip head"),
+    ("exp_059_deepshrink_wide_atari", "Atari frames (uniform)", "conv trunk (1024 feat.) + exact shrink head"),
+    ("exp_060_deepcfn_wide_atari", "Atari frames (uniform)", "conv trunk (1024 feat.) + exact coin-flip head"),
+    ("val_207_deepcfn_cappedwide_atari", "Atari frames (uniform)", "conv trunk (1024 feat.) + capped coin-flip head"),
     ("exp_053_deepshrink_heldout_vectors", "held-out 20\% (vectors)", "deep trunk + exact shrink head"),
     ("exp_054_deepcfn_heldout_vectors", "held-out 20\% (vectors)", "deep trunk + exact coin-flip head"),
     ("exp_057_deepshrink_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact shrink head"),
     ("exp_058_deepcfn_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact coin-flip head"),
     ("exp_056_deepshrink_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact shrink head"),
     ("exp_055_deepcfn_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact coin-flip head"),
+    ("val_206_deepcfn_capped_nonuniform30", "nonuniform visitation (vectors)", "deep trunk + capped coin-flip head (30 seeds)"),
 ]
 
 

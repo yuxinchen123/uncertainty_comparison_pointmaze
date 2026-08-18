@@ -764,8 +764,12 @@ Four findings, all visible in \Cref{tab:neural}:
   cannot be removed by any last-layer update, and the early slope fits ($-2.35$) are
   artifacts of fitting a knee-then-floor curve. This is the same law the phase-1 dictionary
   obeyed (insertion capacity $\ge$ distinct states): \emph{the feature dimension bounds how
-  many states can be counted individually}. The widened-trunk variants ($1024$ image
-  features, \runref{exp 059}/\runref{exp 060}) test the law's converse.
+  many states can be counted individually}. The converse holds too: widening the image
+  trunk to $1024$ features restores machine-exactness for the shrink head on all $512$
+  frames ($0.0381$, slope $-0.500000$, zero spread --- \runref{exp 059}) and removes the
+  coin-flip head's floor (dev\_mean $0.064$, at its statistical floor --- \runref{exp 060};
+  its worst frames are near-duplicates whose nearly identical features share one count, the
+  image-domain face of the pseudo-count dial below).
 \item \textbf{Held-out states expose the pseudo-count trade-off.} In the held-out regime the
   trained states stay on their count curves (dev\_mean $0.26$--$0.29$ on the vector battery)
   but never-visited states are dragged partway down by the trunk's generalization
@@ -775,6 +779,17 @@ Four findings, all visible in \Cref{tab:neural}:
   deployment choosing bandwidth or trunk width is choosing a point on this dial, and the
   off-support fields of \Cref{fig:offsupport} are the same trade-off seen from the other
   side.
+\item \textbf{Two deployment rules the counting head needs.} A validation rerun on a
+  different node exposed both. First, the head's ridge must scale with the accumulated
+  feature energy: with an absolute $10^{-8}$ ridge the early, rank-deficient normal
+  equations amplify null-space noise by its reciprocal, and which rounding noise lands there
+  is decided by the node's linear-algebra kernels --- the same seed read bonus values near
+  $30$ at early checkpoints on one node and none on another (\runref{val 203}, kept as the
+  record). Second, the readout is capped at $1$, exactly as the count oracle
+  $\min(1, m^{-1/2})$ is capped: a state cannot read as more novel than never-visited, and
+  the cap removes the legitimate-but-large least-squares coefficients along barely-visited
+  directions from the readout (\runref{exp 061}; both fixes together: maximum bonus exactly
+  $1$, late accuracy unchanged).
 \item \textbf{Replay narrows but does not close the gradient gap.} The replay-buffer
   coin-flip network (\runref{exp 052}) reaches $0.86$ worst / $0.67$ mean --- far better
   than any per-visit gradient variant, an order short of the exact heads, and carrying its
