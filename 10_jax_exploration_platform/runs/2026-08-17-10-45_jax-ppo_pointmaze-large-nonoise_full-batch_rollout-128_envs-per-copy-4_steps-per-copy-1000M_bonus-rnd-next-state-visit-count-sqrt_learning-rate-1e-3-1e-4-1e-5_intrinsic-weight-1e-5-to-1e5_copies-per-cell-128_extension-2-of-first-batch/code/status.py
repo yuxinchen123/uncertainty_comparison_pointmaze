@@ -27,6 +27,8 @@ import plan_submission as ps  # noqa: E402  (the run's shape lives there)
 
 PACIFIC = ZoneInfo("America/Los_Angeles")
 WINDOWS = ps.ITERATIONS // ps.WINDOW_ITERATIONS
+# a window record's own iteration marker, matched against the raw bytes of a shard's tail
+LAST_ITERATION = re.compile(rb'"last_iteration": (\d+)')
 # a canary this far from its planned seconds per iteration is worth a line of its own in the tick
 CANARY_TOLERANCE = 0.25
 
@@ -56,11 +58,30 @@ def chunk_of_job(name: str) -> str:
     return match.group(1) if match else ""
 
 
+# how much of a shard's tail to read to find its last complete record. One window line of the
+# widest chunk is about 25 kB, so half a megabyte always contains several.
+TAIL_BYTES = 512 * 1024
+
+
 def windows_written(shard: Path) -> int:
-    """How many episode-window records a shard holds; 0 when it does not exist yet."""
-    if not shard.exists():
+    """How many windows a shard has written, from its LAST record rather than by counting lines.
+
+    A shard of this run grows to about 240 MB, and forty of them are read at every tick, so
+    counting lines would mean reading 4 GB every twenty minutes. The last window record carries
+    the iteration it ends at, and windows are a fixed 200 iterations, so the count follows from it.
+
+    before: a shard whose last complete line ends at iteration 61,600;
+    after:  308 windows.
+    """
+    if not shard.exists() or shard.stat().st_size == 0:
         return 0
-    return sum(1 for line in shard.read_text().splitlines() if '"record": "episode_window"' in line)
+    with open(shard, "rb") as handle:
+        handle.seek(max(0, shard.stat().st_size - TAIL_BYTES))
+        lines = handle.read().split(b"\n")
+    for line in reversed(lines):
+        if b'"record": "episode_window"' in line:
+            return int(LAST_ITERATION.search(line).group(1)) // ps.WINDOW_ITERATIONS
+    return 0
 
 
 def queue_entries() -> dict:
