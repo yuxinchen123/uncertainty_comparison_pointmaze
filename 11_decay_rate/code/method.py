@@ -66,7 +66,7 @@ class Method:
     and readout as exp 016 (fresh Rademacher per visit, unit-normalized frozen prior, zero
     head: bonus exactly 1 before and at the first visit)."""
 
-    name = "coinflip_hadamard_perm"
+    name = "coinflip_hadamard_nocollide"
 
     D_COINS = 512
     TAU_ADD = 0.05      # insert a visited state as a center beyond this distance
@@ -94,7 +94,12 @@ class Method:
         self.H = torch.as_tensor(hadamard(self.D_COINS), dtype=torch.float64)
         self.hvisits = []
         self.block_signs = []
-        self.block_perms = []   # per-center per-block column permutation (exp 035 fix: a
+        self.block_perms = []
+        self.spike_used = []    # per-center: coordinates already taken by a block's spike
+        # (exp 036 fix: the all-ones Hadamard row makes each full block's sum a single-
+        # coordinate spike; two blocks of one center colliding on a coordinate shift the
+        # running-mean norm by a factor 1 +- 2/B — draw permutations whose spike coordinates
+        # are distinct per center)   # per-center per-block column permutation (exp 035 fix: a
         # sign-only scramble leaves every full block's sum on coordinate 0, so consecutive
         # blocks cancel and the running-mean norm collapses past 512 visits; permuting the
         # columns per block sends each block's sum to its own random coordinate)
@@ -127,6 +132,7 @@ class Method:
                 self.hvisits.append(0)
                 self.block_signs.append(None)
                 self.block_perms.append(None)
+                self.spike_used.append(set())
 
     def feat(self, x: torch.Tensor) -> torch.Tensor:
         """Per-center Gaussian features with per-center bandwidths."""
@@ -157,8 +163,15 @@ class Method:
                     self.block_signs[j] = (torch.randint(0, 2, (self.D_COINS,),
                                            generator=self.coin_gen, dtype=torch.float64)
                                            * 2.0 - 1.0)
-                    self.block_perms[j] = torch.randperm(self.D_COINS,
-                                                         generator=self.coin_gen)
+                    # resample until this block's spike coordinate (the image of Hadamard
+                    # column 0 under the permutation) is new for this center
+                    for _ in range(64):
+                        perm = torch.randperm(self.D_COINS, generator=self.coin_gen)
+                        spike = int((perm == 0).nonzero()[0, 0])
+                        if spike not in self.spike_used[j]:
+                            break
+                    self.spike_used[j].add(spike)
+                    self.block_perms[j] = perm
                 rows.append((self.H[k % self.D_COINS]
                              * self.block_signs[j])[self.block_perms[j]])
                 self.hvisits[j] = k + 1
