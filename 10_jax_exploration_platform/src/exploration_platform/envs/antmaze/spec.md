@@ -39,10 +39,11 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
 3. **Integrator and solver budget.** The reference ant.xml integrates with RK4 at MuJoCo's
    default Newton settings. Under MJX that compiles to a program about 400x slower (probe 1,
    2026-08-18: 2,134 ms per env step at 1,024 copies on an H100). The fused model runs
-   `implicitfast` with `iterations=4, ls_iterations=8`, chosen on this evidence (probe 3):
-   the C-MuJoCo passive settling height at these settings equals the RK4 full-solver height
-   (0.0427 m, identical to 4 decimals), while the MJX example-model setting `iterations=1`
-   is unstable for this ant (flies to z = 19 m on CPU, NaNs in float32).
+   `implicitfast` with `iterations=4, ls_iterations=8`, chosen on this evidence: the MJX
+   example-model setting `iterations=1` is unstable for this ant (flies to z = 19 m on CPU,
+   NaNs in float32), while at `iterations=4` the tuned model shares the reference's resting
+   equilibrium exactly — settled 1,200 env steps, both models rest at z = 0.38248 m and a
+   state settled under either stays settled under the other to 3.7e-11 (gate 3 below).
 4. **Wall boxes merged.** The reference emits one box geom per wall cell; here horizontal runs
    of wall cells are merged into single boxes (62 wall cells -> 31 boxes on the large map,
    38 -> 20 on the medium, 18 -> 8 on the umaze). The union of
@@ -70,14 +71,16 @@ Run by `tests/envs/test_antmaze_mjx.py` (fast, CPU) and
    contact-free states the fused float32 stepper agrees with C float64 to 3.9e-7 m (median),
    and MJX float64 agrees with C float64 to 4.4e-16 — the same algorithm to machine epsilon;
    float32 against float64 MJX differs by at most 1.8e-6, so the float32 choice costs nothing.
-   At states inside a contact event the one-step difference reaches the centimetre level
-   (worst 2.75e-2 m), because MJX's collision functions differ from C's by documented design
-   (different contact-point sets for the same geom pair). The gate bounds the two regimes
-   separately (1e-4 contact-free, 5e-2 in contact), plus a 20-env-step shared-torque
-   trajectory bound.
-2. Settling equivalence: the tuned model's passive settling height equals the reference RK4
-   full-solver model's on C MuJoCo (the integrator deviation does not change where the ant
-   comes to rest).
+   At states whose 5-substep window contains a contact event the one-step difference reaches
+   the centimetre level (worst 2.75e-2 m), because MJX's collision functions differ from C's
+   by documented design (different contact-point sets for the same geom pair). The gate
+   bounds the two regimes separately (1e-4 contact-free — measured worst 1.76e-6 — and 5e-2
+   in contact).
+2. Trajectory divergence structure: 20 shared-torque env steps from the spawn agree to
+   roundoff before the first contact (measured 1.67e-6), then diverge exponentially — two
+   samples of the same chaotic dynamics — bounded by one maze cell over the horizon.
+   Equilibrium preservation: settled 1,200 env steps, both integrators rest at exactly
+   z = 0.38248 m, and each keeps the other's settled state to ~3.5e-11.
 3. Semantics: reward is 1 exactly within 0.45 m of the goal; truncation at the cap and
    auto-reset restore the spawn exactly; the continuing task never terminates; copies are
    bit-isolated (stepping copy k never changes copy j).

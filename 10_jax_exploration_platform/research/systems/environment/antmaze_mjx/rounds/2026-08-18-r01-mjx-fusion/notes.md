@@ -34,20 +34,38 @@ humanoid/barkour models); Euler with `eulerdamp` disabled against `implicitfast`
 
 ## Probe 3 — is the cheap solver still the reference's physics? (~01:00 PT, CPU)
 
-C MuJoCo (the reference implementation itself), passive settle, 400 env steps:
+C MuJoCo (the reference implementation itself), passive settle, 400 env steps FROM THE MAP
+ORIGIN — which on the umaze is inside a wall box, a flaw found later; the numbers below carried
+wall interference and were superseded by probe 5:
 
 | settings | settled torso z | contacts |
 |---|---|---|
 | RK4, full solver budget (the reference) | 0.0427 m | 38 |
 | implicitfast, iterations 1, ls 4 | **19.0 m — flies away, 0 contacts** | 0 |
-| implicitfast, iterations 4, ls 8 | 0.0427 m — equal to the reference to 4 decimals | 38 |
+| implicitfast, iterations 4, ls 8 | 0.0427 m | 38 |
 
-So the MJX example-model budget (`iterations=1`) is genuinely unstable for this ant (in float32
-it NaNs), and one step up (`iterations=4, ls_iterations=8`) reproduces the reference's answer.
-That is the accepted setting. Caveat recorded: probe 3's settle started at the map origin,
-which on the umaze is inside a wall box; the committed test
-(`tests/envs/test_antmaze_parity_cpu_mujoco.py::test_settling_equivalence`) settles from the
-spawn cell instead, and is the standing form of this gate.
+What survives from this probe: the MJX example-model budget (`iterations=1`) is genuinely
+unstable for this ant (in float32 it NaNs), and `iterations=4, ls_iterations=8` is stable.
+
+## Probe 5 — the committed gates, from the real spawn (~01:50–02:20 PT, CPU)
+
+Three findings, now the standing gates in `tests/envs/test_antmaze_parity_cpu_mujoco.py`:
+
+1. **Away from contacts, MJX IS the C algorithm.** One env step from 50 states along a
+   random-torque trajectory: at the 25 states whose 5-substep window holds no contact, MJX
+   float64 equals C float64 to 4.4e-16, and the fused float32 stepper is within 1.76e-6
+   (float32 against float64 MJX: at most 1.8e-6, so the float32 choice costs nothing).
+2. **At contact events the difference is centimetre-level and algorithmic.** Worst one-step
+   |dqpos| 2.75e-2 m at the 25 in-contact states — MJX's collision functions differ from C's
+   by documented design. Over a horizon this seeds ordinary chaotic divergence: 20 shared-
+   torque env steps agree to 1.67e-6 until the first contact (state 4), then diverge to
+   0.47 m — two samples of the same dynamics, not two different dynamics.
+3. **The tuned solver shares the reference's equilibria exactly.** A first settling
+   comparison at 400 env steps disagreed (tuned z 0.563 against reference 0.382) and looked
+   like different physics; the controls showed the tuned transient was simply unfinished
+   (|qvel| 1.4e-2 at 400 steps). Settled 1,200 steps, BOTH integrators rest at z = 0.38248 m,
+   and a state settled under either stays settled under the other to 3.7e-11, in both
+   directions.
 
 ## Probe 4 — abandoned
 
@@ -61,7 +79,8 @@ Their numbers are the ledger's standing tables.
 ## What round 1 accepted
 
 1. `implicitfast`, Newton `iterations=4`, `ls_iterations=8`, float32 behind a trace-time
-   x64-off boundary (`spec.md` deviations 3 and 6).
+   x64-off boundary (`spec.md` deviations 3 and 6; held to the reference by probe 5's three
+   gates).
 2. Horizontal wall runs merged into single boxes — an identical union of blocks, fewer geom
    pairs (`spec.md` deviation 4).
 3. No contact caps (broken in this MJX version, see probe 2).
