@@ -826,4 +826,95 @@ underscore (\texttt{\textbackslash allowbreak}).}
 \label{tab:mz-jax-env}
 \end{table}
 
+\subsection{Train run 3.1: the first Montezuma batch}
+\label{sec:mz-jax-run31}
+
+Two algorithm arms at one learning rate: random network distillation against no exploration
+bonus, on the full game. This is the family's first live batch — and the platform's first
+discrete-action training — at a budget of about a quarter of a million environment steps per
+copy, three orders of magnitude below the budget the original random-network-distillation
+campaign spent to clear the game. Its job is to show the fused game training end to end at
+scale, and to read whether the bonus moves a smoke-scale agent at all.
+
+\paragraph{Hypotheses.}
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{The bonus drives exploration.} The distillation arm visits more rooms (higher
+  rooms-visited coverage) and collects more clipped score than the no-bonus arm: the game pays
+  nothing before the first key, so a bonus-free agent has no gradient pointing anywhere.
+\item \textbf{The first score is reachable, clearing the game is not.} Some distillation
+  copies reach the first collectable (the key of the starting room pays $+1$ through the
+  clipped score) within the budget; no copy approaches the later rooms' chains of keys and
+  doors. Room coverage, not score, is this run's primary reading.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}
+?>{\raggedright\arraybackslash}p{5.4cm}
+?>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{\texttt{rnd\allowbreak\_next\allowbreak\_state}} &
+\textbf{\texttt{no\allowbreak\_exploration}} \\
+& \small(random network distillation) & \small(no intrinsic bonus) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Environment and RL algorithm}} \\
+\greyrule
+environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the
+  Montezuma's Revenge of \Cref{tab:mz-jax-env}; this run adds no new
+  environment-specification table} \\
+\greyrule
+base RL algorithm & proximal policy optimisation with the categorical actor
+  (\Cref{sec:mz-jax-envspec}) & same \\
+\greyrule
+update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) & same \\
+\greyrule
+rollout length $T$ & $128$ steps & same \\
+\greyrule
+environments per copy $N$ & $1$ & same \\
+\greyrule
+environment steps per copy & $256$k: $2{,}000$ iterations of $128$ steps & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+bonus signal & the prediction error of a trained network against a fixed random target, on the
+  $774$-d next observation & N/A \\
+\greyrule
+where the bonus enters & the advantage: $1 \times$ intrinsic $+\ 2 \times$ extrinsic & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Fixed knobs (nothing is swept in this batch)}} \\
+\greyrule
+learning rate & \multicolumn{2}{c}{$3 \times 10^{-4}$ --- one value} \\
+\greyrule
+intrinsic weight $\beta$ & $1$ & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+\greyrule
+configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
+\greyrule
+copies per arm & \multicolumn{2}{c}{$512$, each its own seed stream} \\
+\greyrule
+recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
+  $200$ iterations, $10$ windows over the run. Episodes end on the game's own terms (lives
+  exhausted) at variable lengths, so no fixed episode clock exists and no window is
+  phase-blocked --- window sums are compared between the arms at equal step budgets, which is
+  the comparison this run makes} \\
+\blackrule
+\end{tabular}%
+}
+\caption{What train run 3.1 runs. ``same'' means the value equals the column to its left;
+``N/A'' marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is
+swept: two arms at one setting each.}
+\label{tab:mz-jax-run31-swept}
+\end{table}
+
+\paragraph{Results --- status.}
+Launched on the H100 NVL of serval05 on 2026-08-18 (the machine held for this session, the two
+arms run one after the other); the results tables and the room-coverage curves follow when the
+run's records are complete.
+
+
 \end{document}
