@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-08-18-04-43_jax-ppo_montezuma-object-centric-sticky_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-2M_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-montezuma-batch
+description: one training unit on the JAX exploration platform
+git:
+  commit: 4bd634b4421fc0968bd9ce9b38e7cf283c3cf50d
+  dirty: true
+  version_tag: jax-platform-v0.1.0-120-g4bd634b
+specs:
+  env: montezuma_oc4500_sticky@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 1024
+  envs_per_copy: 1
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: distinct
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
