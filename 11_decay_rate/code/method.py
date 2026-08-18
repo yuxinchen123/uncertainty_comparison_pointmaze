@@ -51,20 +51,16 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """SGD-1/t + per-position inverse-squared-error loss reweighting + initial-copy readout.
+    """AdaGrad + initial-copy readout: the cumulative-squared-gradient optimizer (the closest
+    off-the-shelf optimizer to a soft visit count — its accumulator never forgets) at the
+    project's O2 settings (lr 1e-2, eps 1e-10, zero initial accumulator), on the plain MSE
+    distillation loss. Readout: initial-copy-normalized residual norm."""
 
-    Same schedule as the prior best (eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2), but each
-    sample's squared error is weighted by the inverse of its own detached squared error
-    (normalized to mean 1). In the tangent-kernel picture the pull on each position becomes
-    proportional to its residual DIRECTION rather than its magnitude, so positions that have
-    already converged stop dominating the gradient and slow positions catch up — the
-    equal-relative-progress idea. Readout: initial-copy-normalized residual norm."""
-
-    name = "sgd1t_inverse_error_reweight"
+    name = "adagrad_initcopy_norm"
 
     def __init__(self, seed: int, obs_dim: int = 4):
         """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
-        denominator), and plain SGD (1/t schedule in update)."""
+        denominator), and AdaGrad."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
@@ -74,28 +70,16 @@ class Method:
         self.predictor0 = copy.deepcopy(self.predictor)
         for p in self.predictor0.parameters():
             p.requires_grad_(False)
-        self.eta0, self.t0 = 1e-2, 1e2
-        self.t = 0  # 0-based optimizer-step counter for the schedule
-        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.eta0)
+        self.opt = torch.optim.Adagrad(self.predictor.parameters(), lr=1e-2, eps=1e-10,
+                                       initial_accumulator_value=0)
 
     def update(self, x: torch.Tensor) -> None:
-        """One SGD-1/t step on the REWEIGHTED loss: each sample's squared error is divided by
-        its own detached squared error (mean-normalized weights), so every position contributes
-        the same relative-progress pull and fast positions cannot outrun slow ones."""
-        for group in self.opt.param_groups:
-            group["lr"] = self.eta0 / (1.0 + self.t / self.t0)
+        """One AdaGrad step on the MSE distillation loss."""
         e = self.predictor(x) - self.target(x)
-        sq = e.pow(2).sum(dim=1)
-        # inverse-squared-error weights, detached, normalized to mean 1 so the global step size
-        # keeps its usual scale. before: sq = [4.0, 1.0, 0.25]; after: w = 1/sq normalized ->
-        # [0.143, 0.571, 2.286] — the smallest-error sample gets the largest pull
-        w = 1.0 / (sq.detach() + 1e-12)
-        w = w / w.mean()
-        loss = 0.5 * (w * sq).mean()
+        loss = 0.5 * e.pow(2).sum(dim=1).mean()
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
-        self.t += 1
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
         """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
