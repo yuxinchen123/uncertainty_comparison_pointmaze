@@ -191,6 +191,8 @@ NEURAL_ROWS = [  # (experiment folder, block, row label) for the phase-2 neural 
     ("exp_056_deepshrink_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact shrink head"),
     ("exp_055_deepcfn_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact coin-flip head"),
     ("val_206_deepcfn_capped_nonuniform30", "nonuniform visitation (vectors)", "deep trunk + capped coin-flip head (30 seeds)"),
+    ("val_209_deepcfn_capped_heldout30", "held-out 20\% (vectors)", "deep trunk + capped coin-flip head (30 seeds)"),
+    ("val_208_deepcfn_cappedwide_atari_nonuniform", "nonuniform visitation (Atari)", "conv trunk (1024 feat.) + capped coin-flip head"),
 ]
 
 
@@ -211,7 +213,7 @@ def neural_table() -> str:
            r"method & dev\_worst $\downarrow$ & dev\_mean & slope & slope std \\"]
     order = ["maze + AntMaze states (uniform)", "Atari frames (uniform)",
              "held-out 20\% (vectors)", "held-out 20\% (Atari)",
-             "nonuniform visitation (vectors)"]
+             "nonuniform visitation (vectors)", "nonuniform visitation (Atari)"]
     for block in order:
         rows = blocks.get(block, [])
         if not rows:
