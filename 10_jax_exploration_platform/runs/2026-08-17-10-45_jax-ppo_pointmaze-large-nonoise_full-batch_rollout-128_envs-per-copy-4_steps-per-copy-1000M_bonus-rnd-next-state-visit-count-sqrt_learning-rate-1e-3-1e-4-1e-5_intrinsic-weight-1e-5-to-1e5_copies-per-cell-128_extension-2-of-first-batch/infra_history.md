@@ -93,3 +93,23 @@ everything the canary phase is for: the card proves it holds the program at this
 node-local compiled-program cache is written by the process that will then use it, the resume is
 tested per chunk on its own card, and the canary's own rate is on disk for the 20-minute tick to
 compare against the plan.
+
+## 2026-08-17 20:35 PT — one chunk was moved off a card another user took first
+
+Thirty-six of the forty jobs started within seconds. The four that did not are the second chunk on
+a card one of this run's own chunks already holds — two on nekomata01 and, on serval03, a chunk
+waiting behind our own — except that serval03's single H100 NVL card had been taken by another
+user's two-hour array job between the availability read the plan was computed from (20:02 PT) and
+the submission (20:12 PT). With one array task running and one queued behind it, that card was
+about four hours from us, which would have put the oracle arm's last chunk at about 07:20 PT
+against the rest of the run's 04:15.
+
+A card of `cheetah04` (A100-SXM4-80GB) had come free meanwhile. Job 6539520 was cancelled — its id
+read from this run's own `slurm/submitted_jobids.txt` and checked against it first, never a blanket
+cancel — and its chunk resubmitted as job 6539578 on that card, where this run's own probe measures
+the oracle arm at 60,447 environment steps a second per copy and the chunk at about 4.6 hours. The
+other serval03 chunk stays where it is; it now has the card to itself once the other user's array
+finishes, and its projected finish is inside the rest of the run's.
+
+The per-user allowance was full at 40 of 40 graphics cards while both jobs were queued, which is why
+the chunk was moved rather than added: cancelling first freed the slot the new job needed.
