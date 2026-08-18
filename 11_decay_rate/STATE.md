@@ -98,11 +98,15 @@ One experiment runs in ~22 s on jaguar03 (job ids in the folder's `slurm/submitt
   requirement, and the bandwidth-overlap trade; the shrink holds -0.500000 over 4.5 decades
   while AdaGrad drifts. Development document: 16 pages, compiled, bibliography verified (18
   new entries via the collector+2-verifier workflow), literature section written.
-- RL PILOT (in flight): new `coinflip_count` intrinsic model added to the parent package
-  (additive registry row + unit tests, committed); pilot run folder
-  `train_runs/2026-08-18-03-30_rl-pilot_...` with queue builder (4 configs x 15 seeds, 1M
-  steps, PointMaze_Large bottom-left = run-8.1's setting so its winner table is the
-  reference). Smoke job running; fleet = 32x1 + 30x1 on open cpu partition after smoke
-  passes. Monitoring cron c7cdaf7e covers campaign + pilot.
+- RL PILOT LAUNCHED 2026-08-17 23:30 PT: new `coinflip_count` intrinsic model in the parent
+  package (additive registry row; all 241 package tests pass after the pin-test update).
+  Smoke passed (20k steps, completed record, bonus decays per episode, 1458 steps/min).
+  Sweep `2026-08-17-23-27_cfpilot`: 60 runs = 4 configs (coinflip_count beta 0.3/1/3 +
+  gt_position_velocity beta 1 control) x 15 seeds x 1M steps on
+  PointMaze_Large-v3_start_bottom_left (run-8.1's setting; its winner table is the
+  reference). Worker jobs 6539941 (32x1 bigcat06) + 6539942 (30x1 affogato02), AllocCPUS
+  verified, open cpu partition, --time 4-00:00:00. Expected finish ~16:00-20:00 PT Aug 18.
+  Interim table: `analysis/code/pilot_table.py`. Monitoring cron c7cdaf7e covers
+  campaign + pilot.
 - Remaining: pilot smoke -> fleet launch -> monitor to completion -> pilot analysis + doc
   section; final document regeneration (val_117/118 + hor_302 rows), page QA, final report.
