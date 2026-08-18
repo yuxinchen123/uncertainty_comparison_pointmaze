@@ -7,8 +7,14 @@ training-curve figure — imports the functions here rather than re-deriving a n
 A shard here is one CHUNK of one arm, and a chunk carries ALL 33 configurations of that arm at a
 slice of their copies. So a configuration's numbers are pooled twice over: within a shard, the
 copies belonging to that configuration are selected by the shard's own `copy_cell` list; across
-shards, the chunks' per-copy lists are concatenated. Pooling is exact rather than an average of
+shards, the chunks' per-copy values are concatenated. Pooling is exact rather than an average of
 averages, because every per-copy quantity is carried per copy all the way to the end.
+
+**Everything here STREAMS.** This run's forty shards come to about 4 GB of JSON — 9,766 window
+records per chunk, each carrying one reward per copy — so a module that read them into memory the
+way the parent runs' did would need tens of gigabytes. Each pass therefore reads a shard line by
+line and keeps only what it is accumulating: a running per-copy reward sum, an episode count, and
+the last scored window. Memory is a few megabytes whatever the run's length.
 
 Three rules the scoring obeys:
 
@@ -29,77 +35,130 @@ Run:
 """
 import json
 import math
-import sys
+import re
 from pathlib import Path
 
 RUN_DIR = Path(__file__).resolve().parent.parent
-PLATFORM_ROOT = RUN_DIR.parent.parent
-sys.path.insert(0, str(PLATFORM_ROOT / "scripts"))
 
 # the open cells of the large map; coverage is already reported as a fraction of them, and this is
 # here so a reader of a coverage number can see what the denominator was
 OPEN_CELLS = 46
 # the copies one configuration of this run holds, across all of its chunks
 COPIES_PER_CONFIGURATION = 128
+# a window record's own iteration marker, pulled out without parsing the whole line
+LAST_ITERATION = re.compile(rb'"last_iteration": (\d+)')
 
 
-def read_chunks(run_dir: Path = RUN_DIR) -> dict:
-    """Every chunk's records, grouped: its identity card, its windows, and its completion record.
+def live_lines(shard: Path) -> dict:
+    """Which line of a shard is the live copy of each record, by a first cheap scan.
 
-    before: data/unit-1_..._chunk-1-of-8_....jsonl with job / unit_start / 9,766 episode_window /
-            unit_complete lines;
-    after:  {"unit-1_..._chunk-1-of-8_...": {"start": {...}, "windows": [...], "complete": {...}}}
-    A window recorded twice (a re-attempt of the same chunk) keeps the later line.
+    A chunk that failed and was re-run appends its windows again from the start, so one shard can
+    hold the same window twice; the later line is the live one. This scan finds the byte-cheap
+    answer — a regular expression over the raw bytes, no JSON parsing — so the second pass can parse
+    only the lines that matter.
+
+    before: a shard whose lines 3..500 are a first attempt ending at iteration 100,000 and whose
+            lines 501.. are the re-run from iteration 200 onward;
+    after:  {"start": 1, "complete": 9999, "windows": {200: 501, 400: 502, ...}} — one line index
+            per window, the later one wherever a window appears twice.
     """
-    chunks = {}
-    for shard in sorted((run_dir / "data").glob("*.jsonl")):
-        for line in shard.read_text().splitlines():
-            if not line.strip():
-                continue
-            record = json.loads(line)
-            kind = record.get("record")
-            if kind not in ("unit_start", "episode_window", "unit_complete"):
-                continue
-            chunk = chunks.setdefault(record["unit_id"],
-                                      {"start": None, "windows": {}, "complete": None})
-            if kind == "unit_start":
-                chunk["start"] = record
-            elif kind == "unit_complete":
-                chunk["complete"] = record
-            else:
-                chunk["windows"][record["last_iteration"]] = record
-    for chunk in chunks.values():
-        chunk["windows"] = [chunk["windows"][key] for key in sorted(chunk["windows"])]
-    return chunks
+    start, complete, windows = None, None, {}
+    with open(shard, "rb") as handle:
+        for index, line in enumerate(handle):
+            if b'"record": "episode_window"' in line:
+                match = LAST_ITERATION.search(line)
+                windows[int(match.group(1))] = index
+            elif b'"record": "unit_start"' in line:
+                start = index
+            elif b'"record": "unit_complete"' in line:
+                complete = index
+    return {"start": start, "complete": complete, "windows": windows}
 
 
-def cell_copies(chunk: dict) -> dict:
-    """Which copy positions inside this chunk belong to each (learning rate, weight) cell.
+def read_selected(shard: Path, indices: set):
+    """Yield (line index, parsed record) for the given line indices of a shard, in file order."""
+    with open(shard) as handle:
+        for index, line in enumerate(handle):
+            if index in indices:
+                yield index, json.loads(line)
 
-    before: cell_settings [(1e-3, 1e-5), (1e-3, 1e-4), ...], copy_cell [0]*16 + [1]*16 + ...
-    after:  {(0.001, 1e-05): [0..15], (0.001, 0.0001): [16..31], ...} — positions in this chunk's
-            own per-copy lists, not seed indices
+
+def cell_copies(start: dict) -> dict:
+    """Which copy positions inside a chunk belong to each (learning rate, weight) cell.
+
+    before: cell_settings [(1e-3, 1e-5), (1e-3, 1e-4), ...], copy_cell [0]*4 + [1]*4 + ...
+    after:  {(0.001, 1e-05): [0, 1, 2, 3], (0.001, 0.0001): [4, 5, 6, 7], ...} — positions in the
+            chunk's own per-copy lists, not seed indices
     """
-    settings = [tuple(setting) for setting in chunk["start"]["cell_settings"]]
+    settings = [tuple(setting) for setting in start["cell_settings"]]
     members = {setting: [] for setting in settings}
-    for position, cell in enumerate(chunk["start"]["copy_cell"]):
+    for position, cell in enumerate(start["copy_cell"]):
         members[settings[cell]].append(position)
     return members
 
 
-def group_by_arm(chunks: dict) -> dict:
-    """The chunks of each arm, in copy-index order.
+def chunk_summary(shard: Path) -> dict:
+    """One chunk's identity and its per-copy totals, accumulated in one streaming pass.
 
-    before: sixteen shards, eight of them chunks of the distillation arm;
-    after:  {"rnd_next_state": [chunk with copy indices 0-15, chunk with 16-31, ...], ...}
+    before: data/unit-1_..._chunk-7-of-32_....jsonl, 9,766 window records of 132 rewards each;
+    after:  {"start": {...}, "complete": {...} or None, "windows_scored": 9766,
+             "episodes_per_copy": 2500096.0, "reward_sum_per_copy": [132 floats],
+             "last_window": {"reward_per_copy": [...], "episodes": 256.0,
+                             "coverage_per_copy": [...]}}
+    """
+    live = live_lines(shard)
+    if live["start"] is None:
+        return None
+    wanted = set(live["windows"].values()) | {live["start"]}
+    if live["complete"] is not None:
+        wanted.add(live["complete"])
+    summary = {"start": None, "complete": None, "windows_scored": 0, "episodes_per_copy": 0.0,
+               "reward_sum_per_copy": None, "last_window": None, "windows_seen": 0}
+    for index, record in read_selected(shard, wanted):
+        kind = record["record"]
+        if kind == "unit_start":
+            summary["start"] = record
+            continue
+        if kind == "unit_complete":
+            summary["complete"] = record
+            continue
+        summary["windows_seen"] += 1
+        if not record["phase_blocked"]:
+            continue
+        rewards = record["reward_ext_sum_per_copy"]
+        if summary["reward_sum_per_copy"] is None:
+            summary["reward_sum_per_copy"] = [0.0] * len(rewards)
+        for position, value in enumerate(rewards):
+            summary["reward_sum_per_copy"][position] += value
+        summary["episodes_per_copy"] += record["episodes_per_copy_in_window"]
+        summary["windows_scored"] += 1
+        summary["last_window"] = {"reward_per_copy": rewards,
+                                  "episodes": record["episodes_per_copy_in_window"],
+                                  "coverage_per_copy": record.get("coverage_per_copy", [])}
+    return summary
+
+
+def chunk_summaries(run_dir: Path = RUN_DIR) -> dict:
+    """Every chunk's streamed summary, keyed by chunk id."""
+    summaries = {}
+    for shard in sorted((run_dir / "data").glob("*.jsonl")):
+        summary = chunk_summary(shard)
+        if summary is not None and summary["start"] is not None:
+            summaries[summary["start"]["unit_id"]] = summary
+    return summaries
+
+
+def group_by_arm(summaries: dict) -> dict:
+    """The chunk summaries of each arm, in copy-index order.
+
+    before: forty chunk summaries, thirty-two of them chunks of the distillation arm;
+    after:  {"rnd_next_state": [chunk with copy indices 0-3, chunk with 4-7, ...], ...}
     """
     groups = {}
-    for chunk_id, chunk in chunks.items():
-        if chunk["start"] is None:
-            continue
-        groups.setdefault(chunk["start"]["bonus"], []).append(dict(chunk, chunk_id=chunk_id))
+    for chunk_id, summary in summaries.items():
+        groups.setdefault(summary["start"]["bonus"], []).append(dict(summary, chunk_id=chunk_id))
     for group in groups.values():
-        group.sort(key=lambda chunk: chunk["start"].get("copy_seed_index_first", 0))
+        group.sort(key=lambda chunk: chunk["start"]["copy_seed_index_first"])
     return groups
 
 
@@ -113,18 +172,11 @@ def check_partition(arm: str, group: list, copies: int = None) -> None:
     covered = []
     for chunk in group:
         start = chunk["start"]
-        first = start["copy_seed_index_first"]
-        last = start["copy_seed_index_last"]
-        covered += list(range(first, last + 1))
+        covered += list(range(start["copy_seed_index_first"], start["copy_seed_index_last"] + 1))
     if sorted(covered) != list(range(copies)):
         raise SystemExit(
             f"the {len(group)} chunks of {arm} do not partition {copies} copies per cell: "
             f"{len(covered)} indices covered, {len(set(covered))} of them distinct")
-
-
-def scored_windows(chunk: dict) -> list:
-    """The chunk's windows that may feed a score: the phase-blocked ones, in iteration order."""
-    return [window for window in chunk["windows"] if window["phase_blocked"]]
 
 
 def mean_and_standard_error(values: list) -> tuple:
@@ -139,69 +191,41 @@ def mean_and_standard_error(values: list) -> tuple:
     return mean, math.sqrt(variance / n)
 
 
-def per_copy_scores(chunk: dict) -> dict:
-    """The four per-copy numbers this run scores by, as lists over the chunk's copies.
-
-    whole_run_reward   mean episode return over every phase-blocked window of the run
-    last_window_reward mean episode return over the final phase-blocked window
-    reached_goal       1.0 if the copy ever collected extrinsic reward, else 0.0
-    coverage_percent   distinct open maze cells entered, as a percentage of the 46 open cells
-
-    before: 9,766 windows, each holding a per-copy reward SUM over 256 episodes;
-    after:  whole_run_reward[k] = sum of copy k's window sums / (9,766 x 256) episodes.
-    """
-    windows = scored_windows(chunk)
-    if not windows:
-        return {}
-    copies = len(windows[0]["reward_ext_sum_per_copy"])
-    total_reward = [0.0] * copies
-    total_episodes = 0.0
-    for window in windows:
-        total_episodes += window["episodes_per_copy_in_window"]
-        for index, value in enumerate(window["reward_ext_sum_per_copy"]):
-            total_reward[index] += value
-    last = windows[-1]
-    return {
-        "whole_run_reward": [value / total_episodes for value in total_reward],
-        "last_window_reward": [value / last["episodes_per_copy_in_window"]
-                               for value in last["reward_ext_sum_per_copy"]],
-        "reached_goal": [1.0 if value > 0 else 0.0 for value in total_reward],
-        "coverage_percent": [100.0 * value for value in last.get("coverage_per_copy", [])],
-        "episodes_per_copy_scored": total_episodes,
-        "windows_scored": len(windows),
-        "last_window_episodes": last["episodes_per_copy_in_window"],
-    }
-
-
 def cell_table(run_dir: Path = RUN_DIR, completed_only: bool = True) -> list:
     """One row per (arm, learning rate, intrinsic weight), pooled over that arm's chunks.
 
     `completed_only` keeps the table rule: an arm any of whose chunks has not finished contributes
     to curves but never to a table number.
 
-    before: eight chunk shards of the distillation arm, each with 33 cells x 16 copies;
-    after:  33 rows, each pooling 8 x 16 = 128 copies of one configuration
+    before: thirty-two chunk summaries of the distillation arm, each holding per-copy totals over
+            33 cells x 4 copies;
+    after:  33 rows, each pooling 32 x 4 = 128 copies of one configuration
     """
     rows = []
-    for arm, group in sorted(group_by_arm(read_chunks(run_dir)).items()):
+    for arm, group in sorted(group_by_arm(chunk_summaries(run_dir)).items()):
         if completed_only:
             if any(chunk["complete"] is None for chunk in group):
                 continue
             check_partition(arm, group)
         pooled, episodes, windows_scored = {}, None, None
         for chunk in group:
-            scores = per_copy_scores(chunk)
-            if not scores:
+            if chunk["reward_sum_per_copy"] is None:
                 continue
-            for setting, positions in cell_copies(chunk).items():
-                entry = pooled.setdefault(setting, {name: [] for name in
-                                                    ("whole_run_reward", "last_window_reward",
-                                                     "reached_goal", "coverage_percent")})
-                for name in entry:
-                    entry[name] += [scores[name][position] for position in positions] \
-                        if scores[name] else []
-            episodes = scores["episodes_per_copy_scored"]
-            windows_scored = scores["windows_scored"]
+            last = chunk["last_window"]
+            # per copy of this chunk: its mean episode return over the whole run, its mean over the
+            # final scored window, whether it ever collected reward, and its maze coverage
+            whole = [value / chunk["episodes_per_copy"] for value in chunk["reward_sum_per_copy"]]
+            final = [value / last["episodes"] for value in last["reward_per_copy"]]
+            reached = [1.0 if value > 0 else 0.0 for value in chunk["reward_sum_per_copy"]]
+            coverage = [100.0 * value for value in last["coverage_per_copy"]]
+            values = {"whole_run_reward": whole, "last_window_reward": final,
+                      "reached_goal": reached, "coverage_percent": coverage}
+            for setting, positions in cell_copies(chunk["start"]).items():
+                entry = pooled.setdefault(setting, {name: [] for name in values})
+                for name, series in values.items():
+                    entry[name] += [series[position] for position in positions] if series else []
+            episodes = chunk["episodes_per_copy"]
+            windows_scored = chunk["windows_scored"]
         for (rate, weight), entry in sorted(pooled.items()):
             row = {"bonus": arm, "learning_rate": rate, "intrinsic_weight": weight,
                    "chunk_ids": [chunk["chunk_id"] for chunk in group],
@@ -231,53 +255,130 @@ def best_per_arm(rows: list, key: str = "whole_run_reward") -> dict:
     return best
 
 
-def configuration_curve(group: list, setting: tuple) -> dict:
-    """The learning curve of one configuration, pooled over its chunks window by window.
+def curve_of(bonus: str, rate: float, weight: float, run_dir: Path = RUN_DIR) -> dict:
+    """The learning curve of one configuration, pooled over its arm's chunks window by window.
 
-    Every chunk of an arm runs the same iterations with the same window size, so a window is
-    identified by the iteration it ends at and the chunks' per-copy values for that window are
-    concatenated before the mean and the standard error are taken. A window that some chunk has not
-    reached yet is dropped, so a curve drawn while the run is going stops at the slowest chunk.
+    Streams the arm's shards once and keeps three running numbers per window — how many chunks have
+    reported it, the sum of this configuration's per-copy episode returns, and the sum of their
+    squares — so the mean and the standard error over all 128 copies come out exactly without any
+    window's per-copy values ever being held.
+
+    A window that some chunk has not reached is dropped, so a curve drawn while the run is going
+    stops at the slowest chunk.
 
     before: eight chunks, each with 9,766 windows of 528 per-copy reward sums;
-    after:  9,766 points, each the mean over the 128 copies of this configuration
+    after:  9,766 points, each the mean over the 128 copies of this configuration with its standard
+            error over them
     """
+    setting = (rate, weight)
     per_window = {}
-    for chunk in group:
-        positions = cell_copies(chunk)[setting]
-        for window in chunk["windows"]:
-            episodes = window["episodes_per_copy_in_window"]
-            entry = per_window.setdefault(window["last_iteration"],
-                                          {"values": [], "chunks": 0,
-                                           "env_steps_per_copy": window["env_steps_per_copy"],
+    chunks = 0
+    for shard in sorted((run_dir / "data").glob("*.jsonl")):
+        live = live_lines(shard)
+        if live["start"] is None:
+            continue
+        _, start = next(read_selected(shard, {live["start"]}))
+        if start["bonus"] != bonus:
+            continue
+        positions = cell_copies(start).get(setting)
+        if positions is None:
+            continue
+        chunks += 1
+        for _, record in read_selected(shard, set(live["windows"].values())):
+            episodes = record["episodes_per_copy_in_window"]
+            values = [record["reward_ext_sum_per_copy"][position] / episodes
+                      for position in positions]
+            entry = per_window.setdefault(record["last_iteration"],
+                                          {"n": 0, "sum": 0.0, "square_sum": 0.0, "chunks": 0,
+                                           "env_steps_per_copy": record["env_steps_per_copy"],
                                            "phase_blocked": True})
-            entry["values"] += [window["reward_ext_sum_per_copy"][position] / episodes
-                                for position in positions]
+            entry["n"] += len(values)
+            entry["sum"] += sum(values)
+            entry["square_sum"] += sum(value * value for value in values)
             entry["chunks"] += 1
-            entry["phase_blocked"] = entry["phase_blocked"] and window["phase_blocked"]
+            entry["phase_blocked"] = entry["phase_blocked"] and record["phase_blocked"]
     steps, means, errors, blocked = [], [], [], []
     for iteration in sorted(per_window):
         entry = per_window[iteration]
-        if entry["chunks"] != len(group):
+        if entry["chunks"] != chunks:
             continue
-        mean, error = mean_and_standard_error(entry["values"])
+        n = entry["n"]
+        mean = entry["sum"] / n
+        # the variance over the copies, from the running sums: (sum of squares - n x mean^2)/(n-1),
+        # clamped at zero because rounding can make an exactly-zero variance read as -1e-18
+        variance = max(0.0, (entry["square_sum"] - n * mean * mean) / (n - 1)) if n > 1 else 0.0
         steps.append(entry["env_steps_per_copy"])
         means.append(mean)
-        errors.append(error)
+        errors.append(math.sqrt(variance / n))
         blocked.append(entry["phase_blocked"])
     return {"env_steps_per_copy": steps, "mean_episode_return": means,
             "standard_error": errors, "phase_blocked": blocked}
 
 
-def curve_of(bonus: str, rate: float, weight: float, run_dir: Path = RUN_DIR) -> dict:
-    """The pooled curve of one configuration, named by its arm and its two swept values."""
-    return configuration_curve(group_by_arm(read_chunks(run_dir))[bonus], (rate, weight))
+def write_metrics(run_dir: Path) -> int:
+    """Copy every live window record of every shard into the run-level metrics.jsonl, streaming.
+
+    The file is the same one every run of this platform writes — one line per (chunk, window), the
+    later line kept where a re-attempt wrote a window twice. It is written by copying lines rather
+    than by parsing and re-serialising them, because at this run's size that is the difference
+    between a few megabytes of memory and several gigabytes.
+    """
+    written = 0
+    with open(run_dir / "metrics.jsonl", "w") as out:
+        for shard in sorted((run_dir / "data").glob("*.jsonl")):
+            live = set(live_lines(shard)["windows"].values())
+            with open(shard) as handle:
+                for index, line in enumerate(handle):
+                    if index in live:
+                        out.write(line)
+                        written += 1
+    return written
+
+
+def run_summary(run_dir: Path, summaries: dict) -> dict:
+    """The run-level headline numbers, from the chunks' own completion records.
+
+    Throughput is reported both ways the project's rule asks for — the aggregate rate over all
+    copies and the rate one copy gets — and the per-copy rate is restated as hours per million
+    steps per copy, which is the unit a run is planned in.
+    """
+    completions = [chunk["complete"] for chunk in summaries.values()
+                   if chunk["complete"] is not None]
+    copies = sum(chunk["start"]["copies"] for chunk in summaries.values()
+                 if chunk["complete"] is not None)
+    steady = (sum(r["seconds_per_iteration_steady"] for r in completions) / len(completions)
+              if completions else None)
+    env_steps = sum(r["env_steps"] for r in completions)
+    iterations = sum(r["iterations"] for r in completions)
+    steps_per_iteration = (env_steps / iterations) if iterations else 0.0
+    total_rate = (steps_per_iteration / steady) if steady else 0.0
+    per_copy_rate = (total_rate / copies) if copies else 0.0
+    hardware = [json.loads(path.read_text())
+                for path in sorted((run_dir / "slurm" / "jobs").glob("*/hardware.json"))]
+    return {
+        "run_id": run_dir.name,
+        "units_complete": len(completions),
+        "units_seen": len(summaries),
+        "units": sorted(summaries),
+        "throughput": {
+            "copies": copies,
+            "seconds_total_wall_clock": max((r["seconds_total"] for r in completions), default=0.0),
+            "seconds_per_iteration_steady": steady,
+            "total_env_steps": env_steps,
+            "total_env_steps_per_second_steady": total_rate,
+            "env_steps_per_second_per_copy_steady": per_copy_rate,
+            "hours_per_million_steps_per_copy_steady": (
+                1e6 / (3600 * per_copy_rate) if per_copy_rate else None),
+        },
+        "hardware": hardware,
+    }
 
 
 def aggregate(run_dir: Path = RUN_DIR) -> dict:
     """Write metrics.jsonl and summary.json, the summary carrying this run's own scores."""
-    from aggregate_run import aggregate as generic_aggregate
-    summary = generic_aggregate(run_dir)
+    summaries = chunk_summaries(run_dir)
+    summary = run_summary(run_dir, summaries)
+    summary["records"] = write_metrics(run_dir)
     rows = cell_table(run_dir)
     summary["configurations_scored"] = len(rows)
     summary["cells"] = rows

@@ -20,6 +20,7 @@ Run (a couple of minutes on the processor):
   PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu \\
     /p/rlprojects/RND/.venvs/platform_jax/bin/python code/test_chunk_partition_end_to_end.py
 """
+import json
 import os
 import shutil
 import subprocess
@@ -88,7 +89,7 @@ def test_two_chunks_partition_a_multi_cell_unit_end_to_end() -> None:
             train_chunk(scratch, chunk)
 
         # 1. each shard records its own slice and holds every cell
-        chunks = aggregate.read_chunks(scratch)
+        chunks = aggregate.chunk_summaries(scratch)
         assert len(chunks) == TOY_CHUNKS, f"expected {TOY_CHUNKS} shards, found {len(chunks)}"
         slices = []
         for chunk_id, chunk in sorted(chunks.items()):
@@ -119,10 +120,11 @@ def test_two_chunks_partition_a_multi_cell_unit_end_to_end() -> None:
         # copies of each shard. The curves themselves are not compared: a 100-iteration toy run
         # never reaches the goal, so every cell's return is zero and equal values would prove
         # nothing either way.
-        curve = aggregate.configuration_curve(group, sorted(settings)[0])
+        rate, weight = sorted(settings)[0]
+        curve = aggregate.curve_of("gt_position_velocity_sqrt", rate, weight, scratch)
         assert len(curve["mean_episode_return"]) == TOY_ITERATIONS // TOY_WINDOW
         assert all(value is not None for value in curve["mean_episode_return"])
-        positions = aggregate.cell_copies(group[0])
+        positions = aggregate.cell_copies(group[0]["start"])
         every = [index for members in positions.values() for index in members]
         assert sorted(every) == list(range(TOY_CELLS * TOY_COPIES_PER_CELL // TOY_CHUNKS)), (
             "the cells of one shard do not partition its copies")
@@ -134,8 +136,43 @@ def test_two_chunks_partition_a_multi_cell_unit_end_to_end() -> None:
         shutil.rmtree(scratch, ignore_errors=True)
 
 
+def test_a_window_written_twice_keeps_the_later_line() -> None:
+    """A chunk re-run after a failure appends its windows again; the later copy is the live one.
+
+    before: a shard whose window ending at iteration 200 appears twice, the first time with a
+            reward sum of 1.0 per copy and the second with 5.0;
+    after:  the streamed summary counts that window once, with 5.0 — the re-attempt's value.
+    """
+    scratch = Path(tempfile.mkdtemp(prefix="duplicate_window_"))
+    try:
+        (scratch / "data").mkdir()
+        start = {"record": "unit_start", "unit_id": "toy", "bonus": "gt_position_velocity_sqrt",
+                 "copies": 2, "cell_settings": [[0.001, 1.0]], "copy_cell": [0, 0],
+                 "copy_seed_index_first": 0, "copy_seed_index_last": 1}
+        def window(reward):
+            """One phase-blocked window record ending at iteration 200 with the given reward."""
+            return {"record": "episode_window", "unit_id": "toy", "last_iteration": 200,
+                    "phase_blocked": True, "episodes_per_copy_in_window": 1.0,
+                    "env_steps_per_copy": 100, "reward_ext_sum_per_copy": [reward, reward],
+                    "coverage_per_copy": [0.5, 0.5]}
+        complete = {"record": "unit_complete", "unit_id": "toy", "seconds_total": 1.0,
+                    "seconds_per_iteration_steady": 0.01, "env_steps": 200, "iterations": 200}
+        lines = [start, window(1.0), window(5.0), complete]
+        (scratch / "data" / "toy.jsonl").write_text(
+            "".join(json.dumps(line) + "\n" for line in lines))
+
+        summary = aggregate.chunk_summary(scratch / "data" / "toy.jsonl")
+        assert summary["windows_scored"] == 1, summary["windows_scored"]
+        assert summary["reward_sum_per_copy"] == [5.0, 5.0], summary["reward_sum_per_copy"]
+        assert summary["episodes_per_copy"] == 1.0
+        print("ok  a window written twice is counted once, with the later line's value")
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 def main() -> None:
     """Run the end-to-end test and report."""
+    test_a_window_written_twice_keeps_the_later_line()
     test_two_chunks_partition_a_multi_cell_unit_end_to_end()
     print("chunk-partition end-to-end test passed")
 

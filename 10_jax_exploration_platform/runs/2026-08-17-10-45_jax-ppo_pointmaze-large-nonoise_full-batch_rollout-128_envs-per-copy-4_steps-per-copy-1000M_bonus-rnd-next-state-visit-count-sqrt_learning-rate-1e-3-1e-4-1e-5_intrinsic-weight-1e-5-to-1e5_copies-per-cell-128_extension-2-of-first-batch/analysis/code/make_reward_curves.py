@@ -19,15 +19,22 @@ The figure keeps the file name `pm_jax_run11_reward_curves.pdf` and the document
 the first extension's own plot survives untouched in its folder as the record of what the figure
 showed before.
 
-Every configuration is read through the run's own `code/aggregate.best_per_arm` rather than
-hardcoded, so the figure and the development document's results table cannot name different
-configurations, and `aggregate.curve_of` pools a configuration's chunks per copy per window, so a
-curve is the mean over all of its copies with the band plus or minus one standard error over them.
+Every configuration is read through `code/aggregate.best_per_arm` rather than hardcoded, so the
+figure and the development document's results table cannot name different configurations, and
+`aggregate.curve_of` pools a configuration's chunks per copy per window, so a curve is the mean over
+all of its copies with the band plus or minus one standard error over them.
+
+**One module reads both runs.** This run's `code/aggregate.py` streams its shards line by line
+because they come to about 4 GB; the first extension's own module reads its shards into memory,
+which costs about 1.3 GB per call and this figure would make five of them. The streaming module was
+checked against the first extension's on that run's own data and reproduces every scored number
+exactly (largest relative difference 0), at 15 MB of memory instead of 5 GB, so it is used for both
+sets of curves here. The development document's results table still reads each block through the
+module of the run that produced it, because that is where the numbers are cited.
 
 Run:
   PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python analysis/code/make_reward_curves.py
 """
-import importlib.util
 import sys
 from pathlib import Path
 
@@ -56,25 +63,6 @@ ARM_STYLE = {
     "none": ("#009E73", "no bonus"),
 }
 ARM_ORDER = ["rnd_next_state", "gt_position_velocity_sqrt", "gt_position_velocity_linear", "none"]
-
-
-def load_run_module(run_dir: Path, module_name: str):
-    """Import one run's own `code/aggregate.py` under a name of our choosing.
-
-    Two runs' modules are both called `aggregate`, so a plain import would return whichever was
-    loaded first and silently score one run with the other's module.
-
-    before: run_dir = <the first extension>, module_name = "aggregate_first_extension"
-    after:  sys.modules["aggregate_first_extension"] is that run's module, with its own RUN_DIR
-    """
-    path = run_dir / "code" / "aggregate.py"
-    if not path.exists():
-        raise SystemExit(f"no aggregation module at {path}")
-    spec = importlib.util.spec_from_file_location(module_name, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-    return module
 
 
 def configuration_note(row: dict) -> str:
@@ -121,16 +109,15 @@ def draw_set(axes, best: dict, curve_source, style: str, chosen_at: str, alpha: 
 
 def main() -> None:
     """Draw one panel: the 10M-chosen configurations dashed, this run's own choices solid."""
-    best_here = best_per_arm(cell_table(completed_only=False))
+    best_here = best_per_arm(cell_table(RUN_DIR, completed_only=False))
     if not best_here:
         raise SystemExit("no scored configuration yet: the run has written no phase-blocked window")
-    first = load_run_module(FIRST_EXTENSION, "aggregate_first_extension")
-    best_first = first.best_per_arm(first.cell_table(FIRST_EXTENSION, completed_only=False))
+    best_first = best_per_arm(cell_table(FIRST_EXTENSION, completed_only=False))
 
     PLOTS.mkdir(parents=True, exist_ok=True)
     figure, axes = plt.subplots(1, 1, figsize=(7.6, 4.8))
     draw_set(axes, best_first,
-             lambda bonus, rate, weight: first.curve_of(bonus, rate, weight, FIRST_EXTENSION),
+             lambda bonus, rate, weight: curve_of(bonus, rate, weight, FIRST_EXTENSION),
              (0, (6, 3)), "chosen at 10M", 0.10, line_alpha=0.55)
     draw_set(axes, best_here,
              lambda bonus, rate, weight: curve_of(bonus, rate, weight, RUN_DIR),
