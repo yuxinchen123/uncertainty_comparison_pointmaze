@@ -90,7 +90,19 @@ One experiment runs in ~22 s on jaguar03 (job ids in the folder's `slurm/submitt
      "initial bonus inconsistency"; PINN line (Chen/Howard/Stinis) is the only prior work
      targeting per-point rate equalization; Li et al. landscape/ResNet story does NOT apply
      at this width/depth (answer to the user's pointer).
-- Remaining plan: exps 032-033 (tighter elliptical bandwidth); 30-seed validation runs of the
-  champions (shrink, coinflip-adaptive, elliptical, AdaGrad baseline) on all three fixed point
-  sets + nonuniform; NTK-diagnostic figure (predicted vs measured per-position slope);
-  development document (in progress); bibliography workflow; final report.
+- 2026-08-18 04:00 PT — validations, ablations, horizon stress done (ledger rows through the
+  abl/hor block). Highlights: collision-free Hadamard coins (val_117) are the new uniform
+  champion (dev_worst 0.0335, dev_mean 0.0031 — below the shrink's off-by-one floor); the
+  Hadamard family needed two bug fixes (block-sum collapse, spike collisions), both diagnosed
+  from theory and verified; ablations confirm the chi-floor scaling, the insertion-radius
+  requirement, and the bandwidth-overlap trade; the shrink holds -0.500000 over 4.5 decades
+  while AdaGrad drifts. Development document: 16 pages, compiled, bibliography verified (18
+  new entries via the collector+2-verifier workflow), literature section written.
+- RL PILOT (in flight): new `coinflip_count` intrinsic model added to the parent package
+  (additive registry row + unit tests, committed); pilot run folder
+  `train_runs/2026-08-18-03-30_rl-pilot_...` with queue builder (4 configs x 15 seeds, 1M
+  steps, PointMaze_Large bottom-left = run-8.1's setting so its winner table is the
+  reference). Smoke job running; fleet = 32x1 + 30x1 on open cpu partition after smoke
+  passes. Monitoring cron c7cdaf7e covers campaign + pilot.
+- Remaining: pilot smoke -> fleet launch -> monitor to completion -> pilot analysis + doc
+  section; final document regeneration (val_117/118 + hor_302 rows), page QA, final report.

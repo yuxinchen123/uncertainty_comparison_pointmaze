@@ -31,6 +31,7 @@ EXPECTED_NAMES = [
     "rnd_state_action",
     "rnd_state_action_next_state",
     "rnd_linear_next_state",
+    "coinflip_count",
     "rnd_elliptical",
     "rnd_elliptical_global",
 ]
@@ -50,16 +51,17 @@ EXPECTED_SPECS = {
     "rnd_state_action":             ("rnd",         "rnd_state_action",             False, True,  None,                True,  None),
     "rnd_state_action_next_state":  ("rnd",         "rnd_state_action_next_state",  False, True,  None,                True,  None),
     "rnd_linear_next_state":        ("rnd",         "rnd_next_state",               True,  False, None,                True,  None),
+    "coinflip_count":               ("coinflip",    None,                           False, False, None,                True,  None),
     "rnd_elliptical":               ("elliptical",  None,                           False, True,  None,                True,  "batch"),
     "rnd_elliptical_global":        ("elliptical",  None,                           False, True,  None,                True,  "global"),
 }
 
 
 def test_registry_has_expected_names_in_order():
-    # Golden path: REGISTRY holds exactly the thirteen documented names in their documented order.
+    # Golden path: REGISTRY holds exactly the fourteen documented names in their documented order.
     assert list(REGISTRY) == EXPECTED_NAMES
-    # Edge case: exactly thirteen entries (no extras / duplicates) and each key equals its spec.name.
-    assert len(REGISTRY) == 13
+    # Edge case: exactly fourteen entries (no extras / duplicates) and each key equals its spec.name.
+    assert len(REGISTRY) == 14
     assert all(name == spec.name for name, spec in REGISTRY.items())
 
 
@@ -72,7 +74,7 @@ def test_algorithm_names_mirrors_registry():
 
 
 def test_algorithms_no_action_exact_list():
-    # Golden path: ALGORITHMS_NO_ACTION is exactly the nine action-free algorithms, in order.
+    # Golden path: ALGORITHMS_NO_ACTION is exactly the ten action-free algorithms, in order.
     assert ALGORITHMS_NO_ACTION == [
         "no_exploration",
         "gt_position",
@@ -83,6 +85,7 @@ def test_algorithms_no_action_exact_list():
         "rnd_next_state_position_only",
         "rnd_state",
         "rnd_linear_next_state",
+        "coinflip_count",
     ]
     # Edge case: it is the complement of uses_action -> the four action-using names are absent.
     action_names = {name for name, spec in REGISTRY.items() if spec.uses_action}
