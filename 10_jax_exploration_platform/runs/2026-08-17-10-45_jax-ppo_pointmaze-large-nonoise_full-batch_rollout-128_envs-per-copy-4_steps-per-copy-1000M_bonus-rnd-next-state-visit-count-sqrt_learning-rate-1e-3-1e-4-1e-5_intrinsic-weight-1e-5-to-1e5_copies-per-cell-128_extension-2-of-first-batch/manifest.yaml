@@ -55,7 +55,7 @@ extends:
       extension_env_steps_per_copy: 1000038400
 description: The second extension of train run 1.1, at a thousand million environment steps per copy. Two algorithm arms — random network distillation on the next state, and the square root of the oracle position-and-velocity visit count — each swept over its whole grid of 3 learning rates x 11 intrinsic weights, 128 copies per configuration, 1,000,038,400 environment steps per copy. A unit is one arm's 33 configurations fused into one compiled program, cut into chunks by copy index where the submission plan's arithmetic says that finishes the whole set sooner.
 git:
-  commit: 74c6b9f269973263d5707823ccf5ddd8c51dce38
+  commit: 12fa47cb9829c856e3b63c2a5177c5c0f9fca936
 specs:
   env: pointmaze_large_cont400_nonoise@1
   agent: ppo_full_batch@1
