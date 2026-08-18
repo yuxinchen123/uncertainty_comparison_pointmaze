@@ -656,11 +656,17 @@ Three validation-only observations:
   already the heterogeneity flag of the parent project's convergence runs --- decays very
   differently under parameter-space optimizers. The exact constructions do not move
   ($0.0381$; $0.054$).
-\item \textbf{The Hadamard refinement needed its own bug found.} Orthogonal coin blocks
-  scrambled by signs alone send every full block's sum onto one coordinate, and consecutive
-  blocks cancel: past $512$ visits the running-mean norm collapses (val 109--111, kept as the
-  record of the broken variant). A per-block column permutation restores exactness at every
-  horizon (val 114--116).
+\item \textbf{The Hadamard refinement needed two bugs found, then set the uniform record.}
+  Orthogonal coin blocks scrambled by signs alone send every full block's sum onto one
+  coordinate, and consecutive blocks cancel: past $512$ visits the running-mean norm
+  collapses (val 109--111, kept as the record of the broken variant). A per-block column
+  permutation restores exactness per block, but two blocks of one position can still land
+  their sums on the same coordinate ($\approx 5\%$ of positions over eight blocks), shifting
+  that position's level (val 114--116). Drawing each position's block permutations with
+  distinct spike coordinates removes that too, and the result is the uniform-regime record:
+  dev\_worst $0.0335$, dev\_mean $0.0031$ --- below the shrink construction's off-by-one
+  floor, because a Rademacher first draw has norm $\sqrt{d}$ exactly and orthogonal blocks
+  make every later checkpoint exact as well (val 117--118).
 \item \textbf{The nonuniform champion is statistical.} Coin-flip counting on the adaptive
   dictionary holds its iteration-phase score at $30$ seeds; the closed-form elliptical
   readout with the tighter bandwidth is second, and carries zero estimator noise in exchange
