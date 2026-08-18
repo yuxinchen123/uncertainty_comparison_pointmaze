@@ -9153,15 +9153,12 @@ campaign stopped early still holds every arm at the same seed count.}
 \label{tab:cleanrl-arms}
 \end{table}
 
-\paragraph{Where the arms stand at the halfway point.}
-The campaign is unfinished, so no run has a final score and neither artifact below can use a run's
-last logged row: a run's last step reflects the speed of the node it landed on as much as its arm, and
-reading arms at different depths would rank node allocations rather than algorithms. Both therefore
-fix the step first and read every arm at that same step. \Cref{tab:cleanrl-interim} reports one number
-per arm --- the extrinsic reward at $10^{9}$ steps, half of the $2\times10^{9}$ planned --- and
-\Cref{fig:cleanrl-interim-curves} plots the whole trajectory up to that point and a little beyond.
-When the campaign finishes, the table's step becomes the full $2\times10^{9}$ and nothing else about
-it changes.
+\paragraph{Where the arms stand.}
+One hundred of the $150$ runs have finished their $2\times10^{9}$ steps, between $18$ and $22$ seeds
+per arm, so \Cref{tab:cleanrl-interim} reports final scores rather than a reading taken mid-run and
+\Cref{fig:cleanrl-interim-curves} plots every arm across its whole budget. The $50$ runs still
+training are excluded from both. Which runs have finished is set by the speed of the node each one
+landed on rather than by its arm, so the exclusion favours no arm in particular.
 
 \begin{table}[H]
 \centering
@@ -9170,27 +9167,26 @@ it changes.
 \toprule
 \textbf{Arm} & \textbf{Seeds} & \textbf{Mean $\pm$ s.e.} $\uparrow$ & \textbf{Median} & \textbf{Best seed} \\
 \midrule
-Arm 1 original & 19 & 6682.7 $\pm$ 758.9 & 6852.5 & 13494.0 \\
-Arm 2 no RND clip & 17 & 6799.0 $\pm$ 618.8 & 6852.0 & 10951.5 \\
-Arm 3 full batch & 18 & \textbf{7419.9 $\pm$ 725.3} & 7080.0 & 14491.0 \\
-Arm 4 shallower & 22 & 5886.4 $\pm$ 581.6 & 6385.5 & 11230.5 \\
-Arm 5 all three & 19 & \underline{7210.6 $\pm$ 533.4} & 7053.0 & 12350.0 \\
+Arm 1 original & 22 & \underline{7424.7 $\pm$ 676.2} & 7053.0 & 13296.5 \\
+Arm 2 no RND clip & 20 & 7161.5 $\pm$ 440.4 & 7094.8 & 10285.0 \\
+Arm 3 full batch & 18 & \textbf{8238.2 $\pm$ 610.3} & 7094.2 & 14409.5 \\
+Arm 4 shallower & 21 & 5834.2 $\pm$ 607.8 & 6205.0 & 12235.0 \\
+Arm 5 all three & 19 & 7331.5 $\pm$ 541.5 & 6975.0 & 12165.0 \\
 \midrule
-CleanRL published & 1 & 4759.0 & --- & --- \\
+CleanRL published & 1 & 7050.0 & --- & --- \\
 \bottomrule
 \end{tabular}
-\caption{Extrinsic reward at $10^{9}$ environment steps, half of each run's $2\times10^{9}$ target,
-for the five arms of train run~1. The quantity is the trailing mean over each run's last $200$
-finished episodes; the seeds column counts the runs that had reached $10^{9}$ steps at the time of
-reading, and the mean, its standard error, the median and the best seed are taken across those runs.
-Logging is every $200$ policy updates, or $3{,}276{,}800$ steps, so no row falls exactly on $10^{9}$
-and the row used is the last at or before it. Bold marks the highest mean and underline the second
-highest among the arms. The five arms lie within about two standard errors of one another and the
-ordering should not be read as a result --- see the discussion below. The final row is CleanRL's own
-published run of this file (their benchmark run \texttt{openrlbenchmark/cleanrl/1wm98fjm}, one seed,
-the same $2\times10^{9}$-step configuration), read at the same step and re-averaged over the same
-trailing $200$ episodes, so it is the same quantity rather than a differently smoothed one. It is a
-reference rather than an arm, hence the separate block and the single seed with no spread.}
+\caption{Final extrinsic reward for the five arms of train run~1, at the end of each run's
+$2\times10^{9}$-step budget. The quantity is the trailing mean over a run's last $200$ finished
+episodes. The seeds column counts the runs that have finished; the mean, its standard error, the
+median and the best seed are taken across those, and the $50$ runs still training are excluded. The
+step read is $1{,}999{,}994{,}880$ rather than the round $2\times10^{9}$ because a batch of
+$16{,}384$ does not divide the target evenly and the trainer stops on an update boundary, $5{,}120$
+steps short. Bold marks the highest mean among the arms and underline the second highest. The final
+row is CleanRL's own published run of this file (their benchmark run
+\texttt{openrlbenchmark/cleanrl/1wm98fjm}, one seed, the same configuration), re-averaged over the
+same trailing $200$ episodes so that it is the same quantity rather than a differently smoothed one;
+it is a reference rather than an arm, hence the separate block and the single seed with no spread.}
 \label{tab:cleanrl-interim}
 \end{table}
 
@@ -9198,17 +9194,16 @@ reference rather than an arm, hence the separate block and the single seed with 
 \centering
 \includegraphics[width=0.92\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/interim_arm_curves.pdf}
 \caption{Extrinsic reward against environment steps for the five arms, each curve the mean across
-that arm's seeds with a shaded standard error. \textbf{A curve is drawn only while at least five of
-its seeds have reached that step}, and the lower panel gives the seed count behind every point, so the
-truncation is visible rather than implied: past roughly $1.0\times10^{9}$ steps the count falls from
-about twenty to five and the curves become correspondingly noisy. The dashed vertical line marks the
-step \Cref{tab:cleanrl-interim} reads, so the table and the figure are the same measurement.
-\textbf{The black dashed curve is CleanRL's own published run} of this file --- their benchmark run
-\texttt{openrlbenchmark/cleanrl/1wm98fjm}, a single seed, the same configuration this campaign
-reproduces. Their per-episode returns are re-averaged here over a trailing $200$ episodes, the window
-this project's trainer uses, rather than the $20$ they log, so the reference and the arms are the same
-quantity and any gap between them is performance and not smoothing. Their run continues past the
-right edge of this axis to $2\times10^{9}$ steps, ending at $7{,}050$.}
+that arm's finished seeds with a shaded standard error. A curve is drawn only while at least five
+seeds have reached the step, and the lower panel gives the seed count behind every point; every arm
+now carries $18$ to $22$ seeds all the way to the target, so that rule no longer cuts any curve
+short. The dashed vertical line marks the step \Cref{tab:cleanrl-interim} reads, so the table and
+the figure are the same measurement. \textbf{The black dashed curve is CleanRL's own published run}
+of this file --- their benchmark run \texttt{openrlbenchmark/cleanrl/1wm98fjm}, a single seed, the
+same configuration this campaign reproduces. Their per-episode returns are re-averaged here over a
+trailing $200$ episodes, the window this project's trainer uses, rather than the $20$ they log, so
+the reference and the arms are the same quantity and any gap between them is performance and not
+smoothing.}
 \label{fig:cleanrl-interim-curves}
 \end{figure}
 
@@ -9216,18 +9211,17 @@ right edge of this axis to $2\times10^{9}$ steps, ending at $7{,}050$.}
 \centering
 \includegraphics[width=0.92\linewidth]{../../08_cleanrl_ppo_rnd/train_runs/2026-08-05-22-30_cleanrl_run_2_ablation_ppo-rnd_montezuma-v5__arm1-orig_arm2-noclip_arm3-prop1_arm4-shallow_arm5-all__2e9step_seed1-30__log200_gradstats_ckpt1h__gpu-gnolim-resv/analysis/plots/arm1_individual_seeds.pdf}
 \caption{Three individual seeds of arm~1, against arm~1's mean over all of its seeds. The three are
-the \emph{first} by seed number rather than the best three, so the choice cannot flatter the arm;
-seed~1 is absent because its run has not yet been claimed from the queue, so the first three with data
-are seeds~2, 3 and~4. Every curve is the same quantity as in \Cref{fig:cleanrl-interim-curves}, the
-trailing mean over the last $200$ finished episodes. The point of the figure is that \textbf{the mean
-resembles none of the three runs it averages}. Seed~3
-reaches $6{,}700$ by $0.32\times10^{9}$ steps and then sits there for two thirds of the run; seed~2 is
-still under $1{,}200$ at $0.7\times10^{9}$ and climbs to $5{,}900$ only afterwards; seed~4 stays at
-about $400$ --- one room's key and door --- for essentially the whole run so far. The smooth grey
-average passes through the middle of all this and describes no single run. Each curve is also a
-staircase rather than a slope: an agent holds a plateau while it exploits the rooms it knows, then
-steps up when exploration opens a new one. Averaging across seeds turns a set of staircases with
-different step times into a smooth ramp, which is a property of the averaging and not of any agent.}
+the \emph{first} by seed number among those that have finished, rather than the best three, so the
+choice cannot flatter the arm; seed~1 is still training, so the first three finished are seeds~2,
+3 and~4. Every curve is the same quantity as in \Cref{fig:cleanrl-interim-curves}, the trailing mean
+over the last $200$ finished episodes. The point of the figure is that \textbf{the mean resembles
+none of the three runs it averages}: seed~3 ends at $9{,}170$, seed~2 at $8{,}129$, and seed~4 at
+$1{,}799$ after peaking at $3{,}907$ --- a fivefold spread within one arm, against an arm mean of
+$7{,}425$. The smooth grey average passes through the middle of all this and describes no single run.
+Each curve is also a staircase rather than a slope: an agent holds a plateau while it exploits the
+rooms it knows, then steps up when exploration opens a new one. Averaging across seeds turns a set of
+staircases with different step times into a smooth ramp, which is a property of the averaging and not
+of any agent.}
 \label{fig:cleanrl-arm1-seeds}
 \end{figure}
 
@@ -9280,19 +9274,22 @@ averaging upward. The $100$ and $400$ readings come from the on-screen scores in
 \end{table}
 
 
-With per-seed outcomes spanning $400$ to $8{,}400$ inside one arm, a mean over eighteen seeds carries
-a standard error of several hundred --- hence $30$ seeds per arm.
+With per-seed outcomes spanning $400$ to $14{,}410$ inside one arm, a mean over twenty seeds still
+carries a standard error of several hundred --- hence $30$ seeds per arm.
 
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \textbf{All five arms learn the task}, reaching $5{,}900$ to $7{,}400$ by $10^{9}$ steps against
-  the $400$ that one room pays.
-\item \textbf{No arm is separated}: highest minus lowest mean is $1{,}533$ against standard errors of
-  $533$ to $759$. The unclipped arms' early lead measured only how fast a seed found its first reward.
-\item \textbf{Arm~5 alone has no failed seed} --- its worst scores $4{,}584$; arms~1 and~4 each have
-  one at $400$. Reliability or luck is what the second half decides.
-\item \textbf{CleanRL's single seed reads $4{,}759$ here}, just before its own jump
-  (\Cref{fig:cleanrl-interim-curves}), and ends at $7{,}050$ --- inside the arms' range. This
-  reproduction tracks it, it does not beat it.
+\item \textbf{All five arms learn the task.} Four finish between $7{,}160$ and $8{,}240$, against the
+  $400$ that the first room's key and door pay; the fifth finishes at $5{,}834$.
+\item \textbf{Only arm~4 separates.} The shallower predictor finishes $2{,}404$ below arm~3, about
+  $2.8$ combined standard errors. The other four sit within one and a half of one another, so their
+  ordering is not a result.
+\item \textbf{Arms~2, 3 and~5 have no failed seed} --- their weakest finish at $4{,}209$, $4{,}600$
+  and $4{,}578$ --- while arms~1 and~4 each have a seed still at $400$, one room's worth. Two such
+  seeds out of a hundred settle nothing on their own, and the pattern is worth only a second look
+  once the remaining fifty runs land.
+\item \textbf{Four arms finish above CleanRL's published $7{,}050$ and arm~4 below it.} With $18$ to
+  $22$ seeds against their one, and a spread inside each arm far wider than any gap between arms,
+  this reproduces their result rather than improving on it.
 \end{enumerate}
 
 \clearpage

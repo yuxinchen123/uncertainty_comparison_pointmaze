@@ -5963,3 +5963,68 @@ free capacity in bulk.
 | <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**41/41**</span> | <span style="color:gray">**135.0/453.0 GB**</span> | <span style="color:gray">**mean 35% (all listed GPUs)**</span> | <span style="color:gray">**174.4/354**</span> | <span style="color:gray">**59.6/240.2/5484.4**</span> | <span style="color:gray">**41**</span> |
 | **TOTAL** | — | **93/93** | **364.4/1441.0 GB** | **mean 40% (all listed GPUs)** | **446.4~/938** | **160.1/704.6/17216.8** | **109** |
 
+## 2026-08-18 13:42  (jobs: 1 running (yuxinchen 1), 0 pending | runs: 20 running, 0 pending, 100 done, 2 failed)
+
+| node | gpu type | gpus ours/node | gpu memory used/total (every gpu) | gpu usage (every gpu) | cpu busy/asked (threads) | sys memory used/asked/node (GB) | running runs |
+|---|---|---|---|---|---|---|---|
+| <span style="color:gray">ai05 (yuxinchen)</span> | <span style="color:gray">gtx_1080</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded/2</span> | <span style="color:gray">not recorded/17.6/125.0</span> | <span style="color:gray">not recorded</span> |
+| **TOTAL (owner)** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/not recorded** | **not recorded/not recorded/not recorded** | **not recorded** |
+| <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded/2**</span> | <span style="color:gray">**not recorded/17.6/125.0**</span> | <span style="color:gray">**not recorded**</span> |
+| **TOTAL** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/2** | **not recorded/17.6/125.0** | **not recorded** |
+
+## 2026-08-18 13:42  (jobs: 1 running (yuxinchen 1), 0 pending | runs: 20 running, 2 pending, 100 done, 0 failed)
+
+| node | gpu type | gpus ours/node | gpu memory used/total (every gpu) | gpu usage (every gpu) | cpu busy/asked (threads) | sys memory used/asked/node (GB) | running runs |
+|---|---|---|---|---|---|---|---|
+| <span style="color:gray">ai05 (yuxinchen)</span> | <span style="color:gray">gtx_1080</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded/2</span> | <span style="color:gray">not recorded/17.6/125.0</span> | <span style="color:gray">not recorded</span> |
+| **TOTAL (owner)** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/not recorded** | **not recorded/not recorded/not recorded** | **not recorded** |
+| <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded/2**</span> | <span style="color:gray">**not recorded/17.6/125.0**</span> | <span style="color:gray">**not recorded**</span> |
+| **TOTAL** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/2** | **not recorded/17.6/125.0** | **not recorded** |
+
+## 2026-08-18 13:47  (jobs: 1 running (yuxinchen 1), 0 pending | runs: 0 running, 50 pending, 100 done, 0 failed)
+
+| node | gpu type | gpus ours/node | gpu memory used/total (every gpu) | gpu usage (every gpu) | cpu busy/asked (threads) | sys memory used/asked/node (GB) | running runs |
+|---|---|---|---|---|---|---|---|
+| <span style="color:gray">ai05 (yuxinchen)</span> | <span style="color:gray">gtx_1080</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded</span> | <span style="color:gray">not recorded/2</span> | <span style="color:gray">not recorded/17.6/125.0</span> | <span style="color:gray">not recorded</span> |
+| **TOTAL (owner)** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/not recorded** | **not recorded/not recorded/not recorded** | **not recorded** |
+| <span style="color:gray">**TOTAL (collaborators)**</span> | <span style="color:gray">—</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded**</span> | <span style="color:gray">**not recorded/2**</span> | <span style="color:gray">**not recorded/17.6/125.0**</span> | <span style="color:gray">**not recorded**</span> |
+| **TOTAL** | — | **not recorded** | **not recorded** | **not recorded** | **not recorded/2** | **not recorded/17.6/125.0** | **not recorded** |
+
+
+## 2026-08-18 13:41 — eight days unattended: 100 runs finished, then everything stopped
+
+The monitoring cron expired on its seven-day limit and the session was idle, so no tick ran between
+2026-08-10 14:22 and now. The campaign ran on without supervision and did most of its work: **100 of
+the 150 runs reached $2\times10^{9}$ steps**, and the sweep stood at 77.0% of its step budget.
+
+But by the time it was looked at, **nothing was running**. Every one of my jobs had ended, 20 markers
+were orphaned by dead jobs, 2 had failed, and 28 had never started.
+
+**The two failures were segmentation faults** (rc $-11$), on 2026-08-12: run 6 on cheetah03 at 978M
+steps and run 17 on affogato11 at 1,750M. Both died immediately after a clean checkpoint with no
+error text, on different nodes and different arms. Two in twelve days across 150 runs, both fully
+recoverable from their checkpoints, so they were returned to `pending` by hand — `monitor.py` never
+auto-requeues a failure, which is the right default.
+
+**Restarting exposed a broken path in every submission script.** The shared skill folder was renamed
+`submit-gpu-sweep` to `uva-submit-gpu-sweep` on 2026-08-11, and all 41 files here still pointed at the
+old location, so the first ten jobs resubmitted today died within seconds:
+
+```
+python3: can't open file '/p/rlprojects/.claude/skills/submit-gpu-sweep/scripts/worker_manager.py'
+```
+
+Those ten were cancelled from my own id file, every reference was repointed, and one job was then
+submitted alone to prove the fix before the rest followed — it claimed 7 runs and began training.
+The campaign is back to **50 running across 13 jobs**, on the fastest hardware available (lotus,
+cheetah08/09, serval06, cheetah02/03, adriatic01--06, jaguar03), submitted open partitions first and
+the reserved node last.
+
+Worth keeping: a renamed shared skill silently breaks every run folder that hardcodes its path, and
+the failure is invisible until a job is submitted. The run's own `slurm/` folder is gitignored, so
+the repair exists only on disk.
+
+**The document now reports finished runs rather than the halfway reading.** `TABLE_STEP` moved from
+$10^{9}$ to $1{,}999{,}994{,}880$ --- not the round $2\times10^{9}$, because 122,070 updates of
+16,384 steps fall 5,120 short and a run stops on an update boundary; asking for the round number
+would have required a step no run ever reaches and emptied the table.
