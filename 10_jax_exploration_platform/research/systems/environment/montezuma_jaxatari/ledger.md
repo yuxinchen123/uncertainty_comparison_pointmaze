@@ -56,7 +56,25 @@ card far earlier. Compile time is 9–10 s per shape.
 
 ## Where this family stands — whole training iteration (H100 NVL, serval05)
 
-(to be filled by `benchmarks/end_to_end/bench_montezuma_train.py` in round 1)
+Measured 2026-08-18 04:50–05:15 PT by `benchmarks/end_to_end/bench_montezuma_train.py`
+(medians over 11 rounds of 10 iterations, two-call warm-up; one iteration = a 128-env-step
+rollout at `n_envs` 1 plus statistics, advantages and the `full_batch` update; result JSON
+`benchmarks/end_to_end/results/2026-08-18_montezuma_train_h100nvl_serval05.json`):
+
+| bonus | copies | seconds per iteration | total env steps per second | env steps per second per copy | hours per million steps per copy | peak device memory |
+|---|---|---|---|---|---|---|
+| `rnd_next_state` | 512 | 0.0958 | 0.68 M | 1,336.0 | 0.21 | 5.41 GiB |
+| `rnd_next_state` | 1,024 | 0.1092 | 1.20 M | 1,172.6 | 0.24 | 10.67 GiB |
+| `none` | 512 | 0.0915 | 0.72 M | 1,399.1 | 0.20 | (grid peak) |
+| `none` | 1,024 | 0.1008 | 1.30 M | 1,269.4 | 0.22 | (grid peak) |
+
+Unlike the ant, where the physics is the whole bill, here the game step and the networks are
+comparable: the whole training iteration keeps about 90 percent of the bare environment rate,
+and the distillation arm costs about 8 percent over the no-bonus arm at 1,024 copies. The
+peak-memory column is meaningful only where a row raised the process high-water mark (the
+`none` rows ran after the 1,024-copy distillation row). At the training run's shape — 1,024
+copies, `rnd_next_state` — 16,000 iterations of 128 steps (2.05 M env steps per copy) take
+about 29 minutes.
 
 ## Correctness, after round 1
 

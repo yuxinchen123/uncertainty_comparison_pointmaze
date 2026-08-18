@@ -1048,7 +1048,7 @@ rollout length $T$ & $128$ steps & same \\
 \greyrule
 environments per copy $N$ & $1$ & same \\
 \greyrule
-environment steps per copy & $256$k: $2{,}000$ iterations of $128$ steps & same \\
+environment steps per copy & $2$M: $16{,}000$ iterations of $128$ steps & same \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
 \greyrule
@@ -1067,10 +1067,10 @@ intrinsic weight $\beta$ & $1$ & N/A \\
 \greyrule
 configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
 \greyrule
-copies per arm & \multicolumn{2}{c}{$512$, each its own seed stream} \\
+copies per arm & \multicolumn{2}{c}{$1{,}024$, each its own seed stream} \\
 \greyrule
 recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
-  $200$ iterations, $10$ windows over the run. Episodes end on the game's own terms (lives
+  $400$ iterations, $40$ windows over the run. Episodes end on the game's own terms (lives
   exhausted) at variable lengths, so no fixed episode clock exists and no window is
   phase-blocked --- window sums are compared between the arms at equal step budgets, which is
   the comparison this run makes} \\
