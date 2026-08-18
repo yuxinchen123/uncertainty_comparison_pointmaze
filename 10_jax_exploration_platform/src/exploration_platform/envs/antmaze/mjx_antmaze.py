@@ -81,9 +81,13 @@ class JaxAntMaze:
                                 qvel=jnp.tile(self.init_qvel[None], (self.B, 1)))
 
     def reset(self) -> EnvState:
-        """Initial state: every environment at the spawn, step and episode counters at zero."""
-        zeros = jnp.zeros((self.C, self.N), jnp.int32)
-        return EnvState(self._spawned_data(), zeros, zeros)
+        """Initial state: every environment at the spawn, step and episode counters at zero.
+
+        The two counters are separate arrays on purpose: the training state is donated to the
+        compiled iteration, and donation refuses a buffer that appears twice in the tree.
+        """
+        return EnvState(self._spawned_data(), jnp.zeros((self.C, self.N), jnp.int32),
+                        jnp.zeros((self.C, self.N), jnp.int32))
 
     def _obs(self, data):
         """Observation [C, N, 29]: the full qpos (15, torso xy included) then qvel (14).
