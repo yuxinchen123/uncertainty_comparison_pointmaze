@@ -51,46 +51,56 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """SGD-1/t + initial-copy normalization: the prior work's best decay configuration
-    (zero-bias init, SGD with eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2) with the readout
-    normalized per position by a FROZEN copy of the predictor taken at initialization:
-    bonus(x) = ||g_t(x) - f(x)|| / ||g_0(x) - f(x)||. Starts at exactly 1 at every input, and
-    the denominator is available online (one extra frozen network, no oracle knowledge)."""
+    """Constant-step SGD + Polyak-averaged readout + initial-copy normalization + square root.
 
-    name = "sgd1t_initcopy_norm"
+    Training: plain SGD at a constant rate (1e-2) on the MSE distillation loss — the LAST
+    iterate keeps training normally. Readout: a uniformly-averaged copy of the predictor
+    parameters (theta_bar_n = mean of theta_0..theta_n). On a quadratic, EVERY eigenmode of the
+    averaged iterate's residual decays as 1/n once past its own transient, so the averaged
+    residual norm decays as 1/n at every position with the same exponent; the readout takes
+    ||g_avg(x) - f(x)|| / ||g_0(x) - f(x)|| (starts at exactly 1) and then a square root to
+    move the uniform 1/n onto the count oracle's n^(-1/2) scale."""
+
+    name = "sgdconst_polyakavg_sqrt"
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build target + predictor (4 -> 256 -> ReLU -> 128), freeze an init-time predictor
-        copy for the readout denominator, and set up plain SGD (schedule in update)."""
+        """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
+        denominator), the running parameter average, and constant-rate SGD."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
         for p in self.target.parameters():
             p.requires_grad_(False)
-        # the frozen initial predictor: the readout's per-position denominator
+        # frozen initial predictor: the per-position readout denominator (starts the bonus at 1)
         self.predictor0 = copy.deepcopy(self.predictor)
         for p in self.predictor0.parameters():
             p.requires_grad_(False)
-        self.eta0, self.t0 = 1e-2, 1e2
-        self.t = 0  # 0-based optimizer-step counter for the schedule
-        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.eta0)
+        # running Polyak average of the predictor parameters, served as its own network
+        self.avg = copy.deepcopy(self.predictor)
+        for p in self.avg.parameters():
+            p.requires_grad_(False)
+        self.n_avg = 1  # iterates averaged so far (theta_0 is in)
+        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=1e-2)
 
     def update(self, x: torch.Tensor) -> None:
-        """One SGD step at the scheduled rate: MSE distillation loss (the prior work's L^mse)."""
-        # shifted 1/t schedule: nearly constant before t0, then an eta0*t0/t tail
-        for group in self.opt.param_groups:
-            group["lr"] = self.eta0 / (1.0 + self.t / self.t0)
+        """One constant-rate SGD step on the MSE loss, then fold the new iterate into the
+        running average: theta_bar += (theta - theta_bar) / (n + 1)."""
         e = self.predictor(x) - self.target(x)
         loss = 0.5 * e.pow(2).sum(dim=1).mean()
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
-        self.t += 1
+        # incremental uniform average over iterates 0..t
+        self.n_avg += 1
+        with torch.no_grad():
+            for pa, p in zip(self.avg.parameters(), self.predictor.parameters()):
+                pa.add_(p - pa, alpha=1.0 / self.n_avg)
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """Per-point normalized residual ||g_t(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
+        """sqrt( ||g_avg(x)-f(x)|| / ||g_0(x)-f(x)|| ): starts at exactly 1; a uniform 1/n
+        decay of the averaged residual reads out as n^(-1/2)."""
         with torch.no_grad():
             f = self.target(x)
-            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
+            e = (self.avg(x) - f).pow(2).sum(dim=1).sqrt()
             e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
-            return (e / e0).cpu().numpy().astype(np.float64)
+            return (e / e0).sqrt().cpu().numpy().astype(np.float64)

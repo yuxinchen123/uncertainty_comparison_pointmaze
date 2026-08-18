@@ -96,11 +96,17 @@ def compute_metrics(records: list, fit_slopes: bool = True) -> dict:
             slopes = np.array([fit_power_floor(steps, b_mean[:, i])["slope"]
                                for i in range(b_mean.shape[1])])
             agg = fit_power_floor(steps, b_mean.mean(axis=1))
+            # the prior work's aggregate convention (convergence run 1): normalize every curve
+            # point-wise by its own step-0 value BEFORE averaging, then fit the mean curve.
+            # before: b_mean (T, P) with rows ~[7.4, 12.1, ...]; after: y columns start at 1
+            y_norm = (b_mean / b_mean[0]).mean(axis=1)
+            agg_norm = fit_power_floor(steps, y_norm)
             env_out.update({
                 "slope_mean": float(slopes.mean()), "slope_std": float(slopes.std()),
                 "slope_min": float(slopes.min()), "slope_max": float(slopes.max()),
                 "slope_absdev_mean": float(np.abs(slopes + 0.5).mean()),
                 "agg_slope": agg["slope"], "agg_floor": agg["c"],
+                "agg_slope_norm": agg_norm["slope"],
                 "per_position_slopes": slopes.tolist(),
             })
         out["per_env"][env] = env_out
@@ -125,7 +131,8 @@ def summary_block(metrics: dict, runtime_seconds: float) -> str:
             lines.append(f"{k}: {metrics[k]:.6f}")
     for env, e in metrics.get("per_env", {}).items():
         if "agg_slope" in e:
-            lines.append(f"agg_slope[{env}]: {e['agg_slope']:.4f}")
+            lines.append(f"agg_slope[{env}]: {e['agg_slope']:.4f}"
+                         f"  agg_slope_norm[{env}]: {e['agg_slope_norm']:.4f}")
     lines.append(f"n_diverged: {metrics.get('n_diverged', 0)}")
     lines.append(f"floor_hits: {metrics.get('floor_hits', 0)}")
     lines.append(f"runtime_seconds: {runtime_seconds:.1f}")

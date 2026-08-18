@@ -42,4 +42,20 @@ All times Pacific (PT), converted from machines running Eastern.
 
 ## Experiments
 
-- (none yet; see results.tsv once the loop starts)
+Ledger: `results.tsv`. Campaign folder:
+`experiments/2026-08-17-22-05_autoresearch_uniform-fullbatch_cellmid108-center100_4096step_seed0-9`.
+One experiment runs in ~22 s on jaguar03 (job ids in the folder's `slurm/submitted_jobids.txt`;
+20-minute cron monitor id 8ab1c6de is armed).
+
+- 2026-08-17 22:20 PT — exps 001–003 done. Findings so far:
+  1. exp 001 (Adam): slope_mean -0.86 (matches prior work's -0.83), homogeneous-ish
+     (slope_std 0.13) but wrong rate everywhere; start_dev 1.37.
+  2. exp 002 (SGD-1/t, prior best): normalized aggregate slope is -0.80 on cell_midpoints but
+     -0.38 on center_square — the prior "-0.503 aggregate" was an average over heterogeneous
+     point sets. slope_std 0.78; worst position slope -4.55.
+  3. exp 003 (SGD-1/t + initial-copy readout normalization): start_dev EXACTLY 0 —
+     requirement (1) is solved by one frozen network copy. Slopes unchanged; dev_worst now
+     dominated by a nearly-flat position (slope -0.001). Requirement (2) is the open battle.
+- Harness note (outside the loop, before exp 004): added `agg_slope_norm` (the prior work's
+  normalize-then-average convention) to metrics.py for comparability; all three metrics.json
+  recomputed.

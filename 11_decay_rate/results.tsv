@@ -1,1 +1,4 @@
 commit	dev_worst	dev_mean	start_dev	slope_mean	slope_std	status	description
+73f8c05	1.618419	1.214187	1.374555	-0.862282	0.133202	keep	exp 001 adam baseline (constant Adam 1e-3, raw l2 readout): the canonical RND control
+b58d201	2.470518	1.918203	1.374555	-0.969486	0.775770	keep	exp 002 sgd1t baseline (eta0 1e-2, t0 1e2): prior work's best; per-env agg slopes -0.80 vs -0.38 expose the heterogeneity
+cd2d303	2.633842	1.407167	0.000000	-0.867277	0.564252	keep	exp 003 sgd1t + initial-copy readout norm: start_dev exactly 0 (requirement 1 solved); slopes unchanged, worst position now a near-flat curve
