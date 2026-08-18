@@ -53,40 +53,36 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Residual-encoded shrink + exact min-change interpolation on a GROWING data-dependent
-    kernel dictionary (the exp-010 mechanism on the exp-019 basis).
+    """Closed-form elliptical posterior readout on unit-normalized adaptive-dictionary
+    features (the deterministic ideal of the coin-flip family).
 
-    The head starts at zero over an empty dictionary and the readout is normalized by the
-    target's own norm, r(x) = ||W phi(x) - f(x)|| / ||f(x)||, so the bonus is exactly 1 at
-    every never-visited input with no stored copy needed. Visited states grow the dictionary
-    exactly as in exp 019 (insert beyond 0.05, bandwidth = half the nearest-center distance,
-    clipped to [0.05, 0.75]); each visit shrinks the visited samples' residual vectors by
-    s = 1/sqrt(1 + r^2) (the map whose iterates from 1 are 1/sqrt(2), 1/sqrt(3), ...), realized
-    exactly by the minimum-Frobenius-change head update on the batch. Near-orthogonal local
-    features keep the interference that broke exp 011 small, and unlike the coin-flip family
-    there is no chi fluctuation floor — the recurrence is deterministic."""
+    No residual and no training at all: the method keeps the running feature second-moment
+    matrix A = I + sum over visits of phihat phihat^T with phihat(x) = phi(x)/||phi(x)|| the
+    unit-normalized features on the growing dictionary of exp 019, and reads out the
+    Gaussian-process posterior standard deviation b(x) = sqrt(phihat(x)^T A^{-1} phihat(x)).
+    Before any visit A = I so b = ||phihat|| = 1 exactly at every input; for mutually
+    orthogonal features a position visited m times reads exactly (1 + m)^{-1/2} — the count
+    lives in A, which is precisely the elliptical-bonus matrix the project already studies.
+    Ash et al. (ICLR 2022) is the bridge: this quantity is what coin-flip regression estimates
+    by sampling, with the chi fluctuation removed."""
 
-    name = "linhead_shrink_adaptive"
+    name = "elliptical_adaptive_dict"
 
     TAU_ADD = 0.05
     SIGMA_MAX = 0.75
     SIGMA_MIN = 0.05
     MAX_CENTERS = 1024
-    RIDGE = 1e-8
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Frozen target MLP; empty dictionary; zero head over it."""
-        torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
-        self.target = make_mlp(obs_dim, 256, 128, seed, "target")
-        for p in self.target.parameters():
-            p.requires_grad_(False)
+        """Empty dictionary and an empty accumulator (grown with the dictionary)."""
+        torch.manual_seed(seed)  # draws nothing; the method has no random state of its own
         self.centers = torch.zeros(0, 2, dtype=torch.float64)
         self.sigmas = torch.zeros(0, dtype=torch.float64)
-        self.W = torch.zeros(128, 0, dtype=torch.float64)
+        self.A = torch.zeros(0, 0, dtype=torch.float64)  # holds A - I (grown with zeros)
 
     def _grow(self, z: torch.Tensor) -> None:
-        """Insert new centers for batch rows far from the dictionary (sequential, as exp 019);
-        the head gets a zero column per new center, leaving its function unchanged."""
+        """Insert new centers for batch rows far from the dictionary (as exp 019); the
+        accumulator gains zero rows/columns (its identity part is added at readout)."""
         for row in z:
             if self.centers.shape[0] >= self.MAX_CENTERS:
                 return
@@ -99,33 +95,33 @@ class Method:
                 self.centers = torch.cat([self.centers, row[None, :]])
                 self.sigmas = torch.cat([self.sigmas,
                                          torch.tensor([sig], dtype=torch.float64)])
-                self.W = torch.cat([self.W, torch.zeros(128, 1, dtype=torch.float64)], dim=1)
+                k = self.A.shape[0]
+                a = torch.zeros(k + 1, k + 1, dtype=torch.float64)
+                a[:k, :k] = self.A
+                self.A = a
 
-    def feat(self, x: torch.Tensor) -> torch.Tensor:
-        """Per-center Gaussian features with per-center bandwidths."""
+    def feat_hat(self, x: torch.Tensor) -> torch.Tensor:
+        """Unit-normalized per-center Gaussian features (norm 1 at every input, so the
+        never-visited readout is exactly 1)."""
         z = x[:, :2].double()
         d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
-        return torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
+        phi = torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
+        return phi / phi.norm(dim=1, keepdim=True)
 
     def update(self, x: torch.Tensor) -> None:
-        """Grow the dictionary, then shrink each visited sample's residual by its own factor
-        via the minimum-change interpolation update."""
+        """Grow the dictionary, then accumulate the visited features' second moments."""
         with torch.no_grad():
             self._grow(x[:, :2].double())
-            phi = self.feat(x)                                   # (B, K)
-            f = self.target(x).double()                          # (B, 128)
-            e = phi @ self.W.T - f                               # residual vectors (B, 128)
-            r = e.norm(dim=1) / f.norm(dim=1)                    # normalized residuals (B,)
-            s = 1.0 / torch.sqrt(1.0 + r.pow(2))                 # per-visit shrink (B,)
-            E = (s - 1.0).unsqueeze(1) * e                       # desired residual change
-            G = phi @ phi.T + self.RIDGE * torch.eye(phi.shape[0], dtype=torch.float64)
-            self.W += E.T @ torch.linalg.solve(G, phi)
+            ph = self.feat_hat(x)
+            self.A += ph.T @ ph
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """r(x) = ||W phi(x) - f(x)|| / ||f(x)|| (exactly 1 over an empty dictionary)."""
+        """sqrt(phihat^T (I + A)^{-1} phihat), exactly 1 over an empty dictionary."""
         with torch.no_grad():
-            f = self.target(x).double()
             if self.centers.shape[0] == 0:
                 return torch.ones(x.shape[0], dtype=torch.float64).numpy()
-            e = (self.feat(x) @ self.W.T - f).norm(dim=1)
-            return (e / f.norm(dim=1)).cpu().numpy()
+            ph = self.feat_hat(x)
+            lam = self.A + torch.eye(self.A.shape[0], dtype=torch.float64)
+            sol = torch.linalg.solve(lam, ph.T)                    # (K, B)
+            q = (ph * sol.T).sum(dim=1).clamp(min=0.0)
+            return q.sqrt().cpu().numpy()
