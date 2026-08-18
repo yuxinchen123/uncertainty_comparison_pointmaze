@@ -53,71 +53,66 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Coin-flip counting with an exact recursive-least-squares linear head (the coin-flip
-    network of Lobel, Bagaria and Konidaris, ICML 2023, arXiv:2306.03186, made exact).
+    """Coin-flip counting + exact RLS head on LOCALIZED radial-basis features.
 
-    Every visit to a position draws a FRESH Rademacher vector c in {-1,+1}^d. A linear head on
-    frozen random features regresses positions onto their coins by exact ridge least squares
-    (the normal equations are accumulated per visit; the solve happens at readout). The
-    least-squares optimum at a position visited m times is that position's own running coin
-    mean, whose expected squared norm is d/m — so the readout ||head(x) + prior(x)|| / sqrt(d)
-    behaves as m^(-1/2) with THAT position's own visit count, under any visitation pattern:
-    the count is encoded statistically, not through optimizer dynamics. The frozen prior
-    network is unit-normalized per input (||prior(x)|| = sqrt(d) exactly) and the head starts
-    at zero, so the bonus is exactly 1 at every never-visited input; after the first visit the
-    running mean is a single Rademacher vector of norm exactly sqrt(d), so the bonus is exactly
-    1 there too — matching min(1, m^(-1/2)) at m = 0 and 1 with no off-by-one. The chi-type
-    fluctuation of a d-coordinate mean (relative std about sqrt(1/(2d)) on the norm) is this
-    construction's noise floor; d = 512 puts it near 3 percent."""
+    exp 014/015 failed for a representational reason: zero-bias ReLU features are homogeneous
+    half-plane hinges, rank-deficient (106/108) and conditioned at 1e10 on the cell-midpoint
+    set, so the least-squares head cannot reach each position's running coin mean and the
+    readout saturates on the unrepresentable component. This experiment swaps in 256 Gaussian
+    radial-basis features (centers uniform over the maze extent, bandwidth sigma = 0.75 world
+    units, Gram condition about 1e2), keeping everything else: fresh Rademacher coins per
+    visit, exact ridge normal equations, unit-normalized frozen prior and zero head (bonus
+    exactly 1 before and at the first visit). With a representable basis the least-squares
+    optimum at each position IS its running coin mean, so the squared readout tracks 1/m_i per
+    position under any visitation pattern, up to the chi fluctuation floor (~1/sqrt(2d))."""
 
-    name = "coinflip_rls_head"
+    name = "coinflip_rls_rbf"
 
-    D_COINS = 512   # coin/output dimension (the fluctuation floor scales as 1/sqrt(2d))
-    RIDGE = 1e-8    # ridge on the accumulated normal equations
+    D_COINS = 512
+    N_FEAT = 256
+    SIGMA = 0.75    # RBF bandwidth in world units (cells are 1x1)
+    RIDGE = 1e-8
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build frozen features, the frozen unit-normalized prior, the zero head, the
-        normal-equation accumulators, and the keyed coin generator."""
+        """Draw RBF centers, the frozen unit-normalized prior, and zero the RLS state."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
-        pred = make_mlp(obs_dim, 256, self.D_COINS, seed, "predictor")
-        self.feat = nn.Sequential(pred[0], pred[1])  # frozen ReLU features (256)
-        for p in self.feat.parameters():
-            p.requires_grad_(False)
+        g = keyed_gen(seed, "rbf_centers")
+        ext_lo = torch.tensor([-6.0, -4.5], dtype=torch.float64)
+        ext_hi = torch.tensor([6.0, 4.5], dtype=torch.float64)
+        self.centers = torch.rand(self.N_FEAT, 2, generator=g).double() * (ext_hi - ext_lo) + ext_lo
         self.prior_raw = make_mlp(obs_dim, 256, self.D_COINS, seed, "prior")
         for p in self.prior_raw.parameters():
             p.requires_grad_(False)
-        # exact ridge least squares state: Lam = ridge*I + sum phi phi^T, Bmat = sum phi tgt^T
-        self.Lam = self.RIDGE * torch.eye(256, dtype=torch.float64)
-        self.Bmat = torch.zeros(256, self.D_COINS, dtype=torch.float64)
-        self.coin_gen = keyed_gen(0, "coins")  # one persistent stream; seed-independent draws
-        # NOTE the coin stream is keyed by a constant, not the seed, so re-running a seed
-        # re-draws the same coin sequence per call order — reproducible per (env, seed) cell
-        # because each cell is its own process with its own Method instance.
+        self.Lam = self.RIDGE * torch.eye(self.N_FEAT, dtype=torch.float64)
+        self.Bmat = torch.zeros(self.N_FEAT, self.D_COINS, dtype=torch.float64)
+        self.coin_gen = keyed_gen(seed, "coins")
+
+    def feat(self, x: torch.Tensor) -> torch.Tensor:
+        """Gaussian radial-basis features of the position coordinates.
+        before: x row [-5.5, 4.0, 0, 0]; after: 256 values exp(-||(x,y)-mu_j||^2 / (2 sigma^2))"""
+        z = x[:, :2].double()
+        d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
+        return torch.exp(-d2 / (2.0 * self.SIGMA ** 2))
 
     def prior(self, x: torch.Tensor) -> torch.Tensor:
-        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input (computed pointwise,
-        online): the never-visited bonus is exactly 1."""
+        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input."""
         p = self.prior_raw(x).double()
         return float(np.sqrt(self.D_COINS)) * p / p.norm(dim=1, keepdim=True)
 
     def update(self, x: torch.Tensor) -> None:
-        """One visit per batch row: draw fresh Rademacher coins, accumulate the normal
-        equations of the regression from features onto (coin - prior)."""
+        """One visit per batch row: fresh Rademacher coins into the normal equations."""
         with torch.no_grad():
-            phi = self.feat(x).double()                              # (B, 256)
-            # fresh coins: +-1 per coordinate per visit occurrence
-            # before: shape (B, 512) uniform ints in {0, 1}; after: {-1.0, +1.0}
+            phi = self.feat(x)
             c = torch.randint(0, 2, (x.shape[0], self.D_COINS), generator=self.coin_gen,
                               dtype=torch.float64) * 2.0 - 1.0
-            tgt = c - self.prior(x)                                  # head regresses this
+            tgt = c - self.prior(x)
             self.Lam += phi.T @ phi
             self.Bmat += phi.T @ tgt
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """||head(x) + prior(x)|| / sqrt(d): exactly 1 before the first visit, then the norm of
-        the position's running coin mean."""
+        """||head(x) + prior(x)|| / sqrt(d)."""
         with torch.no_grad():
-            phi = self.feat(x).double()
-            W = torch.linalg.solve(self.Lam, self.Bmat)              # (256, d)
+            phi = self.feat(x)
+            W = torch.linalg.solve(self.Lam, self.Bmat)
             out = phi @ W + self.prior(x)
             return (out.norm(dim=1) / float(np.sqrt(self.D_COINS))).cpu().numpy()
