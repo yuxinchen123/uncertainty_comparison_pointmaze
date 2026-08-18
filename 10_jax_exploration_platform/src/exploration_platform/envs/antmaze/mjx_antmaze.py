@@ -11,8 +11,8 @@ The platform runs with `jax_enable_x64=True` globally (float64 running statistic
 that default would build a float64 physics program, twice the memory and well below half the
 speed. Every MJX call here is therefore wrapped in `jax.enable_x64(False)`, which is read at
 trace time, so the compiled iteration contains a float32 physics program inside the platform's
-otherwise-unchanged float64-statistics world. `tests/envs/test_antmaze_x64_boundary.py` checks
-that the boundary holds.
+otherwise-unchanged float64-statistics world. `tests/envs/test_antmaze_mjx.py` checks that the
+boundary holds.
 """
 from typing import NamedTuple
 
