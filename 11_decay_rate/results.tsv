@@ -6,3 +6,6 @@ d3ae19c	2.541168	2.025344	0.000000	-0.452742	0.441000	keep	exp 004 const SGD + P
 9f7a899	1.686272	0.775609	0.000000	-1.800971	0.507559	discard	exp 005 functional shrink w/ sqrt schedule: inner Adam OVERSHOOTS the near target (fixed-size steps), acts like fast distillation; slope -1.8. Retry with inner SGD + tolerance
 69edcb3	2.392831	1.801820	0.000000	-0.765255	0.688768	discard	exp 006 SGD-1/t + inverse-squared-error reweighting: spread not reduced (std 0.69)
 3cc2bd3	1.227409	0.761177	0.000000	-0.567772	0.105908	keep	exp 007 AdaGrad + initial-copy readout: NEW LEADER. agg slopes -0.510/-0.499 on both envs, tightest spread (std 0.106); worst position still -1.39
+0ddf03a	1.584701	1.188370	0.000000	-1.043489	0.598286	discard	exp 008 sphere-projected inputs + AdaGrad: kills the radial rate gradient on cell_midpoints but collapses center_square points to near-identical inputs (agg -1.35 there)
+99c30ba	1.608535	0.323168	0.000000	-0.735569	0.201413	keep	exp 009 AdaGrad lr 3e-3: best dev_mean so far (0.32); smaller early drop; worst-position outlier remains (-1.42)
+f0cdb3f	0.038110	0.038107	0.000000	-0.500000	0.000000	keep	exp 010 linear head + exact min-change interpolation + residual-encoded shrink r->r/sqrt(1+r^2): SOLVES the uniform benchmark; slope -0.500000 at every position, residue = the (n+1 vs n) off-by-one
