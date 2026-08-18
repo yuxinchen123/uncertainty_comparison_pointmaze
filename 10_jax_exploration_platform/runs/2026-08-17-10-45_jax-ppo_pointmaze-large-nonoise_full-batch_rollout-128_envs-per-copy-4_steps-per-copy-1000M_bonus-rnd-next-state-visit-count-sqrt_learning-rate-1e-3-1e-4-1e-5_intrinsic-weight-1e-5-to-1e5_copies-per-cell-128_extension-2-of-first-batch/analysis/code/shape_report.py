@@ -25,17 +25,27 @@ RUN_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(RUN_DIR / "code"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from aggregate import cell_table, curve_of                              # noqa: E402
+from aggregate import cell_table                                        # noqa: E402
+from curves_all import curves_all, verify_against_curve_of              # noqa: E402
 from curve_shape import DEFAULTS, classify, sensitivity                 # noqa: E402
 
 SCORE = "whole_run_reward"      # the column the results table sorts on; shared so ranks agree
 
 
 def classify_run(run_dir: Path) -> list:
-    """One record per configuration: its table row, its shape, and how stable that shape is."""
+    """One record per configuration: its table row, its shape, and how stable that shape is.
+
+    Every curve comes from ONE pass over the shards (`curves_all`), which the gate above has just
+    shown produces the same numbers as `aggregate.curve_of` — sixty-six separate passes over about
+    4 GB would otherwise cost an hour at exactly the moment the run finishes.
+    """
+    everything = curves_all(run_dir)
     out = []
     for row in cell_table(run_dir):
-        curve = curve_of(row["bonus"], row["learning_rate"], row["intrinsic_weight"], run_dir)
+        key = (row["bonus"], row["learning_rate"], row["intrinsic_weight"])
+        curve = everything.get(key)
+        if curve is None:
+            continue
         means, errors = curve["mean_episode_return"], curve["standard_error"]
         if len(means) < 10:
             continue
@@ -86,6 +96,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", type=Path, default=RUN_DIR)
     arguments = parser.parse_args()
+    gate = verify_against_curve_of(arguments.run)
+    if not gate["identical"]:
+        raise SystemExit(f"the one-pass reader disagrees with aggregate.curve_of: {gate}")
+    print(f"reader gate: {gate['configurations_checked']} configurations, "
+          f"{gate['windows_compared']} windows, identical to aggregate.curve_of\n")
     records = classify_run(arguments.run)
     if not records:
         print("no completed configuration yet — the table rule keeps unfinished arms out")
