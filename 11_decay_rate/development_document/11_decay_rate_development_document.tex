@@ -707,12 +707,16 @@ deep trunk + exact coin-flip head & \underline{0.054} & \textbf{0.030} & -0.503 
 gradient coin-flip net, Adam $10^{-2}$ (best gradient variant) & 1.148 & 1.159 & -0.696 & 0.264 \\
 gradient coin-flip net, Adam $10^{-4}$ (paper rate) & 2.202 & 1.849 & -0.648 & 0.347 \\
 \midrule
+\multicolumn{5}{@{}l}{\textbf{held-out 20\% (vectors)} (10 seeds)} \\
+deep trunk + exact coin-flip head & \textbf{1.678} & \textbf{0.264} & -0.609 & 0.549 \\
+deep trunk + exact shrink head & \underline{1.935} & \underline{0.292} & -0.944 & 1.282 \\
+\midrule
 \multicolumn{5}{@{}l}{\textbf{nonuniform visitation (vectors)} (10 seeds)} \\
 deep trunk + exact coin-flip head & \textbf{0.618} & \textbf{0.138} & -0.692 & 0.198 \\
 deep trunk + exact shrink head & \underline{1.216} & \underline{0.711} & -0.352 & 0.145 \\
 \bottomrule
 \end{tabular}
-\caption{The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited.}
+\caption{The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited.}
 \label{tab:neural}
 \end{table}
 % >>> AUTO-GENERATED TABLE END: neural

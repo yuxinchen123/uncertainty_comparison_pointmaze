@@ -181,10 +181,10 @@ NEURAL_ROWS = [  # (experiment folder, block, row label) for the phase-2 neural 
     ("exp_046_cfnconv_adagrad1e-2_atari", "Atari frames (uniform)", "gradient coin-flip conv net, AdaGrad $10^{-2}$"),
     ("exp_050_deepshrink_atari", "Atari frames (uniform)", "conv trunk + exact shrink head"),
     ("exp_051_deepcfn_atari", "Atari frames (uniform)", "conv trunk + exact coin-flip head"),
-    ("exp_053_deepshrink_heldout_vectors", "held-out 20\\% (vectors)", "deep trunk + exact shrink head"),
-    ("exp_054_deepcfn_heldout_vectors", "held-out 20\\% (vectors)", "deep trunk + exact coin-flip head"),
-    ("exp_057_deepshrink_heldout_atari", "held-out 20\\% (Atari)", "conv trunk + exact shrink head"),
-    ("exp_058_deepcfn_heldout_atari", "held-out 20\\% (Atari)", "conv trunk + exact coin-flip head"),
+    ("exp_053_deepshrink_heldout_vectors", "held-out 20\% (vectors)", "deep trunk + exact shrink head"),
+    ("exp_054_deepcfn_heldout_vectors", "held-out 20\% (vectors)", "deep trunk + exact coin-flip head"),
+    ("exp_057_deepshrink_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact shrink head"),
+    ("exp_058_deepcfn_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact coin-flip head"),
     ("exp_056_deepshrink_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact shrink head"),
     ("exp_055_deepcfn_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact coin-flip head"),
 ]
@@ -206,7 +206,7 @@ def neural_table() -> str:
            r"\toprule",
            r"method & dev\_worst $\downarrow$ & dev\_mean & slope & slope std \\"]
     order = ["maze + AntMaze states (uniform)", "Atari frames (uniform)",
-             "held-out 20\\% (vectors)", "held-out 20\\% (Atari)",
+             "held-out 20\% (vectors)", "held-out 20\% (Atari)",
              "nonuniform visitation (vectors)"]
     for block in order:
         rows = blocks.get(block, [])
@@ -227,7 +227,7 @@ def neural_table() -> str:
             r" second-best dev\_worst and dev\_mean bold and underlined). Every method"
             r" starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the"
             r" metric scores trained states against their counts AND the never-trained"
-            r" 20\\% against the constant oracle value 1, so it punishes a bonus that"
+            r" 20\% against the constant oracle value 1, so it punishes a bonus that"
             r" generalizes the decay onto states never actually visited.}",
             r"\label{tab:neural}", r"\end{table}"]
     return "\n".join(out)
