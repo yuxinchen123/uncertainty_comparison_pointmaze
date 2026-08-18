@@ -5,8 +5,9 @@ name — the uid is shared with other sessions and with jobs started by hand.
 
 Two views:
   --table   one line per chunk: job, node, state, windows written, per cent done, projected finish
-  --tick    one compact line for a monitoring notification, plus a line per chunk that failed or
-            whose canary rate is far from the plan
+  --tick    one compact line for a monitoring notification, plus a line per chunk that failed,
+            whose canary rate is far from the plan, or whose shard has not grown since the previous
+            tick while its job is still RUNNING
 
 Run:
   PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python code/status.py --table
@@ -31,6 +32,13 @@ WINDOWS = ps.ITERATIONS // ps.WINDOW_ITERATIONS
 LAST_ITERATION = re.compile(rb'"last_iteration": (\d+)')
 # a canary this far from its planned seconds per iteration is worth a line of its own in the tick
 CANARY_TOLERANCE = 0.25
+# where the previous tick's window counts are kept, so this tick can see which shards stopped
+# growing. A running job whose shard is flat is the failure that looks healthiest from squeue.
+TICK_STATE = RUN_DIR / "slurm" / "tick_state.json"
+# how much wall clock must separate two window counts before their being equal means anything. A
+# chunk writes a window every few seconds, but two ticks run seconds apart would compare a count
+# with itself and report every healthy chunk as stalled.
+FLAT_SHARD_MINIMUM_SECONDS = 300.0
 
 
 def own_job_ids() -> list:
@@ -148,6 +156,39 @@ def print_table(result: list) -> None:
               f"{row['planned_hours']:>7.2f} {canary:>9}")
 
 
+def flat_shards(result: list) -> list:
+    """Chunks whose job is RUNNING but whose shard has not grown since the previous tick.
+
+    A job that has stopped writing while the scheduler still calls it RUNNING is the failure that
+    looks healthiest from `squeue` alone — a hung device call, a stuck filesystem, a process that
+    died without its job noticing. Comparing the window count against the previous tick's is what
+    catches it, so the count is stored at every tick.
+
+    before: tick_state.json holding {"unit-1-chunk-7-of-32": 1663} and this tick reading 1663 with
+            the job RUNNING;
+    after:  that chunk is returned, and the tick prints a line for it.
+    """
+    now = datetime.now().astimezone(PACIFIC)
+    previous, elapsed = {}, 0.0
+    if TICK_STATE.exists():
+        state = json.loads(TICK_STATE.read_text())
+        elapsed = now.timestamp() - state["written_at_epoch"]
+        if elapsed >= FLAT_SHARD_MINIMUM_SECONDS:
+            previous = state["windows"]
+    flat = [row for row in result
+            if row["state"] == "RUNNING" and row["chunk"] in previous
+            and 0 < row["windows"] <= previous[row["chunk"]]]
+    TICK_STATE.parent.mkdir(parents=True, exist_ok=True)
+    # the state is only replaced once it has been compared against, so two ticks a few seconds
+    # apart do not throw away the reading the next real comparison needs
+    if not TICK_STATE.exists() or elapsed >= FLAT_SHARD_MINIMUM_SECONDS:
+        TICK_STATE.write_text(json.dumps({
+            "written_at": now.strftime("%Y-%m-%d %H:%M PT"),
+            "written_at_epoch": now.timestamp(),
+            "windows": {row["chunk"]: row["windows"] for row in result}}, indent=2) + "\n")
+    return flat
+
+
 def print_tick(result: list) -> None:
     """One compact line for a notification, plus a line per chunk that needs attention."""
     counts = {}
@@ -158,6 +199,9 @@ def print_tick(result: list) -> None:
     now = datetime.now().astimezone(PACIFIC).strftime("%Y-%m-%d %H:%M PT")
     state_text = " ".join(f"{name} {count}" for name, count in sorted(counts.items()))
     print(f"[{now}] {state_text} | {written}/{total} windows ({100.0 * written / total:.1f}%)")
+    for row in flat_shards(result):
+        print(f"  flat shard while RUNNING: {row['chunk']} job {row['job']} on {row['node']} "
+              f"still at {row['windows']} windows")
     for row in result:
         if row["state"] in ("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL", "OUT_OF_MEMORY"):
             print(f"  {row['state']}: {row['chunk']} job {row['job']} on {row['node']}")
