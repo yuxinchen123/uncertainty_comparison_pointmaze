@@ -61,6 +61,9 @@ def bench(n_copies, rounds=11, steps_per_round=10):
     state, _ = run(state, key)
     jax.block_until_ready(state.stack)
     compile_s = time.perf_counter() - t0
+    # the first call with donated inputs compiles a second executable; keep it out of the rounds
+    state, _ = run(state, jax.random.fold_in(key, 1))
+    jax.block_until_ready(state.stack)
 
     times = []
     for r in range(rounds):

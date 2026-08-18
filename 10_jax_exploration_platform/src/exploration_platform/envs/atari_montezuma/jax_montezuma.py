@@ -119,9 +119,15 @@ class JaxMontezuma:
         return jnp.concatenate([stack.reshape(self.B, -1), room, inv, lives], -1)
 
     def reset(self) -> EnvState:
-        """Initial state: every environment reset under its own key, counters at zero."""
+        """Initial state: every environment reset under its own key, counters at zero.
+
+        The copy at the end breaks buffer aliasing: one compiled reset can give two all-zero
+        state fields the same device buffer, and the donated training state must not hold any
+        buffer twice.
+        """
         with jax.enable_x64(False):
             atari, stack = jax.vmap(self._single_reset)(self._init_keys)
+            atari = jax.tree.map(jnp.copy, atari)
         return EnvState(atari, stack, jnp.zeros((self.C, self.N), jnp.int32),
                         jnp.zeros((self.C, self.N), jnp.int32))
 
@@ -130,6 +136,7 @@ class JaxMontezuma:
         counts zeroed, episode counter kept."""
         with jax.enable_x64(False):
             atari, stack = jax.vmap(self._single_reset)(state.atari.key)
+            atari = jax.tree.map(jnp.copy, atari)   # break aliasing; see reset()
             obs = self._obs_vec(atari, stack).reshape(self.C, self.N, self.obs_dim)
         state = EnvState(atari, stack, jnp.zeros_like(state.step_count), state.reset_count)
         return state, obs

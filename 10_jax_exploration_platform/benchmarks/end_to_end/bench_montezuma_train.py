@@ -52,6 +52,9 @@ def bench(bonus, n_copies, num_steps, n_envs, update_style, rounds=11, iters=10)
     state, m = tr.iterate(state, lr)
     jax.block_until_ready(m["loss"])
     compile_s = time.perf_counter() - t0
+    # the first call with donated inputs compiles a second executable; keep it out of the rounds
+    state, m = tr.iterate(state, lr)
+    jax.block_until_ready(m["loss"])
 
     times = []
     for r in range(rounds):
