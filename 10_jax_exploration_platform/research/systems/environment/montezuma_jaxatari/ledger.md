@@ -43,7 +43,7 @@ cost next to the maze families?
 
 ## Correctness, after round 1
 
-All green on the processor, 2026-08-18 03:15–03:40 PT: the discrete actor's Gumbel-argmax
+All green on the processor, 2026-08-18 02:00–02:30 PT: the discrete actor's Gumbel-argmax
 sampling frequencies match its softmax to 5e-3 over 200,000 draws and its log-probability is
 the log-softmax gather on a real keyed network; the adapter's contract, keyed determinism,
 per-environment sticky diversity, copy isolation, truncation-and-auto-reset (fresh episode
