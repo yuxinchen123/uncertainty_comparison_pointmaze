@@ -1084,8 +1084,68 @@ swept: two arms at one setting each.}
 \end{table}
 
 \paragraph{Results --- status.}
-Launched on the H100 NVL of serval05 on 2026-08-18 (the machine held for this session, the two
-arms run one after the other); the results tables and the room-coverage curves follow when the
-run's records are complete.
+The run is complete. Both arms finished on the H100 NVL of serval05 on 2026-08-18, the
+distillation arm 04:43--05:17 PT and the no-bonus arm 05:18--05:47 PT, each writing its $40$
+recorded windows and its completion record at about $0.08$ seconds per iteration.
+\Cref{tab:mz-jax-run31-results} is written by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py} from the run's own shards.
+
+\paragraph{How to read the metrics table.}
+Define $C = 1{,}024$ as an arm's copy count, indexed $k = 1, \dots, C$; define $W = 40$ as the
+number of recorded windows of $400$ iterations each; and define $S_{k,w}$ as the clipped score
+copy $k$ collects over window $w$. The columns are the same statistics as train run 2.1's
+(\Cref{sec:am-jax-run21}): whole-run reward $R_k = \sum_{w=1}^{W} S_{k,w}$, last-window reward
+$S_{k,W}$, success rate $\frac{1}{C} \sum_k \mathbf{1}[R_k > 0]$, and coverage --- here the
+fraction of the $24$ playable rooms copy $k$ ever entered, in percent.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+\textbf{arm} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-window\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{final rooms\\visited \%}} &
+\textbf{$N$} \\
+\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ &
+  $0.000$ & $4.17 \pm 0.00$ & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration} & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ & $0.000$ &
+  $4.17 \pm 0.00$ & $1{,}024$ \\
+\bottomrule
+\end{tabular}
+\caption{Train run 3.1's two arms over their full $1{,}024$ copies each. Every cell of both
+rows is exactly zero effect: no copy of either arm ever scored or left the starting room
+($4.17$ per cent is exactly $1$ of $24$ rooms), so nothing is bolded --- there is no best
+cell to mark.}
+\label{tab:mz-jax-run31-results}
+\end{table}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{H1 and H2 are both refuted: at this scale the game gives the bonus nothing to
+  win.} No copy of either arm --- $2.05$ million environment steps per copy, $4.2$ billion in
+  total --- ever collected the first key or left the first room. The two arms are identical on
+  every metric because the game's first barrier (climb down, cross the moving skull, take the
+  key, climb back, open a door, all under sticky actions and a five-life budget) gates every
+  reward and every room transition, and neither arm crossed it.
+\item \textbf{The bonus worked as designed and then starved.} The distillation arm's
+  normalised intrinsic reward fell from $0.502$ in the first window to $0.003$ by the end:
+  the predictor consumed the novelty reachable inside room~1 and the bonus stopped paying
+  long before the barrier was crossed. This is the textbook failure mode the original
+  random-network-distillation campaign overcame with pixel networks, far longer horizons and
+  hundreds of times this budget --- the platform reproduces the difficulty faithfully rather
+  than the solution cheaply.
+\item \textbf{What this run bought:} the fused game trains end to end at $1.25$ million
+  environment steps per second on one card, so the follow-ups the family ledger records ---
+  pixel observations with convolutional networks, longer horizons, an episodic-life or
+  first-fire variant to soften the skull barrier --- are hours, not weeks, of compute. The
+  budget here was chosen to be three orders of magnitude below the original campaign's, and
+  the result says that gap is real.
+\end{enumerate}
+
 
 \end{document}
