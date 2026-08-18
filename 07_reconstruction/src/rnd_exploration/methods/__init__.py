@@ -14,6 +14,7 @@ import numpy as np
 from .base import IntrinsicRewardModel
 from .elliptical_bonus import EllipticalBonus, GlobalEllipticalBonus
 from .rnd import RND, EnsembleObservationEncoder, ObservationEncoder
+from .coinflip_count import CoinFlipCount
 from .visit_count import VisitCount
 
 
@@ -51,6 +52,9 @@ REGISTRY: "dict[str, AlgorithmSpec]" = {
         AlgorithmSpec("rnd_state_action",             "rnd",         "rnd_state_action",             False, True,  None,                True),
         AlgorithmSpec("rnd_state_action_next_state",  "rnd",         "rnd_state_action_next_state",  False, True,  None,                True),
         AlgorithmSpec("rnd_linear_next_state",        "rnd",         "rnd_next_state",               True,  False, None,                True),
+        # 11_decay_rate campaign winner (2026-08-18): coin-flip pseudo-count with an exact
+        # recursive-least-squares head, counting at ADD time on a maze-cell-scale dictionary.
+        AlgorithmSpec("coinflip_count",               "coinflip",    None,                           False, False, None,                True),
         AlgorithmSpec("rnd_elliptical",               "elliptical",  None,                           False, True,  None,                True, "batch"),
         AlgorithmSpec("rnd_elliptical_global",        "elliptical",  None,                           False, True,  None,                True, "global"),
     ]
@@ -225,11 +229,25 @@ def build_intrinsic_model(name: str, cfg: Any, ctx: EnvContext) -> Optional[Intr
         if spec.elliptical_mode == "global":
             return GlobalEllipticalBonus(**common)
         raise ValueError(f"unknown elliptical_mode {spec.elliptical_mode!r} for algorithm {name!r}")
+    # Coin-flip pseudo-count (11_decay_rate campaign winner): all knobs duck-typed with the
+    # campaign's RL-adapted defaults (cell-scale dictionary, d=128 coins, add-time counting).
+    if spec.kind == "coinflip":
+        return CoinFlipCount(
+            obs_shape=ctx.obs_shape,
+            d_coins=getattr(cfg, "coinflip_d", 128),
+            tau_add=getattr(cfg, "coinflip_tau_add", 0.5),
+            sigma_min=getattr(cfg, "coinflip_sigma_min", 0.1),
+            sigma_max=getattr(cfg, "coinflip_sigma_max", 0.5),
+            max_centers=getattr(cfg, "coinflip_max_centers", 512),
+            solve_every=getattr(cfg, "coinflip_solve_every", 256),
+            seed=getattr(cfg, "a_seed", 0),
+        )
     raise ValueError(f"unhandled kind {spec.kind!r} for algorithm {name!r}")
 
 
 __all__ = [
     "IntrinsicRewardModel",
+    "CoinFlipCount",
     "EllipticalBonus",
     "GlobalEllipticalBonus",
     "RND",
