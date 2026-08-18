@@ -182,3 +182,21 @@ NAME, which `submit_one.sh` derives from the unit id by a pattern that reads `re
 as `chunk-1-of-8` — so a re-cut chunk and an original collided and a pending resubmission was
 reported as its own cancelled predecessor. Submissions now append the id and the unit to
 `slurm/unit_jobs.tsv` at submit time, and the table reads that.
+
+## 2026-08-18 01:24 PT — the flat-shard check reported a restart as a stall
+
+The tick reported `unit-1-chunk-3-of-32` on cheetah04 as a shard that had stopped growing while its
+job ran. It had not: the job was writing window 1,682 of 9,766 and its log was current. The counter
+reads the LAST record in the shard, and that chunk is one of the four re-placed after jaguar03
+failed, so its shard holds the jaguar03 attempt's windows followed by the re-run's, which start
+again from the first one. The last record's iteration therefore went backwards at the moment the
+re-run began, and a check written as "did not increase" read that as a stall.
+
+The check now reports only an EQUAL count as flat; a smaller one is a restart, which is what this
+platform does when a chunk is re-run, since it saves no model state.
+
+The same reading gives the re-placed chunk's real rate: 1.44 seconds per window, so 3.90 hours for
+its 9,766, against the 2.58 the plan carried from an RTX A4500 measurement through the survey's
+card ratio. The transfer was about half an hour per hour optimistic for this class at this copy
+count. It changes nothing — the chunk still finishes before the re-cut oracle chunks do — and it is
+the kind of error the tick exists to surface.

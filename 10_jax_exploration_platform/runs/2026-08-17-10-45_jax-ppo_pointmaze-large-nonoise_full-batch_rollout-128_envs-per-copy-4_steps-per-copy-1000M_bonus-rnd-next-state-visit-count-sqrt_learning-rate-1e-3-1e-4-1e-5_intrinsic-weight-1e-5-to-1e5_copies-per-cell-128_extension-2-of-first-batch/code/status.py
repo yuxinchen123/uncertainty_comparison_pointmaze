@@ -189,6 +189,12 @@ def flat_shards(result: list) -> list:
     died without its job noticing. Comparing the window count against the previous tick's is what
     catches it, so the count is stored at every tick.
 
+    Only an EQUAL count counts as flat. A count that went DOWN is a chunk that restarted: this
+    platform saves no model state, so a re-run appends its windows from the first one again, and
+    the counter reads the last record in the shard, which legitimately goes backwards at that
+    moment. Reporting that as a stall is what the first version of this check did to the four
+    chunks re-placed after jaguar03 failed.
+
     before: tick_state.json holding {"unit-1-chunk-7-of-32": 1663} and this tick reading 1663 with
             the job RUNNING;
     after:  that chunk is returned, and the tick prints a line for it.
@@ -202,7 +208,7 @@ def flat_shards(result: list) -> list:
             previous = state["windows"]
     flat = [row for row in result
             if row["state"] == "RUNNING" and row["chunk"] in previous
-            and 0 < row["windows"] <= previous[row["chunk"]]]
+            and row["windows"] > 0 and row["windows"] == previous[row["chunk"]]]
     TICK_STATE.parent.mkdir(parents=True, exist_ok=True)
     # the state is only replaced once it has been compared against, so two ticks a few seconds
     # apart do not throw away the reading the next real comparison needs
