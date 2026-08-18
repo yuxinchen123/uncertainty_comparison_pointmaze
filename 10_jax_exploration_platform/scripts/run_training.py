@@ -494,9 +494,14 @@ def main() -> None:
     # the steady-state rate excludes the first iteration, which paid for compiling the program
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)
     steady_iterations = max(args.iterations - 1, 1)
+    # environments that were respawned for a non-finite physics state (the MJX families
+    # count them; other families have no such field)
+    nan_count = getattr(state.env_state, "nan_count", None)
+    nan_episodes = int(np.asarray(nan_count).sum()) if nan_count is not None else None
     emit({
         "record": "unit_complete",
         "unit_id": args.unit_id,
+        "nan_respawned_episodes": nan_episodes,
         "iterations": args.iterations,
         "windows": window_index,
         "env_steps": args.iterations * steps_per_iteration,
@@ -509,7 +514,10 @@ def main() -> None:
         "seconds_per_iteration_steady": steady_seconds / steady_iterations,
         "attempt_finished": datetime.now().astimezone().isoformat(),
     })
-    say(f"unit {args.unit_id} complete: {args.iterations} iterations in {total_seconds:.1f}s")
+    nan_note = (f", {nan_episodes} episodes respawned for a non-finite physics state"
+                if nan_episodes else "")
+    say(f"unit {args.unit_id} complete: {args.iterations} iterations in "
+        f"{total_seconds:.1f}s{nan_note}")
     out.close()
 
     # one shard is still a sweep of one: the run-level files are always the aggregate
