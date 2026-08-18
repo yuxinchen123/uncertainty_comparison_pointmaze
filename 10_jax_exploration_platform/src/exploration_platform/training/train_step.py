@@ -12,25 +12,28 @@ import jax
 import jax.numpy as jnp
 
 from .. import F32, LOG2PI
-from ..agents.ppo.losses import ppo_loss_per_copy
-from ..agents.ppo.networks import actor_mean, critic_values
+from ..agents.ppo.losses import ppo_loss_per_copy, ppo_loss_per_copy_discrete
+from ..agents.ppo.networks import actor_logits, actor_mean, critic_values, logprob_discrete
 from ..agents.ppo.update import build_update
 from ..statistics import rms_update
 from .state import named_params, put_params, stored_params
 
 
-def build_total_loss(cfg, bonus, layout):
+def build_total_loss(cfg, bonus, layout, discrete: bool = False):
     """The scalar the optimizer minimises: the agent's per-copy loss plus the bonus's, summed.
 
     Adding the two [C] vectors before the sum, rather than summing each separately, is what keeps
-    this identical to the single-module trainer down to the last bit.
+    this identical to the single-module trainer down to the last bit. `discrete` picks the
+    categorical actor's loss — a Python decision taken when the program is built.
     """
+    agent_loss = ppo_loss_per_copy_discrete if discrete else ppo_loss_per_copy
+
     def total_loss(params, batch, style_a):
         """Sum over copies of (agent loss + bonus loss) on one (mini)batch."""
         # in the one-array form the gradient is taken with respect to the flat array, so the
         # named tensors the networks expect are cut out of it here
         named = layout.unpack(params) if layout.packed else params
-        loss_c = ppo_loss_per_copy(cfg, named["agent"], batch, style_a)
+        loss_c = agent_loss(cfg, named["agent"], batch, style_a)
         return (loss_c + bonus.loss(named["bonus"], batch)).sum()
     return total_loss
 
@@ -43,6 +46,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
     compare the batch the two forms build.
     """
     C, N, T = cfg.n_copies, cfg.n_envs, cfg.num_steps
+    discrete = getattr(env, "action_kind", "continuous") == "discrete"
 
     # how far to unroll the rollout scan. One rollout step does more work the more copies there
     # are, so the point where a longer program stops paying moves with the copy count: at 8
@@ -59,7 +63,8 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             f"the {bonus.name} bonus cannot score one rollout step at a time, so it cannot be "
             "composed with hoist_rollout=False; leave the hoist on")
 
-    update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout), sweep.lr_per_copy)
+    update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout, discrete),
+                             sweep.lr_per_copy)
 
     def iteration(state, lr):
         """Roll out, score, form advantages, update; returns (state, metrics)."""
@@ -72,9 +77,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         params = named_params(stored_params(state, layout), layout)
         agent_params, bonus_params = params["agent"], params["bonus"]
         bonus_state_old = state.bonus_state
-        z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, env.act_dim), F32)
-
-        logstd = agent_params["actor"]["logstd"]
+        # the per-step action noise: Gaussian for a continuous actor, Gumbel for a discrete
+        # one (argmax of logits + Gumbel draws exactly the categorical distribution)
+        if discrete:
+            u = jax.random.uniform(jax.random.fold_in(key, 0), (T, C, N, env.act_dim), F32,
+                                   minval=1e-7, maxval=1.0 - 1e-7)
+            z_all = -jnp.log(-jnp.log(u))
+            logstd = None
+        else:
+            z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, env.act_dim), F32)
+            logstd = agent_params["actor"]["logstd"]
         # before: a rollout buffer [T, C, N, k]; after: [C, T*N, k], one row per copy per step
         flat = lambda x: x.transpose(1, 0, 2, *range(3, x.ndim)).reshape(C, T * N, *x.shape[3:])
         # before: [C, T*N]; after: [T, C, N] — the inverse of flat for a scalar-per-step field
@@ -85,23 +97,44 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             # environment consumes) and the environment step. The critic values, the
             # log-probability and the intrinsic reward are pure functions of data the scan
             # already stores and of parameters that do not change during a rollout, so they are
-            # computed once afterwards over the whole [C, T*N, ...] batch.
-            def body(carry, z):
-                """One rollout step: act, step the environment, store what the rest needs."""
-                env_state, obs = carry
-                mean = actor_mean(agent_params["actor"], obs)
-                action = mean + jnp.exp(logstd)[:, None, :] * z
-                env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state, action)
-                out = (obs, action, final_obs, r_ext,
-                       term.astype(F32), (term | trunc).astype(F32))
-                return (env_state, next_obs), out
+            # computed once afterwards over the whole [C, T*N, ...] batch. A discrete actor's
+            # log-probability needs its logits, so it is taken inside the scan where the
+            # logits already exist, at the cost of one cheap gather per step.
+            if discrete:
+                def body(carry, z):
+                    """One rollout step: sample from the logits, step, store what the rest needs."""
+                    env_state, obs = carry
+                    logits = actor_logits(agent_params["actor"], obs)
+                    action = jnp.argmax(logits + z, axis=-1).astype(jnp.int32)
+                    logp = logprob_discrete(logits, action)
+                    env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
+                                                                                  action)
+                    out = (obs, action, logp, final_obs, r_ext,
+                           term.astype(F32), (term | trunc).astype(F32))
+                    return (env_state, next_obs), out
 
-            (env_state, obs_last), outs = jax.lax.scan(
-                body, (state.env_state, state.obs), z_all, unroll=scan_unroll)
-            obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+                (env_state, obs_last), outs = jax.lax.scan(
+                    body, (state.env_state, state.obs), z_all, unroll=scan_unroll)
+                obs_buf, act_buf, logp_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+            else:
+                def body(carry, z):
+                    """One rollout step: act, step the environment, store what the rest needs."""
+                    env_state, obs = carry
+                    mean = actor_mean(agent_params["actor"], obs)
+                    action = mean + jnp.exp(logstd)[:, None, :] * z
+                    env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
+                                                                                  action)
+                    out = (obs, action, final_obs, r_ext,
+                           term.astype(F32), (term | trunc).astype(F32))
+                    return (env_state, next_obs), out
 
-            # log-probability of the sampled actions depends only on the noise and on logstd
-            logp_buf = (-0.5 * z_all * z_all - logstd[None, :, None, :] - 0.5 * LOG2PI).sum(-1)
+                (env_state, obs_last), outs = jax.lax.scan(
+                    body, (state.env_state, state.obs), z_all, unroll=scan_unroll)
+                obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+
+                # log-probability of the sampled actions depends only on the noise and logstd
+                logp_buf = (-0.5 * z_all * z_all - logstd[None, :, None, :]
+                            - 0.5 * LOG2PI).sum(-1)
             # one critic pass covers the on-step values and the bootstrap values together
             obs_flat, nobs_flat = flat(obs_buf), flat(nobs_buf)
             vall_e, vall_i = critic_values(
@@ -115,9 +148,14 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                 """One rollout step, with the critic, the log-probability and the bonus inside."""
                 env_state, obs = carry
                 vext, vint = critic_values(agent_params["critic"], obs)
-                mean = actor_mean(agent_params["actor"], obs)
-                action = mean + jnp.exp(logstd)[:, None, :] * z
-                logp = (-0.5 * z * z - logstd[:, None, :] - 0.5 * LOG2PI).sum(-1)
+                if discrete:
+                    logits = actor_logits(agent_params["actor"], obs)
+                    action = jnp.argmax(logits + z, axis=-1).astype(jnp.int32)
+                    logp = logprob_discrete(logits, action)
+                else:
+                    mean = actor_mean(agent_params["actor"], obs)
+                    action = mean + jnp.exp(logstd)[:, None, :] * z
+                    logp = (-0.5 * z * z - logstd[:, None, :] - 0.5 * LOG2PI).sum(-1)
                 env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state, action)
                 r_int = bonus.rollout_step(bonus_params, bonus_state_old, final_obs)
                 out = (obs, action, logp, vext, vint, final_obs, r_ext,
@@ -220,7 +258,10 @@ def build_prime_step(cfg, env, bonus, layout):
 
     def prime_step(state, key):
         """One warm-up rollout (spec 4.3): random actions, the bonus's statistics updated."""
-        acts = jax.random.uniform(key, (T, C, N, env.act_dim), F32, -1.0, 1.0)
+        if getattr(env, "action_kind", "continuous") == "discrete":
+            acts = jax.random.randint(key, (T, C, N), 0, env.n_actions, jnp.int32)
+        else:
+            acts = jax.random.uniform(key, (T, C, N, env.act_dim), F32, -1.0, 1.0)
 
         def body(carry, a):
             """One environment step with a random action; only the next observation is kept."""

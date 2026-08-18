@@ -46,6 +46,9 @@ ALL="golden_09/test_golden_parity.py
      envs/test_antmaze_mjx.py
      envs/test_antmaze_parity_cpu_mujoco.py
      envs/test_antmaze_compose.py
+     agents/test_discrete_actor.py
+     envs/test_montezuma_adapter.py
+     envs/test_montezuma_compose.py
      copy_isolation/test_bonus_copy_isolation.py
      integration/test_jit_eager_equivalence.py"
 CPU_ONLY=" $(echo $CPU_ONLY) "

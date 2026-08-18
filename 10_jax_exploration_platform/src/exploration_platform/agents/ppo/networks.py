@@ -3,6 +3,7 @@
 Every forward takes x of shape [C, M, in] — the copy axis leads, so one matmul is C independent
 matmuls and M is whatever batch the caller has (one rollout step, or a whole rollout at once).
 """
+import jax
 import jax.numpy as jnp
 
 from ... import F32, LOG2PI
@@ -32,6 +33,38 @@ def init_agent_params(n_copies: int, base_seed: int, copy_seed_index,
     critic["Wext"], critic["bext"] = heads["W0"], heads["b0"]
     critic["Wint"], critic["bint"] = heads["W1"], heads["b1"]
     return {"actor": actor, "critic": critic}
+
+
+def init_agent_params_discrete(n_copies: int, base_seed: int, copy_seed_index,
+                               obs_dim: int, n_actions: int):
+    """The discrete-actor variant: the same two hidden layers, a logits head, no logstd.
+
+    Draws use the same frozen network ids as the Gaussian actor, so a discrete run's weights
+    are keyed exactly like a continuous run's of the same shapes.
+    """
+    actor = stacked_orthogonal(
+        "actor", [(64, obs_dim, 2 ** 0.5), (64, 64, 2 ** 0.5), (n_actions, 64, 0.01)],
+        n_copies, base_seed, copy_seed_index)
+    critic = stacked_orthogonal("critic", [(64, obs_dim, 2 ** 0.5), (64, 64, 2 ** 0.5)],
+                                n_copies, base_seed, copy_seed_index)
+    heads = stacked_orthogonal("critic_heads", [(1, 64, 1.0), (1, 64, 1.0)],
+                               n_copies, base_seed, copy_seed_index)
+    critic["Wext"], critic["bext"] = heads["W0"], heads["b0"]
+    critic["Wint"], critic["bint"] = heads["W1"], heads["b1"]
+    return {"actor": actor, "critic": critic}
+
+
+def actor_logits(actor, x):
+    """Action logits [C, M, n_actions] — the discrete actor's forward, same trunk shape."""
+    h = jnp.tanh(jnp.matmul(x, actor["W0"]) + actor["b0"][:, None, :])
+    h = jnp.tanh(jnp.matmul(h, actor["W1"]) + actor["b1"][:, None, :])
+    return jnp.matmul(h, actor["W2"]) + actor["b2"][:, None, :]
+
+
+def logprob_discrete(logits, action):
+    """Log-probability of int32 actions [C, M] under the categorical logits -> [C, M]."""
+    logp = jax.nn.log_softmax(logits, axis=-1)
+    return jnp.take_along_axis(logp, action[..., None].astype(jnp.int32), axis=-1)[..., 0]
 
 
 def actor_mean(actor, x):

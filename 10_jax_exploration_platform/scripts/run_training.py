@@ -81,6 +81,11 @@ ENVIRONMENTS = {
                       "resolved": {"map_name": "large", "start_cell": "(7, 1)",
                                    "goal_cell": "(1, 10)", "continuing_task": True,
                                    "goal_radius": 0.45, "reward_shift": 0.0}},
+    "montezuma": {"spec": "montezuma_oc4500_sticky@1", "cfg": "montezuma",
+                  "episode_steps": 4500,
+                  "resolved": {"game": "montezumarevenge (JAXAtari)",
+                               "sticky_actions": 0.25, "frame_skip": 4, "frame_stack": 4,
+                               "clip_reward": True, "reward_shift": 0.0}},
 }
 
 SPECS = {
@@ -93,6 +98,9 @@ def env_config_of(env_name: str):
     map_name = ENVIRONMENTS[env_name]["cfg"]
     if map_name is None:
         return None
+    if map_name == "montezuma":
+        from exploration_platform.envs.atari_montezuma.jax_montezuma import MontezumaConfig
+        return MontezumaConfig()
     from exploration_platform.envs.antmaze.am_common import preset
     return preset(map_name)
 

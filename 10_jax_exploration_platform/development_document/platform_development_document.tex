@@ -718,4 +718,112 @@ the environment is optimised against.}
 \label{tab:am-jax-env}
 \end{table}
 
+%==============================================================================
+\section{Montezuma's Revenge on the JAX platform}
+\label{sec:mz-jax}
+% The environment specification is subsection 3.0, so a first train run on this family becomes
+% 3.1 and the shared specification keeps the .0 slot, as in the two sections above.
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:mz-jax-envspec}
+
+Montezuma's Revenge is the hard-exploration Atari game the original random-network-distillation
+paper was built to solve, and it brings two firsts to the platform: a discrete action set ---
+the composer now builds a categorical actor (Gumbel-argmax sampling, the log-probability taken
+from the same logits) when the environment declares one, decided in Python before anything is
+compiled, exactly as the bonus is --- and stochastic dynamics, the ALE-v5 sticky-action
+protocol, so this environment carries one random key per environment where PointMaze and
+AntMaze carry none. The game logic is JAXAtari's pure-JAX reimplementation (the project
+validates it against \texttt{ALE/\allowbreak MontezumaRevenge-v5}; its top quality tier), run
+under JAXAtari's own Atari wrapper and adapted to the platform's batched contract. The
+observation is object-centric rather than the reference's pixels --- the platform's agent and
+bonus are the same multilayer perceptrons every family uses --- with the room index, inventory
+and lives appended so rooms do not alias; the deviations and their reasons are recorded in
+\texttt{envs/atari\allowbreak\_montezuma/\allowbreak spec.md}, and coverage for this family
+counts the $24$ playable rooms, the classic Montezuma exploration metric.
+\Cref{tab:mz-jax-env} states it knob by knob.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+?>{\raggedright\arraybackslash}p{6.4cm}
+?>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Montezuma's Revenge, object-centric} &
+  \textbf{Where the value is set} \\
+& \small(reference behaviour: \texttt{ALE/\allowbreak MontezumaRevenge-v5}) &
+  \small(field of the platform code) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Identity and provenance}} \\
+\greyrule
+specification name & \texttt{montezuma\allowbreak\_oc4500\allowbreak\_sticky@1} &
+  the name a run manifest carries \\
+\greyrule
+provenance & JAXAtari (\texttt{k4ntz/JAXAtari}) at commit \texttt{035fc46b}, package
+  \texttt{jaxatari} 0.1.0, MIT license; game assets are the project's replacement package (no
+  original ROM assets) & \texttt{envs/atari\allowbreak\_montezuma/\allowbreak spec.md} \\
+\greyrule
+implementation & \texttt{jax\allowbreak\_montezuma.py}: JAXAtari's game under its
+  \texttt{AtariWrapper}, batched to the platform contract with explicit auto-reset &
+  \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak
+  atari\allowbreak\_montezuma/} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Spaces}} \\
+\greyrule
+observation & $774$-d float32: $4$ stacked frames of the $192$-feature flattened
+  object-centric observation (player, enemies, items, conveyors, doors, ropes, platforms ---
+  position, size, activity, type, orientation each), then the room index, the $4$ inventory
+  slots and lives & \texttt{jax\allowbreak\_montezuma.\allowbreak \_obs\allowbreak\_vec} \\
+\greyrule
+action & discrete, the game's full $18$ ALE actions; the platform's first categorical actor &
+  \texttt{JaxMontezuma.\allowbreak n\allowbreak\_actions} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Dynamics and episode}} \\
+\greyrule
+sticky actions & with probability $0.25$ the previous action repeats (the v5
+  \texttt{repeat\allowbreak\_action\allowbreak\_probability}; no no-op starts --- sticky
+  actions are the protocol that replaced them) &
+  \texttt{MontezumaConfig.\allowbreak sticky\allowbreak\_actions} \\
+\greyrule
+frame skip & $4$: one environment step holds the action for $4$ game frames &
+  \texttt{MontezumaConfig.\allowbreak frame\allowbreak\_skip} \\
+\greyrule
+episode end & lives exhausted ($5$ lives) terminates; no episodic-life splitting &
+  \texttt{AtariWrapper(\allowbreak episodic\allowbreak\_life=False)} \\
+\greyrule
+episode length cap & $4{,}500$ environment steps ($18{,}000$ frames, the cap the
+  random-network-distillation paper used); truncation only &
+  \texttt{MontezumaConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+\greyrule
+reset & deterministic up to the sticky stream: one key per environment from (base seed, copy
+  seed index, environment index), re-split every episode &
+  \texttt{jax\allowbreak\_montezuma.\allowbreak \_single\allowbreak\_reset} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Reward and objective}} \\
+\greyrule
+reward & the score delta of the step, clipped to its sign (the random-network-distillation
+  convention) & \texttt{MontezumaConfig.\allowbreak clip\allowbreak\_reward} \\
+\greyrule
+coverage metric & rooms visited, over the $24$ playable rooms &
+  \texttt{JaxMontezuma.\allowbreak cell\allowbreak\_index} \\
+\greyrule
+discount, extrinsic & $0.999$ & \texttt{PPOConfig.\allowbreak gamma\allowbreak\_ext} \\
+\greyrule
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) &
+  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+\blackrule
+\end{tabular}%
+}
+\caption{The Montezuma's Revenge environment, knob by knob. The two discounts are the
+trainer's defaults rather than environment fields, listed because they define the objective
+the environment is optimised against. Long typewriter names break after every escaped
+underscore (\texttt{\textbackslash allowbreak}).}
+\label{tab:mz-jax-env}
+\end{table}
+
 \end{document}
