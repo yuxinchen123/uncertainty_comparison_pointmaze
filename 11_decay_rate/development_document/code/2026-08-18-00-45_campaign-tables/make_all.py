@@ -237,6 +237,33 @@ def neural_table() -> str:
     return "\n".join(out)
 
 
+
+
+def fig_neural_curves() -> None:
+    """Phase-2 story in three panels: gradient training lags (vectors), the 256-feature
+    capacity floor (Atari), and the widened exact head (Atari)."""
+    panels = [
+        ("exp_039_cfn_adam1e-2", "cell_midpoints", "gradient coin-flip net (best variant)"),
+        ("exp_051_deepcfn_atari", "atari_frames", "coin-flip head, 256 features (floor)"),
+        ("exp_060_deepcfn_wide_atari", "atari_frames", "coin-flip head, 1024 features"),
+    ]
+    plt.rcParams.update({"font.size": 13})
+    fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.0), sharey=True)
+    for ax, (exp, env, title) in zip(axes, panels):
+        steps, b, m = seed_mean(load_records(exp, env))
+        w = steps >= 1
+        for i in range(b.shape[1]):
+            ax.loglog(steps[w], np.maximum(b[w, i], 1e-4), color="tab:blue", alpha=0.12, lw=0.4)
+        ax.loglog(steps[w], np.minimum(1.0, steps[w] ** -0.5), color="grey", lw=2)
+        ax.set_title(title, fontsize=12)
+        ax.set_xlabel("step $n$")
+    axes[0].set_ylabel("bonus $b_i(n)$")
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIGDIR, "neural_curves.pdf"))
+    plt.close(fig)
+    print("wrote neural_curves.pdf")
+
+
 def latex_escape(s: str) -> str:
     """Escape the characters that appear in ledger descriptions."""
     return (s.replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
@@ -348,3 +375,4 @@ if __name__ == "__main__":
     fig_champion_curves()
     fig_nonuniform_scatter()
     fig_adagrad_diagnostics()
+    fig_neural_curves()

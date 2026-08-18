@@ -78,45 +78,48 @@
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces The campaign ledger: every iteration experiment, in submission order. Columns are the primary and secondary deviation metrics, the start deviation, the per-position slope mean and standard deviation (\Cref  {sec:metrics}); (discarded) marks abandoned directions. Numbers are the experiment's own 10-seed metrics; the exact method per row is the method file at the ledger's commit.}}{9}{table.3}\protected@file@percent }
 \newlabel{tab:ledger}{{3}{9}{The campaign ledger: every iteration experiment, in submission order. Columns are the primary and secondary deviation metrics, the start deviation, the per-position slope mean and standard deviation (\Cref {sec:metrics}); (discarded) marks abandoned directions. Numbers are the experiment's own 10-seed metrics; the exact method per row is the method file at the ledger's commit}{table.3}{}}
 \newlabel{tab:ledger@cref}{{[table][3][]3}{[1][9][]9}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Per-position bonus curves on the cell midpoints (uniform full batch, seed-mean; one thin line per position, $108$ per panel; grey line $= \min (1, n^{-1/2})$). Left to right: constant-rate Adam \textbf  {[exp 001]} (raw readout: spread starts and too-fast decay), AdaGrad $3\times 10^{-3}$ with the initial-copy readout \textbf  {[exp 009]} (starts at $1$, first-step drop and corner spread remain), the residual-encoded shrink \textbf  {[exp 010]} (every curve on the oracle), and coin-flip counting on the adaptive dictionary \textbf  {[exp 019]} (every curve on the oracle up to the chi fluctuation).}}{10}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:champion-curves}{{3}{10}{Per-position bonus curves on the cell midpoints (uniform full batch, seed-mean; one thin line per position, $108$ per panel; grey line $= \min (1, n^{-1/2})$). Left to right: constant-rate Adam \runref {exp 001} (raw readout: spread starts and too-fast decay), AdaGrad $3\times 10^{-3}$ with the initial-copy readout \runref {exp 009} (starts at $1$, first-step drop and corner spread remain), the residual-encoded shrink \runref {exp 010} (every curve on the oracle), and coin-flip counting on the adaptive dictionary \runref {exp 019} (every curve on the oracle up to the chi fluctuation)}{figure.caption.7}{}}
-\newlabel{fig:champion-curves@cref}{{[figure][3][]3}{[1][10][]10}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Per-position bonus curves on the cell midpoints (uniform full batch, seed-mean; one thin line per position, $108$ per panel; grey line $= \min (1, n^{-1/2})$). Left to right: constant-rate Adam \textbf  {[exp 001]} (raw readout: spread starts and too-fast decay), AdaGrad $3\times 10^{-3}$ with the initial-copy readout \textbf  {[exp 009]} (starts at $1$, first-step drop and corner spread remain), the residual-encoded shrink \textbf  {[exp 010]} (every curve on the oracle), and coin-flip counting on the adaptive dictionary \textbf  {[exp 019]} (every curve on the oracle up to the chi fluctuation).}}{11}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:champion-curves}{{3}{11}{Per-position bonus curves on the cell midpoints (uniform full batch, seed-mean; one thin line per position, $108$ per panel; grey line $= \min (1, n^{-1/2})$). Left to right: constant-rate Adam \runref {exp 001} (raw readout: spread starts and too-fast decay), AdaGrad $3\times 10^{-3}$ with the initial-copy readout \runref {exp 009} (starts at $1$, first-step drop and corner spread remain), the residual-encoded shrink \runref {exp 010} (every curve on the oracle), and coin-flip counting on the adaptive dictionary \runref {exp 019} (every curve on the oracle up to the chi fluctuation)}{figure.caption.7}{}}
+\newlabel{fig:champion-curves@cref}{{[figure][3][]3}{[1][10][]11}{}{}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {7}Non-uniform visitation}{11}{section.7}\protected@file@percent }
 \newlabel{sec:nonuniform}{{7}{11}{Non-uniform visitation}{section.7}{}}
-\newlabel{sec:nonuniform@cref}{{[section][7][]7}{[1][10][]11}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Final bonus against final realized visit count, one dot per cell-midpoint position (nonuniform regime, seed-mean, log--log; grey line $= m^{-1/2}$). The shrink construction \textbf  {[exp 011]} collapses to a single bonus value regardless of the position's count; the coin-flip construction \textbf  {[exp 020]} falls on the count oracle's line.}}{11}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:nonuniform-scatter}{{4}{11}{Final bonus against final realized visit count, one dot per cell-midpoint position (nonuniform regime, seed-mean, log--log; grey line $= m^{-1/2}$). The shrink construction \runref {exp 011} collapses to a single bonus value regardless of the position's count; the coin-flip construction \runref {exp 020} falls on the count oracle's line}{figure.caption.8}{}}
-\newlabel{fig:nonuniform-scatter@cref}{{[figure][4][]4}{[1][11][]11}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Capacity stress}{11}{section.8}\protected@file@percent }
-\newlabel{sec:capacity}{{8}{11}{Capacity stress}{section.8}{}}
-\newlabel{sec:capacity@cref}{{[section][8][]8}{[1][11][]11}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}The neural algorithm and the generalization domains}{12}{section.9}\protected@file@percent }
-\newlabel{sec:neural}{{9}{12}{The neural algorithm and the generalization domains}{section.9}{}}
-\newlabel{sec:neural@cref}{{[section][9][]9}{[1][12][]12}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Pure gradient training does not track the coin statistics}{12}{subsection.9.1}\protected@file@percent }
-\newlabel{sec:neural-gradient}{{9.1}{12}{Pure gradient training does not track the coin statistics}{subsection.9.1}{}}
-\newlabel{sec:neural-gradient@cref}{{[subsection][1][9]9.1}{[1][12][]12}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}The RND-pluggable answer: a deep trunk with an exact last-layer head}{12}{subsection.9.2}\protected@file@percent }
-\newlabel{sec:neural-lastlayer}{{9.2}{12}{The RND-pluggable answer: a deep trunk with an exact last-layer head}{subsection.9.2}{}}
-\newlabel{sec:neural-lastlayer@cref}{{[subsection][2][9]9.2}{[1][12][]12}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited.}}{13}{table.caption.9}\protected@file@percent }
-\newlabel{tab:neural}{{4}{13}{The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited}{table.caption.9}{}}
-\newlabel{tab:neural@cref}{{[table][4][]4}{[1][12][]13}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}What the generalization domains and regimes measure}{13}{subsection.9.3}\protected@file@percent }
-\newlabel{sec:neural-generalization}{{9.3}{13}{What the generalization domains and regimes measure}{subsection.9.3}{}}
-\newlabel{sec:neural-generalization@cref}{{[subsection][3][9]9.3}{[1][13][]13}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}Validation runs}{14}{section.10}\protected@file@percent }
-\newlabel{sec:validation}{{10}{14}{Validation runs}{section.10}{}}
-\newlabel{sec:validation@cref}{{[section][10][]10}{[1][14][]14}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal).}}{14}{table.caption.10}\protected@file@percent }
-\newlabel{tab:validation}{{5}{14}{Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal)}{table.caption.10}{}}
-\newlabel{tab:validation@cref}{{[table][5][]5}{[1][14][]14}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Ablations and horizon stress}{15}{subsection.10.1}\protected@file@percent }
-\newlabel{sec:ablations}{{10.1}{15}{Ablations and horizon stress}{subsection.10.1}{}}
-\newlabel{sec:ablations@cref}{{[subsection][1][10]10.1}{[1][15][]15}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {11}Findings}{15}{section.11}\protected@file@percent }
-\newlabel{sec:findings}{{11}{15}{Findings}{section.11}{}}
-\newlabel{sec:findings@cref}{{[section][11][]11}{[1][15][]15}{}{}{}}
+\newlabel{sec:nonuniform@cref}{{[section][7][]7}{[1][11][]11}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Final bonus against final realized visit count, one dot per cell-midpoint position (nonuniform regime, seed-mean, log--log; grey line $= m^{-1/2}$). The shrink construction \textbf  {[exp 011]} collapses to a single bonus value regardless of the position's count; the coin-flip construction \textbf  {[exp 020]} falls on the count oracle's line.}}{12}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:nonuniform-scatter}{{4}{12}{Final bonus against final realized visit count, one dot per cell-midpoint position (nonuniform regime, seed-mean, log--log; grey line $= m^{-1/2}$). The shrink construction \runref {exp 011} collapses to a single bonus value regardless of the position's count; the coin-flip construction \runref {exp 020} falls on the count oracle's line}{figure.caption.8}{}}
+\newlabel{fig:nonuniform-scatter@cref}{{[figure][4][]4}{[1][11][]12}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Capacity stress}{12}{section.8}\protected@file@percent }
+\newlabel{sec:capacity}{{8}{12}{Capacity stress}{section.8}{}}
+\newlabel{sec:capacity@cref}{{[section][8][]8}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}The neural algorithm and the generalization domains}{13}{section.9}\protected@file@percent }
+\newlabel{sec:neural}{{9}{13}{The neural algorithm and the generalization domains}{section.9}{}}
+\newlabel{sec:neural@cref}{{[section][9][]9}{[1][13][]13}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Pure gradient training does not track the coin statistics}{13}{subsection.9.1}\protected@file@percent }
+\newlabel{sec:neural-gradient}{{9.1}{13}{Pure gradient training does not track the coin statistics}{subsection.9.1}{}}
+\newlabel{sec:neural-gradient@cref}{{[subsection][1][9]9.1}{[1][13][]13}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}The RND-pluggable answer: a deep trunk with an exact last-layer head}{13}{subsection.9.2}\protected@file@percent }
+\newlabel{sec:neural-lastlayer}{{9.2}{13}{The RND-pluggable answer: a deep trunk with an exact last-layer head}{subsection.9.2}{}}
+\newlabel{sec:neural-lastlayer@cref}{{[subsection][2][9]9.2}{[1][13][]13}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The phase-2 story in per-state curve fans (seed-mean; one thin line per state; grey line $= \min (1, n^{-1/2})$). Left: the best pure-gradient coin-flip network on the cell midpoints --- gradient steps lag the running coin mean and the fan never settles on the oracle. Middle: the exact coin-flip head on Atari with $256$ features --- every curve floors at the target component outside the feature span. Right: the same head with $1024$ features --- the floor is gone and the fan sits on the oracle up to the statistical fluctuation.}}{13}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:neural-curves}{{5}{13}{The phase-2 story in per-state curve fans (seed-mean; one thin line per state; grey line $= \min (1, n^{-1/2})$). Left: the best pure-gradient coin-flip network on the cell midpoints --- gradient steps lag the running coin mean and the fan never settles on the oracle. Middle: the exact coin-flip head on Atari with $256$ features --- every curve floors at the target component outside the feature span. Right: the same head with $1024$ features --- the floor is gone and the fan sits on the oracle up to the statistical fluctuation}{figure.caption.9}{}}
+\newlabel{fig:neural-curves@cref}{{[figure][5][]5}{[1][13][]13}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited.}}{14}{table.caption.10}\protected@file@percent }
+\newlabel{tab:neural}{{4}{14}{The phase-2 neural ladder. Blocks are domain--regime combinations; within each block rows are sorted by dev\_worst (lower is better; best and second-best dev\_worst and dev\_mean bold and underlined). Every method starts at exactly 1 (start\_dev 0, omitted). In the held-out blocks the metric scores trained states against their counts AND the never-trained 20\% against the constant oracle value 1, so it punishes a bonus that generalizes the decay onto states never actually visited}{table.caption.10}{}}
+\newlabel{tab:neural@cref}{{[table][4][]4}{[1][13][]14}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}What the generalization domains and regimes measure}{14}{subsection.9.3}\protected@file@percent }
+\newlabel{sec:neural-generalization}{{9.3}{14}{What the generalization domains and regimes measure}{subsection.9.3}{}}
+\newlabel{sec:neural-generalization@cref}{{[subsection][3][9]9.3}{[1][14][]14}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Validation runs}{16}{section.10}\protected@file@percent }
+\newlabel{sec:validation}{{10}{16}{Validation runs}{section.10}{}}
+\newlabel{sec:validation@cref}{{[section][10][]10}{[1][16][]16}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal).}}{16}{table.caption.11}\protected@file@percent }
+\newlabel{tab:validation}{{5}{16}{Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal)}{table.caption.11}{}}
+\newlabel{tab:validation@cref}{{[table][5][]5}{[1][16][]16}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Ablations and horizon stress}{17}{subsection.10.1}\protected@file@percent }
+\newlabel{sec:ablations}{{10.1}{17}{Ablations and horizon stress}{subsection.10.1}{}}
+\newlabel{sec:ablations@cref}{{[subsection][1][10]10.1}{[1][17][]17}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Findings}{17}{section.11}\protected@file@percent }
+\newlabel{sec:findings}{{11}{17}{Findings}{section.11}{}}
+\newlabel{sec:findings@cref}{{[section][11][]11}{[1][17][]17}{}{}{}}
 \citation{jacot2018neural_neurips}
 \citation{arora2019fine_icml}
 \citation{du2019gradient_iclr}
@@ -138,12 +141,12 @@
 \citation{osband2018randomized_neurips}
 \citation{yang2024exploration}
 \citation{fang2025exploration}
-\@writefile{toc}{\contentsline {section}{\numberline {12}Literature}{16}{section.12}\protected@file@percent }
-\newlabel{sec:literature}{{12}{16}{Literature}{section.12}{}}
-\newlabel{sec:literature@cref}{{[section][12][]12}{[1][16][]16}{}{}{}}
-\@writefile{toc}{\contentsline {paragraph}{Why the decay rate is position-dependent.}{16}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Schedules, averaging, and adaptive optimizers.}{16}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Count-style bonus constructions.}{16}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Literature}{18}{section.12}\protected@file@percent }
+\newlabel{sec:literature}{{12}{18}{Literature}{section.12}{}}
+\newlabel{sec:literature@cref}{{[section][12][]12}{[1][18][]18}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Why the decay rate is position-dependent.}{18}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Schedules, averaging, and adaptive optimizers.}{18}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Count-style bonus constructions.}{18}{section*.14}\protected@file@percent }
 \citation{zhang2019fast_neurips}
 \citation{chen2025selfadaptive_journal_of_computational_physics}
 \citation{li2018visualizing_neurips}
@@ -152,14 +155,14 @@
 \bibstyle{plainnat}
 \bibdata{bibliography}
 \bibcite{abbasi2011online}{{1}{2011}{{Abbasi-Yadkori et~al.}}{{Abbasi-Yadkori, P{\'a}l, and Szepesv{\'a}ri}}}
-\@writefile{toc}{\contentsline {paragraph}{Making per-point rates uniform on purpose.}{17}{section*.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{The landscape question the user raised.}{17}{section*.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {13}What this document does not settle}{17}{section.13}\protected@file@percent }
-\newlabel{sec:limitations}{{13}{17}{What this document does not settle}{section.13}{}}
-\newlabel{sec:limitations@cref}{{[section][13][]13}{[1][17][]17}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The bonus field on a quarter-cell grid after $256$ uniform full-batch visits to the $108$ cell midpoints (white dots), one panel per champion. The visited-cell level is $(257)^{-1/2} \approx 0.062$ everywhere; the panels differ in what they claim about the space in between.}}{17}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:offsupport}{{5}{17}{The bonus field on a quarter-cell grid after $256$ uniform full-batch visits to the $108$ cell midpoints (white dots), one panel per champion. The visited-cell level is $(257)^{-1/2} \approx 0.062$ everywhere; the panels differ in what they claim about the space in between}{figure.caption.16}{}}
-\newlabel{fig:offsupport@cref}{{[figure][5][]5}{[1][17][]17}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Making per-point rates uniform on purpose.}{19}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{The landscape question the user raised.}{19}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}What this document does not settle}{19}{section.13}\protected@file@percent }
+\newlabel{sec:limitations}{{13}{19}{What this document does not settle}{section.13}{}}
+\newlabel{sec:limitations@cref}{{[section][13][]13}{[1][19][]19}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The bonus field on a quarter-cell grid after $256$ uniform full-batch visits to the $108$ cell midpoints (white dots), one panel per champion. The visited-cell level is $(257)^{-1/2} \approx 0.062$ everywhere; the panels differ in what they claim about the space in between.}}{19}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:offsupport}{{6}{19}{The bonus field on a quarter-cell grid after $256$ uniform full-batch visits to the $108$ cell midpoints (white dots), one panel per champion. The visited-cell level is $(257)^{-1/2} \approx 0.062$ everywhere; the panels differ in what they claim about the space in between}{figure.caption.17}{}}
+\newlabel{fig:offsupport@cref}{{[figure][6][]6}{[1][19][]19}{}{}{}}
 \bibcite{arora2019fine_icml}{{2}{2019}{{Arora et~al.}}{{Arora, Du, Hu, Li, and Wang}}}
 \bibcite{bach2013non_neurips}{{3}{2013}{{Bach and Moulines}}{{}}}
 \bibcite{basri2019convergence_neurips}{{4}{2019}{{Basri et~al.}}{{Basri, Jacobs, Kasten, and Kritchman}}}
@@ -185,4 +188,4 @@
 \bibcite{tancik2020fourier_neurips}{{24}{2020}{{Tancik et~al.}}{{Tancik, Srinivasan, Mildenhall, Fridovich-Keil, Raghavan, Singhal, Ramamoorthi, Barron, and Ng}}}
 \bibcite{yang2024exploration}{{25}{2024}{{Yang et~al.}}{{Yang, Tao, Lyu, and Li}}}
 \bibcite{zhang2019fast_neurips}{{26}{2019}{{Zhang et~al.}}{{Zhang, Martens, and Grosse}}}
-\gdef \@abspage@last{19}
+\gdef \@abspage@last{21}
