@@ -200,3 +200,21 @@ its 9,766, against the 2.58 the plan carried from an RTX A4500 measurement throu
 card ratio. The transfer was about half an hour per hour optimistic for this class at this copy
 count. It changes nothing — the chunk still finishes before the re-cut oracle chunks do — and it is
 the kind of error the tick exists to surface.
+
+## 2026-08-18 04:50 PT — the tail: one chunk moved again, and what the re-cut actually cost
+
+At 04:44 PT, 42 of the 44 chunks were complete. Two were left, and one of them —
+`unit-1-chunk-4-of-32`, the second distillation chunk re-placed onto cheetah04 after jaguar03 failed
+— had never started: all four of that node's cards were busy, two with this run's own oracle chunks,
+so it sat `(Priority)` behind them and would not have begun until about 06:40 PT, finishing about
+10:30. Two RTX 5080 cards on nekomata01 were idle. Job 6539904 was cancelled, its id read from this
+run's own id file first, and the chunk resubmitted there as job 6540084, where the same arm at the
+same copy count measured 3.14 hours earlier in this run. That moves the run's finish from about
+10:30 PT to about 08:00.
+
+**The re-cut was worth more than the arithmetic promised.** Its chunks were planned at 7.38 hours
+each, from an RTX A4500 measurement at 264 copies carried onto an RTX 2080 Ti by the survey's card
+ratio at 512 copies. They came in at 5.18 to 5.25 hours — about 30 per cent faster than the
+transfer predicted, in the same direction the first canaries erred. Against the 18 hours one
+uncut 528-copy chunk would have taken on the same card, the re-cut saved about 13 hours rather
+than the 10 it was chosen for.
