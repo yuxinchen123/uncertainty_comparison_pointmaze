@@ -67,7 +67,37 @@ per (map, copies) shape.
 
 ## Where this family stands — whole training iteration (H100 NVL, serval05)
 
-(to be filled by `benchmarks/end_to_end/bench_antmaze_train.py` in round 1)
+Measured 2026-08-18 08:00–08:50 PT by `benchmarks/end_to_end/bench_antmaze_train.py` (medians
+over 11 rounds of 10 iterations after a two-call warm-up; one iteration = a 128-env-step
+rollout at `n_envs` 1 plus statistics, advantages and the `full_batch` update). The grid was
+deliberately cut after the six umaze rows — the environment-step table above shows the
+per-step cost is map-independent under the 32-slot contact budget, so the medium and large
+training rows would repeat the umaze numbers to within noise; the cut is why no result JSON
+exists for this table and the rows are carried from the harness's live log
+(`bench_train_live2.log` rows, verbatim):
+
+| map | bonus | copies | seconds per iteration | total env steps per second | env steps per second per copy | hours per million steps per copy | peak device memory |
+|---|---|---|---|---|---|---|---|
+| umaze | `rnd_next_state` | 512 | 1.006 | 0.065 M | 127.2 | 2.18 | 1.06 GiB |
+| umaze | `rnd_next_state` | 1,024 | 1.136 | 0.115 M | 112.7 | 2.46 | 2.18 GiB |
+| umaze | `rnd_next_state` | 2,048 | 1.536 | 0.171 M | 83.3 | 3.33 | 4.36 GiB |
+| umaze | `none` | 512 | 0.987 | 0.066 M | 129.7 | 2.14 | (grid peak) |
+| umaze | `none` | 1,024 | 1.138 | 0.115 M | 112.5 | 2.47 | (grid peak) |
+| umaze | `none` | 2,048 | 1.524 | 0.172 M | 84.0 | 3.31 | (grid peak) |
+
+Two readings:
+
+1. **The physics is essentially the whole bill.** The whole training iteration costs only
+   about 2 percent more than 128 bare environment steps at the same copy count, and the
+   no-bonus arm costs the same as the distillation arm to within 1 percent — the opposite of
+   PointMaze, where the bonus was 40 percent of the iteration. On this family a cheaper bonus
+   buys nothing; a faster contact solve buys everything.
+2. **The peak-memory column is only meaningful for the first three rows**: the JAX high-water
+   mark never resets within a process, and the `none` rows ran after the 2,048-copy
+   distillation row, so they inherit its 4.36 GiB peak.
+
+At the training run's shape — 1,024 copies, `rnd_next_state` — 2,100 iterations of 128 steps
+(269k env steps per copy) take about 40 minutes.
 
 ## Correctness, after round 2
 
