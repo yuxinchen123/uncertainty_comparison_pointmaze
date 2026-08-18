@@ -51,27 +51,20 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Functional residual shrinkage with a square-root-shaping schedule.
+    """SGD-1/t + per-position inverse-squared-error loss reweighting + initial-copy readout.
 
-    Instead of one gradient step per visit, each outer step t moves the predictor toward the
-    interpolated target field tau_t(x) = (1 - eta_t) g(x) + eta_t f(x) on the visited batch
-    (K warm-started inner Adam steps on ||g - tau_t||^2 with tau_t detached). If the inner fit
-    were exact, the residual at EVERY batch position would shrink by the same factor
-    (1 - eta_t) — a functional step, so the shrink does not pass through the tangent kernel and
-    cannot be position-dependent. The schedule eta_1 = 0, eta_t = 1 - sqrt((t-1)/t) for t >= 2
-    makes the cumulative product prod_{j<=n} (1 - eta_j) = n^(-1/2) exactly, so every position
-    follows the count oracle's curve simultaneously; the network's inner-fit error is the only
-    deviation source. Readout: initial-copy-normalized residual norm (starts at exactly 1);
-    the readout never sees the step counter."""
+    Same schedule as the prior best (eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2), but each
+    sample's squared error is weighted by the inverse of its own detached squared error
+    (normalized to mean 1). In the tangent-kernel picture the pull on each position becomes
+    proportional to its residual DIRECTION rather than its magnitude, so positions that have
+    already converged stop dominating the gradient and slow positions catch up — the
+    equal-relative-progress idea. Readout: initial-copy-normalized residual norm."""
 
-    name = "funcshrink_sqrt_schedule"
-
-    INNER_STEPS = 10       # inner Adam steps per outer visit
-    INNER_LR = 1e-3        # inner Adam learning rate
+    name = "sgd1t_inverse_error_reweight"
 
     def __init__(self, seed: int, obs_dim: int = 4):
         """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
-        denominator), and a persistent inner Adam (warm-started across outer steps)."""
+        denominator), and plain SGD (1/t schedule in update)."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
@@ -81,24 +74,28 @@ class Method:
         self.predictor0 = copy.deepcopy(self.predictor)
         for p in self.predictor0.parameters():
             p.requires_grad_(False)
-        self.t = 0  # outer-step counter (drives the shrink schedule only)
-        self.opt = torch.optim.Adam(self.predictor.parameters(), lr=self.INNER_LR)
+        self.eta0, self.t0 = 1e-2, 1e2
+        self.t = 0  # 0-based optimizer-step counter for the schedule
+        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.eta0)
 
     def update(self, x: torch.Tensor) -> None:
-        """One outer step: freeze tau = (1-eta_t) g(x) + eta_t f(x) on the batch, then K inner
-        Adam steps pulling g toward tau."""
+        """One SGD-1/t step on the REWEIGHTED loss: each sample's squared error is divided by
+        its own detached squared error (mean-normalized weights), so every position contributes
+        the same relative-progress pull and fast positions cannot outrun slow ones."""
+        for group in self.opt.param_groups:
+            group["lr"] = self.eta0 / (1.0 + self.t / self.t0)
+        e = self.predictor(x) - self.target(x)
+        sq = e.pow(2).sum(dim=1)
+        # inverse-squared-error weights, detached, normalized to mean 1 so the global step size
+        # keeps its usual scale. before: sq = [4.0, 1.0, 0.25]; after: w = 1/sq normalized ->
+        # [0.143, 0.571, 2.286] — the smallest-error sample gets the largest pull
+        w = 1.0 / (sq.detach() + 1e-12)
+        w = w / w.mean()
+        loss = 0.5 * (w * sq).mean()
+        self.opt.zero_grad()
+        loss.backward()
+        self.opt.step()
         self.t += 1
-        # square-root-shaping schedule: prod_{j<=n} (1 - eta_j) = n^(-1/2) exactly
-        # before: t = 1, 2, 3, 4 -> after: eta = 0, 1-sqrt(1/2), 1-sqrt(2/3), 1-sqrt(3/4)
-        eta = 0.0 if self.t == 1 else 1.0 - float(np.sqrt((self.t - 1) / self.t))
-        with torch.no_grad():
-            tau = (1.0 - eta) * self.predictor(x) + eta * self.target(x)
-        for _ in range(self.INNER_STEPS):
-            d = self.predictor(x) - tau
-            loss = 0.5 * d.pow(2).sum(dim=1).mean()
-            self.opt.zero_grad()
-            loss.backward()
-            self.opt.step()
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
         """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
