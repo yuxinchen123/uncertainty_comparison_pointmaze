@@ -188,6 +188,7 @@ NEURAL_ROWS = [  # (experiment folder, block, row label) for the phase-2 neural 
     ("exp_054_deepcfn_heldout_vectors", "held-out 20\% (vectors)", "deep trunk + exact coin-flip head"),
     ("exp_057_deepshrink_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact shrink head"),
     ("exp_058_deepcfn_heldout_atari", "held-out 20\% (Atari)", "conv trunk + exact coin-flip head"),
+    ("val_210_deepcfn_cappedwide_atari_heldout", "held-out 20\% (Atari)", "conv trunk (1024 feat.) + capped coin-flip head"),
     ("exp_056_deepshrink_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact shrink head"),
     ("exp_055_deepcfn_nonuniform_vectors", "nonuniform visitation (vectors)", "deep trunk + exact coin-flip head"),
     ("val_206_deepcfn_capped_nonuniform30", "nonuniform visitation (vectors)", "deep trunk + capped coin-flip head (30 seeds)"),
