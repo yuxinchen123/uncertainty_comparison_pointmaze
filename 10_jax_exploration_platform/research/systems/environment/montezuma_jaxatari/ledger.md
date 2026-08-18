@@ -41,6 +41,18 @@ cost next to the maze families?
 
 (to be filled by `benchmarks/end_to_end/bench_montezuma_train.py` in round 1)
 
+## Correctness, after round 1
+
+All green on the processor, 2026-08-18 03:15–03:40 PT: the discrete actor's Gumbel-argmax
+sampling frequencies match its softmax to 5e-3 over 200,000 draws and its log-probability is
+the log-softmax gather on a real keyed network; the adapter's contract, keyed determinism,
+per-environment sticky diversity, copy isolation, truncation-and-auto-reset (fresh episode
+with 5 lives, wrapper clock at zero, keys advanced) and the x64 boundary all hold; and the
+fused composition trains end to end for `rnd_next_state` (intrinsic reward falls as the
+predictor learns) and `none` (intrinsic reward exactly zero), with the PointMaze-only
+visit-count family refused at composition time. The PointMaze golden-parity gate and the
+whole AntMaze set stay green beside them.
+
 ## Recorded future work
 
 1. **Pixel observations and convolutional networks.** The original RND setup is 84x84
