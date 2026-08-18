@@ -51,21 +51,27 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Constant-step SGD + Polyak-averaged readout + initial-copy normalization + square root.
+    """Functional residual shrinkage with a square-root-shaping schedule.
 
-    Training: plain SGD at a constant rate (1e-2) on the MSE distillation loss — the LAST
-    iterate keeps training normally. Readout: a uniformly-averaged copy of the predictor
-    parameters (theta_bar_n = mean of theta_0..theta_n). On a quadratic, EVERY eigenmode of the
-    averaged iterate's residual decays as 1/n once past its own transient, so the averaged
-    residual norm decays as 1/n at every position with the same exponent; the readout takes
-    ||g_avg(x) - f(x)|| / ||g_0(x) - f(x)|| (starts at exactly 1) and then a square root to
-    move the uniform 1/n onto the count oracle's n^(-1/2) scale."""
+    Instead of one gradient step per visit, each outer step t moves the predictor toward the
+    interpolated target field tau_t(x) = (1 - eta_t) g(x) + eta_t f(x) on the visited batch
+    (K warm-started inner Adam steps on ||g - tau_t||^2 with tau_t detached). If the inner fit
+    were exact, the residual at EVERY batch position would shrink by the same factor
+    (1 - eta_t) — a functional step, so the shrink does not pass through the tangent kernel and
+    cannot be position-dependent. The schedule eta_1 = 0, eta_t = 1 - sqrt((t-1)/t) for t >= 2
+    makes the cumulative product prod_{j<=n} (1 - eta_j) = n^(-1/2) exactly, so every position
+    follows the count oracle's curve simultaneously; the network's inner-fit error is the only
+    deviation source. Readout: initial-copy-normalized residual norm (starts at exactly 1);
+    the readout never sees the step counter."""
 
-    name = "sgdconst_polyakavg_sqrt"
+    name = "funcshrink_sqrt_schedule"
+
+    INNER_STEPS = 10       # inner Adam steps per outer visit
+    INNER_LR = 1e-3        # inner Adam learning rate
 
     def __init__(self, seed: int, obs_dim: int = 4):
         """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
-        denominator), the running parameter average, and constant-rate SGD."""
+        denominator), and a persistent inner Adam (warm-started across outer steps)."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
@@ -75,32 +81,29 @@ class Method:
         self.predictor0 = copy.deepcopy(self.predictor)
         for p in self.predictor0.parameters():
             p.requires_grad_(False)
-        # running Polyak average of the predictor parameters, served as its own network
-        self.avg = copy.deepcopy(self.predictor)
-        for p in self.avg.parameters():
-            p.requires_grad_(False)
-        self.n_avg = 1  # iterates averaged so far (theta_0 is in)
-        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=1e-2)
+        self.t = 0  # outer-step counter (drives the shrink schedule only)
+        self.opt = torch.optim.Adam(self.predictor.parameters(), lr=self.INNER_LR)
 
     def update(self, x: torch.Tensor) -> None:
-        """One constant-rate SGD step on the MSE loss, then fold the new iterate into the
-        running average: theta_bar += (theta - theta_bar) / (n + 1)."""
-        e = self.predictor(x) - self.target(x)
-        loss = 0.5 * e.pow(2).sum(dim=1).mean()
-        self.opt.zero_grad()
-        loss.backward()
-        self.opt.step()
-        # incremental uniform average over iterates 0..t
-        self.n_avg += 1
+        """One outer step: freeze tau = (1-eta_t) g(x) + eta_t f(x) on the batch, then K inner
+        Adam steps pulling g toward tau."""
+        self.t += 1
+        # square-root-shaping schedule: prod_{j<=n} (1 - eta_j) = n^(-1/2) exactly
+        # before: t = 1, 2, 3, 4 -> after: eta = 0, 1-sqrt(1/2), 1-sqrt(2/3), 1-sqrt(3/4)
+        eta = 0.0 if self.t == 1 else 1.0 - float(np.sqrt((self.t - 1) / self.t))
         with torch.no_grad():
-            for pa, p in zip(self.avg.parameters(), self.predictor.parameters()):
-                pa.add_(p - pa, alpha=1.0 / self.n_avg)
+            tau = (1.0 - eta) * self.predictor(x) + eta * self.target(x)
+        for _ in range(self.INNER_STEPS):
+            d = self.predictor(x) - tau
+            loss = 0.5 * d.pow(2).sum(dim=1).mean()
+            self.opt.zero_grad()
+            loss.backward()
+            self.opt.step()
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """sqrt( ||g_avg(x)-f(x)|| / ||g_0(x)-f(x)|| ): starts at exactly 1; a uniform 1/n
-        decay of the averaged residual reads out as n^(-1/2)."""
+        """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
         with torch.no_grad():
             f = self.target(x)
-            e = (self.avg(x) - f).pow(2).sum(dim=1).sqrt()
+            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
             e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
-            return (e / e0).sqrt().cpu().numpy().astype(np.float64)
+            return (e / e0).cpu().numpy().astype(np.float64)
