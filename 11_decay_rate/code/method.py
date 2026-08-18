@@ -96,47 +96,50 @@ def add_trunk_biases(net: nn.Module, sigma: float, seed: int, stream: str) -> No
 
 
 class Method:
-    """Deep random features + exact last-layer shrink head: the RND-pluggable NEURAL form of
-    the campaign's exact construction.
+    """Deep random features + exact coin-flip least-squares head: the RND-pluggable NEURAL
+    counting bonus (per-state visit counts under any visitation, by statistics).
 
-    A frozen deep trunk (vector MLP or RND conv stack; random biases N(0, 0.5^2) added only
-    for low-dimensional inputs, which need them to break ReLU homogeneity) produces 256-d
-    features phi(x); a frozen deep target f(x) (128-d) plays RND's target role. The bonus is
-    r(x) = ||W phi(x) - f(x)|| / ||f(x)|| with the head W zero-initialized, so r = 1 exactly
-    at every never-visited input. Each visit applies the residual-encoded per-visit map
-    r -> r / sqrt(1 + r^2) to the visited samples, realized by the minimum-Frobenius-change
-    head update dW = E^T (Phi Phi^T + 1e-8 I)^{-1} Phi in float64 — a functional step that
-    does not pass through the kernel spectrum, self-correcting under capacity stress and
-    feature collinearity (the campaign's exps 010/023). Inputs pass through a whitener frozen
-    after the first visited batch (stationarity for the convergence measurement; the online
-    version would keep updating it)."""
+    A frozen deep trunk (vector MLP or RND conv stack; N(0, 0.5^2) biases only for inputs of
+    dimension <= 8) produces 256-d features. Every visit draws a fresh Rademacher coin vector
+    (d = 512) and accumulates the ridge normal equations of the regression from features onto
+    (coin - prior); the head solve is cached and refreshed at readout. The frozen prior net is
+    unit-normalized per input and the head starts empty, so the bonus
+    ||head(x) + prior(x)|| / sqrt(d) is exactly 1 at every never-visited input, and a state
+    visited m times reads the norm of its own m-coin running mean — m^(-1/2) in expectation,
+    with the chi fluctuation floor and whatever feature collinearity shrinks. Whitener frozen
+    after the first visited batch (as the shrink variant)."""
 
-    name = "deep_lastlayer_shrink"
+    name = "deep_lastlayer_cfn"
 
+    D_COINS = 512
     RIDGE = 1e-8
-    BIAS_SIGMA_LOWDIM = 0.5   # trunk/target bias scale for inputs of dimension <= 8
+    BIAS_SIGMA_LOWDIM = 0.5
 
     def __init__(self, seed: int, obs_dim=4):
-        """Frozen trunk + frozen target (+ low-dim biases), zero head, whitener state."""
+        """Frozen trunk + frozen unit-normalized prior, empty normal equations, whitener."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.is_image = not isinstance(obs_dim, int)
+        d = 256 if self.is_image else self.D_COINS
+        self.d = d
         self.trunk = make_trunk(obs_dim, 256, seed, "feat")
-        self.target = make_trunk(obs_dim, 128, seed, "target")
+        self.prior_raw = make_trunk(obs_dim, d, seed, "prior")
         if not self.is_image and obs_dim <= 8:
             add_trunk_biases(self.trunk, self.BIAS_SIGMA_LOWDIM, seed, "feat")
-            add_trunk_biases(self.target, self.BIAS_SIGMA_LOWDIM, seed, "target")
-        for net in (self.trunk, self.target):
+            add_trunk_biases(self.prior_raw, self.BIAS_SIGMA_LOWDIM, seed, "prior")
+        for net in (self.trunk, self.prior_raw):
             for p in net.parameters():
                 p.requires_grad_(False)
         self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
         self.trunk.to(self.device)
-        self.target.to(self.device)
-        self.W = torch.zeros(128, 256, dtype=torch.float64, device=self.device)
+        self.prior_raw.to(self.device)
+        self.Lam = self.RIDGE * torch.eye(256, dtype=torch.float64, device=self.device)
+        self.Bmat = torch.zeros(256, d, dtype=torch.float64, device=self.device)
+        self.coin_gen = keyed_gen(seed, "coins")
         self._mean = None
         self._var = None
 
     def _whiten(self, x: torch.Tensor) -> torch.Tensor:
-        """Whitener frozen at the FIRST update batch; identity before it; clip +-5."""
+        """Whitener frozen at the first update batch; identity before it; clip +-5."""
         z = x.to(self.device)
         if self._mean is not None:
             z = ((z - self._mean) / (self._var + 1e-8).sqrt()).clamp(-5.0, 5.0)
@@ -150,26 +153,28 @@ class Method:
                 self._mean = z.mean(dim=0)
                 self._var = z.var(dim=0, unbiased=False) + 1e-8
 
+    def _prior(self, z: torch.Tensor) -> torch.Tensor:
+        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input."""
+        p = self.prior_raw(z).double()
+        return float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
+
     def update(self, x: torch.Tensor) -> None:
-        """Shrink the visited samples' residuals by 1/sqrt(1 + r^2) via the min-change solve."""
+        """One visit per batch row: fresh coins into the normal equations."""
         with torch.no_grad():
             self._freeze_whitener(x)
             z = self._whiten(x)
-            phi = self.trunk(z).double()                     # (B, 256)
-            f = self.target(z).double()                      # (B, 128)
-            e = phi @ self.W.T - f                           # residual vectors (B, 128)
-            r = e.norm(dim=1) / f.norm(dim=1).clamp(min=1e-12)
-            s = 1.0 / torch.sqrt(1.0 + r.pow(2))             # per-visit shrink (B,)
-            E = (s - 1.0).unsqueeze(1) * e
-            G = phi @ phi.T + self.RIDGE * torch.eye(phi.shape[0], dtype=torch.float64,
-                                                     device=self.device)
-            self.W += E.T @ torch.linalg.solve(G, phi)
+            phi = self.trunk(z).double()
+            c = (torch.randint(0, 2, (x.shape[0], self.d), generator=self.coin_gen,
+                               dtype=torch.float64) * 2.0 - 1.0).to(self.device)
+            tgt = c - self._prior(z)
+            self.Lam += phi.T @ phi
+            self.Bmat += phi.T @ tgt
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """r(x) = ||W phi(x) - f(x)|| / ||f(x)|| (exactly 1 at initialization)."""
+        """||head(x) + prior(x)|| / sqrt(d); exactly 1 before any visit."""
         with torch.no_grad():
             z = self._whiten(x)
             phi = self.trunk(z).double()
-            f = self.target(z).double()
-            e = (phi @ self.W.T - f).norm(dim=1)
-            return (e / f.norm(dim=1).clamp(min=1e-12)).cpu().numpy()
+            W = torch.linalg.solve(self.Lam, self.Bmat)
+            out = phi @ W + self._prior(z)
+            return (out.norm(dim=1) / float(np.sqrt(self.d))).cpu().numpy()
