@@ -65,3 +65,8 @@ ac975a0	0.054287	0.003108	0.000000	-0.500131	0.000248	keep	val 118 collision-fre
 0de11cf	1.215835	0.710758	0.000000	-0.351516	0.145061	keep	exp 056 deep shrink, NONUNIFORM vectors: fails as its phase-1 sibling did — the recurrence integrates interference
 0de11cf	1.651587	1.201758	0.000000	-2.293455	1.048295	keep	exp 057 deep shrink, HELDOUT atari: floor + leakage compound
 25e19d2	1.771001	1.201959	0.000000	-0.899647	0.168052	keep	exp 058 deep coin-flip, HELDOUT atari: same
+9464d69	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 059 deep shrink head, 1024 image features, atari: MACHINE-EXACT on 512 real MontezumaRevenge frames — the capacity law confirmed in the converse (width past the state count restores exactness)
+9464d69	0.577985	0.063727	0.000000	-0.504180	0.005692	keep	exp 060 deep coin-flip head, 1024 image features, atari: floor removed (dev_mean 0.064 near the d=256 chi floor); worst frames = near-duplicate frames sharing counts through nearly identical features
+0de11cf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	val 201 deep shrink, vectors uniform, 30 seeds: exact, validated
+25e19d2	0.054577	0.029806	0.000000	-0.501656	0.002533	keep	val 202 deep coin-flip, vectors uniform, 30 seeds: statistical floor, validated
+25e19d2	1.674775	0.702331	0.000000	-1.124719	0.495275	discard	val 203 deep coin-flip nonuniform 30 seeds WITH THE ABSOLUTE 1e-8 RIDGE: node-dependent early-solve instability on antmaze (bonus ~30 at early checkpoints; identical seed clean on another node) — kept as the record that motivated exp 061; superseded by val_206
