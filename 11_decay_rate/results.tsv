@@ -2,3 +2,7 @@ commit	dev_worst	dev_mean	start_dev	slope_mean	slope_std	status	description
 73f8c05	1.618419	1.214187	1.374555	-0.862282	0.133202	keep	exp 001 adam baseline (constant Adam 1e-3, raw l2 readout): the canonical RND control
 b58d201	2.470518	1.918203	1.374555	-0.969486	0.775770	keep	exp 002 sgd1t baseline (eta0 1e-2, t0 1e2): prior work's best; per-env agg slopes -0.80 vs -0.38 expose the heterogeneity
 cd2d303	2.633842	1.407167	0.000000	-0.867277	0.564252	keep	exp 003 sgd1t + initial-copy readout norm: start_dev exactly 0 (requirement 1 solved); slopes unchanged, worst position now a near-flat curve
+d3ae19c	2.541168	2.025344	0.000000	-0.452742	0.441000	keep	exp 004 const SGD + Polyak-averaged sqrt readout: slope_mean -0.45 but center_square nearly flat in-window (agg -0.10); heterogeneous (std 0.44)
+9f7a899	1.686272	0.775609	0.000000	-1.800971	0.507559	discard	exp 005 functional shrink w/ sqrt schedule: inner Adam OVERSHOOTS the near target (fixed-size steps), acts like fast distillation; slope -1.8. Retry with inner SGD + tolerance
+69edcb3	2.392831	1.801820	0.000000	-0.765255	0.688768	discard	exp 006 SGD-1/t + inverse-squared-error reweighting: spread not reduced (std 0.69)
+3cc2bd3	1.227409	0.761177	0.000000	-0.567772	0.105908	keep	exp 007 AdaGrad + initial-copy readout: NEW LEADER. agg slopes -0.510/-0.499 on both envs, tightest spread (std 0.106); worst position still -1.39

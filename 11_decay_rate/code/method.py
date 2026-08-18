@@ -51,19 +51,26 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """AdaGrad + initial-copy readout: the cumulative-squared-gradient optimizer (the closest
-    off-the-shelf optimizer to a soft visit count — its accumulator never forgets) at the
-    project's O2 settings (lr 1e-2, eps 1e-10, zero initial accumulator), on the plain MSE
-    distillation loss. Readout: initial-copy-normalized residual norm."""
+    """Sphere-projected inputs + AdaGrad + initial-copy readout.
 
-    name = "adagrad_initcopy_norm"
+    exp 007's diagnostics: the worst positions are the maze corners — the largest-radius
+    inputs, whose tangent-kernel diagonal K(x, x) is largest for a ReLU MLP, so they train
+    fastest (slopes -0.67 vs -0.55 near the center). Fix at the source: lift each input to
+    [x, y, c] with a constant homogeneous coordinate c = 4 and L2-normalize, so every network
+    input lies on the unit sphere and K(x, x) is the SAME at every position; angular geometry
+    still separates the positions. Training and readout otherwise identical to exp 007
+    (AdaGrad lr 1e-2, MSE loss, initial-copy-normalized residual norm)."""
+
+    name = "sphere_input_adagrad"
+
+    HOMOGENEOUS_C = 4.0  # the lifted constant coordinate (comparable to the +-5.5 input range)
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
-        denominator), and AdaGrad."""
+        """Build target + predictor (3 -> 256 -> ReLU -> 128 on the sphere-lifted input), the
+        frozen init copy (readout denominator), and AdaGrad."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
-        self.target = make_mlp(obs_dim, 256, 128, seed, "target")
-        self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
+        self.target = make_mlp(3, 256, 128, seed, "target")
+        self.predictor = make_mlp(3, 256, 128, seed, "predictor")
         for p in self.target.parameters():
             p.requires_grad_(False)
         # frozen initial predictor: the per-position readout denominator (starts the bonus at 1)
@@ -73,18 +80,27 @@ class Method:
         self.opt = torch.optim.Adagrad(self.predictor.parameters(), lr=1e-2, eps=1e-10,
                                        initial_accumulator_value=0)
 
+    def lift(self, x: torch.Tensor) -> torch.Tensor:
+        """[x, y, vx, vy] -> [x, y, c] / ||[x, y, c]||: every input lands on the unit sphere.
+        before: rows [-5.5, 4.0, 0, 0] and [0.05, -0.05, 0, 0]
+        after:  [-0.68, 0.49, 0.49] (norm 1) and [0.012, -0.012, 1.0] (norm 1)"""
+        z = torch.cat([x[:, :2], torch.full_like(x[:, :1], self.HOMOGENEOUS_C)], dim=1)
+        return z / z.pow(2).sum(dim=1, keepdim=True).sqrt()
+
     def update(self, x: torch.Tensor) -> None:
-        """One AdaGrad step on the MSE distillation loss."""
-        e = self.predictor(x) - self.target(x)
+        """One AdaGrad step on the MSE distillation loss over sphere-lifted inputs."""
+        z = self.lift(x)
+        e = self.predictor(z) - self.target(z)
         loss = 0.5 * e.pow(2).sum(dim=1).mean()
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
+        """Initial-copy-normalized residual norm on the lifted input (exactly 1 at t=0)."""
         with torch.no_grad():
-            f = self.target(x)
-            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
-            e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
+            z = self.lift(x)
+            f = self.target(z)
+            e = (self.predictor(z) - f).pow(2).sum(dim=1).sqrt()
+            e0 = (self.predictor0(z) - f).pow(2).sum(dim=1).sqrt()
             return (e / e0).cpu().numpy().astype(np.float64)
