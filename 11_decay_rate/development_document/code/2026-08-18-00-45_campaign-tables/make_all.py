@@ -100,6 +100,7 @@ VAL_LABELS = {  # folder slug -> table row label (regime is the block, so it is 
     "val_107_coinflip_adaptive_uniform30": ("uniform", "coin flips, adaptive dictionary"),
     "val_112_elliptical_sigma035_uniform30": ("uniform", "elliptical posterior readout ($\\sigma \\le 0.35$)"),
     "val_114_hadamardperm_uniform30": ("uniform", "Hadamard coins (column-permuted), adaptive dictionary"),
+    "val_117_hadamardnocollide_uniform30": ("uniform", "Hadamard coins (collision-free spikes), adaptive dictionary"),
     "val_104_adagrad3e-3_nonuniform30": ("nonuniform", "AdaGrad $3{\\times}10^{-3}$ + initial-copy readout"),
     "val_106_shrink_relu_nonuniform30": ("nonuniform", "residual-encoded shrink (exact solve)"),
     "val_108_coinflip_adaptive_nonuniform30": ("nonuniform", "coin flips, adaptive dictionary"),
@@ -107,6 +108,7 @@ VAL_LABELS = {  # folder slug -> table row label (regime is the block, so it is 
     "val_115_hadamardperm_nonuniform30": ("nonuniform", "Hadamard coins (column-permuted), adaptive dictionary"),
     "val_111_coinflip_hadamard_dense30": ("dense grid", "Hadamard coins, sign-only scramble (broken variant, kept as record)"),
     "val_116_hadamardperm_dense30": ("dense grid", "Hadamard coins (column-permuted), adaptive dictionary"),
+    "val_118_hadamardnocollide_dense30": ("dense grid", "Hadamard coins (collision-free spikes), adaptive dictionary"),
 }
 
 

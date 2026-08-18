@@ -1,0 +1,24 @@
+schema_version: 1
+run_id: 2026-08-18-03-30_rl-pilot_pointmaze-large-bottomleft_sac_coinflip-count-b0.3-1-3__gt-position-velocity-b1_1Mstep_seed0-14_vs-run81-reference
+description: >
+  RL pilot of the 11_decay_rate campaign winner: SAC + coinflip_count bonus on
+  PointMaze_Large bottom-left at run-8.1's budget, with a gt_position_velocity control arm;
+  scored against run-8.1's recorded winner table.
+git:
+  branch: Use-RLexplore-RND
+  commit: recorded in command.txt at launch
+specs:
+  env: PointMaze_Large-v3_start_bottom_left@run-8.1
+  agent: SB3 SAC@07_reconstruction/train.py
+  bonus: coinflip_count@1 | gt_position_velocity@1
+compile_signature:
+  total_timesteps: 1000000
+  eval_freq: 50000
+  n_eval_episodes: 100
+  configs: 4
+  seeds: 15
+seeding:
+  base_seed: 0
+  mode: distinct
+artifacts:
+  records: data/<sweep_id>/local/*.json
