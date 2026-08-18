@@ -119,7 +119,7 @@ both, evaluated on the high-dimensional domains (\Cref{sec:neural}).
 \toprule
 \textbf{Symbol} & \textbf{Meaning} \\
 \midrule
-$x_i$ & evaluation position $i$ (input $[x, y, 0, 0]$; \Cref{sec:platform} lists the sets) \\
+$x_i$ & evaluation state $i$ (maze input $[x, y, 0, 0]$, AntMaze observation, or Atari frame; \Cref{sec:platform} lists the sets) \\
 $P$ & number of positions in a point set \\
 $n$ & update-step index ($0$ = at initialization) \\
 $m_i(n)$ & number of times position $i$ was in a training batch during steps $1 \ldots n$ \\
@@ -913,6 +913,29 @@ Five single-knob probes bound the champions' sensitivities, each at $10$ seeds
   cannot serve two spatial scales at once; the growing data-dependent dictionary (insert
   far-enough visited states, bandwidth from the local spacing) serves both scales and the
   $432$-point stress set.
+\item \textbf{The neural forms transfer, and the counting belongs in the last layer.}
+  Keeping the deep network for representation and making the last layer exact carries every
+  phase-1 property onto real 29-dimensional AntMaze observations unchanged (shrink head:
+  $0.0381$, slope $-0.500000$, zero spread; coin-flip head: the statistical floor, plus
+  per-state count tracking under non-uniform visitation). Pure gradient training of the same
+  constructions — the published coin-flip network's regime — cannot track the running coin
+  mean at one step per visit on any domain, and a replay buffer narrows the gap by an order
+  without closing it.
+\item \textbf{Feature width is the capacity law of neural counting.} With more distinct
+  states than feature dimensions ($512$ Atari frames against $256$ features) every
+  last-layer method floors at the target's unrepresentable component; the phase-1 dictionary
+  obeyed the same law through its insertion capacity. Counting $P$ states individually needs
+  a feature dimension of at least $P$ — width is not a tuning knob here but the resource that
+  buys per-state resolution.
+\item \textbf{The deliverable, stated as an algorithm.} Take an RND pipeline; keep its deep
+  trunk (MLP or conv); freeze the trunk (random biases $N(0, 0.5^2)$ for inputs of dimension
+  $\le 8$); zero-initialize the last layer and normalize the frozen reference per input so
+  the bonus is exactly $1$ at every never-visited state; then update ONLY the last layer with
+  one of the two exact heads — the residual-encoded shrink map for uniform-visitation
+  exactness, or the coin-flip normal equations for per-state counts under arbitrary
+  visitation — with feature width at least the number of states to be resolved. Everything
+  else in this document measures what is lost when any one of those ingredients is replaced
+  by ordinary gradient descent.
 \item \textbf{The user-suggested landscape lens does not bind here.} The loss-landscape
   literature's chaos-with-depth findings (and the skip-connection remedy) concern deep
   plain networks; a $4 \to 256 \to 128$ network is already in the shallow-wide regime those
