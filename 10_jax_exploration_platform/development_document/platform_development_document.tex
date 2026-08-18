@@ -387,9 +387,23 @@ document entirely; the run is identified here by its dates and in the caption of
 --- that all $48{,}830$ windows are phase-blocked and that the chunks partition the $1{,}024$
 copies once each.}
 
+\claudeedit{\textbf{The second extension is complete.} The whole grid of the two arms that were
+still improving --- random network distillation and the oracle $1/\sqrt{n}$ bonus, $33$
+configurations each at $128$ copies --- was re-run at $1000$M steps per copy on 2026-08-17 and
+2026-08-18, because the first extension had tested only the configuration each arm won with at
+$10$M steps. All $66$ configurations are scored over the full $128$ copies; its rows are the ones
+below the second double rule of \Cref{tab:pm-jax-run11-results}.}
+\claudecomment{Written under the shared skill \texttt{rl-experiment-writing}: which
+configurations, from what to what, and why, with no run-folder path and no exact step count. The
+run is named by its dates, as the first extension is. Its work was cut into $44$ chunks over $16$
+node classes and one of its cards failed mid-run, which is recorded in the run's
+\texttt{infra\allowbreak\_history.md} and deliberately not here --- rule~3 of that skill keeps
+infrastructure telemetry out of this document.}
+
 \paragraph{How to read the metrics tables.}
 Define a \emph{configuration} as one (learning rate, intrinsic weight) cell of one algorithm arm,
-and define $C$ as the number of copies it is given, $C = 256$ here; index the copies by
+and define $C$ as the number of copies it is given, \sout{$C = 256$ here}\claudeedit{$C = 256$
+in the original sweep, $1{,}024$ in the first extension and $128$ in the second}; index the copies by
 $k = 1, \dots, C$. Define $O$ as the number of open cells of the maze map, $O = 46$ for the large
 map.
 
@@ -470,22 +484,32 @@ error; $N$ is how many completed copies that mean is taken over.
 \texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & \underline{$0.658 \pm 0.024$} & \underline{$0.185 \pm 0.118$} & {\boldmath $0.999$} & \underline{$99.07 \pm 0.06$} & not recorded & $1{,}024$ \\
 \texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $0.331 \pm 0.030$ & $0.171 \pm 0.095$ & \underline{$0.804$} & $94.50 \pm 0.35$ & not recorded & $1{,}024$ \\
 \texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.001 \pm 0.001$ & $0.000 \pm 0.000$ & $0.016$ & $33.36 \pm 0.53$ & not recorded & $1{,}024$ \\
+\midrule\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-4}$, $\beta = 10^{2}$ & {\boldmath $52.500 \pm 3.368$} & {\boldmath $50.754 \pm 4.851$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.06$} & not recorded & $128$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-4}$, $\beta = 10^{1}$ & \underline{$38.199 \pm 3.216$} & \underline{$33.854 \pm 4.629$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.07$} & not recorded & $128$ \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-jax-run11-results
 }
 \caption{Best configuration per algorithm arm, ranked by whole-run reward (the only arrowed
-column). \textbf{The double rule separates the two budgets.} Above it are the four winners of the
+column). \textbf{\sout{The double rule separates the two budgets.}\claudeedit{The two double rules
+separate three runs.}} \sout{Above it are}\claudeedit{Above the first are} the four winners of the
 original sweep, $256$ copies each over \sout{$10{,}035{,}200$ environment}\claudeedit{$10$M} steps
 per copy; below it are
 the same four configurations as the extension \claudeedit{of 2026-08-16} re-ran them, $1{,}024$
 copies each over
-\sout{$1{,}000{,}038{,}400$}\claudeedit{$1000$M} steps per copy. Cells are mean $\pm$ standard error over the configuration's
-completed copies; $N$ is how many completed copies, and every unit of both runs finished, so $N$ is
-the full $256$ above the double rule and the full $1{,}024$ below it. Best per metric column
-\textbf{bold}, second best \underline{underlined}, computed \emph{within} each block --- the two
-blocks are different step budgets over different copy counts, so a cell of one is not comparable
-with a cell of the other. Higher is better in every column that carries a number. Steps to goal
+\sout{$1{,}000{,}038{,}400$}\claudeedit{$1000$M} steps per copy\claudeedit{; below the second are
+the two arms whose whole grid the extension of 2026-08-17 re-ran at $1000$M steps, each at the
+configuration that grid selects, $128$ copies each. The two lower blocks share a budget and differ
+only in how their configuration was chosen --- by a $10$M-step sweep, or by a $1000$M-step one}.
+Cells are mean $\pm$ standard error over the configuration's
+completed copies; $N$ is how many completed copies, and every unit of \sout{both runs}\claudeedit{all
+three runs} finished, so $N$ is
+the full $256$ above the \claudeedit{first} double rule\sout{ and}\claudeedit{,} the full $1{,}024$
+below it\claudeedit{, and the full $128$ below the second}. Best per metric column
+\textbf{bold}, second best \underline{underlined}, computed \emph{within} each block --- the
+\sout{two }blocks are different step budgets over different copy counts, so a cell of one is not
+comparable with a cell of \sout{the other}\claudeedit{another}. Higher is better in every column that carries a number. Steps to goal
 would be the one column where lower is better, and this trainer does not record it --- the cell says
 so rather than being left empty.
 \claudecomment{Budgets rounded and the run named by date, under the shared skill
@@ -505,24 +529,33 @@ run's, and it replaces the run-folder path that the what-is-swept table used to 
 % run's plot is untouched in the original run folder and is its record of the shorter budget.
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-16-22-47_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-1024_extension-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
 \caption{Mean episode return against environment steps for each algorithm arm's best
 configuration, chosen by the same score that ranks \Cref{tab:pm-jax-run11-results}. \textbf{The
 budget shown is the extension's}: every curve runs to
 \sout{$1{,}000{,}038{,}400$ environment}\claudeedit{$1000$M} steps per
-copy and is the mean over that configuration's $1{,}024$ copies, with the band plus or minus one
-standard error over them; each point is one recorded window of $256$ episodes per copy.
-\textbf{The step axis is logarithmic}, which the original sweep's figure did not need: every arm
-reaches its peak inside the first $15$ million steps and then decays over the remaining $985$
-million, so on a linear axis the whole rise would occupy the first per cent of the width. The
+copy\sout{ and is the mean over that configuration's $1{,}024$ copies}, with the band plus or minus
+one standard error over \sout{them}\claudeedit{its copies}; each point is one recorded window of
+$256$ episodes per copy. \claudeedit{\textbf{Line style says which sweep chose the configuration,
+not which budget it ran at.} The four \textbf{dashed} curves are the configurations the $10$M-step
+sweep picked, as the first extension ran them over $1{,}024$ copies; the two \textbf{solid} ones
+are the configurations the second extension's own $1000$M-step sweep picks for the two arms it
+re-ran, over $128$ copies. Both sets run to the same $1000$M steps, so the gap between them is
+what choosing at the wrong budget costs.}
+\textbf{The step axis is logarithmic}, which the original sweep's figure did not need: \sout{every
+arm reaches its peak inside the first $15$ million steps and then decays over the remaining $985$
+million}\claudeedit{the dashed curves peak inside the first $15$ million steps and the solid ones
+near $200$ million, two orders of magnitude apart}, so on a linear axis the whole \sout{rise would
+occupy}\claudeedit{dashed set would occupy} the first per cent of the width. The
 original sweep's $10$-million-step curves over $256$ copies are not drawn beside them --- two
 budgets of one arm in one panel read as two algorithms --- and stay in the original run folder's
-own plot. Solid black is the best random-network-distillation configuration, the reference the
-other arms are measured against; every other arm keeps the colour and line style it had in the
+own plot. Solid black is the best random-network-distillation configuration\claudeedit{ of the
+$1000$M-step sweep}, the reference the
+other arms are measured against; every other arm keeps the colour \sout{and line style }it had in the
 original run. The legend names each winner's learning rate $\alpha$ and, where the arm has a
 bonus, its intrinsic weight $\beta$. Drawn by
 \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_reward\allowbreak\_curves.py} in the
-extension run folder.
+\sout{extension}\claudeedit{second extension's} run folder.
 \claudecomment{The budget is written round under the shared skill
 \texttt{rl-experiment-writing}; the exact $1{,}000{,}038{,}400$ steps per copy is in the extension
 run's \texttt{manifest.yaml}. The figure file's own path is unchanged --- it is the
@@ -565,7 +598,105 @@ run's \texttt{manifest.yaml}. The figure file's own path is unchanged --- it is 
   $0.174$, and at $10^{-5}$ every one of the four arms reaches exactly zero. The three rates are
   therefore not three comparable settings of one experiment --- one of them works, and the next run
   should sweep upward from $10^{-3}$ rather than downward from it.
+\item \claudeedit{\textbf{F5 is refuted by the second extension: the learning rate that wins at
+  $10$M is not the one that wins at $1000$M, and neither arm's winning configuration survives the
+  change of budget.} Given its whole grid at the long budget, random network distillation wins at
+  learning rate $10^{-4}$ and $\beta = 10^{2}$ with $52.500 \pm 3.368$, and the oracle $1/\sqrt{n}$
+  bonus at $10^{-4}$ and $\beta = 10^{1}$ with $38.199 \pm 3.216$. The configurations the $10$M
+  sweep picked --- both at $10^{-3}$, at $\beta = 10^{1}$ and $\beta = 10^{0}$ --- score
+  $1.795 \pm 0.101$ and $0.658 \pm 0.024$ over the same $1000$M steps: a factor of $29$ and $58$
+  worse than the arm's own best. Both arms move the same way, one step down in learning rate and
+  one step up in intrinsic weight, so this is a property of the budget rather than of either
+  bonus. A short sweep chooses what climbs fastest, and what climbs fastest is not what climbs
+  furthest.}
+\item \claudeedit{\textbf{The ordering between the two arms is unchanged, and it is now measured at
+  each arm's own best.} Distillation leads the oracle $1/\sqrt{n}$ bonus $52.500 \pm 3.368$ against
+  $38.199 \pm 3.216$, a gap of about four standard errors. That is the same direction the first
+  extension found and the opposite of the $10$M sweep's, and it no longer depends on the two arms
+  having been given configurations chosen for a hundred-times-shorter run. Neither arm is separated
+  on the other two metrics: both reach the goal in every one of their $128$ copies and both cover
+  $99.85$ per cent of the maze, so at this budget reward is the only metric with anything left to
+  say.}
 \end{enumerate}
+
+\paragraph{\claudeedit{Curve shape: does every configuration rise and then come down?}}
+\claudeedit{\textbf{No.} Aggregated over a configuration's $128$ copies and classified by
+\texttt{analysis/\allowbreak code/\allowbreak curve\allowbreak\_shape.py}, $20$ of the $66$
+configurations ($30$ per cent) rise and then fall; $16$ ($24$ per cent) never reach the goal at all,
+$14$ ($21$ per cent) are still rising at $1000$M steps, $13$ ($20$ per cent) decline from the start,
+and $3$ ($5$ per cent) rise and then flatten. The classifier's label is unchanged under all nine of
+its threshold variants for $53$ of the $66$, and the instability is confined to configurations that
+score badly: every one of the top ten by whole-run reward, from $52.500$ down to $11.631$, carries
+the same label under all nine variants, while the thirteen unstable ones all score $10.391$ or
+below.}
+
+\claudeedit{Because neither arm's best configuration is one of the exceptions ---
+\Cref{tab:pm-jax-run11-results} and \Cref{fig:pm-jax-run11-curves} carry two curves that both rise
+and fall --- the best exception of each arm is a configuration those artifacts do not show, and
+\Cref{tab:pm-jax-run11-shapes} and \Cref{fig:pm-jax-run11-shapes} are where they appear.}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} r r >{\raggedright\arraybackslash}p{1.9cm} r r r@{}}
+\toprule
+\textbf{algorithm} & \textbf{\shortstack[c]{learning\\rate}} &
+\textbf{\shortstack[c]{intrinsic\\weight}} & \textbf{aggregate shape} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} & \textbf{\shortstack[c]{rank of\\$66$}} &
+\textbf{\shortstack[c]{copies of $128$\\sharing it}} \\
+\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & $10^{-5}$ & $10^{1}$ & still rising &
+  $27.778$ & $6$ & $55$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt} & $10^{-4}$ & $10^{2}$ &
+  rise then plateau & $10.391$ & $11$ & $6$ \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{for comparison, the same arms' best configurations, which do rise then
+  fall}} \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & $10^{-4}$ & $10^{2}$ & rise then fall &
+  $52.500$ & $1$ & $76$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt} & $10^{-4}$ & $10^{1}$ &
+  rise then fall & $38.199$ & $3$ & $84$ \\
+\bottomrule
+\end{tabular}
+\caption{\claudeedit{The best configuration of each arm that does \emph{not} rise then fall, with
+each arm's overall best beneath the rule for comparison. Rank is over all $66$ configurations of
+this sweep by whole-run reward. \textbf{The last column is the caveat this table exists to carry:}
+the shape of the mean over $128$ copies need not be the shape of any copy, and it often is not ---
+$76$ and $84$ of the $128$ copies share the aggregate label of the two best configurations, but
+only $6$ of $128$ share the oracle arm's rise-then-plateau, where $90$ of its copies rise and fall
+on their own. The oracle row's label is also the one label here that moves under the threshold
+variants, reading \emph{still rising} under two of the nine; no variant calls it rise-then-fall, so
+the answer to the question is unaffected, but which non-falling shape it is is not settled.}}
+\label{tab:pm-jax-run11-shapes}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_curve_shapes.pdf}}
+\caption{\claudeedit{The two configurations of \Cref{tab:pm-jax-run11-shapes} that do not rise then
+fall, drawn solid, against their own arm's best, drawn dashed. Same arm, same budget, same
+learning rate in the oracle pair --- only the weight on the intrinsic reward differs, and it
+decides whether the curve comes back down inside $1000$M steps. Colour is the arm and the band is
+plus or minus one standard error over the configuration's $128$ copies. Drawn by
+\texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_shape\allowbreak\_curves.py} in the
+second extension's run folder.}}
+\label{fig:pm-jax-run11-shapes}
+\end{figure}
+
+\noindent\claudecomment{This table and this figure are an addition the extension convention of
+\texttt{rnd-experiment-tex-track} would not normally allow, and they are here because the question
+they answer was asked of this run directly and its answer is not visible in
+\Cref{tab:pm-jax-run11-results} or \Cref{fig:pm-jax-run11-curves}: both of those carry each arm's
+best configuration, and both of those configurations rise and fall, so the exceptions appear
+nowhere else. Had either arm's best been an exception, the specification asked for no separate
+table or plot and none would have been added. Sources: the shapes and their sensitivity from
+\texttt{analysis/\allowbreak shape\allowbreak\_classification.json} in the second extension's run
+folder, the per-copy agreement from
+\texttt{analysis/\allowbreak code/\allowbreak copy\allowbreak\_agreement.py}, and every curve
+through the same \texttt{code/\allowbreak aggregate.\allowbreak curve\allowbreak\_of} the results
+table uses, gated identical against a one-pass reader before the classification ran.}
 
 \claudecomment{A \textbf{Training cost} paragraph and a table of what the run cost on each
 card --- seconds per iteration, total and per-copy step rates, hours per million steps, build

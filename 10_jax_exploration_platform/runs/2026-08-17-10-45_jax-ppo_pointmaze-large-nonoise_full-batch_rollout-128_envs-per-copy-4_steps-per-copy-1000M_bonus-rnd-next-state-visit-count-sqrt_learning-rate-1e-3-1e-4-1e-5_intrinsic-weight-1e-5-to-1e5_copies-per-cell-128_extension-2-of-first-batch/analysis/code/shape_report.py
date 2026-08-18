@@ -92,6 +92,21 @@ def report(records: list) -> str:
     return "\n".join(lines) + "\n"
 
 
+def plain_python(value):
+    """Turn a numpy scalar into the python one json can write; raise on anything else.
+
+    The classifier works in numpy, so `interior_peak`, `rise_significant` and their neighbours come
+    back as `numpy.bool_` rather than `bool`, which `json.dumps` refuses. Converting through
+    `.item()` keeps the value exactly and leaves any genuinely unserialisable object raising, which
+    is what a `default=` hook should do.
+
+    before: numpy.bool_(True) ; after: True
+    """
+    if hasattr(value, "item"):
+        return value.item()
+    raise TypeError(f"cannot write {type(value).__name__} to json")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", type=Path, default=RUN_DIR)
@@ -106,7 +121,7 @@ def main() -> None:
         print("no completed configuration yet — the table rule keeps unfinished arms out")
         return
     (arguments.run / "analysis" / "shape_classification.json").write_text(
-        json.dumps(records, indent=1))
+        json.dumps(records, indent=1, default=plain_python))
     text = report(records)
     (arguments.run / "analysis" / "shape_classification.md").write_text(text)
     print(text)
