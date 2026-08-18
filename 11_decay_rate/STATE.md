@@ -59,3 +59,22 @@ One experiment runs in ~22 s on jaguar03 (job ids in the folder's `slurm/submitt
 - Harness note (outside the loop, before exp 004): added `agg_slope_norm` (the prior work's
   normalize-then-average convention) to metrics.py for comparability; all three metrics.json
   recomputed.
+- 2026-08-17 23:00 PT — exps 004–010 done. The findings that changed the plan:
+  1. exp 005 (functional shrink, inner Adam): inner Adam's fixed-size steps overshoot the
+     nearby target — acts like fast distillation (slope -1.8). Inner fitting must use SGD.
+  2. exp 007/009 (AdaGrad): the best gradient-descent family. lr 3e-3: dev_mean 0.32,
+     slope_std 0.20, both envs' aggregate slopes near -0.5. Two defects: an early first-step
+     drop (target stays at 1, curves drop to ~0.55–0.8) and corner positions decaying ~0.17
+     too fast (radial pattern = tangent-kernel diagonal grows with input radius).
+  3. exp 008 (sphere-projected inputs): fixes the radial pattern but collapses nearby points
+     into near-identical inputs — worse overall. Discarded.
+  4. **exp 010 (linear head + exact min-change interpolation + residual-encoded shrink)
+     SOLVES the uniform benchmark**: per-visit map r -> r/sqrt(1+r^2) (bonus value itself
+     encodes the count; no counter, no clock), realized exactly by a minimum-Frobenius-change
+     head update. Slope -0.500000 at every position, dev 0.038 = the (n+1 vs n) off-by-one,
+     identical at all 208 positions.
+- Open frontier (wave 4 in flight): exp 011 = exp-010 method under nonuniform visitation
+  (feature-interference is the question); exp 012 = AdaGrad 3e-3 nonuniform baseline;
+  exp 013 = gradient-only MLP analog of exp 010 (per-sample shrink targets + inner SGD with
+  per-position tolerance). Later: capacity stress (more points than features), 30-seed
+  validation, development document.

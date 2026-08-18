@@ -53,65 +53,71 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """MLP + per-sample residual-encoded shrink targets + inner SGD fitting (the gradient-only
-    analog of the exact linear-head method of exp 010).
+    """Coin-flip counting with an exact recursive-least-squares linear head (the coin-flip
+    network of Lobel, Bagaria and Konidaris, ICML 2023, arXiv:2306.03186, made exact).
 
-    Each update computes every visited sample's normalized residual r_i (initial-copy
-    denominator), forms the shrink target tau_i = f(x_i) + s_i e_i with s_i = 1/sqrt(1+r_i^2)
-    (the per-visit map whose iterates from 1 are exactly 1/sqrt(2), 1/sqrt(3), ...), and runs
-    inner SGD (lr 1e-2, up to 40 steps) on ||g - tau||^2 until every sample's fit error is
-    below 5% of its own target residual scale. Unlike exp 005's inner Adam (whose fixed-size
-    steps overshoot the nearby target), SGD steps are proportional to the distance to tau and
-    contract monotonically. The open question this experiment measures: whether inner
-    gradient fitting can realize the per-position shrink through the tangent kernel, or slow
-    kernel modes leave some positions under-shrunk."""
+    Every visit to a position draws a FRESH Rademacher vector c in {-1,+1}^d. A linear head on
+    frozen random features regresses positions onto their coins by exact ridge least squares
+    (the normal equations are accumulated per visit; the solve happens at readout). The
+    least-squares optimum at a position visited m times is that position's own running coin
+    mean, whose expected squared norm is d/m — so the readout ||head(x) + prior(x)|| / sqrt(d)
+    behaves as m^(-1/2) with THAT position's own visit count, under any visitation pattern:
+    the count is encoded statistically, not through optimizer dynamics. The frozen prior
+    network is unit-normalized per input (||prior(x)|| = sqrt(d) exactly) and the head starts
+    at zero, so the bonus is exactly 1 at every never-visited input; after the first visit the
+    running mean is a single Rademacher vector of norm exactly sqrt(d), so the bonus is exactly
+    1 there too — matching min(1, m^(-1/2)) at m = 0 and 1 with no off-by-one. The chi-type
+    fluctuation of a d-coordinate mean (relative std about sqrt(1/(2d)) on the norm) is this
+    construction's noise floor; d = 512 puts it near 3 percent."""
 
-    name = "mlp_resshrink_innersgd"
+    name = "coinflip_rls_head"
 
-    INNER_LR = 1e-2
-    INNER_MAX_STEPS = 40
-    INNER_TOL = 0.05  # per-sample fit error allowed, relative to the sample's target scale
+    D_COINS = 512   # coin/output dimension (the fluctuation floor scales as 1/sqrt(2d))
+    RIDGE = 1e-8    # ridge on the accumulated normal equations
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build target + predictor (4 -> 256 -> ReLU -> 128), the frozen init copy (readout
-        denominator), and the inner SGD optimizer."""
+        """Build frozen features, the frozen unit-normalized prior, the zero head, the
+        normal-equation accumulators, and the keyed coin generator."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
-        self.target = make_mlp(obs_dim, 256, 128, seed, "target")
-        self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
-        for p in self.target.parameters():
+        pred = make_mlp(obs_dim, 256, self.D_COINS, seed, "predictor")
+        self.feat = nn.Sequential(pred[0], pred[1])  # frozen ReLU features (256)
+        for p in self.feat.parameters():
             p.requires_grad_(False)
-        # frozen initial predictor: the per-position readout denominator (starts the bonus at 1)
-        self.predictor0 = copy.deepcopy(self.predictor)
-        for p in self.predictor0.parameters():
+        self.prior_raw = make_mlp(obs_dim, 256, self.D_COINS, seed, "prior")
+        for p in self.prior_raw.parameters():
             p.requires_grad_(False)
-        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.INNER_LR)
+        # exact ridge least squares state: Lam = ridge*I + sum phi phi^T, Bmat = sum phi tgt^T
+        self.Lam = self.RIDGE * torch.eye(256, dtype=torch.float64)
+        self.Bmat = torch.zeros(256, self.D_COINS, dtype=torch.float64)
+        self.coin_gen = keyed_gen(0, "coins")  # one persistent stream; seed-independent draws
+        # NOTE the coin stream is keyed by a constant, not the seed, so re-running a seed
+        # re-draws the same coin sequence per call order — reproducible per (env, seed) cell
+        # because each cell is its own process with its own Method instance.
+
+    def prior(self, x: torch.Tensor) -> torch.Tensor:
+        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input (computed pointwise,
+        online): the never-visited bonus is exactly 1."""
+        p = self.prior_raw(x).double()
+        return float(np.sqrt(self.D_COINS)) * p / p.norm(dim=1, keepdim=True)
 
     def update(self, x: torch.Tensor) -> None:
-        """Form the per-sample shrink targets, then inner-SGD until every sample fits."""
+        """One visit per batch row: draw fresh Rademacher coins, accumulate the normal
+        equations of the regression from features onto (coin - prior)."""
         with torch.no_grad():
-            f = self.target(x)
-            e = self.predictor(x) - f                       # current residual vectors (B, 128)
-            e0n = (self.predictor0(x) - f).norm(dim=1)      # initial residual norms (B,)
-            r = e.norm(dim=1) / e0n                         # normalized residuals (B,)
-            s = 1.0 / torch.sqrt(1.0 + r.pow(2))            # per-visit shrink factors (B,)
-            tau = f + s.unsqueeze(1) * e                    # shrink targets (B, 128)
-            # per-sample tolerance: 5% of the target's own residual norm
-            # before: r_i = 1, ||e_i|| = 7 -> s = 0.707, scale = 4.95, tol = 0.247
-            tol = self.INNER_TOL * (s * e.norm(dim=1))
-        for _ in range(self.INNER_MAX_STEPS):
-            d = self.predictor(x) - tau
-            with torch.no_grad():
-                if bool((d.norm(dim=1) <= tol).all()):
-                    break
-            loss = 0.5 * d.pow(2).sum(dim=1).mean()
-            self.opt.zero_grad()
-            loss.backward()
-            self.opt.step()
+            phi = self.feat(x).double()                              # (B, 256)
+            # fresh coins: +-1 per coordinate per visit occurrence
+            # before: shape (B, 512) uniform ints in {0, 1}; after: {-1.0, +1.0}
+            c = torch.randint(0, 2, (x.shape[0], self.D_COINS), generator=self.coin_gen,
+                              dtype=torch.float64) * 2.0 - 1.0
+            tgt = c - self.prior(x)                                  # head regresses this
+            self.Lam += phi.T @ phi
+            self.Bmat += phi.T @ tgt
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
+        """||head(x) + prior(x)|| / sqrt(d): exactly 1 before the first visit, then the norm of
+        the position's running coin mean."""
         with torch.no_grad():
-            f = self.target(x)
-            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
-            e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
-            return (e / e0).cpu().numpy().astype(np.float64)
+            phi = self.feat(x).double()
+            W = torch.linalg.solve(self.Lam, self.Bmat)              # (256, d)
+            out = phi @ W + self.prior(x)
+            return (out.norm(dim=1) / float(np.sqrt(self.D_COINS))).cpu().numpy()
