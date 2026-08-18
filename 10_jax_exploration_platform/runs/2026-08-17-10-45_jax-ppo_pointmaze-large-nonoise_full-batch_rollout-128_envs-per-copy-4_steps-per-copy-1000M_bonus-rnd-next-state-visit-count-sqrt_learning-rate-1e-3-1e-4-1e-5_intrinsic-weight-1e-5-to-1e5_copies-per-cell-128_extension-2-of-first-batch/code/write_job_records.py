@@ -37,7 +37,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--unit-file", required=True)
     parser.add_argument("--job-dir", required=True)
-    parser.add_argument("--mode", required=True, choices=["real", "canary"])
+    parser.add_argument("--mode", required=True, choices=["canary_then_real"])
     args = parser.parse_args()
 
     job_dir = Path(args.job_dir)

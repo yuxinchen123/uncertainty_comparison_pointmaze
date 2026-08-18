@@ -1,0 +1,145 @@
+schema_version: 1
+run_id: 2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch
+kind: extension
+extends:
+  parent_run: 2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  parent_run_path: runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-10M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-256_first-batch
+  first_extension_of_the_same_parent: 2026-08-16-22-47_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-1024_extension-of-first-batch
+  what_changed: "the WHOLE learning-rate by intrinsic-weight grid of the two arms that were still improving at the parent's budget, re-run at 128 copies per configuration for 1000038400 environment steps per copy: half the copies of one parent cell and about 100 times its step budget"
+  arms_extended:
+    rnd_next_state:
+      learning_rates:
+        - 1e-3
+        - 1e-4
+        - 1e-5
+      intrinsic_weights:
+        - 1e-5
+        - 1e-4
+        - 1e-3
+        - 1e-2
+        - 1e-1
+        - 1
+        - 10
+        - 100
+        - 1000
+        - 10000
+        - 100000
+      configurations: 33
+      parent_copies_per_cell: 256
+      extension_copies_per_cell: 128
+      extension_chunks: 32
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+    gt_position_velocity_sqrt:
+      learning_rates:
+        - 1e-3
+        - 1e-4
+        - 1e-5
+      intrinsic_weights:
+        - 1e-5
+        - 1e-4
+        - 1e-3
+        - 1e-2
+        - 1e-1
+        - 1
+        - 10
+        - 100
+        - 1000
+        - 10000
+        - 100000
+      configurations: 33
+      parent_copies_per_cell: 256
+      extension_copies_per_cell: 128
+      extension_chunks: 8
+      parent_env_steps_per_copy: 10035200
+      extension_env_steps_per_copy: 1000038400
+description: The second extension of train run 1.1, at a thousand million environment steps per copy. Two algorithm arms — random network distillation on the next state, and the square root of the oracle position-and-velocity visit count — each swept over its whole grid of 3 learning rates x 11 intrinsic weights, 128 copies per configuration, 1,000,038,400 environment steps per copy. A unit is one arm's 33 configurations fused into one compiled program, cut into chunks by copy index where the submission plan's arithmetic says that finishes the whole set sooner.
+git:
+  commit: 74c6b9f269973263d5707823ccf5ddd8c51dce38
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1 + gt_position_velocity_sqrt@1
+  update_schedule: per_rollout@1 for random network distillation, post_rollout_update@1 for the oracle visit-count arm
+compile_signature:
+  cells: 33
+  copies_per_cell_in_the_whole_unit: 128
+  copies_per_unit: 4224
+  copies_per_chunk:
+    - 132
+    - 528
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: not applicable — full_batch takes one gradient step on the whole rollout
+  minibatches: not applicable — full_batch takes one gradient step on the whole rollout
+  dtype: float32
+  stats_dtype: float64
+  iterations: 1953200
+  window_iterations: 200
+  windows: 9766
+  env_steps_per_copy: 1000038400
+seeding:
+  base_seed: 0
+  mode: paired
+  run_seed: the chunk index, so two chunks of one unit never draw the same action noise
+  copy_seed_offset: the chunk's first copy index, so the chunks of a unit partition copies 0..127 of EVERY cell and copy i of a cell in the union has the weights and the environment draws copy i of a single 128-copy cell would have
+submission_plan:
+  generated_at_pacific: 2026-08-17 20:08 PT
+  makespan_hours: 8.053
+  chunk_count: 40
+  cards_used: 37
+  splits_per_unit:
+    - 32
+    - 8
+  written_by: code/plan_submission.py, recorded in code/submission_plan.json
+units:
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-1-of-32_copies-per-cell-4_copies-132_copy-index-0-3
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-2-of-32_copies-per-cell-4_copies-132_copy-index-4-7
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-3-of-32_copies-per-cell-4_copies-132_copy-index-8-11
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-4-of-32_copies-per-cell-4_copies-132_copy-index-12-15
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-5-of-32_copies-per-cell-4_copies-132_copy-index-16-19
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-6-of-32_copies-per-cell-4_copies-132_copy-index-20-23
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-7-of-32_copies-per-cell-4_copies-132_copy-index-24-27
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-8-of-32_copies-per-cell-4_copies-132_copy-index-28-31
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-9-of-32_copies-per-cell-4_copies-132_copy-index-32-35
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-10-of-32_copies-per-cell-4_copies-132_copy-index-36-39
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-11-of-32_copies-per-cell-4_copies-132_copy-index-40-43
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-12-of-32_copies-per-cell-4_copies-132_copy-index-44-47
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-13-of-32_copies-per-cell-4_copies-132_copy-index-48-51
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-14-of-32_copies-per-cell-4_copies-132_copy-index-52-55
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-15-of-32_copies-per-cell-4_copies-132_copy-index-56-59
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-16-of-32_copies-per-cell-4_copies-132_copy-index-60-63
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-17-of-32_copies-per-cell-4_copies-132_copy-index-64-67
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-18-of-32_copies-per-cell-4_copies-132_copy-index-68-71
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-19-of-32_copies-per-cell-4_copies-132_copy-index-72-75
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-20-of-32_copies-per-cell-4_copies-132_copy-index-76-79
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-21-of-32_copies-per-cell-4_copies-132_copy-index-80-83
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-22-of-32_copies-per-cell-4_copies-132_copy-index-84-87
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-23-of-32_copies-per-cell-4_copies-132_copy-index-88-91
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-24-of-32_copies-per-cell-4_copies-132_copy-index-92-95
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-25-of-32_copies-per-cell-4_copies-132_copy-index-96-99
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-26-of-32_copies-per-cell-4_copies-132_copy-index-100-103
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-27-of-32_copies-per-cell-4_copies-132_copy-index-104-107
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-28-of-32_copies-per-cell-4_copies-132_copy-index-108-111
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-29-of-32_copies-per-cell-4_copies-132_copy-index-112-115
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-30-of-32_copies-per-cell-4_copies-132_copy-index-116-119
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-31-of-32_copies-per-cell-4_copies-132_copy-index-120-123
+  - unit-1_rnd-next-state_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-32-of-32_copies-per-cell-4_copies-132_copy-index-124-127
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-1-of-8_copies-per-cell-16_copies-528_copy-index-0-15
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-2-of-8_copies-per-cell-16_copies-528_copy-index-16-31
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-3-of-8_copies-per-cell-16_copies-528_copy-index-32-47
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-4-of-8_copies-per-cell-16_copies-528_copy-index-48-63
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-5-of-8_copies-per-cell-16_copies-528_copy-index-64-79
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-6-of-8_copies-per-cell-16_copies-528_copy-index-80-95
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-7-of-8_copies-per-cell-16_copies-528_copy-index-96-111
+  - unit-2_gt-position-velocity-sqrt_grid-learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_chunk-8-of-8_copies-per-cell-16_copies-528_copy-index-112-127
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+  aggregator: code/aggregate.py
+  plan: code/submission_plan.json
+  own_rate_measurements: code/measured_cells.json
+  canary_shards: canary/data/*.jsonl
+checkpoints: none — this platform saves no model state, so a chunk resumes by being re-run whole
