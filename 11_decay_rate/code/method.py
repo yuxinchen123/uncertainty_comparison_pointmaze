@@ -53,75 +53,47 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Closed-form elliptical posterior readout on unit-normalized adaptive-dictionary
-    features (the deterministic ideal of the coin-flip family).
+    """Quartic residual loss at a constant step (gradient-only, schedule-free, count-free).
 
-    No residual and no training at all: the method keeps the running feature second-moment
-    matrix A = I + sum over visits of phihat phihat^T with phihat(x) = phi(x)/||phi(x)|| the
-    unit-normalized features on the growing dictionary of exp 019, and reads out the
-    Gaussian-process posterior standard deviation b(x) = sqrt(phihat(x)^T A^{-1} phihat(x)).
-    Before any visit A = I so b = ||phihat|| = 1 exactly at every input; for mutually
-    orthogonal features a position visited m times reads exactly (1 + m)^{-1/2} — the count
-    lives in A, which is precisely the elliptical-bonus matrix the project already studies.
-    Ash et al. (ICLR 2022) is the bridge: this quantity is what coin-flip regression estimates
-    by sampling, with the chi fluctuation removed."""
+    Loss = mean of (1/4) r^4 with r = ||e|| / ||e_0|| the initial-copy-normalized residual.
+    On a diagonal kernel dr/dn = -eta kappa r^3 integrates to r(n) = (2 eta kappa n + r(0)^-2)^(-1/2):
+    exponent -1/2 at every position BY CONSTRUCTION at a constant step, forgetting the initial
+    value, and under per-position visitation each position integrates its own visits. The
+    pilot measured the real (coupled-kernel) behavior: slope nearer -0.4 and a x2 prefactor
+    spread from K_ii / ||e_0||^2 variation — this experiment records the honest gradient-only
+    approximation to the exact constructions. eta = 3 (the stable decade; 30 diverges)."""
 
-    name = "elliptical_adaptive_dict"
+    name = "quartic_loss_sgd"
 
-    TAU_ADD = 0.05
-    SIGMA_MAX = 0.75
-    SIGMA_MIN = 0.05
-    MAX_CENTERS = 1024
+    ETA = 3.0
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Empty dictionary and an empty accumulator (grown with the dictionary)."""
-        torch.manual_seed(seed)  # draws nothing; the method has no random state of its own
-        self.centers = torch.zeros(0, 2, dtype=torch.float64)
-        self.sigmas = torch.zeros(0, dtype=torch.float64)
-        self.A = torch.zeros(0, 0, dtype=torch.float64)  # holds A - I (grown with zeros)
-
-    def _grow(self, z: torch.Tensor) -> None:
-        """Insert new centers for batch rows far from the dictionary (as exp 019); the
-        accumulator gains zero rows/columns (its identity part is added at readout)."""
-        for row in z:
-            if self.centers.shape[0] >= self.MAX_CENTERS:
-                return
-            if self.centers.shape[0] == 0:
-                d_nn = float("inf")
-            else:
-                d_nn = float(((self.centers - row) ** 2).sum(-1).min().sqrt())
-            if d_nn > self.TAU_ADD:
-                sig = min(self.SIGMA_MAX, max(self.SIGMA_MIN, 0.5 * d_nn))
-                self.centers = torch.cat([self.centers, row[None, :]])
-                self.sigmas = torch.cat([self.sigmas,
-                                         torch.tensor([sig], dtype=torch.float64)])
-                k = self.A.shape[0]
-                a = torch.zeros(k + 1, k + 1, dtype=torch.float64)
-                a[:k, :k] = self.A
-                self.A = a
-
-    def feat_hat(self, x: torch.Tensor) -> torch.Tensor:
-        """Unit-normalized per-center Gaussian features (norm 1 at every input, so the
-        never-visited readout is exactly 1)."""
-        z = x[:, :2].double()
-        d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
-        phi = torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
-        return phi / phi.norm(dim=1, keepdim=True)
+        """Build target + predictor (4 -> 256 -> ReLU -> 128) and the frozen init copy."""
+        torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
+        self.target = make_mlp(obs_dim, 256, 128, seed, "target")
+        self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
+        for p in self.target.parameters():
+            p.requires_grad_(False)
+        self.predictor0 = copy.deepcopy(self.predictor)
+        for p in self.predictor0.parameters():
+            p.requires_grad_(False)
+        self.opt = torch.optim.SGD(self.predictor.parameters(), lr=self.ETA)
 
     def update(self, x: torch.Tensor) -> None:
-        """Grow the dictionary, then accumulate the visited features' second moments."""
+        """One constant-step SGD step on the normalized quartic loss."""
         with torch.no_grad():
-            self._grow(x[:, :2].double())
-            ph = self.feat_hat(x)
-            self.A += ph.T @ ph
+            e0n = (self.predictor0(x) - self.target(x)).norm(dim=1)
+        e = self.predictor(x) - self.target(x)
+        r = e.norm(dim=1) / e0n
+        loss = 0.25 * (r ** 4).mean()
+        self.opt.zero_grad()
+        loss.backward()
+        self.opt.step()
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """sqrt(phihat^T (I + A)^{-1} phihat), exactly 1 over an empty dictionary."""
+        """Per-point normalized residual ||g(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
         with torch.no_grad():
-            if self.centers.shape[0] == 0:
-                return torch.ones(x.shape[0], dtype=torch.float64).numpy()
-            ph = self.feat_hat(x)
-            lam = self.A + torch.eye(self.A.shape[0], dtype=torch.float64)
-            sol = torch.linalg.solve(lam, ph.T)                    # (K, B)
-            q = (ph * sol.T).sum(dim=1).clamp(min=0.0)
-            return q.sqrt().cpu().numpy()
+            f = self.target(x)
+            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
+            e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
+            return (e / e0).cpu().numpy().astype(np.float64)
