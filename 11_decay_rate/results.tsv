@@ -16,3 +16,14 @@ f58cf8b	2.535454	1.246691	0.000000	-0.900869	0.266914	discard	exp 014 coin-flip 
 f58cf8b	1.905387	0.779812	0.000000	-1.201066	0.994451	discard	exp 015 same under nonuniform: same representational failure
 071676c	1.007965	0.333294	0.000000	-0.574384	0.125927	keep	exp 016 coin-flip RLS on RBF features (sigma 0.75), uniform: cell_midpoints agg -0.5013; weakness = center_square under-spanned by the fixed bandwidth (slope range -0.93..-0.26)
 071676c	0.884954	0.349634	0.000000	-0.635258	0.109145	keep	exp 017 same under NONUNIFORM: best nonuniform result so far (prev 1.41); genuine per-position count tracking through coin statistics + local features
+7103739	1.076466	0.587700	0.000000	-0.512158	0.073844	keep	exp 018 shrink on fixed RBF, NONUNIFORM: 1.08 — locality helps (was 1.47) but the recurrence integrates interference drift
+37c4cc8	0.053264	0.029975	0.000000	-0.503424	0.004278	keep	exp 019 coin-flip + adaptive dictionary, uniform: 0.053, near the chi floor at d=512
+37c4cc8	0.455074	0.142889	0.000000	-0.624278	0.106443	keep	exp 020 same, NONUNIFORM: 0.455 — best nonuniform so far; genuine per-position count tracking
+37c4cc8	0.058624	0.029914	0.000000	-0.502783	0.003729	keep	exp 021 same, dense_grid 432 points: 0.059 — adaptive dictionary absorbs the capacity stress
+071676c	1.396698	0.270802	0.000000	-0.554968	0.055266	keep	exp 022 coin-flip fixed-RBF on dense_grid: 1.40 — fixed bandwidth hits the resolution wall the adaptive dictionary removes
+f0cdb3f	0.038344	0.038110	0.000000	-0.500023	0.000038	keep	exp 023 shrink + global ReLU on dense_grid (432 > 256 features): 0.038 — the residual-encoded map SELF-CORRECTS realization error (shrink factor reads the achieved state), no capacity wall
+3f35bbf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 024 shrink + adaptive dictionary, uniform: matches exp 010 exactly
+3f35bbf	1.309865	0.521629	0.000000	-0.576123	0.198642	keep	exp 025 same, NONUNIFORM: 1.31 — the multiplicative recurrence integrates minibatch interference drift; least-squares statistics (exp 020) average it out instead
+3f35bbf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 026 same, dense_grid: exact again
+0fc6922	0.201516	0.053708	0.000000	-0.499112	0.002149	keep	exp 027 closed-form elliptical posterior on adaptive dictionary, uniform: 0.202 — slope near-perfect; deviation = neighboring-cell feature overlap inflating effective counts
+0fc6922	0.535075	0.258365	0.000000	-0.564484	0.079519	keep	exp 028 same, NONUNIFORM: 0.535 — comparable to coin-flip; overlap-count inflation is the gap
