@@ -141,7 +141,7 @@ def validation_table() -> str:
         rows_by_regime.setdefault(regime, []).append((label, m))
     out = [r"\begin{table}[H]", r"\centering", r"\footnotesize",
            r"\setlength{\tabcolsep}{4pt}",
-           r"\begin{tabular}{@{}l r r r r r@{}}", r"\toprule",
+           r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.6cm} r r r r r@{}}", r"\toprule",
            r"method & dev\_worst $\downarrow$ & dev\_mean & start\_dev & slope & slope std \\"]
     for regime in ("uniform", "nonuniform", "dense grid"):
         rows = rows_by_regime.get(regime, [])

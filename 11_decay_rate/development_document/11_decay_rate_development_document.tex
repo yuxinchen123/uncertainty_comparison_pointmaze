@@ -535,6 +535,16 @@ exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
 032 & elliptical with bandwidth cap 0.35, uniform & 0.114 & 0.044 & 0.00 & -0.500 & 0.001 \\
 033 & same, NONUNIFORM & 0.478 & 0.228 & 0.00 & -0.576 & 0.084 \\
 034 & scrambled-Hadamard coin sequences on the adaptive dictionary & 0.000 & 0.000 & 0.00 & 0.000 & 0.000 \\
+035 & Hadamard coins + per-block column permutation (val\_114-115) & 0.314 & 0.008 & 0.00 & -0.501 & 0.001 \\
+036 & collision-free block spikes & 0.033 & 0.003 & 0.00 & -0.500 & 0.000 \\
+? & abl 201 coin-flip d=128 & 0.108 & 0.060 & 0.00 & -0.506 & 0.000 \\
+? & abl 202 coin-flip insertion radius 0.2 (uniform) & 1.062 & 0.531 & 0.00 & -0.701 & 0.000 \\
+? & abl 203 same, nonuniform & 0.994 & 0.435 & 0.00 & -0.761 & 0.000 \\
+? & abl 204 elliptical bandwidth cap 0.2 & 0.077 & 0.043 & 0.00 & -0.500 & 0.000 \\
+? & hor 301 shrink at 32768 steps & 0.033 & 0.033 & 0.00 & -0.500 & 0.000 \\
+? & hor 303 AdaGrad 3e-3 at 32768 steps & 1.296 & 0.322 & 0.00 & -0.631 & 0.000 \\
+? & hor 302 coin-flip adaptive at 32768 steps & 0.049 & 0.030 & 0.00 & -0.502 & 0.003 \\
+? & val 118 collision-free Hadamard on dense\_grid, 30 seeds & 0.054 & 0.003 & 0.00 & -0.500 & 0.000 \\
 \bottomrule
 \end{longtable}}
 % >>> AUTO-GENERATED TABLE END: ledger
@@ -623,15 +633,16 @@ reports the same metric battery as the ledger, now at validation seed counts.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l r r r r r@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.6cm} r r r r r@{}}
 \toprule
 method & dev\_worst $\downarrow$ & dev\_mean & start\_dev & slope & slope std \\
 \midrule
 \multicolumn{6}{@{}l}{\textbf{uniform} (30 seeds)} \\
-residual-encoded shrink (exact solve) & \textbf{0.038} & 0.038 & 0.00 & -0.500 & 0.000 \\
-coin flips, adaptive dictionary & \underline{0.054} & \underline{0.030} & 0.00 & -0.502 & 0.003 \\
+Hadamard coins (collision-free spikes), adaptive dictionary & \textbf{0.033} & \textbf{0.003} & 0.00 & -0.500 & 0.000 \\
+residual-encoded shrink (exact solve) & \underline{0.038} & 0.038 & 0.00 & -0.500 & 0.000 \\
+coin flips, adaptive dictionary & 0.054 & 0.030 & 0.00 & -0.502 & 0.003 \\
 elliptical posterior readout ($\sigma \le 0.35$) & 0.139 & 0.046 & 0.00 & -0.499 & 0.001 \\
-Hadamard coins (column-permuted), adaptive dictionary & 0.314 & \textbf{0.008} & 0.00 & -0.501 & 0.001 \\
+Hadamard coins (column-permuted), adaptive dictionary & 0.314 & \underline{0.008} & 0.00 & -0.501 & 0.001 \\
 Adam $10^{-3}$, raw readout (control) & 1.653 & 1.250 & 1.62 & -1.038 & 0.356 \\
 AdaGrad $3{\times}10^{-3}$ + initial-copy readout & 1.772 & 0.591 & 0.00 & -0.882 & 0.502 \\
 SGD-$1/t$ (parent project's best), raw readout & 2.410 & 1.741 & 1.62 & -1.413 & 1.031 \\
@@ -642,6 +653,11 @@ Hadamard coins (column-permuted), adaptive dictionary & \underline{0.468} & \tex
 elliptical posterior readout ($\sigma \le 0.35$) & 0.505 & 0.246 & 0.00 & -0.567 & 0.060 \\
 residual-encoded shrink (exact solve) & 1.441 & 0.804 & 0.00 & -0.500 & 0.000 \\
 AdaGrad $3{\times}10^{-3}$ + initial-copy readout & 1.857 & 1.031 & 0.00 & -0.898 & 0.487 \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{dense grid} (30 seeds)} \\
+Hadamard coins (collision-free spikes), adaptive dictionary & \textbf{0.054} & \textbf{0.003} & 0.00 & -0.500 & 0.000 \\
+Hadamard coins (column-permuted), adaptive dictionary & \underline{1.029} & \underline{0.008} & 0.00 & -0.501 & 0.001 \\
+Hadamard coins, sign-only scramble (broken variant, kept as record) & 4.690 & 2.394 & 0.00 & -0.550 & 0.023 \\
 \bottomrule
 \end{tabular}
 \caption{Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal).}
