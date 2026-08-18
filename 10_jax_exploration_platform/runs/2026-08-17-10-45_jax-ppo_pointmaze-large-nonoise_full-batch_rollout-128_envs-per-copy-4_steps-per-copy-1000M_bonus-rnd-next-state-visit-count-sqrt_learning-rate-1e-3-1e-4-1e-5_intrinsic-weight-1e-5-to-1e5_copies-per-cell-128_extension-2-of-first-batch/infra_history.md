@@ -118,3 +118,19 @@ That chunk's queue entry was repriced to the card it actually holds — 4.60 hou
 own probe of the oracle arm on an A100-SXM4 at 528 copies, with the serval03 plan kept beside it
 under `reassigned_from` — so the 20-minute tick stops reporting it as a canary off plan every tick
 for a card it never went to.
+
+## 2026-08-17 21:50 PT — the tick moved to hourly, and a question was queued for the document pass
+
+The run had been stable for over an hour — no job changed state, no id was added or removed, every
+running chunk's shard kept growing, nothing was waiting to be submitted — so the primary tick moved
+from twenty minutes to hourly under the cadence rule of the `sweep-monitoring` skill. It drops back
+to twenty minutes on its own when a job fails, is preempted or requeued, when a shard goes flat
+while its job is RUNNING, when anything is submitted, or when fewer than about six chunks remain;
+the tail is where a tick has work to do. Each tick states which cadence it is on.
+
+A question was also queued for the document pass and is specified in
+`analysis/question_curve_shape.md`: aggregated over a configuration's copies, does every
+configuration of this sweep rise and then fall? Its tooling — `analysis/code/curve_shape.py` and
+`analysis/code/shape_report.py` — is written and was validated against the completed 10M-step
+batch, which is where two of its defects were found. It reads every configuration through this
+run's own `code/aggregate.curve_of`, so a shape and a table score can never disagree.
