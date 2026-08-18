@@ -569,6 +569,19 @@ exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
 043 & gradient CFN SGD-1/t eta0 1e-1 (discarded) & 1.856 & 1.455 & 0.00 & -1.065 & 0.427 \\
 048 & deep random features + exact last-layer shrink head, maze+\,\ldots & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
 049 & deep features + exact coin-flip head, maze+antmaze pooled & 0.054 & 0.030 & 0.00 & -0.503 & 0.004 \\
+044 & gradient conv CFN Adam 1e-4, atari (discarded) & 1.654 & 1.343 & 0.00 & -0.699 & 0.368 \\
+045 & gradient conv CFN Adam 1e-3, atari (discarded) & 1.155 & 0.994 & 0.00 & -0.807 & 0.314 \\
+046 & gradient conv CFN AdaGrad 1e-2, atari (discarded) & 1.779 & 1.384 & 0.00 & -0.469 & 0.210 \\
+047 & gradient conv CFN SGD-1/t 1e-1, atari (discarded) & 2.678 & 2.466 & 0.00 & -2.800 & 0.136 \\
+052 & replay-buffer CFN (4 Adam steps/visit), maze+antmaze & 0.863 & 0.675 & 0.00 & -0.909 & 0.198 \\
+050 & deep shrink head, atari 512 frames vs 256 features & 1.814 & 1.534 & 0.00 & -2.351 & 0.283 \\
+051 & deep coin-flip head, atari & 1.871 & 1.534 & 0.00 & -0.961 & 0.078 \\
+053 & deep shrink, HELDOUT vectors & 1.935 & 0.292 & 0.00 & -0.944 & 1.282 \\
+054 & deep coin-flip, HELDOUT vectors & 1.678 & 0.264 & 0.00 & -0.609 & 0.549 \\
+055 & deep coin-flip, NONUNIFORM vectors & 0.618 & 0.138 & 0.00 & -0.692 & 0.198 \\
+056 & deep shrink, NONUNIFORM vectors & 1.216 & 0.711 & 0.00 & -0.352 & 0.145 \\
+057 & deep shrink, HELDOUT atari & 1.652 & 1.202 & 0.00 & -2.293 & 1.048 \\
+058 & deep coin-flip, HELDOUT atari & 1.771 & 1.202 & 0.00 & -0.900 & 0.168 \\
 \bottomrule
 \end{longtable}}
 % >>> AUTO-GENERATED TABLE END: ledger
@@ -704,12 +717,24 @@ method & dev\_worst $\downarrow$ & dev\_mean & slope & slope std \\
 \multicolumn{5}{@{}l}{\textbf{maze + AntMaze states (uniform)} (10 seeds)} \\
 deep trunk + exact shrink head & \textbf{0.038} & \underline{0.038} & -0.500 & 0.000 \\
 deep trunk + exact coin-flip head & \underline{0.054} & \textbf{0.030} & -0.503 & 0.004 \\
+replay-buffer coin-flip net (4 Adam steps/visit) & 0.863 & 0.675 & -0.909 & 0.198 \\
 gradient coin-flip net, Adam $10^{-2}$ (best gradient variant) & 1.148 & 1.159 & -0.696 & 0.264 \\
 gradient coin-flip net, Adam $10^{-4}$ (paper rate) & 2.202 & 1.849 & -0.648 & 0.347 \\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{Atari frames (uniform)} (10 seeds)} \\
+gradient coin-flip conv net, Adam $10^{-3}$ & \textbf{1.155} & \textbf{0.994} & -0.807 & 0.314 \\
+gradient coin-flip conv net, Adam $10^{-4}$ & \underline{1.654} & \underline{1.343} & -0.699 & 0.368 \\
+gradient coin-flip conv net, AdaGrad $10^{-2}$ & 1.779 & 1.384 & -0.469 & 0.210 \\
+conv trunk + exact shrink head & 1.814 & 1.534 & -2.351 & 0.283 \\
+conv trunk + exact coin-flip head & 1.871 & 1.534 & -0.961 & 0.078 \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{held-out 20\% (vectors)} (10 seeds)} \\
 deep trunk + exact coin-flip head & \textbf{1.678} & \textbf{0.264} & -0.609 & 0.549 \\
 deep trunk + exact shrink head & \underline{1.935} & \underline{0.292} & -0.944 & 1.282 \\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{held-out 20\% (Atari)} (10 seeds)} \\
+conv trunk + exact shrink head & \textbf{1.652} & \textbf{1.202} & -2.293 & 1.048 \\
+conv trunk + exact coin-flip head & \underline{1.771} & \underline{1.202} & -0.900 & 0.168 \\
 \midrule
 \multicolumn{5}{@{}l}{\textbf{nonuniform visitation (vectors)} (10 seeds)} \\
 deep trunk + exact coin-flip head & \textbf{0.618} & \textbf{0.138} & -0.692 & 0.198 \\
@@ -721,10 +746,40 @@ deep trunk + exact shrink head & \underline{1.216} & \underline{0.711} & -0.352 
 \end{table}
 % >>> AUTO-GENERATED TABLE END: neural
 
-\subsection{What the generalization regimes add}
+\subsection{What the generalization domains and regimes measure}
 \label{sec:neural-generalization}
 
-% (numbers spliced by the tick after the heldout/nonuniform experiments complete)
+Four findings, all visible in \Cref{tab:neural}:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{The exact heads transfer to real high-dimensional states.} On the pooled maze
+  plus AntMaze-observation battery the shrink head reproduces its phase-1 numbers to the
+  digit ($0.0381$, slope $-0.500000$, zero spread --- \runref{exp 048}) and the coin-flip
+  head sits at its statistical floor ($0.054$ --- \runref{exp 049}); under non-uniform
+  visitation the coin-flip head tracks each real AntMaze state's own count
+  (\runref{exp 055}, $0.62$ worst / $0.14$ mean) while the shrink head fails exactly as its
+  phase-1 sibling did (\runref{exp 056}).
+\item \textbf{Feature width is the capacity law.} On Atari --- $512$ distinct frames against
+  $256$ trunk features --- both heads hit a hard floor near $0.25$--$0.29$
+  (\runref{exp 050}, \runref{exp 051}): the component of the target outside the feature span
+  cannot be removed by any last-layer update, and the early slope fits ($-2.35$) are
+  artifacts of fitting a knee-then-floor curve. This is the same law the phase-1 dictionary
+  obeyed (insertion capacity $\ge$ distinct states): \emph{the feature dimension bounds how
+  many states can be counted individually}. The widened-trunk variants ($1024$ image
+  features, \runref{exp 059}/\runref{exp 060}) test the law's converse.
+\item \textbf{Held-out states expose the pseudo-count trade-off.} In the held-out regime the
+  trained states stay on their count curves (dev\_mean $0.26$--$0.29$ on the vector battery)
+  but never-visited states are dragged partway down by the trunk's generalization
+  (\runref{exp 053}, \runref{exp 054}): under the strict-count reading that is leakage and
+  the metric punishes it; under the pseudo-count reading, a state that resembles trained
+  ones \emph{should} inherit part of their familiarity. The metric takes the strict view; a
+  deployment choosing bandwidth or trunk width is choosing a point on this dial, and the
+  off-support fields of \Cref{fig:offsupport} are the same trade-off seen from the other
+  side.
+\item \textbf{Replay narrows but does not close the gradient gap.} The replay-buffer
+  coin-flip network (\runref{exp 052}) reaches $0.86$ worst / $0.67$ mean --- far better
+  than any per-visit gradient variant, an order short of the exact heads, and carrying its
+  own forgetting horizon (the ring bounds the count any state can accumulate).
+\end{enumerate}
 
 \clearpage
 
