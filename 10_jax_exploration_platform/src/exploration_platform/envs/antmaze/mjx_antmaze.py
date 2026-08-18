@@ -113,11 +113,17 @@ class JaxAntMaze:
         """One env step (frame_skip physics steps) with auto-reset. Returns (state', obs,
         reward, terminated, truncated, final_obs) — the platform's environment contract."""
         with jax.enable_x64(False):
-            # torque clip and the frame-skip physics rollout, all float32
+            # torque clip and the frame-skip physics rollout, all float32. The frame skip is a
+            # scan, not a Python loop: a loop would inline frame_skip copies of the physics
+            # step into every compiled program and multiply the compile time by that factor
+            # (measured: the whole benchmark grid stalled in compilation before this change)
             a = jnp.clip(act.astype(F32), -1.0, 1.0).reshape(self.B, self.nu)
             data = state.data.replace(ctrl=a)
-            for _ in range(self.cfg.frame_skip):
-                data = jax.vmap(mjx.step, in_axes=(None, 0))(self.model, data)
+
+            def frame(d, _):
+                """One physics step at the held ctrl."""
+                return jax.vmap(mjx.step, in_axes=(None, 0))(self.model, d), None
+            data, _ = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
 

@@ -62,6 +62,25 @@ its clip and optimizer rows come out negative in that style. Use
 `benchmarks/bonus/profile_visit_count_phases.py`, which times each piece instead of subtracting
 unlike things.
 
+### The AntMaze family fused through MJX — 2026-08-18, from 00:20 PT
+
+Branch `fused-antmaze`, H100 NVL on serval05 (held for the session, one job at a time),
+`platform_jax` with `mujoco`/`mujoco-mjx` 3.11.0 added (jax pin unchanged). Ledger:
+[`systems/environment/antmaze_mjx/ledger.md`](systems/environment/antmaze_mjx/ledger.md).
+
+The platform gained its second environment family — the Gymnasium Ant in the umaze / medium /
+large mazes — and the trainer became environment-generic (the composer dispatches on the
+environment-configuration type; widths, coverage indexing and the prime respawn come from the
+environment), with the PointMaze golden-parity gate still bit-identical. The reference model as
+shipped is unusable under MJX (2,134 ms per env step at 1,024 copies — RK4 plus the full solver
+budget); the accepted model (implicitfast, Newton 4/8, merged wall boxes, float32 behind a
+trace-time x64-off boundary) is held to the reference by three measured gates: bit-level
+one-step agreement away from contacts (4.4e-16 in float64, 1.8e-6 in float32), centimetre-level
+documented collision-function differences only inside contact events, and exactly shared
+resting equilibria (z = 0.38248 m both, cross-handover drift 3.7e-11). End-to-end PPO training
+composes and runs for `rnd_next_state` and `none`; the PointMaze-only visit-count family is
+refused at composition. Throughput tables: the family ledger.
+
 ## Open request from train run 1.1
 
 **Record the step inside an episode at which a copy first reaches the goal.** The results table of
