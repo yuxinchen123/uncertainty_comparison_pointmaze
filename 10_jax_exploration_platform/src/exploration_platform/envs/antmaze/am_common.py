@@ -51,6 +51,15 @@ class AntMazeConfig:
     integrator: str = "implicitfast"
     solver_iterations: int = 4
     ls_iterations: int = 8
+    # MJX contact budget: after broadphase, at most max_geom_pairs pairs per collision-function
+    # group and max_contact_points contact slots per condim. Without a cap MJX pads every
+    # possible pair (225 slots on the umaze, more on the large map) and every Newton iteration
+    # drags the whole padded contact state through memory — the large map then stops scaling
+    # with the copy count. The ant can genuinely touch the floor and at most a wall or two at
+    # once, so 8 pairs / 32 points is generous. These are MJX-only numerics; the C-MuJoCo
+    # reference ignores them, so the parity gates compare against the uncapped reference.
+    max_geom_pairs: int = 8
+    max_contact_points: int = 32
 
 
 def preset(map_name: str) -> AntMazeConfig:
@@ -122,4 +131,18 @@ def build_antmaze_xml(cfg: AntMazeConfig) -> str:
     opt.set("integrator", cfg.integrator)
     opt.set("iterations", str(cfg.solver_iterations))
     opt.set("ls_iterations", str(cfg.ls_iterations))
+
+    # The contact-budget numerics MUST be the model's only custom numerics, in this order.
+    # MJX 3.11 reads them as `numeric_data[id]` — the data array indexed by the numeric's ID
+    # rather than its address — so with ant.xml's 15-element `init_qpos` numeric in front, a
+    # cap numeric with id 1 would be read from init_qpos's data and come out 0, silently
+    # deleting every contact (the ant then falls through the floor). ant.xml's `init_qpos`
+    # numeric is unused here (qpos0 comes from the body positions), so it is dropped and the
+    # two size-1 caps take ids 0 and 1, whose ids equal their addresses.
+    custom = root.find("custom")
+    for numeric in list(custom):
+        custom.remove(numeric)
+    ET.SubElement(custom, "numeric", name="max_geom_pairs", data=str(cfg.max_geom_pairs))
+    ET.SubElement(custom, "numeric", name="max_contact_points",
+                  data=str(cfg.max_contact_points))
     return ET.tostring(root, encoding="unicode")
