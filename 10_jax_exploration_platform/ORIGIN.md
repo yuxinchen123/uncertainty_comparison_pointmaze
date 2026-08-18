@@ -76,6 +76,18 @@ precision while reducing the training rollouts' in single, because its priming c
 the flag. The platform passes it in both places. Every gate run uses the default, `False`, where
 the two are identical.
 
+## Added after the copy: the AntMaze family (2026-08-18, branch `fused-antmaze`)
+
+Nothing in this section's tables changed. The platform gained a second environment family that
+was never part of `09_parallelization`: `src/exploration_platform/envs/antmaze/` — the Gymnasium
+Ant in the umaze / medium / large mazes through MuJoCo MJX. Its own provenance (which reference
+files its semantics restate, what was vendored, what deviates and why) is
+`src/exploration_platform/envs/antmaze/spec.md`, not this file. The trainer was made
+environment-generic at the same time (the composer dispatches on the environment-configuration
+type; observation and action widths come from the environment), with the PointMaze defaults
+keeping every existing draw bit-identical — the golden-parity gate still runs against the frozen
+`09_parallelization` module and still requires bit-identical results.
+
 ## The environment specification this platform starts from
 
 The name used in run manifests: **`pointmaze_large_cont400_nonoise@1`**. It is the default

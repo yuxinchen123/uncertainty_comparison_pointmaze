@@ -57,10 +57,44 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 
 # identities of the pieces this run is made of; they go into the manifest so a later change to any
 # of them is visible in the record rather than silent
+# one row per environment this script can run: the specification name a manifest carries, and
+# the environment-configuration factory the composer dispatches on (None = the PointMaze default)
+ENVIRONMENTS = {
+    "pointmaze-large": {"spec": "pointmaze_large_cont400_nonoise@1", "cfg": None,
+                        "episode_steps": 400,
+                        "resolved": {"map_name": "large", "start_cell": "(7, 1)",
+                                     "goal_cell": "(1, 10)", "position_noise": 0.0,
+                                     "continuing_task": True, "goal_radius": 0.45,
+                                     "reward_shift": 0.0}},
+    "antmaze-umaze": {"spec": "antmaze_umaze_cont700_nonoise@1", "cfg": "umaze",
+                      "episode_steps": 700,
+                      "resolved": {"map_name": "umaze", "start_cell": "(3, 1)",
+                                   "goal_cell": "(1, 1)", "continuing_task": True,
+                                   "goal_radius": 0.45, "reward_shift": 0.0}},
+    "antmaze-medium": {"spec": "antmaze_medium_cont1000_nonoise@1", "cfg": "medium",
+                       "episode_steps": 1000,
+                       "resolved": {"map_name": "medium", "start_cell": "(6, 1)",
+                                    "goal_cell": "(1, 6)", "continuing_task": True,
+                                    "goal_radius": 0.45, "reward_shift": 0.0}},
+    "antmaze-large": {"spec": "antmaze_large_cont1000_nonoise@1", "cfg": "large",
+                      "episode_steps": 1000,
+                      "resolved": {"map_name": "large", "start_cell": "(7, 1)",
+                                   "goal_cell": "(1, 10)", "continuing_task": True,
+                                   "goal_radius": 0.45, "reward_shift": 0.0}},
+}
+
 SPECS = {
-    "env": "pointmaze_large_cont400_nonoise@1",
     "agent": "ppo_full_batch@1",
 }
+
+
+def env_config_of(env_name: str):
+    """The environment-configuration object the composer dispatches on; None = PointMaze default."""
+    map_name = ENVIRONMENTS[env_name]["cfg"]
+    if map_name is None:
+        return None
+    from exploration_platform.envs.antmaze.am_common import preset
+    return preset(map_name)
 
 # the update schedule each bonus family follows, for the manifest's record
 UPDATE_SCHEDULES = {
@@ -192,15 +226,18 @@ def parse_args() -> argparse.Namespace:
                              "j x (copies / k) and holds that slice of the copies")
     parser.add_argument("--window-iterations", type=int, default=200,
                         help="iterations per recorded episode window; one record covers one window")
-    parser.add_argument("--episode-steps", type=int, default=400,
-                        help="the environment's truncation cap, which sets the episode clock")
+    parser.add_argument("--env", default="pointmaze-large", choices=sorted(ENVIRONMENTS),
+                        help="which environment specification this unit trains on")
+    parser.add_argument("--episode-steps", type=int, default=0,
+                        help="the environment's truncation cap, which sets the episode clock; "
+                             "0 takes the chosen environment's own cap")
     parser.add_argument("--track-coverage", action="store_true",
                         help="keep a per-copy visited-cell map on the device")
     return parser.parse_args()
 
 
-def specs_of(bonus: str) -> dict:
-    """The component identities of this run, with the bonus and its update schedule filled in."""
+def specs_of(bonus: str, env_name: str) -> dict:
+    """The component identities of this run, with the environment, bonus and schedule filled in."""
     # an older name for a family records the family's own name, so two runs written against
     # different vocabularies are still comparable by their manifests
     from exploration_platform.bonuses.registry import ALIASES
@@ -208,7 +245,8 @@ def specs_of(bonus: str) -> dict:
     if name not in UPDATE_SCHEDULES:
         raise ValueError(f"no update schedule recorded for bonus {bonus!r}; add it to "
                          f"UPDATE_SCHEDULES so the run's manifest names one")
-    return {**SPECS, "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
+    return {"env": ENVIRONMENTS[env_name]["spec"], **SPECS,
+            "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
 
 
 def build_config(args: argparse.Namespace):
@@ -246,11 +284,9 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
     # the full configuration after defaults and overrides — what actually ran, not what was typed
     resolved = {"trainer": {field: getattr(config, field)
                             for field in sorted(config.__dataclass_fields__)},
-                "environment": {"specification": SPECS["env"],
-                                "map_name": "large", "start_cell": "(7, 1)", "goal_cell": "(1, 10)",
-                                "position_noise": 0.0, "max_episode_steps": args.episode_steps,
-                                "continuing_task": True, "goal_radius": 0.45,
-                                "reward_shift": 0.0},
+                "environment": {"specification": ENVIRONMENTS[args.env]["spec"],
+                                "max_episode_steps": args.episode_steps,
+                                **ENVIRONMENTS[args.env]["resolved"]},
                 "runtime": {"interpreter": sys.executable, "unit_id": args.unit_id,
                             "iterations": args.iterations,
                             "window_iterations": args.window_iterations,
@@ -263,7 +299,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
         "run_id": run_dir.name,
         "description": args.description or "one training unit on the JAX exploration platform",
         "git": git_state(PLATFORM_ROOT.parent),
-        "specs": specs_of(args.bonus),
+        "specs": specs_of(args.bonus, args.env),
         "compile_signature": {
             "copies": config.n_copies, "envs_per_copy": config.n_envs,
             "rollout_steps": config.num_steps, "update_style": config.update_style,
@@ -281,6 +317,12 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
 def main() -> None:
     """Create the run folder, train, write one record per phase, then aggregate."""
     args = parse_args()
+    if args.episode_steps == 0:
+        args.episode_steps = ENVIRONMENTS[args.env]["episode_steps"]
+    if args.episode_steps != ENVIRONMENTS[args.env]["episode_steps"]:
+        raise ValueError(f"--episode-steps {args.episode_steps} does not match the "
+                         f"{args.env} cap {ENVIRONMENTS[args.env]['episode_steps']}; the episode "
+                         f"clock would be computed against a cap the environment does not use")
     run_dir = Path(args.run_dir).resolve()
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
@@ -333,7 +375,7 @@ def main() -> None:
     # build the trainer, then time the compilation of the first iteration separately from the rest,
     # because the first iteration pays for compiling the whole program
     build_start = time.time()
-    trainer = Runner(config, bonus=args.bonus)
+    trainer = Runner(config, bonus=args.bonus, env_cfg=env_config_of(args.env))
     sweep = trainer.sweep
     steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
     steps_per_copy_per_iteration = config.num_steps * config.n_envs

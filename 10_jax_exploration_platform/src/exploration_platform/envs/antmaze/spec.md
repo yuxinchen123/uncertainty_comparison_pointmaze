@@ -65,9 +65,16 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
 Run by `tests/envs/test_antmaze_mjx.py` (fast, CPU) and
 `tests/envs/test_antmaze_parity_cpu_mujoco.py` (slower):
 
-1. MJX against C MuJoCo of the SAME model (same XML, same options), a 200-env-step passive +
-   random-action rollout from the spawn: qpos agreement within float32 tolerances at every
-   step (the C run in float64, the MJX run in float32).
+1. MJX against C MuJoCo of the SAME model (same XML, same options), one env step from 50
+   states along a random-torque trajectory, split by contact. Measured 2026-08-18: at
+   contact-free states the fused float32 stepper agrees with C float64 to 3.9e-7 m (median),
+   and MJX float64 agrees with C float64 to 4.4e-16 — the same algorithm to machine epsilon;
+   float32 against float64 MJX differs by at most 1.8e-6, so the float32 choice costs nothing.
+   At states inside a contact event the one-step difference reaches the centimetre level
+   (worst 2.75e-2 m), because MJX's collision functions differ from C's by documented design
+   (different contact-point sets for the same geom pair). The gate bounds the two regimes
+   separately (1e-4 contact-free, 5e-2 in contact), plus a 20-env-step shared-torque
+   trajectory bound.
 2. Settling equivalence: the tuned model's passive settling height equals the reference RK4
    full-solver model's on C MuJoCo (the integrator deviation does not change where the ant
    comes to rest).
