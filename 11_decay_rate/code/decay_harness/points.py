@@ -4,6 +4,8 @@ Ported from 07_reconstruction/convergence_train.py so every geometric convention
 cell centers, sub-cell midpoints) matches the prior convergence runs exactly. This module is
 part of the FIXED harness: the experiment loop never edits it (program.md).
 """
+import os
+
 import numpy as np
 
 # PointMaze_Large-v3 geometry (verified 2026-07-19 against the live environment): 9 cells high,
@@ -12,7 +14,13 @@ import numpy as np
 MAZE_ROWS = 9
 MAZE_COLS = 12
 
-POINT_SET_CHOICES = ("center_square", "top_right_cell", "cell_midpoints", "dense_grid")
+POINT_SET_CHOICES = ("center_square", "top_right_cell", "cell_midpoints", "dense_grid",
+                     "antmaze_states", "atari_frames")
+
+# frozen high-dimensional evaluation domains (phase 2): .npy artifacts written by the seeded
+# collection scripts in ../domains/ — regenerable, never edited by hand
+DOMAINS_DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__)))), "domains_data")
 
 
 def checkpoint_steps(n_steps: int) -> list:
@@ -58,6 +66,14 @@ def point_set(name: str) -> np.ndarray:
         ox, oy = np.meshgrid([-0.25, 0.25], [-0.25, 0.25], indexing="ij")
         xs = (cx[:, None] + ox.ravel()[None, :]).ravel()
         ys = (cy[:, None] + oy.ravel()[None, :]).ravel()
+    elif name in ("antmaze_states", "atari_frames"):
+        # frozen artifacts: antmaze_states (P, 29) = [x, y, 27 core dims] real AntMaze
+        # observations; atari_frames (P, 84, 84) preprocessed MontezumaRevenge frames
+        path = os.path.join(DOMAINS_DATA, f"{name}.npy")
+        if not os.path.exists(path):
+            raise FileNotFoundError(
+                f"{path} missing — generate it with code/domains/collect_{name}.py")
+        return np.load(path).astype(np.float32)
     else:
         raise ValueError(f"point_set must be one of {POINT_SET_CHOICES}; got {name!r}")
     zeros = np.zeros(xs.size)
@@ -66,10 +82,14 @@ def point_set(name: str) -> np.ndarray:
 
 def nonuniform_probabilities(points: np.ndarray) -> np.ndarray:
     """Fixed sampling distribution for the nonuniform regime: one decade of probability across
-    the x extent, so left-edge positions are trained on ~10x as often as right-edge ones."""
+    the x extent (vector domains, whose column 0 is x — maze and AntMaze sets alike), or
+    across the collection index for image domains (frames have no natural coordinate)."""
     # before: points[:, 0] = x in [-5.5, 5.5] (cell_midpoints); after: unnormalized weight
     # 10^(-(x - x_min) / (x_max - x_min)) in [0.1, 1], then normalized to sum 1
-    x = points[:, 0].astype(np.float64)
+    if points.ndim == 2:
+        x = points[:, 0].astype(np.float64)
+    else:
+        x = np.arange(points.shape[0], dtype=np.float64)
     span = x.max() - x.min()
     w = 10.0 ** (-(x - x.min()) / span)
     return w / w.sum()

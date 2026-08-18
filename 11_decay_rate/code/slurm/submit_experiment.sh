@@ -13,15 +13,21 @@ IDFILE="$CAMPAIGN/slurm/submitted_jobids.txt"
 # code/method.py can never change what a queued experiment runs
 cp /p/rlprojects/RND/11_decay_rate/code/method.py "$OUT/method.py"
 
-# reservation discovery per the shared cluster rule (empty when none is active)
-RES=$(scontrol show reservation -o 2>/dev/null | grep -i "Users=.*$USER" \
-      | grep -oP 'ReservationName=\K\S+' | head -1)
-RESARGS=()
-if [ -n "$RES" ]; then
-    RESARGS=(--nodelist=jaguar03 --reservation="$RES")
+# reservation discovery per the shared cluster rule (empty when none is active).
+# PARTITION=cpu (or any partition) overrides the default jaguar03+reservation placement —
+# used when the reserved node is full and jobs would pend on ReqNodeNotAvail.
+RESARGS=(-p gpu)
+if [ -n "${PARTITION:-}" ]; then
+    RESARGS=(-p "$PARTITION")
+else
+    RES=$(scontrol show reservation -o 2>/dev/null | grep -i "Users=.*$USER" \
+          | grep -oP 'ReservationName=\K\S+' | head -1)
+    if [ -n "$RES" ]; then
+        RESARGS+=(--nodelist=jaguar03 --reservation="$RES")
+    fi
 fi
 
-ID=$(sbatch --parsable "${RESARGS[@]}" -p gpu \
+ID=$(sbatch --parsable "${RESARGS[@]}" \
      --output="$OUT/slurm.out" --error="$OUT/slurm.out" \
      /p/rlprojects/RND/11_decay_rate/code/slurm/experiment.slurm "$OUT" "$@")
 echo "$ID $(date '+%Y-%m-%dT%H:%M:%S%z') $EXP" >> "$IDFILE"

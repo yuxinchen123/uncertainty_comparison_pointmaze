@@ -255,3 +255,6 @@ core.*
 11_decay_rate/train_runs/*/data/
 11_decay_rate/train_runs/*/logs/
 11_decay_rate/train_runs/*/queue/
+# 11_decay_rate evaluation-domain artifacts: regenerable from the seeded collection scripts
+# in code/domains/ (the .meta.json sidecars are covered by the global *.json rule).
+11_decay_rate/domains_data/

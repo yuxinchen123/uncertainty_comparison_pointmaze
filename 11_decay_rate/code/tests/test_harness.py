@@ -111,3 +111,20 @@ def test_dense_grid_shape_and_span():
     assert dg[:, 0].min() == -5.75 and dg[:, 0].max() == 5.75
     assert dg[:, 1].min() == -4.25 and dg[:, 1].max() == 4.25
     assert len({(float(x), float(y)) for x, y in dg[:, :2]}) == 432
+
+
+def test_highdim_domains_load_when_present():
+    """Phase-2 domains: frozen artifacts load with the documented shapes (skip if absent)."""
+    import pytest
+    try:
+        am = point_set("antmaze_states")
+    except FileNotFoundError:
+        pytest.skip("antmaze_states.npy not generated on this checkout")
+    assert am.ndim == 2 and am.shape[1] == 29
+    af = point_set("atari_frames")
+    assert af.ndim == 3 and af.shape[1:] == (84, 84)
+    assert 0.0 <= af.min() and af.max() <= 1.0
+    # nonuniform law: decade across x for vectors, across index for frames; both sum to 1
+    for pts in (am, af):
+        pr = nonuniform_probabilities(pts)
+        assert abs(pr.sum() - 1.0) < 1e-12 and pr.max() / pr.min() <= 10.0 + 1e-6

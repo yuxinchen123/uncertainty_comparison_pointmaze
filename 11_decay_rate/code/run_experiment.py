@@ -26,7 +26,9 @@ from decay_harness.metrics import compute_metrics, summary_block
 from decay_harness.points import (POINT_SET_CHOICES, checkpoint_steps, nonuniform_probabilities,
                                   point_set)
 
-CELL_TIME_CAP = 900.0  # seconds per (env, seed) cell; past it the cell aborts as overtime
+CELL_TIME_CAP = float(os.environ.get("CELL_TIME_CAP", 900.0))  # seconds per (env, seed) cell;
+# past it the cell aborts as overtime. Overridable by environment variable for GPU/image
+# domains whose legitimate cell times differ (an infrastructure knob, not a protocol change).
 NONUNIFORM_BATCH = 32  # batch size of the nonuniform regime's sampled updates
 
 
@@ -55,7 +57,10 @@ def run_cell(args) -> str:
     t0 = time.time()
     pts = point_set(env)
     x_all = torch.as_tensor(pts)
-    m = Method(seed, obs_dim=pts.shape[1])
+    # vector domains pass their width; image domains pass the full trailing shape tuple
+    # before: pts (108, 4) -> obs_dim 4;  pts (512, 84, 84) -> obs_dim (84, 84)
+    obs_dim = pts.shape[1] if pts.ndim == 2 else tuple(pts.shape[1:])
+    m = Method(seed, obs_dim=obs_dim)
     cps = checkpoint_steps(n_steps)
 
     # nonuniform regime: fixed sampling law + its own keyed numpy stream, so the visit sequence
