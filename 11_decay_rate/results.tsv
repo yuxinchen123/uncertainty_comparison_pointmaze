@@ -52,3 +52,16 @@ ac975a0	0.054287	0.003108	0.000000	-0.500131	0.000248	keep	val 118 collision-fre
 6ef69a5	1.855729	1.454611	0.000000	-1.065112	0.427337	discard	exp 043 gradient CFN SGD-1/t eta0 1e-1: too fast, spread
 0de11cf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 048 deep random features + exact last-layer shrink head, maze+antmaze pooled: machine-exact on real 29-d AntMaze observations — the neural exact construction transfers
 25e19d2	0.054199	0.029872	0.000000	-0.503266	0.004252	keep	exp 049 deep features + exact coin-flip head, maze+antmaze pooled: matches the phase-1 statistical floor on neural features
+6ef69a5	1.654398	1.343475	0.000000	-0.699277	0.368334	discard	exp 044 gradient conv CFN Adam 1e-4, atari: the optimizer-lag failure is domain-independent
+6ef69a5	1.155169	0.994201	0.000000	-0.807191	0.314068	discard	exp 045 gradient conv CFN Adam 1e-3, atari: same
+6ef69a5	1.779096	1.384236	0.000000	-0.468718	0.209936	discard	exp 046 gradient conv CFN AdaGrad 1e-2, atari: same
+6ef69a5	2.677555	2.465700	0.000000	-2.800326	0.136111	discard	exp 047 gradient conv CFN SGD-1/t 1e-1, atari: unstable-fast
+895f9b2	0.862546	0.674687	0.000000	-0.909268	0.197999	keep	exp 052 replay-buffer CFN (4 Adam steps/visit), maze+antmaze: closes much of the gradient lag (0.86 vs 1.15+) but stays an order above the exact heads; the ring bounds late counts
+0de11cf	1.813704	1.534209	0.000000	-2.350613	0.283373	keep	exp 050 deep shrink head, atari 512 frames vs 256 features: FLOORS at ~0.29 — the unrepresentable target component is a hard floor when distinct states exceed feature width
+25e19d2	1.870539	1.534285	0.000000	-0.960743	0.078492	keep	exp 051 deep coin-flip head, atari: same representational floor (~0.25)
+0de11cf	1.934807	0.292233	0.000000	-0.943983	1.282201	keep	exp 053 deep shrink, HELDOUT vectors: trained states fine (dev_mean 0.29) but the trunk generalizes the decay onto never-visited states — strict-count leakage measured
+25e19d2	1.678382	0.263875	0.000000	-0.609371	0.548920	keep	exp 054 deep coin-flip, HELDOUT vectors: same leakage, milder
+25e19d2	0.617741	0.138426	0.000000	-0.691757	0.198100	keep	exp 055 deep coin-flip, NONUNIFORM vectors: tracks per-state counts on real AntMaze observations (0.62/0.14)
+0de11cf	1.215835	0.710758	0.000000	-0.351516	0.145061	keep	exp 056 deep shrink, NONUNIFORM vectors: fails as its phase-1 sibling did — the recurrence integrates interference
+0de11cf	1.651587	1.201758	0.000000	-2.293455	1.048295	keep	exp 057 deep shrink, HELDOUT atari: floor + leakage compound
+25e19d2	1.771001	1.201959	0.000000	-0.899647	0.168052	keep	exp 058 deep coin-flip, HELDOUT atari: same
