@@ -60,10 +60,32 @@ def job_states() -> dict:
     return states
 
 
-def chunk_of_job(name: str) -> str:
-    """The unit and chunk a job name carries, e.g. "unit-1-chunk-7-of-32"; "" for a probe."""
-    match = re.match(r"pmjax2-(unit-\d+-chunk-\d+-of-\d+)$", name)
-    return match.group(1) if match else ""
+def unit_of_job() -> dict:
+    """Which unit each job was given: the submit-time ledger, then the job folders' own records.
+
+    Job NAMES are not a reliable key: `submit_one.sh` derives them from the unit id with a pattern
+    that reads "recut-chunk-1-of-8" as "chunk-1-of-8", so a re-cut chunk and an original one can
+    carry the same name. Every job writes `assignment.json` with its unit id before it trains, and
+    that is unambiguous.
+
+    before: slurm/jobs/6539930_ai01/assignment.json holding unit_id "unit-2_..._recut-chunk-1-of-8...";
+    after:  {"6539930": "unit-2_..._recut-chunk-1-of-8..."}
+    """
+    mapping = {}
+    ledger = RUN_DIR / "slurm" / "unit_jobs.tsv"
+    if ledger.exists():
+        for line in ledger.read_text().splitlines():
+            if "\t" in line:
+                job, unit = line.split("\t", 1)
+                mapping[job] = unit
+    # a job that has started also says so itself, which covers anything submitted before the
+    # ledger existed
+    for path in sorted((RUN_DIR / "slurm" / "jobs").glob("*/assignment.json")):
+        record = json.loads(path.read_text())
+        job = record.get("slurm_job_id", "")
+        if job and job != "none":
+            mapping[job] = record["unit_id"]
+    return mapping
 
 
 # how much of a shard's tail to read to find its last complete record. One window line of the
@@ -116,17 +138,20 @@ def canary_rate(unit_id: str) -> float:
 def rows() -> list:
     """One row per chunk: its queue entry, its job, its progress and its canary rate."""
     states = job_states()
-    by_chunk = {}
+    units = unit_of_job()
+    by_unit = {}
     for job, entry in states.items():
-        chunk = chunk_of_job(entry["name"])
-        if chunk:
-            # a chunk resubmitted after a failure has two ids; the later one is the live job
-            by_chunk[chunk] = max(by_chunk.get(chunk, ("0", None))[0], job), entry
+        unit = units.get(job)
+        if unit is None:
+            continue
+        # a chunk resubmitted after a failure has several ids; the largest is the live job
+        if unit not in by_unit or int(job) > int(by_unit[unit][0]):
+            by_unit[unit] = (job, entry)
     result = []
     for unit_id, record in sorted(queue_entries().items(),
                                   key=lambda item: (item[1]["order"], item[1]["chunk"])):
         key = f"unit-{record['order']}-chunk-{record['chunk'] + 1}-of-{record['chunks']}"
-        job, entry = by_chunk.get(key, (None, None))
+        job, entry = by_unit.get(unit_id, (None, None))
         written = windows_written(RUN_DIR / "data" / f"{unit_id}.jsonl")
         measured = canary_rate(unit_id)
         planned_seconds_per_iteration = record["planned_seconds"] / ps.ITERATIONS

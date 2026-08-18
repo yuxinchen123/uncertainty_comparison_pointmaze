@@ -59,4 +59,8 @@ exec bash "\$RUN_DIR/code/run_chunk.sh" "$UNIT_ID" "\$JOB_FOLDER"
 SBATCH
 
 JOB_ID=$(sbatch --parsable "$SCRIPT" | tee -a "$RUN_DIR/slurm/submitted_jobids.txt")
+# which unit this id was given, recorded at submit time. A job writes `assignment.json` only once
+# it starts, so without this a PENDING resubmission is invisible and the status table falls back to
+# the cancelled job it replaced.
+printf '%s\t%s\n' "$JOB_ID" "$UNIT_ID" >> "$RUN_DIR/slurm/unit_jobs.tsv"
 echo "submitted $UNIT_ID on $NODE as job $JOB_ID (walltime $WALLTIME, $CPUS cpus, $MEMORY, reservation ${RESERVATION:-none})"

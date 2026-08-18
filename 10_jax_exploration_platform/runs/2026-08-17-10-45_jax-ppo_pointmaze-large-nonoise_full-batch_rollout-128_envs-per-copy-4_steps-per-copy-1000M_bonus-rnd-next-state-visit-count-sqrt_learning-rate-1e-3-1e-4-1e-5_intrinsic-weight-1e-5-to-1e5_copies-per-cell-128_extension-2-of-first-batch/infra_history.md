@@ -134,3 +134,51 @@ configuration of this sweep rise and then fall? Its tooling — `analysis/code/c
 `analysis/code/shape_report.py` — is written and was validated against the completed 10M-step
 batch, which is where two of its defects were found. It reads every configuration through this
 run's own `code/aggregate.curve_of`, so a shape and a table score can never disagree.
+
+## 2026-08-17 23:03 PT — jaguar03 failed with eight chunks on it, and four of them had to be re-cut
+
+`jaguar03` stopped responding at about 23:03 PT. Slurm marked it `down*` with reason "Not
+responding", failed the eight of this run's chunks that were on it — job ids 6539522 to 6539529,
+each `NODE_FAIL` after about 2 h 50 m — and requeued them. Because every one was pinned
+`--nodelist=jaguar03`, they then sat `(ReqNodeNotAvail, UnavailableNodes:jaguar03)` and could never
+start while the node stayed down. The node was down for three days in late July, so waiting was not
+a plan.
+
+Those eight chunks held 3,432 of the run's 8,448 copies — 41 per cent of it — and about 2 h 50 m of
+work each, which is lost outright: this platform saves no model state, so a chunk resumes only by
+being re-run whole.
+
+**No shard needed repairing.** A re-run appends its windows from the first one again, and
+`aggregate.live_lines` keeps the later line wherever a window appears twice; that is what the
+function is for and it is tested. `curves_all` inherits it. Nothing was edited.
+
+**Four chunks moved as they were.** The oracle arm's chunks 7 and 8 and the distillation arm's
+chunks 3 and 4 went to `cheetah04` (A100-SXM4-80GB), where this run's own probe prices them at 7.39
+and 2.58 hours. Jobs 6539899, 6539900, 6539903, 6539904.
+
+**Four had to be cut finer, and this is why.** The oracle arm's chunks 3 to 6 hold 528 copies each,
+and a 528-copy chunk of that arm needs an H100 or an A100 to finish in the time the rest of the run
+had left. Every such card on the cluster was allocated or projected free more than a day out —
+`sbatch --test-only` put serval06 and serval07 at 2026-08-19 04:26 ET and serval03 at 2026-08-23,
+and a shorter walltime did not change those projections, so backfill was not the obstacle. On the
+fastest card actually free, an RTX 2080 Ti, one of those chunks would take 18 hours. Cut into eight
+chunks of 264 copies instead, the same 64 copies per configuration take 7.38 hours each and run
+side by side: `code/recut_stranded_chunks.py` wrote the eight entries, jobs 6539930 to 6539937 on
+ai01 to ai04. The re-cut saves about ten hours against re-running the four unchanged on the same
+cards.
+
+The four superseded shards were MOVED, not edited or deleted, to `data_superseded/`, and their
+queue entries to `queue/superseded/`. They had to leave `data/` because the aggregator checks that
+a configuration's chunks partition its copies exactly once and copy indices 32 to 95 would
+otherwise be covered twice. The oracle arm is now twelve chunks: four of 16 copies per
+configuration (indices 0–15, 16–31, 96–111, 112–127) and eight of 8 (32–95), together covering
+0–127 exactly once. The re-cut chunks carry run seeds 8 to 15, outside the 0 to 7 the original
+cutting used, so no chunk shares another's action noise.
+
+Two smaller repairs came out of it. The first submission of the eight re-cut chunks put four on one
+node, whose 62.5 GB of memory cannot hold four 24 GB jobs; they were cancelled and respread two per
+node over ai01 to ai04, where all eight started at once. And the status table keyed jobs by their
+NAME, which `submit_one.sh` derives from the unit id by a pattern that reads `recut-chunk-1-of-8`
+as `chunk-1-of-8` — so a re-cut chunk and an original collided and a pending resubmission was
+reported as its own cancelled predecessor. Submissions now append the id and the unit to
+`slurm/unit_jobs.tsv` at submit time, and the table reads that.
