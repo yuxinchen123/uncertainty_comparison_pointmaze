@@ -800,9 +800,94 @@ this is the family's first live batch, two arms at one setting each.}
 \end{table}
 
 \paragraph{Results --- status.}
-Launched on the H100 NVL of serval05 on 2026-08-18 (the machine held for this session, the two
-arms run one after the other); the results tables and the coverage curves follow when the run's
-records are complete.
+The run is complete. Both arms finished on the H100 NVL of serval05 on 2026-08-18, the
+distillation arm 03:01--03:45 PT and the no-bonus arm 03:46--04:28 PT, each writing its $12$
+phase-blocked windows and its completion record. Sixteen episodes across the two arms
+($13$ and $3$ of about $786{,}000$ episodes per arm) were respawned by the environment's
+non-finite-state guard --- the rare float32 contact-solve failure of
+\texttt{spec.md} deviation~7, at the expected rate, contained as designed.
+\Cref{tab:am-jax-run21-results} and \Cref{fig:am-jax-run21-curves} are written by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py} from the run's own shards.
+
+\paragraph{How to read the metrics table.}
+Define $C = 1{,}024$ as an arm's copy count, indexed $k = 1, \dots, C$; define $W = 12$ as the
+number of recorded windows, each spanning $175$ iterations (one whole turn of the
+$128$-step-rollout / $700$-step-episode clock, $32$ episodes per copy); and define $S_{k,w}$ as
+the extrinsic reward copy $k$ collects over the whole of window $w$ --- the quantity the
+trainer records. Define $O = 7$ as the number of open cells of the umaze. The columns:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Whole-run reward} (higher is better; the sort column) --- copy $k$'s total,
+  $R_k = \sum_{w=1}^{W} S_{k,w}$: the number of steps the copy spent inside the goal radius
+  over its whole run. The cell is the mean $\pm$ standard error over the $C$ copies.
+\item \textbf{Last-window reward} --- $S_{k,W}$ alone, the same statistic over the final $32$
+  episodes per copy.
+\item \textbf{Success rate} --- the fraction of copies that reached the goal at least once,
+  $s = \frac{1}{C} \sum_{k=1}^{C} \mathbf{1}[R_k > 0]$.
+\item \textbf{Final maze-cell coverage \%} --- with $V_k$ the number of distinct open cells
+  copy $k$ ever entered, $c_k = 100 \, V_k / O$, mean $\pm$ standard error over copies.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+\textbf{arm} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-window\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{final maze-cell\\coverage \%}} &
+\textbf{$N$} \\
+\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & {\boldmath $7.845 \pm 1.065$} &
+  {\boldmath $0.899 \pm 0.379$} & {\boldmath $0.121$} & $67.41 \pm 0.44$ & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration} & $6.793 \pm 0.957$ & $0.606 \pm 0.288$ & $0.120$ &
+  {\boldmath $67.76 \pm 0.44$} & $1{,}024$ \\
+\bottomrule
+\end{tabular}
+\caption{Train run 2.1's two arms, ranked by whole-run reward (the only arrowed column), each
+over its full $1{,}024$ copies. Bold marks the numerically best cell per column --- and the
+honest reading is that \emph{no column separates the arms}: every difference is within about
+one standard error, and the success rates are equal to three decimals.}
+\label{tab:am-jax-run21-results}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-18-03-01_jax-ppo_antmaze-umaze-nonoise_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-269k_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-antmaze-batch/analysis/plots/two_arm_curves.pdf}}
+\caption{Mean maze-cell coverage (left) and mean window reward (right) against environment
+steps per copy, one curve per arm, the band $\pm$ one standard error over the arm's $1{,}024$
+copies; each point is one $175$-iteration phase-blocked window. The two arms' coverage curves
+lie on top of each other for the whole run. Drawn by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py}.}
+\label{fig:am-jax-run21-curves}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{H1 is refuted on this maze: the bonus buys nothing the umaze does not give away.}
+  Whole-run reward $7.845 \pm 1.065$ against $6.793 \pm 0.957$, success rate $0.121$ against
+  $0.120$, final coverage $67.41 \pm 0.44$ against $67.76 \pm 0.44$ per cent --- every gap
+  inside a standard error. Seven open cells is small enough that the torque noise of an ant
+  learning to walk covers what a novelty bonus covers. The discriminating experiment is the
+  medium and large mazes, exactly as the large map was for PointMaze.
+\item \textbf{H2 is refuted in the opposite direction than hypothesized: reward arrived well
+  inside the budget.} The prediction was that learning to walk would consume the run before
+  any goal was reached; in fact both arms reach the goal from about $60$k steps per copy on,
+  and one copy in eight finishes with at least one goal entry.
+\item \textbf{Coverage saturates at about two thirds of the maze in both arms} ($67$ against
+  $100$ per cent for the best PointMaze arms at their far larger budgets): the cells behind
+  the far arm of the U stay rare. Whether a longer budget or a stronger bonus weight breaks
+  the plateau is the natural follow-up sweep.
+\item \textbf{The platform held.} The whole run --- $550$ million environment steps of real
+  articulated physics fused with training --- ran at the benchmarked rate with no
+  intervention; the only incidents were $16$ episodes respawned by the non-finite-state
+  guard, at the rate round~3 of the family ledger measured, invisible to the science.
+\end{enumerate}
+
 
 
 %==============================================================================

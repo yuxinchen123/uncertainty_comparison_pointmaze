@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-08-18-03-01_jax-ppo_antmaze-umaze-nonoise_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-269k_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-antmaze-batch
+description: one training unit on the JAX exploration platform
+git:
+  commit: 31a594bd185ef3b9fff4dadb05552d682f66338b
+  dirty: true
+  version_tag: jax-platform-v0.1.0-102-g31a594b
+specs:
+  env: antmaze_umaze_cont700_nonoise@1
+  agent: ppo_full_batch@1
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 1024
+  envs_per_copy: 1
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: distinct
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
