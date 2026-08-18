@@ -43,3 +43,12 @@ f0cdb3f	0.033324	0.033323	0.000000	-0.500000	0.000000	keep	hor 301 shrink at 327
 99c30ba	1.296298	0.321811	0.000000	-0.630938	0.000000	keep	hor 303 AdaGrad 3e-3 at 32768 steps: drifts to -0.63 — the optimizer family's calibration does not survive longer horizons
 37c4cc8	0.049147	0.030194	0.000000	-0.501833	0.002833	keep	hor 302 coin-flip adaptive at 32768 steps: 0.049 — the statistical construction holds over 4.5 decades
 ac975a0	0.054287	0.003108	0.000000	-0.500131	0.000248	keep	val 118 collision-free Hadamard on dense_grid, 30 seeds: capacity stress absorbed at the near-exact level (dev_mean 0.0031)
+6ef69a5	2.201793	1.848814	0.000000	-0.648345	0.346934	discard	exp 037 gradient CFN, Adam 1e-4 (paper rate), maze+antmaze: one gradient step per visit cannot track the running coin mean
+6ef69a5	1.424450	1.123026	0.000000	-0.789872	0.229593	discard	exp 038 gradient CFN Adam 1e-3: same failure
+6ef69a5	1.148296	1.159253	0.000000	-0.695975	0.264454	discard	exp 039 gradient CFN Adam 1e-2: same failure
+6ef69a5	1.468701	1.037001	0.000000	-0.395234	0.087627	discard	exp 040 gradient CFN AdaGrad 1e-2: too slow (-0.40)
+6ef69a5	1.766058	1.653922	0.000000	-1.402064	0.762817	discard	exp 041 gradient CFN AdaGrad 1e-1: unstable
+6ef69a5	2.057141	1.540832	0.000000	-0.598050	0.145652	discard	exp 042 gradient CFN SGD-1/t eta0 1e-2: lags badly
+6ef69a5	1.855729	1.454611	0.000000	-1.065112	0.427337	discard	exp 043 gradient CFN SGD-1/t eta0 1e-1: too fast, spread
+0de11cf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 048 deep random features + exact last-layer shrink head, maze+antmaze pooled: machine-exact on real 29-d AntMaze observations — the neural exact construction transfers
+25e19d2	0.054199	0.029872	0.000000	-0.503266	0.004252	keep	exp 049 deep features + exact coin-flip head, maze+antmaze pooled: matches the phase-1 statistical floor on neural features

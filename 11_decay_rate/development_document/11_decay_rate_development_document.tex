@@ -89,14 +89,23 @@ per-position bonus $b_i(n)$ satisfies, at \emph{every} position $i$ simultaneous
   $m_i(n) = n$ for every $i$; under non-uniform visitation each position must follow its
   \emph{own} count.
 \end{enumerate}
+The deliverable is an algorithm — preferably a neural network — that plugs into a Random
+Network Distillation pipeline and delivers this decay law, with generalization beyond the
+maze demonstrated on AntMaze observations and Atari frames. Generalization is evaluated the
+same way as everything else in this document: by the convergence rate of the bonus against
+the count oracle's curve on fixed observation sets --- never by end-to-end reinforcement
+learning, which is outside this campaign's scope.
+
 The campaign ran as an autonomous experiment loop in the style of the
 \texttt{autoresearch} repository\footnote{\url{https://github.com/karpathy/autoresearch},
 cloned into the project for reference.}: one editable method file, a fixed measurement
-protocol and metric, one commit and one ledger row per experiment. Thirty-plus experiments later, the answer has three layers, developed in
-\Cref{sec:iteration-experiments,sec:nonuniform,sec:capacity}: an exact construction that
-solves the uniform regime to the achievable limit, a statistical construction that tracks
-per-position counts under arbitrary visitation, and a precise account of \emph{why} ordinary
-optimizers cannot do either.
+protocol and metric, one commit and one ledger row per experiment. Fifty-plus experiments
+later, the answer has four layers: a precise account of \emph{why} ordinary optimizers
+cannot deliver the law (\Cref{sec:mechanism}); an exact construction that solves the
+uniform regime to the achievable limit and a statistical construction that tracks
+per-position counts under arbitrary visitation
+(\Cref{sec:iteration-experiments,sec:nonuniform,sec:capacity}); and the neural forms of
+both, evaluated on the high-dimensional domains (\Cref{sec:neural}).
 
 %==============================================================================
 \section{Notation}
@@ -304,12 +313,18 @@ practical in one night.
 \texttt{top\_\allowbreak right\_\allowbreak cell} & the same discretization of the top-right goal cell; $100$ points (validation runs only) \\
 \greyrule
 \texttt{dense\_\allowbreak grid} & $2\times2$ sub-cell midpoints of every cell; $432$ points --- more positions than a $256$-wide feature layer (capacity stress, added mid-campaign) \\
+\greyrule
+\texttt{antmaze\_\allowbreak states} & $246$ real AntMaze\_Large observation vectors ($29$ dimensions: $x$, $y$, plus the $27$ contact-force-free core dimensions), collected by a seeded random policy and stratified over $41$ maze cells (generalization domain, phase 2) \\
+\greyrule
+\texttt{atari\_\allowbreak frames} & $512$ MontezumaRevenge frames from seeded random play, preprocessed as RND's predictor sees them (grayscale, $84\times84$, single frame) --- the image-input generalization domain (phase 2) \\
 \blackrule
 \multicolumn{2}{@{}l}{\textit{Training regimes}} \\
 \greyrule
 \texttt{uniform\_\allowbreak fullbatch} & one update per step on the full point set; $m_i(n) = n$ \\
 \greyrule
 \texttt{nonuniform} & each step trains on $32$ points sampled i.i.d.\ from a fixed law spanning one decade of probability across the maze's $x$ extent; targets use realized counts \\
+\greyrule
+\texttt{heldout\_\allowbreak uniform} & full-batch training on a fixed $80\%$ of the point set; the held-out $20\%$ are never trained, their counts stay $0$, and the metric scores whether their bonus stays at the oracle value $1$ --- generalization measured inside the convergence framework (phase 2) \\
 \blackrule
 \multicolumn{2}{@{}l}{\textit{Measurement}} \\
 \greyrule
