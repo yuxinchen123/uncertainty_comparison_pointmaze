@@ -63,6 +63,12 @@
   \texttt{email}
 }
 
+% Tables and figures are numbered by section (Table 1.1, Figure 1.2, ...), so a reader who is
+% told "the table in 1.1" can find it, and so a later section's artifacts never renumber this
+% section's. amsmath, loaded above, provides \numberwithin.
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
+
 \begin{document}
 
 \maketitle
@@ -428,6 +434,16 @@ error; $N$ is how many completed copies that mean is taken over.
 \item \textbf{Whole-run reward} (higher is better; the column the table is sorted by) --- copy
   $k$'s mean episode return over its whole run,
   $\bar{R}_k = \dfrac{1}{W E} \sum_{w=1}^{W} S_{k,w}$.
+\item \claudeedit{\textbf{Max reward} (higher is better) --- the highest point the configuration's
+  \emph{aggregated} curve reaches. Define $m_w$ as the mean over the configuration's copies of the
+  window-$w$ episode return, $m_w = \dfrac{1}{K} \sum_{k=1}^{K} \dfrac{S_{k,w}}{E}$, where $K$ is
+  the number of completed copies; the metric is $\max_{w \le W} m_w$, reported with its standard
+  error over the copies at that same window. \textbf{The copies are averaged first and the maximum
+  taken second.} Taking each copy's own best window and averaging those would give a larger number
+  describing a run that never happened, because every copy peaks at a different moment. Read
+  against whole-run and last-window reward it says how much of a configuration's best a longer
+  budget gives back: a configuration whose max and last-window agree never fell, and one whose max
+  is far above its last-window peaked and declined.}
 \item \textbf{Last-window reward} (higher is better) --- the same mean over the final window alone,
   $\bar{R}^{\,\mathrm{last}}_k = \dfrac{S_{k,W}}{E}$, that is over copy $k$'s last $256$ episodes.
   It separates a configuration that ends its run at the goal from one that reached the goal early
@@ -464,29 +480,30 @@ error; $N$ is how many completed copies that mean is taken over.
 % sizing stay outside them. Until then the block below holds the final column headers and one row
 % saying the run has not produced a record yet.
 % >>> AUTO-GENERATED TABLE START: pm-jax-run11-results
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r r r@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm} r r r r r r r@{}}
 \toprule
 \textbf{algorithm --- best configuration} &
 \textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{max\\reward}} &
 \textbf{\shortstack[c]{last-window\\reward}} &
 \textbf{\shortstack[c]{success\\rate}} &
 \textbf{\shortstack[c]{maze-cell\\coverage \%}} &
 \textbf{\shortstack[c]{steps\\to goal}} &
 \textbf{$N$} \\
 \midrule
-\multicolumn{7}{@{}l}{\textbf{\texttt{pointmaze\_\allowbreak large\_\allowbreak cont400\_\allowbreak nonoise@1}}} \\
-\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & {\boldmath $14.608 \pm 0.981$} & {\boldmath $31.339 \pm 1.915$} & {\boldmath $0.945$} & \underline{$96.51 \pm 0.48$} & not recorded & $256$ \\
-\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & \underline{$7.866 \pm 0.723$} & \underline{$17.070 \pm 1.464$} & \underline{$0.926$} & {\boldmath $96.86 \pm 0.48$} & not recorded & $256$ \\
-\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $2.423 \pm 0.464$ & $5.654 \pm 1.026$ & $0.500$ & $80.06 \pm 1.35$ & not recorded & $256$ \\
-\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.005 \pm 0.005$ & $0.019 \pm 0.019$ & $0.004$ & $24.07 \pm 0.89$ & not recorded & $256$ \\
+\multicolumn{8}{@{}l}{\textbf{\texttt{pointmaze\_\allowbreak large\_\allowbreak cont400\_\allowbreak nonoise@1}}} \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & {\boldmath $14.608 \pm 0.981$} & {\boldmath $31.417 \pm 1.916$} & {\boldmath $31.339 \pm 1.915$} & {\boldmath $0.945$} & \underline{$96.51 \pm 0.48$} & not recorded & $256$ \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & \underline{$7.866 \pm 0.723$} & \underline{$17.070 \pm 1.464$} & \underline{$17.070 \pm 1.464$} & \underline{$0.926$} & {\boldmath $96.86 \pm 0.48$} & not recorded & $256$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $2.423 \pm 0.464$ & $5.667 \pm 1.031$ & $5.654 \pm 1.026$ & $0.500$ & $80.06 \pm 1.35$ & not recorded & $256$ \\
+\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.005 \pm 0.005$ & $0.026 \pm 0.026$ & $0.019 \pm 0.019$ & $0.004$ & $24.07 \pm 0.89$ & not recorded & $256$ \\
 \midrule\midrule
-\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & {\boldmath $1.795 \pm 0.101$} & {\boldmath $1.242 \pm 0.286$} & {\boldmath $0.999$} & {\boldmath $99.58 \pm 0.06$} & not recorded & $1{,}024$ \\
-\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & \underline{$0.658 \pm 0.024$} & \underline{$0.185 \pm 0.118$} & {\boldmath $0.999$} & \underline{$99.07 \pm 0.06$} & not recorded & $1{,}024$ \\
-\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $0.331 \pm 0.030$ & $0.171 \pm 0.095$ & \underline{$0.804$} & $94.50 \pm 0.35$ & not recorded & $1{,}024$ \\
-\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.001 \pm 0.001$ & $0.000 \pm 0.000$ & $0.016$ & $33.36 \pm 0.53$ & not recorded & $1{,}024$ \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-3}$, $\beta = 10^{1}$ & {\boldmath $1.795 \pm 0.101$} & \underline{$25.776 \pm 0.955$} & {\boldmath $1.242 \pm 0.286$} & {\boldmath $0.999$} & {\boldmath $99.58 \pm 0.06$} & not recorded & $1{,}024$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & \underline{$0.658 \pm 0.024$} & {\boldmath $31.447 \pm 1.053$} & \underline{$0.185 \pm 0.118$} & {\boldmath $0.999$} & \underline{$99.07 \pm 0.06$} & not recorded & $1{,}024$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak linear}\newline \small learning rate $10^{-3}$, $\beta = 10^{0}$ & $0.331 \pm 0.030$ & $7.181 \pm 0.587$ & $0.171 \pm 0.095$ & \underline{$0.804$} & $94.50 \pm 0.35$ & not recorded & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration}\newline \small learning rate $10^{-3}$, no intrinsic weight & $0.001 \pm 0.001$ & $0.088 \pm 0.088$ & $0.000 \pm 0.000$ & $0.016$ & $33.36 \pm 0.53$ & not recorded & $1{,}024$ \\
 \midrule\midrule
-\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-4}$, $\beta = 10^{2}$ & {\boldmath $52.500 \pm 3.368$} & {\boldmath $50.754 \pm 4.851$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.06$} & not recorded & $128$ \\
-\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-4}$, $\beta = 10^{1}$ & \underline{$38.199 \pm 3.216$} & \underline{$33.854 \pm 4.629$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.07$} & not recorded & $128$ \\
+\texttt{rnd\_\allowbreak next\_\allowbreak state}\newline \small learning rate $10^{-4}$, $\beta = 10^{2}$ & {\boldmath $52.500 \pm 3.368$} & {\boldmath $78.532 \pm 4.113$} & {\boldmath $50.754 \pm 4.851$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.06$} & not recorded & $128$ \\
+\texttt{gt\_\allowbreak position\_\allowbreak velocity\_\allowbreak sqrt}\newline \small learning rate $10^{-4}$, $\beta = 10^{1}$ & \underline{$38.199 \pm 3.216$} & \underline{$60.835 \pm 4.816$} & \underline{$33.854 \pm 4.629$} & {\boldmath $1.000$} & {\boldmath $99.85 \pm 0.07$} & not recorded & $128$ \\
 \bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-jax-run11-results
@@ -502,7 +519,9 @@ copies each over
 the two arms whose whole grid the extension of 2026-08-17 re-ran at $1000$M steps, each at the
 configuration that grid selects, $128$ copies each. The two lower blocks share a budget and differ
 only in how their configuration was chosen --- by a $10$M-step sweep, or by a $1000$M-step one}.
-Cells are mean $\pm$ standard error over the configuration's
+\claudeedit{The max-reward column is the highest point each configuration's copy-averaged curve
+reaches, which is where it differs from every other column: the rest describe the end of the run or
+an average over it, and that one describes its best moment.} Cells are mean $\pm$ standard error over the configuration's
 completed copies; $N$ is how many completed copies, and every unit of \sout{both runs}\claudeedit{all
 three runs} finished, so $N$ is
 the full $256$ above the \claudeedit{first} double rule\sout{ and}\claudeedit{,} the full $1{,}024$
@@ -633,7 +652,17 @@ below.}
 \claudeedit{Because neither arm's best configuration is one of the exceptions ---
 \Cref{tab:pm-jax-run11-results} and \Cref{fig:pm-jax-run11-curves} carry two curves that both rise
 and fall --- the best exception of each arm is a configuration those artifacts do not show, and
-\Cref{tab:pm-jax-run11-shapes} and \Cref{fig:pm-jax-run11-shapes} are where they appear.}
+\Cref{tab:pm-jax-run11-shapes} is where they appear.}
+
+\claudeedit{What decides the shape is the learning rate, and \Cref{fig:pm-jax-run11-shapes} is
+where that is visible. It draws each arm at each of the three swept learning rates, at the
+intrinsic weight whose curve reaches the highest point, and the three rates behave in three
+different ways at the same budget: $\alpha = 10^{-3}$ peaks inside the first $15$M steps and then
+collapses --- the oracle arm to a mean episode return of zero --- $\alpha = 10^{-4}$ peaks near
+$200$M an order of magnitude higher and gives about half of it back, and $\alpha = 10^{-5}$ is
+still climbing in the last window and has the lowest peak of the three. The two arms track each
+other closely within a rate, which is the evidence that the rate and not the bonus is what governs
+when a run peaks.}
 
 \begin{table}[H]
 \centering
@@ -675,23 +704,35 @@ the answer to the question is unaffected, but which non-falling shape it is is n
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_curve_shapes.pdf}}
-\caption{\claudeedit{The two configurations of \Cref{tab:pm-jax-run11-shapes} that do not rise then
-fall, drawn solid, against their own arm's best, drawn dashed. Same arm, same budget, same
-learning rate in the oracle pair --- only the weight on the intrinsic reward differs, and it
-decides whether the curve comes back down inside $1000$M steps. Colour is the arm and the band is
-plus or minus one standard error over the configuration's $128$ copies. Drawn by
+\caption{\claudeedit{Each arm at each of the three swept learning rates, six curves in all. The
+curve drawn for a pair is the intrinsic weight whose aggregated curve reaches the highest point,
+and that point is marked on the curve itself and labelled beside the marker, so the best a
+configuration ever reaches can be read off without matching a line to a legend entry. \textbf{The
+maximum is taken after averaging, not before}: the curve is the mean over the configuration's $128$
+copies window by window, and the mark is the largest value that mean reaches. The mean of each
+copy's own best window would be larger and would describe no run that ever happened, since every
+copy peaks at a different moment. Colour is the arm; line style and transparency are the learning
+rate, dotted and faint for $10^{-3}$, solid for $10^{-4}$, dashed for $10^{-5}$. The band is plus
+or minus one standard error over the $128$ copies. Note that the weight selected here need not be
+the one \Cref{tab:pm-jax-run11-results} names, because that table ranks on whole-run reward and
+this figure ranks on the peak: for distillation at $\alpha = 10^{-4}$ the two criteria choose
+$\beta = 10^{3}$ and $\beta = 10^{2}$ respectively. Drawn by
 \texttt{analysis/\allowbreak code/\allowbreak make\allowbreak\_shape\allowbreak\_curves.py} in the
 second extension's run folder.}}
 \label{fig:pm-jax-run11-shapes}
 \end{figure}
 
 \noindent\claudecomment{This table and this figure are an addition the extension convention of
-\texttt{rnd-experiment-tex-track} would not normally allow, and they are here because the question
-they answer was asked of this run directly and its answer is not visible in
-\Cref{tab:pm-jax-run11-results} or \Cref{fig:pm-jax-run11-curves}: both of those carry each arm's
-best configuration, and both of those configurations rise and fall, so the exceptions appear
-nowhere else. Had either arm's best been an exception, the specification asked for no separate
-table or plot and none would have been added. Sources: the shapes and their sensitivity from
+\texttt{rnd-experiment-tex-track} would not normally allow, and they are here because the questions
+they answer were asked of this run directly and neither answer is visible in
+\Cref{tab:pm-jax-run11-results} or \Cref{fig:pm-jax-run11-curves}. The table's question was whether
+every configuration rises then falls: it does not, and because both of those artifacts carry each
+arm's best configuration and both of those rise and fall, the exceptions appear nowhere else. Had
+either arm's best been an exception, the specification asked for no separate table and none would
+have been added. The figure answers a second question asked at the same time --- each arm's best
+configuration at each of the three learning rates, six curves, the best defined as the highest
+point the copy-averaged curve reaches --- and it replaced an earlier version of this figure that
+drew the table's four configurations instead. Sources: the shapes and their sensitivity from
 \texttt{analysis/\allowbreak shape\allowbreak\_classification.json} in the second extension's run
 folder, the per-copy agreement from
 \texttt{analysis/\allowbreak code/\allowbreak copy\allowbreak\_agreement.py}, and every curve

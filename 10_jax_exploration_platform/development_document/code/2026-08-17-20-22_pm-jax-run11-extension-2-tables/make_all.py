@@ -60,7 +60,7 @@ ARM_LABEL = {
 }
 
 # (column key, higher is better) for the columns that carry numbers and are marked
-MARK_SPEC = [("whole_run_reward", True), ("last_window_reward", True),
+MARK_SPEC = [("whole_run_reward", True), ("max_reward", True), ("last_window_reward", True),
              ("success_rate", True), ("coverage_percent", True)]
 
 
@@ -83,6 +83,47 @@ def load_run_module(run_dir: Path, module_name: str):
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def curve_from(module, run_dir: Path, row: dict) -> dict:
+    """One configuration's aggregated curve, through whichever accessor its own run's module has.
+
+    The three runs' modules were written at three different times and do not share one name for
+    this: the two extensions expose `curve_of(bonus, rate, weight, run_dir)`, while the original
+    sweep predates it and exposes `cell_curve(unit, members)` over the units `read_units` returns.
+    Dispatching on what the module actually provides keeps the rule that every number comes from
+    the run that produced it, rather than reimplementing either here.
+    """
+    if hasattr(module, "curve_of"):
+        return module.curve_of(row["bonus"], row["learning_rate"], row["intrinsic_weight"], run_dir)
+    setting = (row["learning_rate"], row["intrinsic_weight"])
+    for unit in module.read_units(run_dir).values():
+        if unit["start"]["bonus"] != row["bonus"]:
+            continue
+        members = module.cell_copies(unit).get(setting)
+        if members:
+            return module.cell_curve(unit, members)
+    raise SystemExit(f"no curve for {row['bonus']} at {setting} in {run_dir.name}")
+
+
+def max_reward(module, run_dir: Path, row: dict) -> tuple:
+    """The highest window mean of a configuration's curve, and its standard error at that window.
+
+    The aggregation happens FIRST and the maximum second: the curve is the mean over the
+    configuration's copies window by window, and this is the largest value that curve reaches. It
+    is deliberately not the mean of each copy's own best window, which would be larger and would
+    describe no run that ever happened -- every copy peaks at a different moment, so averaging
+    those peaks reports a run in which they all peaked together.
+
+    before: a configuration whose 9,766-window curve rises to 55.6 at 604M steps and ends at 50.8;
+    after:  (55.6, its standard error over the 128 copies at that window)
+    """
+    curve = curve_from(module, run_dir, row)
+    means = curve["mean_episode_return"]
+    if not means:
+        return None, None
+    best = max(range(len(means)), key=lambda index: means[index])
+    return means[best], curve["standard_error"][best]
 
 
 def inject_table(tex_path: Path, table_name: str, tabular_block: str) -> None:
@@ -164,10 +205,13 @@ def block_lines(module, run_dir: Path) -> list:
     """One run's rows, one per arm at its best configuration, sorted and marked within themselves."""
     rows = list(module.best_per_arm(module.cell_table(run_dir)).values())
     if not rows:
-        return ["\\multicolumn{7}{@{}l}{no completed unit yet --- no configuration is scored} \\\\"]
+        return ["\\multicolumn{8}{@{}l}{no completed unit yet --- no configuration is scored} \\\\"]
     rows.sort(key=lambda row: row["whole_run_reward"], reverse=True)
+    for row in rows:
+        row["max_reward"], row["max_reward_standard_error"] = max_reward(module, run_dir, row)
     cells = [{
         "whole_run_reward": cell(row["whole_run_reward"], row["whole_run_reward_standard_error"], 3),
+        "max_reward": cell(row["max_reward"], row["max_reward_standard_error"], 3),
         "last_window_reward": cell(row["last_window_reward"],
                                    row["last_window_reward_standard_error"], 3),
         "success_rate": f"${row['success_rate']:.3f}$",
@@ -175,7 +219,7 @@ def block_lines(module, run_dir: Path) -> list:
     } for row in rows]
     mark(rows, cells)
     return [
-        f"{row_label(row)} & {cell_row['whole_run_reward']} & "
+        f"{row_label(row)} & {cell_row['whole_run_reward']} & {cell_row['max_reward']} & "
         f"{cell_row['last_window_reward']} & {cell_row['success_rate']} & "
         f"{cell_row['coverage_percent']} & not recorded & {copy_count(row['copies'])} \\\\"
         for row, cell_row in zip(rows, cells)]
@@ -187,17 +231,18 @@ def build_results_table() -> str:
     first = load_run_module(FIRST_EXTENSION_RUN, "aggregate_extension_1")
     second = load_run_module(SECOND_EXTENSION_RUN, "aggregate_extension_2")
     lines = [
-        "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{4.6cm} r r r r r r@{}}",
+        "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{4.4cm} r r r r r r r@{}}",
         "\\toprule",
         "\\textbf{algorithm --- best configuration} &",
         "\\textbf{\\shortstack[c]{whole-run\\\\reward $\\uparrow$}} &",
+        "\\textbf{\\shortstack[c]{max\\\\reward}} &",
         "\\textbf{\\shortstack[c]{last-window\\\\reward}} &",
         "\\textbf{\\shortstack[c]{success\\\\rate}} &",
         "\\textbf{\\shortstack[c]{maze-cell\\\\coverage \\%}} &",
         "\\textbf{\\shortstack[c]{steps\\\\to goal}} &",
         "\\textbf{$N$} \\\\",
         "\\midrule",
-        f"\\multicolumn{{7}}{{@{{}}l}}{{\\textbf{{\\texttt{{"
+        f"\\multicolumn{{8}}{{@{{}}l}}{{\\textbf{{\\texttt{{"
         f"{ENV_SPEC.replace('_', chr(92) + '_' + chr(92) + 'allowbreak ')}}}}}}} \\\\",
     ]
     lines += block_lines(original, ORIGINAL_RUN)
