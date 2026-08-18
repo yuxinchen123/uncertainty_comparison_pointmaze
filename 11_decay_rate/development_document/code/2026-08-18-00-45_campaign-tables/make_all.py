@@ -90,6 +90,82 @@ def ledger_table() -> str:
     return "\n".join(out)
 
 
+
+
+VAL_LABELS = {  # folder slug -> table row label (regime is the block, so it is not repeated)
+    "val_101_adam_baseline_uniform30": ("uniform", "Adam $10^{-3}$, raw readout (control)"),
+    "val_102_sgd1t_baseline_uniform30": ("uniform", "SGD-$1/t$ (parent project's best), raw readout"),
+    "val_103_adagrad3e-3_uniform30": ("uniform", "AdaGrad $3{\\times}10^{-3}$ + initial-copy readout"),
+    "val_105_shrink_relu_uniform30": ("uniform", "residual-encoded shrink (exact solve)"),
+    "val_107_coinflip_adaptive_uniform30": ("uniform", "coin flips, adaptive dictionary"),
+    "val_112_elliptical_sigma035_uniform30": ("uniform", "elliptical posterior readout ($\\sigma \\le 0.35$)"),
+    "val_114_hadamardperm_uniform30": ("uniform", "Hadamard coins (column-permuted), adaptive dictionary"),
+    "val_104_adagrad3e-3_nonuniform30": ("nonuniform", "AdaGrad $3{\\times}10^{-3}$ + initial-copy readout"),
+    "val_106_shrink_relu_nonuniform30": ("nonuniform", "residual-encoded shrink (exact solve)"),
+    "val_108_coinflip_adaptive_nonuniform30": ("nonuniform", "coin flips, adaptive dictionary"),
+    "val_113_elliptical_sigma035_nonuniform30": ("nonuniform", "elliptical posterior readout ($\\sigma \\le 0.35$)"),
+    "val_115_hadamardperm_nonuniform30": ("nonuniform", "Hadamard coins (column-permuted), adaptive dictionary"),
+    "val_111_coinflip_hadamard_dense30": ("dense grid", "Hadamard coins, sign-only scramble (broken variant, kept as record)"),
+    "val_116_hadamardperm_dense30": ("dense grid", "Hadamard coins (column-permuted), adaptive dictionary"),
+}
+
+
+def _mark(vals, fmt):
+    """Bold the best (smallest) and underline the second-best in a column; ties all marked."""
+    # before: vals = [0.05, 1.62, 0.05, 0.11]; after: two bolds (tied best), one underline
+    order = sorted(set(vals))
+    out = []
+    for v in vals:
+        t = fmt % v
+        if v == order[0]:
+            t = r"\textbf{" + t + "}"
+        elif len(order) > 1 and v == order[1]:
+            t = r"\underline{" + t + "}"
+        out.append(t)
+    return out
+
+
+def validation_table() -> str:
+    """The 30-seed validation table: regime blocks, methods sorted by dev_worst ascending,
+    best bold / second-best underlined per deviation column within a block."""
+    rows_by_regime = {}
+    for slug, (regime, label) in VAL_LABELS.items():
+        path = os.path.join(CAMPAIGN, slug, "metrics.json")
+        if not os.path.exists(path):
+            print(f"validation_table: MISSING {slug} (skipped)")
+            continue
+        with open(path) as fh:
+            m = json.load(fh)
+        rows_by_regime.setdefault(regime, []).append((label, m))
+    out = [r"\begin{table}[H]", r"\centering", r"\footnotesize",
+           r"\setlength{\tabcolsep}{4pt}",
+           r"\begin{tabular}{@{}l r r r r r@{}}", r"\toprule",
+           r"method & dev\_worst $\downarrow$ & dev\_mean & start\_dev & slope & slope std \\"]
+    for regime in ("uniform", "nonuniform", "dense grid"):
+        rows = rows_by_regime.get(regime, [])
+        if not rows:
+            continue
+        rows.sort(key=lambda t: t[1]["dev_worst"])
+        out.append(r"\midrule")
+        out.append(r"\multicolumn{6}{@{}l}{\textbf{" + regime + r"} (30 seeds)} \\")
+        dw = _mark([r[1]["dev_worst"] for r in rows], "%.3f")
+        dm = _mark([r[1]["dev_mean"] for r in rows], "%.3f")
+        for (label, m), a, b in zip(rows, dw, dm):
+            out.append(f"{label} & {a} & {b} & {m['start_dev']:.2f} & "
+                       f"{m.get('slope_mean', float('nan')):.3f} & "
+                       f"{m.get('slope_std', float('nan')):.3f} \\\\")
+    out += [r"\bottomrule", r"\end{tabular}",
+            r"\caption{Validation at $30$ seeds. Uniform and nonuniform blocks pool the three"
+            r" fixed point sets; the dense-grid block is the $432$-point capacity stress."
+            r" Within each block rows are sorted by dev\_worst (the arrowed sort column;"
+            r" lower is better), and the best and second-best dev\_worst and dev\_mean are"
+            r" bold and underlined. start\_dev is $0$ for every method with a normalized"
+            r" readout; the two raw-readout controls carry the untrained bonus spread."
+            r" Slope columns are unmarked (closeness to $-1/2$, not size, is the goal).}",
+            r"\label{tab:validation}", r"\end{table}"]
+    return "\n".join(out)
+
+
 def latex_escape(s: str) -> str:
     """Escape the characters that appear in ledger descriptions."""
     return (s.replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
@@ -196,6 +272,7 @@ def fig_adagrad_diagnostics() -> None:
 
 if __name__ == "__main__":
     inject_table("ledger", ledger_table())
+    inject_table("validation", validation_table())
     fig_champion_curves()
     fig_nonuniform_scatter()
     fig_adagrad_diagnostics()

@@ -33,3 +33,5 @@ bd9c95d	0.836646	0.506045	0.000000	-0.349311	0.043346	keep	exp 031 same, NONUNIF
 16b4cd4	0.114084	0.044206	0.000000	-0.499608	0.000940	keep	exp 032 elliptical with bandwidth cap 0.35, uniform: 0.114 (was 0.202) — overlap-count inflation halved
 16b4cd4	0.478365	0.228399	0.000000	-0.575789	0.084104	keep	exp 033 same, NONUNIFORM: 0.478 — just behind coin-flip
 8100b9e	0.000000	0.000000	0.000000	0.000000	0.000000	keep	exp 034 scrambled-Hadamard coin sequences on the adaptive dictionary: locally machine-exact min(1, n^-1/2) at every position; validation runs val_109-111 carry its measured numbers
+585c4c2	0.313876	0.007819	0.000000	-0.500658	0.000945	keep	exp 035 Hadamard coins + per-block column permutation (val_114-115): uniform dev_mean 0.0078 — 5x below the shrink's off-by-one floor; dev_worst 0.31 from block-spike coordinate collisions (~5% of positions)
+ac975a0	0.000000	0.000000	0.000000	0.000000	0.000000	keep	exp 036 collision-free block spikes (val_117-118 carry the measured numbers)

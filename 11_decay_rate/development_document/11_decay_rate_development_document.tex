@@ -211,6 +211,23 @@ clean while positions disagree. Three consequences:
   network on a $10\times10$ grid has condition number $5.6 \times 10^{5}$, so the spectrum
   is very far from flat.
 \end{enumerate}
+The linearized picture is checked directly in \Cref{fig:linearization-check}: simulating the
+linearized dynamics of the real network (matrix-free Jacobian products, same schedule, same
+checkpoints, same floored fit) predicts the measured per-position slopes of \runref{exp 002}
+with correlation $0.75$ and a matching range --- the residual heterogeneity is the tangent
+kernel, not noise.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{figures/linearization_check.pdf}
+\caption{Per-position slopes predicted by the linearized dynamics (one seed, matrix-free
+$J J^\top$ products at initialization) against the measured slopes of \runref{exp 002}
+(seed-mean over $10$ seeds), cell midpoints, SGD-$1/t$. The prediction uses a single seed
+while the measurement averages ten, and real training leaves the linearized regime late in
+the run, which bounds the agreement.}
+\label{fig:linearization-check}
+\end{figure}
+
 Two further facts locate the heterogeneity in space. A bias-free ReLU network is positively
 homogeneous, so the kernel diagonal grows with the input radius ($K_{ii} \propto
 \lVert x_i \rVert^2$ up to a constant): the maze corners hold the largest inputs, train
@@ -512,6 +529,12 @@ exp & method / finding & dev\_worst & dev\_mean & start & slope & sl.\ std \\
 026 & same, dense\_grid & 0.038 & 0.038 & 0.00 & -0.500 & 0.000 \\
 027 & closed-form elliptical posterior on adaptive dictionary, u\,\ldots & 0.202 & 0.054 & 0.00 & -0.499 & 0.002 \\
 028 & same, NONUNIFORM & 0.535 & 0.258 & 0.00 & -0.564 & 0.080 \\
+029 & elliptical adaptive on dense\_grid & 0.126 & 0.048 & 0.00 & -0.499 & 0.001 \\
+030 & quartic loss constant step, uniform & 1.015 & 0.692 & 0.00 & -0.398 & 0.047 \\
+031 & same, NONUNIFORM & 0.837 & 0.506 & 0.00 & -0.349 & 0.043 \\
+032 & elliptical with bandwidth cap 0.35, uniform & 0.114 & 0.044 & 0.00 & -0.500 & 0.001 \\
+033 & same, NONUNIFORM & 0.478 & 0.228 & 0.00 & -0.576 & 0.084 \\
+034 & scrambled-Hadamard coin sequences on the adaptive dictionary & 0.000 & 0.000 & 0.00 & 0.000 & 0.000 \\
 \bottomrule
 \end{longtable}}
 % >>> AUTO-GENERATED TABLE END: ledger
@@ -587,7 +610,136 @@ somehow. The measured degradations rank the mechanisms:
 
 \clearpage
 %==============================================================================
-% (validation runs, findings, and literature sections are appended above this line)
+\section{Validation runs}
+\label{sec:validation}
+
+Every finalist and baseline was re-run at $30$ seeds on the three fixed point sets (the
+top-right goal cell joins the two iteration sets), in both regimes; the dense grid validates
+the champions' capacity behavior. Recall the deviation of \Cref{eq:dev}; \Cref{tab:validation}
+reports the same metric battery as the ledger, now at validation seed counts.
+
+% >>> AUTO-GENERATED TABLE START: validation
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+method & dev\_worst $\downarrow$ & dev\_mean & start\_dev & slope & slope std \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{uniform} (30 seeds)} \\
+residual-encoded shrink (exact solve) & \textbf{0.038} & 0.038 & 0.00 & -0.500 & 0.000 \\
+coin flips, adaptive dictionary & \underline{0.054} & \underline{0.030} & 0.00 & -0.502 & 0.003 \\
+elliptical posterior readout ($\sigma \le 0.35$) & 0.139 & 0.046 & 0.00 & -0.499 & 0.001 \\
+Hadamard coins (column-permuted), adaptive dictionary & 0.314 & \textbf{0.008} & 0.00 & -0.501 & 0.001 \\
+Adam $10^{-3}$, raw readout (control) & 1.653 & 1.250 & 1.62 & -1.038 & 0.356 \\
+AdaGrad $3{\times}10^{-3}$ + initial-copy readout & 1.772 & 0.591 & 0.00 & -0.882 & 0.502 \\
+SGD-$1/t$ (parent project's best), raw readout & 2.410 & 1.741 & 1.62 & -1.413 & 1.031 \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{nonuniform} (30 seeds)} \\
+coin flips, adaptive dictionary & \textbf{0.466} & \underline{0.149} & 0.00 & -0.623 & 0.086 \\
+Hadamard coins (column-permuted), adaptive dictionary & \underline{0.468} & \textbf{0.145} & 0.00 & -0.623 & 0.085 \\
+elliptical posterior readout ($\sigma \le 0.35$) & 0.505 & 0.246 & 0.00 & -0.567 & 0.060 \\
+residual-encoded shrink (exact solve) & 1.441 & 0.804 & 0.00 & -0.500 & 0.000 \\
+AdaGrad $3{\times}10^{-3}$ + initial-copy readout & 1.857 & 1.031 & 0.00 & -0.898 & 0.487 \\
+\bottomrule
+\end{tabular}
+\caption{Validation at $30$ seeds. Uniform and nonuniform blocks pool the three fixed point sets; the dense-grid block is the $432$-point capacity stress. Within each block rows are sorted by dev\_worst (the arrowed sort column; lower is better), and the best and second-best dev\_worst and dev\_mean are bold and underlined. start\_dev is $0$ for every method with a normalized readout; the two raw-readout controls carry the untrained bonus spread. Slope columns are unmarked (closeness to $-1/2$, not size, is the goal).}
+\label{tab:validation}
+\end{table}
+% >>> AUTO-GENERATED TABLE END: validation
+
+Three validation-only observations:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{The third point set breaks the optimizer family further.} AdaGrad's pooled slope
+  spread grows from $0.20$ (two sets) to $0.50$ (three sets): the top-right goal cell ---
+  already the heterogeneity flag of the parent project's convergence runs --- decays very
+  differently under parameter-space optimizers. The exact constructions do not move
+  ($0.0381$; $0.054$).
+\item \textbf{The Hadamard refinement needed its own bug found.} Orthogonal coin blocks
+  scrambled by signs alone send every full block's sum onto one coordinate, and consecutive
+  blocks cancel: past $512$ visits the running-mean norm collapses (val 109--111, kept as the
+  record of the broken variant). A per-block column permutation restores exactness at every
+  horizon (val 114--116).
+\item \textbf{The nonuniform champion is statistical.} Coin-flip counting on the adaptive
+  dictionary holds its iteration-phase score at $30$ seeds; the closed-form elliptical
+  readout with the tighter bandwidth is second, and carries zero estimator noise in exchange
+  for the overlap-count inflation.
+\end{enumerate}
+
+%==============================================================================
+\section{Findings}
+\label{sec:findings}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{The requirement splits into level and rate, and the level is cheap.} A frozen
+  copy of the initial predictor as a per-position denominator (or a zero head under a
+  unit-normalized target or prior) starts every curve at exactly $1$ online. Nothing about
+  requirement (1) needs the optimizer.
+\item \textbf{No optimizer or global schedule can satisfy requirement (2).} Under any
+  learning-rate schedule the tangent-kernel modes' log-decays keep the fixed ratios
+  $\lambda_j/\lambda_k$ (\Cref{sec:mechanism-one}); the parent project's aggregate $-0.503$
+  was a calibration of the spectrum's bulk, with per-position slopes from $-0.4$ to steeper
+  than $-4$ around it. AdaGrad comes closest ($\pm 0.1$ on two point sets) and still breaks
+  on the third.
+\item \textbf{The uniform regime is solved by a residual-encoded functional step.} The
+  per-visit map $r \mapsto r/\sqrt{1+r^2}$ --- whose state is the bonus value itself ---
+  realized exactly by a minimum-change interpolation solve, puts every position on
+  $(m+1)^{-1/2}$ simultaneously: slope $-0.500000$ at every position, deviation $0.0381$
+  $=$ the off-by-one floor, self-correcting under capacity stress, at $10$ and at $30$
+  seeds. Its inner solve is the load-bearing part: gradient-descent inner fitting fails on
+  slow kernel modes, and inner Adam overshoots.
+\item \textbf{Per-position counts under arbitrary visitation need statistics, not
+  recurrences.} The shrink map's state is corrupted by feature interference under partial
+  visitation and integrates the damage; the coin-flip running mean (fresh $\pm1$ targets per
+  visit, exact least squares, adaptive dictionary) averages interference out and tracks each
+  position's own count: dev\_worst $0.47$ against per-position targets where every
+  fixed-schedule method scores $1.4$ or worse.
+\item \textbf{Orthogonal coin sequences remove the statistical floor --- with a caveat.}
+  Scrambled-Hadamard visit sequences make a position's first $n$ coins sum to squared norm
+  exactly $nd$, deleting the chi fluctuation; the sign-only scramble fails catastrophically
+  past one block and needs the per-block column permutation.
+\item \textbf{Representation quality is a hard constraint, not a detail.} The project's
+  zero-bias ReLU features are rank-deficient on the maze grid (rank $106/108$, condition
+  $10^{10}$) and break every least-squares construction; a fixed radial-basis bandwidth
+  cannot serve two spatial scales at once; the growing data-dependent dictionary (insert
+  far-enough visited states, bandwidth from the local spacing) serves both scales and the
+  $432$-point stress set.
+\item \textbf{The user-suggested landscape lens does not bind here.} The loss-landscape
+  literature's chaos-with-depth findings (and the skip-connection remedy) concern deep
+  plain networks; a $4 \to 256 \to 128$ network is already in the shallow-wide regime those
+  papers call benign, and the measured pathology is the kernel spectrum, not non-convexity
+  (\Cref{sec:literature}).
+\end{enumerate}
+
+%==============================================================================
+\section{Literature}
+\label{sec:literature}
+
+% (written after the bibliography verification pass; see literature/ for the full notes)
+
+%==============================================================================
+\section{What this document does not settle}
+\label{sec:limitations}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Off-support behavior.} The metric evaluates on the visited point set. The
+  winning constructions generalize through their features (kernel dictionary, prior
+  network), but how the bonus field behaves \emph{between} training positions --- the
+  quantity an exploring agent actually queries --- is unmeasured here.
+\item \textbf{The full reinforcement-learning loop.} The campaign isolates the bonus from
+  policy feedback on purpose. Inside a SAC or PPO loop the visitation law is itself driven
+  by the bonus; whether the count-exact methods improve exploration end to end is the
+  parent project's next train-run question.
+\item \textbf{Streaming state spaces.} The adaptive dictionary was stressed to $432$
+  distinct states with a $1024$-center cap; continuous high-volume state streams need
+  eviction or merging policies the campaign did not test.
+\item \textbf{Pure-gradient deep-network versions.} The exact constructions use a linear
+  head and a solve. The best gradient-only approximations measured here (AdaGrad at a tuned
+  rate; the quartic loss) are honest but loose; closing that gap inside a standard deep-RL
+  training stack is open.
+\end{enumerate}
+
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
 
