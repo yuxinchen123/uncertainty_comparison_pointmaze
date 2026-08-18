@@ -27,3 +27,9 @@ f0cdb3f	0.038344	0.038110	0.000000	-0.500023	0.000038	keep	exp 023 shrink + glob
 3f35bbf	0.038107	0.038107	0.000000	-0.500000	0.000000	keep	exp 026 same, dense_grid: exact again
 0fc6922	0.201516	0.053708	0.000000	-0.499112	0.002149	keep	exp 027 closed-form elliptical posterior on adaptive dictionary, uniform: 0.202 — slope near-perfect; deviation = neighboring-cell feature overlap inflating effective counts
 0fc6922	0.535075	0.258365	0.000000	-0.564484	0.079519	keep	exp 028 same, NONUNIFORM: 0.535 — comparable to coin-flip; overlap-count inflation is the gap
+0fc6922	0.125945	0.047877	0.000000	-0.499229	0.000795	keep	exp 029 elliptical adaptive on dense_grid: 0.126 — capacity absorbed
+bd9c95d	1.014733	0.691805	0.000000	-0.397501	0.047349	keep	exp 030 quartic loss constant step, uniform: slope -0.40 +- 0.05 with level spread — the honest schedule-free pure-gradient approximation
+bd9c95d	0.836646	0.506045	0.000000	-0.349311	0.043346	keep	exp 031 same, NONUNIFORM: 0.84 — inherits the level spread
+16b4cd4	0.114084	0.044206	0.000000	-0.499608	0.000940	keep	exp 032 elliptical with bandwidth cap 0.35, uniform: 0.114 (was 0.202) — overlap-count inflation halved
+16b4cd4	0.478365	0.228399	0.000000	-0.575789	0.084104	keep	exp 033 same, NONUNIFORM: 0.478 — just behind coin-flip
+8100b9e	0.000000	0.000000	0.000000	0.000000	0.000000	keep	exp 034 scrambled-Hadamard coin sequences on the adaptive dictionary: locally machine-exact min(1, n^-1/2) at every position; validation runs val_109-111 carry its measured numbers

@@ -66,7 +66,7 @@ class Method:
     and readout as exp 016 (fresh Rademacher per visit, unit-normalized frozen prior, zero
     head: bonus exactly 1 before and at the first visit)."""
 
-    name = "coinflip_hadamard_adaptive"
+    name = "coinflip_hadamard_perm"
 
     D_COINS = 512
     TAU_ADD = 0.05      # insert a visited state as a center beyond this distance
@@ -94,6 +94,10 @@ class Method:
         self.H = torch.as_tensor(hadamard(self.D_COINS), dtype=torch.float64)
         self.hvisits = []
         self.block_signs = []
+        self.block_perms = []   # per-center per-block column permutation (exp 035 fix: a
+        # sign-only scramble leaves every full block's sum on coordinate 0, so consecutive
+        # blocks cancel and the running-mean norm collapses past 512 visits; permuting the
+        # columns per block sends each block's sum to its own random coordinate)
 
     def _grow(self, z: torch.Tensor) -> None:
         """Insert new centers for batch rows far from the dictionary (sequentially, so a row
@@ -122,6 +126,7 @@ class Method:
                                        torch.zeros(1, self.D_COINS, dtype=torch.float64)])
                 self.hvisits.append(0)
                 self.block_signs.append(None)
+                self.block_perms.append(None)
 
     def feat(self, x: torch.Tensor) -> torch.Tensor:
         """Per-center Gaussian features with per-center bandwidths."""
@@ -152,7 +157,10 @@ class Method:
                     self.block_signs[j] = (torch.randint(0, 2, (self.D_COINS,),
                                            generator=self.coin_gen, dtype=torch.float64)
                                            * 2.0 - 1.0)
-                rows.append(self.H[k % self.D_COINS] * self.block_signs[j])
+                    self.block_perms[j] = torch.randperm(self.D_COINS,
+                                                         generator=self.coin_gen)
+                rows.append((self.H[k % self.D_COINS]
+                             * self.block_signs[j])[self.block_perms[j]])
                 self.hvisits[j] = k + 1
             c = torch.stack(rows)
             tgt = c - self.prior(x)
