@@ -16,11 +16,10 @@ Interface contract (run_experiment.py relies on exactly this):
     per-position visit counts. The learning-rate schedule inside update() MAY use the step
     counter (standard optimizer practice).
 
-Current method: the prior work's Adam baseline (constant-rate Adam 1e-3, orthogonal weights
-gain sqrt(2), zero biases, raw l2 residual readout) — the starting point every later
-experiment is measured against. Expected from the convergence runs: aggregate slope about
--0.83 (too fast), position-dependent starts (start_dev far from 0).
+Current method: see the Method class docstring (one method per experiment; the history of
+methods is the git history of this file plus results.tsv).
 """
+import copy
 import hashlib
 
 import numpy as np
@@ -52,18 +51,25 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """SGD-1/t baseline: the prior work's best decay configuration (zero-bias init, plain SGD
-    with the shifted 1/t schedule eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2); bonus = raw l2
-    residual norm. Convergence run 1 fitted aggregate slope -0.503 for exactly this cell."""
+    """SGD-1/t + initial-copy normalization: the prior work's best decay configuration
+    (zero-bias init, SGD with eta_t = eta0/(1 + t/t0), eta0=1e-2, t0=1e2) with the readout
+    normalized per position by a FROZEN copy of the predictor taken at initialization:
+    bonus(x) = ||g_t(x) - f(x)|| / ||g_0(x) - f(x)||. Starts at exactly 1 at every input, and
+    the denominator is available online (one extra frozen network, no oracle knowledge)."""
 
-    name = "sgd1t_baseline"
+    name = "sgd1t_initcopy_norm"
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Build target + predictor (4 -> 256 -> ReLU -> 128) and plain SGD (schedule in update)."""
+        """Build target + predictor (4 -> 256 -> ReLU -> 128), freeze an init-time predictor
+        copy for the readout denominator, and set up plain SGD (schedule in update)."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.target = make_mlp(obs_dim, 256, 128, seed, "target")
         self.predictor = make_mlp(obs_dim, 256, 128, seed, "predictor")
         for p in self.target.parameters():
+            p.requires_grad_(False)
+        # the frozen initial predictor: the readout's per-position denominator
+        self.predictor0 = copy.deepcopy(self.predictor)
+        for p in self.predictor0.parameters():
             p.requires_grad_(False)
         self.eta0, self.t0 = 1e-2, 1e2
         self.t = 0  # 0-based optimizer-step counter for the schedule
@@ -82,7 +88,9 @@ class Method:
         self.t += 1
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """Per-point l2 residual norm ||g(x_i) - f(x_i)||_2 (exact norm, no clamp), float64."""
+        """Per-point normalized residual ||g_t(x)-f(x)|| / ||g_0(x)-f(x)|| (exactly 1 at t=0)."""
         with torch.no_grad():
-            e = self.predictor(x) - self.target(x)
-            return e.pow(2).sum(dim=1).sqrt().cpu().numpy().astype(np.float64)
+            f = self.target(x)
+            e = (self.predictor(x) - f).pow(2).sum(dim=1).sqrt()
+            e0 = (self.predictor0(x) - f).pow(2).sum(dim=1).sqrt()
+            return (e / e0).cpu().numpy().astype(np.float64)
