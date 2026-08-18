@@ -83,114 +83,112 @@ def make_trunk(obs_dim, out_dim: int, seed: int, stream: str) -> nn.Module:
 
 
 
+def add_trunk_biases(net: nn.Module, sigma: float, seed: int, stream: str) -> None:
+    """Overwrite a trunk's zero biases with keyed N(0, sigma^2) draws (used for LOW-dimensional
+    inputs, whose bias-free ReLU features are homogeneous and nearly collinear)."""
+    idx = 0
+    for layer in net:
+        if isinstance(layer, (nn.Linear, nn.Conv2d)):
+            with torch.no_grad():
+                layer.bias.copy_(sigma * torch.randn(
+                    layer.bias.shape, generator=keyed_gen(seed, stream, "bias", idx)))
+        idx += 1
+
+
 class Method:
-    """Replay-buffer coin-flip network: the published CFN training regime (gradient steps over
-    a replay of stored (state, coin) pairs), measured against the count oracle.
+    """Deep random features + exact coin-flip least-squares head: the RND-pluggable NEURAL
+    counting bonus (per-state visit counts under any visitation, by statistics).
 
-    Every visit appends (x, fresh Rademacher coin) to a ring buffer (capacity 150k pairs) and
-    runs K = 4 Adam minibatch steps (batch 256) on the regression toward (coin - prior). The
-    least-squares optimum over the buffer is each state's running mean of its BUFFERED coins,
-    so two gaps separate this from the exact head: the optimization lag of gradient steps, and
-    the ring's forgetting (a state's effective count saturates near capacity / distinct
-    states). Zero-initialized output layer + unit-normalized frozen prior keep the bonus
-    exactly 1 at never-visited inputs; whitener runs online as in the plain gradient CFN."""
+    A frozen deep trunk (vector MLP or RND conv stack; N(0, 0.5^2) biases only for inputs of
+    dimension <= 8) produces 256-d features. Every visit draws a fresh Rademacher coin vector
+    (d = 512) and accumulates the ridge normal equations of the regression from features onto
+    (coin - prior); the head solve is cached and refreshed at readout. The frozen prior net is
+    unit-normalized per input and the head starts empty, so the bonus
+    ||head(x) + prior(x)|| / sqrt(d) is exactly 1 at every never-visited input, and a state
+    visited m times reads the norm of its own m-coin running mean — m^(-1/2) in expectation,
+    with the chi fluctuation floor and whatever feature collinearity shrinks. Whitener frozen
+    after the first visited batch (as the shrink variant)."""
 
-    name = "cfn_replay_adam1e-3"
+    name = "deep_lastlayer_cfn_capped"
 
     D_COINS = 512
-    RING = 150_000
-    K_STEPS = 4
-    BATCH = 256
-    LR = 1e-3
+    RIDGE = 1e-8
+    BIAS_SIGMA_LOWDIM = 0.5
 
     def __init__(self, seed: int, obs_dim=4):
-        """Trainable net (zero head), frozen unit-normalized prior, ring buffer, Adam."""
+        """Frozen trunk + frozen unit-normalized prior, empty normal equations, whitener."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
         self.is_image = not isinstance(obs_dim, int)
-        self.d = 256 if self.is_image else self.D_COINS
-        self.net = make_trunk(obs_dim, self.d, seed, "predictor")
-        last = [m for m in self.net if isinstance(m, (nn.Linear, nn.Conv2d))][-1]
-        nn.init.zeros_(last.weight)
-        nn.init.zeros_(last.bias)
-        self.prior_raw = make_trunk(obs_dim, self.d, seed, "prior")
-        for p in self.prior_raw.parameters():
-            p.requires_grad_(False)
+        d = 256 if self.is_image else self.D_COINS
+        self.d = d
+        self.trunk = make_trunk(obs_dim, 256, seed, "feat")
+        self.prior_raw = make_trunk(obs_dim, d, seed, "prior")
+        if not self.is_image and obs_dim <= 8:
+            add_trunk_biases(self.trunk, self.BIAS_SIGMA_LOWDIM, seed, "feat")
+            add_trunk_biases(self.prior_raw, self.BIAS_SIGMA_LOWDIM, seed, "prior")
+        for net in (self.trunk, self.prior_raw):
+            for p in net.parameters():
+                p.requires_grad_(False)
         self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
-        self.net.to(self.device)
+        self.trunk.to(self.device)
         self.prior_raw.to(self.device)
-        self.opt = torch.optim.Adam(self.net.parameters(), lr=self.LR)
+        # pure accumulation; the RIDGE is added RELATIVE to the accumulated feature energy
+        # at solve time (an absolute 1e-8 ridge is node-dependently unstable while the
+        # accumulation is still rank-deficient: null-space noise is amplified by 1/ridge, and
+        # different nodes' BLAS rounding decides how much lands there — observed as bonus
+        # values of ~30 at early checkpoints on one node and none on another, same seed)
+        self.Lam = torch.zeros(256, 256, dtype=torch.float64, device=self.device)
+        self.Bmat = torch.zeros(256, d, dtype=torch.float64, device=self.device)
         self.coin_gen = keyed_gen(seed, "coins")
-        self.sample_gen = keyed_gen(seed, "replay")
-        self.buf_x = None      # ring storage, allocated on first visit
-        self.buf_c = None
-        self.buf_n = 0         # total pairs ever appended (ring position = n mod RING)
-        self._count = 1e-4
         self._mean = None
         self._var = None
 
-    def _whiten(self, x: torch.Tensor, update: bool) -> torch.Tensor:
-        """Running mean/std whitening with a +-5 clip (see the plain gradient CFN)."""
+    def _whiten(self, x: torch.Tensor) -> torch.Tensor:
+        """Whitener frozen at the first update batch; identity before it; clip +-5."""
         z = x.to(self.device)
-        if update:
-            with torch.no_grad():
-                b_mean = z.mean(dim=0)
-                b_var = z.var(dim=0, unbiased=False)
-                n = float(z.shape[0])
-                if self._mean is None:
-                    self._mean, self._var = b_mean.clone(), b_var.clone() + 1e-8
-                    self._count = n
-                else:
-                    tot = self._count + n
-                    delta = b_mean - self._mean
-                    self._mean = self._mean + delta * (n / tot)
-                    self._var = (self._var * self._count + b_var * n
-                                 + delta.pow(2) * self._count * n / tot) / tot
-                    self._count = tot
         if self._mean is not None:
             z = ((z - self._mean) / (self._var + 1e-8).sqrt()).clamp(-5.0, 5.0)
         return z.unsqueeze(1) if self.is_image else z
 
+    def _freeze_whitener(self, x: torch.Tensor) -> None:
+        """Initialize the whitener from the first visited batch, then never move it."""
+        if self._mean is None:
+            with torch.no_grad():
+                z = x.to(self.device)
+                self._mean = z.mean(dim=0)
+                self._var = z.var(dim=0, unbiased=False) + 1e-8
+
     def _prior(self, z: torch.Tensor) -> torch.Tensor:
         """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input."""
-        p = self.prior_raw(z)
+        p = self.prior_raw(z).double()
         return float(np.sqrt(self.d)) * p / p.norm(dim=1, keepdim=True).clamp(min=1e-12)
 
-    def _append(self, x: torch.Tensor, c: torch.Tensor) -> None:
-        """Ring append of raw (x, coin) rows. before: buf_n=150000 (full) -> new rows
-        overwrite positions 150000 mod RING onward (the oldest entries)."""
-        if self.buf_x is None:
-            shape = (self.RING,) + tuple(x.shape[1:])
-            self.buf_x = torch.zeros(shape, dtype=x.dtype)
-            self.buf_c = torch.zeros(self.RING, self.d, dtype=torch.float32)
-        idx = (torch.arange(x.shape[0]) + self.buf_n) % self.RING
-        self.buf_x[idx] = x.cpu()
-        self.buf_c[idx] = c.cpu()
-        self.buf_n += x.shape[0]
-
     def update(self, x: torch.Tensor) -> None:
-        """Append fresh coins for the visited batch, then K Adam minibatch replay steps."""
+        """One visit per batch row: fresh coins into the normal equations."""
         with torch.no_grad():
-            self._whiten(x, update=True)   # whitener statistics track visited batches
+            self._freeze_whitener(x)
+            z = self._whiten(x)
+            phi = self.trunk(z).double()
             c = (torch.randint(0, 2, (x.shape[0], self.d), generator=self.coin_gen,
-                               dtype=torch.float32) * 2.0 - 1.0)
-            self._append(x, c)
-        live = min(self.buf_n, self.RING)
-        for _ in range(self.K_STEPS):
-            idx = torch.randint(0, live, (min(self.BATCH, live),), generator=self.sample_gen)
-            xb = self.buf_x[idx].to(self.device)
-            cb = self.buf_c[idx].to(self.device)
-            z = self._whiten(xb, update=False)
-            with torch.no_grad():
-                tgt = cb - self._prior(z)
-            e = self.net(z) - tgt
-            loss = 0.5 * e.pow(2).sum(dim=1).mean()
-            self.opt.zero_grad()
-            loss.backward()
-            self.opt.step()
+                               dtype=torch.float64) * 2.0 - 1.0).to(self.device)
+            tgt = c - self._prior(z)
+            self.Lam += phi.T @ phi
+            self.Bmat += phi.T @ tgt
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """||net(x) + prior(x)|| / sqrt(d) on whitened inputs (whitener not updated)."""
+        """||head(x) + prior(x)|| / sqrt(d); exactly 1 before any visit."""
         with torch.no_grad():
-            z = self._whiten(x, update=False)
-            out = self.net(z) + self._prior(z)
-            return (out.norm(dim=1) / float(np.sqrt(self.d))).cpu().numpy().astype(np.float64)
+            z = self._whiten(x)
+            phi = self.trunk(z).double()
+            k = self.Lam.shape[0]
+            ridge = max(1e-8, 1e-6 * float(self.Lam.diagonal().sum()) / k)
+            W = torch.linalg.solve(
+                self.Lam + ridge * torch.eye(k, dtype=torch.float64, device=self.device),
+                self.Bmat)
+            out = phi @ W + self._prior(z)
+            # cap at 1, exactly as the count oracle min(1, m^(-1/2)) is capped: a state cannot
+            # read as more novel than never-visited. This also removes the early-accumulation
+            # spikes (least-squares coefficients along barely-visited feature directions can
+            # legitimately be large before those directions accumulate energy).
+            b = out.norm(dim=1) / float(np.sqrt(self.d))
+            return b.clamp(max=1.0).cpu().numpy()
