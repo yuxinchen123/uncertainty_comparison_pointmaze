@@ -300,18 +300,29 @@ extended at a larger scale & \multicolumn{4}{>{\raggedright\arraybackslash}p{11.
   $1{,}000{,}038{,}400$ environment steps per copy, that is $1{,}953{,}200$ iterations and $9{,}766$
   recording windows: $4$ times the copies of one cell above and about $100$ times its step
   budget.}\claudeedit{each arm's best configuration --- ranked at $10$M steps off curves that were
-  still rising --- re-run at $1{,}024$ copies for $1000$M steps per copy; results below the double
-  rule of \Cref{tab:pm-jax-run11-results}}} \\
+  still rising --- re-run at $1{,}024$ copies for $1000$M steps per copy; results below the first
+  double rule of \Cref{tab:pm-jax-run11-results}}} \\
+\greyrule
+\claudeedit{extended a second time} &
+  \multicolumn{4}{>{\raggedright\arraybackslash}p{11.3cm}}{\claudeedit{the whole grid of the two
+  arms that were still improving at $1000$M steps ---
+  \texttt{rnd\allowbreak\_next\allowbreak\_state} and
+  \texttt{gt\allowbreak\_position\allowbreak\_velocity\allowbreak\_sqrt}, $33$ configurations each
+  --- re-run at $128$ copies per configuration for $1000$M steps per copy, to see whether the
+  configuration a $10$M-step sweep picks is still the right one at $1000$M; results below the
+  second double rule of \Cref{tab:pm-jax-run11-results}}} \\
 \blackrule
 \end{tabular}%
 }
-\caption{What train run 1.1 sweeps, and what its extension re-ran. ``same'' collapses a value
+\caption{What train run 1.1 sweeps, and what its \sout{extension}\claudeedit{two extensions}
+re-ran. ``same'' collapses a value
 shared with the columns to its
 left; the grey verticals make each span's extent visible. ``N/A'' marks a knob that does not apply
 --- \texttt{no\allowbreak\_exploration} has no bonus, so it has no bonus knobs and no intrinsic
 weight to sweep. The two oracle columns repeat their shared values rather than writing ``same'',
-because the column to their left is the one arm the value does not apply to. The last row is the
-extension's; every row above it describes the original sweep and is unchanged from its launch.}
+because the column to their left is the one arm the value does not apply to. The last
+\sout{row is the extension's}\claudeedit{two rows are the two extensions'}; every row above
+\sout{it}\claudeedit{them} describes the original sweep and is unchanged from its launch.}
 \label{tab:pm-jax-run11-swept}
 \end{table}
 
@@ -326,6 +337,15 @@ reproducibility looks. The extension's $200$-character run-folder path was delet
 than struck through, because rule~2 of that skill keeps run-folder paths out of the document
 entirely; the run is named by date in the status paragraph below and in the caption of
 \Cref{tab:pm-jax-run11-results}.}
+
+\noindent\claudecomment{One row added to \Cref{tab:pm-jax-run11-swept} for the second extension of
+2026-08-17, written under the shared skill \texttt{rl-experiment-writing}: which two arms, from
+what to what, and why, in $46$ words and with no run-folder path. Its exact budget ---
+$1{,}000{,}038{,}400$ environment steps per copy over $1{,}953{,}200$ iterations, $128$ copies of
+each of $33$ configurations per arm --- is in that run's \texttt{manifest.yaml}
+(\texttt{compile\allowbreak\_signature} and \texttt{extends.\allowbreak arms\allowbreak\_extended}).
+The row above it now says ``the first double rule'' rather than ``the double rule'', because
+\Cref{tab:pm-jax-run11-results} has two.}
 
 \paragraph{Results --- status.}
 The run is complete. All four work units finished on 2026-08-16 between 21:04 and 21:36 PT: the two
