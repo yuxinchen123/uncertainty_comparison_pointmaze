@@ -718,7 +718,93 @@ the environment is optimised against.}
 \label{tab:am-jax-env}
 \end{table}
 
-<<<<<<< HEAD
+\subsection{Train run 2.1: the first AntMaze batch}
+\label{sec:am-jax-run21}
+
+Two algorithm arms at one learning rate: random network distillation against no exploration
+bonus, on the umaze — the smallest of the three mazes, where the goal sits at the far end of
+the U, eight cells of walking from the start. This is the family's first live batch: its job is
+to show the fused environment training end to end at scale on the card, and to give the first
+honest reading of what a sparse-reward maze asks of a quadruped that must learn to walk and to
+navigate at once from a budget of about a quarter of a million steps per copy.
+
+\paragraph{Hypotheses.}
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{The bonus drives exploration.} The distillation arm's maze-cell coverage exceeds
+  the no-bonus arm's at every recorded window: a bonus-free ant has no reason to leave the
+  start cell's neighbourhood once its random torques stop carrying it anywhere new.
+\item \textbf{The budget is too short for reward.} Neither arm reaches the goal often enough
+  for whole-run reward to separate them at this budget --- learning to walk consumes most of
+  it --- so coverage, not reward, is this run's primary reading. A longer campaign is the
+  follow-up if coverage says the bonus is working.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}
+?>{\raggedright\arraybackslash}p{5.4cm}
+?>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{\texttt{rnd\allowbreak\_next\allowbreak\_state}} &
+\textbf{\texttt{no\allowbreak\_exploration}} \\
+& \small(random network distillation) & \small(no intrinsic bonus) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Environment and RL algorithm}} \\
+\greyrule
+environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the umaze
+  of \Cref{tab:am-jax-env}; this run adds no new environment-specification table} \\
+\greyrule
+base RL algorithm & proximal policy optimisation, this platform's JAX trainer & same \\
+\greyrule
+update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) & same \\
+\greyrule
+rollout length $T$ & $128$ steps & same \\
+\greyrule
+environments per copy $N$ & $1$ & same \\
+\greyrule
+environment steps per copy & $269$k: $2{,}100$ iterations of $128$ steps & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+bonus signal & the prediction error of a trained network against a fixed random target, on the
+  $29$-d next state & N/A \\
+\greyrule
+where the bonus enters & the advantage: $1 \times$ intrinsic $+\ 2 \times$ extrinsic & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Fixed knobs (nothing is swept in this batch)}} \\
+\greyrule
+learning rate & \multicolumn{2}{c}{$3 \times 10^{-4}$ --- one value} \\
+\greyrule
+intrinsic weight $\beta$ & $1$ & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+\greyrule
+configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
+\greyrule
+copies per arm & \multicolumn{2}{c}{$1{,}024$, each its own seed stream} \\
+\greyrule
+recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
+  $175$ iterations --- one whole turn of the $128$-step-rollout / $700$-step-episode clock, so
+  every window's reward sum is free of the episode phase; $12$ windows over the run} \\
+\blackrule
+\end{tabular}%
+}
+\caption{What train run 2.1 runs. ``same'' means the value equals the column to its left; ``N/A''
+marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is swept:
+this is the family's first live batch, two arms at one setting each.}
+\label{tab:am-jax-run21-swept}
+\end{table}
+
+\paragraph{Results --- status.}
+Launched on the H100 NVL of serval05 on 2026-08-18 (the machine held for this session, the two
+arms run one after the other); the results tables and the coverage curves follow when the run's
+records are complete.
+
+
 %==============================================================================
 \section{Montezuma's Revenge on the JAX platform}
 \label{sec:mz-jax}
@@ -846,27 +932,6 @@ scale, and to read whether the bonus moves a smoke-scale agent at all.
   copies reach the first collectable (the key of the starting room pays $+1$ through the
   clipped score) within the budget; no copy approaches the later rooms' chains of keys and
   doors. Room coverage, not score, is this run's primary reading.
-=======
-\subsection{Train run 2.1: the first AntMaze batch}
-\label{sec:am-jax-run21}
-
-Two algorithm arms at one learning rate: random network distillation against no exploration
-bonus, on the umaze — the smallest of the three mazes, where the goal sits at the far end of
-the U, eight cells of walking from the start. This is the family's first live batch: its job is
-to show the fused environment training end to end at scale on the card, and to give the first
-honest reading of what a sparse-reward maze asks of a quadruped that must learn to walk and to
-navigate at once from a budget of about a quarter of a million steps per copy.
-
-\paragraph{Hypotheses.}
-\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
-\item \textbf{The bonus drives exploration.} The distillation arm's maze-cell coverage exceeds
-  the no-bonus arm's at every recorded window: a bonus-free ant has no reason to leave the
-  start cell's neighbourhood once its random torques stop carrying it anywhere new.
-\item \textbf{The budget is too short for reward.} Neither arm reaches the goal often enough
-  for whole-run reward to separate them at this budget --- learning to walk consumes most of
-  it --- so coverage, not reward, is this run's primary reading. A longer campaign is the
-  follow-up if coverage says the bonus is working.
->>>>>>> fused-antmaze
 \end{enumerate}
 
 \begin{table}[H]
@@ -885,19 +950,12 @@ navigate at once from a budget of about a quarter of a million steps per copy.
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Environment and RL algorithm}} \\
 \greyrule
-<<<<<<< HEAD
 environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the
   Montezuma's Revenge of \Cref{tab:mz-jax-env}; this run adds no new
   environment-specification table} \\
 \greyrule
 base RL algorithm & proximal policy optimisation with the categorical actor
   (\Cref{sec:mz-jax-envspec}) & same \\
-=======
-environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the umaze
-  of \Cref{tab:am-jax-env}; this run adds no new environment-specification table} \\
-\greyrule
-base RL algorithm & proximal policy optimisation, this platform's JAX trainer & same \\
->>>>>>> fused-antmaze
 \greyrule
 update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) & same \\
 \greyrule
@@ -905,20 +963,12 @@ rollout length $T$ & $128$ steps & same \\
 \greyrule
 environments per copy $N$ & $1$ & same \\
 \greyrule
-<<<<<<< HEAD
 environment steps per copy & $256$k: $2{,}000$ iterations of $128$ steps & same \\
-=======
-environment steps per copy & $269$k: $2{,}100$ iterations of $128$ steps & same \\
->>>>>>> fused-antmaze
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
 \greyrule
 bonus signal & the prediction error of a trained network against a fixed random target, on the
-<<<<<<< HEAD
   $774$-d next observation & N/A \\
-=======
-  $29$-d next state & N/A \\
->>>>>>> fused-antmaze
 \greyrule
 where the bonus enters & the advantage: $1 \times$ intrinsic $+\ 2 \times$ extrinsic & N/A \\
 \blackrule
@@ -932,7 +982,6 @@ intrinsic weight $\beta$ & $1$ & N/A \\
 \greyrule
 configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
 \greyrule
-<<<<<<< HEAD
 copies per arm & \multicolumn{2}{c}{$512$, each its own seed stream} \\
 \greyrule
 recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
@@ -947,31 +996,11 @@ recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode
 ``N/A'' marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is
 swept: two arms at one setting each.}
 \label{tab:mz-jax-run31-swept}
-=======
-copies per arm & \multicolumn{2}{c}{$1{,}024$, each its own seed stream} \\
-\greyrule
-recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
-  $175$ iterations --- one whole turn of the $128$-step-rollout / $700$-step-episode clock, so
-  every window's reward sum is free of the episode phase; $12$ windows over the run} \\
-\blackrule
-\end{tabular}%
-}
-\caption{What train run 2.1 runs. ``same'' means the value equals the column to its left; ``N/A''
-marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is swept:
-this is the family's first live batch, two arms at one setting each.}
-\label{tab:am-jax-run21-swept}
->>>>>>> fused-antmaze
 \end{table}
 
 \paragraph{Results --- status.}
 Launched on the H100 NVL of serval05 on 2026-08-18 (the machine held for this session, the two
-<<<<<<< HEAD
 arms run one after the other); the results tables and the room-coverage curves follow when the
 run's records are complete.
-=======
-arms run one after the other); the results tables and the coverage curves follow when the run's
-records are complete.
->>>>>>> fused-antmaze
-
 
 \end{document}
