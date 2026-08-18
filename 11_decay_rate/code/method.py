@@ -125,6 +125,11 @@ class Method:
         self._var = None
         self.coin_gen = keyed_gen(seed, "coins")
         self.t = 0
+        # device BEFORE the optimizer: AdaGrad initializes its accumulator eagerly on the
+        # params' current device, so the net must already live on METHOD_DEVICE
+        self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
+        self.net.to(self.device)
+        self.prior_raw.to(self.device)
         kind = self.OPTIMIZER[0]
         if kind == "adam":
             self.opt = torch.optim.Adam(self.net.parameters(), lr=self.OPTIMIZER[1])
@@ -135,10 +140,6 @@ class Method:
             self.opt = torch.optim.SGD(self.net.parameters(), lr=self.OPTIMIZER[1])
         else:
             raise ValueError(f"unknown optimizer kind {kind!r}")
-        # device: METHOD_DEVICE=cuda for GPU jobs (conv/atari); default cpu
-        self.device = torch.device(os.environ.get("METHOD_DEVICE", "cpu"))
-        self.net.to(self.device)
-        self.prior_raw.to(self.device)
 
     def _whiten(self, x: torch.Tensor, update: bool) -> torch.Tensor:
         """Running mean/std whitening with a +-5 clip; the image branch adds the channel dim.
