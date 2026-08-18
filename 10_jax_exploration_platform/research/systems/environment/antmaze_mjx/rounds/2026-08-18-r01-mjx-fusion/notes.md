@@ -26,9 +26,11 @@ humanoid/barkour models); Euler with `eulerdamp` disabled against `implicitfast`
 
 1. Speed arrives immediately: 2.4–6.8 ms per env step at 1,024 copies depending on variant —
    about 400x over probe 1.
-2. **The contact-cap numerics are broken in MJX 3.11's JAX backend**: ANY setting — including
-   `(-1, 48)` and values far above the true pair count — silently builds a model with ZERO
-   contact slots (`ncon-max=0`), and the ant free-falls. Do not use them.
+2. **The contact-cap numerics appeared broken**: ANY setting — including `(-1, 48)` and values
+   far above the true pair count — silently built a model with ZERO contact slots
+   (`ncon-max=0`), and the ant free-fell. Round 2 later found the mechanism (MJX reads the
+   numeric by id instead of by address, and ant.xml's `init_qpos` numeric shifts every id) and
+   the caps are now in use with that worked around.
 3. `implicitfast` beats Euler-with-eulerdamp-off at the same budget (2.80 against 4.84 ms at
    1,024 copies).
 
@@ -83,6 +85,7 @@ Their numbers are the ledger's standing tables.
    gates).
 2. Horizontal wall runs merged into single boxes — an identical union of blocks, fewer geom
    pairs (`spec.md` deviation 4).
-3. No contact caps (broken in this MJX version, see probe 2).
+3. Contact caps max_geom_pairs 8 / max_contact_points 32, enabled in round 2 once probe 2's
+   apparent breakage was traced to MJX's numeric-by-id read and worked around.
 4. Deterministic resets (reference's joint noise is already zero; cells pinned), so auto-reset
    is a `where` against the spawn and the environment holds no RNG.
