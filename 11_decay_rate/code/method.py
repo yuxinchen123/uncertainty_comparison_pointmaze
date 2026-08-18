@@ -53,43 +53,40 @@ def make_mlp(obs_dim: int, hidden: int, out_dim: int, seed: int, stream: str) ->
 
 
 class Method:
-    """Coin-flip counting + exact RLS head on a GROWING data-dependent kernel dictionary.
+    """Residual-encoded shrink + exact min-change interpolation on a GROWING data-dependent
+    kernel dictionary (the exp-010 mechanism on the exp-019 basis).
 
-    exp 016/017 showed the coin-flip construction works once the basis can represent
-    per-position running means, but a fixed bandwidth cannot serve both the cell-scale set and
-    the 0.1-spaced center square. Here the basis adapts: the dictionary starts empty, and each
-    visited state farther than 0.05 world units from every existing center is inserted as a new
-    center whose bandwidth is half its nearest-center distance at insertion (clipped to
-    [0.05, 0.75]); the normal-equation state grows with the dictionary (new rows start at
-    zero). Resolution therefore concentrates exactly where states are visited, at the spacing
-    they are visited at — the online analog of a growing radial-basis network. Coins, prior,
-    and readout as exp 016 (fresh Rademacher per visit, unit-normalized frozen prior, zero
-    head: bonus exactly 1 before and at the first visit)."""
+    The head starts at zero over an empty dictionary and the readout is normalized by the
+    target's own norm, r(x) = ||W phi(x) - f(x)|| / ||f(x)||, so the bonus is exactly 1 at
+    every never-visited input with no stored copy needed. Visited states grow the dictionary
+    exactly as in exp 019 (insert beyond 0.05, bandwidth = half the nearest-center distance,
+    clipped to [0.05, 0.75]); each visit shrinks the visited samples' residual vectors by
+    s = 1/sqrt(1 + r^2) (the map whose iterates from 1 are 1/sqrt(2), 1/sqrt(3), ...), realized
+    exactly by the minimum-Frobenius-change head update on the batch. Near-orthogonal local
+    features keep the interference that broke exp 011 small, and unlike the coin-flip family
+    there is no chi fluctuation floor — the recurrence is deterministic."""
 
-    name = "coinflip_adaptive_dict"
+    name = "linhead_shrink_adaptive"
 
-    D_COINS = 512
-    TAU_ADD = 0.05      # insert a visited state as a center beyond this distance
-    SIGMA_MAX = 0.75    # bandwidth clip range for inserted centers
+    TAU_ADD = 0.05
+    SIGMA_MAX = 0.75
     SIGMA_MIN = 0.05
     MAX_CENTERS = 1024
     RIDGE = 1e-8
 
     def __init__(self, seed: int, obs_dim: int = 4):
-        """Empty dictionary, frozen unit-normalized prior, empty normal-equation state."""
+        """Frozen target MLP; empty dictionary; zero head over it."""
         torch.manual_seed(seed)  # belt-and-braces; every draw below uses keyed generators
+        self.target = make_mlp(obs_dim, 256, 128, seed, "target")
+        for p in self.target.parameters():
+            p.requires_grad_(False)
         self.centers = torch.zeros(0, 2, dtype=torch.float64)
         self.sigmas = torch.zeros(0, dtype=torch.float64)
-        self.prior_raw = make_mlp(obs_dim, 256, self.D_COINS, seed, "prior")
-        for p in self.prior_raw.parameters():
-            p.requires_grad_(False)
-        self.Lam = torch.zeros(0, 0, dtype=torch.float64)
-        self.Bmat = torch.zeros(0, self.D_COINS, dtype=torch.float64)
-        self.coin_gen = keyed_gen(seed, "coins")
+        self.W = torch.zeros(128, 0, dtype=torch.float64)
 
     def _grow(self, z: torch.Tensor) -> None:
-        """Insert new centers for batch rows far from the dictionary (sequentially, so a row
-        inserted first can cover later rows of the same batch)."""
+        """Insert new centers for batch rows far from the dictionary (sequential, as exp 019);
+        the head gets a zero column per new center, leaving its function unchanged."""
         for row in z:
             if self.centers.shape[0] >= self.MAX_CENTERS:
                 return
@@ -98,20 +95,11 @@ class Method:
             else:
                 d_nn = float(((self.centers - row) ** 2).sum(-1).min().sqrt())
             if d_nn > self.TAU_ADD:
-                # bandwidth = half the nearest-center distance at insertion, clipped
-                # before: first center -> d_nn = inf -> sigma = SIGMA_MAX (0.75)
-                # after: a center_square point 0.1 from its neighbor -> sigma = 0.05
                 sig = min(self.SIGMA_MAX, max(self.SIGMA_MIN, 0.5 * d_nn))
                 self.centers = torch.cat([self.centers, row[None, :]])
                 self.sigmas = torch.cat([self.sigmas,
                                          torch.tensor([sig], dtype=torch.float64)])
-                # grow the normal-equation state with zero rows/columns for the new feature
-                k = self.Lam.shape[0]
-                lam = torch.zeros(k + 1, k + 1, dtype=torch.float64)
-                lam[:k, :k] = self.Lam
-                self.Lam = lam
-                self.Bmat = torch.cat([self.Bmat,
-                                       torch.zeros(1, self.D_COINS, dtype=torch.float64)])
+                self.W = torch.cat([self.W, torch.zeros(128, 1, dtype=torch.float64)], dim=1)
 
     def feat(self, x: torch.Tensor) -> torch.Tensor:
         """Per-center Gaussian features with per-center bandwidths."""
@@ -119,31 +107,25 @@ class Method:
         d2 = ((z[:, None, :] - self.centers[None, :, :]) ** 2).sum(-1)
         return torch.exp(-d2 / (2.0 * self.sigmas[None, :] ** 2))
 
-    def prior(self, x: torch.Tensor) -> torch.Tensor:
-        """Frozen prior with ||prior(x)|| = sqrt(d) exactly at every input."""
-        p = self.prior_raw(x).double()
-        return float(np.sqrt(self.D_COINS)) * p / p.norm(dim=1, keepdim=True)
-
     def update(self, x: torch.Tensor) -> None:
-        """Grow the dictionary from the batch, then accumulate coin normal equations."""
+        """Grow the dictionary, then shrink each visited sample's residual by its own factor
+        via the minimum-change interpolation update."""
         with torch.no_grad():
             self._grow(x[:, :2].double())
-            phi = self.feat(x)
-            c = torch.randint(0, 2, (x.shape[0], self.D_COINS), generator=self.coin_gen,
-                              dtype=torch.float64) * 2.0 - 1.0
-            tgt = c - self.prior(x)
-            self.Lam += phi.T @ phi
-            self.Bmat += phi.T @ tgt
+            phi = self.feat(x)                                   # (B, K)
+            f = self.target(x).double()                          # (B, 128)
+            e = phi @ self.W.T - f                               # residual vectors (B, 128)
+            r = e.norm(dim=1) / f.norm(dim=1)                    # normalized residuals (B,)
+            s = 1.0 / torch.sqrt(1.0 + r.pow(2))                 # per-visit shrink (B,)
+            E = (s - 1.0).unsqueeze(1) * e                       # desired residual change
+            G = phi @ phi.T + self.RIDGE * torch.eye(phi.shape[0], dtype=torch.float64)
+            self.W += E.T @ torch.linalg.solve(G, phi)
 
     def bonus(self, x: torch.Tensor) -> np.ndarray:
-        """||head(x) + prior(x)|| / sqrt(d); the prior alone before any visit."""
+        """r(x) = ||W phi(x) - f(x)|| / ||f(x)|| (exactly 1 over an empty dictionary)."""
         with torch.no_grad():
-            pr = self.prior(x)
+            f = self.target(x).double()
             if self.centers.shape[0] == 0:
-                out = pr
-            else:
-                phi = self.feat(x)
-                lam = self.Lam + self.RIDGE * torch.eye(self.Lam.shape[0], dtype=torch.float64)
-                W = torch.linalg.solve(lam, self.Bmat)
-                out = phi @ W + pr
-            return (out.norm(dim=1) / float(np.sqrt(self.D_COINS))).cpu().numpy()
+                return torch.ones(x.shape[0], dtype=torch.float64).numpy()
+            e = (self.feat(x) @ self.W.T - f).norm(dim=1)
+            return (e / f.norm(dim=1)).cpu().numpy()
