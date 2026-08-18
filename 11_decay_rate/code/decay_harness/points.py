@@ -12,7 +12,7 @@ import numpy as np
 MAZE_ROWS = 9
 MAZE_COLS = 12
 
-POINT_SET_CHOICES = ("center_square", "top_right_cell", "cell_midpoints")
+POINT_SET_CHOICES = ("center_square", "top_right_cell", "cell_midpoints", "dense_grid")
 
 
 def checkpoint_steps(n_steps: int) -> list:
@@ -47,6 +47,17 @@ def point_set(name: str) -> np.ndarray:
         # y = 4 - row in {4 .. -4}; 108 points
         cols, rows = np.meshgrid(np.arange(MAZE_COLS), np.arange(MAZE_ROWS), indexing="ij")
         xs, ys = cols - 5.5, 4.0 - rows
+    elif name == "dense_grid":
+        # capacity-stress set (protocol extension 2026-08-17): 2x2 sub-cell midpoints of every
+        # maze cell — 432 points, MORE distinct positions than a 256-wide feature layer, so
+        # exact interpolation across the whole set is impossible by construction.
+        # before: cell (row, col) center (cx, cy); after: its four points (cx +- 0.25, cy +- 0.25)
+        cols, rows = np.meshgrid(np.arange(MAZE_COLS), np.arange(MAZE_ROWS), indexing="ij")
+        cx, cy = (cols - 5.5).ravel(), (4.0 - rows).ravel()
+        # full 2x2 offset cross product per cell: (108, 1) + (1, 4) -> 432 points
+        ox, oy = np.meshgrid([-0.25, 0.25], [-0.25, 0.25], indexing="ij")
+        xs = (cx[:, None] + ox.ravel()[None, :]).ravel()
+        ys = (cy[:, None] + oy.ravel()[None, :]).ravel()
     else:
         raise ValueError(f"point_set must be one of {POINT_SET_CHOICES}; got {name!r}")
     zeros = np.zeros(xs.size)

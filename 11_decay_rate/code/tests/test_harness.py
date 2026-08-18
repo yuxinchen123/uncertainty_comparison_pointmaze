@@ -102,3 +102,12 @@ def test_diverged_records_counted_not_scored():
     bad = dict(good, diverged=True)
     m = compute_metrics([good, bad], fit_slopes=False)
     assert m["n_diverged"] == 1 and m["dev_worst"] == 0.0
+
+
+def test_dense_grid_shape_and_span():
+    """Capacity-stress set: 432 points (4 per cell), inside the maze extent, all distinct."""
+    dg = point_set("dense_grid")
+    assert dg.shape == (432, 4)
+    assert dg[:, 0].min() == -5.75 and dg[:, 0].max() == 5.75
+    assert dg[:, 1].min() == -4.25 and dg[:, 1].max() == 4.25
+    assert len({(float(x), float(y)) for x, y in dg[:, :2]}) == 432
