@@ -1,4 +1,4 @@
-"""Draw each arm's best configuration at each of the three learning rates -- six curves.
+"""Draw the six highest-peak configurations and RND at intrinsic weight 10 for each rate.
 
 "Best" here is the **highest point the aggregated curve reaches**: the copies are averaged first,
 window by window, and the maximum is taken of that mean. It is deliberately not the mean of each
@@ -88,9 +88,10 @@ def best_by_maximum(curves: dict) -> dict:
 
 
 def main() -> None:
-    """One panel, six curves, each with its maximum marked and labelled on the curve."""
+    """Compare highest-peak configurations with RND at intrinsic weight 10."""
     PLOTS.mkdir(parents=True, exist_ok=True)
-    best = best_by_maximum(curves_all(RUN_DIR))
+    curves = curves_all(RUN_DIR)
+    best = best_by_maximum(curves)
     figure, axes = plt.subplots(1, 1, figsize=(8.0, 5.0))
 
     for (arm, rate), entry in sorted(best.items(), key=lambda item: (item[0][0], -item[0][1])):
@@ -117,16 +118,32 @@ def main() -> None:
         axes.annotate(text, xy=(steps[peak], mean[peak]),
                       xytext=LABEL_OFFSET[(arm, rate)], textcoords="offset points", **shared)
 
+    # Add the same RND intrinsic weight at all rates, using the recorded copy means and errors.
+    # Before: six configurations selected by peak; after: also show three fixed-weight curves.
+    for rate in RATES:
+        curve = curves[("rnd_next_state", rate, 10.0)]
+        steps = np.asarray(curve["env_steps_per_copy"], dtype=float) / 1e6
+        mean = np.asarray(curve["mean_episode_return"], dtype=float)
+        error = np.asarray(curve["standard_error"], dtype=float)
+        style, alpha, width = RATE_STYLE[rate]
+        axes.plot(steps, mean, color="#D55E00", linestyle=style, linewidth=width, alpha=alpha,
+                  label=rf"random network distillation, $\alpha = 10^{{{exponent(rate)}}}$, "
+                        r"$\beta = 10$ (fixed)", zorder=4)
+        axes.fill_between(steps, mean - error, mean + error, color="#D55E00",
+                          alpha=0.07 * alpha, linewidth=0, zorder=1)
+        print(f"  fixed weight RND learning rate={rate:.0e} intrinsic weight=10 "
+              f"windows={len(mean)} maximum={mean.max():.3f}")
+
     axes.set_xscale("log")
     # room to the right of the last window and above the tallest peak for the maximum labels
     axes.set_xlim(right=5.5e3)
     axes.set_ylim(top=95)
     axes.set_xlabel("environment steps per copy (millions, logarithmic)")
     axes.set_ylabel("mean episode return")
-    axes.set_title("Each arm's best configuration at each learning rate, and where it peaks",
+    axes.set_title("Highest-peak configurations and RND at intrinsic weight 10",
                    fontsize=11)
     axes.grid(True, which="major", alpha=0.16, linewidth=0.6)
-    axes.legend(fontsize=7.6, loc="upper left", framealpha=0.92)
+    axes.legend(fontsize=7.2, loc="upper left", framealpha=0.92)
     figure.tight_layout()
     # every annotation must land inside the axes; a label that runs past the spine is a defect
     figure.canvas.draw()
