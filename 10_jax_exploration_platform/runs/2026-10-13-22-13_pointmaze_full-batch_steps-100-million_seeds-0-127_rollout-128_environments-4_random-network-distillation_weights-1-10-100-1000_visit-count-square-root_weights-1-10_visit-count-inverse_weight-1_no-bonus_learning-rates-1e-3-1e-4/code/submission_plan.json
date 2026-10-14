@@ -1,0 +1,41 @@
+{
+  "slots": 11,
+  "plan": [
+    {
+      "node": "cheetah01",
+      "gpus": 2,
+      "cpus_per_program": 1,
+      "reservation": null,
+      "job_id": "6718010"
+    },
+    {
+      "node": "jaguar01",
+      "gpus": 1,
+      "cpus_per_program": 2,
+      "reservation": null,
+      "job_id": "6718011"
+    },
+    {
+      "node": "cheetah08",
+      "gpus": 1,
+      "cpus_per_program": 2,
+      "reservation": null,
+      "job_id": "6718012"
+    },
+    {
+      "node": "jaguar03",
+      "gpus": 6,
+      "cpus_per_program": 8,
+      "reservation": "sl5nw_165",
+      "job_id": "6718013"
+    },
+    {
+      "node": null,
+      "gres_type": "nvidia_a40",
+      "gpus": 1,
+      "cpus_per_program": 2,
+      "reservation": null,
+      "job_id": "6718014"
+    }
+  ]
+}

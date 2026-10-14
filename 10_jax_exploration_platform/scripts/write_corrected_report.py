@@ -106,7 +106,14 @@ def main():
     plots = args.run_dir / "analysis/plots"
     draw(summary["curves"], FIRST, plots / "corrected_reward_curves")
     draw(summary["curves"], SECOND, plots / "corrected_rate_weight_curves", True)
-    text = inject(args.tex.read_text(), "pm-jax-corrected-results", table(summary["cells"]))
+    # Select one setting per algorithm by the prespecified whole-run mean, within this fixed subset.
+    best_per_algorithm = {}
+    for row in summary["cells"]:
+        previous = best_per_algorithm.get(row["bonus"])
+        if previous is None or row["whole_run_reward"] > previous["whole_run_reward"]:
+            best_per_algorithm[row["bonus"]] = row
+    text = inject(args.tex.read_text(), "pm-jax-corrected-results",
+                  table(list(best_per_algorithm.values())))
     args.tex.write_text(text)
     best = max(summary["cells"], key=lambda row: row["whole_run_reward"])
     (args.run_dir / "analysis/analysis.md").write_text(
