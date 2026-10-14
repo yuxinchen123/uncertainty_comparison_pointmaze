@@ -78,7 +78,8 @@
 \label{sec:pm-jax-envspec}
 
 The platform uses the large PointMaze with fixed start and goal positions and no reset noise.
-\Cref{tab:pm-jax-env} gives the environment specification.
+\Cref{tab:pm-jax-env} gives the environment specification;
+\Cref{fig:pm-jax-environment} shows the maze and the grids used by the visit-count bonuses.
 
 \begin{table}[H]
 \centering
@@ -136,6 +137,16 @@ discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) \
 \caption{Environment specification for all runs in this section. The discounts are trainer defaults.}
 \label{tab:pm-jax-env}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{../../07_reconstruction/development_document/code/2026-06-23-pointmaze-discretation/pointmaze_discretization.pdf}
+\caption{Large PointMaze and visit-count grids, reused from the reconstruction development
+document. Left: grey cells are walls; the blue circle marks the fixed start at $(-4.5,-3.0)$
+and the green star marks the goal at $(4.5,3.0)$. Each position cell is $1$\,m square.
+Right: the $10\times10$ velocity bins used with position cells by the oracle bonuses.}
+\label{fig:pm-jax-environment}
+\end{figure}
 
 \subsection{Train run 1.1: the first algorithm batch}
 \label{sec:pm-jax-run11}
