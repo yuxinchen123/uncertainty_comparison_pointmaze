@@ -50,6 +50,16 @@ def build_sweep(cfg) -> SweepVectors:
     """
     C = cfg.n_copies
     sweeps_rate, sweeps_beta = bool(cfg.learning_rates), bool(cfg.betas)
+    explicit = tuple(cfg.parameter_settings)
+    if explicit and (sweeps_rate or sweeps_beta):
+        raise ValueError("parameter_settings cannot be combined with a Cartesian sweep")
+    if explicit:
+        if len(set(explicit)) != len(explicit):
+            raise ValueError("parameter_settings contains duplicate cells")
+        if any(rate <= 0 or beta < 0 or not np.isfinite([rate, beta]).all()
+               for rate, beta in explicit):
+            raise ValueError("each cell needs a finite positive rate and nonnegative weight")
+        sweeps_rate = sweeps_beta = True
     if not (sweeps_rate or sweeps_beta):
         return SweepVectors(False, None, None,
                             list(range(cfg.copy_seed_offset, cfg.copy_seed_offset + C)),
@@ -57,7 +67,7 @@ def build_sweep(cfg) -> SweepVectors:
 
     rates = tuple(cfg.learning_rates) if sweeps_rate else (cfg.learning_rate,)
     betas = tuple(cfg.betas) if sweeps_beta else (cfg.int_coef,)
-    settings = tuple(product(rates, betas))
+    settings = explicit or tuple(product(rates, betas))
     per_group = cfg.copies_per_group
     assert per_group > 0, "a sweep needs copies_per_group set"
     assert len(settings) * per_group == C, (

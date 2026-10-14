@@ -1,0 +1,6 @@
+copies: [128, 256, 512]
+rollout_steps: 128
+environments_per_copy: 4
+update_style: full_batch
+track_coverage: true
+statistics_dtype: float64

@@ -60,6 +60,8 @@ class PPOConfig:
                                      # uses `learning_rate` (round 4)
     betas: tuple = ()                # sweep: the weights on the intrinsic advantage to try;
                                      # empty means every copy uses `int_coef`
+    parameter_settings: tuple = ()   # explicit (learning rate, intrinsic weight) pairs;
+                                     # selects only requested cells instead of a cross product
     copies_per_group: int = 0        # sweep: copies each (learning rate, beta) cell gets; the
                                      # groups are the cross product of the two lists
     sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
