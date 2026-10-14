@@ -1,10 +1,10 @@
-"""Draw the six highest-peak configurations and RND at intrinsic weight 10 for each rate.
+"""Draw the four highest-peak configurations and RND at intrinsic weight 1 for each rate.
 
 "Best" here is the **highest point the aggregated curve reaches**: the copies are averaged first,
 window by window, and the maximum is taken of that mean. It is deliberately not the mean of each
 copy's own best window, which would be larger and would describe no run that ever happened, since
 every copy peaks at a different moment. For each (arm, learning rate) the intrinsic weight that
-maximises this is the one drawn, so the figure holds one curve per cell of a 2 x 3 grid.
+maximises this is the one drawn, so the figure holds one curve per cell of a 2 x 2 grid.
 
 What the figure is for: the learning rate, not the bonus, decides WHEN a run peaks and how far it
 falls afterwards. Colour is the arm and line style plus transparency is the learning rate, so the
@@ -31,7 +31,7 @@ import numpy as np                                                       # noqa:
 from curves_all import curves_all                                        # noqa: E402
 
 PLOTS = RUN_DIR / "analysis" / "plots"
-RATES = (1e-3, 1e-4, 1e-5)
+RATES = (1e-3, 1e-4)
 
 # colour is the ARM, and stays the one each arm carries everywhere else in this run family
 ARM = {
@@ -71,12 +71,12 @@ def best_by_maximum(curves: dict) -> dict:
     """For each (arm, learning rate), the intrinsic weight whose aggregated curve peaks highest.
 
     before: 66 curves, 11 weights for each of 2 arms x 3 rates;
-    after:  6 entries, each the winning weight with its curve and the index of its peak
+    after:  4 entries, each the winning weight with its curve and the index of its peak
     """
     best = {}
     for (arm, rate, weight), curve in curves.items():
         means = curve["mean_episode_return"]
-        if arm not in ARM or not means:
+        if arm not in ARM or rate not in RATES or not means:
             continue
         peak = int(np.argmax(means))
         current = best.get((arm, rate))
@@ -88,7 +88,7 @@ def best_by_maximum(curves: dict) -> dict:
 
 
 def main() -> None:
-    """Compare highest-peak configurations with RND at intrinsic weight 10."""
+    """Compare highest-peak configurations with RND at intrinsic weight 1."""
     PLOTS.mkdir(parents=True, exist_ok=True)
     curves = curves_all(RUN_DIR)
     best = best_by_maximum(curves)
@@ -119,19 +119,19 @@ def main() -> None:
                       xytext=LABEL_OFFSET[(arm, rate)], textcoords="offset points", **shared)
 
     # Add the same RND intrinsic weight at all rates, using the recorded copy means and errors.
-    # Before: six configurations selected by peak; after: also show three fixed-weight curves.
+    # Before: four configurations selected by peak; after: also show two fixed-weight curves.
     for rate in RATES:
-        curve = curves[("rnd_next_state", rate, 10.0)]
+        curve = curves[("rnd_next_state", rate, 1.0)]
         steps = np.asarray(curve["env_steps_per_copy"], dtype=float) / 1e6
         mean = np.asarray(curve["mean_episode_return"], dtype=float)
         error = np.asarray(curve["standard_error"], dtype=float)
         style, alpha, width = RATE_STYLE[rate]
         axes.plot(steps, mean, color="#D55E00", linestyle=style, linewidth=width, alpha=alpha,
                   label=rf"random network distillation, $\alpha = 10^{{{exponent(rate)}}}$, "
-                        r"$\beta = 10$ (fixed)", zorder=4)
+                        r"$\beta = 10^{0}$ (fixed)", zorder=4)
         axes.fill_between(steps, mean - error, mean + error, color="#D55E00",
                           alpha=0.07 * alpha, linewidth=0, zorder=1)
-        print(f"  fixed weight RND learning rate={rate:.0e} intrinsic weight=10 "
+        print(f"  fixed weight RND learning rate={rate:.0e} intrinsic weight=1 "
               f"windows={len(mean)} maximum={mean.max():.3f}")
 
     axes.set_xscale("log")
@@ -140,7 +140,7 @@ def main() -> None:
     axes.set_ylim(top=95)
     axes.set_xlabel("environment steps per copy (millions, logarithmic)")
     axes.set_ylabel("mean episode return")
-    axes.set_title("Highest-peak configurations and RND at intrinsic weight 10",
+    axes.set_title("Highest-peak configurations and RND at intrinsic weight 1",
                    fontsize=11)
     axes.grid(True, which="major", alpha=0.16, linewidth=0.6)
     axes.legend(fontsize=7.2, loc="upper left", framealpha=0.92)

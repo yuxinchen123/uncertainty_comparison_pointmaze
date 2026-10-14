@@ -363,9 +363,9 @@ threshold variants for $53$ configurations, including the ten with highest whole
 \Cref{tab:pm-jax-run11-shapes} shows the best non-falling configuration of each arm and its
 overall best for comparison.
 
-\Cref{fig:pm-jax-run11-shapes} compares learning rates. At $10^{-3}$, curves peak within
-$15$M steps and then decline; at $10^{-4}$, they peak near $200$M steps at higher returns;
-at $10^{-5}$, they are still rising at $1000$M steps. Both arms show this pattern.
+\Cref{fig:pm-jax-run11-shapes} compares learning rates. At $10^{-3}$, the selected curves peak within
+$15$M steps and then decline; at $10^{-4}$, they peak near $200$M steps at higher returns.
+Both arms show this pattern.
 
 \begin{table}[H]
 \centering
@@ -403,13 +403,12 @@ under two of nine threshold variants; $90$ of its copies individually rise then 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_curve_shapes.pdf}}
-\caption{Each arm at each learning rate, using the intrinsic weight with
-the highest peak in the copy-averaged curve. Orange curves add random network distillation
-at fixed intrinsic weight $\beta=10$ for all three learning rates; the $10^{-5}$ curve
-coincides with its highest-peak configuration. Markers show these peaks; bands show one standard
-error over $128$ copies. Colour identifies the algorithm. Dotted, solid, and dashed lines identify
-learning rates $10^{-3}$, $10^{-4}$, and $10^{-5}$, respectively. Selection by peak reward
-can differ from selection by whole-run reward in \Cref{tab:pm-jax-run11-results}.}
+\caption{Each arm at learning rates $10^{-3}$ and $10^{-4}$, using the intrinsic weight
+with the highest peak in the copy-averaged curve. Orange curves add random network distillation
+at fixed intrinsic weight $\beta=10^0=1$ for both learning rates. Markers show the peaks of the
+selected configurations; bands show one standard error over $128$ copies. Dotted and solid lines
+identify learning rates $10^{-3}$ and $10^{-4}$, respectively. Selection by peak reward can differ
+from selection by whole-run reward in \Cref{tab:pm-jax-run11-results}.}
 \label{fig:pm-jax-run11-shapes}
 \end{figure}
 
