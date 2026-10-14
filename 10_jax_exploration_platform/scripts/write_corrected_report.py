@@ -1,4 +1,4 @@
-"""Generate corrected results and overlay their curves on the historical figures."""
+"""Generate the corrected results table and the six settings from historical Figure 1.3."""
 import argparse
 import json
 from pathlib import Path
@@ -7,13 +7,10 @@ from aggregate_selected_run import best_per_algorithm
 NAMES = {"rnd_next_state": "random network distillation",
          "gt_position_velocity_sqrt": r"oracle counts $1/\sqrt{n}$",
          "gt_position_velocity_linear": r"oracle counts $1/n$", "none": "no bonus"}
-FIRST = [("rnd_next_state", 1e-3, 10), ("gt_position_velocity_sqrt", 1e-3, 1),
-         ("gt_position_velocity_linear", 1e-3, 1), ("none", 1e-3, 0),
-         ("rnd_next_state", 1e-4, 100), ("gt_position_velocity_sqrt", 1e-4, 10)]
-SECOND = [("gt_position_velocity_sqrt", 1e-3, 1),
-          ("gt_position_velocity_sqrt", 1e-4, 1), ("rnd_next_state", 1e-3, 100),
-          ("rnd_next_state", 1e-4, 1000), ("rnd_next_state", 1e-3, 1),
-          ("rnd_next_state", 1e-4, 1)]
+SETTINGS = [("gt_position_velocity_sqrt", 1e-3, 1),
+            ("gt_position_velocity_sqrt", 1e-4, 1), ("rnd_next_state", 1e-3, 100),
+            ("rnd_next_state", 1e-4, 1000), ("rnd_next_state", 1e-3, 1),
+            ("rnd_next_state", 1e-4, 1)]
 
 
 def power(value):
@@ -22,55 +19,31 @@ def power(value):
     return rf"10^{{{int(round(math.log10(value)))}}}"
 
 
-def draw(curves, historical, settings, output, shape_plot=False):
-    """Keep each setting's color and rate style; distinguish versions by shade and width."""
+def draw(curves, output):
+    """Draw only the six corrected curves, retaining the historical colors and rate styles."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.lines import Line2D
     import numpy as np
-    colors = {"rnd_next_state": "black", "gt_position_velocity_sqrt": "#0072B2",
-              "gt_position_velocity_linear": "#D55E00", "none": "#009E73"}
+    colors = {"rnd_next_state": "black", "gt_position_velocity_sqrt": "#0072B2"}
     figure, axes = plt.subplots(figsize=(7.6, 4.8))
-    for bonus, rate, weight in settings:
+    # Before: 11 trained settings; after: only the six settings of historical Figure 1.3.
+    for bonus, rate, weight in SETTINGS:
         curve = curves[f"{bonus}:{rate:g}:{weight:g}"]
         steps = np.asarray([point["steps"] for point in curve]) / 1e6
         means = np.asarray([point["mean"] for point in curve])
         errors = np.asarray([point["standard_error"] for point in curve])
-        color = "#D55E00" if shape_plot and bonus == "rnd_next_state" and weight == 1 else colors[bonus]
+        color = "#D55E00" if bonus == "rnd_next_state" and weight == 1 else colors[bonus]
         style = ":" if rate == 1e-3 else "-"
-        if not shape_plot:
-            style = "--" if rate == 1e-3 else "-"
-        label = NAMES[bonus] + rf", $\alpha={power(rate)}$"
-        if bonus != "none":
-            label += rf", $\beta={power(weight)}$"
-        old = historical[f"{bonus}:{rate:g}:{weight:g}"]
-        old_steps = np.asarray(old["env_steps_per_copy"]) / 1e6
-        old_means = np.asarray(old["mean_episode_return"])
-        old_errors = np.asarray(old["standard_error"])
-        axes.plot(old_steps, old_means, color=color, linestyle=style, linewidth=1,
-                  alpha=.4, zorder=2)
-        axes.fill_between(old_steps, old_means - old_errors, old_means + old_errors,
-                          color=color, alpha=.04, linewidth=0, zorder=1)
-        if shape_plot and not (bonus == "rnd_next_state" and weight == 1):
-            peak = int(np.argmax(old_means))
-            axes.plot(old_steps[peak], old_means[peak], marker="o", markersize=4,
-                      color=color, alpha=.4, linestyle="none", zorder=3)
+        label = NAMES[bonus] + rf", $\alpha={power(rate)}$, $\beta={power(weight)}$"
         axes.plot(steps, means, color=color, linestyle=style, linewidth=2.1, label=label,
                   zorder=4)
         axes.fill_between(steps, means - errors, means + errors, color=color, alpha=.13,
                           linewidth=0, zorder=3)
-    axes.axvline(100, color=".65", linewidth=.7, zorder=0)
-    axes.text(100, .01, " corrected budget: 100M", transform=axes.get_xaxis_transform(),
-              fontsize=7, rotation=90, va="bottom", color=".4")
     axes.set(xscale="log", xlabel="environment steps per copy (millions, logarithmic)",
-             ylabel="mean episode return", title="Uncorrected and corrected training")
+             ylabel="mean episode return", title="Training with continuing intrinsic returns")
     axes.grid(alpha=.25, which="both")
-    handles, labels = axes.get_legend_handles_labels()
-    handles += [Line2D([], [], color="black", alpha=.4, linewidth=1),
-                Line2D([], [], color="black", linewidth=2.1)]
-    labels += ["uncorrected: 1000M steps", "corrected: 100M steps"]
-    axes.legend(handles, labels, loc="upper left", fontsize=7, framealpha=.9)
+    axes.legend(loc="upper left", fontsize=8, framealpha=.9)
     figure.tight_layout()
     for extension in ("pdf", "png"):
         figure.savefig(output.with_suffix("." + extension), dpi=180)
@@ -153,9 +126,7 @@ def main():
         raise ValueError("report requires all 11 selected configurations to complete")
     verify_records(args.run_dir)
     plots = args.run_dir / "analysis/plots"
-    historical = json.loads((args.run_dir / "historical_curves.json").read_text())["curves"]
-    draw(summary["curves"], historical["first"], FIRST, plots / "comparison_reward_curves")
-    draw(summary["curves"], historical["second"], SECOND, plots / "comparison_rate_weight_curves", True)
+    draw(summary["curves"], plots / "corrected_rate_weight_curves")
     # Select one setting per algorithm by the prespecified whole-run mean, within this fixed subset.
     best = best_per_algorithm(summary["cells"])
     text = inject(args.tex.read_text(), "pm-jax-corrected-results",
@@ -169,11 +140,9 @@ def main():
         f"for {NAMES[best['bonus']]} at learning rate {best['learning_rate']:g} "
         f"and intrinsic weight {best['intrinsic_weight']:g}. "
         "The 100-million-step budget does not establish the later peaks observed in the "
-        "historical 1000-million-step experiments. Figures 1.2 and 1.3 overlay both versions "
-        "with matching colors; lighter thin lines are uncorrected and darker thick lines "
-        "are corrected. Learning-rate annealing spans each run's own budget, so this "
-        "comparison includes both the implementation corrections and different budgets "
-        "and schedules. The corrected no-bonus advantage weight is zero instead of one.\n")
+        "historical 1000-million-step experiments. Figure 1.4 presents only the corrected "
+        "curves for the six fixed settings in historical Figure 1.3, using matching colors "
+        "and learning-rate line patterns. Historical Figures 1.2 and 1.3 remain unchanged.\n")
     print(f"updated {args.tex}")
 
 

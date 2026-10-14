@@ -59,7 +59,7 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 # of them is visible in the record rather than silent
 SPECS = {
     "env": "pointmaze_large_cont400_nonoise@1",
-    "agent": "ppo_full_batch_continuing_intrinsic@2",
+    "agent": "ppo_full_batch_continuing_intrinsic@3",
 }
 
 # the update schedule each bonus family follows, for the manifest's record
@@ -221,7 +221,10 @@ def build_config(args: argparse.Namespace):
     """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
     from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.training.sweep import sweep_config
+    from exploration_platform.bonuses.registry import ALIASES
     rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
+    no_bonus = ALIASES.get(args.bonus, args.bonus) == "none"
+    intrinsic_coefficient = 0. if no_bonus else args.intrinsic_coefficient
     common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
                   base_seed=args.base_seed, track_coverage=args.track_coverage,
                   copy_seed_offset=args.copy_seed_offset, flat_params=args.flat_params,
@@ -236,19 +239,24 @@ def build_config(args: argparse.Namespace):
         settings = tuple(tuple(float(value) for value in pair) for pair in mapping[args.bonus])
         if any(len(pair) != 2 for pair in settings) or args.copies_per_cell < 1:
             raise ValueError("explicit settings require [rate, weight] pairs and copies-per-cell")
+        if no_bonus and any(weight != 0 for _, weight in settings):
+            raise ValueError("no-bonus settings must use intrinsic weight zero")
         return PPOConfig(n_copies=len(settings) * args.copies_per_cell,
                          update_style=args.update_style, parameter_settings=settings,
-                         copies_per_group=args.copies_per_cell, **common)
+                         copies_per_group=args.copies_per_cell,
+                         int_coef=intrinsic_coefficient, **common)
     # a sweep derives its copy count from the cells; a single configuration takes --copies
     if rates or weights:
+        if no_bonus and any(weight != 0 for weight in weights):
+            raise ValueError("no-bonus sweeps must use intrinsic weight zero")
         if args.copies_per_cell <= 0:
             raise ValueError("a sweep needs --copies-per-cell")
         return sweep_config(learning_rates=rates, betas=weights,
                             copies_per_group=args.copies_per_cell, style=args.update_style,
-                            learning_rate=args.learning_rate, int_coef=args.intrinsic_coefficient,
+                            learning_rate=args.learning_rate, int_coef=intrinsic_coefficient,
                             **common)
     return PPOConfig(n_copies=args.copies, update_style=args.update_style,
-                     learning_rate=args.learning_rate, int_coef=args.intrinsic_coefficient,
+                     learning_rate=args.learning_rate, int_coef=intrinsic_coefficient,
                      **common)
 
 

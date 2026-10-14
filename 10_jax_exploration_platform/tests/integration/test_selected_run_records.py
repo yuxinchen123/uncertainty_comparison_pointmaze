@@ -32,6 +32,35 @@ def main():
         else:
             raise AssertionError("conflicting selected and Cartesian settings accepted")
 
+        # A no-bonus launch records zero weight and rejects nonzero sweep settings.
+        sys.argv = ["run_training", "--run-dir", str(run), "--unit-id", "test",
+                    "--bonus", "none"]
+        assert build_config(parse_args()).int_coef == 0.
+        sys.argv += ["--learning-rates", "1e-3,1e-4", "--copies-per-cell", "128"]
+        assert build_sweep(build_config(parse_args())).group_settings == ((1e-3, 0.), (1e-4, 0.))
+        sys.argv += ["--intrinsic-weights", "1"]
+        try:
+            build_config(parse_args())
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("nonzero no-bonus sweep weight accepted")
+        settings.write_text(json.dumps({"rnd_next_state": [[1e-3, 100], [1e-4, 1]],
+                                        "none": [[1e-3, 1]]}))
+        sys.argv = ["run_training", "--run-dir", str(run), "--unit-id", "test",
+                    "--bonus", "none", "--parameter-settings", str(settings),
+                    "--copies-per-cell", "128"]
+        try:
+            build_config(parse_args())
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("nonzero no-bonus selected weight accepted")
+        settings.write_text(json.dumps({"rnd_next_state": [[1e-3, 100], [1e-4, 1]],
+                                        "none": [[1e-3, 0]]}))
+        cfg = build_config(parse_args())
+        assert cfg.int_coef == 0. and build_sweep(cfg).group_settings == ((1e-3, 0.),)
+
         # Before: old complete data plus a partial retry; after: no completed score until retry ends.
         start = {"record": "unit_start", "unit_id": "test", "bonus": "rnd_next_state",
                  "cell_settings": [[1e-3, 100]], "copy_seed_index": list(range(128)),

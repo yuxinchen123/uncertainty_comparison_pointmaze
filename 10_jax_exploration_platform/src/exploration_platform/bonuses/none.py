@@ -8,8 +8,8 @@ not is `tests/bonuses/test_none_has_no_bonus_arithmetic.py`.
 
 The agent's intrinsic value head and its advantage stream still exist. Zero intrinsic rewards
 do not make approximate intrinsic advantages zero: the initialized value head can still predict
-nonzero values. An extrinsic-only policy control must set its intrinsic-advantage weight to zero.
-The corrected selected experiment does so explicitly in its parameter settings.
+nonzero values. The trainer excludes intrinsic advantages from this control's policy update,
+regardless of the configured intrinsic weight.
 """
 import jax.numpy as jnp
 

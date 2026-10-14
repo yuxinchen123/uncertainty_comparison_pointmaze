@@ -176,9 +176,11 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             (rext_buf, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
              boot_mask, done_buf), reverse=True)
 
-        # the weight on the intrinsic advantage: one scalar for every copy, or — when a sweep
-        # varies it — one value per copy broadcast along the copy axis of [T, C, N]
-        if sweep.beta_per_copy is None:
+        # No-bonus policies use task advantages only. Other bonuses use either a scalar
+        # intrinsic weight or per-copy weights broadcast over the [T, C, N] rollout.
+        if bonus.name == "none":
+            adv = cfg.ext_coef * aext_buf
+        elif sweep.beta_per_copy is None:
             adv = cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf
         else:
             adv = sweep.beta_per_copy.reshape(1, C, 1) * aint_buf + cfg.ext_coef * aext_buf

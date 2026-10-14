@@ -4,7 +4,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-from write_corrected_report import inject, table, verify_records
+from write_corrected_report import SETTINGS, draw, inject, table, verify_records
 from aggregate_selected_run import best_per_algorithm
 
 
@@ -46,6 +46,34 @@ def main():
     import tempfile
     with tempfile.TemporaryDirectory() as temporary:
         run = Path(temporary)
+        # Six corrected settings give six lines; extra trained settings are not plotted.
+        import matplotlib.pyplot as plt
+        curves = {f"{b}:{r:g}:{w:g}": [
+            {"steps": 1e6, "mean": 1., "standard_error": .1},
+            {"steps": 1e8, "mean": 2., "standard_error": .2}]
+                  for b, r, w in SETTINGS}
+        curves["none:0.001:0"] = next(iter(curves.values()))
+        closed_figures = []
+        original_close = plt.close
+        plt.close = lambda figure: closed_figures.append(figure)
+        try:
+            draw(curves, run / "curves")
+        finally:
+            plt.close = original_close
+        figure = closed_figures[-1]
+        assert len(figure.axes[0].lines) == 6
+        assert all("corrected" not in line.get_label() for line in figure.axes[0].lines)
+        assert (run / "curves.pdf").exists() and (run / "curves.png").exists()
+        original_close(figure)
+        missing = dict(curves)
+        missing.pop(next(iter(missing)))
+        try:
+            draw(missing, run / "missing")
+        except KeyError:
+            plt.close("all")
+        else:
+            raise AssertionError("missing corrected curve accepted")
+
         (run / "data").mkdir()
         window = {"record": "episode_window", "loss": 1.,
                   "reward_ext_sum_per_copy": [0.] * 128,

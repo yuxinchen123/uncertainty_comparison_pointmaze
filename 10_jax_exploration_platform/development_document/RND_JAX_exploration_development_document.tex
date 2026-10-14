@@ -328,15 +328,12 @@ within each block. Higher is better for every recorded metric.}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/comparison_reward_curves.pdf}}
-\caption{Uncorrected and corrected training for the same six settings. Lighter, thinner curves
-show the original 1000M-step runs; darker, thicker curves show corrected 100M-step runs in the
-same colors. Dashed curves use the settings selected at 10M steps (1024 historical copies);
-solid curves use settings selected at 1000M steps (128 historical copies). Corrected curves
-average 128 copies each. Bands show one standard error. The vertical line marks the corrected
-budget. Learning rates are annealed over each run's own budget, so this comparison includes
-both the implementation corrections and the different budgets and schedules. The corrected
-no-bonus control also sets the intrinsic-advantage weight to zero.}
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
+\caption{Mean episode return over $1000$M steps per copy, with bands of
+one standard error. Dashed curves use configurations selected at $10$M steps ($1{,}024$ copies);
+solid curves use configurations selected at $1000$M steps ($128$ copies). Each point averages
+$256$ episodes per copy. The step axis is logarithmic. The legend gives the learning rate and
+intrinsic weight.}
 \label{fig:pm-jax-run11-curves}
 \end{figure}
 
@@ -411,14 +408,13 @@ under two of nine threshold variants; $90$ of its copies individually rise then 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/comparison_rate_weight_curves.pdf}}
-\caption{Uncorrected and corrected curves for the historical peak-selected settings and
-random network distillation at fixed intrinsic weight $\beta=1$ (orange). Matching settings use
-the same colors: lighter, thinner lines are uncorrected (1000M steps), and darker, thicker
-lines are corrected (100M steps). Dotted and solid lines identify learning rates $10^{-3}$ and
-$10^{-4}$, respectively. Bands show one standard error over 128 copies. Circles mark the historical peaks. Historical settings
-are held fixed; no new peak winners are selected. The vertical line marks the corrected budget.
-As in Figure~\ref{fig:pm-jax-run11-curves}, the learning-rate schedules use different budgets.}
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_curve_shapes.pdf}}
+\caption{Each arm at learning rates $10^{-3}$ and $10^{-4}$, using the intrinsic weight
+with the highest peak in the copy-averaged curve. Orange curves add random network distillation
+at fixed intrinsic weight $\beta=10^0=1$ for both learning rates. Markers show the peaks of the
+selected configurations; bands show one standard error over $128$ copies. Dotted and solid lines
+identify learning rates $10^{-3}$ and $10^{-4}$, respectively. Selection by peak reward can differ
+from selection by whole-run reward in \Cref{tab:pm-jax-run11-results}.}
 \label{fig:pm-jax-run11-shapes}
 \end{figure}
 
@@ -525,8 +521,16 @@ whole-run reward $0.44$. Without a bonus, only one of the $128$ copies ever reac
 its whole-run mean reward is $3.44\times10^{-7}$, which rounds to zero in the table.
 
 
-The corrected and uncorrected training curves are overlaid in
-Figures~\ref{fig:pm-jax-run11-curves} and~\ref{fig:pm-jax-run11-shapes}, using the same
-color for each matching setting.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_rate_weight_curves.pdf}}
+\caption{Corrected 100M-step training for the six settings in historical
+Figure~\ref{fig:pm-jax-run11-shapes}. Colors retain their original meaning: random network
+distillation is black, oracle $1/\sqrt{n}$ counts are blue, and random network distillation at
+fixed intrinsic weight $\beta=1$ is orange. Dotted and solid lines identify learning rates
+$10^{-3}$ and $10^{-4}$, respectively. Bands show one standard error over 128 copies.
+The settings are held fixed from the historical figure; no new peak winners are selected.}
+\label{fig:pm-jax-corrected-curves}
+\end{figure}
 
 \end{document}

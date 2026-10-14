@@ -46,5 +46,10 @@ the same families. The composed program then contains that one bonus and no bran
 between bonuses; `tests/bonuses/test_none_has_no_bonus_arithmetic.py` checks that directly, in the
 compiled program.
 
+Intrinsic returns continue across episode resets using the value of the reset observation.
+No-bonus policies always use task advantages only, regardless of the intrinsic-weight setting.
+The training command records zero intrinsic weight for no-bonus runs and rejects nonzero
+weights in explicit no-bonus parameter lists or sweeps.
+
 `scripts/run_training.py` is the same thing as a command, writing the platform's standard run
 folder.
