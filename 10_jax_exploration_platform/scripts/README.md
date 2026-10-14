@@ -18,3 +18,24 @@ environment's own. Graphics-card work on serval05 goes through the lock, one com
 ```
 bash /p/rlprojects/RND/09_parallelization/locks/gpu_run.sh "<command>"
 ```
+
+`run_training.py --parameter-settings settings.json --bonus rnd_next_state
+--copies-per-cell 128` trains exactly the pairs listed for that algorithm. For example:
+
+```json
+{
+  "rnd_next_state": [[0.001, 10], [0.0001, 100]],
+  "gt_position_velocity_sqrt": [[0.001, 1]],
+  "none": [[0.001, 0]]
+}
+```
+
+Each pair contains a learning rate and an intrinsic-advantage weight. Algorithms can have
+different pairs; no extra Cartesian-product settings are created. Copies share seed indices
+across settings. The no-bonus policy control uses weight zero.
+
+Separate UVA programs use `--no-aggregate`; `aggregate_selected_run.py` publishes their
+combined scores and curves, and `monitor_selected_run.py` monitors progress on a compute node.
+`write_corrected_report.py` reads that aggregate to generate the corrected results table and
+figures. The selected report run uses one 128-copy setting per queue unit; the shared GPU
+manager claims those units as cards become available.

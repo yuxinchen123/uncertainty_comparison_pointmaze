@@ -1,14 +1,512 @@
-environment: pointmaze_large_cont400_nonoise@1
-agent: ppo_full_batch_continuing_intrinsic@2
-rollout_steps: 128
-environments_per_copy: 4
-iterations: 195325
-window_iterations: 200
-base_seed: 0
-run_seed: 0
-paired_seed_indices: [0, 127]
-parameter_settings: parameter_settings.json
-copies_per_unit: 128
-flat_params: false
-scan_unroll: 0
-iterations_per_dispatch: 1
+{
+  "units": {
+    "random-network-distillation_learning-rate-0.001_intrinsic-weight-10": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          10
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "random-network-distillation_learning-rate-0.0001_intrinsic-weight-100": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.0001,
+          100
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "random-network-distillation_learning-rate-0.001_intrinsic-weight-100": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          100
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "random-network-distillation_learning-rate-0.0001_intrinsic-weight-1000": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.0001,
+          1000
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "random-network-distillation_learning-rate-0.001_intrinsic-weight-1": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          1
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "random-network-distillation_learning-rate-0.0001_intrinsic-weight-1": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.0001,
+          1
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "visit-count-inverse-square-root_learning-rate-0.001_intrinsic-weight-1": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          1
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "visit-count-inverse-square-root_learning-rate-0.0001_intrinsic-weight-10": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.0001,
+          10
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "visit-count-inverse-square-root_learning-rate-0.0001_intrinsic-weight-1": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.0001,
+          1
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "visit-count-inverse_learning-rate-0.001_intrinsic-weight-1": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          1
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    },
+    "no-bonus_learning-rate-0.001_intrinsic-weight-0": {
+      "n_copies": 128,
+      "n_envs": 4,
+      "num_steps": 128,
+      "update_style": "full_batch",
+      "flat_params": false,
+      "update_epochs": 4,
+      "num_minibatches": 4,
+      "learning_rate": 0.0003,
+      "adam_eps": 1e-05,
+      "anneal_lr": true,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "gae_lambda": 0.95,
+      "clip_coef": 0.2,
+      "ent_coef": 0.0,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "int_coef": 1.0,
+      "ext_coef": 2.0,
+      "prime_iterations": 10,
+      "bootstrap_on_truncation": true,
+      "base_seed": 0,
+      "hoist_rollout": true,
+      "scan_unroll": 0,
+      "update_unroll": 2,
+      "batch_stats_f32": false,
+      "learning_rates": [],
+      "betas": [],
+      "parameter_settings": [
+        [
+          0.001,
+          0.0
+        ]
+      ],
+      "copies_per_group": 128,
+      "sweep_seed_mode": "paired",
+      "copy_seed_offset": 0,
+      "track_coverage": true
+    }
+  },
+  "runtime": {
+    "iterations": 195325,
+    "window_iterations": 200,
+    "run_seed": 0,
+    "steps_per_copy": 100006400,
+    "interpreter": "/p/rlprojects/RND/.venvs/platform_jax/bin/python"
+  },
+  "environment": {
+    "specification": "pointmaze_large_cont400_nonoise@1",
+    "map_name": "large",
+    "max_episode_steps": 400,
+    "position_noise": 0.0,
+    "continuing_task": true
+  },
+  "parameter_settings": {
+    "rnd_next_state": [
+      [
+        0.001,
+        10
+      ],
+      [
+        0.0001,
+        100
+      ],
+      [
+        0.001,
+        100
+      ],
+      [
+        0.0001,
+        1000
+      ],
+      [
+        0.001,
+        1
+      ],
+      [
+        0.0001,
+        1
+      ]
+    ],
+    "gt_position_velocity_sqrt": [
+      [
+        0.001,
+        1
+      ],
+      [
+        0.0001,
+        10
+      ],
+      [
+        0.0001,
+        1
+      ]
+    ],
+    "gt_position_velocity_linear": [
+      [
+        0.001,
+        1
+      ]
+    ],
+    "none": [
+      [
+        0.001,
+        0.0
+      ]
+    ]
+  }
+}

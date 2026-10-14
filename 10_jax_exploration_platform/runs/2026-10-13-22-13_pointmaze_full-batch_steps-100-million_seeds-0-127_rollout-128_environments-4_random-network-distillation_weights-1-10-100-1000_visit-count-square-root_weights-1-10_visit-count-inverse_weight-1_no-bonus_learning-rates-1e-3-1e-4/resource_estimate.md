@@ -1,0 +1,3 @@
+Use one fused 128-copy program per graphics card. The corrected RND measurement on serval05 used 524.45 MiB peak device memory. The initial A100 validation recorded about 2.0 GiB host memory while compiling. Request 8 GiB host memory per program and record the completed validation peak before final submission. Preserve float64 running statistics and the default rollout unroll. Individual iteration execution is retained.
+
+Completed RTX A4500 validation job 6718005: exit 0, 2:56 elapsed, MaxRSS 2,235,224 KiB. All four real algorithm entries completed their 200-iteration canaries. The zero-weight no-bonus policy batch matched task-only advantages to 5.96e-8; the historical weight-one batch differed by 0.1101. Request 8 GiB host memory per GPU program.

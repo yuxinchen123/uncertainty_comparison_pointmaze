@@ -12,4 +12,4 @@ Intrinsic returns continue across resets and bootstrap from the actual reset obs
 
 ## Git state
 
-Commit will be recorded before submission. Existing changes in 08_cleanrl_ppo_rnd and RLeXplore belong to other sessions.
+Run code and input configurations are committed and pushed before submission. The exact source commit and SHA-256 file identities are recorded in source_identity.json at launch. Existing changes in 08_cleanrl_ppo_rnd and RLeXplore belong to other sessions.

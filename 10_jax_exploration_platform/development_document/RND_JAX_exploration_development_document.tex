@@ -431,6 +431,7 @@ uses only task advantages. The shared two-head critic architecture is retained.
 The 11 unique settings shown in Figures~\ref{fig:pm-jax-run11-curves} and
 \ref{fig:pm-jax-run11-shapes} are retrained for 100M steps with 128 paired seeds per setting.
 The learning rate is denoted by $\alpha$, and the weight on intrinsic advantage by $\beta$.
+For the oracle bonuses, $n$ denotes the visit count of the discretized position and velocity state.
 Only the listed pairs are trained; the experiment does not take their Cartesian product.
 
 \begin{table}[H]
@@ -489,6 +490,7 @@ fraction of copies that received task reward at least once during training. Cove
 fraction of the 46 open maze cells visited. Reported uncertainties are standard errors over
 128 copies. The settings are fixed from the historical figures, rather than selected again
 from a full grid. A 100M-step run cannot establish the later peaks seen at 1000M steps.
+The number of completed copies is denoted by $N$.
 
 \begin{table}[H]
 \centering
