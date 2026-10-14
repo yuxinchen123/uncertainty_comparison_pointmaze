@@ -151,22 +151,6 @@ Right: the $10\times10$ velocity bins used with position cells by the oracle bon
 \subsection{Train run 1.1: the first algorithm batch}
 \label{sec:pm-jax-run11}
 
-Four algorithm arms run at once: random network distillation, no exploration bonus at all, and the
-two oracle visit-count bonuses that differ only in how fast their bonus falls with the count. Each
-arm is swept over three learning rates, and each arm that has a bonus is swept over eleven weights
-on that bonus.
-
-\paragraph{Hypotheses.}
-\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
-\item Random network distillation, at its best intrinsic weight for each learning rate,
-  achieves higher reward and coverage than training without an exploration bonus.
-\item Both oracle visit-count bonuses achieve at least the reward and coverage of the best
-  random-network-distillation configuration.
-\item The $1/\sqrt{n}$ bonus achieves higher coverage, while $1/n$ achieves higher reward;
-  $n$ is the visit count.
-\item For each bonus, reward rises and then falls as its intrinsic weight increases.
-\end{enumerate}
-
 \begin{table}[H]
 \centering
 \footnotesize
@@ -349,15 +333,15 @@ intrinsic weight.}
 
 \paragraph{Findings.}
 \begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
-\item \textbf{H1 is supported at the two larger learning rates.} Random network distillation
+\item \textbf{Distillation improves reward at the two larger learning rates.} Random network distillation
   improves reward over training without a bonus at $10^{-3}$ and $10^{-4}$. At $10^{-5}$,
   both have zero reward, although distillation achieves higher coverage.
-\item \textbf{H2 is refuted.} At $10$M steps, the oracle $1/\sqrt{n}$ bonus has higher reward
+\item \textbf{Oracle bonuses do not consistently outperform distillation.} At $10$M steps, the oracle $1/\sqrt{n}$ bonus has higher reward
   than distillation, but $1/n$ has lower reward. The winning oracle's coverage is not clearly
   different from distillation's.
-\item \textbf{H3 is refuted.} At $10$M steps, $1/\sqrt{n}$ achieves both higher coverage and
+\item \textbf{The slower-decaying oracle bonus performs better on both metrics.} At $10$M steps, $1/\sqrt{n}$ achieves both higher coverage and
   higher reward than $1/n$.
-\item \textbf{H4 is partly supported.} At learning rate $10^{-3}$, reward has an interior peak
+\item \textbf{Reward peaks at an intermediate intrinsic weight.} At learning rate $10^{-3}$, reward has an interior peak
   and declines at larger intrinsic weights. Very small weights yield almost no reward,
   rather than a clear increasing sequence.
 \item \textbf{The best settings depend on the training budget.} The $10$M-step sweep selects
