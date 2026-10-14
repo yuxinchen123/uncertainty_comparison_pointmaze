@@ -1,0 +1,11 @@
+environment: pointmaze_large_cont400_nonoise@1
+agent: ppo_full_batch_continuing_intrinsic@2
+rollout_steps: 128
+environments_per_copy: 4
+iterations: 195325
+window_iterations: 200
+base_seed: 0
+run_seed: 0
+paired_seed_indices: [0, 127]
+parameter_settings: parameter_settings.json
+execution_choices: to_be_selected_from_benchmarks

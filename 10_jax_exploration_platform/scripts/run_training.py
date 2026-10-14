@@ -187,6 +187,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--flat-params", action="store_true")
     parser.add_argument("--scan-unroll", type=int, default=0)
     parser.add_argument("--iterations-per-dispatch", type=int, default=1)
+    parser.add_argument("--no-aggregate", action="store_true",
+                        help="let the run's central monitor write the aggregate")
     parser.add_argument("--bonus", default="rnd_next_state",
                         help="which intrinsic-reward family; see bonuses/registry.py")
     parser.add_argument("--base-seed", type=int, default=0)
@@ -412,6 +414,11 @@ def main() -> None:
     window_first_iteration = 1
     from exploration_platform.training.blocks import iteration_block
     blocks = {}
+    # Before: one device scalar and a stack for each rate; after: one array transfer per block.
+    fractions = (1.0 - np.arange(args.iterations, dtype=np.float64) / args.iterations
+                 if config.anneal_lr else np.ones(args.iterations, dtype=np.float64))
+    schedule = (fractions if trainer.sweep.lr_per_copy is not None
+                else fractions * config.learning_rate).astype(np.float32)
     iteration = 0
     while iteration < args.iterations:
         # Do not cross a recording-window boundary; before: 8 + 8 exceeds 10, after: 8 + 2.
@@ -426,8 +433,7 @@ def main() -> None:
             if length not in blocks:
                 blocks[length] = iteration_block(trainer, length)
             # The supplied schedule preserves each iteration's original annealed rate exactly.
-            rates = jnp.stack([trainer.lr_argument(index, args.iterations)
-                               for index in range(iteration + 1, iteration + length + 1)])
+            rates = jnp.asarray(schedule[iteration:iteration + length])
             state, metrics = blocks[length](state, rates)
         iteration += length
         reward_in_window = reward_in_window + metrics["reward_ext_sum"]
@@ -507,6 +513,10 @@ def main() -> None:
     })
     say(f"unit {args.unit_id} complete: {args.iterations} iterations in {total_seconds:.1f}s")
     out.close()
+
+    if args.no_aggregate:
+        log.close()
+        return
 
     # one shard is still a sweep of one: the run-level files are always the aggregate
     sys.path.insert(0, str(Path(__file__).resolve().parent))

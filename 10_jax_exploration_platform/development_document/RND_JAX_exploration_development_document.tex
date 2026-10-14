@@ -149,6 +149,10 @@ Right: the $10\times10$ velocity bins used with position cells by the oracle bon
 \end{figure}
 
 \subsection{Train run 1.1: the first algorithm batch}
+
+These historical results were produced before the intrinsic reset correction. At episode
+resets, the old implementation continued intrinsic advantages while predicting the next
+intrinsic value from the final state. The corrected results appear in Section~\ref{sec:pm-jax-corrected}.
 \label{sec:pm-jax-run11}
 
 \begin{table}[H]
@@ -410,6 +414,105 @@ selected configurations; bands show one standard error over $128$ copies. Dotted
 identify learning rates $10^{-3}$ and $10^{-4}$, respectively. Selection by peak reward can differ
 from selection by whole-run reward in \Cref{tab:pm-jax-run11-results}.}
 \label{fig:pm-jax-run11-shapes}
+\end{figure}
+
+
+\subsection{Train run 1.2: corrected intrinsic returns}
+\label{sec:pm-jax-corrected}
+At a 400-step reset, intrinsic advantages now continue into the next episode using the
+intrinsic value of the reset observation. The immediate intrinsic bonus still scores the final
+transition observation. Task-return bootstrapping and task advantage boundaries retain their
+previous definitions. This matches CleanRL's continuing intrinsic-return convention.
+
+The 11 unique settings shown in Figures~\ref{fig:pm-jax-run11-curves} and
+\ref{fig:pm-jax-run11-shapes} are retrained for 100M steps with 128 paired seeds per setting.
+The learning rate is denoted by $\alpha$, and the weight on intrinsic advantage by $\beta$.
+Only the listed pairs are trained; the experiment does not take their Cartesian product.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}p{2.8cm}?p{2.9cm}?p{2.6cm}?p{2.6cm}?p{2.1cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{random network distillation} &
+\textbf{oracle counts $1/\sqrt{n}$} & \textbf{oracle counts $1/n$} & \textbf{no bonus} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Environment and algorithm}} \\
+\greyrule
+environment & \multicolumn{4}{c}{PointMaze large, no reset noise (Table~\ref{tab:pm-jax-env})} \\
+\greyrule
+training budget per copy & \multicolumn{4}{c}{100M environment steps} \\
+\greyrule
+update schedule & \multicolumn{4}{c}{one full-batch gradient step per rollout} \\
+\greyrule
+rollout and environments & \multicolumn{4}{c}{128 steps, four environments per copy} \\
+\greyrule
+seeds per setting & \multicolumn{4}{c}{128; the same seed indices across all settings} \\
+\greyrule
+other settings & \multicolumn{4}{c}{as in Table~\ref{tab:pm-jax-run11-swept}; corrected intrinsic reset value} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Selected parameters}} \\
+\greyrule
+{\bfseries\boldmath learning rate $\alpha$} & {\bfseries\boldmath $10^{-3},10^{-4}$} &
+{\bfseries\boldmath $10^{-3},10^{-4}$} & {\bfseries\boldmath $10^{-3}$} & {\bfseries\boldmath $10^{-3}$} \\
+\greyrule
+{\bfseries\boldmath intrinsic weight $\beta$} & {\bfseries\boldmath $1,10,100,1000$} &
+{\bfseries\boldmath $1,10$} & {\bfseries\boldmath $1$} & \textbf{N/A} \\
+\greyrule
+{\bfseries\boldmath trained $(\alpha,\beta)$ pairs} &
+{\bfseries\boldmath $(10^{-3},1)$\newline $(10^{-3},10)$\newline $(10^{-3},100)$\newline
+$(10^{-4},1)$\newline $(10^{-4},100)$\newline $(10^{-4},1000)$} &
+{\bfseries\boldmath $(10^{-3},1)$\newline $(10^{-4},1)$\newline $(10^{-4},10)$} &
+{\bfseries\boldmath $(10^{-3},1)$} & {\bfseries\boldmath $10^{-3}$, no weight} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Configuration counts}} \\
+\greyrule
+configurations & 6 selected pairs & 3 selected pairs & 1 selected pair & 1 learning rate \\
+\greyrule
+total configurations & \multicolumn{4}{c}{$6+3+1+1=11$} \\
+\blackrule
+\end{tabular}
+\caption{The settings retrained after correcting intrinsic returns. Each listed setting uses 128 independent copies.}
+\label{tab:pm-jax-corrected-swept}
+\end{table}
+
+\paragraph{Metrics.}
+Whole-run reward is each copy's mean task return over complete episode windows, then averaged
+over copies. Final-window reward uses the last 160 episodes per copy. Goal-reaching is the
+fraction of copies that received task reward at least once during training. Coverage is the
+fraction of the 46 open maze cells visited. Reported uncertainties are standard errors over
+128 copies. The settings are fixed from the historical figures, rather than selected again
+from a full grid. A 100M-step run cannot establish the later peaks seen at 1000M steps.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+% Generator: ../scripts/write_corrected_report.py; reads the run's summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-corrected-results
+\begin{tabular}{l}
+Training results will be inserted after all 11 settings complete.\\
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-corrected-results
+\caption{Corrected 100M-step results for every retrained setting. Values are means $\pm$ standard errors where shown.}
+\label{tab:pm-jax-corrected-results}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\IfFileExists{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_reward_curves.pdf}}{\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_reward_curves.pdf}}}{\fbox{Training curves will be inserted when the run completes.}}
+\caption{Corrected 100M-step training for the six settings shown in historical Figure~\ref{fig:pm-jax-run11-curves}. Each curve averages 128 copies; bands show one standard error. Dotted curves use learning rate $10^{-3}$ and solid curves $10^{-4}$.}
+\label{fig:pm-jax-corrected-curves}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_rate_weight_curves.pdf}}{\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_rate_weight_curves.pdf}}}{\fbox{Training curves will be inserted when the run completes.}}
+\caption{Corrected 100M-step training for the six settings shown in historical Figure~\ref{fig:pm-jax-run11-shapes}. Orange curves use random network distillation with intrinsic weight $\beta=1$. The historical peak-selected settings are held fixed; this figure does not select new peak winners. Bands show one standard error over 128 copies.}
+\label{fig:pm-jax-corrected-rates}
 \end{figure}
 
 \end{document}

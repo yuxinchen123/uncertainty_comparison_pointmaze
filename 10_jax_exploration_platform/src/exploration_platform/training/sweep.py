@@ -71,7 +71,7 @@ def build_sweep(cfg) -> SweepVectors:
     per_group = cfg.copies_per_group
     assert per_group > 0, "a sweep needs copies_per_group set"
     assert len(settings) * per_group == C, (
-        f"{len(rates)} learning rates x {len(betas)} intrinsic weights x {per_group} copies "
+        f"{len(settings)} parameter cells x {per_group} copies "
         f"per group is {len(settings) * per_group} copies, but n_copies is {C}")
 
     # the seed index of a copy keys BOTH its initial weights and the environment draws it meets,
