@@ -202,8 +202,8 @@ bonus input & the next state $(x, y, v_x, v_y)$ & N/A &
 bonus value & the squared prediction error, whitened by its running standard deviation & N/A &
   $\min(1, n^{-1/2})$ at count~$n$ & $\min(1, n^{-1})$ at count~$n$ \\
 \greyrule
-what the bonus holds & a predictor network trained with the agent: 2 hidden layers of $256$, $128$
-  outputs & nothing & \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{one integer count table
+what the bonus holds & a predictor network trained with the agent: hidden widths $256$ and $128$;
+  $128$ outputs & nothing & \multicolumn{2}{>{\centering\arraybackslash}p{5.9cm}}{one integer count table
   per copy, $9 \times 12 \times 100 = 10{,}800$ entries; a wall or unvisited cell scores $1$} \\
 \greyrule
 when the bonus updates & every gradient step, as a term of the joint loss & N/A &

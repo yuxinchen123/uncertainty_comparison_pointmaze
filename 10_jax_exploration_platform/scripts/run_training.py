@@ -182,6 +182,11 @@ def parse_args() -> argparse.Namespace:
                         help="comma-separated weights on the intrinsic advantage to sweep")
     parser.add_argument("--copies-per-cell", type=int, default=0,
                         help="copies each (rate, weight) cell gets; required for a sweep")
+    parser.add_argument("--parameter-settings", type=Path,
+                        help="JSON mapping each bonus name to explicit [rate, weight] pairs")
+    parser.add_argument("--flat-params", action="store_true")
+    parser.add_argument("--scan-unroll", type=int, default=0)
+    parser.add_argument("--iterations-per-dispatch", type=int, default=1)
     parser.add_argument("--bonus", default="rnd_next_state",
                         help="which intrinsic-reward family; see bonuses/registry.py")
     parser.add_argument("--base-seed", type=int, default=0)
@@ -218,7 +223,21 @@ def build_config(args: argparse.Namespace):
     rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
     common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
                   base_seed=args.base_seed, track_coverage=args.track_coverage,
-                  copy_seed_offset=args.copy_seed_offset)
+                  copy_seed_offset=args.copy_seed_offset, flat_params=args.flat_params,
+                  scan_unroll=args.scan_unroll)
+    # Before: two rates x two weights = four cells; after: only the listed pairs train.
+    if args.parameter_settings:
+        if rates or weights:
+            raise ValueError("explicit parameter settings cannot be combined with sweep lists")
+        mapping = json.loads(args.parameter_settings.read_text())
+        if args.bonus not in mapping or not mapping[args.bonus]:
+            raise ValueError(f"no parameter settings listed for {args.bonus}")
+        settings = tuple(tuple(float(value) for value in pair) for pair in mapping[args.bonus])
+        if any(len(pair) != 2 for pair in settings) or args.copies_per_cell < 1:
+            raise ValueError("explicit settings require [rate, weight] pairs and copies-per-cell")
+        return PPOConfig(n_copies=len(settings) * args.copies_per_cell,
+                         update_style=args.update_style, parameter_settings=settings,
+                         copies_per_group=args.copies_per_cell, **common)
     # a sweep derives its copy count from the cells; a single configuration takes --copies
     if rates or weights:
         if args.copies_per_cell <= 0:
@@ -290,6 +309,8 @@ def main() -> None:
     import jax.numpy as jnp
 
     config = build_config(args)
+    if args.iterations_per_dispatch < 1:
+        raise ValueError("iterations-per-dispatch must be positive")
     if not (run_dir / "manifest.yaml").exists():
         write_launch_files(run_dir, args, config)
 
@@ -389,13 +410,29 @@ def main() -> None:
     first_iteration_seconds = None
     window_index = 0
     window_first_iteration = 1
-    for iteration in range(1, args.iterations + 1):
+    from exploration_platform.training.blocks import iteration_block
+    blocks = {}
+    iteration = 0
+    while iteration < args.iterations:
+        # Do not cross a recording-window boundary; before: 8 + 8 exceeds 10, after: 8 + 2.
+        remaining_in_window = args.window_iterations - iteration % args.window_iterations
+        length = min(args.iterations_per_dispatch, remaining_in_window,
+                     args.iterations - iteration)
         iteration_start = time.time()
-        state, metrics = trainer.iterate(state,
-                                         trainer.lr_argument(iteration, args.iterations))
+        if length == 1:
+            state, metrics = trainer.iterate(state,
+                                             trainer.lr_argument(iteration + 1, args.iterations))
+        else:
+            if length not in blocks:
+                blocks[length] = iteration_block(trainer, length)
+            # The supplied schedule preserves each iteration's original annealed rate exactly.
+            rates = jnp.stack([trainer.lr_argument(index, args.iterations)
+                               for index in range(iteration + 1, iteration + length + 1)])
+            state, metrics = blocks[length](state, rates)
+        iteration += length
         reward_in_window = reward_in_window + metrics["reward_ext_sum"]
         rint_in_window = rint_in_window + metrics["rint_mean"]
-        if iteration == 1:
+        if first_iteration_seconds is None:
             jax.block_until_ready(metrics["loss"])
             first_iteration_seconds = time.time() - iteration_start
             say(f"first iteration (includes compiling the program) "
@@ -451,7 +488,8 @@ def main() -> None:
     total_seconds = time.time() - start
     # the steady-state rate excludes the first iteration, which paid for compiling the program
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)
-    steady_iterations = max(args.iterations - 1, 1)
+    steady_iterations = max(args.iterations - min(args.iterations_per_dispatch,
+                                                args.window_iterations, args.iterations), 1)
     emit({
         "record": "unit_complete",
         "unit_id": args.unit_id,
