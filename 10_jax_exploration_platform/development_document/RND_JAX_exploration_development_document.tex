@@ -85,81 +85,54 @@ The platform uses the large PointMaze with fixed start and goal positions and no
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
-\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
-?>{\raggedright\arraybackslash}p{6.4cm}
-?>{\raggedright\arraybackslash}p{4.4cm}@{}}
+?>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.4cm-2\tabcolsep-\arrayrulewidth\relax}@{}}
 \blackrule
-\textbf{Parameter} & \textbf{PointMaze large, no reset noise} & \textbf{Where the value is set} \\
-& \small(the platform's only environment so far) & \small(field of the copied code) \\
+\textbf{Parameter} & \textbf{PointMaze large, no reset noise} \\
+ & \small(the platform's only environment so far) \\
 \blackrule
-\multicolumn{3}{@{}l}{\textit{Identity and provenance}} \\
-\greyrule
-specification name & \texttt{pointmaze\allowbreak\_large\allowbreak\_cont400\allowbreak\_nonoise@1} &
-  the name a run manifest carries \\
-\greyrule
-provenance & extracted from \texttt{09\allowbreak\_parallelization} at tag
-  \texttt{jax-rnd-baseline-v0.1.0}; nothing but import paths changed on the copy &
-  \texttt{ORIGIN.md} \\
-\greyrule
-implementation & \texttt{envs/pointmaze/\allowbreak jax\allowbreak\_pointmaze.py} (the stepper) and
-  \texttt{pm\allowbreak\_common.py} (physics constants, maps, configuration) &
-  \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak pointmaze/} \\
-\blackrule
-\multicolumn{3}{@{}l}{\textit{Maze and spaces}} \\
+\multicolumn{2}{@{}l}{\textit{Maze and spaces}} \\
 \greyrule
 maze map & \texttt{large}: 12 columns $\times$ 9 rows of 1\,m cells, walls on the border,
-  46 open cells & \texttt{EnvConfig.\allowbreak map\allowbreak\_name} \\
+  46 open cells \\
 \greyrule
 world extent & $x \in [-6, 6]$, $y \in [-4.5, 4.5]$; the origin is the maze centre and row $0$ is
-  the top row & \texttt{pm\allowbreak\_common.\allowbreak cell\allowbreak\_center} \\
+  the top row \\
 \greyrule
-agent body & 2-D ball, force-actuated, radius $0.1$\,m & \texttt{pm\allowbreak\_common} physics
-  constants \\
+agent body & 2-D ball, force-actuated, radius $0.1$\,m \\
 \greyrule
-observation & $4$-d: $x$, $y$, $v_x$, $v_y$. The goal is \emph{not} observed &
-  \texttt{jax\allowbreak\_pointmaze.\allowbreak step} \\
+observation & $4$-d: $x$, $y$, $v_x$, $v_y$. The goal is \emph{not} observed \\
 \greyrule
-action & $2$-d force, each component clipped to $[-1, 1]$ &
-  \texttt{pm\allowbreak\_common.\allowbreak ACT\allowbreak\_CLIP} \\
+action & $2$-d force, each component clipped to $[-1, 1]$ \\
 \blackrule
-\multicolumn{3}{@{}l}{\textit{Start and goal}} \\
+\multicolumn{2}{@{}l}{\textit{Start and goal}} \\
 \greyrule
-start cell & row $7$, column $1$ (row $0$ is the top); world position $(-4.5, -3.0)$ &
-  \texttt{EnvConfig.\allowbreak start\allowbreak\_cell} \\
+start cell & row $7$, column $1$ (row $0$ is the top); world position $(-4.5, -3.0)$ \\
 \greyrule
-goal cell & row $1$, column $10$; world position $(4.5, 3.0)$ &
-  \texttt{EnvConfig.\allowbreak goal\allowbreak\_cell} \\
+goal cell & row $1$, column $10$; world position $(4.5, 3.0)$ \\
 \greyrule
 reset position noise & $0$. Every episode starts exactly at the start cell's centre and the goal
   sits exactly at its own centre; the only randomness left in an episode is the policy's own
-  sampling & \texttt{EnvConfig.\allowbreak position\allowbreak\_noise} \\
+  sampling \\
 \greyrule
-initial velocity & $(0, 0)$ at every reset &
-  \texttt{jax\allowbreak\_pointmaze.\allowbreak \_spawn} \\
+initial velocity & $(0, 0)$ at every reset \\
 \greyrule
-goal radius & $0.45$\,m: a step whose distance to the goal is at most this earns reward $1$ &
-  \texttt{EnvConfig.\allowbreak goal\allowbreak\_radius} \\
+goal radius & $0.45$\,m: a step whose distance to the goal is at most this earns reward $1$ \\
 \blackrule
-\multicolumn{3}{@{}l}{\textit{Episode and reward}} \\
+\multicolumn{2}{@{}l}{\textit{Episode and reward}} \\
 \greyrule
-episode length cap & $400$ steps; one step is one $0.01$\,s integrator step &
-  \texttt{EnvConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+episode length cap & $400$ steps; one step is one $0.01$\,s integrator step \\
 \greyrule
 task type & continuing: an episode is never terminated at the goal, only truncated at the cap, so
-  a copy that reaches the goal keeps collecting reward until the cap &
-  \texttt{EnvConfig.\allowbreak continuing\allowbreak\_task} \\
+  a copy that reaches the goal keeps collecting reward until the cap \\
 \greyrule
-reward & sparse: $1$ on a step inside the goal radius, $0$ otherwise; no shift is added &
-  \texttt{EnvConfig.\allowbreak reward\allowbreak\_shift} \\
+reward & sparse: $1$ on a step inside the goal radius, $0$ otherwise; no shift is added \\
 \greyrule
-discount, extrinsic & $0.999$ & \texttt{PPOConfig.\allowbreak gamma\allowbreak\_ext} \\
+discount, extrinsic & $0.999$ \\
 \greyrule
-discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) &
-  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) \\
 \blackrule
-\end{tabular}%
-}
+\end{tabular}
 \caption{Environment specification for all runs in this section. The discounts are trainer defaults.}
 \label{tab:pm-jax-env}
 \end{table}
