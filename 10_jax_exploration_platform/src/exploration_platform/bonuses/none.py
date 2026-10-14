@@ -6,10 +6,10 @@ statistics, no warm-up and no loss, so the composed program contains none of any
 arithmetic — not a multiplication by zero, not a masked branch, nothing. The check that it does
 not is `tests/bonuses/test_none_has_no_bonus_arithmetic.py`.
 
-The agent's intrinsic value head and its advantage stream still exist; they are the agent's
-architecture, not the bonus's. Fed a reward that is exactly zero at every step, the filter stays
-at zero, the normalised intrinsic reward stays at zero, and the intrinsic advantage contributes
-nothing to the policy gradient.
+The agent's intrinsic value head and its advantage stream still exist. Zero intrinsic rewards
+do not make approximate intrinsic advantages zero: the initialized value head can still predict
+nonzero values. An extrinsic-only policy control must set its intrinsic-advantage weight to zero.
+The corrected selected experiment does so explicitly in its parameter settings.
 """
 import jax.numpy as jnp
 
