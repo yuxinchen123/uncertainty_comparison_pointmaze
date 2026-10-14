@@ -3,6 +3,10 @@
 The agent's own tests, brought over from `09_parallelization/ppo/jax_ppo/tests/` and pointed at
 the split package under `src/exploration_platform/`.
 
+`test_intrinsic_reset_return.py` checks continuing intrinsic returns with a reset at the first
+or last rollout step and without a reset, for both rollout implementations. It also checks task
+return targets and confirms that the old final-state intrinsic bootstrap differs at resets.
+
 | file | what it checks | runs here? |
 |---|---|---|
 | `test_jax_ppo.py` | per-part behaviour: same-seed determinism, copy isolation (agent AND bonus parameters), both update styles, the distillation error falling | yes, on the processor |

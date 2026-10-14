@@ -9,6 +9,12 @@ starts them from identical state with identical random keys, runs three iteratio
 styles, and requires every reported number and every array of the state to be **bit-identical**,
 not merely close.
 
+Since 2026-10-14, the platform intentionally differs at episode resets: continuing intrinsic
+returns bootstrap from the reset observation, while the frozen baseline uses the final
+observation. This short comparison does not cross an episode boundary during training.
+`../agents/test_intrinsic_reset_return.py` checks the corrected boundary against an independent
+return calculation; the frozen reference remains unchanged.
+
 The two sides keep their state in different shapes, so the comparison is by NAME rather than by
 position: each side is turned into a dictionary of arrays under one agreed set of names
 (`params/actor/W0`, `obs_rms/mean`, ...), the two key sets must match exactly, and every array must
