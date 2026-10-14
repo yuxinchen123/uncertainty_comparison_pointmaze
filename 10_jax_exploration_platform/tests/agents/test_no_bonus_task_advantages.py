@@ -16,7 +16,8 @@ def main():
     # Both controls share all seed streams, networks and rollout actions; only the weight differs.
     batches = []
     for weight in (0., 1.):
-        cfg = PPOConfig(n_copies=2, n_envs=2, num_steps=128, update_style="full_batch",
+        cfg = PPOConfig(n_copies=2, n_envs=2, num_steps=16, scan_unroll=1,
+                        update_style="full_batch",
                         parameter_settings=((1e-3, weight),), copies_per_group=2,
                         prime_iterations=0)
         runner = Runner(cfg, bonus="none")

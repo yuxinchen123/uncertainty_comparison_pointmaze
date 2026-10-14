@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 export PYTHONNOUSERSITE=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
-export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
 /p/rlprojects/RND/.venvs/platform_jax/bin/python -u /p/rlprojects/RND/10_jax_exploration_platform/tests/integration/test_selected_run_records.py
 /p/rlprojects/RND/.venvs/platform_jax/bin/python -u /p/rlprojects/RND/10_jax_exploration_platform/tests/agents/test_no_bonus_task_advantages.py
 timeout --signal=TERM --kill-after=5 580 /p/rlprojects/RND/.venvs/platform_jax/bin/python -u /p/rlprojects/RND/10_jax_exploration_platform/scripts/run_training.py --run-dir /p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/canary/rnd_next_state --unit-id entry-validation --bonus rnd_next_state --parameter-settings /p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/canary/rnd_next_state/parameter_settings.json --copies-per-cell 128 --iterations 200 --window-iterations 200 --track-coverage --no-aggregate
