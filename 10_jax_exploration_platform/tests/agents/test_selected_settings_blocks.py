@@ -16,6 +16,10 @@ from exploration_platform.training.blocks import iteration_block
 
 def main():
     """Verify explicit selection and compare blocks against individual calls across resets."""
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--length", type=int, default=8)
+    length = parser.parse_args().length
     # The missing Cartesian cells must stay missing, and seed offsets must pair across cells.
     cfg = PPOConfig(n_copies=4, copies_per_group=2, copy_seed_offset=3,
                     parameter_settings=((1e-3, 100.), (1e-4, 1.)))
@@ -40,7 +44,7 @@ def main():
         cfg = replace(cfg, n_envs=2, update_style="full_batch", prime_iterations=0,
                       track_coverage=True)
         runner = Runner(cfg, bonus=bonus)
-        rates = jnp.asarray([1. - i / 10 for i in range(8)], jnp.float32)
+        rates = jnp.asarray([1. - i / (length + 2) for i in range(length)], jnp.float32)
         separate = runner.prime(runner.init_state(0))
         # Initial parameters belong to the composition; copy them before a donated call deletes them.
         block_state = jax.tree.map(lambda value: jnp.array(value, copy=True),
@@ -51,7 +55,7 @@ def main():
             separate, metrics = runner.iterate(separate, rate)
             rewards += metrics["reward_ext_sum"]
             intrinsic += metrics["rint_mean"]
-        block_state, summed = iteration_block(runner, 8)(block_state, rates)
+        block_state, summed = iteration_block(runner, length)(block_state, rates)
         jax.block_until_ready(block_state)
         errors = []
         for reference, actual in zip(jax.tree.leaves(separate), jax.tree.leaves(block_state)):
