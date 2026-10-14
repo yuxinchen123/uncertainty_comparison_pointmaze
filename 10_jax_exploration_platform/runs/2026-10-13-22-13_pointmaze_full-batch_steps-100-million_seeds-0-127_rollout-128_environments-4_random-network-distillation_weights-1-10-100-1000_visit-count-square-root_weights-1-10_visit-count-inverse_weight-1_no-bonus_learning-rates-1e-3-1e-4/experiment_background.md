@@ -4,7 +4,7 @@ Retrain the 11 unique parameter settings shown in historical Figures 1.2 and 1.3
 
 ## Key hyperparameters
 
-128 copies per configuration, paired seed indices 0 through 127; full-batch proximal policy optimization, 128 rollout steps, four environments per copy. The exact per-algorithm pairs are in parameter_settings.json. Each copy trains for 195325 iterations (100006400 transitions). Recording windows have 200 iterations, except the final 125-iteration window; both span complete episode-clock cycles. No checkpoints.
+128 copies per configuration, paired seed indices 0 through 127; full-batch proximal policy optimization, 128 rollout steps, four environments per copy. The exact per-algorithm pairs are in parameter_settings.json. Each copy trains for 195325 iterations (100006400 transitions). Recording windows have 200 iterations, except the final 125-iteration window; both span complete episode-clock cycles. No checkpoints. All 11 configurations completed the full budget with no failed training units. Every recorded loss, intrinsic reward, task reward and coverage value passed the finite-value check before publication.
 
 ## Code and config changes
 
