@@ -186,7 +186,6 @@ def parse_args() -> argparse.Namespace:
                         help="JSON mapping each bonus name to explicit [rate, weight] pairs")
     parser.add_argument("--flat-params", action="store_true")
     parser.add_argument("--scan-unroll", type=int, default=0)
-    parser.add_argument("--iterations-per-dispatch", type=int, default=1)
     parser.add_argument("--no-aggregate", action="store_true",
                         help="let the run's central monitor write the aggregate")
     parser.add_argument("--bonus", default="rnd_next_state",
@@ -311,8 +310,6 @@ def main() -> None:
     import jax.numpy as jnp
 
     config = build_config(args)
-    if args.iterations_per_dispatch < 1:
-        raise ValueError("iterations-per-dispatch must be positive")
     if not (run_dir / "manifest.yaml").exists():
         write_launch_files(run_dir, args, config)
 
@@ -412,30 +409,9 @@ def main() -> None:
     first_iteration_seconds = None
     window_index = 0
     window_first_iteration = 1
-    from exploration_platform.training.blocks import iteration_block
-    blocks = {}
-    # Before: one device scalar and a stack for each rate; after: one array transfer per block.
-    fractions = (1.0 - np.arange(args.iterations, dtype=np.float64) / args.iterations
-                 if config.anneal_lr else np.ones(args.iterations, dtype=np.float64))
-    schedule = (fractions if trainer.sweep.lr_per_copy is not None
-                else fractions * config.learning_rate).astype(np.float32)
-    iteration = 0
-    while iteration < args.iterations:
-        # Do not cross a recording-window boundary; before: 8 + 8 exceeds 10, after: 8 + 2.
-        remaining_in_window = args.window_iterations - iteration % args.window_iterations
-        length = min(args.iterations_per_dispatch, remaining_in_window,
-                     args.iterations - iteration)
+    for iteration in range(1, args.iterations + 1):
         iteration_start = time.time()
-        if length == 1:
-            state, metrics = trainer.iterate(state,
-                                             trainer.lr_argument(iteration + 1, args.iterations))
-        else:
-            if length not in blocks:
-                blocks[length] = iteration_block(trainer, length)
-            # The supplied schedule preserves each iteration's original annealed rate exactly.
-            rates = jnp.asarray(schedule[iteration:iteration + length])
-            state, metrics = blocks[length](state, rates)
-        iteration += length
+        state, metrics = trainer.iterate(state, trainer.lr_argument(iteration, args.iterations))
         reward_in_window = reward_in_window + metrics["reward_ext_sum"]
         rint_in_window = rint_in_window + metrics["rint_mean"]
         if first_iteration_seconds is None:
@@ -494,8 +470,7 @@ def main() -> None:
     total_seconds = time.time() - start
     # the steady-state rate excludes the first iteration, which paid for compiling the program
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)
-    steady_iterations = max(args.iterations - min(args.iterations_per_dispatch,
-                                                args.window_iterations, args.iterations), 1)
+    steady_iterations = max(args.iterations - 1, 1)
     emit({
         "record": "unit_complete",
         "unit_id": args.unit_id,

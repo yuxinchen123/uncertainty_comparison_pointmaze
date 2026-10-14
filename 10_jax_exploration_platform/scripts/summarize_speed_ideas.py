@@ -44,6 +44,11 @@ def main():
               f"{best['steps_per_second_per_copy']/baseline['steps_per_second_per_copy']:.3f}. "
               "Packed parameters were slower and are not retained. The corrected selected-run "
               "queue uses 128 copies per setting and keeps the same 128 seeds."]
+    lines += ["", "The 32-iteration grouped-dispatch candidate was rejected after its longer "
+              "numerical check: the final RND position differed by 0.00526, above the "
+              "predeclared 2e-5 tolerance. It is absent from the production training entry. "
+              "The retained changes are explicit parameter selection and 128-copy batches "
+              "distributed through a shared queue; individual iteration execution is preserved."]
     (args.benchmark_dir / "analysis.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines[:19]), flush=True)
 

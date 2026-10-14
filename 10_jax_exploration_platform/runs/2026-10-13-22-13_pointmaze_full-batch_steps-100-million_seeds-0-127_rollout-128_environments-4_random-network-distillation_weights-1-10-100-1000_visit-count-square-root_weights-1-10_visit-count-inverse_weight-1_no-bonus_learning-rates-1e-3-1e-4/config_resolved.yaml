@@ -8,4 +8,7 @@ base_seed: 0
 run_seed: 0
 paired_seed_indices: [0, 127]
 parameter_settings: parameter_settings.json
-execution_choices: to_be_selected_from_benchmarks
+copies_per_unit: 128
+flat_params: false
+scan_unroll: 0
+iterations_per_dispatch: 1
