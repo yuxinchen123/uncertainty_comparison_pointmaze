@@ -7,7 +7,7 @@ NAMES = {"rnd_next_state": "random network distillation",
          "gt_position_velocity_sqrt": r"oracle counts $1/\sqrt{n}$",
          "gt_position_velocity_linear": r"oracle counts $1/n$", "none": "no bonus"}
 FIRST = [("rnd_next_state", 1e-3, 10), ("gt_position_velocity_sqrt", 1e-3, 1),
-         ("gt_position_velocity_linear", 1e-3, 1), ("none", 1e-3, 1),
+         ("gt_position_velocity_linear", 1e-3, 1), ("none", 1e-3, 0),
          ("rnd_next_state", 1e-4, 100), ("gt_position_velocity_sqrt", 1e-4, 10)]
 SECOND = [("gt_position_velocity_sqrt", 1e-3, 1),
           ("gt_position_velocity_sqrt", 1e-4, 1), ("rnd_next_state", 1e-3, 100),

@@ -8,7 +8,7 @@ Retrain the 11 unique parameter settings shown in historical Figures 1.2 and 1.3
 
 ## Code and config changes
 
-Intrinsic returns continue across resets and bootstrap from the actual reset observation. Immediate intrinsic rewards still score the final transition observation. Task-return bootstrap and task advantage boundaries retain their prior definitions. Predictor hidden widths are 256 and 128, with 128 outputs. Select execution options from ten bounded serval05 measurements, then test numerical agreement. Generic UVA jobs claim units from one shared queue; no unit is assigned to an account in advance.
+Intrinsic returns continue across resets and bootstrap from the actual reset observation. Immediate intrinsic rewards still score the final transition observation. Task-return bootstrap and task advantage boundaries retain their prior definitions. Predictor hidden widths are 256 and 128, with 128 outputs. Ten bounded serval05 measurements favored 128-copy batches. Grouped dispatch was rejected after a longer numerical-agreement check; retain individual iteration execution and default rollout unroll. The no-bonus control uses intrinsic-advantage weight zero, as authorized by the user. Its critic still has two heads and the same value loss. Generic UVA jobs claim units from one shared queue; no unit is assigned to an account in advance.
 
 ## Git state
 

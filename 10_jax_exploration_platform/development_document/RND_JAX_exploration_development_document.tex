@@ -152,7 +152,9 @@ Right: the $10\times10$ velocity bins used with position cells by the oracle bon
 
 These historical results were produced before the intrinsic reset correction. At episode
 resets, the old implementation continued intrinsic advantages while predicting the next
-intrinsic value from the final state. The corrected results appear in Section~\ref{sec:pm-jax-corrected}.
+intrinsic value from the final state. The historical no-bonus control also used weight one
+on its intrinsic advantage despite zero intrinsic rewards. The corrected results appear in
+Section~\ref{sec:pm-jax-corrected}.
 \label{sec:pm-jax-run11}
 
 \begin{table}[H]
@@ -423,6 +425,8 @@ At a 400-step reset, intrinsic advantages now continue into the next episode usi
 intrinsic value of the reset observation. The immediate intrinsic bonus still scores the final
 transition observation. Task-return bootstrapping and task advantage boundaries retain their
 previous definitions. This matches CleanRL's continuing intrinsic-return convention.
+For the no-bonus control, the intrinsic advantage now has weight zero, so its policy update
+uses only task advantages. The shared two-head critic architecture is retained.
 
 The 11 unique settings shown in Figures~\ref{fig:pm-jax-run11-curves} and
 \ref{fig:pm-jax-run11-shapes} are retrained for 100M steps with 128 paired seeds per setting.
