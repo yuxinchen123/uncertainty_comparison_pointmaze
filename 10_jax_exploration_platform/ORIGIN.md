@@ -76,6 +76,21 @@ precision while reducing the training rollouts' in single, because its priming c
 the flag. The platform passes it in both places. Every gate run uses the default, `False`, where
 the two are identical.
 
+## Continuing intrinsic returns at resets, changed on 2026-10-14
+
+The user chose the CleanRL convention: intrinsic advantages continue across episode resets,
+and the next intrinsic value at a reset is evaluated at the actual reset observation. The copied
+trainer instead used the final observation before the reset while continuing those advantages
+into the next episode. `training/train_step.py` now corrects that combination in both rollout
+implementations. The immediate intrinsic reward and the task-value bootstrap still use the
+final observation.
+
+`tests/agents/test_intrinsic_reset_return.py` checks the corrected targets against an independent
+return calculation, with resets at the first and last rollout steps and without a reset. The
+short frozen-reference comparison does not cross a reset during training; equality there does
+not imply equality at episode boundaries. Existing experiment results were generated with the
+earlier convention and remain records of that version.
+
 ## The environment specification this platform starts from
 
 The name used in run manifests: **`pointmaze_large_cont400_nonoise@1`**. It is the default
