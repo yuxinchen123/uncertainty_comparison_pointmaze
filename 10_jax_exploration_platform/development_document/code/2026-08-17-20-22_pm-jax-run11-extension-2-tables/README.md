@@ -5,7 +5,7 @@ The table generator of train run 1.1 **after its second extension**. It replaces
 `2026-08-16-21-00_pm-jax-run11-tables/`; both stay in place unchanged as the record of what the
 document's table said before each extension ran, and neither is called any more.
 
-`make_all.py` writes one table into `platform_development_document.tex`:
+`make_all.py` writes one table into `RND_JAX_exploration_development_document.tex`:
 
 | marker name | what it is |
 |---|---|
@@ -61,8 +61,8 @@ short budget" from "chosen by the long one".
 PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python make_all.py
 export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH"
 latexmk -cd -pdf -interaction=nonstopmode \
-  /p/rlprojects/RND/10_jax_exploration_platform/development_document/platform_development_document.tex
-grep -nE 'Overfull \\hbox' ../../platform_development_document.log
+  /p/rlprojects/RND/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.tex
+grep -nE 'Overfull \\hbox' ../../RND_JAX_exploration_development_document.log
 ```
 
 Then rasterize the table's page and look at it, per the development document's README.

@@ -5,7 +5,7 @@ generators.
 
 | file / folder | what it is |
 |---|---|
-| `platform_development_document.tex` | the document itself |
+| `RND_JAX_exploration_development_document.tex` | the document itself |
 | `neurips_2026.sty` | the paper style, copied from `07_reconstruction/development_document/` |
 | `bibliography.bib` | the bibliography, copied from the same place |
 | `code/` | one folder per run's table generator, named `<YYYY-MM-DD-HH-MM>_<run-slug>-tables/` |
@@ -15,7 +15,7 @@ generators.
 ```bash
 export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH"
 latexmk -cd -pdf -interaction=nonstopmode \
-  /p/rlprojects/RND/10_jax_exploration_platform/development_document/platform_development_document.tex
+  /p/rlprojects/RND/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.tex
 ```
 
 The built PDF is gitignored and is never committed.
@@ -38,7 +38,7 @@ environment becomes 1.2 and points back at the 1.0 table instead of repeating it
 ## After every edit or regeneration
 
 1. Rebuild the PDF in the same turn.
-2. `grep -nE 'Overfull \\hbox' platform_development_document.log` — a hit at a table's lines means
+2. `grep -nE 'Overfull \\hbox' RND_JAX_exploration_development_document.log` — a hit at a table's lines means
    it overflows; fix it by folding the cell text (`\allowbreak`, `\shortstack`, rebalanced column
    widths), never by shrinking the font, and never by rotating a column header.
 3. Rasterize the changed pages (`gs -sDEVICE=png16m -r150 -dFirstPage=N -dLastPage=N`) and look at

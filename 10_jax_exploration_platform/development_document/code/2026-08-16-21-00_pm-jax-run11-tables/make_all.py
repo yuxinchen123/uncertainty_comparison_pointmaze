@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Regenerate the best-configuration results table of subsection 1.1 inline in
-`platform_development_document.tex`, between the AUTO-GENERATED TABLE markers:
+`RND_JAX_exploration_development_document.tex`, between the AUTO-GENERATED TABLE markers:
 
   - pm-jax-run11-results : one row per algorithm arm at its best configuration, on the one
                            environment of this run
@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-MAIN_TEX = HERE.parent.parent / "platform_development_document.tex"
+MAIN_TEX = HERE.parent.parent / "RND_JAX_exploration_development_document.tex"
 PLATFORM_ROOT = HERE.parent.parent.parent
 RUN_DIR = (PLATFORM_ROOT / "runs" /
            "2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4"
@@ -61,7 +61,7 @@ def inject_table(tex_path: Path, table_name: str, tabular_block: str) -> None:
         raise SystemExit(
             f"Marker mismatch for table {table_name!r} in {tex_path}: "
             f"BEGIN count={text.count(begin)}, END count={text.count(end)} (expect exactly 1 of "
-            "each). Add the markers in platform_development_document.tex first.")
+            "each). Add the markers in RND_JAX_exploration_development_document.tex first.")
     before, _, rest = text.partition(begin)
     _, _, after = rest.partition(end)
     tex_path.write_text(f"{before}{begin}\n{tabular_block}\n{end}{after}")

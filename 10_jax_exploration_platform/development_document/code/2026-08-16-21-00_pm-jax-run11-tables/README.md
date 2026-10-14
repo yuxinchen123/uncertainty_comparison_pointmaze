@@ -2,7 +2,7 @@
 
 The table generator of train run 1.1 (`runs/2026-08-16-20-39_jax-ppo_pointmaze-large-nonoise_...`).
 
-`make_all.py` writes one table into `platform_development_document.tex`:
+`make_all.py` writes one table into `RND_JAX_exploration_development_document.tex`:
 
 | marker name | what it is |
 |---|---|
@@ -28,8 +28,8 @@ the curve shown is the configuration the table names.
 PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python make_all.py
 export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH"
 latexmk -cd -pdf -interaction=nonstopmode \
-  /p/rlprojects/RND/10_jax_exploration_platform/development_document/platform_development_document.tex
-grep -nE 'Overfull \\hbox' ../../platform_development_document.log
+  /p/rlprojects/RND/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.tex
+grep -nE 'Overfull \\hbox' ../../RND_JAX_exploration_development_document.log
 ```
 
 Then rasterize the table's page and look at it, per the development document's README.

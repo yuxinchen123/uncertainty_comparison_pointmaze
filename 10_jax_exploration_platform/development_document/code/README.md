@@ -6,7 +6,7 @@ timestamp in Pacific time. It is empty until a run has written completed records
 Each folder holds `make_all.py` and its own `README.md`. `make_all.py` imports the run's own status
 and metrics modules — it never re-implements loading, scoring, ranking or best/second marking — and
 splices only the block between the `% >>> AUTO-GENERATED TABLE START: <name>` and
-`% <<< AUTO-GENERATED TABLE END: <name>` markers in `platform_development_document.tex`, failing
+`% <<< AUTO-GENERATED TABLE END: <name>` markers in `RND_JAX_exploration_development_document.tex`, failing
 hard when a marker is missing or appears twice. The caption, the label and the `\resizebox` stay
 outside the markers.
 

@@ -9,7 +9,7 @@ learning rates, and each arm that has a bonus over eleven weights on that bonus,
 is between each arm's best configuration rather than between one guessed setting of each.
 
 The four hypotheses the run is set up to answer are written out in the development document
-(`development_document/platform_development_document.tex`, subsection 1.1): random network
+(`development_document/RND_JAX_exploration_development_document.tex`, subsection 1.1): random network
 distillation beats no bonus; the oracle bonuses bound it from above; the two decays trade coverage
 against reward differently; and reward against intrinsic weight is single-peaked.
 
@@ -141,7 +141,7 @@ run, mean and standard error over the cell's 256 copies):
 | `no_exploration` | 1e-3 | none | 0.005 ± 0.005 | 0.019 ± 0.019 | 0.004 | 24.07 ± 0.89 |
 
 The five findings, including which hypotheses the run refutes, are written out in subsection 1.1 of
-`development_document/platform_development_document.tex`. In short: the bonus beats no bonus wherever
+`development_document/RND_JAX_exploration_development_document.tex`. In short: the bonus beats no bonus wherever
 the sparse reward can show it; only the 1/sqrt(n) oracle bonus bounds distillation from above, the
 1/n one falls well below it; the predicted coverage-against-reward trade-off between the two decays
 is absent (1/sqrt(n) wins both); reward against intrinsic weight has one interior peak and a sharp
@@ -154,6 +154,6 @@ Where the artifacts are:
   by `code/aggregate.py` from the shards in `data/`.
 - `analysis/plots/pm_jax_run11_reward_curves.pdf` and its `.png`, written by
   `analysis/code/make_reward_curves.py`.
-- `../../development_document/platform_development_document.tex` subsection 1.1, whose results table
+- `../../development_document/RND_JAX_exploration_development_document.tex` subsection 1.1, whose results table
   is written by `development_document/code/2026-08-16-21-00_pm-jax-run11-tables/make_all.py`.
 - `canary_estimate_vs_actual.md` for the canary phase, `infra_history.md` for the one incident.

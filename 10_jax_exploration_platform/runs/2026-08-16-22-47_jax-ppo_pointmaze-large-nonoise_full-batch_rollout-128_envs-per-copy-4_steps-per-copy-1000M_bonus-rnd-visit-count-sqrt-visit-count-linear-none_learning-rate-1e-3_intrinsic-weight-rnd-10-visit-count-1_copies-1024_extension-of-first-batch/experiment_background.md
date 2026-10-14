@@ -269,7 +269,7 @@ findable without a bonus.
   written by `code/aggregate.py` from the shards.
 - `analysis/plots/pm_jax_run11_reward_curves.pdf` and its `.png`, written by
   `analysis/code/make_reward_curves.py`.
-- `../../development_document/platform_development_document.tex` subsection 1.1, whose results table
+- `../../development_document/RND_JAX_exploration_development_document.tex` subsection 1.1, whose results table
   is written by
   `development_document/code/2026-08-16-22-27_pm-jax-run11-extension-tables/make_all.py`.
 - `code/submission_plan.json` for the plan and every alternative it rejected,
