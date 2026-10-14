@@ -58,7 +58,7 @@ def table(rows):
     """Render all completed settings, marking the best and second values within this block."""
     fields = ("whole_run_reward", "last_window_reward", "success_rate", "coverage_percent")
     rankings = {field: sorted({row[field] for row in rows}, reverse=True) for field in fields}
-    lines = [r"\begin{tabular}{@{}p{4.4cm}rrrrr@{}}", r"\toprule",
+    lines = [r"\begin{tabular}{@{}p{3.4cm}rrrrr@{}}", r"\toprule",
              r"\textbf{algorithm and settings} & \shortstack{whole-run\\reward $\uparrow$} &"
              r"\shortstack{final-window\\reward} & \shortstack{ever\\reached goal} &"
              r"\shortstack{coverage\\(\%)} & $N$ \\", r"\midrule"]

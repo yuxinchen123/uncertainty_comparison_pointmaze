@@ -495,11 +495,18 @@ The number of completed copies is denoted by $N$.
 \begin{table}[H]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 % Generator: ../scripts/write_corrected_report.py; reads the run's summary.json.
 % >>> AUTO-GENERATED TABLE START: pm-jax-corrected-results
-\begin{tabular}{l}
-Training results will be inserted after all 11 settings complete.\\
+\begin{tabular}{@{}p{4.4cm}rrrrr@{}}
+\toprule
+\textbf{algorithm and settings} & \shortstack{whole-run\\reward $\uparrow$} &\shortstack{final-window\\reward} & \shortstack{ever\\reached goal} &\shortstack{coverage\\(\%)} & $N$ \\
+\midrule
+random network distillation\newline $\alpha=10^{-3}$, $\beta=10^{2}$ & {\boldmath $24.163 \pm 1.753$} & {\boldmath $33.045 \pm 3.916$} & {\boldmath $1.000$} & {\boldmath $99.304 \pm 0.288$} & 128 \\
+oracle counts $1/\sqrt{n}$\newline $\alpha=10^{-3}$, $\beta=10^{0}$ & \underline{$17.875 \pm 1.676$} & \underline{$18.295 \pm 3.374$} & {\boldmath $1.000$} & \underline{$98.998 \pm 0.174$} & 128 \\
+oracle counts $1/n$\newline $\alpha=10^{-3}$, $\beta=10^{0}$ & $6.849 \pm 1.398$ & $11.882 \pm 2.932$ & \underline{$0.734$} & $91.372 \pm 1.218$ & 128 \\
+no bonus\newline $\alpha=10^{-3}$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ & $0.008$ & $26.919 \pm 1.213$ & 128 \\
+\bottomrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pm-jax-corrected-results
 \caption{Corrected 100M-step results at each algorithm's highest whole-run reward among the
