@@ -42,7 +42,9 @@ def main():
         runner = Runner(cfg, bonus=bonus)
         rates = jnp.asarray([1. - i / 10 for i in range(8)], jnp.float32)
         separate = runner.prime(runner.init_state(0))
-        block_state = runner.prime(runner.init_state(0))
+        # Initial parameters belong to the composition; copy them before a donated call deletes them.
+        block_state = jax.tree.map(lambda value: jnp.array(value, copy=True),
+                                  runner.prime(runner.init_state(0)))
         rewards = jnp.zeros((4,), jnp.float32)
         intrinsic = jnp.zeros((4,), jnp.float32)
         for rate in rates:

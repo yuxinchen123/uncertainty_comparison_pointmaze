@@ -34,6 +34,7 @@ CPU_ONLY="agents/test_jax_ppo.py agents/test_sweep_jax.py agents/test_hoist_equi
           integration/test_jit_eager_equivalence.py"
 ALL="golden_09/test_golden_parity.py
      agents/test_intrinsic_reset_return.py
+     agents/test_selected_settings_blocks.py
      agents/test_jax_ppo.py
      agents/test_sweep_jax.py
      agents/test_copy_seed_offset.py

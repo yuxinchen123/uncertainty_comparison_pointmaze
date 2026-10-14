@@ -59,7 +59,7 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 # of them is visible in the record rather than silent
 SPECS = {
     "env": "pointmaze_large_cont400_nonoise@1",
-    "agent": "ppo_full_batch@1",
+    "agent": "ppo_full_batch_continuing_intrinsic@2",
 }
 
 # the update schedule each bonus family follows, for the manifest's record
