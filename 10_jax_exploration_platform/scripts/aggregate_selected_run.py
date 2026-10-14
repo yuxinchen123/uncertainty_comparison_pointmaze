@@ -13,6 +13,18 @@ def mean_error(values):
     return mean, error
 
 
+def best_per_algorithm(rows):
+    """Select each algorithm's highest whole-run mean among the completed settings supplied."""
+    if not rows:
+        raise ValueError("no completed settings to rank")
+    best = {}
+    for row in rows:
+        previous = best.get(row["bonus"])
+        if previous is None or row["whole_run_reward"] > previous["whole_run_reward"]:
+            best[row["bonus"]] = row
+    return best
+
+
 def read_unit(path):
     """Stream the latest attempt, retaining only per-copy totals and small curve records."""
     start, complete, totals, episodes, last, curve = None, None, None, 0., None, []

@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+from aggregate_selected_run import best_per_algorithm
 
 NAMES = {"rnd_next_state": "random network distillation",
          "gt_position_velocity_sqrt": r"oracle counts $1/\sqrt{n}$",
@@ -94,6 +95,30 @@ def inject(text, name, content):
     return left + begin + "\n" + content + "\n" + end + right
 
 
+def verify_records(run):
+    """Require finite training measurements and the full budget in all 11 completed shards."""
+    import math
+    completions = 0
+    for path in sorted((run / "data").glob("*.jsonl")):
+        with path.open() as handle:
+            for line in handle:
+                record = json.loads(line)
+                if record["record"] == "episode_window":
+                    values = [record["loss"]]
+                    for field in ("reward_ext_sum_per_copy", "rint_mean_per_copy", "coverage_per_copy"):
+                        if len(record[field]) != 128:
+                            raise ValueError(f"wrong copy count in {path}: {field}")
+                        values.extend(record[field])
+                    if not all(math.isfinite(value) for value in values):
+                        raise ValueError(f"non-finite training measurement in {path}")
+                elif record["record"] == "unit_complete":
+                    if record["iterations"] != 195325 or record["env_steps_per_copy"] != 100006400:
+                        raise ValueError(f"wrong training budget in {path}")
+                    completions += 1
+    if completions != 11:
+        raise ValueError(f"expected 11 completed shards, found {completions}")
+
+
 def main():
     """Require all requested settings, generate artifacts, and insert the completed results."""
     parser = argparse.ArgumentParser()
@@ -103,17 +128,14 @@ def main():
     summary = json.loads((args.run_dir / "summary.json").read_text())
     if summary["units_complete"] != 11 or len(summary["cells"]) != 11:
         raise ValueError("report requires all 11 selected configurations to complete")
+    verify_records(args.run_dir)
     plots = args.run_dir / "analysis/plots"
     draw(summary["curves"], FIRST, plots / "corrected_reward_curves")
     draw(summary["curves"], SECOND, plots / "corrected_rate_weight_curves", True)
     # Select one setting per algorithm by the prespecified whole-run mean, within this fixed subset.
-    best_per_algorithm = {}
-    for row in summary["cells"]:
-        previous = best_per_algorithm.get(row["bonus"])
-        if previous is None or row["whole_run_reward"] > previous["whole_run_reward"]:
-            best_per_algorithm[row["bonus"]] = row
+    best = best_per_algorithm(summary["cells"])
     text = inject(args.tex.read_text(), "pm-jax-corrected-results",
-                  table(list(best_per_algorithm.values())))
+                  table(list(best.values())))
     args.tex.write_text(text)
     best = max(summary["cells"], key=lambda row: row["whole_run_reward"])
     (args.run_dir / "analysis/analysis.md").write_text(
