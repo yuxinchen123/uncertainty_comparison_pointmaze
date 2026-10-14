@@ -133,6 +133,13 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             vext_next, vint_next = unflat(vext_next), unflat(vint_next)
             scored = flat(rint_scan)
 
+        # Intrinsic returns continue across episode resets, so their next value must be the
+        # value at the reset observation. Keep the final-state value for task-return bootstrap.
+        # Before: a reset bootstraps from final_obs; after: it uses the next rollout observation.
+        _, vint_last = critic_values(agent_params["critic"], obs_last)
+        vint_after_reset = jnp.concatenate([vint_buf[1:], vint_last[None]], axis=0)
+        vint_next = jnp.where(done_buf.astype(bool), vint_after_reset, vint_next)
+
         # the bonus scores the rollout (or takes the scores the scan already made), moves its own
         # state on, and hands over whatever extra fields its loss will need in the update batch
         bonus_state, rint_flat, batch_extra = bonus.post_rollout(
