@@ -278,3 +278,5 @@ core.*
 10_jax_exploration_platform/benchmark_runs/**/data/cache_*/
 # The platform's shared JAX compilation cache (regenerable, written by every worker).
 10_jax_exploration_platform/.jax_compilation_cache/
+# The development document's read marks (scripts/report_contents.py) are part of its record.
+!10_jax_exploration_platform/development_document/report_read_state.json
