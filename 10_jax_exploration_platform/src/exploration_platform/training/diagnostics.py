@@ -12,10 +12,14 @@ from ..statistics import rms_init, rms_update
 
 
 def tracker_init(n_copies: int, n_envs: int) -> dict:
-    """An episode tracker at the start of every environment's episode: nothing seen yet."""
-    zeros_i = jnp.zeros((n_copies, n_envs), jnp.int32)
-    return {"reached": jnp.zeros((n_copies, n_envs), bool), "first_hit": zeros_i,
-            "inside": zeros_i, "ret": jnp.zeros((n_copies, n_envs), F32), "length": zeros_i}
+    """An episode tracker at the start of every environment's episode: nothing seen yet.
+
+    Every field is its own array: the iteration donates its input state, and one buffer passed
+    as two donated fields is refused on the card.
+    """
+    zeros_i = lambda: jnp.zeros((n_copies, n_envs), jnp.int32)
+    return {"reached": jnp.zeros((n_copies, n_envs), bool), "first_hit": zeros_i(),
+            "inside": zeros_i(), "ret": jnp.zeros((n_copies, n_envs), F32), "length": zeros_i()}
 
 
 def track_episodes(carry: dict, inside_buf, rext_buf, done_buf):

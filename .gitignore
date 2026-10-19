@@ -267,3 +267,9 @@ core.*
 10_jax_exploration_platform/analysis/*/code/
 !10_jax_exploration_platform/analysis/*/plots/*.pdf
 !10_jax_exploration_platform/analysis/*/plots/*.png
+# Analysis folders inside platform run and benchmark folders follow the analysis-folder rule:
+# analysis.md and plots/ are tracked, the scratch code/ and the extracted data/ are not.
+10_jax_exploration_platform/runs/**/analysis/code/
+10_jax_exploration_platform/runs/**/analysis/data/
+10_jax_exploration_platform/benchmark_runs/**/analysis/code/
+10_jax_exploration_platform/benchmark_runs/**/analysis/data/

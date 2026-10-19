@@ -457,6 +457,14 @@ def main() -> None:
     # the per-copy arrays of every later record without re-deriving the sweep
     emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
           "environment": env_spec(env_cfg), "diagnostics": config.diagnostics,
+          # this unit's whole configuration: units of one run folder may differ in their flags,
+          # while the folder's config_resolved.yaml holds only the first unit's
+          "trainer_config": {field: (list(value) if isinstance(value, tuple) else value)
+                             for field, value in ((f, getattr(config, f))
+                                                  for f in sorted(config.__dataclass_fields__))},
+          "environment_config": {field: (list(value) if isinstance(value, tuple) else value)
+                                 for field, value in ((f, getattr(env_cfg, f))
+                                                      for f in env_cfg.__dataclass_fields__)},
           "copies": config.n_copies, "envs_per_copy": config.n_envs,
           "rollout_steps": config.num_steps, "iterations": args.iterations,
           "window_iterations": args.window_iterations, "episode_steps": args.episode_steps,
