@@ -261,3 +261,9 @@ core.*
 
 # Periodic monitoring reports are runtime records; run summaries and analysis remain available.
 10_jax_exploration_platform/runs/**/20_mins_monitoring/*_report.md
+
+# Reward-component analysis: keep figures, omit regenerable records.
+10_jax_exploration_platform/analysis/*/data/
+10_jax_exploration_platform/analysis/*/code/
+!10_jax_exploration_platform/analysis/*/plots/*.pdf
+!10_jax_exploration_platform/analysis/*/plots/*.png

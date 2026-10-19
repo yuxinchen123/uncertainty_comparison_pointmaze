@@ -128,7 +128,7 @@ def main() -> None:
     # into the first per cent of the width and the figure shows a spike against a flat line
     axes.set_xscale("log")
     axes.set_xlabel("environment steps per copy (millions, logarithmic)")
-    axes.set_ylabel("mean episode return")
+    axes.set_ylabel("mean extrinsic reward per episode")
     axes.set_title("PointMaze large, no reset noise — 1000M steps per copy", fontsize=11)
     axes.grid(alpha=0.25, linewidth=0.6, which="both")
     axes.legend(loc="upper left", fontsize=7, framealpha=0.9)

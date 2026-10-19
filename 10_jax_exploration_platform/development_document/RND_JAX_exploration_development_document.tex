@@ -328,8 +328,8 @@ within each block. Higher is better for every recorded metric.}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_reward_curves.pdf}}
-\caption{Mean episode return over $1000$M steps per copy, with bands of
+\includegraphics[width=\textwidth]{\detokenize{../analysis/2026-10-19-12-50_extrinsic-and-raw-intrinsic-reward-curves/plots/historical_extrinsic_selected.pdf}}
+\caption{Mean extrinsic reward per episode over $1000$M steps per copy, with bands of
 one standard error. Dashed curves use configurations selected at $10$M steps ($1{,}024$ copies);
 solid curves use configurations selected at $1000$M steps ($128$ copies). Each point averages
 $256$ episodes per copy. The step axis is logarithmic. The legend gives the learning rate and
@@ -406,10 +406,24 @@ under two of nine threshold variants; $90$ of its copies individually rise then 
 \label{tab:pm-jax-run11-shapes}
 \end{table}
 
+\paragraph{Reward quantities.}
+The existing training curves show extrinsic reward only. Let $R_{\mathrm{ext}}$ be the
+extrinsic reward summed over a 400-step episode, and let $R_{\mathrm{int,raw}}$ be the raw
+intrinsic reward summed over the same episode. The additional plots show their unweighted
+sum, $R_{\mathrm{sum}}=R_{\mathrm{ext}}+R_{\mathrm{int,raw}}$.
+The logged intrinsic mean is per step, so it is multiplied by 400 before addition.
+These sums use the raw bonus before normalization and do not apply the intrinsic weight.
+The trainer combines separately discounted task and normalized intrinsic advantages; its
+normalization values were not saved. Its weighted, normalized training total therefore
+cannot be reconstructed from these records.
+
+\begingroup
+\renewcommand{\thefigure}{\thesection.3.1}
+\renewcommand{\theHfigure}{\thesection.3.1}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-17-10-45_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-1000M_bonus-rnd-next-state-visit-count-sqrt_learning-rate-1e-3-1e-4-1e-5_intrinsic-weight-1e-5-to-1e5_copies-per-cell-128_extension-2-of-first-batch/analysis/plots/pm_jax_run11_curve_shapes.pdf}}
-\caption{Each arm at learning rates $10^{-3}$ and $10^{-4}$, using the intrinsic weight
+\includegraphics[width=\textwidth]{\detokenize{../analysis/2026-10-19-12-50_extrinsic-and-raw-intrinsic-reward-curves/plots/historical_extrinsic.pdf}}
+\caption{Extrinsic reward per episode for each arm at learning rates $10^{-3}$ and $10^{-4}$, using the intrinsic weight
 with the highest peak in the copy-averaged curve. Orange curves add random network distillation
 at fixed intrinsic weight $\beta=10^0=1$ for both learning rates. Markers show the peaks of the
 selected configurations; bands show one standard error over $128$ copies. Dotted and solid lines
@@ -417,6 +431,26 @@ identify learning rates $10^{-3}$ and $10^{-4}$, respectively. Selection by peak
 from selection by whole-run reward in \Cref{tab:pm-jax-run11-results}.}
 \label{fig:pm-jax-run11-shapes}
 \end{figure}
+\endgroup
+
+\begingroup
+\addtocounter{figure}{-1}
+\renewcommand{\thefigure}{\thesection.3.2}
+\renewcommand{\theHfigure}{\thesection.3.2}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../analysis/2026-10-19-12-50_extrinsic-and-raw-intrinsic-reward-curves/plots/historical_total.pdf}}
+\caption{Total recorded reward per episode: extrinsic plus raw intrinsic, unweighted,
+for the same historical settings as Figure~\ref{fig:pm-jax-run11-shapes}. Colors and line
+styles match that figure. Each raw intrinsic mean per step is multiplied by 400 before
+addition to extrinsic reward per episode. Bands show one standard error of the combined
+reward across 128 copies, including covariance between its two components. This raw sum
+does not reconstruct the weighted, normalized quantity used in policy updates. The vertical
+axis is logarithmic above 1 and linear between $-1$ and $1$.}
+\label{fig:pm-jax-run11-total}
+\end{figure}
+\endgroup
+
 
 
 \subsection{Train run 1.2: corrected intrinsic returns}
@@ -521,10 +555,13 @@ whole-run reward $0.44$. Without a bonus, only one of the $128$ copies ever reac
 its whole-run mean reward is $3.44\times10^{-7}$, which rounds to zero in the table.
 
 
+\begingroup
+\renewcommand{\thefigure}{\thesection.4.1}
+\renewcommand{\theHfigure}{\thesection.4.1}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-13-22-13_pointmaze_full-batch_steps-100-million_seeds-0-127_rollout-128_environments-4_random-network-distillation_weights-1-10-100-1000_visit-count-square-root_weights-1-10_visit-count-inverse_weight-1_no-bonus_learning-rates-1e-3-1e-4/analysis/plots/corrected_rate_weight_curves.pdf}}
-\caption{Corrected 100M-step training for the six settings in historical
+\includegraphics[width=\textwidth]{\detokenize{../analysis/2026-10-19-12-50_extrinsic-and-raw-intrinsic-reward-curves/plots/corrected_extrinsic.pdf}}
+\caption{Extrinsic reward per episode during corrected 100M-step training for the six settings in historical
 Figure~\ref{fig:pm-jax-run11-shapes}. Colors retain their original meaning: random network
 distillation is black, oracle $1/\sqrt{n}$ counts are blue, and random network distillation at
 fixed intrinsic weight $\beta=1$ is orange. Dotted and solid lines identify learning rates
@@ -532,5 +569,26 @@ $10^{-3}$ and $10^{-4}$, respectively. Bands show one standard error over 128 co
 The settings are held fixed from the historical figure; no new peak winners are selected.}
 \label{fig:pm-jax-corrected-curves}
 \end{figure}
+\endgroup
+
+\begingroup
+\addtocounter{figure}{-1}
+\renewcommand{\thefigure}{\thesection.4.2}
+\renewcommand{\theHfigure}{\thesection.4.2}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../analysis/2026-10-19-12-50_extrinsic-and-raw-intrinsic-reward-curves/plots/corrected_total.pdf}}
+\caption{Total recorded reward per episode: extrinsic plus raw intrinsic, unweighted,
+during corrected 100M-step training for the same six settings as
+Figure~\ref{fig:pm-jax-corrected-curves}. Colors and line styles match that figure.
+The reward definition and limitation are the same as in Figure~\ref{fig:pm-jax-run11-total}:
+raw intrinsic reward is added before normalization and weighting. Bands show one standard
+error of each copy's combined reward over 128 copies. These plots describe the recorded
+reward trajectories; they do not establish why extrinsic reward rises and then falls. The
+vertical axis is logarithmic above 1 and linear between $-1$ and $1$.}
+\label{fig:pm-jax-corrected-total}
+\end{figure}
+\endgroup
+
 
 \end{document}

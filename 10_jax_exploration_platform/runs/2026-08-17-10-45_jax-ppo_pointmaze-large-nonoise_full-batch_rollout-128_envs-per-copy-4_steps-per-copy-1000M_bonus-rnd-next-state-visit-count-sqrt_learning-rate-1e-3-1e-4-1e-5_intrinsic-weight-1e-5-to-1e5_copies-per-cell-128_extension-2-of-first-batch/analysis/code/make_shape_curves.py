@@ -139,7 +139,7 @@ def main() -> None:
     axes.set_xlim(right=5.5e3)
     axes.set_ylim(top=95)
     axes.set_xlabel("environment steps per copy (millions, logarithmic)")
-    axes.set_ylabel("mean episode return")
+    axes.set_ylabel("mean extrinsic reward per episode")
     axes.set_title("Highest-peak configurations and RND at intrinsic weight 1",
                    fontsize=11)
     axes.grid(True, which="major", alpha=0.16, linewidth=0.6)

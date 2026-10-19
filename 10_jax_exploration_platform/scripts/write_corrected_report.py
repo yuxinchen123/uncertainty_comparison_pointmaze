@@ -41,7 +41,7 @@ def draw(curves, output):
         axes.fill_between(steps, means - errors, means + errors, color=color, alpha=.13,
                           linewidth=0, zorder=3)
     axes.set(xscale="log", xlabel="environment steps per copy (millions, logarithmic)",
-             ylabel="mean episode return", title="Training with continuing intrinsic returns")
+             ylabel="mean extrinsic reward per episode", title="Training with continuing intrinsic returns")
     axes.grid(alpha=.25, which="both")
     axes.legend(loc="upper left", fontsize=8, framealpha=.9)
     figure.tight_layout()
@@ -140,9 +140,11 @@ def main():
         f"for {NAMES[best['bonus']]} at learning rate {best['learning_rate']:g} "
         f"and intrinsic weight {best['intrinsic_weight']:g}. "
         "The 100-million-step budget does not establish the later peaks observed in the "
-        "historical 1000-million-step experiments. Figure 1.4 presents only the corrected "
-        "curves for the six fixed settings in historical Figure 1.3, using matching colors "
-        "and learning-rate line patterns. Historical Figures 1.2 and 1.3 remain unchanged.\n")
+        "historical 1000-million-step experiments. Figure 1.4.1 presents only the corrected "
+        "curves for the six fixed settings in historical Figure 1.3.1, using matching colors "
+        "and learning-rate line patterns. Historical Figures 1.2 and 1.3.1 show extrinsic "
+        "reward only. Figures 1.3.2 and 1.4.2 add raw intrinsic reward without normalization "
+        "or weighting; scripts/write_reward_component_figures.py generates those plots.\n")
     print(f"updated {args.tex}")
 
 
