@@ -40,6 +40,19 @@
 \newcommand{\blackrule}{\arrayrulecolor{black}\hline}                        % category boundary / frame
 % <<< END COPY <<<
 
+% Read / unread / updated marking for the contents table (scripts/report_contents.py writes the
+% \study...begin and \study...end lines, and a \studyfloatcolor line at the start of every table and
+% figure of a marked subsection, because a float does not keep the text's color).
+\definecolor{unreadblue}{RGB}{0,70,200}
+\definecolor{editbrown}{RGB}{133,45,15}
+\newif\ifstudyunread
+\newif\ifstudychanged
+\newcommand{\studyunreadbegin}{\global\studyunreadtrue\color{unreadblue}}
+\newcommand{\studyunreadend}{\global\studyunreadfalse\color{black}}
+\newcommand{\studychangedbegin}{\global\studychangedtrue\color{editbrown}}
+\newcommand{\studychangedend}{\global\studychangedfalse\color{black}}
+\newcommand{\studyfloatcolor}{\ifstudyunread\color{unreadblue}\fi\ifstudychanged\color{editbrown}\fi}
+
 % The NeurIPS style sets \flushbottom, which stretches a page's vertical spacing until the text
 % reaches the bottom margin. This document's pages are mostly one tall table each, so a page that
 % a table did not fit on gets its few paragraphs spread across the whole height with large gaps
@@ -65,6 +78,22 @@
 \maketitle
 
 \tableofcontents
+% >>> REPORT CONTENTS START
+\begin{center}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.4cm} l l l@{}}
+\toprule
+\textbf{subsection} & \textbf{first written} & \textbf{last changed} & \textbf{status} \\
+\midrule
+\hyperref[sec:pm-jax-envspec]{Environment specification} & 2026-08-16 19:06 PT & 2026-10-13 20:24 PT & read \\
+\hyperref[sec:pm-jax-run11]{Train run 1.1: the first algorithm batch} & 2026-08-16 19:06 PT & 2026-10-19 12:58 PT & read \\
+\hyperref[sec:pm-jax-corrected]{Train run 1.2: corrected intrinsic returns} & 2026-10-13 22:23 PT & 2026-10-19 12:58 PT & read \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\small Times come from the document's version history and are Pacific, converted from machines running Eastern. Unread subsections are \textcolor{unreadblue}{blue}; in updated ones only the changed text is \textcolor{editbrown}{brown}.\par}
+% <<< REPORT CONTENTS END
 \clearpage
 
 %==============================================================================
@@ -592,6 +621,7 @@ vertical axis is logarithmic above 1 and linear between $-1$ and $1$.}
 
 
 \subsection{Training speed on jaguar03}
+\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-speed-jaguar03}
 The reward-decline study below runs many short units on jaguar03's eight RTX A4500 cards. Ten
 execution ideas were timed there on 2026-10-19 against one baseline: a random network
@@ -602,6 +632,7 @@ $S$ million steps per copy then takes $S \times 10^{6}/(3600\,r)$ hours. ``Total
 baseline'' divides an idea's total steps per second by the baseline's.
 
 \begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -639,6 +670,7 @@ best \underline{underlined}; higher is better for rates and lower for hours and 
 \end{table}
 
 \begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../benchmark_runs/2026-10-19-15-46_jaguar03_rtx-a4500_random-network-distillation_copies-128-per-setting_rollout-128_environments-4_full-batch_speed-10-ideas-round-2/plots/speed_ideas.pdf}}
 \caption{Two ways of putting more copies on one RTX A4500: settings packed into one program
@@ -671,6 +703,6 @@ per second; right: steps per second per copy.}
 and $1000$ into one program of $4 \times 128$ copies, so every unit of a batch has the same copy
 count and copy $k$ meets the same noise and environments in every idea. Jobs share one
 compilation cache, ask for eight processors, and keep the diagnostics on.
-
+\studyunreadend % REPORT-STATUS
 
 \end{document}

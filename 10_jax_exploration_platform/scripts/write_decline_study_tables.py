@@ -5,6 +5,7 @@ rewrites only what lies between the markers, so captions and prose are never tou
 
 Tables:
 - pm-jax-speed-jaguar03: the jaguar03 speed ideas, from the benchmark's analysis_rows.json.
+- pm-jax-screening-results / -verdicts: the map screening, from its analysis/data/summary.json.
 
 Usage: write_decline_study_tables.py <document.tex> [--only <table name>]
 """
@@ -79,7 +80,98 @@ def speed_table() -> str:
     return "\n".join(lines)
 
 
-TABLES = {"pm-jax-speed-jaguar03": speed_table}
+SCREEN_RUN = ROOT / ("runs/2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-"
+                     "cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_"
+                     "no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127")
+SCREEN_MAPS = [("umaze-cap150", "U-maze, cap 150"), ("medium-cap250", "medium maze, cap 250"),
+               ("medium-cap400", "medium maze, cap 400"), ("large-cap400", "large maze, cap 400")]
+BONUS_NAMES = {"rnd_next_state": "random network distillation",
+               "gt_position_velocity_sqrt": "oracle counts $1/\\sqrt{n}$", "none": "no bonus"}
+
+
+def screening_rows():
+    """The screening summary as {map: [(bonus, weight, numbers), ...]} in a fixed row order."""
+    summary = json.loads((SCREEN_RUN / "analysis" / "data" / "summary.json").read_text())
+    by_map = {m: [] for m, _ in SCREEN_MAPS}
+    order = {"rnd_next_state": 0, "gt_position_velocity_sqrt": 1, "none": 2}
+    for numbers in summary.values():
+        map_key = numbers["unit"].split("_")[0]
+        by_map[map_key].append((numbers["bonus"], numbers["intrinsic_weight"], numbers))
+    for rows in by_map.values():
+        rows.sort(key=lambda r: (order[r[0]], r[1]))
+    return by_map
+
+
+def screening_verdicts(by_map):
+    """The three rules of the screening per map: (rule 1, rule 2, rule 3, numbers used)."""
+    verdicts = {}
+    for map_key, rows in by_map.items():
+        none = next(n for b, _, n in rows if b == "none")
+        rnd = [n for b, _, n in rows if b == "rnd_next_state"]
+        best = max(rnd, key=lambda n: n["whole_run"])
+        oracle = next(n for b, _, n in rows if b == "gt_position_velocity_sqrt")
+        r1 = none["ever_reached"] <= 0.25
+        r2 = best["holds_peak"] <= 0.6 and best["peak_fraction_of_run"] <= 0.5
+        r3 = oracle["holds_peak"] <= 0.6
+        verdicts[map_key] = (r1, r2, r3, none, best, oracle)
+    return verdicts
+
+
+def screening_table() -> str:
+    """Per map and setting: peak, final, how much of the peak is held, and goal-reaching shares."""
+    by_map = screening_rows()
+    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r r r@{}}",
+             r"\toprule",
+             r"\textbf{bonus and weight} & \textbf{\shortstack[c]{peak\\return}} & "
+             r"\textbf{\shortstack[c]{steps at\\peak (M)}} & "
+             r"\textbf{\shortstack[c]{final-10\%\\return}} & "
+             r"\textbf{\shortstack[c]{final\\/ peak}} & "
+             r"\textbf{\shortstack[c]{copies ever\\at the goal}} & "
+             r"\textbf{\shortstack[c]{final share of\\episodes at goal}} \\",
+             r"\midrule"]
+    for k, (map_key, title) in enumerate(SCREEN_MAPS):
+        rows = by_map[map_key]
+        finals = [round(n["final"], 1) for _, _, n in rows]
+        holds = [round(n["holds_peak"], 2) for _, _, n in rows]
+        if k:
+            lines.append(r"\midrule")
+        lines.append(r"\multicolumn{7}{@{}l}{\textit{" + title + "}} \\\\")
+        for (bonus, weight, n), f, h in zip(rows, finals, holds):
+            name = BONUS_NAMES[bonus] + ("" if bonus == "none" else f", $\\beta={weight:g}$")
+            lines.append(
+                f"{name} & {n['peak']:.1f} & {n['peak_step'] / 1e6:.1f} & "
+                f"{mark(finals, f, f'{f:.1f} $\\pm$ {n['final_se']:.1f}')} & "
+                f"{mark(holds, h, f'{h:.2f}')} & {n['ever_reached']:.2f} & "
+                f"{n['reach_share_final']:.2f} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
+def screening_verdict_table() -> str:
+    """Pass or fail of each screening rule per map, with the number each rule reads."""
+    verdicts = screening_verdicts(screening_rows())
+    word = lambda ok: "pass" if ok else r"\textbf{fail}"
+    lines = [r"\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{3.3cm} "
+             r">{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{3.3cm}@{}}",
+             r"\toprule",
+             r"\textbf{map} & \textbf{1. no bonus at the goal in at most 25\% of copies} & "
+             r"\textbf{2. best RND setting holds at most 60\% of its peak, peak in the first half} & "
+             r"\textbf{3. oracle $1/\sqrt{n}$ holds at most 60\% of its peak} \\",
+             r"\midrule"]
+    for map_key, title in SCREEN_MAPS:
+        r1, r2, r3, none, best, oracle = verdicts[map_key]
+        lines.append(
+            f"{title} & {word(r1)} ({none['ever_reached'] * 100:.0f}\\%) & "
+            f"{word(r2)} ($\\beta={best['intrinsic_weight']:g}$: {best['holds_peak']:.2f}, "
+            f"peak at {best['peak_fraction_of_run'] * 100:.0f}\\% of the run) & "
+            f"{word(r3)} ({oracle['holds_peak']:.2f}) \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
+TABLES = {"pm-jax-speed-jaguar03": speed_table,
+          "pm-jax-screening-results": screening_table,
+          "pm-jax-screening-verdicts": screening_verdict_table}
 
 
 def splice(text: str, name: str, body: str) -> str:
