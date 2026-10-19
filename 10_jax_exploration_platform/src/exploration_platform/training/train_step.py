@@ -16,6 +16,7 @@ from ..agents.ppo.losses import ppo_loss_per_copy
 from ..agents.ppo.networks import actor_mean, critic_values
 from ..agents.ppo.update import build_update
 from ..statistics import rms_update
+from . import diagnostics as diag
 from .state import named_params, put_params, stored_params
 
 
@@ -60,6 +61,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             "composed with hoist_rollout=False; leave the hoist on")
 
     update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout), sweep.lr_per_copy)
+
+    # the reward-decline study's switches, all decided here while the program is built
+    if cfg.int_coef_schedule not in ("constant", "linear_decay"):
+        raise ValueError(f"unknown int_coef_schedule {cfg.int_coef_schedule!r}")
+    if cfg.int_coef_schedule == "linear_decay" and cfg.total_iterations <= 0:
+        raise ValueError("int_coef_schedule='linear_decay' needs total_iterations")
+    track = cfg.diagnostics or cfg.success_gate_rate > 0
+    # a step paid more than the reward shift ended inside the goal radius, whatever the payment
+    # rule: per_step pays shift + 1 there, remaining_steps pays shift + at least 1
+    inside_threshold = env.cfg.reward_shift + 0.5
 
     def iteration(state, lr):
         """Roll out, score, form advantages, update; returns (state, metrics)."""
@@ -157,6 +168,26 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
         rint_hat = rint_buf / int_std
 
+        # study additions: the episode tracker (and the running goal-reaching rate it feeds), and
+        # the task reward scaled by its running discounted-sum std. Neither runs by default.
+        agent_state = {"int_filter": int_filter, "int_rms": int_rms}
+        if track:
+            tracker, ended = diag.track_episodes(state.agent_state["episode"],
+                                                 rext_buf > inside_threshold, rext_buf, done_buf)
+            agent_state["episode"] = tracker
+        if cfg.success_gate_rate > 0:
+            success_old = state.agent_state["success_rate"]
+            agent_state["success_rate"] = diag.update_success_rate(
+                success_old, ended["episodes"], ended["reached"], cfg.success_gate_rate)
+        else:
+            success_old = None
+        rext_used = rext_buf
+        if cfg.normalize_ext_reward:
+            ext_filter, ext_rms, rext_used, ext_std = diag.normalize_task_reward(
+                state.agent_state["ext_filter"], state.agent_state["ext_rms"], rext_buf,
+                done_buf, cfg.gamma_ext)
+            agent_state["ext_filter"], agent_state["ext_rms"] = ext_filter, ext_rms
+
         # two-stream generalized advantage estimation, backwards (spec 7)
         boot_mask = term_buf if cfg.bootstrap_on_truncation else done_buf
 
@@ -173,13 +204,20 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         zero = jnp.zeros((C, N), F32)
         _, (aext_buf, aint_buf) = jax.lax.scan(
             gae_body, (zero, zero),
-            (rext_buf, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
+            (rext_used, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
              boot_mask, done_buf), reverse=True)
 
         # No-bonus policies use task advantages only. Other bonuses use either a scalar
-        # intrinsic weight or per-copy weights broadcast over the [T, C, N] rollout.
+        # intrinsic weight or per-copy weights broadcast over the [T, C, N] rollout; a schedule
+        # or the goal-rate gate multiplies that weight by a [C] factor.
+        factor = diag.intrinsic_weight_factor(cfg, step, success_old)
+        beta_c = None
         if bonus.name == "none":
             adv = cfg.ext_coef * aext_buf
+        elif factor is not None:
+            base = sweep.beta_per_copy if sweep.beta_per_copy is not None else cfg.int_coef
+            beta_c = base * factor
+            adv = beta_c.reshape(1, C, 1) * aint_buf + cfg.ext_coef * aext_buf
         elif sweep.beta_per_copy is None:
             adv = cfg.int_coef * aint_buf + cfg.ext_coef * aext_buf
         else:
@@ -205,15 +243,44 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
 
         state = state._replace(
             env_state=env_state, obs=obs_last, bonus_state=bonus_state, visited=visited,
-            step=step,
-            agent_state={"int_filter": int_filter, "int_rms": int_rms})
-        new_params, opt, loss = update_fn(stored_params(state, layout), state.opt, batch, lr,
-                                          jax.random.fold_in(key, 1))
+            step=step, agent_state=agent_state)
+        updated = update_fn(stored_params(state, layout), state.opt, batch, lr,
+                            jax.random.fold_in(key, 1))
+        new_params, opt, loss = updated[:3]
         state = put_params(state, new_params, layout)._replace(opt=opt)
 
         metrics = {"loss": loss, "reward_ext_sum": rext_buf.sum(axis=(0, 2)),
                    "rint_mean": rint_buf.mean(axis=(0, 2)),
                    **bonus.metrics(bonus_params, bonus_state)}
+        if cfg.diagnostics:
+            # per copy, [C] each: what the policy, the critic and the advantage looked like this
+            # iteration, and the episodes that ended inside the rollout
+            new_agent = named_params(new_params, layout)["agent"]
+            beta_now = (beta_c if beta_c is not None else
+                        sweep.beta_per_copy if sweep.beta_per_copy is not None else
+                        jnp.full((C,), 0.0 if bonus.name == "none" else cfg.int_coef, F32))
+            speed = jnp.sqrt((nobs_flat[..., 2:] ** 2).sum(-1))
+            d = {"logstd_mean": new_agent["actor"]["logstd"].mean(axis=1),
+                 "approx_kl": diag.gaussian_kl(agent_params["actor"], new_agent["actor"],
+                                               batch["obs"]),
+                 "ext_explained_variance": diag.explained_variance(batch["vext_old"],
+                                                                   batch["ret_ext"]),
+                 "vext_mean": batch["vext_old"].mean(axis=1),
+                 "ret_ext_mean": batch["ret_ext"].mean(axis=1),
+                 "int_std": int_std.reshape(C),
+                 "rint_hat_mean": rint_hat.mean(axis=(0, 2)),
+                 "adv_int_rms": jnp.sqrt(((beta_now.reshape(1, C, 1) * aint_buf) ** 2
+                                          ).mean(axis=(0, 2))),
+                 "adv_ext_rms": jnp.sqrt(((cfg.ext_coef * aext_buf) ** 2).mean(axis=(0, 2))),
+                 "beta_effective": beta_now,
+                 "speed_mean": speed.mean(axis=1),
+                 **{f"episode_{name}": value for name, value in ended.items()},
+                 **updated[3]}
+            if cfg.success_gate_rate > 0:
+                d["success_rate"] = agent_state["success_rate"]
+            if cfg.normalize_ext_reward:
+                d["ext_std"] = ext_std
+            metrics["diagnostics"] = d
         if capture_batch:
             return state, metrics, batch
         return state, metrics

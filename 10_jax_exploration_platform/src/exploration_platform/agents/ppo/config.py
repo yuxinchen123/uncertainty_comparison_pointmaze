@@ -76,3 +76,21 @@ class PPOConfig:
                                      # draws bit-identical
     track_coverage: bool = False     # maintain a per-copy visited-cell map on the device, so
                                      # per-copy exploration curves can be recorded (round 4)
+
+    # ---- the reward-decline study (2026-10-19). Every default reproduces the arithmetic above,
+    # so a configuration that sets none of these compiles exactly the program it did before ----
+    diagnostics: bool = False        # extra per-iteration metrics (policy log std, update KL,
+                                     # gradient norms, value fit, advantage sizes) and a per-copy
+                                     # episode tracker (episodes ended, goal reached, steps inside)
+    total_iterations: int = 0        # the run's length in iterations; read only by the schedules
+                                     # below, which need to know where in the run an iteration is
+    int_coef_schedule: str = "constant"  # "linear_decay": the intrinsic weight times
+                                     # 1 - (k - 1) / total_iterations at iteration k, reaching
+                                     # nearly zero at the end, the same shape as the rate anneal
+    success_gate_rate: float = 0.0   # > 0: the intrinsic weight of each copy is multiplied by
+                                     # 1 - s, where s is that copy's running goal-reaching rate
+                                     # over ended episodes, moved by this step size per iteration
+    normalize_ext_reward: bool = False   # divide the task reward by the running standard
+                                     # deviation of its discounted sum, as the intrinsic reward is
+    clip_per_network: bool = False   # clip the actor's, the critic's and the predictor's gradients
+                                     # to max_grad_norm separately instead of jointly

@@ -89,6 +89,30 @@ class EnvConfig:
     continuing_task: bool = True             # True: never terminated (only truncated at the cap)
     reward_shift: float = 0.0                # added to every step's reward (-1 = ExPLORe convention)
     goal_radius: float = 0.45                # sparse reward and termination threshold
+    # what a step inside the goal radius pays (added 2026-10-19 for the reward-decline study):
+    # "per_step" pays 1 on every such step (the original task); "remaining_steps" ends the episode
+    # there and pays at once what a perfect stay would still earn, cap - step + 1. The second
+    # needs continuing_task=False, since it is a payment for ending the episode.
+    goal_reward: str = "per_step"
+
+
+def validate_env_config(cfg: "EnvConfig") -> None:
+    """Refuse a configuration the environment would run silently wrong: a start or goal inside a
+    wall or outside the map, or a goal payment that does not fit the termination rule.
+
+    Example: medium map, start (7, 1) -> refused, row 7 of the medium map is all wall.
+    """
+    # the start and the goal must be open cells of the chosen map
+    wall = np.array(MAPS[cfg.map_name], dtype=np.uint8)
+    rows, cols = wall.shape
+    for name, (i, j) in (("start_cell", cfg.start_cell), ("goal_cell", cfg.goal_cell)):
+        if not (0 <= i < rows and 0 <= j < cols) or wall[i, j]:
+            raise ValueError(f"{name} {(i, j)} is not an open cell of the {cfg.map_name} map")
+    # the goal payment must be one this environment knows, and the lump sum needs termination
+    if cfg.goal_reward not in ("per_step", "remaining_steps"):
+        raise ValueError(f"unknown goal_reward {cfg.goal_reward!r}")
+    if cfg.goal_reward == "remaining_steps" and cfg.continuing_task:
+        raise ValueError("goal_reward='remaining_steps' needs continuing_task=False")
 
 
 def cell_center(cell: Tuple[int, int], rows: int, cols: int) -> Tuple[float, float]:

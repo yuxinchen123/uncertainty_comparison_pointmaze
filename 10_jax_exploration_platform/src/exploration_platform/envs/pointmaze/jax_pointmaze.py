@@ -11,7 +11,7 @@ import numpy as np
 
 from .pm_common import (ACT_CLIP, B_REF, H, INV_MHD, K_OVER_D, M, MARGIN, NEIGHBOR_OFFSETS, R,
                         SOL_D0, SOL_DMAX, SOL_MID, SOL_WIDTH, VEL_CLIP, EnvConfig,
-                        build_geometry, cell_center)
+                        build_geometry, cell_center, validate_env_config)
 from .pm_common import D as D_DAMP
 from .pm_common import G as G_GEAR
 
@@ -51,6 +51,7 @@ class JaxPointMaze:
     def __init__(self, cfg: EnvConfig, n_copies: int, n_envs: int, base_seed: int = 0,
                  dtype=jnp.float32, copy_seed_index=None):
         self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
+        validate_env_config(cfg)
         geo = build_geometry(cfg.map_name)
         self.rows, self.cols = geo["rows"], geo["cols"]
         self.nb_mask = jnp.asarray(geo["nb_mask"].reshape(-1).astype(np.int32))
@@ -173,7 +174,13 @@ class JaxPointMaze:
 
         delta = pos - state.goal
         at_goal = (delta * delta).sum(-1) <= self.cfg.goal_radius ** 2
-        reward = at_goal.astype(self.dtype) + self.cfg.reward_shift
+        if self.cfg.goal_reward == "remaining_steps":
+            # arriving at step k ends the episode and pays the steps a perfect stay would still
+            # earn: before step_count 300 of a 400 cap; after reward 101
+            pay = (self.cfg.max_episode_steps - step_count + 1).astype(self.dtype)
+            reward = at_goal.astype(self.dtype) * pay + self.cfg.reward_shift
+        else:
+            reward = at_goal.astype(self.dtype) + self.cfg.reward_shift
         if self.cfg.continuing_task:
             terminated = jnp.zeros_like(at_goal)
         else:

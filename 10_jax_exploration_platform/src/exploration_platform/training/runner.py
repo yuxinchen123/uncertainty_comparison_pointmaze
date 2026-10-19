@@ -17,6 +17,7 @@ from ..agents.ppo.update import opt_init
 from ..envs.pointmaze.jax_pointmaze import EnvState
 from ..evaluation.coverage import coverage_fraction
 from ..statistics import rms_init
+from . import diagnostics as diag
 from .compose import Composition
 from .state import TrainState, put_params
 
@@ -51,13 +52,23 @@ class Runner:
         # the state stores the trainable tree in whichever form the layout says: one array, or
         # the two named halves
         stored = self.layout.pack(trainable) if self.layout.packed else trainable
+        # what the agent carries between iterations; the reward-decline study's switches add their
+        # own accumulators, and a configuration without them carries exactly the two it always did
+        agent_state = {"int_filter": jnp.zeros((cfg.n_copies, cfg.n_envs), F32),
+                       "int_rms": rms_init(cfg.n_copies, 1)}
+        if cfg.diagnostics or cfg.success_gate_rate > 0:
+            agent_state["episode"] = diag.tracker_init(cfg.n_copies, cfg.n_envs)
+        if cfg.success_gate_rate > 0:
+            agent_state["success_rate"] = jnp.zeros((cfg.n_copies,), F32)
+        if cfg.normalize_ext_reward:
+            agent_state["ext_filter"], agent_state["ext_rms"] = diag.ext_filter_init(
+                cfg.n_copies, cfg.n_envs)
         state = TrainState(
             env_state=self.env.reset(),
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
             agent_params={}, bonus_params={},
             opt=opt_init(stored),
-            agent_state={"int_filter": jnp.zeros((cfg.n_copies, cfg.n_envs), F32),
-                         "int_rms": rms_init(cfg.n_copies, 1)},
+            agent_state=agent_state,
             bonus_state=self.composition.init_bonus_state,
             visited=jnp.zeros(
                 (cfg.n_copies, self.composition.n_cells if cfg.track_coverage else 0), bool),

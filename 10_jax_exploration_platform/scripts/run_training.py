@@ -202,7 +202,68 @@ def parse_args() -> argparse.Namespace:
                         help="the environment's truncation cap, which sets the episode clock")
     parser.add_argument("--track-coverage", action="store_true",
                         help="keep a per-copy visited-cell map on the device")
+    # the environment (added 2026-10-19); the defaults are the large-maze task every earlier run used
+    parser.add_argument("--map", default="large", choices=["umaze", "open", "medium", "large"])
+    parser.add_argument("--start-cell", default="7,1", help="row,column of the start; row 0 on top")
+    parser.add_argument("--goal-cell", default="1,10", help="row,column of the goal")
+    parser.add_argument("--terminate-at-goal", action="store_true",
+                        help="end the episode on the first step inside the goal radius")
+    parser.add_argument("--reward-shift", type=float, default=0.0,
+                        help="added to every step's task reward (-1: 0 at the goal, -1 elsewhere)")
+    parser.add_argument("--goal-reward", default="per_step",
+                        choices=["per_step", "remaining_steps"],
+                        help="remaining_steps: ending at the goal pays cap - step + 1 at once")
+    # the agent knobs the reward-decline study varies; the defaults are PPOConfig's
+    parser.add_argument("--ent-coef", type=float, default=0.0)
+    parser.add_argument("--gamma-ext", type=float, default=0.999)
+    parser.add_argument("--ext-coef", type=float, default=2.0)
+    parser.add_argument("--max-grad-norm", type=float, default=0.5)
+    parser.add_argument("--update-epochs", type=int, default=4)
+    parser.add_argument("--num-minibatches", type=int, default=4)
+    parser.add_argument("--diagnostics", action="store_true",
+                        help="record policy, critic, advantage and per-episode numbers per window")
+    parser.add_argument("--intrinsic-weight-schedule", default="constant",
+                        choices=["constant", "linear_decay"])
+    parser.add_argument("--success-gate-rate", type=float, default=0.0,
+                        help="> 0: intrinsic weight x (1 - running goal-reaching rate)")
+    parser.add_argument("--normalize-extrinsic-reward", action="store_true")
+    parser.add_argument("--clip-per-network", action="store_true")
     return parser.parse_args()
+
+
+def cell(text: str) -> tuple:
+    """Parse a row,column cell. before: "6,1"; after: (6, 1)."""
+    row, col = (int(part) for part in text.split(","))
+    return row, col
+
+
+def build_env_config(args: argparse.Namespace):
+    """The environment this unit trains in, from the command line."""
+    from exploration_platform.envs.pointmaze.pm_common import EnvConfig, validate_env_config
+    env_cfg = EnvConfig(map_name=args.map, start_cell=cell(args.start_cell),
+                        goal_cell=cell(args.goal_cell), max_episode_steps=args.episode_steps,
+                        continuing_task=not args.terminate_at_goal,
+                        reward_shift=args.reward_shift, goal_reward=args.goal_reward)
+    validate_env_config(env_cfg)
+    return env_cfg
+
+
+def env_spec(env_cfg) -> str:
+    """The environment's identity string; the original task keeps its original name.
+
+    before: large map, continuing, cap 400, shift 0, per_step -> pointmaze_large_cont400_nonoise@1
+    before: medium map, terminating, cap 250, shift -1 -> pointmaze_medium_term250_nonoise_shift-1@1
+    """
+    kind = "cont" if env_cfg.continuing_task else "term"
+    name = f"pointmaze_{env_cfg.map_name}_{kind}{env_cfg.max_episode_steps}_nonoise"
+    if (env_cfg.map_name, env_cfg.start_cell, env_cfg.goal_cell) != ("large", (7, 1), (1, 10)):
+        name += (f"_start{env_cfg.start_cell[0]}-{env_cfg.start_cell[1]}"
+                 f"_goal{env_cfg.goal_cell[0]}-{env_cfg.goal_cell[1]}")
+    if env_cfg.reward_shift:
+        name += f"_shift{env_cfg.reward_shift:g}"
+    if env_cfg.goal_reward != "per_step":
+        name += f"_{env_cfg.goal_reward}"
+    return name + "@1"
 
 
 def specs_of(bonus: str) -> dict:
@@ -228,7 +289,19 @@ def build_config(args: argparse.Namespace):
     common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
                   base_seed=args.base_seed, track_coverage=args.track_coverage,
                   copy_seed_offset=args.copy_seed_offset, flat_params=args.flat_params,
-                  scan_unroll=args.scan_unroll)
+                  scan_unroll=args.scan_unroll,
+                  ent_coef=args.ent_coef, gamma_ext=args.gamma_ext, ext_coef=args.ext_coef,
+                  max_grad_norm=args.max_grad_norm, update_epochs=args.update_epochs,
+                  num_minibatches=args.num_minibatches, diagnostics=args.diagnostics,
+                  int_coef_schedule=args.intrinsic_weight_schedule,
+                  total_iterations=(args.iterations
+                                    if args.intrinsic_weight_schedule != "constant" else 0),
+                  success_gate_rate=args.success_gate_rate,
+                  normalize_ext_reward=args.normalize_extrinsic_reward,
+                  clip_per_network=args.clip_per_network)
+    if args.terminate_at_goal and not args.diagnostics:
+        raise ValueError("--terminate-at-goal needs --diagnostics: episodes then end at different "
+                         "steps, and only the episode tracker counts them")
     # Before: two rates x two weights = four cells; after: only the listed pairs train.
     if args.parameter_settings:
         if rates or weights:
@@ -260,7 +333,7 @@ def build_config(args: argparse.Namespace):
                      **common)
 
 
-def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
+def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg) -> None:
     """Write command.txt, config_resolved.yaml and manifest.yaml before the first iteration."""
     # the exact command, so the run can be repeated without reconstructing it from prose. Arguments
     # are quoted the way a shell needs them, or an argument holding spaces (the description) would
@@ -274,11 +347,11 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
     # the full configuration after defaults and overrides — what actually ran, not what was typed
     resolved = {"trainer": {field: getattr(config, field)
                             for field in sorted(config.__dataclass_fields__)},
-                "environment": {"specification": SPECS["env"],
-                                "map_name": "large", "start_cell": "(7, 1)", "goal_cell": "(1, 10)",
-                                "position_noise": 0.0, "max_episode_steps": args.episode_steps,
-                                "continuing_task": True, "goal_radius": 0.45,
-                                "reward_shift": 0.0},
+                "environment": {"specification": env_spec(env_cfg),
+                                **{field: (str(getattr(env_cfg, field))
+                                           if isinstance(getattr(env_cfg, field), tuple)
+                                           else getattr(env_cfg, field))
+                                   for field in env_cfg.__dataclass_fields__}},
                 "runtime": {"interpreter": sys.executable, "unit_id": args.unit_id,
                             "iterations": args.iterations,
                             "window_iterations": args.window_iterations,
@@ -291,7 +364,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config) -> None:
         "run_id": run_dir.name,
         "description": args.description or "one training unit on the JAX exploration platform",
         "git": git_state(PLATFORM_ROOT.parent),
-        "specs": specs_of(args.bonus),
+        "specs": {**specs_of(args.bonus), "env": env_spec(env_cfg)},
         "compile_signature": {
             "copies": config.n_copies, "envs_per_copy": config.n_envs,
             "rollout_steps": config.num_steps, "update_style": config.update_style,
@@ -318,8 +391,9 @@ def main() -> None:
     import jax.numpy as jnp
 
     config = build_config(args)
+    env_cfg = build_env_config(args)
     if not (run_dir / "manifest.yaml").exists():
-        write_launch_files(run_dir, args, config)
+        write_launch_files(run_dir, args, config, env_cfg)
 
     shard = run_dir / "data" / f"{args.unit_id}.jsonl"
     log = open(run_dir / "logs" / f"{args.unit_id}.log", "a", buffering=1)
@@ -361,7 +435,7 @@ def main() -> None:
     # build the trainer, then time the compilation of the first iteration separately from the rest,
     # because the first iteration pays for compiling the whole program
     build_start = time.time()
-    trainer = Runner(config, bonus=args.bonus)
+    trainer = Runner(config, bonus=args.bonus, env_cfg=env_cfg)
     sweep = trainer.sweep
     steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
     steps_per_copy_per_iteration = config.num_steps * config.n_envs
@@ -382,6 +456,7 @@ def main() -> None:
     # the unit's own identity card: which cell each copy belongs to, so the aggregator can group
     # the per-copy arrays of every later record without re-deriving the sweep
     emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
+          "environment": env_spec(env_cfg), "diagnostics": config.diagnostics,
           "copies": config.n_copies, "envs_per_copy": config.n_envs,
           "rollout_steps": config.num_steps, "iterations": args.iterations,
           "window_iterations": args.window_iterations, "episode_steps": args.episode_steps,
@@ -413,6 +488,8 @@ def main() -> None:
     # the loop never synchronises except on the iterations that close a window
     reward_in_window = jnp.zeros((config.n_copies,))
     rint_in_window = jnp.zeros((config.n_copies,))
+    # the diagnostics' window sums, also on the device; None until the first iteration names them
+    diag_in_window = None
     start = time.time()
     first_iteration_seconds = None
     window_index = 0
@@ -422,6 +499,9 @@ def main() -> None:
         state, metrics = trainer.iterate(state, trainer.lr_argument(iteration, args.iterations))
         reward_in_window = reward_in_window + metrics["reward_ext_sum"]
         rint_in_window = rint_in_window + metrics["rint_mean"]
+        if config.diagnostics:
+            diag_in_window = (metrics["diagnostics"] if diag_in_window is None else
+                              jax.tree.map(jnp.add, diag_in_window, metrics["diagnostics"]))
         if first_iteration_seconds is None:
             jax.block_until_ready(metrics["loss"])
             first_iteration_seconds = time.time() - iteration_start
@@ -462,6 +542,16 @@ def main() -> None:
             }
             if config.track_coverage:
                 record["coverage_per_copy"] = trainer.coverage(state).tolist()
+            if config.diagnostics:
+                # episode_* fields stay sums over the window (episodes ended, reached, ...); every
+                # other field is the mean over the window's iterations. Six significant digits.
+                # before: {"episode_episodes": [3., 2.], "approx_kl": [0.002, 0.004]} summed over
+                #         2 iterations; after: episode_episodes [3, 2], approx_kl [0.001, 0.002]
+                record["diagnostics_per_copy"] = {
+                    name: [float(f"{x:.6g}") for x in np.asarray(
+                        value if name.startswith("episode_") else value / iterations_in_window)]
+                    for name, value in diag_in_window.items()}
+                diag_in_window = None
             emit(record)
             coverage_note = (f", maze coverage mean {np.mean(record['coverage_per_copy']):.3f}"
                              if config.track_coverage else "")

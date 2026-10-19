@@ -35,6 +35,47 @@ def clip_per_copy(grads, n_copies: int, max_grad_norm: float):
     return jax.tree.map(lambda g: g * scale.reshape((n_copies,) + (1,) * (g.ndim - 1)), grads)
 
 
+def per_copy_norm(tree, n_copies: int):
+    """The gradient norm of each copy over every tensor of a tree, [C]; zeros for an empty tree."""
+    leaves = jax.tree.leaves(tree)
+    if not leaves:
+        return jnp.zeros((n_copies,), F32)
+    return jnp.sqrt(sum((leaf.reshape(n_copies, -1).astype(F32) ** 2).sum(axis=1)
+                        for leaf in leaves))
+
+
+def clip_and_report(cfg, grads, n_copies: int):
+    """Clip the gradient as the configuration says, and report each network's norm before it.
+
+    The default clips the whole tree jointly, exactly as `clip_per_copy` always has. With
+    clip_per_network the actor, the critic and the bonus's networks are clipped separately, so a
+    large critic gradient no longer shrinks the actor's step.
+
+    before: grads {"agent": {"actor", "critic"}, "bonus": {"predictor"} or {}}
+    after:  the same tree clipped, and {"grad_norm_actor": [C], "grad_norm_critic": [C],
+            "grad_norm_bonus": [C], "clip_scale": [C]} where clip_scale is the smallest factor
+            any clip applied to that copy (1 when nothing was clipped)
+    """
+    # each network's norm before clipping, per copy
+    parts = {"actor": grads["agent"]["actor"], "critic": grads["agent"]["critic"],
+             "bonus": grads["bonus"]}
+    norms = {name: per_copy_norm(tree, n_copies) for name, tree in parts.items()}
+    report = {f"grad_norm_{name}": norm for name, norm in norms.items()}
+
+    # the joint clip (default) or one clip per network
+    if not cfg.clip_per_network:
+        total = jnp.sqrt(sum(norm ** 2 for norm in norms.values()))
+        report["clip_scale"] = jnp.minimum(1.0, cfg.max_grad_norm / (total + 1e-6))
+        return clip_per_copy(grads, n_copies, cfg.max_grad_norm), report
+    scales = [jnp.minimum(1.0, cfg.max_grad_norm / (norm + 1e-6)) for norm in norms.values()]
+    report["clip_scale"] = jnp.minimum(jnp.minimum(scales[0], scales[1]), scales[2])
+    clipped = {"agent": {"actor": clip_per_copy(parts["actor"], n_copies, cfg.max_grad_norm),
+                         "critic": clip_per_copy(parts["critic"], n_copies, cfg.max_grad_norm)},
+               "bonus": (clip_per_copy(parts["bonus"], n_copies, cfg.max_grad_norm)
+                         if jax.tree.leaves(parts["bonus"]) else parts["bonus"])}
+    return clipped, report
+
+
 def adam_step(params, grads, opt: OptState, lr, adam_eps: float, n_copies: int, lr_per_copy):
     """One Adam step (torch.optim.Adam formula): moments, bias correction, parameter update.
 
@@ -66,6 +107,11 @@ def build_update(cfg, loss_fn, lr_per_copy):
     loss_fn(params, batch) -> scalar loss summed over copies. The returned function has the
     signature update(params, opt, batch, lr, key) -> (params, opt, reported loss).
     """
+    if cfg.flat_params and (cfg.diagnostics or cfg.clip_per_network):
+        raise ValueError("diagnostics and clip_per_network need the named parameter tree; "
+                         "turn flat_params off")
+    if cfg.diagnostics or cfg.clip_per_network:
+        return _build_reporting(cfg, loss_fn, lr_per_copy)
     if cfg.update_style == "full_batch":
         return _build_full_batch(cfg, loss_fn, lr_per_copy)
     if cfg.update_style == "epoch_minibatch":
@@ -120,4 +166,58 @@ def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
         (params, opt), losses = jax.lax.scan(body, (params, opt), mbs,
                                              unroll=cfg.update_unroll)
         return params, opt, losses[-1]
+    return update
+
+
+def _build_reporting(cfg, loss_fn, lr_per_copy):
+    """Either update style, clipping through `clip_and_report` and returning its report as well.
+
+    The signature becomes update(params, opt, batch, lr, key) -> (params, opt, loss, report);
+    under epoch-minibatch updates each report field is the mean over the gradient steps. Kept
+    apart from the two plain builders so a configuration that asks for neither switch compiles the
+    program it always did.
+    """
+    C = cfg.n_copies
+    if cfg.update_style == "full_batch":
+        def update(params, opt, batch, lr, key):
+            """One gradient, the configured clip, one Adam step, and the clip's report."""
+            loss, grads = jax.value_and_grad(lambda p: loss_fn(p, batch, style_a=True))(params)
+            grads, report = clip_and_report(cfg, grads, C)
+            params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
+            return params, opt, loss, report
+        return update
+    if cfg.update_style != "epoch_minibatch":
+        raise ValueError(f"unknown update style {cfg.update_style!r}")
+
+    Brows = cfg.num_steps * cfg.n_envs
+    mb_size = Brows // cfg.num_minibatches
+    n_steps = cfg.update_epochs * cfg.num_minibatches
+
+    def update(params, opt, batch, lr, key):
+        """Style B as in `_build_epoch_minibatch`, with the clip report averaged over the steps."""
+        # the same permutations and minibatches as the plain style B builder
+        perm = jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, C, Brows), F32), axis=-1)
+        idx = perm.reshape(cfg.update_epochs, C, cfg.num_minibatches, mb_size)
+        idx = idx.transpose(0, 2, 1, 3).reshape(n_steps, C, mb_size)
+
+        def gather(t):
+            """One batch field, cut into the S minibatches the scan will walk."""
+            if t.ndim == 3:
+                return jnp.take_along_axis(t[None], idx[..., None], axis=2)
+            return jnp.take_along_axis(t[None], idx, axis=2)
+
+        mbs = {k: gather(batch[k]) for k in sorted(batch)}
+
+        def body(carry, mb):
+            """One gradient step, with its clip report as a scan output."""
+            params, opt = carry
+            loss, grads = jax.value_and_grad(lambda p: loss_fn(p, mb, style_a=False))(params)
+            grads, report = clip_and_report(cfg, grads, C)
+            params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
+            return (params, opt), (loss, report)
+
+        # the reports come back stacked [S, C]; the mean over the S steps is what is recorded
+        (params, opt), (losses, reports) = jax.lax.scan(body, (params, opt), mbs,
+                                                        unroll=cfg.update_unroll)
+        return params, opt, losses[-1], jax.tree.map(lambda x: x.mean(axis=0), reports)
     return update
