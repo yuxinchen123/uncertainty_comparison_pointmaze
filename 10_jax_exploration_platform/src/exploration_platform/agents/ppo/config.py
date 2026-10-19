@@ -94,3 +94,7 @@ class PPOConfig:
                                      # deviation of its discounted sum, as the intrinsic reward is
     clip_per_network: bool = False   # clip the actor's, the critic's and the predictor's gradients
                                      # to max_grad_norm separately instead of jointly
+    logstd_floor: float = float("-inf")  # after every update, raise the policy's log standard
+                                     # deviation to at least this; -inf leaves it free
+    critic_lr_scale: float = 1.0     # the critic's update step is this fraction of the step Adam
+                                     # computed; 1 leaves it as the actor's

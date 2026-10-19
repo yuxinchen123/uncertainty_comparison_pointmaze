@@ -228,6 +228,13 @@ def parse_args() -> argparse.Namespace:
                         help="> 0: intrinsic weight x (1 - running goal-reaching rate)")
     parser.add_argument("--normalize-extrinsic-reward", action="store_true")
     parser.add_argument("--clip-per-network", action="store_true")
+    parser.add_argument("--logstd-floor", type=float, default=float("-inf"),
+                        help="raise the policy's log standard deviation to at least this")
+    parser.add_argument("--critic-lr-scale", type=float, default=1.0,
+                        help="the critic's step as a fraction of the step Adam computed")
+    parser.add_argument("--vf-coef", type=float, default=0.5)
+    parser.add_argument("--no-bootstrap-on-truncation", action="store_true",
+                        help="treat the episode cap as the end of the task return")
     parser.add_argument("--lr-anneal-iterations", type=int, default=0,
                         help="iterations over which the learning rate anneals linearly to zero; "
                              "0 = this run's own length. A longer horizon makes a short run use "
@@ -302,7 +309,9 @@ def build_config(args: argparse.Namespace):
                                     if args.intrinsic_weight_schedule != "constant" else 0),
                   success_gate_rate=args.success_gate_rate,
                   normalize_ext_reward=args.normalize_extrinsic_reward,
-                  clip_per_network=args.clip_per_network)
+                  clip_per_network=args.clip_per_network, logstd_floor=args.logstd_floor,
+                  critic_lr_scale=args.critic_lr_scale, vf_coef=args.vf_coef,
+                  bootstrap_on_truncation=not args.no_bootstrap_on_truncation)
     if 0 < args.lr_anneal_iterations < args.iterations:
         raise ValueError("--lr-anneal-iterations shorter than the run would anneal the learning "
                          "rate below zero")

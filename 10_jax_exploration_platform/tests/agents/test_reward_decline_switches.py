@@ -235,6 +235,18 @@ def test_switches_on():
         assert all(np.isfinite(v).all() for v in values if v.dtype.kind == "f"), name
         print(f"PASS {name}: three iterations, every float finite")
 
+    # the log-std floor holds after updates that push the spread down (a floor above the start
+    # value 0 is reached at once); a critic step of zero leaves the critic where it started
+    state, _ = run(PPOConfig(logstd_floor=0.25, **SMALL))
+    assert (np.asarray(state.agent_params["actor"]["logstd"]) >= 0.25).all()
+    runner = Runner(PPOConfig(critic_lr_scale=0.0, **SMALL))
+    start = runner.prime(runner.init_state(0))
+    critic0 = jax.tree.map(lambda x: np.array(x), start.agent_params["critic"])
+    state, _ = runner.iterate(start, runner.lr_argument(1, 3))
+    for a, b in zip(jax.tree.leaves(critic0), jax.tree.leaves(state.agent_params["critic"])):
+        np.testing.assert_array_equal(a, np.asarray(b))
+    print("PASS logstd_floor holds; critic_lr_scale 0 freezes the critic")
+
     # with no switch at all the agent state holds exactly the two original entries
     runner = Runner(PPOConfig(**SMALL))
     assert set(runner.init_state(0).agent_state) == {"int_filter", "int_rms"}

@@ -107,10 +107,12 @@ def build_update(cfg, loss_fn, lr_per_copy):
     loss_fn(params, batch) -> scalar loss summed over copies. The returned function has the
     signature update(params, opt, batch, lr, key) -> (params, opt, reported loss).
     """
-    if cfg.flat_params and (cfg.diagnostics or cfg.clip_per_network):
+    if cfg.flat_params and (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
+                            or cfg.logstd_floor > float("-inf")):
         raise ValueError("diagnostics and clip_per_network need the named parameter tree; "
                          "turn flat_params off")
-    if cfg.diagnostics or cfg.clip_per_network:
+    if (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
+            or cfg.logstd_floor > float("-inf")):
         return _build_reporting(cfg, loss_fn, lr_per_copy)
     if cfg.update_style == "full_batch":
         return _build_full_batch(cfg, loss_fn, lr_per_copy)
@@ -169,8 +171,28 @@ def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
     return update
 
 
+def after_step(cfg, before, after):
+    """The study's adjustments to a finished Adam step: a shorter critic step, a log-std floor.
+
+    before / after: the trainable tree before and after the step. With critic_lr_scale s the
+    critic moves s times as far as Adam proposed: before 0.10, Adam 0.12, s = 0.5 -> 0.11.
+    With a floor f the log standard deviation becomes max(logstd, f): -1.3 with f = -1 -> -1.
+    """
+    if cfg.critic_lr_scale != 1.0:
+        s = cfg.critic_lr_scale
+        critic = jax.tree.map(lambda b, a: b + s * (a - b),
+                              before["agent"]["critic"], after["agent"]["critic"])
+        after = {**after, "agent": {**after["agent"], "critic": critic}}
+    if cfg.logstd_floor > float("-inf"):
+        actor = {**after["agent"]["actor"],
+                 "logstd": jnp.maximum(after["agent"]["actor"]["logstd"], cfg.logstd_floor)}
+        after = {**after, "agent": {**after["agent"], "actor": actor}}
+    return after
+
+
 def _build_reporting(cfg, loss_fn, lr_per_copy):
-    """Either update style, clipping through `clip_and_report` and returning its report as well.
+    """Either update style, clipping through `clip_and_report`, adjusting through `after_step`,
+    and returning the clip report as well.
 
     The signature becomes update(params, opt, batch, lr, key) -> (params, opt, loss, report);
     under epoch-minibatch updates each report field is the mean over the gradient steps. Kept
@@ -183,8 +205,8 @@ def _build_reporting(cfg, loss_fn, lr_per_copy):
             """One gradient, the configured clip, one Adam step, and the clip's report."""
             loss, grads = jax.value_and_grad(lambda p: loss_fn(p, batch, style_a=True))(params)
             grads, report = clip_and_report(cfg, grads, C)
-            params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
-            return params, opt, loss, report
+            stepped, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
+            return after_step(cfg, params, stepped), opt, loss, report
         return update
     if cfg.update_style != "epoch_minibatch":
         raise ValueError(f"unknown update style {cfg.update_style!r}")
@@ -213,8 +235,8 @@ def _build_reporting(cfg, loss_fn, lr_per_copy):
             params, opt = carry
             loss, grads = jax.value_and_grad(lambda p: loss_fn(p, mb, style_a=False))(params)
             grads, report = clip_and_report(cfg, grads, C)
-            params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
-            return (params, opt), (loss, report)
+            stepped, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
+            return (after_step(cfg, params, stepped), opt), (loss, report)
 
         # the reports come back stacked [S, C]; the mean over the S steps is what is recorded
         (params, opt), (losses, reports) = jax.lax.scan(body, (params, opt), mbs,

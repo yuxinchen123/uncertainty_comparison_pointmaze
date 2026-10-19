@@ -89,6 +89,8 @@
 \hyperref[sec:pm-jax-run11]{Train run 1.1: the first algorithm batch} & 2026-08-16 19:06 PT & 2026-10-19 12:58 PT & read \\
 \hyperref[sec:pm-jax-corrected]{Train run 1.2: corrected intrinsic returns} & 2026-10-13 22:23 PT & 2026-10-19 12:58 PT & read \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:55 PT & 2026-10-19 16:55 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:55 PT & 2026-10-19 16:55 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -703,6 +705,250 @@ per second; right: steps per second per copy.}
 and $1000$ into one program of $4 \times 128$ copies, so every unit of a batch has the same copy
 count and copy $k$ meets the same noise and environments in every idea. Jobs share one
 compilation cache, ask for eight processors, and keep the diagnostics on.
+\studyunreadend % REPORT-STATUS
+
+\subsection{Choosing a small environment for the reward-decline study}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-screening}
+Candidate fixes are tested first on the smallest maze that still shows the problem. Three smaller
+PointMaze maps were screened against the large one, with the same ball dynamics, goal radius,
+sparse reward and continuing task as \Cref{tab:pm-jax-env}; only the map, the start, the goal and
+the episode cap differ (\Cref{tab:pm-jax-screening-env}, \Cref{fig:pm-jax-screening-maps}). The
+medium maze is screened at two caps: $400$ steps, and $250$, which keeps the large maze's ratio of
+travel to cap ($10$ cell moves against $17$).
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}?>{\raggedright\arraybackslash}p{2.3cm}?>{\raggedright\arraybackslash}p{2.6cm}?>{\raggedright\arraybackslash}p{2.6cm}?>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\blackrule
+\textbf{parameter} & \textbf{U-maze} & \textbf{medium, cap 250} & \textbf{medium, cap 400} &
+\textbf{large, cap 400} \\
+\blackrule
+open cells & $7$ & \multicolumn{2}{c?}{$26$} & $46$ \\
+\greyrule
+start cell (row, column) & $(3,1)$ & \multicolumn{2}{c?}{$(6,1)$} & $(7,1)$ \\
+\greyrule
+goal cell & $(1,1)$ & \multicolumn{2}{c?}{$(1,6)$} & $(1,10)$ \\
+\greyrule
+shortest route & $6$ cell moves & \multicolumn{2}{c?}{$10$ cell moves} & $17$ cell moves \\
+\greyrule
+episode cap & $150$ steps & $250$ steps & $400$ steps & $400$ steps \\
+\greyrule
+steps per copy & \multicolumn{3}{c?}{$30$M} & $50$M \\
+\blackrule
+\end{tabular}
+\caption{The screened maps. Everything not listed is as in \Cref{tab:pm-jax-env}.}
+\label{tab:pm-jax-screening-env}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127/analysis/plots/screened_maps.pdf}}
+\caption{The screened maps, to scale with $1$\,m cells. Grey cells are walls; the blue disc
+marks the start and the green star and circle the goal and its $0.45$\,m radius.}
+\label{fig:pm-jax-screening-maps}
+\end{figure}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm}?>{\raggedright\arraybackslash}p{3.7cm}?>{\raggedright\arraybackslash}p{3.2cm}?>{\raggedright\arraybackslash}p{3.2cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{random network distillation} &
+\textbf{oracle counts $1/\sqrt{n}$} & \textbf{no bonus} \\
+\blackrule
+\multicolumn{4}{@{}l}{\textit{Environment and algorithm}} \\
+\greyrule
+{\bfseries\boldmath environment} & \multicolumn{3}{>{\centering\arraybackslash}p{10.3cm}}{\bfseries\boldmath
+U-maze cap 150; medium cap 250; medium cap 400; large cap 400 --- 4 values} \\
+\greyrule
+learning rate & \multicolumn{3}{>{\centering\arraybackslash}p{10.3cm}}{$10^{-3}$, annealed linearly to zero over the run} \\
+\greyrule
+update and rollout & \multicolumn{3}{>{\centering\arraybackslash}p{10.3cm}}{one full-batch step per rollout of $128$ steps $\times$ $4$
+environments} \\
+\greyrule
+seeds & \multicolumn{3}{c}{$128$ copies per configuration, seeds $0$--$127$} \\
+\blackrule
+\multicolumn{4}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+{\bfseries\boldmath intrinsic weight $\beta$} & {\bfseries\boldmath $1$, $10$, $100$, $1000$ ---
+4 values} & {\bfseries\boldmath $1$} & \textbf{N/A} \\
+\blackrule
+\multicolumn{4}{@{}l}{\textit{Configuration counts}} \\
+\greyrule
+configurations & $4$(maps) $\times$ $4$(weights) $=16$ & $4$(maps) $=4$ & $4$(maps) $=4$ \\
+\greyrule
+total configurations & \multicolumn{3}{c}{$16+4+4=24$} \\
+\blackrule
+\end{tabular}
+\caption{The screening's settings. Bold rows are swept.}
+\label{tab:pm-jax-screening-swept}
+\end{table}
+
+\paragraph{Metrics.}
+Episode returns are counted over the episodes that end inside each $250$-iteration recording
+window. Let $G_{c,w}$ be the mean extrinsic return of the episodes copy $c$ ended in window $w$,
+and $\bar G_w$ its mean over the configuration's copies. Then the peak is $\max_w \bar G_w$; the
+final-10\% return is the mean over copies of each copy's return in the last tenth of the windows;
+``final / peak'' is their ratio; ``copies ever at the goal'' is the share of copies with at least
+one episode inside the goal radius; and ``final share of episodes at goal'' is the share of the
+last tenth's episodes that entered the goal radius. Uncertainties are standard errors over
+copies.
+
+The rules, fixed before the runs: the chosen map is the smallest on which (1) a policy without a
+bonus reaches the goal in at most $25\%$ of copies, so exploration is needed; (2) the random
+network distillation setting with the highest whole-run return keeps at most $60\%$ of its peak in
+the final tenth, with its peak in the first half of the run; and (3) the oracle $1/\sqrt{n}$ bonus
+keeps at most $60\%$ of its peak. If no smaller map passes, the study uses the large maze at
+learning rate $10^{-3}$ for $50$M steps.
+
+\paragraph{Run status.} Submitted 2026-10-19 16:22 PT on twelve RTX 2080 Ti cards; the results
+tables and curves are added when the last unit ends.
+\studyunreadend % REPORT-STATUS
+
+\subsection{Reward-decline batch 1: a control and ten ideas}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-decline-batch1}
+Each idea changes one thing against a shared control. Three change the environment's reward
+structure (\Cref{tab:pm-jax-batch1-env-ideas}); seven change the algorithm
+(\Cref{tab:pm-jax-batch1-alg-ideas}). Every unit runs the four intrinsic weights $1$, $10$, $100$
+and $1000$ as one program of $4\times128$ copies, so copy $k$ meets the same environments and
+policy noise in every unit. The learning rate anneals linearly over $1000$M steps, so it stays
+above $97.5\%$ of $10^{-3}$ during these $50$M steps, as in the $1000$M-step runs of
+\Cref{fig:pm-jax-run11-shapes} where the fall was first seen; annealing over the run's own $50$M
+steps would hide part of the fall, as in \Cref{fig:pm-jax-corrected-curves}.
+
+Define $k$ as the iteration index and $N=97{,}657$ as the run's iterations; $\beta$ as the
+intrinsic weight; $s_c$ as copy $c$'s running share of ended episodes that reached the goal,
+moved each iteration by $0.05$ times the difference to the share among that iteration's ended
+episodes; and $T_{\max}=400$ as the episode cap.
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}?>{\raggedright\arraybackslash}p{2.5cm}?>{\raggedright\arraybackslash}p{2.5cm}?>{\raggedright\arraybackslash}p{2.5cm}?>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{control} & \textbf{E1} & \textbf{E2} & \textbf{E3} \\
+& \small(original task) & \small(end at the goal) & \small(end at the goal, step cost) &
+\small(end at the goal, lump sum) \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Environment and algorithm}} \\
+\greyrule
+environment & \multicolumn{4}{>{\centering\arraybackslash}p{10.5cm}}{large PointMaze,
+start $(7,1)$, goal $(1,10)$, cap $400$ steps (\Cref{tab:pm-jax-env})} \\
+\greyrule
+algorithm & \multicolumn{4}{>{\centering\arraybackslash}p{10.5cm}}{random network distillation
+with proximal policy optimisation; one full-batch step per rollout of $128$ steps $\times$ $4$
+environments; extrinsic discount $0.999$, intrinsic $0.99$; extrinsic weight $2$} \\
+\greyrule
+learning rate & \multicolumn{4}{>{\centering\arraybackslash}p{10.5cm}}{$10^{-3}$, annealed
+linearly over $1000$M steps} \\
+\greyrule
+training budget & \multicolumn{4}{c}{$50$M environment steps per copy} \\
+\greyrule
+seeds & \multicolumn{4}{c}{$128$ copies per configuration, seeds $0$--$127$, paired} \\
+\greyrule
+{\bfseries\boldmath intrinsic weight $\beta$} &
+\multicolumn{4}{>{\centering\arraybackslash}p{10.5cm}}{\bfseries\boldmath $1$, $10$, $100$,
+$1000$ in one program --- 4 values} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Reward structure}} \\
+\greyrule
+{\bfseries\boldmath episode ends} & {\bfseries\boldmath only at the cap} &
+\multicolumn{3}{>{\centering\arraybackslash}p{7.7cm}}{\bfseries\boldmath on the first step inside
+the goal radius, or at the cap} \\
+\greyrule
+{\bfseries\boldmath reward inside the goal radius} & {\bfseries\boldmath $1$ on every such step}
+& {\bfseries\boldmath $1$, once} & {\bfseries\boldmath $0$, once} &
+{\bfseries\boldmath $T_{\max}-t+1$ at arrival step $t$} \\
+\greyrule
+{\bfseries\boldmath reward on other steps} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0$}
+& {\bfseries\boldmath $-1$} & {\bfseries\boldmath $0$} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Configuration counts}} \\
+\greyrule
+configurations & $4$(weights) & $4$(weights) & $4$(weights) & $4$(weights) \\
+\blackrule
+\end{tabular}
+\caption{Batch 1, the control and the three environment-reward ideas. Bold rows are swept. E3
+pays at arrival what staying until the cap would have earned in the control's task.}
+\label{tab:pm-jax-batch1-env-ideas}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.14}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.6cm}?>{\raggedright\arraybackslash}p{2.0cm}?>{\raggedright\arraybackslash}p{1.6cm}?>{\raggedright\arraybackslash}p{1.9cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{A1} & \textbf{A2} & \textbf{A3} & \textbf{A4} & \textbf{A5} &
+\textbf{A6} & \textbf{A7} \\
+& \small(weight decay) & \small(goal-rate gate) & \small(clipped PPO) & \small(entropy) &
+\small(task-reward scaling) & \small(discount) & \small(clip per network) \\
+\blackrule
+everything else & \multicolumn{7}{c}{as the control in \Cref{tab:pm-jax-batch1-env-ideas},
+including $\beta\in\{1,10,100,1000\}$} \\
+\blackrule
+{\bfseries\boldmath intrinsic weight used} & {\bfseries\boldmath $\beta\,(1-\frac{k-1}{N})$} &
+{\bfseries\boldmath $\beta\,(1-s_c)$} & {\bfseries\boldmath $\beta$} & {\bfseries\boldmath $\beta$}
+& {\bfseries\boldmath $\beta$} & {\bfseries\boldmath $\beta$} & {\bfseries\boldmath $\beta$} \\
+\greyrule
+{\bfseries\boldmath update} & \textbf{one step} & \textbf{one step} & {\bfseries\boldmath $4$
+epochs $\times$ $4$ minibatches, clip $0.2$} & \textbf{one step} & \textbf{one step} &
+\textbf{one step} & \textbf{one step} \\
+\greyrule
+{\bfseries\boldmath entropy coefficient} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} &
+{\bfseries\boldmath $0$} & {\bfseries\boldmath $0.01$} & {\bfseries\boldmath $0$} &
+{\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} \\
+\greyrule
+{\bfseries\boldmath task reward used} & \textbf{as paid} & \textbf{as paid} & \textbf{as paid} &
+\textbf{as paid} & {\bfseries\boldmath divided by $\max(1,\sigma)$} & \textbf{as paid} &
+\textbf{as paid} \\
+\greyrule
+{\bfseries\boldmath extrinsic discount} & {\bfseries\boldmath $0.999$} &
+{\bfseries\boldmath $0.999$} & {\bfseries\boldmath $0.999$} & {\bfseries\boldmath $0.999$} &
+{\bfseries\boldmath $0.999$} & {\bfseries\boldmath $0.99$} & {\bfseries\boldmath $0.999$} \\
+\greyrule
+{\bfseries\boldmath gradient clip} & \textbf{joint} & \textbf{joint} & \textbf{joint} &
+\textbf{joint} & \textbf{joint} & \textbf{joint} & {\bfseries\boldmath per network} \\
+\blackrule
+configurations & $4$ & $4$ & $4$ & $4$ & $4$ & $4$ & $4$ \\
+\greyrule
+total, batch 1 & \multicolumn{7}{c}{$11$ units $\times$ $4$ weights $=44$ configurations,
+$5{,}632$ copies} \\
+\blackrule
+\end{tabular}%
+}
+\caption{Batch 1, the seven algorithm ideas. Bold rows are swept. Under ``task reward used'',
+$\sigma$ is the running standard deviation of the discounted sum of task rewards since the last
+episode end. ``Joint'' clips the actor's, the critic's and the predictor's gradient together to
+norm $0.5$; ``per network'' clips each to $0.5$ separately.}
+\label{tab:pm-jax-batch1-alg-ideas}
+\end{table}
+
+\paragraph{Metrics and ``fixed''.} The metrics are those of
+\Cref{sec:pm-jax-screening}, on each idea's own reward. An idea fixes the fall when its final-10\%
+return is at least $90\%$ of its own peak and it still learns: an algorithm idea's final return
+must exceed the control's peak minus one standard error; an environment idea, whose reward has a
+different scale, must end with a share of episodes reaching the goal at least the control's share
+at its peak.
+
+\paragraph{Run status.} Submitted 2026-10-19 16:48 PT: eight units on RTX A4500 cards and three on
+RTX 2080 Ti cards.
 \studyunreadend % REPORT-STATUS
 
 \end{document}
