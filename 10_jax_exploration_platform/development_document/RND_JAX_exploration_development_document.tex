@@ -591,4 +591,86 @@ vertical axis is logarithmic above 1 and linear between $-1$ and $1$.}
 \endgroup
 
 
+\subsection{Training speed on jaguar03}
+\label{sec:pm-jax-speed-jaguar03}
+The reward-decline study below runs many short units on jaguar03's eight RTX A4500 cards. Ten
+execution ideas were timed there on 2026-10-19 against one baseline: a random network
+distillation program of $128$ copies (learning rate $10^{-3}$, intrinsic weight $100$, full-batch
+updates, coverage tracking on). Each idea ran twice, on two different cards, while a baseline ran
+on a third card at the same time. Let $r$ be the steps per second one copy gets; a unit of
+$S$ million steps per copy then takes $S \times 10^{6}/(3600\,r)$ hours. ``Total against
+baseline'' divides an idea's total steps per second by the baseline's.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+% Generator: ../scripts/write_decline_study_tables.py; reads the benchmark's analysis_rows.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-speed-jaguar03
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm} r r r r r r r >{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+\textbf{idea} & \textbf{\shortstack[c]{copies}} & \textbf{\shortstack[c]{seconds per\\iteration}} & \textbf{\shortstack[c]{total steps\\per second (M)}} & \textbf{\shortstack[c]{steps per second\\per copy (k)}} & \textbf{\shortstack[c]{hours per M\\steps per copy}} & \textbf{\shortstack[c]{total against\\baseline $\uparrow$}} & \textbf{\shortstack[c]{setup\\seconds}} & \textbf{\shortstack[c]{copies identical\\to baseline}} \\
+\midrule
+02 eight settings in one program & 1{,}024 & 0.0505 & \textbf{10.39} & 10.1 & 0.0274 & \textbf{1.44} & 84 & 0 of 128 \\
+01 four settings in one program & 512 & 0.0269 & \underline{9.75} & 19.0 & 0.0146 & \underline{1.35} & 68 & 0 of 128 \\
+07 XLA latency-hiding scheduler on & 128 & 0.0090 & 7.25 & \textbf{56.6} & \textbf{0.0049} & 1.00 & 59 & 0 of 128 \\
+08 compilation cache, first run & 128 & 0.0091 & 7.24 & \textbf{56.6} & \textbf{0.0049} & 1.00 & 57 & 5 of 128 \\
+baseline: one setting, one program per card & 128 & 0.0091 & 7.22 & \underline{56.4} & \underline{0.0049} & 1.00 & 55 & 3 of 128 \\
+09 two processors instead of eight & 128 & 0.0091 & 7.22 & \underline{56.4} & \underline{0.0049} & 1.00 & 79 & 91 of 128 \\
+08 compilation cache, second run & 128 & 0.0091 & 7.22 & \underline{56.4} & \underline{0.0049} & 1.00 & \textbf{7} & 5 of 128 \\
+04 four programs share a card & 512 & 0.0381 & 6.88 & 13.4 & 0.0207 & 0.95 & 85 & 1 of 128 \\
+03 two programs share a card & 256 & 0.0192 & 6.83 & 26.7 & 0.0104 & 0.95 & 66 & 91 of 128 \\
+06 XLA command buffers also for loops & 128 & 0.0101 & 6.49 & 50.7 & 0.0055 & 0.90 & 58 & 26 of 128 \\
+10 the study's diagnostics on & 128 & 0.0105 & 6.23 & 48.7 & 0.0057 & 0.86 & \underline{50} & 0 of 128 \\
+05 XLA command buffers off & 128 & 0.0128 & 5.17 & 40.4 & 0.0069 & 0.72 & 60 & 91 of 128 \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-speed-jaguar03
+}
+\caption{Speed of the ten execution ideas on one RTX A4500, sorted by total steps per second
+against the baseline. M is millions and k thousands of environment steps. Setup is building,
+priming and compiling before the first timed iteration. The last column counts, of setting~0's
+$128$ copies, those whose parameters after ten iterations match a baseline run bit for bit; the
+baseline row compares two baseline runs on two cards. Best values are \textbf{bold} and second
+best \underline{underlined}; higher is better for rates and lower for hours and setup.}
+\label{tab:pm-jax-speed-jaguar03}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../benchmark_runs/2026-10-19-15-46_jaguar03_rtx-a4500_random-network-distillation_copies-128-per-setting_rollout-128_environments-4_full-batch_speed-10-ideas-round-2/plots/speed_ideas.pdf}}
+\caption{Two ways of putting more copies on one RTX A4500: settings packed into one program
+(each setting $128$ copies), and several $128$-copy programs sharing the card. Left: total steps
+per second; right: steps per second per copy.}
+\label{fig:pm-jax-speed-jaguar03}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{S\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{Packing settings is the only idea that raises a card's throughput.} Four settings
+  in one program give $1.35$ times the baseline's total, eight give $1.44$ times; each setting
+  then advances $3.0$ and $5.6$ times more slowly.
+\item \textbf{Sharing a card between programs lowers the total} to $0.95$ times, for two and for
+  four programs.
+\item \textbf{XLA's default command buffers are already the fastest choice.} Turning them off
+  gives $0.72$ times; extending them to loops gives $0.90$ times. The latency-hiding scheduler
+  changes nothing.
+\item \textbf{A compilation cache cuts setup from 57 to 7 seconds} on the second run of a
+  program; two processors instead of eight leave the rate unchanged but slow setup to 79 seconds.
+\item \textbf{The study's diagnostics cost 14\%} of the rate.
+\item \textbf{Runs on these cards are reproducible only to rounding.} Two runs of the same
+  program on two cards keep $3$ of $128$ copies bit-identical after ten iterations; the rest
+  differ by at most $2.8\times10^{-4}$. A program with a different copy count draws different
+  policy noise for the same copy, because the noise array's shape includes the copy count; so
+  copies are paired only between programs of equal copy count.
+\end{enumerate}
+
+\paragraph{Choices for the study.} Every unit packs the four intrinsic weights $1$, $10$, $100$
+and $1000$ into one program of $4 \times 128$ copies, so every unit of a batch has the same copy
+count and copy $k$ meets the same noise and environments in every idea. Jobs share one
+compilation cache, ask for eight processors, and keep the diagnostics on.
+
+
 \end{document}

@@ -40,4 +40,4 @@ The reward-decline study's environment flags (`--map`, `--start-cell`, `--goal-c
 ## 4. Git state
 
 Commit 1ac4d07 (pushed) plus the run folder's own scaffolding and `scripts/summarize_episode_records.py`,
-committed before the full submission (hash recorded below when submitted).
+committed before the full submission: commit e38760a (pushed).

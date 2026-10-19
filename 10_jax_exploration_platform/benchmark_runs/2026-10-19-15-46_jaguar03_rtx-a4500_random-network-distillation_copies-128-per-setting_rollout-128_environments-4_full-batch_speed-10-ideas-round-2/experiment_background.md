@@ -44,4 +44,4 @@ baseline card turns over every round and each idea runs twice on two different c
 
 ## 4. Git state
 
-Filled in at submission (see the line below).
+Commit 1ac4d07 (pushed), clean for every file this benchmark runs. The repository also holds unrelated uncommitted files of other sessions under `08_cleanrl_ppo_rnd/`.

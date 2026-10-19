@@ -228,6 +228,10 @@ def parse_args() -> argparse.Namespace:
                         help="> 0: intrinsic weight x (1 - running goal-reaching rate)")
     parser.add_argument("--normalize-extrinsic-reward", action="store_true")
     parser.add_argument("--clip-per-network", action="store_true")
+    parser.add_argument("--lr-anneal-iterations", type=int, default=0,
+                        help="iterations over which the learning rate anneals linearly to zero; "
+                             "0 = this run's own length. A longer horizon makes a short run use "
+                             "the early part of a long run's schedule")
     return parser.parse_args()
 
 
@@ -299,6 +303,9 @@ def build_config(args: argparse.Namespace):
                   success_gate_rate=args.success_gate_rate,
                   normalize_ext_reward=args.normalize_extrinsic_reward,
                   clip_per_network=args.clip_per_network)
+    if 0 < args.lr_anneal_iterations < args.iterations:
+        raise ValueError("--lr-anneal-iterations shorter than the run would anneal the learning "
+                         "rate below zero")
     if args.terminate_at_goal and not args.diagnostics:
         raise ValueError("--terminate-at-goal needs --diagnostics: episodes then end at different "
                          "steps, and only the episode tracker counts them")
@@ -480,7 +487,8 @@ def main() -> None:
           "copy_seed_index_last": int(max(sweep.copy_seed_index)),
           "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
           "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
-          "steps_per_iteration": steps_per_iteration})
+          "steps_per_iteration": steps_per_iteration,
+          "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations})
     say(f"{config.n_copies} copies x {config.n_envs} environments x {config.num_steps} steps, "
         f"{args.iterations} iterations, update style {config.update_style}, "
         f"{len(sweep.group_settings)} cells of {config.copies_per_group or config.n_copies} copies")
@@ -504,7 +512,8 @@ def main() -> None:
     window_first_iteration = 1
     for iteration in range(1, args.iterations + 1):
         iteration_start = time.time()
-        state, metrics = trainer.iterate(state, trainer.lr_argument(iteration, args.iterations))
+        state, metrics = trainer.iterate(
+            state, trainer.lr_argument(iteration, args.lr_anneal_iterations or args.iterations))
         reward_in_window = reward_in_window + metrics["reward_ext_sum"]
         rint_in_window = rint_in_window + metrics["rint_mean"]
         if config.diagnostics:

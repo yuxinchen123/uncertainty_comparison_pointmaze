@@ -262,6 +262,16 @@ def test_command_line():
         "pointmaze_medium_term250_nonoise_start6-1_goal1-6_shift-1@1")
     config = run_training.build_config(args)
     assert (config.total_iterations, config.ent_coef, config.gamma_ext) == (77, 0.01, 0.99)
+
+    # an anneal horizon longer than the run is accepted; a shorter one is refused
+    sys.argv += ["--lr-anneal-iterations", "1000"]
+    run_training.build_config(run_training.parse_args())
+    sys.argv[-1] = "10"
+    try:
+        run_training.build_config(run_training.parse_args())
+        raise AssertionError("an anneal horizon shorter than the run was accepted")
+    except ValueError:
+        pass
     print("PASS command line: original defaults, study flags reach the configuration")
 
 

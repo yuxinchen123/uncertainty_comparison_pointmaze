@@ -273,3 +273,8 @@ core.*
 10_jax_exploration_platform/runs/**/analysis/data/
 10_jax_exploration_platform/benchmark_runs/**/analysis/code/
 10_jax_exploration_platform/benchmark_runs/**/analysis/data/
+# The speed studies' saved parameters (.npz) are only for the agreement check; regenerable.
+10_jax_exploration_platform/benchmark_runs/**/data/*.npz
+10_jax_exploration_platform/benchmark_runs/**/data/cache_*/
+# The platform's shared JAX compilation cache (regenerable, written by every worker).
+10_jax_exploration_platform/.jax_compilation_cache/
