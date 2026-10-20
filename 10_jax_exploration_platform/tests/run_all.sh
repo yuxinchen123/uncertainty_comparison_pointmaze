@@ -39,6 +39,7 @@ ALL="golden_09/test_golden_parity.py
      agents/test_reward_decline_switches.py
      integration/test_selected_run_records.py
      integration/test_reward_component_figures.py
+     integration/test_summarize_episode_records.py
      agents/test_jax_ppo.py
      agents/test_sweep_jax.py
      agents/test_copy_seed_offset.py

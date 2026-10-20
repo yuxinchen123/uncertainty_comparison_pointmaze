@@ -2,16 +2,16 @@
 
 | id | batch | idea | run folder | outcome |
 |---|---|---|---|---|
-| E1 | 1 | episode ends at the goal, +1 once | | planned |
-| E2 | 1 | episode ends at the goal; 0 at the goal, -1 elsewhere | | planned |
-| E3 | 1 | episode ends at the goal; pays remaining steps of the cap at once | | planned |
-| A1 | 1 | intrinsic weight decayed linearly to 0 | | planned |
-| A2 | 1 | intrinsic weight x (1 - running goal-reaching rate) | | planned |
-| A3 | 1 | clipped PPO, 4 epochs x 4 minibatches | | planned |
-| A4 | 1 | entropy bonus 0.01 | | planned |
-| A5 | 1 | task reward / max(1, running std of its discounted sum) | | planned |
-| A6 | 1 | extrinsic discount 0.99 | | planned |
-| A7 | 1 | gradient clip per network | | planned |
+| E1 | 1 | episode ends at the goal, +1 once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| E2 | 1 | episode ends at the goal; 0 at the goal, -1 elsewhere | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| E3 | 1 | episode ends at the goal; pays remaining steps of the cap at once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A1 | 1 | intrinsic weight decayed linearly to 0 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A2 | 1 | intrinsic weight x (1 - running goal-reaching rate) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A3 | 1 | clipped PPO, 4 epochs x 4 minibatches | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A4 | 1 | entropy bonus 0.01 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A5 | 1 | task reward / max(1, running std of its discounted sum) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A6 | 1 | extrinsic discount 0.99 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A7 | 1 | gradient clip per network | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
 
 ## Mechanism notes (screening diagnostics, partial, 2026-10-19 16:45 PT)
 

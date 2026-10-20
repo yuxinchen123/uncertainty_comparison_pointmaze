@@ -169,7 +169,97 @@ def screening_verdict_table() -> str:
     return "\n".join(lines)
 
 
+BATCH_NAMES = {
+    "control": "control", "e1_terminate-at-goal": "E1 end at the goal",
+    "e2_terminate-at-goal_reward-shift-minus-1": "E2 end at the goal, step cost",
+    "e3_terminate-at-goal_goal-reward-remaining-steps": "E3 end at the goal, lump sum",
+    "a1_intrinsic-weight-linear-decay": "A1 weight decay",
+    "a2_intrinsic-weight-goal-rate-gate-0.05": "A2 goal-rate gate",
+    "a3_clipped-ppo_epochs-4_minibatches-4": "A3 clipped PPO",
+    "a3_clipped-ppo_epochs-4_minibatches-4_second-attempt": "A3 clipped PPO",
+    "a4_entropy-coefficient-0.01": "A4 entropy 0.01",
+    "a5_normalize-extrinsic-reward": "A5 task-reward scaling",
+    "a6_extrinsic-discount-0.99": "A6 discount 0.99",
+    "a7_gradient-clip-per-network": "A7 clip per network",
+}
+
+
+def batch_summary(run: Path) -> dict:
+    """{unit: {weight: numbers}} for a batch, keeping one attempt per idea (complete ones first)."""
+    summary = json.loads((run / "analysis" / "data" / "summary.json").read_text())
+    out = {}
+    for numbers in summary.values():
+        unit = numbers["unit"].replace("_second-attempt", "")
+        slot = out.setdefault(unit, {})
+        w = numbers["intrinsic_weight"]
+        if w not in slot or (numbers["complete"] and not slot[w]["complete"]):
+            slot[w] = numbers
+    return out
+
+
+def fixed(unit: str, n: dict, control_best: dict) -> bool:
+    """The study's test: holds 90% of its own peak and still learns (see the subsection text)."""
+    holds = n["holds_peak"] >= 0.9
+    if unit.startswith("e"):
+        return holds and n["reach_share_final"] >= control_best["reach_share_peak"]
+    return holds and n["final"] > control_best["peak"] - control_best["peak_se"]
+
+
+def batch_results_table(run: Path) -> str:
+    """One row per idea at its best weight (highest final-10% return), sorted by that return."""
+    data = batch_summary(run)
+    best = {u: max(ws.values(), key=lambda n: n["final"]) for u, ws in data.items()}
+    control = best["control"]
+    rows = sorted(best.items(), key=lambda kv: -kv[1]["final"])
+    finals = [round(n["final"], 2) for _, n in rows]
+    holds = [round(n["holds_peak"], 2) for _, n in rows]
+    reach = [round(n["reach_share_final"], 2) for _, n in rows]
+    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} r r r r r r l@{}}",
+             r"\toprule",
+             r"\textbf{idea} & \textbf{$\beta$} & \textbf{\shortstack[c]{peak\\return}} & "
+             r"\textbf{\shortstack[c]{steps at\\peak (M)}} & "
+             r"\textbf{\shortstack[c]{final-10\%\\return $\uparrow$}} & "
+             r"\textbf{\shortstack[c]{final\\/ peak}} & "
+             r"\textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\",
+             r"\midrule"]
+    for (unit, n), f, h, g in zip(rows, finals, holds, reach):
+        done = "" if n["complete"] else r"$^{\ast}$"
+        lines.append(
+            f"{BATCH_NAMES.get(unit, unit)}{done} & {n['intrinsic_weight']:g} & {n['peak']:.2f} & "
+            f"{n['peak_step'] / 1e6:.1f} & {mark(finals, f, f'{f:.2f} $\\pm$ {n['final_se']:.2f}')} & "
+            f"{mark(holds, h, f'{h:.2f}')} & {mark(reach, g, f'{g:.2f}')} & "
+            f"{'yes' if fixed(unit, n, control) else 'no'} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
+def batch_holds_grid(run: Path) -> str:
+    """final / peak for every idea and weight, and the final-10% return beside it."""
+    data = batch_summary(run)
+    weights = sorted({w for ws in data.values() for w in ws})
+    order = [u for u in BATCH_NAMES if u in data]
+    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} " + "r " * len(weights)
+             + "@{}}", r"\toprule",
+             r"\textbf{idea} & " + " & ".join(rf"\textbf{{$\beta={w:g}$}}" for w in weights)
+             + r" \\", r"\midrule"]
+    for unit in order:
+        cells = []
+        for w in weights:
+            n = data[unit].get(w)
+            cells.append("--" if n is None else f"{n['holds_peak']:.2f} ({n['final']:.1f})")
+        lines.append(f"{BATCH_NAMES.get(unit, unit)} & " + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
+BATCH1 = ROOT / ("runs/2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-"
+                 "1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-"
+                 "e3-a1-a2-a3-a4-a5-a6-a7")
+
+
 TABLES = {"pm-jax-speed-jaguar03": speed_table,
+          "pm-jax-batch1-results": lambda: batch_results_table(BATCH1),
+          "pm-jax-batch1-holds": lambda: batch_holds_grid(BATCH1),
           "pm-jax-screening-results": screening_table,
           "pm-jax-screening-verdicts": screening_verdict_table}
 
@@ -192,7 +282,8 @@ def main():
     args = parser.parse_args()
     text = args.document.read_text()
     for name, build in TABLES.items():
-        if args.only and name != args.only:
+        # a table whose markers are not in the document yet is skipped, not built
+        if (args.only and name != args.only) or f"TABLE START: {name}" not in text:
             continue
         text = splice(text, name, build())
     args.document.write_text(text)
