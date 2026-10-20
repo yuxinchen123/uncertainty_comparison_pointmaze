@@ -117,14 +117,18 @@ def scalar_yaml(value) -> str:
 def git_state(repo_root: Path) -> dict:
     """The commit this run's code is at, and whether anything was uncommitted at launch."""
     # a worker submitted under a collaborator's account runs git on a repository it does not own,
-    # which git refuses unless the directory is marked safe for this one command
-    git = ["git", "-c", "safe.directory=*", "-C", str(repo_root)]
-    commit = subprocess.run(git + ["rev-parse", "HEAD"],
-                            capture_output=True, text=True, check=True).stdout.strip()
-    status = subprocess.run(git + ["status", "--porcelain"],
-                            capture_output=True, text=True, check=True).stdout.strip()
-    describe = subprocess.run(git + ["describe", "--tags", "--always"],
-                              capture_output=True, text=True).stdout.strip()
+    # which git refuses unless a global config names the directory safe (git 2.34 on the compute
+    # nodes ignores the setting on the command line), so these calls read a config that does
+    git = ["git", "-C", str(repo_root)]
+    env = {**os.environ,
+           "GIT_CONFIG_GLOBAL": str(Path(__file__).resolve().parent / "git_safe_directory.gitconfig")}
+    run = lambda *a: subprocess.run(git + list(a), capture_output=True, text=True, env=env)
+    head = run("rev-parse", "HEAD")
+    if head.returncode:
+        raise RuntimeError(f"git could not read the repository's commit: {head.stderr.strip()}")
+    commit = head.stdout.strip()
+    status = run("status", "--porcelain").stdout.strip()
+    describe = run("describe", "--tags", "--always").stdout.strip()
     return {"commit": commit, "dirty": bool(status), "version_tag": describe}
 
 
