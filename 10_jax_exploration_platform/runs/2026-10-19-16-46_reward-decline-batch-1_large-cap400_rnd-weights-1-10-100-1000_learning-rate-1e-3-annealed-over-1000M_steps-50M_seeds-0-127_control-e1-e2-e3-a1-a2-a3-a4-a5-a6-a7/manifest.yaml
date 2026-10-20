@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7
+description: "reward-decline idea A3: a3_clipped-ppo_epochs-4_minibatches-4"
+git:
+  commit: 3349b3d9bf3248c4c73796ce7cab3833b345588d
+  dirty: true
+  version_tag: jax-platform-v0.1.0-147-g3349b3d
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 512
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

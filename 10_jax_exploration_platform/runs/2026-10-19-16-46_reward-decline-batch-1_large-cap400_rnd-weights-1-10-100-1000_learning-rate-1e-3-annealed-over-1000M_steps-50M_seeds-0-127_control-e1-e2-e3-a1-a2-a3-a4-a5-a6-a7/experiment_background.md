@@ -54,4 +54,4 @@ on the lump-sum scale (return + cap).
 
 ## 4. Git state
 
-Recorded at submission below.
+Commit 3349b3d (pushed); the platform code is unchanged since 0fda00d.

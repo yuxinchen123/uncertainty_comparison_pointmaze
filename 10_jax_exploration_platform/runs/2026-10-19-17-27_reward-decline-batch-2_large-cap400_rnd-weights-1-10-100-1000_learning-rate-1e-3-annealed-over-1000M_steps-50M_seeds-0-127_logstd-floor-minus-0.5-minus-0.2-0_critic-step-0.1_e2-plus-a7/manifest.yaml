@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7
+description: "reward-decline idea B5: b5_terminate-at-goal_reward-shift-minus-1_gradient-clip-per-network"
+git:
+  commit: e946a88051f16743dc55c43ba8f4c5fb1b9bb673
+  dirty: true
+  version_tag: jax-platform-v0.1.0-154-ge946a88
+specs:
+  env: pointmaze_large_term400_nonoise_shift-1@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 512
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

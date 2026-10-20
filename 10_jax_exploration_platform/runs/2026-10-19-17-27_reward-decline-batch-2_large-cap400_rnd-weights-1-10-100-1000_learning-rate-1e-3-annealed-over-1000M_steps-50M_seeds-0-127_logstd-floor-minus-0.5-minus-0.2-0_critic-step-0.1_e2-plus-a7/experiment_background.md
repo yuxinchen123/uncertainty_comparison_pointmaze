@@ -33,4 +33,4 @@ queue (sl5nw on jaguar03, yuxinchen on open RTX 2080 Ti cards).
 
 ## 4. Git state
 
-Recorded at submission below.
+Commit 51479e7 (pushed).
