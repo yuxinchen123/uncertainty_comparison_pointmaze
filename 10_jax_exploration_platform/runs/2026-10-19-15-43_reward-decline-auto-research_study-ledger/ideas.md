@@ -54,3 +54,9 @@ Values are means over copies, at the window of the copy-averaged peak and over t
 8. (batch 2 scored, 18:49 PT) Log-std floors keep the spread but not the peak: the ball still
    slows in the runs that fall. Two fixes so far: A8 (anneal the rate within the run) and B5 (end at
    the goal with a -1 step cost, gradient clip per network).
+
+## Phase 4 (confirmation), submitted 2026-10-19 19:28 PT
+
+Control, A8, B5 and C2 (the best batch-3 result) with RND and oracle 1/sqrt(n), 128 paired seeds:
+part A at learning rate 1e-3 for 100M steps (`2026-10-19-19-27_reward-decline-confirmation-part-a_...`),
+part B at 1e-4 for 400M steps (`..._part-b_...`).

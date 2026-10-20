@@ -24,4 +24,4 @@ code/worker.sh from both accounts; commands in code/submission_commands.md.
 
 ## 4. Git state
 
-Recorded at submission below.
+Commit 0054958 (pushed).
