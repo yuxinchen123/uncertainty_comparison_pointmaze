@@ -98,3 +98,6 @@ class PPOConfig:
                                      # deviation to at least this; -inf leaves it free
     critic_lr_scale: float = 1.0     # the critic's update step is this fraction of the step Adam
                                      # computed; 1 leaves it as the actor's
+    normalize_agent_obs: bool = False  # feed the actor and critic the observation centred and
+                                     # scaled by its running per-copy statistics, clipped to +-5,
+                                     # instead of the raw position and velocity

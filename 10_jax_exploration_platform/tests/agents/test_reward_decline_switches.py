@@ -229,6 +229,8 @@ def test_switches_on():
                                                **SMALL), None),
             ("clip_per_network", PPOConfig(diagnostics=True, clip_per_network=True, **SMALL),
              None),
+            ("normalize_agent_obs", PPOConfig(diagnostics=True, normalize_agent_obs=True,
+                                              **SMALL), None),
             ("terminating medium map", PPOConfig(diagnostics=True, **SMALL), medium)):
         state, metrics = run(cfg, env_cfg=env_cfg)
         values = [np.asarray(v) for v in jax.tree.leaves(state_arrays(state))]
@@ -246,6 +248,13 @@ def test_switches_on():
     for a, b in zip(jax.tree.leaves(critic0), jax.tree.leaves(state.agent_params["critic"])):
         np.testing.assert_array_equal(a, np.asarray(b))
     print("PASS logstd_floor holds; critic_lr_scale 0 freezes the critic")
+
+    # the agent's input statistics move with the rollouts: after three iterations their count is
+    # 1e-4 plus three rollouts of T x N observations per copy
+    state, _ = run(PPOConfig(normalize_agent_obs=True, **SMALL), iterations=3)
+    count = np.asarray(state.agent_state["obs_rms"].count)
+    np.testing.assert_allclose(count, 1e-4 + 3 * SMALL["num_steps"] * SMALL["n_envs"])
+    print("PASS normalize_agent_obs keeps running statistics of the agent's input")
 
     # with no switch at all the agent state holds exactly the two original entries
     runner = Runner(PPOConfig(**SMALL))

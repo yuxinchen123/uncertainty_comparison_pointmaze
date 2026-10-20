@@ -14,6 +14,7 @@ import jax.numpy as jnp
 from .. import F32, LOG2PI
 from ..agents.ppo.losses import ppo_loss_per_copy
 from ..agents.ppo.networks import actor_mean, critic_values
+from ..bonuses.rnd.networks import whiten
 from ..agents.ppo.update import build_update
 from ..statistics import rms_update
 from . import diagnostics as diag
@@ -68,6 +69,8 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
     if cfg.int_coef_schedule == "linear_decay" and cfg.total_iterations <= 0:
         raise ValueError("int_coef_schedule='linear_decay' needs total_iterations")
     track = cfg.diagnostics or cfg.success_gate_rate > 0
+    if cfg.normalize_agent_obs and not cfg.hoist_rollout:
+        raise ValueError("normalize_agent_obs is built only for the hoisted rollout")
     # a step paid more than the reward shift ended inside the goal radius, whatever the payment
     # rule: per_step pays shift + 1 there, remaining_steps pays shift + at least 1
     inside_threshold = env.cfg.reward_shift + 0.5
@@ -86,6 +89,14 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, 2), F32)
 
         logstd = agent_params["actor"]["logstd"]
+        # what the actor and critic see: the raw observation, or (normalize_agent_obs) the
+        # observation whitened with the statistics as they stood at the start of the iteration
+        # before: obs [C, M, 4] in metres and m/s; after: the same shape, about unit scale
+        if cfg.normalize_agent_obs:
+            agent_rms = state.agent_state["obs_rms"]
+            seen = lambda x: whiten(x, agent_rms)
+        else:
+            seen = lambda x: x
         # before: a rollout buffer [T, C, N, k]; after: [C, T*N, k], one row per copy per step
         flat = lambda x: x.transpose(1, 0, 2, *range(3, x.ndim)).reshape(C, T * N, *x.shape[3:])
         # before: [C, T*N]; after: [T, C, N] — the inverse of flat for a scalar-per-step field
@@ -100,7 +111,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             def body(carry, z):
                 """One rollout step: act, step the environment, store what the rest needs."""
                 env_state, obs = carry
-                mean = actor_mean(agent_params["actor"], obs)
+                mean = actor_mean(agent_params["actor"], seen(obs))
                 action = mean + jnp.exp(logstd)[:, None, :] * z
                 env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state, action)
                 out = (obs, action, final_obs, r_ext,
@@ -116,7 +127,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             # one critic pass covers the on-step values and the bootstrap values together
             obs_flat, nobs_flat = flat(obs_buf), flat(nobs_buf)
             vall_e, vall_i = critic_values(
-                agent_params["critic"], jnp.concatenate([obs_flat, nobs_flat], axis=1))
+                agent_params["critic"], seen(jnp.concatenate([obs_flat, nobs_flat], axis=1)))
             vext_buf, vint_buf = unflat(vall_e[:, :T * N]), unflat(vall_i[:, :T * N])
             vext_next, vint_next = unflat(vall_e[:, T * N:]), unflat(vall_i[:, T * N:])
             scored = None
@@ -147,7 +158,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         # Intrinsic returns continue across episode resets, so their next value must be the
         # value at the reset observation. Keep the final-state value for task-return bootstrap.
         # Before: a reset bootstraps from final_obs; after: it uses the next rollout observation.
-        _, vint_last = critic_values(agent_params["critic"], obs_last)
+        _, vint_last = critic_values(agent_params["critic"], seen(obs_last))
         vint_after_reset = jnp.concatenate([vint_buf[1:], vint_last[None]], axis=0)
         vint_next = jnp.where(done_buf.astype(bool), vint_after_reset, vint_next)
 
@@ -171,6 +182,8 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         # study additions: the episode tracker (and the running goal-reaching rate it feeds), and
         # the task reward scaled by its running discounted-sum std. Neither runs by default.
         agent_state = {"int_filter": int_filter, "int_rms": int_rms}
+        if cfg.normalize_agent_obs:
+            agent_state["obs_rms"] = rms_update(agent_rms, flat(obs_buf), cfg.batch_stats_f32)
         if track:
             tracker, ended = diag.track_episodes(state.agent_state["episode"],
                                                  rext_buf > inside_threshold, rext_buf, done_buf)
@@ -226,7 +239,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         ret_int = aint_buf + vint_buf
 
         batch = {
-            "obs": flat(obs_buf), "actions": flat(act_buf), "old_logprob": flat(logp_buf),
+            "obs": seen(flat(obs_buf)), "actions": flat(act_buf), "old_logprob": flat(logp_buf),
             "adv": flat(adv), "ret_ext": flat(ret_ext), "ret_int": flat(ret_int),
             "vext_old": flat(vext_buf), **batch_extra,
         }

@@ -63,6 +63,8 @@ class Runner:
         if cfg.normalize_ext_reward:
             agent_state["ext_filter"], agent_state["ext_rms"] = diag.ext_filter_init(
                 cfg.n_copies, cfg.n_envs)
+        if cfg.normalize_agent_obs:
+            agent_state["obs_rms"] = rms_init(cfg.n_copies, 4)
         state = TrainState(
             env_state=self.env.reset(),
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
