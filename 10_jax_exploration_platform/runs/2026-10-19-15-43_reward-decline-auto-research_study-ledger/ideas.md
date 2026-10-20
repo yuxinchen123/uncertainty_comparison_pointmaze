@@ -60,3 +60,7 @@ Values are means over copies, at the window of the copy-averaged peak and over t
 Control, A8, B5 and C2 (the best batch-3 result) with RND and oracle 1/sqrt(n), 128 paired seeds:
 part A at learning rate 1e-3 for 100M steps (`2026-10-19-19-27_reward-decline-confirmation-part-a_...`),
 part B at 1e-4 for 400M steps (`..._part-b_...`).
+9. (phase 4 part A, oracle 1/sqrt(n) units, 100M steps, lr 1e-3, 20:26 PT) Control falls almost
+   to zero (final/peak 0.04-0.05). A8 holds at weight 10 (0.95) but not at 1 (0.51: peak at 12M,
+   while the rate is still ~0.9e-3). B5 falls (0.54-0.67): it does not carry over to the oracle bonus.
+   C2 holds at weight 10 (1.00, final 92.5) and mostly at 1 (0.81). RND units still running.
