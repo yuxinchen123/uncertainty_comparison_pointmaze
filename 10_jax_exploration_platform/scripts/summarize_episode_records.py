@@ -104,6 +104,13 @@ def summarize_cell(windows, copies, offset: float = 0.0):
         peak_values = np.array([windows[k]["diagnostics_per_copy"][name][c] for c in copies])
         tail_diag[name + "_at_peak"] = float(peak_values.mean())
     out["diagnostics_final_and_at_peak"] = tail_diag
+    # copy-mean curves of the diagnostics that explain a fall, one value per window
+    out["diagnostic_curves"] = {
+        name: [float(np.mean([w["diagnostics_per_copy"][name][c] for c in copies]))
+               for w in windows]
+        for name in ("logstd_mean", "speed_mean", "ext_explained_variance", "adv_int_rms",
+                     "adv_ext_rms", "grad_norm_critic")
+        if name in windows[-1]["diagnostics_per_copy"]}
     return out
 
 

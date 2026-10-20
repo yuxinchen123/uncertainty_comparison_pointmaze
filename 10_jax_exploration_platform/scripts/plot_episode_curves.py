@@ -30,6 +30,8 @@ def main():
     parser.add_argument("--titles", default="", help="unit=title pairs, comma-separated")
     parser.add_argument("--reach", action="store_true")
     parser.add_argument("--columns", type=int, default=4)
+    parser.add_argument("--diagnostic", default="",
+                        help="plot this diagnostic's copy-mean curve instead of the return")
     args = parser.parse_args()
     summary = list(json.loads(args.summary.read_text()).values())
     units = args.units.split(",") if args.units else sorted({s["unit"] for s in summary})
@@ -53,7 +55,9 @@ def main():
     for ax, (title, members) in zip(axes.flat, panels):
         for k, s in enumerate(members):
             x = np.array(s["curve_steps"]) / 1e6
-            if args.reach:
+            if args.diagnostic:
+                y, band = np.array(s["diagnostic_curves"][args.diagnostic]), None
+            elif args.reach:
                 y, band = np.array(s["reach_share_curve"]), None
             else:
                 y, band = np.array(s["curve"]), np.array(s["curve_se"])
@@ -76,7 +80,10 @@ def main():
         ax.set_visible(False)
     for ax in axes[-1]:
         ax.set_xlabel("environment steps per copy (millions)")
-    ylabel = "share of episodes reaching the goal" if args.reach else "mean extrinsic return per episode"
+    ylabel = ({"logstd_mean": "policy log standard deviation", "speed_mean": "mean ball speed (m/s)"}
+              .get(args.diagnostic, args.diagnostic) if args.diagnostic else
+              "share of episodes reaching the goal" if args.reach else
+              "mean extrinsic return per episode")
     for ax in axes[:, 0]:
         ax.set_ylabel(ylabel, fontsize=8)
     fig.tight_layout()

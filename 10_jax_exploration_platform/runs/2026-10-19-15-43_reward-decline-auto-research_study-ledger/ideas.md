@@ -2,16 +2,16 @@
 
 | id | batch | idea | run folder | outcome |
 |---|---|---|---|---|
-| E1 | 1 | episode ends at the goal, +1 once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| E2 | 1 | episode ends at the goal; 0 at the goal, -1 elsewhere | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| E3 | 1 | episode ends at the goal; pays remaining steps of the cap at once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A1 | 1 | intrinsic weight decayed linearly to 0 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A2 | 1 | intrinsic weight x (1 - running goal-reaching rate) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A3 | 1 | clipped PPO, 4 epochs x 4 minibatches | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A4 | 1 | entropy bonus 0.01 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A5 | 1 | task reward / max(1, running std of its discounted sum) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A6 | 1 | extrinsic discount 0.99 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
-| A7 | 1 | gradient clip per network | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| E1 | 1 | episode ends at the goal, +1 once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | holds 0.91 at weights 1 and 10 but ends with 53-59% of episodes reaching the goal (control peak 67.5%); weights 100 and 1000 do not learn: not fixed |
+| E2 | 1 | episode ends at the goal; 0 at the goal, -1 elsewhere | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | holds 0.92-0.94 at weights 1-100; ends with 36-50% reaching the goal: not fixed |
+| E3 | 1 | episode ends at the goal; pays remaining steps of the cap at once | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | holds 0.58-0.89: not fixed |
+| A1 | 1 | intrinsic weight decayed linearly to 0 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | falls more than the control (0.16-0.51): not fixed |
+| A2 | 1 | intrinsic weight x (1 - running goal-reaching rate) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | falls (0.16-0.37): not fixed |
+| A3 | 1 | clipped PPO, 4 epochs x 4 minibatches | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | barely learns at lr 1e-3 (log std to -2.6 in 2M steps); still running |
+| A4 | 1 | entropy bonus 0.01 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | highest level (peaks ~90, best final 76.4) but falls (0.55-0.80); log std grows to +5: not fixed |
+| A5 | 1 | task reward / max(1, running std of its discounted sum) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | falls (0.12-0.79), lower level: not fixed |
+| A6 | 1 | extrinsic discount 0.99 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | falls (0.44-0.85): not fixed |
+| A7 | 1 | gradient clip per network | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | peak 43 but falls (0.14-0.59): not fixed |
 | A8 | screening | learning rate annealed to zero over the run's own 50M steps (the screening's large-maze RND unit: batch 1's control program, same 512 copies, seeds and weights, anneal over 50M instead of 1000M) | `2026-10-19-16-18_map-screening_...` | holds 0.98-0.99 at every weight; peaks at the end; best final 64.9 (weight 100) against the control's peak 31 |
 | B1 | 2 | log std floor -0.5 | `2026-10-19-17-27_reward-decline-batch-2_...` | running |
 | B2 | 2 | log std floor -0.2 | batch 2 | running |
@@ -41,3 +41,8 @@ Values are means over copies, at the window of the copy-averaged peak and over t
    This points at exploration pressure (and with it the policy's spread) running out, not at the
    bonus pulling the agent away from the goal. Ideas that keep the spread (A4 entropy; a log-std
    floor) are the first candidates for batch 2.
+7. (batch 1 scored, 18:10 PT) The log std falls in almost every run, including those that hold
+   (A8 and E2 end near -0.5), so the spread alone does not explain the fall. Mean speed does separate
+   them: falling runs slow from ~5 to 2-3 m/s; holding runs (E1, E2, A8) keep 4-5. Reading: the reward
+   for staying inside the goal radius teaches braking, which spreads to the whole maze under a high
+   learning rate; ending at the goal removes the braking incentive, annealing stops the drift.

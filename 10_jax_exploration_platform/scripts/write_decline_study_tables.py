@@ -182,12 +182,26 @@ BATCH_NAMES = {
     "a5_normalize-extrinsic-reward": "A5 task-reward scaling",
     "a6_extrinsic-discount-0.99": "A6 discount 0.99",
     "a7_gradient-clip-per-network": "A7 clip per network",
+    "a8_learning-rate-annealed-over-the-run": "A8 rate annealed within the run",
+    "b1_logstd-floor-minus-0.5": "B1 log std floor $-0.5$",
+    "b2_logstd-floor-minus-0.2": "B2 log std floor $-0.2$",
+    "b3_logstd-floor-0": "B3 log std floor $0$",
+    "b4_critic-step-0.1": "B4 critic step $0.1$",
+    "b5_terminate-at-goal_reward-shift-minus-1_gradient-clip-per-network": "B5 E2 with A7",
 }
 
 
 def batch_summary(run: Path) -> dict:
-    """{unit: {weight: numbers}} for a batch, keeping one attempt per idea (complete ones first)."""
+    """{unit: {weight: numbers}} for a batch, keeping one attempt per idea (complete ones first).
+
+    Paired rows from other runs (same program shape, seeds and weights; the screening's large-maze
+    RND unit is batch 1's control with the rate annealed over the run) come from the batch's
+    analysis/data/paired_summary.json when it exists.
+    """
     summary = json.loads((run / "analysis" / "data" / "summary.json").read_text())
+    paired = run / "analysis" / "data" / "paired_summary.json"
+    if paired.exists():
+        summary.update(json.loads(paired.read_text()))
     out = {}
     for numbers in summary.values():
         unit = numbers["unit"].replace("_second-attempt", "")
@@ -198,19 +212,22 @@ def batch_summary(run: Path) -> dict:
     return out
 
 
-def fixed(unit: str, n: dict, control_best: dict) -> bool:
-    """The study's test: holds 90% of its own peak and still learns (see the subsection text)."""
+def fixed(unit: str, n: dict, control_peak: dict) -> bool:
+    """The study's test: holds 90% of its own peak and still learns (see the subsection text).
+
+    control_peak is the control setting with the highest peak over all weights.
+    """
     holds = n["holds_peak"] >= 0.9
     if unit.startswith("e"):
-        return holds and n["reach_share_final"] >= control_best["reach_share_peak"]
-    return holds and n["final"] > control_best["peak"] - control_best["peak_se"]
+        return holds and n["reach_share_final"] >= control_peak["reach_share_peak"]
+    return holds and n["final"] > control_peak["peak"] - control_peak["peak_se"]
 
 
 def batch_results_table(run: Path) -> str:
     """One row per idea at its best weight (highest final-10% return), sorted by that return."""
     data = batch_summary(run)
     best = {u: max(ws.values(), key=lambda n: n["final"]) for u, ws in data.items()}
-    control = best["control"]
+    control = max(data["control"].values(), key=lambda n: n["peak"])
     rows = sorted(best.items(), key=lambda kv: -kv[1]["final"])
     finals = [round(n["final"], 2) for _, n in rows]
     holds = [round(n["holds_peak"], 2) for _, n in rows]
