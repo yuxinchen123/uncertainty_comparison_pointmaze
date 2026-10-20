@@ -1,0 +1,29 @@
+schema_version: 1
+run_id: 2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127
+description: "map screening: smallest map that shows the reward fall"
+git:
+  commit: e38760af82763f41f34c53f18fbf16e0106dc14c
+  dirty: true
+  version_tag: jax-platform-v0.1.0-145-ge38760a
+specs:
+  env: pointmaze_umaze_cont150_nonoise_start3-1_goal1-1@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  bonus: none@1
+  update_schedule: none@1
+compile_signature:
+  copies: 128
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

@@ -1,0 +1,57 @@
+trainer:
+  adam_eps: 1e-05
+  anneal_lr: true
+  base_seed: 0
+  batch_stats_f32: false
+  betas: ()
+  bootstrap_on_truncation: true
+  clip_coef: 0.2
+  clip_per_network: false
+  copies_per_group: 128
+  copy_seed_offset: 0
+  diagnostics: true
+  ent_coef: 0.0
+  ext_coef: 2.0
+  flat_params: false
+  gae_lambda: 0.95
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  hoist_rollout: true
+  int_coef: 0.0
+  int_coef_schedule: constant
+  learning_rate: 0.0003
+  learning_rates: ()
+  max_grad_norm: 0.5
+  n_copies: 128
+  n_envs: 4
+  normalize_ext_reward: false
+  num_minibatches: 4
+  num_steps: 128
+  parameter_settings: ((0.001, 0.0),)
+  prime_iterations: 10
+  scan_unroll: 0
+  success_gate_rate: 0.0
+  sweep_seed_mode: paired
+  total_iterations: 0
+  track_coverage: true
+  update_epochs: 4
+  update_style: full_batch
+  update_unroll: 2
+  vf_coef: 0.5
+environment:
+  specification: pointmaze_umaze_cont150_nonoise_start3-1_goal1-1@1
+  map_name: umaze
+  start_cell: (3, 1)
+  goal_cell: (1, 1)
+  position_noise: 0.0
+  max_episode_steps: 150
+  continuing_task: true
+  reward_shift: 0.0
+  goal_radius: 0.45
+  goal_reward: per_step
+runtime:
+  interpreter: /p/rlprojects/RND/.venvs/platform_jax/bin/python
+  unit_id: umaze-cap150_none
+  iterations: 58594
+  window_iterations: 250
+  run_seed: 0

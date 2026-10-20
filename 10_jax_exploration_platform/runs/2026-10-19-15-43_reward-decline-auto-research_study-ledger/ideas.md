@@ -12,6 +12,12 @@
 | A5 | 1 | task reward / max(1, running std of its discounted sum) | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
 | A6 | 1 | extrinsic discount 0.99 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
 | A7 | 1 | gradient clip per network | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | running since 16:48 PT |
+| A8 | screening | learning rate annealed to zero over the run's own 50M steps (the screening's large-maze RND unit: batch 1's control program, same 512 copies, seeds and weights, anneal over 50M instead of 1000M) | `2026-10-19-16-18_map-screening_...` | holds 0.98-0.99 at every weight; peaks at the end; best final 64.9 (weight 100) against the control's peak 31 |
+| B1 | 2 | log std floor -0.5 | `2026-10-19-17-27_reward-decline-batch-2_...` | running |
+| B2 | 2 | log std floor -0.2 | batch 2 | running |
+| B3 | 2 | log std floor 0 | batch 2 | running |
+| B4 | 2 | critic step 0.1 | batch 2 | running |
+| B5 | 2 | E2 + A7 | batch 2 | running |
 
 ## Mechanism notes (screening diagnostics, partial, 2026-10-19 16:45 PT)
 

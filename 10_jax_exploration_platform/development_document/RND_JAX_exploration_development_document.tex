@@ -89,8 +89,8 @@
 \hyperref[sec:pm-jax-run11]{Train run 1.1: the first algorithm batch} & 2026-08-16 19:06 PT & 2026-10-19 12:58 PT & read \\
 \hyperref[sec:pm-jax-corrected]{Train run 1.2: corrected intrinsic returns} & 2026-10-13 22:23 PT & 2026-10-19 12:58 PT & read \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:55 PT & 2026-10-19 16:55 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:55 PT & 2026-10-19 16:55 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:56 PT & 2026-10-19 17:48 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 16:56 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -810,8 +810,109 @@ the final tenth, with its peak in the first half of the run; and (3) the oracle 
 keeps at most $60\%$ of its peak. If no smaller map passes, the study uses the large maze at
 learning rate $10^{-3}$ for $50$M steps.
 
-\paragraph{Run status.} Submitted 2026-10-19 16:22 PT on twelve RTX 2080 Ti cards; the results
-tables and curves are added when the last unit ends.
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+% Generator: ../scripts/write_decline_study_tables.py; reads the screening's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-screening-verdicts
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{3.1cm}@{}}
+\toprule
+\textbf{map} & \textbf{1. no bonus at the goal in at most 25\% of copies} & \textbf{2. best RND setting holds at most 60\% of its peak, peak in the first half} & \textbf{3. oracle $1/\sqrt{n}$ holds at most 60\% of its peak} \\
+\midrule
+U-maze, cap 150 & \textbf{fail} (44\%) & \textbf{fail} ($\beta=10$: 0.99, peak at 86\% of the run) & \textbf{fail} (1.00) \\
+medium maze, cap 250 & \textbf{fail} (51\%) & \textbf{fail} ($\beta=100$: 1.00, peak at 99\% of the run) & \textbf{fail} (0.83) \\
+medium maze, cap 400 & \textbf{fail} (64\%) & \textbf{fail} ($\beta=1000$: 1.00, peak at 100\% of the run) & pass (0.48) \\
+large maze, cap 400 & pass (1\%) & \textbf{fail} ($\beta=100$: 0.99, peak at 100\% of the run) & \textbf{fail} (0.97) \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-screening-verdicts
+\caption{The three screening rules per map. In brackets: the share of copies without a bonus that
+reached the goal; the best random network distillation setting's final / peak and where its peak
+lies; the oracle's final / peak.}
+\label{tab:pm-jax-screening-verdicts}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+% Generator: ../scripts/write_decline_study_tables.py; reads the screening's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-screening-results
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm} r r r r r r@{}}
+\toprule
+\textbf{bonus and weight} & \textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & \textbf{\shortstack[c]{final-10\%\\return}} & \textbf{\shortstack[c]{final\\/ peak}} & \textbf{\shortstack[c]{copies ever\\at the goal}} & \textbf{\shortstack[c]{final share of\\episodes at goal}} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{U-maze, cap 150}} \\
+random network distillation, $\beta=1$ & 41.1 & 27.9 & 41.0 $\pm$ 1.1 & \textbf{1.00} & 0.99 & 0.95 \\
+random network distillation, $\beta=10$ & 43.8 & 25.7 & \underline{43.5 $\pm$ 0.9} & \underline{0.99} & 1.00 & 0.97 \\
+random network distillation, $\beta=100$ & 43.1 & 26.5 & 43.0 $\pm$ 0.9 & \textbf{1.00} & 0.99 & 0.97 \\
+random network distillation, $\beta=1000$ & 35.5 & 23.9 & 35.0 $\pm$ 1.4 & \underline{0.99} & 1.00 & 0.89 \\
+oracle counts $1/\sqrt{n}$, $\beta=1$ & 45.5 & 28.7 & \textbf{45.5 $\pm$ 0.5} & \textbf{1.00} & 1.00 & 0.99 \\
+no bonus & 13.5 & 28.9 & 13.5 $\pm$ 1.8 & \textbf{1.00} & 0.44 & 0.32 \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{medium maze, cap 250}} \\
+random network distillation, $\beta=1$ & 58.3 & 29.4 & 57.9 $\pm$ 4.9 & \underline{0.99} & 0.99 & 0.58 \\
+random network distillation, $\beta=10$ & 69.6 & 4.6 & 59.7 $\pm$ 5.1 & 0.86 & 1.00 & 0.56 \\
+random network distillation, $\beta=100$ & 85.7 & 29.8 & \underline{85.2 $\pm$ 4.6} & \textbf{1.00} & 1.00 & 0.78 \\
+random network distillation, $\beta=1000$ & 89.8 & 27.9 & \textbf{89.5 $\pm$ 4.1} & \textbf{1.00} & 1.00 & 0.86 \\
+oracle counts $1/\sqrt{n}$, $\beta=1$ & 73.1 & 4.9 & 60.6 $\pm$ 5.0 & 0.83 & 1.00 & 0.59 \\
+no bonus & 29.1 & 4.0 & 22.5 $\pm$ 4.1 & 0.77 & 0.51 & 0.21 \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{medium maze, cap 400}} \\
+random network distillation, $\beta=1$ & 145.3 & 2.9 & 94.7 $\pm$ 10.5 & \underline{0.65} & 1.00 & 0.45 \\
+random network distillation, $\beta=10$ & 162.6 & 5.6 & 103.7 $\pm$ 10.8 & 0.64 & 1.00 & 0.50 \\
+random network distillation, $\beta=100$ & 173.1 & 28.7 & \underline{172.4 $\pm$ 10.6} & \textbf{1.00} & 1.00 & 0.75 \\
+random network distillation, $\beta=1000$ & 221.9 & 30.0 & \textbf{221.2 $\pm$ 7.7} & \textbf{1.00} & 1.00 & 0.93 \\
+oracle counts $1/\sqrt{n}$, $\beta=1$ & 174.8 & 4.0 & 83.3 $\pm$ 9.8 & 0.48 & 1.00 & 0.43 \\
+no bonus & 79.7 & 5.1 & 47.9 $\pm$ 8.6 & 0.60 & 0.64 & 0.23 \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{large maze, cap 400}} \\
+random network distillation, $\beta=1$ & 45.6 & 50.0 & 45.1 $\pm$ 4.2 & \textbf{0.99} & 0.98 & 0.60 \\
+random network distillation, $\beta=10$ & 51.2 & 41.6 & 50.1 $\pm$ 4.6 & \underline{0.98} & 1.00 & 0.55 \\
+random network distillation, $\beta=100$ & 65.6 & 50.0 & \textbf{64.9 $\pm$ 4.3} & \textbf{0.99} & 1.00 & 0.71 \\
+random network distillation, $\beta=1000$ & 56.4 & 49.5 & \underline{55.3 $\pm$ 3.7} & \underline{0.98} & 1.00 & 0.74 \\
+oracle counts $1/\sqrt{n}$, $\beta=1$ & 47.0 & 50.0 & 45.7 $\pm$ 4.4 & 0.97 & 0.98 & 0.52 \\
+no bonus & 0.8 & 20.5 & 0.0 $\pm$ 0.0 & 0.00 & 0.01 & 0.00 \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-screening-results
+\caption{Screening results, $128$ copies per configuration. Returns are mean extrinsic returns per
+episode on each map's own scale (one per step inside the goal radius), so they are comparable only
+within a map. Final-10\% values are means $\pm$ standard errors over copies. Within each map the
+highest final return and final / peak are \textbf{bold} and the second highest \underline{underlined}.}
+\label{tab:pm-jax-screening-results}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127/analysis/plots/screening_curves.pdf}}
+\caption{Mean extrinsic return per episode during the screening, by map (columns) and bonus
+(rows), with bands of one standard error over $128$ copies. The learning rate anneals to zero over
+each run's own budget ($30$M steps, large maze $50$M).}
+\label{fig:pm-jax-screening-curves}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{M\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{No smaller map needs exploration enough.} Without a bonus, $44$--$64\%$ of copies
+  reach the goal on the U-maze and the medium maze, against $1\%$ on the large maze; all smaller
+  maps fail the first rule, so the study runs on the large maze.
+\item \textbf{On the medium maze with cap 400, a weak bonus falls and a strong one holds.} Without a
+  bonus, with the oracle at weight $1$, and with distillation at weights $1$ and $10$, the final
+  tenth keeps $0.48$--$0.65$ of the peak; distillation at weights $100$ and $1000$ keeps all of it
+  and ends highest. The fall therefore does not need the bonus, and a strong bonus prevents it there.
+\item \textbf{On the large maze, annealing the learning rate to zero within $50$M steps prevents the
+  fall.} Every setting keeps $0.97$--$0.99$ of its peak, and the peaks come at the end of the run;
+  the falls of \Cref{fig:pm-jax-run11-shapes} happened while a $1000$M-step schedule still held the
+  rate near $10^{-3}$. Batch 1 therefore anneals over $1000$M steps, which reproduces the fall within
+  $50$M steps (\Cref{sec:pm-jax-decline-batch1}).
+\end{enumerate}
 \studyunreadend % REPORT-STATUS
 
 \subsection{Reward-decline batch 1: a control and ten ideas}

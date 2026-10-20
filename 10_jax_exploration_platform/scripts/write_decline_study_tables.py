@@ -120,7 +120,7 @@ def screening_verdicts(by_map):
 def screening_table() -> str:
     """Per map and setting: peak, final, how much of the peak is held, and goal-reaching shares."""
     by_map = screening_rows()
-    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} r r r r r r@{}}",
+    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm} r r r r r r@{}}",
              r"\toprule",
              r"\textbf{bonus and weight} & \textbf{\shortstack[c]{peak\\return}} & "
              r"\textbf{\shortstack[c]{steps at\\peak (M)}} & "
@@ -151,8 +151,9 @@ def screening_verdict_table() -> str:
     """Pass or fail of each screening rule per map, with the number each rule reads."""
     verdicts = screening_verdicts(screening_rows())
     word = lambda ok: "pass" if ok else r"\textbf{fail}"
-    lines = [r"\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{3.3cm} "
-             r">{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{3.3cm}@{}}",
+    lines = [r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} "
+             r">{\raggedright\arraybackslash}p{3.1cm} "
+             r">{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}p{3.1cm}@{}}",
              r"\toprule",
              r"\textbf{map} & \textbf{1. no bonus at the goal in at most 25\% of copies} & "
              r"\textbf{2. best RND setting holds at most 60\% of its peak, peak in the first half} & "
