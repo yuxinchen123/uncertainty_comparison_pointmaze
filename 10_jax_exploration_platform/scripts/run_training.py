@@ -116,11 +116,14 @@ def scalar_yaml(value) -> str:
 
 def git_state(repo_root: Path) -> dict:
     """The commit this run's code is at, and whether anything was uncommitted at launch."""
-    commit = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "HEAD"],
+    # a worker submitted under a collaborator's account runs git on a repository it does not own,
+    # which git refuses unless the directory is marked safe for this one command
+    git = ["git", "-c", "safe.directory=*", "-C", str(repo_root)]
+    commit = subprocess.run(git + ["rev-parse", "HEAD"],
                             capture_output=True, text=True, check=True).stdout.strip()
-    status = subprocess.run(["git", "-C", str(repo_root), "status", "--porcelain"],
+    status = subprocess.run(git + ["status", "--porcelain"],
                             capture_output=True, text=True, check=True).stdout.strip()
-    describe = subprocess.run(["git", "-C", str(repo_root), "describe", "--tags", "--always"],
+    describe = subprocess.run(git + ["describe", "--tags", "--always"],
                               capture_output=True, text=True).stdout.strip()
     return {"commit": commit, "dirty": bool(status), "version_tag": describe}
 
