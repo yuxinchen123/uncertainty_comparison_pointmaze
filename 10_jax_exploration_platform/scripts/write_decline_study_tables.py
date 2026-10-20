@@ -291,7 +291,61 @@ BATCH3 = ROOT / ("runs/2026-10-19-18-11_reward-decline-batch-3_large-cap400_rnd-
                  "normalized-agent-obs_learning-rate-3e-4_anneal-over-100M")
 
 
+CONFIRM_A = ROOT / ("runs/2026-10-19-19-27_reward-decline-confirmation-part-a_large-cap400_"
+                    "learning-rate-1e-3_steps-100M_rnd-weights-1-10-100-1000_visit-count-sqrt-"
+                    "weights-1-10_seeds-0-127_control-a8-b5-c2")
+CONFIRM_B = ROOT / ("runs/2026-10-19-19-27_reward-decline-confirmation-part-b_large-cap400_"
+                    "learning-rate-1e-4_steps-400M_rnd-weights-100-1000_visit-count-sqrt-weights-"
+                    "1-10_seeds-0-127_control-a8-b5-c2")
+CONFIRM_IDEAS = [("control", "control"), ("a8_learning-rate-annealed-over-the-run", "A8"),
+                 ("b5_terminate-at-goal_reward-shift-minus-1_gradient-clip-per-network", "B5"),
+                 ("c2_entropy-coefficient-0.01_anneal-in-run", "C2")]
+
+
+def confirmation_table(run: Path) -> str:
+    """One row per bonus, idea and weight; "fixed" is judged against the same bonus's control.
+
+    The reference is the control setting of that bonus with the highest peak, as in the batches.
+    """
+    summary = json.loads((run / "analysis" / "data" / "summary.json").read_text())
+    rows = {}
+    for n in summary.values():
+        # before: unit "lr-1e-3_steps-100M_c2_entropy-coefficient-0.01_anneal-in-run_rnd_next_state"
+        # after:  idea "c2_entropy-coefficient-0.01_anneal-in-run", bonus "rnd_next_state"
+        bonus = n["bonus"]
+        idea = n["unit"].split("_", 2)[2][: -len(bonus) - 1]
+        rows[(bonus, idea, n["intrinsic_weight"])] = n
+    lines = [r"\begin{tabular}{@{}l l r r r r r r l@{}}", r"\toprule",
+             r"\textbf{bonus} & \textbf{idea} & \textbf{$\beta$} & "
+             r"\textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & "
+             r"\textbf{\shortstack[c]{final-10\%\\return}} & \textbf{\shortstack[c]{final\\/ peak}} & "
+             r"\textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\",
+             r"\midrule"]
+    for b, (bonus, bonus_name) in enumerate((("rnd_next_state", "RND"),
+                                             ("gt_position_velocity_sqrt", r"oracle $1/\sqrt{n}$"))):
+        weights = sorted({w for (bb, _, w) in rows if bb == bonus})
+        control = max((rows[(bonus, "control", w)] for w in weights
+                       if (bonus, "control", w) in rows), key=lambda n: n["peak"])
+        if b:
+            lines.append(r"\midrule")
+        for idea, label in CONFIRM_IDEAS:
+            for w in weights:
+                n = rows.get((bonus, idea, w))
+                if n is None:
+                    continue
+                done = "" if n["complete"] else r"$^{\ast}$"
+                lines.append(
+                    f"{bonus_name} & {label}{done} & {w:g} & {n['peak']:.1f} & "
+                    f"{n['peak_step'] / 1e6:.0f} & {n['final']:.1f} $\\pm$ {n['final_se']:.1f} & "
+                    f"{n['holds_peak']:.2f} & {n['reach_share_final']:.2f} & "
+                    f"{'yes' if fixed(idea, n, control) else 'no'} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines)
+
+
 TABLES = {"pm-jax-speed-jaguar03": speed_table,
+          "pm-jax-confirm-a": lambda: confirmation_table(CONFIRM_A),
+          "pm-jax-confirm-b": lambda: confirmation_table(CONFIRM_B),
           "pm-jax-batch3-results": lambda: batch_results_table(BATCH3),
           "pm-jax-batch3-holds": lambda: batch_holds_grid(BATCH3),
           "pm-jax-batch2-results": lambda: batch_results_table(BATCH2),

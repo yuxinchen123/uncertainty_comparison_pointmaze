@@ -64,3 +64,7 @@ part B at 1e-4 for 400M steps (`..._part-b_...`).
    to zero (final/peak 0.04-0.05). A8 holds at weight 10 (0.95) but not at 1 (0.51: peak at 12M,
    while the rate is still ~0.9e-3). B5 falls (0.54-0.67): it does not carry over to the oracle bonus.
    C2 holds at weight 10 (1.00, final 92.5) and mostly at 1 (0.81). RND units still running.
+10. (phase 4 part A complete, 21:52 PT; lr 1e-3, 100M) Control falls to 0.04-0.29. C2 holds at
+   RND weights 100/1000 (0.94/0.99, finals 91.6/98.5) and oracle weight 10 (1.00, 92.5); 0.81-0.85 at
+   small weights (dip at 20-40M, recovers as the rate falls). A8 holds at RND 100/1000 and oracle 10
+   only (early peaks fall). B5 only delayed the fall (0.54-0.79 at 100M).

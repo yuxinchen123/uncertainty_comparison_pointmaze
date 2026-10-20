@@ -93,6 +93,7 @@
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 20:09 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:49 PT & 2026-10-19 18:49 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch3]{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}} & 2026-10-19 19:49 PT & 2026-10-19 19:49 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-confirm]{Confirmation: longer runs, both bonuses, two learning rates}} & 2026-10-19 21:51 PT & 2026-10-19 21:51 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1446,6 +1447,127 @@ standard error over $128$ copies.}
   $67.5\%$ at the control's peak. \textbf{Whitening the agent's input (C3)} learns little within
   $50$M steps.
 \end{enumerate}
+\studyunreadend % REPORT-STATUS
+
+\subsection{Confirmation: longer runs, both bonuses, two learning rates}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-decline-confirm}
+The control and three ideas that passed in the batches --- A8, B5 and C2 --- are run again for
+longer, with random network distillation and with the oracle $1/\sqrt{n}$ bonus. Part A keeps the
+batches' learning rate and doubles the budget; part B uses the learning rate at which the
+$1000$M-step runs of \Cref{fig:pm-jax-run11-shapes} peaked late and then fell.
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}?>{\raggedright\arraybackslash}p{5.2cm}?>{\raggedright\arraybackslash}p{5.2cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{part A} & \textbf{part B} \\
+\blackrule
+{\bfseries\boldmath ideas} & \multicolumn{2}{>{\centering\arraybackslash}p{10.6cm}}{\bfseries\boldmath
+control; A8; B5; C2 (\Cref{tab:pm-jax-batch1-env-ideas,tab:pm-jax-batch2-ideas,tab:pm-jax-batch3-ideas}) --- 4 values} \\
+\greyrule
+{\bfseries\boldmath bonus} & \multicolumn{2}{>{\centering\arraybackslash}p{10.6cm}}{\bfseries\boldmath
+random network distillation; oracle $1/\sqrt{n}$ --- 2 values} \\
+\greyrule
+{\bfseries\boldmath learning rate} & {\bfseries\boldmath $10^{-3}$} & {\bfseries\boldmath $10^{-4}$} \\
+\greyrule
+training budget & $100$M steps per copy & $400$M steps per copy \\
+\greyrule
+rate anneals to zero over & \multicolumn{2}{>{\centering\arraybackslash}p{10.6cm}}{control and B5:
+$1000$M steps; A8 and C2: the run's own budget} \\
+\greyrule
+{\bfseries\boldmath intrinsic weight $\beta$} & {\bfseries\boldmath distillation $1$, $10$, $100$,
+$1000$; oracle $1$, $10$} & {\bfseries\boldmath distillation $100$, $1000$; oracle $1$, $10$} \\
+\greyrule
+everything else & \multicolumn{2}{>{\centering\arraybackslash}p{10.6cm}}{as the control in
+\Cref{tab:pm-jax-batch1-env-ideas}; $128$ paired copies per configuration} \\
+\blackrule
+configurations & $4$(ideas) $\times$ $(4+2)$(weights) $=24$ & $4$(ideas) $\times$ $(2+2)$(weights) $=16$ \\
+\blackrule
+\end{tabular}
+\caption{The confirmation runs. Bold rows are swept. Part B's weights are those that led the
+$1000$M-step runs at $10^{-4}$.}
+\label{tab:pm-jax-confirm-settings}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+% Generator: ../scripts/write_decline_study_tables.py; reads part A's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-confirm-a
+\begin{tabular}{@{}l l r r r r r r l@{}}
+\toprule
+\textbf{bonus} & \textbf{idea} & \textbf{$\beta$} & \textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & \textbf{\shortstack[c]{final-10\%\\return}} & \textbf{\shortstack[c]{final\\/ peak}} & \textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\
+\midrule
+RND & control & 1 & 21.5 & 19 & 2.1 $\pm$ 0.8 & 0.10 & 0.06 & no \\
+RND & control & 10 & 28.3 & 12 & 2.2 $\pm$ 0.8 & 0.08 & 0.07 & no \\
+RND & control & 100 & 30.0 & 16 & 5.0 $\pm$ 1.0 & 0.17 & 0.17 & no \\
+RND & control & 1000 & 19.0 & 37 & 5.6 $\pm$ 0.9 & 0.29 & 0.19 & no \\
+RND & A8 & 1 & 23.3 & 21 & 17.6 $\pm$ 3.2 & 0.76 & 0.25 & no \\
+RND & A8 & 10 & 33.8 & 15 & 23.4 $\pm$ 3.7 & 0.69 & 0.27 & no \\
+RND & A8 & 100 & 36.6 & 99 & 35.1 $\pm$ 4.1 & 0.96 & 0.45 & yes \\
+RND & A8 & 1000 & 51.7 & 99 & 50.7 $\pm$ 4.4 & 0.98 & 0.57 & yes \\
+RND & B5 & 1 & 33.5 & 48 & 24.7 $\pm$ 3.4 & 0.74 & 0.37 & no \\
+RND & B5 & 10 & 33.8 & 35 & 26.6 $\pm$ 3.6 & 0.79 & 0.37 & no \\
+RND & B5 & 100 & 50.4 & 51 & 37.0 $\pm$ 3.5 & 0.73 & 0.53 & no \\
+RND & B5 & 1000 & 62.4 & 43 & 41.9 $\pm$ 3.5 & 0.67 & 0.57 & no \\
+RND & C2 & 1 & 90.1 & 20 & 75.0 $\pm$ 4.8 & 0.83 & 0.67 & no \\
+RND & C2 & 10 & 92.5 & 16 & 78.2 $\pm$ 4.6 & 0.85 & 0.70 & no \\
+RND & C2 & 100 & 97.3 & 19 & 91.6 $\pm$ 3.9 & 0.94 & 0.83 & yes \\
+RND & C2 & 1000 & 99.8 & 79 & 98.5 $\pm$ 3.1 & 0.99 & 0.88 & yes \\
+\midrule
+oracle $1/\sqrt{n}$ & control & 1 & 28.7 & 12 & 1.1 $\pm$ 0.5 & 0.04 & 0.04 & no \\
+oracle $1/\sqrt{n}$ & control & 10 & 12.3 & 22 & 0.6 $\pm$ 0.2 & 0.05 & 0.03 & no \\
+oracle $1/\sqrt{n}$ & A8 & 1 & 28.0 & 12 & 14.3 $\pm$ 2.9 & 0.51 & 0.19 & no \\
+oracle $1/\sqrt{n}$ & A8 & 10 & 20.3 & 99 & 19.3 $\pm$ 3.4 & 0.95 & 0.24 & no \\
+oracle $1/\sqrt{n}$ & B5 & 1 & 31.0 & 36 & 20.6 $\pm$ 3.2 & 0.67 & 0.29 & no \\
+oracle $1/\sqrt{n}$ & B5 & 10 & 27.9 & 35 & 15.0 $\pm$ 2.8 & 0.54 & 0.23 & no \\
+oracle $1/\sqrt{n}$ & C2 & 1 & 93.7 & 17 & 75.6 $\pm$ 4.8 & 0.81 & 0.68 & no \\
+oracle $1/\sqrt{n}$ & C2 & 10 & 92.8 & 98 & 92.5 $\pm$ 3.9 & 1.00 & 0.83 & yes \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-confirm-a
+\caption{Part A, learning rate $10^{-3}$, $100$M steps, $128$ copies per row. ``Fixed'' is judged
+against the same bonus's control setting with the highest peak (distillation $30.0$, oracle
+$28.7$). B5 is on the lump-sum scale.}
+\label{tab:pm-jax-confirm-a}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-19-27_reward-decline-confirmation-part-a_large-cap400_learning-rate-1e-3_steps-100M_rnd-weights-1-10-100-1000_visit-count-sqrt-weights-1-10_seeds-0-127_control-a8-b5-c2/analysis/plots/confirmation_return.pdf}}
+\caption{Part A: mean extrinsic return per episode, with bands of one standard error over $128$
+copies; one line per intrinsic weight.}
+\label{fig:pm-jax-confirm-a}
+\end{figure}
+
+\paragraph{Findings, part A.}
+\begin{enumerate}[label=\textbf{V\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{Without a fix the return falls almost to zero within $100$M steps}: the control keeps
+  $0.08$--$0.29$ of its peak with distillation and $0.04$--$0.05$ with the oracle bonus.
+\item \textbf{The entropy bonus with a within-run anneal (C2) holds best and reaches the highest
+  level.} With distillation it keeps $0.94$ and $0.99$ of its peak at $\beta=100$ and $1000$
+  (finals $91.6$ and $98.5$) and $0.83$--$0.85$ at $\beta=1$ and $10$; with the oracle bonus it keeps
+  $1.00$ at $\beta=10$ (final $92.5$) and $0.81$ at $\beta=1$. The smaller weights dip between
+  $20$M and $40$M steps and climb back as the rate falls.
+\item \textbf{The within-run anneal alone (A8) holds at the larger weights only}: $0.96$ and $0.98$ at
+  distillation weights $100$ and $1000$, $0.95$ at oracle weight $10$; where the peak comes early
+  ($12$--$21$M steps, while the rate is still about $0.8\times10^{-3}$), it keeps $0.51$--$0.76$.
+\item \textbf{Ending at the goal with clipping per network (B5) only delayed the fall}: it held over
+  $50$M steps but keeps $0.67$--$0.79$ of its peak over $100$M with distillation and
+  $0.54$--$0.67$ with the oracle bonus.
+\end{enumerate}
+
+\paragraph{Run status, part B.} Learning rate $10^{-4}$ for $400$M steps; its rows are added when
+its last unit ends.
 \studyunreadend % REPORT-STATUS
 
 \end{document}

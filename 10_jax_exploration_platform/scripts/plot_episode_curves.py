@@ -67,7 +67,7 @@ def main():
                          else "no bonus")
                 if s["bonus"] == "gt_position_velocity_sqrt":
                     label = f"oracle 1/sqrt(n), weight {s['intrinsic_weight']:g}"
-                    color = "tab:blue"
+                    color = {1.0: "tab:cyan", 10.0: "navy"}.get(s["intrinsic_weight"], "tab:blue")
             else:
                 color, label = cmap(k % 20), titles.get(s["unit"], s["unit"])
             ax.plot(x, y, color=color, lw=1.1, label=label)

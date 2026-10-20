@@ -1,0 +1,31 @@
+schema_version: 1
+run_id: 2026-10-19-19-27_reward-decline-confirmation-part-a_large-cap400_learning-rate-1e-3_steps-100M_rnd-weights-1-10-100-1000_visit-count-sqrt-weights-1-10_seeds-0-127_control-a8-b5-c2
+description: reward-decline confirmation lr-1e-3_steps-100M B5 rnd_next_state
+git:
+  commit: 0054958ed250880dd4cc86a15db1a2b50ea43004
+  dirty: true
+  version_tag: jax-platform-v0.1.0-161-g0054958
+specs:
+  env: pointmaze_large_term400_nonoise_shift-1@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 512
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+y.json
+  shards: data/*.jsonl
