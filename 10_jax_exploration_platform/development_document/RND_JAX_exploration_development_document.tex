@@ -93,7 +93,8 @@
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 20:09 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:49 PT & 2026-10-19 18:49 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch3]{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}} & 2026-10-19 19:49 PT & 2026-10-19 19:49 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-confirm]{Confirmation: longer runs, both bonuses, two learning rates}} & 2026-10-19 21:51 PT & 2026-10-19 21:51 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-confirm]{Confirmation: longer runs, both bonuses, two learning rates}} & 2026-10-19 21:52 PT & 2026-10-20 00:48 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-summary]{Summary of the reward-decline study}} & 2026-10-20 00:48 PT & 2026-10-20 00:48 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1566,8 +1567,96 @@ copies; one line per intrinsic weight.}
   $0.54$--$0.67$ with the oracle bonus.
 \end{enumerate}
 
-\paragraph{Run status, part B.} Learning rate $10^{-4}$ for $400$M steps; its rows are added when
-its last unit ends.
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.1}
+% Generator: ../scripts/write_decline_study_tables.py; reads part B's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-confirm-b
+\begin{tabular}{@{}l l r r r r r r l@{}}
+\toprule
+\textbf{bonus} & \textbf{idea} & \textbf{$\beta$} & \textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & \textbf{\shortstack[c]{final-10\%\\return}} & \textbf{\shortstack[c]{final\\/ peak}} & \textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\
+\midrule
+RND & control & 100 & 95.4 & 170 & 61.8 $\pm$ 4.8 & 0.65 & 0.60 & no \\
+RND & control & 1000 & 87.9 & 297 & 77.3 $\pm$ 4.2 & 0.88 & 0.72 & no \\
+RND & A8 & 100 & 86.0 & 249 & 83.1 $\pm$ 4.0 & 0.97 & 0.85 & no \\
+RND & A8 & 1000 & 81.0 & 389 & 80.6 $\pm$ 3.6 & 1.00 & 0.87 & no \\
+RND & B5 & 100 & 100.1 & 359 & 99.2 $\pm$ 2.9 & 0.99 & 0.99 & yes \\
+RND & B5 & 1000 & 103.3 & 329 & 102.0 $\pm$ 2.6 & 0.99 & 0.99 & yes \\
+RND & C2 & 100 & 104.0 & 383 & 103.6 $\pm$ 2.6 & 1.00 & 0.97 & yes \\
+RND & C2 & 1000 & 106.1 & 380 & 105.8 $\pm$ 1.3 & 1.00 & 0.96 & yes \\
+\midrule
+oracle $1/\sqrt{n}$ & control & 1 & 46.2 & 207 & 31.8 $\pm$ 4.2 & 0.69 & 0.34 & no \\
+oracle $1/\sqrt{n}$ & control & 10 & 40.4 & 279 & 34.6 $\pm$ 4.5 & 0.86 & 0.34 & no \\
+oracle $1/\sqrt{n}$ & A8 & 1 & 45.9 & 394 & 45.3 $\pm$ 4.5 & 0.99 & 0.50 & yes \\
+oracle $1/\sqrt{n}$ & A8 & 10 & 38.0 & 395 & 37.6 $\pm$ 4.5 & 0.99 & 0.40 & no \\
+oracle $1/\sqrt{n}$ & B5 & 1 & 77.3 & 339 & 77.0 $\pm$ 4.5 & 1.00 & 0.83 & yes \\
+oracle $1/\sqrt{n}$ & B5 & 10 & 76.4 & 385 & 75.8 $\pm$ 4.4 & 0.99 & 0.81 & yes \\
+oracle $1/\sqrt{n}$ & C2 & 1 & 98.9 & 316 & 97.4 $\pm$ 3.4 & 0.98 & 0.90 & yes \\
+oracle $1/\sqrt{n}$ & C2 & 10 & 87.6 & 398 & 87.3 $\pm$ 4.0 & 1.00 & 0.80 & yes \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-confirm-b
+\caption{Part B, learning rate $10^{-4}$, $400$M steps, $128$ copies per row. ``Fixed'' is judged
+against the same bonus's control setting with the highest peak (distillation $95.4$ at
+$\beta=100$, oracle $46.2$ at $\beta=1$). B5 is on the lump-sum scale.}
+\label{tab:pm-jax-confirm-b}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-19-27_reward-decline-confirmation-part-b_large-cap400_learning-rate-1e-4_steps-400M_rnd-weights-100-1000_visit-count-sqrt-weights-1-10_seeds-0-127_control-a8-b5-c2/analysis/plots/confirmation_return.pdf}}
+\caption{Part B: mean extrinsic return per episode, with bands of one standard error over $128$
+copies; one line per intrinsic weight.}
+\label{fig:pm-jax-confirm-b}
+\end{figure}
+
+\paragraph{Findings, part B.}
+\begin{enumerate}[label=\textbf{V\arabic*},leftmargin=*,labelsep=0.6em,start=5]
+\item \textbf{At learning rate $10^{-4}$ the control falls later and more slowly, as in the
+  $1000$M-step runs.} Distillation at $\beta=100$ peaks at $95.4$ after $170$M steps and keeps
+  $0.65$ of it; the oracle bonus peaks after $207$--$279$M steps and keeps $0.69$--$0.86$.
+\item \textbf{B5 and C2 pass at every setting; A8 holds but learns less.} B5 keeps $0.99$--$1.00$
+  of its peak and C2 $0.98$--$1.00$, with both bonuses; C2 ends highest with distillation
+  ($103.6$ and $105.8$), B5 with the largest share of episodes reaching the goal ($99\%$ with
+  distillation). A8 keeps $0.97$--$1.00$ of its peak, but with distillation it ends at $80.6$--$83.1$,
+  below the control's peak of $95.4$, so it passes the test only at oracle weight $1$.
+\end{enumerate}
+\studyunreadend % REPORT-STATUS
+
+\subsection{Summary of the reward-decline study}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-decline-summary}
+\begin{enumerate}[label=\textbf{R\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{What falls, and when.} The extrinsic return falls after its peak whenever the
+  learning rate stays near its starting value long after the peak: within $50$M steps at
+  $10^{-3}$, after about $170$M steps at $10^{-4}$. It falls with distillation and with the
+  oracle count bonus, and on the medium maze also without any bonus
+  (\Cref{sec:pm-jax-screening}).
+\item \textbf{What comes with it.} In every falling run the ball slows, from about $5$ to
+  $2$--$3$\,m/s, so it reaches the goal later; the action spread shrinks in falling and holding
+  runs alike, and raising it with a floor does not stop the fall
+  (\Cref{sec:pm-jax-decline-batch1,sec:pm-jax-decline-batch2}).
+\item \textbf{What fixes it.} Annealing the learning rate to zero over the training budget, with
+  an entropy coefficient of $0.01$ (C2), held at every setting of the confirmation except the two
+  smallest distillation weights and the smallest oracle weight at $10^{-3}$, where the dip
+  recovered to $0.81$--$0.85$ of the peak; it also reached the highest returns throughout
+  ($92$--$106$ against the controls' peaks of $30$--$95$). The anneal alone (A8) held wherever the
+  peak came late in the run, but at $10^{-4}$ it ended below the control's peak. Ending the episode at the goal with a $-1$ step cost and clipping the
+  networks' gradients separately (B5) held at $10^{-4}$ and over $50$M steps at $10^{-3}$, but not
+  over $100$M at $10^{-3}$, and it changes the task.
+\item \textbf{What does not.} Floors on the log standard deviation, a shorter critic step, the
+  extrinsic discount $0.99$, scaling the task reward, decaying or gating the intrinsic weight,
+  clipped PPO at $10^{-3}$, and whitening the agent's input
+  (\Cref{tab:pm-jax-batch1-holds,tab:pm-jax-batch2-holds,tab:pm-jax-batch3-holds}).
+\item \textbf{Recommended setting} for the platform's distillation runs: learning rate annealed
+  linearly to zero over the run's own budget, entropy coefficient $0.01$. Both are existing
+  options of the training command: \texttt{-{}-ent-coef 0.01}, with \texttt{-{}-lr-anneal-iterations}
+  left unset so the rate anneals over the run's own length; the trainer's defaults are unchanged.
+\end{enumerate}
 \studyunreadend % REPORT-STATUS
 
 \end{document}

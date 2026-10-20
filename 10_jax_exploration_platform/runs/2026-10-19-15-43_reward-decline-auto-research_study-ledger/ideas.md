@@ -68,3 +68,13 @@ part B at 1e-4 for 400M steps (`..._part-b_...`).
    RND weights 100/1000 (0.94/0.99, finals 91.6/98.5) and oracle weight 10 (1.00, 92.5); 0.81-0.85 at
    small weights (dip at 20-40M, recovers as the rate falls). A8 holds at RND 100/1000 and oracle 10
    only (early peaks fall). B5 only delayed the fall (0.54-0.79 at 100M).
+11. (phase 4 part B complete, 2026-10-20 00:48 PT; lr 1e-4, 400M) Control falls later and slower
+   (RND weight 100 peak 95.4 at 170M, keeps 0.65; oracle keeps 0.69-0.86). B5 and C2 pass everywhere
+   (0.98-1.00; C2 finals 103.6/105.8 with RND); A8 holds (0.97-1.00) but ends below the control's
+   peak with RND (80.6-83.1 vs 95.4).
+
+## Outcome
+
+21 ideas tested (batches 1-3 plus A8) and confirmed in phase 4. Recommended for the platform's RND
+runs: learning rate annealed to zero over the run's own budget with entropy coefficient 0.01 (C2).
+Report: development document subsections 1.3-1.9 (summary in 1.9). Study complete; monitor deleted.
