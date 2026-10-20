@@ -188,6 +188,11 @@ BATCH_NAMES = {
     "b3_logstd-floor-0": "B3 log std floor $0$",
     "b4_critic-step-0.1": "B4 critic step $0.1$",
     "b5_terminate-at-goal_reward-shift-minus-1_gradient-clip-per-network": "B5 E2 with A7",
+    "c1_terminate-at-goal_reward-shift-minus-1_anneal-in-run": "C1 E2 with A8",
+    "c2_entropy-coefficient-0.01_anneal-in-run": "C2 A4 with A8",
+    "c3_normalized-agent-observation": "C3 whitened agent input",
+    "c4_learning-rate-3e-4": r"C4 learning rate $3\times10^{-4}$",
+    "c5_anneal-over-100M": "C5 anneal over 100M",
 }
 
 
@@ -281,7 +286,14 @@ BATCH2 = ROOT / ("runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-
                  "minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7")
 
 
+BATCH3 = ROOT / ("runs/2026-10-19-18-11_reward-decline-batch-3_large-cap400_rnd-weights-1-10-100-"
+                 "1000_steps-50M_seeds-0-127_e2-plus-anneal-in-run_entropy-plus-anneal-in-run_"
+                 "normalized-agent-obs_learning-rate-3e-4_anneal-over-100M")
+
+
 TABLES = {"pm-jax-speed-jaguar03": speed_table,
+          "pm-jax-batch3-results": lambda: batch_results_table(BATCH3),
+          "pm-jax-batch3-holds": lambda: batch_holds_grid(BATCH3),
           "pm-jax-batch2-results": lambda: batch_results_table(BATCH2),
           "pm-jax-batch2-holds": lambda: batch_holds_grid(BATCH2),
           "pm-jax-batch1-results": lambda: batch_results_table(BATCH1),

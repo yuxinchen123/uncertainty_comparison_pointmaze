@@ -91,7 +91,8 @@
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:56 PT & 2026-10-19 17:49 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 18:10 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:48 PT & 2026-10-19 18:48 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:49 PT & 2026-10-19 18:49 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch3]{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}} & 2026-10-19 19:49 PT & 2026-10-19 19:49 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1313,6 +1314,140 @@ still slows in the runs that fall.}
   the changed task.} It keeps $0.91$--$0.95$ of its peak at every weight and, at $\beta=1000$, ends
   with $74.1\%$ of episodes reaching the goal, above the $67.5\%$ at the control's peak; its speed
   stays at $4.4$--$4.8$\,m/s. Each half alone did not pass: E2 learned less, A7 fell.
+\end{enumerate}
+\studyunreadend % REPORT-STATUS
+
+\subsection{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-decline-batch3}
+Batch 3 combines the within-run anneal (A8) with the two ideas that reached the highest levels
+(E2 and the entropy bonus A4), and probes the learning rate and the scale of the agent's input. It
+shares batch 1's control and its copies, seeds, environments and policy noise.
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}?>{\raggedright\arraybackslash}p{2.0cm}?>{\raggedright\arraybackslash}p{2.0cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{C1} & \textbf{C2} & \textbf{C3} & \textbf{C4} & \textbf{C5} \\
+& \small(E2 with A8) & \small(A4 with A8) & \small(whitened input) & \small(lower rate) &
+\small(anneal 100M) \\
+\blackrule
+everything else & \multicolumn{5}{>{\centering\arraybackslash}p{10.5cm}}{as the control in
+\Cref{tab:pm-jax-batch1-env-ideas}, including $\beta\in\{1,10,100,1000\}$} \\
+\blackrule
+{\bfseries\boldmath learning rate} & {\bfseries\boldmath $10^{-3}$} & {\bfseries\boldmath $10^{-3}$} &
+{\bfseries\boldmath $10^{-3}$} & {\bfseries\boldmath $3\times10^{-4}$} & {\bfseries\boldmath $10^{-3}$} \\
+\greyrule
+{\bfseries\boldmath rate anneals to zero over} & {\bfseries\boldmath $50$M (the run)} &
+{\bfseries\boldmath $50$M (the run)} & {\bfseries\boldmath $1000$M} & {\bfseries\boldmath $1000$M} &
+{\bfseries\boldmath $100$M} \\
+\greyrule
+{\bfseries\boldmath episode ends} & \textbf{at the goal or the cap} & \textbf{at the cap} &
+\textbf{at the cap} & \textbf{at the cap} & \textbf{at the cap} \\
+\greyrule
+{\bfseries\boldmath reward on other steps} & {\bfseries\boldmath $-1$} & {\bfseries\boldmath $0$} &
+{\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} \\
+\greyrule
+{\bfseries\boldmath entropy coefficient} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0.01$} &
+{\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} \\
+\greyrule
+{\bfseries\boldmath actor and critic input} & \textbf{raw} & \textbf{raw} & \textbf{whitened} &
+\textbf{raw} & \textbf{raw} \\
+\blackrule
+configurations & $4$ & $4$ & $4$ & $4$ & $4$ \\
+\greyrule
+total, batch 3 & \multicolumn{5}{c}{$5$ units $\times$ $4$ weights $=20$ configurations} \\
+\blackrule
+\end{tabular}
+\caption{Batch 3. Bold rows are swept. ``Whitened'': centred and scaled by running per-copy
+statistics of the observation, clipped to $\pm5$, as random network distillation does for its own
+input.}
+\label{tab:pm-jax-batch3-ideas}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+% Generator: ../scripts/write_decline_study_tables.py; reads the batch's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-batch3-results
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} r r r r r r l@{}}
+\toprule
+\textbf{idea} & \textbf{$\beta$} & \textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & \textbf{\shortstack[c]{final-10\%\\return $\uparrow$}} & \textbf{\shortstack[c]{final\\/ peak}} & \textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\
+\midrule
+C2 A4 with A8 & 1000 & 109.57 & 45.1 & \textbf{109.29 $\pm$ 0.62} & \textbf{1.00} & \textbf{0.97} & yes \\
+A8 rate annealed within the run & 100 & 65.56 & 50.0 & \underline{64.86 $\pm$ 4.32} & \underline{0.99} & 0.71 & yes \\
+C4 learning rate $3\times10^{-4}$ & 100 & 66.88 & 48.8 & 64.74 $\pm$ 3.54 & 0.97 & \underline{0.84} & yes \\
+C1 E2 with A8 & 1000 & 62.70 & 49.0 & 61.84 $\pm$ 3.89 & \underline{0.99} & 0.75 & yes \\
+C5 anneal over 100M & 1000 & 33.23 & 49.5 & 31.10 $\pm$ 2.97 & 0.94 & 0.49 & yes \\
+control & 1000 & 19.88 & 28.5 & 10.58 $\pm$ 1.49 & 0.53 & 0.31 & no \\
+C3 whitened agent input & 100 & 11.66 & 31.0 & 8.37 $\pm$ 1.37 & 0.72 & 0.27 & no \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-batch3-results
+\caption{Batch 3 with batch 1's control and A8 for reference, each idea at the weight with its
+highest final-10\% return; $128$ copies per weight. C1 is on the lump-sum scale of E2. ``Fixed'' as
+in \Cref{tab:pm-jax-batch1-results}.}
+\label{tab:pm-jax-batch3-results}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+% Generator: ../scripts/write_decline_study_tables.py; reads the batch's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-batch3-holds
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} r r r r @{}}
+\toprule
+\textbf{idea} & \textbf{$\beta=1$} & \textbf{$\beta=10$} & \textbf{$\beta=100$} & \textbf{$\beta=1000$} \\
+\midrule
+control & 0.26 (5.8) & 0.18 (4.6) & 0.32 (10.0) & 0.53 (10.6) \\
+A8 rate annealed within the run & 0.99 (45.1) & 0.98 (50.1) & 0.99 (64.9) & 0.98 (55.3) \\
+C1 E2 with A8 & 0.99 (43.4) & 0.99 (41.3) & 0.99 (58.5) & 0.99 (61.8) \\
+C2 A4 with A8 & 1.00 (100.4) & 1.00 (101.3) & 0.99 (105.5) & 1.00 (109.3) \\
+C3 whitened agent input & 0.60 (3.2) & 0.74 (5.8) & 0.72 (8.4) & 0.87 (7.4) \\
+C4 learning rate $3\times10^{-4}$ & 0.95 (37.8) & 0.96 (56.0) & 0.97 (64.7) & 0.85 (28.5) \\
+C5 anneal over 100M & 0.66 (17.7) & 0.47 (15.5) & 0.67 (21.2) & 0.94 (31.1) \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-batch3-holds
+\caption{Final / peak for every idea and intrinsic weight, with the final-10\% return in brackets.}
+\label{tab:pm-jax-batch3-holds}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-18-11_reward-decline-batch-3_large-cap400_rnd-weights-1-10-100-1000_steps-50M_seeds-0-127_e2-plus-anneal-in-run_entropy-plus-anneal-in-run_normalized-agent-obs_learning-rate-3e-4_anneal-over-100M/analysis/plots/batch3_return.pdf}}
+\caption{Mean extrinsic return per episode in batch 3, with batch 1's control and A8; bands of one
+standard error over $128$ copies.}
+\label{fig:pm-jax-batch3-return}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{D\arabic*},leftmargin=*,labelsep=0.6em,start=10]
+\item \textbf{The entropy bonus with a within-run anneal (C2) is the best setting of the study.}
+  At every weight it keeps $0.99$--$1.00$ of its peak, ends between $100$ and $109$ ($3.5$ times
+  the control's peak), and $91$--$97\%$ of its last episodes reach the goal. Alone, the entropy
+  bonus rose as high but fell (A4); alone, the anneal held but ended lower (A8).
+\item \textbf{A lower constant learning rate (C4) holds within $50$M steps}, keeping $0.95$--$0.97$
+  of the peak at weights $1$--$100$ and ending at $64.7$ ($\beta=100$); its peaks come at the end of
+  the run, so a later fall is not ruled out: at $10^{-4}$ the $1000$M-step runs fell after
+  $170$--$260$M steps.
+\item \textbf{Annealing over $100$M steps (C5) holds only at the largest weight}: $\beta=1000$
+  keeps $0.94$ of its peak and passes; the other weights keep $0.47$--$0.67$.
+\item \textbf{Ending at the goal with the anneal (C1) holds and passes}: it keeps $0.99$ of its peak
+  at every weight, and at $\beta=1000$ $75\%$ of its last episodes reach the goal, against
+  $67.5\%$ at the control's peak. \textbf{Whitening the agent's input (C3)} learns little within
+  $50$M steps.
 \end{enumerate}
 \studyunreadend % REPORT-STATUS
 

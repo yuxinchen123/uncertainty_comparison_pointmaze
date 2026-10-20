@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: 2026-10-19-18-11_reward-decline-batch-3_large-cap400_rnd-weights-1-10-100-1000_steps-50M_seeds-0-127_e2-plus-anneal-in-run_entropy-plus-anneal-in-run_normalized-agent-obs_learning-rate-3e-4_anneal-over-100M
+description: "reward-decline idea C4: c4_learning-rate-3e-4"
+git:
+  commit: 125d5a17808eab3762620f52273dbfb119828c23
+  dirty: true
+  version_tag: jax-platform-v0.1.0-158-g125d5a1
+specs:
+  env: pointmaze_large_cont400_nonoise@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 512
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: full_batch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl
+hards: data/*.jsonl

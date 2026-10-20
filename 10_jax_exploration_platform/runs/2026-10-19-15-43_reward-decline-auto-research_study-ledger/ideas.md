@@ -18,11 +18,11 @@
 | B3 | 2 | log std floor 0 | batch 2 | falls (0.23-0.85); highest peak 43.5: not fixed |
 | B4 | 2 | critic step 0.1 | batch 2 | barely learns (return below 3): not fixed |
 | B5 | 2 | E2 + A7 | batch 2 | FIXED: holds 0.91-0.95 at every weight; weight 1000 ends with 74.1% of episodes reaching the goal (control peak 67.5%), speed 4.4-4.8 m/s |
-| C1 | 3 | E2 + rate annealed within the run (A8) | `2026-10-19-18-11_reward-decline-batch-3_...` | running |
-| C2 | 3 | A4 entropy 0.01 + A8 | batch 3 | running |
-| C3 | 3 | actor and critic see whitened observations | batch 3 | running |
-| C4 | 3 | learning rate 3e-4 (anneal over 1000M) | batch 3 | running |
-| C5 | 3 | anneal over 100M (1e-3 -> 5e-4 within 50M) | batch 3 | running |
+| C1 | 3 | E2 + rate annealed within the run (A8) | `2026-10-19-18-11_reward-decline-batch-3_...` | FIXED: holds 0.99 at every weight; weight 1000 ends with 75% of episodes at the goal |
+| C2 | 3 | A4 entropy 0.01 + A8 | batch 3 | FIXED, best of the study: holds 0.99-1.00 at every weight, final 100-109 (3.5x control peak), 91-97% of episodes at the goal |
+| C3 | 3 | actor and critic see whitened observations | batch 3 | learns little (best final 8.4): not fixed |
+| C4 | 3 | learning rate 3e-4 (anneal over 1000M) | batch 3 | holds 0.95-0.97 at weights 1-100 within 50M (final 64.7 at weight 100); peaks at the run's end, so a later fall is not ruled out |
+| C5 | 3 | anneal over 100M (1e-3 -> 5e-4 within 50M) | batch 3 | holds only at weight 1000 (0.94, final 31.1); others 0.47-0.67 |
 
 ## Mechanism notes (screening diagnostics, partial, 2026-10-19 16:45 PT)
 
