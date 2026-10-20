@@ -18,6 +18,11 @@
 | B3 | 2 | log std floor 0 | batch 2 | running |
 | B4 | 2 | critic step 0.1 | batch 2 | running |
 | B5 | 2 | E2 + A7 | batch 2 | running |
+| C1 | 3 | E2 + rate annealed within the run (A8) | `2026-10-19-18-11_reward-decline-batch-3_...` | running |
+| C2 | 3 | A4 entropy 0.01 + A8 | batch 3 | running |
+| C3 | 3 | actor and critic see whitened observations | batch 3 | running |
+| C4 | 3 | learning rate 3e-4 (anneal over 1000M) | batch 3 | running |
+| C5 | 3 | anneal over 100M (1e-3 -> 5e-4 within 50M) | batch 3 | running |
 
 ## Mechanism notes (screening diagnostics, partial, 2026-10-19 16:45 PT)
 
