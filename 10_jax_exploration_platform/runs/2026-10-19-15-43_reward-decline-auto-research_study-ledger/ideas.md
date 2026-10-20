@@ -28,3 +28,10 @@ Values are means over copies, at the window of the copy-averaged peak and over t
 5. Runs that fall lose policy spread and speed: no bonus, medium 400: log std -0.29 -> -0.94, mean
    speed 1.64 -> 1.31; oracle 1/sqrt(n), medium 400: log std -0.07 -> -0.42, speed 3.0 -> 2.5. Runs
    that hold keep log std near -0.15.
+6. (complete small-map screening, 17:12 PT) On the medium map with cap 400 the fall
+   comes with a WEAK bonus: final / peak 0.60 without a bonus, 0.48 for the oracle at weight 1, 0.65
+   and 0.64 for RND at weights 1 and 10; RND at weights 100 and 1000 holds 1.00 and ends highest
+   (172, 221). Medium cap 250: only RND weight 10 falls a little (0.86). U-maze: nothing falls.
+   This points at exploration pressure (and with it the policy's spread) running out, not at the
+   bonus pulling the agent away from the goal. Ideas that keep the spread (A4 entropy; a log-std
+   floor) are the first candidates for batch 2.
