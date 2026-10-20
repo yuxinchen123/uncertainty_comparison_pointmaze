@@ -88,13 +88,13 @@
 \hyperref[sec:pm-jax-envspec]{Environment specification} & 2026-08-16 19:06 PT & 2026-10-13 20:24 PT & read \\
 \hyperref[sec:pm-jax-run11]{Train run 1.1: the first algorithm batch} & 2026-08-16 19:06 PT & 2026-10-19 12:58 PT & read \\
 \hyperref[sec:pm-jax-corrected]{Train run 1.2: corrected intrinsic returns} & 2026-10-13 22:23 PT & 2026-10-19 12:58 PT & read \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:56 PT & 2026-10-19 17:49 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 20:09 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:49 PT & 2026-10-19 18:49 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch3]{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}} & 2026-10-19 19:49 PT & 2026-10-19 19:49 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-confirm]{Confirmation: longer runs, both bonuses, two learning rates}} & 2026-10-19 21:52 PT & 2026-10-20 00:48 PT & unread \\
-\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-summary]{Summary of the reward-decline study}} & 2026-10-20 00:48 PT & 2026-10-20 00:48 PT & unread \\
+\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & read \\
+\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study} & 2026-10-19 16:56 PT & 2026-10-19 17:49 PT & read \\
+\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas} & 2026-10-19 16:56 PT & 2026-10-19 20:09 PT & read \\
+\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination} & 2026-10-19 18:49 PT & 2026-10-19 18:49 PT & read \\
+\hyperref[sec:pm-jax-decline-batch3]{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input} & 2026-10-19 19:49 PT & 2026-10-19 19:49 PT & read \\
+\hyperref[sec:pm-jax-decline-confirm]{Confirmation: longer runs, both bonuses, two learning rates} & 2026-10-19 21:52 PT & 2026-10-20 00:48 PT & read \\
+\hyperref[sec:pm-jax-decline-summary]{Summary of the reward-decline study} & 2026-10-20 00:48 PT & 2026-10-20 00:48 PT & read \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -627,7 +627,6 @@ vertical axis is logarithmic above 1 and linear between $-1$ and $1$.}
 
 
 \subsection{Training speed on jaguar03}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-speed-jaguar03}
 The reward-decline study below runs many short units on jaguar03's eight RTX A4500 cards. Ten
 execution ideas were timed there on 2026-10-19 against one baseline: a random network
@@ -638,7 +637,6 @@ $S$ million steps per copy then takes $S \times 10^{6}/(3600\,r)$ hours. ``Total
 baseline'' divides an idea's total steps per second by the baseline's.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -676,7 +674,6 @@ best \underline{underlined}; higher is better for rates and lower for hours and 
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../benchmark_runs/2026-10-19-15-46_jaguar03_rtx-a4500_random-network-distillation_copies-128-per-setting_rollout-128_environments-4_full-batch_speed-10-ideas-round-2/plots/speed_ideas.pdf}}
 \caption{Two ways of putting more copies on one RTX A4500: settings packed into one program
@@ -709,10 +706,8 @@ per second; right: steps per second per copy.}
 and $1000$ into one program of $4 \times 128$ copies, so every unit of a batch has the same copy
 count and copy $k$ meets the same noise and environments in every idea. Jobs share one
 compilation cache, ask for eight processors, and keep the diagnostics on.
-\studyunreadend % REPORT-STATUS
 
 \subsection{Choosing a small environment for the reward-decline study}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-screening}
 Candidate fixes are tested first on the smallest maze that still shows the problem. Three smaller
 PointMaze maps were screened against the large one, with the same ball dynamics, goal radius,
@@ -722,7 +717,6 @@ medium maze is screened at two caps: $400$ steps, and $250$, which keeps the lar
 travel to cap ($10$ cell moves against $17$).
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -750,7 +744,6 @@ steps per copy & \multicolumn{3}{c?}{$30$M} & $50$M \\
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127/analysis/plots/screened_maps.pdf}}
 \caption{The screened maps, to scale with $1$\,m cells. Grey cells are walls; the blue disc
@@ -759,7 +752,6 @@ marks the start and the green star and circle the goal and its $0.45$\,m radius.
 \end{figure}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -815,7 +807,6 @@ keeps at most $60\%$ of its peak. If no smaller map passes, the study uses the l
 learning rate $10^{-3}$ for $50$M steps.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -840,7 +831,6 @@ lies; the oracle's final / peak.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -893,7 +883,6 @@ highest final return and final / peak are \textbf{bold} and the second highest \
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-18_map-screening_umaze-cap150_medium-cap250_medium-cap400_large-cap400_rnd-weights-1-10-100-1000_visit-count-sqrt-weight-1_no-bonus_learning-rate-1e-3_steps-30M-large-50M_seeds-0-127/analysis/plots/screening_curves.pdf}}
 \caption{Mean extrinsic return per episode during the screening, by map (columns) and bonus
@@ -917,10 +906,8 @@ each run's own budget ($30$M steps, large maze $50$M).}
   rate near $10^{-3}$. Batch 1 therefore anneals over $1000$M steps, which reproduces the fall within
   $50$M steps (\Cref{sec:pm-jax-decline-batch1}).
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \subsection{Reward-decline batch 1: a control and ten ideas}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-decline-batch1}
 Each idea changes one thing against a shared control. Three change the environment's reward
 structure (\Cref{tab:pm-jax-batch1-env-ideas}); seven change the algorithm
@@ -937,7 +924,6 @@ moved each iteration by $0.05$ times the difference to the share among that iter
 episodes; and $T_{\max}=400$ as the episode cap.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -992,7 +978,6 @@ pays at arrival what staying until the cap would have earned in the control's ta
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{2.5pt}
@@ -1057,7 +1042,6 @@ program, copies, seeds and weights, with the learning rate annealed to zero over
 steps instead of $1000$M. It enters the comparison as a paired idea.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1093,7 +1077,6 @@ episodes reached the goal.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
@@ -1124,7 +1107,6 @@ A8 rate annealed within the run & 0.99 (45.1) & 0.98 (50.1) & 0.99 (64.9) & 0.98
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7/analysis/plots/batch1_return.pdf}}
 \caption{Mean extrinsic return per episode, each idea's own reward, with bands of one standard
@@ -1133,7 +1115,6 @@ error over $128$ copies; one line per intrinsic weight.}
 \end{figure}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7/analysis/plots/batch1_speed_mean.pdf}}
 \caption{Mean speed of the ball over all training steps (copy means), the diagnostic that separates
@@ -1142,7 +1123,6 @@ the falling runs from those that hold.}
 \end{figure}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7/analysis/plots/batch1_logstd_mean.pdf}}
 \caption{The policy's log standard deviation (copy means). It falls in almost every run, including
@@ -1179,10 +1159,8 @@ those that hold, so it does not by itself explain the fall.}
   Ending the episode at the goal removes the reason to brake; a falling learning rate stops the
   drift.
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \subsection{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-decline-batch2}
 Batch 2 was chosen from batch 1 at three quarters of its run, when the falling runs showed a
 shrinking log standard deviation: three ideas keep it above a floor after every update, one shortens
@@ -1191,7 +1169,6 @@ the critic's step, and one combines E2 and A7, the two ideas that then held best
 everything not listed is as in \Cref{tab:pm-jax-batch1-env-ideas}.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1231,7 +1208,6 @@ every update; the critic step multiplies the change Adam proposes for the critic
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1259,7 +1235,6 @@ lump-sum scale of E2. ``Fixed'' as in \Cref{tab:pm-jax-batch1-results}.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
@@ -1285,7 +1260,6 @@ B5 E2 with A7 & 0.91 (30.7) & 0.95 (32.6) & 0.94 (45.7) & 0.95 (59.6) \\
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7/analysis/plots/batch2_return.pdf}}
 \caption{Mean extrinsic return per episode in batch 2, with batch 1's control and A8; bands of one
@@ -1294,7 +1268,6 @@ standard error over $128$ copies.}
 \end{figure}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7/analysis/plots/batch2_speed_mean.pdf}}
 \caption{Mean ball speed in batch 2. With the log standard deviation held up (B1--B3) the ball
@@ -1314,17 +1287,14 @@ still slows in the runs that fall.}
   with $74.1\%$ of episodes reaching the goal, above the $67.5\%$ at the control's peak; its speed
   stays at $4.4$--$4.8$\,m/s. Each half alone did not pass: E2 learned less, A7 fell.
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \subsection{Reward-decline batch 3: annealing combined, the learning rate, and the agent's input}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-decline-batch3}
 Batch 3 combines the within-run anneal (A8) with the two ideas that reached the highest levels
 (E2 and the entropy bonus A4), and probes the learning rate and the scale of the agent's input. It
 shares batch 1's control and its copies, seeds, environments and policy noise.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1369,7 +1339,6 @@ input.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1397,7 +1366,6 @@ in \Cref{tab:pm-jax-batch1-results}.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
@@ -1423,7 +1391,6 @@ C5 anneal over 100M & 0.66 (17.7) & 0.47 (15.5) & 0.67 (21.2) & 0.94 (31.1) \\
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-18-11_reward-decline-batch-3_large-cap400_rnd-weights-1-10-100-1000_steps-50M_seeds-0-127_e2-plus-anneal-in-run_entropy-plus-anneal-in-run_normalized-agent-obs_learning-rate-3e-4_anneal-over-100M/analysis/plots/batch3_return.pdf}}
 \caption{Mean extrinsic return per episode in batch 3, with batch 1's control and A8; bands of one
@@ -1448,10 +1415,8 @@ standard error over $128$ copies.}
   $67.5\%$ at the control's peak. \textbf{Whitening the agent's input (C3)} learns little within
   $50$M steps.
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \subsection{Confirmation: longer runs, both bonuses, two learning rates}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-decline-confirm}
 The control and three ideas that passed in the batches --- A8, B5 and C2 --- are run again for
 longer, with random network distillation and with the oracle $1/\sqrt{n}$ bonus. Part A keeps the
@@ -1459,7 +1424,6 @@ batches' learning rate and doubles the budget; part B uses the learning rate at 
 $1000$M-step runs of \Cref{fig:pm-jax-run11-shapes} peaked late and then fell.
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1496,7 +1460,6 @@ $1000$M-step runs at $10^{-4}$.}
 \end{table}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1542,7 +1505,6 @@ $28.7$). B5 is on the lump-sum scale.}
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-19-27_reward-decline-confirmation-part-a_large-cap400_learning-rate-1e-3_steps-100M_rnd-weights-1-10-100-1000_visit-count-sqrt-weights-1-10_seeds-0-127_control-a8-b5-c2/analysis/plots/confirmation_return.pdf}}
 \caption{Part A: mean extrinsic return per episode, with bands of one standard error over $128$
@@ -1568,7 +1530,6 @@ copies; one line per intrinsic weight.}
 \end{enumerate}
 
 \begin{table}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -1606,7 +1567,6 @@ $\beta=100$, oracle $46.2$ at $\beta=1$). B5 is on the lump-sum scale.}
 \end{table}
 
 \begin{figure}[H]
-\studyfloatcolor % REPORT-STATUS
 \centering
 \includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-19-27_reward-decline-confirmation-part-b_large-cap400_learning-rate-1e-4_steps-400M_rnd-weights-100-1000_visit-count-sqrt-weights-1-10_seeds-0-127_control-a8-b5-c2/analysis/plots/confirmation_return.pdf}}
 \caption{Part B: mean extrinsic return per episode, with bands of one standard error over $128$
@@ -1625,10 +1585,8 @@ copies; one line per intrinsic weight.}
   distillation). A8 keeps $0.97$--$1.00$ of its peak, but with distillation it ends at $80.6$--$83.1$,
   below the control's peak of $95.4$, so it passes the test only at oracle weight $1$.
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \subsection{Summary of the reward-decline study}
-\studyunreadbegin % REPORT-STATUS
 \label{sec:pm-jax-decline-summary}
 \begin{enumerate}[label=\textbf{R\arabic*},leftmargin=*,labelsep=0.6em]
 \item \textbf{What falls, and when.} The extrinsic return falls after its peak whenever the
@@ -1657,6 +1615,5 @@ copies; one line per intrinsic weight.}
   options of the training command: \texttt{-{}-ent-coef 0.01}, with \texttt{-{}-lr-anneal-iterations}
   left unset so the rate anneals over the run's own length; the trainer's defaults are unchanged.
 \end{enumerate}
-\studyunreadend % REPORT-STATUS
 
 \end{document}
