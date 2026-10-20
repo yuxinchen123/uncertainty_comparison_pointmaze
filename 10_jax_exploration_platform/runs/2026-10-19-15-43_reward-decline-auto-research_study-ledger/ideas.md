@@ -13,11 +13,11 @@
 | A6 | 1 | extrinsic discount 0.99 | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | falls (0.44-0.85): not fixed |
 | A7 | 1 | gradient clip per network | `2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_control-e1-e2-e3-a1-a2-a3-a4-a5-a6-a7` | peak 43 but falls (0.14-0.59): not fixed |
 | A8 | screening | learning rate annealed to zero over the run's own 50M steps (the screening's large-maze RND unit: batch 1's control program, same 512 copies, seeds and weights, anneal over 50M instead of 1000M) | `2026-10-19-16-18_map-screening_...` | holds 0.98-0.99 at every weight; peaks at the end; best final 64.9 (weight 100) against the control's peak 31 |
-| B1 | 2 | log std floor -0.5 | `2026-10-19-17-27_reward-decline-batch-2_...` | running |
-| B2 | 2 | log std floor -0.2 | batch 2 | running |
-| B3 | 2 | log std floor 0 | batch 2 | running |
-| B4 | 2 | critic step 0.1 | batch 2 | running |
-| B5 | 2 | E2 + A7 | batch 2 | running |
+| B1 | 2 | log std floor -0.5 | `2026-10-19-17-27_reward-decline-batch-2_...` | falls (0.32-0.67) though log std stays above -0.3; ball still slows: not fixed |
+| B2 | 2 | log std floor -0.2 | batch 2 | falls (0.42-0.75): not fixed |
+| B3 | 2 | log std floor 0 | batch 2 | falls (0.23-0.85); highest peak 43.5: not fixed |
+| B4 | 2 | critic step 0.1 | batch 2 | barely learns (return below 3): not fixed |
+| B5 | 2 | E2 + A7 | batch 2 | FIXED: holds 0.91-0.95 at every weight; weight 1000 ends with 74.1% of episodes reaching the goal (control peak 67.5%), speed 4.4-4.8 m/s |
 | C1 | 3 | E2 + rate annealed within the run (A8) | `2026-10-19-18-11_reward-decline-batch-3_...` | running |
 | C2 | 3 | A4 entropy 0.01 + A8 | batch 3 | running |
 | C3 | 3 | actor and critic see whitened observations | batch 3 | running |
@@ -51,3 +51,6 @@ Values are means over copies, at the window of the copy-averaged peak and over t
    them: falling runs slow from ~5 to 2-3 m/s; holding runs (E1, E2, A8) keep 4-5. Reading: the reward
    for staying inside the goal radius teaches braking, which spreads to the whole maze under a high
    learning rate; ending at the goal removes the braking incentive, annealing stops the drift.
+8. (batch 2 scored, 18:49 PT) Log-std floors keep the spread but not the peak: the ball still
+   slows in the runs that fall. Two fixes so far: A8 (anneal the rate within the run) and B5 (end at
+   the goal with a -1 step cost, gradient clip per network).

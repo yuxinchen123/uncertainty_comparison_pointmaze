@@ -91,6 +91,7 @@
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-speed-jaguar03]{Training speed on jaguar03}} & 2026-10-19 16:44 PT & 2026-10-19 16:44 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-screening]{Choosing a small environment for the reward-decline study}} & 2026-10-19 16:56 PT & 2026-10-19 17:49 PT & unread \\
 \textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch1]{Reward-decline batch 1: a control and ten ideas}} & 2026-10-19 16:56 PT & 2026-10-19 18:10 PT & unread \\
+\textcolor{unreadblue}{\hyperref[sec:pm-jax-decline-batch2]{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}} & 2026-10-19 18:48 PT & 2026-10-19 18:48 PT & unread \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1178,6 +1179,141 @@ those that hold, so it does not by itself explain the fall.}
 
 \paragraph{Run status.} A3 (clipped PPO) is still running, in two attempts; its row is updated
 when one ends.
+\studyunreadend % REPORT-STATUS
+
+\subsection{Reward-decline batch 2: the policy's spread, the critic's step, and a combination}
+\studyunreadbegin % REPORT-STATUS
+\label{sec:pm-jax-decline-batch2}
+Batch 2 was chosen from batch 1 at three quarters of its run, when the falling runs showed a
+shrinking log standard deviation: three ideas keep it above a floor after every update, one shortens
+the critic's step, and one combines E2 and A7, the two ideas that then held best. It shares batch
+1's control: every unit has the same $4\times128$ copies, seeds, environments and policy noise, and
+everything not listed is as in \Cref{tab:pm-jax-batch1-env-ideas}.
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.7cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{1.9cm}?>{\raggedright\arraybackslash}p{2.5cm}@{}}
+\blackrule
+\textbf{hyperparameter} & \textbf{B1} & \textbf{B2} & \textbf{B3} & \textbf{B4} & \textbf{B5} \\
+& \small(floor $-0.5$) & \small(floor $-0.2$) & \small(floor $0$) & \small(critic step) &
+\small(E2 with A7) \\
+\blackrule
+everything else & \multicolumn{5}{>{\centering\arraybackslash}p{10.5cm}}{as the control in
+\Cref{tab:pm-jax-batch1-env-ideas}, including $\beta\in\{1,10,100,1000\}$} \\
+\blackrule
+{\bfseries\boldmath log std floor} & {\bfseries\boldmath $-0.5$} & {\bfseries\boldmath $-0.2$} &
+{\bfseries\boldmath $0$} & \textbf{none} & \textbf{none} \\
+\greyrule
+{\bfseries\boldmath critic step} & {\bfseries\boldmath $1$} & {\bfseries\boldmath $1$} &
+{\bfseries\boldmath $1$} & {\bfseries\boldmath $0.1$} & {\bfseries\boldmath $1$} \\
+\greyrule
+{\bfseries\boldmath episode ends} & \textbf{at the cap} & \textbf{at the cap} &
+\textbf{at the cap} & \textbf{at the cap} & \textbf{at the goal or the cap} \\
+\greyrule
+{\bfseries\boldmath reward on other steps} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} &
+{\bfseries\boldmath $0$} & {\bfseries\boldmath $0$} & {\bfseries\boldmath $-1$} \\
+\greyrule
+{\bfseries\boldmath gradient clip} & \textbf{joint} & \textbf{joint} & \textbf{joint} &
+\textbf{joint} & \textbf{per network} \\
+\blackrule
+configurations & $4$ & $4$ & $4$ & $4$ & $4$ \\
+\greyrule
+total, batch 2 & \multicolumn{5}{c}{$5$ units $\times$ $4$ weights $=20$ configurations} \\
+\blackrule
+\end{tabular}
+\caption{Batch 2. Bold rows are swept. The floor is applied to the log standard deviation after
+every update; the critic step multiplies the change Adam proposes for the critic's parameters.}
+\label{tab:pm-jax-batch2-ideas}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+% Generator: ../scripts/write_decline_study_tables.py; reads the batch's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-batch2-results
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} r r r r r r l@{}}
+\toprule
+\textbf{idea} & \textbf{$\beta$} & \textbf{\shortstack[c]{peak\\return}} & \textbf{\shortstack[c]{steps at\\peak (M)}} & \textbf{\shortstack[c]{final-10\%\\return $\uparrow$}} & \textbf{\shortstack[c]{final\\/ peak}} & \textbf{\shortstack[c]{final share of\\episodes at goal}} & \textbf{fixed} \\
+\midrule
+A8 rate annealed within the run & 100 & 65.56 & 50.0 & \textbf{64.86 $\pm$ 4.32} & \textbf{0.99} & \underline{0.71} & yes \\
+B5 E2 with A7 & 1000 & 62.61 & 42.9 & \underline{59.63 $\pm$ 3.64} & \underline{0.95} & \textbf{0.74} & yes \\
+B3 log std floor $0$ & 1000 & 30.48 & 34.6 & 25.94 $\pm$ 2.58 & 0.85 & 0.46 & no \\
+B2 log std floor $-0.2$ & 1000 & 25.80 & 27.8 & 19.23 $\pm$ 2.17 & 0.75 & 0.40 & no \\
+B1 log std floor $-0.5$ & 100 & 29.61 & 16.3 & 15.00 $\pm$ 1.81 & 0.51 & 0.36 & no \\
+control & 1000 & 19.88 & 28.5 & 10.58 $\pm$ 1.49 & 0.53 & 0.31 & no \\
+B4 critic step $0.1$ & 10 & 2.65 & 49.4 & 2.00 $\pm$ 0.55 & 0.75 & 0.08 & no \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-batch2-results
+\caption{Batch 2 with batch 1's control and A8 for reference: each idea at the intrinsic weight with
+its highest final-10\% return, sorted by that return; $128$ copies per weight. B5 is on the
+lump-sum scale of E2. ``Fixed'' as in \Cref{tab:pm-jax-batch1-results}.}
+\label{tab:pm-jax-batch2-results}
+\end{table}
+
+\begin{table}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+% Generator: ../scripts/write_decline_study_tables.py; reads the batch's analysis/data/summary.json.
+% >>> AUTO-GENERATED TABLE START: pm-jax-batch2-holds
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} r r r r @{}}
+\toprule
+\textbf{idea} & \textbf{$\beta=1$} & \textbf{$\beta=10$} & \textbf{$\beta=100$} & \textbf{$\beta=1000$} \\
+\midrule
+control & 0.26 (5.8) & 0.18 (4.6) & 0.32 (10.0) & 0.53 (10.6) \\
+A8 rate annealed within the run & 0.99 (45.1) & 0.98 (50.1) & 0.99 (64.9) & 0.98 (55.3) \\
+B1 log std floor $-0.5$ & 0.34 (7.3) & 0.32 (9.2) & 0.51 (15.0) & 0.67 (14.2) \\
+B2 log std floor $-0.2$ & 0.47 (14.6) & 0.42 (14.7) & 0.49 (17.6) & 0.75 (19.2) \\
+B3 log std floor $0$ & 0.31 (10.3) & 0.23 (9.8) & 0.50 (20.0) & 0.85 (25.9) \\
+B4 critic step $0.1$ & 0.25 (0.3) & 0.75 (2.0) & 0.72 (0.6) & 0.22 (0.0) \\
+B5 E2 with A7 & 0.91 (30.7) & 0.95 (32.6) & 0.94 (45.7) & 0.95 (59.6) \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pm-jax-batch2-holds
+\caption{Final / peak for every idea and intrinsic weight, with the final-10\% return in brackets.}
+\label{tab:pm-jax-batch2-holds}
+\end{table}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7/analysis/plots/batch2_return.pdf}}
+\caption{Mean extrinsic return per episode in batch 2, with batch 1's control and A8; bands of one
+standard error over $128$ copies.}
+\label{fig:pm-jax-batch2-return}
+\end{figure}
+
+\begin{figure}[H]
+\studyfloatcolor % REPORT-STATUS
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7/analysis/plots/batch2_speed_mean.pdf}}
+\caption{Mean ball speed in batch 2. With the log standard deviation held up (B1--B3) the ball
+still slows in the runs that fall.}
+\label{fig:pm-jax-batch2-speed}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{D\arabic*},leftmargin=*,labelsep=0.6em,start=7]
+\item \textbf{Holding the action spread up does not stop the fall.} With the log standard deviation
+  kept at or above $-0.5$, $-0.2$ or $0$, every floor still keeps only $0.23$--$0.85$ of its peak,
+  and the ball still slows to $2.1$--$2.6$\,m/s at the small weights. The floors raise the peaks
+  (up to $43.5$, against the control's $31.3$) but not what is kept of them.
+\item \textbf{A shorter critic step (B4) stops learning}: the return stays below $3$ at every weight.
+\item \textbf{Ending at the goal with a step cost, plus clipping per network (B5), fixes the fall in
+  the changed task.} It keeps $0.91$--$0.95$ of its peak at every weight and, at $\beta=1000$, ends
+  with $74.1\%$ of episodes reaching the goal, above the $67.5\%$ at the control's peak; its speed
+  stays at $4.4$--$4.8$\,m/s. Each half alone did not pass: E2 learned less, A7 fell.
+\end{enumerate}
 \studyunreadend % REPORT-STATUS
 
 \end{document}

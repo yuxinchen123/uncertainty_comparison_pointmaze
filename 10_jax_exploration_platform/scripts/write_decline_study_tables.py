@@ -218,7 +218,8 @@ def fixed(unit: str, n: dict, control_peak: dict) -> bool:
     control_peak is the control setting with the highest peak over all weights.
     """
     holds = n["holds_peak"] >= 0.9
-    if unit.startswith("e"):
+    # an idea that ends episodes at the goal pays on another scale, so it is judged on reaching
+    if "terminate-at-goal" in unit:
         return holds and n["reach_share_final"] >= control_peak["reach_share_peak"]
     return holds and n["final"] > control_peak["peak"] - control_peak["peak_se"]
 
@@ -275,7 +276,14 @@ BATCH1 = ROOT / ("runs/2026-10-19-16-46_reward-decline-batch-1_large-cap400_rnd-
                  "e3-a1-a2-a3-a4-a5-a6-a7")
 
 
+BATCH2 = ROOT / ("runs/2026-10-19-17-27_reward-decline-batch-2_large-cap400_rnd-weights-1-10-100-"
+                 "1000_learning-rate-1e-3-annealed-over-1000M_steps-50M_seeds-0-127_logstd-floor-"
+                 "minus-0.5-minus-0.2-0_critic-step-0.1_e2-plus-a7")
+
+
 TABLES = {"pm-jax-speed-jaguar03": speed_table,
+          "pm-jax-batch2-results": lambda: batch_results_table(BATCH2),
+          "pm-jax-batch2-holds": lambda: batch_holds_grid(BATCH2),
           "pm-jax-batch1-results": lambda: batch_results_table(BATCH1),
           "pm-jax-batch1-holds": lambda: batch_holds_grid(BATCH1),
           "pm-jax-screening-results": screening_table,
