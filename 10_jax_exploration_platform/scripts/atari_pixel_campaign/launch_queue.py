@@ -212,7 +212,7 @@ def launch_slurm(source_root, run_dir, commit, python, directory, identifier, me
              "exec " + command_text]
     atomic_text(script, "\n".join(lines) + "\n")
     resources = ["-p", "gpu", "--nodelist=jaguar03", "--gres=gpu:nvidia_rtx_a4500:1",
-                 "--cpus-per-task=8", "--mem=24G", "--time=12:00:00", "--nodes=1", "--ntasks=1"]
+                 "--cpus-per-task=8", "--mem=64G", "--time=12:00:00", "--nodes=1", "--ntasks=1"]
     reservation = current_reservation()
     if reservation is not None:
         resources += ["--reservation=" + reservation, "--qos=csresnolim"]

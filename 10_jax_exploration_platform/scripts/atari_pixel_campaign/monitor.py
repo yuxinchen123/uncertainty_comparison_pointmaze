@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import textwrap
 import time
 from zoneinfo import ZoneInfo
 
@@ -27,6 +28,40 @@ def own_jobs(directory):
     return [line.split("|", 4) for line in result.stdout.splitlines() if line.strip()]
 
 
+def measurement_progress(value, result):
+    """Show measured rounds and their result instead of a missing update count."""
+    # Before: {state: completed, decision: accepted}; after: 7/7 pairs; +11.1%.
+    if result and result.get("case_completed"):
+        count = result.get("paired_rounds", 0)
+        gain = result.get("median_speedup")
+        outcome = result["decision"].replace("_", " ")
+        if gain is not None:
+            outcome += f"; {100 * (gain - 1):+.1f}%"
+        return f"{count}/{count} pairs; {outcome}" if count else outcome
+    if "total_rounds" in value and "round" in value:
+        return f"{value['variant']} {value['round']}/{value['total_rounds']} rounds"
+    return None
+
+
+def table_row(name, pool, gpu, state, progress):
+    """Wrap complete words into a table with no line longer than 100 characters."""
+    # Long mechanism names continue on a second line instead of losing their meaning.
+    cells = [str(item) for item in (name, pool, gpu, state, progress)]
+    widths = (32, 12, 12, 10, 24)
+    wrapped = [textwrap.wrap(cell, width=width) or [""]
+               for cell, width in zip(cells, widths)]
+    return "\n".join("  ".join(
+        f"{parts[index] if index < len(parts) else '':{width}}"
+        for parts, width in zip(wrapped, widths)).rstrip()
+        for index in range(max(map(len, wrapped))))
+
+
+def gpu_label(name):
+    """Keep the actual GPU model readable within the narrow status column."""
+    # For example, NVIDIA RTX A4500 becomes 1 RTX A4500; the card count stays explicit.
+    return "1 " + name.removeprefix("NVIDIA ") if name != "unknown" else name
+
+
 def unit_rows(directory):
     """Read one small status file per unit without retaining training histories."""
     rows = []
@@ -35,13 +70,19 @@ def unit_rows(directory):
     for path in sorted((directory / "data").glob("*/progress.json")):
         value = read_json(path)
         hardware = read_json(path.parent / "hardware.json") or {}
+        specification = read_json(directory / "queue" / "specifications" / (path.parent.name + ".json"))
+        result = read_json(path.parent / "result.json") if value["state"] == "completed" else None
         age = time.time() - path.stat().st_mtime
         phase = value["state"]
         state = ("waiting" if phase.startswith("waiting") else phase
                  if phase in {"completed", "checkpointed", "failed", "initializing", "normalization_warmup"}
                  else "running")
-        failure = (read_json(path.parent / "failure.json")
-                   or read_json(path.parent / "supervisor_failure.json"))
+        # A previous attempt's failure stays on disk; only the current attempt sets its state.
+        attempt = value.get("attempt")
+        failure_root = (path.parent / "attempts" / f"attempt-{attempt:04d}"
+                        if attempt is not None else path.parent)
+        failure = (read_json(failure_root / "failure.json")
+                   or read_json(failure_root / "supervisor_failure.json"))
         if failure:
             state = "failed"
         update = value.get("update", value.get("round", 0))
@@ -57,15 +98,28 @@ def unit_rows(directory):
             progress = "checks passed"
         if phase not in ("running", "completed", "checkpointed", "failed"):
             progress = phase.replace("_", " ")
+            if value.get("variant"):
+                progress += "; " + value["variant"]
+        measured = measurement_progress(value, result)
+        if measured is not None:
+            progress = measured
         if age > 2400 and state not in ("completed", "checkpointed", "failed", "waiting"):
             progress += f"; no record for {int(age / 60)} min"
         if failure:
-            progress = failure["error"][:100]
+            progress = (failure["error"] if "error" in failure
+                        else failure["failure_stage"].replace("_", " "))
+            if "exit_code" in failure:
+                progress += f"; exit {failure['exit_code']}"
         visible = hardware.get("cuda_visible_devices", "")
         queries = hardware.get("gpu_query", "").splitlines()
         selected = next((line for line in queries if line.startswith(visible + ",")),
                         queries[0] if len(queries) == 1 else "")
-        rows.append({"run": path.parent.name, "pool": hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
+        name = path.parent.name
+        if specification:
+            copies = specification["configuration"]["n_copies"]
+            noun = "copy" if copies == 1 else "copies"
+            name = specification["hypothesis"].replace("_", " ") + f" ({copies} {noun})"
+        rows.append({"run": name, "pool": hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
                      "gpu": selected.split(",")[1:2],
                      "state": state, "progress": progress, "age_seconds": age})
     return rows
@@ -89,7 +143,7 @@ def tick(directory):
                 "error": controller_error, "time": datetime.now(timezone.utc).isoformat()}) + "\n")
     jobs, units = own_jobs(directory), unit_rows(directory)
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
-    rows = ["run or job                  pool          gpu             state       progress"]
+    rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
     rows.append("TRAINING")
     submissions = directory / "slurm" / "submissions.tsv"
     names = {}
@@ -112,41 +166,41 @@ def tick(directory):
                     lines = stream.read().decode(errors="replace").splitlines()
                 passed = sum(line.startswith("PASS") for line in lines)
                 progress = f"{passed} checks passed" if passed else "initializing checks"
-            rows.append(f'{kind[:26]:26}  {node[:12]:12}  {gpu[:14]:14}  '
-                        f'{state:10}  {progress}')
+            rows.append(table_row(kind, "nolim" if kind == "monitor" else node,
+                                  "none" if kind == "monitor" else gpu, state, progress))
     for unit in units:
         if unit["state"] in {"running", "initializing", "normalization_warmup"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
-            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
-                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"][:30]}')
+            rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu), "RUNNING", unit["progress"]))
     rows.append("WAITING")
     for unit in units:
         if unit["state"] == "waiting":
-            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  {"none":14}  '
-                        f'{"WAITING":10}  {unit["progress"][:30]}')
+            rows.append(table_row(unit["run"], unit["pool"], "none", "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING":
-            rows.append(f'{"scheduled study job":26}  {"UVA":12}  {gpu[:14]:14}  '
-                        f'{state:10}  {reason[:25]}')
+            if "Held" not in reason:
+                rows.append(table_row("scheduled study job", "UVA", gpu, state, reason))
     rows.append("HELD")
     for identifier, state, node, gpu, reason in jobs:
         if state.startswith("RESV_DEL") or "Held" in reason:
-            rows.append(f'{"held study job":26}  {"UVA":12}  {gpu[:14]:14}  '
-                        f'{"HELD":10}  {reason[:25]}')
+            rows.append(table_row("held study job", "UVA", gpu, "HELD", reason))
     rows.append("FINISHED")
     for unit in units:
         if unit["state"] in {"completed", "checkpointed", "failed"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
-            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
-                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"][:30]}')
+            rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu),
+                                  "FINISHED" if unit["state"] == "completed" else unit["state"].upper(),
+                                  unit["progress"]))
     if controller_error:
-        rows.append(f'{"queue controller":26}  {"UVA":12}  {"none":14}  '
-                    f'{"FAILED":10}  {controller_error[:30]}')
+        rows.append(table_row("queue controller", "UVA", "none", "FAILED", controller_error))
     rows.append("PLANNED")
     state_path = directory / "campaign_state.json"
     campaign = read_json(state_path) or {"phase": "implementation"}
-    rows.append(f'{"next study phase":26}  {"study":12}  {"H100 / A4500":14}  '
-                f'{"PLANNED":10}  {campaign.get("next_action", campaign["phase"])[:30]}')
+    counts = campaign.get("queue_counts", {})
+    rows.append(table_row("remaining comparisons", "study", "H100 / A4500", "PLANNED",
+                          f"{counts.get('pending', 0)} awaiting current runs"))
+    rows.append(table_row("next study phase", "study", "H100 / A4500", "PLANNED",
+                          campaign.get("next_action", campaign["phase"]).replace("_", " ")))
     # Mark the end of the complete study only after the controller verifies every stage.
     text = "\n".join(rows) + "\n"
     print(text, flush=True)

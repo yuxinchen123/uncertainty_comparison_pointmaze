@@ -2476,9 +2476,9 @@ values every ten updates; the published rows and their schedule must agree.
 \greyrule
 specified mechanisms & 30 \\
 \greyrule
-specified mechanisms investigated on both GPU types & 0 of 30 \\
+specified mechanisms investigated on both GPU types & 1 of 30 \\
 \greyrule
-specified mechanisms timed correctly on both GPU types & 0 of 30 \\
+specified mechanisms timed correctly on both GPU types & 1 of 30 \\
 \greyrule
 specified mechanisms covering every required copy count & 0 of 30 \\
 \greyrule
@@ -2488,13 +2488,13 @@ additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
 controller phase & initial benchmarks \\
 \greyrule
-registered queue cases completed & 0 \\
+registered queue cases completed & 6 \\
 \greyrule
 registered queue cases failed & 0 \\
 \greyrule
-registered queue cases pending & 120 \\
+registered queue cases pending & 105 \\
 \greyrule
-registered queue cases running & 0 \\
+registered queue cases running & 9 \\
 \blackrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
@@ -2531,11 +2531,11 @@ at matched per-GPU copy counts, with a common wall-clock measurement interval.
 \blackrule
 \textbf{Registered case outcome} & \textbf{H100} & \textbf{Jaguar03 RTX A4500} \\
 \greyrule
-accepted timing & 0 & 0 \\
+accepted timing & 1 & 3 \\
 \greyrule
 inconclusive timing & 0 & 0 \\
 \greyrule
-rejected timing & 0 & 0 \\
+rejected timing & 0 & 2 \\
 \greyrule
 correctness rejected & 0 & 0 \\
 \greyrule
@@ -2559,13 +2559,30 @@ fully deterministic reference. Separate controls investigate the setting for
 deterministic execution and the physical data layout used by convolutions;
 their completion is not a prerequisite for those comparisons.
 
-No infrastructure change has yet been accepted through the registered paired
-comparisons, and the planned $2$-billion-step training has not begun. The
-section's generator reads only registry-indexed case results, retains failed
+At one independent policy copy, caching room backgrounds passed the numerical
+checks and timing acceptance rule on both GPU types
+(\Cref{fig:pixel-montezuma-background-cache-paired}). Measurements at larger
+matched copy counts and comparisons of the remaining mechanisms are still in
+progress. The planned $2$-billion-step training has not begun. The section's
+generator reads only registry-indexed case results, retains failed
 and inconclusive attempts in its complete report, and produces paired-speed
 plots only after statistical analysis on a compute host. Standalone capacity
 probes and execution diagnostics do not enter those paired results. Training
 curves and best-configuration learning results will be added when the
 corresponding training records exist.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_dd2226e690a58df600cd532017df27f41b7ac9d8be50d07adbf1e8a73c947d49.pdf}}
+\par\medskip
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f.pdf}}
+\caption{Initial one-copy paired measurements for the registered infrastructure changes,
+shown separately for the H100 and Jaguar03 RTX A4500. Each circle is one of
+seven reference-to-candidate duration ratios; the diamond is their median.
+Ratios above one favor the candidate. Each panel has its own horizontal range.
+These results do not establish performance at larger copy counts or for the
+final combination of changes.}
+\label{fig:pixel-montezuma-background-cache-paired}
+\end{figure}
 
 \end{document}

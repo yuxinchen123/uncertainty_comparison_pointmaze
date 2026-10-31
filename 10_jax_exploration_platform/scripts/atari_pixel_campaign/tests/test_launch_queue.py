@@ -120,7 +120,7 @@ class QueueLauncherTests(unittest.TestCase):
                 record = LAUNCHER.launch_slurm(Path("/frozen/source"), run_dir, "a" * 40,
                     Path("/shared/python"), directory, "queue_worker_jaguar03", Path("/metadata/launcher.py"))
             arguments = launch.call_args.args[0]
-            for value in ("--gres=gpu:nvidia_rtx_a4500:1", "--cpus-per-task=8", "--mem=24G",
+            for value in ("--gres=gpu:nvidia_rtx_a4500:1", "--cpus-per-task=8", "--mem=64G",
                           "--time=12:00:00", "--reservation=sl5nw_reserved", "--qos=csresnolim"):
                 self.assertIn(value, arguments)
             self.assertEqual((run_dir / "slurm/submitted_jobids_uva.txt").read_text(), "6779000\n")
