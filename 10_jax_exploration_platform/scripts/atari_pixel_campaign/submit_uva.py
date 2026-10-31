@@ -1,6 +1,7 @@
 """Submit exact recorded study jobs using an immutable committed source snapshot."""
 
 import argparse
+import fcntl
 from pathlib import Path
 import shlex
 import subprocess
@@ -13,14 +14,22 @@ def source_snapshot(repository, run_directory):
     commit = subprocess.check_output(["git", "-C", str(repository), "rev-parse", "HEAD"],
                                      text=True).strip()
     destination = run_directory / "data" / "code_snapshots" / commit
-    if not destination.exists():
-        destination.mkdir(parents=True)
-        with tempfile.TemporaryFile() as archive:
-            subprocess.run(["git", "-C", str(repository), "archive", commit,
-                            "10_jax_exploration_platform"], stdout=archive, check=True)
-            archive.seek(0)
-            with tarfile.open(fileobj=archive) as members:
-                members.extractall(destination, filter="data")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    # A second submission must never observe a partly extracted source tree.
+    with (destination.parent / (commit + ".lock")).open("a") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        if not destination.exists():
+            with tempfile.TemporaryDirectory(dir=destination.parent,
+                                              prefix="building_" + commit[:12] + "_") as temporary:
+                staging = Path(temporary) / "source"
+                staging.mkdir()
+                with tempfile.TemporaryFile() as archive:
+                    subprocess.run(["git", "-C", str(repository), "archive", commit,
+                                    "10_jax_exploration_platform"], stdout=archive, check=True)
+                    archive.seek(0)
+                    with tarfile.open(fileobj=archive) as members:
+                        members.extractall(staging, filter="data")
+                staging.rename(destination)
     return destination / "10_jax_exploration_platform", commit
 
 
@@ -36,6 +45,9 @@ def submit(repository, run_directory, kind):
     environment = source / "scripts" / "atari_pixel_campaign" / "worker_environment.sh"
     header = ["#!/bin/bash", "set -euo pipefail",
               f"export PYTHONPATH={source_quote}/src",
+              # Check visibility on the compute host before opening new NFS files.
+              f"for attempt in {{1..60}}; do test -r {shlex.quote(str(environment))} && break; sleep 2; done",
+              f"test -r {shlex.quote(str(environment))}",
               f"source {shlex.quote(str(environment))}"]
     if kind == "monitor":
         resources = ["-p", "nolim", "--cpus-per-task=1", "--mem=2G",
