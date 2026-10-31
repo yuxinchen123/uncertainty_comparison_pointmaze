@@ -1,0 +1,12 @@
+ssh_alias = "aces"
+source_commit = "d28e6735e79788f618acb0ebfde8609db1f776af"
+code = "/scratch/user/u.sl359075/rnd_atari_pixels/code/d28e6735e79788f618acb0ebfde8609db1f776af"
+run = "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+unit = "aces_reference_copies_1_source_d28e6735e797"
+python = "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python"
+remote_id_file = "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt"
+unit_records = "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797"
+scheduler_log = "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/aces_reference_<jobid>.out"
+classification = "resource_probe_only"
+monitor_cadence_minutes = 20
+parent_cron_id = "72a562a5-596b-41c0-af66-98beb4034a8e"

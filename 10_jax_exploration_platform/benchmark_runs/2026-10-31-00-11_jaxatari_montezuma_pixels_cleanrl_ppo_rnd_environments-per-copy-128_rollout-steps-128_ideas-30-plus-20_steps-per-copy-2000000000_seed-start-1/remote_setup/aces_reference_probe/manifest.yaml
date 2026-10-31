@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "description": "Full-size original reference capacity and throughput probe on ACES.",
+  "git": {
+    "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "dirty": false,
+    "source_archive_sha256": "49b9a77ba47fbb24018223d82e64088f1a0e760d791149293a0b67805141c6b7"
+  },
+  "unit": "aces_reference_copies_1_source_d28e6735e797",
+  "classification": "resource_probe_only",
+  "compile_signature": {
+    "copies": 1,
+    "environments_per_copy": 128,
+    "rollout_steps": 128,
+    "epochs": 4,
+    "minibatches": 4,
+    "network_dtype": "float32",
+    "statistics_dtype": "float64"
+  },
+  "artifacts": {
+    "records": "data/aces_reference_copies_1_source_d28e6735e797",
+    "job_ids": "slurm/submitted_jobids_aces.txt"
+  }
+}

@@ -2191,4 +2191,361 @@ cell to mark.}
 \end{enumerate}
 
 
+\clearpage
+\section{Pixel Montezuma infrastructure study}
+\label{sec:pixel-montezuma-infrastructure}
+\setcounter{subsection}{-1}
+
+\subsection{Environment and pixel protocol}
+\label{sec:pixel-montezuma-environment}
+
+This study replaces the preceding historical run's object features with stacked
+game images. Its purpose is to reduce the time and memory needed for the
+original CleanRL proximal policy optimisation learner with random network
+distillation, while retaining that learner's configuration. The reference is the
+\href{https://github.com/vwxyzjn/cleanrl/blob/fe8d8a03c41a7ef5b523e2e354bd01c363e786bb/cleanrl/ppo_rnd_envpool.py}{pinned CleanRL Atari implementation}.
+Game transitions and rendering use the
+\href{https://github.com/k4ntz/JAXtari/tree/04ab9aec318c72162e2e53503a594a489d7e162b}{pinned JAXtari implementation}.
+JAXtari recreates the game with its own implementation and assets; this study
+does not claim that its trajectories equal those of an Atari emulator using
+the original game ROM.
+
+\Cref{tab:pixel-montezuma-environment} specifies the pixel protocol. The
+approved environment adaptation is an immediate native reset within the same
+transition. A reset therefore does not require a separate action call whose
+action would be discarded. The episode cap matches EnvPool version 0.6.6:
+its \href{https://github.com/sail-sg/envpool/blob/v0.6.6/envpool/atari/registration.py#L26-L35}{registration}
+sets $108{,}000$, and its
+\href{https://github.com/sail-sg/envpool/blob/v0.6.6/envpool/atari/atari_env.h#L168-L194}{frame loop}
+increments the episode clock once after the four native frames and ends the
+episode on the $108{,}000$th held-action transition. Reset no-operation and fire
+frames do not advance this clock. One reset edge follows the approved native
+reset adaptation: if no-operation warmup ends a game, the adapter starts a new
+episode clock, whereas EnvPool resets the game without restarting that clock.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+% >>> AUTO-GENERATED TABLE START: pixel-montezuma-environment
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.25cm}?
+>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Pixel environment or implementation} \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Game and observations}} \\
+\greyrule
+game & JAXtari Montezuma's Revenge; pixel observations \\
+\greyrule
+actions & $18$ categorical actions \\
+\greyrule
+observed image & $4\times84\times84$ unsigned-byte grayscale pixels \\
+\greyrule
+action repeat & one action held for $4$ native game frames \\
+\greyrule
+sticky action probability & $0.25$ \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Image processing}} \\
+\greyrule
+frame processing order & grayscale each native frame, take the maximum of the last two held-action frames, area-average resize, and convert to unsigned bytes \\
+\greyrule
+frame history & four processed frames, ordered from oldest to newest \\
+\greyrule
+full-game reset history & repeat the initial processed frame four times \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Episodes and rewards}} \\
+\greyrule
+learning reward & sign of the game reward \\
+\greyrule
+reported game reward & unclipped full-game score, recorded separately \\
+\greyrule
+life loss & an extrinsic episode boundary; the intrinsic return continues \\
+\greyrule
+reset actions & $0$--$29$ native no-operation frames, then one native fire action \\
+\greyrule
+reset timing & native immediate reset within the transition \\
+\greyrule
+life-loss history & preserve the transition history and append one reset frame; a full game ending during reset replaces the history \\
+\greyrule
+episode cap, matching EnvPool & $108{,}000$ held-action transitions per full game, including transitions before a life-loss reset \\
+\blackrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pixel-montezuma-environment
+\caption{Pixel Montezuma environment protocol. A native frame is one game
+transition before action repeat. An environment transition is one held action
+followed by its processed observation.}
+\label{tab:pixel-montezuma-environment}
+\end{table}
+
+\subsection{Fixed CleanRL learner and independent copies}
+\label{sec:pixel-montezuma-learner}
+
+One policy copy owns its policy network, trainable distillation predictor,
+frozen random target, optimizer state, running statistics, random-number
+streams, and $128$ environments. A rollout takes $128$ transitions from each
+environment, giving $16{,}384$ transitions for that copy's update. Four epochs
+and four minibatches per epoch give sixteen optimizer steps. Copies share the
+compiled computation, but their gradients and running statistics are separate.
+Increasing the number of copies does not enlarge an individual policy's batch.
+
+The planned training budget is $2$ billion environment transitions per copy,
+or about $15.6$ million transitions per individual environment stream. The
+source convention rounds down to complete updates; exact counts belong to the
+run records. Random observation-normalization warmup is outside this budget.
+The infrastructure comparisons use one common, fixed hyperparameter setting.
+The implementation also permits explicitly supplied scalar settings per copy,
+so later hyperparameter comparisons can share a compiled group when their
+network and batch shapes agree.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+% >>> AUTO-GENERATED TABLE START: pixel-montezuma-learner
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.25cm}?
+>{\raggedright\arraybackslash}p{4.75cm}?
+>{\raggedright\arraybackslash}p{\dimexpr\textwidth-8cm-4\tabcolsep-2\arrayrulewidth\relax}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{Original CleanRL} & \textbf{Pixel JAX learner} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Batch and budget}} \\
+\greyrule
+training budget per policy copy & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$2$ billion environment transitions} \\
+\greyrule
+parallel environments per copy & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$128$} \\
+\greyrule
+rollout steps per environment & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$128$} \\
+\greyrule
+transitions per update per copy & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$16{,}384$} \\
+\greyrule
+epochs per update & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$4$} \\
+\greyrule
+minibatches per epoch & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$4$, each containing $4{,}096$ transitions} \\
+\greyrule
+hyperparameter configurations & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$1$ fixed setting; no hyperparameter search in this study} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Optimizer and policy objective}} \\
+\greyrule
+Adam learning rate & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$10^{-4}$, linearly reduced over the training budget} \\
+\greyrule
+Adam numerical constant & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$10^{-5}$} \\
+\greyrule
+Adam moment coefficients & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.9$ and $0.999$} \\
+\greyrule
+policy clip coefficient & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.1$} \\
+\greyrule
+entropy coefficient & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.001$} \\
+\greyrule
+value coefficient & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.5$} \\
+\greyrule
+joint gradient norm limit & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.5$ across policy and predictor parameters} \\
+\greyrule
+advantage normalization & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{within each minibatch; sample standard deviation with correction one} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Returns and distillation}} \\
+\greyrule
+extrinsic discount & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.999$} \\
+\greyrule
+intrinsic discount & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.99$} \\
+\greyrule
+generalized advantage estimation parameter & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.95$} \\
+\greyrule
+intrinsic and extrinsic advantage weights & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$1$ and $2$, respectively} \\
+\greyrule
+predictor update fraction & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{$0.25$, using a random row mask} \\
+\greyrule
+value losses & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{clipped extrinsic value loss; unclipped intrinsic mean-squared error} \\
+\greyrule
+return boundaries & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}{extrinsic return stops at an episode boundary; intrinsic return is non-episodic} \\
+\blackrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pixel-montezuma-learner
+\caption{Fixed policy-optimization and distillation configuration. Values
+spanning both source columns are shared. Infrastructure settings are studied
+separately; no learning hyperparameter is swept here.}
+\label{tab:pixel-montezuma-learner}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+% >>> AUTO-GENERATED TABLE START: pixel-montezuma-networks
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.25cm}?
+>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.25cm-2\tabcolsep-\arrayrulewidth\relax}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Pixel environment or implementation} \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Networks}} \\
+\greyrule
+policy convolution channels & $4\to32\to64\to64$; kernels $8,4,3$; strides $4,2,1$; rectified linear activations \\
+\greyrule
+policy shared dense layers & $3{,}136\to256\to448$ with rectified linear activations \\
+\greyrule
+policy output branches & $448$-unit actor layer and $18$ logits; residual $448$-unit critic layer and separate extrinsic and intrinsic value heads \\
+\greyrule
+distillation input & the newest $84\times84$ grayscale frame \\
+\greyrule
+distillation convolution channels & $1\to32\to64\to64$; kernels $8,4,3$; strides $4,2,1$; leaky rectified linear slope $0.01$ \\
+\greyrule
+predictor dense layers & $3{,}136\to512\to512\to512$; rectified linear activations between layers \\
+\greyrule
+frozen target dense layer & $3{,}136\to512$ \\
+\blackrule
+\multicolumn{2}{@{}l}{\textit{Normalization and numerical precision}} \\
+\greyrule
+policy pixel scaling & divide unsigned-byte values by $255$ \\
+\greyrule
+observation normalization warmup & $50$ random rollouts of $128$ steps, outside the training budget \\
+\greyrule
+distillation observation normalization & per-pixel running mean and variance, then clip to $[-5,5]$ \\
+\greyrule
+network arithmetic & $32$-bit floating point, highest matrix-multiplication precision; no reduced-precision modes \\
+\greyrule
+running statistics & $64$-bit floating point in the JAX implementation \\
+\blackrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pixel-montezuma-networks
+\caption{Pixel networks and numerical settings. Convolution kernels and
+strides are listed in layer order. Each copy has an independently initialized
+policy, predictor, and frozen target.}
+\label{tab:pixel-montezuma-networks}
+\end{table}
+
+The implementation retains two distinct uses of prediction error from the
+source. Rollout bonuses use the newest frame of the next observation, before
+any reset, normalized with the preceding observation statistics; their error
+is half the sum of squared feature errors. Predictor updates use the current
+observation with the updated observation statistics and a mean squared feature
+error. The frozen target can be reused when equivalent; the trainable predictor
+must reflect every optimizer update. The source's reward-normalization axis
+and count conventions and its initial observation after normalization warmup
+are retained. PointMaze-specific return, learning-rate, and clipping choices
+are not selected by this Atari configuration.
+
+\subsection{Thirty specified ideas and twenty ideas chosen from measurements}
+\label{sec:pixel-montezuma-study}
+
+The first stage investigates thirty distinct implementation changes on an
+H100 and on Jaguar03's RTX A4500. The mechanisms cover rendering and image
+processing, frame storage, convolution and dense-layer batching, optimizer
+state, rollout and update loops, random-number generation, and report readout.
+Each change must have an implemented, distinct computation before it can be
+counted as an experiment. A parameter trial of one mechanism does not count as
+another idea. The next twenty mechanisms remain unchosen until the preceding
+results and execution profiles identify useful work; they are selected in four
+batches of five. Unsupported changes, failed correctness checks, and
+inconclusive timing comparisons remain visible in the study record.
+
+Every timed case records immutable source code, its resolved settings, the
+GPU model, host, and copy count. It first checks fixed inputs and copied-state
+updates against the reference. Pixels and discrete state require exact
+agreement. Floating-point comparisons use explicit tolerances and retain the
+first disagreement for diagnosis. A failed check rejects the implementation
+before timing; it does not become a zero-throughput measurement.
+
+After at least two warmup calls and stable compilation, a comparison takes
+seven pairs of timings, ten complete training updates per variant per pair.
+The order alternates between reference first and candidate first. A change
+is accepted only with valid correctness checks, uncontended measurements, a
+median speed ratio above one, and a one-sided paired sign probability at most
+$0.05$. Small or inconsistent gains remain inconclusive. Final combinations
+receive a separate check and eleven pairs of twenty updates. Training-only
+timing and the report-readout comparison are kept separate. The latter compares
+downloading metrics after each update with downloading their device-accumulated
+values every ten updates; the published rows and their schedule must agree.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+% >>> AUTO-GENERATED TABLE START: pixel-montezuma-study-status
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.3cm}?
+>{\raggedright\arraybackslash}p{\dimexpr\textwidth-5.3cm-2\tabcolsep-\arrayrulewidth\relax}@{}}
+\blackrule
+\textbf{Study record} & \textbf{Current status} \\
+\greyrule
+specified mechanisms & 30 \\
+\greyrule
+specified mechanisms investigated on both GPU types & 0 of 30 \\
+\greyrule
+specified mechanisms timed correctly on both GPU types & 0 of 30 \\
+\greyrule
+specified mechanisms covering every required copy count & required copy counts not yet authorized \\
+\greyrule
+additional mechanisms chosen from profiles & 0 of 20 \\
+\greyrule
+additional mechanisms investigated on both GPU types & 0 of 20 \\
+\greyrule
+controller phase & correctness and full size resource probes \\
+\blackrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
+\caption{Study progress from the campaign registry and controller record.
+``Investigated'' includes a completed correctness rejection on both GPU types;
+``timed correctly'' requires valid timings on both. Complete copy-count
+coverage additionally requires every authorized matched copy count.}
+\label{tab:pixel-montezuma-study-status}
+\end{table}
+
+\subsection{Packing, measurements, and current results}
+\label{sec:pixel-montezuma-results}
+
+Both GPU types are compared at one copy and at the largest copy count that
+fits both, while preserving $128$ environments per copy and the original
+rollout and minibatch sizes. Separate packing measurements then double the
+copy count on each GPU. When doubling adds less than ten percent aggregate
+throughput, that comparison is repeated and the smaller count is selected.
+Packing leaves at least fifteen percent of GPU memory free. The report keeps
+aggregate transitions per second, transitions per second per copy, synchronized
+latency, compilation and warmup time, and measured process and allocator memory
+separate. A paired process's retained compilation memory is not treated as the
+memory requirement of a fresh process running only the chosen implementation.
+Jaguar03 also receives isolated one-GPU and concurrent eight-GPU measurements
+at matched per-GPU copy counts, with a common wall-clock measurement interval.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+% >>> AUTO-GENERATED TABLE START: pixel-montezuma-case-outcomes
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}?r?r@{}}
+\blackrule
+\textbf{Registered case outcome} & \textbf{H100} & \textbf{Jaguar03 RTX A4500} \\
+\greyrule
+accepted timing & 0 & 0 \\
+\greyrule
+inconclusive timing & 0 & 0 \\
+\greyrule
+rejected timing & 0 & 0 \\
+\greyrule
+correctness rejected & 0 & 0 \\
+\greyrule
+invalid measurement & 0 & 0 \\
+\blackrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: pixel-montezuma-case-outcomes
+\caption{Outcomes of registered paired case attempts, including repeated copy
+counts and parameter trials. Counts here are attempts, not distinct mechanisms.
+Unregistered setup and resource probes are excluded. Invalid timings and
+correctness rejections do not enter throughput comparisons.}
+\label{tab:pixel-montezuma-case-outcomes}
+\end{table}
+
+Measurements are in progress. No infrastructure change has yet been accepted
+through the registered paired comparisons, and the planned $2$-billion-step
+training has not begun. Initial resource probes establish that the full-size
+learner can run; their execution settings differ from the frozen measurement
+settings, so their rates are excluded from the formal results above. The
+section's generator reads only registry-indexed case results, retains failed
+and inconclusive attempts in its complete report, and produces paired-speed
+plots only after statistical analysis on a compute host. Training curves and
+best-configuration learning results will be added when the corresponding
+training records exist.
+
 \end{document}
