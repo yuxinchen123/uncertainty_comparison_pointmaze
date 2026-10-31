@@ -45,6 +45,12 @@ def read_document(path):
     return json.loads(contents), {"path": str(path), "sha256": hashlib.sha256(contents).hexdigest()}
 
 
+def installed_backend_receipt(jaxtari_source, gpu_libraries):
+    """Record actual installed package versions beside verified Python and GPU library bytes."""
+    return {"jaxtari_source": jaxtari_source, "gpu_libraries": gpu_libraries,
+            "packages": {name: metadata.version(name) for name in training.PACKAGE_NAMES}}
+
+
 def write_once(path, contents):
     """Retain identical staged inputs and reject any replacement of an existing unit artifact."""
     if path.exists():
@@ -405,8 +411,9 @@ def run_prepared(directory):
                 libraries = training.installed_gpu_library_receipts()
                 training.atomic_json(directory / "hardware.json", {**hardware, "runtime_environment": runtime})
                 training.atomic_json(directory / "asset_receipt.json", assets)
-                training.atomic_json(directory / "installed_backend.json", {"jaxtari_source": jaxtari, "gpu_libraries": libraries})
-                _compute(directory, plan, hardware, libraries)
+                backend = installed_backend_receipt(jaxtari, libraries)
+                training.atomic_json(directory / "installed_backend.json", backend)
+                _compute(directory, plan, hardware, backend)
         except BaseException as error:
             diagnostic.atomic_json(directory / "failure.json", {"error": repr(error), "exception_type": type(error).__name__,
                 "traceback": traceback.format_exc(), "source_commit": plan["source_commit"], "mode": plan["mode"],
@@ -427,7 +434,7 @@ def verify_imported_sources(root, paired):
         raise ValueError("the imported JAXtari package differs from the verified installed Python files")
 
 
-def _compute(directory, plan, hardware, installed_libraries):
+def _compute(directory, plan, hardware, installed_backend):
     """Import the exact core only after card/source/runtime/assets checks, then execute the requested fixed protocol."""
     started_at = time.time()
     if "jax" in sys.modules:
@@ -502,7 +509,8 @@ def _compute(directory, plan, hardware, installed_libraries):
                 "training_start_iteration": training_origin,
                 "median_transitions_per_second": statistics.median(row["transitions_per_second_total"] for row in measured)}
     result.update(source_commit=plan["source_commit"], hardware_class=plan["hardware_class"],
-        loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_libraries),
+        installed_backend=installed_backend,
+        loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
         runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
         helpers=plan["helpers"], copy_seeds=list(seeds), protocol={"rounds": 7,
             "requested_minimum_updates_per_round": plan["minimum_updates_per_round"], "actual_updates_per_round": plan["iterations"]},

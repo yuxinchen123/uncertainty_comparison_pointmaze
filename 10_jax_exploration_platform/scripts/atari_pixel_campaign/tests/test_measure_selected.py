@@ -49,6 +49,18 @@ class SelectedMeasurementTests(unittest.TestCase):
                       hashlib.sha256((SCRIPTS / name).read_bytes()).hexdigest() for name in PRODUCER.HELPERS}}
         self.frozen_source_requests = []
 
+    def test_backend_versions_are_actual_complete_and_missing_packages_reject(self):
+        """Retain every installed package identity without guessing a missing distribution version."""
+        source, libraries = {"source_commit": "a" * 40}, {"images": ["verified-image"]}
+        versions = {name: "observed-" + name for name in PRODUCER.training.PACKAGE_NAMES}
+        with patch.object(PRODUCER.metadata, "version", side_effect=versions.__getitem__):
+            self.assertEqual(PRODUCER.installed_backend_receipt(source, libraries),
+                             {"jaxtari_source": source, "gpu_libraries": libraries, "packages": versions})
+        with patch.object(PRODUCER.metadata, "version", side_effect=PRODUCER.metadata.PackageNotFoundError("jax")):
+            with self.assertRaises(PRODUCER.metadata.PackageNotFoundError):
+                PRODUCER.installed_backend_receipt(source, libraries)
+        self.assertNotIn("jax", sys.modules)
+
     def arguments(self, *extra):
         """Parse the real CLI with explicit input paths and no GPU execution flag."""
         return PRODUCER.parse_arguments(["--prepare-only", "--mode", "confirmation", "--source-root", str(self.source),
