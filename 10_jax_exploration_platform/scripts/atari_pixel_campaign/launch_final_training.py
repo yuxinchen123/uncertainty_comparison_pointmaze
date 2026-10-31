@@ -308,6 +308,17 @@ def prepare(run, input_path):
     units = [prepared_unit(run, proposal) for proposal in proposals["units"]]
     with queue_lock(run) as queue:
         old = {path.stem: read(path) for path in (queue / "units").glob("*.json")}
+        # A prepared monitor policy freezes every A4500 unit available to generic workers.
+        policy_path = queue / "monitor_policy.json"
+        if policy_path.exists():
+            policy = read(policy_path)
+            expected = {name: {"path": str(queue / "units" / (name + ".json")),
+                               "sha256": file_digest(queue / "units" / (name + ".json"))}
+                        for name, unit in old.items() if unit["hardware_class"] == "jaguar03_rtx_a4500"}
+            if (policy.get("kind") != "uva_final_training_monitor_policy" or policy.get("units") != expected
+                    or any(old.get(unit["unit_id"]) != unit for unit in units
+                           if unit["hardware_class"] == "jaguar03_rtx_a4500")):
+                raise ValueError("a prepared final monitor policy permits only identical existing A4500 units")
         for unit in units:
             if unit["unit_id"] in old and old[unit["unit_id"]] != unit:
                 raise ValueError("a final unit cannot change its source, helpers, configuration or seeds")

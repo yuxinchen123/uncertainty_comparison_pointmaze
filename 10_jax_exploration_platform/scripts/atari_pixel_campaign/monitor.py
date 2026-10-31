@@ -1,6 +1,7 @@
 """Inspect this study's own jobs and bounded per-unit progress records."""
 
 import argparse
+import hashlib
 from datetime import datetime, timezone
 import json
 import os
@@ -59,7 +60,39 @@ def table_row(name, pool, gpu, state, progress):
 def gpu_label(name):
     """Keep the actual GPU model readable within the narrow status column."""
     # For example, NVIDIA RTX A4500 becomes 1 RTX A4500; the card count stays explicit.
+    if name.startswith(("1× ", "8× ")):
+        return name
     return "1 " + name.removeprefix("NVIDIA ") if name != "unknown" else name
+
+
+
+
+def final_training_progress(value):
+    """Show final policy counts together with the exact continuation or phase reason."""
+    progress = ", ".join(str(count) + " " + name for name, count in value.get("counts", {}).items())
+    return (progress + "; " if progress else "") + value["reason"]
+
+
+def recorded_scaling_group(directory):
+    """Display a scaling allocation only when its recorded roster matches its immutable plan."""
+    plan_path = directory / "scaling_plan.json"
+    assignment = read_json(directory / "assignment.json") or read_json(directory / "allocation.json")
+    if not assignment or not plan_path.exists():
+        return None
+    plan = read_json(plan_path)
+    proof = assignment.get("allocation", {})
+    cards = proof.get("cards", [])
+    roster = plan.get("gpu_uuids", [])
+    if (assignment.get("plan_sha256") != hashlib.sha256(plan_path.read_bytes()).hexdigest()
+            or assignment.get("hostname") != "jaguar03" or proof.get("hostname") != "jaguar03"
+            or len(roster) not in {1, 8} or len(roster) != len(set(roster))
+            or assignment.get("gpu_uuids") != roster or len(cards) != len(roster)
+            or {card.get("gpu_uuid") for card in cards} != set(roster)
+            or len({card.get("physical_minor") for card in cards}) != len(roster)
+            or any(card.get("name") != "NVIDIA RTX A4500" for card in cards)):
+        return None
+    return {"pool": "jaguar03", "gpu": [str(len(roster)) + "× RTX A4500"],
+            "slurm_job_id": proof.get("slurm_job_id", "")}
 
 
 def unit_rows(directory):
@@ -117,12 +150,17 @@ def unit_rows(directory):
         selected = next((line for line in queries if line.startswith(visible + ",")),
                         queries[0] if len(queries) == 1 else "")
         name = path.parent.name
+        group = recorded_scaling_group(path.parent) if not hardware else None
+        final_status = read_json(directory / "final_training_queue/status" / (name + ".json"))
+        if final_status and final_status.get("unit_id") == name and final_status.get("state") == "held":
+            state, progress = "held", final_status.get("reason", "final unit requires diagnosis")
         if specification:
             copies = specification["configuration"]["n_copies"]
             noun = "copy" if copies == 1 else "copies"
             name = specification["hypothesis"].replace("_", " ") + f" ({copies} {noun})"
-        rows.append({"run": name, "pool": hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
-                     "gpu": selected.split(",")[1:2],
+        rows.append({"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
+                     "gpu": group["gpu"] if group else selected.split(",")[1:2],
+                     "slurm_job_id": group["slurm_job_id"] if group else hardware.get("slurm_job_id", ""),
                      "state": state, "progress": progress, "age_seconds": age})
     return rows
 
@@ -132,17 +170,19 @@ def tick(directory):
     directory = directory.resolve()
     reports = directory / "20_mins_monitoring"
     reports.mkdir(parents=True, exist_ok=True)
-    controller_error = None
+    controller_error, controller_state = None, None
     if (directory / "SOURCE_AND_GATES_READY.json").exists():
         # Index finished cases and retry eligible failures; parent admission stays separate.
         try:
             from controller import tick as advance_queue
-            advance_queue(directory)
+            controller_state = advance_queue(directory)
             (reports / "controller_error.json").unlink(missing_ok=True)
         except Exception as error:
             controller_error = str(error)
             (reports / "controller_error.json").write_text(json.dumps({
                 "error": controller_error, "time": datetime.now(timezone.utc).isoformat()}) + "\n")
+    from final_training_monitor import tick as advance_final_training
+    final_training = advance_final_training(directory, controller_state=controller_state, controller_error=controller_error)
     jobs, units = own_jobs(directory), unit_rows(directory)
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
@@ -157,6 +197,7 @@ def tick(directory):
     for path in (directory / "data").glob("*/hardware.json"):
         hardware = read_json(path)
         observed_jobs.add(hardware.get("slurm_job_id", ""))
+    observed_jobs.update(unit.get("slurm_job_id", "") for unit in units)
     for identifier, state, node, gpu, reason in jobs:
         if state == "RUNNING" and identifier not in observed_jobs:
             kind = names.get(identifier, "study job")
@@ -175,6 +216,9 @@ def tick(directory):
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu), "RUNNING", unit["progress"]))
     rows.append("WAITING")
+    if final_training["state"] in {"waiting", "submitted"}:
+        rows.append(table_row("final training continuation", "UVA", "RTX A4500", final_training["state"].upper(),
+                              final_training_progress(final_training)))
     for unit in units:
         if unit["state"] == "waiting":
             rows.append(table_row(unit["run"], unit["pool"], "none", "WAITING", unit["progress"]))
@@ -183,10 +227,19 @@ def tick(directory):
             if "Held" not in reason:
                 rows.append(table_row("scheduled study job", "UVA", gpu, state, reason))
     rows.append("HELD")
+    for unit in units:
+        if unit["state"] == "held":
+            gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
+            rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu), "HELD", unit["progress"]))
+    if final_training["state"] == "held":
+        rows.append(table_row("final training continuation", "UVA", "RTX A4500", "HELD", final_training["reason"]))
     for identifier, state, node, gpu, reason in jobs:
         if state.startswith("RESV_DEL") or "Held" in reason:
             rows.append(table_row("held study job", "UVA", gpu, "HELD", reason))
     rows.append("FINISHED")
+    if final_training["state"] == "finished":
+        rows.append(table_row("final training continuation", "UVA", "RTX A4500", "FINISHED",
+                              final_training_progress(final_training)))
     for unit in units:
         if unit["state"] in {"completed", "checkpointed", "failed"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
@@ -209,7 +262,7 @@ def tick(directory):
     report = "# Pixel Montezuma study status\n\n" + now + "\n\n```text\n" + text + "```\n"
     (reports / "latest_report.md").write_text(report)
     (reports / "latest_status.json").write_text(json.dumps({
-        "time": now, "jobs": jobs, "units": units, "campaign": campaign}, indent=2) + "\n")
+        "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training}, indent=2) + "\n")
     return (directory / "STUDY_COMPLETE").exists()
 
 

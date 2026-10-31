@@ -191,6 +191,54 @@ class FinalLauncherTests(unittest.TestCase):
         self.assertEqual(units[0]["target_backend"], self.backend)
         self.assertFalse(any(name in sys.modules for name in ("jax", "numpy", "torch")))
 
+    def test_prepared_monitor_policy_allows_only_identical_existing_a4500_units(self):
+        """Registration cannot add unlisted units while generic workers use a frozen policy roster."""
+        units = self.prepare(count=1)
+        paths = {unit["unit_id"]: self.queue / "units" / (unit["unit_id"] + ".json") for unit in units}
+        policy = {"kind": "uva_final_training_monitor_policy", "units": {
+            name: {"path": str(path), "sha256": final.file_digest(path)} for name, path in paths.items()}}
+        self.write(self.queue / "monitor_policy.json", policy)
+        before = (self.queue / "seed_manifest.json").read_bytes()
+        self.assertEqual(self.prepare(count=1), units)
+        with self.assertRaisesRegex(ValueError, "only identical existing"):
+            self.prepare(count=2)
+        self.assertEqual((self.queue / "seed_manifest.json").read_bytes(), before)
+        self.assertEqual(len(list((self.queue / "units").glob("*.json"))), 1)
+        original = dict(self.proposals[0])
+        self.proposals[0] = {**original, "checkpoint_seconds": 600}
+        with self.assertRaisesRegex(ValueError, "only identical existing"):
+            self.prepare(count=1)
+        self.proposals[0] = original
+        path = paths[units[0]["unit_id"]]
+        path.write_bytes(path.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "only identical existing"):
+            self.prepare(count=1)
+
+    def test_a4500_monitor_policy_does_not_block_a_separately_prepared_h100_seed_block(self):
+        """The shared registration layer accepts a new disjoint H100 unit without revising the A4500 policy."""
+        units = self.prepare(count=1)
+        unit = units[0]
+        path = self.queue / "units" / (unit["unit_id"] + ".json")
+        policy = {"kind": "uva_final_training_monitor_policy", "units": {
+            unit["unit_id"]: {"path": str(path), "sha256": final.file_digest(path)}}}
+        policy_path = self.write(self.queue / "monitor_policy.json", policy)
+        original_policy = policy_path.read_bytes()
+        h100 = {**unit, "unit_id": "explicit_h100_policy_seed_9001", "hardware_class": "h100", "copy_seeds": [9001]}
+        proposal = self.write("prepared_h100_registration.json", {"schema_version": 1, "units": [{"unit_id": h100["unit_id"]}]})
+        # The H100 producer owns its admission; this test exercises only shared registration and the policy lock.
+        with mock.patch.object(final, "prepared_unit", return_value=h100):
+            self.assertEqual(final.prepare(self.run, proposal), [h100])
+            self.assertEqual(final.prepare(self.run, proposal), [h100])
+        self.assertEqual(policy_path.read_bytes(), original_policy)
+        seeds = final.read(self.queue / "seed_manifest.json")["units"]
+        self.assertEqual(seeds[h100["unit_id"]]["copy_seeds"], [9001])
+        self.assertEqual(seeds[unit["unit_id"]]["copy_seeds"], [1])
+        with self.assertRaisesRegex(ValueError, "only identical existing"):
+            self.prepare(count=2)
+        changed = {**h100, "checkpoint_seconds": 600}
+        with mock.patch.object(final, "prepared_unit", return_value=changed), self.assertRaisesRegex(ValueError, "cannot change"):
+            final.prepare(self.run, proposal)
+
     def test_assets_allow_a_different_operational_root_only_with_the_complete_same_manifest(self):
         """Metadata staging accepts an exact copied manifest without reading sprite files on login."""
         copied = self.run / "asset_metadata/copied_manifest.json"

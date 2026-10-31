@@ -1,6 +1,7 @@
 """Verify readable status reports using metadata records and no numerical imports."""
 
 import contextlib
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -107,6 +108,83 @@ class MonitorTests(unittest.TestCase):
             checked_rows = monitor.unit_rows(root)
         self.assertEqual(rows[0]["progress"], "0/7 rounds; initializing; candidate")
         self.assertEqual(checked_rows[0]["progress"], "0/7 rounds; correctness passed")
+
+
+    def test_scaling_groups_show_the_proved_one_or_eight_physical_cards(self):
+        """Recorded allocation cards and the immutable plan replace the unknown-GPU label."""
+        for count in (1, 8):
+            with self.subTest(count=count), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                unit = root / "data/original_reference_scaling_component"
+                unit.mkdir(parents=True)
+                roster = ["GPU-physical-" + str(index) for index in range(count)]
+                plan = unit / "scaling_plan.json"
+                plan.write_text(json.dumps({"gpu_uuids": roster}))
+                assignment = {"plan_sha256": hashlib.sha256(plan.read_bytes()).hexdigest(),
+                    "hostname": "jaguar03", "gpu_uuids": roster, "allocation": {
+                        "hostname": "jaguar03", "slurm_job_id": "9001", "cards": [
+                            {"gpu_uuid": gpu, "physical_minor": str(index), "name": "NVIDIA RTX A4500"}
+                            for index, gpu in enumerate(roster)]}}
+                (unit / "assignment.json").write_text(json.dumps(assignment))
+                (unit / "progress.json").write_text(json.dumps({"state": "completed", "rounds": 7}))
+                row = monitor.unit_rows(root)[0]
+                self.assertEqual(row["gpu"], [str(count) + "× RTX A4500"])
+                self.assertEqual(monitor.gpu_label(row["gpu"][0]), row["gpu"][0])
+                self.assertEqual(row["pool"], "jaguar03")
+                self.assertEqual(row["slurm_job_id"], "9001")
+                assignment["allocation"]["cards"][0]["gpu_uuid"] = "GPU-not-in-plan"
+                (unit / "assignment.json").write_text(json.dumps(assignment))
+                self.assertIsNone(monitor.recorded_scaling_group(unit))
+                self.assertEqual(monitor.unit_rows(root)[0]["gpu"], [])
+
+    def test_failed_final_unit_is_held_with_its_diagnosis_reason(self):
+        """The final queue's explicit hold prevents a failed application looking eligible for retry."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unit = root / "data/explicit_final_policy"
+            unit.mkdir(parents=True)
+            (unit / "progress.json").write_text(json.dumps({"state": "failed", "attempt": 2}))
+            status = root / "final_training_queue/status"
+            status.mkdir(parents=True)
+            (status / "explicit_final_policy.json").write_text(json.dumps({"unit_id": "explicit_final_policy", "state": "held",
+                                                                          "reason": "current attempt requires diagnosis"}))
+            row = monitor.unit_rows(root)[0]
+            self.assertEqual(row["state"], "held")
+            self.assertIn("requires diagnosis", row["progress"])
+
+    def test_final_completion_and_waiting_summary_use_their_actual_report_sections(self):
+        """Completed UVA units stay in FINISHED while a pending continuation remains in WAITING."""
+        import final_training_monitor
+        for state, section in (("finished", "FINISHED"), ("waiting", "WAITING")):
+            value = {"state": state, "reason": "explicit continuation state", "counts": {"completed": 2}, "units": []}
+            with self.subTest(state=state), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(monitor, "own_jobs", return_value=[]), patch.object(final_training_monitor, "tick", return_value=value):
+                root = Path(temporary)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    monitor.tick(root)
+                report = (root / "20_mins_monitoring/latest_report.md").read_text()
+                chosen = report.split(section + "\n", 1)[1].split("\nPLANNED\n", 1)[0]
+                self.assertIn("final training continuation", chosen)
+                self.assertNotIn("final training continuation", report.split("PLANNED\n", 1)[1])
+
+    def test_final_hook_receives_fresh_controller_state_and_reports_a_hold(self):
+        """The final continuation decision follows this tick's controller before owned-job reporting."""
+        import controller
+        import final_training_monitor
+        state = {"phase": "final_verification_pending"}
+        held = {"state": "held", "reason": "raw scaling proof is stale", "units": []}
+        with tempfile.TemporaryDirectory() as temporary, patch.object(monitor, "own_jobs", return_value=[]), \
+                patch.object(controller, "tick", return_value=state), patch.object(final_training_monitor, "tick", return_value=held) as final_tick:
+            root = Path(temporary)
+            (root / "SOURCE_AND_GATES_READY.json").write_text("{}")
+            with contextlib.redirect_stdout(io.StringIO()):
+                monitor.tick(root)
+            final_tick.assert_called_once_with(root, controller_state=state, controller_error=None)
+            report = (root / "20_mins_monitoring/latest_report.md").read_text()
+            held_section = report.split("HELD\n", 1)[1].split("FINISHED\n", 1)[0]
+            self.assertIn("scaling proof is stale", " ".join(held_section.split()))
+            result = json.loads((root / "20_mins_monitoring/latest_status.json").read_text())
+            self.assertEqual(result["final_training"], held)
 
 
 if __name__ == "__main__":
