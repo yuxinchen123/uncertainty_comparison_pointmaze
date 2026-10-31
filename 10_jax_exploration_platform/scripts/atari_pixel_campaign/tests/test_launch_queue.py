@@ -1,9 +1,13 @@
 """Mocked metadata checks: no GPU initialization, SSH connection, or Slurm submission."""
 
 import importlib.util
+from contextlib import redirect_stdout
+import fcntl
+import io
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -127,6 +131,66 @@ class QueueLauncherTests(unittest.TestCase):
             self.assertIn("6779000\tqueue-worker\t", (run_dir / "slurm/submissions.tsv").read_text())
             self.assertEqual(record["job_id"], "6779000")
             self.assertIn("--resolve-slurm-gpu", Path(record["script"]).read_text())
+
+    def test_main_holds_admission_lock_through_all_submissions_and_ledger_appends(self):
+        """Block source activation until the entire requested launch batch is durably recorded."""
+        with tempfile.TemporaryDirectory() as temporary:
+            run_dir = Path(temporary)
+            observed = []
+            def held(stage):
+                """An independent descriptor must be unable to acquire the controller's exact lock."""
+                with (run_dir / "queue/metadata.lock").open("a+") as stream:
+                    with self.assertRaises(BlockingIOError):
+                        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                observed.append(stage)
+            def admit(source, run):
+                """Inspect the lock at the source-validation boundary."""
+                held("admission")
+                return Path(source), Path(run), "a" * 40
+            def submit(command, **options):
+                """Return two explicit synthetic IDs without invoking Slurm."""
+                held("submission")
+                return subprocess.CompletedProcess(command, 0, str(6789000 + observed.count("submission")) + "\n", "")
+            original_append = LAUNCHER.append_submission
+            def append(run, identifier, commit, script):
+                """Verify that each durable ledger append remains inside the same source lock."""
+                held("ledger")
+                original_append(run, identifier, commit, script)
+            arguments = ["launch_queue.py", "--context", "jaguar03_rtx_a4500", "--source-root", "/frozen/source",
+                         "--run-dir", str(run_dir), "--workers", "2", "--python", "/shared/python"]
+            with patch.object(sys, "argv", arguments), patch.object(LAUNCHER, "admitted_source", side_effect=admit), \
+                    patch.object(LAUNCHER.os, "access", return_value=True), \
+                    patch.object(LAUNCHER, "current_reservation", return_value=None), \
+                    patch.object(LAUNCHER.subprocess, "run", side_effect=submit), \
+                    patch.object(LAUNCHER, "append_submission", side_effect=append), redirect_stdout(io.StringIO()):
+                LAUNCHER.main()
+            self.assertEqual(observed, ["admission", "submission", "ledger", "submission", "ledger"])
+            self.assertEqual((run_dir / "slurm/submitted_jobids_uva.txt").read_text(), "6789001\n6789002\n")
+            with (run_dir / "queue/metadata.lock").open("a+") as stream:
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+
+    def test_failed_admission_releases_lock_and_standalone_resolver_never_uses_it(self):
+        """Do not retain the parent lock after failure or require admission code in staged GPU resolution."""
+        with tempfile.TemporaryDirectory() as temporary:
+            run_dir = Path(temporary)
+            arguments = ["launch_queue.py", "--context", "jaguar03_rtx_a4500", "--source-root", "/frozen/source",
+                         "--run-dir", str(run_dir)]
+            with patch.object(sys, "argv", arguments), patch.object(LAUNCHER, "admitted_source", side_effect=ValueError("synthetic")):
+                with self.assertRaisesRegex(ValueError, "synthetic"):
+                    LAUNCHER.main()
+            with (run_dir / "queue/metadata.lock").open("a+") as stream:
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+            with patch.object(sys, "argv", arguments + ["--resolve-slurm-gpu"]), \
+                    patch.object(LAUNCHER, "admitted_source") as admission, \
+                    patch.object(LAUNCHER, "source_admission_lock") as lock, \
+                    patch.object(LAUNCHER, "allocated_gpu_uuid", return_value="GPU-synthetic"), \
+                    redirect_stdout(io.StringIO()) as output:
+                LAUNCHER.main()
+            admission.assert_not_called()
+            lock.assert_not_called()
+            self.assertEqual(output.getvalue(), "GPU-synthetic\n")
 
 
 if __name__ == "__main__":

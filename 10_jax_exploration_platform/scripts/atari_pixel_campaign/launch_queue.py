@@ -5,6 +5,7 @@ outside the detached study checkout without changing the admitted numerical code
 """
 
 import argparse
+from contextlib import contextmanager
 import csv
 from datetime import datetime, timezone
 import fcntl
@@ -24,6 +25,23 @@ import xml.etree.ElementTree as ET
 PIXEL_PYTHON = "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
 SERVAL02_CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 CONTEXTS = ("h100", "jaguar03_rtx_a4500")
+SOURCE_ADMISSION_LOCK_PROTOCOL = "queue-metadata-lock-through-source-check-and-submission-v1"
+
+
+@contextmanager
+def source_admission_lock(run_dir):
+    """Serialize source validation and every launch/ledger append with source admission changes."""
+    run_dir = Path(run_dir)
+    if not run_dir.is_absolute() or not run_dir.is_dir():
+        raise ValueError("--run-dir must be an existing absolute campaign directory")
+    directory = run_dir / "queue"
+    directory.mkdir(exist_ok=True)
+    with (directory / "metadata.lock").open("a+") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
 def atomic_text(path, value):
@@ -238,35 +256,38 @@ def main():
     parser.add_argument("--python", type=Path, default=Path(PIXEL_PYTHON))
     parser.add_argument("--resolve-slurm-gpu", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
-    source_root, run_dir, commit = admitted_source(args.source_root, args.run_dir)
+    # The staged standalone GPU resolver imports no controller and never waits for the parent's submission lock.
     if args.resolve_slurm_gpu:
         if args.context != "jaguar03_rtx_a4500":
             raise ValueError("Slurm GPU resolution is only used for the jaguar03 workers")
         print(allocated_gpu_uuid(), flush=True)
         return
-    if args.workers < 1 or (args.context == "h100" and args.workers != 1):
-        raise ValueError("request a positive worker count; serval02 card 1 has exactly one supervisor")
-    if not args.python.is_absolute() or not os.access(args.python, os.X_OK):
-        raise ValueError("--python must be the absolute executable path to the shared pixel environment")
-    directory = run_dir / "slurm" / "queue_workers"
-    directory.mkdir(parents=True, exist_ok=True)
+    # Hold the same lock as controller/worker claims until every returned PID/job ID is durable.
+    with source_admission_lock(args.run_dir):
+        source_root, run_dir, commit = admitted_source(args.source_root, args.run_dir)
+        if args.workers < 1 or (args.context == "h100" and args.workers != 1):
+            raise ValueError("request a positive worker count; serval02 card 1 has exactly one supervisor")
+        if not args.python.is_absolute() or not os.access(args.python, os.X_OK):
+            raise ValueError("--python must be the absolute executable path to the shared pixel environment")
+        directory = run_dir / "slurm" / "queue_workers"
+        directory.mkdir(parents=True, exist_ok=True)
 
-    # Keep this parent-only metadata utility immutable even if the integration branch changes.
-    contents = Path(__file__).read_bytes()
-    digest = hashlib.sha256(contents).hexdigest()
-    metadata_wrapper = directory / ("launch_queue_" + digest + ".py")
-    if metadata_wrapper.exists():
-        if metadata_wrapper.read_bytes() != contents:
-            raise ValueError("an existing metadata wrapper has different contents")
-    else:
-        atomic_text(metadata_wrapper, contents.decode("utf-8"))
-    for _ in range(args.workers):
-        identifier = "queue_worker_" + args.context + "_source_" + commit[:12] + "_" + uuid.uuid4().hex[:12]
-        record = (launch_direct(source_root, run_dir, commit, args.python, directory, identifier)
-                  if args.context == "h100" else launch_slurm(source_root, run_dir, commit,
-                      args.python, directory, identifier, metadata_wrapper))
-        record["metadata_wrapper_sha256"] = digest
-        print(json.dumps(record), flush=True)
+        # Keep this parent-only metadata utility immutable even if the integration branch changes.
+        contents = Path(__file__).read_bytes()
+        digest = hashlib.sha256(contents).hexdigest()
+        metadata_wrapper = directory / ("launch_queue_" + digest + ".py")
+        if metadata_wrapper.exists():
+            if metadata_wrapper.read_bytes() != contents:
+                raise ValueError("an existing metadata wrapper has different contents")
+        else:
+            atomic_text(metadata_wrapper, contents.decode("utf-8"))
+        for _ in range(args.workers):
+            identifier = "queue_worker_" + args.context + "_source_" + commit[:12] + "_" + uuid.uuid4().hex[:12]
+            record = (launch_direct(source_root, run_dir, commit, args.python, directory, identifier)
+                      if args.context == "h100" else launch_slurm(source_root, run_dir, commit,
+                          args.python, directory, identifier, metadata_wrapper))
+            record["metadata_wrapper_sha256"] = digest
+            print(json.dumps(record), flush=True)
 
 
 if __name__ == "__main__":
