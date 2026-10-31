@@ -1,0 +1,65 @@
+{
+  "kind": "branch_reachable_git_bundle",
+  "created_at_utc": "2026-10-31T14:57:41.166990+00:00",
+  "repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+  "branch": "merge-atari-cleanrl",
+  "tip_commit": "535efed3d25c9276bba5f503b3825b1a68c5183d",
+  "tip_tree": "b3de88152396df2ef9ab9b25f00e9b59752e5882",
+  "bundle": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_git_history_integration-535efed3d25c/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle",
+  "bundle_sha256": "7970b1d61c92ec5f3d844380700d76b1e21b9e453051b8720744d1813f61331e",
+  "bundle_bytes": 79879794,
+  "bundle_heads": "535efed3d25c9276bba5f503b3825b1a68c5183d refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d\n",
+  "packing_limits": {
+    "threads": 2,
+    "window_memory_per_thread": "64m",
+    "delta_cache_size": "32m",
+    "address_space_limit_bytes": 2147483648
+  },
+  "commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d",
+      "535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "-c",
+      "pack.threads=2",
+      "-c",
+      "pack.windowMemory=64m",
+      "-c",
+      "pack.deltaCacheSize=32m",
+      "-c",
+      "pack.window=5",
+      "-c",
+      "pack.depth=20",
+      "bundle",
+      "create",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_git_history_integration-535efed3d25c/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle.incomplete",
+      "refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "bundle",
+      "verify",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_git_history_integration-535efed3d25c/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle.incomplete"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "-d",
+      "refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d",
+      "535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ]
+  ],
+  "scope": "Only objects reachable from this pushed branch tip; no --all and no job submissions."
+}

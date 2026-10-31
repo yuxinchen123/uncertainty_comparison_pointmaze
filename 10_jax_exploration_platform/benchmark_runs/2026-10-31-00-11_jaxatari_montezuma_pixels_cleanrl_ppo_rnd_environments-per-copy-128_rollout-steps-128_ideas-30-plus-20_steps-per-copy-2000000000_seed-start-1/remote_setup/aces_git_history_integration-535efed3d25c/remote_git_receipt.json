@@ -1,0 +1,248 @@
+{
+  "kind": "verified_branch_bundle_git_roots",
+  "bare_repository": "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+  "bundle": "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle",
+  "bundle_sha256": "7970b1d61c92ec5f3d844380700d76b1e21b9e453051b8720744d1813f61331e",
+  "bundle_heads": "535efed3d25c9276bba5f503b3825b1a68c5183d refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d\n",
+  "bundle_verify_stdout": "The bundle contains this ref:\n535efed3d25c9276bba5f503b3825b1a68c5183d refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d\nThe bundle records a complete history.\nThe bundle uses this hash algorithm: sha1\n",
+  "bundle_verify_stderr": "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle is okay\n",
+  "checkouts": [
+    {
+      "role": "numerical_source_d28e6735e797",
+      "root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "tree": "68b796b0cb903194fb4eec30dec10c21386015a5",
+      "git_status_porcelain": "",
+      "detached_head": true,
+      "sparse_paths": [
+        "10_jax_exploration_platform"
+      ]
+    },
+    {
+      "role": "study_helpers_535efed3d25c",
+      "root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "commit": "535efed3d25c9276bba5f503b3825b1a68c5183d",
+      "tree": "b3de88152396df2ef9ab9b25f00e9b59752e5882",
+      "git_status_porcelain": "",
+      "detached_head": true,
+      "sparse_paths": [
+        "10_jax_exploration_platform"
+      ]
+    }
+  ],
+  "commands": [
+    [
+      "git",
+      "init",
+      "--bare",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "rev-parse",
+      "--is-bare-repository"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "bundle",
+      "verify",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle"
+    ],
+    [
+      "git",
+      "bundle",
+      "list-heads",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "-c",
+      "pack.threads=2",
+      "-c",
+      "pack.windowMemory=64m",
+      "-c",
+      "pack.deltaCacheSize=32m",
+      "fetch",
+      "--no-tags",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/integration-535efed3d25c9276bba5f503b3825b1a68c5183d.bundle",
+      "refs/transfer/aces_atari_integration_535efed3d25c9276bba5f503b3825b1a68c5183d:refs/heads/merge-atari-cleanrl"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "-c",
+      "pack.threads=2",
+      "fsck",
+      "--connectivity-only"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "worktree",
+      "add",
+      "--detach",
+      "--no-checkout",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "d28e6735e79788f618acb0ebfde8609db1f776af"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "sparse-checkout",
+      "init",
+      "--cone"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "sparse-checkout",
+      "set",
+      "10_jax_exploration_platform"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "checkout",
+      "--detach",
+      "d28e6735e79788f618acb0ebfde8609db1f776af"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "sparse-checkout",
+      "list"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "worktree",
+      "add",
+      "--detach",
+      "--no-checkout",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "sparse-checkout",
+      "init",
+      "--cone"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "sparse-checkout",
+      "set",
+      "10_jax_exploration_platform"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "checkout",
+      "--detach",
+      "535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "sparse-checkout",
+      "list"
+    ]
+  ],
+  "packing_threads": 2,
+  "address_space_limit_bytes": 2147483648,
+  "existing_archives_modified": false,
+  "jobs_submitted": 0
+}
