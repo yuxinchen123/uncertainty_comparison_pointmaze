@@ -30,25 +30,43 @@ def own_jobs(directory):
 def unit_rows(directory):
     """Read one small status file per unit without retaining training histories."""
     rows = []
+    processes = read_json(directory / "processes.json") or []
+    hosts = {record["unit"]: record["host"] for record in processes}
     for path in sorted((directory / "data").glob("*/progress.json")):
         value = read_json(path)
         hardware = read_json(path.parent / "hardware.json") or {}
         age = time.time() - path.stat().st_mtime
-        state = value["state"]
-        failure = read_json(path.parent / "failure.json")
+        phase = value["state"]
+        state = ("waiting" if phase.startswith("waiting") else phase
+                 if phase in {"completed", "checkpointed", "failed", "initializing", "normalization_warmup"}
+                 else "running")
+        failure = (read_json(path.parent / "failure.json")
+                   or read_json(path.parent / "supervisor_failure.json"))
         if failure:
             state = "failed"
         update = value.get("update", value.get("round", 0))
         target = value.get("target_updates", "")
         progress = f"{update}/{target} updates" if target else str(update)
-        if state in ("initializing", "normalization_warmup"):
-            progress = state.replace("_", " ")
-        if age > 2400 and state not in ("completed", "checkpointed"):
+        if value.get("record") == "benchmark":
+            arguments = read_json(path.parent / "arguments.json") or {}
+            progress = f"{value['round'] + 1}/{arguments.get('rounds', '?')} measured rounds"
+        elif state == "completed" and value.get("rounds"):
+            noun = "round" if value["rounds"] == 1 else "rounds"
+            progress = f"{value['rounds']} {noun} complete"
+        elif state == "completed" and value.get("passed"):
+            progress = "checks passed"
+        if phase not in ("running", "completed", "checkpointed", "failed"):
+            progress = phase.replace("_", " ")
+        if age > 2400 and state not in ("completed", "checkpointed", "failed", "waiting"):
             progress += f"; no record for {int(age / 60)} min"
         if failure:
             progress = failure["error"][:100]
-        rows.append({"run": path.parent.name, "pool": hardware.get("hostname", "unknown"),
-                     "gpu": hardware.get("gpu_query", "").split(",")[1:2],
+        visible = hardware.get("cuda_visible_devices", "")
+        queries = hardware.get("gpu_query", "").splitlines()
+        selected = next((line for line in queries if line.startswith(visible + ",")),
+                        queries[0] if len(queries) == 1 else "")
+        rows.append({"run": path.parent.name, "pool": hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
+                     "gpu": selected.split(",")[1:2],
                      "state": state, "progress": progress, "age_seconds": age})
     return rows
 
@@ -58,6 +76,17 @@ def tick(directory):
     directory = directory.resolve()
     reports = directory / "20_mins_monitoring"
     reports.mkdir(parents=True, exist_ok=True)
+    controller_error = None
+    if (directory / "SOURCE_AND_GATES_READY.json").exists():
+        # Index finished cases and retry eligible failures; parent admission stays separate.
+        try:
+            from controller import tick as advance_queue
+            advance_queue(directory)
+            (reports / "controller_error.json").unlink(missing_ok=True)
+        except Exception as error:
+            controller_error = str(error)
+            (reports / "controller_error.json").write_text(json.dumps({
+                "error": controller_error, "time": datetime.now(timezone.utc).isoformat()}) + "\n")
     jobs, units = own_jobs(directory), unit_rows(directory)
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = ["run or job                  pool          gpu             state       progress"]
@@ -89,8 +118,12 @@ def tick(directory):
         if unit["state"] in {"running", "initializing", "normalization_warmup"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
-                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"]}')
+                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"][:30]}')
     rows.append("WAITING")
+    for unit in units:
+        if unit["state"] == "waiting":
+            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  {"none":14}  '
+                        f'{"WAITING":10}  {unit["progress"][:30]}')
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING":
             rows.append(f'{"scheduled study job":26}  {"UVA":12}  {gpu[:14]:14}  '
@@ -105,12 +138,15 @@ def tick(directory):
         if unit["state"] in {"completed", "checkpointed", "failed"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
-                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"]}')
+                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"][:30]}')
+    if controller_error:
+        rows.append(f'{"queue controller":26}  {"UVA":12}  {"none":14}  '
+                    f'{"FAILED":10}  {controller_error[:30]}')
     rows.append("PLANNED")
     state_path = directory / "campaign_state.json"
     campaign = read_json(state_path) or {"phase": "implementation"}
     rows.append(f'{"next study phase":26}  {"study":12}  {"H100 / A4500":14}  '
-                f'{"PLANNED":10}  {campaign.get("next_action", campaign["phase"])}')
+                f'{"PLANNED":10}  {campaign.get("next_action", campaign["phase"])[:30]}')
     # Mark the end of the complete study only after the controller verifies every stage.
     text = "\n".join(rows) + "\n"
     print(text, flush=True)
