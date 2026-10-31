@@ -9,6 +9,11 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class PPOConfig:
     """Agent and loop knobs (algorithm specification section 15)."""
+    # Resolve these choices from the environment's named configuration before compiling.
+    # Empty choices are never passed into the trainer; the resolved run record names them.
+    configuration_preset: str = "environment_default"
+    intrinsic_bootstrap_observation: str = ""
+    no_bonus_advantage_stream: str = ""
     n_copies: int = 8
     n_envs: int = 4
     num_steps: int = 128

@@ -25,9 +25,10 @@ def reference_returns(rewards, values, next_values, gamma, gae_lambda, stop):
     return returns
 
 
-def check_reset_case(hoist, initial_steps):
+def check_reset_case(hoist, initial_steps, configuration_preset="pointmaze_current"):
     """Compare captured intrinsic and task targets at an internal reset, final reset, or no reset."""
-    cfg = PPOConfig(n_copies=2, n_envs=2, num_steps=4, prime_iterations=0,
+    cfg = PPOConfig(configuration_preset=configuration_preset,
+                    n_copies=2, n_envs=2, num_steps=4, prime_iterations=0,
                     update_style="full_batch", hoist_rollout=hoist)
     runner = Runner(cfg)
     state = runner.prime(runner.init_state(run_seed=17))
@@ -66,7 +67,9 @@ def check_reset_case(hoist, initial_steps):
         values_int.append(np.asarray(intrinsic))
     std = np.sqrt(np.asarray(after.agent_state["int_rms"].var) + 1e-8).astype(np.float32)
     normalized = np.asarray(rewards_int) / std[None]
-    expected_int = reference_returns(normalized, np.asarray(values_int), np.asarray(value_int_next),
+    selected_next = (value_int_next if configuration_preset == "pointmaze_current"
+                     else old_int_next)
+    expected_int = reference_returns(normalized, np.asarray(values_int), np.asarray(selected_next),
                                      cfg.gamma_int, cfg.gae_lambda, np.zeros_like(dones))
     expected_ext = reference_returns(np.asarray(rewards_ext), np.asarray(values_ext),
                                      np.asarray(value_ext_next), cfg.gamma_ext, cfg.gae_lambda, dones)
@@ -80,11 +83,14 @@ def check_reset_case(hoist, initial_steps):
                                    cfg.gamma_int, cfg.gae_lambda, np.zeros_like(dones))
     if initial_steps:
         assert dones.sum() == 4, "each of the four environments must reset exactly once"
-        assert np.max(np.abs(old_return - expected_int)) > 1e-3
+        if configuration_preset == "pointmaze_current":
+            assert np.max(np.abs(old_return - expected_int)) > 1e-3
+        else:
+            np.testing.assert_allclose(old_return, expected_int, rtol=2e-5, atol=2e-5)
     else:
         assert dones.sum() == 0
         np.testing.assert_allclose(old_return, expected_int, rtol=2e-5, atol=2e-5)
-    print(f"PASS hoist={hoist} initial_episode_steps={initial_steps} "
+    print(f"PASS configuration={configuration_preset} hoist={hoist} initial_episode_steps={initial_steps} "
           f"intrinsic_target_error={np.max(np.abs(actual_int - expected_int)):.3g}", flush=True)
 
 
@@ -96,5 +102,12 @@ def test_continuing_intrinsic_return():
             check_reset_case(hoist, initial_steps)
 
 
+def test_historical_intrinsic_return():
+    """Retain the old final-observation calculation only under its named historical preset."""
+    for hoist in (False, True):
+        check_reset_case(hoist, 399, "pointmaze_historical")
+
+
 if __name__ == "__main__":
     test_continuing_intrinsic_return()
+    test_historical_intrinsic_return()

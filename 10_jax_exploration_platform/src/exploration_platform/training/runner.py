@@ -14,7 +14,6 @@ import numpy as np
 from .. import F32
 from ..agents.ppo.config import PPOConfig
 from ..agents.ppo.update import opt_init
-from ..envs.pointmaze.jax_pointmaze import EnvState
 from ..evaluation.coverage import coverage_fraction
 from ..statistics import rms_init
 from . import diagnostics as diag
@@ -30,8 +29,8 @@ class Runner:
 
         `bonus` is a preset name from `bonuses/registry.py`, or a factory passed straight in.
         """
-        self.cfg = cfg
         self.composition = Composition(cfg, bonus, env_cfg)
+        self.cfg = self.composition.cfg
         self.env = self.composition.env
         self.bonus = self.composition.bonus
         self.sweep = self.composition.sweep
@@ -64,10 +63,10 @@ class Runner:
             agent_state["ext_filter"], agent_state["ext_rms"] = diag.ext_filter_init(
                 cfg.n_copies, cfg.n_envs)
         if cfg.normalize_agent_obs:
-            agent_state["obs_rms"] = rms_init(cfg.n_copies, 4)
+            agent_state["obs_rms"] = rms_init(cfg.n_copies, self.env.obs_dim)
         state = TrainState(
             env_state=self.env.reset(),
-            obs=jnp.zeros((cfg.n_copies, cfg.n_envs, 4), F32),
+            obs=jnp.zeros((cfg.n_copies, cfg.n_envs, self.env.obs_dim), F32),
             agent_params={}, bonus_params={},
             opt=opt_init(stored),
             agent_state=agent_state,
@@ -89,10 +88,8 @@ class Runner:
         if self.prime_step is not None:
             for i in range(self.cfg.prime_iterations):
                 state = self.prime_step(state, jax.random.fold_in(key, i))
-        rc = state.env_state.reset_count
-        pos, vel, goal = self.env._spawn(rc)
-        env_state = EnvState(pos, vel, goal, jnp.zeros_like(state.env_state.step_count), rc)
-        return state._replace(env_state=env_state, obs=jnp.concatenate([pos, vel], -1))
+        env_state, obs = self.env.respawn(state.env_state)
+        return state._replace(env_state=env_state, obs=obs)
 
     def lr_argument(self, iteration: int, num_iterations: int):
         """The scalar passed to one iteration, given the annealing schedule.

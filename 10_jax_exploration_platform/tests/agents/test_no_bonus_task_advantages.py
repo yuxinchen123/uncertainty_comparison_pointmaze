@@ -8,6 +8,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from exploration_platform.agents.ppo.config import PPOConfig
+from exploration_platform.agents.ppo.networks import critic_values
 from exploration_platform.training.runner import Runner
 
 
@@ -36,5 +37,23 @@ def main():
     np.testing.assert_array_equal(batches[1]["adv"], batches[2]["adv"])
 
 
+def test_historical_weighted_stream():
+    """Reproduce the historical weighted intrinsic stream only when explicitly selected."""
+    cfg = PPOConfig(configuration_preset="pointmaze_historical", n_copies=2, n_envs=2,
+                    num_steps=16, scan_unroll=1, update_style="full_batch", prime_iterations=0)
+    runner = Runner(cfg, bonus="none")
+    initial = runner.prime(runner.init_state(0))
+    _, _, batch = jax.jit(runner.composition.iteration_capturing_batch())(
+        initial, jnp.asarray(1e-4, jnp.float32))
+    # Before: two return targets and old intrinsic predictions; after: the recorded weighted sum.
+    _, intrinsic_old = critic_values(initial.agent_params["critic"], batch["obs"])
+    task_only = cfg.ext_coef * (batch["ret_ext"] - batch["vext_old"])
+    expected = task_only + cfg.int_coef * (batch["ret_int"] - intrinsic_old)
+    np.testing.assert_allclose(batch["adv"], expected, rtol=2e-5, atol=2e-5)
+    assert np.max(np.abs(np.asarray(batch["adv"] - task_only))) > 1e-5
+    print("PASS historical no-bonus control retains its recorded weighted stream", flush=True)
+
+
 if __name__ == "__main__":
     main()
+    test_historical_weighted_stream()

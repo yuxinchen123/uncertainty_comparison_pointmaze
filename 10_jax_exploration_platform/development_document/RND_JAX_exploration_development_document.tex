@@ -1616,4 +1616,579 @@ copies; one line per intrinsic weight.}
   left unset so the rate anneals over the run's own length; the trainer's defaults are unchanged.
 \end{enumerate}
 
+% Historical environment sections imported from fused-atari; their runs retain their old configurations.
+\clearpage
+\noindent\textbf{Historical environment configurations.}
+The following AntMaze and object-observation Montezuma experiments were run in August 2026.
+Their recorded configurations and results remain historical records. They do not use the later
+PointMaze return calculation or the new pixel-based CleanRL Atari configuration. New commands
+select a named environment-specific configuration and record all resolved choices.
+
+%==============================================================================
+\section{AntMaze on the JAX platform}
+\label{sec:am-jax}
+% The environment specification is subsection 2.0, so a first train run on this family becomes
+% 2.1 and the shared specification keeps the .0 slot, exactly as in the PointMaze section.
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:am-jax-envspec}
+
+The platform's second environment family replaces the force-actuated ball with the Gymnasium Ant
+--- a quadruped of eight torque-actuated joints on a free-floating torso --- in the same three
+maze grids, scaled from $1$\,m to $4$\,m cells. The ant is real articulated rigid-body physics,
+so the stepper is not hand-derived as PointMaze's is: the model is the vendored Gymnasium
+\texttt{ant.xml} plus the maze walls, compiled through MuJoCo MJX so that the physics, the agent
+and the bonus fuse into the platform's usual single compiled iteration. Resets are fully
+deterministic --- the reference already zeroes the ant's joint noise, and this platform pins the
+start and goal cells and zeroes the cell noise, the same convention the PointMaze specification
+adopted --- so the environment holds no random number generator at all, and the only randomness
+in an episode is the policy's own sampling. Where the fused model deviates from the reference
+(the integrator and solver budget, the merged wall boxes, the flat observation) the deviation and
+the measurement that justifies it are recorded in the family's
+\texttt{envs/antmaze/\allowbreak spec.md}, and the correctness gates in
+\texttt{tests/envs/} hold the fused stepper against the C-MuJoCo reference of the same model.
+\Cref{tab:am-jax-env} states the three mazes knob by knob.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.3cm}
+?>{\raggedright\arraybackslash}p{3.4cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{AntMaze umaze} & \textbf{AntMaze medium} & \textbf{AntMaze large} &
+  \textbf{Where the value is set} \\
+& \small(reference \texttt{AntMaze\allowbreak\_UMaze-v5}) &
+  \small(reference \texttt{AntMaze\allowbreak\_Medium-v5}) &
+  \small(reference \texttt{AntMaze\allowbreak\_Large-v5}) & \small(field of the platform code) \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Identity and provenance}} \\
+\greyrule
+specification name &
+  \texttt{antmaze\allowbreak\_umaze\allowbreak\_cont700\allowbreak\_nonoise@1} &
+  \texttt{antmaze\allowbreak\_medium\allowbreak\_cont1000\allowbreak\_nonoise@1} &
+  \texttt{antmaze\allowbreak\_large\allowbreak\_cont1000\allowbreak\_nonoise@1} &
+  the name a run manifest carries \\
+\greyrule
+provenance & Gymnasium-Robotics 1.3.1 \texttt{AntMaze\allowbreak\_UMaze-v5} semantics over the
+  Gymnasium 1.2.3 \texttt{ant.xml}, vendored byte for byte & same & same &
+  \texttt{envs/antmaze/\allowbreak spec.md} \\
+\greyrule
+implementation & \texttt{mjx\allowbreak\_antmaze.py} (the MJX stepper) and
+  \texttt{am\allowbreak\_common.py} (maps, configuration, model builder), MuJoCo MJX 3.11.0 &
+  same & same & \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak antmaze/} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Robot and spaces}} \\
+\greyrule
+agent body & the Gymnasium Ant: free-floating torso, four legs, $15$ position and $14$ velocity
+  coordinates & same & same & \texttt{assets/\allowbreak ant.xml} \\
+\greyrule
+observation & $29$-d: the full \texttt{qpos} ($15$, torso $x$, $y$ included) then \texttt{qvel}
+  ($14$). The goal is \emph{not} observed & same & same &
+  \texttt{mjx\allowbreak\_antmaze.\allowbreak \_obs} \\
+\greyrule
+action & $8$-d joint torques, each component clipped to $[-1, 1]$ & same & same &
+  \texttt{mjx\allowbreak\_antmaze.\allowbreak step} \\
+\greyrule
+control cadence & one environment step is $5$ physics steps of $0.01$\,s, i.e.\ $20$\,Hz control
+  & same & same & \texttt{AntMazeConfig.\allowbreak frame\allowbreak\_skip} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Maze}} \\
+\greyrule
+maze map & $5 \times 5$ cells of $4$\,m, $7$ open & $8 \times 8$ cells, $26$ open &
+  $9 \times 12$ cells, $46$ open (the PointMaze large grid) &
+  \texttt{AntMazeConfig.\allowbreak map\allowbreak\_name} \\
+\greyrule
+world extent & $x, y \in [-10, 10]$ & $x, y \in [-16, 16]$ &
+  $x \in [-24, 24]$, $y \in [-18, 18]$ & \texttt{am\allowbreak\_common.\allowbreak
+  cell\allowbreak\_center} \\
+\greyrule
+walls & $2$\,m boxes; horizontal wall runs merged into single boxes, an identical union
+  ($18$ cells $\to 8$ boxes) & $38 \to 20$ boxes & $62 \to 31$ boxes &
+  \texttt{am\allowbreak\_common.\allowbreak merged\allowbreak\_wall\allowbreak\_boxes} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Start and goal}} \\
+\greyrule
+start cell & row $3$, column $1$ (row $0$ is the top); world $(-4, -4)$ &
+  row $6$, column $1$; world $(-10, -10)$ & row $7$, column $1$; world $(-18, -12)$ &
+  \texttt{AntMazeConfig.\allowbreak start\allowbreak\_cell} \\
+\greyrule
+goal cell & row $1$, column $1$; world $(-4, 4)$ & row $1$, column $6$; world $(10, 10)$ &
+  row $1$, column $10$; world $(18, 12)$ & \texttt{AntMazeConfig.\allowbreak
+  goal\allowbreak\_cell} \\
+\greyrule
+reset noise & $0$: the cells are pinned, and the reference's joint-reset noise is already
+  zero --- every reset is bit-identical & same & same & \texttt{spec.md} deviation 1 \\
+\greyrule
+goal radius & $0.45$\,m: a step whose torso-to-goal distance is at most this earns reward $1$ &
+  same & same & \texttt{AntMazeConfig.\allowbreak goal\allowbreak\_radius} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Episode and reward}} \\
+\greyrule
+episode length cap & $700$ steps & $1{,}000$ steps & $1{,}000$ steps &
+  \texttt{AntMazeConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+\greyrule
+task type & continuing: never terminated at the goal, only truncated at the cap; the goal
+  never moves. A flipped ant is not terminated either (the reference discards the Ant's health
+  termination) & same & same & \texttt{AntMazeConfig.\allowbreak
+  continuing\allowbreak\_task} \\
+\greyrule
+reward & sparse: $1$ on a step inside the goal radius, $0$ otherwise; no shift is added & same &
+  same & \texttt{AntMazeConfig.\allowbreak reward\allowbreak\_shift} \\
+\greyrule
+discount, extrinsic & $0.999$ & same & same & \texttt{PPOConfig.\allowbreak
+  gamma\allowbreak\_ext} \\
+\greyrule
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) & same & same &
+  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+\blackrule
+\multicolumn{5}{@{}l}{\textit{Physics implementation}} \\
+\greyrule
+integrator and solver & \texttt{implicitfast}, Newton, $4$ iterations, $8$ line-search,
+  float32; the reference runs RK4 at the full solver budget in float64 ---
+  \texttt{spec.md} deviations 3 and 6, gates in \texttt{tests/envs/} & same & same &
+  \texttt{AntMazeConfig.\allowbreak integrator}, \texttt{.solver\allowbreak\_iterations} \\
+\blackrule
+\end{tabular}%
+}
+\caption{Historical AntMaze settings; ``same'' repeats the previous column.}
+\label{tab:am-jax-env}
+\end{table}
+
+\subsection{Train run 2.1: the first AntMaze batch}
+\label{sec:am-jax-run21}
+
+Two algorithm arms at one learning rate: random network distillation against no exploration
+bonus, on the umaze — the smallest of the three mazes, where the goal sits at the far end of
+the U, eight cells of walking from the start. This is the family's first live batch: its job is
+to show the fused environment training end to end at scale on the card, and to give the first
+honest reading of what a sparse-reward maze asks of a quadruped that must learn to walk and to
+navigate at once from a budget of about a quarter of a million steps per copy.
+
+\paragraph{Hypotheses.}
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{The bonus drives exploration.} The distillation arm's maze-cell coverage exceeds
+  the no-bonus arm's at every recorded window: a bonus-free ant has no reason to leave the
+  start cell's neighbourhood once its random torques stop carrying it anywhere new.
+\item \textbf{The budget is too short for reward.} Neither arm reaches the goal often enough
+  for whole-run reward to separate them at this budget --- learning to walk consumes most of
+  it --- so coverage, not reward, is this run's primary reading. A longer campaign is the
+  follow-up if coverage says the bonus is working.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}
+?>{\raggedright\arraybackslash}p{5.4cm}
+?>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{\texttt{rnd\allowbreak\_next\allowbreak\_state}} &
+\textbf{\texttt{no\allowbreak\_exploration}} \\
+& \small(random network distillation) & \small(no intrinsic bonus) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Environment and RL algorithm}} \\
+\greyrule
+environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the umaze
+  of \Cref{tab:am-jax-env}; this run adds no new environment-specification table} \\
+\greyrule
+base RL algorithm & proximal policy optimisation, this platform's JAX trainer & same \\
+\greyrule
+update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) & same \\
+\greyrule
+rollout length $T$ & $128$ steps & same \\
+\greyrule
+environments per copy $N$ & $1$ & same \\
+\greyrule
+environment steps per copy & $269$k: $2{,}100$ iterations of $128$ steps & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+bonus signal & the prediction error of a trained network against a fixed random target, on the
+  $29$-d next state & N/A \\
+\greyrule
+where the bonus enters & the advantage: $1 \times$ intrinsic $+\ 2 \times$ extrinsic & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Fixed knobs (nothing is swept in this batch)}} \\
+\greyrule
+learning rate & \multicolumn{2}{c}{$3 \times 10^{-4}$ --- one value} \\
+\greyrule
+intrinsic weight $\beta$ & $1$ & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+\greyrule
+configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
+\greyrule
+copies per arm & \multicolumn{2}{c}{$1{,}024$, each its own seed stream} \\
+\greyrule
+recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
+  $175$ iterations --- one whole turn of the $128$-step-rollout / $700$-step-episode clock, so
+  every window's reward sum is free of the episode phase; $12$ windows over the run} \\
+\blackrule
+\end{tabular}%
+}
+\caption{What train run 2.1 runs. ``same'' means the value equals the column to its left; ``N/A''
+marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is swept:
+this is the family's first live batch, two arms at one setting each.}
+\label{tab:am-jax-run21-swept}
+\end{table}
+
+\paragraph{Results --- status.}
+The run is complete. Both arms finished on the H100 NVL of serval05 on 2026-08-18, the
+distillation arm 03:01--03:45 PT and the no-bonus arm 03:46--04:28 PT, each writing its $12$
+phase-blocked windows and its completion record. Sixteen episodes across the two arms
+($13$ and $3$ of about $786{,}000$ episodes per arm) were respawned by the environment's
+non-finite-state guard --- the rare float32 contact-solve failure of
+\texttt{spec.md} deviation~7, at the expected rate, contained as designed.
+\Cref{tab:am-jax-run21-results} and \Cref{fig:am-jax-run21-curves} are written by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py} from the run's own shards.
+
+\paragraph{How to read the metrics table.}
+Define $C = 1{,}024$ as an arm's copy count, indexed $k = 1, \dots, C$; define $W = 12$ as the
+number of recorded windows, each spanning $175$ iterations (one whole turn of the
+$128$-step-rollout / $700$-step-episode clock, $32$ episodes per copy); and define $S_{k,w}$ as
+the extrinsic reward copy $k$ collects over the whole of window $w$ --- the quantity the
+trainer records. Define $O = 7$ as the number of open cells of the umaze. The columns:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Whole-run reward} (higher is better; the sort column) --- copy $k$'s total,
+  $R_k = \sum_{w=1}^{W} S_{k,w}$: the number of steps the copy spent inside the goal radius
+  over its whole run. The cell is the mean $\pm$ standard error over the $C$ copies.
+\item \textbf{Last-window reward} --- $S_{k,W}$ alone, the same statistic over the final $32$
+  episodes per copy.
+\item \textbf{Success rate} --- the fraction of copies that reached the goal at least once,
+  $s = \frac{1}{C} \sum_{k=1}^{C} \mathbf{1}[R_k > 0]$.
+\item \textbf{Final maze-cell coverage \%} --- with $V_k$ the number of distinct open cells
+  copy $k$ ever entered, $c_k = 100 \, V_k / O$, mean $\pm$ standard error over copies.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+\textbf{arm} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-window\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{final maze-cell\\coverage \%}} &
+\textbf{$N$} \\
+\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & {\boldmath $7.845 \pm 1.065$} &
+  {\boldmath $0.899 \pm 0.379$} & {\boldmath $0.121$} & $67.41 \pm 0.44$ & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration} & $6.793 \pm 0.957$ & $0.606 \pm 0.288$ & $0.120$ &
+  {\boldmath $67.76 \pm 0.44$} & $1{,}024$ \\
+\bottomrule
+\end{tabular}
+\caption{Train run 2.1's two arms, ranked by whole-run reward (the only arrowed column), each
+over its full $1{,}024$ copies. Bold marks the numerically best cell per column --- and the
+honest reading is that \emph{no column separates the arms}: every difference is within about
+one standard error, and the success rates are equal to three decimals.}
+\label{tab:am-jax-run21-results}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-08-18-03-01_jax-ppo_antmaze-umaze-nonoise_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-269k_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-antmaze-batch/analysis/plots/two_arm_curves.pdf}}
+\caption{Mean maze-cell coverage (left) and mean window reward (right) against environment
+steps per copy, one curve per arm, the band $\pm$ one standard error over the arm's $1{,}024$
+copies; each point is one $175$-iteration phase-blocked window. The two arms' coverage curves
+lie on top of each other for the whole run. Drawn by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py}.}
+\label{fig:am-jax-run21-curves}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{H1 is refuted on this maze: the bonus buys nothing the umaze does not give away.}
+  Whole-run reward $7.845 \pm 1.065$ against $6.793 \pm 0.957$, success rate $0.121$ against
+  $0.120$, final coverage $67.41 \pm 0.44$ against $67.76 \pm 0.44$ per cent --- every gap
+  inside a standard error. Seven open cells is small enough that the torque noise of an ant
+  learning to walk covers what a novelty bonus covers. The discriminating experiment is the
+  medium and large mazes, exactly as the large map was for PointMaze.
+\item \textbf{H2 is refuted in the opposite direction than hypothesized: reward arrived well
+  inside the budget.} The prediction was that learning to walk would consume the run before
+  any goal was reached; in fact both arms reach the goal from about $60$k steps per copy on,
+  and one copy in eight finishes with at least one goal entry.
+\item \textbf{Coverage saturates at about two thirds of the maze in both arms} ($67$ against
+  $100$ per cent for the best PointMaze arms at their far larger budgets): the cells behind
+  the far arm of the U stay rare. Whether a longer budget or a stronger bonus weight breaks
+  the plateau is the natural follow-up sweep.
+\item \textbf{The platform held.} The whole run --- $550$ million environment steps of real
+  articulated physics fused with training --- ran at the benchmarked rate with no
+  intervention; the only incidents were $16$ episodes respawned by the non-finite-state
+  guard, at the rate round~3 of the family ledger measured, invisible to the science.
+\end{enumerate}
+
+
+
+%==============================================================================
+\section{Montezuma's Revenge on the JAX platform}
+\label{sec:mz-jax}
+% The environment specification is subsection 3.0, so a first train run on this family becomes
+% 3.1 and the shared specification keeps the .0 slot, as in the two sections above.
+\setcounter{subsection}{-1}
+
+\subsection{Environment specification}
+\label{sec:mz-jax-envspec}
+
+Montezuma's Revenge is the hard-exploration Atari game the original random-network-distillation
+paper was built to solve, and it brings two firsts to the platform: a discrete action set ---
+the composer now builds a categorical actor (Gumbel-argmax sampling, the log-probability taken
+from the same logits) when the environment declares one, decided in Python before anything is
+compiled, exactly as the bonus is --- and stochastic dynamics, the ALE-v5 sticky-action
+protocol, so this environment carries one random key per environment where PointMaze and
+AntMaze carry none. The game logic is JAXAtari's pure-JAX reimplementation (the project
+validates it against \texttt{ALE/\allowbreak MontezumaRevenge-v5}; its top quality tier), run
+under JAXAtari's own Atari wrapper and adapted to the platform's batched contract. The
+observation is object-centric rather than the reference's pixels --- the platform's agent and
+bonus are the same multilayer perceptrons every family uses --- with the room index, inventory
+and lives appended so rooms do not alias; the deviations and their reasons are recorded in
+\texttt{envs/atari\allowbreak\_montezuma/\allowbreak spec.md}, and coverage for this family
+counts the $24$ playable rooms, the classic Montezuma exploration metric.
+\Cref{tab:mz-jax-env} states it knob by knob.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+?>{\raggedright\arraybackslash}p{6.4cm}
+?>{\raggedright\arraybackslash}p{4.4cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Montezuma's Revenge, object-centric} &
+  \textbf{Where the value is set} \\
+& \small(reference behaviour: \texttt{ALE/\allowbreak MontezumaRevenge-v5}) &
+  \small(field of the platform code) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Identity and provenance}} \\
+\greyrule
+specification name & \texttt{montezuma\allowbreak\_oc4500\allowbreak\_sticky@1} &
+  the name a run manifest carries \\
+\greyrule
+provenance & JAXAtari (\texttt{k4ntz/JAXAtari}) at commit \texttt{035fc46b}, package
+  \texttt{jaxatari} 0.1.0, MIT license; game assets are the project's replacement package (no
+  original ROM assets) & \texttt{envs/atari\allowbreak\_montezuma/\allowbreak spec.md} \\
+\greyrule
+implementation & \texttt{jax\allowbreak\_montezuma.py}: JAXAtari's game under its
+  \texttt{AtariWrapper}, batched to the platform contract with explicit auto-reset &
+  \texttt{src/exploration\allowbreak\_platform/envs/\allowbreak
+  atari\allowbreak\_montezuma/} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Spaces}} \\
+\greyrule
+observation & $774$-d float32: $4$ stacked frames of the $192$-feature flattened
+  object-centric observation (player, enemies, items, conveyors, doors, ropes, platforms ---
+  position, size, activity, type, orientation each), then the room index, the $4$ inventory
+  slots and lives & \texttt{jax\allowbreak\_montezuma.\allowbreak \_obs\allowbreak\_vec} \\
+\greyrule
+action & discrete, the game's full $18$ ALE actions; the platform's first categorical actor &
+  \texttt{JaxMontezuma.\allowbreak n\allowbreak\_actions} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Dynamics and episode}} \\
+\greyrule
+sticky actions & with probability $0.25$ the previous action repeats (the v5
+  \texttt{repeat\allowbreak\_action\allowbreak\_probability}; no no-op starts --- sticky
+  actions are the protocol that replaced them) &
+  \texttt{MontezumaConfig.\allowbreak sticky\allowbreak\_actions} \\
+\greyrule
+frame skip & $4$: one environment step holds the action for $4$ game frames &
+  \texttt{MontezumaConfig.\allowbreak frame\allowbreak\_skip} \\
+\greyrule
+episode end & lives exhausted ($5$ lives) terminates; no episodic-life splitting &
+  \texttt{AtariWrapper(\allowbreak episodic\allowbreak\_life=False)} \\
+\greyrule
+episode length cap & $4{,}500$ environment steps ($18{,}000$ frames, the cap the
+  random-network-distillation paper used); truncation only &
+  \texttt{MontezumaConfig.\allowbreak max\allowbreak\_episode\allowbreak\_steps} \\
+\greyrule
+reset & deterministic up to the sticky stream: one key per environment from (base seed, copy
+  seed index, environment index), re-split every episode &
+  \texttt{jax\allowbreak\_montezuma.\allowbreak \_single\allowbreak\_reset} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Reward and objective}} \\
+\greyrule
+reward & the score delta of the step, clipped to its sign (the random-network-distillation
+  convention) & \texttt{MontezumaConfig.\allowbreak clip\allowbreak\_reward} \\
+\greyrule
+coverage metric & rooms visited, over the $24$ playable rooms &
+  \texttt{JaxMontezuma.\allowbreak cell\allowbreak\_index} \\
+\greyrule
+discount, extrinsic & $0.999$ & \texttt{PPOConfig.\allowbreak gamma\allowbreak\_ext} \\
+\greyrule
+discount, intrinsic & $0.99$ (used only by an arm that has an intrinsic bonus) &
+  \texttt{PPOConfig.\allowbreak gamma\allowbreak\_int} \\
+\blackrule
+\end{tabular}%
+}
+\caption{The Montezuma's Revenge environment, knob by knob. The two discounts are the
+trainer's defaults rather than environment fields, listed because they define the objective
+the environment is optimised against. Long typewriter names break after every escaped
+underscore (\texttt{\textbackslash allowbreak}).}
+\label{tab:mz-jax-env}
+\end{table}
+
+\subsection{Train run 3.1: the first Montezuma batch}
+\label{sec:mz-jax-run31}
+
+Two algorithm arms at one learning rate: random network distillation against no exploration
+bonus, on the full game. This is the family's first live batch — and the platform's first
+discrete-action training — at a budget of about a quarter of a million environment steps per
+copy, three orders of magnitude below the budget the original random-network-distillation
+campaign spent to clear the game. Its job is to show the fused game training end to end at
+scale, and to read whether the bonus moves a smoke-scale agent at all.
+
+\paragraph{Hypotheses.}
+\begin{enumerate}[label=\textbf{H\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{The bonus drives exploration.} The distillation arm visits more rooms (higher
+  rooms-visited coverage) and collects more clipped score than the no-bonus arm: the game pays
+  nothing before the first key, so a bonus-free agent has no gradient pointing anywhere.
+\item \textbf{The first score is reachable, clearing the game is not.} Some distillation
+  copies reach the first collectable (the key of the starting room pays $+1$ through the
+  clipped score) within the budget; no copy approaches the later rooms' chains of keys and
+  doors. Room coverage, not score, is this run's primary reading.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}
+?>{\raggedright\arraybackslash}p{5.4cm}
+?>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\blackrule
+\textbf{Hyperparameter} & \textbf{\texttt{rnd\allowbreak\_next\allowbreak\_state}} &
+\textbf{\texttt{no\allowbreak\_exploration}} \\
+& \small(random network distillation) & \small(no intrinsic bonus) \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Environment and RL algorithm}} \\
+\greyrule
+environment specification & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{the
+  Montezuma's Revenge of \Cref{tab:mz-jax-env}; this run adds no new
+  environment-specification table} \\
+\greyrule
+base RL algorithm & proximal policy optimisation with the categorical actor
+  (\Cref{sec:mz-jax-envspec}) & same \\
+\greyrule
+update style & one gradient step per rollout (\texttt{full\allowbreak\_batch}) & same \\
+\greyrule
+rollout length $T$ & $128$ steps & same \\
+\greyrule
+environments per copy $N$ & $1$ & same \\
+\greyrule
+environment steps per copy & $2$M: $16{,}000$ iterations of $128$ steps & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Intrinsic bonus}} \\
+\greyrule
+bonus signal & the prediction error of a trained network against a fixed random target, on the
+  $774$-d next observation & N/A \\
+\greyrule
+where the bonus enters & the advantage: $1 \times$ intrinsic $+\ 2 \times$ extrinsic & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Fixed knobs (nothing is swept in this batch)}} \\
+\greyrule
+learning rate & \multicolumn{2}{c}{$3 \times 10^{-4}$ --- one value} \\
+\greyrule
+intrinsic weight $\beta$ & $1$ & N/A \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Run bookkeeping}} \\
+\greyrule
+configs in this table & \multicolumn{2}{c}{$2$ --- one per arm} \\
+\greyrule
+copies per arm & \multicolumn{2}{c}{$1{,}024$, each its own seed stream} \\
+\greyrule
+recording & \multicolumn{2}{>{\raggedright\arraybackslash}p{10.8cm}}{one episode window per
+  $400$ iterations, $40$ windows over the run. Episodes end on the game's own terms (lives
+  exhausted) at variable lengths, so no fixed episode clock exists and no window is
+  phase-blocked --- window sums are compared between the arms at equal step budgets, which is
+  the comparison this run makes} \\
+\blackrule
+\end{tabular}%
+}
+\caption{What train run 3.1 runs. ``same'' means the value equals the column to its left;
+``N/A'' marks a knob that does not apply --- the no-bonus arm has no bonus knobs. Nothing is
+swept: two arms at one setting each.}
+\label{tab:mz-jax-run31-swept}
+\end{table}
+
+\paragraph{Results --- status.}
+The run is complete. Both arms finished on the H100 NVL of serval05 on 2026-08-18, the
+distillation arm 04:43--05:17 PT and the no-bonus arm 05:18--05:47 PT, each writing its $40$
+recorded windows and its completion record at about $0.08$ seconds per iteration.
+\Cref{tab:mz-jax-run31-results} is written by the run's
+\texttt{analysis/\allowbreak code/\allowbreak
+make\allowbreak\_two\allowbreak\_arm\allowbreak\_analysis.py} from the run's own shards.
+
+\paragraph{How to read the metrics table.}
+Define $C = 1{,}024$ as an arm's copy count, indexed $k = 1, \dots, C$; define $W = 40$ as the
+number of recorded windows of $400$ iterations each; and define $S_{k,w}$ as the clipped score
+copy $k$ collects over window $w$. The columns are the same statistics as train run 2.1's
+(\Cref{sec:am-jax-run21}): whole-run reward $R_k = \sum_{w=1}^{W} S_{k,w}$, last-window reward
+$S_{k,W}$, success rate $\frac{1}{C} \sum_k \mathbf{1}[R_k > 0]$, and coverage --- here the
+fraction of the $24$ playable rooms copy $k$ ever entered, in percent.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}l r r r r r@{}}
+\toprule
+\textbf{arm} &
+\textbf{\shortstack[c]{whole-run\\reward $\uparrow$}} &
+\textbf{\shortstack[c]{last-window\\reward}} &
+\textbf{\shortstack[c]{success\\rate}} &
+\textbf{\shortstack[c]{final rooms\\visited \%}} &
+\textbf{$N$} \\
+\midrule
+\texttt{rnd\_\allowbreak next\_\allowbreak state} & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ &
+  $0.000$ & $4.17 \pm 0.00$ & $1{,}024$ \\
+\texttt{no\_\allowbreak exploration} & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ & $0.000$ &
+  $4.17 \pm 0.00$ & $1{,}024$ \\
+\bottomrule
+\end{tabular}
+\caption{Train run 3.1's two arms over their full $1{,}024$ copies each. Every cell of both
+rows is exactly zero effect: no copy of either arm ever scored or left the starting room
+($4.17$ per cent is exactly $1$ of $24$ rooms), so nothing is bolded --- there is no best
+cell to mark.}
+\label{tab:mz-jax-run31-results}
+\end{table}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=\textbf{F\arabic*},leftmargin=*,labelsep=0.6em]
+\item \textbf{H1 and H2 are both refuted: at this scale the game gives the bonus nothing to
+  win.} No copy of either arm --- $2.05$ million environment steps per copy, $4.2$ billion in
+  total --- ever collected the first key or left the first room. The two arms are identical on
+  every metric because the game's first barrier (climb down, cross the moving skull, take the
+  key, climb back, open a door, all under sticky actions and a five-life budget) gates every
+  reward and every room transition, and neither arm crossed it.
+\item \textbf{The bonus worked as designed and then starved.} The distillation arm's
+  normalised intrinsic reward fell from $0.502$ in the first window to $0.003$ by the end:
+  the predictor consumed the novelty reachable inside room~1 and the bonus stopped paying
+  long before the barrier was crossed. This is the textbook failure mode the original
+  random-network-distillation campaign overcame with pixel networks, far longer horizons and
+  hundreds of times this budget --- the platform reproduces the difficulty faithfully rather
+  than the solution cheaply.
+\item \textbf{What this run bought:} the fused game trains end to end at $1.25$ million
+  environment steps per second on one card, so the follow-ups the family ledger records ---
+  pixel observations with convolutional networks, longer horizons, an episodic-life or
+  first-fire variant to soften the skull barrier --- are hours, not weeks, of compute. The
+  budget here was chosen to be three orders of magnitude below the original campaign's, and
+  the result says that gap is real.
+\end{enumerate}
+
+
 \end{document}

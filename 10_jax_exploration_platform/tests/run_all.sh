@@ -32,7 +32,8 @@ export PYTHONNOUSERSITE=1
 CPU_ONLY="agents/test_jax_ppo.py agents/test_sweep_jax.py agents/test_hoist_equivalence.py
           agents/test_flat_params_equivalence.py agents/test_copy_seed_offset.py
           integration/test_jit_eager_equivalence.py"
-ALL="golden_09/test_golden_parity.py
+ALL="agents/test_configuration_presets.py
+     golden_09/test_golden_parity.py
      agents/test_intrinsic_reset_return.py
      agents/test_selected_settings_blocks.py
      agents/test_no_bonus_task_advantages.py
@@ -50,6 +51,12 @@ ALL="golden_09/test_golden_parity.py
      bonuses/test_visit_count.py
      bonuses/test_visit_count_learning_sanity.py
      parity_07/test_visit_count_against_07.py
+     envs/test_antmaze_mjx.py
+     envs/test_antmaze_parity_cpu_mujoco.py
+     envs/test_antmaze_compose.py
+     agents/test_discrete_actor.py
+     envs/test_montezuma_adapter.py
+     envs/test_montezuma_compose.py
      copy_isolation/test_bonus_copy_isolation.py
      integration/test_jit_eager_equivalence.py"
 CPU_ONLY=" $(echo $CPU_ONLY) "

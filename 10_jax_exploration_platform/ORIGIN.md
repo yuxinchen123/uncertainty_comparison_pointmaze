@@ -91,6 +91,18 @@ short frozen-reference comparison does not cross a reset during training; equali
 not imply equality at episode boundaries. Existing experiment results were generated with the
 earlier convention and remain records of that version.
 
+## Added after the copy: the AntMaze family (2026-08-18, branch `fused-antmaze`)
+
+Nothing in this section's tables changed. The platform gained a second environment family that
+was never part of `09_parallelization`: `src/exploration_platform/envs/antmaze/` — the Gymnasium
+Ant in the umaze / medium / large mazes through MuJoCo MJX. Its own provenance (which reference
+files its semantics restate, what was vendored, what deviates and why) is
+`src/exploration_platform/envs/antmaze/spec.md`, not this file. The trainer was made
+environment-generic at the same time (the composer dispatches on the environment-configuration
+type; observation and action widths come from the environment), with the PointMaze defaults
+keeping every existing draw bit-identical — the golden-parity gate still runs against the frozen
+`09_parallelization` module and still requires bit-identical results.
+
 ## The environment specification this platform starts from
 
 The name used in run manifests: **`pointmaze_large_cont400_nonoise@1`**. It is the default
@@ -136,3 +148,20 @@ Two things stayed in 09 that a later stage may want:
 - `tests/agents/test_forward_fixture.py` was copied, but it cannot run here as it stands: it
   compares against a fixture file written by the PyTorch trainer, which is not part of this folder.
   It is kept so the check is not lost.
+
+## Named environment configurations after the branch merge
+
+The current PointMaze return calculation is selected by `pointmaze_current`. Its intrinsic
+returns use reset observations, and its no-bonus control uses task advantages alone.
+`pointmaze_historical`, `antmaze_historical`, and `montezuma_object_historical` retain their
+recorded final-observation intrinsic return calculation and weighted intrinsic advantages.
+The old platform resolves an environment into one of these names before compiling and records
+the full configuration. `--configuration-preset` makes the historical PointMaze choice explicit.
+An incompatible environment and configuration name fails before training.
+
+The PointMaze study's learning-rate horizon, entropy coefficient, input and reward scaling,
+separate gradient clipping, policy standard-deviation floor, and diagnostics remain explicit
+run options. They are not applied to the historical AntMaze or Montezuma configurations.
+The new pixel-based CleanRL Atari implementation uses its own source-defined configuration;
+it does not inherit any PointMaze preset or the historical object-observation Atari settings.
+Old run manifests and reported results are kept unchanged.

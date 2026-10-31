@@ -57,10 +57,55 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 
 # identities of the pieces this run is made of; they go into the manifest so a later change to any
 # of them is visible in the record rather than silent
-SPECS = {
-    "env": "pointmaze_large_cont400_nonoise@1",
-    "agent": "ppo_full_batch_continuing_intrinsic@3",
+# one row per environment this script can run: the specification name a manifest carries, and
+# the environment-configuration factory the composer dispatches on (None = the PointMaze default)
+ENVIRONMENTS = {
+    "pointmaze-large": {"spec": "pointmaze_large_cont400_nonoise@1", "cfg": None,
+                        "episode_steps": 400,
+                        "resolved": {"map_name": "large", "start_cell": "(7, 1)",
+                                     "goal_cell": "(1, 10)", "position_noise": 0.0,
+                                     "continuing_task": True, "goal_radius": 0.45,
+                                     "reward_shift": 0.0}},
+    "antmaze-umaze": {"spec": "antmaze_umaze_cont700_nonoise@1", "cfg": "umaze",
+                      "episode_steps": 700,
+                      "resolved": {"map_name": "umaze", "start_cell": "(3, 1)",
+                                   "goal_cell": "(1, 1)", "continuing_task": True,
+                                   "goal_radius": 0.45, "reward_shift": 0.0}},
+    "antmaze-medium": {"spec": "antmaze_medium_cont1000_nonoise@1", "cfg": "medium",
+                       "episode_steps": 1000,
+                       "resolved": {"map_name": "medium", "start_cell": "(6, 1)",
+                                    "goal_cell": "(1, 6)", "continuing_task": True,
+                                    "goal_radius": 0.45, "reward_shift": 0.0}},
+    "antmaze-large": {"spec": "antmaze_large_cont1000_nonoise@1", "cfg": "large",
+                      "episode_steps": 1000,
+                      "resolved": {"map_name": "large", "start_cell": "(7, 1)",
+                                   "goal_cell": "(1, 10)", "continuing_task": True,
+                                   "goal_radius": 0.45, "reward_shift": 0.0}},
+    "montezuma": {"spec": "montezuma_oc4500_sticky@1", "cfg": "montezuma",
+                  "episode_steps": 4500,
+                  "resolved": {"game": "montezumarevenge (JAXAtari)",
+                               "sticky_actions": 0.25, "frame_skip": 4, "frame_stack": 4,
+                               "clip_reward": True, "reward_shift": 0.0}},
 }
+
+AGENT_SPECS = {
+    "pointmaze_current": "ppo_full_batch_continuing_intrinsic@3",
+    "pointmaze_historical": "ppo_full_batch@1",
+    "antmaze_historical": "ppo_full_batch@1",
+    "montezuma_object_historical": "ppo_full_batch@1",
+}
+
+
+def env_config_of(env_name: str):
+    """The environment-configuration object the composer dispatches on; None = PointMaze default."""
+    map_name = ENVIRONMENTS[env_name]["cfg"]
+    if map_name is None:
+        return None
+    if map_name == "montezuma":
+        from exploration_platform.envs.atari_montezuma.jax_montezuma import MontezumaConfig
+        return MontezumaConfig()
+    from exploration_platform.envs.antmaze.am_common import preset
+    return preset(map_name)
 
 # the update schedule each bonus family follows, for the manifest's record
 UPDATE_SCHEDULES = {
@@ -174,6 +219,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--description", default="", help="the human sentence for the manifest")
     parser.add_argument("--copies", type=int, default=128,
                         help="copies, when neither knob is swept; a sweep derives the count")
+    parser.add_argument("--configuration-preset", default="environment_default",
+                        choices=["environment_default", *sorted(AGENT_SPECS)],
+                        help="named environment-specific return and no-bonus choices; "
+                             "pixel CleanRL Atari uses its separate training command")
     parser.add_argument("--envs-per-copy", type=int, default=4)
     parser.add_argument("--rollout-steps", type=int, default=128)
     parser.add_argument("--iterations", type=int, default=200)
@@ -205,8 +254,11 @@ def parse_args() -> argparse.Namespace:
                              "j x (copies / k) and holds that slice of the copies")
     parser.add_argument("--window-iterations", type=int, default=200,
                         help="iterations per recorded episode window; one record covers one window")
-    parser.add_argument("--episode-steps", type=int, default=400,
-                        help="the environment's truncation cap, which sets the episode clock")
+    parser.add_argument("--env", default="pointmaze-large", choices=sorted(ENVIRONMENTS),
+                        help="which environment specification this unit trains on")
+    parser.add_argument("--episode-steps", type=int, default=0,
+                        help="the environment's truncation cap, which sets the episode clock; "
+                             "0 takes the chosen environment's own cap")
     parser.add_argument("--track-coverage", action="store_true",
                         help="keep a per-copy visited-cell map on the device")
     # the environment (added 2026-10-19); the defaults are the large-maze task every earlier run used
@@ -259,9 +311,17 @@ def cell(text: str) -> tuple:
 
 def build_env_config(args: argparse.Namespace):
     """The environment this unit trains in, from the command line."""
+    from dataclasses import replace
     from exploration_platform.envs.pointmaze.pm_common import EnvConfig, validate_env_config
+    episode_steps = args.episode_steps or ENVIRONMENTS[args.env]["episode_steps"]
+    if args.env != "pointmaze-large":
+        if (args.map, args.start_cell, args.goal_cell, args.terminate_at_goal, args.goal_reward) != (
+                "large", "7,1", "1,10", False, "per_step"):
+            raise ValueError("PointMaze map and goal options cannot change another environment")
+        return replace(env_config_of(args.env), max_episode_steps=episode_steps,
+                       reward_shift=args.reward_shift)
     env_cfg = EnvConfig(map_name=args.map, start_cell=cell(args.start_cell),
-                        goal_cell=cell(args.goal_cell), max_episode_steps=args.episode_steps,
+                        goal_cell=cell(args.goal_cell), max_episode_steps=episode_steps,
                         continuing_task=not args.terminate_at_goal,
                         reward_shift=args.reward_shift, goal_reward=args.goal_reward)
     validate_env_config(env_cfg)
@@ -274,20 +334,28 @@ def env_spec(env_cfg) -> str:
     before: large map, continuing, cap 400, shift 0, per_step -> pointmaze_large_cont400_nonoise@1
     before: medium map, terminating, cap 250, shift -1 -> pointmaze_medium_term250_nonoise_shift-1@1
     """
+    environment_type = type(env_cfg).__name__
+    if environment_type == "MontezumaConfig":
+        name = f"montezuma_oc{env_cfg.max_episode_steps}_sticky"
+        if env_cfg.reward_shift:
+            name += f"_shift{env_cfg.reward_shift:g}"
+        return name + "@1"
     kind = "cont" if env_cfg.continuing_task else "term"
-    name = f"pointmaze_{env_cfg.map_name}_{kind}{env_cfg.max_episode_steps}_nonoise"
-    if (env_cfg.map_name, env_cfg.start_cell, env_cfg.goal_cell) != ("large", (7, 1), (1, 10)):
+    family = "antmaze" if environment_type == "AntMazeConfig" else "pointmaze"
+    name = f"{family}_{env_cfg.map_name}_{kind}{env_cfg.max_episode_steps}_nonoise"
+    if family == "pointmaze" and (env_cfg.map_name, env_cfg.start_cell, env_cfg.goal_cell) != (
+            "large", (7, 1), (1, 10)):
         name += (f"_start{env_cfg.start_cell[0]}-{env_cfg.start_cell[1]}"
                  f"_goal{env_cfg.goal_cell[0]}-{env_cfg.goal_cell[1]}")
     if env_cfg.reward_shift:
         name += f"_shift{env_cfg.reward_shift:g}"
-    if env_cfg.goal_reward != "per_step":
+    if family == "pointmaze" and env_cfg.goal_reward != "per_step":
         name += f"_{env_cfg.goal_reward}"
     return name + "@1"
 
 
-def specs_of(bonus: str) -> dict:
-    """The component identities of this run, with the bonus and its update schedule filled in."""
+def specs_of(bonus: str, config, env_cfg) -> dict:
+    """Record the actual environment and its named algorithm configuration, plus the bonus."""
     # an older name for a family records the family's own name, so two runs written against
     # different vocabularies are still comparable by their manifests
     from exploration_platform.bonuses.registry import ALIASES
@@ -295,18 +363,27 @@ def specs_of(bonus: str) -> dict:
     if name not in UPDATE_SCHEDULES:
         raise ValueError(f"no update schedule recorded for bonus {bonus!r}; add it to "
                          f"UPDATE_SCHEDULES so the run's manifest names one")
-    return {**SPECS, "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
+    return {"env": env_spec(env_cfg), "agent": AGENT_SPECS[config.configuration_preset],
+            "configuration_preset": config.configuration_preset,
+            "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
 
 
 def build_config(args: argparse.Namespace):
     """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
     from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.training.sweep import sweep_config
+    from exploration_platform.agents.ppo.presets import resolve_configuration
     from exploration_platform.bonuses.registry import ALIASES
+    selected = resolve_configuration(PPOConfig(configuration_preset=args.configuration_preset),
+                                     build_env_config(args))
     rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
     no_bonus = ALIASES.get(args.bonus, args.bonus) == "none"
-    intrinsic_coefficient = 0. if no_bonus else args.intrinsic_coefficient
-    common = dict(n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
+    task_only = no_bonus and selected.no_bonus_advantage_stream == "task_only"
+    intrinsic_coefficient = 0. if task_only else args.intrinsic_coefficient
+    common = dict(configuration_preset=selected.configuration_preset,
+                  intrinsic_bootstrap_observation=selected.intrinsic_bootstrap_observation,
+                  no_bonus_advantage_stream=selected.no_bonus_advantage_stream,
+                  n_envs=args.envs_per_copy, num_steps=args.rollout_steps,
                   base_seed=args.base_seed, track_coverage=args.track_coverage,
                   copy_seed_offset=args.copy_seed_offset, flat_params=args.flat_params,
                   scan_unroll=args.scan_unroll,
@@ -322,6 +399,8 @@ def build_config(args: argparse.Namespace):
                   critic_lr_scale=args.critic_lr_scale, vf_coef=args.vf_coef,
                   bootstrap_on_truncation=not args.no_bootstrap_on_truncation,
                   normalize_agent_obs=args.normalize_agent_obs)
+    # Reject PointMaze-only study options before a run directory or its manifest is written.
+    resolve_configuration(PPOConfig(**common), build_env_config(args))
     if 0 < args.lr_anneal_iterations < args.iterations:
         raise ValueError("--lr-anneal-iterations shorter than the run would anneal the learning "
                          "rate below zero")
@@ -338,7 +417,7 @@ def build_config(args: argparse.Namespace):
         settings = tuple(tuple(float(value) for value in pair) for pair in mapping[args.bonus])
         if any(len(pair) != 2 for pair in settings) or args.copies_per_cell < 1:
             raise ValueError("explicit settings require [rate, weight] pairs and copies-per-cell")
-        if no_bonus and any(weight != 0 for _, weight in settings):
+        if task_only and any(weight != 0 for _, weight in settings):
             raise ValueError("no-bonus settings must use intrinsic weight zero")
         return PPOConfig(n_copies=len(settings) * args.copies_per_cell,
                          update_style=args.update_style, parameter_settings=settings,
@@ -346,7 +425,7 @@ def build_config(args: argparse.Namespace):
                          int_coef=intrinsic_coefficient, **common)
     # a sweep derives its copy count from the cells; a single configuration takes --copies
     if rates or weights:
-        if no_bonus and any(weight != 0 for weight in weights):
+        if task_only and any(weight != 0 for weight in weights):
             raise ValueError("no-bonus sweeps must use intrinsic weight zero")
         if args.copies_per_cell <= 0:
             raise ValueError("a sweep needs --copies-per-cell")
@@ -390,7 +469,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
         "run_id": run_dir.name,
         "description": args.description or "one training unit on the JAX exploration platform",
         "git": git_state(PLATFORM_ROOT.parent),
-        "specs": {**specs_of(args.bonus), "env": env_spec(env_cfg)},
+        "specs": specs_of(args.bonus, config, env_cfg),
         "compile_signature": {
             "copies": config.n_copies, "envs_per_copy": config.n_envs,
             "rollout_steps": config.num_steps, "update_style": config.update_style,
@@ -408,6 +487,8 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
 def main() -> None:
     """Create the run folder, train, write one record per phase, then aggregate."""
     args = parse_args()
+    if args.episode_steps == 0:
+        args.episode_steps = ENVIRONMENTS[args.env]["episode_steps"]
     run_dir = Path(args.run_dir).resolve()
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
@@ -462,6 +543,7 @@ def main() -> None:
     # because the first iteration pays for compiling the whole program
     build_start = time.time()
     trainer = Runner(config, bonus=args.bonus, env_cfg=env_cfg)
+    config = trainer.cfg
     sweep = trainer.sweep
     steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
     steps_per_copy_per_iteration = config.num_steps * config.n_envs
@@ -605,9 +687,14 @@ def main() -> None:
     # the steady-state rate excludes the first iteration, which paid for compiling the program
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)
     steady_iterations = max(args.iterations - 1, 1)
+    # environments that were respawned for a non-finite physics state (the MJX families
+    # count them; other families have no such field)
+    nan_count = getattr(state.env_state, "nan_count", None)
+    nan_episodes = int(np.asarray(nan_count).sum()) if nan_count is not None else None
     emit({
         "record": "unit_complete",
         "unit_id": args.unit_id,
+        "nan_respawned_episodes": nan_episodes,
         "iterations": args.iterations,
         "windows": window_index,
         "env_steps": args.iterations * steps_per_iteration,
@@ -620,7 +707,10 @@ def main() -> None:
         "seconds_per_iteration_steady": steady_seconds / steady_iterations,
         "attempt_finished": datetime.now().astimezone().isoformat(),
     })
-    say(f"unit {args.unit_id} complete: {args.iterations} iterations in {total_seconds:.1f}s")
+    nan_note = (f", {nan_episodes} episodes respawned for a non-finite physics state"
+                if nan_episodes else "")
+    say(f"unit {args.unit_id} complete: {args.iterations} iterations in "
+        f"{total_seconds:.1f}s{nan_note}")
     out.close()
 
     if args.no_aggregate:

@@ -8,8 +8,9 @@ not is `tests/bonuses/test_none_has_no_bonus_arithmetic.py`.
 
 The agent's intrinsic value head and its advantage stream still exist. Zero intrinsic rewards
 do not make approximate intrinsic advantages zero: the initialized value head can still predict
-nonzero values. The trainer excludes intrinsic advantages from this control's policy update,
-regardless of the configured intrinsic weight.
+nonzero values. The named current PointMaze configuration excludes intrinsic advantages from
+this control's policy update. Historical configurations retain their recorded weighted stream;
+pixel-based CleanRL Atari uses its own source-defined policy and does not inherit either choice.
 """
 import jax.numpy as jnp
 
@@ -17,7 +18,8 @@ from .. import F32
 from .protocol import BonusFunctions
 
 
-def build(cfg, env_cfg, n_copies: int, base_seed: int, copy_seed_index):
+def build(cfg, env_cfg, n_copies: int, base_seed: int, copy_seed_index,
+          obs_dim: int = 4):
     """Bind this bonus to one run. Nothing about it actually depends on the run."""
     def init():
         """No parameters and no state."""

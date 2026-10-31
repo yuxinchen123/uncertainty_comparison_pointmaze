@@ -16,20 +16,22 @@ from .config import RNDConfig
 from .networks import features, init_predictor, init_target, whiten
 
 
-def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index):
+def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index,
+          obs_dim: int = 4):
     """Bind this bonus to one run's copy count, seeds and statistics setting.
 
-    env_cfg is unused: this family reads the observation as four numbers and needs to know
+    env_cfg is unused: this family reads the observation as obs_dim numbers and needs to know
     nothing else about the environment it came from.
     """
     # the target is a constant of the program, not a parameter: it is drawn once here and never
     # appears in any gradient
-    target = init_target(rnd_cfg, n_copies, base_seed, copy_seed_index)
+    target = init_target(rnd_cfg, n_copies, base_seed, copy_seed_index, obs_dim)
 
     def init():
-        """The predictor's weights, and fresh statistics for the four observation dimensions."""
-        return ({"predictor": init_predictor(rnd_cfg, n_copies, base_seed, copy_seed_index)},
-                {"obs_rms": rms_init(n_copies, 4)})
+        """The predictor's weights, and fresh statistics for the observation dimensions."""
+        return ({"predictor": init_predictor(rnd_cfg, n_copies, base_seed, copy_seed_index,
+                                                 obs_dim)},
+                {"obs_rms": rms_init(n_copies, obs_dim)})
 
     def score(params, state, next_obs):
         """Intrinsic reward of [C, M, 4] next observations -> [C, M]."""
