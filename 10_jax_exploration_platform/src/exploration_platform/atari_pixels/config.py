@@ -50,6 +50,12 @@ class PixelPPOConfig:
     associative_gae: bool = False
     associative_reward_filter: bool = False
     moment_reduction: str = "two_pass"
+    fuse_minibatch_image_preparation: bool = False
+    recompute_network_activations: bool = False
+    fuse_network_bias_and_activation: bool = False
+    flatten_update_scan: bool = False
+    batch_quantity_keyed_random_generation: bool = False
+    rollout_frame_storage: str = "stacked_frames"
     # These preserve literal upstream behavior rather than the PointMaze corrections.
     upstream_reward_filter_axis: bool = True
     warmup_keeps_initial_observation: bool = True
@@ -78,6 +84,7 @@ class PixelPPOConfig:
                    "dense_batching": ("matmul", "einsum"),
                    "convolution_batching": ("vmap", "grouped"),
                    "rollout_observation_storage": ("float32", "uint8"),
+                   "rollout_frame_storage": ("stacked_frames", "indexed_frames"),
                    "moment_reduction": ("two_pass", "raw_moments")}
         for name, allowed in choices.items():
             if getattr(self, name) not in allowed:

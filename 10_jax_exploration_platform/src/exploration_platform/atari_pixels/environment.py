@@ -232,6 +232,12 @@ class AtariPixelEnvironment:
             state = jax.tree.map(jnp.copy, state)
             return state, state.frames.reshape(shape + self.observation_shape)
 
+    def observe(self, state):
+        """Read the current stored frame history without advancing game or random state."""
+        # Before: [C*N,4,84,84]; after: the same bytes viewed as [C,N,4,84,84].
+        copies = state.frames.shape[0] // self.num_envs
+        return state.frames.reshape((copies, self.num_envs) + self.observation_shape)
+
     def _step_single(self, state, action):
         """Advance one held action and report masks before an immediate reset."""
         # Stop native frames at game over; life-loss masks are decided after the held action.

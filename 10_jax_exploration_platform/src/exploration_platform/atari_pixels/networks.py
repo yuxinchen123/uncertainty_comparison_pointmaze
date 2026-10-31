@@ -90,7 +90,7 @@ def dense(layer, values, batching="matmul"):
     return product + layer["bias"][:, None]
 
 
-def convolution(layer, images, stride, layout="nchw", batching="vmap"):
+def convolution(layer, images, stride, layout="nchw", batching="vmap", include_bias=True):
     """Apply independent HWIO kernels to each policy's NHWC image batch."""
     # Before: [copies, rows, H, W, channels]; after: independent output images per copy.
     def convolve(image_batch, weight, groups=1):
@@ -107,7 +107,8 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap"):
 
     def one_copy(image_batch, weight, bias):
         """Convolve one policy's images at full float32 matrix precision."""
-        return convolve(image_batch, weight) + bias
+        result = convolve(image_batch, weight)
+        return result + bias if include_bias else result
     if batching == "vmap":
         return jax.vmap(one_copy)(images, layer["weight"], layer["bias"])
     # Before: C separate [B,H,W,I] batches; after: [B,H,W,C*I] with C feature groups.
@@ -118,17 +119,25 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap"):
         weights.shape[1], weights.shape[2], channels, copies * weights.shape[-1])
     result = convolve(packed_images, packed_weights, copies)
     result = result.reshape(rows, result.shape[1], result.shape[2], copies, weights.shape[-1])
-    return result.transpose(3, 0, 1, 2, 4) + layer["bias"][:, None, None, None, :]
+    result = result.transpose(3, 0, 1, 2, 4)
+    return result + layer["bias"][:, None, None, None, :] if include_bias else result
 
 
 def convolution_trunk(layers, frames, leaky=False, configuration=None):
     """Run the three CleanRL convolutions and flatten in PyTorch's NCHW order."""
     images = frames.transpose(0, 1, 3, 4, 2)
     for layer, stride in zip(layers, (4, 2, 1)):
+        fused = configuration is not None and configuration.fuse_network_bias_and_activation
         images = convolution(layer, images, stride,
             layout=configuration.network_layout if configuration is not None else "nchw",
-            batching=configuration.convolution_batching if configuration is not None else "vmap")
-        images = jax.nn.leaky_relu(images, negative_slope=0.01) if leaky else jax.nn.relu(images)
+            batching=configuration.convolution_batching if configuration is not None else "vmap",
+            include_bias=not fused)
+        if fused:
+            from .kernels import bias_activation
+            images = bias_activation(images, layer["bias"], leaky)
+        else:
+            # PyTorch LeakyReLU uses the negative slope at exactly zero as well.
+            images = jnp.where(images > 0., images, images * .01) if leaky else jax.nn.relu(images)
     # Before: [C,B,7,7,64]; after: [C,B,3136] with channel-major PyTorch ordering.
     return images.transpose(0, 1, 4, 2, 3).reshape(images.shape[0], images.shape[1], -1)
 

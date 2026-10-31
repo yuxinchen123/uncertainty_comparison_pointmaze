@@ -27,6 +27,8 @@ class Rollout(NamedTuple):
     episode_finished: object
     policy_features: object
     logits: object
+    reset_frames: object
+    frame_bank: object
 
 
 def flatten_rollout(values):
@@ -34,6 +36,13 @@ def flatten_rollout(values):
     # Before: [128,2,128,4,84,84]; after: [2,16384,4,84,84], without mixing policies.
     axes = (1, 0, 2) + tuple(range(3, values.ndim))
     return values.transpose(axes).reshape(values.shape[1], -1, *values.shape[3:])
+
+
+def gather_indexed_frames(frame_bank, lanes, frame_indices):
+    """Reconstruct only selected pixel stacks from each policy's per-environment frame bank."""
+    # Before: bank [C,N,K,H,W], lane [C,B], indices [C,B,4]; after: [C,B,4,H,W].
+    return jax.vmap(lambda bank, lane, indices: bank[lane[:, None], indices])(
+        frame_bank, lanes, frame_indices)
 
 
 def intrinsic_reward(parameters, target, frames, statistics, configuration=None):
@@ -117,9 +126,19 @@ def generalized_advantages(rewards, intrinsic_rewards, rollout, final_values,
 
 
 def minibatch_loss(parameters, target, batch, predictor_mask, config,
-                   intrinsic_coefficients):
+                   intrinsic_coefficients, observation_statistics=None):
     """Return the sum of per-policy losses and independent loss diagnostics."""
-    logits, value_ext, value_int = policy_forward(parameters["agent"], batch["observations"], config)
+    def evaluate_policy(parameters, observations):
+        """Keep rematerialization local to the trainable policy's activation storage."""
+        return policy_forward(parameters, observations, config)
+
+    def evaluate_predictor(parameters, frames):
+        """Keep rematerialization local to the trainable predictor's activation storage."""
+        return rnd_forward(parameters, frames, config)
+
+    policy = jax.checkpoint(evaluate_policy) if config.recompute_network_activations else evaluate_policy
+    predictor = jax.checkpoint(evaluate_predictor) if config.recompute_network_activations else evaluate_predictor
+    logits, value_ext, value_int = policy(parameters["agent"], batch["observations"])
     log_probability, entropy = categorical_statistics(logits, batch["actions"])
     ratio = jnp.exp(log_probability - batch["log_probabilities"])
     advantages = batch["advantage_ext"] * config.extrinsic_coefficient
@@ -137,11 +156,12 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
     value_loss_ext = 0.5 * jnp.maximum((value_ext - batch["return_ext"]) ** 2,
                                      (clipped_value - batch["return_ext"]) ** 2).mean(axis=1)
     value_loss_int = 0.5 * ((value_int - batch["return_int"]) ** 2).mean(axis=1)
-    normalized_frames = batch["normalized_frames"]
+    normalized_frames = (normalize_frames(batch["raw_frames"], observation_statistics)
+                         if config.fuse_minibatch_image_preparation else batch["normalized_frames"])
     target_features = (batch["target_features"] if config.cache_target_features
                        else rnd_forward(target, normalized_frames, config))
     target_features = jax.lax.stop_gradient(target_features)
-    predictor_features = rnd_forward(parameters["predictor"], normalized_frames, config)
+    predictor_features = predictor(parameters["predictor"], normalized_frames)
     # Upstream trains with MEAN feature error, although the rollout bonus uses SUM/2.
     errors = ((predictor_features - target_features) ** 2).mean(axis=-1)
     predictor_loss = (errors * predictor_mask).sum(axis=1) / jnp.maximum(predictor_mask.sum(axis=1), 1.0)
@@ -240,17 +260,27 @@ class PixelPPORND:
     def collect(self, state):
         """Collect an on-policy rollout with frozen parameters and pre-update RND statistics."""
         config = self.config
+        action_keys = (jax.vmap(lambda step: quantity_keys(state.copy_seeds, "rollout/actions",
+            state.iteration, step))(jnp.arange(config.num_steps))
+            if config.batch_quantity_keyed_random_generation else None)
+        indexed = config.rollout_frame_storage == "indexed_frames"
+        # Initial policy pixels intentionally differ from the true environment after upstream warmup.
+        frame_bank = (jnp.concatenate((state.observations, self.environment.observe(state.environment)),
+            axis=2) if indexed else None)
+        initial_indices = jnp.broadcast_to(jnp.arange(4, 8, dtype=jnp.int32),
+                                           state.observations.shape[:2] + (4,))
 
         def step(carry, step_index):
             """Record one transition and preserve its next pixels for the RND bonus."""
-            environment_state, observations, done_before = carry
+            environment_state, observations, done_before, frame_indices = carry
             hidden = policy_features(state.parameters["agent"], observations, config)
             logits = actor_logits(state.parameters["agent"], hidden, config)
             if config.hoist_critic:
                 values_ext = values_int = jnp.zeros(observations.shape[:2], jnp.float32)
             else:
                 values_ext, values_int = critic_values(state.parameters["agent"], hidden, config)
-            keys = quantity_keys(state.copy_seeds, "rollout/actions", state.iteration, step_index)
+            keys = (action_keys[step_index] if config.batch_quantity_keyed_random_generation
+                    else quantity_keys(state.copy_seeds, "rollout/actions", state.iteration, step_index))
             actions = jax.vmap(lambda key, value: jax.random.categorical(key, value).astype(jnp.int32))(keys, logits)
             log_probability = (jnp.zeros(actions.shape, jnp.float32)
                 if config.hoist_rollout_log_probabilities else categorical_statistics(logits, actions)[0])
@@ -261,18 +291,38 @@ class PixelPPORND:
             frames = information["final_observation"][..., 3:4, :, :]
             bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
                 state.parameters, state.target, frames, state.observation_statistics, config))
-            stored_observations = observations.astype(jnp.float32) if config.rollout_observation_storage == "float32" else observations
+            if indexed:
+                stored_observations = jnp.where(step_index == 0, frame_indices - 4, frame_indices)
+                normal_index = jnp.full(frame_indices.shape[:-1] + (1,), 8 + 2 * step_index, jnp.int32)
+                reset_index = normal_index + 1
+                after_transition = jnp.concatenate((frame_indices[..., 1:], normal_index), axis=-1)
+                after_life_reset = jnp.concatenate((after_transition[..., 1:], reset_index), axis=-1)
+                frame_indices = jnp.where(information["episode_done"][..., None], reset_index,
+                    jnp.where(done[..., None], after_life_reset, after_transition))
+            else:
+                stored_observations = (observations.astype(jnp.float32)
+                    if config.rollout_observation_storage == "float32" else observations)
             recorded = Rollout(stored_observations, frames, actions, log_probability, reward, bonus,
                                done_before, values_ext, values_int, information["episode_return"],
                                information["episode_done"], hidden if config.hoist_critic else
                                jnp.zeros(hidden.shape[:2] + (0,), jnp.float32),
                                logits if config.hoist_rollout_log_probabilities else
-                               jnp.zeros(logits.shape[:2] + (0,), jnp.float32))
-            return (next_environment, next_observations, done), recorded
+                               jnp.zeros(logits.shape[:2] + (0,), jnp.float32),
+                               next_observations[..., 3:4, :, :] if indexed else
+                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8),
+                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8))
+            return (next_environment, next_observations, done, frame_indices), recorded
 
-        (environment_state, observations, done), rollout = jax.lax.scan(
-            step, (state.environment, state.observations, state.done), jnp.arange(config.num_steps),
+        (environment_state, observations, done, _), rollout = jax.lax.scan(
+            step, (state.environment, state.observations, state.done, initial_indices), jnp.arange(config.num_steps),
             unroll=config.rollout_unroll)
+        if indexed:
+            # Store two new frames per transition: the terminal image and any reset image.
+            # Before: [T,C,N,2,H,W]; after: bank [C,N,8+2*T,H,W], shared across minibatches.
+            added_frames = jnp.concatenate((rollout.next_frames, rollout.reset_frames), axis=3)
+            added_frames = added_frames.transpose(1, 2, 0, 3, 4, 5).reshape(
+                config.n_copies, config.n_envs, 2 * config.num_steps, 84, 84)
+            rollout = rollout._replace(frame_bank=jnp.concatenate((frame_bank, added_frames), axis=2))
         if config.hoist_rollout_bonus:
             bonuses = intrinsic_reward(state.parameters, state.target,
                                        flatten_rollout(rollout.next_frames), state.observation_statistics, config)
@@ -301,20 +351,36 @@ class PixelPPORND:
         _, final_ext, final_int = policy_forward(state.parameters["agent"], state.observations, config)
         advantage_ext, advantage_int = generalized_advantages(
             rollout.rewards, normalized_bonus, rollout, (final_ext, final_int), state.done, config)
+        indexed = rollout.observations.ndim == 4
         observations = flatten_rollout(rollout.observations)
-        frames = observations[..., 3:4, :, :]
+        if indexed:
+            lanes = jnp.broadcast_to(jnp.tile(jnp.arange(config.n_envs, dtype=jnp.int32),
+                                              config.num_steps), (config.n_copies, config.batch_size))
+            frames = gather_indexed_frames(rollout.frame_bank, lanes, observations[..., -1:])
+        else:
+            frames = observations[..., 3:4, :, :]
         observation_statistics = update_observation_statistics(state.observation_statistics, frames, config.moment_reduction)
-        batch = {"observations": observations, "actions": flatten_rollout(rollout.actions),
+        batch = {"actions": flatten_rollout(rollout.actions),
                  "log_probabilities": flatten_rollout(rollout.log_probabilities),
                  "values_ext": flatten_rollout(rollout.values_ext),
                  "advantage_ext": flatten_rollout(advantage_ext),
                  "advantage_int": flatten_rollout(advantage_int),
                  "return_ext": flatten_rollout(advantage_ext + rollout.values_ext),
-                 "return_int": flatten_rollout(advantage_int + rollout.values_int),
-                 "normalized_frames": normalize_frames(frames, observation_statistics)}
+                 "return_int": flatten_rollout(advantage_int + rollout.values_int)}
+        if indexed:
+            batch.update(frame_bank=rollout.frame_bank, frame_lanes=lanes, frame_indices=observations)
+        else:
+            batch["observations"] = observations
+        if config.fuse_minibatch_image_preparation:
+            # Avoid a full float32 [C,16384,1,84,84] normalized-image buffer between phases.
+            batch["raw_frames"] = frames.astype(jnp.uint8)
+        else:
+            batch["normalized_frames"] = normalize_frames(frames, observation_statistics)
         if config.cache_target_features:
             # Training targets use CURRENT frames and UPDATED statistics, unlike rollout targets.
-            batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, batch["normalized_frames"], config))
+            normalized = (normalize_frames(frames, observation_statistics)
+                          if config.fuse_minibatch_image_preparation else batch["normalized_frames"])
+            batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, normalized, config))
         return state._replace(observation_statistics=observation_statistics,
                               reward_statistics=reward_statistics, reward_filter=reward_filter), batch
 
@@ -329,57 +395,81 @@ class PixelPPORND:
         starting_optimizer = (AdamState(layout.pack(state.optimizer.first),
             layout.pack(state.optimizer.second), state.optimizer.step) if layout is not None else state.optimizer)
 
-        def epoch(carry, epoch_index):
-            """Give every policy a separate permutation before its four minibatches."""
+        def predictor_masks(epoch_index, minibatch_index):
+            """Use exactly the same named mask keys in batched and per-step generation."""
+            keys = quantity_keys(state.copy_seeds, "update/predictor-mask", state.iteration,
+                                 epoch_index, minibatch_index)
+            return jax.vmap(lambda key: (jax.random.uniform(key, (config.minibatch_size,),
+                dtype=jnp.float32) < config.predictor_update_proportion).astype(jnp.float32))(keys)
+
+        all_masks = (jax.vmap(lambda epoch: jax.vmap(lambda minibatch: predictor_masks(epoch, minibatch))(
+            jnp.arange(config.num_minibatches)))(jnp.arange(config.update_epochs))
+            if config.batch_quantity_keyed_random_generation else None)
+        frame_bank = batch.get("frame_bank")
+        row_batch = {name: value for name, value in batch.items() if name != "frame_bank"}
+
+        def epoch_indices(epoch_index):
+            """Build one independently shuffled permutation per policy and epoch."""
             keys = quantity_keys(state.copy_seeds, "update/permutation", state.iteration, epoch_index)
             permutations = jax.vmap(lambda key: jax.random.permutation(key, config.batch_size))(keys)
-            # Before: [C,B]; after: [minibatches,C,minibatch_size], retaining each policy's rows.
-            indices = permutations.reshape(config.n_copies, config.num_minibatches,
-                                             config.minibatch_size).transpose(1, 0, 2)
+            return permutations.reshape(config.n_copies, config.num_minibatches,
+                                         config.minibatch_size).transpose(1, 0, 2)
 
-            def gather_epoch(value):
-                """Gather and reshape all minibatches once before the optimizer scan."""
-                selected = jax.vmap(lambda rows, index: rows[index])(value, permutations)
-                shaped = selected.reshape(config.n_copies, config.num_minibatches,
-                                           config.minibatch_size, *value.shape[2:])
-                # Before: [C,M,B,...]; after: [M,C,B,...], ready for one scan over M.
-                return shaped.transpose((1, 0, 2) + tuple(range(3, shaped.ndim)))
+        def gather_minibatch(indices):
+            """Gather one equal-sized minibatch from every independent policy."""
+            selected = jax.tree.map(lambda value: jax.vmap(lambda rows, index: rows[index])(value, indices), row_batch)
+            if frame_bank is not None:
+                selected["observations"] = gather_indexed_frames(frame_bank, selected["frame_lanes"],
+                                                                  selected["frame_indices"])
+            return selected
 
-            scan_values = jax.tree.map(gather_epoch, batch) if config.pre_gather_minibatches else indices
+        def minibatch(carry, values):
+            """Differentiate and update one minibatch, retaining keyed epoch identities."""
+            parameters, optimizer = carry
+            epoch_index, minibatch_index, rows_or_indices = values
+            selected = rows_or_indices if config.pre_gather_minibatches else gather_minibatch(rows_or_indices)
+            masks = (all_masks[epoch_index, minibatch_index] if all_masks is not None
+                     else predictor_masks(epoch_index, minibatch_index))
 
-            def minibatch(carry, values):
-                """Gather one fixed-size minibatch, differentiate its losses and apply Adam."""
-                parameters, optimizer = carry
-                minibatch_index, rows_or_indices = values
-                selected = (rows_or_indices if config.pre_gather_minibatches else jax.tree.map(
-                    lambda value: jax.vmap(lambda rows, index: rows[index])(value, rows_or_indices), batch))
-                keys = quantity_keys(state.copy_seeds, "update/predictor-mask", state.iteration,
-                                     epoch_index, minibatch_index)
-                masks = jax.vmap(lambda key: (jax.random.uniform(key, (config.minibatch_size,),
-                    dtype=jnp.float32) < config.predictor_update_proportion).astype(jnp.float32))(keys)
+            def loss(parameters):
+                """Differentiate trainable networks while keeping RND targets and statistics fixed."""
+                named_parameters = layout.unpack(parameters) if layout is not None else parameters
+                return minibatch_loss(named_parameters, state.target, selected, masks, config,
+                                      self.intrinsic_coefficients, state.observation_statistics)
 
-                def loss(parameters):
-                    """Differentiate only the trainable networks, treating target features as constants."""
-                    named_parameters = layout.unpack(parameters) if layout is not None else parameters
-                    return minibatch_loss(named_parameters, state.target, selected, masks, config,
-                                          self.intrinsic_coefficients)
+            (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
+            parameters, optimizer, gradient_norm = adam_step(
+                parameters, gradients, optimizer, learning_rates,
+                config.max_gradient_norm, config.adam_epsilon,
+                fuse_optimizer=config.fuse_optimizer and layout is None)
+            return (parameters, optimizer), {**metrics, "gradient_norm": gradient_norm}
 
-                (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
-                parameters, optimizer, gradient_norm = adam_step(
-                    parameters, gradients, optimizer, learning_rates,
-                    config.max_gradient_norm, config.adam_epsilon,
-                    fuse_optimizer=config.fuse_optimizer and layout is None)
-                return (parameters, optimizer), {**metrics, "gradient_norm": gradient_norm}
-
-            return jax.lax.scan(minibatch, carry, (jnp.arange(config.num_minibatches), scan_values),
+        def epoch(carry, epoch_index):
+            """Give every policy a separate permutation before its four minibatches."""
+            indices = epoch_indices(epoch_index)
+            scan_values = jax.vmap(gather_minibatch)(indices) if config.pre_gather_minibatches else indices
+            return jax.lax.scan(minibatch, carry, (jnp.full((config.num_minibatches,), epoch_index),
+                                 jnp.arange(config.num_minibatches), scan_values),
                                  unroll=config.update_unroll)
 
-        (parameters, optimizer), diagnostics = jax.lax.scan(
-            epoch, (starting_parameters, starting_optimizer), jnp.arange(config.update_epochs))
+        if config.flatten_update_scan:
+            # Before: [epoch,minibatch,C,B]; after: one [epoch*minibatch,C,B] update scan.
+            indices = jax.vmap(epoch_indices)(jnp.arange(config.update_epochs)).reshape(
+                config.update_epochs * config.num_minibatches, config.n_copies, config.minibatch_size)
+            scan_values = jax.vmap(gather_minibatch)(indices) if config.pre_gather_minibatches else indices
+            epochs = jnp.repeat(jnp.arange(config.update_epochs), config.num_minibatches)
+            minibatches = jnp.tile(jnp.arange(config.num_minibatches), config.update_epochs)
+            (parameters, optimizer), diagnostics = jax.lax.scan(minibatch,
+                (starting_parameters, starting_optimizer), (epochs, minibatches, scan_values),
+                unroll=config.update_unroll)
+            metrics = jax.tree.map(lambda value: value.mean(axis=0), diagnostics)
+        else:
+            (parameters, optimizer), diagnostics = jax.lax.scan(
+                epoch, (starting_parameters, starting_optimizer), jnp.arange(config.update_epochs))
+            metrics = jax.tree.map(lambda value: value.mean(axis=(0, 1)), diagnostics)
         if layout is not None:
             parameters = layout.unpack(parameters)
             optimizer = AdamState(layout.unpack(optimizer.first), layout.unpack(optimizer.second), optimizer.step)
-        metrics = jax.tree.map(lambda value: value.mean(axis=(0, 1)), diagnostics)
         return state._replace(parameters=parameters, optimizer=optimizer), {**metrics, "learning_rate": learning_rates}
 
     def iteration(self, state):

@@ -82,3 +82,26 @@ def test_float64_raw_moments_match_two_pass_on_pixel_values():
         actual = update_observation_statistics(statistics, value, "raw_moments")
         for before, after in zip(expected, actual):
             np.testing.assert_allclose(after, before, rtol=1e-11, atol=1e-11)
+
+
+@pytest.mark.parametrize("leaky", [False, True])
+def test_fused_bias_activation_and_backward(leaky):
+    """The fused kernel and its bias derivative agree at positive, negative and zero inputs."""
+    from exploration_platform.atari_pixels.kernels import bias_activation
+
+    values = (jnp.arange(2 * 3 * 4 * 2, dtype=jnp.float32).reshape(2, 3, 4, 2) % 9 - 4) / 4
+    biases = jnp.asarray([[0., .25], [-.25, 0.]], jnp.float32)
+
+    def reference(values, biases):
+        """Use PyTorch's negative-slope convention at exactly zero for LeakyReLU."""
+        summed = values + biases[:, None, None, :]
+        return jnp.where(summed > 0., summed, summed * (.01 if leaky else 0.))
+
+    expected = reference(values, biases)
+    actual = jax.jit(lambda values, biases: bias_activation(values, biases, leaky))(values, biases)
+    np.testing.assert_array_equal(actual, expected)
+    expected_gradients = jax.grad(lambda values, biases: reference(values, biases).sum(), argnums=(0, 1))(values, biases)
+    actual_gradients = jax.jit(jax.grad(lambda values, biases: bias_activation(values, biases, leaky).sum(),
+                                       argnums=(0, 1)))(values, biases)
+    for before, after in zip(expected_gradients, actual_gradients):
+        np.testing.assert_allclose(after, before, rtol=1e-6, atol=1e-6)

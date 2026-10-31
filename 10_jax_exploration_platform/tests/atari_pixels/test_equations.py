@@ -207,7 +207,7 @@ def test_statistics_and_original_reward_filter():
     fake_state = SimpleNamespace(reward_statistics=initialize_statistics(2, ()),
                                  reward_filter=jnp.zeros((2, 3), jnp.float32))
     normalized, reward_statistics, filtered = normalize_intrinsic_rewards(rewards, fake_state, configuration)
-    expected_filtered = np.asarray(rewards).transpose(2, 1, 0)
+    expected_filtered = np.asarray(rewards).transpose(2, 1, 0).copy()
     expected_filtered[1] += .99 * expected_filtered[0]
     np.testing.assert_allclose(filtered, expected_filtered[-1], rtol=1e-6)
     np.testing.assert_allclose(reward_statistics.count, [2.0001, 2.0001])
