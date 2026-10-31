@@ -21,12 +21,12 @@ def bias_activation(values, biases, leaky):
         """Compute a block of independent float32 additions and activation values."""
         indices = pl.program_id(0) * block_size + jnp.arange(block_size, dtype=jnp.int32)
         valid = indices < total
-        pixels = pl.load(input_ref, (indices,), mask=valid, other=0.)
+        pixels = pltriton.load(input_ref.at[indices], mask=valid, other=0.)
         bias_indices = (indices // per_policy) * channels + indices % channels
-        bias = pl.load(bias_ref, (bias_indices,), mask=valid, other=0.)
+        bias = pltriton.load(bias_ref.at[bias_indices], mask=valid, other=0.)
         summed = pixels + bias
         activated = jnp.where(summed > 0., summed, summed * (0.01 if leaky else 0.))
-        pl.store(output_ref, (indices,), activated, mask=valid)
+        pltriton.store(output_ref.at[indices], activated, mask=valid)
 
     result = pl.pallas_call(kernel, out_shape=jax.ShapeDtypeStruct((total,), jnp.float32),
         grid=((total + block_size - 1) // block_size,),

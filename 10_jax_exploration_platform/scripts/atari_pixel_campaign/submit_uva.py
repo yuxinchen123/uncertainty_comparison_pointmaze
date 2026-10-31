@@ -33,7 +33,7 @@ def source_snapshot(repository, run_directory):
     return destination / "10_jax_exploration_platform", commit
 
 
-def submit(repository, run_directory, kind):
+def submit(repository, run_directory, kind, test_filter=None):
     """Write a complete batch script and immediately record the exact returned job ID."""
     source, commit = source_snapshot(repository, run_directory)
     slurm = run_directory / "slurm"
@@ -75,7 +75,8 @@ def submit(repository, run_directory, kind):
             body = ["unset XDG_DATA_HOME"] + [
                 f"{interpreter} {source_quote}/tests/{test}" for test in tests]
         elif kind == "pixel-gates":
-            body = [f"{pixel_python} -m pytest -q {source_quote}/tests/atari_pixels "
+            selection = " -k " + shlex.quote(test_filter) if test_filter else ""
+            body = [f"{pixel_python} -m pytest -q{selection} {source_quote}/tests/atari_pixels "
                     f"{source_quote}/tests/test_atari_pixel_environment.py"]
         elif kind == "smoke":
             body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_unit.py "
@@ -107,5 +108,6 @@ if __name__ == "__main__":
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--kind", required=True,
                         choices=["monitor", "merge-gates", "pixel-gates", "smoke"])
+    parser.add_argument("--test-filter")
     args = parser.parse_args()
-    submit(args.repo.resolve(), args.run_dir.resolve(), args.kind)
+    submit(args.repo.resolve(), args.run_dir.resolve(), args.kind, args.test_filter)
