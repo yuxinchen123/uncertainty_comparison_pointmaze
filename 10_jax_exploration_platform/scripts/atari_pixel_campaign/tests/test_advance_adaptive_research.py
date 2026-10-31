@@ -40,7 +40,7 @@ class AdaptiveRevisionTests(unittest.TestCase):
         self.core = {"source_root": str(self.root), "source_commit": self.commit, "files": {}}
         self.counter = 100
         self.helper_bytes = {name: ("synthetic committed " + name).encode() for name in (
-            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")}
+            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")}
         self.helpers = {"source_root": str(self.root), "source_commit": self.commit,
                         "files": {advance.SCRIPT_PREFIX + name: advance.sha256(contents)
                                   for name, contents in self.helper_bytes.items()}}

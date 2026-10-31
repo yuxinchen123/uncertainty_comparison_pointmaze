@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import launch_queue
 
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
-TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "controller.py", "ideas.py",
+TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "controller.py", "ideas.py",
                  "queue_worker.py", "diagnose_gpu_execution.py")
 ACTIVE = {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED", "RESIZING", "REQUEUED", "REQUEUE_FED", "SIGNALING", "STAGE_OUT"}
 TERMINAL = {"COMPLETED", "CANCELLED", "FAILED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}

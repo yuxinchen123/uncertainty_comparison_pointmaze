@@ -32,7 +32,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         relatives = ["10_jax_exploration_platform/" + name for name in (
             "src/exploration_platform/atari_pixels/config.py", "src/exploration_platform/atari_pixels/environment.py")]
         relatives += [deployment.PREFIX + name for name in ("paired_benchmark.py", "ideas.py", "worker_environment.sh",
-            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")]
+            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")]
         for relative in relatives:
             target = self.source / relative
             target.parent.mkdir(parents=True, exist_ok=True)

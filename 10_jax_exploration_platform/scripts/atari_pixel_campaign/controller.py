@@ -12,6 +12,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 import fcntl
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -391,6 +392,19 @@ def scientific_case_complete(result):
         and result.get("correctness_attempted") and result.get("decision") == "rejected"))
 
 
+def validate_attempt_completion(run_dir, case, lease, result_path):
+    """Require explicit execution proof for the approved fourth attempt while preserving ordinary results."""
+    if lease["attempt"] > case["maximum_attempts"] or "infrastructure_retry_approval" in lease:
+        if (Path(result_path).parent / "failure.json").exists():
+            raise ValueError("the retry retains an application or execution-proof failure")
+        specification = importlib.util.spec_from_file_location("queue_infrastructure_retry_validation",
+            Path(__file__).resolve().with_name("infrastructure_retry.py"))
+        module = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(module)
+        return module.validate_execution(result_path, case, lease)
+    return None
+
+
 def recover_local_claim(run_dir, identifier, expected_token):
     """Recover a verified dead local attempt; never infer death from elapsed lease age."""
     queue = Path(run_dir) / "queue"
@@ -408,10 +422,20 @@ def recover_local_claim(run_dir, identifier, expected_token):
     unit, attempt = attempt_paths(run_dir, identifier, lease["attempt"])
     result_path = attempt / "result.json"
     result = read_json(result_path) if result_path.exists() else None
-    if scientific_case_complete(result):
+    complete = scientific_case_complete(result)
+    if complete:
+        try:
+            validate_attempt_completion(run_dir, case, lease, result_path)
+        except (ValueError, KeyError, FileNotFoundError) as error:
+            complete = False
+            if not (attempt / "failure.json").exists():
+                atomic_json(attempt / "failure.json", {"failure_stage": "infrastructure_retry_proof",
+                    "retryable": False, "case_completed": False, "error": str(error),
+                    "time": utc_now(), "attempt": lease["attempt"]})
+    if complete:
         atomic_json(unit / "result.json", result)
-        path.rename(queue / "completed" / path.name)
         lease.update(state="completed", recovered_at=utc_now())
+        destination = "completed"
         atomic_json(unit / "progress.json", {"state": "completed", "attempt": lease["attempt"],
                                             "decision": result["decision"], "time": utc_now()})
     else:
@@ -423,11 +447,21 @@ def recover_local_claim(run_dir, identifier, expected_token):
         if not failure_path.exists():
             atomic_json(failure_path, failure)
         atomic_json(unit / "failure.json", failure)
-        path.rename(queue / "failed" / path.name)
         lease.update(state="failed", recovered_at=utc_now())
+        destination = "failed"
         atomic_json(unit / "progress.json", {"state": "failed", "attempt": lease["attempt"],
                                             "failure_stage": failure["failure_stage"], "time": utc_now()})
+    # Publish both terminal leases before exposing the completed/failed queue state.
+    # If recovery stops before the rename, the remaining running entry can be recovered again.
+    atomic_json(attempt / "lease.json", lease)
     atomic_json(lease_path, lease)
+    for directory in (attempt, lease_path.parent):
+        descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    path.rename(queue / destination / path.name)
     return case
 
 
@@ -444,6 +478,7 @@ def index_completed(run_dir, registry):
         _, attempt = attempt_paths(run_dir, case["unit_id"], lease["attempt"])
         result_path = attempt / "result.json"
         result = read_json(result_path)
+        validate_attempt_completion(run_dir, case, lease, result_path)
         if not result.get("case_completed") or result.get("specification_digest") != case["specification_digest"]:
             raise ValueError("a completed queue case lacks its matching complete result")
         expected = {"idea": case["hypothesis"], "hardware_class": case["hardware_class"],

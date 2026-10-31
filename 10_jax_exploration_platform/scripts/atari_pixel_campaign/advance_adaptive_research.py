@@ -374,7 +374,7 @@ def producer_record(path, mode, run_dir, root, commit, runtime, context, core, e
     if (plan["paired_source"]["source_root"], plan["paired_source"]["source_commit"]) != (str(root), commit):
         raise ValueError("measurement Executor source is not the new detached source")
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
-        "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")])
+        "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")])
     for relative, expected_hash in plan["helpers"]["files"].items():
         if sha256(evidence.file(path.parent / "code" / Path(relative).name)) != expected_hash:
             raise ValueError("the executed staged helper differs from its committed receipt")
@@ -441,7 +441,7 @@ def profile_record(path, run_dir, root, commit, runtime, context, baseline, core
         if validation.configuration_without_copies(checked_configuration(record["configuration"], root)) != baseline:
             raise ValueError("profile did not measure the shared accepted baseline")
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
-        "profile_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")])
+        "profile_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")])
     committed_files(plan["paired_source"], evidence,
                     [SCRIPT_PREFIX + name for name in ("paired_benchmark.py", "ideas.py")], require_worktree=True)
     if (plan["paired_source"]["source_root"], plan["paired_source"]["source_commit"]) != (str(root), commit):

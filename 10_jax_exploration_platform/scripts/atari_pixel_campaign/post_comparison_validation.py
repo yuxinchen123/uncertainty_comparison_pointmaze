@@ -11,6 +11,7 @@ import argparse
 import ast
 import csv
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -42,6 +43,15 @@ FINAL_FLAGS = ("final_combination_correctness_passed", "final_confirmation_passe
 def canonical_digest(value):
     """Identify the complete normalized document rather than a convenient run name."""
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+
+
+def retry_validation_module():
+    """Load the pinned adjacent retry dependency even when this validator was imported under an alias."""
+    path = Path(__file__).resolve().with_name("infrastructure_retry.py")
+    specification = importlib.util.spec_from_file_location("pixel_infrastructure_retry_validation", path)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
 
 
 class Evidence:
@@ -526,7 +536,13 @@ def validate_cohort_case(path, name, context, copies, source, evidence):
             or configuration(record["candidate"]) != configuration(candidate)
             or canonical_digest(reference) == canonical_digest(candidate) or record.get("implementation_distinct") is not True):
         raise ValueError("a cohort result changed its supplied configuration or has no distinct implementation")
-    runtime = cohort_runtime_evidence(case, record, hardware, worker, evidence)
+    # An explicit attempt beyond the unchanged original limit requires the separate actual-runtime receipt.
+    # Ordinary historical cases retain their original source-protocol reconstruction.
+    if (record.get("attempt", 1) > case.get("maximum_attempts", 3)
+            or "infrastructure_retry_approval" in hardware):
+        runtime = retry_validation_module().validate_execution(path, case, evidence=evidence)
+    else:
+        runtime = cohort_runtime_evidence(case, record, hardware, worker, evidence)
     if record.get("failure_stage") == "correctness":
         if (record.get("decision") != "rejected" or record.get("correctness_attempted") is not True
                 or record.get("correctness_passed") is not False or not record.get("error")):

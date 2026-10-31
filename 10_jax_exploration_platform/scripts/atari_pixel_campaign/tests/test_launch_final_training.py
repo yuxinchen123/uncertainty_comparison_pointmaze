@@ -61,7 +61,7 @@ class FinalLauncherTests(unittest.TestCase):
         self.asset_record = {"root": str(self.asset_root), "manifest": str(manifest), "sha256": final.file_digest(manifest)}
         self.asset_input = self.write("asset_metadata/asset_record.json", self.asset_record)
         self.producer_files = {name: b"# synthetic committed asset producer\n" for name in (
-            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")}
+            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")}
         self.producer_helpers = {"source_root": "/synthetic/producer", "source_commit": "f" * 40,
             "files": {final.PREFIX + name: hashlib.sha256(contents).hexdigest()
                       for name, contents in self.producer_files.items()}}

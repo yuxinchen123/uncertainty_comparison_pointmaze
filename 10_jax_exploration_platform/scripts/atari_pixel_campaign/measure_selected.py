@@ -33,7 +33,7 @@ import diagnose_gpu_execution as diagnostic
 import post_comparison_validation as validation
 import train_optimized as training
 
-HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "train_optimized.py")
+HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")
 CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 MODES = ("correctness", "confirmation", "packing-point")
 
