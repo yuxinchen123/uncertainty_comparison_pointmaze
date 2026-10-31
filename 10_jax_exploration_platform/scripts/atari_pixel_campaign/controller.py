@@ -498,13 +498,46 @@ def recover_unstarted_claims(run_dir):
     return repaired
 
 
-def final_requirements_met(registry, flags):
-    """Expose readiness only after fifty investigated ideas and separate final verification records."""
+def final_validation_allocation(run_dir):
+    """Keep real-data timing revalidation inside this campaign's owned Slurm compute allocation."""
+    identifier = os.environ.get("SLURM_JOB_ID", "")
+    host = socket.gethostname().split(".")[0].lower()
+    # Numeric Slurm identifiers can repeat across clusters; this controller runs on UVA.
+    ledger = Path(run_dir) / "slurm" / "submitted_jobids_uva.txt"
+    owned = set(ledger.read_text().splitlines()) if ledger.exists() else set()
+    cgroup = Path("/proc/self/cgroup").read_text()
+    if (not identifier.isdecimal() or identifier not in owned or host.startswith(("portal", "login"))
+            or not re.search(r"(?:^|/)job_" + re.escape(identifier) + r"(?:/|$)", cgroup, re.MULTILINE)):
+        raise ValueError("final raw-evidence revalidation requires this campaign's owned Slurm compute allocation")
+
+
+def final_requirements_met(registry, flags, *, run_dir=None, source_commit=None):
+    """Rebuild the complete final receipt from original evidence rather than trusting five flags."""
     if len(investigated_hypotheses(registry)) != 50:
         return False
-    required = ("final_combination_correctness_passed", "final_confirmation_passed",
-                "h100_packing_complete", "a4500_packing_complete", "eight_gpu_scaling_complete")
-    return all(flags.get(name) is True for name in required)
+    if (not isinstance(flags, dict) or flags.get("schema_version") != 1
+            or flags.get("kind") != "final_verification" or not isinstance(flags.get("specification"), dict)
+            or flags.get("specification_digest") != content_digest(flags["specification"])):
+        raise ValueError("final_verification.json must be a complete post-comparison validation receipt")
+    if run_dir is None or source_commit is None:
+        raise ValueError("final readiness requires the current campaign directory and admitted source")
+    run_dir = Path(run_dir).resolve(strict=True)
+    if flags.get("source_commit") != source_commit or flags["specification"].get("source_commit") != source_commit:
+        raise ValueError("final verification source differs from the currently admitted source")
+    registry_path = run_dir / "study_registry.json"
+    if Path(flags["specification"].get("study_registry", "")).resolve() != registry_path:
+        raise ValueError("final verification must validate this campaign's current study_registry.json")
+    if read_json(registry_path) != registry:
+        raise ValueError("the current registry differs from the registry being considered for final readiness")
+
+    # Recompute all fifty matched-count checks, longer confirmation, packing and synchronized scaling only on compute.
+    final_validation_allocation(run_dir)
+    from post_comparison_validation import validate_final_verification
+    rebuilt = validate_final_verification(flags["specification"],
+                                          specification_path=flags.get("specification_path"))
+    if rebuilt != flags:
+        raise ValueError("final verification receipt is stale or differs from its revalidated raw evidence")
+    return True
 
 
 def tick(run_dir):
@@ -575,10 +608,18 @@ def tick(run_dir):
             registry["reference_freeze_required_before_measurement"] = False
         counts = {name: len(list((run_dir / "queue" / name).glob("*.json"))) for name in QUEUE_STATES}
         flags_path = run_dir / "final_verification.json"
-        flags = read_json(flags_path) if flags_path.exists() else {}
-        if (ready is not None and flags.get("source_commit") == ready["source_commit"]
-                and final_requirements_met(registry, flags)
+        final_ready, final_error = False, None
+        if (ready is not None and len(completed) == 50
                 and not any(counts[name] for name in ("pending", "running", "failed"))):
+            try:
+                if not flags_path.exists():
+                    raise ValueError("final_verification.json has not been produced from complete raw evidence")
+                final_ready = final_requirements_met(registry, read_json(flags_path),
+                                                     run_dir=run_dir, source_commit=ready["source_commit"])
+            except (ArithmeticError, AttributeError, IndexError, KeyError, TypeError, ValueError,
+                    OSError, subprocess.SubprocessError) as error:
+                final_error = f"{type(error).__name__}: {error}"
+        if final_ready:
             phase = "ready_for_final"
         elif initial_complete:
             active_adaptive = any(read_json(path)["hypothesis_position"] >= 31
@@ -605,7 +646,10 @@ def tick(run_dir):
                  "remaining_work": remaining_work,
                  "pending_implementations": unavailable, "time": utc_now(),
                  "authorization_error": authorization_error,
+                 "final_verification_error": final_error,
                  "next_action": ("parent chooses five hypotheses from profiles" if phase == "adaptive_research_pending"
+                                 else "revalidate final evidence: " + final_error
+                                 if phase == "final_verification_pending" and final_error
                                  else "verify all final requirements before launching training" if phase == "ready_for_final"
                                  else phase)}
         atomic_json(registry_path, registry)
