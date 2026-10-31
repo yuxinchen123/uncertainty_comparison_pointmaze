@@ -38,6 +38,18 @@ class PixelPPOConfig:
     cache_target_features: bool = False
     hoist_rollout_bonus: bool = False
     donate_state: bool = False
+    network_layout: str = "nchw"
+    dense_batching: str = "matmul"
+    convolution_batching: str = "vmap"
+    flat_parameters: bool = False
+    fuse_optimizer: bool = False
+    pre_gather_minibatches: bool = False
+    hoist_critic: bool = False
+    hoist_rollout_log_probabilities: bool = False
+    rollout_observation_storage: str = "float32"
+    associative_gae: bool = False
+    associative_reward_filter: bool = False
+    moment_reduction: str = "two_pass"
     # These preserve literal upstream behavior rather than the PointMaze corrections.
     upstream_reward_filter_axis: bool = True
     warmup_keeps_initial_observation: bool = True
@@ -62,6 +74,14 @@ class PixelPPOConfig:
         for values in (self.per_copy_learning_rates, self.per_copy_intrinsic_coefficients):
             if values and len(values) != self.n_copies:
                 raise ValueError("each per-copy setting must contain exactly n_copies values")
+        choices = {"network_layout": ("nchw", "nhwc"),
+                   "dense_batching": ("matmul", "einsum"),
+                   "convolution_batching": ("vmap", "grouped"),
+                   "rollout_observation_storage": ("float32", "uint8"),
+                   "moment_reduction": ("two_pass", "raw_moments")}
+        for name, allowed in choices.items():
+            if getattr(self, name) not in allowed:
+                raise ValueError(f"{name} must be one of {allowed}")
 
     @property
     def batch_size(self):

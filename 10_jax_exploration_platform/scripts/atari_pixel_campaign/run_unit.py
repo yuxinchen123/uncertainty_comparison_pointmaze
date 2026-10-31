@@ -69,6 +69,7 @@ def parse_arguments():
     parser.add_argument("--minibatches", type=int, default=4)
     parser.add_argument("--seed-start", type=int, default=1)
     parser.add_argument("--configuration", type=Path)
+    parser.add_argument("--environment-configuration", type=Path)
     parser.add_argument("--rounds", type=int, default=7)
     parser.add_argument("--checkpoint-seconds", type=int, default=1200)
     parser.add_argument("--maximum-seconds", type=float, default=0)
@@ -108,7 +109,9 @@ def run(args):
     config = PixelPPOConfig(**configuration)
     atomic_json(directory / "config_resolved.json", asdict(config))
     seeds = tuple(range(args.seed_start, args.seed_start + args.copies))
-    environment = AtariPixelEnvironment(num_envs=args.envs_per_copy)
+    environment_settings = (json.loads(args.environment_configuration.read_text())
+                            if args.environment_configuration else {})
+    environment = AtariPixelEnvironment(num_envs=args.envs_per_copy, **environment_settings)
     trainer = PixelPPORND(config, environment)
     checkpoint = directory / "checkpoints" / "latest.pkl"
     started = time.monotonic()

@@ -6,9 +6,9 @@ import jax
 import jax.numpy as jnp
 
 from .config import PixelPPOConfig
-from .networks import (categorical_statistics, initialize_networks, policy_forward,
-                       quantity_keys, rnd_forward)
-from .state import (PixelTrainState, adam_step, initialize_adam, initialize_statistics,
+from .networks import (actor_logits, categorical_statistics, critic_values, initialize_networks,
+                       policy_features, policy_forward, quantity_keys, rnd_forward)
+from .state import (AdamState, FlatParameterLayout, PixelTrainState, adam_step, initialize_adam, initialize_statistics,
                     normalize_frames, update_moments, update_observation_statistics)
 
 
@@ -25,6 +25,8 @@ class Rollout(NamedTuple):
     values_int: object
     episode_returns: object
     episode_finished: object
+    policy_features: object
+    logits: object
 
 
 def flatten_rollout(values):
@@ -34,10 +36,11 @@ def flatten_rollout(values):
     return values.transpose(axes).reshape(values.shape[1], -1, *values.shape[3:])
 
 
-def intrinsic_reward(parameters, target, frames, statistics):
+def intrinsic_reward(parameters, target, frames, statistics, configuration=None):
     """Use half the SUM of feature errors for the rollout bonus, as upstream does."""
     normalized = normalize_frames(frames, statistics)
-    differences = rnd_forward(target, normalized) - rnd_forward(parameters["predictor"], normalized)
+    differences = (rnd_forward(target, normalized, configuration)
+                   - rnd_forward(parameters["predictor"], normalized, configuration))
     return jnp.sum(differences ** 2, axis=-1) * 0.5
 
 
@@ -51,11 +54,27 @@ def normalize_intrinsic_rewards(rewards, state, config):
         filtered = previous * jnp.asarray(config.gamma_int, jnp.float32) + reward
         return filtered, filtered
 
-    filtered_state, filtered = jax.lax.scan(accumulate, state.reward_filter, values)
+    if config.associative_reward_filter:
+        coefficients = jnp.full_like(values, config.gamma_int)
+
+        def compose(left, right):
+            """Compose later affine filter updates after earlier updates."""
+            left_value, left_coefficient = left
+            right_value, right_coefficient = right
+            return right_value + right_coefficient * left_value, right_coefficient * left_coefficient
+
+        filtered, products = jax.lax.associative_scan(compose, (values, coefficients))
+        filtered = filtered + products * state.reward_filter[None]
+        filtered_state = filtered[-1]
+    else:
+        filtered_state, filtered = jax.lax.scan(accumulate, state.reward_filter, values)
+    values_for_moments = filtered.astype(jnp.float64)
+    batch_mean = values_for_moments.mean(axis=(0, 2))
+    batch_variance = (values_for_moments.var(axis=(0, 2)) if config.moment_reduction == "two_pass"
+                      else jnp.maximum((values_for_moments ** 2).mean(axis=(0, 2)) - batch_mean ** 2, 0.0))
     statistics = update_moments(
         state.reward_statistics,
-        filtered.astype(jnp.float64).mean(axis=(0, 2)),
-        filtered.astype(jnp.float64).var(axis=(0, 2)),
+        batch_mean, batch_variance,
         config.n_envs if config.upstream_reward_filter_axis else config.batch_size)
     normalized = rewards / jnp.sqrt(statistics.variance).astype(jnp.float32)[None, :, None]
     return normalized, statistics, filtered_state
@@ -81,6 +100,18 @@ def generalized_advantages(rewards, intrinsic_rewards, rollout, final_values,
         return (advantage_ext, advantage_int), (advantage_ext, advantage_int)
 
     zeros = jnp.zeros_like(values_ext)
+    if config.associative_gae:
+        def compose(left, right):
+            """Compose one earlier advantage recurrence after a later recurrence."""
+            left_value, left_coefficient = left
+            right_value, right_coefficient = right
+            return right_value + right_coefficient * left_value, right_coefficient * left_coefficient
+
+        coefficient_ext = config.gamma_ext * config.gae_lambda * masks
+        coefficient_int = jnp.full_like(delta_int, config.gamma_int * config.gae_lambda)
+        advantage_ext, _ = jax.lax.associative_scan(compose, (delta_ext[::-1], coefficient_ext[::-1]))
+        advantage_int, _ = jax.lax.associative_scan(compose, (delta_int[::-1], coefficient_int[::-1]))
+        return advantage_ext[::-1], advantage_int[::-1]
     _, advantages = jax.lax.scan(reverse_step, (zeros, zeros), (delta_ext, delta_int, masks), reverse=True)
     return advantages
 
@@ -88,7 +119,7 @@ def generalized_advantages(rewards, intrinsic_rewards, rollout, final_values,
 def minibatch_loss(parameters, target, batch, predictor_mask, config,
                    intrinsic_coefficients):
     """Return the sum of per-policy losses and independent loss diagnostics."""
-    logits, value_ext, value_int = policy_forward(parameters["agent"], batch["observations"])
+    logits, value_ext, value_int = policy_forward(parameters["agent"], batch["observations"], config)
     log_probability, entropy = categorical_statistics(logits, batch["actions"])
     ratio = jnp.exp(log_probability - batch["log_probabilities"])
     advantages = batch["advantage_ext"] * config.extrinsic_coefficient
@@ -108,9 +139,9 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
     value_loss_int = 0.5 * ((value_int - batch["return_int"]) ** 2).mean(axis=1)
     normalized_frames = batch["normalized_frames"]
     target_features = (batch["target_features"] if config.cache_target_features
-                       else rnd_forward(target, normalized_frames))
+                       else rnd_forward(target, normalized_frames, config))
     target_features = jax.lax.stop_gradient(target_features)
-    predictor_features = rnd_forward(parameters["predictor"], normalized_frames)
+    predictor_features = rnd_forward(parameters["predictor"], normalized_frames, config)
     # Upstream trains with MEAN feature error, although the rollout bonus uses SUM/2.
     errors = ((predictor_features - target_features) ** 2).mean(axis=-1)
     predictor_loss = (errors * predictor_mask).sum(axis=1) / jnp.maximum(predictor_mask.sum(axis=1), 1.0)
@@ -195,7 +226,7 @@ class PixelPPORND:
             environment_state, collected = jax.lax.scan(random_step, environment_state,
                                                         jnp.arange(config.num_steps))
             frames = flatten_rollout(collected)[..., 3:4, :, :]
-            statistics = update_observation_statistics(statistics, frames)
+            statistics = update_observation_statistics(statistics, frames, config.moment_reduction)
             return (environment_state, statistics, collected[-1]), None
 
         (environment_state, statistics, observations), _ = jax.lax.scan(
@@ -213,18 +244,30 @@ class PixelPPORND:
         def step(carry, step_index):
             """Record one transition and preserve its next pixels for the RND bonus."""
             environment_state, observations, done_before = carry
-            logits, values_ext, values_int = policy_forward(state.parameters["agent"], observations)
+            hidden = policy_features(state.parameters["agent"], observations, config)
+            logits = actor_logits(state.parameters["agent"], hidden, config)
+            if config.hoist_critic:
+                values_ext = values_int = jnp.zeros(observations.shape[:2], jnp.float32)
+            else:
+                values_ext, values_int = critic_values(state.parameters["agent"], hidden, config)
             keys = quantity_keys(state.copy_seeds, "rollout/actions", state.iteration, step_index)
             actions = jax.vmap(lambda key, value: jax.random.categorical(key, value).astype(jnp.int32))(keys, logits)
-            log_probability, _ = categorical_statistics(logits, actions)
+            log_probability = (jnp.zeros(actions.shape, jnp.float32)
+                if config.hoist_rollout_log_probabilities else categorical_statistics(logits, actions)[0])
             next_environment, next_observations, reward, done, information = self.environment.step(
                 environment_state, actions)
-            frames = next_observations[..., 3:4, :, :]
+            # The environment resets in this same call, but a terminal transition's next
+            # image is its pre-reset image, as returned by the original EnvPool transition.
+            frames = information["final_observation"][..., 3:4, :, :]
             bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
-                state.parameters, state.target, frames, state.observation_statistics))
-            recorded = Rollout(observations, frames, actions, log_probability, reward, bonus,
+                state.parameters, state.target, frames, state.observation_statistics, config))
+            stored_observations = observations.astype(jnp.float32) if config.rollout_observation_storage == "float32" else observations
+            recorded = Rollout(stored_observations, frames, actions, log_probability, reward, bonus,
                                done_before, values_ext, values_int, information["episode_return"],
-                               information["episode_done"])
+                               information["episode_done"], hidden if config.hoist_critic else
+                               jnp.zeros(hidden.shape[:2] + (0,), jnp.float32),
+                               logits if config.hoist_rollout_log_probabilities else
+                               jnp.zeros(logits.shape[:2] + (0,), jnp.float32))
             return (next_environment, next_observations, done), recorded
 
         (environment_state, observations, done), rollout = jax.lax.scan(
@@ -232,10 +275,22 @@ class PixelPPORND:
             unroll=config.rollout_unroll)
         if config.hoist_rollout_bonus:
             bonuses = intrinsic_reward(state.parameters, state.target,
-                                       flatten_rollout(rollout.next_frames), state.observation_statistics)
+                                       flatten_rollout(rollout.next_frames), state.observation_statistics, config)
             # Before: [C,T*N]; after: [T,C,N], restoring the exact temporal filter inputs.
             bonuses = bonuses.reshape(config.n_copies, config.num_steps, config.n_envs).transpose(1, 0, 2)
             rollout = rollout._replace(intrinsic_rewards=bonuses)
+        if config.hoist_critic:
+            values_ext, values_int = critic_values(state.parameters["agent"],
+                flatten_rollout(rollout.policy_features), config)
+            rollout = rollout._replace(values_ext=values_ext.reshape(config.n_copies,
+                config.num_steps, config.n_envs).transpose(1, 0, 2),
+                values_int=values_int.reshape(config.n_copies,
+                config.num_steps, config.n_envs).transpose(1, 0, 2))
+        if config.hoist_rollout_log_probabilities:
+            log_probability, _ = categorical_statistics(flatten_rollout(rollout.logits),
+                                                         flatten_rollout(rollout.actions))
+            rollout = rollout._replace(log_probabilities=log_probability.reshape(
+                config.n_copies, config.num_steps, config.n_envs).transpose(1, 0, 2))
         return state._replace(environment=environment_state, observations=observations, done=done), rollout
 
     def prepare_batch(self, state, rollout):
@@ -243,12 +298,12 @@ class PixelPPORND:
         config = self.config
         normalized_bonus, reward_statistics, reward_filter = normalize_intrinsic_rewards(
             rollout.intrinsic_rewards, state, config)
-        _, final_ext, final_int = policy_forward(state.parameters["agent"], state.observations)
+        _, final_ext, final_int = policy_forward(state.parameters["agent"], state.observations, config)
         advantage_ext, advantage_int = generalized_advantages(
             rollout.rewards, normalized_bonus, rollout, (final_ext, final_int), state.done, config)
         observations = flatten_rollout(rollout.observations)
         frames = observations[..., 3:4, :, :]
-        observation_statistics = update_observation_statistics(state.observation_statistics, frames)
+        observation_statistics = update_observation_statistics(state.observation_statistics, frames, config.moment_reduction)
         batch = {"observations": observations, "actions": flatten_rollout(rollout.actions),
                  "log_probabilities": flatten_rollout(rollout.log_probabilities),
                  "values_ext": flatten_rollout(rollout.values_ext),
@@ -259,7 +314,7 @@ class PixelPPORND:
                  "normalized_frames": normalize_frames(frames, observation_statistics)}
         if config.cache_target_features:
             # Training targets use CURRENT frames and UPDATED statistics, unlike rollout targets.
-            batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, batch["normalized_frames"]))
+            batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, batch["normalized_frames"], config))
         return state._replace(observation_statistics=observation_statistics,
                               reward_statistics=reward_statistics, reward_filter=reward_filter), batch
 
@@ -269,6 +324,10 @@ class PixelPPORND:
         fraction = (1.0 - state.iteration.astype(jnp.float32) / config.total_iterations
                     if config.anneal_learning_rate else jnp.asarray(1.0, jnp.float32))
         learning_rates = self.learning_rates * fraction
+        layout = FlatParameterLayout(state.parameters) if config.flat_parameters else None
+        starting_parameters = layout.pack(state.parameters) if layout is not None else state.parameters
+        starting_optimizer = (AdamState(layout.pack(state.optimizer.first),
+            layout.pack(state.optimizer.second), state.optimizer.step) if layout is not None else state.optimizer)
 
         def epoch(carry, epoch_index):
             """Give every policy a separate permutation before its four minibatches."""
@@ -278,11 +337,22 @@ class PixelPPORND:
             indices = permutations.reshape(config.n_copies, config.num_minibatches,
                                              config.minibatch_size).transpose(1, 0, 2)
 
+            def gather_epoch(value):
+                """Gather and reshape all minibatches once before the optimizer scan."""
+                selected = jax.vmap(lambda rows, index: rows[index])(value, permutations)
+                shaped = selected.reshape(config.n_copies, config.num_minibatches,
+                                           config.minibatch_size, *value.shape[2:])
+                # Before: [C,M,B,...]; after: [M,C,B,...], ready for one scan over M.
+                return shaped.transpose((1, 0, 2) + tuple(range(3, shaped.ndim)))
+
+            scan_values = jax.tree.map(gather_epoch, batch) if config.pre_gather_minibatches else indices
+
             def minibatch(carry, values):
                 """Gather one fixed-size minibatch, differentiate its losses and apply Adam."""
                 parameters, optimizer = carry
-                minibatch_index, indices = values
-                selected = jax.tree.map(lambda value: jax.vmap(lambda rows, index: rows[index])(value, indices), batch)
+                minibatch_index, rows_or_indices = values
+                selected = (rows_or_indices if config.pre_gather_minibatches else jax.tree.map(
+                    lambda value: jax.vmap(lambda rows, index: rows[index])(value, rows_or_indices), batch))
                 keys = quantity_keys(state.copy_seeds, "update/predictor-mask", state.iteration,
                                      epoch_index, minibatch_index)
                 masks = jax.vmap(lambda key: (jax.random.uniform(key, (config.minibatch_size,),
@@ -290,20 +360,25 @@ class PixelPPORND:
 
                 def loss(parameters):
                     """Differentiate only the trainable networks, treating target features as constants."""
-                    return minibatch_loss(parameters, state.target, selected, masks, config,
+                    named_parameters = layout.unpack(parameters) if layout is not None else parameters
+                    return minibatch_loss(named_parameters, state.target, selected, masks, config,
                                           self.intrinsic_coefficients)
 
                 (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
                 parameters, optimizer, gradient_norm = adam_step(
                     parameters, gradients, optimizer, learning_rates,
-                    config.max_gradient_norm, config.adam_epsilon)
+                    config.max_gradient_norm, config.adam_epsilon,
+                    fuse_optimizer=config.fuse_optimizer and layout is None)
                 return (parameters, optimizer), {**metrics, "gradient_norm": gradient_norm}
 
-            return jax.lax.scan(minibatch, carry, (jnp.arange(config.num_minibatches), indices),
+            return jax.lax.scan(minibatch, carry, (jnp.arange(config.num_minibatches), scan_values),
                                  unroll=config.update_unroll)
 
         (parameters, optimizer), diagnostics = jax.lax.scan(
-            epoch, (state.parameters, state.optimizer), jnp.arange(config.update_epochs))
+            epoch, (starting_parameters, starting_optimizer), jnp.arange(config.update_epochs))
+        if layout is not None:
+            parameters = layout.unpack(parameters)
+            optimizer = AdamState(layout.unpack(optimizer.first), layout.unpack(optimizer.second), optimizer.step)
         metrics = jax.tree.map(lambda value: value.mean(axis=(0, 1)), diagnostics)
         return state._replace(parameters=parameters, optimizer=optimizer), {**metrics, "learning_rate": learning_rates}
 

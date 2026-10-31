@@ -52,6 +52,11 @@ class SmallPixelEnvironment(AtariPixelEnvironment):
         self.noop_max = 0
         self.episodic_life = True
         self.sticky_action_probability = 0.0
+        self.render_final_two_only = False
+        self.frame_skip_unroll = 1
+        self.batch_layout = "flat"
+        self.stack_update = "concatenate"
+        self.reset_only_when_needed = True
         self.game = SmallGame()
         for name, value in overrides.items():
             setattr(self, name, value)
@@ -102,6 +107,8 @@ def test_hold_four_frames_and_continue_game_after_life_loss():
     np.testing.assert_array_equal(rewards, np.ones((2, 2)))
     np.testing.assert_array_equal(done, np.ones((2, 2), bool))
     assert not bool(jnp.any(info["episode_done"]))
+    np.testing.assert_array_equal(info["final_observation"][:, :, -1, 0, 0],
+                                   np.full((2, 2), 9))
     np.testing.assert_array_equal(next_obs[:, :, -1, 0, 0], np.full((2, 2), 10))
 
 
@@ -119,11 +126,34 @@ def test_time_limit_resets_full_game_and_retains_terminal_return():
     np.testing.assert_array_equal(obs, np.ones((1, 2, 4, 84, 84), np.uint8))
 
 
-def test_noop_stream_does_not_change_sticky_stream_identifier():
-    """Named streams give identical lane seeds under paired policy groups."""
+def test_policy_seed_pairing_preserves_distinct_environment_keys():
+    """Paired policy seeds retain matching lanes and distinct environment keys."""
     # Matching policy seeds pair trajectories; distinct environment indices separate keys.
     env = SmallPixelEnvironment()
     state, _ = jax.jit(env.reset)(jnp.asarray([19, 19], dtype=jnp.int32))
     np.testing.assert_array_equal(state.key[0], state.key[2])
     np.testing.assert_array_equal(state.key[1], state.key[3])
     assert not bool(jnp.all(state.key[0] == state.key[1]))
+
+
+def test_environment_optimization_options_preserve_every_output():
+    """Compare alternate batching, rendering, stacking and scans on a life-reset transition."""
+    # Every candidate starts from the exact same saved state and receives the same held actions.
+    seeds = jnp.asarray([7, 11], dtype=jnp.int32)
+    actions = jnp.full((2, 2), 2, jnp.int32)
+    baseline = SmallPixelEnvironment()
+    state, _ = jax.jit(baseline.reset)(seeds)
+    expected = jax.jit(baseline.step)(state, actions)
+    candidates = [
+        {"render_final_two_only": True},
+        {"frame_skip_unroll": 2},
+        {"frame_skip_unroll": 4},
+        {"batch_layout": "nested"},
+        {"stack_update": "gather"},
+        {"reset_only_when_needed": False},
+    ]
+    for options in candidates:
+        candidate = SmallPixelEnvironment(**options)
+        actual = jax.jit(candidate.step)(state, actions)
+        for wanted, observed in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):
+            np.testing.assert_array_equal(observed, wanted, err_msg=str(options))

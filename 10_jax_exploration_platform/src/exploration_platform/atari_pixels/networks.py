@@ -82,49 +82,94 @@ def initialize_networks(copy_seeds, action_count):
     return {"agent": agent, "predictor": predictor}, target
 
 
-def dense(layer, values):
+def dense(layer, values, batching="matmul"):
     """Apply independent [input, output] dense weights to [copies, rows, input]."""
-    return jnp.matmul(values, layer["weight"], precision=jax.lax.Precision.HIGHEST) + layer["bias"][:, None]
+    product = (jnp.matmul(values, layer["weight"], precision=jax.lax.Precision.HIGHEST)
+               if batching == "matmul" else jnp.einsum("cbi,cio->cbo", values,
+                   layer["weight"], precision=jax.lax.Precision.HIGHEST))
+    return product + layer["bias"][:, None]
 
 
-def convolution(layer, images, stride):
+def convolution(layer, images, stride, layout="nchw", batching="vmap"):
     """Apply independent HWIO kernels to each policy's NHWC image batch."""
     # Before: [copies, rows, H, W, channels]; after: independent output images per copy.
+    def convolve(image_batch, weight, groups=1):
+        """Choose the compiler's NCHW or NHWC convolution path without changing image values."""
+        if layout == "nchw":
+            result = jax.lax.conv_general_dilated(
+                image_batch.transpose(0, 3, 1, 2), weight.transpose(3, 2, 0, 1),
+                (stride, stride), "VALID", dimension_numbers=("NCHW", "OIHW", "NCHW"),
+                feature_group_count=groups, precision=jax.lax.Precision.HIGHEST)
+            return result.transpose(0, 2, 3, 1)
+        return jax.lax.conv_general_dilated(image_batch, weight, (stride, stride), "VALID",
+            dimension_numbers=("NHWC", "HWIO", "NHWC"), feature_group_count=groups,
+            precision=jax.lax.Precision.HIGHEST)
+
     def one_copy(image_batch, weight, bias):
         """Convolve one policy's images at full float32 matrix precision."""
-        result = jax.lax.conv_general_dilated(
-            image_batch, weight, (stride, stride), "VALID", dimension_numbers=("NHWC", "HWIO", "NHWC"),
-            precision=jax.lax.Precision.HIGHEST)
-        return result + bias
-    return jax.vmap(one_copy)(images, layer["weight"], layer["bias"])
+        return convolve(image_batch, weight) + bias
+    if batching == "vmap":
+        return jax.vmap(one_copy)(images, layer["weight"], layer["bias"])
+    # Before: C separate [B,H,W,I] batches; after: [B,H,W,C*I] with C feature groups.
+    copies, rows, height, width, channels = images.shape
+    packed_images = images.transpose(1, 2, 3, 0, 4).reshape(rows, height, width, copies * channels)
+    weights = layer["weight"]
+    packed_weights = weights.transpose(1, 2, 3, 0, 4).reshape(
+        weights.shape[1], weights.shape[2], channels, copies * weights.shape[-1])
+    result = convolve(packed_images, packed_weights, copies)
+    result = result.reshape(rows, result.shape[1], result.shape[2], copies, weights.shape[-1])
+    return result.transpose(3, 0, 1, 2, 4) + layer["bias"][:, None, None, None, :]
 
 
-def convolution_trunk(layers, frames, leaky=False):
+def convolution_trunk(layers, frames, leaky=False, configuration=None):
     """Run the three CleanRL convolutions and flatten in PyTorch's NCHW order."""
     images = frames.transpose(0, 1, 3, 4, 2)
     for layer, stride in zip(layers, (4, 2, 1)):
-        images = convolution(layer, images, stride)
+        images = convolution(layer, images, stride,
+            layout=configuration.network_layout if configuration is not None else "nchw",
+            batching=configuration.convolution_batching if configuration is not None else "vmap")
         images = jax.nn.leaky_relu(images, negative_slope=0.01) if leaky else jax.nn.relu(images)
     # Before: [C,B,7,7,64]; after: [C,B,3136] with channel-major PyTorch ordering.
     return images.transpose(0, 1, 4, 2, 3).reshape(images.shape[0], images.shape[1], -1)
 
 
-def policy_forward(parameters, observations):
-    """Return action logits and both value heads from one shared CNN pass."""
-    hidden = convolution_trunk(parameters["convolutions"], observations.astype(jnp.float32) / 255.0)
+def policy_features(parameters, observations, configuration=None):
+    """Compute the common CNN/dense representation without the actor or value heads."""
+    hidden = convolution_trunk(parameters["convolutions"], observations.astype(jnp.float32) / 255.0,
+                                configuration=configuration)
     for layer in parameters["dense"]:
-        hidden = jax.nn.relu(dense(layer, hidden))
-    logits = dense(parameters["actor"][1], jax.nn.relu(dense(parameters["actor"][0], hidden)))
-    features = hidden + jax.nn.relu(dense(parameters["extra"], hidden))
-    return logits, dense(parameters["value_ext"], features)[..., 0], dense(parameters["value_int"], features)[..., 0]
+        hidden = jax.nn.relu(dense(layer, hidden, configuration.dense_batching if configuration else "matmul"))
+    return hidden
 
 
-def rnd_forward(parameters, normalized_frames):
+def actor_logits(parameters, features, configuration=None):
+    """Apply the two actor layers to already computed policy features."""
+    batching = configuration.dense_batching if configuration is not None else "matmul"
+    return dense(parameters["actor"][1], jax.nn.relu(dense(parameters["actor"][0], features, batching)), batching)
+
+
+def critic_values(parameters, hidden, configuration=None):
+    """Apply the residual value layers to a rollout step or the complete rollout."""
+    batching = configuration.dense_batching if configuration is not None else "matmul"
+    features = hidden + jax.nn.relu(dense(parameters["extra"], hidden, batching))
+    return dense(parameters["value_ext"], features, batching)[..., 0], dense(parameters["value_int"], features, batching)[..., 0]
+
+
+def policy_forward(parameters, observations, configuration=None):
+    """Return action logits and both value heads from one shared CNN pass."""
+    hidden = policy_features(parameters, observations, configuration)
+    values_ext, values_int = critic_values(parameters, hidden, configuration)
+    return actor_logits(parameters, hidden, configuration), values_ext, values_int
+
+
+def rnd_forward(parameters, normalized_frames, configuration=None):
     """Evaluate one RND network; its final dense layer has no activation."""
-    hidden = convolution_trunk(parameters["convolutions"], normalized_frames, leaky=True)
+    hidden = convolution_trunk(parameters["convolutions"], normalized_frames, leaky=True,
+                                configuration=configuration)
+    batching = configuration.dense_batching if configuration is not None else "matmul"
     for layer in parameters["dense"][:-1]:
-        hidden = jax.nn.relu(dense(layer, hidden))
-    return dense(parameters["dense"][-1], hidden)
+        hidden = jax.nn.relu(dense(layer, hidden, batching))
+    return dense(parameters["dense"][-1], hidden, batching)
 
 
 def categorical_statistics(logits, actions):

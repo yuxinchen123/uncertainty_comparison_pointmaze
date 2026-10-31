@@ -80,7 +80,11 @@ class AtariPixelEnvironment:
     def __init__(self, num_envs: int = 128, frame_skip: int = 4,
                  max_episode_steps: int = 108000, noop_max: int = 30,
                  episodic_life: bool = True,
-                 sticky_action_probability: float = 0.25):
+                 sticky_action_probability: float = 0.25,
+                 render_final_two_only: bool = False, frame_skip_unroll: int = 1,
+                 batch_layout: str = "flat", stack_update: str = "concatenate",
+                 reset_only_when_needed: bool = True,
+                 cache_room_backgrounds: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -89,16 +93,37 @@ class AtariPixelEnvironment:
             raise ValueError("environment counts and limits must be positive; noop_max may be zero")
         if not 0.0 <= sticky_action_probability <= 1.0:
             raise ValueError("sticky_action_probability must be between zero and one")
+        if frame_skip_unroll < 1:
+            raise ValueError("frame_skip_unroll must be positive")
+        if batch_layout not in ("flat", "nested"):
+            raise ValueError("batch_layout must be 'flat' or 'nested'")
+        if stack_update not in ("concatenate", "gather"):
+            raise ValueError("stack_update must be 'concatenate' or 'gather'")
         self.num_envs = num_envs
         self.frame_skip = frame_skip
         self.max_episode_steps = max_episode_steps
         self.noop_max = noop_max
         self.episodic_life = episodic_life
         self.sticky_action_probability = sticky_action_probability
+        self.render_final_two_only = render_final_two_only
+        self.frame_skip_unroll = frame_skip_unroll
+        self.batch_layout = batch_layout
+        self.stack_update = stack_update
+        self.reset_only_when_needed = reset_only_when_needed
+        self.cache_room_backgrounds = cache_room_backgrounds
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
-            self.game = jaxtari.make("montezumarevenge")
+            if cache_room_backgrounds:
+                # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
+                from jaxtari.games.jax_montezumarevenge import JaxMontezumaRevenge
+                from jaxtari.games.montezuma_revenge.core import MontezumaRevengeConstants
+
+                jaxtari.check_ownership()
+                constants = MontezumaRevengeConstants(RENDERER_PRELOAD_ROOMS=True)
+                self.game = JaxMontezumaRevenge(constants)
+            else:
+                self.game = jaxtari.make("montezumarevenge")
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")
@@ -119,6 +144,23 @@ class AtariPixelEnvironment:
         """Apply the recorded area resize to one raw grayscale image."""
         # Keep the final observation small while the game keeps its native coordinate system.
         return area_resize_frame(gray, self.row_weights, self.column_weights)
+
+    def _append_frame(self, frames, frame):
+        """Append identical pixels using either concatenation or an explicit gather."""
+        # Before: [a,b,c,d]; after: [b,c,d,new], under either implementation.
+        if self.stack_update == "gather":
+            indices = jnp.asarray([1, 2, 3, 3], dtype=jnp.int32)
+            return jnp.take(frames, indices, axis=0).at[3].set(frame)
+        return jnp.concatenate((frames[1:], frame[None]), axis=0)
+
+    def _map_lanes(self, function, shape, *arguments):
+        """Map the same scalar transition with flat or nested policy/environment axes."""
+        # Before: [C*N,...]; nested form temporarily uses [C,N,...], then returns flat lanes.
+        if self.batch_layout == "flat":
+            return jax.vmap(function)(*arguments)
+        nested = jax.tree.map(lambda value: value.reshape(shape + value.shape[1:]), arguments)
+        result = jax.vmap(jax.vmap(function))(*nested)
+        return jax.tree.map(lambda value: value.reshape((-1,) + value.shape[2:]), result)
 
     def _raw_frame(self, game, key, frame_count, previous_action, requested_action):
         """Advance exactly one native game frame, including its sticky-action draw."""
@@ -161,7 +203,7 @@ class AtariPixelEnvironment:
 
         # Before: four older frames; after: a new full stack, or one appended life-reset frame.
         full_stack = jnp.broadcast_to(frame, self.observation_shape)
-        continued_stack = jnp.concatenate((state.frames[1:], frame[None]), axis=0)
+        continued_stack = self._append_frame(state.frames, frame)
         frames = jnp.where(reset_game, full_stack, continued_stack)
         return PixelEnvironmentState(
             game, frames, state.key, frame_count,
@@ -186,14 +228,14 @@ class AtariPixelEnvironment:
             keys = jax.vmap(lambda seed: jax.vmap(lambda lane: self._named_key(
                 jax.random.PRNGKey(seed), ENVIRONMENT_STREAM, lane))(lane_indices))(seeds)
             shape = (seeds.shape[0], self.num_envs)
-            state = jax.vmap(self._initial_single)(keys.reshape(-1, 2))
+            state = self._map_lanes(self._initial_single, shape, keys.reshape(-1, 2))
             state = jax.tree.map(jnp.copy, state)
             return state, state.frames.reshape(shape + self.observation_shape)
 
     def _step_single(self, state, action):
         """Advance one held action and report masks before an immediate reset."""
         # Stop native frames at game over; life-loss masks are decided after the held action.
-        initial_gray = self._frame(state.game)
+        initial_frame = state.game if self.render_final_two_only else self._frame(state.game)
 
         def frame_body(carry, _):
             """Advance one held frame and retain the latest two grayscale screens."""
@@ -203,20 +245,24 @@ class AtariPixelEnvironment:
                 """Compute a game frame only while this game remains active."""
                 next_game, next_count, next_action, reward, done = self._raw_frame(
                     game, state.key, count, previous, action)
-                gray = self._frame(next_game)
+                latest_frame = (next_game if self.render_final_two_only
+                                else self._frame(next_game))
                 return (next_game, next_count, next_action, total_reward + reward,
-                        done, latest, gray)
+                        done, latest, latest_frame)
 
             next_carry = jax.lax.cond(ended, lambda _: carry, active, operand=None)
             return next_carry, None
 
         carry = (state.game, state.frame_count, state.previous_action, jnp.float32(0),
-                 jnp.bool_(False), initial_gray, initial_gray)
+                 jnp.bool_(False), initial_frame, initial_frame)
         (game, count, previous, reward, game_done, prior, latest), _ = jax.lax.scan(
-            frame_body, carry, None, length=self.frame_skip)
+            frame_body, carry, None, length=self.frame_skip, unroll=self.frame_skip_unroll)
+        if self.render_final_two_only:
+            # Render only the retained last two game states instead of all held-action frames.
+            prior, latest = self._frame(prior), self._frame(latest)
         pooled = jnp.maximum(prior, latest) if self.frame_skip > 1 else latest
         frame = self._resize(pooled)
-        frames = jnp.concatenate((state.frames[1:], frame[None]), axis=0)
+        frames = self._append_frame(state.frames, frame)
         step_count = state.step_count + jnp.int32(1)
         truncated = step_count >= self.max_episode_steps
         life_lost = ((game.lives < state.game.lives) & (game.lives > 0)
@@ -238,17 +284,24 @@ class AtariPixelEnvironment:
         with jax.enable_x64(False):
             actions = jnp.asarray(actions, dtype=jnp.int32)
             shape = actions.shape
-            next_state, rewards, done, info = jax.vmap(self._step_single)(
-                state, actions.reshape(-1))
+            next_state, rewards, done, info = self._map_lanes(
+                self._step_single, shape, state, actions.reshape(-1))
+            # RND scores the state reached by the action, before any immediate reset.
+            # Before: terminal stack [B,4,84,84]; after: info keeps that stack for this transition.
+            info["final_observation"] = next_state.frames
 
             def reset_finished(current):
                 """Run NOOP/FIRE resets only on transitions that ended a life or game."""
-                return jax.vmap(lambda lane, ended, full: jax.lax.cond(
+                reset_lane = lambda lane, ended, full: jax.lax.cond(
                     ended, lambda _: self._reset_single(lane, full), lambda _: lane,
-                    operand=None))(current, done, info["episode_done"])
+                    operand=None)
+                return self._map_lanes(reset_lane, shape, current, done, info["episode_done"])
 
-            next_state = jax.lax.cond(jnp.any(done), reset_finished,
-                                       lambda current: current, next_state)
+            if self.reset_only_when_needed:
+                next_state = jax.lax.cond(jnp.any(done), reset_finished,
+                                           lambda current: current, next_state)
+            else:
+                next_state = reset_finished(next_state)
             observation = next_state.frames.reshape(shape + self.observation_shape)
-            info = jax.tree.map(lambda value: value.reshape(shape), info)
+            info = jax.tree.map(lambda value: value.reshape(shape + value.shape[1:]), info)
             return next_state, observation, rewards.reshape(shape), done.reshape(shape), info

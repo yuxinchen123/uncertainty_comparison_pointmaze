@@ -36,7 +36,8 @@ class FixedPixelEnvironment:
         done = counters % 3 == 0
         rewards = (actions % 2).astype(jnp.float32)
         return counters, self.observe(counters), rewards, done, {
-            "episode_return": counters.astype(jnp.float32), "episode_done": done}
+            "episode_return": counters.astype(jnp.float32), "episode_done": done,
+            "final_observation": self.observe(counters)}
 
 
 def test_warmup_complete_iteration_and_optimized_equivalence():
