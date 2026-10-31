@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import fcntl
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -186,9 +187,12 @@ def ready_specification(run_dir):
 def immutable_case(entry, context, copies, ready):
     """Record source, algorithm, execution changes and random identities before a worker claims them."""
     seed_start = ready.get("seed_start", 1)
+    iterations = compatible_updates_per_round(entry, ready.get("iterations", 1))
     if not re.fullmatch(r"[A-Za-z0-9_-]+", entry.name):
         raise ValueError("hypothesis names must be plain path components made of words, digits and separators")
-    identifier = (f"{entry.name}__hardware-{context}__copies-{copies}__seed-start-{seed_start}"
+    identifier = (f"idea-position-{entry.position:02d}__{entry.name}"
+                  f"__hardware-{context}__copies-{copies}__seed-start-{seed_start}"
+                  f"__updates-per-round-{iterations}"
                   f"__source-commit-{ready['source_commit']}")
     case = {"schema_version": 1, "unit_id": identifier, "hypothesis": entry.name,
             "campaign_run_dir": ready["campaign_run_dir"],
@@ -198,7 +202,7 @@ def immutable_case(entry, context, copies, ready):
             "candidate": {"learner": entry.learner, "environment": entry.environment,
                           "execution": entry.execution},
             "reference_execution": entry.reference_execution,
-            "rounds": ready.get("rounds", 7), "iterations": ready.get("iterations", 10),
+            "rounds": ready.get("rounds", 7), "iterations": iterations,
             "seed_start": seed_start, "additional_correctness_checks": list(entry.additional_checks),
             "maximum_attempts": ready.get("maximum_attempts", 3)}
     # Empty settings retain the original initial-case contents and their existing digests.
@@ -212,6 +216,24 @@ def immutable_case(entry, context, copies, ready):
         raise ValueError("benchmark rounds, updates and retry limits are invalid")
     case["specification_digest"] = content_digest(case)
     return case
+
+
+def compatible_updates_per_round(entry, minimum=1):
+    """Use the fewest complete updates that cover both execution groups and report windows."""
+    # Before: minimum one, group five; after: five complete updates in each paired arm.
+    if type(minimum) is not int or minimum < 1:
+        raise ValueError("iterations per round must be a positive integer")
+    multiple = 1
+    for execution in (entry.reference_execution or {}, entry.execution):
+        requirements = [execution.get("iterations_per_call", 1)]
+        if execution.get("report_readout", "none") != "none":
+            requirements.append(execution.get("report_every_iterations", 10))
+        for count in requirements:
+            if type(count) is not int or count < 1:
+                raise ValueError("execution groups and report windows must be positive integers")
+            multiple = math.lcm(multiple, count)
+    # Before: requested minimum six, group five; after: ten updates without padding.
+    return ((minimum + multiple - 1) // multiple) * multiple
 
 
 def case_states(run_dir, identifier):

@@ -222,6 +222,10 @@ def admit(args):
         raise ValueError("matched copy counts must be positive and include one")
     if type(args.seed_start) is not int or args.seed_start < 0:
         raise ValueError("the starting seed must be a nonnegative integer")
+    # Programmatic callers may omit this optional command-line setting, like its default.
+    iterations_per_round = vars(args).get("iterations_per_round", 1)
+    if type(iterations_per_round) is not int or iterations_per_round < 1:
+        raise ValueError("iterations per round must be a positive integer")
     configuration, configuration_evidence = evidence_file(args.reference_configuration_source)
     configuration = {**configuration, "n_copies": 1}
     if any(configuration.get(name) != value for name, value in REFERENCE_ALGORITHM.items()):
@@ -253,7 +257,8 @@ def admit(args):
                      "matched_copy_counts": counts, "gate_records": gate_paths,
                      "reference_configuration_path": str(reference_path),
                      "reference_configuration_source": configuration_evidence,
-                     "seed_start": args.seed_start, "rounds": 7, "iterations": 10}
+                     "seed_start": args.seed_start, "rounds": 7,
+                     "iterations": iterations_per_round}
     publications.append((run_dir / SENTINEL_NAME, specification))
     with admission_lock(run_dir):
         check_existing(publications)
@@ -269,7 +274,8 @@ def admit(args):
     print(json.dumps(state, indent=2), flush=True)
 
 
-if __name__ == "__main__":
+def argument_parser():
+    """Describe admission inputs and the minimum complete-update measurement window."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--source-root", type=Path, required=True)
@@ -278,7 +284,13 @@ if __name__ == "__main__":
     parser.add_argument("--matched-copy-counts", nargs="+", type=int, required=True)
     parser.add_argument("--capacity-record", action="append", type=Path, default=[])
     parser.add_argument("--seed-start", type=int, default=1)
+    parser.add_argument("--iterations-per-round", type=int, default=1,
+                        help="minimum complete updates per paired round; expanded for execution/report windows")
     for hardware in ("h100", "a4500"):
         for kind in ("learner", "renderer"):
             parser.add_argument(f"--{hardware}-{kind}-record", type=Path, required=True)
-    admit(parser.parse_args())
+    return parser
+
+
+if __name__ == "__main__":
+    admit(argument_parser().parse_args())
