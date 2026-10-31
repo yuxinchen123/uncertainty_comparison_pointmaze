@@ -1,0 +1,21 @@
+{
+  "kind": "site_validation_monitor_review",
+  "reviewed_at_utc": "2026-10-31T23:43:50.085826+00:00",
+  "metadata_tests_passed": 30,
+  "new_site_tests": 18,
+  "existing_monitor_tests": 12,
+  "independent_root_review_passed": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "22017054128640af5e8b32f2fb6a879f4749ed233854344c0746340ed2b02064",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_site_validation.py": "524a515978a016198d18628c505584426492a4d8c496f61380815c97072813bd"
+  },
+  "scope": "Display only exact owned site tests, including terminal raw failures, outside scientific unit rows and counts. Raw success requires independent review; no workers or claims are admitted.",
+  "reviewed_cases": [
+    "foreign identifiers never query scheduler",
+    "partial and malformed records keep existing monitor rows alive",
+    "failure files take precedence over raw passed results",
+    "terminal accounting uses only exact owned identifiers and preserves full state names",
+    "requested GPU identity stays distinct from actually observed identity",
+    "pending and running site rows are not duplicated"
+  ]
+}

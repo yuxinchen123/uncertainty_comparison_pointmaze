@@ -7,7 +7,9 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
+import tempfile
 import textwrap
 import time
 from zoneinfo import ZoneInfo
@@ -167,6 +169,191 @@ def unit_rows(directory):
     return rows
 
 
+def site_packet(directory, packet, receipt, identifiers):
+    """Bind one direct-child site submission to this campaign's exact owned UVA job."""
+    # A named packet becomes an owned operational job only after its byte receipts agree.
+    identifier = receipt.get("job_id")
+    if (receipt.get("cluster") != "uva" or not isinstance(identifier, str)
+            or not re.fullmatch(r"[1-9][0-9]*", identifier) or identifier not in identifiers):
+        raise ValueError("site submission job is not in this campaign's UVA ledger")
+    if packet.is_symlink() or packet.resolve().parent != directory / "remote_setup":
+        raise ValueError("site packet must be a direct child of this campaign's remote_setup")
+    if (packet / "submission_receipt.json").is_symlink():
+        raise ValueError("site submission receipt must stay inside its own packet")
+    for filename, key in (("site_validation_plan.json", "plan_sha256"),
+                          ("manifest.yaml", "manifest_sha256"), ("job.sbatch", "job_script_sha256")):
+        path = packet / filename
+        if (path.is_symlink() or path.resolve().parent != packet
+                or hashlib.sha256(path.read_bytes()).hexdigest() != receipt.get(key)):
+            raise ValueError("site submission byte receipt differs: " + filename)
+    plan, manifest = read_json(packet / "site_validation_plan.json"), read_json(packet / "manifest.yaml")
+    if (plan.get("kind") != "h100_nvl_slurm_site_validation" or type(plan.get("schema_version")) is not int
+            or plan["schema_version"] not in {1, 2}
+            or plan.get("campaign_run_dir") != str(directory)
+            or plan.get("job_shape", {}).get("gres") != "gpu:nvidia_h100_nvl:1"):
+        raise ValueError("site plan does not identify this campaign and requested H100 NVL")
+    for value in (receipt, plan):
+        if (value.get("workers_permitted") is not False or value.get("campaign_claims_permitted") is not False
+                or type(value.get("scientific_hypothesis_credit")) is not int
+                or value["scientific_hypothesis_credit"] != 0):
+            raise ValueError("site records cannot permit workers, claims or scientific credit")
+    for key, filename, digest in (("plan", "site_validation_plan.json", "plan_sha256"),
+                                  ("job_script", "job.sbatch", "job_script_sha256")):
+        if manifest.get(key) != {"path": str(packet / filename), "sha256": receipt[digest]}:
+            raise ValueError("site manifest refers to a different " + key)
+    if (manifest.get("submission_command") != receipt.get("held_command")
+            or not receipt.get("held_command") or receipt["held_command"][-1] != str(packet / "job.sbatch")):
+        raise ValueError("site submission command differs from its prepared script")
+    return identifier, plan
+
+
+def site_hardware(packet, identifier):
+    """Display only allocation identity actually recorded for this exact owned job."""
+    # Missing allocation evidence stays unknown, even when a planned node was named elsewhere.
+    observed = {"pool": "UVA", "gpu": ["H100 NVL requested"], "requested_gpu": "NVIDIA H100 NVL",
+                "observed_gpu": None, "gpu_uuid": None, "driver": None, "allocation_records": []}
+    for filename in ("allocation_observation.json", "allocation_details.json", "site_assignment.json"):
+        path = packet / filename
+        if path.exists():
+            observed["allocation_records"].append({"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    observation = read_json(packet / "allocation_observation.json")
+    if observation:
+        if observation.get("owned_job", {}).get("job_id") != identifier:
+            raise ValueError("site allocation observation belongs to another job")
+        observed["pool"] = observation.get("hostname") or "UVA"
+        cards = list(csv.reader(observation.get("gpu_csv", "").splitlines()))
+        if len(cards) == 1 and len(cards[0]) == 5:
+            _, gpu, model, _, driver = [value.strip() for value in cards[0]]
+            observed.update(observed_gpu=model, gpu_uuid=gpu, driver=driver, gpu=[model])
+    assignment = read_json(packet / "site_assignment.json")
+    if assignment:
+        proof = assignment.get("allocation", {})
+        if proof.get("job_id") != identifier or assignment.get("owned_job", {}).get("job_id") != identifier:
+            raise ValueError("site assignment belongs to another job")
+        observed.update(pool=proof["hostname"], observed_gpu=proof["model"], gpu=[proof["model"]],
+                        gpu_uuid=proof["gpu_uuid"], driver=proof["driver"])
+    return observed
+
+
+def site_accounting(identifier, identity, cache):
+    """Cache exact owned-job terminal accounting without inferring a successful site check."""
+    # For example, 123|COMPLETED|0:0|serval07 still means ended without a raw site result.
+    terminal = {"BOOT_FAIL", "CANCELLED", "COMPLETED", "DEADLINE", "FAILED", "NODE_FAIL",
+                "OUT_OF_MEMORY", "PREEMPTED", "REVOKED", "TIMEOUT"}
+    saved = cache.get(identifier)
+    if saved and saved.get("identity") == identity and saved.get("state") in terminal:
+        return saved
+    command = ["sacct", "-n", "-P", "-j", identifier, "--format=JobIDRaw,State%64,ExitCode,NodeList"]
+    result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=20,
+                            env={**os.environ, "TZ": "UTC"})
+    records = [line.split("|") for line in result.stdout.splitlines() if line.split("|", 1)[0] == identifier]
+    if len(records) != 1 or len(records[0]) != 4:
+        raise ValueError("exact owned site job has no unambiguous accounting row")
+    _, state, exit_code, node = records[0]
+    record = {"identity": identity, "job_id": identifier, "command": command,
+              "observed_at_utc": datetime.now(timezone.utc).isoformat(), "stdout": result.stdout,
+              "state": state.split()[0].removesuffix("+"), "exit_code": exit_code, "node": node}
+    record["terminal"] = record["state"] in terminal
+    if record["state"] in terminal:
+        cache[identifier] = record
+    return record
+
+
+def site_validation_rows(directory, jobs):
+    """Keep owned site checks and their operational anomalies separate from scientific cases."""
+    reports = directory / "20_mins_monitoring"
+    reports.mkdir(parents=True, exist_ok=True)
+    status_path = reports / "site_validation_status.json"
+    now = datetime.now(timezone.utc).isoformat()
+    anomalies, previous = {}, {}
+    try:
+        previous = read_json(status_path) or {}
+        anomalies = previous.get("anomalies", {})
+        cache = previous.get("terminal_accounting", {})
+        if not isinstance(anomalies, dict) or not isinstance(cache, dict):
+            raise ValueError("site monitoring anomalies and accounting must be mappings")
+    except (OSError, ValueError, TypeError, AttributeError) as error:
+        anomalies, cache = {}, {}
+        anomalies["monitoring record"] = {"reason": "invalid site monitoring record: " + str(error), "observed_at_utc": now}
+    ledger = directory / "slurm/submitted_jobids_uva.txt"
+    identifiers = set(ledger.read_text().splitlines()) if ledger.exists() else set()
+    active = {job[0]: job for job in jobs}
+    rows, owned, records = [], set(), []
+    for path in sorted((directory / "remote_setup").glob("*/submission_receipt.json")):
+        packet, identifier = path.parent, ""
+        row = {"kind": "site_validation", "run": "H100 NVL site validation", "pool": "UVA", "gpu": ["H100 NVL requested"],
+               "state": "failed", "slurm_job_id": "", "progress": "site submission record requires diagnosis",
+               "workers_permitted": False, "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+        record = {"packet": str(packet), "observed_at_utc": now}
+        try:
+            receipt = read_json(path)
+            if receipt.get("kind") != "owned_h100_nvl_site_validation_submission":
+                continue
+            if receipt.get("cluster") == "uva" and receipt.get("job_id") in identifiers:
+                identifier = receipt["job_id"]
+                owned.add(identifier)
+                row["slurm_job_id"] = identifier
+            identifier, _ = site_packet(directory, packet, receipt, identifiers)
+            owned.add(identifier)
+            row.update(slurm_job_id=identifier, **site_hardware(packet, identifier))
+            identity = {"submission_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                        "plan_sha256": receipt["plan_sha256"], "job_script_sha256": receipt["job_script_sha256"]}
+            record.update(job_id=identifier, identity=identity)
+            if (packet / "failure.json").exists():
+                failure = read_json(packet / "failure.json")
+                error = failure.get("error") if isinstance(failure, dict) else None
+                row["progress"] = "site failed: " + (str(error) if error else "failure file exists without a valid error record")
+            elif (packet / "result.json").exists():
+                result = read_json(packet / "result.json")
+                if (result.get("schema_version") != 1 or result.get("kind") != "h100_nvl_slurm_site_evidence" or result.get("passed") is not True
+                        or result.get("workers_permitted") is not False or result.get("campaign_claims_permitted") is not False
+                        or type(result.get("scientific_hypothesis_credit")) is not int
+                        or result["scientific_hypothesis_credit"] != 0
+                        or result.get("plan") != {"path": str(packet / "site_validation_plan.json"), "sha256": receipt["plan_sha256"]}):
+                    raise ValueError("raw site result does not retain the no admission and zero credit boundary")
+                row.update(state="completed", progress="raw checks complete; independent review required; no worker admission; zero case and idea credit")
+            elif identifier in active:
+                _, state, node, _, reason = active[identifier]
+                if state.startswith("RESV_DEL") or "Held" in reason:
+                    row.update(state="held", progress=reason)
+                elif state == "PENDING":
+                    row.update(state="waiting", progress=reason)
+                elif state in {"RUNNING", "COMPLETING", "CONFIGURING"}:
+                    row.update(state="running", progress="site checks " + state.lower())
+                    if node and node not in {"(null)", "None"}:
+                        if row["pool"] != "UVA" and row["pool"] != node:
+                            raise ValueError("recorded site host differs from the exact owned scheduler job")
+                        row["pool"] = node
+                else:
+                    row.update(state="held", progress="site scheduler state requires inspection: " + state)
+            else:
+                accounting = site_accounting(identifier, identity, cache)
+                record["accounting"] = accounting
+                row.update(state="failed", progress="site job ended without result or failure: " + accounting["state"] + "; exit " + accounting["exit_code"])
+                if accounting["node"] and accounting["node"] not in {"None", "Unknown", "(null)"}:
+                    row["pool"] = accounting["node"]
+                if not accounting["terminal"]:
+                    row.update(state="held", progress="site absent from active query; accounting state " + accounting["state"])
+            for filename in ("failure.json", "result.json"):
+                outcome = packet / filename
+                if outcome.exists():
+                    record[filename] = {"path": str(outcome), "sha256": hashlib.sha256(outcome.read_bytes()).hexdigest()}
+        except (OSError, ValueError, TypeError, KeyError, AttributeError, subprocess.SubprocessError) as error:
+            row.update(state="failed", progress="site monitoring record invalid: " + str(error))
+        if row["state"] in {"failed", "held"}:
+            anomalies[str(packet)] = {"job_id": identifier, "reason": row["progress"], "observed_at_utc": now}
+        rows.append(row)
+        records.append({**record, "row": row})
+    # The monitor owns only this small operational file, not any site or admission artifact.
+    status = {"schema_version": 1, "kind": "site_validation_monitoring", "observed_at_utc": now,
+              "sites": records, "terminal_accounting": cache, "anomalies": anomalies}
+    with tempfile.NamedTemporaryFile(mode="w", dir=reports, prefix="site_validation_status.", delete=False) as stream:
+        json.dump(status, stream, indent=2)
+        stream.write("\n")
+    os.replace(stream.name, status_path)
+    return rows, owned, status
+
+
 def tick(directory):
     """Write a combined report, preserving distinctions between active and planned work."""
     directory = directory.resolve()
@@ -186,6 +373,8 @@ def tick(directory):
     from final_training_monitor import tick as advance_final_training
     final_training = advance_final_training(directory, controller_state=controller_state, controller_error=controller_error)
     jobs, units = own_jobs(directory), unit_rows(directory)
+    sites, site_jobs, site_status = site_validation_rows(directory, jobs)
+    display_units = units + sites
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
     rows.append("TRAINING")
@@ -200,6 +389,7 @@ def tick(directory):
         hardware = read_json(path)
         observed_jobs.add(hardware.get("slurm_job_id", ""))
     observed_jobs.update(unit.get("slurm_job_id", "") for unit in units)
+    observed_jobs.update(site_jobs)
     for identifier, state, node, gpu, reason in jobs:
         if state == "RUNNING" and identifier not in observed_jobs:
             kind = names.get(identifier, "study job")
@@ -213,7 +403,7 @@ def tick(directory):
                 progress = f"{passed} checks passed" if passed else "initializing checks"
             rows.append(table_row(kind, "nolim" if kind == "monitor" else node,
                                   "none" if kind == "monitor" else gpu, state, progress))
-    for unit in units:
+    for unit in display_units:
         if unit["state"] in {"running", "initializing", "normalization_warmup"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu), "RUNNING", unit["progress"]))
@@ -221,28 +411,29 @@ def tick(directory):
     if final_training["state"] in {"waiting", "submitted"}:
         rows.append(table_row("final training continuation", "UVA", "RTX A4500", final_training["state"].upper(),
                               final_training_progress(final_training)))
-    for unit in units:
+    for unit in display_units:
         if unit["state"] == "waiting":
-            rows.append(table_row(unit["run"], unit["pool"], "none", "WAITING", unit["progress"]))
+            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") == "site_validation" else "none"
+            rows.append(table_row(unit["run"], unit["pool"], gpu, "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
-        if state == "PENDING":
+        if state == "PENDING" and identifier not in site_jobs:
             if "Held" not in reason:
                 rows.append(table_row("scheduled study job", "UVA", gpu, state, reason))
     rows.append("HELD")
-    for unit in units:
+    for unit in display_units:
         if unit["state"] == "held":
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu), "HELD", unit["progress"]))
     if final_training["state"] == "held":
         rows.append(table_row("final training continuation", "UVA", "RTX A4500", "HELD", final_training["reason"]))
     for identifier, state, node, gpu, reason in jobs:
-        if state.startswith("RESV_DEL") or "Held" in reason:
+        if identifier not in site_jobs and (state.startswith("RESV_DEL") or "Held" in reason):
             rows.append(table_row("held study job", "UVA", gpu, "HELD", reason))
     rows.append("FINISHED")
     if final_training["state"] == "finished":
         rows.append(table_row("final training continuation", "UVA", "RTX A4500", "FINISHED",
                               final_training_progress(final_training)))
-    for unit in units:
+    for unit in display_units:
         if unit["state"] in {"completed", "checkpointed", "failed"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu),
@@ -264,7 +455,8 @@ def tick(directory):
     report = "# Pixel Montezuma study status\n\n" + now + "\n\n```text\n" + text + "```\n"
     (reports / "latest_report.md").write_text(report)
     (reports / "latest_status.json").write_text(json.dumps({
-        "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training}, indent=2) + "\n")
+        "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training,
+        "site_validation": site_status}, indent=2) + "\n")
     return (directory / "STUDY_COMPLETE").exists()
 
 
