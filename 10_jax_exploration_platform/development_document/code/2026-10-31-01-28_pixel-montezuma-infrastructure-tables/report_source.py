@@ -103,4 +103,10 @@ RESOLVED_SETTINGS = {
     "extrinsic_advantage_weight": 2.0, "normalization_warmup_rollouts": 50,
     "network_precision": "float32", "statistics_precision": "float64",
     "allow_reduced_precision": False,
+    "paired_timing_rounds": 7,
+    "paired_timing_minimum_complete_updates_per_round": 1,
+    "paired_timing_grouped_complete_updates_per_round": 5,
+    "paired_timing_report_complete_updates_per_round": 10,
+    "selected_combination_confirmation_paired_rounds": 7,
+    "selected_combination_confirmation_complete_updates_per_round": 10,
 }

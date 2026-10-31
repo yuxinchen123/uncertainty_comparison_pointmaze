@@ -30,6 +30,29 @@ study:
   training_steps_per_copy_actual: 1999994880
   full_training_implementations: optimized_only
   packing_marginal_gain_limit: 0.10
+timing_protocol:
+  controller_commit: 3cda60931a31bd974b6d9fc07490a17e7d48e5e0
+  recorded_before_first_scientific_case: true
+  paired_rounds: 7
+  minimum_complete_updates_per_variant_per_round: 1
+  complete_update: full_rollout_and_all_sixteen_optimizer_steps
+  window_selection: smallest_multiple_covering_both_execution_groups_and_report_intervals
+  grouped_training_updates:
+    hypothesis: group_complete_training_iterations
+    complete_updates_per_variant_per_round: 5
+  scheduled_report_accumulation:
+    hypothesis: accumulate_scheduled_reports_on_device
+    complete_updates_per_variant_per_round: 10
+  selected_combination_confirmation:
+    required_before_final_training: true
+    separate_correctness_check: true
+    paired_rounds: 7
+    complete_updates_per_variant_per_round: 10
+  superseded_report_plan:
+    executed_scientific_cases: 0
+    initial_complete_updates_per_variant_per_round: 10
+    final_confirmation_paired_rounds: 11
+    final_confirmation_complete_updates_per_variant_per_round: 20
 hardware:
   benchmark_contexts: [serval02_card_1_h100, serval05_h100, jaguar03_rtx_a4500]
   final_h100_contexts: [aces, deltaai, mit]

@@ -2,11 +2,15 @@
 
 `report_source.py` is the reviewed specification and source record. It names the
 absolute campaign directory, the original CleanRL and JAXtari commits, and the
-environment and learner settings. It contains no measured performance.
+environment, learner, and timing settings. It contains no measured performance.
 
 `make_all.py` reads `study_registry.json`, `campaign_state.json`, and only the
 result files explicitly indexed by the registry. It checks the reviewed learner
-settings against `config_resolved.yaml`. It never searches resource-probe
+and timing settings against `config_resolved.yaml`. Timing uses seven paired
+rounds with at least one complete update per variant per round, five for grouped
+updates, and ten for report accumulation. The selected combination requires a
+separate seven-round confirmation with ten complete updates per variant per
+round. It never searches resource-probe
 directories for results. It uses the campaign's own investigation and paired
 decision functions, and does not select a final implementation or start jobs.
 

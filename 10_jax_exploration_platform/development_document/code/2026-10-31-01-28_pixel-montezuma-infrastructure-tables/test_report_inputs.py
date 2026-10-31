@@ -9,6 +9,27 @@ import make_all
 
 
 class ReportInputTests(unittest.TestCase):
+    def test_timing_protocol_matches_resolved_configuration(self):
+        """Accept the reviewed timing windows and reject an outdated ordinary window."""
+        with tempfile.TemporaryDirectory() as directory:
+            campaign = Path(directory)
+            # Before: reviewed scalar settings; after: the same values in flat YAML.
+            settings = dict(make_all.source.RESOLVED_SETTINGS)
+            configuration = campaign / "config_resolved.yaml"
+            configuration.write_text("".join(f"{key}: {json.dumps(value)}\n"
+                                             for key, value in settings.items()))
+            (campaign / "manifest.yaml").write_text(
+                f"cleanrl_commit: {make_all.source.CLEANRL_COMMIT}\n"
+                f"jaxtari_commit: {make_all.source.JAXTARI_COMMIT}\n")
+            make_all.check_fixed_settings(campaign)
+
+            # Before: one ordinary update; after: obsolete ten-update window, rejected.
+            settings["paired_timing_minimum_complete_updates_per_round"] = 10
+            configuration.write_text("".join(f"{key}: {json.dumps(value)}\n"
+                                             for key, value in settings.items()))
+            with self.assertRaisesRegex(ValueError, "paired_timing_minimum_complete_updates_per_round"):
+                make_all.check_fixed_settings(campaign)
+
     def test_unregistered_probe_is_never_used(self):
         with tempfile.TemporaryDirectory() as directory:
             campaign = Path(directory)

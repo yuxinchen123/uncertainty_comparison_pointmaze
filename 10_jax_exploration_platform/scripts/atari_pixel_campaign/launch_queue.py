@@ -18,6 +18,7 @@ import shlex
 import subprocess
 import sys
 import uuid
+import xml.etree.ElementTree as ET
 
 
 PIXEL_PYTHON = "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
@@ -74,15 +75,18 @@ def admitted_source(source_root, run_dir):
 
 
 def allocated_gpu_uuid(environment=None):
-    """Resolve exactly one allocated Slurm GPU, including a remapped CUDA ordinal, through NVML."""
+    """Match the single visible A4500 to Slurm's physical allocation without an NVML index lookup."""
     environment = os.environ if environment is None else environment
     visible = environment.get("CUDA_VISIBLE_DEVICES", "")
-    allocated = environment.get("SLURM_STEP_GPUS") or environment.get("SLURM_JOB_GPUS", "")
-    if not visible or "," in visible or not allocated or "," in allocated:
+    allocations = [environment[name] for name in ("SLURM_JOB_GPUS", "SLURM_STEP_GPUS")
+                   if environment.get(name)]
+    if not visible or "," in visible or not allocations or any("," in value for value in allocations):
         raise ValueError("one CUDA-visible GPU and one recorded Slurm GPU allocation are required")
-    if not (allocated.isdecimal() or allocated.startswith("GPU-")):
+    if any(not (value.isdecimal() or value.startswith("GPU-")) for value in allocations):
         raise ValueError("Slurm must identify the single allocated GPU by physical index or UUID")
-    result = subprocess.run(["nvidia-smi", "-i", allocated, "--query-gpu=index,uuid,name",
+    # Before: physical GPU five may appear at visible NVML index zero; its minor remains five.
+    # This driver's CSV query omits minor_number, so read that field from its XML report.
+    result = subprocess.run(["nvidia-smi", "--query-gpu=index,uuid,name",
         "--format=csv,noheader"], capture_output=True, text=True, check=True, timeout=15)
     rows = list(csv.reader(result.stdout.splitlines()))
     if len(rows) != 1 or len(rows[0]) != 3:
@@ -90,11 +94,23 @@ def allocated_gpu_uuid(environment=None):
     index, gpu_uuid, name = (part.strip() for part in rows[0])
     if not gpu_uuid.startswith("GPU-") or "A4500" not in name:
         raise ValueError("the jaguar03 worker must hold one physical RTX A4500")
-    # Slurm may expose physical index 5 as CUDA ordinal 0 inside its device control group.
-    if visible not in {"0", index, gpu_uuid}:
+    result = subprocess.run(["nvidia-smi", "-q", "-x"], capture_output=True,
+                            text=True, check=True, timeout=15)
+    devices = ET.fromstring(result.stdout).findall("gpu")
+    if (len(devices) != 1 or devices[0].findtext("uuid") != gpu_uuid
+            or devices[0].findtext("product_name") != name):
+        raise ValueError("nvidia-smi's visible row and physical device report disagree")
+    minor = devices[0].findtext("minor_number", "")
+    if not index.isdecimal() or not minor.isdecimal():
+        raise ValueError("the visible GPU must record a numeric index and physical device minor number")
+    # Cross-check physical identity before allowing CUDA's remapped ordinal zero.
+    for allocated in allocations:
+        if allocated.isdecimal() and int(allocated) != int(minor):
+            raise ValueError("Slurm's physical GPU allocation conflicts with the visible device minor number")
+        if allocated.startswith("GPU-") and gpu_uuid != allocated:
+            raise ValueError("nvidia-smi returned a different GPU UUID from the allocated one")
+    if visible not in {"0", index, minor, gpu_uuid}:
         raise ValueError("CUDA visibility conflicts with the physical GPU recorded by Slurm")
-    if allocated.startswith("GPU-") and gpu_uuid != allocated:
-        raise ValueError("nvidia-smi returned a different GPU UUID from the allocated one")
     return gpu_uuid
 
 

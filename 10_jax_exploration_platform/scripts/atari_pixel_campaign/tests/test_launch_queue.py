@@ -18,13 +18,29 @@ SPECIFICATION.loader.exec_module(LAUNCHER)
 class QueueLauncherTests(unittest.TestCase):
     """Keep allocation identity and recording behavior testable without touching hardware."""
 
+    def gpu_queries(self, rows="0, GPU-allocated-five, NVIDIA RTX A4500\n", *, minor="5",
+                    gpu_uuid="GPU-allocated-five", extra_device=False):
+        """Represent the driver's supported CSV fields and its separate physical-device XML."""
+        device = (f"<gpu><uuid>{gpu_uuid}</uuid><minor_number>{minor}</minor_number>"
+                  "<product_name>NVIDIA RTX A4500</product_name></gpu>")
+        xml = "<nvidia_smi_log>" + device * (2 if extra_device else 1) + "</nvidia_smi_log>"
+
+        def query(command, **options):
+            """Return only the two supported unfiltered metadata commands."""
+            outputs = {("nvidia-smi", "--query-gpu=index,uuid,name", "--format=csv,noheader"): rows,
+                       ("nvidia-smi", "-q", "-x"): xml}
+            return subprocess.CompletedProcess(command, 0, outputs[tuple(command)], "")
+
+        return query
+
     def test_remapped_cuda_zero_uses_slurm_physical_gpu(self):
-        """CUDA ordinal zero must resolve to the allocated physical index, not card zero."""
-        result = subprocess.CompletedProcess([], 0, "5, GPU-allocated-five, NVIDIA RTX A4500\n", "")
-        with patch.object(LAUNCHER.subprocess, "run", return_value=result) as query:
+        """NVML index zero and CUDA zero may identify physical device minor five."""
+        with patch.object(LAUNCHER.subprocess, "run", side_effect=self.gpu_queries()) as query:
             actual = LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0", "SLURM_JOB_GPUS": "5"})
         self.assertEqual(actual, "GPU-allocated-five")
-        self.assertEqual(query.call_args.args[0][:3], ["nvidia-smi", "-i", "5"])
+        self.assertEqual(query.call_args_list[0].args[0], ["nvidia-smi",
+            "--query-gpu=index,uuid,name", "--format=csv,noheader"])
+        self.assertEqual(query.call_args_list[1].args[0], ["nvidia-smi", "-q", "-x"])
 
     def test_ambiguous_or_conflicting_visibility_is_rejected(self):
         """A worker cannot choose a card when the allocation or visibility is ambiguous."""
@@ -32,10 +48,44 @@ class QueueLauncherTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "one CUDA-visible"):
                 LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0,1", "SLURM_JOB_GPUS": "5"})
             query.assert_not_called()
-        result = subprocess.CompletedProcess([], 0, "5, GPU-allocated-five, NVIDIA RTX A4500\n", "")
-        with patch.object(LAUNCHER.subprocess, "run", return_value=result):
+        with patch.object(LAUNCHER.subprocess, "run", side_effect=self.gpu_queries()):
             with self.assertRaisesRegex(ValueError, "conflicts"):
                 LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "2", "SLURM_JOB_GPUS": "5"})
+
+    def test_physical_minor_and_allocation_uuids_must_agree(self):
+        """Reject a wrong physical card even when it is the only visible ordinal zero."""
+        with patch.object(LAUNCHER.subprocess, "run", side_effect=self.gpu_queries()):
+            for visible in ("0", "5", "GPU-allocated-five"):
+                with self.subTest(visible=visible):
+                    self.assertEqual(LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": visible,
+                        "SLURM_JOB_GPUS": "5", "SLURM_STEP_GPUS": "GPU-allocated-five"}),
+                        "GPU-allocated-five")
+            for allocated in ("0", "4", "GPU-other-card"):
+                with self.subTest(allocated=allocated), self.assertRaises(ValueError):
+                    LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0",
+                                                "SLURM_JOB_GPUS": allocated})
+            with self.assertRaisesRegex(ValueError, "conflicts"):
+                LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0",
+                    "SLURM_JOB_GPUS": "5", "SLURM_STEP_GPUS": "0"})
+            with self.assertRaisesRegex(ValueError, "CUDA visibility conflicts"):
+                LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "GPU-other-card",
+                                            "SLURM_JOB_GPUS": "5"})
+
+    def test_visible_query_must_identify_one_physical_a4500(self):
+        """Reject multiple rows, missing minor numbers, malformed rows and another GPU type."""
+        row = "0, GPU-allocated-five, NVIDIA RTX A4500\n"
+        for output in ("", row + "1, GPU-other, NVIDIA RTX A4500\n",
+                       "0, NVIDIA RTX A4500\n", "0, GPU-allocated-five, NVIDIA H100\n"):
+            with self.subTest(output=output), patch.object(
+                    LAUNCHER.subprocess, "run", side_effect=self.gpu_queries(output)):
+                with self.assertRaises(ValueError):
+                    LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0", "SLURM_JOB_GPUS": "5"})
+        for options in ({"minor": "N/A"}, {"minor": ""}, {"gpu_uuid": "GPU-other-card"},
+                        {"extra_device": True}):
+            with self.subTest(options=options), patch.object(
+                    LAUNCHER.subprocess, "run", side_effect=self.gpu_queries(**options)):
+                with self.assertRaises(ValueError):
+                    LAUNCHER.allocated_gpu_uuid({"CUDA_VISIBLE_DEVICES": "0", "SLURM_JOB_GPUS": "5"})
 
     def test_direct_supervisor_has_per_case_lock_and_durable_pid(self):
         """Record the remote process before releasing a worker, without an outer standing lock."""

@@ -25,3 +25,10 @@ allow_reduced_precision: false
 training_updates: 122070
 checkpoint_interval_seconds: 1200
 monitor_interval_seconds: 1200
+# Timing protocol; each complete update retains the learner settings above.
+paired_timing_rounds: 7
+paired_timing_minimum_complete_updates_per_round: 1
+paired_timing_grouped_complete_updates_per_round: 5
+paired_timing_report_complete_updates_per_round: 10
+selected_combination_confirmation_paired_rounds: 7
+selected_combination_confirmation_complete_updates_per_round: 10

@@ -2448,12 +2448,17 @@ first disagreement for diagnosis. A failed check rejects the implementation
 before timing; it does not become a zero-throughput measurement.
 
 After at least two warmup calls and stable compilation, a comparison takes
-seven pairs of timings, ten complete training updates per variant per pair.
+seven pairs of timings. Each variant in an ordinary pair runs one complete
+training update, including its rollout and all sixteen optimizer steps.
+The grouped-update comparison runs five complete updates per variant per pair;
+the report-readout comparison runs ten. These longer windows cover the complete
+execution group or reporting interval without padding or partial updates.
 The order alternates between reference first and candidate first. A change
 is accepted only with valid correctness checks, uncontended measurements, a
 median speed ratio above one, and a one-sided paired sign probability at most
-$0.05$. Small or inconsistent gains remain inconclusive. Final combinations
-receive a separate check and eleven pairs of twenty updates. Training-only
+$0.05$. Small or inconsistent gains remain inconclusive. The selected combination
+must receive a separate correctness check and confirmation with seven pairs of
+ten complete updates per variant before final training. Training-only
 timing and the report-readout comparison are kept separate. The latter compares
 downloading metrics after each update with downloading their device-accumulated
 values every ten updates; the published rows and their schedule must agree.
@@ -2475,13 +2480,21 @@ specified mechanisms investigated on both GPU types & 0 of 30 \\
 \greyrule
 specified mechanisms timed correctly on both GPU types & 0 of 30 \\
 \greyrule
-specified mechanisms covering every required copy count & required copy counts not yet recorded \\
+specified mechanisms covering every required copy count & 0 of 30 \\
 \greyrule
 additional mechanisms chosen from profiles & 0 of 20 \\
 \greyrule
 additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
-controller phase & reference execution diagnosis \\
+controller phase & initial benchmarks \\
+\greyrule
+registered queue cases completed & 0 \\
+\greyrule
+registered queue cases failed & 0 \\
+\greyrule
+registered queue cases pending & 120 \\
+\greyrule
+registered queue cases running & 0 \\
 \blackrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
@@ -2541,9 +2554,10 @@ Learner and rendering checks have passed on both GPU types. Standalone capacity
 probes have completed, and their timings are recorded separately from the
 registered paired comparisons. A recovered execution trace shows that
 computing convolution weight gradients accounts for the largest share of
-recorded GPU kernel time. Matched controls are investigating the setting for
-deterministic execution and the physical data layout used by convolutions
-before the paired implementation comparisons proceed.
+recorded GPU kernel time. The initial paired comparisons now use the validated,
+fully deterministic reference. Separate controls investigate the setting for
+deterministic execution and the physical data layout used by convolutions;
+their completion is not a prerequisite for those comparisons.
 
 No infrastructure change has yet been accepted through the registered paired
 comparisons, and the planned $2$-billion-step training has not begun. The
