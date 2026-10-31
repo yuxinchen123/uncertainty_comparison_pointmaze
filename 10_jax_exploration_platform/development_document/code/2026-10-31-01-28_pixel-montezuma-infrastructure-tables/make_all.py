@@ -307,6 +307,16 @@ def plot_specifications(records, input_fingerprint, plot_directory=PLOT_DIRECTOR
     return panels
 
 
+def plot_title(panel):
+    """Keep complete host, copy and scope labels on short separate lines at print size."""
+    noun = "copy" if panel["copies"] == 1 else "copies"
+    lines = [f"{HARDWARE_NAMES[panel['hardware']]}, {panel['host']}",
+             f"{panel['copies']} independent policy {noun}; panel {panel['panel_index']} of {panel['panel_count']}",
+             panel["scope"].replace("_", " ")]
+    return "\n".join(textwrap.fill(line, width=46, break_long_words=False, break_on_hyphens=False)
+                     for line in lines)
+
+
 def make_plots(records, input_fingerprint):
     """Draw the bounded panel specification on compute and record every generated PDF."""
     require_compute()
@@ -314,6 +324,7 @@ def make_plots(records, input_fingerprint):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
+    from matplotlib.ticker import MaxNLocator
 
     generated = plot_specifications(records, input_fingerprint)
     indexed = {row["path"]: row["result"] for row in records}
@@ -321,7 +332,7 @@ def make_plots(records, input_fingerprint):
     for panel in generated:
         results = [indexed[row["path"]] for row in panel["results"]]
         label_lines = sum(len(label.splitlines()) for label in panel["wrapped_labels"])
-        figure, axis = plt.subplots(figsize=(8.6, max(3.2, 1.8 + 0.25 * label_lines + 0.12 * len(results))))
+        figure, axis = plt.subplots(figsize=(8.6, max(3.8, 2.5 + 0.25 * label_lines + 0.12 * len(results))))
         for position, result in enumerate(results):
             ratios = result["paired_speedups"]
             color = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}[result["decision"]]
@@ -330,12 +341,10 @@ def make_plots(records, input_fingerprint):
         axis.set_yticks(range(len(results)), panel["wrapped_labels"], fontsize=12.5)
         axis.invert_yaxis()
         axis.axvline(1.0, color="black", linewidth=0.8)
-        axis.set_xlabel("Reference duration / candidate duration (larger is faster)", fontsize=12.5)
+        axis.set_xlabel("Reference duration / candidate duration\n(larger is faster)", fontsize=12.5)
         axis.tick_params(axis="x", labelsize=12)
-        copy_noun = "copy" if panel["copies"] == 1 else "copies"
-        axis.set_title(f"{HARDWARE_NAMES[panel['hardware']]}, {panel['copies']} independent policy {copy_noun}, "
-                       f"{panel['host']}\n{panel['scope'].replace('_', ' ')}; "
-                       f"panel {panel['panel_index']} of {panel['panel_count']}", fontsize=13)
+        axis.xaxis.set_major_locator(MaxNLocator(nbins=4, min_n_ticks=3))
+        axis.set_title(plot_title(panel), fontsize=13)
         colors = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}
         present = {result["decision"] for result in results}
         handles = [Line2D([], [], marker="o", linestyle="none", color=colors[name], label=name)

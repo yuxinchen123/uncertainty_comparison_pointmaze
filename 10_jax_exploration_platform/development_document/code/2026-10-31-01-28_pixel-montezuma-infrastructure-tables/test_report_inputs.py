@@ -10,6 +10,16 @@ import make_all
 
 
 class ReportInputTests(unittest.TestCase):
+    def test_plot_title_retains_complete_labels_on_separate_short_lines(self):
+        """Keep the full host visible with plural copies and the longer report-readout scope."""
+        panel = {"hardware": "jaguar03_rtx_a4500", "host": "jaguar03", "copies": 2,
+                 "scope": "training_with_report_readout", "panel_index": 3, "panel_count": 3}
+        title = make_all.plot_title(panel)
+        self.assertEqual(title.splitlines(), ["Jaguar03 RTX A4500, jaguar03",
+            "2 independent policy copies; panel 3 of 3", "training with report readout"])
+        panel.update(hardware="h100", host="serval02", copies=1)
+        self.assertIn("1 independent policy copy;", make_all.plot_title(panel))
+
     def measured_row(self, name, *, hardware="jaguar03_rtx_a4500", copies=1, commit="a" * 40,
                      host="jaguar03", scope="training_iteration_execution", reference=None):
         """Construct one clearly synthetic registered timing without analyzing numerical data."""
