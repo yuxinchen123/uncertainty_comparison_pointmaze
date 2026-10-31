@@ -1,0 +1,26 @@
+{
+  "kind": "h100_nvl_slurm_prepared_launch_review",
+  "reviewed_at_utc": "2026-10-31T21:47:45.372539+00:00",
+  "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "helper_commit": "e0dd3cd4fb4b9db40142d44a42417b046cb4cabb",
+  "configuration_fields": {
+    "learner": 49,
+    "environment": 14
+  },
+  "numerical_source_files": 32,
+  "independent_review": "CLEARED: exact detached helper and32-file frozen numerical closure;49learner/14environment fields;11installed packages and GPU image hashes;4531asset entries; admission unchanged; exact held1NVL/8CPU/64GiB/3h job and zero worker/claim/idea permission.",
+  "job_submitted": false,
+  "source_admission_changed": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "files": {
+    "site_validation_plan.json": "2a5a9d18f736e399ceaf4b6f2808bc00ee7e2d34a70b178625a6832ef1bba35e",
+    "job.sbatch": "632a6e000832b09e0a1ef0a4e109b99435c22493f9985c213b423ee2d393cbcb",
+    "command.txt": "b40cc1367cb82215e9db0a9f0d2ea4d50fcef4a3deb6f87bda1b8769c0f6824d",
+    "config_resolved.yaml": "cc32240e6e75c7b33e4c9928279f8156e43ade89576b35bb8f8ae2be83d0dd08",
+    "experiment_background.md": "d7226ec271a1a6827bd74d6233a85e4035ae5e1b43e70347c85e431e819bb6db",
+    "manifest.yaml": "bb90e076d73c936ef819359f4f6555e70d8f03722f7ff7d49d08da0f9a93f18d",
+    "preparation_execution.json": "8817a808bf06f3788325bc5cc07a218c8ad8e0ab704f41b450fe1afe762dce89"
+  },
+  "independent_review_completed_at_utc": "2026-10-31T21:48:02.725394+00:00"
+}

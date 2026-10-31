@@ -1,0 +1,59 @@
+{
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
+    "sha256": "2a5a9d18f736e399ceaf4b6f2808bc00ee7e2d34a70b178625a6832ef1bba35e"
+  },
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch",
+    "sha256": "632a6e000832b09e0a1ef0a4e109b99435c22493f9985c213b423ee2d393cbcb"
+  },
+  "helpers": {
+    "source_root": "/p/rlprojects/RND_worktrees/atari-h100-nvl-site-validation-helpers-e0dd3cd4fb4b",
+    "source_commit": "e0dd3cd4fb4b9db40142d44a42417b046cb4cabb",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "fb21fa2002382ff17f7d4fb1918c92387c9444a0198327ba96bd23485eb2a5d7",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "51d7d4470f8f6a7628274574266ebbc5ae9710112006d2e2c97b95494accf9cd",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "8d63add95cdf8fbb9bfedd325b2688a1d5518603f333e61aefea68a754bb6643",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "9d34653d41c51962fd11cda86332ad4f037e14a6e9bb61d9c86db6ce85a3ad5d",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    }
+  },
+  "state": "prepared_not_submitted",
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--constraint=h100_94gb&amd_epyc_9354",
+    "--gres=gpu:nvidia_h100_nvl:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=03:00:00",
+    "--job-name=atari_h100_nvl_site_validation",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch"
+  ],
+  "submission_control": {
+    "submit_held": true,
+    "helper_submits_or_releases": false,
+    "release_exact_saved_id_only": true,
+    "parent_procedure": [
+      "Submit the recorded command with --hold.",
+      "Write and fsync the exact returned UVA job ID in slurm/submitted_jobids_uva.txt and write and fsync its submission receipt.",
+      "Only after both records are durable, release that exact saved ID with scontrol release."
+    ],
+    "release_command_template": [
+      "scontrol",
+      "release",
+      "<exact_saved_uva_job_id>"
+    ]
+  }
+}
