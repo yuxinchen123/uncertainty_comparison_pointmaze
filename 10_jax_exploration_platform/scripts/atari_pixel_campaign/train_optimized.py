@@ -9,6 +9,8 @@ checkouts; an archive without Git metadata is insufficient. Every raw evidence
 path must be accessible on the training server through explicitly staged and
 revalidated receipts. asset_record names an exhaustive asset manifest outside
 its asset root, with the manifest's SHA256 fixed in the final specification.
+Wheel-only remote installs also supply jaxtari_source_root: a staged checkout
+of the pinned public JAXtari commit used to verify installed Python files.
 """
 
 import argparse
@@ -17,6 +19,7 @@ from datetime import datetime, timezone
 import fcntl
 import hashlib
 import importlib
+import importlib.util
 from importlib import metadata
 import json
 import math
@@ -29,6 +32,7 @@ import socket
 import subprocess
 import sys
 import time
+from urllib.parse import unquote, urlparse
 
 
 SCRIPT_ROOT = Path(__file__).resolve().parent
@@ -40,6 +44,8 @@ PACKAGE_NAMES = ("jax", "jaxlib", "jax-cuda12-plugin", "jax-cuda12-pjrt",
                  "nvidia-cudnn-cu12", "nvidia-cublas-cu12", "nvidia-cuda-runtime-cu12",
                  "jaxtari", "flax", "optax", "numpy")
 JAXTARI_COMMIT = "04ab9aec318c72162e2e53503a594a489d7e162b"
+SERVAL02_CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
+SERVAL02_STANDING_LOCK = Path("/tmp/sl5nw_serval02_card1.lock")
 
 
 def utc_now():
@@ -70,6 +76,38 @@ def component_source_commit(root, environment):
     if len(commit) != 40 or any(character not in "0123456789abcdef" for character in commit):
         raise ValueError("the component Git checkout must record a full commit")
     return commit
+
+
+def training_placement(environment, hostname):
+    """Require a Slurm compute allocation or the explicitly authorized serval02 card."""
+    host = hostname.split(".")[0]
+    if host == "serval05" or any(word in host for word in ("portal", "login")):
+        raise RuntimeError("final training cannot run on serval05 or a login host")
+    if host == "serval02":
+        if environment.get("CUDA_VISIBLE_DEVICES") != SERVAL02_CARD1:
+            raise ValueError("direct training requires the exact authorized serval02 card 1 UUID")
+        return {"kind": "serval02", "gpu_uuid": SERVAL02_CARD1, "standing_lock": str(SERVAL02_STANDING_LOCK)}
+    job = environment.get("SLURM_JOB_ID", "")
+    if not job.isdecimal() or int(job) < 1:
+        raise RuntimeError("jaguar03 and other training hosts require a Slurm compute allocation")
+    return {"kind": "slurm", "slurm_job_id": job}
+
+
+@contextmanager
+def placement_guard(placement):
+    """Hold the direct host's standing lock and verify GPU modes before numerical imports."""
+    if placement["kind"] == "slurm":
+        yield
+        return
+    from queue_worker import gpu_identity, gpu_readiness, standing_case_lock
+    with standing_case_lock(Path(placement["standing_lock"])) as (acquired, unused):
+        if not acquired:
+            raise RuntimeError("serval02 card 1's standing lock is already held")
+        gpu_identity(placement["gpu_uuid"], "h100")
+        readiness = gpu_readiness(placement["gpu_uuid"], "h100")
+        if readiness.get("ready") is not True:
+            raise RuntimeError("serval02 card 1 is not ready: " + json.dumps(readiness, sort_keys=True))
+        yield
 
 
 def atomic_json(path, value):
@@ -197,6 +235,95 @@ def file_sha256(path):
     return digest.hexdigest()
 
 
+def jaxtari_python_receipt(source_root=None):
+    """Check installed JAXtari Python bytes against the pinned Git tree without importing it."""
+    distribution = metadata.distribution("jaxtari")
+    direct = json.loads(distribution.read_text("direct_url.json") or "{}")
+    if source_root is None:
+        url = urlparse(direct.get("url", ""))
+        candidate = Path(unquote(url.path)) if url.scheme == "file" else None
+        if candidate is not None and candidate.is_dir():
+            source_root = candidate
+    if source_root is None or not Path(source_root).is_absolute():
+        raise ValueError("stage the pinned JAXtari Git checkout and supply jaxtari_source_root")
+    root = Path(source_root).resolve(strict=True)
+    top = subprocess.check_output(["git", "-C", str(root), "rev-parse", "--show-toplevel"], text=True).strip()
+    commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if Path(top).resolve() != root or commit != JAXTARI_COMMIT:
+        raise ValueError("the JAXtari source is not the exact pinned Git checkout")
+    entries = subprocess.check_output(["git", "-C", str(root), "ls-tree", "-rz", commit, "--", "src/jaxtari"])
+    expected = {}
+    for entry in entries.split(b"\0"):
+        if entry:
+            header, name = entry.split(b"\t", 1)
+            path = name.decode()
+            if path.endswith(".py"):
+                expected[path.removeprefix("src/")] = header.decode().split()[2]
+    installed = {str(path): distribution.locate_file(path) for path in distribution.files or []
+                 if str(path).startswith("jaxtari/") and str(path).endswith(".py")}
+    if not expected or set(expected) != set(installed):
+        raise ValueError("installed JAXtari Python files differ from the pinned source file set")
+    files = {}
+    for name, path in installed.items():
+        contents = Path(path).read_bytes()
+        blob = hashlib.sha1(b"blob " + str(len(contents)).encode() + b"\0" + contents).hexdigest()
+        if blob != expected[name]:
+            raise ValueError("installed JAXtari Python differs from the pinned source: " + name)
+        files[name] = {"git_blob": blob, "sha256": hashlib.sha256(contents).hexdigest()}
+    return {"source_root": str(root), "source_commit": commit, "version": distribution.version,
+            "direct_url": direct, "python_files": files, "tree_digest": canonical_digest(files)}
+
+
+def installed_gpu_library_receipts():
+    """Hash the installed cuDNN and CUDA runtime images before any training update."""
+    files = {}
+    for name in ("nvidia-cudnn-cu12", "nvidia-cuda-runtime-cu12"):
+        distribution = metadata.distribution(name)
+        for relative in distribution.files or []:
+            basename = Path(relative).name
+            if basename.startswith(("libcudnn", "libcudart")) and ".so" in basename:
+                path = Path(distribution.locate_file(relative)).resolve(strict=True)
+                files[str(path)] = {"package": name, "version": distribution.version, "sha256": file_sha256(path)}
+    if not any(Path(path).name.startswith("libcudnn.so") for path in files) or not any(
+            Path(path).name.startswith("libcudart.so") for path in files):
+        raise ValueError("the installed environment lacks its cuDNN/CUDA runtime images")
+    return files
+
+
+def actual_gpu_library_receipt(backend, expected):
+    """Query already loaded libraries and verify their actual bytes against checkpoint identity."""
+    # Import this identity-bound helper explicitly, regardless of the numerical source's search path.
+    specification = importlib.util.spec_from_file_location("optimized_training_gpu_libraries",
+                                                          SCRIPT_ROOT / "diagnose_gpu_execution.py")
+    helper = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(helper)
+    receipt = helper.loaded_gpu_libraries(backend)
+    loaded = {str(Path(path).resolve(strict=True)) for path in receipt["loaded_shared_libraries"]
+              if Path(path).name.startswith(("libcudnn", "libcudart"))}
+    verified = {}
+    for path in loaded:
+        if path not in expected or file_sha256(Path(path)) != expected[path]["sha256"]:
+            raise ValueError("the actually loaded GPU library differs from the installed immutable image: " + path)
+        verified[path] = expected[path]
+    return {**receipt, "verified_package_libraries": verified, "pid": os.getpid(), "time": utc_now()}
+
+
+def validate_gpu_library_receipt(receipt, backend):
+    """Validate checkpoint library receipts without importing array modules or loading a library."""
+    expected = backend.get("installed_gpu_libraries")
+    if expected is None:
+        return
+    if (not isinstance(receipt, dict) or type(receipt.get("cudnnGetVersion")) is not int
+            or type(receipt.get("cudaRuntimeGetVersion")) is not int
+            or min(receipt["cudnnGetVersion"], receipt["cudaRuntimeGetVersion"]) <= 0):
+        raise ValueError("the trained checkpoint lacks verified actual CUDA/cuDNN libraries")
+    verified = receipt.get("verified_package_libraries", {})
+    if (any(path not in expected or value != expected[path] for path, value in verified.items())
+            or any(str(Path(receipt[name]).resolve()) not in verified
+                   for name in ("cudnn_library", "cuda_runtime_library"))):
+        raise ValueError("checkpoint loaded-library receipts differ from their immutable images")
+
+
 def verify_assets(record, environment):
     """Check every asset against a fixed manifest before any game initialization."""
     if set(record) != {"root", "manifest", "sha256"}:
@@ -262,13 +389,15 @@ def validate_report_state(report, execution, iteration):
         raise ValueError("checkpoint reporting window disagrees with the true iteration")
 
 
-def save_checkpoint(path, state, report, identity, iteration, elapsed_seconds):
+def save_checkpoint(path, state, report, identity, iteration, elapsed_seconds, loaded_libraries=None):
     """Atomically preserve the full host state and an unfinished reporting window."""
     validate_host_state(state, identity, iteration)
     validate_report_state(report, identity["configuration"]["execution"], iteration)
+    if iteration:
+        validate_gpu_library_receipt(loaded_libraries, identity["backend"])
     payload = {"schema_version": 1, "identity": identity, "identity_digest": canonical_digest(identity),
                "iteration": iteration, "elapsed_seconds": elapsed_seconds, "written_utc": utc_now(),
-               "state": state, "report_state": report}
+               "state": state, "report_state": report, "loaded_gpu_libraries": loaded_libraries}
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + f".tmp-{os.getpid()}")
     with temporary.open("wb") as stream:
@@ -286,7 +415,7 @@ def save_checkpoint(path, state, report, identity, iteration, elapsed_seconds):
         "target_updates": learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"]),
         "steps_per_copy": iteration * learner["n_envs"] * learner["num_steps"],
         "pending_report_updates": report["pending_count"], "elapsed_seconds": elapsed_seconds,
-        "written_utc": payload["written_utc"]})
+        "written_utc": payload["written_utc"], "loaded_gpu_libraries": loaded_libraries})
 
 
 def load_checkpoint(path, identity):
@@ -298,6 +427,8 @@ def load_checkpoint(path, identity):
         raise ValueError("checkpoint identity differs from the admitted training run")
     validate_host_state(payload["state"], identity, payload["iteration"])
     validate_report_state(payload["report_state"], identity["configuration"]["execution"], payload["iteration"])
+    if payload["iteration"]:
+        validate_gpu_library_receipt(payload.get("loaded_gpu_libraries"), identity["backend"])
     elapsed = payload["elapsed_seconds"]
     if type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed < 0:
         raise ValueError("checkpoint elapsed runtime is invalid")
@@ -391,6 +522,7 @@ class TrainingExecution:
 
 def run(arguments):
     """Train only after admission, restoring schedules and full state together."""
+    placement = training_placement(os.environ, socket.gethostname())
     from post_comparison_validation import validate_training_admission
 
     # Admission rereads raw evidence; a flag or an old receipt alone never starts training.
@@ -399,11 +531,9 @@ def run(arguments):
     source_receipt(source_root, specification["source_commit"])
     helper_commit = subprocess.check_output(["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"], text=True).strip()
     helpers = source_receipt(PROJECT_ROOT, helper_commit, [str((SCRIPT_ROOT / name).relative_to(PROJECT_ROOT))
-        for name in ("train_optimized.py", "post_comparison_validation.py", "controller.py", "ideas.py")])
+        for name in ("train_optimized.py", "post_comparison_validation.py", "controller.py", "ideas.py", "queue_worker.py",
+                     "diagnose_gpu_execution.py")])
     runtime = enforce_runtime(specification["runtime_environment"], os.environ)
-    host = socket.gethostname().split(".")[0]
-    if not os.environ.get("SLURM_JOB_ID") and host not in {"serval02", "jaguar03"}:
-        raise RuntimeError("final training requires a compute allocation or an authorized direct compute host")
     for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):
         if not (arguments.run_dir / name).is_file():
             raise ValueError("the campaign is missing its launch-time record: " + name)
@@ -413,7 +543,21 @@ def run(arguments):
         assets = verify_assets(specification["asset_record"], os.environ)
         prepare_unit(directory, specification)
         attempt, attempt_directory = new_attempt(directory)
-        _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory)
+        waiting = {"state": "waiting_for_standing_lock" if placement["kind"] == "serval02" else "validating_allocation",
+                   "attempt": attempt, "pid": os.getpid(), "time": utc_now(), "placement": placement}
+        atomic_json(attempt_directory / "progress.json", waiting)
+        atomic_json(directory / "progress.json", waiting)
+        try:
+            with placement_guard(placement):
+                _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory)
+        except Exception as error:
+            if not (attempt_directory / "failure.json").exists():
+                failure = {"error": repr(error), "failure_stage": "placement", "attempt": attempt,
+                           "pid": os.getpid(), "time": utc_now()}
+                atomic_json(attempt_directory / "failure.json", failure)
+                atomic_json(directory / "failure.json", failure)
+                atomic_json(directory / "progress.json", {**failure, "state": "failed"})
+            raise
 
 
 def _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory):
@@ -435,6 +579,8 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         signal.signal(signum, request_stop)
     progress({"state": "validating_runtime"})
     try:
+        jaxtari_source = jaxtari_python_receipt(specification.get("jaxtari_source_root"))
+        installed_libraries = installed_gpu_library_receipts()
         # Load the Executor and numerical implementation from the admitted source only.
         sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "src"))
         sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "scripts" / "atari_pixel_campaign"))
@@ -464,7 +610,8 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         query = subprocess.check_output(["nvidia-smi", "--query-gpu=index,name,memory.total,driver_version,uuid",
                                          "--format=csv,noheader"], text=True).strip()
         backend = {"device_kind": device_kind, "driver_version": query.splitlines()[0].split(",")[3].strip(),
-                   "packages": {name: metadata.version(name) for name in PACKAGE_NAMES}}
+                   "packages": {name: metadata.version(name) for name in PACKAGE_NAMES},
+                   "jaxtari_source": jaxtari_source, "installed_gpu_libraries": installed_libraries}
         identity = checkpoint_identity(specification, helpers, runtime, backend, assets)
         identity_path = directory / "training_identity.json"
         if identity_path.exists() and json.loads(identity_path.read_text()) != identity:
@@ -482,10 +629,16 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         configuration = specification["configuration"]
         config = PixelPPOConfig(**configuration["learner"])
         environment = AtariPixelEnvironment(**configuration["environment"])
+        jaxtari = sys.modules.get("jaxtari")
+        expected_jaxtari = Path(metadata.distribution("jaxtari").locate_file("jaxtari/__init__.py")).resolve(strict=True)
+        if jaxtari is None or Path(jaxtari.__file__).resolve() != expected_jaxtari:
+            raise ValueError("the imported JAXtari package differs from the verified installed Python files")
         trainer = PixelPPORND(config, environment)
         executor = paired.Executor(trainer, configuration["execution"])
         checkpoint = directory / "checkpoints/latest.pkl"
         prior_seconds = 0.0
+        loaded_libraries = None
+        libraries_verified_in_this_process = False
         if checkpoint.exists():
             payload = load_checkpoint(checkpoint, identity)
             state = paired.device_copy(payload["state"])
@@ -493,6 +646,7 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
             if configuration["execution"]["report_readout"] == "scheduled" and report["pending_sums"] is not None:
                 report["pending_sums"] = paired.device_copy(report["pending_sums"])
             prior_seconds = payload["elapsed_seconds"]
+            loaded_libraries = payload.get("loaded_gpu_libraries")
         else:
             progress({"state": "initializing"})
             state = trainer.initialize(tuple(specification["copy_seeds"]))
@@ -513,7 +667,7 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
             """Copy every state leaf and pending report value before atomic serialization."""
             jax.block_until_ready(state)
             save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report), identity,
-                            update, prior_seconds + time.monotonic() - started)
+                            update, prior_seconds + time.monotonic() - started, loaded_libraries)
 
         # The first save avoids repeating completed normalization warmup after interruption.
         checkpoint_now()
@@ -530,6 +684,12 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
             update = int(jax.device_get(state.iteration))
             if update != before + count:
                 raise RuntimeError("the learner counter did not advance by the exact complete update count")
+            if not libraries_verified_in_this_process:
+                loaded_libraries = actual_gpu_library_receipt(devices[0].client, installed_libraries)
+                validate_gpu_library_receipt(loaded_libraries, backend)
+                atomic_json(attempt_directory / "loaded_gpu_libraries.json", loaded_libraries)
+                atomic_json(directory / "loaded_gpu_libraries.json", loaded_libraries)
+                libraries_verified_in_this_process = True
             # Grouped metrics describe its last update; scheduled rows retain the original full windows.
             if configuration["execution"]["report_readout"] == "none":
                 reports = [{"iteration": update, "window_updates": 1,

@@ -1,7 +1,9 @@
 """Check final-training admission and restart metadata without numerical imports."""
 
 from collections import namedtuple
+from contextlib import contextmanager
 import copy
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -97,11 +99,54 @@ class TrainingMetadataTests(unittest.TestCase):
         validator.validate_training_admission = mock.Mock(return_value={"authorized": True})
         before = set(sys.modules)
         with mock.patch.dict(sys.modules, {"post_comparison_validation": validator}), \
+                mock.patch.object(training, "training_placement", return_value={"kind": "slurm"}), \
                 mock.patch.object(training, "source_receipt") as receipt:
             with self.assertRaisesRegex(ValueError, "schema_version"):
                 training.run(types.SimpleNamespace(final_spec=Path("/unverified.json")))
             receipt.assert_not_called()
         self.assertFalse({"jax", "numpy", "torch"} & (set(sys.modules) - before))
+
+    def test_placement_requires_the_authorized_card_or_slurm(self):
+        """Card zero, direct Jaguar03, serval05 and login hosts cannot reach numerical imports."""
+        environment = {"CUDA_VISIBLE_DEVICES": training.SERVAL02_CARD1}
+        self.assertEqual(training.training_placement(environment, "serval02")["kind"], "serval02")
+        for host in ("jaguar03", "ac049", "mit-compute"):
+            with self.subTest(host=host), self.assertRaisesRegex(RuntimeError, "Slurm"):
+                training.training_placement({}, host)
+            self.assertEqual(training.training_placement({"SLURM_JOB_ID": "123"}, host)["kind"], "slurm")
+        for host in ("serval05", "portal05", "alogin1", "gh-login02", "orcd-login001"):
+            with self.subTest(host=host), self.assertRaisesRegex(RuntimeError, "login host"):
+                training.training_placement({"SLURM_JOB_ID": "123"}, host)
+        for visible in ("0", "1", "GPU-other", training.SERVAL02_CARD1 + ",GPU-other"):
+            with self.subTest(visible=visible), self.assertRaisesRegex(ValueError, "card 1 UUID"):
+                training.training_placement({"CUDA_VISIBLE_DEVICES": visible}, "serval02")
+
+    def test_direct_preflight_holds_the_standing_lock_until_training_returns(self):
+        """The actual metadata preflight runs inside the lock and rejects a busy card before yield."""
+        events = []
+        worker = types.ModuleType("queue_worker")
+
+        @contextmanager
+        def locked(path):
+            """Record whether the caller keeps the standing lock across its body."""
+            events.append(("acquired", path))
+            yield True, 9
+            events.append(("released", path))
+
+        worker.standing_case_lock = locked
+        worker.gpu_identity = mock.Mock()
+        worker.gpu_readiness = mock.Mock(return_value={"ready": True})
+        placement = training.training_placement({"CUDA_VISIBLE_DEVICES": training.SERVAL02_CARD1}, "serval02")
+        with mock.patch.dict(sys.modules, {"queue_worker": worker}):
+            with training.placement_guard(placement):
+                self.assertEqual([event[0] for event in events], ["acquired"])
+                worker.gpu_identity.assert_called_once_with(training.SERVAL02_CARD1, "h100")
+                worker.gpu_readiness.assert_called_once_with(training.SERVAL02_CARD1, "h100")
+            self.assertEqual([event[0] for event in events], ["acquired", "released"])
+            worker.gpu_readiness.return_value = {"ready": False, "reason": "gpu_has_compute_processes"}
+            with self.assertRaisesRegex(RuntimeError, "not ready"):
+                with training.placement_guard(placement):
+                    self.fail("a busy GPU must never reach training")
 
     def test_runtime_matches_validated_flags_and_records_extended_environment(self):
         """Equivalent whitespace is accepted; conflicting precision or compiler flags is rejected."""
@@ -275,6 +320,68 @@ class TrainingMetadataTests(unittest.TestCase):
             (root / "unrecorded.png").write_bytes(b"extra")
             with self.assertRaisesRegex(ValueError, "exactly"):
                 training.verify_assets(record, {})
+
+    def test_installed_jaxtari_python_matches_pinned_git_blobs(self):
+        """Record actual package-file hashes and reject a changed source byte at the same version."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            installed = root / "core.py"
+            contents = b"pinned python source\n"
+            installed.write_bytes(contents)
+            blob = hashlib.sha1(b"blob " + str(len(contents)).encode() + b"\0" + contents).hexdigest()
+            tree = f"100644 blob {blob}\tsrc/jaxtari/core.py\0".encode()
+            distribution = types.SimpleNamespace(files=[Path("jaxtari/core.py")], version="0.2.0",
+                locate_file=lambda path: installed,
+                read_text=lambda name: json.dumps({"dir_info": {}, "url": root.as_uri()}))
+            for changed in (False, True):
+                replies = [str(root), training.JAXTARI_COMMIT, tree]
+                with mock.patch.object(training.metadata, "distribution", return_value=distribution), \
+                        mock.patch.object(training.subprocess, "check_output", side_effect=replies):
+                    if changed:
+                        installed.write_bytes(b"changed python source\n")
+                        with self.assertRaisesRegex(ValueError, "differs from the pinned source"):
+                            training.jaxtari_python_receipt()
+                    else:
+                        receipt = training.jaxtari_python_receipt()
+                        self.assertEqual(receipt["source_commit"], training.JAXTARI_COMMIT)
+                        self.assertEqual(receipt["python_files"]["jaxtari/core.py"]["git_blob"], blob)
+
+    def test_loaded_gpu_library_receipt_matches_installed_bytes_and_checkpoint(self):
+        """Accept actual mapped images and reject an unexpected or changed image without loading it."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            cudnn, cuda = root / "libcudnn.so.9", root / "libcudart.so.12"
+            cudnn.write_bytes(b"cuDNN image")
+            cuda.write_bytes(b"CUDA runtime image")
+            distributions = {name: types.SimpleNamespace(version="recorded", files=[path.name],
+                locate_file=lambda relative, folder=root: folder / relative) for name, path in (
+                    ("nvidia-cudnn-cu12", cudnn), ("nvidia-cuda-runtime-cu12", cuda))}
+            with mock.patch.object(training.metadata, "distribution", side_effect=distributions.__getitem__):
+                expected = training.installed_gpu_library_receipts()
+            diagnostic = types.ModuleType("diagnose_gpu_execution")
+            diagnostic.loaded_gpu_libraries = lambda backend: {
+                "loaded_shared_libraries": [str(cudnn), str(cuda)],
+                "cudnn_library": str(cudnn), "cuda_runtime_library": str(cuda),
+                "cudnnGetVersion": 92400, "cudaRuntimeGetVersion": 12090}
+            helper_spec = types.SimpleNamespace(loader=types.SimpleNamespace(exec_module=lambda helper: None))
+            with mock.patch.object(training.importlib.util, "spec_from_file_location", return_value=helper_spec), \
+                    mock.patch.object(training.importlib.util, "module_from_spec", return_value=diagnostic):
+                receipt = training.actual_gpu_library_receipt(object(), expected)
+                backend = {"installed_gpu_libraries": expected}
+                training.validate_gpu_library_receipt(receipt, backend)
+                identity = example_identity()
+                identity["backend"] = backend
+                report = {"pending_sums": None, "pending_count": 0, "last_report_iteration": 0}
+                path = root / "latest.pkl"
+                with self.assertRaisesRegex(ValueError, "lacks verified"):
+                    training.save_checkpoint(path, example_state(), report, identity, 3, 1)
+                training.save_checkpoint(path, example_state(), report, identity, 3, 1, receipt)
+                self.assertEqual(training.load_checkpoint(path, identity)["loaded_gpu_libraries"], receipt)
+                sidecar = json.loads(path.with_name("latest.metadata.json").read_text())
+                self.assertEqual(sidecar["loaded_gpu_libraries"]["cudnnGetVersion"], 92400)
+                cuda.write_bytes(b"changed runtime image")
+                with self.assertRaisesRegex(ValueError, "actually loaded GPU library differs"):
+                    training.actual_gpu_library_receipt(object(), expected)
 
 
 if __name__ == "__main__":

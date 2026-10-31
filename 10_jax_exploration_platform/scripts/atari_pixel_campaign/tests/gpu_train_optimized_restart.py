@@ -24,8 +24,6 @@ import unittest
 
 if os.environ.get("RND_RUN_GPU_COMPONENT_TESTS") != "1":
     raise unittest.SkipTest("GPU component checks require an explicit compute-only invocation")
-if not os.environ.get("SLURM_JOB_ID") and socket.gethostname().split(".")[0] not in {"serval02", "jaguar03"}:
-    raise RuntimeError("GPU component checks cannot run on a login host")
 
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = SCRIPT_ROOT.parents[2]
@@ -33,6 +31,7 @@ sys.path.insert(0, str(SCRIPT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "10_jax_exploration_platform/src"))
 import train_optimized as training
 
+training.training_placement(os.environ, socket.gethostname())
 COMPONENT_SOURCE_COMMIT = training.component_source_commit(PROJECT_ROOT, os.environ)
 training.enforce_runtime({"JAX_ENABLE_X64": "true", "JAX_DEFAULT_MATMUL_PRECISION": "highest",
                           "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"}, os.environ)
@@ -65,6 +64,8 @@ class TrainingGPUComponentTests(unittest.TestCase):
         cls.trainer = PixelPPORND(cls.config, cls.environment)
         cls.initial_host = paired.host_copy(cls.trainer.warmup(cls.trainer.initialize((11,))))
         cls.source_commit = COMPONENT_SOURCE_COMMIT
+        cls.jaxtari_source = training.jaxtari_python_receipt()
+        cls.installed_gpu_libraries = training.installed_gpu_library_receipts()
 
     def identity(self, options):
         """Identify tiny component state without weakening the production admission boundary."""
@@ -134,6 +135,9 @@ class TrainingGPUComponentTests(unittest.TestCase):
             self.assertEqual(training.load_checkpoint(checkpoint, identity)["iteration"], 7)
         self.assert_state_agreement(uninterrupted, state, execution.executor)
         paired.agreement(jax.device_get(reference_metrics), jax.device_get(metrics))
+        receipt = training.actual_gpu_library_receipt(jax.devices()[0].client, self.installed_gpu_libraries)
+        training.validate_gpu_library_receipt(receipt, {"installed_gpu_libraries": self.installed_gpu_libraries})
+        self.assertEqual(self.jaxtari_source["source_commit"], training.JAXTARI_COMMIT)
 
     def test_scheduled_pending_report_resume_matches_uninterrupted_executor(self):
         """Save two updates into a four-update report window and preserve its next published row."""
