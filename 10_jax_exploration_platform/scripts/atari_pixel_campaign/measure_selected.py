@@ -490,7 +490,7 @@ def _compute(directory, plan, hardware, installed_libraries):
             memory = MemoryObservation(devices[0], plan["gpu_uuid"])
             measured = []
             for index in range(7):
-                progress({"state": "running", "round": index + 1, "total_rounds": 7})
+                progress({"state": "running", "variant": "candidate", "round": index + 1, "total_rounds": 7})
                 row, host = paired.measure_round(executor, host, plan["iterations"], memory)
                 measured.append(row)
                 diagnostic.atomic_json(directory / "rounds.json", measured)
