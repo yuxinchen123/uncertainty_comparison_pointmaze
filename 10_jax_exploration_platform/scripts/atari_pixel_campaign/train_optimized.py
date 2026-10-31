@@ -560,7 +560,8 @@ def run(arguments):
             raise
 
 
-def _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory):
+def _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory,
+           *, operational_paths=None, metadata_hooks=None):
     """Keep numerical imports and device work inside the admitted, locked unit."""
     stop = {"reason": None}
     started = time.monotonic()
@@ -579,8 +580,13 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         signal.signal(signum, request_stop)
     progress({"state": "validating_runtime"})
     try:
-        jaxtari_source = jaxtari_python_receipt(specification.get("jaxtari_source_root"))
+        public_source = specification.get("jaxtari_source_root") if operational_paths is None else operational_paths["jaxtari_source_root"]
+        jaxtari_source = jaxtari_python_receipt(public_source)
         installed_libraries = installed_gpu_library_receipts()
+        packages = {name: metadata.version(name) for name in PACKAGE_NAMES}
+        if metadata_hooks is not None:
+            metadata_hooks.before_numerical_imports({"jaxtari_source": jaxtari_source,
+                "gpu_libraries": installed_libraries, "packages": packages})
         # Load the Executor and numerical implementation from the admitted source only.
         sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "src"))
         sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "scripts" / "atari_pixel_campaign"))
@@ -610,9 +616,16 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         query = subprocess.check_output(["nvidia-smi", "--query-gpu=index,name,memory.total,driver_version,uuid",
                                          "--format=csv,noheader"], text=True).strip()
         backend = {"device_kind": device_kind, "driver_version": query.splitlines()[0].split(",")[3].strip(),
-                   "packages": {name: metadata.version(name) for name in PACKAGE_NAMES},
+                   "packages": packages,
                    "jaxtari_source": jaxtari_source, "installed_gpu_libraries": installed_libraries}
         identity = checkpoint_identity(specification, helpers, runtime, backend, assets)
+        if metadata_hooks is not None:
+            # Metadata hooks receive no learner state and cannot replace source/configuration/seeds in this constructor.
+            bound = metadata_hooks.identity_metadata(runtime, backend, assets)
+            if set(bound) != {"runtime_environment", "backend", "assets", "deployment"}:
+                raise ValueError("training metadata hooks must return only the declared identity metadata")
+            identity = checkpoint_identity(specification, helpers, bound["runtime_environment"], bound["backend"], bound["assets"])
+            identity["deployment"] = bound["deployment"]
         identity_path = directory / "training_identity.json"
         if identity_path.exists() and json.loads(identity_path.read_text()) != identity:
             raise ValueError("the existing training unit has a different identity")
@@ -689,6 +702,8 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
                 validate_gpu_library_receipt(loaded_libraries, backend)
                 atomic_json(attempt_directory / "loaded_gpu_libraries.json", loaded_libraries)
                 atomic_json(directory / "loaded_gpu_libraries.json", loaded_libraries)
+                if metadata_hooks is not None:
+                    metadata_hooks.after_first_update(loaded_libraries)
                 libraries_verified_in_this_process = True
             # Grouped metrics describe its last update; scheduled rows retain the original full windows.
             if configuration["execution"]["report_readout"] == "none":
