@@ -1,0 +1,54 @@
+{
+  "kind": "h100_nvl_slurm_site_validation_review",
+  "reviewed_at_utc": "2026-10-31T21:40:26.803270+00:00",
+  "metadata_test_count": 22,
+  "tests_passed": true,
+  "independent_review": "Cleared by independent reviewer: all22 stdlib tests pass; source/runtime/allocation/full gate/environment/cleanup/finite-state checks and held exact-ID submission order reviewed.",
+  "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "files": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "sha256": "fb21fa2002382ff17f7d4fb1918c92387c9444a0198327ba96bd23485eb2a5d7"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_site_validation.py",
+      "sha256": "3a02ff6239b3e5bbfde64397ed781f68a43708cd036ff667361ee9e32358d1c2"
+    }
+  ],
+  "resource_observations": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "node",
+        "serval[06-09]"
+      ],
+      "exit_code": 0,
+      "stdout": "NodeName=serval06 Arch=x86_64 CoresPerSocket=32 \n   CPUAlloc=24 CPUEfctv=62 CPUTot=64 CPULoad=3.59\n   AvailableFeatures=h100_94gb,amd_epyc_9354\n   ActiveFeatures=h100_94gb,amd_epyc_9354\n   Gres=gpu:nvidia_h100_nvl:2(S:0)\n   NodeAddr=serval06 NodeHostName=serval06 Version=23.11.6\n   OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 \n   RealMemory=1500000 AllocMem=221184 FreeMem=489604 Sockets=1 Boards=1\n   CoreSpecCount=1 CPUSpecList=62-63 MemSpecLimit=4000\n   State=MIXED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=gpu \n   BootTime=2026-10-26T14:25:08 SlurmdStartTime=2026-10-26T14:25:33\n   LastBusyTime=2026-10-31T16:53:28 ResumeAfterTime=None\n   CfgTRES=cpu=62,mem=1500000M,billing=225066,gres/gpu=2\n   AllocTRES=cpu=24,mem=216G,gres/gpu=2\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\nNodeName=serval07 Arch=x86_64 CoresPerSocket=32 \n   CPUAlloc=18 CPUEfctv=62 CPUTot=64 CPULoad=15.48\n   AvailableFeatures=h100_94gb,amd_epyc_9354\n   ActiveFeatures=h100_94gb,amd_epyc_9354\n   Gres=gpu:nvidia_h100_nvl:2(S:0)\n   NodeAddr=serval07 NodeHostName=serval07 Version=23.11.6\n   OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 \n   RealMemory=1500000 AllocMem=303104 FreeMem=429923 Sockets=1 Boards=1\n   CoreSpecCount=1 CPUSpecList=62-63 MemSpecLimit=4000\n   State=MIXED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=gpu \n   BootTime=2026-10-26T14:25:07 SlurmdStartTime=2026-10-26T14:25:32\n   LastBusyTime=2026-10-31T16:25:16 ResumeAfterTime=None\n   CfgTRES=cpu=62,mem=1500000M,billing=225066,gres/gpu=2\n   AllocTRES=cpu=18,mem=296G,gres/gpu=2\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\nNodeName=serval08 Arch=x86_64 CoresPerSocket=32 \n   CPUAlloc=32 CPUEfctv=62 CPUTot=64 CPULoad=16.56\n   AvailableFeatures=h100_94gb,amd_epyc_9354\n   ActiveFeatures=h100_94gb,amd_epyc_9354\n   Gres=gpu:nvidia_h100_nvl:2(S:0)\n   NodeAddr=serval08 NodeHostName=serval08 Version=23.11.6\n   OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 \n   RealMemory=1500000 AllocMem=262144 FreeMem=595030 Sockets=1 Boards=1\n   CoreSpecCount=1 CPUSpecList=62-63 MemSpecLimit=4000\n   State=MIXED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=gpu \n   BootTime=2026-10-26T14:25:08 SlurmdStartTime=2026-10-26T14:25:32\n   LastBusyTime=2026-10-31T14:43:40 ResumeAfterTime=None\n   CfgTRES=cpu=62,mem=1500000M,billing=225066,gres/gpu=2\n   AllocTRES=cpu=32,mem=256G,gres/gpu=2\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\nNodeName=serval09 Arch=x86_64 CoresPerSocket=32 \n   CPUAlloc=32 CPUEfctv=62 CPUTot=64 CPULoad=2.02\n   AvailableFeatures=h100_94gb,amd_epyc_9354\n   ActiveFeatures=h100_94gb,amd_epyc_9354\n   Gres=gpu:nvidia_h100_nvl:2(S:0)\n   NodeAddr=serval09 NodeHostName=serval09 Version=23.11.6\n   OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 \n   RealMemory=1500000 AllocMem=262144 FreeMem=853346 Sockets=1 Boards=1\n   CoreSpecCount=1 CPUSpecList=62-63 MemSpecLimit=4000\n   State=MIXED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=gpu \n   BootTime=2026-10-26T14:25:02 SlurmdStartTime=2026-10-26T14:25:27\n   LastBusyTime=2026-10-31T17:24:13 ResumeAfterTime=None\n   CfgTRES=cpu=62,mem=1500000M,billing=225066,gres/gpu=2\n   AllocTRES=cpu=32,mem=256G,gres/gpu=2\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu"
+      ],
+      "exit_code": 0,
+      "stdout": "PartitionName=gpu\n   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL\n   AllocNodes=ALL Default=NO QoS=cspartgpu\n   DefaultTime=02:00:00 DisableRootJobs=YES ExclusiveUser=NO GraceTime=0 Hidden=NO\n   MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED\n   Nodes=adriatic[01-06],affogato[11,13-15],ai[01-04,06],cheetah[01-04,08-09],jaguar[01-03,05-06],lotus,lynx[01-07,10],nekomata[01-02],serval[03,06-09]\n   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO\n   OverTimeLimit=NONE PreemptMode=OFF\n   State=UP TotalCPUs=2144 TotalNodes=42 SelectTypeParameters=NONE\n   JobDefaults=(null)\n   DefMemPerCPU=256 MaxMemPerNode=UNLIMITED\n   TRES=cpu=2058,mem=22318000M,node=42,billing=3350078,gres/gpu=160\n   TRESBillingWeights=CPU=1.0,Mem=0.15,GRES/gpu=2.0\n\n",
+      "stderr": ""
+    }
+  ],
+  "job_queries_outside_campaign": false,
+  "job_submitted": false,
+  "source_admission_changed": false,
+  "workers_admitted": false,
+  "queue_claims_permitted": false,
+  "required_parent_submission_order": [
+    "Use the prepared held submission command.",
+    "Persist the exact returned UVA job identifier and submission receipt with fsync.",
+    "Release only that exact saved job identifier."
+  ],
+  "scope": "One owned scheduler GPU site test; no benchmark-case or research-idea contribution.",
+  "independent_review_completed_at_utc": "2026-10-31T21:43:45.682398+00:00"
+}
