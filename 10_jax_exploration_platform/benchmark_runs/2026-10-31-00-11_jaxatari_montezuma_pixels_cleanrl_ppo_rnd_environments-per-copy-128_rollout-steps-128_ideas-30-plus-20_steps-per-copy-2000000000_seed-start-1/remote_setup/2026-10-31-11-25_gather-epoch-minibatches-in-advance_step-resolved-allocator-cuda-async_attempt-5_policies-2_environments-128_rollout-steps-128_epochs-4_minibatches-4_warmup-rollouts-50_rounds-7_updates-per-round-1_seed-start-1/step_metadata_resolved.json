@@ -1,0 +1,37 @@
+{
+  "phase": "resolved",
+  "time_utc": "2026-10-31T18:30:39.049796+00:00",
+  "pid": 1651559,
+  "process_start_time": "43171495",
+  "hostname": "jaguar03",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6778302/step_0/user/task_0\n",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    112,
+    113,
+    114,
+    115
+  ],
+  "selected_gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "environment": {
+    "SLURM_JOB_ID": "6778302",
+    "SLURM_JOB_GPUS": "0",
+    "SLURM_STEP_GPUS": "0",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_CPU_BIND_TYPE": "mask_cpu:",
+    "SLURM_CPU_BIND_LIST": "0x000000000000000000000000000F000000000000000000000000000F",
+    "SLURM_CPU_BIND": "quiet,mask_cpu:0x000000000000000000000000000F000000000000000000000000000F",
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "approval": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/infrastructure_retries/pregather_cuda_async/approvals/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "9337b37bda3d610baf925fafa378c21f4d013ca3394d0a28db33ecd00a892ea5"
+  },
+  "preflight_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/preflight_failure_receipt.json",
+    "sha256": "e17ce01208039ae5ae9d13db997d317a9e6fac0a4461415913865d185befef00"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "worker_id": "eef63d45eed643f3b27e55a829c1ac7c",
+  "hostname": "jaguar03",
+  "worker_pid": 1651548,
+  "worker_start_time": "43171462",
+  "slurm_job_id": "6778302",
+  "hardware_class": "jaguar03_rtx_a4500",
+  "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "gpu_name": "NVIDIA RTX A4500",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    112,
+    113,
+    114,
+    115
+  ],
+  "thread_environment": {
+    "OMP_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "token": "b0f7c6b156f84208a9c561e635979e3a",
+  "unit_id": "idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af",
+  "attempt": 5,
+  "state": "running",
+  "claimed_at": "2026-10-31T18:30:47.440846+00:00",
+  "runner_pid": 1652100,
+  "runner_start_time": "43172342",
+  "pregather_async_retry_approval": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/infrastructure_retries/pregather_cuda_async/approvals/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "9337b37bda3d610baf925fafa378c21f4d013ca3394d0a28db33ecd00a892ea5"
+  },
+  "assignment": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/assignment.json",
+    "sha256": "f9a1f695c997ddc347a1469c0920e46ece947af388a5e1987d90d93c2742b65b"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "observed_at_utc": "2026-10-31T18:32:17.062138+00:00",
+  "job_id": "6778302",
+  "state": "running",
+  "comparison_attempt": 5,
+  "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "helper_commit": "b9a8a366d6efad3b305caf71366efd8414d0d26a",
+  "launch_commit": "cd59148bd58f3a37bf7e7c690a2990df66abe46f",
+  "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "runner_pid": 1652100,
+  "runner_process_start_time": "43172342",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    112,
+    113,
+    114,
+    115
+  ],
+  "actual_allocator": {
+    "platform_name": "cuda",
+    "allocator": "cuda_async",
+    "memory_fraction": 0.85,
+    "preallocate": false,
+    "abort_collectives_on_failure": false,
+    "use_tfrt_gpu_client": false
+  },
+  "step_visibility_before": "0",
+  "step_visibility_after": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "scientific_completion_claimed": false,
+  "files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/step_metadata_before.json",
+      "sha256": "00bde2a1353dbc5b16cad8d8c5ff8f39972c3cbb6d7531693a08afea9c5720b0"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/step_metadata_resolved.json",
+      "sha256": "d3f4af9e05af164143d761a83b3193ba5e6f3f0695e288eeeb6d5f50a5648d4b"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/step_metadata_after.json",
+      "sha256": "6bfbfc25a5819600fdec0189c766c257c73201705a62f7a3ab1649f9a5a5df0e"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/initial_lease_snapshot.json",
+      "sha256": "e9f7f30dc97d104a5b14de964a24778f5ced6a2a6de32e42a1653887312a1cec"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/actual_allocator.json",
+      "sha256": "878d2113acca5d7c4ef381ffa56c625a2a40423eef214973cf1a0ce3dfa2f3aa"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/hardware.json",
+      "sha256": "c3e19b1a01e0362b7a47d4b91e16750a7c7cb168ad4f4f524b4f3601abd8bfa0"
+    }
+  ],
+  "initial_lease_original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/lease.json"
+}
