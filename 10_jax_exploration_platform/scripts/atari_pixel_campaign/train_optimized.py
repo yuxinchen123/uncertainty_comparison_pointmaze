@@ -531,7 +531,7 @@ def run(arguments):
     source_receipt(source_root, specification["source_commit"])
     helper_commit = subprocess.check_output(["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"], text=True).strip()
     helpers = source_receipt(PROJECT_ROOT, helper_commit, [str((SCRIPT_ROOT / name).relative_to(PROJECT_ROOT))
-        for name in ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "controller.py", "ideas.py", "queue_worker.py",
+        for name in ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "controller.py", "ideas.py", "queue_worker.py",
                      "diagnose_gpu_execution.py")])
     runtime = enforce_runtime(specification["runtime_environment"], os.environ)
     for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):

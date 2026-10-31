@@ -150,14 +150,18 @@ def launcher_capability(evidence):
 def committed_files(receipt, evidence, required=(), require_worktree=False):
     """Verify a receipt's exact Git blobs and staged files without importing their code."""
     root, commit, files = Path(receipt["source_root"]), receipt["source_commit"], receipt["files"]
-    if not root.is_absolute() or not re.fullmatch(r"[0-9a-f]{40}", commit) or not set(required) <= set(files):
+    if not root.is_absolute() or not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("source/helper receipt lacks its committed required files")
+    verified = {}
     for relative, expected in files.items():
         if not relative.startswith(SCRIPT_PREFIX) or ".." in Path(relative).parts:
             raise ValueError("a helper receipt must name campaign source files")
         original = subprocess.check_output(["git", "-C", str(root), "show", f"{commit}:{relative}"])
         if sha256(original) != expected or (require_worktree and evidence.file(root / relative) != original):
             raise ValueError("a producer/helper differs from its committed receipt")
+        verified[relative] = original
+    if not validation.helper_requirements(required, verified) <= set(files):
+        raise ValueError("source/helper receipt lacks its committed required files")
 
 
 def checked_configuration(value, root):
@@ -374,7 +378,7 @@ def producer_record(path, mode, run_dir, root, commit, runtime, context, core, e
     if (plan["paired_source"]["source_root"], plan["paired_source"]["source_commit"]) != (str(root), commit):
         raise ValueError("measurement Executor source is not the new detached source")
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
-        "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")])
+        "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "train_optimized.py")])
     for relative, expected_hash in plan["helpers"]["files"].items():
         if sha256(evidence.file(path.parent / "code" / Path(relative).name)) != expected_hash:
             raise ValueError("the executed staged helper differs from its committed receipt")
@@ -441,7 +445,7 @@ def profile_record(path, run_dir, root, commit, runtime, context, baseline, core
         if validation.configuration_without_copies(checked_configuration(record["configuration"], root)) != baseline:
             raise ValueError("profile did not measure the shared accepted baseline")
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
-        "profile_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")])
+        "profile_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "train_optimized.py")])
     committed_files(plan["paired_source"], evidence,
                     [SCRIPT_PREFIX + name for name in ("paired_benchmark.py", "ideas.py")], require_worktree=True)
     if (plan["paired_source"]["source_root"], plan["paired_source"]["source_commit"]) != (str(root), commit):

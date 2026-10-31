@@ -6,6 +6,7 @@ Every continuation uses its unit's original detached training-helper checkout.
 """
 
 import argparse
+import ast
 from contextlib import contextmanager
 import csv
 from datetime import datetime, timezone
@@ -30,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import launch_queue
 
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
-TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "controller.py", "ideas.py",
+TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "controller.py", "ideas.py",
                  "queue_worker.py", "diagnose_gpu_execution.py")
 ACTIVE = {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED", "RESIZING", "REQUEUED", "REQUEUE_FED", "SIGNALING", "STAGE_OUT"}
 TERMINAL = {"COMPLETED", "CANCELLED", "FAILED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}
@@ -104,12 +105,23 @@ def verify_receipt(receipt):
 
 
 def frozen_helpers(root, commit):
-    """Pin the six original runner helpers to an unchanged detached Git checkout."""
+    """Pin the original runtime closure required by the committed caller source."""
     root = Path(root).resolve(strict=True)
     top = subprocess.check_output(["git", "-C", str(root), "rev-parse", "--show-toplevel"], text=True).strip()
     actual = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.run(["git", "-C", str(root), "symbolic-ref", "--quiet", "HEAD"], capture_output=True)
     paths = [PREFIX + name for name in TRAIN_HELPERS]
+    # Old committed callers never dispatched the new retry module; retain their original receipt identity.
+    callers = []
+    for name in ("controller.py", "post_comparison_validation.py"):
+        relative = PREFIX + name
+        original = subprocess.check_output(["git", "-C", str(root), "show", commit + ":" + relative])
+        if (root / relative).read_bytes() != original:
+            raise ValueError("a pinned training helper differs from its Git blob")
+        callers.append(ast.parse(original))
+    if not any(isinstance(node, ast.Constant) and node.value == "pregather_async_retry.py"
+               for tree in callers for node in ast.walk(tree)):
+        paths.remove(PREFIX + "pregather_async_retry.py")
     changes = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", *paths], text=True)
     if (Path(top).resolve(strict=True) != root or actual != commit or branch.returncode != 1
             or changes.strip() or not re.fullmatch(r"[0-9a-f]{40}", commit)):

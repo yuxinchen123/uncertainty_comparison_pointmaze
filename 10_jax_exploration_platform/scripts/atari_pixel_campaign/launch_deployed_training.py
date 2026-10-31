@@ -99,13 +99,15 @@ def verify_binding(run, binding):
         raise ValueError("each H100 unit requires its one explicit independent seed block")
     root, commit = Path(unit["helpers"]["source_root"]), unit["helpers"]["source_commit"]
     physical = train_deployed.deployment.git_root(str(root), commit, validation.Evidence())
+    verified = {}
     for relative, expected in unit["helpers"]["files"].items():
         if not relative.startswith(metadata.PREFIX) or ".." in Path(relative).parts:
             raise ValueError("the pinned deployed helper path is invalid")
         blob = subprocess.check_output(["git", "-C", str(physical), "show", commit + ":" + relative])
         if hashlib.sha256(blob).hexdigest() != expected or metadata.file_digest(root / relative) != expected:
             raise ValueError("an original deployed helper differs from its committed bytes")
-    required = {metadata.PREFIX + name for name in train_deployed.HELPERS}
+        verified[relative] = blob
+    required = validation.helper_requirements({metadata.PREFIX + name for name in train_deployed.HELPERS}, verified)
     if not required <= set(unit["helpers"]["files"]):
         raise ValueError("the explicit deployed unit omitted a required original runner helper")
     validator = root / metadata.PREFIX / "validate_deployed_training_completion.py"

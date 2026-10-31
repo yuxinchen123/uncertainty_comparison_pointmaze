@@ -23,7 +23,7 @@ import train_optimized as training
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 JAXTARI_COMMIT = training.JAXTARI_COMMIT
 REQUIRED_HELPERS = {PREFIX + name for name in ("measure_selected.py", "diagnose_gpu_execution.py",
-                                               "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")}
+                                               "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "train_optimized.py")}
 
 
 def sha256(value):
@@ -80,15 +80,17 @@ def git_root(root, commit, evidence):
 def committed_files(receipt, required, evidence):
     """Verify every committed helper/Executor byte named by a target measurement receipt."""
     root, commit, files = receipt["source_root"], receipt["source_commit"], receipt["files"]
-    if not required <= set(files):
-        raise ValueError("target measurement omitted a required source helper")
     physical = git_root(root, commit, evidence)
+    verified = {}
     for relative, expected in files.items():
         if not relative.startswith(PREFIX) or ".." in Path(relative).parts:
             raise ValueError("deployment helper receipts require explicit campaign source paths")
         original = subprocess.check_output(["git", "-C", str(physical), "show", commit + ":" + relative])
         if hashlib.sha256(original).hexdigest() != sha256(expected):
             raise ValueError("a target helper differs from its committed source bytes")
+        verified[relative] = original
+    if not validation.helper_requirements(required, verified) <= set(files):
+        raise ValueError("target measurement omitted a required source helper")
 
 
 def actual_runtime(value, expected):

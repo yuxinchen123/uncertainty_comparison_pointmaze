@@ -98,6 +98,16 @@ class DeployedLauncherTests(unittest.TestCase):
         self.assertFalse((self.run / "data").exists())
         self.assertFalse(any(name in sys.modules for name in ("jax", "numpy", "torch")))
 
+    def test_old_deployed_helper_receipt_does_not_gain_a_dependency_its_callers_never_used(self):
+        """An old checkpoint helper identity remains valid under the current metadata launcher."""
+        unit = copy.deepcopy(self.unit)
+        unit["helpers"]["files"].pop(launch.metadata.PREFIX + "pregather_async_retry.py")
+        descriptor = self.write("reserved/old_helper_descriptor.json", unit)
+        binding = {**self.binding, "global_descriptor": launch.receipt(descriptor)}
+        admitted, _, _ = launch.verify_binding(self.run, binding)
+        self.assertEqual(admitted["helpers"], unit["helpers"])
+        self.assertEqual(admitted["copy_seeds"], self.unit["copy_seeds"])
+
     def test_changed_binding_helper_or_resource_proof_fails_before_submission(self):
         """Pinned actual bytes cannot be replaced while keeping a saved admission or policy."""
         path = Path(self.binding["global_descriptor"]["path"])

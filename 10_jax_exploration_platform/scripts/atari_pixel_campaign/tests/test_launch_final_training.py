@@ -61,7 +61,7 @@ class FinalLauncherTests(unittest.TestCase):
         self.asset_record = {"root": str(self.asset_root), "manifest": str(manifest), "sha256": final.file_digest(manifest)}
         self.asset_input = self.write("asset_metadata/asset_record.json", self.asset_record)
         self.producer_files = {name: b"# synthetic committed asset producer\n" for name in (
-            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "train_optimized.py")}
+            "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "train_optimized.py")}
         self.producer_helpers = {"source_root": "/synthetic/producer", "source_commit": "f" * 40,
             "files": {final.PREFIX + name: hashlib.sha256(contents).hexdigest()
                       for name, contents in self.producer_files.items()}}
@@ -666,6 +666,33 @@ class AllocatedGpuTests(unittest.TestCase):
 
 class FrozenHelperTests(unittest.TestCase):
     """Require a real detached helper root instead of accepting an archive under a Git ancestor."""
+
+    def test_old_pinned_callers_keep_their_original_helper_identity(self):
+        """Adding a future lazy dependency does not rewrite receipts for callers that never used it."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py")
+            for name in old_names:
+                path = root / final.PREFIX / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("# old pinned metadata helper\n")
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            def commit():
+                """Record the two source generations without importing either fixture."""
+                subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+                subprocess.run(["git", "-C", str(root), "-c", "user.name=Metadata dependency test",
+                    "-c", "user.email=test@example.invalid", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "Record helper dependency source"], check=True)
+                value = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+                subprocess.run(["git", "-C", str(root), "checkout", "-q", "--detach", value], check=True)
+                return value
+            old_commit = commit()
+            expected = {"source_root": str(root), "source_commit": old_commit,
+                "files": {final.PREFIX + name: final.file_digest(root / final.PREFIX / name) for name in old_names}}
+            self.assertEqual(final.frozen_helpers(root, old_commit), expected)
+            (root / final.PREFIX / "post_comparison_validation.py").write_text("PREGATHER_ASYNC_RETRY_MODULE = 'pregather_async_retry.py'\n")
+            (root / final.PREFIX / "pregather_async_retry.py").write_text("# future adjacent helper\n")
+            current = final.frozen_helpers(root, commit())
+            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS})
 
     def test_exact_git_top_is_required_for_helpers(self):
         """A nested ignored copy cannot borrow the containing checkout's committed identity."""

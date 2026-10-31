@@ -33,6 +33,7 @@ SENTINEL_NAME = "SOURCE_AND_GATES_READY.json"
 SOURCE_SCOPES = ("10_jax_exploration_platform/src/exploration_platform/atari_pixels",
                  "10_jax_exploration_platform/scripts/atari_pixel_campaign")
 QUEUE_STATES = ("pending", "running", "completed", "failed")
+PREGATHER_ASYNC_RETRY_MODULE = "pregather_async_retry.py"
 REFERENCE_ALGORITHM = {
     "n_envs": 128, "num_steps": 128, "action_count": 18,
     "update_epochs": 4, "num_minibatches": 4, "total_timesteps": 2_000_000_000,
@@ -394,6 +395,14 @@ def scientific_case_complete(result):
 
 def validate_attempt_completion(run_dir, case, lease, result_path):
     """Require explicit execution proof for the approved fourth attempt while preserving ordinary results."""
+    if lease["attempt"] == 5:
+        if (Path(result_path).parent / "failure.json").exists():
+            raise ValueError("the fifth attempt retains an application or execution-proof failure")
+        specification = importlib.util.spec_from_file_location("queue_pregather_async_retry_validation",
+            Path(__file__).resolve().with_name(PREGATHER_ASYNC_RETRY_MODULE))
+        module = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(module)
+        return module.validate_execution(result_path, case, lease)
     if lease["attempt"] > case["maximum_attempts"] or "infrastructure_retry_approval" in lease:
         if (Path(result_path).parent / "failure.json").exists():
             raise ValueError("the retry retains an application or execution-proof failure")

@@ -38,6 +38,7 @@ ENVIRONMENT = {"num_envs": 128, "frame_skip": 4, "max_episode_steps": 108000,
                "noop_max": 30, "episodic_life": True, "sticky_action_probability": .25}
 FINAL_FLAGS = ("final_combination_correctness_passed", "final_confirmation_passed",
                "h100_packing_complete", "a4500_packing_complete", "eight_gpu_scaling_complete")
+PREGATHER_ASYNC_RETRY_MODULE = "pregather_async_retry.py"
 
 
 def canonical_digest(value):
@@ -52,6 +53,32 @@ def retry_validation_module():
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     return module
+
+
+def pregather_retry_validation_module():
+    """Resolve the case-only fifth-attempt metadata validator beside this exact caller."""
+    specification = importlib.util.spec_from_file_location("pixel_pregather_async_retry_validation",
+        Path(__file__).resolve().with_name(PREGATHER_ASYNC_RETRY_MODULE))
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+def helper_requirements(required, verified_files):
+    """Require the new metadata dependency only when the already verified pinned caller declares it."""
+    selected = set(required)
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + PREGATHER_ASYNC_RETRY_MODULE
+    declares = False
+    for name in ("post_comparison_validation.py", "controller.py"):
+        path = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
+        if path in verified_files:
+            tree = ast.parse(verified_files[path])
+            declares |= any(isinstance(node, ast.Constant) and node.value == PREGATHER_ASYNC_RETRY_MODULE for node in ast.walk(tree))
+    if declares:
+        selected.add(relative)
+    else:
+        selected.discard(relative)
+    return selected
 
 
 class Evidence:
@@ -538,7 +565,9 @@ def validate_cohort_case(path, name, context, copies, source, evidence):
         raise ValueError("a cohort result changed its supplied configuration or has no distinct implementation")
     # An explicit attempt beyond the unchanged original limit requires the separate actual-runtime receipt.
     # Ordinary historical cases retain their original source-protocol reconstruction.
-    if (record.get("attempt", 1) > case.get("maximum_attempts", 3)
+    if record.get("attempt") == 5:
+        runtime = pregather_retry_validation_module().validate_execution(path, case, evidence=evidence)
+    elif (record.get("attempt", 1) > case.get("maximum_attempts", 3)
             or "infrastructure_retry_approval" in hardware):
         runtime = retry_validation_module().validate_execution(path, case, evidence=evidence)
     else:

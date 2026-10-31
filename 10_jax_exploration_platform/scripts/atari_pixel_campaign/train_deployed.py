@@ -27,7 +27,7 @@ import validate_training_deployment as deployment
 
 SCRIPTS = Path(__file__).resolve().parent
 HELPERS = ("train_deployed.py", "deployed_training_admission.py", "validate_training_deployment.py", "portable_evidence.py",
-           "train_optimized.py", "measure_selected.py", "post_comparison_validation.py", "infrastructure_retry.py",
+           "train_optimized.py", "measure_selected.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
            "controller.py", "ideas.py", "queue_worker.py", "diagnose_gpu_execution.py")
 
 
