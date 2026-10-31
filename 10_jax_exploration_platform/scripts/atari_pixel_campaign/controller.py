@@ -39,6 +39,15 @@ REFERENCE_ALGORITHM = {
     "predictor_update_proportion": 0.25, "observation_warmup_iterations": 50,
     "upstream_reward_filter_axis": True, "warmup_keeps_initial_observation": True,
 }
+REFERENCE_ENVIRONMENT_CHOICES = {
+    "render_final_two_only": (False, True),
+    "batch_layout": ("flat", "nested"),
+    "stack_update": ("concatenate", "gather", "circular"),
+    "reset_only_when_needed": (False, True),
+    "cache_room_backgrounds": (False, True),
+    "fuse_pixel_preprocessing": (False, True),
+    "combine_palette_and_sprite_drawing": (False, True),
+}
 
 
 def utc_now():
@@ -105,6 +114,40 @@ def verify_source(source_root, source_commit):
     return {"source_root": str(root), "source_commit": actual}
 
 
+def reference_environment_settings(value, source_root):
+    """Allow implemented execution changes while keeping every game-protocol setting fixed."""
+    # Missing settings become the original environment; protocol keys are never overrides.
+    if not isinstance(value, dict):
+        raise ValueError("reference_environment must be a mapping of environment performance settings")
+    if any(type(name) is not str for name in value):
+        raise ValueError("reference environment setting names must be strings")
+    allowed = set(REFERENCE_ENVIRONMENT_CHOICES) | {"frame_skip_unroll"}
+    unknown = set(value) - allowed
+    if unknown:
+        raise ValueError("reference_environment may contain only environment performance settings: "
+                         + ", ".join(sorted(unknown)))
+    if not value:
+        return {}
+
+    # Inspect the pinned constructor without importing JAX or the game package.
+    capabilities = source_capabilities(Path(source_root) / "10_jax_exploration_platform")
+    missing = set(value) - capabilities["environment"]
+    if missing:
+        raise ValueError("reference environment settings are not implemented in the pinned source: "
+                         + ", ".join(sorted(missing)))
+    # Match the constructor's supported choices before recording any baseline setting.
+    for name, setting in value.items():
+        if name == "frame_skip_unroll":
+            if type(setting) is not int or setting < 1:
+                raise ValueError("reference environment frame_skip_unroll must be a positive integer")
+        else:
+            choices = REFERENCE_ENVIRONMENT_CHOICES[name]
+            if type(setting) is not type(choices[0]) or setting not in choices:
+                raise ValueError(f"reference environment {name} must be one of {choices!r}")
+    # For example, {cache_room_backgrounds: true} is copied into each immutable case.
+    return dict(value)
+
+
 def ready_specification(run_dir):
     """Read the parent's source/gate authorization and verify both hardware contexts."""
     path = Path(run_dir) / SENTINEL_NAME
@@ -131,7 +174,11 @@ def ready_specification(run_dir):
     if (configuration.get("per_copy_learning_rates") or configuration.get("per_copy_intrinsic_coefficients")
             or configuration.get("per_copy_scalar_settings")):
         raise ValueError("this study uses one common CleanRL setting; per-copy interfaces are checked in the gates")
+    # Keep environment execution settings separate from the fixed learner and game protocol.
+    environment = reference_environment_settings(ready.get("reference_environment", {}),
+                                                 ready["source_root"])
     ready = {**ready, "reference_configuration": configuration,
+             "reference_environment": environment,
              "campaign_run_dir": str(Path(run_dir).resolve())}
     return ready
 
@@ -154,6 +201,11 @@ def immutable_case(entry, context, copies, ready):
             "rounds": ready.get("rounds", 7), "iterations": ready.get("iterations", 10),
             "seed_start": seed_start, "additional_correctness_checks": list(entry.additional_checks),
             "maximum_attempts": ready.get("maximum_attempts", 3)}
+    # Empty settings retain the original initial-case contents and their existing digests.
+    environment = reference_environment_settings(ready.get("reference_environment", {}),
+                                                 ready["source_root"])
+    if environment:
+        case["reference_environment"] = environment
     if (any(type(case[name]) is not int for name in ("rounds", "iterations", "maximum_attempts", "seed_start"))
             or case["rounds"] < 7 or case["iterations"] < 1 or case["maximum_attempts"] < 1
             or case["seed_start"] < 0):

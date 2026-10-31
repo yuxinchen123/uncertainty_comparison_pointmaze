@@ -73,6 +73,9 @@ def run_case(run_dir, case, attempt_number, lease_token):
     ready = ready_specification(run_dir)
     if ready is None or (ready["source_root"], ready["source_commit"]) != (case["source_root"], case["source_commit"]):
         raise ValueError("the parent source/gate authorization is no longer valid for this case")
+    # Refuse a pending case after its parent's admitted environment baseline changes.
+    if case.get("reference_environment", {}) != ready["reference_environment"]:
+        raise ValueError("the case reference environment differs from the parent's current authorization")
     expected_script = (Path(case["source_root"]) /
                        "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_case.py").resolve()
     if Path(__file__).resolve() != expected_script:
@@ -113,7 +116,8 @@ def run_case(run_dir, case, attempt_number, lease_token):
         result = run_paired_benchmark(
             config, candidate["learner"], candidate["environment"], candidate["execution"],
             rounds=case["rounds"], iterations=case["iterations"], seed_start=case["seed_start"],
-            reference_execution=case["reference_execution"], progress=progress)
+            reference_execution=case["reference_execution"],
+            reference_environment=case.get("reference_environment", {}), progress=progress)
     except CorrectnessMismatch as error:
         result = {**error.context, "decision": "rejected", "measurement_valid": False,
                   "correctness_passed": False, "correctness_attempted": True,
