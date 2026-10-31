@@ -1,0 +1,32 @@
+{
+  "kind": "aces_jaxtari_source_verified",
+  "git_root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+  "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+  "tree": "fce02bbb48a9e85b68a78731b588f591b593db38",
+  "git_status_porcelain": "",
+  "detached_head": true,
+  "python_file_count": 193,
+  "installed_python_file_count": 193,
+  "installed_tree_digest": "06465115933e9b0c3e569c575774edc10f4a828190b8bee658a5592d85b7f2f7",
+  "installed_version": "0.2.0",
+  "numerical_modules_imported": false,
+  "receipt_copy_command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "aces",
+    "cat /scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json"
+  ],
+  "source_receipt_sha256": "e3e7f81c87d122d90458a535f3fd69ae2efd2b7039cad4f526b0a1f953f612eb",
+  "installed_receipt_sha256": "d2d5567869ba5d74f2c98e80867580f956cc3f1267d1ff8cafb8d1ba688b2829",
+  "installed_packages_modified": false,
+  "assets_modified": false,
+  "jobs_submitted": 0
+}

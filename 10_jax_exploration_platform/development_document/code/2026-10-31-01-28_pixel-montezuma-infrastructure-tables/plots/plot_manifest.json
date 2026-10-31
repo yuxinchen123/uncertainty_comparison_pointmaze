@@ -13,12 +13,14 @@
     "mechanism_names": [
       "cache_room_backgrounds",
       "render_final_two_game_states",
-      "unroll_four_frame_game_loop"
+      "unroll_four_frame_game_loop",
+      "nested_policy_environment_batching"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
       "render final two game states",
-      "unroll four frame game loop"
+      "unroll four frame game loop",
+      "nested policy environment batching"
     ],
     "results": [
       {
@@ -32,9 +34,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-03__unroll_four_frame_game_loop__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "c932ce7f2b06f8dbdc6992932d417ed95695dae35037028f29cc0cf7ee2966c3"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-04__nested_policy_environment_batching__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "e37f05e358854f4c053c3bd57f49437db79ae1431d620b4ec85d4afb0aaad318"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -50,12 +56,14 @@
     "mechanism_names": [
       "cache_room_backgrounds",
       "render_final_two_game_states",
-      "unroll_four_frame_game_loop"
+      "unroll_four_frame_game_loop",
+      "nested_policy_environment_batching"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
       "render final two game states",
-      "unroll four frame game loop"
+      "unroll four frame game loop",
+      "nested policy environment batching"
     ],
     "results": [
       {
@@ -69,9 +77,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-03__unroll_four_frame_game_loop__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "ba0011989dcbdde972dcc108b8f98e9a32d27f3974034580aca3cd73777d6d1e"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-04__nested_policy_environment_batching__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "49192a9eb7caca05c4b834ae39b5dc543e5adb3f97313ce20abb2d58b6e00c94"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -150,7 +162,7 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -229,7 +241,7 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -302,7 +314,7 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -327,7 +339,7 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -406,7 +418,7 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -485,7 +497,7 @@
         "sha256": "8bbe9f3430e249694b11e915d7061397cdc96d08429671715ce0f413a8a82578"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   },
   {
     "schema_version": 2,
@@ -528,6 +540,31 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "f4da7c89317134ac53df4eb28c27b514fdd34feaf1f48b2626d0bb5c0965a68f"
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
+  },
+  {
+    "schema_version": 2,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_4f10159632a6e30800e6d2094208c3cd302b93793d422db7a4e4d3c11951f4fa_panel-01-of-01.pdf",
+    "hardware": "jaguar03_rtx_a4500",
+    "host": "jaguar03",
+    "copies": 2,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "scope": "training_with_report_readout",
+    "reference_fingerprint": "8f46fff9aca348a32bb081491d65420d1c55fde31b23544c3a5c44f89f76cd8e",
+    "panel_index": 1,
+    "panel_count": 1,
+    "mechanism_names": [
+      "accumulate_scheduled_reports_on_device"
+    ],
+    "wrapped_labels": [
+      "accumulate scheduled reports on device"
+    ],
+    "results": [
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-29__accumulate_scheduled_reports_on_device__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-10__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
+      }
+    ],
+    "input_fingerprint": "c4e15b9534319c143fc823f7ddfa465af8b3994457c0c68c715f09a45ebdb9a1"
   }
 ]

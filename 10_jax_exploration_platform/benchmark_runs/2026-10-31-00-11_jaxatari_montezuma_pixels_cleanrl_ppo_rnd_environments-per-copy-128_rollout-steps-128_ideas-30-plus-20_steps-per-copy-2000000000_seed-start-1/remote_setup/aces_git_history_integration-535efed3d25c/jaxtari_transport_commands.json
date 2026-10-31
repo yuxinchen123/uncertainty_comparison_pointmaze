@@ -1,0 +1,58 @@
+{
+  "kind": "aces_jaxtari_source_transport",
+  "source_stage_command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "aces",
+    "/usr/bin/python3 -c 'from pathlib import Path\nimport hashlib,json,os,resource,subprocess,time\nbase=Path('\\''/scratch/user/u.sl359075/rnd_atari_pixels'\\'')\ntarget=base/'\\''git/checkouts/jaxtari_source_04ab9aec318c'\\''\ncommit='\\''04ab9aec318c72162e2e53503a594a489d7e162b'\\''\nurl='\\''https://github.com/k4ntz/JAXtari.git'\\''\ncommands=[];started=time.monotonic();environment=dict(os.environ,GIT_TERMINAL_PROMPT='\\''0'\\'',GIT_CONFIG_NOSYSTEM='\\''1'\\'',GIT_CONFIG_GLOBAL='\\''/dev/null'\\'')\ndef limit():resource.setrlimit(resource.RLIMIT_AS,(2*2**30,2*2**30))\ndef invoke(command,allowed=(0,)):\n commands.append(command)\n remaining=180-(time.monotonic()-started)\n if remaining<=0:raise RuntimeError('\\''bounded source-staging deadline exceeded'\\'')\n result=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True,env=environment,preexec_fn=limit,timeout=remaining)\n if result.returncode not in allowed:raise RuntimeError(json.dumps({'\\''command'\\'':command,'\\''returncode'\\'':result.returncode,'\\''stdout'\\'':result.stdout,'\\''stderr'\\'':result.stderr}))\n return result\nspace=os.statvfs(str(base))\nif space.f_bavail*space.f_frsize<100*2**20:raise RuntimeError('\\''scratch space is insufficient for the pinned public source snapshot'\\'')\ncandidates=[target,base/'\\''reference_repos/jaxtari_pixel_study'\\'',base/'\\''jaxtari'\\'']\nchecked=[];root=None\nfor candidate in candidates:\n item={'\\''path'\\'':str(candidate),'\\''exists'\\'':candidate.exists(),'\\''has_git'\\'':(candidate/'\\''.git'\\'').exists()}\n if item['\\''has_git'\\'']:\n  top=invoke(['\\''git'\\'','\\''-C'\\'',str(candidate),'\\''rev-parse'\\'','\\''--show-toplevel'\\'']).stdout.strip()\n  head=invoke(['\\''git'\\'','\\''-C'\\'',str(candidate),'\\''rev-parse'\\'','\\''HEAD'\\'']).stdout.strip()\n  branch=invoke(['\\''git'\\'','\\''-C'\\'',str(candidate),'\\''symbolic-ref'\\'','\\''--quiet'\\'','\\''HEAD'\\''],allowed=(0,1))\n  status=invoke(['\\''git'\\'','\\''-C'\\'',str(candidate),'\\''status'\\'','\\''--porcelain'\\'','\\''--untracked-files=all'\\'']).stdout\n  item.update(top=top,commit=head,detached=branch.returncode==1,status=status)\n  if str(candidate.resolve())==top and head==commit and branch.returncode==1 and not status:root=candidate\n checked.append(item)\nif root is None:\n if target.exists():raise RuntimeError('\\''dedicated target already exists without the required clean exact Git identity; preserved'\\'')\n target.mkdir(parents=True)\n invoke(['\\''git'\\'','\\''init'\\'',str(target)])\n fetched=invoke(['\\''git'\\'','\\''-C'\\'',str(target),'\\''-c'\\'','\\''pack.threads=2'\\'','\\''-c'\\'','\\''pack.windowMemory=64m'\\'','\\''-c'\\'','\\''pack.deltaCacheSize=32m'\\'','\\''-c'\\'','\\''credential.helper='\\'','\\''-c'\\'','\\''core.askPass=/bin/false'\\'','\\''-c'\\'','\\''http.extraHeader='\\'','\\''fetch'\\'','\\''--depth=1'\\'','\\''--no-tags'\\'',url,commit])\n invoke(['\\''git'\\'','\\''-C'\\'',str(target),'\\''sparse-checkout'\\'','\\''init'\\'','\\''--cone'\\''])\n invoke(['\\''git'\\'','\\''-C'\\'',str(target),'\\''sparse-checkout'\\'','\\''set'\\'','\\''src/jaxtari'\\''])\n invoke(['\\''git'\\'','\\''-C'\\'',str(target),'\\''checkout'\\'','\\''--detach'\\'',commit])\n root=target\nhead=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''rev-parse'\\'','\\''HEAD'\\'']).stdout.strip()\ntop=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''rev-parse'\\'','\\''--show-toplevel'\\'']).stdout.strip()\nbranch=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''symbolic-ref'\\'','\\''--quiet'\\'','\\''HEAD'\\''],allowed=(0,1))\nstatus=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''status'\\'','\\''--porcelain'\\'','\\''--untracked-files=all'\\'']).stdout\ntree=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''rev-parse'\\'','\\''HEAD^{tree}'\\'']).stdout.strip()\nif head!=commit or top!=str(root.resolve()) or branch.returncode!=1 or status:raise RuntimeError('\\''staged public source did not verify as a clean detached exact Git root'\\'')\nentries=invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''ls-tree'\\'','\\''-r'\\'',commit,'\\''--'\\'','\\''src/jaxtari'\\'']).stdout.splitlines();python_files={}\nfor entry in entries:\n header,name=entry.split('\\''\\t'\\'',1)\n if not name.endswith('\\''.py'\\''):continue\n blob=header.split()[2];contents=(root/name).read_bytes()\n if hashlib.sha1(b'\\''blob '\\''+str(len(contents)).encode()+b'\\''\\0'\\''+contents).hexdigest()!=blob:raise RuntimeError('\\''staged Python source differs from pinned Git blob'\\'')\n invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''cat-file'\\'','\\''-e'\\'',blob])\n python_files[name]={'\\''git_blob'\\'':blob,'\\''sha256'\\'':hashlib.sha256(contents).hexdigest()}\nif len(python_files)!=193:raise RuntimeError('\\''the pinned public source does not contain all193expected Python files'\\'')\nrecord={'\\''kind'\\'':'\\''pinned_jaxtari_git_source'\\'','\\''root'\\'':str(root),'\\''commit'\\'':head,'\\''tree'\\'':tree,'\\''detached_head'\\'':True,'\\''git_status_porcelain'\\'':status,'\\''python_file_count'\\'':len(python_files),'\\''python_files'\\'':python_files,'\\''sparse_paths'\\'':invoke(['\\''git'\\'','\\''-C'\\'',str(root),'\\''sparse-checkout'\\'','\\''list'\\'']).stdout.splitlines(),'\\''public_origin'\\'':url,'\\''explicit_fetch_attempts'\\'':0 if any(c.get('\\''commit'\\'')==commit and c.get('\\''detached'\\'') and not c.get('\\''status'\\'') for c in checked) else 1,'\\''checked_existing_paths'\\'':checked,'\\''scratch_available_bytes_before'\\'':space.f_bavail*space.f_frsize,'\\''packing_threads'\\'':2,'\\''address_space_limit_bytes'\\'':2*2**30,'\\''commands'\\'':commands,'\\''installed_packages_modified'\\'':False,'\\''assets_modified'\\'':False,'\\''jobs_submitted'\\'':0}\npath=base/'\\''git/jaxtari-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json'\\''\nif path.exists():raise RuntimeError('\\''an earlier source-staging receipt exists; preserve it'\\'')\npath.write_text(json.dumps(record,indent=2)+'\\''\\n'\\'')\nprint(json.dumps({k:record[k] for k in ('\\''root'\\'','\\''commit'\\'','\\''tree'\\'','\\''git_status_porcelain'\\'','\\''python_file_count'\\'','\\''explicit_fetch_attempts'\\'')}),flush=True)'"
+  ],
+  "installed_python_verify_command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "aces",
+    "/usr/bin/python3 -c 'from pathlib import Path\nimport json,os,subprocess\nprogram='\\'''\\'''\\''import importlib.util,json,pathlib,sys\\nhelper=sys.argv[1];source=sys.argv[2];output=pathlib.Path(sys.argv[3])\\nassert not any(name in sys.modules for name in (\"jax\",\"numpy\",\"torch\"))\\nspec=importlib.util.spec_from_file_location(\"pinned_source_metadata\",helper);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\\nreceipt=module.jaxtari_python_receipt(source)\\nassert not any(name in sys.modules for name in (\"jax\",\"numpy\",\"torch\"))\\nif output.exists():raise RuntimeError(\"preserve existing installed-source receipt\")\\noutput.write_text(json.dumps(receipt,indent=2)+\"\\\\n\")\\nprint(json.dumps({\"source_root\":receipt[\"source_root\"],\"source_commit\":receipt[\"source_commit\"],\"python_file_count\":len(receipt[\"python_files\"]),\"tree_digest\":receipt[\"tree_digest\"],\"version\":receipt[\"version\"],\"numerical_modules_imported\":False}))\\n'\\'''\\'''\\''\ncommand=['\\''/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python'\\'','\\''-I'\\'','\\''-c'\\'',program,'\\''/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py'\\'','\\''/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c'\\'','\\''/scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-installed-python-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json'\\'']\nresult=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True,env=dict(os.environ,PYTHONNOUSERSITE='\\''1'\\'',PYTHONUNBUFFERED='\\''1'\\''),timeout=60)\nif result.returncode:raise RuntimeError(result.stderr)\nprint(result.stdout.strip())'"
+  ],
+  "receipt_copy_command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "aces",
+    "/usr/bin/python3 -c 'from pathlib import Path\nimport hashlib,json\npaths={\"git_source\":\"/scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json\",\"installed_python\":\"/scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-installed-python-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json\"}\nprint(json.dumps({name:{'\\''path'\\'':value,'\\''sha256'\\'':hashlib.sha256(Path(value).read_bytes()).hexdigest(),'\\''text'\\'':Path(value).read_text()} for name,value in paths.items()}))'"
+  ],
+  "original_receipts": {
+    "git_source": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json",
+      "sha256": "e3e7f81c87d122d90458a535f3fd69ae2efd2b7039cad4f526b0a1f953f612eb"
+    },
+    "installed_python": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/git/jaxtari-installed-python-04ab9aec318c72162e2e53503a594a489d7e162b.receipt.json",
+      "sha256": "d2d5567869ba5d74f2c98e80867580f956cc3f1267d1ff8cafb8d1ba688b2829"
+    }
+  },
+  "jobs_submitted": 0,
+  "installed_packages_modified": false,
+  "assets_modified": false
+}
