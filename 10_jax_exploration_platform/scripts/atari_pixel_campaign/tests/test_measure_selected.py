@@ -1,6 +1,7 @@
 """Check selected-configuration preparation and memory records without numerical imports."""
 
 import copy
+from contextlib import nullcontext
 import hashlib
 import importlib.util
 import json
@@ -59,6 +60,37 @@ class SelectedMeasurementTests(unittest.TestCase):
         with patch.object(PRODUCER.metadata, "version", side_effect=PRODUCER.metadata.PackageNotFoundError("jax")):
             with self.assertRaises(PRODUCER.metadata.PackageNotFoundError):
                 PRODUCER.installed_backend_receipt(source, libraries)
+        self.assertNotIn("jax", sys.modules)
+
+    def test_compute_receives_the_same_full_observed_hardware_as_its_sidecar(self):
+        """Capture applied defaults and cache flags once, rather than replacing them with planned flags."""
+        arguments = self.arguments()
+        arguments.python = Path(sys.executable)
+        directory = self.prepare(arguments)
+        hardware = {"hostname": "jaguar03", "pid": os.getpid(), "gpu_uuid": "GPU-fixture"}
+
+        def compute(output, plan, observed, backend):
+            """Inspect the producer's real metadata boundary while performing no numerical work."""
+            self.assertEqual(observed, json.loads((output / "hardware.json").read_text()))
+            runtime = observed["runtime_environment"]
+            self.assertEqual(runtime["XLA_PYTHON_CLIENT_PREALLOCATE"], "false")
+            self.assertEqual(runtime["JAXTARI_SKIP_SPRITE_UPDATE"], "1")
+            self.assertEqual(runtime["JAX_ENABLE_COMPILATION_CACHE"], "false")
+            self.assertEqual(runtime["JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES"], "")
+            self.assertGreater(len(runtime), len(plan["runtime_environment"]))
+
+        with patch.object(PRODUCER, "__file__", str(directory / "code/measure_selected.py")), \
+                patch.object(PRODUCER, "verify_prepared"), \
+                patch.object(PRODUCER, "card_admission", return_value=nullcontext()), \
+                patch.object(PRODUCER, "preflight", return_value=hardware), \
+                patch.object(PRODUCER.training, "verify_assets", return_value={}), \
+                patch.object(PRODUCER.training, "jaxtari_python_receipt", return_value={}), \
+                patch.object(PRODUCER.training, "installed_gpu_library_receipts", return_value={}), \
+                patch.object(PRODUCER, "installed_backend_receipt", return_value={}), \
+                patch.object(PRODUCER, "_compute", side_effect=compute) as numeric, \
+                patch.dict(os.environ, {}, clear=True):
+            PRODUCER.run_prepared(directory)
+        numeric.assert_called_once()
         self.assertNotIn("jax", sys.modules)
 
     def arguments(self, *extra):

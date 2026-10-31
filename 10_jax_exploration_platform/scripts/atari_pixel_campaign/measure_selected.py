@@ -398,18 +398,18 @@ def run_prepared(directory):
         if (directory / "result.json").exists() or (directory / "failure.json").exists():
             raise ValueError("retain the previous result/failure and use a new measurement unit")
         verify_prepared(directory, plan)
-        runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
         for name, expected in (("XLA_PYTHON_CLIENT_PREALLOCATE", "false"), ("JAXTARI_SKIP_SPRITE_UPDATE", "1")):
             if os.environ.get(name, expected) != expected:
                 raise ValueError("measurement runtime differs from the frozen worker setting: " + name)
             os.environ[name] = expected
+        runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
         try:
             with card_admission(directory, plan):
-                hardware = preflight(plan)
+                hardware = {**preflight(plan), "runtime_environment": runtime}
                 assets = training.verify_assets(plan["asset_record"], os.environ)
                 jaxtari = training.jaxtari_python_receipt(plan.get("jaxtari_source_root"))
                 libraries = training.installed_gpu_library_receipts()
-                training.atomic_json(directory / "hardware.json", {**hardware, "runtime_environment": runtime})
+                training.atomic_json(directory / "hardware.json", hardware)
                 training.atomic_json(directory / "asset_receipt.json", assets)
                 backend = installed_backend_receipt(jaxtari, libraries)
                 training.atomic_json(directory / "installed_backend.json", backend)
@@ -509,7 +509,7 @@ def _compute(directory, plan, hardware, installed_backend):
                 "training_start_iteration": training_origin,
                 "median_transitions_per_second": statistics.median(row["transitions_per_second_total"] for row in measured)}
     result.update(source_commit=plan["source_commit"], hardware_class=plan["hardware_class"],
-        hardware={**hardware, "runtime_environment": plan["runtime_environment"]},
+        hardware=hardware,
         installed_backend=installed_backend,
         loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
         runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
