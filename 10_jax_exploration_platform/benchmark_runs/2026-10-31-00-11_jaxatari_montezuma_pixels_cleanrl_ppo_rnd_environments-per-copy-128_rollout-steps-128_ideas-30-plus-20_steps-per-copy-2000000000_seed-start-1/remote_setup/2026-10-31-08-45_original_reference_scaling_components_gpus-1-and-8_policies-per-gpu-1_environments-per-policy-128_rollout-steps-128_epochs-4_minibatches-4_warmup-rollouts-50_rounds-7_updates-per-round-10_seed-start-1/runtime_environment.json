@@ -1,0 +1,5 @@
+{
+  "JAX_ENABLE_X64": "true",
+  "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+  "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+}

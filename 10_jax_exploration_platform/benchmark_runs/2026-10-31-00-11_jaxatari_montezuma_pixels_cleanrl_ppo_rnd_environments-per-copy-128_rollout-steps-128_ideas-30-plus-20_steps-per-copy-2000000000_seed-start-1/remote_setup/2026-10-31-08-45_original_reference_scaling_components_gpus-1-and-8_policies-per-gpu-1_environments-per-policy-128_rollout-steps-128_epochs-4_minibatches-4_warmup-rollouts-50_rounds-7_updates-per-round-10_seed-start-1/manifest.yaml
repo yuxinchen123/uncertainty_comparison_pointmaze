@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "original_reference_scaling_component_checks",
+  "formal_scaling_credit": false,
+  "hypothesis_count_contribution": 0,
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "helper_commit": "eebea5219d6cdb6adcea56ade3c71c7dcc73dc09",
+  "plans": [
+    {
+      "gpu_count": 1,
+      "unit_id": "original_reference_scaling_component_gpus-1_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1",
+      "launch_inputs": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-08-45_original_reference_scaling_components_gpus-1-and-8_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1/gpu-count-1_launch_inputs.json",
+      "script": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/original_reference_scaling_component_gpus-1_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1_helpers-eebea5219d6c.sh",
+      "resources": {
+        "cpus": 8,
+        "host_memory_gib": 64,
+        "gpus": 1,
+        "node": "jaguar03",
+        "component_check_walltime_minutes": 40,
+        "partition": "gpu",
+        "reservation": "sl5nw_168"
+      }
+    },
+    {
+      "gpu_count": 8,
+      "unit_id": "original_reference_scaling_component_gpus-8_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1",
+      "launch_inputs": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-08-45_original_reference_scaling_components_gpus-1-and-8_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1/gpu-count-8_launch_inputs.json",
+      "script": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/original_reference_scaling_component_gpus-8_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1_helpers-eebea5219d6c.sh",
+      "resources": {
+        "cpus": 64,
+        "host_memory_gib": 512,
+        "gpus": 8,
+        "node": "jaguar03",
+        "component_check_walltime_minutes": 40,
+        "partition": "gpu",
+        "reservation": "sl5nw_168"
+      }
+    }
+  ],
+  "asset_manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+  "asset_file_count": 4531
+}
