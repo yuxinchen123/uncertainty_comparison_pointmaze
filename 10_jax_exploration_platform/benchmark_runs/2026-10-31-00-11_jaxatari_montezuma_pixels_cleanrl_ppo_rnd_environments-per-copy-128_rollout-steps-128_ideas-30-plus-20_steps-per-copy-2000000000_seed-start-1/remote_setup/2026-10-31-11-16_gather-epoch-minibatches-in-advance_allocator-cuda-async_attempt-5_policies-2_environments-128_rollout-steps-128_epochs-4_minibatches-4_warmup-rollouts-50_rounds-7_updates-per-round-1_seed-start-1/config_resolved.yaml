@@ -1,0 +1,17 @@
+{
+  "configuration": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/specifications/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "d661816f161c9a0b756d9cb3d376c1553e662292204dfc881095aacf4613037e"
+  },
+  "runtime": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "allocator": {
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+    "XLA_PYTHON_CLIENT_ALLOCATOR": "cuda_async"
+  },
+  "approved_attempt": 5
+}
