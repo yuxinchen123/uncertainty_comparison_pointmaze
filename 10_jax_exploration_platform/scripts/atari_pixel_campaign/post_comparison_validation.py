@@ -47,8 +47,13 @@ def canonical_digest(value):
 class Evidence:
     """Read original bytes once per identity and retain hashes for later admission checks."""
 
-    def __init__(self):
+    def __init__(self, resolver=None):
         """Start an empty set of original artifact receipts."""
+        if resolver is not None:
+            from portable_evidence import ExactPathResolver
+            if not isinstance(resolver, ExactPathResolver):
+                raise TypeError("portable evidence requires the strict exact-path resolver")
+        self.resolver = resolver
         self.receipts = {}
         self.source_defaults = {}
         self.runtime_provenance = {}
@@ -57,17 +62,34 @@ class Evidence:
         """Require an absolute existing JSON path and reject evidence changing during validation."""
         return json.loads(self.file(path))
 
-    def file(self, path):
+    def path_identity(self, path, strict=False):
+        """Keep original mapped path identities while preserving local path normalization."""
+        if self.resolver is not None:
+            from portable_evidence import original_path
+            return original_path(path)
+        return str(Path(path).resolve(strict=strict))
+
+    def physical_file(self, path):
+        """Locate an explicitly pinned file, or the original local file when no mapping is supplied."""
+        if self.resolver is not None:
+            return self.resolver.file_path(path)
+        return Path(path)
+
+    def git_root(self, path, commit):
+        """Resolve historical Git locations without changing their recorded logical root."""
+        return self.resolver.git_root(path, commit) if self.resolver is not None else Path(path)
+
+    def file(self, path, record=True):
         """Read and hash an original artifact, including source or launch-script evidence."""
-        path = Path(path)
-        if not path.is_absolute():
+        if not Path(path).is_absolute():
             raise ValueError("evidence paths must be absolute: " + str(path))
-        path = path.resolve(strict=True)
-        contents = path.read_bytes()
-        receipt = {"path": str(path), "sha256": hashlib.sha256(contents).hexdigest()}
-        if str(path) in self.receipts and self.receipts[str(path)] != receipt:
+        identity = self.path_identity(path, strict=True)
+        contents = self.resolver.read_bytes(path) if self.resolver is not None else Path(identity).read_bytes()
+        receipt = {"path": identity, "sha256": hashlib.sha256(contents).hexdigest()}
+        if identity in self.receipts and self.receipts[identity] != receipt:
             raise ValueError("evidence changed while it was being validated: " + str(path))
-        self.receipts[str(path)] = receipt
+        if record:
+            self.receipts[identity] = receipt
         return contents
 
     def records(self):
@@ -182,7 +204,7 @@ def execution_identity(record):
 def validate_combination(specification, evidence):
     """Require independent correctness and seven longer paired confirmation rounds for the selected combination."""
     first_path, second_path = specification["correctness_record"], specification["confirmation_record"]
-    if Path(first_path).resolve() == Path(second_path).resolve():
+    if evidence.path_identity(first_path) == evidence.path_identity(second_path):
         raise ValueError("combination correctness and confirmation require separate recorded executions")
     first, second = evidence.read(first_path), evidence.read(second_path)
     if execution_identity(first) == execution_identity(second):
@@ -394,7 +416,8 @@ def case_source_defaults(case, evidence):
     key = (str(root), commit)
     if key in evidence.source_defaults:
         return evidence.source_defaults[key]
-    actual = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    physical_root = evidence.git_root(case["source_root"], commit)
+    actual = subprocess.check_output(["git", "-C", str(physical_root), "rev-parse", "HEAD"], text=True).strip()
     if actual != commit:
         raise ValueError("a historical case source checkout no longer matches its recorded commit")
     files = {}
@@ -403,7 +426,7 @@ def case_source_defaults(case, evidence):
                      "scripts/atari_pixel_campaign/worker_environment.sh"):
         path = root / "10_jax_exploration_platform" / relative
         contents = evidence.file(path)
-        original = subprocess.check_output(["git", "-C", str(root), "show", commit + ":10_jax_exploration_platform/" + relative])
+        original = subprocess.check_output(["git", "-C", str(physical_root), "show", commit + ":10_jax_exploration_platform/" + relative])
         if contents != original:
             raise ValueError("a historical case source file changed: " + str(path))
         files[relative] = contents.decode()
@@ -433,7 +456,7 @@ def cohort_runtime_evidence(case, record, hardware, worker_environment, evidence
     for kind in ("learner", "renderer"):
         receipt = gate["checks"][kind]
         original = evidence.read(receipt["path"])
-        if (evidence.receipts[str(Path(receipt["path"]).resolve())]["sha256"] != receipt["sha256"]
+        if (evidence.receipts[evidence.path_identity(receipt["path"])]["sha256"] != receipt["sha256"]
                 or original.get("passed") is not True or original.get("exit_code") != 0
                 or original.get("source_commit") != commit):
             raise ValueError("legacy admission check was changed or did not pass at the case source")
@@ -456,12 +479,12 @@ def cohort_runtime_evidence(case, record, hardware, worker_environment, evidence
     job = hardware.get("slurm_job_id")
     if job:
         ledger = run / "slurm/submissions.tsv"
-        rows = [line.split("\t") for line in ledger.read_text().splitlines()]
+        rows = [line.split("\t") for line in evidence.file(ledger, record=False).decode().splitlines()]
         selected_rows = [row for row in rows if len(row) == 4 and row[0] == job]
         matches = [(row[2], row[3]) for row in selected_rows]
     else:
         ledger = run / "processes.json"
-        selected_rows = [row for row in json.loads(ledger.read_text()) if row.get("pid") == hardware.get("worker_pid")
+        selected_rows = [row for row in json.loads(evidence.file(ledger, record=False)) if row.get("pid") == hardware.get("worker_pid")
                          and row.get("start_time") == hardware.get("worker_start_time")]
         matches = [(row["source_commit"], row["script"]) for row in selected_rows]
     if len(matches) != 1 or matches[0][0] != commit:
@@ -577,20 +600,20 @@ def validate_final_verification(specification, evidence=None, specification_path
     return {"schema_version": 1, "kind": "final_verification", "source_commit": source,
             **{name: True for name in FINAL_FLAGS}, "runtime_environment": runtime,
             "specification": specification, "specification_digest": canonical_digest(specification),
-            "specification_path": str(Path(specification_path).resolve()) if specification_path is not None else None,
+            "specification_path": evidence.path_identity(specification_path) if specification_path is not None else None,
             "cohort_runtime_provenance": [{"result_path": path, **evidence.runtime_provenance[path]}
                                           for path in sorted(evidence.runtime_provenance)],
             "selected": selected, "scaling": scaling, "evidence": evidence.records()}
 
 
-def validate_training_admission(path):
+def validate_training_admission(path, resolver=None):
     """Revalidate original final evidence before admitting the exact source, configuration and policy seeds."""
-    evidence = Evidence()
+    evidence = Evidence(resolver)
     specification = evidence.read(path)
     saved = evidence.read(specification["final_verification"])
     if saved.get("kind") != "final_verification" or saved.get("specification_digest") != canonical_digest(saved["specification"]):
         raise ValueError("the final verification receipt is missing its original evidence specification")
-    rebuilt = validate_final_verification(saved["specification"], specification_path=saved.get("specification_path"))
+    rebuilt = validate_final_verification(saved["specification"], Evidence(resolver), specification_path=saved.get("specification_path"))
     if rebuilt != saved:
         raise ValueError("final verification evidence changed or no longer passes its recorded gates")
     context = specification["hardware_class"]
@@ -605,21 +628,34 @@ def validate_training_admission(path):
             or any(type(seed) is not int or not 0 <= seed < 2 ** 32 for seed in seeds)):
         raise ValueError("training needs one distinct nonnegative seed per selected policy copy")
     root = Path(specification["source_root"])
-    if not root.is_absolute() or not root.is_dir():
+    if not root.is_absolute():
         raise ValueError("training source_root must be an existing absolute checkout")
-    commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    changes = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all",
+    physical_root = evidence.git_root(specification["source_root"], specification["source_commit"])
+    if not physical_root.is_dir():
+        raise ValueError("training source_root must be an existing absolute checkout")
+    commit = subprocess.check_output(["git", "-C", str(physical_root), "rev-parse", "HEAD"], text=True).strip()
+    changes = subprocess.check_output(["git", "-C", str(physical_root), "status", "--porcelain", "--untracked-files=all",
         "--", "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
         "10_jax_exploration_platform/scripts/atari_pixel_campaign"], text=True).strip()
     if commit != specification["source_commit"] or changes:
         raise ValueError("training source checkout differs from its verified frozen commit")
     module = root / "10_jax_exploration_platform/src/exploration_platform/atari_pixels"
-    tree = ast.parse((module / "config.py").read_text())
+    source_files = {}
+    for name in ("config.py", "environment.py"):
+        path = module / name
+        contents = evidence.file(path, record=False)
+        if resolver is not None:
+            relative = str(path.relative_to(root))
+            original = subprocess.check_output(["git", "-C", str(physical_root), "show", commit + ":" + relative])
+            if contents != original:
+                raise ValueError("a staged training source file differs from its pinned Git blob: " + str(path))
+        source_files[name] = contents
+    tree = ast.parse(source_files["config.py"])
     fields = {node.target.id for item in tree.body if isinstance(item, ast.ClassDef) and item.name == "PixelPPOConfig"
               for node in item.body if isinstance(node, ast.AnnAssign) and node.value is not None}
     if set(actual["learner"]) != fields:
         raise ValueError("training requires every frozen learner field explicitly resolved")
-    tree = ast.parse((module / "environment.py").read_text())
+    tree = ast.parse(source_files["environment.py"])
     constructor = next(node for item in tree.body if isinstance(item, ast.ClassDef) and item.name == "AtariPixelEnvironment"
                        for node in item.body if isinstance(node, ast.FunctionDef) and node.name == "__init__")
     if set(actual["environment"]) != {argument.arg for argument in constructor.args.args if argument.arg != "self"}:
@@ -631,11 +667,11 @@ def validate_training_admission(path):
                 "admission_records": evidence.records(), "evidence": saved["evidence"]}}
 
 
-def validate_training_completion(specification_path, unit_directory):
+def validate_training_completion(specification_path, unit_directory, resolver=None):
     """Verify the actual 2B schedule and checkpoint bytes without importing or unpickling arrays."""
-    admitted = validate_training_admission(specification_path)
-    evidence = Evidence()
-    directory = Path(unit_directory).resolve(strict=True)
+    admitted = validate_training_admission(specification_path, resolver=resolver)
+    evidence = Evidence(resolver)
+    directory = Path(evidence.path_identity(unit_directory, strict=True))
     result = evidence.read(directory / "result.json")
     identity_record = evidence.read(directory / "training_identity.json")
     checkpoint = evidence.read(directory / "checkpoints/latest.metadata.json")
@@ -664,10 +700,11 @@ def validate_training_completion(specification_path, unit_directory):
             or checkpoint.get("copy_seeds") != admitted["copy_seeds"]):
         raise ValueError("the checkpoint metadata does not describe the completed learner state")
     path = directory / "checkpoints/latest.pkl"
-    if checkpoint.get("checkpoint_path") != str(path.resolve()) or not path.is_file():
+    physical_path = evidence.physical_file(path)
+    if checkpoint.get("checkpoint_path") != evidence.path_identity(path) or not physical_path.is_file():
         raise ValueError("the completed checkpoint is not at its recorded original path")
     digest = hashlib.sha256()
-    with path.open("rb") as stream:
+    with physical_path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     if digest.hexdigest() != checkpoint.get("checkpoint_sha256"):
@@ -686,13 +723,21 @@ def main():
     operation.add_argument("--training-admission", action="store_true")
     operation.add_argument("--training-completion", type=Path, metavar="UNIT_DIRECTORY")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--evidence-manifest", type=Path)
+    parser.add_argument("--evidence-manifest-sha256")
     args = parser.parse_args()
+    if args.evidence_manifest_sha256 and args.evidence_manifest is None:
+        parser.error("an expected evidence manifest hash requires --evidence-manifest")
+    resolver = None
+    if args.evidence_manifest is not None:
+        from portable_evidence import ExactPathResolver
+        resolver = ExactPathResolver(args.evidence_manifest, args.evidence_manifest_sha256)
     if args.training_completion:
-        result = validate_training_completion(args.specification, args.training_completion)
+        result = validate_training_completion(args.specification, args.training_completion, resolver=resolver)
     elif args.training_admission:
-        result = validate_training_admission(args.specification)
+        result = validate_training_admission(args.specification, resolver=resolver)
     else:
-        evidence = Evidence()
+        evidence = Evidence(resolver)
         result = validate_final_verification(evidence.read(args.specification), evidence, args.specification)
     contents = (json.dumps(result, indent=2, allow_nan=False) + "\n").encode()
     if args.output:
