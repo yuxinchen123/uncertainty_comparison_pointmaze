@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import time
+from zoneinfo import ZoneInfo
 
 
 def read_json(path):
@@ -34,6 +35,9 @@ def unit_rows(directory):
         hardware = read_json(path.parent / "hardware.json") or {}
         age = time.time() - path.stat().st_mtime
         state = value["state"]
+        failure = read_json(path.parent / "failure.json")
+        if failure:
+            state = "failed"
         update = value.get("update", value.get("round", 0))
         target = value.get("target_updates", "")
         progress = f"{update}/{target} updates" if target else str(update)
@@ -41,6 +45,8 @@ def unit_rows(directory):
             progress = state.replace("_", " ")
         if age > 2400 and state not in ("completed", "checkpointed"):
             progress += f"; no record for {int(age / 60)} min"
+        if failure:
+            progress = failure["error"][:100]
         rows.append({"run": path.parent.name, "pool": hardware.get("hostname", "unknown"),
                      "gpu": hardware.get("gpu_query", "").split(",")[1:2],
                      "state": state, "progress": progress, "age_seconds": age})
@@ -53,22 +59,30 @@ def tick(directory):
     reports = directory / "20_mins_monitoring"
     reports.mkdir(parents=True, exist_ok=True)
     jobs, units = own_jobs(directory), unit_rows(directory)
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = ["run or job                  pool          gpu             state       progress"]
-    for section, states in (
-            ("TRAINING", {"running", "initializing", "normalization_warmup"}),
-            ("FINISHED", {"completed", "checkpointed"})):
-        rows.append(section)
-        for unit in units:
-            if unit["state"] in states:
-                gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
-                rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
-                            f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"]}')
+    rows.append("TRAINING")
+    for unit in units:
+        if unit["state"] in {"running", "initializing", "normalization_warmup"}:
+            gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
+            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
+                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"]}')
     rows.append("WAITING")
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING":
             rows.append(f'{"scheduled study job":26}  {"UVA":12}  {gpu[:14]:14}  '
                         f'{state:10}  {reason[:25]}')
+    rows.append("HELD")
+    for identifier, state, node, gpu, reason in jobs:
+        if state.startswith("RESV_DEL") or "Held" in reason:
+            rows.append(f'{"held study job":26}  {"UVA":12}  {gpu[:14]:14}  '
+                        f'{"HELD":10}  {reason[:25]}')
+    rows.append("FINISHED")
+    for unit in units:
+        if unit["state"] in {"completed", "checkpointed", "failed"}:
+            gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
+            rows.append(f'{unit["run"][:26]:26}  {unit["pool"][:12]:12}  '
+                        f'{gpu[:14]:14}  {unit["state"][:10]:10}  {unit["progress"]}')
     rows.append("PLANNED")
     state_path = directory / "campaign_state.json"
     campaign = read_json(state_path) or {"phase": "implementation"}

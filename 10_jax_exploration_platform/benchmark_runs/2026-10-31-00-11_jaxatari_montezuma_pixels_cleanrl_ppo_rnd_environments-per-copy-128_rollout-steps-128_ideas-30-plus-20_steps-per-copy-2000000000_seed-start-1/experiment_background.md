@@ -27,6 +27,6 @@ Latest placement instruction: short H100 measurements may use serval02 or serval
 Initial current branch: Use-RLexplore-RND at 0c93d43132d288e240a36a09a50618248d6bd808.
 Incoming branch: fused-atari at adf6861a7406c6235942d52f9276ad42aa8bcef6; includes fused-antmaze.
 Integration branch: merge-atari-cleanrl.
-Execution commit: pending code completion; record the exact commit before submitting work.
+First pixel baseline code commit: d5d63d9. Each submitted unit records its full execution commit in the submission ledger and reads an immutable archive of that commit.
 
 Original-checkout modified historical logs, notebook edits in RLeXplore, and an untracked completion sentinel are preserved separately. No numerical work is run on login nodes.
