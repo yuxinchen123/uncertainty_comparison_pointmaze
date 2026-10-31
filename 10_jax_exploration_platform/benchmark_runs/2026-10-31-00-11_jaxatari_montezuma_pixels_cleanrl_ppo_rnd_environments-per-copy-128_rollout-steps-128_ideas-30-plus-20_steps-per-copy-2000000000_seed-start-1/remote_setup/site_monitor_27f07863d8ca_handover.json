@@ -1,0 +1,27 @@
+{
+  "kind": "verified_site_monitor_handover",
+  "checked_at_utc": "2026-10-31T23:50:27.482077+00:00",
+  "new_monitor_job_id": "6779145",
+  "new_source_commit": "27f07863d8cac86fb78de014f8e4e355c0233f43",
+  "new_first_report_verified": true,
+  "new_log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/site_monitor_27f07863d8ca_first_report.log",
+    "sha256": "9a9c1cc251c652e16710183f49db180d6ad16275ca615f39ac3fe9735fb5397e"
+  },
+  "old_monitor_job_id": "6778089",
+  "old_owned_job_record": "JobId=6778089 JobName=atari_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=405 Nice=0 Account=sl5nw_base QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=05:37:33 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-10-31T14:12:37 EligibleTime=2026-10-31T14:12:37 AccrueTime=2026-10-31T14:12:37 StartTime=2026-10-31T14:12:54 EndTime=2026-11-07T13:12:54 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-31T14:12:54 Scheduler=Backfill Partition=nolim AllocNode:Sid=portal05:181009 ReqNodeList=(null) ExcNodeList=(null) NodeList=heartpiece BatchHost=heartpiece NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=cpu=2,mem=2G,node=1,billing=311 Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_b9a8a366d6ef.sh WorkDir=/p/rlprojects/RND_worktrees/merge-atari-cleanrl StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6778089.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6778089.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+  "all_old_cpu_analysis_completed": true,
+  "last_old_analysis_step": "6778089.32",
+  "old_cancel_command": [
+    "scancel",
+    "6778089"
+  ],
+  "old_cancel_exit_code": 0,
+  "old_cancel_stdout": "",
+  "old_cancel_stderr": "",
+  "gpu_jobs_cancelled": false,
+  "session_cron_id": "8eb6fe22-fb3a-4f7c-8c2e-f11b4968b3dd",
+  "cadence_seconds": 1200,
+  "live_log_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6779145.log",
+  "old_terminal_accounting": "6778089|CANCELLED by 2618919|0:0\n6778089.batch|CANCELLED|0:15\n6778089.0|COMPLETED|0:0\n6778089.1|FAILED|1:0\n6778089.2|COMPLETED|0:0\n6778089.3|COMPLETED|0:0\n6778089.4|FAILED|1:0\n6778089.5|COMPLETED|0:0\n6778089.6|COMPLETED|0:0\n6778089.7|COMPLETED|0:0\n6778089.8|COMPLETED|0:0\n6778089.9|COMPLETED|0:0\n6778089.10|COMPLETED|0:0\n6778089.11|COMPLETED|0:0\n6778089.12|COMPLETED|0:0\n6778089.13|COMPLETED|0:0\n6778089.14|COMPLETED|0:0\n6778089.15|COMPLETED|0:0\n6778089.16|COMPLETED|0:0\n6778089.17|COMPLETED|0:0\n6778089.18|COMPLETED|0:0\n6778089.19|COMPLETED|0:0\n6778089.20|COMPLETED|0:0\n6778089.21|COMPLETED|0:0\n6778089.22|COMPLETED|0:0\n6778089.23|COMPLETED|0:0\n6778089.24|COMPLETED|0:0\n6778089.25|COMPLETED|0:0\n6778089.26|COMPLETED|0:0\n6778089.27|COMPLETED|0:0\n6778089.28|COMPLETED|0:0\n6778089.29|COMPLETED|0:0\n6778089.30|COMPLETED|0:0\n6778089.31|COMPLETED|0:0\n6778089.32|COMPLETED|0:0\n"
+}

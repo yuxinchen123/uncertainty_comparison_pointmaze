@@ -1,0 +1,23 @@
+{
+  "created_at_utc": "2026-10-31T23:47:26.199387+00:00",
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=nolim",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--gpus-per-node=0",
+    "--time=7-00:00:00",
+    "--job-name=atari_monitor",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_27f07863d8ca.sh"
+  ],
+  "published_launch_commit": "c92b1d2cd20e0c65865c98e7b625b70aad464376",
+  "old_monitor_job_id": "6778089",
+  "session_cron_id": "8eb6fe22-fb3a-4f7c-8c2e-f11b4968b3dd"
+}
