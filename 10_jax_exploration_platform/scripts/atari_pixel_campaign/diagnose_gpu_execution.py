@@ -6,19 +6,23 @@ standing card lock. Importing this file performs standard-library metadata work 
 
 import argparse
 import ast
+import csv
 import ctypes
 from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
 import shlex
+import shutil
 import socket
 import subprocess
 import sys
 import sysconfig
+import tempfile
 import time
 import traceback
 
@@ -26,6 +30,8 @@ import traceback
 GPU_UUID = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 CORE_SCOPES = ("10_jax_exploration_platform/src/exploration_platform/atari_pixels",
                "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh")
+CACHE_VARIABLES = ("JAX_ENABLE_COMPILATION_CACHE", "JAX_COMPILATION_CACHE_DIR",
+                   "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES")
 
 
 def atomic_json(path, value):
@@ -73,7 +79,7 @@ def core_identity(source_root, commit):
     return {"source_root": str(root), "source_commit": commit, "files": files}
 
 
-def default_configuration(source_root):
+def default_configuration(source_root, deterministic_operations=True):
     """Read literal frozen defaults without importing JAX or creating a numerical context."""
     directory = Path(source_root) / "10_jax_exploration_platform/src/exploration_platform/atari_pixels"
     config_tree = ast.parse((directory / "config.py").read_text())
@@ -90,7 +96,7 @@ def default_configuration(source_root):
             "execution": {"compile_updates": 2, "timed_rounds": 2, "updates_per_round": 2,
                           "traced_updates": 1, "seed": 1, "precision": "float32",
                           "statistics_precision": "float64", "matmul_precision": "highest",
-                          "deterministic_operations": True, "formal_benchmark": False,
+                          "deterministic_operations": deterministic_operations, "formal_benchmark": False,
                           "capacity_evidence": False}}
 
 
@@ -104,24 +110,138 @@ def record_progress(directory, phase, **fields):
     atomic_json(directory / "progress.json", record)
 
 
-def hardware_record():
-    """Record only the selected H100 and the exact runtime settings used by this process."""
-    command = ["nvidia-smi", "-i", GPU_UUID,
+def hardware_record(gpu_uuid=GPU_UUID, context="h100", deterministic_operations=True, convolution_backend_layout="default"):
+    """Record the selected physical GPU and require the exact diagnostic runtime settings."""
+    if context not in {"h100", "jaguar03_rtx_a4500"} or type(deterministic_operations) is not bool:
+        raise ValueError("the diagnostic context and deterministic setting must be explicit")
+    layout_flags = {"default": [], "channels-last": ["--xla_gpu_force_conv_nhwc=true"],
+                    "channels-first": ["--xla_gpu_force_conv_nchw=true"]}
+    if convolution_backend_layout not in layout_flags or (not deterministic_operations and convolution_backend_layout != "default"):
+        raise ValueError("a physical convolution layout control requires deterministic operations")
+    command = ["nvidia-smi", "-i", gpu_uuid,
                "--query-gpu=uuid,name,memory.total,driver_version", "--format=csv,noheader"]
     query = subprocess.check_output(command, text=True).strip()
-    if not query.startswith(GPU_UUID + ",") or "H100" not in query or "\n" in query:
-        raise ValueError("the diagnostic did not resolve exactly the permitted H100")
+    device_name = "H100" if context == "h100" else "A4500"
+    if not query.startswith(gpu_uuid + ",") or device_name not in query or "\n" in query:
+        raise ValueError("the diagnostic did not resolve exactly its recorded physical GPU")
+    if context == "jaguar03_rtx_a4500" and socket.gethostname() != "jaguar03":
+        raise ValueError("the RTX A4500 diagnostic must run on jaguar03")
     runtime = {name: os.environ.get(name, "") for name in (
         "JAX_ENABLE_X64", "JAX_DEFAULT_MATMUL_PRECISION", "XLA_FLAGS", "CUDA_VISIBLE_DEVICES",
-        "XLA_PYTHON_CLIENT_PREALLOCATE", "XLA_PYTHON_CLIENT_MEM_FRACTION", "OMP_NUM_THREADS")}
+        "XLA_PYTHON_CLIENT_PREALLOCATE", "XLA_PYTHON_CLIENT_MEM_FRACTION", "OMP_NUM_THREADS", *CACHE_VARIABLES)}
     flags = [flag for flag in shlex.split(runtime["XLA_FLAGS"])
              if flag.startswith("--xla_gpu_exclude_nondeterministic_ops=")]
-    if (runtime["CUDA_VISIBLE_DEVICES"] != GPU_UUID or runtime["JAX_ENABLE_X64"] != "true"
+    expected_flag = "--xla_gpu_exclude_nondeterministic_ops=" + str(deterministic_operations).lower()
+    actual_layout = [flag for flag in shlex.split(runtime["XLA_FLAGS"])
+                     if flag.startswith(("--xla_gpu_force_conv_nhwc=", "--xla_gpu_force_conv_nchw="))]
+    if (runtime["CUDA_VISIBLE_DEVICES"] != gpu_uuid or runtime["JAX_ENABLE_X64"] != "true"
             or runtime["JAX_DEFAULT_MATMUL_PRECISION"] != "highest"
-            or flags != ["--xla_gpu_exclude_nondeterministic_ops=true"]):
-        raise ValueError("the diagnostic must retain the exact GPU, precision and deterministic settings")
+            or flags != [expected_flag]):
+        raise ValueError("the diagnostic must match its recorded GPU, precision and deterministic flag")
+    if actual_layout != layout_flags[convolution_backend_layout]:
+        raise ValueError("the actual compiler convolution layout differs from the diagnostic plan")
+    if (runtime["JAX_ENABLE_COMPILATION_CACHE"] != "false" or runtime["JAX_COMPILATION_CACHE_DIR"]
+            or runtime["JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES"]
+            or any("cache" in flag or "autotune_results" in flag for flag in shlex.split(runtime["XLA_FLAGS"]))):
+        raise ValueError("the diagnostic must disable persistent compilation caches and reject XLA cache/load flags")
     return {"hostname": socket.gethostname(), "gpu_query": query,
+            "hardware_context": context, "expected_deterministic_operations": deterministic_operations,
+            "convolution_backend_layout": convolution_backend_layout,
+            "compilation_cache_policy": "disabled",
             "runtime_environment": runtime, "pid": os.getpid()}
+
+
+def summary_csv_evidence(path, count_column):
+    """Require actual positive kernel or API measurements instead of an empty or header-only CSV."""
+    with Path(path).open(newline="", encoding="utf-8-sig") as stream:
+        reader = csv.DictReader(stream)
+        if not {"Name", count_column, "Total Time (ns)"}.issubset(reader.fieldnames or []):
+            raise ValueError("Nsight summary does not contain the required measurement columns: " + str(path))
+        rows = list(reader)
+    if not rows:
+        raise ValueError("Nsight summary contains no data rows: " + str(path))
+    total_elapsed = 0.0
+    for row in rows:
+        if any(not isinstance(row.get(name), str) for name in ("Name", count_column, "Total Time (ns)")):
+            raise ValueError("Nsight summary contains an incomplete measurement: " + str(path))
+        count = int(row[count_column].replace(",", ""))
+        elapsed = float(row["Total Time (ns)"].replace(",", ""))
+        if not row["Name"].strip() or count < 1 or not math.isfinite(elapsed) or elapsed < 0:
+            raise ValueError("Nsight summary contains an invalid measurement: " + str(path))
+        total_elapsed += elapsed
+    if total_elapsed <= 0:
+        raise ValueError("Nsight summary contains no positive measured duration: " + str(path))
+    return {"rows": len(rows), "columns": reader.fieldnames,
+            "sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest()}
+
+
+def preserve_trace_file(source, destination):
+    """Publish a complete derived trace file without replacing any existing artifact."""
+    descriptor, temporary = tempfile.mkstemp(prefix=".trace-", dir=Path(destination).parent)
+    temporary = Path(temporary)
+    digest = hashlib.sha256()
+    try:
+        with Path(source).open("rb") as incoming, os.fdopen(descriptor, "wb") as outgoing:
+            for chunk in iter(lambda: incoming.read(1024 * 1024), b""):
+                outgoing.write(chunk)
+                digest.update(chunk)
+            outgoing.flush()
+            os.fsync(outgoing.fileno())
+        os.link(temporary, destination)
+    finally:
+        temporary.unlink()
+    return {"path": str(destination), "bytes": Path(destination).stat().st_size, "sha256": digest.hexdigest()}
+
+
+def summarize_trace(directory, nsys):
+    """Export through short local paths and require nonempty kernel/API records before success."""
+    trace = Path(directory).resolve(strict=True) / "trace"
+    report = trace / "capture.nsys-rep"
+    analysis_path = trace / "analysis.json"
+    if analysis_path.exists():
+        raise ValueError("an existing trace analysis is immutable; preserve it and use a separate recovery directory")
+    if not report.is_file() or report.stat().st_size == 0:
+        raise ValueError("Nsight did not produce a nonempty raw trace report")
+    analysis = {"completed": False, "report": str(report), "export_location": "short local /tmp directory"}
+    error = None
+    with tempfile.TemporaryDirectory(prefix="rnd-nsys-", dir="/tmp") as temporary:
+        local = Path(temporary)
+        shutil.copyfile(report, local / "capture.nsys-rep")
+        command = [str(nsys), "stats", "--report=cuda_gpu_kern_sum,cuda_api_sum", "--format=csv",
+                   "--force-export=true", "--output=summary", "capture.nsys-rep"]
+        analysis.update(command=command, working_directory=str(local))
+        try:
+            process = subprocess.run(command, cwd=local, capture_output=True, text=True, timeout=180)
+            analysis["exit_code"] = process.returncode
+            (local / "stats.stdout.log").write_text(process.stdout)
+            (local / "stats.stderr.log").write_text(process.stderr)
+            if process.returncode != 0:
+                raise RuntimeError(f"Nsight stats exited with status {process.returncode}")
+            summaries = {}
+            for name, count in (("cuda_gpu_kern_sum", "Instances"), ("cuda_api_sum", "Num Calls")):
+                paths = list(local.glob("summary*" + name + "*.csv"))
+                if len(paths) != 1:
+                    raise ValueError("Nsight did not produce exactly one " + name + " CSV summary")
+                summaries[name] = {"path": str(trace / paths[0].name), **summary_csv_evidence(paths[0], count)}
+            analysis.update(completed=True, summaries=summaries)
+        except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as failure:
+            error = failure
+            analysis.update(completed=False, error=repr(failure))
+            if isinstance(failure, subprocess.TimeoutExpired):
+                analysis["exit_code"] = None
+                for name, value in (("stats.stdout.log", failure.stdout), ("stats.stderr.log", failure.stderr)):
+                    (local / name).write_text(value.decode(errors="replace") if isinstance(value, bytes) else value or "")
+        # Retain CSVs, SQLite exports and process logs even when stats returned zero
+        # without usable data. The original capture remains at its original path.
+        derived = [path for path in sorted(local.iterdir()) if path.is_file() and path.name != "capture.nsys-rep"]
+        collisions = [trace / path.name for path in derived if (trace / path.name).exists()]
+        if collisions:
+            raise ValueError("existing derived trace files are immutable: " + str(collisions))
+        analysis["derived_files"] = [preserve_trace_file(path, trace / path.name) for path in derived]
+        atomic_json(analysis_path, analysis)
+    if error is not None:
+        raise RuntimeError("Nsight did not produce validated kernel and API summaries: " + str(error)) from error
+    return analysis
 
 
 def cuda_profiler():
@@ -168,10 +288,16 @@ def run(args):
         raise ValueError("the staged diagnostic helper changed after preparation")
     if core_identity(Path(plan["core"]["source_root"]), plan["core"]["source_commit"]) != plan["core"]:
         raise ValueError("the frozen core changed after preparation")
-    config_document = default_configuration(plan["core"]["source_root"])
+    expected_deterministic = plan["expected_deterministic_operations"]
+    if type(expected_deterministic) is not bool:
+        raise ValueError("expected_deterministic_operations must be a JSON boolean")
+    if plan["compilation_cache_policy"] != "disabled":
+        raise ValueError("new diagnostics must explicitly disable persistent compilation caches")
+    config_document = default_configuration(plan["core"]["source_root"], expected_deterministic)
     if json.loads(json.dumps(config_document)) != plan["configuration"]:
         raise ValueError("the frozen default configuration changed after preparation")
-    atomic_json(directory / "hardware.json", hardware_record())
+    layout = plan.get("convolution_backend_layout", "default")
+    atomic_json(directory / "hardware.json", hardware_record(plan["gpu_uuid"], plan["hardware_context"], expected_deterministic, layout))
 
     # All numerical imports happen here, after the parent has recorded this process
     # and the host-side launcher has waited for predecessors and acquired the card.
@@ -183,8 +309,9 @@ def run(args):
     from exploration_platform.atari_pixels.config import PixelPPOConfig
     from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
     from exploration_platform.atari_pixels.training import PixelPPORND
-    if any("H100" not in device.device_kind for device in jax.devices()) or len(jax.devices()) != 1:
-        raise ValueError("JAX must expose exactly the selected H100")
+    expected_device = "H100" if plan["hardware_context"] == "h100" else "A4500"
+    if any(expected_device not in device.device_kind for device in jax.devices()) or len(jax.devices()) != 1:
+        raise ValueError("JAX must expose exactly the selected GPU type")
     config = PixelPPOConfig(**config_document["learner"])
     if json.loads(json.dumps(asdict(config))) != plan["configuration"]["learner"]:
         raise ValueError("the constructed learner differs from its recorded defaults")
@@ -261,6 +388,9 @@ def run(args):
               "capacity_evidence": False, "copies": 1, "rounds": rounds,
               "initialization_seconds": initialization_seconds, "compilation_seconds": compilation_seconds,
               "training_updates": 7 if args.trace_enabled else 6, "trace": trace,
+              "hardware_context": plan["hardware_context"], "gpu_uuid": plan["gpu_uuid"],
+              "expected_deterministic_operations": expected_deterministic,
+              "convolution_backend_layout": layout,
               "source_commit": plan["core"]["source_commit"], "helper": plan["helper"]}
     atomic_json(directory / "result.json", result)
     record_progress(directory, "completed", completed=True, training_updates=result["training_updates"])

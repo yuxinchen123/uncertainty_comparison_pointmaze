@@ -12,6 +12,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import signal
 import subprocess
@@ -132,6 +133,50 @@ def bounded_command(command, seconds):
         raise TimeoutError("the diagnostic exceeded its recorded active time limit")
 
 
+def configure_runtime(deterministic_operations=True, convolution_backend_layout="default"):
+    """Preserve full precision and apply only the explicitly planned compiler controls."""
+    if type(deterministic_operations) is not bool:
+        raise ValueError("the expected deterministic setting must be a JSON boolean")
+    layout_flags = {"default": None, "channels-last": "--xla_gpu_force_conv_nhwc=true",
+                    "channels-first": "--xla_gpu_force_conv_nchw=true"}
+    if convolution_backend_layout not in layout_flags or (not deterministic_operations and convolution_backend_layout != "default"):
+        raise ValueError("a physical convolution layout control requires deterministic operations")
+    before = os.environ.get("XLA_FLAGS", "")
+    tokens = shlex.split(before)
+    if any(flag.startswith(("--xla_gpu_force_conv_nhwc=", "--xla_gpu_force_conv_nchw=")) for flag in tokens):
+        raise ValueError("the diagnostic cannot inherit a forced convolution layout")
+    if any("cache" in flag or "autotune_results" in flag for flag in tokens):
+        raise ValueError("diagnostics cannot inherit XLA cache or autotune-results load/dump flags")
+    cache_names = ("JAX_ENABLE_COMPILATION_CACHE", "JAX_COMPILATION_CACHE_DIR",
+                   "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES")
+    cache_before = {name: os.environ.get(name) for name in cache_names}
+    if cache_before["JAX_COMPILATION_CACHE_DIR"] or cache_before["JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES"]:
+        raise ValueError("diagnostics cannot inherit a JAX persistent cache directory or XLA cache policy")
+    flags = [flag for flag in tokens if flag.startswith("--xla_gpu_exclude_nondeterministic_ops=")]
+    if flags != ["--xla_gpu_exclude_nondeterministic_ops=true"]:
+        raise ValueError("source the unchanged worker environment with exactly one enabled determinism flag first")
+    if os.environ.get("JAX_ENABLE_X64") != "true" or os.environ.get("JAX_DEFAULT_MATMUL_PRECISION") != "highest":
+        raise ValueError("the diagnostic control cannot change full precision or statistics precision")
+    after = before
+    if not deterministic_operations:
+        after, replacements = re.subn(r"(?<!\S)--xla_gpu_exclude_nondeterministic_ops=true(?=\s|$)",
+            "--xla_gpu_exclude_nondeterministic_ops=false", before)
+        if replacements != 1:
+            raise ValueError("the diagnostic control could not replace exactly its one determinism flag")
+    if layout_flags[convolution_backend_layout]:
+        after += " " + layout_flags[convolution_backend_layout]
+    os.environ["XLA_FLAGS"] = after
+    os.environ["JAX_ENABLE_COMPILATION_CACHE"] = "false"
+    os.environ["JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES"] = ""
+    return {"expected_deterministic_operations": deterministic_operations,
+            "convolution_backend_layout": convolution_backend_layout,
+            "XLA_FLAGS_before": before, "XLA_FLAGS": after,
+            "compilation_cache_policy": "disabled", "compilation_cache_environment_before": cache_before,
+            "compilation_cache_environment": {name: os.environ.get(name) for name in cache_names},
+            "JAX_ENABLE_X64": os.environ["JAX_ENABLE_X64"],
+            "JAX_DEFAULT_MATMUL_PRECISION": os.environ["JAX_DEFAULT_MATMUL_PRECISION"]}
+
+
 def supervise(directory):
     """Wait without a GPU context, acquire the existing card lock, then run the fixed diagnostic."""
     directory = Path(directory).resolve(strict=True)
@@ -153,6 +198,8 @@ def supervise(directory):
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
         write_once(directory / "card_preflight.json", encoded_json(free_selected_card()))
         helper.core_identity(Path(plan["core"]["source_root"]), plan["core"]["source_commit"])
+        runtime = configure_runtime(plan["expected_deterministic_operations"], plan.get("convolution_backend_layout", "default"))
+        write_once(directory / "executed_runtime_environment.json", encoded_json(runtime))
         worker = [plan["python"], str(directory / "code/diagnose_gpu_execution.py"), "--unit-dir", str(directory)]
         nsys = Path("/usr/local/bin/nsys")
         if nsys.is_file() and os.access(nsys, os.X_OK):
@@ -171,13 +218,7 @@ def supervise(directory):
             report = directory / "trace/capture.nsys-rep"
             if not report.is_file():
                 raise ValueError("Nsight did not produce the requested one-update capture")
-            stats = [str(nsys), "stats", "--report=cuda_gpu_kern_sum,cuda_api_sum", "--format=csv",
-                     "--force-export=true", "--output=" + str(directory / "trace/summary"), str(report)]
-            stats_code = bounded_command(stats, 180)
-            helper.atomic_json(directory / "trace/analysis.json", {"command": stats, "exit_code": stats_code,
-                "report": str(report), "completed": stats_code == 0})
-            if stats_code != 0:
-                raise RuntimeError(f"Nsight summary generation exited with status {stats_code}")
+            helper.summarize_trace(directory, nsys)
         helper.record_progress(directory, "completed", completed=True, diagnostic_only=True)
 
 
@@ -189,10 +230,17 @@ def prepare(args):
         raise ValueError("this diagnostic must use the unchanged frozen reference commit")
     core = helper.core_identity(source_root, args.source_commit)
     helpers = helper_identity()
-    configuration = helper.default_configuration(source_root)
+    deterministic_operations = args.deterministic_operations == "true"
+    layout = args.convolution_backend_layout
+    if layout not in {"default", "channels-last", "channels-first"} or (not deterministic_operations and layout != "default"):
+        raise ValueError("a physical convolution layout control requires deterministic operations")
+    configuration = helper.default_configuration(source_root, deterministic_operations)
     if configuration["learner"]["n_copies"] != 1 or configuration["learner"]["observation_warmup_iterations"] != 50:
         raise ValueError("the frozen defaults do not match the requested one-policy diagnostic")
-    identifier = ("serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128"
+    label = "reference_execution_diagnostic" if deterministic_operations else "determinism-disabled-control"
+    if layout != "default":
+        label = "convolution-backend-" + layout + "-control"
+    identifier = ("serval02_" + label + "_copies-1_environments-per-copy-128_rollout-steps-128"
         "_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1"
         "_source-" + args.source_commit[:12] + "_helper-" + helpers["diagnose_gpu_execution.py"]["git_commit"][:12])
     directory = run_dir / "data" / identifier
@@ -201,8 +249,29 @@ def prepare(args):
         run_dir / ("data/serval02_pixel_gates_copies_1_source_" + args.source_commit[:12] + "/result.json"),
         run_dir / ("data/serval02_pixel_rendering_copies_1_source_" + args.source_commit[:12] + "/result.json")]
     after += [path for path in (args.after_result or []) if path.resolve() not in after]
+    if not deterministic_operations or layout != "default":
+        matches = []
+        for path in args.after_result or []:
+            predecessor_plan = path.parent / "diagnostic_plan.json"
+            if predecessor_plan.exists():
+                record = json.loads(predecessor_plan.read_text())
+                predecessor_configuration = record.get("configuration", {})
+                expected_on = helper.default_configuration(source_root)
+                if (record.get("core") == core and predecessor_configuration == json.loads(json.dumps(expected_on))
+                        and record.get("convolution_backend_layout", "default") == "default"
+                        and record.get("hardware_context", "h100") == "h100" and record.get("gpu_uuid") == GPU_UUID
+                        and path.name == "result.json"):
+                    matches.append(str(path.resolve()))
+        if len(matches) != 1:
+            raise ValueError("this control requires exactly one matched enabled default-layout diagnostic --after-result")
     plan = {"schema_version": 1, "diagnostic_only": True, "formal_benchmark": False,
             "capacity_evidence": False, "unit_id": identifier, "core": core,
+            "hardware_context": "h100", "expected_deterministic_operations": deterministic_operations,
+            "convolution_backend_layout": layout,
+            "planned_runtime_flags": {"deterministic_operations": "--xla_gpu_exclude_nondeterministic_ops=" + str(deterministic_operations).lower(),
+                "convolution_backend_layout": {"default": None, "channels-last": "--xla_gpu_force_conv_nhwc=true",
+                                               "channels-first": "--xla_gpu_force_conv_nchw=true"}[layout]},
+            "compilation_cache_policy": "disabled",
             "helper": helpers["diagnose_gpu_execution.py"], "launcher": helpers["launch_diagnostic.py"],
             "configuration": configuration, "python": str(args.python), "gpu_uuid": GPU_UUID,
             "standing_lock": "/tmp/sl5nw_serval02_card1.lock", "maximum_active_seconds": 2700,
@@ -210,7 +279,7 @@ def prepare(args):
     plan_bytes = encoded_json(plan)
     artifacts = {directory / "diagnostic_plan.json": plan_bytes,
                  directory / "manifest.yaml": encoded_json({"schema_version": 1, "run_id": identifier,
-                     "description": "Separate full-size one-policy deterministic execution diagnostic; no formal result admission.",
+                     "description": "Separate full-size one-policy execution diagnostic; no formal result admission.",
                      "git": {"commit": args.source_commit, "dirty": False},
                      "helper": plan["helper"], "configuration": configuration}),
                  directory / "config_resolved.yaml": encoded_json(configuration)}
@@ -218,15 +287,18 @@ def prepare(args):
         artifacts[directory / "code" / name] = Path(helpers[name]["path"]).read_bytes()
     command = [str(args.python), str(directory / "code/diagnose_gpu_execution.py"), "--unit-dir", str(directory), "--trace-enabled"]
     artifacts[directory / "command.txt"] = (shlex.join(command) + "\n").encode()
-    background = ("## Purpose\n\nMeasure full-size one-policy training with deterministic operations to distinguish "
+    determinism_description = "enabled" if deterministic_operations else "disabled only for this diagnostic control"
+    background = (f"## Purpose\n\nMeasure full-size one-policy training with deterministic operations {determinism_description} to distinguish "
         "the runtime setting from the change to two independent policies. Trace one later update for CUDA kernel durations. "
         "These are diagnostic measurements, not formal benchmark or capacity evidence.\n\n"
         "## Key hyperparameters\n\nOne policy, 128 environments, 128 rollout steps, four epochs, four minibatches, "
         "50 normalization warmup rollouts, seed one. Two compile updates, two timing rounds of two updates, "
         "then one separately traced update. Policy and optimizer use float32; running statistics use float64; "
-        "matrix precision is highest and deterministic GPU operations remain required.\n\n"
+        f"matrix precision is highest; deterministic GPU operations are {determinism_description}.\n\n"
         "## Code and config changes\n\nThe learner and environment use the unchanged frozen core. "
-        "A separately committed helper controls timing and CUDAProfilerApi capture. No checkpoint is saved. "
+        "A separately committed helper controls timing and CUDAProfilerApi capture. Persistent compilation caches "
+        "are explicitly disabled; inherited XLA cache/load flags are rejected. No checkpoint is saved. "
+        f"The compiler's physical convolution layout is {layout}; the model and learning configuration are unchanged. "
         "The supervisor waits for all recorded predecessors and acquires the standing lock for serval02 card 1.\n\n"
         f"## Git state\n\nFrozen core commit: `{args.source_commit}`. "
         f"Diagnostic helper commit: `{plan['helper']['git_commit']}`. "
@@ -298,6 +370,8 @@ def main():
     parser.add_argument("--source-commit", default=CORE_COMMIT)
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--after-result", type=Path, action="append")
+    parser.add_argument("--deterministic-operations", choices=("true", "false"), default="true")
+    parser.add_argument("--convolution-backend-layout", choices=("default", "channels-last", "channels-first"), default="default")
     parser.add_argument("--python", type=Path, default=Path(PYTHON))
     parser.add_argument("--launch", action="store_true")
     parser.add_argument("--supervise", type=Path, help=argparse.SUPPRESS)
