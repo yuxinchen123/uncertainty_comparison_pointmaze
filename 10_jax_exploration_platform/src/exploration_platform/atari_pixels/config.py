@@ -91,9 +91,10 @@ class PixelPPOConfig:
             values = tuple(float(value) for value in values)
             if len(values) != self.n_copies or not all(math.isfinite(value) for value in values):
                 raise ValueError(f"{name} requires n_copies finite numeric values")
+            # JAX GPU arithmetic may turn subnormal inputs into zero, including Adam's divisor.
             if any(abs(value) > float.fromhex("0x1.fffffep+127") or
-                   (value != 0 and abs(value) < 2 ** -149) for value in values):
-                raise ValueError(f"per-copy {name} must fit the nonzero float32 range or equal zero")
+                   (value != 0 and abs(value) < 2 ** -126) for value in values):
+                raise ValueError(f"per-copy {name} must fit the normal float32 range or equal zero")
             if name in {"gamma_ext", "gamma_int", "gae_lambda", "predictor_update_proportion"}:
                 if any(value < 0 or value > 1 for value in values):
                     raise ValueError(f"per-copy {name} must be in [0, 1]")

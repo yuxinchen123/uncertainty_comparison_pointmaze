@@ -128,7 +128,8 @@ def ready_specification(run_dir):
     configuration = read_json(Path(ready["reference_configuration_path"]))
     if any(configuration.get(name) != value for name, value in REFERENCE_ALGORITHM.items()):
         raise ValueError("the ready sentinel's reference configuration differs from the agreed CleanRL settings")
-    if configuration.get("per_copy_learning_rates") or configuration.get("per_copy_intrinsic_coefficients"):
+    if (configuration.get("per_copy_learning_rates") or configuration.get("per_copy_intrinsic_coefficients")
+            or configuration.get("per_copy_scalar_settings")):
         raise ValueError("this study uses one common CleanRL setting; per-copy interfaces are checked in the gates")
     ready = {**ready, "reference_configuration": configuration,
              "campaign_run_dir": str(Path(run_dir).resolve())}

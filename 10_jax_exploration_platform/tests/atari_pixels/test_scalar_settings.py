@@ -34,6 +34,9 @@ def test_scalar_mapping_roundtrip_and_structural_rejection():
         PixelPPOConfig(per_copy_scalar_settings={"learning_rate": (1e100,)})
     with pytest.raises(ValueError, match="float32"):
         PixelPPOConfig(per_copy_scalar_settings={"adam_epsilon": (1e-100,)})
+    with pytest.raises(ValueError, match="normal float32"):
+        PixelPPOConfig(per_copy_scalar_settings={"adam_epsilon": (2 ** -140,)})
+    assert PixelPPOConfig(per_copy_scalar_settings={"adam_epsilon": (2 ** -126,)})
 
 
 def test_discount_vectors_agree_with_separate_scalar_recurrences():

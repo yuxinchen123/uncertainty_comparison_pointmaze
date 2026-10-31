@@ -1,0 +1,29 @@
+# Installation and file checks only; numerical compute has not run on login nodes.
+source_commit = "04ab9aec318c72162e2e53503a594a489d7e162b"
+source_wheel_sha256 = "66d93feea7a895b0f5b99bd5188bd5949c4b295eb80d25617eed0a4c37b60be2"
+alternative_sprite_archive_sha256 = "7f4ef286f0763c6b36946d5a35043f542395f67d12cf1a3e91150649237ef83e"
+asset_files = 4531
+jax = "0.11.0"
+jaxlib = "0.11.0"
+numpy = "2.5.2"
+optax = "0.2.8"
+flax = "0.12.8"
+gymnax = "0.0.9"
+gymnasium = "1.3.0"
+ale_py = "0.12.1"
+
+[aces]
+architecture = "x86_64"
+python = "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python"
+source_environment = "/scratch/user/u.sl359075/envs/cs_jax"
+xdg_data_home = "/scratch/user/u.sl359075/rnd_atari_pixels/assets"
+setup = "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup"
+pip_check_passed = true
+
+[deltaai]
+architecture = "aarch64"
+python = "/projects/biwj/sliu51/envs/rnd_atari_pixels_jax/bin/python"
+source_environment = "/projects/biwj/sliu51/envs/cs_jax"
+xdg_data_home = "/projects/biwj/sliu51/rnd_atari_pixels/assets"
+setup = "/projects/biwj/sliu51/rnd_atari_pixels/remote_setup"
+pip_check_passed = true

@@ -1,6 +1,7 @@
 """Launch one recorded serval02 card-1 unit under its shared exclusive lock."""
 
 import argparse
+import fcntl
 import importlib.util
 import json
 from pathlib import Path
@@ -45,6 +46,7 @@ def launch(repository, directory, mode, copies):
         "exec 9>/tmp/sl5nw_serval02_card1.lock", "flock -w 86400 9",
         f"for attempt in {{1..90}}; do test -r {shlex.quote(str(worker))} && break; sleep 2; done",
         f"source {shlex.quote(str(worker))}",
+        f"export PYTHONPATH={shlex.quote(str(source / 'src'))}",
         f"export CUDA_VISIBLE_DEVICES={gpu}",
         f"/usr/bin/python3 - {shlex.quote(gpu)} <<'PY'",
         "import subprocess,sys",
@@ -59,8 +61,11 @@ def launch(repository, directory, mode, copies):
         shlex.join(arguments)]
     script.write_text("\n".join(text) + "\n")
     log = scripts / (unit + ".log")
+    pid_file = scripts / (unit + ".pid")
     command = ("nohup bash " + shlex.quote(str(script)) + " >" + shlex.quote(str(log))
-               + " 2>&1 < /dev/null & echo $!")
+               + " 2>&1 < /dev/null & supervisor_pid=$!; "
+               + "printf '%s\\n' \"$supervisor_pid\" > " + shlex.quote(str(pid_file))
+               + "; printf '%s\\n' \"$supervisor_pid\"")
     result = subprocess.run(["ssh", "-n", "-o", "BatchMode=yes", "-o",
                              "ConnectTimeout=20", "serval02", command],
                             capture_output=True, text=True, check=True)
@@ -71,9 +76,13 @@ def launch(repository, directory, mode, copies):
               "source_commit": commit, "log": str(log), "script": str(script),
               "gpu_uuid": gpu}
     ledger = directory / "processes.json"
-    records = json.loads(ledger.read_text()) if ledger.exists() else []
-    records.append(record)
-    ledger.write_text(json.dumps(records, indent=2) + "\n")
+    with ledger.with_suffix(".lock").open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        records = json.loads(ledger.read_text()) if ledger.exists() else []
+        records.append(record)
+        temporary = ledger.with_suffix(".tmp")
+        temporary.write_text(json.dumps(records, indent=2) + "\n")
+        temporary.replace(ledger)
     print(json.dumps(record), flush=True)
 
 

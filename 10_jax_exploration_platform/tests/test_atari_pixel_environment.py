@@ -1,6 +1,7 @@
 """Check preprocessing and reset semantics without loading game sprites."""
 
 from typing import NamedTuple
+from types import SimpleNamespace
 
 import jax
 import jax.numpy as jnp
@@ -11,8 +12,56 @@ from exploration_platform.atari_pixels.environment import (
     area_resize_frame,
     area_resize_weights,
     grayscale_frame,
+    _install_room_background_cache,
     NOOP_STREAM,
 )
+
+
+def test_room_background_cache_uses_complete_state_and_each_room_geometry():
+    """Caching accepts the added fire-history field and keeps rooms distinct."""
+    # A complete reset template carries prev_is_fire; old renderer templates omitted it.
+    class CacheState(NamedTuple):
+        """Retain complete-state evidence and one room's static geometry."""
+
+        geometry: jax.Array
+        prev_is_fire: jax.Array
+
+    class CacheRenderer:
+        """Draw small rasters using only the room geometry supplied by the loader."""
+
+        def _load_room_geometry(self, room, state):
+            """Keep fire history while replacing the selected room geometry."""
+            # Room zero becomes geometry 10; room two becomes geometry 12.
+            return state._replace(geometry=room + jnp.int32(10))
+
+        def _build_room_background(self, room, state):
+            """Expose incorrect geometry loads or incomplete reset states directly."""
+            # Before: one geometry value; after: a constant two-by-two palette raster.
+            assert state.prev_is_fire.dtype == jnp.bool_
+            return jnp.full((2, 2), state.geometry + room, dtype=jnp.int32)
+
+    class CacheGame:
+        """Use a valid reset state instead of the upstream renderer's incomplete template."""
+
+        def __init__(self, room_count):
+            """Give the fixture a separate renderer and explicit room count."""
+            # One room also checks that the leading cache axis is retained.
+            self.renderer = CacheRenderer()
+            self.consts = SimpleNamespace(MAX_ROOMS=room_count)
+
+        def reset(self, key):
+            """Return all game fields without consuming a learner's training key."""
+            # The test fixture has no random game quantities.
+            del key
+            return None, CacheState(jnp.int32(-1), jnp.bool_(False))
+
+    # Check both one room and several distinct room backgrounds.
+    for count in (1, 3):
+        game = CacheGame(count)
+        _install_room_background_cache(game)
+        expected = np.broadcast_to((10 + 2 * np.arange(count))[:, None, None], (count, 2, 2))
+        np.testing.assert_array_equal(game.renderer.room_backgrounds, expected)
+        assert game.renderer.pre_load_rooms is True
 
 
 class SmallGameState(NamedTuple):

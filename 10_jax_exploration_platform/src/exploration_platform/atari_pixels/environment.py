@@ -71,6 +71,26 @@ def _install_grayscale_palette_lookup(game):
     game.renderer.jr = renderer
 
 
+def _install_room_background_cache(game):
+    """Build upstream's static room rasters from its complete, valid reset state."""
+    # The pinned renderer's optional preload constructor omits prev_is_fire from its
+    # template state. Use game.reset instead, without changing the installed package
+    # or any training key. Only ladders, ropes and static room geometry enter this cache.
+    renderer = game.renderer
+    _, template = game.reset(jax.random.PRNGKey(0))
+
+    def one_room(room):
+        """Draw the same static geometry that the uncached renderer draws per frame."""
+        # Before: one room identifier; after: its native-resolution palette raster.
+        state = renderer._load_room_geometry(room, template)
+        return renderer._build_room_background(room, state)
+
+    # Before: [0,1,...,32]; after: [33,height,width] immutable palette rasters.
+    rooms = jnp.arange(game.consts.MAX_ROOMS, dtype=jnp.int32)
+    renderer.room_backgrounds = jax.jit(jax.vmap(one_room))(rooms)
+    renderer.pre_load_rooms = True
+
+
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
     """Build exact pixel-overlap weights for a one-dimensional area reduction."""
     # Before: 210 source rows; after: [84, 210] weights whose rows each sum to one.
@@ -142,16 +162,10 @@ class AtariPixelEnvironment:
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
+            self.game = jaxtari.make("montezumarevenge")
             if cache_room_backgrounds:
                 # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
-                from jaxtari.games.jax_montezumarevenge import JaxMontezumaRevenge
-                from jaxtari.games.montezuma_revenge.core import MontezumaRevengeConstants
-
-                jaxtari.check_ownership()
-                constants = MontezumaRevengeConstants(RENDERER_PRELOAD_ROOMS=True)
-                self.game = JaxMontezumaRevenge(constants)
-            else:
-                self.game = jaxtari.make("montezumarevenge")
+                _install_room_background_cache(self.game)
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")

@@ -33,7 +33,7 @@ def source_snapshot(repository, run_directory):
     return destination / "10_jax_exploration_platform", commit
 
 
-def submit(repository, run_directory, kind, test_filter=None):
+def submit(repository, run_directory, kind, test_filter=None, copies=1):
     """Write a complete batch script and immediately record the exact returned job ID."""
     source, commit = source_snapshot(repository, run_directory)
     slurm = run_directory / "slurm"
@@ -99,11 +99,12 @@ def submit(repository, run_directory, kind, test_filter=None):
                     "--epochs 1 --minibatches 1 --warmup-rollouts 1 --iterations 2"]
         elif kind == "baseline":
             body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_unit.py "
-                    f"--run-dir {run_quote} --unit-id jaguar03_pixel_reference_copies_1 "
-                    "--mode benchmark --copies 1 --rounds 7 --iterations 10"]
+                    f"--run-dir {run_quote} --unit-id jaguar03_pixel_reference_copies_{copies}_source_{commit[:12]} "
+                    f"--mode benchmark --copies {copies} --rounds 7 --iterations 10"]
         else:
             raise ValueError(f"unsupported job kind {kind}")
-    script = jobs / f"{kind}_{commit[:12]}.sh"
+    copy_suffix = f"_copies_{copies}" if kind == "baseline" else ""
+    script = jobs / f"{kind}{copy_suffix}_{commit[:12]}.sh"
     script.write_text("\n".join(header + body) + "\n")
     command = ["sbatch", "--parsable", "--nodes=1", "--ntasks=1",
                "--job-name=atari_" + kind.replace("-", "_"),
@@ -128,5 +129,8 @@ if __name__ == "__main__":
                         choices=["monitor", "merge-gates", "pixel-gates", "smoke", "baseline",
                                  "rendering", "configuration-gates"])
     parser.add_argument("--test-filter")
+    parser.add_argument("--copies", type=int, default=1)
     args = parser.parse_args()
-    submit(args.repo.resolve(), args.run_dir.resolve(), args.kind, args.test_filter)
+    if args.copies < 1:
+        parser.error("copies must be positive")
+    submit(args.repo.resolve(), args.run_dir.resolve(), args.kind, args.test_filter, args.copies)

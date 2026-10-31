@@ -14,7 +14,7 @@ mkdir -p "$PIP_CACHE_DIR" "$CONDA_PKGS_DIRS"
 /sw/user/python/miniforge3-cuquantum-26.01.0/bin/conda create --yes --copy --clone "$source_environment" --prefix "$study_environment"
 mkdir -p "$setup_directory/jaxtari_source"
 tar -xzf "$setup_directory/jaxtari_04ab_source.tar.gz" -C "$setup_directory/jaxtari_source"
-"$study_environment/bin/python" -m pip install --only-binary=:all: --constraint "$setup_directory/source_versions.txt" --requirement "$setup_directory/requirements_additional.txt"
+"$study_environment/bin/python" -m pip install --only-binary=:all: --constraint "$setup_directory/source_versions.txt" --requirement "$setup_directory/requirements_additional.requirements"
 "$study_environment/bin/python" -m pip install --constraint "$setup_directory/source_versions.txt" "$setup_directory/jaxtari_source"
 "$study_environment/bin/python" -m pip check
 "$study_environment/bin/python" -m pip list --format=freeze > "$setup_directory/study_versions.txt"

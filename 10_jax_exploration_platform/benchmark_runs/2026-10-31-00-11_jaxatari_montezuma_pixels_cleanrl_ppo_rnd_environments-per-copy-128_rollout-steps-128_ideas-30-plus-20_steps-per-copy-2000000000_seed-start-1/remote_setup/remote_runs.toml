@@ -1,0 +1,25 @@
+# Read jobs only from this run's exact id file. Reuse the existing SSH master.
+[deltaai_small_real_game_check]
+ssh_alias = "deltaai"
+account = "biwj-dtai-gh"
+partition = "ghx4"
+job_id = "3493790"
+unit_id = "deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2"
+source_commit = "dd2709f928cb22bccd23ad0395a1d60b97ff3884"
+code = "/projects/biwj/sliu51/rnd_atari_pixels/code/dd2709f928cb22bccd23ad0395a1d60b97ff3884"
+python = "/projects/biwj/sliu51/envs/rnd_atari_pixels_jax/bin/python"
+run = "/projects/biwj/sliu51/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+remote_id_file = "/projects/biwj/sliu51/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_deltaai.txt"
+local_id_file = "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_deltaai.txt"
+unit_records = "/projects/biwj/sliu51/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2"
+scheduler_log = "/projects/biwj/sliu51/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/deltaai_pixel_check_3493790.out"
+completion = "data/deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2/result.json completed=true"
+failure = "data/deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2/failure.json"
+initial_state = "RUNNING gh040; billing=1000,cpu=8,gres/gpu=1,mem=32G,node=1"
+final_state = "COMPLETED"
+exit_code = "0:0"
+elapsed_seconds = 165
+actual_gpu = "NVIDIA GH200 120GB"
+actual_gpu_memory_mib = 97871
+actual_driver = "595.71.05"
+result_mirrored_locally = true

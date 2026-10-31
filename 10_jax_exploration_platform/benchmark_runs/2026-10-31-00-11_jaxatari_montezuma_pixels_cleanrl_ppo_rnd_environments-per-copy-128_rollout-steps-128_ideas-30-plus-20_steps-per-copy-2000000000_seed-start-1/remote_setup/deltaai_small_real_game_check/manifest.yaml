@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "description": "Small real-game check of pinned pixel PPO and RND on a DeltaAI compute node.",
+  "git": {
+    "commit": "dd2709f928cb22bccd23ad0395a1d60b97ff3884",
+    "dirty": false,
+    "source_archive_sha256": "4fda91313925f8cf37750dd561905be0fee0fa47101521a0f66aae916dc426f9"
+  },
+  "sources": {
+    "cleanrl": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb",
+    "jaxtari": "04ab9aec318c72162e2e53503a594a489d7e162b",
+    "alternative_sprite_archive_sha256": "7f4ef286f0763c6b36946d5a35043f542395f67d12cf1a3e91150649237ef83e"
+  },
+  "unit": "deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2",
+  "compile_signature": {
+    "copies": 1,
+    "environments_per_copy": 2,
+    "rollout_steps": 2,
+    "epochs": 1,
+    "minibatches": 1
+  },
+  "artifacts": {
+    "records": "data/deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2",
+    "submitted_job_ids": "slurm/submitted_jobids_deltaai.txt"
+  }
+}
