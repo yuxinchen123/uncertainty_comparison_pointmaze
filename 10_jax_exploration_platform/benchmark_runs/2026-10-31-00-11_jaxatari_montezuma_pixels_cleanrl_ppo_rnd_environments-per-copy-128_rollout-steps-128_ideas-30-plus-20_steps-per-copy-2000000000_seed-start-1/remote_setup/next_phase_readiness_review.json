@@ -1,0 +1,62 @@
+{
+  "kind": "next_phase_readiness_review",
+  "reviewed_at_utc": "2026-10-31T19:29:42.862900+00:00",
+  "current_phase": "initial_benchmarks",
+  "initial_comparisons_required": 120,
+  "initial_comparisons_completed_at_review": 75,
+  "adaptive_ideas_selected": 0,
+  "requirements_before_first_adaptive_batch": [
+    "Finish all original matched-copy measurements on both GPU types.",
+    "Record exact terminal UVA jobs and stopped direct-server supervisors and children.",
+    "Freeze committed numerical and helper sources; use a common full selected configuration on both GPU types, differing only in copy count.",
+    "Produce selected-baseline correctness and seven alternating timing pairs with at least ten complete updates per arm on both GPU types.",
+    "Measure isolated capacity at every proposed matched copy count including one, plus the required doubling boundary and independent boundary confirmation.",
+    "Capture current selected-baseline profiles after fifty observation warmup rollouts and stable compilation, with verified Nsight identity and nonempty kernel/API summaries.",
+    "Choose five ideas from those actual profiles, implement and check them, then prepare and separately activate a fully recorded admission revision on owned UVA compute."
+  ],
+  "measurement_entrypoint": "measure_selected.py --prepare-only",
+  "measurement_modes": [
+    "correctness",
+    "confirmation",
+    "packing-point"
+  ],
+  "measurement_rounds": 7,
+  "minimum_complete_updates_per_round": 10,
+  "profile_entrypoint": "profile_selected.py --prepare-only",
+  "profile_tool_inspection": "profile_selected.py --inspect-profile-tool",
+  "admission_preparation": "advance_adaptive_research.py prepare --run-dir <campaign-directory> --specification <revision-specification>",
+  "activation_is_separate": true,
+  "uva_gpu_resources": {
+    "gpu_type": "NVIDIA RTX A4500",
+    "gpu_count": 1,
+    "cpus": 8,
+    "host_memory_gib": 64,
+    "maximum_walltime_hours_after_recheck": 12
+  },
+  "h100_resources": {
+    "hostname": "serval02",
+    "physical_card": 1,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "exclusive_lock": "/tmp/sl5nw_serval02_card1.lock"
+  },
+  "reviewed_guard_corrections": [
+    "require_validation_allocation uses only the exact UVA ledger.",
+    "stopped_workers terminal Slurm receipts require the exact literal and resolved UVA ledger path."
+  ],
+  "reviewed_files": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/advance_adaptive_research.py",
+      "sha256": "43f036f6583f704e5569472a2a0c725c0eacca257cc132b4fde7b435180428c0"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_advance_adaptive_research.py",
+      "sha256": "8e36d4c5691a6781a9c3ad4f48f18d221875de06cebee1f149288fd2901abf06"
+    }
+  ],
+  "full_metadata_tests_passed": 25,
+  "independent_review_passed": true,
+  "live_admission_changed": false,
+  "new_job_submitted": false,
+  "new_numerical_execution": false,
+  "deferred_edge_case": "If no common combination improves the reference, an unchanged-reference profiling path will need an explicit truthful evidence design; current comparison producers reject identical arms. No fallback result or improvement is claimed now."
+}

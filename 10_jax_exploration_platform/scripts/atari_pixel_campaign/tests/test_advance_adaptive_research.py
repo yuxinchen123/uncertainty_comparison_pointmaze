@@ -468,6 +468,34 @@ class MetadataBoundaryTests(unittest.TestCase):
             advance.write_once(path, b'{"original":true}\n')
         self.assertEqual(path.read_bytes(), b'{"original": true}\n\n')
 
+    def test_terminal_worker_receipt_requires_exact_uva_ledger_despite_foreign_id_collision(self):
+        """A matching worker, submission row and terminal state cannot make a foreign ledger authoritative."""
+        controller.layout(self.root)
+        slurm = self.root / "slurm"
+        slurm.mkdir()
+        row = "333\tqueue-worker\t" + "a" * 40 + "\t/synthetic_worker.sh"
+        (slurm / "submissions.tsv").write_text(row + "\n")
+        controller.atomic_json(self.root / "processes.json", [])
+        worker = {"worker_id": "original_worker", "hostname": "jaguar03", "worker_pid": 77,
+            "worker_start_time": "100", "slurm_job_id": "333", "state": "running", "time": "2026-10-31T11:00:00+00:00"}
+        controller.atomic_json(self.root / "queue/workers/original.json", worker)
+        proof = {**worker, "kind": "terminal_slurm_job", "state": "COMPLETED", "observed_at": "2026-10-31T12:00:00+00:00"}
+        receipt = {"schema_version": 1, "workers": [proof], "processes": [], "runners": [],
+            "jobs": [{"job_id": "333", "submission_row": row, "state": "COMPLETED", "observed_at": "2026-10-31T12:00:00+00:00"}]}
+        receipt_path = self.root / "worker_stop.json"
+        for name in ("submitted_jobids_aces.txt", "submitted_jobids_mit.txt", "submitted_jobids.txt"):
+            ledger = slurm / name
+            ledger.write_text("333\n")
+            proof["ledger_path"] = str(ledger)
+            controller.atomic_json(receipt_path, receipt)
+            with self.subTest(foreign_ledger=name), self.assertRaisesRegex(ValueError, "exact UVA job ledger"):
+                advance.stopped_workers(self.root, receipt_path, advance.validation.Evidence())
+        ledger = slurm / "submitted_jobids_uva.txt"
+        ledger.write_text("333\n")
+        proof["ledger_path"] = str(ledger)
+        controller.atomic_json(receipt_path, receipt)
+        self.assertEqual(advance.stopped_workers(self.root, receipt_path, advance.validation.Evidence()), [worker])
+
     def test_activation_requires_reviewed_committed_launcher_serialization(self):
         """An uncommitted marker or source check outside the shared lock cannot authorize a revision."""
         contents = (SCRIPTS / "launch_queue.py").read_bytes()
@@ -556,6 +584,46 @@ class MetadataBoundaryTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "owned Slurm compute"):
                     advance.require_validation_allocation(self.root)
         with mock.patch.dict(os.environ, {"SLURM_JOB_ID": "999"}):
+            with self.assertRaisesRegex(ValueError, "owned Slurm compute"):
+                advance.require_validation_allocation(self.root)
+
+    def test_foreign_cluster_job_id_collision_cannot_authorize_uva_validation(self):
+        """Matching host/cgroup and a foreign or combined ledger do not establish ownership on UVA."""
+        directory = self.root / "slurm"
+        directory.mkdir()
+        for name in ("submitted_jobids_aces.txt", "submitted_jobids_mit.txt", "submitted_jobids.txt"):
+            (directory / name).write_text("333\n")
+        uva = directory / "submitted_jobids_uva.txt"
+        uva.write_text("999\n")
+        original_read = Path.read_text
+        def read(path, *args, **kwargs):
+            """Keep the foreign collision's compute placement valid so only its ledger can reject it."""
+            if path == Path("/proc/self/cgroup"):
+                return "0::/system.slice/slurmstepd.scope/job_333/step_0/task_0\n"
+            return original_read(path, *args, **kwargs)
+        with mock.patch.dict(os.environ, {"SLURM_JOB_ID": "333"}), \
+                mock.patch.object(Path, "read_text", read), \
+                mock.patch.object(advance.socket, "gethostname", return_value="heartpiece"):
+            with self.assertRaisesRegex(ValueError, "owned Slurm compute"):
+                advance.require_validation_allocation(self.root)
+            uva.write_text("999\n333\n")
+            advance.require_validation_allocation(self.root)
+            uva.unlink()
+            with self.assertRaisesRegex(ValueError, "owned Slurm compute"):
+                advance.require_validation_allocation(self.root)
+
+    def test_owned_uva_job_still_requires_its_exact_compute_cgroup(self):
+        """A correct UVA ledger cannot authorize a process running under another job's cgroup."""
+        ledger = self.root / "slurm/submitted_jobids_uva.txt"
+        ledger.parent.mkdir()
+        ledger.write_text("333\n")
+        original_read = Path.read_text
+        def read(path, *args, **kwargs):
+            """Substitute only the process's mismatched allocation path."""
+            return "0::/slurm/job_334/step_0/task_0\n" if path == Path("/proc/self/cgroup") else original_read(path, *args, **kwargs)
+        with mock.patch.dict(os.environ, {"SLURM_JOB_ID": "333"}), \
+                mock.patch.object(Path, "read_text", read), \
+                mock.patch.object(advance.socket, "gethostname", return_value="heartpiece"):
             with self.assertRaisesRegex(ValueError, "owned Slurm compute"):
                 advance.require_validation_allocation(self.root)
 

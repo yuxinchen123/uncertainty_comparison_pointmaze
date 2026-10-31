@@ -320,8 +320,9 @@ def stopped_workers(run_dir, receipt_path, evidence):
                 raise ValueError("original worker process was not observed dead")
         elif proof.get("kind") == "terminal_slurm_job":
             ledger = Path(proof["ledger_path"]).resolve(strict=True)
-            if ledger.parent != Path(run_dir) / "slurm" or not re.fullmatch(r"submitted_jobids[^/]*\.txt", ledger.name):
-                raise ValueError("worker terminal evidence must use this campaign's exact job ledger")
+            expected_ledger = Path(run_dir) / "slurm" / "submitted_jobids_uva.txt"
+            if Path(proof["ledger_path"]) != expected_ledger or ledger != expected_ledger:
+                raise ValueError("worker terminal evidence must use this campaign's exact UVA job ledger")
             if str(worker["slurm_job_id"]) not in evidence.file(ledger).decode().splitlines():
                 raise ValueError("worker terminal evidence names a job outside the owned ledger")
             if proof.get("state") not in TERMINAL_STATES or not worker["slurm_job_id"]:
@@ -670,8 +671,9 @@ def require_validation_allocation(run_dir):
     """Keep real timing-statistic validation inside an owned Slurm compute allocation."""
     identifier = os.environ.get("SLURM_JOB_ID", "")
     host = socket.gethostname().split(".")[0].lower()
-    ledgers = sorted((Path(run_dir) / "slurm").glob("submitted_jobids*.txt"))
-    owned = {line for ledger in ledgers for line in ledger.read_text().splitlines()}
+    # Numeric Slurm identifiers can repeat across clusters; this guard runs on UVA.
+    ledger = Path(run_dir) / "slurm" / "submitted_jobids_uva.txt"
+    owned = set(ledger.read_text().splitlines()) if ledger.exists() else set()
     cgroup = Path("/proc/self/cgroup").read_text()
     if (not identifier.isdecimal() or identifier not in owned or host.startswith(("portal", "login"))
             or not re.search(r"(?:^|/)job_" + re.escape(identifier) + r"(?:/|$)", cgroup, re.MULTILINE)):
