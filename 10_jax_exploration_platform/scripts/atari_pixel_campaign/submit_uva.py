@@ -92,6 +92,20 @@ def submit(repository, run_directory, kind, test_filter=None, copies=1):
                     f"--source-commit {commit} -- {pixel_python} "
                     f"{source_quote}/tests/integration/test_training_configuration_file_cli.py",
                     f"{pixel_python} {source_quote}/tests/integration/test_selected_run_records.py"]
+        elif kind == "training-checks":
+            # Resolve Slurm's physical allocation before the explicit compute-only fixture imports JAX.
+            resources = ["--mem=64G" if value == "--mem=24G" else value for value in resources]
+            resolver = ["/usr/bin/python3", str(source / "scripts/atari_pixel_campaign/launch_queue.py"),
+                        "--context", "jaguar03_rtx_a4500", "--source-root", str(source.parent),
+                        "--run-dir", str(run_directory), "--resolve-slurm-gpu"]
+            unit = "jaguar03_optimized_training_checks_" + commit[:12]
+            body = ["gpu_uuid=$(" + shlex.join(resolver) + ")",
+                    'export CUDA_VISIBLE_DEVICES="$gpu_uuid"',
+                    "export RND_RUN_GPU_COMPONENT_TESTS=1", "export RND_COMPONENT_SOURCE_COMMIT=" + commit,
+                    f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_checks.py "
+                    f"--run-dir {run_quote} --unit-id {unit} --source-commit {commit} -- "
+                    f"{pixel_python} -m pytest -q "
+                    f"{source_quote}/scripts/atari_pixel_campaign/tests/gpu_train_optimized_restart.py"]
         elif kind == "smoke":
             body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_unit.py "
                     f"--run-dir {run_quote} --unit-id jaguar03_pixel_smoke "
@@ -127,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--kind", required=True,
                         choices=["monitor", "merge-gates", "pixel-gates", "smoke", "baseline",
-                                 "rendering", "configuration-gates"])
+                                 "rendering", "configuration-gates", "training-checks"])
     parser.add_argument("--test-filter")
     parser.add_argument("--copies", type=int, default=1)
     args = parser.parse_args()
