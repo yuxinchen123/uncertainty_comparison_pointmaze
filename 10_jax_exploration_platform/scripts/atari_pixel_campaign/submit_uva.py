@@ -83,6 +83,10 @@ def submit(repository, run_directory, kind, test_filter=None):
                     f"--run-dir {run_quote} --unit-id jaguar03_pixel_smoke "
                     "--mode smoke --copies 1 --envs-per-copy 2 --rollout-steps 2 "
                     "--epochs 1 --minibatches 1 --warmup-rollouts 1 --iterations 2"]
+        elif kind == "baseline":
+            body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_unit.py "
+                    f"--run-dir {run_quote} --unit-id jaguar03_pixel_reference_copies_1 "
+                    "--mode benchmark --copies 1 --rounds 7 --iterations 10"]
         else:
             raise ValueError(f"unsupported job kind {kind}")
     script = jobs / f"{kind}_{commit[:12]}.sh"
@@ -107,7 +111,7 @@ if __name__ == "__main__":
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--kind", required=True,
-                        choices=["monitor", "merge-gates", "pixel-gates", "smoke"])
+                        choices=["monitor", "merge-gates", "pixel-gates", "smoke", "baseline"])
     parser.add_argument("--test-filter")
     args = parser.parse_args()
     submit(args.repo.resolve(), args.run_dir.resolve(), args.kind, args.test_filter)

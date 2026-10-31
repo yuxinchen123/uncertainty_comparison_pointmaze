@@ -40,12 +40,13 @@ def hardware_record():
             "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""), "pid": os.getpid()}
 
 
-def save_checkpoint(path, state, config, copy_seeds):
+def save_checkpoint(path, state, config, copy_seeds, environment_configuration=None):
     """Save all host copies of learner and game state with its exact configuration."""
     import jax
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(".tmp")
     payload = {"configuration": asdict(config), "copy_seeds": copy_seeds,
+               "environment_configuration": dict(environment_configuration or {}),
                "state": jax.device_get(state)}
     with temporary.open("wb") as stream:
         pickle.dump(payload, stream, protocol=pickle.HIGHEST_PROTOCOL)
@@ -135,6 +136,8 @@ def run(args):
             saved = pickle.load(stream)
         if saved["configuration"] != asdict(config) or tuple(saved["copy_seeds"]) != seeds:
             raise ValueError("checkpoint configuration or policy seeds do not match this unit")
+        if saved["environment_configuration"] != environment_settings:
+            raise ValueError("checkpoint environment settings do not match this unit")
         state = jax.tree.map(jax.device_put, saved["state"])
     else:
         state = trainer.initialize(seeds)
@@ -207,11 +210,11 @@ def run(args):
         update += 1
         record_progress(metrics, time.monotonic() - update_started, update, target)
         if time.monotonic() - last_checkpoint >= args.checkpoint_seconds:
-            save_checkpoint(checkpoint, state, config, seeds)
+            save_checkpoint(checkpoint, state, config, seeds, environment_settings)
             last_checkpoint = time.monotonic()
         if args.maximum_seconds and time.monotonic() - started >= args.maximum_seconds:
             stop["requested"] = True
-    save_checkpoint(checkpoint, state, config, seeds)
+    save_checkpoint(checkpoint, state, config, seeds, environment_settings)
     completed = update == target
     atomic_json(directory / "result.json", {
         "completed": completed, "updates": update, "target_updates": target,
