@@ -71,7 +71,7 @@
         "sha256": "dd776c2eaf0f9d605e7bf2fe36390780fb0796a205992357197046a022e29d31"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -93,7 +93,8 @@
       "fuse_pixel_preprocessing",
       "combine_palette_and_sprite_drawing",
       "store_rollout_observations_as_bytes",
-      "reconstruct_stacks_from_individual_frames"
+      "reconstruct_stacks_from_individual_frames",
+      "circular_frame_stack"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
@@ -103,7 +104,8 @@
       "fuse pixel preprocessing",
       "combine palette and sprite drawing",
       "store rollout observations as bytes",
-      "reconstruct stacks from individual\nframes"
+      "reconstruct stacks from individual\nframes",
+      "circular frame stack"
     ],
     "results": [
       {
@@ -137,9 +139,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "611cd0cdeb9d5d00f58f8c0839e865a49df055beb5c0a5e7845a84fd99772c42"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-09__circular_frame_stack__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "f60c8eb2560ad4c7d0cb6268b80ab0b9d3e9a024eca60464eb8be001f5b89fcf"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -219,7 +225,7 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -299,7 +305,7 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -373,7 +379,7 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -399,7 +405,7 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -425,7 +431,7 @@
         "sha256": "54f879a03eb4aa6044c1149504745e3f45061ed5f4c234b8badd7a6385cdbe32"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -505,7 +511,7 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -585,7 +591,7 @@
         "sha256": "bc6d2e329b86dcc412bf0616a75b894463f8cb9715596e19d654a97c65fb6b4a"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -653,7 +659,7 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   },
   {
     "schema_version": 2,
@@ -679,6 +685,6 @@
         "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
       }
     ],
-    "input_fingerprint": "f4f6a440a434d869fac3f46c5de4ea08c47d0cf3d44be69d4c3ade8bf33c01e3"
+    "input_fingerprint": "815239c8d35d81cd8b55de7db5b307464a24f5fafac812e85062c3558a19a829"
   }
 ]
