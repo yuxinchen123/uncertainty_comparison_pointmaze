@@ -357,7 +357,7 @@ def figure_source(manifest_path, expected_panels, document):
         return "% No registered valid paired timing is available for a figure."
     if not manifest_path.exists() or read_json(manifest_path) != expected_panels:
         raise ValueError("plots require a current manifest with matching input fingerprint and panels; run --plots on compute")
-    figures = []
+    figures, cited_cache_groups = [], set()
     for index, panel in enumerate(expected_panels):
         path = Path(panel["path"])
         if not path.is_file() or path.suffix != ".pdf":
@@ -381,6 +381,13 @@ def figure_source(manifest_path, expected_panels, document):
                  "\\caption{" + caption + "}", "\\label{" + label + "}"]
         if index == 0:
             block.append(r"\label{fig:pixel-montezuma-background-cache-paired}")
+        # Keep historical cache citations stable as later results create more panels.
+        if copies == 1 and "cache_room_backgrounds" in panel["mechanism_names"]:
+            hardware = panel["hardware"]
+            if hardware not in cited_cache_groups:
+                card = "h100" if hardware == "h100" else "a4500"
+                block.append(r"\label{fig:pixel-montezuma-cache-" + card + "-one-copy}")
+                cited_cache_groups.add(hardware)
         figures.append("\n".join(block + [r"\end{figure}"]))
     return "\n\n".join(figures) if figures else "% No registered valid paired timing is available for a figure."
 

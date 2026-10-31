@@ -182,6 +182,17 @@ class ReportInputTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing PDF"):
                 make_all.figure_source(manifest, panels, directory / "document.tex")
 
+    def test_historical_cache_citations_name_both_gpu_figures(self):
+        """Cache evidence has separate stable citations even when other panels appear first."""
+        rows = [self.measured_row("cache_room_backgrounds", hardware="h100", host="serval02"),
+                self.measured_row("cache_room_backgrounds"), self.measured_row("other_setting", copies=2)]
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            panels, manifest = self.manifest_files(directory, rows)
+            text = make_all.figure_source(manifest, panels, directory / "document.tex")
+        self.assertEqual(text.count(r"\label{fig:pixel-montezuma-cache-h100-one-copy}"), 1)
+        self.assertEqual(text.count(r"\label{fig:pixel-montezuma-cache-a4500-one-copy}"), 1)
+
     def test_figure_splice_preserves_table_blocks_and_reviewed_prose(self):
         """Only the separately marked figure region changes, with unique markers required."""
         marker = make_all.FIGURE_MARKER
