@@ -1,0 +1,26 @@
+{
+  "kind": "h100_nvl_slurm_inactive_worker_review",
+  "reviewed_at_utc": "2026-10-31T23:54:49.550769+00:00",
+  "metadata_tests_passed": 35,
+  "historical_and_portable_tests": 11,
+  "queue_and_publication_tests": 24,
+  "independent_review_passed": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "1ef00369132bedc855b34a6087180b6da6e56a325c065cd0377fb35c5c3d24c3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "e7ccc2454e4009e214ab2b701534af7422a8ba2cb47f2dffa14270fae8fc438a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "16221906dc38818bb41b8c143641ac2d29c49c4c64559835924d144d4a6adcd3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_historical_evidence.py": "0821a0b602acad3376ed3b64f7e94c20139f403c33a1197350620d97fdd989dd",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_queue.py": "373e274498131dc2e48ac7753bacc338ccc60ecdd551a5d5cd9dce2db2475a43"
+  },
+  "workers_admitted": false,
+  "source_admission_changed": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "activation_requirements": [
+    "Reviewed controller and final-validator dispatch must reject missing or stripped Slurm proof.",
+    "All staged helper closures must include the new evidence module while retaining old source support.",
+    "An actual site must pass the full original gates and one complete update.",
+    "A separate exact-site placement policy and fresh same-allocation gates must be recorded before any claim."
+  ],
+  "scope": "Inactive metadata wrappers only. The original numerical source, case bytes, seeds, timing windows and attempt limits are unchanged. Historical validation uses captured old bytes through strict path mapping, without inspecting the reader installation or current admission."
+}
