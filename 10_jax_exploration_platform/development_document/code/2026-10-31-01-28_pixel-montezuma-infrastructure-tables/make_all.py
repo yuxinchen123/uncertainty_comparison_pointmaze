@@ -114,15 +114,31 @@ def registered_cases(campaign, registry):
                              "median_speedup", "paired_rounds", "measurement_scope"):
                     if name in summary and result.get(name) != summary[name]:
                         raise ValueError(f"result field {name} disagrees with the registry: {path}")
-                records.append({"registry_summary": summary, "result": result,
-                                "path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+                record = {"registry_summary": summary, "result": result,
+                          "path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+                if result.get("attempt") == 5:
+                    record["execution_context"] = validated_allocator_context(path)
+                records.append(record)
     return records
+
+
+def validated_allocator_context(result_path):
+    """Derive the exceptional allocator context only after its full raw execution check."""
+    require_compute()
+    from post_comparison_validation import pregather_retry_validation_module
+    proof = pregather_retry_validation_module().validate_execution(
+        result_path, read_json(Path(result_path).with_name("case.json")))
+    if (proof.get("scope") != "actual_pregather_async_fifth_attempt_runtime"
+            or proof.get("allocator") != "cuda_async" or proof.get("memory_preparation") is not None):
+        raise ValueError("the formal fifth attempt lacks its supported validated allocator context")
+    return {name: proof[name] for name in ("scope", "allocator", "memory_preparation",
+                                          "actual_runtime_environment", "execution_record")}
 
 
 def fingerprint(registry, records):
     """Invalidate a statistical report when any indexed input or specification changes."""
     return digest({"registry": registry,
-                   "results": [(row["path"], row["sha256"]) for row in records],
+                   "results": [(row["path"], row["sha256"], row.get("execution_context")) for row in records],
                    "report_specification": hashlib.sha256((HERE / "report_source.py").read_bytes()).hexdigest()})
 
 
@@ -274,7 +290,7 @@ def plot_specifications(records, input_fingerprint, plot_directory=PLOT_DIRECTOR
             continue
         cohort = (result["hardware_class"], result.get("hostname", "not recorded"), result["copies"],
                   result["source_commit"], result.get("measurement_scope", "training_iteration_execution"),
-                  digest(result["reference"]))
+                  digest(result["reference"]), row.get("execution_context", {}).get("allocator", "original"))
         grouped[cohort].append(row)
     panels = []
     for cohort, rows in sorted(grouped.items()):
@@ -295,11 +311,12 @@ def plot_specifications(records, input_fingerprint, plot_directory=PLOT_DIRECTOR
         if chunk:
             chunks.append(chunk)
         for index, chunk in enumerate(chunks, 1):
-            hardware, host, copies, commit, scope, reference = cohort
+            hardware, host, copies, commit, scope, reference, allocator = cohort
             stem = f"paired-speed-ratios_{digest(cohort)}_panel-{index:02d}-of-{len(chunks):02d}"
             panels.append({"schema_version": 2, "path": str(Path(plot_directory).resolve() / (stem + ".pdf")),
                 "hardware": hardware, "host": host, "copies": copies, "source_commit": commit,
                 "scope": scope, "reference_fingerprint": reference, "panel_index": index,
+                "allocator_context": allocator,
                 "panel_count": len(chunks), "mechanism_names": [row["result"]["idea"] for row, _ in chunk],
                 "wrapped_labels": [label for _, label in chunk],
                 "results": [{"path": row["path"], "sha256": row["sha256"]} for row, _ in chunk],
@@ -313,6 +330,8 @@ def plot_title(panel):
     lines = [f"{HARDWARE_NAMES[panel['hardware']]}, {panel['host']}",
              f"{panel['copies']} independent policy {noun}; panel {panel['panel_index']} of {panel['panel_count']}",
              panel["scope"].replace("_", " ")]
+    if panel.get("allocator_context") == "cuda_async":
+        lines.append("CUDA asynchronous memory allocator")
     return "\n".join(textwrap.fill(line, width=46, break_long_words=False, break_on_hyphens=False)
                      for line in lines)
 
@@ -332,7 +351,7 @@ def make_plots(records, input_fingerprint):
     for panel in generated:
         results = [indexed[row["path"]] for row in panel["results"]]
         label_lines = sum(len(label.splitlines()) for label in panel["wrapped_labels"])
-        figure, axis = plt.subplots(figsize=(8.6, max(3.8, 2.5 + 0.25 * label_lines + 0.12 * len(results))))
+        figure, axis = plt.subplots(figsize=(8.6, max(3.8, 2.5 + 0.25 * label_lines + 0.12 * len(results)) + 0.6))
         for position, result in enumerate(results):
             ratios = result["paired_speedups"]
             color = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}[result["decision"]]
@@ -344,15 +363,18 @@ def make_plots(records, input_fingerprint):
         axis.set_xlabel("Reference duration / candidate duration\n(larger is faster)", fontsize=12.5)
         axis.tick_params(axis="x", labelsize=12)
         axis.xaxis.set_major_locator(MaxNLocator(nbins=4, min_n_ticks=3))
+        axis.ticklabel_format(axis="x", useOffset=False, style="plain")
         axis.set_title(plot_title(panel), fontsize=13)
         colors = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}
         present = {result["decision"] for result in results}
         handles = [Line2D([], [], marker="o", linestyle="none", color=colors[name], label=name)
                    for name in colors if name in present]
         handles.append(Line2D([], [], marker="D", linestyle="none", color="black", label="paired median"))
-        axis.legend(handles=handles, loc="best", fontsize=12)
+        # Keep every timing point visible; an in-axes legend can hide later rows' points.
+        figure.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.01),
+                      ncol=4, fontsize=12, frameon=False)
         axis.grid(axis="x", alpha=0.2)
-        figure.tight_layout(pad=1.2)
+        figure.tight_layout(pad=1.2, rect=(0, 0.10, 1, 1))
         for suffix in ("pdf", "png"):
             figure.savefig(Path(panel["path"]).with_suffix("." + suffix), dpi=180)
         plt.close(figure)
@@ -384,6 +406,9 @@ def figure_source(manifest_path, expected_panels, document):
                    + "Ratios above one favor the candidate. Each panel has its own horizontal range. "
                    + "These execution timings do not establish learning returns, larger-copy performance, "
                    + "or performance of the final combination.")
+        if panel["allocator_context"] == "cuda_async":
+            caption += (" Both variants used the validated CUDA asynchronous memory allocator, "
+                        "without the nine-GiB memory preparation used in the earlier retries.")
         label = "fig:pixel-montezuma-paired-" + path.stem.removeprefix("paired-speed-ratios_")
         block = [r"\begin{figure}[H]", r"\centering",
                  rf"\includegraphics[width=\textwidth]{{\detokenize{{{relative}}}}}",

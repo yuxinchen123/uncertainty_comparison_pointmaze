@@ -52,7 +52,11 @@ from being used. Resource probes remain excluded even if they contain timing
 fields. `analysis.md` is generated; do not edit it directly.
 
 Plots separate GPU model, host, policy-copy count, source commit, reference
-configuration, and measurement scope. Every valid paired ratio is shown, with
+configuration, measurement scope, and the formal asynchronous-allocator context.
+That exceptional context is derived only after the existing production validator
+rechecks its raw execution receipts, so a report containing that result also
+requires compute allocation for metadata formatting. Its separate panel states
+the allocator and absence of the earlier memory preparation. Every valid paired ratio is shown, with
 its median. Correctness rejections and invalid measurements remain in the
 complete report rather than being plotted as zero speed. Report-readout timing
 is separate from training-only timing. `plots/plot_manifest.json` records exact
@@ -63,6 +67,7 @@ names wrap in full, with at most twenty label lines per panel. Panels retain
 separate GPU, host, independent-policy count, source, reference configuration,
 and measurement scope. Every valid registered row appears exactly once, including
 two-copy results and later adaptive cohorts.
+Legends occupy a separate region below the axes so no timing point can be hidden.
 
 The generator updates the separate `AUTO-GENERATED FIGURES` block named
 `pixel-montezuma-paired-measurements`. It inserts one figure per panel from the

@@ -2469,6 +2469,13 @@ nine-GiB byte array before learner and game initialization. Separate execution
 receipts bind these retries to the original source, correctness checks, timing
 pairs, and preserved allocation failures.
 
+The two-policy A4500 comparison that gathers epoch minibatches in advance used
+CUDA's asynchronous memory allocator for both reference and candidate in a
+separate formal retry, without the nine-GiB preparation. The original learner,
+precision settings, correctness checks, and seven timing pairs were retained.
+It passed correctness checks but was slower than its matched reference. This
+timing result applies to that recorded allocator setting.
+
 \begin{table}[H]
 \centering
 \footnotesize
@@ -2482,11 +2489,11 @@ pairs, and preserved allocation failures.
 \greyrule
 specified mechanisms & 30 \\
 \greyrule
-specified mechanisms investigated on both GPU types & 6 of 30 \\
+specified mechanisms investigated on both GPU types & 8 of 30 \\
 \greyrule
-specified mechanisms timed correctly on both GPU types & 6 of 30 \\
+specified mechanisms timed correctly on both GPU types & 8 of 30 \\
 \greyrule
-specified mechanisms covering every required copy count & 5 of 30 \\
+specified mechanisms covering every required copy count & 7 of 30 \\
 \greyrule
 additional mechanisms chosen from profiles & 0 of 20 \\
 \greyrule
@@ -2494,11 +2501,11 @@ additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
 controller phase & initial benchmarks \\
 \greyrule
-registered queue cases completed & 70 \\
+registered queue cases completed & 75 \\
 \greyrule
-registered queue cases failed & 1 \\
+registered queue cases failed & 0 \\
 \greyrule
-registered queue cases pending & 48 \\
+registered queue cases pending & 44 \\
 \greyrule
 registered queue cases running & 1 \\
 \blackrule
@@ -2539,9 +2546,9 @@ at matched per-GPU copy counts, with a common wall-clock measurement interval.
 \greyrule
 accepted timing & 5 & 16 \\
 \greyrule
-inconclusive timing & 4 & 16 \\
+inconclusive timing & 8 & 16 \\
 \greyrule
-rejected timing & 2 & 27 \\
+rejected timing & 2 & 28 \\
 \greyrule
 correctness rejected & 0 & 0 \\
 \greyrule
@@ -2580,75 +2587,82 @@ corresponding training records exist.
 % >>> AUTO-GENERATED FIGURES START: pixel-montezuma-paired-measurements
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_dd2226e690a58df600cd532017df27f41b7ac9d8be50d07adbf1e8a73c947d49_panel-01-of-01.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-01-of-01.pdf}}
 \caption{Paired execution-speed measurements on H100 (serval02), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-dd2226e690a58df600cd532017df27f41b7ac9d8be50d07adbf1e8a73c947d49_panel-01-of-01}
+\label{fig:pixel-montezuma-paired-42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-01-of-01}
 \label{fig:pixel-montezuma-background-cache-paired}
 \label{fig:pixel-montezuma-cache-h100-one-copy}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_ef543ff43389ee6ca56a7eb38b3eec014c5bd1b26e7551b552deade95cebdb07_panel-01-of-01.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-01.pdf}}
 \caption{Paired execution-speed measurements on H100 (serval02), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-ef543ff43389ee6ca56a7eb38b3eec014c5bd1b26e7551b552deade95cebdb07_panel-01-of-01}
+\label{fig:pixel-montezuma-paired-17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-01}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-01-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-01-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72}. Panel 1 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-01-of-03}
+\label{fig:pixel-montezuma-paired-645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-01-of-03}
 \label{fig:pixel-montezuma-cache-a4500-one-copy}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-02-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-02-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72}. Panel 2 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-02-of-03}
+\label{fig:pixel-montezuma-paired-645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-02-of-03}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-03-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-03-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72}. Panel 3 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-03-of-03}
+\label{fig:pixel-montezuma-paired-645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-03-of-03}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_ad59f050396bef86b63f66f0a9614fa14bc2f41db4e7372365d6070d2dfd9dda_panel-01-of-01.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_d027edcbb0bbebe143e4d866b2f5210d433f8fd9c3a68092e9392691ba04768a_panel-01-of-01.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training with report readout. Reference configuration hash: \texttt{effc9e3a0b9cda09aac82046d0b839fdff3231601232d913e09c83d12ec02f2b}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-ad59f050396bef86b63f66f0a9614fa14bc2f41db4e7372365d6070d2dfd9dda_panel-01-of-01}
+\label{fig:pixel-montezuma-paired-d027edcbb0bbebe143e4d866b2f5210d433f8fd9c3a68092e9392691ba04768a_panel-01-of-01}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-01-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_cc70d644ab7b3cdfdc245ca2dac875a18563cc7e79a7a57230a10458840c565e_panel-01-of-01.pdf}}
+\caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination. Both variants used the validated CUDA asynchronous memory allocator, without the nine-GiB memory preparation used in the earlier retries.}
+\label{fig:pixel-montezuma-paired-cc70d644ab7b3cdfdc245ca2dac875a18563cc7e79a7a57230a10458840c565e_panel-01-of-01}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-01-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 1 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-01-of-03}
+\label{fig:pixel-montezuma-paired-b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-01-of-03}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-02-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-02-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 2 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-02-of-03}
+\label{fig:pixel-montezuma-paired-b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-02-of-03}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-03-of-03.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-03-of-03.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 3 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-03-of-03}
+\label{fig:pixel-montezuma-paired-b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-03-of-03}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_4f10159632a6e30800e6d2094208c3cd302b93793d422db7a4e4d3c11951f4fa_panel-01-of-01.pdf}}
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_64e00d7fe4d4d063ec82e76878dec6a8eb944bb5a205422c9d4c18389762fc29_panel-01-of-01.pdf}}
 \caption{Paired execution-speed measurements on Jaguar03 RTX A4500 (jaguar03), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training with report readout. Reference configuration hash: \texttt{8f46fff9aca348a32bb081491d65420d1c55fde31b23544c3a5c44f89f76cd8e}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
-\label{fig:pixel-montezuma-paired-4f10159632a6e30800e6d2094208c3cd302b93793d422db7a4e4d3c11951f4fa_panel-01-of-01}
+\label{fig:pixel-montezuma-paired-64e00d7fe4d4d063ec82e76878dec6a8eb944bb5a205422c9d4c18389762fc29_panel-01-of-01}
 \end{figure}
 % <<< AUTO-GENERATED FIGURES END: pixel-montezuma-paired-measurements
 

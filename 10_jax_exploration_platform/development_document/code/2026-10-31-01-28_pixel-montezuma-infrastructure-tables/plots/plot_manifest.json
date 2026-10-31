@@ -1,7 +1,7 @@
 [
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_dd2226e690a58df600cd532017df27f41b7ac9d8be50d07adbf1e8a73c947d49_panel-01-of-01.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-01-of-01.pdf",
     "hardware": "h100",
     "host": "serval02",
     "copies": 1,
@@ -9,6 +9,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72",
     "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 1,
     "mechanism_names": [
       "cache_room_backgrounds",
@@ -16,7 +17,9 @@
       "unroll_four_frame_game_loop",
       "nested_policy_environment_batching",
       "fuse_pixel_preprocessing",
-      "combine_palette_and_sprite_drawing"
+      "combine_palette_and_sprite_drawing",
+      "store_rollout_observations_as_bytes",
+      "reconstruct_stacks_from_individual_frames"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
@@ -24,7 +27,9 @@
       "unroll four frame game loop",
       "nested policy environment batching",
       "fuse pixel preprocessing",
-      "combine palette and sprite drawing"
+      "combine palette and sprite drawing",
+      "store rollout observations as bytes",
+      "reconstruct stacks from individual\nframes"
     ],
     "results": [
       {
@@ -50,13 +55,21 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-06__combine_palette_and_sprite_drawing__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "539a79310e8cbb3bdde9057b4b369454fdfd74b7f8f5872e54a3d79ac4f926d8"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-07__store_rollout_observations_as_bytes__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "b511d4472694a6090f618c93b81d7f698f505ada26229bb0cfa6d3ab57b14348"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "2ff682530e2ce75502e1b5f38bc7f070a0dda0125225f8cc091b1435c6b873f8"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_ef543ff43389ee6ca56a7eb38b3eec014c5bd1b26e7551b552deade95cebdb07_panel-01-of-01.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-01.pdf",
     "hardware": "h100",
     "host": "serval02",
     "copies": 2,
@@ -64,20 +77,25 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852",
     "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 1,
     "mechanism_names": [
       "cache_room_backgrounds",
       "render_final_two_game_states",
       "unroll_four_frame_game_loop",
       "nested_policy_environment_batching",
-      "fuse_pixel_preprocessing"
+      "fuse_pixel_preprocessing",
+      "combine_palette_and_sprite_drawing",
+      "store_rollout_observations_as_bytes"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
       "render final two game states",
       "unroll four frame game loop",
       "nested policy environment batching",
-      "fuse pixel preprocessing"
+      "fuse pixel preprocessing",
+      "combine palette and sprite drawing",
+      "store rollout observations as bytes"
     ],
     "results": [
       {
@@ -99,13 +117,21 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-05__fuse_pixel_preprocessing__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "f7ba6c634b00535a0e5894b79da775674755317985e223473291c9f76b7a9d9c"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-06__combine_palette_and_sprite_drawing__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "c1e9624637b911d85b575dd00d9eece728e7bd0e9ba5d961e19e5df70f459342"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-07__store_rollout_observations_as_bytes__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "d8f0617f60587f4a8e8882f792f2b39bdec5db87071e6e390e74e479621c907d"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-01-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-01-of-03.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 1,
@@ -113,6 +139,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72",
     "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "cache_room_backgrounds",
@@ -180,11 +207,11 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-02-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-02-of-03.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 1,
@@ -192,6 +219,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72",
     "panel_index": 2,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "donate_training_buffers",
@@ -259,11 +287,11 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_fb3e2df9b7993f673f42dc28edf5a2cff512b31828143d5ff7e687523d10da3f_panel-03-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-03-of-03.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 1,
@@ -271,6 +299,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "154f6049c14ddf5454884e2de10dbd11242ed9ddcac9d37f0346bec5316e1b72",
     "panel_index": 3,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "single_sixteen_minibatch_scan",
@@ -332,11 +361,11 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_ad59f050396bef86b63f66f0a9614fa14bc2f41db4e7372365d6070d2dfd9dda_panel-01-of-01.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_d027edcbb0bbebe143e4d866b2f5210d433f8fd9c3a68092e9392691ba04768a_panel-01-of-01.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 1,
@@ -344,6 +373,7 @@
     "scope": "training_with_report_readout",
     "reference_fingerprint": "effc9e3a0b9cda09aac82046d0b839fdff3231601232d913e09c83d12ec02f2b",
     "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 1,
     "mechanism_names": [
       "accumulate_scheduled_reports_on_device"
@@ -357,11 +387,11 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-01-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_cc70d644ab7b3cdfdc245ca2dac875a18563cc7e79a7a57230a10458840c565e_panel-01-of-01.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 2,
@@ -369,6 +399,33 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852",
     "panel_index": 1,
+    "allocator_context": "cuda_async",
+    "panel_count": 1,
+    "mechanism_names": [
+      "gather_epoch_minibatches_in_advance"
+    ],
+    "wrapped_labels": [
+      "gather epoch minibatches in advance"
+    ],
+    "results": [
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/result.json",
+        "sha256": "54f879a03eb4aa6044c1149504745e3f45061ed5f4c234b8badd7a6385cdbe32"
+      }
+    ],
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+  },
+  {
+    "schema_version": 2,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-01-of-03.pdf",
+    "hardware": "jaguar03_rtx_a4500",
+    "host": "jaguar03",
+    "copies": 2,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "scope": "training_iteration_execution",
+    "reference_fingerprint": "15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852",
+    "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "cache_room_backgrounds",
@@ -436,11 +493,11 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-02-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-02-of-03.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 2,
@@ -448,6 +505,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852",
     "panel_index": 2,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "donate_training_buffers",
@@ -515,11 +573,11 @@
         "sha256": "bc6d2e329b86dcc412bf0616a75b894463f8cb9715596e19d654a97c65fb6b4a"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0e812b51d4f0db245d967a310265561c70283fc44c544385ab6f0928d4d0fefe_panel-03-of-03.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-03-of-03.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 2,
@@ -527,6 +585,7 @@
     "scope": "training_iteration_execution",
     "reference_fingerprint": "15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852",
     "panel_index": 3,
+    "allocator_context": "original",
     "panel_count": 3,
     "mechanism_names": [
       "single_sixteen_minibatch_scan",
@@ -582,11 +641,11 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   },
   {
     "schema_version": 2,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_4f10159632a6e30800e6d2094208c3cd302b93793d422db7a4e4d3c11951f4fa_panel-01-of-01.pdf",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_64e00d7fe4d4d063ec82e76878dec6a8eb944bb5a205422c9d4c18389762fc29_panel-01-of-01.pdf",
     "hardware": "jaguar03_rtx_a4500",
     "host": "jaguar03",
     "copies": 2,
@@ -594,6 +653,7 @@
     "scope": "training_with_report_readout",
     "reference_fingerprint": "8f46fff9aca348a32bb081491d65420d1c55fde31b23544c3a5c44f89f76cd8e",
     "panel_index": 1,
+    "allocator_context": "original",
     "panel_count": 1,
     "mechanism_names": [
       "accumulate_scheduled_reports_on_device"
@@ -607,6 +667,6 @@
         "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
       }
     ],
-    "input_fingerprint": "14c40b7f8654eaf00f08aea76844e2c8f690337287fb9297b6eca77ee1d7cbcc"
+    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
   }
 ]

@@ -4,12 +4,87 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import ModuleType
 import unittest
+from unittest.mock import Mock, patch
 
 import make_all
 
 
 class ReportInputTests(unittest.TestCase):
+    def test_allocator_context_requires_the_actual_production_validation(self):
+        """Use only the validated runtime, rejecting raw receipt failures and other allocators."""
+        module = ModuleType("post_comparison_validation")
+        validator = Mock()
+        module.pregather_retry_validation_module = Mock(return_value=validator)
+        proof = {"scope": "actual_pregather_async_fifth_attempt_runtime", "allocator": "cuda_async",
+                 "memory_preparation": None, "actual_runtime_environment": {"allocator": "cuda_async"},
+                 "execution_record": {"path": "/synthetic/execution.json", "sha256": "a" * 64}}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "result.json"
+            path.with_name("case.json").write_text(json.dumps({"unit_id": "synthetic fifth attempt"}))
+            with patch.dict(sys.modules, {"post_comparison_validation": module}), \
+                    patch.object(make_all, "require_compute") as allocation:
+                validator.validate_execution.return_value = proof
+                self.assertEqual(make_all.validated_allocator_context(path), proof)
+                allocation.assert_called_once()
+                validator.validate_execution.assert_called_once_with(
+                    path, {"unit_id": "synthetic fifth attempt"})
+                validator.validate_execution.side_effect = ValueError("raw execution changed")
+                with self.assertRaisesRegex(ValueError, "raw execution changed"):
+                    make_all.validated_allocator_context(path)
+                validator.validate_execution.side_effect = None
+                validator.validate_execution.return_value = {**proof, "allocator": "unvalidated"}
+                with self.assertRaisesRegex(ValueError, "validated allocator context"):
+                    make_all.validated_allocator_context(path)
+
+    def test_validated_allocator_gets_a_separate_explicit_panel(self):
+        """Keep equal learner configurations in separate panels when their allocator differs."""
+        rows = [self.measured_row("original_allocator", copies=2),
+                self.measured_row("gather_epoch_minibatches_in_advance", copies=2)]
+        rows[1]["execution_context"] = {"allocator": "cuda_async", "memory_preparation": None}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            panels, manifest = self.manifest_files(directory, rows)
+            self.assertEqual(len(panels), 2)
+            asynchronous = next(panel for panel in panels if panel["allocator_context"] == "cuda_async")
+            self.assertEqual(asynchronous["mechanism_names"], ["gather_epoch_minibatches_in_advance"])
+            self.assertIn("CUDA asynchronous memory allocator", make_all.plot_title(asynchronous))
+            text = make_all.figure_source(manifest, panels, directory / "document.tex")
+            self.assertEqual(text.count("Both variants used the validated CUDA asynchronous"), 1)
+            self.assertIn("without the nine-GiB memory preparation", text)
+        before = make_all.fingerprint({}, rows)
+        rows[1]["execution_context"]["execution_record"] = {"sha256": "changed"}
+        self.assertNotEqual(make_all.fingerprint({}, rows), before)
+
+    def test_plot_legend_stays_outside_timing_points_for_short_and_full_panels(self):
+        """Reserve a separate legend region even when timings occupy every plot corner."""
+        # Use only fake drawing objects; actual numerical plotting remains on compute.
+        matplotlib = ModuleType("matplotlib")
+        matplotlib.use = Mock()
+        pyplot = ModuleType("matplotlib.pyplot")
+        pyplot.close = Mock()
+        lines, ticker = ModuleType("matplotlib.lines"), ModuleType("matplotlib.ticker")
+        lines.Line2D, ticker.MaxNLocator = Mock(), Mock()
+        modules = {"matplotlib": matplotlib, "matplotlib.pyplot": pyplot,
+                   "matplotlib.lines": lines, "matplotlib.ticker": ticker}
+        for count in (1, 10):
+            with self.subTest(mechanisms=count), tempfile.TemporaryDirectory() as temporary:
+                figure, axis = Mock(), Mock()
+                pyplot.subplots = Mock(return_value=(figure, axis))
+                rows = [self.measured_row(f"mechanism_{index}") for index in range(count)]
+                with patch.dict(sys.modules, modules), patch.object(make_all, "require_compute"), \
+                        patch.object(make_all, "PLOT_DIRECTORY", Path(temporary)):
+                    make_all.make_plots(rows, "synthetic-fingerprint")
+                axis.legend.assert_not_called()
+                axis.ticklabel_format.assert_called_once_with(axis="x", useOffset=False, style="plain")
+                legend = figure.legend.call_args.kwargs
+                reserved = figure.tight_layout.call_args.kwargs["rect"]
+                self.assertEqual(legend["loc"], "lower center")
+                self.assertLess(legend["bbox_to_anchor"][1], reserved[1])
+                self.assertEqual(legend["fontsize"], 12)
+                self.assertEqual(figure.savefig.call_count, 2)
+
     def test_plot_title_retains_complete_labels_on_separate_short_lines(self):
         """Keep the full host visible with plural copies and the longer report-readout scope."""
         panel = {"hardware": "jaguar03_rtx_a4500", "host": "jaguar03", "copies": 2,

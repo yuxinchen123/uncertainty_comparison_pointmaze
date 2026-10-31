@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "kind": "pixel_precision_warning_read_only_audit",
+  "observed_at_utc": "2026-10-31T18:43:55.677916+00:00",
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "numerical_code_or_active_process_modified": false,
+  "new_numerical_or_gpu_probe_performed": false,
+  "finding": "The warning is consistent with integer promotion inside the intentional game-only x64-disabled scope. The available evidence does not indicate that the learner running statistics changed to float32.",
+  "warning_origin_scope": "The warning log names the generic JAX dtype-promotion helper only; a complete warning call stack was not captured. The renderer default-offset mechanism below is consistent with the source and warning, not a captured upstream traceback.",
+  "source_mechanism": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+      "lines": [
+        136,
+        164,
+        319,
+        386
+      ],
+      "meaning": "Import JAXtari before the game-only contexts; construct, reset and step the game inside with jax.enable_x64(False)."
+    },
+    {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxtari/__init__.py",
+      "sha256": "d49698cd245969cb3d46f394d238d5cde2e444e810dc4a6e8207bcaca586cd08",
+      "lines": [
+        113
+      ],
+      "meaning": "Import the JAXtari core during package import."
+    },
+    {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxtari/core.py",
+      "sha256": "116f69d3154fb2a63c2812e78e4097fa9d60403c25fd030bfb8517fc4b41b25b",
+      "lines": [
+        6
+      ],
+      "meaning": "Import JAXGameRenderer during core import."
+    },
+    {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxtari/renderers.py",
+      "sha256": "d8adf54963158285897eabd005f18e49f6e27cfabe2246ac2cef99ca5529bd6f",
+      "lines": [
+        2
+      ],
+      "meaning": "Import the rendering utility module during package import."
+    },
+    {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxtari/rendering/jax_rendering_utils.py",
+      "sha256": "a93ab0545095399ba3dfafdfca8c658aa8bc549594c577d0d33a04750e0645c0",
+      "lines": [
+        759,
+        786,
+        791,
+        811,
+        819,
+        820
+      ],
+      "meaning": "Define default flip_offset=jnp.array([0,0]) at module import without an explicit dtype; subtract it from game drawing coordinates inside the renderer. With global x64 enabled during import this default is int64, while the game executes with x64 disabled."
+    },
+    {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax/_src/numpy/util.py",
+      "sha256": "4c37fccc0ab3fb7db06cafcf65e58604671b7d83277782c85a0d73e9d545cf0b",
+      "lines": [
+        84
+      ],
+      "meaning": "The logged warning site performs array argument dtype promotion."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+      "lines": [
+        193,
+        225,
+        233,
+        234
+      ],
+      "meaning": "Require global x64 before constructing the learner; initialize observation/reward statistics after environment.reset returns out of its local context."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+      "lines": [
+        66,
+        67,
+        68,
+        74,
+        88,
+        97
+      ],
+      "meaning": "Construct all running-statistic mean/variance/count arrays in float64; update and normalize with float64 before casting neural inputs to float32."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/run_case.py",
+      "sha256": "c47f1ab1722e5850e74a7b9e3380f4fde861bbd45af6b21a7a2fc6067b0f59e7",
+      "lines": [
+        94,
+        95,
+        99,
+        100
+      ],
+      "meaning": "Set JAX_ENABLE_X64=true and highest precision, then set the corresponding JAX configuration before the learner is imported."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-pregather-async-retry-helpers-b9a8a36/10_jax_exploration_platform/scripts/atari_pixel_campaign/run_pregather_async_retry.py",
+      "sha256": "8ad515150ac6aad5b2d0ca3eb35553706643a6d8bdbd24561fcba7bec04ba1c9",
+      "lines": [
+        68,
+        70,
+        80,
+        97,
+        98,
+        103
+      ],
+      "meaning": "Validate the explicit runtime and set global x64/highest before calling the unchanged original case runner."
+    }
+  ],
+  "current_processes": [
+    {
+      "hardware_class": "jaguar03_rtx_a4500",
+      "pid": 1652100,
+      "process_start_time": "43172342",
+      "hardware": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/hardware.json",
+        "sha256": "c3e19b1a01e0362b7a47d4b91e16750a7c7cb168ad4f4f524b4f3601abd8bfa0"
+      },
+      "lease_observed": {
+        "attempt": 5,
+        "state": "running",
+        "worker_pid": 1651548,
+        "worker_start_time": "43171462",
+        "runner_pid": 1652100,
+        "runner_start_time": "43172342"
+      },
+      "progress_observed": {
+        "state": "initializing",
+        "variant": "candidate",
+        "unit_id": "idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af",
+        "attempt": 5,
+        "pid": 1652100,
+        "time": "2026-10-31T18:38:13.074217+00:00",
+        "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+      },
+      "warning": {
+        "log_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/runner.log",
+        "line": 1,
+        "text": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax/_src/numpy/util.py:84: UserWarning: Explicitly requested dtype int64 requested in dtype is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.",
+        "line_sha256": "f3f1315da9417d922b78376828523375cd9e0536a03e3de102ffaf983ef67365",
+        "scope": "one selected warning line; the active append-only log is not treated as an immutable complete file"
+      },
+      "initial_process_precision": {
+        "receipt": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005/process_environment.json",
+          "sha256": "51a3c6c55bbc9f6a892cd966d74012ac1b74cb9792f38f7549331bb4e616b1d3"
+        },
+        "values": {
+          "JAX_ENABLE_X64": "true",
+          "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+          "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+        },
+        "scope": "actual allowlisted /proc/self/environ captured before importing JAX"
+      }
+    },
+    {
+      "hardware_class": "h100",
+      "pid": 3797079,
+      "process_start_time": "43196510",
+      "hardware": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/hardware.json",
+        "sha256": "b20b675e7a8c953537ad197586593dbbb4a09bad7e3d08b23e05e65770bda4a8"
+      },
+      "lease_observed": {
+        "attempt": 1,
+        "state": "running",
+        "worker_pid": 3567981,
+        "worker_start_time": "41082317",
+        "runner_pid": 3797079,
+        "runner_start_time": "43196510"
+      },
+      "progress_observed": {
+        "state": "initializing",
+        "variant": "candidate",
+        "unit_id": "idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af",
+        "attempt": 1,
+        "pid": 3797079,
+        "time": "2026-10-31T18:36:01.628012+00:00",
+        "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+      },
+      "warning": {
+        "log_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/runner.log",
+        "line": 1,
+        "text": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax/_src/numpy/util.py:84: UserWarning: Explicitly requested dtype int64 requested in dtype is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.",
+        "line_sha256": "f3f1315da9417d922b78376828523375cd9e0536a03e3de102ffaf983ef67365",
+        "scope": "one selected warning line; the active append-only log is not treated as an immutable complete file"
+      },
+      "initial_process_precision": {
+        "scope": "not captured for this ordinary H100 runner; only the pinned source settings and runtime guards are evidence",
+        "additional_remote_environment_read_performed": false
+      }
+    }
+  ],
+  "earlier_actual_dtype_records": [
+    {
+      "record": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b/dtypes.json",
+        "sha256": "4dfcef3e7559499dc942cb234d443268229ad9d33449e6d3b261f45843419090"
+      },
+      "values": {
+        "parameters": [
+          "float32"
+        ],
+        "target": [
+          "float32"
+        ],
+        "optimizer_first": [
+          "float32"
+        ],
+        "optimizer_second": [
+          "float32"
+        ],
+        "observation_statistics": [
+          "float64"
+        ],
+        "reward_statistics": [
+          "float64"
+        ]
+      },
+      "diagnostic_plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b/diagnostic_plan.json",
+        "sha256": "c99d601a8b8f4b820e296fa0ee7241779c00abf1918b9ea9b136741546c67cda"
+      },
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "scope": "actual post-warmup dtype observations from an earlier completed D28 process, not an in-memory read from either current runner",
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673"
+    },
+    {
+      "record": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/jaguar03_diagnostic_determinism-enabled_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28/dtypes.json",
+        "sha256": "4dfcef3e7559499dc942cb234d443268229ad9d33449e6d3b261f45843419090"
+      },
+      "values": {
+        "parameters": [
+          "float32"
+        ],
+        "target": [
+          "float32"
+        ],
+        "optimizer_first": [
+          "float32"
+        ],
+        "optimizer_second": [
+          "float32"
+        ],
+        "observation_statistics": [
+          "float64"
+        ],
+        "reward_statistics": [
+          "float64"
+        ]
+      },
+      "diagnostic_plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/jaguar03_diagnostic_determinism-enabled_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28/diagnostic_plan.json",
+        "sha256": "39194189c4bde3b69c475c472c9cb638716bcfee7d1de28e453f541c4538c060"
+      },
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "scope": "actual post-warmup dtype observations from an earlier completed D28 process, not an in-memory read from either current runner",
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673"
+    }
+  ],
+  "limits": [
+    "Neither active process writes a complete current-state dtype receipt during initialization; current live arrays were not inspected.",
+    "Both current learners progressed beyond source-level global-x64 guards. Earlier completed processes of the same pinned numerical source directly recorded float64 observation/reward statistics and float32 parameters/Adam.",
+    "No warning was suppressed and no precision or algorithm setting was changed."
+  ],
+  "decision": "Continue monitoring the unchanged active runs; no numerical probe is needed for this audit."
+}
