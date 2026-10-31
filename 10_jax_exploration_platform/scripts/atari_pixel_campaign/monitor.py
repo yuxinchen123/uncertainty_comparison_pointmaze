@@ -62,6 +62,29 @@ def tick(directory):
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = ["run or job                  pool          gpu             state       progress"]
     rows.append("TRAINING")
+    submissions = directory / "slurm" / "submissions.tsv"
+    names = {}
+    if submissions.exists():
+        for line in submissions.read_text().splitlines():
+            identifier, kind, _, _ = line.split("\t", 3)
+            names[identifier] = kind
+    observed_jobs = set()
+    for path in (directory / "data").glob("*/hardware.json"):
+        hardware = read_json(path)
+        observed_jobs.add(hardware.get("slurm_job_id", ""))
+    for identifier, state, node, gpu, reason in jobs:
+        if state == "RUNNING" and identifier not in observed_jobs:
+            kind = names.get(identifier, "study job")
+            log = directory / "slurm" / "jobs" / f"{kind}_{identifier}.log"
+            progress = "monitor active" if kind == "monitor" else "checking"
+            if log.exists() and kind != "monitor":
+                with log.open("rb") as stream:
+                    stream.seek(max(0, log.stat().st_size - 65536))
+                    lines = stream.read().decode(errors="replace").splitlines()
+                passed = sum(line.startswith("PASS") for line in lines)
+                progress = f"{passed} checks passed" if passed else "initializing checks"
+            rows.append(f'{kind[:26]:26}  {node[:12]:12}  {gpu[:14]:14}  '
+                        f'{state:10}  {progress}')
     for unit in units:
         if unit["state"] in {"running", "initializing", "normalization_warmup"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
