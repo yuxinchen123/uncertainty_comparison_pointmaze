@@ -509,6 +509,7 @@ def _compute(directory, plan, hardware, installed_backend):
                 "training_start_iteration": training_origin,
                 "median_transitions_per_second": statistics.median(row["transitions_per_second_total"] for row in measured)}
     result.update(source_commit=plan["source_commit"], hardware_class=plan["hardware_class"],
+        hardware={**hardware, "runtime_environment": plan["runtime_environment"]},
         installed_backend=installed_backend,
         loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
         runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
