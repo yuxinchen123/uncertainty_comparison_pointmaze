@@ -74,17 +74,32 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.actual_runtime = {**self.runtime, "JAX_ENABLE_COMPILATION_CACHE": "false", "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": "",
                                "XLA_PYTHON_CLIENT_PREALLOCATE": "false", "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
                                "NVIDIA_VISIBLE_DEVICES": "GPU-target"}
-        final = deployment.validation.validate_final_verification(self.fixture.specification)
-        self.final_path = self.write(self.directory / "global_final_verification.json", final)
-        self.run = self.directory / "target_campaign"
-        self.target = {"server": "aces", "hostnames": ["ac049", "ac055"], "gpu_model": "NVIDIA H100 PCIe",
-                       "total_memory_bytes": 1000 * 2 ** 20, "driver_version": "synthetic-driver"}
         self.core = deployment.diagnostic.core_identity(self.source, self.commit)
         self.helpers = {"source_root": str(self.source), "source_commit": self.commit,
             "files": {relative: hashlib.sha256((self.source / relative).read_bytes()).hexdigest() for relative in deployment.REQUIRED_HELPERS}}
         self.paired = {"source_root": str(self.source), "source_commit": self.commit,
             "files": {deployment.PREFIX + name: hashlib.sha256((self.source / deployment.PREFIX / name).read_bytes()).hexdigest()
                       for name in ("paired_benchmark.py", "ideas.py")}}
+        self.asset_files = {"jaxtari/sprites/player.npy": "a" * 64, "jaxtari/fonts/font.npy": "b" * 64}
+        self.asset_manifest = {"schema_version": 1, "source_commit": public_commit, "files": self.asset_files}
+        self.global_asset_record = self.assets_record("global")
+        self.target_asset_record = self.assets_record("target")
+        confirmation = Path(self.fixture.specification["contexts"]["h100"]["confirmation_record"])
+        result = json.loads(confirmation.read_text())
+        result.update(helpers=self.helpers, measurement_mode="confirmation")
+        self.write(confirmation, result)
+        global_plan = {"schema_version": 1, "kind": "selected_configuration_measurement", "mode": "confirmation",
+            "source_commit": self.commit, "hardware_class": "h100", "runtime_environment": self.runtime,
+            "configuration": result["candidate"], "reference_configuration": result["reference"],
+            "helpers": self.helpers, "asset_record": self.global_asset_record}
+        self.write_prepared_plan(confirmation.parent, global_plan)
+        self.write_asset_receipt(confirmation.parent, self.global_asset_record)
+        self.write_helpers(confirmation.parent)
+        final = deployment.validation.validate_final_verification(self.fixture.specification)
+        self.final_path = self.write(self.directory / "global_final_verification.json", final)
+        self.run = self.directory / "target_campaign"
+        self.target = {"server": "aces", "hostnames": ["ac049", "ac055"], "gpu_model": "NVIDIA H100 PCIe",
+                       "total_memory_bytes": 1000 * 2 ** 20, "driver_version": "synthetic-driver"}
         self.process_counter = 5000
         first = self.target_record("correctness", 2, "target_correctness")
         second = self.target_record("confirmation", 2, "target_confirmation")
@@ -124,6 +139,31 @@ class TrainingDeploymentTests(unittest.TestCase):
         path.write_text(json.dumps(value))
         return path
 
+    def assets_record(self, name):
+        """Create identical manifest bytes for different roots without creating any actual asset files."""
+        manifest = self.write(self.directory / (name + "_asset_metadata/manifest.json"), self.asset_manifest)
+        return {"root": str(self.directory / (name + "_assets")), "manifest": str(manifest),
+                "sha256": hashlib.sha256(manifest.read_bytes()).hexdigest()}
+
+    def write_asset_receipt(self, directory, record):
+        """Retain the actual producer receipt's exact root/manifest/tree/source/count schema."""
+        manifest = json.loads(Path(record["manifest"]).read_text())
+        return self.write(directory / "asset_receipt.json", {"root": record["root"], "manifest_sha256": record["sha256"],
+            "source_commit": manifest["source_commit"], "file_count": len(manifest["files"]),
+            "tree_digest": deployment.validation.canonical_digest(manifest["files"])})
+
+    def write_prepared_plan(self, directory, plan):
+        """Bind each fixture plan to its actual serialized bytes."""
+        plan_path = self.write(directory / "measurement_plan.json", plan)
+        self.write(directory / "measurement_prepared.json", {"plan_sha256": hashlib.sha256(plan_path.read_bytes()).hexdigest()})
+
+    def write_helpers(self, directory):
+        """Copy the exact committed producer helpers beside each fixture plan."""
+        for relative in self.helpers["files"]:
+            path = directory / "code" / Path(relative).name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes((self.source / relative).read_bytes())
+
     def target_record(self, mode, copies, name, seconds=1.):
         """Create actual-shape immutable selected-measurement plans and raw-bound backend records."""
         self.process_counter += 1
@@ -143,13 +183,10 @@ class TrainingDeploymentTests(unittest.TestCase):
             "runtime_environment": self.runtime, "core": self.core, "paired_source": self.paired, "helpers": self.helpers,
             "configuration": configuration, "reference_configuration": None if mode == "packing-point" else reference,
             "copy_seeds": list(range(1, copies + 1)), "gpu_uuid": "GPU-target", "rounds": 7, "iterations": 10,
-            "minimum_updates_per_round": 10}
-        plan_path = self.write(directory / "measurement_plan.json", plan)
-        self.write(directory / "measurement_prepared.json", {"plan_sha256": hashlib.sha256(plan_path.read_bytes()).hexdigest()})
-        for relative in self.helpers["files"]:
-            path = directory / "code" / Path(relative).name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes((self.source / relative).read_bytes())
+            "minimum_updates_per_round": 10, "asset_record": self.target_asset_record}
+        self.write_prepared_plan(directory, plan)
+        self.write_asset_receipt(directory, self.target_asset_record)
+        self.write_helpers(directory)
         if mode == "packing-point":
             result = self.fixture.packing("h100", copies, seconds, pid)
             result["configuration"] = configuration
@@ -188,13 +225,19 @@ class TrainingDeploymentTests(unittest.TestCase):
 
     def test_actual_pcie_evidence_selects_its_own_copy_count_and_backend(self):
         """The NVL-selected single policy does not override two-policy PCIe packing evidence."""
-        receipt = deployment.validate_deployment(self.specification)
+        with patch.object(Path, "rglob", side_effect=AssertionError("deployment must not rehash individual assets")):
+            receipt = deployment.validate_deployment(self.specification)
         self.assertEqual(receipt["configuration"], self.selected)
         self.assertEqual(receipt["copy_seeds"], self.seeds)
         self.assertEqual(receipt["packing"]["selected_copies"], 2)
         self.assertEqual(receipt["target"]["gpu_model"], "NVIDIA H100 PCIe")
         self.assertEqual(set(receipt["backend"]["packages"]), set(deployment.training.PACKAGE_NAMES))
         self.assertEqual(len(receipt["executions"]), 7)
+        self.assertEqual(receipt["assets"]["tree_digest"], deployment.validation.canonical_digest(self.asset_files))
+        self.assertNotEqual(receipt["global_asset_proof"]["root"], receipt["executions"][0]["asset_proof"]["root"])
+        recorded = {entry["path"] for entry in receipt["evidence"]}
+        for proof in [receipt["global_asset_proof"], *[row["asset_proof"] for row in receipt["executions"]]]:
+            self.assertTrue({proof["measurement_plan"], proof["asset_receipt"], proof["manifest"]} <= recorded)
         self.assertNotIn("jax", sys.modules)
         self.assertNotIn("numpy", sys.modules)
         self.assertNotIn("torch", sys.modules)
@@ -206,6 +249,53 @@ class TrainingDeploymentTests(unittest.TestCase):
         registry["adaptive_batches"][-1]["hypotheses"][-1]["results"]["h100"] = []
         self.write(registry_path, registry)
         with self.assertRaisesRegex(ValueError, "unfinished mechanism"):
+            deployment.validate_deployment(self.specification)
+
+    def test_missing_global_asset_proof_or_manifest_inside_assets_is_rejected(self):
+        """A global success flag cannot replace its actual producer receipt and external manifest."""
+        confirmation = Path(self.fixture.specification["contexts"]["h100"]["confirmation_record"])
+        receipt = confirmation.parent / "asset_receipt.json"
+        original = receipt.read_bytes()
+        receipt.unlink()
+        with self.assertRaises(FileNotFoundError):
+            deployment.validate_deployment(self.specification)
+        receipt.write_bytes(original)
+        plan = json.loads((confirmation.parent / "measurement_plan.json").read_text())
+        inside = Path(plan["asset_record"]["root"]) / "manifest.json"
+        self.write(inside, self.asset_manifest)
+        plan["asset_record"]["manifest"] = str(inside)
+        self.write_prepared_plan(confirmation.parent, plan)
+        with self.assertRaisesRegex(ValueError, "outside its asset root"):
+            deployment.validate_deployment(self.specification)
+
+    def test_target_asset_manifest_bytes_are_pinned_by_the_prepared_plan(self):
+        """Even changed JSON whitespace invalidates the manifest SHA named by the target plan."""
+        path = Path(self.target_asset_record["manifest"])
+        path.write_bytes(path.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "manifest differs from its prepared SHA256"):
+            deployment.validate_deployment(self.specification)
+
+    def test_target_asset_receipt_fields_must_match_its_actual_manifest(self):
+        """Tree/source/file-count claims are derived from the manifest rather than trusted separately."""
+        path = Path(self.specification["correctness_record"]).parent / "asset_receipt.json"
+        original = json.loads(path.read_text())
+        for name, value in (("tree_digest", "c" * 64), ("source_commit", "d" * 40), ("file_count", True)):
+            self.write(path, {**original, name: value})
+            with self.subTest(field=name), self.assertRaisesRegex(ValueError, "game-asset receipt disagrees"):
+                deployment.validate_deployment(self.specification)
+
+    def test_a_consistent_target_asset_tree_still_must_match_the_global_proof(self):
+        """Another internally valid asset manifest cannot replace the globally selected game pixels."""
+        directory = Path(self.specification["correctness_record"]).parent
+        manifest = copy.deepcopy(self.asset_manifest)
+        manifest["files"]["jaxtari/sprites/player.npy"] = "c" * 64
+        path = self.write(self.directory / "alternate_asset_metadata/manifest.json", manifest)
+        record = {**self.target_asset_record, "manifest": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        plan = json.loads((directory / "measurement_plan.json").read_text())
+        plan["asset_record"] = record
+        self.write_prepared_plan(directory, plan)
+        self.write_asset_receipt(directory, record)
+        with self.assertRaisesRegex(ValueError, "target game assets differ from the global"):
             deployment.validate_deployment(self.specification)
 
     def test_model_driver_memory_and_bound_sidecars_cannot_change(self):

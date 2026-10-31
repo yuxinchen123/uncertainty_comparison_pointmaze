@@ -11,7 +11,7 @@ import csv
 import hashlib
 import json
 import math
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import subprocess
 
@@ -189,6 +189,66 @@ def backend_identity(installed, loaded, evidence):
                 "platform", "platform_version", "cudnnGetVersion", "cudaRuntimeGetVersion")}}
 
 
+def asset_identity(directory, plan, evidence):
+    """Validate the producer's manifest/asset receipt without reading the individual game assets again."""
+    record = plan.get("asset_record")
+    if not isinstance(record, dict) or set(record) != {"root", "manifest", "sha256"}:
+        raise ValueError("measurement needs its complete original game-asset record")
+    if not Path(record["root"]).is_absolute() or not Path(record["manifest"]).is_absolute():
+        raise ValueError("game-asset root and manifest need absolute original paths")
+    root = evidence.path_identity(record["root"])
+    manifest_path = evidence.path_identity(record["manifest"])
+    if Path(manifest_path).is_relative_to(root):
+        raise ValueError("the recorded game-asset manifest must remain outside its asset root")
+    contents = evidence.file(record["manifest"])
+    if hashlib.sha256(contents).hexdigest() != sha256(record["sha256"]):
+        raise ValueError("the game-asset manifest differs from its prepared SHA256")
+    manifest = json.loads(contents)
+    if (not isinstance(manifest, dict) or set(manifest) != {"schema_version", "source_commit", "files"}
+            or type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1
+            or manifest["source_commit"] != JAXTARI_COMMIT or not isinstance(manifest["files"], dict) or not manifest["files"]):
+        raise ValueError("the game-asset manifest must identify the pinned public source and complete file map")
+    # Before: filename/hash rows in the original manifest; after: metadata-only tree identity, with no asset-file reads.
+    for name, digest in manifest["files"].items():
+        if (not isinstance(name, str) or not name or "\0" in name or PurePosixPath(name).is_absolute()
+                or ".." in PurePosixPath(name).parts or str(PurePosixPath(name)) != name or name == "."):
+            raise ValueError("game-asset manifest names must be canonical relative file paths")
+        sha256(digest)
+    expected = {"root": root, "manifest_sha256": record["sha256"], "source_commit": JAXTARI_COMMIT,
+                "file_count": len(manifest["files"]), "tree_digest": validation.canonical_digest(manifest["files"])}
+    receipt_path = directory / "asset_receipt.json"
+    receipt = evidence.read(receipt_path)
+    if type(receipt.get("file_count")) is not int or receipt != expected:
+        raise ValueError("the producer game-asset receipt disagrees with its actual manifest/tree/source/file count")
+    return {"identity": {key: value for key, value in expected.items() if key != "root"},
+            "root": root, "manifest": manifest_path, "asset_receipt": evidence.path_identity(receipt_path),
+            "measurement_plan": evidence.path_identity(directory / "measurement_plan.json")}
+
+
+def global_asset_proof(final, evidence):
+    """Bind the global selected H100 confirmation to its immutable producer plan and actual asset proof."""
+    path = final["specification"]["contexts"]["h100"]["confirmation_record"]
+    directory = Path(path).parent
+    result = evidence.read(path)
+    plan = evidence.read(directory / "measurement_plan.json")
+    if (evidence.read(directory / "measurement_prepared.json") != {
+            "plan_sha256": hashlib.sha256(evidence.file(directory / "measurement_plan.json")).hexdigest()}
+            or type(plan.get("schema_version")) is not int or plan["schema_version"] != 1
+            or plan.get("kind") != "selected_configuration_measurement" or plan.get("mode") != "confirmation"
+            or result.get("measurement_mode") != "confirmation" or plan.get("hardware_class") != "h100"
+            or plan.get("source_commit") != final["source_commit"]
+            or plan.get("configuration") != final["selected"]["h100"]["configuration"]
+            or plan.get("configuration") != result["candidate"] or plan.get("reference_configuration") != result["reference"]
+            or validation.runtime_environment(plan["runtime_environment"]) != final["runtime_environment"]
+            or result.get("helpers") != plan.get("helpers")):
+        raise ValueError("global selected confirmation lacks its original prepared producer/asset proof")
+    committed_files(plan["helpers"], REQUIRED_HELPERS, evidence)
+    for relative, expected in plan["helpers"]["files"].items():
+        if hashlib.sha256(evidence.file(directory / "code" / Path(relative).name)).hexdigest() != expected:
+            raise ValueError("global selected confirmation changed its executed producer helper")
+    return asset_identity(directory, plan, evidence)
+
+
 def target_record(path, mode, specification, evidence):
     """Require a result's prepared source/helpers/configuration and raw-bound actual hardware/backend."""
     directory = Path(path).parent
@@ -268,7 +328,8 @@ def target_record(path, mode, specification, evidence):
     if result["loaded_gpu_libraries"].get("pid") != process[1]:
         raise ValueError("target mapped-library receipt belongs to another process")
     backend = backend_identity(installed, result["loaded_gpu_libraries"], evidence)
-    return result, configuration, process, runtime, backend
+    assets = asset_identity(directory, plan, evidence)
+    return result, configuration, process, runtime, backend, assets
 
 
 def seed_admission(path, unit_id, seeds, configuration, context, evidence):
@@ -335,6 +396,7 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         raise ValueError("the complete original final verification changed or no longer passes")
     if specification["source_commit"] != final["source_commit"] or runtime != final["runtime_environment"]:
         raise ValueError("target deployment must retain the globally verified numerical source and runtime")
+    global_assets = global_asset_proof(final, evidence)
     used = global_processes(final, evidence)
     combination = validation.validate_combination(specification, evidence)
     packing = validation.validate_packing(specification, evidence)
@@ -347,7 +409,7 @@ def validate_deployment(specification, resolver=None, specification_path=None):
     paths += [(path, "packing-point") for path in specification["packing_records"] + specification["packing_confirmation_records"]]
     identities, backend, actual, observations = set(), None, None, []
     for path, mode in paths:
-        result, configuration, process, observed_runtime, observed_backend = target_record(path, mode, specification, evidence)
+        result, configuration, process, observed_runtime, observed_backend, observed_assets = target_record(path, mode, specification, evidence)
         if process in used or process in identities:
             raise ValueError("target deployment reused an original/global or another target process execution")
         identities.add(process)
@@ -355,9 +417,11 @@ def validate_deployment(specification, resolver=None, specification_path=None):
             raise ValueError("target confirmation changed the globally recorded reference controls")
         if backend is not None and (observed_backend != backend or observed_runtime != actual):
             raise ValueError("target measurements crossed different software/runtime groups")
+        if observed_assets["identity"] != global_assets["identity"]:
+            raise ValueError("target game assets differ from the global selected confirmation's manifest/tree/source/file count")
         backend, actual = observed_backend, observed_runtime
         observations.append({"path": evidence.path_identity(path), "mode": mode, "process": list(process),
-                             "gpu_uuid": result["hardware"]["gpu_uuid"]})
+                             "gpu_uuid": result["hardware"]["gpu_uuid"], "asset_proof": observed_assets})
     seeds = seed_admission(specification["seed_manifest"], specification["unit_id"], specification["copy_seeds"],
                            packing["configuration"], "h100", evidence)
     evidence.recheck_images()
@@ -365,6 +429,7 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         "source_commit": specification["source_commit"], "hardware_class": "h100", "target": specification["target"],
         "configuration": packing["configuration"], "copy_seeds": specification["copy_seeds"], "unit_id": specification["unit_id"],
         "runtime_environment": runtime, "actual_runtime_environment": actual, "backend": backend,
+        "assets": global_assets["identity"], "global_asset_proof": global_assets,
         "global_final_verification": {"path": evidence.path_identity(specification["final_verification"]),
             "sha256": hashlib.sha256(evidence.file(specification["final_verification"])).hexdigest(),
             "specification_digest": final["specification_digest"]},
