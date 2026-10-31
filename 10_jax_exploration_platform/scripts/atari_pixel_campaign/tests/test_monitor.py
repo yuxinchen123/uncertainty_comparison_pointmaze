@@ -91,6 +91,20 @@ class MonitorTests(unittest.TestCase):
             self.assertEqual(rows[0]["state"], "initializing")
             self.assertEqual(rows[0]["progress"], "initializing; reference")
 
+    def test_queued_initialization_reports_zero_measured_rounds(self):
+        """Initialization is active work with zero of the seven paired rounds measured."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unit = root / "data" / "case"
+            unit.mkdir(parents=True)
+            specifications = root / "queue" / "specifications"
+            specifications.mkdir(parents=True)
+            (specifications / "case.json").write_text(json.dumps({"hypothesis": "cache_room_backgrounds",
+                "configuration": {"n_copies": 2}, "rounds": 7}))
+            (unit / "progress.json").write_text(json.dumps({"state": "initializing", "variant": "candidate"}))
+            rows = monitor.unit_rows(root)
+        self.assertEqual(rows[0]["progress"], "0/7 rounds; initializing; candidate")
+
 
 if __name__ == "__main__":
     unittest.main()

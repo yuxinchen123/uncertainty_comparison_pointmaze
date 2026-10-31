@@ -6,7 +6,9 @@ starts long training. Existing case specifications and attempt records are kept.
 """
 
 import argparse
+import ast
 from contextlib import contextmanager
+from dataclasses import replace
 from datetime import datetime, timezone
 import fcntl
 import hashlib
@@ -49,6 +51,9 @@ REFERENCE_ENVIRONMENT_CHOICES = {
     "fuse_pixel_preprocessing": (False, True),
     "combine_palette_and_sprite_drawing": (False, True),
 }
+EXECUTION_CHOICES = {"compilation_mode": ("whole_iteration", "separate_phases"),
+                     "report_readout": ("none", "per_update", "scheduled")}
+EXECUTION_COUNTS = {"iterations_per_call", "report_every_iterations"}
 
 
 def utc_now():
@@ -149,6 +154,73 @@ def reference_environment_settings(value, source_root):
     return dict(value)
 
 
+def execution_defaults(source_root):
+    """Read only the pinned Executor's declared and consumed options through Python syntax trees."""
+    path = (Path(source_root) / "10_jax_exploration_platform/scripts/atari_pixel_campaign"
+            / "paired_benchmark.py")
+    tree = ast.parse(path.read_text(), filename=str(path))
+    assignments = [node for node in tree.body if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == "DEFAULT_EXECUTION"
+                           for target in node.targets)]
+    executors = [node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "Executor"]
+    if len(assignments) != 1 or len(executors) != 1:
+        raise ValueError("the pinned source must declare exactly one DEFAULT_EXECUTION and Executor")
+    defaults = ast.literal_eval(assignments[0].value)
+    consumed = {node.slice.value for node in ast.walk(executors[0]) if isinstance(node, ast.Subscript)
+                and isinstance(node.value, ast.Attribute) and node.value.attr == "options"
+                and isinstance(node.value.value, ast.Name) and node.value.value.id == "self"
+                and isinstance(node.slice, ast.Constant) and type(node.slice.value) is str}
+    required = set(EXECUTION_CHOICES) | EXECUTION_COUNTS
+    if not isinstance(defaults, dict) or set(defaults) != required or not required <= consumed:
+        raise ValueError("the pinned Executor does not implement the four supported execution options")
+    validate_execution(defaults)
+    return defaults
+
+
+def validate_execution(value):
+    """Reject unknown settings, noninteger counts and combinations forbidden by Executor."""
+    if not isinstance(value, dict) or any(type(name) is not str for name in value):
+        raise ValueError("reference execution must be a mapping with string setting names")
+    unknown = set(value) - set(EXECUTION_CHOICES) - EXECUTION_COUNTS
+    if unknown:
+        raise ValueError("unknown reference execution settings: " + ", ".join(sorted(unknown)))
+    for name, setting in value.items():
+        if name in EXECUTION_COUNTS:
+            if type(setting) is not int or setting < 1:
+                raise ValueError(f"execution {name} must be a positive integer")
+        elif type(setting) is not str or setting not in EXECUTION_CHOICES[name]:
+            raise ValueError(f"execution {name} must be one of {EXECUTION_CHOICES[name]!r}")
+    # Before: separate phases plus group five; after: rejection before creating a case.
+    if value.get("iterations_per_call", 1) != 1:
+        if value.get("compilation_mode", "whole_iteration") == "separate_phases":
+            raise ValueError("separately compiled phases require ungrouped updates")
+        if value.get("report_readout", "none") != "none":
+            raise ValueError("active reporting requires ungrouped updates")
+
+
+def reference_execution_settings(value, source_root):
+    """Validate a future execution baseline without changing the original empty admission."""
+    validate_execution(value)
+    if value:
+        validate_execution({**execution_defaults(source_root), **value})
+    return dict(value)
+
+
+def execution_arms(entry, baseline, source_root):
+    """Resolve both arms independently so reference-only controls cannot enter the candidate."""
+    if not baseline:
+        validate_execution(entry.reference_execution or {})
+        validate_execution({**(entry.reference_execution or {}), **entry.execution})
+        return entry.reference_execution, entry.execution
+    defaults = execution_defaults(source_root)
+    # Before: baseline group five, explicit candidate group two; after: reference five/candidate two.
+    reference = {**defaults, **baseline, **(entry.reference_execution or {})}
+    candidate = {**defaults, **baseline, **entry.execution}
+    validate_execution(reference)
+    validate_execution(candidate)
+    return reference, candidate
+
+
 def ready_specification(run_dir):
     """Read the parent's source/gate authorization and verify both hardware contexts."""
     path = Path(run_dir) / SENTINEL_NAME
@@ -178,8 +250,10 @@ def ready_specification(run_dir):
     # Keep environment execution settings separate from the fixed learner and game protocol.
     environment = reference_environment_settings(ready.get("reference_environment", {}),
                                                  ready["source_root"])
+    execution = reference_execution_settings(ready.get("reference_execution", {}), ready["source_root"])
     ready = {**ready, "reference_configuration": configuration,
              "reference_environment": environment,
+             "reference_execution": execution,
              "campaign_run_dir": str(Path(run_dir).resolve())}
     return ready
 
@@ -187,7 +261,10 @@ def ready_specification(run_dir):
 def immutable_case(entry, context, copies, ready):
     """Record source, algorithm, execution changes and random identities before a worker claims them."""
     seed_start = ready.get("seed_start", 1)
-    iterations = compatible_updates_per_round(entry, ready.get("iterations", 1))
+    baseline = reference_execution_settings(ready.get("reference_execution", {}), ready["source_root"])
+    reference_execution, candidate_execution = execution_arms(entry, baseline, ready["source_root"])
+    measured_entry = replace(entry, reference_execution=reference_execution, execution=candidate_execution)
+    iterations = compatible_updates_per_round(measured_entry, ready.get("iterations", 1))
     if not re.fullmatch(r"[A-Za-z0-9_-]+", entry.name):
         raise ValueError("hypothesis names must be plain path components made of words, digits and separators")
     identifier = (f"idea-position-{entry.position:02d}__{entry.name}"
@@ -200,8 +277,8 @@ def immutable_case(entry, context, copies, ready):
             "source_root": ready["source_root"], "source_commit": ready["source_commit"],
             "configuration": {**ready["reference_configuration"], "n_copies": copies},
             "candidate": {"learner": entry.learner, "environment": entry.environment,
-                          "execution": entry.execution},
-            "reference_execution": entry.reference_execution,
+                          "execution": candidate_execution},
+            "reference_execution": reference_execution,
             "rounds": ready.get("rounds", 7), "iterations": iterations,
             "seed_start": seed_start, "additional_correctness_checks": list(entry.additional_checks),
             "maximum_attempts": ready.get("maximum_attempts", 3)}
@@ -210,6 +287,8 @@ def immutable_case(entry, context, copies, ready):
                                                  ready["source_root"])
     if environment:
         case["reference_environment"] = environment
+    if baseline:
+        case["reference_execution_baseline"] = baseline
     if (any(type(case[name]) is not int for name in ("rounds", "iterations", "maximum_attempts", "seed_start"))
             or case["rounds"] < 7 or case["iterations"] < 1 or case["maximum_attempts"] < 1
             or case["seed_start"] < 0):

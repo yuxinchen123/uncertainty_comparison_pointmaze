@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 
 from controller import (REFERENCE_ALGORITHM, SENTINEL_NAME, read_json,
-                        ready_specification, tick, verify_source)
+                        ready_specification, reference_execution_settings, tick, verify_source)
 
 
 CONTEXTS = ("h100", "jaguar03_rtx_a4500")
@@ -226,6 +226,11 @@ def admit(args):
     iterations_per_round = vars(args).get("iterations_per_round", 1)
     if type(iterations_per_round) is not int or iterations_per_round < 1:
         raise ValueError("iterations per round must be a positive integer")
+    execution_path = vars(args).get("reference_execution_configuration")
+    execution, execution_evidence = {}, None
+    if execution_path is not None:
+        supplied_execution, execution_evidence = evidence_file(execution_path)
+        execution = reference_execution_settings(supplied_execution, source_root)
     configuration, configuration_evidence = evidence_file(args.reference_configuration_source)
     configuration = {**configuration, "n_copies": 1}
     if any(configuration.get(name) != value for name, value in REFERENCE_ALGORITHM.items()):
@@ -259,6 +264,9 @@ def admit(args):
                      "reference_configuration_source": configuration_evidence,
                      "seed_start": args.seed_start, "rounds": 7,
                      "iterations": iterations_per_round}
+    # Empty optional files leave the original initial admission's contents unchanged.
+    if execution:
+        specification.update(reference_execution=execution, reference_execution_source=execution_evidence)
     publications.append((run_dir / SENTINEL_NAME, specification))
     with admission_lock(run_dir):
         check_existing(publications)
@@ -281,6 +289,8 @@ def argument_parser():
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--reference-configuration-source", type=Path, required=True)
+    parser.add_argument("--reference-execution-configuration", type=Path,
+                        help="optional JSON mapping of an accepted execution baseline for a new admission")
     parser.add_argument("--matched-copy-counts", nargs="+", type=int, required=True)
     parser.add_argument("--capacity-record", action="append", type=Path, default=[])
     parser.add_argument("--seed-start", type=int, default=1)

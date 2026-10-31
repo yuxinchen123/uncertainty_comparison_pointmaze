@@ -76,6 +76,8 @@ def run_case(run_dir, case, attempt_number, lease_token):
     # Refuse a pending case after its parent's admitted environment baseline changes.
     if case.get("reference_environment", {}) != ready["reference_environment"]:
         raise ValueError("the case reference environment differs from the parent's current authorization")
+    if case.get("reference_execution_baseline", {}) != ready["reference_execution"]:
+        raise ValueError("the case reference execution differs from the parent's current authorization")
     expected_script = (Path(case["source_root"]) /
                        "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_case.py").resolve()
     if Path(__file__).resolve() != expected_script:
