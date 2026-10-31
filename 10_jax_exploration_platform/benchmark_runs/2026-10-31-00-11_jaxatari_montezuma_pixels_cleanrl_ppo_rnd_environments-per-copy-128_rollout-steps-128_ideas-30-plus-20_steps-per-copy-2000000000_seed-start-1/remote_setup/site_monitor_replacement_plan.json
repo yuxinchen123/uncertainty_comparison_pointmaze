@@ -1,0 +1,43 @@
+{
+  "kind": "site_validation_monitor_replacement",
+  "created_at_utc": "2026-10-31T23:46:20.658304+00:00",
+  "helper_commit": "27f07863d8cac86fb78de014f8e4e355c0233f43",
+  "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/27f07863d8cac86fb78de014f8e4e355c0233f43/10_jax_exploration_platform",
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_27f07863d8ca.sh",
+    "sha256": "c7988c07c8352e371c4550c64370bc490deba36de4b412cf0bb1e074a39d49e7"
+  },
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=nolim",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--gpus-per-node=0",
+    "--time=7-00:00:00",
+    "--job-name=atari_monitor",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_27f07863d8ca.sh"
+  ],
+  "old_monitor_job_id": "6778089",
+  "real_verification_step_id": "6778089.31",
+  "real_verification_scheduler_receipt": "6778089.31|COMPLETED|0:0\n",
+  "site_rows_verified": [
+    "6778886 failed",
+    "6779137 waiting or later recorded state"
+  ],
+  "scientific_case_credit": 0,
+  "cadence_seconds": 1200,
+  "replacement_order": [
+    "Publish the reviewed source and this launch record.",
+    "Submit held, synchronize the exact identifier and receipt, then release.",
+    "Verify the replacement job is running and has produced its first combined report.",
+    "Only then cancel the exact old owned CPU monitor job."
+  ],
+  "session_cron_id": "8eb6fe22-fb3a-4f7c-8c2e-f11b4968b3dd"
+}
