@@ -1,0 +1,43 @@
+{
+  "kind": "owned_h100_nvl_site_validation_submission",
+  "cluster": "uva",
+  "job_id": "6779137",
+  "state_at_record": "held",
+  "submitted_at_utc": "2026-10-31T23:32:29.139596+00:00",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--constraint=h100_94gb&amd_epyc_9354",
+    "--gres=gpu:nvidia_h100_nvl:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=03:00:00",
+    "--job-name=atari_h100_nvl_site_validation",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch"
+  ],
+  "published_launch_commit": "a85828511f0cbf92d9c2952d9679d62d48b82516",
+  "helper_commit": "b535e72461e52a035dbb89f8bccb6343f1f880af",
+  "helper_root": "/p/rlprojects/RND_worktrees/atari-h100-nvl-site-capture-helpers-b535e72461e5",
+  "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "plan_sha256": "1f2b76206c333e4a03140ac497cae9b1a8fce07eb3e177fa8e2c5fd8f788ed32",
+  "manifest_sha256": "b65033e0117d03a9b2d359b90b8defb9cac0e80075b717015fa8c3f04a7bb119",
+  "job_script_sha256": "e1dca553142806bc32820553af6c4b182b44e7e159c631866492bfe484301099",
+  "stdout_sha256": "42e38530941d64d255e2488cf58bc16885b2ca67406222b6ea4f45d8f5c85cb3",
+  "ledgers": [
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids.txt",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/h100_nvl_site_validation_jobids.txt"
+  ],
+  "log_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_6779137.log",
+  "previous_failed_job_id": "6778886",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
