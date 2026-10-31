@@ -1,0 +1,597 @@
+"""Train the validated final pixel learner and resume its complete state exactly.
+
+Admission and checkpoint metadata use only the standard library. Numerical
+imports happen only after evidence, source, runtime, and output checks pass.
+No training is authorized by the existence of this script alone.
+
+Both the numerical source and these helpers require actual frozen Git
+checkouts; an archive without Git metadata is insufficient. Every raw evidence
+path must be accessible on the training server through explicitly staged and
+revalidated receipts. asset_record names an exhaustive asset manifest outside
+its asset root, with the manifest's SHA256 fixed in the final specification.
+"""
+
+import argparse
+from contextlib import contextmanager
+from datetime import datetime, timezone
+import fcntl
+import hashlib
+import importlib
+from importlib import metadata
+import json
+import math
+import os
+from pathlib import Path
+import pickle
+import shlex
+import signal
+import socket
+import subprocess
+import sys
+import time
+
+
+SCRIPT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_ROOT.parents[2]
+REQUIRED_RUNTIME = ("JAX_ENABLE_X64", "JAX_DEFAULT_MATMUL_PRECISION", "XLA_FLAGS")
+STATE_FIELDS = {"environment", "observations", "done", "parameters", "target", "optimizer",
+                "observation_statistics", "reward_statistics", "reward_filter", "iteration", "copy_seeds"}
+PACKAGE_NAMES = ("jax", "jaxlib", "jax-cuda12-plugin", "jax-cuda12-pjrt",
+                 "nvidia-cudnn-cu12", "nvidia-cublas-cu12", "nvidia-cuda-runtime-cu12",
+                 "jaxtari", "flax", "optax", "numpy")
+JAXTARI_COMMIT = "04ab9aec318c72162e2e53503a594a489d7e162b"
+
+
+def utc_now():
+    """Write timestamps in a host-independent, timezone-aware form."""
+    return datetime.now(timezone.utc).isoformat()
+
+
+def canonical_digest(value):
+    """Bind identity to values rather than JSON whitespace or key order."""
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
+                                     allow_nan=False).encode()).hexdigest()
+
+
+def component_source_commit(root, environment):
+    """Identify a component-test archive or exact Git root without searching an ancestor repo."""
+    root = Path(root).resolve(strict=True)
+    supplied = environment.get("RND_COMPONENT_SOURCE_COMMIT")
+    if supplied is not None:
+        if (not isinstance(supplied, str) or len(supplied) != 40
+                or any(character not in "0123456789abcdef" for character in supplied)
+                or root.name != supplied):
+            raise ValueError("the component archive requires its full commit and matching snapshot directory")
+        return supplied
+    top = subprocess.check_output(["git", "-C", str(root), "rev-parse", "--show-toplevel"], text=True).strip()
+    if Path(top).resolve() != root:
+        raise ValueError("the component fixture cannot use an ancestor repository's Git identity")
+    commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if len(commit) != 40 or any(character not in "0123456789abcdef" for character in commit):
+        raise ValueError("the component Git checkout must record a full commit")
+    return commit
+
+
+def atomic_json(path, value):
+    """Publish a complete, flushed metadata record through one rename."""
+    temporary = path.with_name(path.name + f".tmp-{os.getpid()}")
+    with temporary.open("w") as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    temporary.replace(path)
+
+
+def append_record(path, value):
+    """Flush one complete record before the next execution group begins."""
+    with path.open("a") as stream:
+        stream.write(json.dumps(value, allow_nan=False) + "\n")
+        stream.flush()
+
+
+def validate_specification(specification):
+    """Reject incomplete identities and altered final budgets before numerical imports."""
+    # Full configuration/evidence checks belong to validate_training_admission.
+    if specification.get("schema_version") != 1:
+        raise ValueError("training specification schema_version must be one")
+    required = {"source_root", "source_commit", "hardware_class", "configuration",
+                "copy_seeds", "runtime_environment", "final_verification", "validation", "asset_record"}
+    if not required <= specification.keys():
+        raise ValueError("training specification is missing its validated identity")
+    configuration = specification["configuration"]
+    if set(configuration) != {"learner", "environment", "execution"}:
+        raise ValueError("training needs full learner, environment, and execution settings")
+    learner = configuration["learner"]
+    expected = {"total_timesteps": 2_000_000_000, "n_envs": 128, "num_steps": 128,
+                "update_epochs": 4, "num_minibatches": 4}
+    if any(type(learner.get(name)) is not int or learner[name] != value
+           for name, value in expected.items()):
+        raise ValueError("final training must retain the 2B/128/128/4/4 learner contract")
+    seeds = specification["copy_seeds"]
+    if (type(learner.get("n_copies")) is not int or learner["n_copies"] < 1
+            or not isinstance(seeds, list) or len(seeds) != learner["n_copies"]
+            or any(type(seed) is not int or not 0 <= seed < 2 ** 32 for seed in seeds)
+            or len(set(seeds)) != len(seeds)):
+        raise ValueError("copy_seeds must contain one distinct unsigned 32-bit seed per policy")
+    if any(learner.get(name) for name in ("per_copy_learning_rates", "per_copy_intrinsic_coefficients",
+                                         "per_copy_scalar_settings")):
+        raise ValueError("the final infrastructure run does not search per-copy hyperparameters")
+    if configuration["environment"].get("num_envs") != 128:
+        raise ValueError("the full environment must retain 128 environments per policy")
+    execution = configuration["execution"]
+    if set(execution) != {"compilation_mode", "iterations_per_call", "report_readout", "report_every_iterations"}:
+        raise ValueError("execution must contain exactly the four Executor settings")
+    if any(type(execution[name]) is not int or execution[name] < 1
+           for name in ("iterations_per_call", "report_every_iterations")):
+        raise ValueError("execution groups and report intervals must be positive integers")
+    if execution["compilation_mode"] not in {"whole_iteration", "separate_phases"}:
+        raise ValueError("unsupported compilation mode")
+    if execution["report_readout"] not in {"none", "per_update", "scheduled"}:
+        raise ValueError("unsupported report readout")
+    if execution["iterations_per_call"] != 1 and (
+            execution["compilation_mode"] == "separate_phases" or execution["report_readout"] != "none"):
+        raise ValueError("grouping cannot change separate compilation or reporting boundaries")
+    return specification
+
+
+def enforce_runtime(required, environment):
+    """Apply the validated precision/flags and refuse conflicting explicit settings."""
+    if set(required) != set(REQUIRED_RUNTIME):
+        raise ValueError("runtime admission must include exactly the three required JAX/XLA settings")
+    if required["JAX_ENABLE_X64"] != "true" or required["JAX_DEFAULT_MATMUL_PRECISION"] != "highest":
+        raise ValueError("final training requires float64 statistics and highest float32 precision")
+    flags = shlex.split(required["XLA_FLAGS"])
+    deterministic = [flag for flag in flags if flag.startswith("--xla_gpu_exclude_nondeterministic_ops=")]
+    if deterministic != ["--xla_gpu_exclude_nondeterministic_ops=true"]:
+        raise ValueError("the validated runtime must enable deterministic XLA operations exactly once")
+    if any("cache" in flag or "autotune_results" in flag for flag in flags):
+        raise ValueError("final training has no admission for imported compiler cache artifacts")
+    for name, value in environment.items():
+        if name.startswith(("JAX_COMPILATION_CACHE", "JAX_PERSISTENT_CACHE")) and value:
+            raise ValueError("final training cannot inherit an unvalidated persistent cache setting: " + name)
+    if environment.get("JAX_ENABLE_COMPILATION_CACHE", "false") != "false":
+        raise ValueError("final training requires persistent compilation caches to be disabled")
+    environment["JAX_ENABLE_COMPILATION_CACHE"] = "false"
+    environment["JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES"] = ""
+    normalized = {**required, "XLA_FLAGS": shlex.join(flags)}
+    for name, value in normalized.items():
+        actual = environment.get(name)
+        if name == "XLA_FLAGS" and actual is not None:
+            actual = shlex.join(shlex.split(actual))
+        if actual is not None and actual != value:
+            raise ValueError(f"runtime setting {name} differs from its validated value")
+        environment[name] = value
+    return {name: value for name, value in sorted(environment.items())
+            if name.startswith(("JAX_", "JAXTARI_", "XLA_", "CUDA_", "CUDNN_", "NVIDIA_"))
+            and name != "CUDA_VISIBLE_DEVICES"}
+
+
+def source_receipt(root, commit, relative_paths=None):
+    """Require an exact Git snapshot and bind every explicitly used helper file."""
+    root = Path(root).resolve(strict=True)
+    actual = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if actual != commit or len(commit) != 40:
+        raise ValueError("training source is not at the exact admitted commit")
+    paths = list(relative_paths or [])
+    changes = subprocess.check_output(
+        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", *paths], text=True)
+    if changes.strip():
+        raise ValueError("training source has uncommitted runtime changes: " + changes.strip())
+    files = {}
+    for relative in paths:
+        original = subprocess.check_output(["git", "-C", str(root), "show", f"{commit}:{relative}"])
+        current = (root / relative).read_bytes()
+        if current != original:
+            raise ValueError("a runtime helper differs from its Git snapshot")
+        files[relative] = hashlib.sha256(current).hexdigest()
+    return {"source_root": str(root), "source_commit": commit, "files": files}
+
+
+def file_sha256(path):
+    """Hash large checkpoints and asset files without retaining their bytes in memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def verify_assets(record, environment):
+    """Check every asset against a fixed manifest before any game initialization."""
+    if set(record) != {"root", "manifest", "sha256"}:
+        raise ValueError("asset_record requires root, manifest, and its SHA256")
+    root, manifest_path = Path(record["root"]), Path(record["manifest"])
+    if not root.is_absolute() or not manifest_path.is_absolute():
+        raise ValueError("asset paths must be absolute")
+    root, manifest_path = root.resolve(strict=True), manifest_path.resolve(strict=True)
+    if not root.is_dir() or manifest_path.is_relative_to(root) or file_sha256(manifest_path) != record["sha256"]:
+        raise ValueError("asset manifest must match its hash and remain outside the asset tree")
+    manifest = json.loads(manifest_path.read_text())
+    if manifest.get("schema_version") != 1 or manifest.get("source_commit") != JAXTARI_COMMIT:
+        raise ValueError("asset manifest must name the pinned JAXtari source")
+    files = manifest["files"]
+    actual = {str(path.relative_to(root)): path for path in root.rglob("*") if path.is_file()}
+    if not isinstance(files, dict) or not files or set(files) != set(actual):
+        raise ValueError("asset manifest does not cover exactly the available asset files")
+    for name, path in actual.items():
+        if not path.resolve().is_relative_to(root) or file_sha256(path) != files[name]:
+            raise ValueError("asset file differs from its immutable manifest: " + name)
+    configured = environment.get("XDG_DATA_HOME")
+    if configured is not None and Path(configured).resolve() != root:
+        raise ValueError("XDG_DATA_HOME differs from the immutable asset root")
+    environment["XDG_DATA_HOME"] = str(root)
+    return {"root": str(root), "manifest_sha256": record["sha256"], "source_commit": JAXTARI_COMMIT,
+            "file_count": len(files), "tree_digest": canonical_digest(files)}
+
+
+def checkpoint_identity(specification, helpers, runtime_environment, backend, assets):
+    """Keep resume identity independent of changing report or registry receipts."""
+    return {"schema_version": 1, "source_root": specification["source_root"],
+            "source_commit": specification["source_commit"], "hardware_class": specification["hardware_class"],
+            "configuration": specification["configuration"], "copy_seeds": specification["copy_seeds"],
+            "runtime_environment": runtime_environment, "backend": backend, "helpers": helpers, "assets": assets}
+
+
+def validate_host_state(state, identity, iteration):
+    """Check true schedule position and seed ownership without selecting state fields."""
+    if not STATE_FIELDS <= set(getattr(state, "_fields", ())):
+        raise ValueError("checkpoint must contain the complete PixelTrainState")
+    if int(state.iteration) != iteration:
+        raise ValueError("checkpoint iteration does not match the actual learner state")
+    if [int(seed) for seed in state.copy_seeds] != identity["copy_seeds"]:
+        raise ValueError("checkpoint state seeds do not match the training identity")
+    learner = identity["configuration"]["learner"]
+    target = learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"])
+    if type(iteration) is not int or not 0 <= iteration <= target:
+        raise ValueError("checkpoint iteration is outside the original training schedule")
+
+
+def validate_report_state(report, execution, iteration):
+    """Keep unfinished reporting windows attached to their original update sequence."""
+    if set(report) != {"pending_sums", "pending_count", "last_report_iteration"}:
+        raise ValueError("checkpoint report state is incomplete")
+    count, last = report["pending_count"], report["last_report_iteration"]
+    if type(count) is not int or type(last) is not int or not 0 <= last <= iteration:
+        raise ValueError("checkpoint reporting counters are invalid")
+    if execution["report_readout"] == "none":
+        if count != 0 or report["pending_sums"] is not None or last != 0:
+            raise ValueError("unreported execution cannot contain a reporting window")
+    elif (not 0 <= count < execution["report_every_iterations"] or last + count != iteration
+          or (report["pending_sums"] is None) != (count == 0)):
+        raise ValueError("checkpoint reporting window disagrees with the true iteration")
+
+
+def save_checkpoint(path, state, report, identity, iteration, elapsed_seconds):
+    """Atomically preserve the full host state and an unfinished reporting window."""
+    validate_host_state(state, identity, iteration)
+    validate_report_state(report, identity["configuration"]["execution"], iteration)
+    payload = {"schema_version": 1, "identity": identity, "identity_digest": canonical_digest(identity),
+               "iteration": iteration, "elapsed_seconds": elapsed_seconds, "written_utc": utc_now(),
+               "state": state, "report_state": report}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + f".tmp-{os.getpid()}")
+    with temporary.open("wb") as stream:
+        pickle.dump(payload, stream, protocol=pickle.HIGHEST_PROTOCOL)
+        stream.flush()
+        os.fsync(stream.fileno())
+    temporary.replace(path)
+    # A raw metadata consumer can verify completion without unpickling array modules.
+    learner = identity["configuration"]["learner"]
+    atomic_json(path.with_name("latest.metadata.json"), {
+        "schema_version": 1, "kind": "optimized_training_checkpoint", "checkpoint_path": str(path.resolve()),
+        "checkpoint_sha256": file_sha256(path), "identity_digest": payload["identity_digest"],
+        "source_commit": identity["source_commit"], "configuration_digest": canonical_digest(identity["configuration"]),
+        "iteration": iteration, "copy_seeds": identity["copy_seeds"],
+        "target_updates": learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"]),
+        "steps_per_copy": iteration * learner["n_envs"] * learner["num_steps"],
+        "pending_report_updates": report["pending_count"], "elapsed_seconds": elapsed_seconds,
+        "written_utc": payload["written_utc"]})
+
+
+def load_checkpoint(path, identity):
+    """Refuse changed source, execution, seeds, flags, or backend before device restore."""
+    with path.open("rb") as stream:
+        payload = pickle.load(stream)
+    if (payload.get("schema_version") != 1 or payload.get("identity") != identity
+            or payload.get("identity_digest") != canonical_digest(identity)):
+        raise ValueError("checkpoint identity differs from the admitted training run")
+    validate_host_state(payload["state"], identity, payload["iteration"])
+    validate_report_state(payload["report_state"], identity["configuration"]["execution"], payload["iteration"])
+    elapsed = payload["elapsed_seconds"]
+    if type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed < 0:
+        raise ValueError("checkpoint elapsed runtime is invalid")
+    return payload
+
+
+def next_update_count(iteration, target, group_size):
+    """Use a complete group when it fits, then single original updates without padding."""
+    if any(type(value) is not int for value in (iteration, target, group_size)):
+        raise ValueError("update counters must be integers")
+    if not 0 <= iteration <= target or group_size < 1:
+        raise ValueError("update counters or execution group size are invalid")
+    remaining = target - iteration
+    return 0 if remaining == 0 else group_size if remaining >= group_size else 1
+
+
+@contextmanager
+def unit_lock(directory):
+    """Prevent two processes from updating or checkpointing the same training unit."""
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / "training.lock").open("a+") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        yield
+
+
+def new_attempt(directory):
+    """Keep each process failure distinct from later checkpoint-resume attempts."""
+    attempts = directory / "attempts"
+    attempts.mkdir(exist_ok=True)
+    numbers = [int(path.name.removeprefix("attempt-")) for path in attempts.glob("attempt-*")]
+    number = max(numbers, default=0) + 1
+    path = attempts / f"attempt-{number:04d}"
+    path.mkdir()
+    return number, path
+
+
+def prepare_unit(directory, specification):
+    """Refuse output reuse before replacing any existing experiment records."""
+    marker = directory / "training_unit.json"
+    unit_identity = {"kind": "validated_optimized_training", "specification_digest": canonical_digest(
+        {name: value for name, value in specification.items() if name != "validation"})}
+    if marker.exists():
+        if json.loads(marker.read_text()) != unit_identity:
+            raise ValueError("the existing training unit belongs to a different specification")
+    elif any(path.name != "training.lock" for path in directory.iterdir()):
+        raise ValueError("the selected unit already contains non-training experiment records")
+    else:
+        atomic_json(marker, unit_identity)
+
+
+class TrainingExecution:
+    """Use the validated Executor while retaining report windows across saves."""
+
+    def __init__(self, executor, paired, jax, numpy, jnp, report=None):
+        """Keep physical state and pending metrics without reinitializing policy schedules."""
+        self.executor, self.paired, self.jax = executor, paired, jax
+        self.numpy, self.jnp = numpy, jnp
+        self.report = report or {"pending_sums": None, "pending_count": 0, "last_report_iteration": 0}
+
+    def advance(self, state, count, iteration):
+        """Complete original updates and publish only complete reporting intervals."""
+        options = self.executor.options
+        if options["report_readout"] == "none":
+            # Before: 3 updates remain for a group of 5; after: three unpadded one-update calls.
+            if count == self.executor.group_size:
+                state, metrics = self.executor.run(state, count, initial_iteration=iteration)
+            elif count == 1 and count < self.executor.group_size:
+                state, metrics = self.executor.one(state)
+            else:
+                raise ValueError("training call does not match its validated execution group or tail")
+            return state, metrics, []
+        if count != 1:
+            raise ValueError("reported training must advance one complete update at a time")
+
+        # This is Executor's report operation with its accumulator retained between calls.
+        state, metrics = self.executor.one(state)
+        per_update = options["report_readout"] == "per_update"
+        values = self.jax.device_get(metrics) if per_update else metrics
+        arrays = self.numpy if per_update else self.jnp
+        self.report["pending_sums"] = self.paired.accumulate_report(self.report["pending_sums"], values, arrays)
+        self.report["pending_count"] += 1
+        reports = []
+        interval = options["report_every_iterations"]
+        if self.report["pending_count"] == interval:
+            window = self.report["pending_sums"] if per_update else self.jax.device_get(self.report["pending_sums"])
+            reports.append({"iteration": iteration + 1, "window_updates": interval,
+                            "metrics": self.paired.finish_report(window, interval)})
+            self.report = {"pending_sums": None, "pending_count": 0, "last_report_iteration": iteration + 1}
+        return state, metrics, reports
+
+
+def run(arguments):
+    """Train only after admission, restoring schedules and full state together."""
+    from post_comparison_validation import validate_training_admission
+
+    # Admission rereads raw evidence; a flag or an old receipt alone never starts training.
+    specification = validate_specification(validate_training_admission(arguments.final_spec))
+    source_root = Path(specification["source_root"]).resolve(strict=True)
+    source_receipt(source_root, specification["source_commit"])
+    helper_commit = subprocess.check_output(["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"], text=True).strip()
+    helpers = source_receipt(PROJECT_ROOT, helper_commit, [str((SCRIPT_ROOT / name).relative_to(PROJECT_ROOT))
+        for name in ("train_optimized.py", "post_comparison_validation.py", "controller.py", "ideas.py")])
+    runtime = enforce_runtime(specification["runtime_environment"], os.environ)
+    host = socket.gethostname().split(".")[0]
+    if not os.environ.get("SLURM_JOB_ID") and host not in {"serval02", "jaguar03"}:
+        raise RuntimeError("final training requires a compute allocation or an authorized direct compute host")
+    for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):
+        if not (arguments.run_dir / name).is_file():
+            raise ValueError("the campaign is missing its launch-time record: " + name)
+
+    directory = arguments.run_dir / "data" / arguments.unit_id
+    with unit_lock(directory):
+        assets = verify_assets(specification["asset_record"], os.environ)
+        prepare_unit(directory, specification)
+        attempt, attempt_directory = new_attempt(directory)
+        _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory)
+
+
+def _train(arguments, specification, source_root, helpers, runtime, assets, directory, attempt, attempt_directory):
+    """Keep numerical imports and device work inside the admitted, locked unit."""
+    stop = {"reason": None}
+    started = time.monotonic()
+
+    def request_stop(signum, frame):
+        """Save after the active complete update/group instead of interrupting device state."""
+        stop["reason"] = signal.Signals(signum).name
+
+    def progress(value):
+        """Publish the current process attempt without inheriting an earlier failure."""
+        record = {**value, "attempt": attempt, "pid": os.getpid(), "time": utc_now()}
+        atomic_json(attempt_directory / "progress.json", record)
+        atomic_json(directory / "progress.json", record)
+
+    for signum in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT):
+        signal.signal(signum, request_stop)
+    progress({"state": "validating_runtime"})
+    try:
+        # Load the Executor and numerical implementation from the admitted source only.
+        sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "src"))
+        sys.path.insert(0, str(source_root / "10_jax_exploration_platform" / "scripts" / "atari_pixel_campaign"))
+        if "jax" in sys.modules:
+            raise RuntimeError("JAX was imported before the validated runtime settings were applied")
+        import jax
+        import jax.numpy as jnp
+        import numpy as np
+        paired = importlib.import_module("paired_benchmark")
+        from exploration_platform.atari_pixels.config import PixelPPOConfig
+        from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
+        from exploration_platform.atari_pixels.training import PixelPPORND
+        expected_paired = source_root / "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+        if Path(paired.__file__).resolve() != expected_paired:
+            raise ValueError("the Executor was not imported from its admitted source")
+        jax.config.update("jax_enable_x64", True)
+        jax.config.update("jax_default_matmul_precision", "highest")
+        devices = jax.devices()
+        if len(devices) != 1 or devices[0].platform != "gpu":
+            raise RuntimeError("final training requires exactly one visible GPU")
+        device_kind = devices[0].device_kind
+        hardware_class = ("h100" if "H100" in device_kind else
+                          "jaguar03_rtx_a4500" if "A4500" in device_kind and socket.gethostname().split(".")[0] == "jaguar03"
+                          else "unsupported")
+        if hardware_class != specification["hardware_class"]:
+            raise RuntimeError("the actual GPU differs from the admitted hardware class")
+        query = subprocess.check_output(["nvidia-smi", "--query-gpu=index,name,memory.total,driver_version,uuid",
+                                         "--format=csv,noheader"], text=True).strip()
+        backend = {"device_kind": device_kind, "driver_version": query.splitlines()[0].split(",")[3].strip(),
+                   "packages": {name: metadata.version(name) for name in PACKAGE_NAMES}}
+        identity = checkpoint_identity(specification, helpers, runtime, backend, assets)
+        identity_path = directory / "training_identity.json"
+        if identity_path.exists() and json.loads(identity_path.read_text()) != identity:
+            raise ValueError("the existing training unit has a different identity")
+        atomic_json(identity_path, identity)
+        atomic_json(directory / "final_specification.json", specification)
+        atomic_json(directory / "validation_receipt.json", specification["validation"])
+        atomic_json(directory / "arguments.json", {key: str(value) if isinstance(value, Path) else value
+                                                  for key, value in vars(arguments).items()})
+        atomic_json(directory / "hardware.json", {"hostname": socket.gethostname(), "device_kind": device_kind,
+                    "gpu_query": query,
+                    "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""), "pid": os.getpid(),
+                    "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES", ""),
+                    "runtime_environment": runtime, "backend": backend})
+        configuration = specification["configuration"]
+        config = PixelPPOConfig(**configuration["learner"])
+        environment = AtariPixelEnvironment(**configuration["environment"])
+        trainer = PixelPPORND(config, environment)
+        executor = paired.Executor(trainer, configuration["execution"])
+        checkpoint = directory / "checkpoints/latest.pkl"
+        prior_seconds = 0.0
+        if checkpoint.exists():
+            payload = load_checkpoint(checkpoint, identity)
+            state = paired.device_copy(payload["state"])
+            report = payload["report_state"]
+            if configuration["execution"]["report_readout"] == "scheduled" and report["pending_sums"] is not None:
+                report["pending_sums"] = paired.device_copy(report["pending_sums"])
+            prior_seconds = payload["elapsed_seconds"]
+        else:
+            progress({"state": "initializing"})
+            state = trainer.initialize(tuple(specification["copy_seeds"]))
+            jax.block_until_ready(state)
+            progress({"state": "normalization_warmup"})
+            state = trainer.warmup(state)
+            jax.block_until_ready(state)
+            report = None
+        execution = TrainingExecution(executor, paired, jax, np, jnp, report)
+        update = int(jax.device_get(state.iteration))
+        target = config.total_iterations
+        validate_report_state(execution.report, configuration["execution"], update)
+        atomic_json(directory / "config_resolved.json", configuration)
+        append_record(directory / "metrics.jsonl", {"record": "resumed" if checkpoint.exists() else "initialized",
+                      "update": update, "process_seconds": time.monotonic() - started, "time": utc_now()})
+
+        def checkpoint_now():
+            """Copy every state leaf and pending report value before atomic serialization."""
+            jax.block_until_ready(state)
+            save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report), identity,
+                            update, prior_seconds + time.monotonic() - started)
+
+        # The first save avoids repeating completed normalization warmup after interruption.
+        checkpoint_now()
+        last_checkpoint = time.monotonic()
+        while update < target and stop["reason"] is None:
+            if arguments.maximum_seconds and time.monotonic() - started >= arguments.maximum_seconds:
+                stop["reason"] = "maximum_seconds"
+                break
+            count = next_update_count(update, target, executor.group_size)
+            before = update
+            call_started = time.monotonic()
+            state, metrics, reports = execution.advance(state, count, before)
+            jax.block_until_ready(state)
+            update = int(jax.device_get(state.iteration))
+            if update != before + count:
+                raise RuntimeError("the learner counter did not advance by the exact complete update count")
+            # Grouped metrics describe its last update; scheduled rows retain the original full windows.
+            if configuration["execution"]["report_readout"] == "none":
+                reports = [{"iteration": update, "window_updates": 1,
+                            "metrics_scope": "last_update_in_execution_group", "metrics": jax.device_get(metrics)}]
+            for row in reports:
+                values = {name: np.asarray(value).tolist() for name, value in row["metrics"].items()}
+                append_record(directory / "metrics.jsonl", {"record": "training_metrics", **row, "metrics": values})
+            status = {"state": "running", "update": update, "target_updates": target,
+                        "updates_in_call": count, "seconds": time.monotonic() - call_started,
+                        "process_elapsed_seconds": time.monotonic() - started,
+                        "recorded_elapsed_seconds_total": prior_seconds + time.monotonic() - started,
+                        "steps_per_copy": update * config.batch_size,
+                        "copy_progress": [{"seed": seed, "updates": update,
+                                           "transitions": update * config.batch_size,
+                                           "transitions_per_environment": update * config.num_steps}
+                                          for seed in specification["copy_seeds"]],
+                        "pending_report_updates": execution.report["pending_count"],
+                        "time": utc_now(), "pid": os.getpid()}
+            progress(status)
+            if time.monotonic() - last_checkpoint >= arguments.checkpoint_seconds:
+                checkpoint_now()
+                last_checkpoint = time.monotonic()
+        checkpoint_now()
+        result = {"completed": update == target, "update": update, "target_updates": target,
+                  "requested_steps_per_copy": config.total_timesteps, "steps_per_copy": update * config.batch_size,
+                  "copy_seeds": specification["copy_seeds"], "copies": config.n_copies,
+                  "pending_report_updates": execution.report["pending_count"],
+                  "last_report_iteration": execution.report["last_report_iteration"],
+                  "stop_reason": "completed" if update == target else stop["reason"],
+                  "process_elapsed_seconds": time.monotonic() - started,
+                  "recorded_elapsed_seconds_total": prior_seconds + time.monotonic() - started,
+                  "identity_digest": canonical_digest(identity), "attempt": attempt, "time": utc_now()}
+        atomic_json(directory / "result.json", result)
+        atomic_json(attempt_directory / "result.json", result)
+        progress({**result, "state": "completed" if result["completed"] else "checkpointed"})
+        print(json.dumps(result, allow_nan=False), flush=True)
+    except Exception as error:
+        # A failed run remains failed; recovery starts from its last complete checkpoint.
+        failure = {"error": repr(error), "time": utc_now(), "pid": os.getpid(), "attempt": attempt}
+        atomic_json(attempt_directory / "failure.json", failure)
+        atomic_json(directory / "failure.json", failure)
+        progress({"state": "failed", "error": repr(error)})
+        raise
+
+
+def parse_arguments(argv=None):
+    """Allow placement and stop boundaries without exposing learner overrides."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--final-spec", type=Path, required=True)
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--unit-id", required=True)
+    parser.add_argument("--checkpoint-seconds", type=int, default=1200)
+    parser.add_argument("--maximum-seconds", type=float, default=0)
+    arguments = parser.parse_args(argv)
+    if (Path(arguments.unit_id).name != arguments.unit_id or arguments.unit_id in {"", ".", ".."}
+            or not 0 < arguments.checkpoint_seconds <= 1200
+            or not math.isfinite(arguments.maximum_seconds) or arguments.maximum_seconds < 0):
+        parser.error("use a plain unit name, checkpoint interval in (0,1200], and nonnegative finite maximum seconds")
+    arguments.run_dir = arguments.run_dir.resolve(strict=True)
+    arguments.final_spec = arguments.final_spec.resolve(strict=True)
+    return arguments
+
+
+if __name__ == "__main__":
+    run(parse_arguments())

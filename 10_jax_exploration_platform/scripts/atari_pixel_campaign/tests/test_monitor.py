@@ -103,7 +103,10 @@ class MonitorTests(unittest.TestCase):
                 "configuration": {"n_copies": 2}, "rounds": 7}))
             (unit / "progress.json").write_text(json.dumps({"state": "initializing", "variant": "candidate"}))
             rows = monitor.unit_rows(root)
+            (unit / "progress.json").write_text(json.dumps({"state": "correctness_passed"}))
+            checked_rows = monitor.unit_rows(root)
         self.assertEqual(rows[0]["progress"], "0/7 rounds; initializing; candidate")
+        self.assertEqual(checked_rows[0]["progress"], "0/7 rounds; correctness passed")
 
 
 if __name__ == "__main__":

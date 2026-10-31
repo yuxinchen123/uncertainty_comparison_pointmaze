@@ -103,7 +103,7 @@ def unit_rows(directory):
         measured = measurement_progress(value, result)
         if measured is not None:
             progress = measured
-        elif specification and state in {"initializing", "normalization_warmup"}:
+        elif specification and phase not in {"running", "completed", "failed", "checkpointed"} and state != "waiting":
             progress = f"0/{specification['rounds']} rounds; {progress}"
         if age > 2400 and state not in ("completed", "checkpointed", "failed", "waiting"):
             progress += f"; no record for {int(age / 60)} min"
