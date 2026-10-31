@@ -1,0 +1,14 @@
+{
+  "kind": "h100_nvl_site_validation_waiting_status",
+  "checked_at_utc": "2026-10-31T21:50:16.792046+00:00",
+  "job_id": "6778886",
+  "cluster": "uva",
+  "scheduler_record": "JobId=6778886 JobName=atari_h100_nvl_site_validation\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=412 Nice=0 Account=sl5nw_base QOS=normal\n   JobState=PENDING Reason=Resources Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A\n   SubmitTime=2026-10-31T17:48:26 EligibleTime=2026-10-31T17:48:27\n   AccrueTime=2026-10-31T17:48:27\n   StartTime=2026-11-01T03:25:23 EndTime=2026-11-01T06:25:23 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-31T17:50:05 Scheduler=Backfill:*\n   Partition=gpu AllocNode:Sid=portal05:328369\n   ReqNodeList=(null) ExcNodeList=(null)\n   NodeList= SchedNodeList=serval07\n   NumNodes=1-1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0\n   Features=h100_94gb&amd_epyc_9354 DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch\n   WorkDir=/p/rlprojects/RND\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_6778886.log\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_6778886.log\n   Power=\n   TresPerNode=gres/gpu:nvidia_h100_nvl:1\n   TresPerTask=cpu:8\n   \n\n",
+  "session_cron_id": "8eb6fe22-fb3a-4f7c-8c2e-f11b4968b3dd",
+  "persistent_monitor_job_id": "6778089",
+  "cadence_seconds": 1200,
+  "current_site_status": "waiting_for_slurm_allocation",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
