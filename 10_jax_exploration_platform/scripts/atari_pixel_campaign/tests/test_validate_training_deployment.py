@@ -403,9 +403,32 @@ class TrainingDeploymentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "staged helper differs"):
             deployment.validate_deployment(self.specification)
 
+    def test_api_and_saved_spec_receipts_keep_the_original_specification_path_explicit(self):
+        """API receipts name no source file; CLI-style receipts retain and hash their explicit original file."""
+        direct = deployment.validate_deployment(self.specification)
+        self.assertIsNone(direct["specification_path"])
+        path = self.write(self.directory / "deployment_specification.json", self.specification)
+        saved = deployment.validate_deployment(self.specification, specification_path=path)
+        self.assertEqual(saved["specification_path"], str(path))
+        self.assertIn({"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}, saved["evidence"])
+        self.assertEqual({key: value for key, value in direct.items() if key not in {"specification_path", "evidence"}},
+                         {key: value for key, value in saved.items() if key not in {"specification_path", "evidence"}})
+
+    def test_saved_spec_retains_original_flag_whitespace_and_rebuilds_exactly(self):
+        """Runtime normalization cannot rewrite the original saved specification identity."""
+        original = copy.deepcopy(self.specification)
+        original["runtime_environment"]["XLA_FLAGS"] = "  " + self.runtime["XLA_FLAGS"] + "  "
+        path = self.write(self.directory / "deployment_specification.json", original)
+        saved = deployment.validate_deployment(original, specification_path=path)
+        self.assertEqual(saved["specification"], original)
+        self.assertEqual(saved["specification_digest"], deployment.validation.canonical_digest(original))
+        self.assertEqual(saved["runtime_environment"], self.runtime)
+        self.assertEqual(deployment.validate_deployment(saved["specification"], specification_path=saved["specification_path"]), saved)
+
     def test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed(self):
         """Target binaries, public Git source, global gates and prepared helpers all resolve explicitly."""
-        original = deployment.validate_deployment(self.specification)
+        specification_path = self.write(self.directory / "deployment_specification.json", self.specification)
+        original = deployment.validate_deployment(self.specification, specification_path=specification_path)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         staging = Path(temporary.name)
@@ -430,7 +453,8 @@ class TrainingDeploymentTests(unittest.TestCase):
         resolver = portable_evidence.ExactPathResolver(manifest_path)
         shutil.rmtree(self.directory)
         shutil.rmtree(self.fixture.directory)
-        self.assertEqual(deployment.validate_deployment(self.specification, resolver=resolver), original)
+        self.assertEqual(deployment.validate_deployment(self.specification, resolver=resolver, specification_path=specification_path), original)
+        self.assertEqual(original["specification_path"], str(specification_path))
         self.assertNotIn("jax", sys.modules)
         self.assertNotIn("numpy", sys.modules)
 

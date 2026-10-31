@@ -388,6 +388,7 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         raise ValueError("this deployment specification requires the exact version-one H100 target fields")
     if specification_path is not None and evidence.read(specification_path) != specification:
         raise ValueError("the deployment specification changed")
+    original_specification = specification
     runtime = validation.runtime_environment(specification["runtime_environment"])
     specification = {**specification, "runtime_environment": runtime}
     final = evidence.read(specification["final_verification"])
@@ -434,7 +435,9 @@ def validate_deployment(specification, resolver=None, specification_path=None):
             "sha256": hashlib.sha256(evidence.file(specification["final_verification"])).hexdigest(),
             "specification_digest": final["specification_digest"]},
         "combination": combination, "packing": packing, "seed_admission": seeds, "executions": observations,
-        "specification": specification, "specification_digest": validation.canonical_digest(specification), "evidence": evidence.records()}
+        "specification": original_specification, "specification_digest": validation.canonical_digest(original_specification),
+        "specification_path": evidence.path_identity(specification_path) if specification_path is not None else None,
+        "evidence": evidence.records()}
 
 
 def match_actual_backend(receipt, server, hardware, installed_backend, loaded_gpu_libraries):
