@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "pregather_fifth_submission_preflight_failure",
+  "observed_at_utc": "2026-10-31T18:26:01.139544+00:00",
+  "failed_job_id": "6778300",
+  "failed_state": "FAILED",
+  "failed_exit_code": "1:0",
+  "comparison_attempts_consumed": 0,
+  "approval": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/infrastructure_retries/pregather_cuda_async/approvals/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "9337b37bda3d610baf925fafa378c21f4d013ca3394d0a28db33ecd00a892ea5"
+  },
+  "prior_lease": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/leases/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "8113124640413338dba436f12d7ef7a7dd46dbfa1588bd0cdb9ee76217da5d4f"
+  },
+  "prior_case": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/failed/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "sha256": "d661816f161c9a0b756d9cb3d376c1553e662292204dfc881095aacf4613037e"
+  },
+  "failed_log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/gather_async_comparison_6778300.log",
+    "sha256": "a029282d147841f28cfe656f9cfa1eb2cdd3e4bcfe14043c8161cb4b350a57c9"
+  },
+  "previous_launch_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-16_gather-epoch-minibatches-in-advance_allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/launch_plan.json",
+    "sha256": "99bc9dd0e58c039a6ed6ebdefe6bf86a88617e9382f36efa30966ca6077b3948"
+  },
+  "previous_job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-16_gather-epoch-minibatches-in-advance_allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/job.sbatch",
+    "sha256": "0d4647ffc2e7c4d30cba246ead102793e890e57611393a2cae5077ecb841f18b"
+  },
+  "previous_submission_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-16_gather-epoch-minibatches-in-advance_allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/submission_receipt.json",
+    "sha256": "2cef7915ca6ee8902358c6041817b3fa566eeb0d87b644ba669e450b89bf42cd"
+  },
+  "previous_submission_intent": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-16_gather-epoch-minibatches-in-advance_allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/submission_intent.json",
+    "sha256": "2cef7915ca6ee8902358c6041817b3fa566eeb0d87b644ba669e450b89bf42cd"
+  },
+  "sacct": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/failed_submission_sacct.txt",
+    "sha256": "1fff40966673a85c190515fef77adbf2c79abc5203e5c872e6c29fb4a33c83ed"
+  },
+  "scontrol_query": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/failed_submission_scontrol_query.json",
+    "sha256": "27cfd7ebbefa153f0acd2ff8d4df73e78778baea4f76206dfd3faed513967833"
+  },
+  "read_commands": [
+    [
+      "sacct",
+      "-j",
+      "6778300",
+      "--format=JobID,JobName,User,NodeList,State,ExitCode,Start,End,AllocTRES,SubmitLine",
+      "-P"
+    ],
+    [
+      "scontrol",
+      "show",
+      "job",
+      "6778300"
+    ]
+  ],
+  "verified_absent_paths": [
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/infrastructure_retries/pregather_cuda_async/claims/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af.json",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-23__gather_epoch_minibatches_in_advance__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0005",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-11-16_gather-epoch-minibatches-in-advance_allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1"
+  ],
+  "held_queue_state": "failed",
+  "current_case_attempt": 4,
+  "next_approved_attempt": 5,
+  "sixth_attempt_permitted": false,
+  "diagnosis": "The previous script resolved and exported the GPU UUID before srun. The worker requires the UUID at entry. Slurm may replace CUDA_VISIBLE_DEVICES in the step; the failed job did not record the actual value or cgroup, so that clause is not established by the old log.",
+  "correction": "Resolve and export the physical GPU UUID inside srun before invoking the unchanged approved helper."
+}

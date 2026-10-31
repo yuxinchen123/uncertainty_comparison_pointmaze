@@ -1,0 +1,18 @@
+{
+  "checked_at_utc": "2026-10-31T18:27:53.953416+00:00",
+  "stdlib_wrapper_tests_passed": 3,
+  "test_command": [
+    "/usr/bin/python3",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-11-25_gather-epoch-minibatches-in-advance_step-resolved-allocator-cuda-async_attempt-5_policies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-1_seed-start-1/test_step_wrapper.py",
+    "-v"
+  ],
+  "bash_syntax_checks": {
+    "job.sbatch": "passed",
+    "inside_step.sh": "passed"
+  },
+  "python_ast_checks": {
+    "record_step_metadata.py": "passed",
+    "test_step_wrapper.py": "passed"
+  },
+  "real_gpu_or_numerical_execution_performed": false
+}

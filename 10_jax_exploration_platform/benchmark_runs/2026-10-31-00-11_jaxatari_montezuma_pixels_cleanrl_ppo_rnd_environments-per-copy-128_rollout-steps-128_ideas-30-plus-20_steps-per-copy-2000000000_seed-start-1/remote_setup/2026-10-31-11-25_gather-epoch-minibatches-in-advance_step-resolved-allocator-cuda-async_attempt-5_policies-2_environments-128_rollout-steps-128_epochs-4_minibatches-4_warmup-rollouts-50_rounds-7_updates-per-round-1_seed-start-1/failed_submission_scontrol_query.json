@@ -1,0 +1,12 @@
+{
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "6778300"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "slurm_load_jobs error: Invalid job id specified\n",
+  "note": "The job aged out of scontrol after the initial read-only audit; sacct remains the preserved terminal record."
+}
