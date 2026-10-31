@@ -1,0 +1,16 @@
+{
+  "kind": "h100_nvl_site_capture_and_admission_archive_review",
+  "reviewed_at_utc": "2026-10-31T23:27:38.621034+00:00",
+  "metadata_tests_passed": 28,
+  "independent_review_passed": true,
+  "resolver_ast_unchanged": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "1564533a5620453cc7ab44f67d3dfb62aa0c7ed79fb56bfda2f74dc384eada99",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_site_validation.py": "3f8aed04179e07fc0bae584075bf1e215c72a401ad1dae2baf22b62134cab215"
+  },
+  "old_failed_job_id": "6778886",
+  "new_job_submitted": false,
+  "site_plan_schema_version": 2,
+  "immutable_admission_files": 4,
+  "scope": "Record allowlisted allocation observations before unchanged identity checks; capture immutable admission bytes. No worker or source admission change."
+}

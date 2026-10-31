@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import stat
 import subprocess
 import sys
 import tempfile
@@ -101,11 +102,128 @@ class H100SiteTests(unittest.TestCase):
             return "0::/slurm/job_333/step_0/task_0\n" if path == Path("/proc/self/cgroup") else original_read(path, *args, **kwargs)
         with patch.dict(os.environ, self.environment, clear=True), patch.object(site_validation.socket, "gethostname", return_value="serval06"), \
                 patch.object(Path, "read_text", read), patch.object(site_validation, "query", side_effect=[self.csv.replace(site_validation.DRIVER, "580.159.04"), self.xml]), \
+                patch.object(site_validation, "capture_allocation_details", return_value={"test": "metadata capture"}), \
                 patch.object(site_validation, "run_child") as child:
             with self.assertRaisesRegex(ValueError, "stop before JAX"):
                 site_validation.placement(self.run, self.plan)
         child.assert_not_called()
         self.assertFalse((self.run / "site_assignment.json").exists())
+
+    def test_rejected_mapping_preserves_original_allowlisted_observations_before_validation(self):
+        """A physical-allocation mismatch retains actual fields and GPU records without an inherited secret."""
+        original_read = Path.read_text
+        def read(path, *args, **kwargs):
+            """Supply only this fixture's owned cgroup while leaving saved observations real."""
+            return "0::/slurm/job_333/step_0/task_0\n" if path == Path("/proc/self/cgroup") else original_read(path, *args, **kwargs)
+        environment = {**self.environment, "SLURM_JOB_GPUS": "6", "SLURM_STEP_GPUS": "6",
+            "SLURM_STEP_ID": "0", "SLURM_GPUS_ON_NODE": "1", "PRIVATE_TOKEN": "must not be recorded"}
+        with patch.dict(os.environ, environment, clear=True), patch.object(site_validation.socket, "gethostname", return_value="serval09"), \
+                patch.object(Path, "read_text", read), patch.object(site_validation, "query", side_effect=[self.csv, self.xml]), \
+                patch.object(site_validation, "capture_allocation_details", return_value={"test": "metadata capture"}), \
+                patch.object(site_validation, "run_child") as child:
+            with self.assertRaisesRegex(ValueError, "exact physical GPU"):
+                site_validation.placement(self.run, self.plan)
+        observation = site_validation.read(self.run / "allocation_observation.json")
+        self.assertEqual(observation["allocation_environment"]["SLURM_JOB_GPUS"], "6")
+        self.assertEqual(observation["allocation_environment"]["SLURM_STEP_GPUS"], "6")
+        self.assertEqual(observation["allocation_environment"]["CUDA_VISIBLE_DEVICES"], "0")
+        self.assertEqual(observation["gpu_csv"], self.csv)
+        self.assertEqual(observation["gpu_xml"], self.xml)
+        self.assertNotIn("must not be recorded", (self.run / "allocation_observation.json").read_text())
+        self.assertNotIn("PRIVATE_TOKEN", observation["allocation_environment"])
+        self.assertFalse((self.run / "site_assignment.json").exists())
+        child.assert_not_called()
+
+    def test_missing_gpu_fields_are_recorded_explicitly_instead_of_inferred_as_remapped(self):
+        """An absent job/step GPU identity remains distinguishable from an observed conflicting value."""
+        original_read = Path.read_text
+        def read(path, *args, **kwargs):
+            """Provide the owned cgroup only; preserve ordinary filesystem behavior for captured receipts."""
+            return "0::/slurm/job_333/step_0/task_0\n" if path == Path("/proc/self/cgroup") else original_read(path, *args, **kwargs)
+        environment = {name: value for name, value in self.environment.items() if name not in ("SLURM_JOB_GPUS", "SLURM_STEP_GPUS")}
+        with patch.dict(os.environ, environment, clear=True), patch.object(site_validation.socket, "gethostname", return_value="serval09"), \
+                patch.object(Path, "read_text", read), patch.object(site_validation, "query", side_effect=[self.csv, self.xml]), \
+                patch.object(site_validation, "capture_allocation_details", return_value={"test": "metadata capture"}):
+            with self.assertRaisesRegex(ValueError, "exact physical GPU"):
+                site_validation.placement(self.run, self.plan)
+        observation = site_validation.read(self.run / "allocation_observation.json")
+        for name in ("SLURM_JOB_GPUS", "SLURM_STEP_GPUS"):
+            self.assertIsNone(observation["allocation_environment"][name])
+            self.assertIn(name, observation["absent_allocation_fields"])
+
+    def test_extra_allocation_capture_queries_only_owned_job_and_gpu_device_metadata(self):
+        """Additional diagnosis never queries another job, user, GPU process or unrelated configuration file."""
+        config = Path("/etc/slurm/gres.conf")
+        original_read = Path.read_text
+        def read(path, *args, **kwargs):
+            """Supply explicit GPU mappings and prove unrelated configuration lines are not recorded."""
+            if path == config:
+                return "# comment\nNodeName=serval[06-09] AutoDetect=nvml\nName=gpu File=/dev/nvidia7\nUnrelated=private-value\n"
+            return original_read(path, *args, **kwargs)
+        information = types.SimpleNamespace(st_mode=stat.S_IFCHR | 0o666, st_rdev=os.makedev(195, 7))
+        with patch.object(site_validation.subprocess, "run", return_value=types.SimpleNamespace(returncode=0, stdout="JobId=333 GRES_IDX=0", stderr="")) as query, \
+                patch.object(Path, "glob", return_value=[Path("/dev/nvidia7")]), patch.object(Path, "lstat", return_value=information), \
+                patch.object(Path, "exists", return_value=True), patch.object(Path, "read_text", read):
+            captured = site_validation.capture_allocation_details({"job_id": "333", "ledger_prefix": ["333"]})
+        query.assert_called_once_with(["scontrol", "show", "job", "-d", "333"], capture_output=True, text=True, check=False, timeout=20)
+        self.assertEqual(captured["device_files"], [{"path": "/dev/nvidia7", "character_device": True, "major": 195, "minor": 7}])
+        self.assertEqual(len(captured["gpu_gres_mapping"]["gpu_mapping_lines"]), 2)
+        self.assertNotIn("private-value", json.dumps(captured))
+        with patch.object(site_validation.subprocess, "run") as query:
+            with self.assertRaisesRegex(ValueError, "exact owned job"):
+                site_validation.capture_allocation_details({"job_id": "334", "ledger_prefix": ["333"]})
+        query.assert_not_called()
+
+    def admission_fixture(self):
+        """Construct four exact raw admission documents and a separate new preparation directory."""
+        original = self.run / "original_admission"
+        directory = self.run / "new_prepared_site"
+        directory.mkdir()
+        files = []
+        for name in ("SOURCE_AND_GATES_READY.json", "reference_configuration.json", "h100_gate.json", "a4500_gate.json"):
+            path = self.write(original / name, {"original_document": name})
+            files.append(site_validation.receipt(path))
+        return directory, {"files": files}
+
+    def test_admission_archive_keeps_raw_bytes_and_original_identity_after_originals_removed(self):
+        """Historical copied evidence remains valid after live admission changes or is removed."""
+        directory, admission = self.admission_fixture()
+        archive = site_validation.archive_admission(directory, admission)
+        original_records = copy.deepcopy(admission["files"])
+        for original, item in zip(admission["files"], archive["files"]):
+            self.assertEqual(item["original"], original)
+            self.assertEqual(Path(item["captured"]["path"]).read_bytes(), Path(original["path"]).read_bytes())
+            Path(original["path"]).unlink()
+        self.assertEqual(site_validation.validate_admission_archive(directory, admission, archive), archive)
+        self.assertEqual([item["original"] for item in archive["files"]], original_records)
+
+    def test_admission_archive_rejects_changed_copy_missing_record_or_substituted_path(self):
+        """Recomputed transport metadata cannot replace the exact captured original documents."""
+        directory, admission = self.admission_fixture()
+        archive = site_validation.archive_admission(directory, admission)
+        for field in (None, {**archive, "files": archive["files"][:-1]},
+                {**archive, "files": list(reversed(archive["files"]))}):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                site_validation.validate_admission_archive(directory, admission, field)
+        substituted = copy.deepcopy(archive)
+        substituted["files"][0]["captured"]["path"] = admission["files"][0]["path"]
+        with self.assertRaisesRegex(ValueError, "exact captured path"):
+            site_validation.validate_admission_archive(directory, admission, substituted)
+        target = Path(archive["files"][0]["captured"]["path"])
+        target.write_bytes(target.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "copy changed"):
+            site_validation.validate_admission_archive(directory, admission, archive)
+
+    def test_admission_capture_rejects_changed_original_and_duplicate_records(self):
+        """Preparation never records newly changed bytes under a previously admitted SHA."""
+        directory, admission = self.admission_fixture()
+        duplicate = {"files": [admission["files"][0]] * 4}
+        with self.assertRaisesRegex(ValueError, "distinct"):
+            site_validation.archive_admission(directory, duplicate)
+        Path(admission["files"][0]["path"]).write_bytes(b'{"changed":true}\n')
+        with self.assertRaisesRegex(ValueError, "changed before"):
+            site_validation.archive_admission(directory, admission)
+        self.assertFalse((directory / "admission_files").exists())
 
     def test_original_gate_commands_are_complete_and_selector_free(self):
         """A site validation cannot replace the original gates with a subset or a worker launch."""
@@ -424,7 +542,7 @@ class H100SiteTests(unittest.TestCase):
             software={"result": site_validation.receipt(self.write(self.run / "software_result.json", {})),
                 "installed_backend": reference["shared_installed_backend"], "asset_receipt": reference["shared_asset_receipt"],
                 "packages": {name: "captured-version" for name in site_validation.PACKAGE_NAMES}})
-        plan.update(schema_version=1, kind="h100_nvl_slurm_site_validation", source_commit=site_validation.SOURCE_COMMIT,
+        plan.update(schema_version=2, kind="h100_nvl_slurm_site_validation", source_commit=site_validation.SOURCE_COMMIT,
             runtime_environment=site_validation.RUNTIME, gate_environment_policy=site_validation.GATE_ENVIRONMENT_POLICY,
             job_shape=site_validation.JOB_SHAPE, submission_control=site_validation.SUBMISSION_CONTROL,
             reference_updates=1, workers_permitted=False, campaign_claims_permitted=False,
@@ -433,7 +551,10 @@ class H100SiteTests(unittest.TestCase):
             "files": {site_validation.PREFIX + name: "b" * 64 for name in site_validation.HELPERS}}
         paths = ["10_jax_exploration_platform/src/exploration_platform/__init__.py"]
         plan["numerical_source"].update(source_commit=site_validation.SOURCE_COMMIT, files={name: "c" * 64 for name in paths})
-        plan["admission"] = {"source_root": plan["numerical_source"]["source_root"], "files": []}
+        admission_files = [site_validation.receipt(self.write(self.run / "admission" / (name + ".json"), {"record": name}))
+            for name in ("source_and_gates", "reference_configuration", "h100_gate", "a4500_gate")]
+        plan["admission"] = {"source_root": plan["numerical_source"]["source_root"], "files": admission_files}
+        plan["admission_archive"] = site_validation.archive_admission(directory, plan["admission"])
         plan["configuration"]["learner"]["learning_rate"] = .0001
         expected_configuration = copy.deepcopy(plan["configuration"])
         expected_reference = copy.deepcopy(reference)
@@ -449,6 +570,11 @@ class H100SiteTests(unittest.TestCase):
             publish(plan)
             site_validation.prepared(directory)
             rebuild.assert_called_once()
+            missing_archive = copy.deepcopy(plan)
+            missing_archive.pop("admission_archive")
+            publish(missing_archive)
+            with self.assertRaisesRegex(ValueError, "admission archive"):
+                site_validation.prepared(directory)
             for scope, field, value in (("learner", "learning_rate", .01), ("environment", "num_envs", 64)):
                 altered = copy.deepcopy(plan)
                 altered["configuration"][scope][field] = value

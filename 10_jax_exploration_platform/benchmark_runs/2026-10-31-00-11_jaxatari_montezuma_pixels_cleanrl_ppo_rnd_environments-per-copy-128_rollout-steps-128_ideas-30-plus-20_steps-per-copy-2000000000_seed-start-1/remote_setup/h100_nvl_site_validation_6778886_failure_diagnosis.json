@@ -1,0 +1,46 @@
+{
+  "kind": "h100_nvl_site_validation_failure_diagnosis",
+  "checked_at_utc": "2026-10-31T23:23:15.545078+00:00",
+  "job_id": "6778886",
+  "scheduler_record": "6778886|FAILED|1:0|serval09|2026-10-31T18:37:55|2026-10-31T18:38:07\n6778886.batch|FAILED|1:0|serval09|2026-10-31T18:37:55|2026-10-31T18:38:07\n6778886.0|FAILED|1:0|serval09|2026-10-31T18:37:56|2026-10-31T18:38:07\n",
+  "failed_before_jax": true,
+  "observed_failure": "The step exposed one H100 NVL with internally consistent model/memory/UUID records. The resolver then rejected either missing Slurm job/step GPU fields or a field that differed from the NVML physical minor and UUID. The original fields were not saved, so these causes cannot yet be distinguished.",
+  "exact_differing_values_available": false,
+  "reason_values_unavailable": "The original helper did not persist the allocation fields or GPU CSV/XML before failing.",
+  "required_next_change": "Preserve allowlisted raw allocation identity before applying the unchanged resolver. Do not guess a remapping or drop identity checks.",
+  "old_failure_preserved": true,
+  "new_worker_admitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "numeric_mapping_error_proven": false,
+  "files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/failure.json",
+      "sha256": "094083c5305b4ba2cd8e2a60d4a2e8da956ab52bc9a39c9e55d2252e4a21df0e"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
+      "sha256": "2a5a9d18f736e399ceaf4b6f2808bc00ee7e2d34a70b178625a6832ef1bba35e"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_6778886.log",
+      "sha256": "9d0d849a2df37671ae64a70c334d37d198bf7d070f9c8d307895fb1bdeeeaad9"
+    }
+  ],
+  "authoritative_background_sources": [
+    {
+      "url": "https://slurm.schedmd.com/gres.html#GPU_Management",
+      "relevance": "NVML index, Linux device minor and cgroup-relative CUDA ordinal are distinct identities."
+    },
+    {
+      "url": "https://slurm.schedmd.com/sbatch.html",
+      "relevance": "SLURM_JOB_GPUS describes global GPU identifiers, not cgroup-relative ordinals."
+    }
+  ],
+  "unproven_causes": [
+    "Both SLURM_JOB_GPUS and SLURM_STEP_GPUS were absent or empty.",
+    "One supplied identifier used a numeric identity different from the NVML physical minor."
+  ],
+  "driver_mismatch_proven": false,
+  "cuda_visible_devices_mismatch_proven": false
+}

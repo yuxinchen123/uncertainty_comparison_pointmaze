@@ -19,6 +19,7 @@ import re
 import shlex
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import time
@@ -40,7 +41,7 @@ RUNTIME = {"JAX_ENABLE_X64": "true", "JAX_DEFAULT_MATMUL_PRECISION": "highest",
            "JAXTARI_SKIP_SPRITE_UPDATE": "1", "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
            "XLA_PYTHON_CLIENT_PREALLOCATE": "false", "OMP_NUM_THREADS": "8",
            "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "PYTHONNOUSERSITE": "1", "PYTHONUNBUFFERED": "1"}
-ALLOCATION_KEYS = ("SLURM_JOB_ID", "SLURM_JOB_GPUS", "SLURM_STEP_GPUS", "SLURM_CPUS_PER_TASK",
+ALLOCATION_KEYS = ("SLURM_JOB_ID", "SLURM_STEP_ID", "SLURM_JOB_GPUS", "SLURM_STEP_GPUS", "SLURM_GPUS_ON_NODE", "SLURM_CPUS_PER_TASK",
                    "SLURM_CPU_BIND_TYPE", "SLURM_CPU_BIND_LIST", "SLURM_CPU_BIND", "CUDA_VISIBLE_DEVICES")
 GATE_ENVIRONMENT_POLICY = {"reject_nonempty_prefixes": ["PYTEST_"], "reject_nonempty_names": ["PYTHONOPTIMIZE"],
                            "cleanrl_reference": "exact original Git blob only", "error_values_recorded": False}
@@ -214,6 +215,47 @@ def check_admission(run, expected):
         raise ValueError("the source admission changed during the site validation; no workers are admitted")
 
 
+def admission_copy_path(directory, index, original):
+    """Give each captured source-admission file an exact location inside its new prepared directory."""
+    return Path(directory) / "admission_files" / ("record-" + str(index + 1) + "_" + Path(original["path"]).name)
+
+
+def archive_admission(directory, admission):
+    """Copy unchanged original admission bytes before publishing the new prepared plan."""
+    files = admission["files"]
+    if len(files) != 4 or len({item["path"] for item in files}) != 4:
+        raise ValueError("capture exactly the four distinct original source-admission files")
+    captured = []
+    for index, original in enumerate(files):
+        # Before: original logical path plus SHA. After: the same bytes at one explicit captured path.
+        contents = Path(original["path"]).read_bytes()
+        if hashlib.sha256(contents).hexdigest() != original["sha256"] or receipt(original["path"]) != original:
+            raise ValueError("an original source-admission file changed before it was captured")
+        target = admission_copy_path(directory, index, original)
+        load("infrastructure_retry").write_once(target, contents)
+        captured.append({"original": original, "captured": receipt(target)})
+    result = {"schema_version": 1, "kind": "original_source_admission_bytes", "files": captured}
+    validate_admission_archive(directory, admission, result)
+    return result
+
+
+def validate_admission_archive(directory, admission, archive):
+    """Verify complete immutable copies without reading a historical mutable admission path."""
+    files = admission["files"]
+    if (not isinstance(archive, dict) or archive.get("schema_version") != 1
+            or archive.get("kind") != "original_source_admission_bytes" or len(files) != 4
+            or len({item["path"] for item in files}) != 4 or len(archive.get("files", [])) != 4):
+        raise ValueError("the prepared plan needs an exact four-file immutable admission archive")
+    for index, (original, item) in enumerate(zip(files, archive["files"])):
+        expected_path = str(admission_copy_path(directory, index, original))
+        if (set(item) != {"original", "captured"} or item["original"] != original
+                or item["captured"].get("path") != expected_path
+                or item["captured"].get("sha256") != original["sha256"]
+                or receipt(expected_path) != item["captured"]):
+            raise ValueError("an immutable admission copy changed its original identity, bytes or exact captured path")
+    return archive
+
+
 def software_reference(result_path, installed_path, assets_path):
     """Rebuild a completed formal UVA packet before using its actual full shared-software map."""
     result_path, installed_path, assets_path = (Path(path).resolve(strict=True) for path in (result_path, installed_path, assets_path))
@@ -296,6 +338,38 @@ def query(arguments):
     return subprocess.check_output(arguments, text=True, timeout=20)
 
 
+def capture_allocation_details(owned):
+    """Record only the owned scheduler row, device-file numbers and GPU-only GRES mapping for diagnosis."""
+    job = owned["job_id"]
+    if not re.fullmatch(r"[1-9][0-9]*", job) or job not in owned["ledger_prefix"]:
+        raise ValueError("diagnostic scheduler capture requires the already verified exact owned job")
+    command = ["scontrol", "show", "job", "-d", job]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=False, timeout=20)
+        scheduler = {"command": command, "returncode": result.returncode, "stdout": result.stdout, "stderr": result.stderr}
+    except subprocess.TimeoutExpired:
+        scheduler = {"command": command, "status": "timeout"}
+    except FileNotFoundError:
+        scheduler = {"command": command, "status": "executable unavailable"}
+    devices = []
+    for path in sorted(Path("/dev").glob("nvidia*")):
+        information = path.lstat()
+        devices.append({"path": str(path), "character_device": stat.S_ISCHR(information.st_mode),
+            "major": os.major(information.st_rdev) if stat.S_ISCHR(information.st_mode) else None,
+            "minor": os.minor(information.st_rdev) if stat.S_ISCHR(information.st_mode) else None})
+    config = Path("/etc/slurm/gres.conf")
+    mapping = {"path": str(config), "status": "absent", "gpu_mapping_lines": []}
+    if config.exists():
+        try:
+            lines = config.read_text().splitlines()
+            mapping.update(status="readable", gpu_mapping_lines=[line for line in lines if line.strip()
+                and not line.lstrip().startswith("#") and ("AutoDetect=" in line or re.search(r"\bName=gpu(?:\s|$)", line))])
+        except PermissionError:
+            mapping["status"] = "permission denied"
+    return {"schema_version": 1, "scheduler": scheduler, "device_files": devices, "gpu_gres_mapping": mapping,
+        "purpose": "diagnosis only; no alternative GPU mapping is accepted"}
+
+
 def require_owned_job(run, environment, cgroup):
     """Require this campaign's UVA ledger before starting any numerical child."""
     job = environment.get("SLURM_JOB_ID", "")
@@ -347,7 +421,7 @@ def prepare(arguments):
     fresh_packages = package_versions(arguments.python)
     if fresh_packages != reference["software"]["packages"]:
         raise ValueError("the chosen interpreter differs from the actual completed shared-software packet")
-    plan = {"schema_version": 1, "kind": "h100_nvl_slurm_site_validation", "campaign_run_dir": str(run),
+    plan = {"schema_version": 2, "kind": "h100_nvl_slurm_site_validation", "campaign_run_dir": str(run),
         "source_commit": SOURCE_COMMIT, "helpers": helpers, "numerical_source": numerical, "admission": admission,
         "cleanrl_reference": cleanrl,
         "gate_environment_policy": GATE_ENVIRONMENT_POLICY,
@@ -359,6 +433,7 @@ def prepare(arguments):
         "workers_permitted": False, "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0,
         "created_at_utc": datetime.now(timezone.utc).isoformat()}
     directory.mkdir()
+    plan["admission_archive"] = archive_admission(directory, admission)
     write_once(directory / "site_validation_plan.json", plan)
     executable = helper / PREFIX / "h100_nvl_slurm_site_validation.py"
     # Slurm may rewrite CUDA visibility when entering a step; resolve only inside that step.
@@ -385,7 +460,7 @@ def prepared(directory):
     plan = bound(manifest["plan"])
     if (manifest["plan"]["path"] != str(directory / "site_validation_plan.json")
             or receipt(directory / "job.sbatch") != manifest["job_script"]
-            or plan.get("schema_version") != 1 or plan.get("kind") != "h100_nvl_slurm_site_validation"
+            or plan.get("schema_version") != 2 or plan.get("kind") != "h100_nvl_slurm_site_validation"
             or plan.get("source_commit") != SOURCE_COMMIT or plan.get("runtime_environment") != RUNTIME
             or plan.get("job_shape") != JOB_SHAPE or plan.get("reference_updates") != 1
             or plan.get("submission_control") != SUBMISSION_CONTROL
@@ -406,6 +481,7 @@ def prepared(directory):
         raise ValueError("the site plan omitted part of its exact helper or original numerical closure")
     for item in plan["admission"]["files"]:
         bound(item)
+    validate_admission_archive(directory, plan["admission"], plan.get("admission_archive"))
     for name in ("hardware", "loaded_libraries", "diagnostic_plan", "dtype_record", "shared_installed_backend", "shared_asset_receipt"):
         bound(plan["reference"][name])
     if (plan["reference"]["driver"] != DRIVER or plan["reference"]["model"] != MODEL
@@ -430,6 +506,14 @@ def placement(directory, plan):
     owned = require_owned_job(plan["campaign_run_dir"], os.environ, Path("/proc/self/cgroup").read_text())
     csv_text = query(["nvidia-smi", "--query-gpu=index,uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits"])
     xml_text = query(["nvidia-smi", "-q", "-x"])
+    # Keep actual source observations even when the mapping rejects; never record broad environment prefixes.
+    write_once(directory / "allocation_observation.json", {"schema_version": 1, "hostname": host,
+        "allocation_environment": {name: os.environ.get(name) for name in ALLOCATION_KEYS},
+        "absent_allocation_fields": [name for name in ALLOCATION_KEYS if name not in os.environ],
+        "gpu_csv": csv_text, "gpu_xml": xml_text, "owned_job": owned,
+        "cpu_affinity": sorted(os.sched_getaffinity(0)), "pid": os.getpid(),
+        "process_start_time": process_start_time(os.getpid())})
+    write_once(directory / "allocation_details.json", capture_allocation_details(owned))
     proof = resolve_allocation(os.environ, host, csv_text, xml_text)
     if proof["driver"] != plan["reference"]["driver"]:
         raise ValueError("the allocated driver differs from the original H100 reference; stop before JAX")
