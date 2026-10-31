@@ -12,12 +12,18 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import xml.etree.ElementTree as ET
 
 
 SOURCE_COMMIT = "d28e6735e79788f618acb0ebfde8609db1f776af"
 DIAGNOSIS_SHA256 = "0a5619b813dd3355357e2a3afdeb39b315a78d5413a5746a7d9bed1d8c3d7005"
+PREFLIGHT_FAILURE_SHA256 = "47424be3693c562a0d48d72f6db8c400bc140bedadc5cec53eb2454b635797d3"
+ORIGINAL_APPROVALS_PATH = "queue/infrastructure_retries/approvals"
+APPROVALS_PATH = "queue/infrastructure_retries/slurm_cpu_binding_resolved_mask/approvals"
+CLAIMS_PATH = "queue/infrastructure_retries/claims"
+OPERATIONAL_REVISION = "slurm_cpu_binding_resolved_mask"
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 REGION_BYTES = 9 * 2 ** 30
 PREPARATION = {"phase": "before learner/game imports and initialization", "allocation_count": 1,
@@ -216,8 +222,8 @@ def validate_diagnosis(document, evidence):
     return result
 
 
-def validate_approval_document(receipt, evidence):
-    """Rebuild an approval before publishing it or trusting an already published copy."""
+def validate_original_approval_document(receipt, evidence):
+    """Rebuild the unchanged original approval independently of the operational replacement."""
     case = validate_case(evidence.file(receipt["case"]["path"]))
     if (receipt.get("schema_version") != 1 or receipt.get("kind") != "allocator_region_infrastructure_retry"
             or receipt.get("approved_attempt") != 4 or receipt.get("previous_attempt") != 3
@@ -250,11 +256,49 @@ def validate_approval_document(receipt, evidence):
     return receipt, case
 
 
+def validate_approval_document(receipt, evidence):
+    """Bind the operational replacement to its unconsumed original and exact reviewed preflight failure."""
+    receipt, case = validate_original_approval_document(receipt, evidence)
+    previous_record = receipt["supersedes_approval"]
+    previous = bound_document(previous_record, evidence)
+    validate_original_approval_document(previous, evidence)
+    expected_path = Path(case["campaign_run_dir"]) / ORIGINAL_APPROVALS_PATH / (case["unit_id"] + ".json")
+    original_keys = {"schema_version", "kind", "unit_id", "campaign_run_dir", "approved_attempt", "previous_attempt",
+        "case", "previous_lease", "previous_failure", "diagnosis", "helpers", "numerical_source", "runtime_environment",
+        "allocator", "preparation", "asset_record", "jaxtari_source_root", "python"}
+    if (set(previous) != original_keys or set(receipt) != original_keys | {
+            "supersedes_approval", "preflight_failure", "operational_revision"}
+            or previous_record["path"] != str(expected_path) or receipt.get("operational_revision") != OPERATIONAL_REVISION
+            or any(receipt[name] != previous[name] for name in original_keys - {"helpers"})
+            or receipt["helpers"]["source_commit"] == previous["helpers"]["source_commit"]):
+        raise ValueError("the replacement changed original scientific inputs or lacks its exact earlier approval")
+    failure = bound_document(receipt["preflight_failure"], evidence)
+    if (receipt["preflight_failure"]["sha256"] != PREFLIGHT_FAILURE_SHA256
+            or failure.get("kind") != "allocator_retry_preflight_failure" or failure.get("comparison_attempts_consumed") != 0
+            or failure.get("source_commit") != SOURCE_COMMIT or failure.get("helper_commit") != previous["helpers"]["source_commit"]
+            or failure.get("failed_job_id") != "6778001" or failure.get("metadata_diagnosis_job_id") != "6778002"):
+        raise ValueError("the replacement lacks the exact reviewed preflight failure receipt")
+    for name in ("failure_log", "cpu_diagnosis_log"):
+        if digest(evidence.file(failure[name]["path"])) != failure[name]["sha256"]:
+            raise ValueError("a recorded retry preflight log changed")
+    rows = failure.get("unclaimed_original_approvals", [])
+    selected = [row for row in rows if row.get("unit_id") == case["unit_id"]]
+    if (len(rows) != len(APPROVED) or len(selected) != 1 or any(selected[0].get(name) != value for name, value in {
+            **previous_record, "current_attempt": 3, "no_fourth_attempt_directory_observed": True,
+            "no_retry_claim_observed": True}.items())):
+        raise ValueError("the operational approval was already consumed or differs from the preflight observation")
+    observation = failure["cpu_observation"]
+    if observation.get("hostname") != "jaguar03":
+        raise ValueError("the CPU preflight observation ran on another host")
+    cpu_allocation(observation["environment"], [str(index) for index in range(5)], observation["affinity"])
+    return receipt, case
+
+
 def validate_approval(path, evidence=None):
     """Rebuild one immutable attempt-four authorization and all its original inputs."""
     evidence = LocalEvidence() if evidence is None else evidence
     receipt, case = validate_approval_document(evidence.read(path), evidence)
-    if Path(path) != Path(case["campaign_run_dir"]) / "queue/infrastructure_retries/approvals" / (case["unit_id"] + ".json"):
+    if Path(path) != Path(case["campaign_run_dir"]) / APPROVALS_PATH / (case["unit_id"] + ".json"):
         raise ValueError("the retry approval is outside its exact separate queue")
     return receipt, case
 
@@ -263,14 +307,26 @@ def cpu_allocation(environment, roster, available):
     """Assign disjoint eight-CPU subsets from the parent's actual allocated thread affinity."""
     declared = environment.get("SLURM_CPUS_PER_TASK", "")
     binding = environment.get("SLURM_CPU_BIND_TYPE", "")
+    binding_list = environment.get("SLURM_CPU_BIND_LIST", "")
+    combined = environment.get("SLURM_CPU_BIND", "")
     available = sorted(available)
     required = 8 * len(roster)
     if (not declared.isdecimal() or int(declared) < required or len(available) < required
             or len(available) > int(declared) or len(set(available)) != len(available)
-            or any(type(cpu) is not int or cpu < 0 for cpu in available)
-            or "threads" not in binding.split(",")):
+            or any(type(cpu) is not int or cpu < 0 for cpu in available)):
+        raise ValueError("retry parent requires allocated thread affinity and at least eight CPUs per GPU")
+    if binding in {"mask_cpu", "mask_cpu:"}:
+        if (not re.fullmatch(r"0x[0-9A-Fa-f]+", binding_list)
+                or combined not in {"mask_cpu:" + binding_list, "quiet,mask_cpu:" + binding_list, "verbose,mask_cpu:" + binding_list}):
+            raise ValueError("Slurm's resolved CPU mask fields disagree")
+        bits = int(binding_list, 16)
+        decoded = [index for index in range(bits.bit_length()) if bits & (1 << index)]
+        if decoded != available:
+            raise ValueError("Slurm's resolved CPU mask differs from the actual available affinity")
+    elif binding != "threads" or binding_list or combined not in {"", "threads", "quiet,threads", "verbose,threads"}:
         raise ValueError("retry parent requires allocated thread affinity and at least eight CPUs per GPU")
     return {"slurm_cpus_per_task": declared, "slurm_cpu_bind_type": binding,
+        "slurm_cpu_bind_list": binding_list, "slurm_cpu_bind": combined,
         "parent_available_cpus": available, "cpus_per_gpu": 8, "thread_environment": THREAD_ENVIRONMENT,
         "gpu_cpu_affinities": {gpu: available[index * 8:(index + 1) * 8] for index, gpu in enumerate(roster)}}
 
@@ -279,7 +335,8 @@ def validate_cpu_allocation(assignment, gpu_uuid):
     """Reject overlapping or substituted CPU masks rather than accepting an arbitrary eight CPUs."""
     recorded = assignment["cpu_allocation"]
     expected = cpu_allocation({"SLURM_CPUS_PER_TASK": recorded["slurm_cpus_per_task"],
-        "SLURM_CPU_BIND_TYPE": recorded["slurm_cpu_bind_type"]}, assignment["gpu_uuids"], recorded["parent_available_cpus"])
+        "SLURM_CPU_BIND_TYPE": recorded["slurm_cpu_bind_type"], "SLURM_CPU_BIND_LIST": recorded["slurm_cpu_bind_list"],
+        "SLURM_CPU_BIND": recorded["slurm_cpu_bind"]}, assignment["gpu_uuids"], recorded["parent_available_cpus"])
     if expected != recorded:
         raise ValueError("retry CPU affinity overlaps or differs from its exact per-GPU assignment")
     return recorded["gpu_cpu_affinities"][gpu_uuid]
@@ -384,7 +441,7 @@ def validate_execution(result_path, case, lease=None, evidence=None):
             or actual.get("OMP_NUM_THREADS") != "8" or actual.get("OPENBLAS_NUM_THREADS") != "1"
             or actual.get("MKL_NUM_THREADS") != "1"):
         raise ValueError("the original numerical runner changed its assigned eight CPUs or thread runtime")
-    claim = evidence.read(Path(case["campaign_run_dir"]) / "queue/infrastructure_retries/claims" / (case["unit_id"] + ".json"))
+    claim = evidence.read(Path(case["campaign_run_dir"]) / CLAIMS_PATH / (case["unit_id"] + ".json"))
     if (claim.get("approval") != approval_record or any(claim["lease"].get(name) != saved_lease.get(name) for name in
             ("token", "unit_id", "attempt", "worker_pid", "worker_start_time", "gpu_uuid", "slurm_job_id", "assignment",
              "cpu_affinity", "thread_environment"))
@@ -426,6 +483,11 @@ def prepare(arguments):
         failed = matches[0]
         case = validate_case(failed.read_bytes())
         original = run / "queue/specifications" / failed.name
+        old_approval_path = run / ORIGINAL_APPROVALS_PATH / failed.name
+        old_approval = evidence.read(old_approval_path)
+        validate_original_approval_document(old_approval, evidence)
+        if (run / CLAIMS_PATH / failed.name).exists() or (run / "data" / case["unit_id"] / "attempts/attempt-0004").exists():
+            raise ValueError("a prior approval already consumed the single fourth attempt")
         if original.read_bytes() != failed.read_bytes() or case["campaign_run_dir"] != str(run):
             raise ValueError("the held case differs from its original immutable specification")
         previous = run / "data" / case["unit_id"] / "attempts/attempt-0003"
@@ -440,9 +502,11 @@ def prepare(arguments):
             "helpers": helpers, "numerical_source": git_receipt(case["source_root"], SOURCE_COMMIT, numerical_paths),
             "runtime_environment": RUNTIME, "allocator": ALLOCATOR, "preparation": PREPARATION,
             "asset_record": assets, "jaxtari_source_root": str(arguments.jaxtari_source_root.resolve(strict=True)),
-            "python": str(arguments.python.absolute())}
+            "python": str(arguments.python.absolute()), "supersedes_approval": file_record(old_approval_path, evidence),
+            "operational_revision": OPERATIONAL_REVISION,
+            "preflight_failure": file_record(arguments.preflight_failure_receipt.resolve(strict=True), evidence)}
         validate_approval_document(receipt, evidence)
-        approvals.append((run / "queue/infrastructure_retries/approvals" / failed.name, receipt))
+        approvals.append((run / APPROVALS_PATH / failed.name, receipt))
     # Before: five held cases. After: five approvals, while all five case files stay failed.
     for path, receipt in approvals:
         if path.exists() and path.read_bytes() != json_bytes(receipt):
@@ -455,7 +519,7 @@ def prepare(arguments):
 def main():
     """Create metadata approvals only; this command never requeues, submits or opens a GPU."""
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("run-dir", "helper-root", "diagnosis", "asset-record", "jaxtari-source-root", "python"):
+    for name in ("run-dir", "helper-root", "diagnosis", "asset-record", "jaxtari-source-root", "python", "preflight-failure-receipt"):
         parser.add_argument("--" + name, type=Path, required=True)
     print(json.dumps(prepare(parser.parse_args()), indent=2))
 

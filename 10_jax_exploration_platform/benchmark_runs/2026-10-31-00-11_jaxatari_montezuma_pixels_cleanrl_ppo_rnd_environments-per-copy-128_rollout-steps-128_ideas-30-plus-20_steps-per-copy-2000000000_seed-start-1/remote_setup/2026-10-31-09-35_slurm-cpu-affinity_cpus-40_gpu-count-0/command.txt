@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+srun --ntasks=1 --cpus-per-task=40 --cpu-bind=threads /usr/bin/python3 -c 'import json,os,socket;print(json.dumps({"hostname":socket.gethostname(),"environment":{k:v for k,v in os.environ.items() if k.startswith("SLURM_") and any(x in k for x in ["CPU","BIND","THREAD","HINT"])},"affinity":sorted(os.sched_getaffinity(0))}),flush=True)'
+srun --ntasks=1 --cpus-per-task=40 --threads-per-core=1 --cpu-bind=threads /usr/bin/python3 -c 'import json,os,socket;print(json.dumps({"hostname":socket.gethostname(),"environment":{k:v for k,v in os.environ.items() if k.startswith("SLURM_") and any(x in k for x in ["CPU","BIND","THREAD","HINT"])},"affinity":sorted(os.sched_getaffinity(0))}),flush=True)'

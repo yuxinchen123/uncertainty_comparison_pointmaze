@@ -73,7 +73,7 @@ class RetryTests(unittest.TestCase):
         self.diagnosis_path = self.run / "diagnosis/result.json"
         self.write(self.diagnosis_path, diagnosis)
         patch.object(retry, "DIAGNOSIS_SHA256", retry.digest(self.diagnosis_path.read_bytes())).start()
-        self.approval_path = self.run / "queue/infrastructure_retries/approvals" / (self.unit + ".json")
+        self.approval_path = self.run / retry.APPROVALS_PATH / (self.unit + ".json")
         self.approval = {"schema_version": 1, "kind": "allocator_region_infrastructure_retry", "unit_id": self.unit,
             "campaign_run_dir": str(self.run), "approved_attempt": 4, "previous_attempt": 3,
             "case": self.receipt(self.case_path), "previous_lease": self.receipt(self.previous / "lease.json"),
@@ -84,6 +84,27 @@ class RetryTests(unittest.TestCase):
             "runtime_environment": retry.RUNTIME, "allocator": retry.ALLOCATOR, "preparation": retry.PREPARATION,
             "asset_record": {}, "jaxtari_source_root": str(self.run / "jaxtari"), "python": sys.executable}
         patch.object(retry, "numerical_source_paths", return_value=sorted(self.approval["numerical_source"]["files"])).start()
+        self.old_approval_path = self.run / retry.ORIGINAL_APPROVALS_PATH / (self.unit + ".json")
+        old = copy.deepcopy(self.approval)
+        old["helpers"].update(source_root=str(self.run / "original_helpers"), source_commit="e" * 40)
+        self.write(self.old_approval_path, old)
+        self.old_approval_bytes = self.old_approval_path.read_bytes()
+        failure_log = self.run / "preflight/failure.log"
+        cpu_log = self.run / "preflight/cpu.log"
+        failure_log.parent.mkdir(parents=True)
+        failure_log.write_text("original failure before a comparison claim\n")
+        cpu_log.write_text("original metadata CPU observation\n")
+        preflight = {"kind": "allocator_retry_preflight_failure", "comparison_attempts_consumed": 0,
+            "failed_job_id": "6778001", "metadata_diagnosis_job_id": "6778002", "source_commit": retry.SOURCE_COMMIT,
+            "helper_commit": "e" * 40, "failure_log": self.receipt(failure_log), "cpu_diagnosis_log": self.receipt(cpu_log),
+            "unclaimed_original_approvals": [{**self.receipt(self.old_approval_path), "unit_id": self.unit, "current_attempt": 3,
+                "no_fourth_attempt_directory_observed": True, "no_retry_claim_observed": True}],
+            "cpu_observation": {"hostname": "jaguar03", "environment": self.resolved_cpu_environment(),
+                "affinity": list(range(56, 76)) + list(range(168, 188))}}
+        preflight_path = self.write(self.run / "preflight/receipt.json", preflight)
+        patch.object(retry, "PREFLIGHT_FAILURE_SHA256", retry.digest(preflight_path.read_bytes())).start()
+        self.approval.update(supersedes_approval=self.receipt(self.old_approval_path),
+            preflight_failure=self.receipt(preflight_path), operational_revision=retry.OPERATIONAL_REVISION)
         self.write(self.approval_path, self.approval)
         self.assignment_path = self.run / "retry-node/assignment.json"
         self.assignment = self.assignment_record()
@@ -110,6 +131,12 @@ class RetryTests(unittest.TestCase):
                 "allocator": {"bytes_limit": 17 * 2 ** 30, "bytes_in_use": retry.REGION_BYTES if name == "allocated" else 0,
                     "largest_free_block_bytes": 16 * 2 ** 30}}
         return result
+
+    def resolved_cpu_environment(self):
+        """Retain the exact Slurm fields observed in the owned forty-CPU metadata diagnosis."""
+        mask = "0x000000000FFFFF00000000000000000000000FFFFF00000000000000"
+        return {"SLURM_CPUS_PER_TASK": "40", "SLURM_CPU_BIND_TYPE": "mask_cpu:",
+            "SLURM_CPU_BIND_LIST": mask, "SLURM_CPU_BIND": "quiet,mask_cpu:" + mask}
 
     def assignment_record(self):
         """Model two physical cards with remapped visible indices and unchanged Slurm minor allocations."""
@@ -190,6 +217,30 @@ class RetryTests(unittest.TestCase):
         self.assertEqual(list((self.run / "queue/pending").glob("*.json")), [])
         self.assertTrue((self.run / "queue/running" / (self.unit + ".json")).exists())
         self.assertEqual(json.loads(self.case_path.read_bytes())["maximum_attempts"], 3)
+        self.assertEqual(self.old_approval_path.read_bytes(), self.old_approval_bytes)
+        self.assertTrue((self.run / retry.CLAIMS_PATH / (self.unit + ".json")).exists())
+        self.assertFalse((self.approval_path.parent.parent / "claims").exists())
+
+    def test_new_worker_does_not_consume_old_approval_namespace(self):
+        """An old unclaimed approval remains historical metadata rather than implicit new authorization."""
+        self.approval_path.unlink()
+        ready = {"source_root": str(self.source), "source_commit": retry.SOURCE_COMMIT}
+        with patch.object(controller, "ready_specification", return_value=ready):
+            self.assertIsNone(worker.claim_retry(self.run, {}, self.assignment_path))
+        self.assertEqual(self.old_approval_path.read_bytes(), self.old_approval_bytes)
+        self.assertTrue((self.run / "queue/failed" / (self.unit + ".json")).exists())
+
+    def test_replacement_is_bound_to_the_old_approval_and_preflight_bytes(self):
+        """Neither a changed earlier approval nor a changed preflight record can grant the operational replacement."""
+        retry.validate_approval(self.approval_path)
+        self.old_approval_path.write_bytes(self.old_approval_bytes + b" ")
+        with self.assertRaisesRegex(ValueError, "evidence bytes changed"):
+            retry.validate_approval(self.approval_path)
+        self.old_approval_path.write_bytes(self.old_approval_bytes)
+        preflight = Path(self.approval["preflight_failure"]["path"])
+        preflight.write_bytes(preflight.read_bytes() + b" ")
+        with self.assertRaisesRegex(ValueError, "evidence bytes changed"):
+            retry.validate_approval(self.approval_path)
 
     def test_valid_sidecar_binds_raw_bytes_and_keeps_original_result_unchanged(self):
         """A separately approved runtime receipt can count the exact original result without rewriting it."""
@@ -391,6 +442,22 @@ class RetryTests(unittest.TestCase):
                 ({"SLURM_CPUS_PER_TASK": "16", "SLURM_CPU_BIND_TYPE": "threads"}, range(32))):
             with self.assertRaisesRegex(ValueError, "eight CPUs per GPU"):
                 retry.cpu_allocation(environment, roster, available)
+
+    def test_actual_resolved_slurm_mask_matches_all_forty_available_cpus(self):
+        """The actual threads request is accepted through its exact resolved mask, not a label guess."""
+        roster = [f"GPU-{index}" for index in range(5)]
+        available = list(range(56, 76)) + list(range(168, 188))
+        environment = self.resolved_cpu_environment()
+        proof = retry.cpu_allocation(environment, roster, available)
+        self.assertEqual(proof["parent_available_cpus"], available)
+        self.assertEqual(proof["slurm_cpu_bind_list"], environment["SLURM_CPU_BIND_LIST"])
+        self.assertEqual(proof["slurm_cpu_bind"], environment["SLURM_CPU_BIND"])
+        self.assertEqual([proof["gpu_cpu_affinities"][gpu] for gpu in roster], [available[i*8:(i+1)*8] for i in range(5)])
+        with self.assertRaisesRegex(ValueError, "mask differs"):
+            retry.cpu_allocation(environment, roster, list(range(40)))
+        changed = {**environment, "SLURM_CPU_BIND": "quiet,mask_cpu:0xffff"}
+        with self.assertRaisesRegex(ValueError, "mask fields disagree"):
+            retry.cpu_allocation(changed, roster, available)
 
     def test_overlapping_or_substituted_cpu_masks_are_rejected(self):
         """Another worker's CPUs cannot be substituted even if the replacement contains eight integers."""

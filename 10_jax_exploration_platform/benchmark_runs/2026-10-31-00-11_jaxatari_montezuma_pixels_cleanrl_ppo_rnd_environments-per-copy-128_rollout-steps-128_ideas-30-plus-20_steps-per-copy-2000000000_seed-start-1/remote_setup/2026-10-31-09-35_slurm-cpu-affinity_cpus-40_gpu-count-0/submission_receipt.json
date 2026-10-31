@@ -1,0 +1,21 @@
+{
+  "job_id": "6778002",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--nodes=1",
+    "--ntasks=1",
+    "--nodelist=jaguar03",
+    "--partition=gpu",
+    "--gpus-per-node=0",
+    "--cpus-per-task=40",
+    "--mem=1G",
+    "--time=00:05:00",
+    "--reservation=sl5nw_168",
+    "--qos=csresnolim",
+    "--job-name=atari_cpu_affinity_read",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-09-35_slurm-cpu-affinity_cpus-40_gpu-count-0/slurm-%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-09-35_slurm-cpu-affinity_cpus-40_gpu-count-0/job.sbatch"
+  ],
+  "submitted_at_utc": "2026-10-31T16:34:35.316893+00:00"
+}

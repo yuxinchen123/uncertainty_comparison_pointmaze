@@ -44,8 +44,8 @@ def claim_retry(run_dir, identity, assignment_path):
         ready = controller.ready_specification(run)
         if ready is None:
             return None
-        for approval_path in sorted((run / "queue/infrastructure_retries/approvals").glob("*.json")):
-            claim_path = run / "queue/infrastructure_retries/claims" / approval_path.name
+        for approval_path in sorted((run / retry.APPROVALS_PATH).glob("*.json")):
+            claim_path = run / retry.CLAIMS_PATH / approval_path.name
             if claim_path.exists():
                 continue
             approval, case = retry.validate_approval(approval_path)
@@ -189,7 +189,9 @@ def bind_worker_cpus(assignment, gpu_uuid, environment):
     cpus = retry.validate_cpu_allocation(assignment, gpu_uuid)
     proof = assignment["cpu_allocation"]
     if (environment.get("SLURM_CPUS_PER_TASK") != proof["slurm_cpus_per_task"]
-            or environment.get("SLURM_CPU_BIND_TYPE") != proof["slurm_cpu_bind_type"]):
+            or environment.get("SLURM_CPU_BIND_TYPE") != proof["slurm_cpu_bind_type"]
+            or environment.get("SLURM_CPU_BIND_LIST", "") != proof["slurm_cpu_bind_list"]
+            or environment.get("SLURM_CPU_BIND", "") != proof["slurm_cpu_bind"]):
         raise ValueError("the retry worker changed its original allocated CPU declaration")
     os.sched_setaffinity(0, set(cpus))
     if sorted(os.sched_getaffinity(0)) != cpus:
@@ -239,7 +241,7 @@ def run_parent(arguments):
     run, directory = arguments.run_dir.resolve(strict=True), arguments.output_dir.resolve()
     if directory == run or run not in directory.parents or "jax" in sys.modules:
         raise ValueError("use a new campaign child output directory and a nonnumerical retry parent")
-    approvals = list((run / "queue/infrastructure_retries/approvals").glob("*.json"))
+    approvals = list((run / retry.APPROVALS_PATH).glob("*.json"))
     if len(approvals) != 5:
         raise ValueError("the approved retry batch contains exactly five case-specific receipts")
     for path in approvals:

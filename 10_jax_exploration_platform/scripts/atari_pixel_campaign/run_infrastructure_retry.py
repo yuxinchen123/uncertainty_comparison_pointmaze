@@ -91,6 +91,8 @@ def verify_cpu_inheritance(assignment, lease):
             or lease.get("thread_environment") != retry.THREAD_ENVIRONMENT
             or os.environ.get("SLURM_CPUS_PER_TASK") != proof["slurm_cpus_per_task"]
             or os.environ.get("SLURM_CPU_BIND_TYPE") != proof["slurm_cpu_bind_type"]
+            or os.environ.get("SLURM_CPU_BIND_LIST", "") != proof["slurm_cpu_bind_list"]
+            or os.environ.get("SLURM_CPU_BIND", "") != proof["slurm_cpu_bind"]
             or any(os.environ.get(name) != value for name, value in retry.THREAD_ENVIRONMENT.items())):
         raise ValueError("the original numerical runner did not inherit its assigned eight CPUs and thread runtime")
 

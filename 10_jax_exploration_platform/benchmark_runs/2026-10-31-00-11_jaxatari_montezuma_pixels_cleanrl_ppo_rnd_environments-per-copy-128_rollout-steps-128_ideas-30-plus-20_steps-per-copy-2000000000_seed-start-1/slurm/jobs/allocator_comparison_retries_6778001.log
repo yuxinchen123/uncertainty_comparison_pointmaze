@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry_worker.py", line 344, in <module>
+    main()
+  File "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry_worker.py", line 340, in main
+    run_parent(arguments)
+  File "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry_worker.py", line 257, in run_parent
+    cpus = retry.cpu_allocation(os.environ, roster, os.sched_getaffinity(0))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py", line 272, in cpu_allocation
+    raise ValueError("retry parent requires allocated thread affinity and at least eight CPUs per GPU")
+ValueError: retry parent requires allocated thread affinity and at least eight CPUs per GPU
+srun: error: jaguar03: task 0: Exited with exit code 1
