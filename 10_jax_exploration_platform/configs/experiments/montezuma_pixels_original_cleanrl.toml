@@ -6,6 +6,7 @@ jaxtari_commit = "04ab9aec318c72162e2e53503a594a489d7e162b"
 reset_contract = "Native JAXtari immediate reset; pre-reset frames retained for transition bonus"
 network_precision = "float32"
 statistics_precision = "float64"
+deterministic_gpu_operations = true
 
 [learner]
 n_envs = 128
@@ -47,6 +48,15 @@ rollout_observation_storage = "float32"
 associative_gae = false
 associative_reward_filter = false
 moment_reduction = "two_pass"
+fuse_minibatch_image_preparation = false
+recompute_network_activations = false
+fuse_network_bias_and_activation = false
+flatten_update_scan = false
+batch_quantity_keyed_random_generation = false
+rollout_frame_storage = "stacked_frames"
+per_copy_learning_rates = []
+per_copy_intrinsic_coefficients = []
+per_copy_scalar_settings = {}
 
 [environment]
 frame_skip = 4

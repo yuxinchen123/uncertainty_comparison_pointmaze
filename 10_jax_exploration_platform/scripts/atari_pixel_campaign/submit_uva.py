@@ -76,8 +76,22 @@ def submit(repository, run_directory, kind, test_filter=None):
                 f"{interpreter} {source_quote}/tests/{test}" for test in tests]
         elif kind == "pixel-gates":
             selection = " -k " + shlex.quote(test_filter) if test_filter else ""
-            body = [f"{pixel_python} -m pytest -q{selection} {source_quote}/tests/atari_pixels "
-                    f"{source_quote}/tests/test_atari_pixel_environment.py"]
+            body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_checks.py "
+                    f"--run-dir {run_quote} --unit-id jaguar03_pixel_gates_{commit[:12]} "
+                    f"--source-commit {commit} -- {pixel_python} -m pytest -q{selection} "
+                    f"{source_quote}/tests/atari_pixels {source_quote}/tests/test_atari_pixel_environment.py"]
+        elif kind == "rendering":
+            body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_checks.py "
+                    f"--run-dir {run_quote} --unit-id jaguar03_rendering_{commit[:12]} "
+                    f"--source-commit {commit} -- {pixel_python} "
+                    f"{source_quote}/scripts/atari_pixel_campaign/check_rendering.py --candidate all"]
+        elif kind == "configuration-gates":
+            body = ["unset XDG_DATA_HOME",
+                    f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_checks.py "
+                    f"--run-dir {run_quote} --unit-id configuration_files_{commit[:12]} "
+                    f"--source-commit {commit} -- {pixel_python} "
+                    f"{source_quote}/tests/integration/test_training_configuration_file_cli.py",
+                    f"{pixel_python} {source_quote}/tests/integration/test_selected_run_records.py"]
         elif kind == "smoke":
             body = [f"{pixel_python} {source_quote}/scripts/atari_pixel_campaign/run_unit.py "
                     f"--run-dir {run_quote} --unit-id jaguar03_pixel_smoke "
@@ -111,7 +125,8 @@ if __name__ == "__main__":
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--kind", required=True,
-                        choices=["monitor", "merge-gates", "pixel-gates", "smoke", "baseline"])
+                        choices=["monitor", "merge-gates", "pixel-gates", "smoke", "baseline",
+                                 "rendering", "configuration-gates"])
     parser.add_argument("--test-filter")
     args = parser.parse_args()
     submit(args.repo.resolve(), args.run_dir.resolve(), args.kind, args.test_filter)

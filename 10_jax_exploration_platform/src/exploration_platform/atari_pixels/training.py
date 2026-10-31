@@ -10,6 +10,7 @@ from .networks import (actor_logits, categorical_statistics, critic_values, init
                        policy_features, policy_forward, quantity_keys, rnd_forward)
 from .state import (AdamState, FlatParameterLayout, PixelTrainState, adam_step, initialize_adam, initialize_statistics,
                     normalize_frames, update_moments, update_observation_statistics)
+from .settings import scalar_product, scalar_setting
 
 
 class Rollout(NamedTuple):
@@ -57,14 +58,15 @@ def normalize_intrinsic_rewards(rewards, state, config):
     """Retain upstream's environment-axis filter and count, or explicitly select time order."""
     # Upstream transposes [T,N] and iterates N vectors of length T; each policy is independent.
     values = rewards.transpose(2, 1, 0) if config.upstream_reward_filter_axis else rewards
+    gamma = jnp.asarray(scalar_setting(config, "gamma_int", (config.n_copies, 1)), jnp.float32)
 
     def accumulate(previous, reward):
         """Carry the unreset discounted intrinsic filter along the selected upstream axis."""
-        filtered = previous * jnp.asarray(config.gamma_int, jnp.float32) + reward
+        filtered = previous * gamma + reward
         return filtered, filtered
 
     if config.associative_reward_filter:
-        coefficients = jnp.full_like(values, config.gamma_int)
+        coefficients = jnp.full_like(values, scalar_setting(config, "gamma_int", (1, config.n_copies, 1)))
 
         def compose(left, right):
             """Compose later affine filter updates after earlier updates."""
@@ -93,19 +95,23 @@ def generalized_advantages(rewards, intrinsic_rewards, rollout, final_values,
                            done_after, config):
     """Mask extrinsic GAE at done while keeping intrinsic GAE non-episodic."""
     values_ext, values_int = final_values
+    gamma_ext = scalar_setting(config, "gamma_ext", (1, config.n_copies, 1))
+    gamma_int = scalar_setting(config, "gamma_int", (1, config.n_copies, 1))
+    recurrence_ext = scalar_product(config, ("gamma_ext", "gae_lambda"), (config.n_copies, 1))
+    recurrence_int = scalar_product(config, ("gamma_int", "gae_lambda"), (config.n_copies, 1))
     # Before: done_before[t] describes t-1; after: masks[t] describes transition t.
     masks = 1.0 - jnp.concatenate((rollout.done_before[1:], done_after[None]), axis=0).astype(jnp.float32)
     next_ext = jnp.concatenate((rollout.values_ext[1:], values_ext[None]), axis=0)
     next_int = jnp.concatenate((rollout.values_int[1:], values_int[None]), axis=0)
-    delta_ext = rewards + config.gamma_ext * next_ext * masks - rollout.values_ext
-    delta_int = intrinsic_rewards + config.gamma_int * next_int - rollout.values_int
+    delta_ext = rewards + gamma_ext * next_ext * masks - rollout.values_ext
+    delta_int = intrinsic_rewards + gamma_int * next_int - rollout.values_int
 
     def reverse_step(previous, values):
         """Compute one earlier extrinsic/intrinsic advantage pair."""
         previous_ext, previous_int = previous
         difference_ext, difference_int, mask = values
-        advantage_ext = difference_ext + config.gamma_ext * config.gae_lambda * mask * previous_ext
-        advantage_int = difference_int + config.gamma_int * config.gae_lambda * previous_int
+        advantage_ext = difference_ext + recurrence_ext * mask * previous_ext
+        advantage_int = difference_int + recurrence_int * previous_int
         return (advantage_ext, advantage_int), (advantage_ext, advantage_int)
 
     zeros = jnp.zeros_like(values_ext)
@@ -116,8 +122,9 @@ def generalized_advantages(rewards, intrinsic_rewards, rollout, final_values,
             right_value, right_coefficient = right
             return right_value + right_coefficient * left_value, right_coefficient * left_coefficient
 
-        coefficient_ext = config.gamma_ext * config.gae_lambda * masks
-        coefficient_int = jnp.full_like(delta_int, config.gamma_int * config.gae_lambda)
+        coefficient_ext = scalar_product(config, ("gamma_ext", "gae_lambda"), (1, config.n_copies, 1)) * masks
+        coefficient_int = jnp.full_like(delta_int, scalar_product(
+            config, ("gamma_int", "gae_lambda"), (1, config.n_copies, 1)))
         advantage_ext, _ = jax.lax.associative_scan(compose, (delta_ext[::-1], coefficient_ext[::-1]))
         advantage_int, _ = jax.lax.associative_scan(compose, (delta_int[::-1], coefficient_int[::-1]))
         return advantage_ext[::-1], advantage_int[::-1]
@@ -141,18 +148,19 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
     logits, value_ext, value_int = policy(parameters["agent"], batch["observations"])
     log_probability, entropy = categorical_statistics(logits, batch["actions"])
     ratio = jnp.exp(log_probability - batch["log_probabilities"])
-    advantages = batch["advantage_ext"] * config.extrinsic_coefficient
+    clip_coefficient = scalar_setting(config, "clip_coefficient", (config.n_copies, 1))
+    advantages = batch["advantage_ext"] * scalar_setting(config, "extrinsic_coefficient", (config.n_copies, 1))
     advantages = advantages + batch["advantage_int"] * intrinsic_coefficients[:, None]
     # PyTorch Tensor.std() uses correction=1; JAX's default population variance would differ.
     advantages = (advantages - advantages.mean(axis=1, keepdims=True)) / (
         advantages.std(axis=1, ddof=1, keepdims=True) + 1e-8)
     unclipped = -advantages * ratio
-    clipped = -advantages * jnp.clip(ratio, 1.0 - config.clip_coefficient, 1.0 + config.clip_coefficient)
+    clipped = -advantages * jnp.clip(ratio, 1.0 - clip_coefficient, 1.0 + clip_coefficient)
     policy_loss = jnp.maximum(unclipped, clipped).mean(axis=1)
 
     # Clip only the extrinsic value head; the intrinsic value head uses plain squared error.
     clipped_value = batch["values_ext"] + jnp.clip(
-        value_ext - batch["values_ext"], -config.clip_coefficient, config.clip_coefficient)
+        value_ext - batch["values_ext"], -clip_coefficient, clip_coefficient)
     value_loss_ext = 0.5 * jnp.maximum((value_ext - batch["return_ext"]) ** 2,
                                      (clipped_value - batch["return_ext"]) ** 2).mean(axis=1)
     value_loss_int = 0.5 * ((value_int - batch["return_int"]) ** 2).mean(axis=1)
@@ -166,8 +174,8 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
     errors = ((predictor_features - target_features) ** 2).mean(axis=-1)
     predictor_loss = (errors * predictor_mask).sum(axis=1) / jnp.maximum(predictor_mask.sum(axis=1), 1.0)
     entropy_mean = entropy.mean(axis=1)
-    losses = (policy_loss - config.entropy_coefficient * entropy_mean
-              + config.value_coefficient * (value_loss_ext + value_loss_int) + predictor_loss)
+    losses = (policy_loss - scalar_setting(config, "entropy_coefficient") * entropy_mean
+              + scalar_setting(config, "value_coefficient") * (value_loss_ext + value_loss_int) + predictor_loss)
     log_ratio = log_probability - batch["log_probabilities"]
     diagnostics = {"loss": losses, "policy_loss": policy_loss,
                    "value_loss": value_loss_ext + value_loss_int,
@@ -187,9 +195,9 @@ class PixelPPORND:
         if environment.action_count != config.action_count:
             raise ValueError("environment and learner action counts differ")
         self.config, self.environment = config, environment
-        self.learning_rates = jnp.asarray(config.per_copy_learning_rates or
+        self.learning_rates = jnp.asarray(config.per_copy_values("learning_rate") or
                                          (config.learning_rate,) * config.n_copies, jnp.float32)
-        self.intrinsic_coefficients = jnp.asarray(config.per_copy_intrinsic_coefficients or
+        self.intrinsic_coefficients = jnp.asarray(config.per_copy_values("intrinsic_coefficient") or
                                                 (config.intrinsic_coefficient,) * config.n_copies, jnp.float32)
         self._compiled_iteration = jax.jit(self.iteration, donate_argnums=(0,) if config.donate_state else ())
         self._compiled_warmup = jax.jit(self._warmup)
@@ -399,6 +407,11 @@ class PixelPPORND:
             """Use exactly the same named mask keys in batched and per-step generation."""
             keys = quantity_keys(state.copy_seeds, "update/predictor-mask", state.iteration,
                                  epoch_index, minibatch_index)
+            if config.per_copy_values("predictor_update_proportion") is not None:
+                draws = jax.vmap(lambda key: jax.random.uniform(
+                    key, (config.minibatch_size,), dtype=jnp.float32))(keys)
+                return (draws < scalar_setting(config, "predictor_update_proportion",
+                                                (config.n_copies, 1))).astype(jnp.float32)
             return jax.vmap(lambda key: (jax.random.uniform(key, (config.minibatch_size,),
                 dtype=jnp.float32) < config.predictor_update_proportion).astype(jnp.float32))(keys)
 
@@ -440,7 +453,7 @@ class PixelPPORND:
             (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
             parameters, optimizer, gradient_norm = adam_step(
                 parameters, gradients, optimizer, learning_rates,
-                config.max_gradient_norm, config.adam_epsilon,
+                scalar_setting(config, "max_gradient_norm"), scalar_setting(config, "adam_epsilon"),
                 fuse_optimizer=config.fuse_optimizer and layout is None)
             return (parameters, optimizer), {**metrics, "gradient_norm": gradient_norm}
 

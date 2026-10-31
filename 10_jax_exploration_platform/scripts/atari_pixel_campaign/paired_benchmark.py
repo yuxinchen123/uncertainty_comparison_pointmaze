@@ -434,6 +434,7 @@ def measure_round(executor, starting_host, iterations, memory):
     config = executor.trainer.config
     transitions = iterations * config.batch_size * config.n_copies
     host = host_copy(state)
+    require_finite((host, jax.device_get(metrics)), "timed round")
     result = {"seconds": seconds, "iterations": iterations, "copies": config.n_copies,
               "report_origin_iteration": initial_iteration,
               "environments_per_copy": config.n_envs, "rollout_steps": config.num_steps,
@@ -447,6 +448,17 @@ def measure_round(executor, starting_host, iterations, memory):
     del state, metrics
     gc.collect()
     return result, host
+
+
+def require_finite(tree, label):
+    """Reject non-finite parameters, optimizer state or statistics outside the timed window."""
+    import jax
+    import numpy as np
+
+    for path, value in jax.tree_util.tree_flatten_with_path(tree)[0]:
+        array = np.asarray(value)
+        if array.dtype.kind in "fc" and not np.isfinite(array).all():
+            raise CorrectnessMismatch(f"{label}: non-finite state at {jax.tree_util.keystr(path)}")
 
 
 def synchronized_latency(executor, starting_host, calls=3):

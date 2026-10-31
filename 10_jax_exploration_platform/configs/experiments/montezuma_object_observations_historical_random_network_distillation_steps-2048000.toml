@@ -1,0 +1,79 @@
+# Complete recorded settings. Trainer and environment values are explicit at load time.
+# A nonempty parameter grid sets effective cell rates and weights; scalar fields retain their recorded values.
+
+[metadata]
+name = "Historical Montezuma object observations with random network distillation"
+implementation = "jax_exploration_platform"
+environment_family = "montezuma_object"
+source_files = [
+  "10_jax_exploration_platform/runs/2026-08-18-04-43_jax-ppo_montezuma-object-centric-sticky_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-2M_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-montezuma-batch/config_resolved.yaml",
+  "10_jax_exploration_platform/runs/2026-08-18-04-43_jax-ppo_montezuma-object-centric-sticky_full-batch_rollout-128_envs-per-copy-1_steps-per-copy-2M_bonus-rnd-next-state-none_learning-rate-3e-4_intrinsic-weight-1_copies-1024_first-montezuma-batch/experiment_background.md",
+]
+source_record_sha256 = "2a40004df727fb70086e8159824351fdf8622ae0b0177b98597fe1d4862154ab"
+source_unit = "unit-rnd_next_state"
+notes = "Explicit historical return semantics; PointMaze study changes stay disabled. Environment fields omitted by the old writer are recorded from the unchanged environment dataclass."
+later_fields_recorded_explicitly = ["parameter_settings", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs"]
+source_steps_per_policy_copy = 2048000
+
+[trainer]
+configuration_preset = "montezuma_object_historical"
+intrinsic_bootstrap_observation = "final_observation"
+no_bonus_advantage_stream = "weighted_intrinsic"
+n_copies = 1024
+n_envs = 1
+num_steps = 128
+update_style = "full_batch"
+flat_params = false
+update_epochs = 4
+num_minibatches = 4
+learning_rate = 0.0003
+adam_eps = 1e-05
+anneal_lr = true
+gamma_ext = 0.999
+gamma_int = 0.99
+gae_lambda = 0.95
+clip_coef = 0.2
+ent_coef = 0.0
+vf_coef = 0.5
+max_grad_norm = 0.5
+int_coef = 1.0
+ext_coef = 2.0
+prime_iterations = 10
+bootstrap_on_truncation = true
+base_seed = 0
+hoist_rollout = true
+scan_unroll = 0
+update_unroll = 2
+batch_stats_f32 = false
+learning_rates = []
+betas = []
+parameter_settings = []
+copies_per_group = 0
+sweep_seed_mode = "paired"
+copy_seed_offset = 0
+track_coverage = true
+diagnostics = false
+total_iterations = 0
+int_coef_schedule = "constant"
+success_gate_rate = 0.0
+normalize_ext_reward = false
+clip_per_network = false
+logstd_floor = -inf
+critic_lr_scale = 1.0
+normalize_agent_obs = false
+
+[environment]
+sticky_actions = 0.25
+frame_skip = 4
+frame_stack = 4
+max_episode_steps = 4500
+clip_reward = true
+reward_shift = 0.0
+
+[runtime]
+environment = "montezuma"
+bonus = "rnd_next_state"
+iterations = 16000
+window_iterations = 400
+run_seed = 0
+lr_anneal_iterations = 16000

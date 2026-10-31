@@ -123,6 +123,9 @@ def adam_step(parameters, gradients, optimizer, learning_rates, max_norm, epsilo
                        for gradient in jax.tree.leaves(gradients))
     norms = jnp.sqrt(squared_norm)
     scales = jnp.minimum(jnp.asarray(max_norm, jnp.float32) / (norms + 1e-6), 1.0)
+    if not isinstance(max_norm, (float, int)) or max_norm == 0:
+        # As in upstream's `if max_grad_norm`, a zero cap disables clipping for that policy.
+        scales = jnp.where(jnp.asarray(max_norm) > 0, scales, 1.0)
     gradients = jax.tree.map(lambda value: value * scales.reshape(
         (copies,) + (1,) * (value.ndim - 1)), gradients)
     step = optimizer.step + 1
@@ -135,6 +138,8 @@ def adam_step(parameters, gradients, optimizer, learning_rates, max_norm, epsilo
     def update(parameter, moment, variance):
         """Broadcast only the policy's learning rate over its own parameters."""
         rate = learning_rates.reshape((copies,) + (1,) * (parameter.ndim - 1))
-        return parameter - (rate / correction1) * moment / (jnp.sqrt(variance) / correction2 + epsilon)
+        epsilon_value = (epsilon if isinstance(epsilon, (float, int)) else
+            epsilon.reshape((copies,) + (1,) * (parameter.ndim - 1)))
+        return parameter - (rate / correction1) * moment / (jnp.sqrt(variance) / correction2 + epsilon_value)
 
     return jax.tree.map(update, parameters, first, second), AdamState(first, second, step), norms

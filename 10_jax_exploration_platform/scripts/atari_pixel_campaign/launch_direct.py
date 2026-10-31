@@ -16,15 +16,26 @@ def launch(repository, directory, mode, copies):
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     source, commit = module.source_snapshot(repository, directory)
-    unit = "serval02_pixel_" + mode + "_copies_" + str(copies)
+    unit = ("serval02_pixel_" + mode + "_copies_" + str(copies)
+            + "_source_" + commit[:12])
     scripts = directory / "slurm" / "direct_jobs"
     scripts.mkdir(parents=True, exist_ok=True)
     script = scripts / (unit + "_" + commit[:12] + ".sh")
     python = "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
     worker = source / "scripts" / "atari_pixel_campaign" / "worker_environment.sh"
     runner = source / "scripts" / "atari_pixel_campaign" / "run_unit.py"
-    arguments = [python, str(runner), "--run-dir", str(directory), "--unit-id", unit,
-                 "--mode", mode, "--copies", str(copies)]
+    if mode in ("gates", "rendering"):
+        checker = source / "scripts" / "atari_pixel_campaign" / "run_checks.py"
+        command = ([python, "-m", "pytest", "-q", str(source / "tests" / "atari_pixels"),
+                    str(source / "tests" / "test_atari_pixel_environment.py")]
+                   if mode == "gates" else
+                   [python, str(source / "scripts" / "atari_pixel_campaign" / "check_rendering.py"),
+                    "--candidate", "all"])
+        arguments = [python, str(checker), "--run-dir", str(directory), "--unit-id", unit,
+                     "--source-commit", commit, "--", *command]
+    else:
+        arguments = [python, str(runner), "--run-dir", str(directory), "--unit-id", unit,
+                     "--mode", mode, "--copies", str(copies)]
     if mode == "smoke":
         arguments += ["--envs-per-copy", "2", "--rollout-steps", "2", "--epochs", "1",
                       "--minibatches", "1", "--warmup-rollouts", "1", "--iterations", "2"]
@@ -70,7 +81,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--run-dir", type=Path, required=True)
-    parser.add_argument("--mode", choices=["smoke", "benchmark"], required=True)
+    parser.add_argument("--mode", choices=["smoke", "benchmark", "gates", "rendering"], required=True)
     parser.add_argument("--copies", type=int, default=1)
     args = parser.parse_args()
     launch(args.repo.resolve(), args.run_dir.resolve(), args.mode, args.copies)

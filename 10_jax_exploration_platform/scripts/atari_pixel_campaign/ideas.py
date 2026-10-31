@@ -358,6 +358,11 @@ def register_adaptive_batch(registry, hypotheses, profiling_evidence, reference_
         raise ValueError("all twenty adaptive slots are already assigned")
     required = {"name", "hypothesis", "mechanism", "learner", "environment", "execution",
                 "correctness_checks", "measurement_settings", "acceptance_criteria"}
+    existing_changes = {}
+    for entry in INITIAL_IDEAS:
+        for trial_index in (None, *range(len(entry.parameter_trials))):
+            existing_changes[canonical_signature(**trial_changes(entry, trial_index))] = entry.name
+    batch_changes = set()
     updates = []
     for position, hypothesis in zip(target["hypotheses"], hypotheses):
         if not required.issubset(hypothesis) or not hypothesis["name"] or not hypothesis["hypothesis"]:
@@ -366,6 +371,15 @@ def register_adaptive_batch(registry, hypotheses, profiling_evidence, reference_
             raise ValueError("an adaptive hypothesis cannot rename or repeat an earlier mechanism")
         if not any(hypothesis[scope] for scope in ("learner", "environment", "execution")):
             raise ValueError("an adaptive hypothesis needs a concrete distinct implementation")
+        signature = canonical_signature(**{scope: hypothesis[scope]
+                                            for scope in ("learner", "environment", "execution")})
+        if signature in batch_changes:
+            raise ValueError("two additional names cannot describe an identical configuration in one batch")
+        if signature in existing_changes and not (hypothesis.get("interaction_reason")
+                                                   and hypothesis.get("related_prior_hypotheses")):
+            raise ValueError("an earlier setting or parameter trial needs an explicitly motivated interaction, "
+                             "not another hypothesis name")
+        batch_changes.add(signature)
         chosen_names.add(hypothesis["name"])
         updates.append((position, hypothesis))
     for position, hypothesis in updates:

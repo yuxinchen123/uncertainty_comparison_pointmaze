@@ -1,0 +1,82 @@
+# Complete recorded settings. Trainer and environment values are explicit at load time.
+# A nonempty parameter grid sets effective cell rates and weights; scalar fields retain their recorded values.
+
+[metadata]
+name = "Historical PointMaze random network distillation experiment"
+implementation = "jax_exploration_platform"
+environment_family = "pointmaze"
+source_files = [
+  "10_jax_exploration_platform/runs/2026-08-16-22-30_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-100M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-8192_extension-of-first-batch/config_resolved.yaml",
+  "10_jax_exploration_platform/runs/2026-08-16-22-30_jax-ppo_pointmaze-large-nonoise_full-batch_rollout-128_envs-per-copy-4_steps-per-copy-100M_bonus-rnd-visit-count-sqrt-visit-count-linear-none_learning-rate-1e-3_intrinsic-weight-rnd-10-visit-count-1_copies-8192_extension-of-first-batch/experiment_background.md",
+]
+source_record_sha256 = "e271fc8a4478f000b19f60caab39e834b4238a5b0b2ed81c821349296f197f73"
+source_unit = "unit-1_rnd-next-state_learning-rate-1e-3_intrinsic-weight-10_copies-8192"
+notes = "Historical final-observation intrinsic bootstrap and historical weighted intrinsic advantage path. Later study switches are explicitly disabled."
+later_fields_recorded_explicitly = ["parameter_settings", "copy_seed_offset", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs"]
+source_steps_per_policy_copy = 100044800
+
+[trainer]
+configuration_preset = "pointmaze_historical"
+intrinsic_bootstrap_observation = "final_observation"
+no_bonus_advantage_stream = "weighted_intrinsic"
+n_copies = 8192
+n_envs = 4
+num_steps = 128
+update_style = "full_batch"
+flat_params = false
+update_epochs = 4
+num_minibatches = 4
+learning_rate = 0.0003
+adam_eps = 1e-05
+anneal_lr = true
+gamma_ext = 0.999
+gamma_int = 0.99
+gae_lambda = 0.95
+clip_coef = 0.2
+ent_coef = 0.0
+vf_coef = 0.5
+max_grad_norm = 0.5
+int_coef = 1.0
+ext_coef = 2.0
+prime_iterations = 10
+bootstrap_on_truncation = true
+base_seed = 0
+hoist_rollout = true
+scan_unroll = 0
+update_unroll = 2
+batch_stats_f32 = false
+learning_rates = [0.001]
+betas = [10.0]
+parameter_settings = []
+copies_per_group = 8192
+sweep_seed_mode = "paired"
+copy_seed_offset = 0
+track_coverage = true
+diagnostics = false
+total_iterations = 0
+int_coef_schedule = "constant"
+success_gate_rate = 0.0
+normalize_ext_reward = false
+clip_per_network = false
+logstd_floor = -inf
+critic_lr_scale = 1.0
+normalize_agent_obs = false
+
+[environment]
+map_name = "large"
+start_cell = [7, 1]
+goal_cell = [1, 10]
+position_noise = 0.0
+max_episode_steps = 400
+continuing_task = true
+reward_shift = 0.0
+goal_radius = 0.45
+goal_reward = "per_step"
+
+[runtime]
+environment = "pointmaze-large"
+bonus = "rnd_next_state"
+iterations = 195400
+window_iterations = 200
+run_seed = 0
+lr_anneal_iterations = 195400

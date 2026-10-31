@@ -12,6 +12,7 @@ import pytest
 
 from exploration_platform.atari_pixels.config import PixelPPOConfig
 from exploration_platform.atari_pixels.training import PixelPPORND
+from exploration_platform.atari_pixels.training import minibatch_loss
 
 
 class FixedPixelEnvironment:
@@ -173,3 +174,97 @@ def test_checkpoint_restores_exact_next_update_and_rejects_changed_environment(
         pickle.dump(missing_environment, stream)
     with pytest.raises(ValueError, match="no recorded environment"):
         load_checkpoint(incomplete, configuration, seeds, environment_configuration)
+
+
+def test_generic_scalar_vectors_keep_other_policy_unchanged(paired_policy_fixture):
+    """Several common scalar changes in policy one cannot alter policy zero's complete update."""
+    configuration, environment, state, expected, _ = paired_policy_fixture
+    settings = {
+        "learning_rate": (1e-4, 3e-4), "intrinsic_coefficient": (1., 4.),
+        "extrinsic_coefficient": (2., 1.), "entropy_coefficient": (.001, .01),
+        "value_coefficient": (.5, 1.), "clip_coefficient": (.1, .2),
+        "gamma_ext": (.999, .9), "gamma_int": (.99, .8), "gae_lambda": (.95, .7),
+        "predictor_update_proportion": (.25, 1.), "max_gradient_norm": (.5, .1),
+        "adam_epsilon": (1e-5, 1e-4),
+    }
+    trainer = PixelPPORND(replace(configuration, per_copy_scalar_settings=settings), environment)
+    actual, _ = trainer.train_iteration(state)
+    jax.block_until_ready(actual)
+    for before, after in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):
+        if before.ndim and before.shape[0] == 2:
+            np.testing.assert_array_equal(before[0], after[0])
+        else:
+            np.testing.assert_array_equal(before, after)
+    assert any(not np.array_equal(np.asarray(before[1]), np.asarray(after[1]))
+               for before, after in zip(jax.tree.leaves(expected.parameters), jax.tree.leaves(actual.parameters)))
+
+
+def test_same_compiled_update_repeats_exactly(paired_policy_fixture):
+    """Repeated identical inputs distinguish backend nondeterminism from copy or checkpoint errors."""
+    configuration, environment, state, _, _ = paired_policy_fixture
+    trainer = PixelPPORND(configuration, environment)
+    first, first_metrics = trainer.train_iteration(state)
+    jax.block_until_ready(first)
+    second, second_metrics = trainer.train_iteration(state)
+    jax.block_until_ready(second)
+    for before, after in zip(jax.tree.leaves(first), jax.tree.leaves(second)):
+        np.testing.assert_array_equal(before, after)
+    for name in first_metrics:
+        np.testing.assert_array_equal(first_metrics[name], second_metrics[name])
+
+
+@pytest.mark.parametrize("name,changed", [
+    ("entropy_coefficient", .01), ("value_coefficient", 1.),
+    ("clip_coefficient", 0.), ("extrinsic_coefficient", .5), ("intrinsic_coefficient", 4.),
+])
+def test_each_vector_loss_setting_matches_separate_scalar_policies(paired_policy_fixture, name, changed):
+    """Each advertised loss setting affects the requested policy and agrees with scalar evaluation."""
+    configuration, environment, state, _, _ = paired_policy_fixture
+    reference = PixelPPORND(configuration, environment)
+    collected, rollout = reference.collect(state)
+    _, batch = reference.prepare_batch(collected, rollout)
+    # These supplied advantages and old probabilities exercise clipping and nonproportional weights.
+    batch["advantage_ext"] = jnp.tile(jnp.asarray([[1., -2., .5, .25]], jnp.float32), (2, 1))
+    batch["advantage_int"] = jnp.tile(jnp.asarray([[.2, .4, -.3, .1]], jnp.float32), (2, 1))
+    batch["log_probabilities"] = batch["log_probabilities"] + jnp.asarray([[-.3, .2, -.1, .4]], jnp.float32)
+    batch["return_ext"] = batch["values_ext"] + jnp.asarray([[1., -.5, .2, .7]], jnp.float32)
+    batch["return_int"] = jnp.tile(jnp.asarray([[1., .5, -.2, .7]], jnp.float32), (2, 1))
+    masks = jnp.ones((2, 4), jnp.float32)
+    values = (getattr(configuration, name), changed)
+    vector_configuration = replace(configuration, per_copy_scalar_settings={name: values})
+    vector_trainer = PixelPPORND(vector_configuration, environment)
+    _, actual = minibatch_loss(state.parameters, state.target, batch, masks,
+        vector_configuration, vector_trainer.intrinsic_coefficients)
+    _, unchanged = minibatch_loss(state.parameters, state.target, batch, masks,
+        configuration, reference.intrinsic_coefficients)
+    assert not np.isclose(float(actual["loss"][1]), float(unchanged["loss"][1]), rtol=1e-7, atol=1e-7)
+    for index in range(2):
+        scalar_configuration = replace(configuration, n_copies=1, **{name: values[index]})
+        parameters = jax.tree.map(lambda value: value[index:index + 1], state.parameters)
+        target = jax.tree.map(lambda value: value[index:index + 1], state.target)
+        scalar_batch = jax.tree.map(lambda value: value[index:index + 1], batch)
+        scalar_trainer = PixelPPORND(scalar_configuration, environment)
+        _, expected = minibatch_loss(parameters, target, scalar_batch, masks[index:index + 1],
+            scalar_configuration, scalar_trainer.intrinsic_coefficients)
+        for metric in ("loss", "policy_loss", "value_loss", "predictor_loss", "entropy"):
+            np.testing.assert_allclose(actual[metric][index], expected[metric][0], rtol=1e-4, atol=1e-5)
+
+
+def test_predictor_fraction_zero_and_one_control_only_the_requested_predictor(paired_policy_fixture):
+    """Zero selected examples leave one predictor unchanged while full selection trains the other."""
+    configuration, environment, state, _, _ = paired_policy_fixture
+    reference = PixelPPORND(configuration, environment)
+    collected, rollout = reference.collect(state)
+    prepared, batch = reference.prepare_batch(collected, rollout)
+    trainer = PixelPPORND(replace(configuration, per_copy_scalar_settings={
+        "predictor_update_proportion": (0., 1.)}), environment)
+    actual, metrics = jax.jit(trainer.update)(prepared, batch)
+    jax.block_until_ready(actual)
+    for before, after in zip(jax.tree.leaves(state.parameters["predictor"]),
+                             jax.tree.leaves(actual.parameters["predictor"])):
+        np.testing.assert_array_equal(before[0], after[0])
+    assert float(metrics["predictor_loss"][0]) == 0.
+    assert float(metrics["predictor_loss"][1]) > 0.
+    assert any(not np.array_equal(np.asarray(before[1]), np.asarray(after[1]))
+               for before, after in zip(jax.tree.leaves(state.parameters["predictor"]),
+                                         jax.tree.leaves(actual.parameters["predictor"])))

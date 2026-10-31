@@ -5,6 +5,8 @@ export PYTHONNOUSERSITE=1
 export PYTHONUNBUFFERED=1
 export JAX_ENABLE_X64=true
 export JAX_DEFAULT_MATMUL_PRECISION=highest
+# Original CleanRL requests deterministic operations; apply that choice to XLA too.
+export XLA_FLAGS="${XLA_FLAGS:-} --xla_gpu_exclude_nondeterministic_ops=true"
 export JAXTARI_SKIP_SPRITE_UPDATE=1
 export XDG_DATA_HOME="${ATARI_PIXEL_ASSETS:-/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets}"
 export XLA_PYTHON_CLIENT_PREALLOCATE=false

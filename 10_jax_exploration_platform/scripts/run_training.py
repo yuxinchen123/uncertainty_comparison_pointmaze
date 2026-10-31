@@ -209,7 +209,7 @@ def number_list(text: str) -> tuple:
     return tuple(float(part) for part in text.split(",") if part.strip())
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None) -> argparse.Namespace:
     """Every knob this run exposes; the defaults are the trainer's own."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", required=True, help="the run folder; created if missing")
@@ -217,6 +217,8 @@ def parse_args() -> argparse.Namespace:
     # than write a shard full of the runner's defaults under a plausible-looking name
     parser.add_argument("--unit-id", required=True, help="names this unit's data shard")
     parser.add_argument("--description", default="", help="the human sentence for the manifest")
+    parser.add_argument("--configuration-file", type=Path,
+                        help="complete environment-specific TOML; explicit CLI options override its settings")
     parser.add_argument("--copies", type=int, default=128,
                         help="copies, when neither knob is swept; a sweep derives the count")
     parser.add_argument("--configuration-preset", default="environment_default",
@@ -300,7 +302,8 @@ def parse_args() -> argparse.Namespace:
                         help="iterations over which the learning rate anneals linearly to zero; "
                              "0 = this run's own length. A longer horizon makes a short run use "
                              "the early part of a long run's schedule")
-    return parser.parse_args()
+    from experiment_configuration import parse_with_configuration_file
+    return parse_with_configuration_file(parser, argv)
 
 
 def cell(text: str) -> tuple:
@@ -314,16 +317,23 @@ def build_env_config(args: argparse.Namespace):
     from dataclasses import replace
     from exploration_platform.envs.pointmaze.pm_common import EnvConfig, validate_env_config
     episode_steps = args.episode_steps or ENVIRONMENTS[args.env]["episode_steps"]
+    document = getattr(args, "experiment_configuration_data", None)
     if args.env != "pointmaze-large":
         if (args.map, args.start_cell, args.goal_cell, args.terminate_at_goal, args.goal_reward) != (
                 "large", "7,1", "1,10", False, "per_step"):
             raise ValueError("PointMaze map and goal options cannot change another environment")
-        return replace(env_config_of(args.env), max_episode_steps=episode_steps,
+        environment = env_config_of(args.env)
+        if document is not None:
+            environment = replace(environment, **document["environment"])
+        return replace(environment, max_episode_steps=episode_steps,
                        reward_shift=args.reward_shift)
-    env_cfg = EnvConfig(map_name=args.map, start_cell=cell(args.start_cell),
-                        goal_cell=cell(args.goal_cell), max_episode_steps=episode_steps,
-                        continuing_task=not args.terminate_at_goal,
-                        reward_shift=args.reward_shift, goal_reward=args.goal_reward)
+    # Retain file-only environment settings such as noise and goal radius, then apply CLI values.
+    fields = dict(document["environment"]) if document is not None else {}
+    fields.update(map_name=args.map, start_cell=cell(args.start_cell),
+                  goal_cell=cell(args.goal_cell), max_episode_steps=episode_steps,
+                  continuing_task=not args.terminate_at_goal,
+                  reward_shift=args.reward_shift, goal_reward=args.goal_reward)
+    env_cfg = EnvConfig(**fields)
     validate_env_config(env_cfg)
     return env_cfg
 
@@ -369,6 +379,20 @@ def specs_of(bonus: str, config, env_cfg) -> dict:
 
 
 def build_config(args: argparse.Namespace):
+    """Preserve the existing CLI construction and retain complete optional file settings."""
+    from dataclasses import replace
+    from experiment_configuration import additional_trainer_fields
+    from exploration_platform.agents.ppo.presets import resolve_configuration
+
+    # Without the new flag this is exactly the existing constructor, with no replaced defaults.
+    configuration = _build_config_values(args)
+    if getattr(args, "experiment_configuration_data", None) is None:
+        return configuration
+    configuration = replace(configuration, **additional_trainer_fields(args))
+    return resolve_configuration(configuration, build_env_config(args))
+
+
+def _build_config_values(args: argparse.Namespace):
     """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
     from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.training.sweep import sweep_config
@@ -408,13 +432,18 @@ def build_config(args: argparse.Namespace):
         raise ValueError("--terminate-at-goal needs --diagnostics: episodes then end at different "
                          "steps, and only the episode tracker counts them")
     # Before: two rates x two weights = four cells; after: only the listed pairs train.
-    if args.parameter_settings:
+    settings_from_file = getattr(args, "experiment_parameter_settings", ())
+    if args.parameter_settings or settings_from_file:
         if rates or weights:
             raise ValueError("explicit parameter settings cannot be combined with sweep lists")
-        mapping = json.loads(args.parameter_settings.read_text())
-        if args.bonus not in mapping or not mapping[args.bonus]:
-            raise ValueError(f"no parameter settings listed for {args.bonus}")
-        settings = tuple(tuple(float(value) for value in pair) for pair in mapping[args.bonus])
+        if args.parameter_settings:
+            mapping = json.loads(args.parameter_settings.read_text())
+            if args.bonus not in mapping or not mapping[args.bonus]:
+                raise ValueError(f"no parameter settings listed for {args.bonus}")
+            pairs = mapping[args.bonus]
+        else:
+            pairs = settings_from_file
+        settings = tuple(tuple(float(value) for value in pair) for pair in pairs)
         if any(len(pair) != 2 for pair in settings) or args.copies_per_cell < 1:
             raise ValueError("explicit settings require [rate, weight] pairs and copies-per-cell")
         if task_only and any(weight != 0 for _, weight in settings):
@@ -461,6 +490,9 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
                             "iterations": args.iterations,
                             "window_iterations": args.window_iterations,
                             "run_seed": args.run_seed}}
+    document = getattr(args, "experiment_configuration_data", None)
+    if document is not None:
+        resolved["configuration_file"] = {name: document[name] for name in ("path", "sha256", "metadata")}
     (run_dir / "config_resolved.yaml").write_text(as_yaml(resolved) + "\n")
 
     # machine-readable identity of the run: which code, which component versions, which shape
@@ -563,6 +595,7 @@ def main() -> None:
 
     # the unit's own identity card: which cell each copy belongs to, so the aggregator can group
     # the per-copy arrays of every later record without re-deriving the sweep
+    configuration_document = getattr(args, "experiment_configuration_data", None)
     emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
           "environment": env_spec(env_cfg), "diagnostics": config.diagnostics,
           # this unit's whole configuration: units of one run folder may differ in their flags,
@@ -589,7 +622,10 @@ def main() -> None:
           "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
           "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
           "steps_per_iteration": steps_per_iteration,
-          "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations})
+          "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations,
+          **({"configuration_file": {name: configuration_document[name]
+                                      for name in ("path", "sha256", "metadata")}}
+             if configuration_document is not None else {})})
     say(f"{config.n_copies} copies x {config.n_envs} environments x {config.num_steps} steps, "
         f"{args.iterations} iterations, update style {config.update_style}, "
         f"{len(sweep.group_settings)} cells of {config.copies_per_group or config.n_copies} copies")

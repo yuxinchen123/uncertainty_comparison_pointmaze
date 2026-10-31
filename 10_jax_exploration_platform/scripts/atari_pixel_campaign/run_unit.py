@@ -47,7 +47,11 @@ def hardware_record():
          "--format=csv,noheader"], capture_output=True, text=True, check=True)
     return {"hostname": os.uname().nodename, "gpu_query": query.stdout.strip(),
             "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES", ""),
-            "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""), "pid": os.getpid()}
+            "slurm_job_id": os.environ.get("SLURM_JOB_ID", ""), "pid": os.getpid(),
+            "runtime_environment": {name: os.environ.get(name, "") for name in (
+                "JAX_ENABLE_X64", "JAX_DEFAULT_MATMUL_PRECISION", "XLA_FLAGS",
+                "XLA_PYTHON_CLIENT_PREALLOCATE", "XLA_PYTHON_CLIENT_MEM_FRACTION",
+                "OMP_NUM_THREADS", "XDG_DATA_HOME")}}
 
 
 def save_checkpoint(path, state, config, copy_seeds, environment_configuration=None):
