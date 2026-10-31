@@ -1,0 +1,24 @@
+{
+  "protocol": {
+    "copies": 2,
+    "environments_per_copy": 128,
+    "rollout_steps": 128,
+    "epochs": 4,
+    "minibatches": 4,
+    "normalization_warmup_rollouts": 50,
+    "rounds": 7,
+    "updates_per_arm_per_round": 1,
+    "copy_seeds": [
+      1,
+      2
+    ]
+  },
+  "runtime": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true",
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85"
+  },
+  "allocator_preparation_bytes": 9663676416
+}
