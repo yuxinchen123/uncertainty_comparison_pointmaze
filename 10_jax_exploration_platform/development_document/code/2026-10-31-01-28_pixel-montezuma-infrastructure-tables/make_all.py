@@ -332,7 +332,8 @@ def make_plots(records, input_fingerprint):
         axis.axvline(1.0, color="black", linewidth=0.8)
         axis.set_xlabel("Reference duration / candidate duration (larger is faster)", fontsize=12.5)
         axis.tick_params(axis="x", labelsize=12)
-        axis.set_title(f"{HARDWARE_NAMES[panel['hardware']]}, {panel['copies']} independent policy copies, "
+        copy_noun = "copy" if panel["copies"] == 1 else "copies"
+        axis.set_title(f"{HARDWARE_NAMES[panel['hardware']]}, {panel['copies']} independent policy {copy_noun}, "
                        f"{panel['host']}\n{panel['scope'].replace('_', ' ')}; "
                        f"panel {panel['panel_index']} of {panel['panel_count']}", fontsize=13)
         colors = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}
@@ -368,8 +369,8 @@ def figure_source(manifest_path, expected_panels, document):
                    + ("copy" if copies == 1 else "copies")
                    + f". Source commit: \\texttt{{{latex_text(panel['source_commit'])}}}. "
                    + f"Measurement scope: {latex_text(panel['scope'].replace('_', ' '))}. "
-                   + f"Reference configuration fingerprint: \\texttt{{{panel['reference_fingerprint']}}}. "
-                   + f"Panel {panel['panel_index']} of {panel['panel_count']} within this cohort. "
+                   + f"Reference configuration hash: \\texttt{{{panel['reference_fingerprint']}}}. "
+                   + f"Panel {panel['panel_index']} of {panel['panel_count']} for this configuration. "
                    + "Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. "
                    + "Ratios above one favor the candidate. Each panel has its own horizontal range. "
                    + "These execution timings do not establish learning returns, larger-copy performance, "
