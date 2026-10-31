@@ -1,10 +1,14 @@
 """Small complete learner checks; numerical execution belongs on an allocated compute node."""
 
 from dataclasses import replace
+import importlib.util
+from pathlib import Path
+import pickle
 
 import jax
 import jax.numpy as jnp
 import numpy as np
+import pytest
 
 from exploration_platform.atari_pixels.config import PixelPPOConfig
 from exploration_platform.atari_pixels.training import PixelPPORND
@@ -37,7 +41,7 @@ class FixedPixelEnvironment:
         rewards = (actions % 2).astype(jnp.float32)
         return counters, self.observe(counters), rewards, done, {
             "episode_return": counters.astype(jnp.float32), "episode_done": done,
-            "final_observation": self.observe(counters)}
+            "final_observation": self.observe(counters), "full_game_reset": done}
 
 
 def test_warmup_complete_iteration_and_optimized_equivalence():
@@ -85,3 +89,87 @@ def test_donation_and_zero_warmup():
     jax.block_until_ready(state)
     assert int(state.iteration) == 2 and int(state.optimizer.step) == 2
     assert np.isfinite(np.asarray(metrics["loss"])).all()
+
+
+@pytest.fixture(scope="module")
+def paired_policy_fixture():
+    """Initialize two independently seeded policies once for complete-iteration isolation tests."""
+    configuration = PixelPPOConfig(n_copies=2, n_envs=2, num_steps=2, num_minibatches=1,
+                                    update_epochs=1, observation_warmup_iterations=1,
+                                    total_timesteps=256)
+    environment = FixedPixelEnvironment(2)
+    trainer = PixelPPORND(configuration, environment)
+    state = trainer.warmup(trainer.initialize((19, 37)))
+    result, metrics = trainer.train_iteration(state)
+    jax.block_until_ready(result)
+    return configuration, environment, state, result, metrics
+
+
+@pytest.mark.parametrize("setting,values", [
+    ("per_copy_learning_rates", (1e-4, 3e-4)),
+    ("per_copy_intrinsic_coefficients", (1.0, 10.0)),
+])
+def test_complete_iteration_hyperparameter_copy_isolation(paired_policy_fixture, setting, values):
+    """Changing only policy one's rate or intrinsic weight leaves policy zero bit-identical."""
+    configuration, environment, state, expected, expected_metrics = paired_policy_fixture
+    changed_trainer = PixelPPORND(replace(configuration, **{setting: values}), environment)
+    actual, actual_metrics = changed_trainer.train_iteration(state)
+    jax.block_until_ready(actual)
+    # Every mutable field, including parameters, Adam, filters and statistics, retains its copy axis.
+    for before, after in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):
+        if before.ndim and before.shape[0] == 2:
+            np.testing.assert_array_equal(before[0], after[0])
+        else:
+            np.testing.assert_array_equal(before, after)
+    assert any(not np.array_equal(np.asarray(before[1]), np.asarray(after[1]))
+               for before, after in zip(jax.tree.leaves(expected.parameters),
+                                         jax.tree.leaves(actual.parameters)))
+    np.testing.assert_array_equal(expected_metrics["loss"][0], actual_metrics["loss"][0])
+    if setting == "per_copy_learning_rates":
+        np.testing.assert_allclose(actual_metrics["learning_rate"], values, rtol=1e-7)
+
+
+def test_checkpoint_restores_exact_next_update_and_rejects_changed_environment(
+        paired_policy_fixture, tmp_path):
+    """The production checkpoint writer/reader reproduce uninterrupted training exactly."""
+    from exploration_platform.atari_pixels.checkpointing import load_checkpoint
+
+    configuration, environment, _, state, _ = paired_policy_fixture
+    # Import the real campaign writer, without invoking its command-line entry point.
+    script = Path(__file__).resolve().parents[2] / "scripts/atari_pixel_campaign/run_unit.py"
+    specification = importlib.util.spec_from_file_location("pixel_checkpoint_writer", script)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    path = tmp_path / "latest.pkl"
+    seeds, environment_configuration = (19, 37), {"num_envs": 2}
+    module.save_checkpoint(path, state, configuration, seeds, environment_configuration)
+    restored = load_checkpoint(path, configuration, seeds, environment_configuration)
+    for before, after in zip(jax.tree.leaves(state), jax.tree.leaves(restored)):
+        np.testing.assert_array_equal(before, after)
+    assert path.exists() and not path.with_suffix(".tmp").exists()
+
+    # Replay one actual next rollout and update rather than checking serialized bytes alone.
+    trainer = PixelPPORND(configuration, environment)
+    uninterrupted, expected_metrics = trainer.train_iteration(state)
+    resumed, actual_metrics = trainer.train_iteration(restored)
+    jax.block_until_ready(resumed)
+    for before, after in zip(jax.tree.leaves(uninterrupted), jax.tree.leaves(resumed)):
+        np.testing.assert_array_equal(before, after)
+    for name in expected_metrics:
+        np.testing.assert_array_equal(expected_metrics[name], actual_metrics[name])
+
+    with pytest.raises(ValueError, match="environment settings"):
+        load_checkpoint(path, configuration, seeds, {"num_envs": 3})
+    with pytest.raises(ValueError, match="policy seeds"):
+        load_checkpoint(path, configuration, (37, 19), environment_configuration)
+    with pytest.raises(ValueError, match="learner configuration"):
+        load_checkpoint(path, replace(configuration, learning_rate=3e-4), seeds, environment_configuration)
+    # Old or incomplete files cannot silently resume with an unrecorded environment protocol.
+    with path.open("rb") as stream:
+        missing_environment = pickle.load(stream)
+    del missing_environment["environment_configuration"]
+    incomplete = tmp_path / "missing_environment.pkl"
+    with incomplete.open("wb") as stream:
+        pickle.dump(missing_environment, stream)
+    with pytest.raises(ValueError, match="no recorded environment"):
+        load_checkpoint(incomplete, configuration, seeds, environment_configuration)

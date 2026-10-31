@@ -1,6 +1,6 @@
 """Small float32 kernels that work on both Ampere and Hopper graphics cards."""
 
-from functools import partial
+from functools import cache, partial
 
 import jax
 import jax.numpy as jnp
@@ -8,18 +8,40 @@ from jax.experimental import pallas as pl
 from jax.experimental.pallas import triton as pltriton
 
 
+def ampere_target_description(device_kind, compute_capability):
+    """Describe the RTX A4500's verified sm86 target without changing its hardware name."""
+    if device_kind != "NVIDIA RTX A4500" or compute_capability not in (86, "8.6", (8, 6)):
+        raise ValueError(f"unexpected device for the RTX A4500 target: {device_kind}/{compute_capability}")
+    return pltriton.GpuInfo(gpu_version=None, arch_name="8.6", compute_capability=86)
+
+
+@cache
+def register_gpu_targets():
+    """Fill JAX 0.11's missing RTX A4500 metadata using its intended target registry."""
+    # The installed pinned library omits this marketing name while already supporting sm86.
+    # Register the real name and capability; leave recognized devices such as H100 untouched.
+    from jax._src.pallas.triton import gpu_info
+
+    for device in jax.local_devices():
+        if device.platform == "gpu" and device.device_kind == "NVIDIA RTX A4500":
+            description = ampere_target_description(device.device_kind, device.compute_capability)
+            gpu_info.registry[device.device_kind] = lambda description=description: description
+
+
 @partial(jax.custom_vjp, nondiff_argnums=(2,))
 def bias_activation(values, biases, leaky):
     """Add a per-policy channel bias and apply an activation in one Pallas kernel."""
+    register_gpu_targets()
     # Flattening retains the leading policy axis; each pixel reads only its own bias row.
     total = values.size
     per_policy = total // values.shape[0]
     channels = values.shape[-1]
     block_size = 256
+    index_dtype = jnp.int64 if total > 2 ** 31 - 1 else jnp.int32
 
     def kernel(input_ref, bias_ref, output_ref):
         """Compute a block of independent float32 additions and activation values."""
-        indices = pl.program_id(0) * block_size + jnp.arange(block_size, dtype=jnp.int32)
+        indices = pl.program_id(0).astype(index_dtype) * block_size + jnp.arange(block_size, dtype=index_dtype)
         valid = indices < total
         pixels = pltriton.load(input_ref.at[indices], mask=valid, other=0.)
         bias_indices = (indices // per_policy) * channels + indices % channels

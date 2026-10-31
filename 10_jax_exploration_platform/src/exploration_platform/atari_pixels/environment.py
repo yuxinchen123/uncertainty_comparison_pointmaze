@@ -37,6 +37,7 @@ class PixelEnvironmentState(NamedTuple):
     reset_count: jax.Array
     previous_action: jax.Array
     episode_return: jax.Array
+    frame_cursor: jax.Array
 
 
 def grayscale_frame(rgb: jax.Array) -> jax.Array:
@@ -45,6 +46,29 @@ def grayscale_frame(rgb: jax.Array) -> jax.Array:
     rgb = rgb.astype(jnp.int32)
     luminance = rgb[..., 0] * 2989 + rgb[..., 1] * 5870 + rgb[..., 2] * 1140
     return ((luminance + 5000) // 10000).astype(jnp.uint8)
+
+
+def _grayscale_palette_lookup(self, raster, palette, indices_to_update=None,
+                              new_color_ids=None):
+    """Render ordered palette IDs directly through a precomputed grayscale palette."""
+    # Montezuma uses an immutable palette; runtime recoloring is outside this adapter's game.
+    if indices_to_update is not None or new_color_ids is not None:
+        raise ValueError("the grayscale palette path does not support runtime palette recoloring")
+    del palette
+    return self.pixel_observation_grayscale_palette[raster]
+
+
+def _install_grayscale_palette_lookup(game):
+    """Preserve upstream sprite draw order while removing its full RGB image allocation."""
+    # Upstream first draws all sprites as palette IDs, then expands the completed raster to RGB.
+    # This candidate leaves every draw untouched and replaces only that final palette lookup.
+    original = game.renderer.jr
+    grayscale_class = type("GrayscalePaletteRendering", (type(original),), {
+        "render_from_palette": _grayscale_palette_lookup})
+    renderer = object.__new__(grayscale_class)
+    renderer.__dict__.update(original.__dict__)
+    renderer.pixel_observation_grayscale_palette = grayscale_frame(game.renderer.PALETTE)
+    game.renderer.jr = renderer
 
 
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
@@ -84,7 +108,9 @@ class AtariPixelEnvironment:
                  render_final_two_only: bool = False, frame_skip_unroll: int = 1,
                  batch_layout: str = "flat", stack_update: str = "concatenate",
                  reset_only_when_needed: bool = True,
-                 cache_room_backgrounds: bool = False):
+                 cache_room_backgrounds: bool = False,
+                 fuse_pixel_preprocessing: bool = False,
+                 combine_palette_and_sprite_drawing: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -97,8 +123,8 @@ class AtariPixelEnvironment:
             raise ValueError("frame_skip_unroll must be positive")
         if batch_layout not in ("flat", "nested"):
             raise ValueError("batch_layout must be 'flat' or 'nested'")
-        if stack_update not in ("concatenate", "gather"):
-            raise ValueError("stack_update must be 'concatenate' or 'gather'")
+        if stack_update not in ("concatenate", "gather", "circular"):
+            raise ValueError("stack_update must be 'concatenate', 'gather', or 'circular'")
         self.num_envs = num_envs
         self.frame_skip = frame_skip
         self.max_episode_steps = max_episode_steps
@@ -111,6 +137,8 @@ class AtariPixelEnvironment:
         self.stack_update = stack_update
         self.reset_only_when_needed = reset_only_when_needed
         self.cache_room_backgrounds = cache_room_backgrounds
+        self.fuse_pixel_preprocessing = fuse_pixel_preprocessing
+        self.combine_palette_and_sprite_drawing = combine_palette_and_sprite_drawing
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -129,6 +157,8 @@ class AtariPixelEnvironment:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")
             self.row_weights = area_resize_weights(height)
             self.column_weights = area_resize_weights(width)
+            if combine_palette_and_sprite_drawing:
+                _install_grayscale_palette_lookup(self.game)
 
     def _named_key(self, key, stream, index):
         """Derive one event's key without advancing any other random quantity."""
@@ -138,12 +168,39 @@ class AtariPixelEnvironment:
     def _frame(self, game):
         """Render and grayscale one game state before any pooling or resizing."""
         # The renderer returns [210, 160, 3]; grayscale must happen before maximum pooling.
-        return grayscale_frame(self.game.render(game))
+        image = self.game.render(game)
+        if self.combine_palette_and_sprite_drawing or self.fuse_pixel_preprocessing:
+            # Palette-index width can promote the RGB array even though channel values remain bytes.
+            return image.astype(jnp.uint8)
+        return grayscale_frame(image)
 
     def _resize(self, gray):
         """Apply the recorded area resize to one raw grayscale image."""
         # Keep the final observation small while the game keeps its native coordinate system.
         return area_resize_frame(gray, self.row_weights, self.column_weights)
+
+    def _preprocess_pair(self, first, second):
+        """Combine grayscale conversion, final-frame maximum, area resize and byte rounding."""
+        if not self.fuse_pixel_preprocessing:
+            # The standard renderer or grayscale-palette renderer already returned grayscale.
+            return self._resize(jnp.maximum(first, second))
+
+        # Pallas performs the reduction in one GPU kernel. Near half-byte rounding boundaries,
+        # the original dense float32 reference determines the exact byte rather than assuming
+        # that different accumulation orders round identically.
+        from .pixel_preprocessing import fused_area_preprocess
+
+        pixels, ambiguous = fused_area_preprocess(first, second)
+
+        def correct_reference_rounding(_):
+            """Use the original reduction only for bytes whose rounding can depend on order."""
+            first_gray = grayscale_frame(first) if first.ndim == 3 else first
+            second_gray = grayscale_frame(second) if second.ndim == 3 else second
+            reference = self._resize(jnp.maximum(first_gray, second_gray))
+            return jnp.where(ambiguous, reference, pixels)
+
+        return jax.lax.cond(jnp.any(ambiguous), correct_reference_rounding,
+                            lambda _: pixels, operand=None)
 
     def _append_frame(self, frames, frame):
         """Append identical pixels using either concatenation or an explicit gather."""
@@ -152,6 +209,26 @@ class AtariPixelEnvironment:
             indices = jnp.asarray([1, 2, 3, 3], dtype=jnp.int32)
             return jnp.take(frames, indices, axis=0).at[3].set(frame)
         return jnp.concatenate((frames[1:], frame[None]), axis=0)
+
+    def _ordered_frames(self, frames, cursor):
+        """Read a lane's logical frame order from either canonical or circular storage."""
+        # Physical [new,b,c,d], cursor 1, becomes logical [b,c,d,new].
+        if self.stack_update == "circular":
+            return jnp.take(frames, (jnp.arange(4, dtype=jnp.int32) + cursor) % 4, axis=0)
+        return frames
+
+    def _store_frame(self, frames, cursor, frame):
+        """Append one frame while moving only its slot in the circular implementation."""
+        # A circular append writes one 84 by 84 frame instead of copying three older frames.
+        if self.stack_update == "circular":
+            return frames.at[cursor].set(frame), (cursor + jnp.int32(1)) % jnp.int32(4)
+        return self._append_frame(frames, frame), cursor
+
+    def canonical_state(self, state):
+        """Normalize physical frame storage for correctness checks without changing gameplay."""
+        # Timing keeps physical storage; only comparisons use chronological frames and zero cursors.
+        frames = jax.vmap(self._ordered_frames)(state.frames, state.frame_cursor)
+        return state._replace(frames=frames, frame_cursor=jnp.zeros_like(state.frame_cursor))
 
     def _map_lanes(self, function, shape, *arguments):
         """Map the same scalar transition with flat or nested policy/environment axes."""
@@ -199,16 +276,19 @@ class AtariPixelEnvironment:
             0, noop_count, noop_body, (game, frame_count, previous_action, reset_game))
         game, frame_count, previous_action, _, _ = self._raw_frame(
             game, state.key, frame_count, previous_action, jnp.int32(1))
-        frame = self._resize(self._frame(game))
+        reset_frame = self._frame(game)
+        frame = self._preprocess_pair(reset_frame, reset_frame)
 
         # Before: four older frames; after: a new full stack, or one appended life-reset frame.
         full_stack = jnp.broadcast_to(frame, self.observation_shape)
-        continued_stack = self._append_frame(state.frames, frame)
+        continued_stack, continued_cursor = self._store_frame(
+            state.frames, state.frame_cursor, frame)
         frames = jnp.where(reset_game, full_stack, continued_stack)
+        cursor = jnp.where(reset_game, jnp.int32(0), continued_cursor)
         return PixelEnvironmentState(
             game, frames, state.key, frame_count,
             jnp.where(reset_game, jnp.int32(0), state.step_count), reset_index,
-            previous_action, jnp.where(reset_game, jnp.float32(0), state.episode_return))
+            previous_action, jnp.where(reset_game, jnp.float32(0), state.episode_return), cursor)
 
     def _initial_single(self, key):
         """Initialize one lane, including the first NOOP/FIRE reset and frame stack."""
@@ -216,7 +296,7 @@ class AtariPixelEnvironment:
         game = self.game.reset(self._named_key(key, GAME_STREAM, jnp.int32(0)))[1]
         state = PixelEnvironmentState(
             game, jnp.zeros(self.observation_shape, jnp.uint8), key,
-            jnp.int32(0), jnp.int32(0), jnp.int32(-1), jnp.int32(0), jnp.float32(0))
+            jnp.int32(0), jnp.int32(0), jnp.int32(-1), jnp.int32(0), jnp.float32(0), jnp.int32(0))
         return self._reset_single(state, jnp.bool_(True))
 
     def reset(self, seed_indices):
@@ -230,13 +310,14 @@ class AtariPixelEnvironment:
             shape = (seeds.shape[0], self.num_envs)
             state = self._map_lanes(self._initial_single, shape, keys.reshape(-1, 2))
             state = jax.tree.map(jnp.copy, state)
-            return state, state.frames.reshape(shape + self.observation_shape)
+            return state, self.observe(state)
 
     def observe(self, state):
         """Read the current stored frame history without advancing game or random state."""
         # Before: [C*N,4,84,84]; after: the same bytes viewed as [C,N,4,84,84].
         copies = state.frames.shape[0] // self.num_envs
-        return state.frames.reshape((copies, self.num_envs) + self.observation_shape)
+        frames = jax.vmap(self._ordered_frames)(state.frames, state.frame_cursor)
+        return frames.reshape((copies, self.num_envs) + self.observation_shape)
 
     def _step_single(self, state, action):
         """Advance one held action and report masks before an immediate reset."""
@@ -266,17 +347,18 @@ class AtariPixelEnvironment:
         if self.render_final_two_only:
             # Render only the retained last two game states instead of all held-action frames.
             prior, latest = self._frame(prior), self._frame(latest)
-        pooled = jnp.maximum(prior, latest) if self.frame_skip > 1 else latest
-        frame = self._resize(pooled)
-        frames = self._append_frame(state.frames, frame)
+        frame = self._preprocess_pair(prior, latest) if self.frame_skip > 1 else self._preprocess_pair(latest, latest)
+        frames, cursor = self._store_frame(state.frames, state.frame_cursor, frame)
         step_count = state.step_count + jnp.int32(1)
         truncated = step_count >= self.max_episode_steps
-        life_lost = ((game.lives < state.game.lives) & (game.lives > 0)
+        # JAXtari ends a game below zero lives, so the nonterminal 1 -> 0 loss still
+        # needs the life boundary used by its own AtariWrapper.
+        life_lost = ((game.lives < state.game.lives) & (state.game.lives > 0)
                      if self.episodic_life else jnp.bool_(False))
         done = game_done | truncated | life_lost
         episode_return = state.episode_return + reward.astype(jnp.float32)
         next_state = PixelEnvironmentState(game, frames, state.key, count, step_count,
-                                            state.reset_count, previous, episode_return)
+                                            state.reset_count, previous, episode_return, cursor)
 
         # Keep full-game episode statistics separate from the PPO life-loss boundary.
         info = {"episode_return": episode_return, "episode_done": game_done | truncated,
@@ -294,7 +376,8 @@ class AtariPixelEnvironment:
                 self._step_single, shape, state, actions.reshape(-1))
             # RND scores the state reached by the action, before any immediate reset.
             # Before: terminal stack [B,4,84,84]; after: info keeps that stack for this transition.
-            info["final_observation"] = next_state.frames
+            info["final_observation"] = jax.vmap(self._ordered_frames)(
+                next_state.frames, next_state.frame_cursor)
 
             def reset_finished(current):
                 """Run NOOP/FIRE resets only on transitions that ended a life or game."""
@@ -308,6 +391,9 @@ class AtariPixelEnvironment:
                                            lambda current: current, next_state)
             else:
                 next_state = reset_finished(next_state)
-            observation = next_state.frames.reshape(shape + self.observation_shape)
+            # Reset NOOPs can end a game after a life-loss transition; expose the actual
+            # frame-stack reset kind separately from that transition's episode statistics.
+            info["full_game_reset"] = done & (next_state.step_count == 0)
+            observation = self.observe(next_state)
             info = jax.tree.map(lambda value: value.reshape(shape + value.shape[1:]), info)
             return next_state, observation, rewards.reshape(shape), done.reshape(shape), info

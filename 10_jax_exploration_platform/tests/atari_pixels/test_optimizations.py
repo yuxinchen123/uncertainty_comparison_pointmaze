@@ -105,3 +105,14 @@ def test_fused_bias_activation_and_backward(leaky):
                                        argnums=(0, 1)))(values, biases)
     for before, after in zip(expected_gradients, actual_gradients):
         np.testing.assert_allclose(after, before, rtol=1e-6, atol=1e-6)
+
+
+def test_rtx_a4500_target_metadata_rejects_another_architecture():
+    """Register the actual sm86 architecture and reject mismatched hardware metadata."""
+    from exploration_platform.atari_pixels.kernels import ampere_target_description
+
+    description = ampere_target_description("NVIDIA RTX A4500", "8.6")
+    assert description.arch_name == "8.6" and description.compute_capability == 86
+    assert description.gpu_version is None
+    with pytest.raises(ValueError, match="unexpected device"):
+        ampere_target_description("NVIDIA RTX A4500", "9.0")

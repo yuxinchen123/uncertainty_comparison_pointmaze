@@ -11,6 +11,7 @@ from exploration_platform.atari_pixels.environment import (
     area_resize_frame,
     area_resize_weights,
     grayscale_frame,
+    NOOP_STREAM,
 )
 
 
@@ -57,6 +58,8 @@ class SmallPixelEnvironment(AtariPixelEnvironment):
         self.batch_layout = "flat"
         self.stack_update = "concatenate"
         self.reset_only_when_needed = True
+        self.fuse_pixel_preprocessing = False
+        self.combine_palette_and_sprite_drawing = False
         self.game = SmallGame()
         for name, value in overrides.items():
             setattr(self, name, value)
@@ -80,6 +83,14 @@ def test_grayscale_matches_recorded_ale_coefficients():
     np.testing.assert_array_equal(grayscale_frame(rgb), [76, 150, 29, 255])
     assert int(jnp.maximum(*grayscale_frame(rgb[:2]))) == 150
     assert int(grayscale_frame(jnp.maximum(rgb[0], rgb[1]))) == 226
+
+
+def test_grayscale_rounds_exact_half_values_up_before_area_reduction():
+    """ALE rounds grayscale halfway values up; area-resize rounding is a separate operation."""
+    # Exact luminances are 28.5, 21.5, 14.5, 7.5 and 22.5, using decimal ALE coefficients.
+    rgb = jnp.asarray([[0, 0, 250], [0, 4, 168], [0, 8, 86], [0, 12, 4], [10, 1, 166]],
+                      dtype=jnp.uint8)
+    np.testing.assert_array_equal(grayscale_frame(rgb), [29, 22, 15, 8, 23])
 
 
 def test_area_resize_preserves_constants_and_averages_regions():
@@ -126,6 +137,35 @@ def test_time_limit_resets_full_game_and_retains_terminal_return():
     np.testing.assert_array_equal(obs, np.ones((1, 2, 4, 84, 84), np.uint8))
 
 
+def test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns():
+    """JAXtari's zero-lives state remains playable until the final loss below zero."""
+    # The pinned game's own AtariWrapper checks old lives > 0, not new lives > 0.
+    environment = SmallPixelEnvironment()
+    state, _ = jax.jit(environment.reset)(jnp.asarray([7], dtype=jnp.int32))
+    state = state._replace(game=state.game._replace(lives=jnp.ones_like(state.game.lives)))
+    state, _, _, done, info = jax.jit(environment.step)(state, jnp.full((1, 2), 2, jnp.int32))
+    np.testing.assert_array_equal(state.game.lives, [0, 0])
+    assert bool(jnp.all(done & info["life_lost"]))
+    assert not bool(jnp.any(info["episode_done"] | info["full_game_reset"]))
+
+
+def test_game_over_stops_held_frames_and_immediately_resets_the_full_stack():
+    """A real game-over mask stops further held frames and preserves its terminal pixels."""
+    # Position 98 plus one action-2 frame reaches game over; later held frames must not execute.
+    environment = SmallPixelEnvironment(stack_update="circular")
+    state, _ = jax.jit(environment.reset)(jnp.asarray([7], dtype=jnp.int32))
+    state = state._replace(game=state.game._replace(
+        position=jnp.full_like(state.game.position, 98), lives=jnp.zeros_like(state.game.lives)))
+    state, observations, rewards, done, info = jax.jit(environment.step)(
+        state, jnp.full((1, 2), 2, jnp.int32))
+    assert bool(jnp.all(done & info["game_over"] & info["episode_done"] & info["full_game_reset"]))
+    np.testing.assert_array_equal(info["raw_reward"], [[2, 2]])
+    np.testing.assert_array_equal(info["final_observation"][..., -1, 0, 0], [[100, 100]])
+    np.testing.assert_array_equal(rewards, [[1, 1]])
+    np.testing.assert_array_equal(state.frame_cursor, [0, 0])
+    np.testing.assert_array_equal(observations, np.ones((1, 2, 4, 84, 84), np.uint8))
+
+
 def test_policy_seed_pairing_preserves_distinct_environment_keys():
     """Paired policy seeds retain matching lanes and distinct environment keys."""
     # Matching policy seeds pair trajectories; distinct environment indices separate keys.
@@ -150,10 +190,80 @@ def test_environment_optimization_options_preserve_every_output():
         {"frame_skip_unroll": 4},
         {"batch_layout": "nested"},
         {"stack_update": "gather"},
+        {"stack_update": "circular"},
         {"reset_only_when_needed": False},
     ]
     for options in candidates:
         candidate = SmallPixelEnvironment(**options)
         actual = jax.jit(candidate.step)(state, actions)
-        for wanted, observed in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):
+        normalized = (candidate.canonical_state(actual[0]), *actual[1:])
+        for wanted, observed in zip(jax.tree.leaves(expected), jax.tree.leaves(normalized)):
             np.testing.assert_array_equal(observed, wanted, err_msg=str(options))
+
+
+def test_circular_storage_preserves_multiple_steps_and_life_reset():
+    """A real circular buffer keeps chronological observations across cursor wraparound."""
+    # Repeated appends change physical order; canonical frames, game state and pixels stay equal.
+    baseline = SmallPixelEnvironment()
+    circular = SmallPixelEnvironment(stack_update="circular")
+    reference, _ = jax.jit(baseline.reset)(jnp.asarray([3], dtype=jnp.int32))
+    current, _ = jax.jit(circular.reset)(jnp.asarray([3], dtype=jnp.int32))
+    for action in [2, 1, 2, 1, 2, 1]:
+        actions = jnp.full((1, 2), action, jnp.int32)
+        expected = jax.jit(baseline.step)(reference, actions)
+        actual = jax.jit(circular.step)(current, actions)
+        reference, current = expected[0], actual[0]
+        normalized = (circular.canonical_state(current), *actual[1:])
+        for wanted, observed in zip(jax.tree.leaves(expected), jax.tree.leaves(normalized)):
+            np.testing.assert_array_equal(observed, wanted)
+        np.testing.assert_array_equal(circular.observe(current), actual[1])
+
+
+def test_game_end_during_life_reset_reports_the_actual_full_stack_reset():
+    """Indexed frame reconstruction must recognize a full reset caused by reset NOOPs."""
+    class NoopEndsGame(SmallGame):
+        """End the fixture on the first reset NOOP following a life loss."""
+
+        def step(self, state, action):
+            """Preserve the original action transition, then end during reset NOOP processing."""
+            observation, next_state, reward, done, info = super().step(state, action)
+            done = done | ((action == 0) & (state.lives == 2))
+            return observation, next_state, reward, done, info
+
+    class ForcedNoopEnvironment(SmallPixelEnvironment):
+        """Retain named random streams while ensuring the fixture performs one reset NOOP."""
+
+        def _named_key(self, key, stream, index):
+            """Use a supplied deterministic NOOP-count key and preserve all other streams."""
+            return self.noop_count_key if stream == NOOP_STREAM else super()._named_key(key, stream, index)
+
+    # Select a fixed key whose pinned JAX generator requests one NOOP rather than zero.
+    keys = jax.vmap(jax.random.PRNGKey)(jnp.arange(32, dtype=jnp.uint32))
+    counts = jax.vmap(lambda key: jax.random.randint(key, (), 0, 2, dtype=jnp.int32))(keys)
+    selection = np.flatnonzero(np.asarray(counts) == 1)[0]
+    environment = ForcedNoopEnvironment(noop_max=2, stack_update="circular")
+    environment.noop_count_key = keys[selection]
+    environment.game = NoopEndsGame()
+    state, _ = jax.jit(environment.reset)(jnp.asarray([7], dtype=jnp.int32))
+    state, observations, _, done, info = jax.jit(environment.step)(
+        state, jnp.full((1, 2), 2, jnp.int32))
+    assert bool(jnp.all(done & info["life_lost"] & info["full_game_reset"]))
+    assert not bool(jnp.any(info["episode_done"]))
+    np.testing.assert_array_equal(state.frame_cursor, [0, 0])
+    np.testing.assert_array_equal(observations, np.ones((1, 2, 4, 84, 84), np.uint8))
+
+
+def test_fused_area_kernel_matches_reference_after_rounding_correction():
+    """Interpret the GPU kernel on deterministic RGB patterns and check every output byte."""
+    from exploration_platform.atari_pixels.pixel_preprocessing import fused_area_preprocess
+
+    # A full color pattern exercises fractional area weights and both grayscale/max orderings.
+    indices = jnp.arange(210 * 160 * 3, dtype=jnp.int32).reshape(210, 160, 3)
+    first = ((indices * 17 + 3) % 256).astype(jnp.uint8)
+    second = ((indices * 31 + 119) % 256).astype(jnp.uint8)
+    row_weights, column_weights = area_resize_weights(210), area_resize_weights(160)
+    reference = area_resize_frame(jnp.maximum(grayscale_frame(first), grayscale_frame(second)),
+                                   row_weights, column_weights)
+    result, ambiguous = fused_area_preprocess(first, second, interpret=True)
+    corrected = jnp.where(ambiguous, reference, result)
+    np.testing.assert_array_equal(corrected, reference)

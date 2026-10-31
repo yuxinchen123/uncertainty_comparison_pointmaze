@@ -42,7 +42,7 @@ class FrameEnvironment:
         frames = jnp.where(done[..., None, None, None], jnp.uint8(7), final)
         return FrameState(count, frames), frames, jnp.zeros(count.shape, jnp.float32), done, {
             "episode_return": count.astype(jnp.float32), "episode_done": done,
-            "final_observation": final}
+            "final_observation": final, "full_game_reset": done}
 
 
 def test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks():

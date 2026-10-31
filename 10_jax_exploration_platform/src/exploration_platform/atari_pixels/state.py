@@ -117,7 +117,7 @@ def adam_step(parameters, gradients, optimizer, learning_rates, max_norm, epsilo
         return layout.unpack(flat_parameters), AdamState(layout.unpack(flat_optimizer.first),
             layout.unpack(flat_optimizer.second), flat_optimizer.step), norms
 
-    # A spike in one policy cannot reduce another policy's gradient scale.
+    # A large gradient in one policy cannot reduce another policy's gradient scale.
     copies = learning_rates.shape[0]
     squared_norm = sum((gradient.reshape(copies, -1) ** 2).sum(axis=1)
                        for gradient in jax.tree.leaves(gradients))

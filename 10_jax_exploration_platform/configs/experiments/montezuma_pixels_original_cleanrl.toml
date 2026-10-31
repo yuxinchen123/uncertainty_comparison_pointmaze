@@ -1,0 +1,64 @@
+# Original CleanRL policy settings. Independent-copy count and seeds belong to the launch.
+[reference]
+name = "Original CleanRL proximal policy optimization with Random Network Distillation"
+cleanrl_commit = "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb"
+jaxtari_commit = "04ab9aec318c72162e2e53503a594a489d7e162b"
+reset_contract = "Native JAXtari immediate reset; pre-reset frames retained for transition bonus"
+network_precision = "float32"
+statistics_precision = "float64"
+
+[learner]
+n_envs = 128
+num_steps = 128
+action_count = 18
+total_timesteps = 2000000000
+update_epochs = 4
+num_minibatches = 4
+learning_rate = 0.0001
+adam_epsilon = 0.00001
+anneal_learning_rate = true
+gamma_ext = 0.999
+gamma_int = 0.99
+gae_lambda = 0.95
+clip_coefficient = 0.1
+entropy_coefficient = 0.001
+value_coefficient = 0.5
+max_gradient_norm = 0.5
+intrinsic_coefficient = 1.0
+extrinsic_coefficient = 2.0
+predictor_update_proportion = 0.25
+observation_warmup_iterations = 50
+upstream_reward_filter_axis = true
+warmup_keeps_initial_observation = true
+rollout_unroll = 1
+update_unroll = 1
+cache_target_features = false
+hoist_rollout_bonus = false
+donate_state = false
+network_layout = "nchw"
+dense_batching = "matmul"
+convolution_batching = "vmap"
+flat_parameters = false
+fuse_optimizer = false
+pre_gather_minibatches = false
+hoist_critic = false
+hoist_rollout_log_probabilities = false
+rollout_observation_storage = "float32"
+associative_gae = false
+associative_reward_filter = false
+moment_reduction = "two_pass"
+
+[environment]
+frame_skip = 4
+max_episode_steps = 108000
+noop_max = 30
+episodic_life = true
+sticky_action_probability = 0.25
+render_final_two_only = false
+frame_skip_unroll = 1
+batch_layout = "flat"
+stack_update = "concatenate"
+reset_only_when_needed = true
+cache_room_backgrounds = false
+fuse_pixel_preprocessing = false
+combine_palette_and_sprite_drawing = false

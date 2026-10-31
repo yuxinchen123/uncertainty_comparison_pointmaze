@@ -297,7 +297,7 @@ class PixelPPORND:
                 reset_index = normal_index + 1
                 after_transition = jnp.concatenate((frame_indices[..., 1:], normal_index), axis=-1)
                 after_life_reset = jnp.concatenate((after_transition[..., 1:], reset_index), axis=-1)
-                frame_indices = jnp.where(information["episode_done"][..., None], reset_index,
+                frame_indices = jnp.where(information["full_game_reset"][..., None], reset_index,
                     jnp.where(done[..., None], after_life_reset, after_transition))
             else:
                 stored_observations = (observations.astype(jnp.float32)

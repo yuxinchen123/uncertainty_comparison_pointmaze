@@ -30,6 +30,16 @@ def append_record(path, value):
         stream.flush()
 
 
+def read_configuration(path):
+    """Read a named TOML preset or an explicit JSON override document."""
+    if path.suffix == ".toml":
+        import tomllib
+        return tomllib.loads(path.read_text())
+    if path.suffix == ".json":
+        return json.loads(path.read_text())
+    raise ValueError("configuration files must use .toml or .json")
+
+
 def hardware_record():
     """Record the actual visible GPU and driver rather than relying on a scheduler label."""
     query = subprocess.run(
@@ -89,6 +99,7 @@ def run(args):
     from exploration_platform.atari_pixels.config import PixelPPOConfig
     from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
     from exploration_platform.atari_pixels.training import PixelPPORND
+    from exploration_platform.atari_pixels.checkpointing import load_checkpoint
 
     # Identity files exist before any model or game initialization.
     directory = args.run_dir / "data" / args.unit_id
@@ -97,7 +108,8 @@ def run(args):
                  for key, value in vars(args).items()}
     atomic_json(directory / "arguments.json", arguments)
     atomic_json(directory / "hardware.json", hardware_record())
-    overrides = json.loads(args.configuration.read_text()) if args.configuration else {}
+    document = read_configuration(args.configuration) if args.configuration else {}
+    overrides = document["learner"] if "learner" in document else document
     configuration = {
         "n_copies": args.copies, "n_envs": args.envs_per_copy,
         "num_steps": args.rollout_steps, "update_epochs": args.epochs,
@@ -110,8 +122,9 @@ def run(args):
     config = PixelPPOConfig(**configuration)
     atomic_json(directory / "config_resolved.json", asdict(config))
     seeds = tuple(range(args.seed_start, args.seed_start + args.copies))
-    environment_settings = (json.loads(args.environment_configuration.read_text())
-                            if args.environment_configuration else {})
+    environment_settings = dict(document.get("environment", {})) if "learner" in document else {}
+    if args.environment_configuration:
+        environment_settings.update(read_configuration(args.environment_configuration))
     environment = AtariPixelEnvironment(num_envs=args.envs_per_copy, **environment_settings)
     trainer = PixelPPORND(config, environment)
     checkpoint = directory / "checkpoints" / "latest.pkl"
@@ -132,13 +145,7 @@ def run(args):
 
     # Resume only checkpoints produced with this exact learner configuration.
     if args.mode == "train" and checkpoint.exists():
-        with checkpoint.open("rb") as stream:
-            saved = pickle.load(stream)
-        if saved["configuration"] != asdict(config) or tuple(saved["copy_seeds"]) != seeds:
-            raise ValueError("checkpoint configuration or policy seeds do not match this unit")
-        if saved["environment_configuration"] != environment_settings:
-            raise ValueError("checkpoint environment settings do not match this unit")
-        state = jax.tree.map(jax.device_put, saved["state"])
+        state = load_checkpoint(checkpoint, config, seeds, environment_settings)
     else:
         state = trainer.initialize(seeds)
         jax.block_until_ready(state)
