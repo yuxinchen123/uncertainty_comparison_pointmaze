@@ -1,6 +1,7 @@
 """Inspect this study's own jobs and bounded per-unit progress records."""
 
 import argparse
+import csv
 import hashlib
 from datetime import datetime, timezone
 import json
@@ -146,9 +147,10 @@ def unit_rows(directory):
             if "exit_code" in failure:
                 progress += f"; exit {failure['exit_code']}"
         visible = hardware.get("cuda_visible_devices", "")
-        queries = hardware.get("gpu_query", "").splitlines()
-        selected = next((line for line in queries if line.startswith(visible + ",")),
-                        queries[0] if len(queries) == 1 else "")
+        # Benchmark records put the UUID first; training records put it last.
+        queries = list(csv.reader(hardware.get("gpu_query", "").splitlines(), skipinitialspace=True))
+        selected = next((row for row in queries if len(row) >= 2 and visible in {row[0], row[-1]}),
+                        queries[0] if len(queries) == 1 else [])
         name = path.parent.name
         group = recorded_scaling_group(path.parent) if not hardware else None
         final_status = read_json(directory / "final_training_queue/status" / (name + ".json"))
@@ -159,7 +161,7 @@ def unit_rows(directory):
             noun = "copy" if copies == 1 else "copies"
             name = specification["hypothesis"].replace("_", " ") + f" ({copies} {noun})"
         rows.append({"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
-                     "gpu": group["gpu"] if group else selected.split(",")[1:2],
+                     "gpu": group["gpu"] if group else selected[1:2],
                      "slurm_job_id": group["slurm_job_id"] if group else hardware.get("slurm_job_id", ""),
                      "state": state, "progress": progress, "age_seconds": age})
     return rows

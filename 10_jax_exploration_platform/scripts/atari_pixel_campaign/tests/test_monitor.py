@@ -73,6 +73,25 @@ class MonitorTests(unittest.TestCase):
         self.assertNotIn("JobHeldUser", waiting)
         self.assertIn("JobHeldUser", held)
 
+    def test_training_gpu_uuid_selects_its_card_from_a_full_node_query(self):
+        """Eight allocated cards remain distinguishable when a child records its UUID last."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unit = root / "data" / "final_training"
+            unit.mkdir(parents=True)
+            (unit / "progress.json").write_text(json.dumps({
+                "state": "running", "update": 1, "target_updates": 122070}))
+            hardware = {"hostname": "jaguar03", "cuda_visible_devices": "GPU-5",
+                "gpu_query": "\n".join(
+                    f"{index}, NVIDIA RTX A4500, 20470 MiB, 580.159.04, GPU-{index}"
+                    for index in range(8))}
+            (unit / "hardware.json").write_text(json.dumps(hardware))
+            self.assertEqual(monitor.unit_rows(root)[0]["gpu"], ["NVIDIA RTX A4500"])
+            # A different UUID must stay unknown instead of borrowing another card's identity.
+            hardware["cuda_visible_devices"] = "GPU-99"
+            (unit / "hardware.json").write_text(json.dumps(hardware))
+            self.assertEqual(monitor.unit_rows(root)[0]["gpu"], [])
+
     def test_runner_exit_and_later_attempt_remain_distinct(self):
         """An interrupted first attempt must not mark its live retry as failed."""
         with tempfile.TemporaryDirectory() as temporary:
