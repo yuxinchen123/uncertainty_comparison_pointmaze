@@ -65,7 +65,7 @@
         "sha256": "2ff682530e2ce75502e1b5f38bc7f070a0dda0125225f8cc091b1435c6b873f8"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -86,7 +86,8 @@
       "nested_policy_environment_batching",
       "fuse_pixel_preprocessing",
       "combine_palette_and_sprite_drawing",
-      "store_rollout_observations_as_bytes"
+      "store_rollout_observations_as_bytes",
+      "reconstruct_stacks_from_individual_frames"
     ],
     "wrapped_labels": [
       "cache room backgrounds",
@@ -95,7 +96,8 @@
       "nested policy environment batching",
       "fuse pixel preprocessing",
       "combine palette and sprite drawing",
-      "store rollout observations as bytes"
+      "store rollout observations as bytes",
+      "reconstruct stacks from individual\nframes"
     ],
     "results": [
       {
@@ -125,9 +127,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-07__store_rollout_observations_as_bytes__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "d8f0617f60587f4a8e8882f792f2b39bdec5db87071e6e390e74e479621c907d"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-08__reconstruct_stacks_from_individual_frames__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "611cd0cdeb9d5d00f58f8c0839e865a49df055beb5c0a5e7845a84fd99772c42"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -207,7 +213,7 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -287,7 +293,7 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -361,7 +367,7 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -387,7 +393,7 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -413,7 +419,7 @@
         "sha256": "54f879a03eb4aa6044c1149504745e3f45061ed5f4c234b8badd7a6385cdbe32"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -493,7 +499,7 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -573,7 +579,7 @@
         "sha256": "bc6d2e329b86dcc412bf0616a75b894463f8cb9715596e19d654a97c65fb6b4a"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -641,7 +647,7 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   },
   {
     "schema_version": 2,
@@ -667,6 +673,6 @@
         "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
       }
     ],
-    "input_fingerprint": "650867029eaaa84bb28349a639d1aa7b595f8f6a0b33950894cdbdcf9a4ff154"
+    "input_fingerprint": "4c2165e16100aea2333a27c08e8cd15fd5c05f5a530c10c97f2c737e46657a96"
   }
 ]
