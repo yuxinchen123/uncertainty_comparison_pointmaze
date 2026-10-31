@@ -1,0 +1,39 @@
+schema_version: 1
+run_id: 2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1
+description: Pixel Montezuma CleanRL policy training with thirty specified and twenty adaptive infrastructure ideas.
+git:
+  integration_branch: merge-atari-cleanrl
+  initial_commit: 0c93d43132d288e240a36a09a50618248d6bd808
+  execution_commit: pending
+sources:
+  cleanrl_commit: fe8d8a03c41a7ef5b523e2e354bd01c363e786bb
+  jaxtari_commit: 04ab9aec318c72162e2e53503a594a489d7e162b
+specs:
+  env: jaxtari_montezuma_pixels_native_reset
+  agent: original_cleanrl_ppo_random_network_distillation
+compile_signature:
+  copies: measured_after_optimization
+  envs_per_copy: 128
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 1
+  mode: distinct_per_policy_copy
+study:
+  specified_ideas: 30
+  adaptive_ideas: 20
+  adaptive_batch_size: 5
+  training_steps_per_copy_requested: 2000000000
+  training_steps_per_copy_actual: 1999994880
+  full_training_implementations: optimized_only
+  packing_marginal_gain_limit: 0.10
+hardware:
+  benchmark_contexts: [serval02_card_1_h100, serval05_h100, jaguar03_rtx_a4500]
+  final_h100_contexts: [aces, deltaai, mit]
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  checkpoint: checkpoints/latest.pkl

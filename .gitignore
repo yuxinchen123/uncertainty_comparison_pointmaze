@@ -280,3 +280,10 @@ core.*
 10_jax_exploration_platform/.jax_compilation_cache/
 # The development document's read marks (scripts/report_contents.py) are part of its record.
 !10_jax_exploration_platform/development_document/report_read_state.json
+
+# Pixel Atari campaign records and queues are runtime data; source and launch files stay tracked.
+10_jax_exploration_platform/benchmark_runs/**/data/
+10_jax_exploration_platform/benchmark_runs/**/queue/
+10_jax_exploration_platform/benchmark_runs/**/20_mins_monitoring/
+10_jax_exploration_platform/benchmark_runs/**/campaign_state.json
+10_jax_exploration_platform/benchmark_runs/**/processes.json
