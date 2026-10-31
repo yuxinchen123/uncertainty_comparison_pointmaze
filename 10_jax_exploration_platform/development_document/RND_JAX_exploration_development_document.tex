@@ -2463,6 +2463,12 @@ timing and the report-readout comparison are kept separate. The latter compares
 downloading metrics after each update with downloading their device-accumulated
 values every ten updates; the published rows and their schedule must agree.
 
+Four completed A4500 comparisons with two independent policies needed a large
+contiguous memory region: their retry processes allocated, synchronized, and deleted one
+nine-GiB byte array before learner and game initialization. Separate execution
+receipts bind these retries to the original source, correctness checks, timing
+pairs, and preserved allocation failures.
+
 \begin{table}[H]
 \centering
 \footnotesize
@@ -2476,9 +2482,9 @@ values every ten updates; the published rows and their schedule must agree.
 \greyrule
 specified mechanisms & 30 \\
 \greyrule
-specified mechanisms investigated on both GPU types & 5 of 30 \\
+specified mechanisms investigated on both GPU types & 6 of 30 \\
 \greyrule
-specified mechanisms timed correctly on both GPU types & 5 of 30 \\
+specified mechanisms timed correctly on both GPU types & 6 of 30 \\
 \greyrule
 specified mechanisms covering every required copy count & 5 of 30 \\
 \greyrule
@@ -2488,13 +2494,13 @@ additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
 controller phase & initial benchmarks \\
 \greyrule
-registered queue cases completed & 65 \\
+registered queue cases completed & 70 \\
 \greyrule
-registered queue cases failed & 0 \\
+registered queue cases failed & 1 \\
 \greyrule
-registered queue cases pending & 49 \\
+registered queue cases pending & 48 \\
 \greyrule
-registered queue cases running & 6 \\
+registered queue cases running & 1 \\
 \blackrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
@@ -2531,11 +2537,11 @@ at matched per-GPU copy counts, with a common wall-clock measurement interval.
 \blackrule
 \textbf{Registered case outcome} & \textbf{H100} & \textbf{Jaguar03 RTX A4500} \\
 \greyrule
-accepted timing & 5 & 13 \\
+accepted timing & 5 & 16 \\
 \greyrule
-inconclusive timing & 3 & 16 \\
+inconclusive timing & 4 & 16 \\
 \greyrule
-rejected timing & 2 & 26 \\
+rejected timing & 2 & 27 \\
 \greyrule
 correctness rejected & 0 & 0 \\
 \greyrule
