@@ -2475,13 +2475,13 @@ specified mechanisms investigated on both GPU types & 0 of 30 \\
 \greyrule
 specified mechanisms timed correctly on both GPU types & 0 of 30 \\
 \greyrule
-specified mechanisms covering every required copy count & required copy counts not yet authorized \\
+specified mechanisms covering every required copy count & required copy counts not yet recorded \\
 \greyrule
 additional mechanisms chosen from profiles & 0 of 20 \\
 \greyrule
 additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
-controller phase & correctness and full size resource probes \\
+controller phase & reference execution diagnosis \\
 \blackrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
@@ -2537,15 +2537,21 @@ correctness rejections do not enter throughput comparisons.}
 \label{tab:pixel-montezuma-case-outcomes}
 \end{table}
 
-Measurements are in progress. No infrastructure change has yet been accepted
-through the registered paired comparisons, and the planned $2$-billion-step
-training has not begun. Initial resource probes establish that the full-size
-learner can run; their execution settings differ from the frozen measurement
-settings, so their rates are excluded from the formal results above. The
+Learner and rendering checks have passed on both GPU types. Standalone capacity
+probes have completed, and their timings are recorded separately from the
+registered paired comparisons. A recovered execution trace shows that
+computing convolution weight gradients accounts for the largest share of
+recorded GPU kernel time. Matched controls are investigating the setting for
+deterministic execution and the physical data layout used by convolutions
+before the paired implementation comparisons proceed.
+
+No infrastructure change has yet been accepted through the registered paired
+comparisons, and the planned $2$-billion-step training has not begun. The
 section's generator reads only registry-indexed case results, retains failed
 and inconclusive attempts in its complete report, and produces paired-speed
-plots only after statistical analysis on a compute host. Training curves and
-best-configuration learning results will be added when the corresponding
-training records exist.
+plots only after statistical analysis on a compute host. Standalone capacity
+probes and execution diagnostics do not enter those paired results. Training
+curves and best-configuration learning results will be added when the
+corresponding training records exist.
 
 \end{document}

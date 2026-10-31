@@ -196,7 +196,7 @@ def status_table(registry, state):
     rows = [("specified mechanisms", str(len(specified))),
             ("specified mechanisms investigated on both GPU types", f"{len(initial_names & investigated)} of {len(specified)}"),
             ("specified mechanisms timed correctly on both GPU types", f"{len(initial_names & measured)} of {len(specified)}"),
-            ("specified mechanisms covering every required copy count", f"{complete_count} of {len(specified)}" if counts else "required copy counts not yet authorized"),
+            ("specified mechanisms covering every required copy count", f"{complete_count} of {len(specified)}" if counts else "required copy counts not yet recorded"),
             ("additional mechanisms chosen from profiles", f"{sum(bool(entry['name']) for entry in adaptive)} of {len(adaptive)}"),
             ("additional mechanisms investigated on both GPU types", f"{len(investigated - initial_names)} of {len(adaptive)}"),
             ("controller phase", latex_text(str(state.get("phase", "not recorded")).replace("_", " ")))]
