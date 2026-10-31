@@ -64,6 +64,18 @@ def test_room_background_cache_uses_complete_state_and_each_room_geometry():
         assert game.renderer.pre_load_rooms is True
 
 
+def test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values():
+    """Integer rounding keeps half-even ties without unsupported Triton primitives."""
+    from exploration_platform.atari_pixels.pixel_preprocessing import _round_area_ratio_to_bytes
+
+    # Numerators cover exact half bytes and the immediately neighboring rational values.
+    denominator = jnp.int32(33600)
+    totals = jnp.asarray([0, 16800, 50400, 84000, 8551200, 8568000,
+                          16799, 16801, 50399, 50401, 83999, 84001], jnp.int32)
+    expected = np.asarray([0, 0, 2, 2, 254, 255, 0, 1, 1, 2, 2, 3], np.uint8)
+    np.testing.assert_array_equal(_round_area_ratio_to_bytes(totals, denominator), expected)
+
+
 class SmallGameState(NamedTuple):
     """Retain only the position and lives needed by the adapter fixture."""
 

@@ -4,6 +4,17 @@ import jax
 import jax.numpy as jnp
 
 
+def _round_area_ratio_to_bytes(total, denominator):
+    """Round a nonnegative integer area ratio to the nearest byte, with even ties."""
+    # Before: numerators [16800,50400,84000] / 33600; after: bytes [0,2,2].
+    # Integer comparisons avoid Pallas Triton's unsupported round primitive.
+    lower = total // denominator
+    twice_remainder = (total % denominator) * jnp.int32(2)
+    round_up = ((twice_remainder > denominator)
+                | ((twice_remainder == denominator) & ((lower & jnp.int32(1)) != 0)))
+    return jnp.clip(lower + round_up.astype(jnp.int32), 0, 255).astype(jnp.uint8)
+
+
 def fused_area_preprocess(first, second, *, interpret=False):
     """Return area-reduced bytes and a mask requiring reference rounding confirmation."""
     # Lazy imports keep ordinary environment and fake-game tests independent of GPU lowering.
@@ -56,9 +67,12 @@ def fused_area_preprocess(first, second, *, interpret=False):
                 gray = jnp.maximum(load_gray(first_ref, y, x, active),
                                    load_gray(second_ref, y, x, active))
                 total += gray * row_weight * column_weight
-        mean = total.astype(jnp.float32) / jnp.float32(height * width)
-        pixels = jnp.clip(jnp.rint(mean), 0, 255).astype(jnp.uint8)
-        ambiguity = jnp.abs(mean - jnp.floor(mean) - jnp.float32(0.5)) <= jnp.float32(0.001)
+        denominator = jnp.int32(height * width)
+        pixels = _round_area_ratio_to_bytes(total, denominator)
+        # Exact distance to a half byte <= 0.001, retaining the reference correction
+        # where float32 matrix reduction order can change the rounded observation.
+        twice_remainder = (total % denominator) * jnp.int32(2)
+        ambiguity = jnp.abs(twice_remainder - denominator) * jnp.int32(500) <= denominator
         plgpu.store(output_ref.at[output_y, output_x], pixels, mask=valid)
         plgpu.store(ambiguous_ref.at[output_y, output_x], ambiguity, mask=valid)
 
