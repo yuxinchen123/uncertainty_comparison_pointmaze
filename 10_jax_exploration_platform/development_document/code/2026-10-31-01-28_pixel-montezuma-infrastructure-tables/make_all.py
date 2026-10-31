@@ -15,6 +15,7 @@ import os
 import re
 import socket
 import sys
+import textwrap
 
 import report_source as source
 
@@ -28,6 +29,10 @@ from ideas import REQUIRED_HARDWARE, investigated_hypotheses, measured_hypothese
 
 HARDWARE_NAMES = {"h100": "H100", "jaguar03_rtx_a4500": "Jaguar03 RTX A4500"}
 AGGREGATE = HERE / "data" / "registered_measurements.json"
+PLOT_DIRECTORY = HERE / "plots"
+FIGURE_MARKER = "pixel-montezuma-paired-measurements"
+MAX_PANEL_MECHANISMS = 10
+MAX_PANEL_LABEL_LINES = 20
 
 
 def read_json(path):
@@ -260,14 +265,8 @@ def write_ledger(registry, records, input_fingerprint, analyzed):
     (HERE / "analysis.md").write_text("\n".join(lines).rstrip() + "\n")
 
 
-def make_plots(records, input_fingerprint):
-    """Plot paired distributions separately for each hardware, copy count and source cohort."""
-    require_compute()
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.lines import Line2D
-
+def plot_specifications(records, input_fingerprint, plot_directory=PLOT_DIRECTORY):
+    """Describe bounded panels without importing plotting or numerical packages."""
     grouped = defaultdict(list)
     for row in records:
         result = row["result"]
@@ -276,53 +275,131 @@ def make_plots(records, input_fingerprint):
         cohort = (result["hardware_class"], result.get("hostname", "not recorded"), result["copies"],
                   result["source_commit"], result.get("measurement_scope", "training_iteration_execution"),
                   digest(result["reference"]))
-        grouped[cohort].append(result)
-    plot_directory = HERE / "plots"
-    plot_directory.mkdir(parents=True, exist_ok=True)
-    generated = []
-    for cohort, results in sorted(grouped.items()):
-        hardware, host, copies, commit, scope, _ = cohort
-        figure, axis = plt.subplots(figsize=(9, max(3.0, 0.35 * len(results) + 1.3)))
+        grouped[cohort].append(row)
+    panels = []
+    for cohort, rows in sorted(grouped.items()):
+        # Before: one unbounded cohort; after: complete rows in panels of at most ten.
+        chunks, chunk, lines = [], [], 0
+        for row in rows:
+            label = textwrap.fill(row["result"]["idea"].replace("_", " "), width=40,
+                                  break_long_words=False, break_on_hyphens=False)
+            label_lines = len(label.splitlines())
+            if label_lines > MAX_PANEL_LABEL_LINES:
+                raise ValueError("a mechanism label exceeds the readable panel height")
+            if chunk and (len(chunk) == MAX_PANEL_MECHANISMS
+                          or lines + label_lines > MAX_PANEL_LABEL_LINES):
+                chunks.append(chunk)
+                chunk, lines = [], 0
+            chunk.append((row, label))
+            lines += label_lines
+        if chunk:
+            chunks.append(chunk)
+        for index, chunk in enumerate(chunks, 1):
+            hardware, host, copies, commit, scope, reference = cohort
+            stem = f"paired-speed-ratios_{digest(cohort)}_panel-{index:02d}-of-{len(chunks):02d}"
+            panels.append({"schema_version": 2, "path": str(Path(plot_directory).resolve() / (stem + ".pdf")),
+                "hardware": hardware, "host": host, "copies": copies, "source_commit": commit,
+                "scope": scope, "reference_fingerprint": reference, "panel_index": index,
+                "panel_count": len(chunks), "mechanism_names": [row["result"]["idea"] for row, _ in chunk],
+                "wrapped_labels": [label for _, label in chunk],
+                "results": [{"path": row["path"], "sha256": row["sha256"]} for row, _ in chunk],
+                "input_fingerprint": input_fingerprint})
+    return panels
+
+
+def make_plots(records, input_fingerprint):
+    """Draw the bounded panel specification on compute and record every generated PDF."""
+    require_compute()
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+
+    generated = plot_specifications(records, input_fingerprint)
+    indexed = {row["path"]: row["result"] for row in records}
+    PLOT_DIRECTORY.mkdir(parents=True, exist_ok=True)
+    for panel in generated:
+        results = [indexed[row["path"]] for row in panel["results"]]
+        label_lines = sum(len(label.splitlines()) for label in panel["wrapped_labels"])
+        figure, axis = plt.subplots(figsize=(8.6, max(3.2, 1.8 + 0.25 * label_lines + 0.12 * len(results))))
         for position, result in enumerate(results):
             ratios = result["paired_speedups"]
             color = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}[result["decision"]]
             axis.scatter(ratios, [position] * len(ratios), s=15, alpha=0.6, color=color)
             axis.scatter([result["median_speedup"]], [position], marker="D", s=30, color=color)
-        axis.set_yticks(range(len(results)), [result["idea"].replace("_", " ") for result in results], fontsize=9)
+        axis.set_yticks(range(len(results)), panel["wrapped_labels"], fontsize=12.5)
+        axis.invert_yaxis()
         axis.axvline(1.0, color="black", linewidth=0.8)
-        axis.set_xlabel("Reference duration divided by candidate duration (larger is faster)")
-        axis.set_title(f"{HARDWARE_NAMES[hardware]}, {copies} independent policy copies, {host}\n"
-                       + scope.replace("_", " "))
+        axis.set_xlabel("Reference duration / candidate duration (larger is faster)", fontsize=12.5)
+        axis.tick_params(axis="x", labelsize=12)
+        axis.set_title(f"{HARDWARE_NAMES[panel['hardware']]}, {panel['copies']} independent policy copies, "
+                       f"{panel['host']}\n{panel['scope'].replace('_', ' ')}; "
+                       f"panel {panel['panel_index']} of {panel['panel_count']}", fontsize=13)
         colors = {"accepted": "#2166ac", "inconclusive": "#b8860b", "rejected": "#555555"}
         present = {result["decision"] for result in results}
         handles = [Line2D([], [], marker="o", linestyle="none", color=colors[name], label=name)
                    for name in colors if name in present]
         handles.append(Line2D([], [], marker="D", linestyle="none", color="black", label="paired median"))
-        axis.legend(handles=handles, loc="best", fontsize=8)
+        axis.legend(handles=handles, loc="best", fontsize=12)
         axis.grid(axis="x", alpha=0.2)
-        figure.tight_layout()
-        stem = "paired-speed-ratios_" + digest(cohort)
+        figure.tight_layout(pad=1.2)
         for suffix in ("pdf", "png"):
-            figure.savefig(plot_directory / f"{stem}.{suffix}", dpi=180)
+            figure.savefig(Path(panel["path"]).with_suffix("." + suffix), dpi=180)
         plt.close(figure)
-        generated.append({"path": str(plot_directory / f"{stem}.pdf"), "hardware": hardware,
-                          "copies": copies, "source_commit": commit, "host": host, "scope": scope,
-                          "input_fingerprint": input_fingerprint})
-    (plot_directory / "plot_manifest.json").write_text(json.dumps(generated, indent=2) + "\n")
+    (PLOT_DIRECTORY / "plot_manifest.json").write_text(json.dumps(generated, indent=2) + "\n")
 
 
-def splice(document, replacements):
-    """Change tabular blocks only, with an exact unique marker pair for each table."""
+def figure_source(manifest_path, expected_panels, document):
+    """Include every current panel exclusively, rejecting stale fingerprints or missing files."""
+    manifest_path = Path(manifest_path)
+    if not expected_panels and not manifest_path.exists():
+        return "% No registered valid paired timing is available for a figure."
+    if not manifest_path.exists() or read_json(manifest_path) != expected_panels:
+        raise ValueError("plots require a current manifest with matching input fingerprint and panels; run --plots on compute")
+    figures = []
+    for index, panel in enumerate(expected_panels):
+        path = Path(panel["path"])
+        if not path.is_file() or path.suffix != ".pdf":
+            raise ValueError(f"the current plot manifest names a missing PDF: {path}")
+        relative = os.path.relpath(path, Path(document).resolve().parent)
+        copies = panel["copies"]
+        caption = (f"Paired execution-speed measurements on {HARDWARE_NAMES[panel['hardware']]} "
+                   f"({panel['host']}), with {copies} independent policy "
+                   + ("copy" if copies == 1 else "copies")
+                   + f". Source commit: \\texttt{{{latex_text(panel['source_commit'])}}}. "
+                   + f"Measurement scope: {latex_text(panel['scope'].replace('_', ' '))}. "
+                   + f"Reference configuration fingerprint: \\texttt{{{panel['reference_fingerprint']}}}. "
+                   + f"Panel {panel['panel_index']} of {panel['panel_count']} within this cohort. "
+                   + "Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. "
+                   + "Ratios above one favor the candidate. Each panel has its own horizontal range. "
+                   + "These execution timings do not establish learning returns, larger-copy performance, "
+                   + "or performance of the final combination.")
+        label = "fig:pixel-montezuma-paired-" + path.stem.removeprefix("paired-speed-ratios_")
+        block = [r"\begin{figure}[H]", r"\centering",
+                 rf"\includegraphics[width=\textwidth]{{\detokenize{{{relative}}}}}",
+                 "\\caption{" + caption + "}", "\\label{" + label + "}"]
+        if index == 0:
+            block.append(r"\label{fig:pixel-montezuma-background-cache-paired}")
+        figures.append("\n".join(block + [r"\end{figure}"]))
+    return "\n\n".join(figures) if figures else "% No registered valid paired timing is available for a figure."
+
+
+def splice(document, replacements, figures=None):
+    """Change only uniquely marked table blocks and the separate generated figure block."""
     text = document.read_text()
-    for name, tabular in replacements.items():
-        start = f"% >>> AUTO-GENERATED TABLE START: {name}"
-        end = f"% <<< AUTO-GENERATED TABLE END: {name}"
-        if text.count(start) != 1 or text.count(end) != 1:
-            raise ValueError(f"expected exactly one marker pair for {name}")
-        expression = re.compile(re.escape(start) + r"\n.*?\n" + re.escape(end), re.DOTALL)
-        text, count = expression.subn(lambda _: start + "\n" + tabular + "\n" + end, text)
-        if count != 1:
-            raise ValueError(f"could not replace table {name}")
+    groups = [("TABLE", replacements)]
+    if figures is not None:
+        groups.append(("FIGURES", {FIGURE_MARKER: figures}))
+    for kind, blocks in groups:
+        for name, content in blocks.items():
+            start = f"% >>> AUTO-GENERATED {kind} START: {name}"
+            end = f"% <<< AUTO-GENERATED {kind} END: {name}"
+            if text.count(start) != 1 or text.count(end) != 1:
+                raise ValueError(f"expected exactly one marker pair for {name}")
+            expression = re.compile(re.escape(start) + r"\n.*?\n" + re.escape(end), re.DOTALL)
+            text, count = expression.subn(lambda _: start + "\n" + content + "\n" + end, text)
+            if count != 1:
+                raise ValueError(f"could not replace {kind.lower()} block {name}")
     document.write_text(text)
 
 
@@ -349,15 +426,17 @@ def main():
         if aggregate is None and records:
             raise SystemExit("plotting requires a current compute aggregate")
         make_plots(records, input_fingerprint)
+    figures = figure_source(PLOT_DIRECTORY / "plot_manifest.json",
+                            plot_specifications(records, input_fingerprint), arguments.document)
     splice(arguments.document, {
         "pixel-montezuma-environment": category_table(source.ENVIRONMENT_ROWS),
         "pixel-montezuma-learner": category_table(source.LEARNER_ROWS, compared=True),
         "pixel-montezuma-networks": category_table(source.NETWORK_ROWS),
         "pixel-montezuma-study-status": status_table(registry, state),
         "pixel-montezuma-case-outcomes": outcomes_table(records),
-    })
+    }, figures=figures)
     write_ledger(registry, records, input_fingerprint, aggregate is not None)
-    print(f"Updated five table blocks from {len(records)} registered paired case attempts.")
+    print(f"Updated five table blocks and all figure panels from {len(records)} registered paired case attempts.")
 
 
 if __name__ == "__main__":
