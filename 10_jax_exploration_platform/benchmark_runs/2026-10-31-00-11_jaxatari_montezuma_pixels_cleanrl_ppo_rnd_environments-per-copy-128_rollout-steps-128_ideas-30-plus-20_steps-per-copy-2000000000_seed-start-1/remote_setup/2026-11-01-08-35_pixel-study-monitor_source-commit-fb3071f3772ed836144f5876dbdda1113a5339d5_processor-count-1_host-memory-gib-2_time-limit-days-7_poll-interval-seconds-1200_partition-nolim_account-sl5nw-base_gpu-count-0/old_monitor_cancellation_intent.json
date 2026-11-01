@@ -1,0 +1,51 @@
+{
+  "kind": "owned_old_cpu_monitor_cancellation_after_verified_replacement",
+  "at_utc": "2026-11-01T17:12:31.641935+00:00",
+  "old_job_id": "6781087",
+  "replacement_job_id": "6781231",
+  "replacement_verification_sha256": "75bc096772964ef20336bda96468535b1b9e2ca6f51d7752106f1811ba55a4d9",
+  "current_new_job": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781231",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "6781231|sl5nw|RUNNING|slurm1|slurm1\n",
+    "stderr": ""
+  },
+  "old_owned_job_detail": {
+    "command": [
+      "scontrol",
+      "show",
+      "job",
+      "6781087",
+      "-o"
+    ],
+    "returncode": 0,
+    "stdout": "JobId=6781087 JobName=pixel_study_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=405 Nice=0 Account=sl5nw_base QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=02:41:02 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-11-01T09:24:49 EligibleTime=2026-11-01T09:31:22 AccrueTime=2026-11-01T09:31:22 StartTime=2026-11-01T09:31:29 EndTime=2026-11-08T09:31:29 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T09:31:29 Scheduler=Backfill Partition=nolim AllocNode:Sid=portal05:1520890 ReqNodeList=(null) ExcNodeList=(null) NodeList=slurm2 BatchHost=slurm2 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=cpu=2,mem=2G,node=1,billing=311 Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-13_pixel-study-monitor_source-commit-4814459cb7befc872d8f0e30682c23f4aa79b625_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch WorkDir=/p/rlprojects/RND StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6781087.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6781087.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+    "stderr": ""
+  },
+  "old_running_steps": {
+    "command": [
+      "squeue",
+      "--steps",
+      "--noheader",
+      "--jobs=6781087",
+      "--format=%i"
+    ],
+    "returncode": 0,
+    "stdout": "6781087.batch\n",
+    "stderr": ""
+  },
+  "all_old_auxiliary_steps_drained": true,
+  "command": [
+    "scancel",
+    "6781087"
+  ],
+  "automatic_retry_permitted": false,
+  "old_monitor_submitted_for_this_campaign_and_session": true
+}

@@ -1,0 +1,45 @@
+{
+  "old_accounting": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-j",
+      "6781087",
+      "--format=JobIDRaw,State,ExitCode,NodeList"
+    ],
+    "returncode": 0,
+    "stdout": "6781087|CANCELLED by 2618919|0:0|slurm2\n",
+    "stderr": ""
+  },
+  "old_queue": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781087",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "new_queue": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781231",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "6781231|sl5nw|RUNNING|slurm1|slurm1\n",
+    "stderr": ""
+  },
+  "kind": "owned_cpu_monitor_handover_terminal_verification",
+  "passed": true,
+  "at_utc": "2026-11-01T17:12:55.109446+00:00"
+}

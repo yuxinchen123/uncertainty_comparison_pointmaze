@@ -1,0 +1,16 @@
+{
+  "kind": "old_monitor_read_only_step_format_inspection_error",
+  "job_id": "6781087",
+  "command": [
+    "squeue",
+    "--steps",
+    "--noheader",
+    "--jobs=6781087",
+    "--format=%i|%j|%T|%N"
+  ],
+  "observed_stdout": "6781087.batch|batch|%T|slurm2\n",
+  "observed_stderr": "squeue: error: Invalid job step format specification: T\n",
+  "inner_returncode_not_retained": true,
+  "correction": "Use only supported step identifier output; the later exact query returned0 and only6781087.batch before cancellation. Its full raw return is saved in old_monitor_cancellation_intent.json.",
+  "job_action_performed_by_this_failed_inspection": false
+}

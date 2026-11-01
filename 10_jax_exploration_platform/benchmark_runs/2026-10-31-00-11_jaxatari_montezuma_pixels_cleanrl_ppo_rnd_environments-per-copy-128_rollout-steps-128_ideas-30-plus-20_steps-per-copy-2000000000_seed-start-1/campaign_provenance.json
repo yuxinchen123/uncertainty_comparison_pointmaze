@@ -1,5 +1,5 @@
 {
-  "cron_id": "9d8a7489-79f6-4a73-9b10-0e894b235e10",
+  "cron_id": "724f8afd-a185-4be1-a10d-0aa14474680b",
   "merge_complete": true,
   "current_branch_integrated_commit": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
   "original_local_edits_preserved": true,
@@ -11,7 +11,7 @@
   ],
   "h100_disabled_control_result": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/serval02_determinism-disabled-control_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28/result.json",
   "a4500_diagnostic_job_id": "6777543",
-  "persistent_monitor_job_id": "6781087",
+  "persistent_monitor_job_id": "6781231",
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
   "job_ledgers": "slurm/submitted_jobids_*.txt",
@@ -51,7 +51,7 @@
   "a4500_24g_supervisors_stop_after_case_requested_at": "2026-10-31T11:47:13+00:00",
   "a4500_stop_after_case_receipt": "slurm/queue_workers/stop_after_current_case_requests_2026-10-31-04-47.json",
   "a4500_host_memory_failure_evidence": "Jobs 6777641 and 6777643 each recorded a 24 GiB memory.max, oom=1 and oom_kill=1 while their numerical children exited -9; retained attempts remain unchanged.",
-  "superseded_monitor_job_id": "6780635",
+  "superseded_monitor_job_id": "6781087",
   "replacement_a4500_job_ids": [
     "6777679",
     "6777680",
@@ -183,7 +183,7 @@
       }
     ]
   },
-  "monitoring_verified_utc": "2026-11-01T16:44:38.617220+00:00",
+  "monitoring_verified_utc": "2026-11-01T17:18:41.980282+00:00",
   "monitoring_cadence": "every twenty minutes",
   "cron_verified_active": true,
   "isolated_capacity_diagnosis_job_ids": [
@@ -200,8 +200,8 @@
     "finished_at": "2026-10-31T14:25:07.738337+00:00",
     "result_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/jaguar03_optimized_training_checks_6f55596a4b69/result.json"
   },
-  "persistent_monitor_source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
-  "persistent_monitor_verified_utc": "2026-11-01T14:43:22.585258+00:00",
+  "persistent_monitor_source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "persistent_monitor_verified_utc": "2026-11-01T17:18:41.980282+00:00",
   "correctness_cache_diagnosis_job_id": "6777949",
   "cache_release_diagnosis": {
     "job_id": "6777949",
@@ -236,7 +236,7 @@
     "final_study_credit": 0,
     "eight_gpu_dependencies": "afterok:6777974,afterany:6777971"
   },
-  "monitor_replacement_verified_at": "2026-11-01T14:41:32.466073+00:00",
+  "monitor_replacement_verified_at": "2026-11-01T17:18:41.980282+00:00",
   "allocator_retry_preflight_failure_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-09-32_allocator-region-retries_gpus-5_copies-2_environments-128_rollout-steps-128_rounds-7_updates-per-round-1_attempt-4_region-bytes-9663676416_seed-start-1/preflight_failure_receipt.json",
   "updated_utc": "2026-11-01T14:41:32.466073+00:00",
   "latest_report_registered_cases": 101,
@@ -351,5 +351,12 @@
     }
   ],
   "aces_autodetect_site_job_id": "2275518",
-  "aces_autodetect_site_release_receipt_sha256": "9b9ab540b0ab616dbeff749eee5a6ea28a2dd16925008d793caca14d02d796c1"
+  "aces_autodetect_site_release_receipt_sha256": "9b9ab540b0ab616dbeff749eee5a6ea28a2dd16925008d793caca14d02d796c1",
+  "monitor_identity_history": [
+    {
+      "at_utc": "2026-11-01T17:12:31.641935+00:00",
+      "old_job_id": "6781087",
+      "old_source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625"
+    }
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_monitor_6781231.py",
+    "--publication-commit",
+    "00eb776022a119e42e2ce927169e946a94618b26",
+    "--release"
+  ],
+  "returncode": 0,
+  "stdout": "{\"kind\": \"owned_uva_persistent_monitor_release\", \"cluster\": \"uva\", \"job_id\": \"6781231\", \"command\": [\"scontrol\", \"release\", \"6781231\"], \"returncode\": 0, \"stdout\": \"\", \"stderr\": \"\", \"at_utc\": \"2026-11-01T17:06:21.687537+00:00\", \"submission_receipt_sha256\": \"0d5faa27c218dec7fa56aa2f7f960aa194e3e268c6dda21c37babaa31172cc6c\", \"release_review_sha256\": \"e335979b6d13ffa9ce746eafe0ccdf78eac9598702a7b0f07ab00f586d2caca0\", \"held_monitor_review_sha256\": \"e98ba99bfa54211b13af8994b66baa0becc632d70930b9c240cf07beae08eef8\", \"published_release_commit\": \"00eb776022a119e42e2ce927169e946a94618b26\", \"release_source_sha256\": \"46f3b9add21a7c73ed3e1c7bac54d5517bdb8473d73bd08a9905a930efff1cb6\", \"automatic_retry_permitted\": false, \"old_monitor_job_id\": \"6781087\", \"old_monitor_stopped\": false, \"scientific_hypothesis_credit\": 0, \"worker_admission\": false}\n",
+  "stderr": "",
+  "attempts": 1,
+  "automatic_retry_permitted": false,
+  "at_utc": "2026-11-01T17:06:21.705451+00:00"
+}
