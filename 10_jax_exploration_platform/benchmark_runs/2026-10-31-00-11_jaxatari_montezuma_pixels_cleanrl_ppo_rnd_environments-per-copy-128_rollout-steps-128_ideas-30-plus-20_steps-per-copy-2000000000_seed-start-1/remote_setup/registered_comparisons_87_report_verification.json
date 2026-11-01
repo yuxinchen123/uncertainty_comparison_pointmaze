@@ -1,0 +1,153 @@
+{
+  "kind": "registered_comparisons_report_publication",
+  "registered_comparison_count": 87,
+  "analysis_job_id": "6779145",
+  "analysis_step_id": "6779145.6",
+  "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843",
+  "full_verified_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/analysis_executions/6779145_6_registered-comparisons-87_verified.json",
+    "sha256": "83a75c885a5f0ce45ec2c556c872d218cf06ae021bb2cdf7d943e4ea10b4c1c7"
+  },
+  "full_receipt_retained_locally": true,
+  "pdf_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.pdf",
+  "pdf_sha256": "8fbb2fec8af54b455d8b83ba496f446475304feac69befaf8be77c1c99ebc1af",
+  "pdf_pages": 51,
+  "plot_panel_count": 13,
+  "visual_review_passed": true,
+  "source_and_layout_unchanged": true,
+  "new_tests_run": false,
+  "prior_report_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/registered_comparisons_85_report_verification.json",
+    "sha256": "a0de9dd59fa89b8ad823ce2927f5222dabfbe71cd4dc3ed93f38f6c11f87d825"
+  },
+  "publication_files": [
+    {
+      "path": "10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.tex",
+      "sha256": "bdd56b689a8c07c0a23fafb5fd6a8e377881953353953e3873b49a62e5ea96e0"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/README.md",
+      "sha256": "6d7ffec77d770ad541467671ab2cd015b6b1390cd1db92cd33fc092e61b58864"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/analysis.md",
+      "sha256": "431d88dfaefba83a2ef53423790edbbe99dc041fa76f8f4305557272118e74a7"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/make_all.py",
+      "sha256": "d0d33fa6b79ee9f7695fd391c291b5c8157a6e5e20bed6000906078772ea05ae"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/test_report_inputs.py",
+      "sha256": "edb854f8364eccf2ec34d7788fb9f68477667544c6f42214efa5d4ef316f2411"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/plot_manifest.json",
+      "sha256": "3c69c24209838e2e0c6d25f43f77beb881558787919675cfae87261da7775165"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-01-of-02.pdf",
+      "sha256": "77cd1d0e992735df4116b462b211a7705e5e003d098ac72851a4a665a103f796"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-01-of-02.png",
+      "sha256": "51f3ad772799dd4050bb4652fa6685de6ad8356257a776748122ce4370d23437"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-02-of-02.pdf",
+      "sha256": "47029c1ef535dc9ce7d250237f516ac44d1e7b887486002396c87af4434a9b66"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_42a8e4956aa0f1e33b29c7ff87b06320d2ccf5bee7b1c14700674c8b47f4ce5a_panel-02-of-02.png",
+      "sha256": "550a217997cb3b0467ba0a0c519e271c504df77f9078194808fb9c6447e328de"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-02.pdf",
+      "sha256": "81858a24a551220f070204361b967995fc7346a99c35a477a22e95dae4c2fcd9"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-02.png",
+      "sha256": "6d5715a3f7c6f361faf0e64b0ae4559ab09a4b8aa686e281f73ae9bd27b6c70e"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-02-of-02.pdf",
+      "sha256": "89eee0178f5ea0782be37d74c2dfb3e620bb91e45fbad8f1d930c1bcb936c838"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-02-of-02.png",
+      "sha256": "780de4b83621ffd44236d08548fa51b2e483a9a49aaa40bab215bc2e0b132ac5"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-01-of-03.pdf",
+      "sha256": "cd02646225fa90da44c7487ec6c522f7fc94fc8eb61784dcc4aad8599c81ef29"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-01-of-03.png",
+      "sha256": "91bb451047c5ab4a2747a7be3b7d7ea4e2f924e1b6f291a9722c07523910f3aa"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-02-of-03.pdf",
+      "sha256": "0353fecd4d69f40f058d60812a9d6af54d582c56b66ed6383627f928d5ac96b1"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-02-of-03.png",
+      "sha256": "4a09d950bdf741623999ef4a227c0d122472ec3c0da57c382e79ef113c9f923e"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-03-of-03.pdf",
+      "sha256": "56d2030d6c3069b3de48a427664c2d1880c08a56ae14c34b0437f0b5c419888f"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_645ff41c1cf2615630d48698cfe30d01dcfe390054f93751dc1911707d8c669c_panel-03-of-03.png",
+      "sha256": "018b2a2e7c372b8db82f4c1d3bfb5e857fe59df2d54e5f4f7756654b43825583"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_d027edcbb0bbebe143e4d866b2f5210d433f8fd9c3a68092e9392691ba04768a_panel-01-of-01.pdf",
+      "sha256": "fb414188cf85f4625930c3785708b776a3d8af6f134f732230ffb40c416bc5b5"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_d027edcbb0bbebe143e4d866b2f5210d433f8fd9c3a68092e9392691ba04768a_panel-01-of-01.png",
+      "sha256": "d84ea0a9fc309fbce7c566f5fdc424a69ea9b804514c30d931a4ae20f652ce75"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_cc70d644ab7b3cdfdc245ca2dac875a18563cc7e79a7a57230a10458840c565e_panel-01-of-01.pdf",
+      "sha256": "a4e8b7e52efd23dc7ecfa1f1d56faf7dd09c8af7c74aeefd4e5b395b205b9ab8"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_cc70d644ab7b3cdfdc245ca2dac875a18563cc7e79a7a57230a10458840c565e_panel-01-of-01.png",
+      "sha256": "d6a31079c8dcd51f4a8b7bf96841d644695720ab01dbcc3cce6d3f57ad50e2ce"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-01-of-03.pdf",
+      "sha256": "a11f62bb984e2edcada3c1ec60598f82c44b8fffe57042f25fd092ed9379c3a3"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-01-of-03.png",
+      "sha256": "bb477d732c40ebc55f1013f06958f8e72e2c568b08ce6064cab045792f08db19"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-02-of-03.pdf",
+      "sha256": "21af01cafa764cfee1cba1dc9e7b7d34331cabce40c88b5486c26f35badc3e42"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-02-of-03.png",
+      "sha256": "65055e237f0cd05f43b9e77a4dc6324c9a7d383f9aa1a5eb8279f56222124149"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-03-of-03.pdf",
+      "sha256": "11a245aea0db3e3addb496826005ab673800e0f4c391ae4dbb53dbc1e2d3db7e"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_b88214a1767d75424f0f605cceb55f27768d2ff6e70aedba25f778e6302cf500_panel-03-of-03.png",
+      "sha256": "baecabff38e43d476f32658eb4c3373a8e50f5bf1454475934f6ef27eec24bf2"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_64e00d7fe4d4d063ec82e76878dec6a8eb944bb5a205422c9d4c18389762fc29_panel-01-of-01.pdf",
+      "sha256": "4a7bc85722812204b1eda0977557fb88bb63e049007372d63cc328020ab1648b"
+    },
+    {
+      "path": "10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_64e00d7fe4d4d063ec82e76878dec6a8eb944bb5a205422c9d4c18389762fc29_panel-01-of-01.png",
+      "sha256": "2cb551e9fe85e4a3a08818afadb2c8fdb963ecb01b01cf309dca52bcc74cb9ec"
+    }
+  ]
+}
