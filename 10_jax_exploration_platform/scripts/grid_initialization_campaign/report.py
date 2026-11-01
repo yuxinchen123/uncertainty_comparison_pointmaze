@@ -3,14 +3,18 @@
 import argparse
 import csv
 from collections import defaultdict
+import difflib
+import hashlib
 import html
+from html.parser import HTMLParser
 import json
 from pathlib import Path
+import re
 import sys
 
 import numpy as np
 
-from common import PLATFORM, pacific, read_json, seed_for, write_json
+from common import PLATFORM, now, pacific, read_json, seed_for, write_json
 from campaign import result_records
 
 sys.path.insert(0, str(PLATFORM / 'src'))
@@ -146,6 +150,144 @@ def select_reporting_rows(rows):
         row['specification']['policy_kind'], row['configuration'].get('comparison', ''),
         condition_variant(row['specification']),
         field_label(row['specification'])))
+
+
+def select_focus_rows(rows, state):
+    """Limit expensive presentation to maps chosen before confirmation outcomes are observed."""
+    # Numerical tables and seed files retain all maps; this controls only main figures and LaTeX.
+    if not rows:
+        return []
+    latest = max(WAVE_ORDER.index(row['specification']['wave']) for row in rows)
+    available = [row for row in rows if WAVE_ORDER.index(row['specification']['wave']) == latest
+                 and condition_variant(row['specification']) == 'primary']
+    chosen = state.get('selected_comparisons', []) if state else []
+    if chosen:
+        allowed = {(json.dumps(item['geometry'], sort_keys=True), item['policy_kind']) for item in chosen}
+    elif state and state.get('selected_maps'):
+        allowed = {(json.dumps(geometry, sort_keys=True), policy)
+                   for geometry in state['selected_maps'] for policy in ('tabular', 'neural')}
+    elif state is not None:
+        return []
+    else:
+        # Standalone schema checks have no campaign state; a fixed metadata order remains bounded.
+        allowed = set(sorted({(json.dumps(row['specification']['geometry'], sort_keys=True),
+                               row['specification']['policy_kind']) for row in available})[:8])
+    return [row for row in available if (json.dumps(row['specification']['geometry'], sort_keys=True),
+                                         row['specification']['policy_kind']) in allowed]
+
+
+def _highlight_changed_html(current, previous):
+    """Color only text inserted or replaced since the section was explicitly marked read."""
+    class TextReader(HTMLParser):
+        """Collect rendered text separately from its HTML elements."""
+
+        def __init__(self):
+            """Start an empty text stream."""
+            super().__init__(convert_charrefs=True)
+            self.parts = []
+
+        def handle_data(self, data):
+            """Retain visible text in its original order."""
+            self.parts.append(data)
+
+    # Compare visible text so an inserted link or image cannot break the surrounding HTML tags.
+    old_reader, current_reader = TextReader(), TextReader()
+    old_reader.feed(previous)
+    current_reader.feed(current)
+    changes = [(start, end) for action, _, _, start, end in difflib.SequenceMatcher(
+        None, ''.join(old_reader.parts), ''.join(current_reader.parts), autojunk=False).get_opcodes()
+        if action in ('insert', 'replace')]
+
+    class ChangedTextWriter(HTMLParser):
+        """Preserve HTML while coloring changed ranges of its text stream."""
+
+        def __init__(self):
+            """Start reconstruction at the first visible character."""
+            super().__init__(convert_charrefs=True)
+            self.parts, self.offset = [], 0
+
+        def handle_starttag(self, tag, attributes):
+            """Preserve the renderer's complete opening element."""
+            self.parts.append(self.get_starttag_text())
+
+        def handle_startendtag(self, tag, attributes):
+            """Preserve images and other self-closing elements."""
+            self.parts.append(self.get_starttag_text())
+
+        def handle_endtag(self, tag):
+            """Close the existing renderer element."""
+            self.parts.append(f'</{tag}>')
+
+        def handle_data(self, data):
+            """Split at changed ranges without coloring unchanged words."""
+            end = self.offset + len(data)
+            boundaries = sorted({self.offset, end, *[max(self.offset, start) for start, stop in changes
+                if start < end and stop > self.offset], *[min(end, stop) for start, stop in changes
+                if start < end and stop > self.offset]})
+            for start, stop in zip(boundaries, boundaries[1:]):
+                content = html.escape(data[start-self.offset:stop-self.offset])
+                changed = any(left <= start < right for left, right in changes)
+                self.parts.append('<span class="changed">'+content+'</span>' if changed else content)
+            self.offset = end
+
+    writer = ChangedTextWriter()
+    writer.feed(current)
+    return ''.join(writer.parts)
+
+
+def _write_report_with_history(analysis_dir, markdown):
+    """Add section history and render read, unread, and updated states in a browser report."""
+    from markdown_it import MarkdownIt
+
+    # Section history records actual content changes, never file modification times or automatic reads.
+    history_path = analysis_dir / 'section_history.json'
+    history = read_json(history_path) if history_path.exists() else {'sections': {}}
+    split = re.split(r'(?m)^## (.+)\n', markdown)
+    renderer = MarkdownIt('commonmark', {'html': False}).enable('table')
+    contents = ['## Contents\n\n| Section | First written | Last changed | Status |\n|---|---|---|---|\n']
+    sections, html_sections = [], []
+    timestamp = now()
+    for index in range(1, len(split), 2):
+        title, text = split[index], split[index+1]
+        identifier = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        images = {name: hashlib.sha256((analysis_dir/name).read_bytes()).hexdigest()
+                  for name in re.findall(r'!\[[^\]]*\]\(([^)]+)\)', text)}
+        digest = hashlib.sha256((text+json.dumps(images, sort_keys=True)).encode()).hexdigest()
+        saved = history['sections'].get(identifier, {})
+        record = {**saved, 'title': title, 'content_digest': digest,
+            'first_added': saved.get('first_added', timestamp),
+            'last_changed': saved.get('last_changed', timestamp) if saved.get('content_digest') == digest else timestamp,
+            'last_read_digest': saved.get('last_read_digest'), 'last_read_text': saved.get('last_read_text'),
+            'last_read_figures': saved.get('last_read_figures', {}), 'current_figures': images,
+            'current_text': text}
+        status = 'unread' if not record['last_read_digest'] else ('read' if record['last_read_digest'] == digest else 'updated')
+        record['status'] = status
+        history['sections'][identifier] = record
+        contents.append(f'| [{title}](#{identifier}) | {pacific(record["first_added"])} | {pacific(record["last_changed"])} | {status} |\n')
+        body = renderer.render(text)
+        if status == 'updated':
+            body = _highlight_changed_html(body, renderer.render(record['last_read_text'] or ''))
+        for image_name, image_digest in images.items():
+            if record['last_read_digest'] and image_digest != record['last_read_figures'].get(image_name):
+                body = re.sub(r'(<img[^>]*src="'+re.escape(image_name)+r'"[^>]*>)',
+                              r'\1<small class="figure-updated">updated</small>', body)
+        sections.append(f'## {title}\n'+text)
+        html_sections.append(f'<section id="{identifier}" class="{status}"><h2>{html.escape(title)}</h2>{body}</section>')
+
+    # The HTML companion provides colors; Markdown retains ordinary readable links and explicit statuses.
+    contents_markdown = ''.join(contents)+'\n[Read with section colors](analysis.html). No section marks itself read.\n\n'
+    (analysis_dir/'analysis.md').write_text(split[0]+contents_markdown+''.join(sections))
+    html_contents = renderer.render(''.join(contents))
+    for identifier, record in history['sections'].items():
+        html_contents = html_contents.replace(f'href="#{identifier}"', f'class="{record["status"]}" href="#{identifier}"')
+    style = '''body{font:16px system-ui;max-width:1150px;margin:32px auto;padding:0 20px;line-height:1.5}
+table{border-collapse:collapse;width:100%;margin:18px 0}th,td{padding:6px;border-bottom:1px solid #bbb;text-align:left;overflow-wrap:anywhere}
+img{max-width:100%;height:auto}section{margin-top:32px}.unread,.unread a{color:#2452cc}.changed{color:#852D0F}.figure-updated{display:block;color:#2452cc}
+@media(prefers-color-scheme:dark){body{background:#171717;color:#eee}.unread,.unread a{color:#8bb4ff}.changed{color:#e7a48f}a{color:#adc7ff}}
+@media print{body{max-width:none;margin:0}table{font-size:10pt}img{break-inside:avoid}}'''
+    (analysis_dir/'analysis.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>Initial bonus research</title><style>'+style+
+        '</style>'+renderer.render(split[0])+html_contents+''.join(html_sections)+'</html>')
+    write_json(history_path, history)
 
 
 def paired_confirmation_comparisons(rows, repetitions=8000):
@@ -569,8 +711,12 @@ def generate_report(run_dir):
     rows = collect_rows(run_dir)
     display_rows = select_reporting_rows(rows)
     paired_comparisons = paired_confirmation_comparisons(display_rows)
+    state_path = run_dir/'campaign_state.json'
+    state = read_json(state_path) if state_path.exists() else None
+    focus_rows = select_focus_rows(display_rows, state)
     pieces = ['<!-- Generated by scripts/grid_initialization_campaign/report.py; edit that generator. -->\n',
               '# Initial bonus differences and exploration\n\n', f'Updated {pacific()}.\n\n',
+              '## Metrics and comparison rules\n\n',
               'For policy seed $i$, let $T_i$ be the number of training transitions before its first goal, '
               '$B$ its transition budget, and $K$ the number of completed independent copies. A failure contributes $B$. '
               'The primary metric is the mean capped first-goal time, lower being better.\n\n',
@@ -582,6 +728,8 @@ def generate_report(run_dir):
               'Development rows choose settings using development results. Confirmation comparisons retain settings '
               'chosen before their fresh seeds ran. Shared and independently tuned settings appear separately. '
               'These results concern the recorded finite budget; they do not establish permanent trapping.\n\n']
+    pieces.append('## Numerical results\n\nEvery measured map remains in these summaries and in the seed records. '
+                  'Large figures and the main document use only the maps already chosen by the campaign.\n\n')
     if not display_rows:
         pieces.append('No completed training records are available. No failure case has been established.\n')
     previous = None
@@ -591,7 +739,7 @@ def generate_report(run_dir):
                    specification['total_timesteps'], row['configuration'].get('comparison', 'development best'),
                    condition_variant(specification))
         if heading != previous:
-            pieces.append('\n## ' + '; '.join(map(str, heading)) + '\n\n'
+            pieces.append('\n### ' + '; '.join(map(str, heading)) + '\n\n'
                           '| Initialization | Mean steps [95% interval] | Goal found, % | Coverage, % | Seeds |\n'
                           '|---|---:|---:|---:|---:|\n')
             previous = heading
@@ -617,10 +765,12 @@ def generate_report(run_dir):
 
     # Refresh behavior figures for the latest completed phase while preserving older phase files.
     figure_groups = []
-    if display_rows:
-        latest = max(WAVE_ORDER.index(row['specification']['wave']) for row in display_rows)
+    render_history_path = analysis_dir/'behavior_render_history.json'
+    render_history = read_json(render_history_path) if render_history_path.exists() else {}
+    if focus_rows:
+        latest = max(WAVE_ORDER.index(row['specification']['wave']) for row in focus_rows)
         grouped = defaultdict(list)
-        for row in display_rows:
+        for row in focus_rows:
             spec = row['specification']
             if WAVE_ORDER.index(spec['wave']) == latest:
                 key = json.dumps([spec['geometry'], spec['policy_kind'], spec['total_timesteps'],
@@ -633,7 +783,17 @@ def generate_report(run_dir):
                       'The policy view covers up to 33 states around the most visited late state.\n\n')
         for index, comparison_rows in enumerate(grouped.values()):
             name = f'{WAVE_ORDER[latest]}_comparison-{index}'
-            representatives = _plot_comparison(run_dir, comparison_rows, plots_dir, name)
+            # Immutable completed summaries identify unchanged figures without repeatedly drawing them.
+            signature = hashlib.sha256((json.dumps(comparison_rows, sort_keys=True)+
+                hashlib.sha256(Path(__file__).read_bytes()).hexdigest()).encode()).hexdigest()
+            required = [plots_dir/f'{name}_{suffix}.{extension}' for suffix in (
+                'maps', 'movement', 'policy', 'discovery') for extension in ('png', 'pdf')]
+            required.append(plots_dir/f'{name}_sampled_positions.html')
+            if render_history.get(name, {}).get('digest') == signature and all(path.exists() for path in required):
+                representatives = render_history[name]['representatives']
+            else:
+                representatives = _plot_comparison(run_dir, comparison_rows, plots_dir, name)
+                render_history[name] = {'digest': signature, 'representatives': representatives}
             figure_groups.append({'name': name, 'representatives': representatives})
             pieces.append(f'### {geometry_label(comparison_rows[0]["specification"])}; '
                           f'{comparison_rows[0]["specification"]["policy_kind"]} policy\n\n')
@@ -665,8 +825,9 @@ def generate_report(run_dir):
                   'The figure choices follow [visitation maps and action arrows](https://arxiv.org/pdf/2001.00119), '
                   '[trajectory and coverage comparisons](https://proceedings.neurips.cc/paper_files/paper/2023/file/9c7900fac04a701cbed83256b76dbaa3-Paper-Conference.pdf), '
                   'and [initial random-network bonus maps](https://proceedings.mlr.press/v235/yang24w.html).\n')
-    (analysis_dir / 'analysis.md').write_text(''.join(pieces))
-    _write_results_tex(analysis_dir, display_rows, figure_groups, paired_comparisons)
+    _write_report_with_history(analysis_dir, ''.join(pieces))
+    write_json(render_history_path, render_history)
+    _write_results_tex(analysis_dir, focus_rows, figure_groups, paired_comparisons)
     write_json(analysis_dir / 'data/aggregate_results.json', {'generated_at': pacific(),
         'completed_setting_groups': len(rows), 'reported_groups': display_rows, 'figures': figure_groups,
         'paired_confirmation_comparisons': paired_comparisons})
