@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "kind": "saved_actual_published_monitor_candidate_verification",
+  "passed": true,
+  "at_utc": "2026-11-01T16:46:13.530827+00:00",
+  "source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "source_file_count": 246,
+  "actual_candidate_job": "6781087",
+  "actual_candidate_step": "63",
+  "metadata_verification_step": "67",
+  "new_job_id": null,
+  "candidate_full_tick_completed": true,
+  "full_tick_repeated": false,
+  "original_failed_verifier_preserved": true,
+  "formatting_correction": "Actual print(text) emits one extra newline; saved Markdown embeds text once. Exact equality stdout == fenced_table + one newline passed.",
+  "protected_file_equality_passed_before_original_wrapper_failure": true,
+  "protected_names": [
+    "next_actions.json",
+    "campaign_provenance.json",
+    "SOURCE_AND_GATES_READY.json"
+  ],
+  "protected_write_attempts": [],
+  "source_and_modes_verified": true,
+  "controller_error": null,
+  "all_five_status_sections_present": true,
+  "maximum_report_line_length": 98,
+  "reported_queue_counts": {
+    "pending": 3,
+    "running": 1,
+    "completed": 116,
+    "failed": 0
+  },
+  "old_cpu_monitor_preserved": "6781087",
+  "unchanged_allocation_guard_functions": true,
+  "actual_two_thread_and_synthetic_single_thread_goldens_passed": true,
+  "negative_allocation_cases_rejected": [
+    "requested_two_cpus",
+    "allocated_three_cpus",
+    "nonzero_gpu",
+    "wrong_owner",
+    "requeue_enabled"
+  ],
+  "numerical_imports": false,
+  "gpu_or_device_calls": false,
+  "python_socket_connections": false,
+  "local_scheduler_read_queries_performed": true,
+  "new_jobs_submitted": 0,
+  "job_releases_or_cancellations": 0,
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0,
+  "final_training_credit": 0,
+  "worker_admission": false
+}

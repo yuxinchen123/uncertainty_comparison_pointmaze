@@ -1,0 +1,27 @@
+{
+  "kind": "root_independent_frozen_monitor_preparation_review",
+  "passed": true,
+  "at_utc": "2026-11-01T16:50:45.499236+00:00",
+  "actual_job_id": "6781087",
+  "actual_step_id": "72",
+  "source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "source_files_verified_against_git": 246,
+  "archive_bytes_verified": true,
+  "artifact_roster_files_verified": 278,
+  "allocation_guard_functions_identical_to_current_verified_guard": true,
+  "actual_saved_candidate_full_tick_verified": true,
+  "candidate_step": "6781087.63",
+  "candidate_verifier": "6781087.67",
+  "queue_counts": {
+    "pending": 3,
+    "running": 1,
+    "completed": 116,
+    "failed": 0
+  },
+  "plan_sha256": "f5b79f3113959b3fa14a50acf3ab5945aede66bdd3c45dee5a3e27c1d8dacedf",
+  "script_sha256": "1062f826cce0649376a72b9ce04058b3aec33dd44dddadf2d1917ac69d0c47bf",
+  "manifest_sha256": "07fd933a944c3ab8758c68b3ae7f7329a311ce534e2d923dd55f956184f32d37",
+  "old_monitor_preserved": "6781087",
+  "new_jobs_submitted": 0,
+  "publication_required_before_submission": true
+}

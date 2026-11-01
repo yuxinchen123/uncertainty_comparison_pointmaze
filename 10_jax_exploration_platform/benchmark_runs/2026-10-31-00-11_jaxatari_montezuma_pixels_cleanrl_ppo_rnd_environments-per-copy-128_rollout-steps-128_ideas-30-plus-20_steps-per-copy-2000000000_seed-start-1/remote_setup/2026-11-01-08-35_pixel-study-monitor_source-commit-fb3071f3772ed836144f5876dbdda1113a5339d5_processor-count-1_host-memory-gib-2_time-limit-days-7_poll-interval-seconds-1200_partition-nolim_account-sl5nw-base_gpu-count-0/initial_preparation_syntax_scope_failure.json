@@ -1,0 +1,16 @@
+{
+  "kind": "initial_monitor_preparation_syntax_scope_failure",
+  "at_utc": "2026-11-01T16:40:33.068097+00:00",
+  "source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "preparer_sha256": "d96b033ca966307e1dea2639d60bbf111f9c2a167147d565b426b2f20d7d0462",
+  "error_type": "SyntaxError",
+  "error": "f-string expression part cannot include a backslash",
+  "source_path": "10_jax_exploration_platform/scripts/write_decline_study_tables.py",
+  "line": 145,
+  "interpreter": "/usr/bin/python3 (3.10)",
+  "cause": "The broad archive syntax check used the monitor interpreter for an unrelated report generator that uses Python3.12 f-string syntax.",
+  "prepared_source_bytes_changed": false,
+  "standard_records_preserved": true,
+  "resumed_scope": "Full committed archive syntax uses registered atari_pixels_jax Python3.12; actual monitor campaign modules use /usr/bin/python3.10; startup and candidate must pass on owned compute.",
+  "job_submissions": 0
+}

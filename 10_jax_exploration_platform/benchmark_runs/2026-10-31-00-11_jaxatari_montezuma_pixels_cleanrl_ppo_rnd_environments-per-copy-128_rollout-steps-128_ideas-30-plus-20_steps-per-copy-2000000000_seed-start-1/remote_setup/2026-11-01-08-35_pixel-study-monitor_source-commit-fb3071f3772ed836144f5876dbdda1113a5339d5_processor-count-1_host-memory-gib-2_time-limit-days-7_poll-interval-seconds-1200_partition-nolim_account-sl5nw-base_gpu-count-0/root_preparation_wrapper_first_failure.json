@@ -1,0 +1,10 @@
+{
+  "kind": "root_metadata_wrapper_failure",
+  "owned_step": null,
+  "error": "AttributeError: files is a list, not a dictionary",
+  "scientific_computation": false,
+  "source_or_packet_modified": false,
+  "correction": "Read the actual per-scope roster entries; preserve original source, roster and candidate artifacts.",
+  "owned_job_id": "6781087",
+  "correction_of_record": "The original wrapper did not retain its actual step identifier; the initial recorder guessed69, which was incorrect. Do not attribute this failure to another agent step."
+}

@@ -1,0 +1,10 @@
+{
+  "command": [
+    "scontrol",
+    "update",
+    "JobId=2275518",
+    "Requeue=0"
+  ],
+  "returncode": 0,
+  "automatic_retry_permitted": false
+}

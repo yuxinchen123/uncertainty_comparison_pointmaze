@@ -1,0 +1,8 @@
+{
+  "kind": "root_metadata_wrapper_failure",
+  "owned_job_id": "6781087",
+  "owned_step": null,
+  "error": "Archive member names carry the exact frozen source-commit prefix, which the first tar comparison omitted.",
+  "source_or_packet_modified": false,
+  "correction": "Require the exact commit prefix and then compare every relative member and byte to the unchanged manifest."
+}

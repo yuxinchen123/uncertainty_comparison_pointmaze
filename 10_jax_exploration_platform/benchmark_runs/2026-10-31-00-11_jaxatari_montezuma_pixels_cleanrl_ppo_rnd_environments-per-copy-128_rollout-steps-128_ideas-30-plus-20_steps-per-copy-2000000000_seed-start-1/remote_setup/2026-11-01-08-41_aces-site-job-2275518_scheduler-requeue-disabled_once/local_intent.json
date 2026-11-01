@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "owned_aces_requeue_disable_intent",
+  "job_id": "2275518",
+  "command": [
+    "scontrol",
+    "update",
+    "JobId=2275518",
+    "Requeue=0"
+  ],
+  "run": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "packet": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "native_action_directory": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once",
+  "action_name": "2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once",
+  "submission_row": [
+    "2275518",
+    "2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+    "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+  ],
+  "native_packet_hashes": {
+    "site_validation_plan.json": "594a08f2344b633b5ff784c26eefcd74da5e78eee24d1b3cb551fbc64b66b49c",
+    "manifest.yaml": "705ef412378b68eee1578e292a053c87d85df65b0377df17d01362df57c701e8",
+    "job.sbatch": "1c6932ea4f2286943d22668f33473de3095237a85ff4c5a724a7550f204bb44d"
+  },
+  "private_python": "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+  "publication_commit": "6e608132d9aac5e84c193afb2d97a9682948afa8",
+  "source_sha256": "565f180aae6daed1932139651f9dff40a4c6efc59a3bd9f39f1b76ffff76a5d5",
+  "at_utc": "2026-11-01T16:46:06.198878+00:00",
+  "automatic_retry_permitted": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}
