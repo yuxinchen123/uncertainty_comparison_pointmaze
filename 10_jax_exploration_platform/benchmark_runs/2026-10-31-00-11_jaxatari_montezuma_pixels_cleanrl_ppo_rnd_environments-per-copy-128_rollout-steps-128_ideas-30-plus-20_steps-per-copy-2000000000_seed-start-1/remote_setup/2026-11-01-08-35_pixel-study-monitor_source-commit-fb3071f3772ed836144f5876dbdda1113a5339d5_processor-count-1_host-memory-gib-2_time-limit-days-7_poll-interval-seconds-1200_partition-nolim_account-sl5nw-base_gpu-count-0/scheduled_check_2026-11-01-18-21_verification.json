@@ -1,0 +1,77 @@
+{
+  "kind": "owned_full_scheduled_monitor_check",
+  "passed": true,
+  "checked_at_utc": "2026-11-01T18:21:30.574006+00:00",
+  "monitor_job_id": "6781231",
+  "step_id": "20",
+  "source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "returncode": 0,
+  "queue_counts": {
+    "pending": 2,
+    "running": 1,
+    "completed": 117,
+    "failed": 0
+  },
+  "site_rows": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "snapshot_sha256": "db579016cd1563fa63e37f71883deba577377d28236c8f61ac5e88896e1f197f",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2274632",
+        "data_unit_name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+        "state": "failed",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "site failed: root-owned cache and running task/cgroup settings must agree",
+        "observed_host": "ac045",
+        "observed_at_utc": "2026-11-01T18:20:28.356154+00:00"
+      }
+    },
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+      "snapshot_sha256": "471709e79e5fbb64f46de64acb32cd48c1b08cd28cf05752f878b86bafa8b721",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2275518",
+        "data_unit_name": "2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+        "state": "waiting",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "(Priority)",
+        "observed_host": "",
+        "observed_at_utc": "2026-11-01T18:20:28.356657+00:00"
+      }
+    }
+  ],
+  "report_sha256": "40feacbd14ff093a579acd7475ba53e349c541f4cf44e56239cb1f74b68bcaf8",
+  "status_sha256": "3c7b87f648edc908109c64d719ff421d4cf902e8d1b958bfbcac611c5022ba52"
+}

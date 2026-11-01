@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_metadata_observation",
+  "plan_sha256": "16a820c1979e5bedaf10411f319bf3b518b66aab9f22b30b632e89bd37dfb011",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "started_utc": "2026-11-01T18:23:35.726358+00:00",
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "process": {
+    "hostname": "jaguar03",
+    "pid": 1990312,
+    "uid": 2618919,
+    "effective_uid": 2618919,
+    "uid_fields": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "parent_pid": 1990305,
+    "process_start_time": "51769139",
+    "raw_proc_stat": "1990312 (python3) R 1990305 1990312 1990304 0 -1 4194560 3105 6343 0 25 3 2 2 5 20 0 1 0 51769139 30330880 4867 2147483648 94644195020800 94644197857101 140726794727312 0 0 0 0 16781312 2 0 0 0 17 56 0 0 0 0 0 94644200228880 94644200513016 94644450205696 140726794731699 140726794732573 140726794732573 140726794739687 0\n",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781903/step_0/user/task_0\n",
+    "cpu_affinity": [
+      56
+    ]
+  },
+  "job_id": "6781903",
+  "step_id": "0",
+  "environment": {
+    "SLURM_JOB_ID": "6781903",
+    "SLURM_STEP_ID": "0",
+    "SLURM_CPUS_PER_TASK": "1",
+    "SLURM_CONF": "/etc/slurm/slurm.conf"
+  },
+  "held_identifier_binding": {
+    "schema_version": 1,
+    "kind": "uva_active_configuration_metadata_observation_returned_held_identifier_binding",
+    "cluster": "uva",
+    "job_id": "6781903",
+    "reservation": "sl5nw_168",
+    "owner": {
+      "username": "sl5nw",
+      "uid": 2618919
+    },
+    "plan_sha256": "16a820c1979e5bedaf10411f319bf3b518b66aab9f22b30b632e89bd37dfb011",
+    "owned_ledger_origin": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "owned_ledger_sha256": "57715685e7fa43eeeaf0ad1385b41e58a96db89f28d01b5e779bcf4b57dc409b",
+    "held_state_verified_by_this_function": false,
+    "job_released_by_producer": false,
+    "environment_transitions": 0,
+    "learner_updates": 0,
+    "case_credit": 0,
+    "idea_credit": 0,
+    "packing_point_credit": 0,
+    "throughput_credit": 0,
+    "site_qualification_credit": 0,
+    "admission_granted": false,
+    "physical_assignment_verified": false,
+    "kernel_device_enforcement_verified": false
+  },
+  "owned_ledger": {
+    "origin": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "sha256": "57715685e7fa43eeeaf0ad1385b41e58a96db89f28d01b5e779bcf4b57dc409b"
+  },
+  "job_query": {
+    "command": [
+      "scontrol",
+      "show",
+      "job",
+      "-d",
+      "6781903"
+    ],
+    "returncode": 0,
+    "capture_status": "completed",
+    "stdout": "JobId=6781903 JobName=job.sbatch\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=405 Nice=0 Account=sl5nw_base QOS=csresnolim\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   DerivedExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:05:00 TimeMin=N/A\n   SubmitTime=2026-11-01T13:11:17 EligibleTime=2026-11-01T13:23:34\n   AccrueTime=2026-11-01T13:23:34\n   StartTime=2026-11-01T13:23:35 EndTime=2026-11-01T13:28:35 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T13:23:35 Scheduler=Main\n   Partition=gpu AllocNode:Sid=portal05:1689606\n   ReqNodeList=jaguar03 ExcNodeList=(null)\n   NodeList=jaguar03\n   BatchHost=jaguar03\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=2G,node=1,billing=308\n   AllocTRES=cpu=2,mem=2G,node=1,billing=309\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   JOB_GRES=(null)\n     Nodes=jaguar03 CPU_IDs=112-113 Mem=2048 GRES=\n   MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   Reservation=sl5nw_168\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch\n   WorkDir=/p/rlprojects/RND_worktrees/2026-11-01-09-43_passive-installed-slurm-wrapper_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_6781903.err\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_6781903.out\n   Power=\n   TresPerTask=cpu:1\n   \n\n",
+    "stdout_capture_sha256": "01e8ded258cdeffe40d560e81d50b40ddee828d1197f09d308f6e8d969283cb1",
+    "stdout_captured_byte_count": 2713,
+    "stderr": "",
+    "stderr_capture_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_captured_byte_count": 0
+  },
+  "step_query": {
+    "command": [
+      "scontrol",
+      "show",
+      "step",
+      "-d",
+      "6781903.0"
+    ],
+    "returncode": 0,
+    "capture_status": "completed",
+    "stdout": "StepId=6781903.0 UserId=2618919 StartTime=2026-11-01T13:23:35 TimeLimit=UNLIMITED\n   State=RUNNING Partition=gpu NodeList=jaguar03\n   Nodes=1 CPUs=1 Tasks=1 Name=python3 Network=(null)\n   TRES=cpu=1,mem=2G,node=1\n   ResvPorts=(null)\n   CPUFreqReq=Default Dist=Cyclic\n   SrunHost:Pid=jaguar03:1990293\n   TresPerStep=cpu:1\n   TresPerTask=cpu:1,cpu:1\n\n",
+    "stdout_capture_sha256": "983ed1aca8c10d6d9feac16221f7a8d2810828295a5b13d19afa3c7a45621bc6",
+    "stdout_captured_byte_count": 349,
+    "stderr": "",
+    "stderr_capture_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_captured_byte_count": 0
+  },
+  "cpu_topology_query": {
+    "command": [
+      "scontrol",
+      "show",
+      "node",
+      "jaguar03",
+      "-o"
+    ],
+    "returncode": 0,
+    "fields": [
+      {
+        "line": 1,
+        "name": "NodeName",
+        "value": "jaguar03"
+      },
+      {
+        "line": 1,
+        "name": "ThreadsPerCore",
+        "value": "2"
+      }
+    ],
+    "capture_status": "completed",
+    "stdout_capture_sha256": "d992f37241e0d7700c17a8697524f25e28970cf8faf53dd1a9d08ce8b7e99888",
+    "stdout_captured_byte_count": 870,
+    "stdout_complete": true,
+    "stderr_capture_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_captured_byte_count": 0,
+    "stderr_complete": true,
+    "stderr_byte_count": 0,
+    "filter_status": "parsed",
+    "authority": "controller_reported_values_not_local_file_or_binary_attestation"
+  },
+  "allocation_binding_passed": true,
+  "completed": true,
+  "finished_utc": "2026-11-01T18:23:35.797025+00:00"
+}

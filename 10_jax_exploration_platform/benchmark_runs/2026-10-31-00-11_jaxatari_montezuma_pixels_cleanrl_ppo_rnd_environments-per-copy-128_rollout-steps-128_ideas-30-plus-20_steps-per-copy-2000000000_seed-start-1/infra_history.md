@@ -377,3 +377,15 @@ Preserved the first twenty-nine-case suite and three independently found source 
 ## 2026-11-01 10:20 PST — held passive observation recorded
 
 Submitted passive metadata observation 6781903 once with hold, synchronized both owned ledgers and the exact row, and verified its separate identifier binding on owned step 6781231.15. Preserved the first portal file-visibility failure without repeating binding. Full monitor 6781231.16 verifies the held row and 117 of 120 original comparisons. Both native recurring task ed95cc7b-fde3-47fc-bab9-b7e7be84eace and persistent monitor 6781231 remain every twenty minutes. Release source review is pending; no collector, source profile, physical mapping or admission has run. Both existing masters passed at 18:01:04 UTC; next explicit check is no earlier than 19:01:05 UTC.
+
+
+## 2026-11-01 10:24 PST — passive observation released once
+
+Published exact release source and reviews as 37e382c8b7797111591a21dda0bcb0509b742e20 after six author and six independent control checks plus three additional checks. The publication-aware default command made no scheduler call. Released exact owned 6781903 once at 18:23:34.762378 UTC; actual receipt SHA256 e23464ec52d0e5f1285fb8058ef2ba32968af56e60137e87617ea3c84447b3ea. The earlier explicit-path Git staging refusal is preserved and corrected without changing ignore rules. No repeated job action, source profile, physical mapping or worker admission. Actual passive raw review is pending. Owned full check 6781231.20 still verifies 117 of 120 original comparisons.
+
+
+## 2026-11-01 10:33 PST — actual passive audit passed; future producer correction required
+
+Passive observation 6781903 completed 0:0; independent audit 6781231.24 verifies raw/source/ownership/release evidence and all ninety preserved files, SHA256 9407efac53a8308ecf3e23eafbd278f8447fd42c8f31c182ba4ffcb903a98d18. Installed custom Slurm binary/plugin/manual bytes remain unavailable under its frozen file scope. All mapping, enforcement, qualification and admission flags stay false.
+
+Read-only assessment found full NVIDIA XML and logical-index/minor equality assumptions in selected measurement and scaling, inherited by profiling, plus an unfiltered paired-timing process query. Required separate configured-isolation design is under review; no source or admission change yet. Full monitor 6781231.23 passes 117 of 120 original comparisons. New recurring task 74538a37-b39e-46ef-b184-5a3287b6ec81 was verified before deleting its predecessor; both monitors remain every twenty minutes.

@@ -1,0 +1,971 @@
+{
+  "actions_performed": [
+    "Read immutable local passive result and reviewed current source text.",
+    "Read official upstream documentation/source; no Slurm executable, GPU query/library/device, SSH or scheduler action.",
+    "Write this unique design receipt only."
+  ],
+  "actual_configuration": {
+    "cache_state": "/var/spool/slurmd/conf-cache was absent for all three observed candidates.",
+    "controller": {
+      "gres_types": "gpu",
+      "node_gres": "gpu:nvidia_rtx_a4500:8(S:0-1)",
+      "proctrack_type": "proctrack/cgroup",
+      "reported_version": "23.11.6",
+      "slurm_conf": "/etc/slurm/slurm.conf",
+      "slurm_user": "slurm(64030)",
+      "slurmd_user": "root(0)",
+      "task_plugins": "task/cgroup,task/affinity",
+      "version_authority": "controller-reported label only"
+    },
+    "controller_node_difference": {
+      "controller_reported_cgroup_plugin": "autodetect",
+      "controller_reported_constrain_cores": "no",
+      "controller_reported_constrain_devices": "no",
+      "controller_reported_constrain_ram_space": "no",
+      "interpretation": "The controller response and the local node file are separately observed authorities. Upstream 23.11.6 assembles show-config cgroup data in slurmctld; this is not evidence of the running node task plugin or kernel device policy. The proposed profile must preserve both values and explicitly trust only the named node configuration for its configured-isolation basis. It must not relabel either as actual enforcement."
+    },
+    "files": [
+      {
+        "byte_count": 3531,
+        "directory_chain": [
+          {
+            "byte_count": 4096,
+            "changed_ns": 1782814322213413042,
+            "device": 64770,
+            "directory": true,
+            "inode": 2,
+            "mode": 493,
+            "modified_ns": 1782814322213413042,
+            "owner_uid": 0,
+            "path": "/",
+            "regular_file": false
+          },
+          {
+            "byte_count": 12288,
+            "changed_ns": 1793371460288356677,
+            "device": 64770,
+            "directory": true,
+            "inode": 31457281,
+            "mode": 493,
+            "modified_ns": 1793371460288356677,
+            "owner_uid": 0,
+            "path": "/etc",
+            "regular_file": false
+          },
+          {
+            "byte_count": 4096,
+            "changed_ns": 1789066137431616618,
+            "device": 64770,
+            "directory": true,
+            "inode": 31588634,
+            "mode": 493,
+            "modified_ns": 1789066137431616618,
+            "owner_uid": 64030,
+            "path": "/etc/slurm",
+            "regular_file": false
+          }
+        ],
+        "filtered_assignments": [
+          {
+            "line": 26,
+            "name": "SlurmdPidFile",
+            "value": "/var/run/slurmd.pid"
+          },
+          {
+            "line": 29,
+            "name": "SlurmdLogFile",
+            "value": "/var/log/slurm/slurmd.log"
+          },
+          {
+            "line": 30,
+            "name": "SlurmdSpoolDir",
+            "value": "/var/spool/slurmd"
+          },
+          {
+            "line": 32,
+            "name": "SlurmUser",
+            "value": "slurm"
+          },
+          {
+            "line": 38,
+            "name": "GresTypes",
+            "value": "gpu"
+          },
+          {
+            "line": 40,
+            "name": "ProctrackType",
+            "value": "proctrack/cgroup"
+          },
+          {
+            "line": 42,
+            "name": "TaskPlugin",
+            "value": "task/cgroup,task/affinity"
+          }
+        ],
+        "full_file_read": true,
+        "includes": [
+          {
+            "line": 121,
+            "source_path": "/etc/slurm/slurm.conf",
+            "status": "literal_child_observed",
+            "token": "/etc/slurm/nodes.conf"
+          },
+          {
+            "line": 122,
+            "source_path": "/etc/slurm/slurm.conf",
+            "status": "literal_child_observed",
+            "token": "/etc/slurm/partitions.conf"
+          }
+        ],
+        "mode": "0o644",
+        "owner_uid": 64030,
+        "path": "/etc/slurm/slurm.conf",
+        "read_descriptor_and_path_stable": true,
+        "sha256": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a"
+      },
+      {
+        "byte_count": 9356,
+        "directory_chain": [
+          {
+            "byte_count": 4096,
+            "changed_ns": 1782814322213413042,
+            "device": 64770,
+            "directory": true,
+            "inode": 2,
+            "mode": 493,
+            "modified_ns": 1782814322213413042,
+            "owner_uid": 0,
+            "path": "/",
+            "regular_file": false
+          },
+          {
+            "byte_count": 12288,
+            "changed_ns": 1793371460288356677,
+            "device": 64770,
+            "directory": true,
+            "inode": 31457281,
+            "mode": 493,
+            "modified_ns": 1793371460288356677,
+            "owner_uid": 0,
+            "path": "/etc",
+            "regular_file": false
+          },
+          {
+            "byte_count": 4096,
+            "changed_ns": 1789066137431616618,
+            "device": 64770,
+            "directory": true,
+            "inode": 31588634,
+            "mode": 493,
+            "modified_ns": 1789066137431616618,
+            "owner_uid": 64030,
+            "path": "/etc/slurm",
+            "regular_file": false
+          }
+        ],
+        "filtered_assignments": [
+          {
+            "line": 23,
+            "name": "NodeName",
+            "value": "affogato01"
+          },
+          {
+            "line": 24,
+            "name": "NodeName",
+            "value": "affogato02"
+          },
+          {
+            "line": 25,
+            "name": "NodeName",
+            "value": "affogato03"
+          },
+          {
+            "line": 26,
+            "name": "NodeName",
+            "value": "affogato[04-05]"
+          },
+          {
+            "line": 27,
+            "name": "NodeName",
+            "value": "affogato[06-10]"
+          },
+          {
+            "line": 28,
+            "name": "NodeName",
+            "value": "bigcat[01-05]"
+          },
+          {
+            "line": 29,
+            "name": "NodeName",
+            "value": "bigcat06"
+          },
+          {
+            "line": 30,
+            "name": "NodeName",
+            "value": "cortado[01-10]"
+          },
+          {
+            "line": 31,
+            "name": "NodeName",
+            "value": "heartpiece"
+          },
+          {
+            "line": 32,
+            "name": "NodeName",
+            "value": "hydro"
+          },
+          {
+            "line": 33,
+            "name": "NodeName",
+            "value": "lynx[08-09]"
+          },
+          {
+            "line": 34,
+            "name": "NodeName",
+            "value": "puma01"
+          },
+          {
+            "line": 35,
+            "name": "NodeName",
+            "value": "panther01"
+          },
+          {
+            "line": 36,
+            "name": "NodeName",
+            "value": "slurm1"
+          },
+          {
+            "line": 37,
+            "name": "NodeName",
+            "value": "slurm[2-4]"
+          },
+          {
+            "line": 38,
+            "name": "NodeName",
+            "value": "slurm5"
+          },
+          {
+            "line": 39,
+            "name": "NodeName",
+            "value": "struct[01-09]"
+          },
+          {
+            "line": 42,
+            "name": "NodeName",
+            "value": "adriatic[01-06]"
+          },
+          {
+            "line": 42,
+            "name": "Gres",
+            "value": "gpu:quadro_rtx_4000:4"
+          },
+          {
+            "line": 43,
+            "name": "NodeName",
+            "value": "affogato11"
+          },
+          {
+            "line": 43,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+          },
+          {
+            "line": 44,
+            "name": "NodeName",
+            "value": "affogato[13-15]"
+          },
+          {
+            "line": 44,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+          },
+          {
+            "line": 45,
+            "name": "NodeName",
+            "value": "ai[01-04]"
+          },
+          {
+            "line": 45,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+          },
+          {
+            "line": 46,
+            "name": "NodeName",
+            "value": "ai06"
+          },
+          {
+            "line": 46,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_2080_ti:3"
+          },
+          {
+            "line": 47,
+            "name": "NodeName",
+            "value": "ai[05,10]"
+          },
+          {
+            "line": 47,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080:4"
+          },
+          {
+            "line": 48,
+            "name": "NodeName",
+            "value": "ai[07-08]"
+          },
+          {
+            "line": 48,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+          },
+          {
+            "line": 49,
+            "name": "NodeName",
+            "value": "ai09"
+          },
+          {
+            "line": 49,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+          },
+          {
+            "line": 50,
+            "name": "NodeName",
+            "value": "cheetah01"
+          },
+          {
+            "line": 50,
+            "name": "Gres",
+            "value": "gpu:nvidia_a100-pcie-40gb:4"
+          },
+          {
+            "line": 51,
+            "name": "NodeName",
+            "value": "cheetah02"
+          },
+          {
+            "line": 51,
+            "name": "Gres",
+            "value": "gpu:nvidia_rtx_4000_ada_generation:4"
+          },
+          {
+            "line": 52,
+            "name": "NodeName",
+            "value": "cheetah03"
+          },
+          {
+            "line": 52,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_2080_ti:2"
+          },
+          {
+            "line": 53,
+            "name": "NodeName",
+            "value": "cheetah04"
+          },
+          {
+            "line": 53,
+            "name": "Gres",
+            "value": "gpu:a100:4"
+          },
+          {
+            "line": 54,
+            "name": "NodeName",
+            "value": "cheetah[08-09]"
+          },
+          {
+            "line": 54,
+            "name": "Gres",
+            "value": "gpu:nvidia_rtx_a4000:4"
+          },
+          {
+            "line": 55,
+            "name": "NodeName",
+            "value": "lotus"
+          },
+          {
+            "line": 55,
+            "name": "Gres",
+            "value": "gpu:quadro_rtx_6000:8"
+          },
+          {
+            "line": 56,
+            "name": "NodeName",
+            "value": "lynx01"
+          },
+          {
+            "line": 56,
+            "name": "Gres",
+            "value": "gpu:nvidia_titan_xp:4"
+          },
+          {
+            "line": 57,
+            "name": "NodeName",
+            "value": "lynx[02-04]"
+          },
+          {
+            "line": 57,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+          },
+          {
+            "line": 58,
+            "name": "NodeName",
+            "value": "lynx[05-07]"
+          },
+          {
+            "line": 58,
+            "name": "Gres",
+            "value": "gpu:tesla_p100-pcie-12gb:4"
+          },
+          {
+            "line": 59,
+            "name": "NodeName",
+            "value": "lynx10"
+          },
+          {
+            "line": 59,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+          },
+          {
+            "line": 60,
+            "name": "NodeName",
+            "value": "nekomata[01-02]"
+          },
+          {
+            "line": 60,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_rtx_5080:2"
+          },
+          {
+            "line": 61,
+            "name": "NodeName",
+            "value": "jaguar01"
+          },
+          {
+            "line": 61,
+            "name": "Gres",
+            "value": "gpu:nvidia_a40:4"
+          },
+          {
+            "line": 62,
+            "name": "NodeName",
+            "value": "jaguar02"
+          },
+          {
+            "line": 62,
+            "name": "Gres",
+            "value": "gpu:nvidia_a16:8"
+          },
+          {
+            "line": 63,
+            "name": "NodeName",
+            "value": "jaguar03"
+          },
+          {
+            "line": 63,
+            "name": "Gres",
+            "value": "gpu:nvidia_rtx_a4500:8"
+          },
+          {
+            "line": 64,
+            "name": "NodeName",
+            "value": "jaguar05"
+          },
+          {
+            "line": 64,
+            "name": "Gres",
+            "value": "gpu:quadro_rtx_4000:4"
+          },
+          {
+            "line": 65,
+            "name": "NodeName",
+            "value": "jaguar06"
+          },
+          {
+            "line": 65,
+            "name": "Gres",
+            "value": "gpu:a40:2"
+          },
+          {
+            "line": 66,
+            "name": "NodeName",
+            "value": "jinx[01-02]"
+          },
+          {
+            "line": 66,
+            "name": "Gres",
+            "value": "gpu:nvidia_geforce_gtx_1080:2"
+          },
+          {
+            "line": 67,
+            "name": "NodeName",
+            "value": "titanx03"
+          },
+          {
+            "line": 67,
+            "name": "Gres",
+            "value": "gpu:nvidia_titan_x:1"
+          },
+          {
+            "line": 70,
+            "name": "NodeName",
+            "value": "serval03"
+          },
+          {
+            "line": 70,
+            "name": "Gres",
+            "value": "gpu:nvidia_h100_nvl:1"
+          },
+          {
+            "line": 71,
+            "name": "NodeName",
+            "value": "serval[06-09]"
+          },
+          {
+            "line": 71,
+            "name": "Gres",
+            "value": "gpu:nvidia_h100_nvl:2"
+          }
+        ],
+        "full_file_read": true,
+        "includes": [],
+        "mode": "0o644",
+        "owner_uid": 64030,
+        "path": "/etc/slurm/nodes.conf",
+        "read_descriptor_and_path_stable": true,
+        "sha256": "1c9dc0acd626a1f794feddae773da4295d5807e06e872a9330a722eac2e59a5c"
+      },
+      {
+        "byte_count": 2347,
+        "directory_chain": [
+          {
+            "byte_count": 4096,
+            "changed_ns": 1782814322213413042,
+            "device": 64770,
+            "directory": true,
+            "inode": 2,
+            "mode": 493,
+            "modified_ns": 1782814322213413042,
+            "owner_uid": 0,
+            "path": "/",
+            "regular_file": false
+          },
+          {
+            "byte_count": 12288,
+            "changed_ns": 1793371460288356677,
+            "device": 64770,
+            "directory": true,
+            "inode": 31457281,
+            "mode": 493,
+            "modified_ns": 1793371460288356677,
+            "owner_uid": 0,
+            "path": "/etc",
+            "regular_file": false
+          },
+          {
+            "byte_count": 4096,
+            "changed_ns": 1789066137431616618,
+            "device": 64770,
+            "directory": true,
+            "inode": 31588634,
+            "mode": 493,
+            "modified_ns": 1789066137431616618,
+            "owner_uid": 64030,
+            "path": "/etc/slurm",
+            "regular_file": false
+          }
+        ],
+        "filtered_assignments": [],
+        "full_file_read": true,
+        "includes": [],
+        "mode": "0o644",
+        "owner_uid": 64030,
+        "path": "/etc/slurm/partitions.conf",
+        "read_descriptor_and_path_stable": true,
+        "sha256": "161b848c4ee1281341d7791391e516df99fb4a98ea16d07d57355b4553871d8c"
+      },
+      {
+        "byte_count": 1044,
+        "directory_chain": [
+          {
+            "byte_count": 4096,
+            "changed_ns": 1782814322213413042,
+            "device": 64770,
+            "directory": true,
+            "inode": 2,
+            "mode": 493,
+            "modified_ns": 1782814322213413042,
+            "owner_uid": 0,
+            "path": "/",
+            "regular_file": false
+          },
+          {
+            "byte_count": 12288,
+            "changed_ns": 1793371460288356677,
+            "device": 64770,
+            "directory": true,
+            "inode": 31457281,
+            "mode": 493,
+            "modified_ns": 1793371460288356677,
+            "owner_uid": 0,
+            "path": "/etc",
+            "regular_file": false
+          },
+          {
+            "byte_count": 4096,
+            "changed_ns": 1789066137431616618,
+            "device": 64770,
+            "directory": true,
+            "inode": 31588634,
+            "mode": 493,
+            "modified_ns": 1789066137431616618,
+            "owner_uid": 64030,
+            "path": "/etc/slurm",
+            "regular_file": false
+          }
+        ],
+        "filtered_assignments": [
+          {
+            "line": 13,
+            "name": "NodeName",
+            "value": "ai[00-10]"
+          },
+          {
+            "line": 13,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 14,
+            "name": "NodeName",
+            "value": "adriatic[01-06]"
+          },
+          {
+            "line": 14,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 15,
+            "name": "NodeName",
+            "value": "affogato[11,13-15]"
+          },
+          {
+            "line": 15,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 16,
+            "name": "NodeName",
+            "value": "cheetah[01-05,08-09]"
+          },
+          {
+            "line": 16,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 17,
+            "name": "NodeName",
+            "value": "jaguar[01-03,05-06]"
+          },
+          {
+            "line": 17,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 18,
+            "name": "NodeName",
+            "value": "jinx[01-02]"
+          },
+          {
+            "line": 18,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 19,
+            "name": "NodeName",
+            "value": "lynx[01-07,10-11]"
+          },
+          {
+            "line": 19,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 20,
+            "name": "NodeName",
+            "value": "lotus"
+          },
+          {
+            "line": 20,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 21,
+            "name": "NodeName",
+            "value": "nekomata[01-02]"
+          },
+          {
+            "line": 21,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 22,
+            "name": "NodeName",
+            "value": "serval[03,06-09]"
+          },
+          {
+            "line": 22,
+            "name": "AutoDetect",
+            "value": "nvml"
+          },
+          {
+            "line": 25,
+            "name": "NodeName",
+            "value": "titanx[02-03]"
+          },
+          {
+            "line": 25,
+            "name": "AutoDetect",
+            "value": "nvml"
+          }
+        ],
+        "full_file_read": true,
+        "includes": [],
+        "mode": "0o644",
+        "owner_uid": 64030,
+        "path": "/etc/slurm/gres.conf",
+        "read_descriptor_and_path_stable": true,
+        "sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7"
+      },
+      {
+        "byte_count": 495,
+        "directory_chain": [
+          {
+            "byte_count": 4096,
+            "changed_ns": 1782814322213413042,
+            "device": 64770,
+            "directory": true,
+            "inode": 2,
+            "mode": 493,
+            "modified_ns": 1782814322213413042,
+            "owner_uid": 0,
+            "path": "/",
+            "regular_file": false
+          },
+          {
+            "byte_count": 12288,
+            "changed_ns": 1793371460288356677,
+            "device": 64770,
+            "directory": true,
+            "inode": 31457281,
+            "mode": 493,
+            "modified_ns": 1793371460288356677,
+            "owner_uid": 0,
+            "path": "/etc",
+            "regular_file": false
+          },
+          {
+            "byte_count": 4096,
+            "changed_ns": 1789066137431616618,
+            "device": 64770,
+            "directory": true,
+            "inode": 31588634,
+            "mode": 493,
+            "modified_ns": 1789066137431616618,
+            "owner_uid": 64030,
+            "path": "/etc/slurm",
+            "regular_file": false
+          }
+        ],
+        "filtered_assignments": [
+          {
+            "line": 10,
+            "name": "CgroupPlugin",
+            "value": "cgroup/v2"
+          },
+          {
+            "line": 11,
+            "name": "ConstrainCores",
+            "value": "yes"
+          },
+          {
+            "line": 12,
+            "name": "ConstrainDevices",
+            "value": "yes"
+          },
+          {
+            "line": 13,
+            "name": "ConstrainRAMSpace",
+            "value": "yes"
+          }
+        ],
+        "full_file_read": true,
+        "includes": [],
+        "mode": "0o644",
+        "owner_uid": 64030,
+        "path": "/etc/slurm/cgroup.conf",
+        "read_descriptor_and_path_stable": true,
+        "sha256": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9"
+      }
+    ],
+    "filtered_excerpts_are_not_an_effective_configuration_dump": true,
+    "full_bytes_hashed_not_all_disclosed": true,
+    "include_scope": [
+      "/etc/slurm/slurm.conf includes exactly /etc/slurm/nodes.conf then /etc/slurm/partitions.conf",
+      "The two children have no additional includes; no unsupported include was recorded."
+    ],
+    "node_configuration": {
+      "autodetect": "nvml",
+      "cgroup_plugin": "cgroup/v2",
+      "constrain_cores": "yes",
+      "constrain_devices": "yes",
+      "constrain_ram_space": "yes",
+      "explicit_file_roster_present": false,
+      "matching_host_expression": "jaguar[01-03,05-06]"
+    },
+    "service_identity": {
+      "gid": 64030,
+      "identity_does_not_itself_establish_trust": true,
+      "name": "slurm",
+      "root_passwd_sha256": "c89bc90e1293bdd05907bb0ee62ae470a3ac7f4a1e40d864902c965f46a25acd",
+      "uid": 64030
+    }
+  },
+  "basis": {
+    "hostname": "jaguar03",
+    "independent_raw_audit_sha256": "9407efac53a8308ecf3e23eafbd278f8447fd42c8f31c182ba4ffcb903a98d18",
+    "job_id": "6781903",
+    "observation_collection_completed": true,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/passive_observation.json",
+    "scientific_credit": 0,
+    "sha256": "b52907bbe47942918eb147e1e403c89c2114f69b1aa3970423cda5f81fa61f16",
+    "step_id": "0"
+  },
+  "boundary": {
+    "case_credit": 0,
+    "configured_isolation_qualified": false,
+    "design_only": true,
+    "gpu_operations_performed": false,
+    "idea_credit": 0,
+    "installed_binary_matches_upstream_verified": false,
+    "job_submitted": false,
+    "kernel_device_enforcement_verified": false,
+    "packet_prepared": false,
+    "physical_gres_mapping_verified": false,
+    "site_qualification_credit": 0,
+    "slurmd_executed": false,
+    "source_admission_changed": false,
+    "source_changed": false,
+    "worker_admitted": false
+  },
+  "created_at_utc": "2026-11-01T18:30:10.111767+00:00",
+  "installed_software_limits": {
+    "active_daemon_image_verified": false,
+    "binary_read_status": "The observed custom executable path was outside the collector namespace; no executable bytes or ELF metadata were captured.",
+    "candidate_is_not_loaded_library_evidence": true,
+    "default_manuals_read": 0,
+    "dpkg_slurm_rows": 0,
+    "effective_systemd_environment_verified": false,
+    "installed_binary_matches_upstream_verified": false,
+    "matching_dpkg_binary_ownership_verified": false,
+    "nvml_candidate_file_sha256": "941c7f7999351d8b9b69f275a20ebd2818e3314678fc12dba6da8a6f12b74d27",
+    "nvml_candidate_path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+    "nvml_loaded_or_device_opened": false,
+    "plugin_directory": "/sw/ubuntu2204/custom/slurm/23.11.6/lib/slurm",
+    "plugin_read_status": "Outside the collector namespace; no plugin bytes were captured.",
+    "startup_gres_binding_verified": false,
+    "systemd_unit": {
+      "effective_execution_resolved": false,
+      "environment_file_not_read": true,
+      "exec_start_program": "/sw/ubuntu/custom/slurm/current/sbin/slurmd",
+      "mode": "0o644",
+      "owner_uid": 0,
+      "path": "/usr/lib/systemd/system/slurmd.service",
+      "sha256": "0731a19af3a7b93d385078d2891ed3a3554bdfb9a4abc6223802f0b55f9f7bde"
+    }
+  },
+  "kind": "uva_jaguar03_autodetect_configured_isolation_design",
+  "primary_references": [
+    {
+      "supports": "Node cgroup configuration is a sibling of slurm.conf; its changes require daemon restart or reconfiguration. This is upstream documentation, not installed-build verification.",
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/doc/man/man5/cgroup.conf.5"
+    },
+    {
+      "supports": "The controller builds show-config data from its cgroup_get_conf_list call in _fill_ctld_conf; those reported fields do not attest the node task plugin.",
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/slurmctld/proc_req.c"
+    },
+    {
+      "supports": "Upstream initializes default constraint fields to false, reads a local cgroup.conf, and packs node values for stepd. No claim that installed custom bytes equal this source.",
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/interfaces/cgroup.c"
+    },
+    {
+      "supports": "AutoDetect fills GPU configuration and Linux minors need not match NVML PCI ordering; this design avoids deriving assignment from either order.",
+      "url": "https://slurm.schedmd.com/gres.html"
+    }
+  ],
+  "proposed_profile": {
+    "claim_labels": {
+      "configured_isolation": "Explicit trust in the exact named administrator-managed configuration.",
+      "installed_binary_matches_upstream_verified": false,
+      "kernel_device_enforcement_verified": false,
+      "logical_job_step_gres_agreement": "Verified only after fresh raw matching evidence.",
+      "physical_cuda_identity": "Verified only by the fresh same-process UUID/PCI/proc join.",
+      "physical_gres_mapping_verified": false,
+      "uid_encoded_in_cgroup_path": false
+    },
+    "compatibility": "Keep all existing default/root-owned explicit-File behavior unchanged. Missing capability/profile uses the old checks and must not silently select this profile.",
+    "explicit_trust_assumptions": [
+      "Trust only the reviewed UVA scheduler/controller and the exact administrator-managed /etc/slurm configuration path set identified above.",
+      "Trust root UID 0 for / and /etc and the observed slurm service UID 64030 for /etc/slurm and its five named files, subject to stable ordinary paths and no group/other write permission. This is a declared configuration trust decision, not evidence that the owner is root.",
+      "Trust the named configured task/cgroup device isolation to limit the original CUDA selector to the one owned allocation. Kernel device enforcement is not independently proved."
+    ],
+    "fresh_metadata_requirements": [
+      "Validate exact campaign UVA ID and submission row, immutable held/release records, correct owner name/UID, job and numeric step identity and typed request plus actual single-GPU job/step TRES before GPU libraries.",
+      "Capture exact raw owned job/step queries, original SLURM_JOB_GPUS, SLURM_STEP_GPUS and CUDA_VISIBLE_DEVICES without rewriting them; require one canonical logical job/step index and exact equality between those two logical indices. Never equate that index to a Linux minor or NVML index.",
+      "Retain own process PID, parent, positive birth, all four kernel UIDs, exact cgroup-v2 job/numeric-step/user/task hierarchy, namespace/mount identity, root-owned nonwritable cgroup chain and actual task membership using the separately reviewed explicit-v2 ownership rules.",
+      "Read the same five ordinary config files through stable descriptors and directory chains, bind complete-file hashes and allowed field excerpts, require their exact observed include scope, exact service identity and no competing cache. Changed baseline hashes, owners, includes or relevant fields require a new review.",
+      "Require exactly the two distinct task/cgroup and task/affinity plugins, proctrack/cgroup, GresTypes=gpu, one matching AutoDetect=nvml host line, jaguar03 typed eight-card node declaration and local cgroup/v2 with ConstrainDevices/ConstrainCores=yes. Reject duplicates, competing overrides, File/shared/MIG records and unsupported includes."
+    ],
+    "fresh_physical_requirements": [
+      "Enter the child with the original Slurm CUDA selector unchanged. Before environment transitions or learner updates, require exactly one CUDA-visible device and one JAX GPU in that same process.",
+      "Record actual same-process CUDA UUID and PCI address, original selector, loaded driver path/hash and PID; join that UUID/PCI to the exact NVIDIA proc identity and character-device minor/major without selecting by logical index.",
+      "Use only reviewed hardware-field CSV queries and ordinary proc/sysfs metadata; do not use full nvidia-smi XML or query other processes. Require unique UUID/PCI/minor rosters and before/after identity consistency.",
+      "Capture the actually mapped CUDA driver and backend bytes to immutable shared storage before the allocation ends, using the existing reviewed capture contract; CPU and portable readers verify those captured copies.",
+      "Require unchanged full original source, float32 network/float64 statistics, software/assets, correctness and complete numerical gates before any later qualification decision. A zero-GPU metadata record cannot satisfy any of those fresh gates."
+    ],
+    "metadata_tests": [
+      "Reject implicit selection, changed/missing service identity, unexpected owner/path, symlink or writable ancestor, changed hash/include and ambiguous duplicate configuration.",
+      "Keep controller-local cgroup authorities separate; reject a record that claims the controller output proved node device enforcement.",
+      "Reject foreign/missing ledger or owner, changed job/step logical selector, changed PID/birth/UID/task membership, absent numeric-step proof and partial raw captures.",
+      "Accept a synthetic logical index different from the physical minor only with complete independent physical UUID/PCI/proc evidence and false mapping/enforcement flags; reject all relabelled or duplicate rosters.",
+      "Reject selector replacement before CUDA, full-XML collection, changed captured driver/backend, missing source capability, and portable evidence substitutions.",
+      "Golden historical/default cases remain byte/semantics compatible. Metadata fixtures grant no GPU or scientific credit."
+    ],
+    "name": "uva-jaguar03-autodetect-nvml-configured-isolation-version-1",
+    "opt_in": true,
+    "scope": "One typed NVIDIA RTX A4500 on jaguar03, one owned numeric Slurm step and one training process; no multi-GPU or other host extension.",
+    "smallest_code_scope": [
+      "One separate UVA AutoDetect configuration/allocation qualifier and its strict metadata tests, with a distinct complete profile object. Reuse generic parsers/capture contracts without changing ACES or historical default constants.",
+      "An opt-in producer dispatcher must select this profile before measure_selected.resolve_uuid and hardware preflight. The current index/minor equality and full-XML branch must be unreachable for it. Final training and instrumented capacity paths need their own explicit support before accepting this profile; unsupported consumers reject it.",
+      "Record the full profile in plan, parent/child allocation, physical identity, captured-image evidence and results; portable/current readers revalidate it strictly. No old failure or metadata result can be upgraded."
+    ],
+    "source_capability_required": true
+  },
+  "recommendation": {
+    "reason": "It will trust the administrator-managed configuration explicitly rather than derive a physical Slurm GRES order. Reading the custom binary would identify installed bytes but would not prove the active daemon image, loaded configuration or physical allocation mapping.",
+    "separate_proof_goal": "If an independently verified Slurm logical-index-to-device mapping is required, this design is insufficient. A narrowly reviewed custom-path observation can gather installed bytes, but those bytes alone still do not establish the active merged GRES roster.",
+    "smallest_next_step": "Review and implement one separately versioned configured-isolation profile; no further passive job is required for this limited trust basis."
+  },
+  "schema_version": 1,
+  "status": "design_only_pending_independent_review"
+}

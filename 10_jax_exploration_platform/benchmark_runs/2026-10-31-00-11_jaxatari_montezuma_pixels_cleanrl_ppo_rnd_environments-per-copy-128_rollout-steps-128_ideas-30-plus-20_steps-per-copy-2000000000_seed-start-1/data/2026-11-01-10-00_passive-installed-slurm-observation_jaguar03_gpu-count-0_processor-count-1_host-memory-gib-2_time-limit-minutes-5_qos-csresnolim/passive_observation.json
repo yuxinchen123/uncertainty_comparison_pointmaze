@@ -1,0 +1,3253 @@
+{
+  "schema_version": 1,
+  "kind": "passive_installed_slurm_metadata_observation",
+  "capability": "bounded_passive_installed_slurm_metadata_version_1",
+  "started_utc": "2026-11-01T18:23:35.806845+00:00",
+  "process": {
+    "hostname": "jaguar03",
+    "pid": 1990312,
+    "uid": 2618919,
+    "effective_uid": 2618919,
+    "uid_fields": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "parent_pid": 1990305,
+    "process_start_time": "51769139",
+    "raw_proc_stat": "1990312 (python3) R 1990305 1990312 1990304 0 -1 4194560 3116 7828 0 25 4 2 3 7 20 0 1 0 51769139 30330880 4867 2147483648 94644195020800 94644197857101 140726794727312 0 0 0 0 16781312 2 0 0 0 17 56 0 0 0 0 0 94644200228880 94644200513016 94644450205696 140726794731699 140726794732573 140726794732573 140726794739687 0\n",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781903/step_0/user/task_0\n",
+    "cpu_affinity": [
+      56
+    ]
+  },
+  "job_id": "6781903",
+  "step_id": "0",
+  "limits": {
+    "symlink_hops": 16,
+    "include_files": 64,
+    "configuration_bytes_per_file": 1048576,
+    "configuration_total_bytes": 67108864,
+    "unit_bytes": 65536,
+    "dropin_files": 32,
+    "path_directories": 32,
+    "program_candidates": 32,
+    "binary_bytes": 33554432,
+    "plugin_directories": 8,
+    "manual_bytes": 2097152,
+    "package_database_bytes": 16777216,
+    "passwd_bytes": 1048576,
+    "query_bytes": 1048576,
+    "query_timeout_seconds": 20,
+    "total_read_bytes": 201326592
+  },
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "physical_gres_mapping_verified": false,
+  "configured_isolation_qualified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "controller_configuration": {
+    "command": [
+      "scontrol",
+      "show",
+      "config"
+    ],
+    "returncode": 0,
+    "fields": [
+      {
+        "line": 50,
+        "name": "GresTypes",
+        "value": "gpu"
+      },
+      {
+        "line": 99,
+        "name": "PluginDir",
+        "value": "/sw/ubuntu2204/custom/slurm/23.11.6/lib/slurm"
+      },
+      {
+        "line": 127,
+        "name": "ProctrackType",
+        "value": "proctrack/cgroup"
+      },
+      {
+        "line": 153,
+        "name": "SlurmUser",
+        "value": "slurm(64030)"
+      },
+      {
+        "line": 165,
+        "name": "SlurmdLogFile",
+        "value": "/var/log/slurm/slurmd.log"
+      },
+      {
+        "line": 167,
+        "name": "SlurmdPidFile",
+        "value": "/var/run/slurmd.pid"
+      },
+      {
+        "line": 169,
+        "name": "SlurmdSpoolDir",
+        "value": "/var/spool/slurmd"
+      },
+      {
+        "line": 172,
+        "name": "SlurmdUser",
+        "value": "root(0)"
+      },
+      {
+        "line": 176,
+        "name": "SLURM_CONF",
+        "value": "/etc/slurm/slurm.conf"
+      },
+      {
+        "line": 192,
+        "name": "TaskPlugin",
+        "value": "task/cgroup,task/affinity"
+      },
+      {
+        "line": 211,
+        "name": "CgroupMountpoint",
+        "value": "/sys/fs/cgroup"
+      },
+      {
+        "line": 212,
+        "name": "CgroupPlugin",
+        "value": "autodetect"
+      },
+      {
+        "line": 213,
+        "name": "ConstrainCores",
+        "value": "no"
+      },
+      {
+        "line": 214,
+        "name": "ConstrainDevices",
+        "value": "no"
+      },
+      {
+        "line": 215,
+        "name": "ConstrainRAMSpace",
+        "value": "no"
+      },
+      {
+        "line": 217,
+        "name": "EnableControllers",
+        "value": "no"
+      },
+      {
+        "line": 218,
+        "name": "IgnoreSystemd",
+        "value": "no"
+      },
+      {
+        "line": 219,
+        "name": "IgnoreSystemdOnFailure",
+        "value": "no"
+      }
+    ],
+    "capture_status": "completed",
+    "stdout_capture_sha256": "a27f7a7871c7e975b7e5f157b685cd7808edfdb3a96e5145bf9792dcab7cf7bd",
+    "stdout_captured_byte_count": 8122,
+    "stdout_complete": true,
+    "stderr_capture_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_captured_byte_count": 0,
+    "stderr_complete": true,
+    "stderr_byte_count": 0,
+    "filter_status": "parsed",
+    "authority": "controller_reported_values_not_local_file_or_binary_attestation"
+  },
+  "controller_node": {
+    "command": [
+      "scontrol",
+      "show",
+      "node",
+      "jaguar03",
+      "-o"
+    ],
+    "returncode": 0,
+    "fields": [
+      {
+        "line": 1,
+        "name": "NodeName",
+        "value": "jaguar03"
+      },
+      {
+        "line": 1,
+        "name": "Gres",
+        "value": "gpu:nvidia_rtx_a4500:8(S:0-1)"
+      },
+      {
+        "line": 1,
+        "name": "NodeHostName",
+        "value": "jaguar03"
+      },
+      {
+        "line": 1,
+        "name": "Version",
+        "value": "23.11.6"
+      },
+      {
+        "line": 1,
+        "name": "BootTime",
+        "value": "2026-10-26T14:35:24"
+      },
+      {
+        "line": 1,
+        "name": "SlurmdStartTime",
+        "value": "2026-10-26T14:37:45"
+      }
+    ],
+    "capture_status": "completed",
+    "stdout_capture_sha256": "d992f37241e0d7700c17a8697524f25e28970cf8faf53dd1a9d08ce8b7e99888",
+    "stdout_captured_byte_count": 870,
+    "stdout_complete": true,
+    "stderr_capture_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_captured_byte_count": 0,
+    "stderr_complete": true,
+    "stderr_byte_count": 0,
+    "filter_status": "parsed",
+    "authority": "controller_reported_values_not_local_file_or_binary_attestation"
+  },
+  "controller_settings_usable_for_candidate_discovery": true,
+  "configuration_roots": [
+    "/etc/slurm",
+    "/var/spool/slurmd/conf-cache"
+  ],
+  "configuration_trees": [
+    {
+      "files": [
+        {
+          "requested_path": "/etc/slurm/slurm.conf",
+          "read_status": "read",
+          "path": "/etc/slurm/slurm.conf",
+          "symlink_chain": [],
+          "read_trace": {
+            "pinned_directory_chain": [
+              {
+                "path": "/",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1782814322213413042,
+                "changed_ns": 1782814322213413042,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "byte_count": 12288,
+                "modified_ns": 1793371460288356677,
+                "changed_ns": 1793371460288356677,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc/slurm",
+                "owner_uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1789066137431616618,
+                "changed_ns": 1789066137431616618,
+                "directory": true,
+                "regular_file": false
+              }
+            ],
+            "descriptor_before": {
+              "path": "/etc/slurm/slurm.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263041,
+              "device": 64770,
+              "byte_count": 3531,
+              "modified_ns": 1789066137436074733,
+              "changed_ns": 1789066137431616618,
+              "directory": false,
+              "regular_file": true
+            },
+            "reader_before": {
+              "path": "/etc/slurm/slurm.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263041,
+              "device": 64770,
+              "byte_count": 3531,
+              "modified_ns": 1789066137436074733,
+              "changed_ns": 1789066137431616618,
+              "directory": false,
+              "regular_file": true
+            },
+            "descriptor_after": {
+              "path": "/etc/slurm/slurm.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263041,
+              "device": 64770,
+              "byte_count": 3531,
+              "modified_ns": 1789066137436074733,
+              "changed_ns": 1789066137431616618,
+              "directory": false,
+              "regular_file": true
+            },
+            "bytes_read": 3531,
+            "size_limit_bytes": 1048576,
+            "complete_file": true,
+            "path_after": {
+              "path": "/etc/slurm/slurm.conf",
+              "status": "observed",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263041,
+              "device": 64770,
+              "directory": false,
+              "regular_file": true,
+              "symlink": false,
+              "exact_path": true
+            },
+            "path_replaced_during_read": false,
+            "inode_changed_during_read": false
+          },
+          "symlink_chain_after": [],
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263041,
+          "device": 64770,
+          "byte_count": 3531,
+          "modified_ns": 1789066137436074733,
+          "changed_ns": 1789066137431616618,
+          "directory": false,
+          "regular_file": true,
+          "directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 31457281,
+              "device": 64770,
+              "byte_count": 12288,
+              "modified_ns": 1793371460288356677,
+              "changed_ns": 1793371460288356677,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc/slurm",
+              "owner_uid": 64030,
+              "mode": 493,
+              "inode": 31588634,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1789066137431616618,
+              "changed_ns": 1789066137431616618,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "sha256": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a",
+          "captured_byte_count": 3531,
+          "origin": null,
+          "assignments": [
+            {
+              "line": 26,
+              "name": "SlurmdPidFile",
+              "value": "/var/run/slurmd.pid"
+            },
+            {
+              "line": 29,
+              "name": "SlurmdLogFile",
+              "value": "/var/log/slurm/slurmd.log"
+            },
+            {
+              "line": 30,
+              "name": "SlurmdSpoolDir",
+              "value": "/var/spool/slurmd"
+            },
+            {
+              "line": 32,
+              "name": "SlurmUser",
+              "value": "slurm"
+            },
+            {
+              "line": 38,
+              "name": "GresTypes",
+              "value": "gpu"
+            },
+            {
+              "line": 40,
+              "name": "ProctrackType",
+              "value": "proctrack/cgroup"
+            },
+            {
+              "line": 42,
+              "name": "TaskPlugin",
+              "value": "task/cgroup,task/affinity"
+            }
+          ],
+          "includes": [
+            {
+              "source_path": "/etc/slurm/slurm.conf",
+              "line": 121,
+              "token": "/etc/slurm/nodes.conf",
+              "status": "literal_child_observed"
+            },
+            {
+              "source_path": "/etc/slurm/slurm.conf",
+              "line": 122,
+              "token": "/etc/slurm/partitions.conf",
+              "status": "literal_child_observed"
+            }
+          ]
+        },
+        {
+          "requested_path": "/etc/slurm/nodes.conf",
+          "read_status": "read",
+          "path": "/etc/slurm/nodes.conf",
+          "symlink_chain": [],
+          "read_trace": {
+            "pinned_directory_chain": [
+              {
+                "path": "/",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1782814322213413042,
+                "changed_ns": 1782814322213413042,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "byte_count": 12288,
+                "modified_ns": 1793371460288356677,
+                "changed_ns": 1793371460288356677,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc/slurm",
+                "owner_uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1789066137431616618,
+                "changed_ns": 1789066137431616618,
+                "directory": true,
+                "regular_file": false
+              }
+            ],
+            "descriptor_before": {
+              "path": "/etc/slurm/nodes.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263038,
+              "device": 64770,
+              "byte_count": 9356,
+              "modified_ns": 1784731710405396699,
+              "changed_ns": 1784731710403172886,
+              "directory": false,
+              "regular_file": true
+            },
+            "reader_before": {
+              "path": "/etc/slurm/nodes.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263038,
+              "device": 64770,
+              "byte_count": 9356,
+              "modified_ns": 1784731710405396699,
+              "changed_ns": 1784731710403172886,
+              "directory": false,
+              "regular_file": true
+            },
+            "descriptor_after": {
+              "path": "/etc/slurm/nodes.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263038,
+              "device": 64770,
+              "byte_count": 9356,
+              "modified_ns": 1784731710405396699,
+              "changed_ns": 1784731710403172886,
+              "directory": false,
+              "regular_file": true
+            },
+            "bytes_read": 9356,
+            "size_limit_bytes": 1048576,
+            "complete_file": true,
+            "path_after": {
+              "path": "/etc/slurm/nodes.conf",
+              "status": "observed",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263038,
+              "device": 64770,
+              "directory": false,
+              "regular_file": true,
+              "symlink": false,
+              "exact_path": true
+            },
+            "path_replaced_during_read": false,
+            "inode_changed_during_read": false
+          },
+          "symlink_chain_after": [],
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263038,
+          "device": 64770,
+          "byte_count": 9356,
+          "modified_ns": 1784731710405396699,
+          "changed_ns": 1784731710403172886,
+          "directory": false,
+          "regular_file": true,
+          "directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 31457281,
+              "device": 64770,
+              "byte_count": 12288,
+              "modified_ns": 1793371460288356677,
+              "changed_ns": 1793371460288356677,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc/slurm",
+              "owner_uid": 64030,
+              "mode": 493,
+              "inode": 31588634,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1789066137431616618,
+              "changed_ns": 1789066137431616618,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "sha256": "1c9dc0acd626a1f794feddae773da4295d5807e06e872a9330a722eac2e59a5c",
+          "captured_byte_count": 9356,
+          "origin": {
+            "path": "/etc/slurm/slurm.conf",
+            "line": 121
+          },
+          "assignments": [
+            {
+              "line": 23,
+              "name": "NodeName",
+              "value": "affogato01"
+            },
+            {
+              "line": 24,
+              "name": "NodeName",
+              "value": "affogato02"
+            },
+            {
+              "line": 25,
+              "name": "NodeName",
+              "value": "affogato03"
+            },
+            {
+              "line": 26,
+              "name": "NodeName",
+              "value": "affogato[04-05]"
+            },
+            {
+              "line": 27,
+              "name": "NodeName",
+              "value": "affogato[06-10]"
+            },
+            {
+              "line": 28,
+              "name": "NodeName",
+              "value": "bigcat[01-05]"
+            },
+            {
+              "line": 29,
+              "name": "NodeName",
+              "value": "bigcat06"
+            },
+            {
+              "line": 30,
+              "name": "NodeName",
+              "value": "cortado[01-10]"
+            },
+            {
+              "line": 31,
+              "name": "NodeName",
+              "value": "heartpiece"
+            },
+            {
+              "line": 32,
+              "name": "NodeName",
+              "value": "hydro"
+            },
+            {
+              "line": 33,
+              "name": "NodeName",
+              "value": "lynx[08-09]"
+            },
+            {
+              "line": 34,
+              "name": "NodeName",
+              "value": "puma01"
+            },
+            {
+              "line": 35,
+              "name": "NodeName",
+              "value": "panther01"
+            },
+            {
+              "line": 36,
+              "name": "NodeName",
+              "value": "slurm1"
+            },
+            {
+              "line": 37,
+              "name": "NodeName",
+              "value": "slurm[2-4]"
+            },
+            {
+              "line": 38,
+              "name": "NodeName",
+              "value": "slurm5"
+            },
+            {
+              "line": 39,
+              "name": "NodeName",
+              "value": "struct[01-09]"
+            },
+            {
+              "line": 42,
+              "name": "NodeName",
+              "value": "adriatic[01-06]"
+            },
+            {
+              "line": 42,
+              "name": "Gres",
+              "value": "gpu:quadro_rtx_4000:4"
+            },
+            {
+              "line": 43,
+              "name": "NodeName",
+              "value": "affogato11"
+            },
+            {
+              "line": 43,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+            },
+            {
+              "line": 44,
+              "name": "NodeName",
+              "value": "affogato[13-15]"
+            },
+            {
+              "line": 44,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+            },
+            {
+              "line": 45,
+              "name": "NodeName",
+              "value": "ai[01-04]"
+            },
+            {
+              "line": 45,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+            },
+            {
+              "line": 46,
+              "name": "NodeName",
+              "value": "ai06"
+            },
+            {
+              "line": 46,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_2080_ti:3"
+            },
+            {
+              "line": 47,
+              "name": "NodeName",
+              "value": "ai[05,10]"
+            },
+            {
+              "line": 47,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080:4"
+            },
+            {
+              "line": 48,
+              "name": "NodeName",
+              "value": "ai[07-08]"
+            },
+            {
+              "line": 48,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+            },
+            {
+              "line": 49,
+              "name": "NodeName",
+              "value": "ai09"
+            },
+            {
+              "line": 49,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+            },
+            {
+              "line": 50,
+              "name": "NodeName",
+              "value": "cheetah01"
+            },
+            {
+              "line": 50,
+              "name": "Gres",
+              "value": "gpu:nvidia_a100-pcie-40gb:4"
+            },
+            {
+              "line": 51,
+              "name": "NodeName",
+              "value": "cheetah02"
+            },
+            {
+              "line": 51,
+              "name": "Gres",
+              "value": "gpu:nvidia_rtx_4000_ada_generation:4"
+            },
+            {
+              "line": 52,
+              "name": "NodeName",
+              "value": "cheetah03"
+            },
+            {
+              "line": 52,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_2080_ti:2"
+            },
+            {
+              "line": 53,
+              "name": "NodeName",
+              "value": "cheetah04"
+            },
+            {
+              "line": 53,
+              "name": "Gres",
+              "value": "gpu:a100:4"
+            },
+            {
+              "line": 54,
+              "name": "NodeName",
+              "value": "cheetah[08-09]"
+            },
+            {
+              "line": 54,
+              "name": "Gres",
+              "value": "gpu:nvidia_rtx_a4000:4"
+            },
+            {
+              "line": 55,
+              "name": "NodeName",
+              "value": "lotus"
+            },
+            {
+              "line": 55,
+              "name": "Gres",
+              "value": "gpu:quadro_rtx_6000:8"
+            },
+            {
+              "line": 56,
+              "name": "NodeName",
+              "value": "lynx01"
+            },
+            {
+              "line": 56,
+              "name": "Gres",
+              "value": "gpu:nvidia_titan_xp:4"
+            },
+            {
+              "line": 57,
+              "name": "NodeName",
+              "value": "lynx[02-04]"
+            },
+            {
+              "line": 57,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+            },
+            {
+              "line": 58,
+              "name": "NodeName",
+              "value": "lynx[05-07]"
+            },
+            {
+              "line": 58,
+              "name": "Gres",
+              "value": "gpu:tesla_p100-pcie-12gb:4"
+            },
+            {
+              "line": 59,
+              "name": "NodeName",
+              "value": "lynx10"
+            },
+            {
+              "line": 59,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+            },
+            {
+              "line": 60,
+              "name": "NodeName",
+              "value": "nekomata[01-02]"
+            },
+            {
+              "line": 60,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_rtx_5080:2"
+            },
+            {
+              "line": 61,
+              "name": "NodeName",
+              "value": "jaguar01"
+            },
+            {
+              "line": 61,
+              "name": "Gres",
+              "value": "gpu:nvidia_a40:4"
+            },
+            {
+              "line": 62,
+              "name": "NodeName",
+              "value": "jaguar02"
+            },
+            {
+              "line": 62,
+              "name": "Gres",
+              "value": "gpu:nvidia_a16:8"
+            },
+            {
+              "line": 63,
+              "name": "NodeName",
+              "value": "jaguar03"
+            },
+            {
+              "line": 63,
+              "name": "Gres",
+              "value": "gpu:nvidia_rtx_a4500:8"
+            },
+            {
+              "line": 64,
+              "name": "NodeName",
+              "value": "jaguar05"
+            },
+            {
+              "line": 64,
+              "name": "Gres",
+              "value": "gpu:quadro_rtx_4000:4"
+            },
+            {
+              "line": 65,
+              "name": "NodeName",
+              "value": "jaguar06"
+            },
+            {
+              "line": 65,
+              "name": "Gres",
+              "value": "gpu:a40:2"
+            },
+            {
+              "line": 66,
+              "name": "NodeName",
+              "value": "jinx[01-02]"
+            },
+            {
+              "line": 66,
+              "name": "Gres",
+              "value": "gpu:nvidia_geforce_gtx_1080:2"
+            },
+            {
+              "line": 67,
+              "name": "NodeName",
+              "value": "titanx03"
+            },
+            {
+              "line": 67,
+              "name": "Gres",
+              "value": "gpu:nvidia_titan_x:1"
+            },
+            {
+              "line": 70,
+              "name": "NodeName",
+              "value": "serval03"
+            },
+            {
+              "line": 70,
+              "name": "Gres",
+              "value": "gpu:nvidia_h100_nvl:1"
+            },
+            {
+              "line": 71,
+              "name": "NodeName",
+              "value": "serval[06-09]"
+            },
+            {
+              "line": 71,
+              "name": "Gres",
+              "value": "gpu:nvidia_h100_nvl:2"
+            }
+          ],
+          "includes": []
+        },
+        {
+          "requested_path": "/etc/slurm/partitions.conf",
+          "read_status": "read",
+          "path": "/etc/slurm/partitions.conf",
+          "symlink_chain": [],
+          "read_trace": {
+            "pinned_directory_chain": [
+              {
+                "path": "/",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1782814322213413042,
+                "changed_ns": 1782814322213413042,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc",
+                "owner_uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "byte_count": 12288,
+                "modified_ns": 1793371460288356677,
+                "changed_ns": 1793371460288356677,
+                "directory": true,
+                "regular_file": false
+              },
+              {
+                "path": "/etc/slurm",
+                "owner_uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "byte_count": 4096,
+                "modified_ns": 1789066137431616618,
+                "changed_ns": 1789066137431616618,
+                "directory": true,
+                "regular_file": false
+              }
+            ],
+            "descriptor_before": {
+              "path": "/etc/slurm/partitions.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263039,
+              "device": 64770,
+              "byte_count": 2347,
+              "modified_ns": 1784731718821238994,
+              "changed_ns": 1784731718819200312,
+              "directory": false,
+              "regular_file": true
+            },
+            "reader_before": {
+              "path": "/etc/slurm/partitions.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263039,
+              "device": 64770,
+              "byte_count": 2347,
+              "modified_ns": 1784731718821238994,
+              "changed_ns": 1784731718819200312,
+              "directory": false,
+              "regular_file": true
+            },
+            "descriptor_after": {
+              "path": "/etc/slurm/partitions.conf",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263039,
+              "device": 64770,
+              "byte_count": 2347,
+              "modified_ns": 1784731718821238994,
+              "changed_ns": 1784731718819200312,
+              "directory": false,
+              "regular_file": true
+            },
+            "bytes_read": 2347,
+            "size_limit_bytes": 1048576,
+            "complete_file": true,
+            "path_after": {
+              "path": "/etc/slurm/partitions.conf",
+              "status": "observed",
+              "owner_uid": 64030,
+              "mode": 420,
+              "inode": 27263039,
+              "device": 64770,
+              "directory": false,
+              "regular_file": true,
+              "symlink": false,
+              "exact_path": true
+            },
+            "path_replaced_during_read": false,
+            "inode_changed_during_read": false
+          },
+          "symlink_chain_after": [],
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263039,
+          "device": 64770,
+          "byte_count": 2347,
+          "modified_ns": 1784731718821238994,
+          "changed_ns": 1784731718819200312,
+          "directory": false,
+          "regular_file": true,
+          "directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 31457281,
+              "device": 64770,
+              "byte_count": 12288,
+              "modified_ns": 1793371460288356677,
+              "changed_ns": 1793371460288356677,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/etc/slurm",
+              "owner_uid": 64030,
+              "mode": 493,
+              "inode": 31588634,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1789066137431616618,
+              "changed_ns": 1789066137431616618,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "sha256": "161b848c4ee1281341d7791391e516df99fb4a98ea16d07d57355b4553871d8c",
+          "captured_byte_count": 2347,
+          "origin": {
+            "path": "/etc/slurm/slurm.conf",
+            "line": 122
+          },
+          "assignments": [],
+          "includes": []
+        }
+      ],
+      "include_order": [
+        {
+          "source_path": "/etc/slurm/slurm.conf",
+          "line": 121,
+          "token": "/etc/slurm/nodes.conf",
+          "status": "literal_child_observed"
+        },
+        {
+          "source_path": "/etc/slurm/slurm.conf",
+          "line": 122,
+          "token": "/etc/slurm/partitions.conf",
+          "status": "literal_child_observed"
+        }
+      ],
+      "unresolved": [],
+      "complete": true,
+      "captured_input_bytes": 15234,
+      "qualification_granted": false,
+      "filtered_excerpts_not_effective_configuration": true
+    },
+    {
+      "files": [
+        {
+          "requested_path": "/var/spool/slurmd/conf-cache/slurm.conf",
+          "read_status": "unavailable",
+          "error_type": "FileNotFoundError",
+          "error": "[Errno 2] No such file or directory: '/var/spool/slurmd/conf-cache'",
+          "origin": null,
+          "assignments": [],
+          "includes": []
+        }
+      ],
+      "include_order": [],
+      "unresolved": [
+        {
+          "path": "/var/spool/slurmd/conf-cache/slurm.conf",
+          "reason": "unavailable"
+        }
+      ],
+      "complete": false,
+      "captured_input_bytes": 0,
+      "qualification_granted": false,
+      "filtered_excerpts_not_effective_configuration": true
+    }
+  ],
+  "gres_and_cgroup_files": [
+    {
+      "requested_path": "/etc/slurm/gres.conf",
+      "read_status": "read",
+      "path": "/etc/slurm/gres.conf",
+      "symlink_chain": [],
+      "read_trace": {
+        "pinned_directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/etc",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 31457281,
+            "device": 64770,
+            "byte_count": 12288,
+            "modified_ns": 1793371460288356677,
+            "changed_ns": 1793371460288356677,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/etc/slurm",
+            "owner_uid": 64030,
+            "mode": 493,
+            "inode": 31588634,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1789066137431616618,
+            "changed_ns": 1789066137431616618,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "descriptor_before": {
+          "path": "/etc/slurm/gres.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263034,
+          "device": 64770,
+          "byte_count": 1044,
+          "modified_ns": 1784731702205744028,
+          "changed_ns": 1784731702203146271,
+          "directory": false,
+          "regular_file": true
+        },
+        "reader_before": {
+          "path": "/etc/slurm/gres.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263034,
+          "device": 64770,
+          "byte_count": 1044,
+          "modified_ns": 1784731702205744028,
+          "changed_ns": 1784731702203146271,
+          "directory": false,
+          "regular_file": true
+        },
+        "descriptor_after": {
+          "path": "/etc/slurm/gres.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263034,
+          "device": 64770,
+          "byte_count": 1044,
+          "modified_ns": 1784731702205744028,
+          "changed_ns": 1784731702203146271,
+          "directory": false,
+          "regular_file": true
+        },
+        "bytes_read": 1044,
+        "size_limit_bytes": 1048576,
+        "complete_file": true,
+        "path_after": {
+          "path": "/etc/slurm/gres.conf",
+          "status": "observed",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 27263034,
+          "device": 64770,
+          "directory": false,
+          "regular_file": true,
+          "symlink": false,
+          "exact_path": true
+        },
+        "path_replaced_during_read": false,
+        "inode_changed_during_read": false
+      },
+      "symlink_chain_after": [],
+      "owner_uid": 64030,
+      "mode": 420,
+      "inode": 27263034,
+      "device": 64770,
+      "byte_count": 1044,
+      "modified_ns": 1784731702205744028,
+      "changed_ns": 1784731702203146271,
+      "directory": false,
+      "regular_file": true,
+      "directory_chain": [
+        {
+          "path": "/",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 2,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1782814322213413042,
+          "changed_ns": 1782814322213413042,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/etc",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 31457281,
+          "device": 64770,
+          "byte_count": 12288,
+          "modified_ns": 1793371460288356677,
+          "changed_ns": 1793371460288356677,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/etc/slurm",
+          "owner_uid": 64030,
+          "mode": 493,
+          "inode": 31588634,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1789066137431616618,
+          "changed_ns": 1789066137431616618,
+          "directory": true,
+          "regular_file": false
+        }
+      ],
+      "sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+      "captured_byte_count": 1044,
+      "configuration_complete": false,
+      "filtered_excerpts_not_effective_configuration": true,
+      "include_expansion_supported": false,
+      "assignments": [
+        {
+          "line": 13,
+          "name": "NodeName",
+          "value": "ai[00-10]"
+        },
+        {
+          "line": 13,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 14,
+          "name": "NodeName",
+          "value": "adriatic[01-06]"
+        },
+        {
+          "line": 14,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 15,
+          "name": "NodeName",
+          "value": "affogato[11,13-15]"
+        },
+        {
+          "line": 15,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 16,
+          "name": "NodeName",
+          "value": "cheetah[01-05,08-09]"
+        },
+        {
+          "line": 16,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 17,
+          "name": "NodeName",
+          "value": "jaguar[01-03,05-06]"
+        },
+        {
+          "line": 17,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 18,
+          "name": "NodeName",
+          "value": "jinx[01-02]"
+        },
+        {
+          "line": 18,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 19,
+          "name": "NodeName",
+          "value": "lynx[01-07,10-11]"
+        },
+        {
+          "line": 19,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 20,
+          "name": "NodeName",
+          "value": "lotus"
+        },
+        {
+          "line": 20,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 21,
+          "name": "NodeName",
+          "value": "nekomata[01-02]"
+        },
+        {
+          "line": 21,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 22,
+          "name": "NodeName",
+          "value": "serval[03,06-09]"
+        },
+        {
+          "line": 22,
+          "name": "AutoDetect",
+          "value": "nvml"
+        },
+        {
+          "line": 25,
+          "name": "NodeName",
+          "value": "titanx[02-03]"
+        },
+        {
+          "line": 25,
+          "name": "AutoDetect",
+          "value": "nvml"
+        }
+      ],
+      "include_directives": [],
+      "include_status": "no_Include_directive_observed"
+    },
+    {
+      "requested_path": "/etc/slurm/cgroup.conf",
+      "read_status": "read",
+      "path": "/etc/slurm/cgroup.conf",
+      "symlink_chain": [],
+      "read_trace": {
+        "pinned_directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/etc",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 31457281,
+            "device": 64770,
+            "byte_count": 12288,
+            "modified_ns": 1793371460288356677,
+            "changed_ns": 1793371460288356677,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/etc/slurm",
+            "owner_uid": 64030,
+            "mode": 493,
+            "inode": 31588634,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1789066137431616618,
+            "changed_ns": 1789066137431616618,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "descriptor_before": {
+          "path": "/etc/slurm/cgroup.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 31588675,
+          "device": 64770,
+          "byte_count": 495,
+          "modified_ns": 1751297880683196688,
+          "changed_ns": 1752695842418402081,
+          "directory": false,
+          "regular_file": true
+        },
+        "reader_before": {
+          "path": "/etc/slurm/cgroup.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 31588675,
+          "device": 64770,
+          "byte_count": 495,
+          "modified_ns": 1751297880683196688,
+          "changed_ns": 1752695842418402081,
+          "directory": false,
+          "regular_file": true
+        },
+        "descriptor_after": {
+          "path": "/etc/slurm/cgroup.conf",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 31588675,
+          "device": 64770,
+          "byte_count": 495,
+          "modified_ns": 1751297880683196688,
+          "changed_ns": 1752695842418402081,
+          "directory": false,
+          "regular_file": true
+        },
+        "bytes_read": 495,
+        "size_limit_bytes": 1048576,
+        "complete_file": true,
+        "path_after": {
+          "path": "/etc/slurm/cgroup.conf",
+          "status": "observed",
+          "owner_uid": 64030,
+          "mode": 420,
+          "inode": 31588675,
+          "device": 64770,
+          "directory": false,
+          "regular_file": true,
+          "symlink": false,
+          "exact_path": true
+        },
+        "path_replaced_during_read": false,
+        "inode_changed_during_read": false
+      },
+      "symlink_chain_after": [],
+      "owner_uid": 64030,
+      "mode": 420,
+      "inode": 31588675,
+      "device": 64770,
+      "byte_count": 495,
+      "modified_ns": 1751297880683196688,
+      "changed_ns": 1752695842418402081,
+      "directory": false,
+      "regular_file": true,
+      "directory_chain": [
+        {
+          "path": "/",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 2,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1782814322213413042,
+          "changed_ns": 1782814322213413042,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/etc",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 31457281,
+          "device": 64770,
+          "byte_count": 12288,
+          "modified_ns": 1793371460288356677,
+          "changed_ns": 1793371460288356677,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/etc/slurm",
+          "owner_uid": 64030,
+          "mode": 493,
+          "inode": 31588634,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1789066137431616618,
+          "changed_ns": 1789066137431616618,
+          "directory": true,
+          "regular_file": false
+        }
+      ],
+      "sha256": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9",
+      "captured_byte_count": 495,
+      "configuration_complete": false,
+      "filtered_excerpts_not_effective_configuration": true,
+      "include_expansion_supported": false,
+      "assignments": [
+        {
+          "line": 10,
+          "name": "CgroupPlugin",
+          "value": "cgroup/v2"
+        },
+        {
+          "line": 11,
+          "name": "ConstrainCores",
+          "value": "yes"
+        },
+        {
+          "line": 12,
+          "name": "ConstrainDevices",
+          "value": "yes"
+        },
+        {
+          "line": 13,
+          "name": "ConstrainRAMSpace",
+          "value": "yes"
+        }
+      ],
+      "include_directives": [],
+      "include_status": "no_Include_directive_observed"
+    },
+    {
+      "requested_path": "/var/spool/slurmd/conf-cache/gres.conf",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/var/spool/slurmd/conf-cache'",
+      "configuration_complete": false,
+      "filtered_excerpts_not_effective_configuration": true,
+      "include_expansion_supported": false
+    },
+    {
+      "requested_path": "/var/spool/slurmd/conf-cache/cgroup.conf",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/var/spool/slurmd/conf-cache'",
+      "configuration_complete": false,
+      "filtered_excerpts_not_effective_configuration": true,
+      "include_expansion_supported": false
+    }
+  ],
+  "unsupported_configuration_includes": [],
+  "service_units": {
+    "units_and_dropins": [
+      {
+        "requested_path": "/etc/systemd/system/slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/etc/systemd/system/slurmd.service'"
+      },
+      {
+        "requested_path": "/etc/systemd/system/slurm-slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/etc/systemd/system/slurm-slurmd.service'"
+      },
+      {
+        "requested_path": "/run/systemd/system/slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/run/systemd/system/slurmd.service'"
+      },
+      {
+        "requested_path": "/run/systemd/system/slurm-slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/run/systemd/system/slurm-slurmd.service'"
+      },
+      {
+        "requested_path": "/usr/lib/systemd/system/slurmd.service",
+        "read_status": "read",
+        "path": "/usr/lib/systemd/system/slurmd.service",
+        "symlink_chain": [],
+        "read_trace": {
+          "pinned_directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806529,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1708108625000000000,
+              "changed_ns": 1714500607115165451,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806533,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1785335913472967598,
+              "changed_ns": 1785335913472967598,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/systemd",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806762,
+              "device": 64770,
+              "byte_count": 12288,
+              "modified_ns": 1755183196793026888,
+              "changed_ns": 1755183196793026888,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/systemd/system",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22815486,
+              "device": 64770,
+              "byte_count": 36864,
+              "modified_ns": 1786984691423105448,
+              "changed_ns": 1786984691423105448,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "descriptor_before": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "reader_before": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "descriptor_after": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "bytes_read": 801,
+          "size_limit_bytes": 65536,
+          "complete_file": true,
+          "path_after": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "status": "observed",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "directory": false,
+            "regular_file": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          "path_replaced_during_read": false,
+          "inode_changed_during_read": false
+        },
+        "symlink_chain_after": [],
+        "owner_uid": 0,
+        "mode": 420,
+        "inode": 27263024,
+        "device": 64770,
+        "byte_count": 801,
+        "modified_ns": 1770761475104425668,
+        "changed_ns": 1770761475103417219,
+        "directory": false,
+        "regular_file": true,
+        "directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806529,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1708108625000000000,
+            "changed_ns": 1714500607115165451,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806533,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1785335913472967598,
+            "changed_ns": 1785335913472967598,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/systemd",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806762,
+            "device": 64770,
+            "byte_count": 12288,
+            "modified_ns": 1755183196793026888,
+            "changed_ns": 1755183196793026888,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/systemd/system",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22815486,
+            "device": 64770,
+            "byte_count": 36864,
+            "modified_ns": 1786984691423105448,
+            "changed_ns": 1786984691423105448,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "sha256": "0731a19af3a7b93d385078d2891ed3a3554bdfb9a4abc6223802f0b55f9f7bde",
+        "captured_byte_count": 801,
+        "service_fields": [
+          {
+            "line": 15,
+            "name": "EnvironmentFile",
+            "value_sha256": "eb925207e165a4526980e608755840d050be4897e117275d95ab40cea8500c79",
+            "status": "not_read_environment_may_contain_secrets"
+          },
+          {
+            "line": 18,
+            "name": "ExecStart",
+            "value_sha256": "3f8ca4635a9f5dd5f941e20cee97f302e7baf2edd63786bfac94c11e608a6909",
+            "program": "/sw/ubuntu/custom/slurm/current/sbin/slurmd",
+            "token_count": 4,
+            "status": "unresolved_execution_tokens",
+            "reason": "unreviewed unit argument retained only by hash"
+          }
+        ]
+      },
+      {
+        "requested_path": "/usr/lib/systemd/system/slurm-slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurm-slurmd.service'"
+      },
+      {
+        "requested_path": "/lib/systemd/system/slurmd.service",
+        "read_status": "read",
+        "path": "/usr/lib/systemd/system/slurmd.service",
+        "symlink_chain": [
+          {
+            "path": "/lib",
+            "target": "usr/lib",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 13,
+            "device": 64770
+          }
+        ],
+        "read_trace": {
+          "pinned_directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806529,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1708108625000000000,
+              "changed_ns": 1714500607115165451,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806533,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1785335913472967598,
+              "changed_ns": 1785335913472967598,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/systemd",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806762,
+              "device": 64770,
+              "byte_count": 12288,
+              "modified_ns": 1755183196793026888,
+              "changed_ns": 1755183196793026888,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/systemd/system",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22815486,
+              "device": 64770,
+              "byte_count": 36864,
+              "modified_ns": 1786984691423105448,
+              "changed_ns": 1786984691423105448,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "descriptor_before": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "reader_before": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "descriptor_after": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "byte_count": 801,
+            "modified_ns": 1770761475104425668,
+            "changed_ns": 1770761475103417219,
+            "directory": false,
+            "regular_file": true
+          },
+          "bytes_read": 801,
+          "size_limit_bytes": 65536,
+          "complete_file": true,
+          "path_after": {
+            "path": "/usr/lib/systemd/system/slurmd.service",
+            "status": "observed",
+            "owner_uid": 0,
+            "mode": 420,
+            "inode": 27263024,
+            "device": 64770,
+            "directory": false,
+            "regular_file": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          "path_replaced_during_read": false,
+          "inode_changed_during_read": false
+        },
+        "symlink_chain_after": [
+          {
+            "path": "/lib",
+            "target": "usr/lib",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 13,
+            "device": 64770,
+            "unchanged": true
+          }
+        ],
+        "owner_uid": 0,
+        "mode": 420,
+        "inode": 27263024,
+        "device": 64770,
+        "byte_count": 801,
+        "modified_ns": 1770761475104425668,
+        "changed_ns": 1770761475103417219,
+        "directory": false,
+        "regular_file": true,
+        "directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806529,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1708108625000000000,
+            "changed_ns": 1714500607115165451,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806533,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1785335913472967598,
+            "changed_ns": 1785335913472967598,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/systemd",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806762,
+            "device": 64770,
+            "byte_count": 12288,
+            "modified_ns": 1755183196793026888,
+            "changed_ns": 1755183196793026888,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/systemd/system",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22815486,
+            "device": 64770,
+            "byte_count": 36864,
+            "modified_ns": 1786984691423105448,
+            "changed_ns": 1786984691423105448,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "sha256": "0731a19af3a7b93d385078d2891ed3a3554bdfb9a4abc6223802f0b55f9f7bde",
+        "captured_byte_count": 801,
+        "service_fields": [
+          {
+            "line": 15,
+            "name": "EnvironmentFile",
+            "value_sha256": "eb925207e165a4526980e608755840d050be4897e117275d95ab40cea8500c79",
+            "status": "not_read_environment_may_contain_secrets"
+          },
+          {
+            "line": 18,
+            "name": "ExecStart",
+            "value_sha256": "3f8ca4635a9f5dd5f941e20cee97f302e7baf2edd63786bfac94c11e608a6909",
+            "program": "/sw/ubuntu/custom/slurm/current/sbin/slurmd",
+            "token_count": 4,
+            "status": "unresolved_execution_tokens",
+            "reason": "unreviewed unit argument retained only by hash"
+          }
+        ]
+      },
+      {
+        "requested_path": "/lib/systemd/system/slurm-slurmd.service",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurm-slurmd.service'"
+      }
+    ],
+    "directory_observations": [
+      {
+        "requested_path": "/etc/systemd/system/slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/etc/systemd/system/slurmd.service.d'"
+      },
+      {
+        "requested_path": "/etc/systemd/system/slurm-slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/etc/systemd/system/slurm-slurmd.service.d'"
+      },
+      {
+        "requested_path": "/run/systemd/system/slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/run/systemd/system/slurmd.service.d'"
+      },
+      {
+        "requested_path": "/run/systemd/system/slurm-slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/run/systemd/system/slurm-slurmd.service.d'"
+      },
+      {
+        "requested_path": "/usr/lib/systemd/system/slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurmd.service.d'"
+      },
+      {
+        "requested_path": "/usr/lib/systemd/system/slurm-slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurm-slurmd.service.d'"
+      },
+      {
+        "requested_path": "/lib/systemd/system/slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurmd.service.d'"
+      },
+      {
+        "requested_path": "/lib/systemd/system/slurm-slurmd.service.d",
+        "entries": [],
+        "status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/systemd/system/slurm-slurmd.service.d'"
+      }
+    ],
+    "effective_systemd_execution_resolved": false,
+    "no_environment_file_read": true
+  },
+  "installed_programs": [
+    {
+      "requested_path": "/sw/ubuntu/custom/slurm/current/sbin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "ValueError",
+      "error": "metadata path leaves its allowed namespace",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/sbin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/sbin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/sbin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/sbin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/sbin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/sbin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/bin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/bin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/bin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/bin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/bin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/bin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/sbin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/sbin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/sbin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/bin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/bin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/bin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/sbin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/sbin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/sbin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/sbin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/bin/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/bin/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/bin/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/bin/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/games/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/games/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/games/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/games/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/games/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/games/scontrol'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/games/slurmd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/games/slurmd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/games/slurmstepd",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/games/slurmstepd'",
+      "role": "slurm_program_not_executed"
+    },
+    {
+      "requested_path": "/usr/local/games/scontrol",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/local/games/scontrol'",
+      "role": "slurm_program_not_executed"
+    }
+  ],
+  "program_discovery_unresolved": [
+    "PATH_directory_limit",
+    "unsupported_PATH_entry_sha256=0106ff93bdc0cde6786a6914ce45384a291c59ef72631150379b0d5fd9a88b55",
+    "unsupported_PATH_entry_sha256=c0501ccdac193a9a7237052d8f48a6157fbdb3b240eaa55ec9534425a46b19d5",
+    "unsupported_PATH_entry_sha256=c04c12d860e5dbf07e843650595c1485f7aa027862181ba75f5d6d5fa5ae8444",
+    "unsupported_PATH_entry_sha256=b11f3e6ce6449f67d1a20cac96a90092278be419da8d360f199542781ab05980",
+    "unsupported_PATH_entry_sha256=6491c655ac0b490f91ce716c7f8f7fd10cd16c1d0bb18cac612927094a64c327",
+    "unsupported_PATH_entry_sha256=73b6bec26e0af2fce5c5323d940ed05dd86f63785621574cd122d19850ac07ce",
+    "unsupported_PATH_entry_sha256=fb6563b5cd547958588755e9e4c1223be27d45bf9ca2e85545a4e4a043ea16e1",
+    "unsupported_PATH_entry_sha256=3da6e809e22d90e0e7381358a4aa57394d8938731e374440ed0e10a95f52eccf",
+    "unsupported_PATH_entry_sha256=e50b7bc0fc9a558fca509f27dc554c9074332e8f6bc5c6acccfe38dc7c56872c",
+    "unsupported_PATH_entry_sha256=0106ff93bdc0cde6786a6914ce45384a291c59ef72631150379b0d5fd9a88b55",
+    "unsupported_PATH_entry_sha256=c0501ccdac193a9a7237052d8f48a6157fbdb3b240eaa55ec9534425a46b19d5",
+    "unsupported_PATH_entry_sha256=35a8964aa05aceb3878403b5092bf2d951d07eef0585ea614b724986ea785c92",
+    "unsupported_PATH_entry_sha256=0106ff93bdc0cde6786a6914ce45384a291c59ef72631150379b0d5fd9a88b55",
+    "unsupported_PATH_entry_sha256=c0501ccdac193a9a7237052d8f48a6157fbdb3b240eaa55ec9534425a46b19d5",
+    "unsupported_PATH_entry_sha256=c04c12d860e5dbf07e843650595c1485f7aa027862181ba75f5d6d5fa5ae8444",
+    "unsupported_PATH_entry_sha256=0106ff93bdc0cde6786a6914ce45384a291c59ef72631150379b0d5fd9a88b55",
+    "unsupported_PATH_entry_sha256=c0501ccdac193a9a7237052d8f48a6157fbdb3b240eaa55ec9534425a46b19d5",
+    "unsupported_PATH_entry_sha256=002c3af40e6f7fcd71b0d0b6fa576d1a8c88ad2e89c0a6fea49c1603d37d7b75",
+    "unsupported_PATH_entry_sha256=2d0742cd79ddc1128f9e1f492a2bf252ec96b8a90843543a841151d1894a7a17",
+    "unsupported_PATH_entry_sha256=2d0742cd79ddc1128f9e1f492a2bf252ec96b8a90843543a841151d1894a7a17",
+    "unsupported_PATH_entry_sha256=40ad126636f61922632846e3ed87db625024fe50f967713a7c8a3994733668de",
+    "unsupported_PATH_entry_sha256=2d0742cd79ddc1128f9e1f492a2bf252ec96b8a90843543a841151d1894a7a17",
+    "unsupported_PATH_entry_sha256=8016efaef489b540f6a82346c4bd649b60becb9b9ab205fda4af3bcd9639c433",
+    "unsupported_PATH_entry_sha256=d607cb49af10e0b709b885c41fb1f6a77819f36a56b5bdb6cbb4912cf43192e5"
+  ],
+  "plugins": {
+    "controller_plugin_dir": "/sw/ubuntu2204/custom/slurm/23.11.6/lib/slurm",
+    "files": [],
+    "unresolved": [
+      "PluginDir leaves installed namespace"
+    ]
+  },
+  "packages": {
+    "database": {
+      "requested_path": "/var/lib/dpkg/status",
+      "read_status": "read",
+      "path": "/var/lib/dpkg/status",
+      "symlink_chain": [],
+      "read_trace": {
+        "pinned_directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/var",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 18743297,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1736400155956941821,
+            "changed_ns": 1736400155956941821,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/var/lib",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 18743303,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782857954917968790,
+            "changed_ns": 1782857954917968790,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/var/lib/dpkg",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 18743437,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1793203535333490532,
+            "changed_ns": 1793203535333490532,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "descriptor_before": {
+          "path": "/var/lib/dpkg/status",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 18744551,
+          "device": 64770,
+          "byte_count": 1604866,
+          "modified_ns": 1793203535325490491,
+          "changed_ns": 1793203535333490532,
+          "directory": false,
+          "regular_file": true
+        },
+        "reader_before": {
+          "path": "/var/lib/dpkg/status",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 18744551,
+          "device": 64770,
+          "byte_count": 1604866,
+          "modified_ns": 1793203535325490491,
+          "changed_ns": 1793203535333490532,
+          "directory": false,
+          "regular_file": true
+        },
+        "descriptor_after": {
+          "path": "/var/lib/dpkg/status",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 18744551,
+          "device": 64770,
+          "byte_count": 1604866,
+          "modified_ns": 1793203535325490491,
+          "changed_ns": 1793203535333490532,
+          "directory": false,
+          "regular_file": true
+        },
+        "bytes_read": 1604866,
+        "size_limit_bytes": 16777216,
+        "complete_file": true,
+        "path_after": {
+          "path": "/var/lib/dpkg/status",
+          "status": "observed",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 18744551,
+          "device": 64770,
+          "directory": false,
+          "regular_file": true,
+          "symlink": false,
+          "exact_path": true
+        },
+        "path_replaced_during_read": false,
+        "inode_changed_during_read": false
+      },
+      "symlink_chain_after": [],
+      "owner_uid": 0,
+      "mode": 420,
+      "inode": 18744551,
+      "device": 64770,
+      "byte_count": 1604866,
+      "modified_ns": 1793203535325490491,
+      "changed_ns": 1793203535333490532,
+      "directory": false,
+      "regular_file": true,
+      "directory_chain": [
+        {
+          "path": "/",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 2,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1782814322213413042,
+          "changed_ns": 1782814322213413042,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/var",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 18743297,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1736400155956941821,
+          "changed_ns": 1736400155956941821,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/var/lib",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 18743303,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1782857954917968790,
+          "changed_ns": 1782857954917968790,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/var/lib/dpkg",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 18743437,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1793203535333490532,
+          "changed_ns": 1793203535333490532,
+          "directory": true,
+          "regular_file": false
+        }
+      ],
+      "sha256": "53a6b1fe7502648d271fa59663bb70f8e66cdf74246433cee7a195c05ac131cb",
+      "captured_byte_count": 1604866
+    },
+    "packages": [],
+    "file_rosters": [],
+    "binary_ownership_verified": false,
+    "package_label_is_not_upstream_binary_attestation": true
+  },
+  "installed_manuals": [
+    {
+      "requested_path": "/usr/share/man/man8/slurmd.8",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man8/slurmd.8'"
+    },
+    {
+      "requested_path": "/usr/share/man/man8/slurmd.8.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man8/slurmd.8.gz'"
+    },
+    {
+      "requested_path": "/usr/share/man/man8/slurmstepd.8",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man8/slurmstepd.8'"
+    },
+    {
+      "requested_path": "/usr/share/man/man8/slurmstepd.8.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man8/slurmstepd.8.gz'"
+    },
+    {
+      "requested_path": "/usr/share/man/man1/scontrol.1",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man1/scontrol.1'"
+    },
+    {
+      "requested_path": "/usr/share/man/man1/scontrol.1.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man1/scontrol.1.gz'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/slurm.conf.5",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/slurm.conf.5'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/slurm.conf.5.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/slurm.conf.5.gz'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/gres.conf.5",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/gres.conf.5'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/gres.conf.5.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/gres.conf.5.gz'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/cgroup.conf.5",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/cgroup.conf.5'"
+    },
+    {
+      "requested_path": "/usr/share/man/man5/cgroup.conf.5.gz",
+      "read_status": "unavailable",
+      "error_type": "FileNotFoundError",
+      "error": "[Errno 2] No such file or directory: '/usr/share/man/man5/cgroup.conf.5.gz'"
+    }
+  ],
+  "service_accounts": {
+    "database": {
+      "requested_path": "/etc/passwd",
+      "read_status": "read",
+      "path": "/etc/passwd",
+      "symlink_chain": [],
+      "read_trace": {
+        "pinned_directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/etc",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 31457281,
+            "device": 64770,
+            "byte_count": 12288,
+            "modified_ns": 1793371460288356677,
+            "changed_ns": 1793371460288356677,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "descriptor_before": {
+          "path": "/etc/passwd",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 31458034,
+          "device": 64770,
+          "byte_count": 2047,
+          "modified_ns": 1770761300826690107,
+          "changed_ns": 1770761300830690123,
+          "directory": false,
+          "regular_file": true
+        },
+        "reader_before": {
+          "path": "/etc/passwd",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 31458034,
+          "device": 64770,
+          "byte_count": 2047,
+          "modified_ns": 1770761300826690107,
+          "changed_ns": 1770761300830690123,
+          "directory": false,
+          "regular_file": true
+        },
+        "descriptor_after": {
+          "path": "/etc/passwd",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 31458034,
+          "device": 64770,
+          "byte_count": 2047,
+          "modified_ns": 1770761300826690107,
+          "changed_ns": 1770761300830690123,
+          "directory": false,
+          "regular_file": true
+        },
+        "bytes_read": 2047,
+        "size_limit_bytes": 1048576,
+        "complete_file": true,
+        "path_after": {
+          "path": "/etc/passwd",
+          "status": "observed",
+          "owner_uid": 0,
+          "mode": 420,
+          "inode": 31458034,
+          "device": 64770,
+          "directory": false,
+          "regular_file": true,
+          "symlink": false,
+          "exact_path": true
+        },
+        "path_replaced_during_read": false,
+        "inode_changed_during_read": false
+      },
+      "symlink_chain_after": [],
+      "owner_uid": 0,
+      "mode": 420,
+      "inode": 31458034,
+      "device": 64770,
+      "byte_count": 2047,
+      "modified_ns": 1770761300826690107,
+      "changed_ns": 1770761300830690123,
+      "directory": false,
+      "regular_file": true,
+      "directory_chain": [
+        {
+          "path": "/",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 2,
+          "device": 64770,
+          "byte_count": 4096,
+          "modified_ns": 1782814322213413042,
+          "changed_ns": 1782814322213413042,
+          "directory": true,
+          "regular_file": false
+        },
+        {
+          "path": "/etc",
+          "owner_uid": 0,
+          "mode": 493,
+          "inode": 31457281,
+          "device": 64770,
+          "byte_count": 12288,
+          "modified_ns": 1793371460288356677,
+          "changed_ns": 1793371460288356677,
+          "directory": true,
+          "regular_file": false
+        }
+      ],
+      "sha256": "c89bc90e1293bdd05907bb0ee62ae470a3ac7f4a1e40d864902c965f46a25acd",
+      "captured_byte_count": 2047
+    },
+    "selected_accounts": [
+      {
+        "name": "root",
+        "uid": "0",
+        "gid": "0",
+        "home": "/root",
+        "shell": "/bin/bash"
+      },
+      {
+        "name": "slurm",
+        "uid": "64030",
+        "gid": "64030",
+        "home": "/nonexistent",
+        "shell": "/bin/bash"
+      }
+    ],
+    "password_fields_retained": false,
+    "gecos_retained": false,
+    "account_metadata_does_not_establish_config_trust": true
+  },
+  "nvidia_management_library": {
+    "loaded": false,
+    "device_opened": false,
+    "candidates": [
+      {
+        "requested_path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+        "read_status": "read",
+        "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+        "symlink_chain": [
+          {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+            "target": "libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 22814106,
+            "device": 64770
+          }
+        ],
+        "read_trace": {
+          "pinned_directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806529,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1708108625000000000,
+              "changed_ns": 1714500607115165451,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806533,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1785335913472967598,
+              "changed_ns": 1785335913472967598,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/x86_64-linux-gnu",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806776,
+              "device": 64770,
+              "byte_count": 98304,
+              "modified_ns": 1793203534809487861,
+              "changed_ns": 1793203534809487861,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "descriptor_before": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "reader_before": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "descriptor_after": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "bytes_read": 2291896,
+          "size_limit_bytes": 33554432,
+          "complete_file": true,
+          "path_after": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "status": "observed",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "directory": false,
+            "regular_file": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          "path_replaced_during_read": false,
+          "inode_changed_during_read": false
+        },
+        "symlink_chain_after": [
+          {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+            "target": "libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 22814106,
+            "device": 64770,
+            "unchanged": true
+          }
+        ],
+        "owner_uid": 0,
+        "mode": 493,
+        "inode": 22807449,
+        "device": 64770,
+        "byte_count": 2291896,
+        "modified_ns": 1782857996074080283,
+        "changed_ns": 1782857996074080283,
+        "directory": false,
+        "regular_file": true,
+        "directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806529,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1708108625000000000,
+            "changed_ns": 1714500607115165451,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806533,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1785335913472967598,
+            "changed_ns": 1785335913472967598,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/x86_64-linux-gnu",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806776,
+            "device": 64770,
+            "byte_count": 98304,
+            "modified_ns": 1793203534809487861,
+            "changed_ns": 1793203534809487861,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "sha256": "941c7f7999351d8b9b69f275a20ebd2818e3314678fc12dba6da8a6f12b74d27",
+        "captured_byte_count": 2291896,
+        "role": "management_library_file_not_loaded",
+        "elf": {
+          "class": "ELF64",
+          "byte_order": "little",
+          "machine": 62,
+          "build_ids": [
+            "26df1ce60f32e99fe31caf80027adabdf8f77904"
+          ],
+          "needed": [
+            "libpthread.so.0",
+            "libm.so.6",
+            "libdl.so.2",
+            "libc.so.6",
+            "librt.so.1"
+          ],
+          "rpath": [],
+          "runpath": [],
+          "image_executed": false,
+          "dependencies_loaded": false
+        }
+      },
+      {
+        "requested_path": "/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+        "read_status": "read",
+        "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+        "symlink_chain": [
+          {
+            "path": "/lib",
+            "target": "usr/lib",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 13,
+            "device": 64770
+          },
+          {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+            "target": "libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 22814106,
+            "device": 64770
+          }
+        ],
+        "read_trace": {
+          "pinned_directory_chain": [
+            {
+              "path": "/",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 2,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1782814322213413042,
+              "changed_ns": 1782814322213413042,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806529,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1708108625000000000,
+              "changed_ns": 1714500607115165451,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806533,
+              "device": 64770,
+              "byte_count": 4096,
+              "modified_ns": 1785335913472967598,
+              "changed_ns": 1785335913472967598,
+              "directory": true,
+              "regular_file": false
+            },
+            {
+              "path": "/usr/lib/x86_64-linux-gnu",
+              "owner_uid": 0,
+              "mode": 493,
+              "inode": 22806776,
+              "device": 64770,
+              "byte_count": 98304,
+              "modified_ns": 1793203534809487861,
+              "changed_ns": 1793203534809487861,
+              "directory": true,
+              "regular_file": false
+            }
+          ],
+          "descriptor_before": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "reader_before": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "descriptor_after": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "byte_count": 2291896,
+            "modified_ns": 1782857996074080283,
+            "changed_ns": 1782857996074080283,
+            "directory": false,
+            "regular_file": true
+          },
+          "bytes_read": 2291896,
+          "size_limit_bytes": 33554432,
+          "complete_file": true,
+          "path_after": {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.580.159.04",
+            "status": "observed",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22807449,
+            "device": 64770,
+            "directory": false,
+            "regular_file": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          "path_replaced_during_read": false,
+          "inode_changed_during_read": false
+        },
+        "symlink_chain_after": [
+          {
+            "path": "/lib",
+            "target": "usr/lib",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 13,
+            "device": 64770,
+            "unchanged": true
+          },
+          {
+            "path": "/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1",
+            "target": "libnvidia-ml.so.580.159.04",
+            "owner_uid": 0,
+            "mode": 511,
+            "inode": 22814106,
+            "device": 64770,
+            "unchanged": true
+          }
+        ],
+        "owner_uid": 0,
+        "mode": 493,
+        "inode": 22807449,
+        "device": 64770,
+        "byte_count": 2291896,
+        "modified_ns": 1782857996074080283,
+        "changed_ns": 1782857996074080283,
+        "directory": false,
+        "regular_file": true,
+        "directory_chain": [
+          {
+            "path": "/",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 2,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1782814322213413042,
+            "changed_ns": 1782814322213413042,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806529,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1708108625000000000,
+            "changed_ns": 1714500607115165451,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806533,
+            "device": 64770,
+            "byte_count": 4096,
+            "modified_ns": 1785335913472967598,
+            "changed_ns": 1785335913472967598,
+            "directory": true,
+            "regular_file": false
+          },
+          {
+            "path": "/usr/lib/x86_64-linux-gnu",
+            "owner_uid": 0,
+            "mode": 493,
+            "inode": 22806776,
+            "device": 64770,
+            "byte_count": 98304,
+            "modified_ns": 1793203534809487861,
+            "changed_ns": 1793203534809487861,
+            "directory": true,
+            "regular_file": false
+          }
+        ],
+        "sha256": "941c7f7999351d8b9b69f275a20ebd2818e3314678fc12dba6da8a6f12b74d27",
+        "captured_byte_count": 2291896,
+        "role": "management_library_file_not_loaded",
+        "elf": {
+          "class": "ELF64",
+          "byte_order": "little",
+          "machine": 62,
+          "build_ids": [
+            "26df1ce60f32e99fe31caf80027adabdf8f77904"
+          ],
+          "needed": [
+            "libpthread.so.0",
+            "libm.so.6",
+            "libdl.so.2",
+            "libc.so.6",
+            "librt.so.1"
+          ],
+          "rpath": [],
+          "runpath": [],
+          "image_executed": false,
+          "dependencies_loaded": false
+        }
+      },
+      {
+        "requested_path": "/usr/lib64/libnvidia-ml.so.1",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib64/libnvidia-ml.so.1'",
+        "role": "management_library_file_not_loaded"
+      },
+      {
+        "requested_path": "/usr/lib/nvidia/libnvidia-ml.so.1",
+        "read_status": "unavailable",
+        "error_type": "FileNotFoundError",
+        "error": "[Errno 2] No such file or directory: '/usr/lib/nvidia/libnvidia-ml.so.1'",
+        "role": "management_library_file_not_loaded"
+      }
+    ],
+    "actual_process_loaded_library_not_observed": true
+  },
+  "startup_gres_records": {
+    "status": "not_read_no_exact_installed_startup_record_parser_yet",
+    "controller_slurmd_start_time": "2026-10-26T14:37:45",
+    "controller_log_file": "/var/log/slurm/slurmd.log",
+    "other_job_or_process_records_read": false
+  },
+  "unresolved_fields": [
+    "actual_slurmd_merged_GRES_File_order",
+    "physical_GRES_mapping",
+    "kernel_device_enforcement",
+    "vendor_build_equivalence_to_upstream",
+    "effective_systemd_environment_and_execution",
+    "startup_GRES_log_binding",
+    "same_process_CUDA_UUID_and_PCI_not_observed_in_zero_GPU_scope"
+  ],
+  "collection_completed": true,
+  "finished_utc": "2026-11-01T18:23:35.901027+00:00",
+  "total_bytes_read": 6209080,
+  "configuration_read_attempts": 5,
+  "configuration_bytes_read": 16773
+}

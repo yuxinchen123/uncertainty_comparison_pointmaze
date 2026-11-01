@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "kind": "owned_zero_gpu_passive_installed_slurm_observation",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "passive_plan_sha256": "8598556c53caf13c1660e7d5d94cd35fb7ca28816835db89c5ee6f68572450d0",
+  "started_utc": "2026-11-01T18:23:35.679792+00:00",
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "physical_gres_mapping_verified": false,
+  "configured_isolation_qualified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "process": {
+    "hostname": "jaguar03",
+    "pid": 1990312,
+    "uid": 2618919,
+    "effective_uid": 2618919,
+    "uid_fields": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "parent_pid": 1990305,
+    "process_start_time": "51769139",
+    "raw_proc_stat": "1990312 (python3) R 1990305 1990312 1990304 0 -1 4194560 3104 4403 0 25 3 1 2 3 20 0 1 0 51769139 30330880 4867 2147483648 94644195020800 94644197857101 140726794727312 0 0 0 0 16781312 2 0 0 0 17 56 0 0 0 0 0 94644200228880 94644200513016 94644450205696 140726794731699 140726794732573 140726794732573 140726794739687 0\n",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781903/step_0/user/task_0\n",
+    "cpu_affinity": [
+      56
+    ]
+  },
+  "observed_job_id": "6781903",
+  "observed_step_id": "0",
+  "job_id": "6781903",
+  "step_id": "0",
+  "ownership_observation_sha256": "4982e61b985360c913f25e572b2d9badb6e1b8153c913f48f574f5d4aa73b54b",
+  "passive_observation_sha256": "b52907bbe47942918eb147e1e403c89c2114f69b1aa3970423cda5f81fa61f16",
+  "completed": true,
+  "finished_utc": "2026-11-01T18:23:36.018367+00:00"
+}

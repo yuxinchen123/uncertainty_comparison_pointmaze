@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "kind": "owned_zero_gpu_passive_observer_release",
+  "cluster": "uva",
+  "job_id": "6781903",
+  "command": [
+    "scontrol",
+    "release",
+    "6781903"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "at_utc": "2026-11-01T18:23:34.762378+00:00",
+  "submission_receipt_sha256": "43251c8f2d5341ab8c97b55b97c3b9f587370106e46b5cf1c50876a4d649d687",
+  "release_review_sha256": "f0cbd312f6a741dac3241ed769ed87fbe4ef9e0f232dba0241e25a5e9f9aebab",
+  "held_monitor_review_sha256": "7e86e439377125ee36e9cd6f0971232bc014cf1203167421916b66a19f2dec4d",
+  "published_release_commit": "37e382c8b7797111591a21dda0bcb0509b742e20",
+  "release_source_sha256": "d644c53cf0239c4ab3554e695c004f9b34ebf432c047a999b57757fc02e57b0d",
+  "frozen_inputs_sha256": "d053777060efc639e75d5b2cdf3d66e43decbd42cf45a7e7f15b49e425f09cc6",
+  "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+  "automatic_retry_permitted": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false
+}
