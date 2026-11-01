@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+    "bind-held-identifier",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+    "--job-id",
+    "6781190",
+    "--reservation",
+    "sl5nw_168"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schema_version\": 1, \"kind\": \"uva_active_configuration_metadata_observation_returned_held_identifier_binding\", \"cluster\": \"uva\", \"job_id\": \"6781190\", \"reservation\": \"sl5nw_168\", \"owner\": {\"username\": \"sl5nw\", \"uid\": 2618919}, \"plan_sha256\": \"e519aabce26a25b3e8dc5ac64ce59353302d352151989642a7200b5e320ced81\", \"owned_ledger_origin\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt\", \"owned_ledger_sha256\": \"5aea2fa80712f272dc3ffe66dc3bc3a7d6998bfa9e15b8f7f08c2a61769f3cc0\", \"held_state_verified_by_this_function\": false, \"job_released_by_producer\": false, \"environment_transitions\": 0, \"learner_updates\": 0, \"case_credit\": 0, \"idea_credit\": 0, \"packing_point_credit\": 0, \"throughput_credit\": 0, \"site_qualification_credit\": 0, \"admission_granted\": false, \"physical_assignment_verified\": false, \"kernel_device_enforcement_verified\": false}\n",
+  "stderr": "",
+  "ledger_fsynced_before_binding": true,
+  "at_utc": "2026-11-01T15:52:11.822573+00:00"
+}

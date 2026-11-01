@@ -1,0 +1,47 @@
+{
+  "kind": "owned_zero_gpu_configuration_observer_release_review",
+  "at_utc": "2026-11-01T15:59:35.439467+00:00",
+  "job_id": "6781190",
+  "cluster": "uva",
+  "source_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+  "exact_held_fields": {
+    "JobId": "6781190",
+    "UserId": "sl5nw(2618919)",
+    "Account": "sl5nw_base",
+    "QOS": "csresnolim",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Requeue": "0",
+    "TimeLimit": "00:05:00",
+    "Partition": "gpu",
+    "ReqNodeList": "jaguar03",
+    "NumNodes": "1-1",
+    "NumCPUs": "1",
+    "NumTasks": "1",
+    "CPUs/Task": "1",
+    "MinMemoryNode": "2G",
+    "Reservation": "sl5nw_168",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch"
+  },
+  "requested_tres": {
+    "cpu": "1",
+    "mem": "2G",
+    "node": "1",
+    "billing": "308"
+  },
+  "gpu_count": 0,
+  "full_monitor_step": "6781087.35",
+  "full_monitor_verification_sha256": "21400fa705080d16e82956de5679766f3a7372ead674668508fa689bf989845a",
+  "submission_receipt_sha256": "2790cb37c82c1d853b1c9202585c03cb216664ccf52aef3d1584ac8f6c0e849d",
+  "immutable_binding_sha256": "77cbfa54885f3a2edec7665636b10286a93d162cf4b62c4a111f1f1513ac7bf2",
+  "unchanged_plan_sha256": "e519aabce26a25b3e8dc5ac64ce59353302d352151989642a7200b5e320ced81",
+  "session_cron_id": "8ab1df2b-41e0-4821-9177-ed6f25332035",
+  "release_command": [
+    "scontrol",
+    "release",
+    "6781190"
+  ],
+  "release_attempted": false,
+  "scientific_credit": 0,
+  "mapping_or_admission_granted": false
+}
