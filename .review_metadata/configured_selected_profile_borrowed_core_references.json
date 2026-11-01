@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "excluded_borrowed_core_source_references",
+  "excluded_from_owned_publication": [
+    ".review_metadata/first_full_suite_source/uva_slurm_configured_isolation.py",
+    ".review_metadata/source_before_independent_corrections/uva_slurm_configured_isolation.py",
+    ".review_metadata/source_before_native_renderer_scope_correction/uva_slurm_configured_isolation.py",
+    ".review_metadata/source_before_renderer_contract_correction/uva_slurm_configured_isolation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+  ],
+  "all_preserved_locally": true,
+  "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+  "published_source_commit": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178",
+  "published_path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+  "reason": "The independently owned production core and its identical copies remain excluded; their exact bytes are already preserved in the separate published core commit."
+}

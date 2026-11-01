@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_execution_interfaces",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity",
+  "branch": "implement-selected-configured-isolation-2026-11-01",
+  "base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "qualification_prepare_entry": "measure_selected.py --prepare-only --mode correctness --configured-isolation-profile <exact exported PROFILE JSON> --target-qualification --cleanrl-source-root /p/rlprojects/RND/08_cleanrl_ppo_rnd/cleanrl --qualification-software-result <actual completed attempt-0004 result.json> --source-root /p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673 --source-commit d28e6735e79788f618acb0ebfde8609db1f776af --configuration <full original one-copy configuration> --reference-configuration <same full original one-copy configuration> --runtime-environment <exact runtime JSON> --asset-record <exact asset record JSON> --jaxtari-source-root <source root from exact asset manifest> --run-dir <canonical campaign> --unit-id <fresh descriptive unit> --hardware-class jaguar03_rtx_a4500 --python /p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "preparation_placement": "owned CPU numeric srun step; original cohort software validation recomputes its actual evidence there",
+  "qualification_execute_entry": "one owned numeric srun task runs <unit>/code/measure_selected.py --prepared-unit <unit>; do not use a global hardware-query wrapper",
+  "immutable_static_identity": {
+    "gpu_uuid": null,
+    "job_id": "absent",
+    "owned_inputs_path": "<unit>/owned_allocation_inputs.json"
+  },
+  "separate_actual_submission_binding": "Root must fsync exact actual IDs/TSV row, freeze owned ledger/submissions snapshots and exact submission/release receipts, then write owned_allocation_inputs.json. Static plan remains null and unchanged. No submitted identifier is guessed.",
+  "qualification_result": "target_qualification_result.json; zero scientific/throughput/packing/case/idea credit; independent exact actual terminal review required before normal configured correctness/confirmation/profile",
+  "circular_prerequisites": [],
+  "ordinary_comparison_entry": "measure_selected.py --configured-isolation-profile ... --target-qualification-record <exact actual qualification result> --target-qualification-review <exact actual independent review>; distinct full reference/candidate only",
+  "selected_combination_reader": "post_comparison_validation.validate_combination supports only an explicit configured_isolation_profile and exact local raw proof; final/portable consumers refuse",
+  "profile_entry": "profile_selected.py with same explicit profile/qualification inputs, complete120 registry and explicit accepted combined baseline; supervisor metadata in unit/supervisor, actual child metadata/binding/driver in unit",
+  "later_controller_boundary": "advance_adaptive_research default measurement/profile admission readers still refuse configured-isolation records. Their explicit opt-in and capacity/final/scaling/portable consumers need separate reviewed support; this producer does not change current admission.",
+  "direct_H100_gap": {
+    "files": [
+      "measure_selected.py::_compute confirmation",
+      "profile_selected.py::_capture_core",
+      "frozen paired_benchmark.py::MemoryObservation/query_gpu_processes"
+    ],
+    "current_path": "default direct H100 measurement still uses the unfiltered frozen paired observer and must not start unchanged",
+    "required_separate_path": "reviewed explicit direct card-one known-UUID/current-context binding, source/admission/standing-lock custody and assigned-UUID observer; inherit and prove the exact parent lock descriptor for the Nsight child, refusing a dropped descriptor",
+    "physical_policy": "never card0; no new direct use before original numerical worker exits; current A4500 profile cannot be reused as direct H100 trust"
+  },
+  "actions_performed": {
+    "new_jobs": 0,
+    "GPU_experiments": 0,
+    "worker_admission_changes": 0
+  }
+}

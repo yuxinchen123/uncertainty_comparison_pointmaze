@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_author_metadata",
+  "job_id": "6781231",
+  "step_id": "51",
+  "modules": [
+    "test_configured_measurement"
+  ],
+  "tests_run": 44,
+  "failures": [],
+  "errors": [],
+  "before": {
+    "configured_measurement.py": "6c4406a516c62e7d145eecf47e1f11b9a3fd7e98b0035aa60e9d60d82cb39dcc",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "ccfc15761a7802b3bb61fdf7a2c0da75fde8b6f25c7d055b97cf4989dc006e91",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "6c4406a516c62e7d145eecf47e1f11b9a3fd7e98b0035aa60e9d60d82cb39dcc",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "ccfc15761a7802b3bb61fdf7a2c0da75fde8b6f25c7d055b97cf4989dc006e91",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 5.219387054443359,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "allowed_isolated_import_probes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpr0azrh40/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmp1jdrsxei/data/unit/code",
+        "[\"profile_selected.py\", \"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpapvptlel/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmplpjcndwf/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmp4w5fy1wp/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    }
+  ],
+  "wrapper_sha256": "1bafb4f9af324bb0f30e426123d08912740c7e12bd44e1cd9cd2b17325522365",
+  "numerical_work": false,
+  "job_actions": 0
+}

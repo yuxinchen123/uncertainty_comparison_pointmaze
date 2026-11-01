@@ -70,11 +70,16 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt():
+def helper_receipt(configured=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in HELPERS])
+    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured)])
+
+
+def required_helpers(configured=False):
+    """Include the exact optional identity closure while preserving the default profile roster."""
+    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured))))
 
 
 @contextmanager
@@ -113,8 +118,11 @@ def initial_summaries_complete(registry):
 
 def prepare(args):
     """Stage immutable profile inputs without loading an array library or touching a GPU."""
+    configured = getattr(args, "configured_isolation_profile", None) is not None
+    if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"):
+        raise ValueError("configured profiling needs an unresolved single A4500 plan")
     if (Path(args.unit_id).name != args.unit_id or args.unit_id in {"", ".", ".."}
-            or not args.gpu_uuid.startswith("GPU-") or args.hardware_class not in validation.CONTEXTS
+            or not configured and (not isinstance(args.gpu_uuid, str) or not args.gpu_uuid.startswith("GPU-")) or args.hardware_class not in validation.CONTEXTS
             or type(args.seed_start) is not int or args.seed_start < 0
             or not math.isfinite(args.maximum_active_seconds) or args.maximum_active_seconds <= 0):
         raise ValueError("profile identity, selected GPU, seed, or active time limit is invalid")
@@ -141,7 +149,18 @@ def prepare(args):
     if (confirmation.get("measurement_mode") != "confirmation" or confirmation.get("decision") != "accepted"
             or validation.configuration_without_copies(confirmation["candidate"]) != validation.configuration_without_copies(configuration)):
         raise ValueError("the profile configuration is not its explicit accepted combined baseline")
-    validation.identity(confirmation, args.hardware_class, args.source_commit, runtime)
+    if "configured_isolation" in confirmation and not configured:
+        raise ValueError("default profiling cannot consume a configured-isolation measurement")
+    if configured:
+        import configured_measurement as support
+        explicit_profile, unused_profile_input = measurement.read_document(args.configured_isolation_profile)
+        support.core().require_profile(explicit_profile)
+        if baseline.get("configured_isolation_profile") != explicit_profile:
+            raise ValueError("the accepted baseline specification must explicitly name this configured-isolation profile")
+        support.verify_saved_measurement(Path(confirmation_input["path"]).parent, confirmation)
+        validation._identity_fields(confirmation, args.hardware_class, args.source_commit, runtime)
+    else:
+        validation.identity(confirmation, args.hardware_class, args.source_commit, runtime)
     tool, tool_input = measurement.read_document(args.profile_tool_record)
     if (set(tool) != {"path", "version", "sha256"} or not Path(tool["path"]).is_absolute()
             or not isinstance(tool["version"], str) or not tool["version"].strip()
@@ -152,7 +171,7 @@ def prepare(args):
         raise ValueError("the profile policy seeds exceed unsigned 32-bit values")
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
-        "core": core, "paired_source": paired_source, "helpers": helper_receipt(),
+        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -167,13 +186,19 @@ def prepare(args):
         "inputs": {"configuration": config_input, "runtime_environment": runtime_input, "asset_record": asset_input,
                    "study_registry": registry_input, "accepted_baseline_specification": baseline_input,
                    "accepted_confirmation": confirmation_input, "profile_tool_record": tool_input}}
+    if configured:
+        import configured_measurement as support
+        profile, profile_input = measurement.read_document(args.configured_isolation_profile)
+        support.configure_plan(plan, profile, "component_profile")
+        plan["inputs"]["configured_isolation_profile"] = profile_input
+        support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
     artifacts = {directory / "measurement_plan.json": measurement.json_bytes(plan),
         directory / "manifest.yaml": measurement.json_bytes(plan),
         directory / "config_resolved.yaml": measurement.json_bytes(configuration),
         directory / "inputs/study_registry.json": args.study_registry.read_bytes(),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/profile_selected.py"),
                                                "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in HELPERS:
+    for name in required_helpers(configured):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -205,7 +230,7 @@ def verify_prepared(directory, plan):
         raise ValueError("the immutable profile plan changed")
     if Path(__file__).resolve() != directory / "code/profile_selected.py" or str(Path(sys.executable).absolute()) != plan["python"]:
         raise ValueError("execute the staged profile entrypoint with its exact recorded Python")
-    for name in HELPERS:
+    for name in required_helpers("configured_isolation" in plan):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -213,6 +238,7 @@ def verify_prepared(directory, plan):
                          ("post_comparison_validation.py", validation), ("train_optimized.py", training)):
         if Path(module.__file__).resolve() != directory / "code" / name:
             raise ValueError("the profile imported a mutable helper: " + name)
+    measurement.configured_support(plan)
     if diagnostic.core_identity(Path(plan["source_root"]), plan["source_commit"]) != plan["core"]:
         raise ValueError("the profile core changed after preparation")
     if training.source_receipt(Path(plan["source_root"]), plan["source_commit"],
@@ -335,7 +361,15 @@ def run_prepared(directory):
             os.environ[name] = value
         try:
             with interruption_cleanup(), measurement.card_admission(directory, plan):
-                hardware = measurement.preflight(plan)
+                support = measurement.configured_support(plan)
+                if support is not None:
+                    supervisor = directory / "supervisor"
+                    supervisor.mkdir(exist_ok=False)
+                    metadata_record = support.core().collect_metadata(plan, supervisor)
+                    hardware = {"configured_isolation_metadata": metadata_record}
+                    support.verify_qualification_inputs(plan)
+                else:
+                    hardware = measurement.preflight(plan)
                 if tool_record(plan["profile_tool"]["path"]) != plan["profile_tool"]:
                     raise ValueError("the compute host's profiling tool differs from the prepared tool record")
                 validate_measured_baseline(directory, plan)
@@ -373,7 +407,8 @@ def capture(directory):
             or process_birth(release["pid"]) != release["process_start_time"]
             or os.getpgrp() != release["pid"] or process_parent(release["pid"]) != release["parent_pid"]):
         raise ValueError("the capture release does not belong to this live recorded parent")
-    hardware = measurement.preflight(plan)
+    support = measurement.configured_support(plan)
+    hardware = {"configured_isolation_metadata": support.core().collect_metadata(plan, directory)} if support is not None else measurement.preflight(plan)
     runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
     hardware["runtime_environment"] = runtime
     installed = json.loads((directory / "installed_backend.json").read_text())
@@ -400,44 +435,58 @@ def _capture_core(directory, plan, hardware, installed):
     expected = "H100" if plan["hardware_class"] == "h100" else "A4500"
     if len(devices) != 1 or devices[0].platform != "gpu" or expected not in devices[0].device_kind:
         raise ValueError("the profile did not select its recorded single GPU type")
-    configuration = plan["configuration"]
-    trainer = PixelPPORND(PixelPPOConfig(**configuration["learner"]), AtariPixelEnvironment(**configuration["environment"]))
-    executor = paired.Executor(trainer, configuration["execution"])
-    execution_started = time.time()
-    diagnostic.record_progress(directory, "normalization_warmup", profile_updates=plan["profile_updates"])
-    state = trainer.warmup(trainer.initialize(tuple(plan["copy_seeds"])))
-    host = paired.host_copy(state)
-    del state
-    diagnostic.record_progress(directory, "compile_warmup")
-    host, warmup = paired.warm_executor(executor, host, plan["profile_updates"])
-    loaded = training.actual_gpu_library_receipt(devices[0].client, installed["gpu_libraries"])
-    training.validate_gpu_library_receipt(loaded, {"installed_gpu_libraries": installed["gpu_libraries"]})
-    state = paired.device_copy(host)
-    jax.block_until_ready(state)
-    start_iteration = int(host.iteration)
-    before = executor.cache_sizes()
-    profiler, runtime_path = diagnostic.cuda_profiler()
-    diagnostic.record_progress(directory, "capturing_complete_window", profile_updates=plan["profile_updates"])
-    if profiler.cudaProfilerStart() != 0:
-        raise RuntimeError("CUDA profiler capture did not start")
-    try:
-        state, metrics = executor.run(state, plan["profile_updates"], initial_iteration=start_iteration)
-        jax.block_until_ready((state, metrics))
-    finally:
-        if profiler.cudaProfilerStop() != 0:
-            raise RuntimeError("CUDA profiler capture did not stop")
-    end_iteration = int(jax.device_get(state.iteration))
-    if end_iteration - start_iteration != plan["profile_updates"] or executor.cache_sizes() != before:
-        raise ValueError("the capture changed its complete update count or compiled another signature")
-    result = {key: plan[key] for key in ("schema_version", "kind", "source_root", "source_commit", "hardware_class",
-        "campaign_run_dir", "unit_id", "compilation_cache_policy", "core", "helpers", "paired_source", "configuration",
-        "runtime_environment", "gpu_uuid", "profile_updates", "profile_tool", "copy_seeds")}
-    result.update(capture_completed=True, hardware=hardware, profile_start_iteration=start_iteration,
-        profile_end_iteration=end_iteration, compiled_signatures_before=list(before), compiled_signatures_after=list(executor.cache_sizes()),
-        normalization_warmup_iterations=50, compilation_warmup=warmup, loaded_gpu_libraries=loaded,
-        actual_runtime_environment=hardware["runtime_environment"],
-        cuda_profiler_runtime=str(runtime_path), execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(),
-            "process_start_time": hardware["process_start_time"], "started_at_seconds": execution_started, "finished_at_seconds": time.time()})
+    support = measurement.configured_support(plan)
+    binding, numerical_paths = None, None
+    if support is not None:
+        numerical_paths = support.numerical_module_paths(plan)
+        metadata_record = hardware["configured_isolation_metadata"]
+        binding = support.core().bind_process(plan, metadata_record, devices[0], directory)
+        hardware = {**support.bound_hardware(plan, metadata_record, binding), "runtime_environment": plan["runtime_environment"]}
+    with support.observed_work(devices[0], binding, directory / "profile_memory") if support is not None else measurement.nullcontext({}) as observed:
+        configuration = plan["configuration"]
+        trainer = PixelPPORND(PixelPPOConfig(**configuration["learner"]), AtariPixelEnvironment(**configuration["environment"]))
+        executor = paired.Executor(trainer, configuration["execution"])
+        execution_started = time.time()
+        diagnostic.record_progress(directory, "normalization_warmup", profile_updates=plan["profile_updates"])
+        state = trainer.warmup(trainer.initialize(tuple(plan["copy_seeds"])))
+        host = paired.host_copy(state)
+        del state
+        diagnostic.record_progress(directory, "compile_warmup")
+        host, warmup = paired.warm_executor(executor, host, plan["profile_updates"])
+        loaded = training.actual_gpu_library_receipt(devices[0].client, installed["gpu_libraries"])
+        training.validate_gpu_library_receipt(loaded, {"installed_gpu_libraries": installed["gpu_libraries"]})
+        state = paired.device_copy(host)
+        jax.block_until_ready(state)
+        start_iteration = int(host.iteration)
+        before = executor.cache_sizes()
+        profiler, runtime_path = diagnostic.cuda_profiler()
+        diagnostic.record_progress(directory, "capturing_complete_window", profile_updates=plan["profile_updates"])
+        if profiler.cudaProfilerStart() != 0:
+            raise RuntimeError("CUDA profiler capture did not start")
+        try:
+            state, metrics = executor.run(state, plan["profile_updates"], initial_iteration=start_iteration)
+            jax.block_until_ready((state, metrics))
+        finally:
+            if profiler.cudaProfilerStop() != 0:
+                raise RuntimeError("CUDA profiler capture did not stop")
+        end_iteration = int(jax.device_get(state.iteration))
+        if end_iteration - start_iteration != plan["profile_updates"] or executor.cache_sizes() != before:
+            raise ValueError("the capture changed its complete update count or compiled another signature")
+        result = {key: plan[key] for key in ("schema_version", "kind", "source_root", "source_commit", "hardware_class",
+            "campaign_run_dir", "unit_id", "compilation_cache_policy", "core", "helpers", "paired_source", "configuration",
+            "runtime_environment", "gpu_uuid", "profile_updates", "profile_tool", "copy_seeds")}
+        result.update(capture_completed=True, hardware=hardware, profile_start_iteration=start_iteration,
+            profile_end_iteration=end_iteration, compiled_signatures_before=list(before), compiled_signatures_after=list(executor.cache_sizes()),
+            normalization_warmup_iterations=50, compilation_warmup=warmup, loaded_gpu_libraries=loaded,
+            actual_runtime_environment=hardware["runtime_environment"],
+            cuda_profiler_runtime=str(runtime_path), execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(),
+                "process_start_time": hardware["process_start_time"], "started_at_seconds": execution_started, "finished_at_seconds": time.time()})
+        if support is not None:
+            result.update(configured_isolation=plan["configured_isolation"], resolved_device_binding=binding,
+                configured_isolation_record=True, numerical_module_paths=numerical_paths, target_qualification_inputs=plan["target_qualification_inputs"], **support.BOUNDARY)
+    if support is not None:
+        result["profile_memory"] = observed
+        result["gpu_uuid"] = binding["gpu_uuid"]
     diagnostic.atomic_json(directory / "hardware.json", hardware)
     diagnostic.atomic_json(directory / "capture_result.json", result)
 
@@ -450,6 +499,9 @@ def parse_arguments(argv=None):
     operation.add_argument("--capture-unit", type=Path)
     operation.add_argument("--inspect-profile-tool", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--configured-isolation-profile", type=Path)
+    parser.add_argument("--target-qualification-record", type=Path)
+    parser.add_argument("--target-qualification-review", type=Path)
     for name in ("source-root", "configuration", "runtime-environment", "asset-record", "study-registry",
                  "accepted-baseline-specification", "profile-tool-record", "jaxtari-source-root", "run-dir"):
         parser.add_argument("--" + name, type=Path)
@@ -464,9 +516,15 @@ def parse_arguments(argv=None):
               "accepted_baseline_specification", "profile_tool_record", "run_dir", "unit_id", "gpu_uuid", "hardware_class")
     if args.prepared_unit or args.capture_unit or args.inspect_profile_tool:
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
-                                                                              "minimum_updates", "maximum_active_seconds", "python")):
+                                                                              "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review")):
             parser.error("execution/tool inspection cannot override a prepared configuration")
         return args
+    if args.configured_isolation_profile is not None:
+        if args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500" or not args.target_qualification_record or not args.target_qualification_review:
+            parser.error("configured profiling needs null physical identity and actual qualification/review")
+        fields = tuple(name for name in fields if name != "gpu_uuid")
+    elif args.target_qualification_record or args.target_qualification_review:
+        parser.error("target qualification inputs require an explicit configured-isolation profile")
     if any(getattr(args, name) is None for name in fields):
         parser.error("preparation needs explicit source/config/runtime/assets/initial study/baseline/tool/GPU/output inputs")
     args.seed_start = 1 if args.seed_start is None else args.seed_start

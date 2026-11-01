@@ -1104,6 +1104,7 @@ def validate_exclusion(path, specification, evidence):
             originals[name] = json_document(proof.file(original))
     plan, observation, terminal, parent = (originals[name] for name in
         ('measurement_plan.json', 'capacity_observation.json', 'capacity_child_exit.json', 'capacity_parent.json'))
+    require('configured_isolation' not in plan, 'configured-isolation capacity exclusions are unsupported')
     require(record['protocol'] == protocol(plan.get('device_memory_limit_protocol')) == observation.get('protocol'), 'capacity protocol changed')
     require(directory == Path(plan['campaign_run_dir']) / 'data' / plan['unit_id']
             and originals['measurement_prepared.json'] == {'plan_sha256': hashlib.sha256(proof.file(directory / 'measurement_plan.json')).hexdigest()}

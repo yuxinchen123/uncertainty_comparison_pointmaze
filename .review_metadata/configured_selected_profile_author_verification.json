@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_author_verification",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_producer_source_freeze.json",
+    "sha256": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011"
+  },
+  "full_run": {
+    "job_id": "6781231",
+    "step_id": "40",
+    "tests_run": 152,
+    "passed": 149,
+    "harness_only_local_git_rejections": 3,
+    "receipt_sha256": "33e55475d2392512d8e16d27fa9cfd6ca29c733c53ab63d628d8bd3abc8f3f2b"
+  },
+  "unchanged_failed_tests_corrected_harness": {
+    "job_id": "6781231",
+    "step_id": "41",
+    "tests_run": 3,
+    "passed": 3,
+    "receipt_sha256": "2fcdcfbd14b5eefc7b16ad6c4f8e775f96b560ca2012ab263e1201b1f34d4a03"
+  },
+  "all_152_distinct_cases_passed_across_exact_same_source": true,
+  "all_hashes_unchanged": true,
+  "GPU_operations": 0,
+  "numerical_imports": 0,
+  "network_operations": 0,
+  "new_jobs": 0,
+  "independent_review_pending": true,
+  "default_compatibility_scope": "legacy records and default helper rosters retain behavior; the frozen paired numerical file bytes are unchanged. The source freeze statement is behavioral, not a claim that the default identity function source was unedited."
+}

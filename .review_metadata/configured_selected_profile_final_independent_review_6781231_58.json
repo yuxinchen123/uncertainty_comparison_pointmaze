@@ -1,0 +1,204 @@
+{
+  "GPU_experiments": 0,
+  "actual_gpu_qualification": false,
+  "admission_granted": false,
+  "approved_for_source_publication": true,
+  "approved_freeze": {
+    "borrowed_core_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+    "own_files": {
+      "configured_measurement.py": "29ecb15d446ecc4b9e43d2754f0d87b354be438fa411693481db3ef43465eddd",
+      "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+      "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+      "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+      "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+      "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+      "tests/test_configured_measurement.py": "47a3bb29db8f6bf9f171d646eb98c20d905d4ec6b6d10eea487df2764dbb4602",
+      "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1"
+    },
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_producer_native_renderer_source_freeze.json",
+    "sha256": "8398f24bfe62254523d84d5187fc3c5b1c52d7aa73b8b9b5600778ac349e4523"
+  },
+  "at_utc": "2026-11-01T20:19:06.893364+00:00",
+  "case_credit": 0,
+  "closed_findings": [
+    "Saved qualification reconstructs exact source/CleanRL/software/assets, six precision groups, positive finite state, loaded library bytes/current PID, complete pytest function/parametrized-case/phase counts, full renderer matrices, zero-credit fields and exact memory PID/UUID/summary.",
+    "Allocator and invalid successful device-query failures retain raw lifecycle or anonymous bounded capture facts before refusing; original numerical errors are preserved.",
+    "Process completeness requires literal Boolean true; no unobserved memory-reserve equality is invented.",
+    "Actual D28 nested-with renderer assignments are read within the same function; missing/duplicate/nested-function substitution rejects. Actual admitted backend yields33rooms/132variants/11synthetic cases."
+  ],
+  "existing_history_files_preserved": 25,
+  "idea_credit": 0,
+  "independent_final_focused": {
+    "job_id": "6781231",
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_independent_final_focus_6781231_58.json",
+    "sha256": "da12fa79c400738ad8084eee681b0c32f7c7adb9955011ce09ef021c46fb84bb",
+    "step_id": "58",
+    "tests_passed": 51
+  },
+  "independent_previous_full": {
+    "errors": 1,
+    "failures": 0,
+    "interpretation": "All168 affected cases and four direct checks passed; exact native renderer case found nested-with traversal defect. That defect is corrected and passes in final51-case focused run. This was not an uninterrupted173-case pass.",
+    "job_id": "6781231",
+    "passes": 172,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_independent_final_6781231_54.json",
+    "sha256": "efc08f682f14d8286fd0920233f9cd2b83132b1821d9bf8530ade7105020c8bc",
+    "step_id": "54",
+    "tests_run": 173
+  },
+  "job_actions": 0,
+  "kind": "independent_configured_selected_profile_source_review",
+  "limits": [
+    "This approves source and metadata integration only.",
+    "No real target qualification, GPU numerical test, physical device observation, worker admission or scientific result was performed.",
+    "Independent actual full-original target qualification and raw review remain required before selected/profiling use.",
+    "Retained initial wrapper/fixture errors and disproved hypotheses remain in history; no source result was overwritten."
+  ],
+  "preserved_source_archives": {
+    "configured_selected_profile_producer_corrected_source_freeze.json": {
+      "configured_measurement.py": {
+        "exists": true,
+        "expected_sha256": "cab3276c05495c14ebb87e2bb63a641629e047fb9c737b1caedf428ae2a80d9c",
+        "mode": "0o660",
+        "sha256": "cab3276c05495c14ebb87e2bb63a641629e047fb9c737b1caedf428ae2a80d9c",
+        "symlink": false
+      },
+      "device_memory_limit.py": {
+        "exists": true,
+        "expected_sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+        "mode": "0o660",
+        "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+        "symlink": false
+      },
+      "measure_gpu_scaling.py": {
+        "exists": true,
+        "expected_sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+        "mode": "0o660",
+        "sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+        "symlink": false
+      },
+      "measure_selected.py": {
+        "exists": true,
+        "expected_sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+        "mode": "0o660",
+        "sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+        "symlink": false
+      },
+      "post_comparison_validation.py": {
+        "exists": true,
+        "expected_sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+        "mode": "0o660",
+        "sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+        "symlink": false
+      },
+      "profile_selected.py": {
+        "exists": true,
+        "expected_sha256": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+        "mode": "0o660",
+        "sha256": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+        "symlink": false
+      },
+      "tests/test_configured_measurement.py": {
+        "exists": true,
+        "expected_sha256": "cf2b2dc225592ff866a8eea392b8eb8bc4ede437bfd06359776f853c41038866",
+        "mode": "0o660",
+        "sha256": "cf2b2dc225592ff866a8eea392b8eb8bc4ede437bfd06359776f853c41038866",
+        "symlink": false
+      },
+      "uva_slurm_configured_isolation.py": {
+        "exists": true,
+        "expected_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+        "mode": "0o660",
+        "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+        "symlink": false
+      },
+      "validate_training_deployment.py": {
+        "exists": true,
+        "expected_sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+        "mode": "0o660",
+        "sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+        "symlink": false
+      }
+    },
+    "configured_selected_profile_producer_source_freeze.json": {
+      "configured_measurement.py": {
+        "exists": true,
+        "expected_sha256": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+        "mode": "0o660",
+        "sha256": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+        "symlink": false
+      },
+      "device_memory_limit.py": {
+        "exists": true,
+        "expected_sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+        "mode": "0o660",
+        "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+        "symlink": false
+      },
+      "measure_gpu_scaling.py": {
+        "exists": true,
+        "expected_sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+        "mode": "0o660",
+        "sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+        "symlink": false
+      },
+      "measure_selected.py": {
+        "exists": true,
+        "expected_sha256": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+        "mode": "0o660",
+        "sha256": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+        "symlink": false
+      },
+      "post_comparison_validation.py": {
+        "exists": true,
+        "expected_sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+        "mode": "0o660",
+        "sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+        "symlink": false
+      },
+      "profile_selected.py": {
+        "exists": true,
+        "expected_sha256": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+        "mode": "0o660",
+        "sha256": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+        "symlink": false
+      },
+      "tests/test_configured_measurement.py": {
+        "exists": true,
+        "expected_sha256": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+        "mode": "0o660",
+        "sha256": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+        "symlink": false
+      },
+      "uva_slurm_configured_isolation.py": {
+        "exists": true,
+        "expected_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+        "mode": "0o660",
+        "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+        "symlink": false
+      },
+      "validate_training_deployment.py": {
+        "exists": true,
+        "expected_sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+        "mode": "0o660",
+        "sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+        "symlink": false
+      }
+    }
+  },
+  "protected_numerical_files": 13,
+  "protected_numerical_unchanged": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope_verified": [
+    "Default helper tuples and default/UVA/ACES historical identity paths remain unchanged unless explicitly opted in.",
+    "Immutable null physical plans, exact later owned inputs and separate actual child binding; no selector rewrite or index/minor inference.",
+    "All five approved core dependencies and the configured observer stage and import from exact staged paths; absent siblings reject.",
+    "Selected and profile supervisor/child metadata branches use separate actual process proof and no parent binding substitution.",
+    "Exact assigned-UUID own-row samples cover declared windows with explicit lifecycle and raw proof; no foreign process details are persisted.",
+    "Packing/capacity/final/scaling/portable/default consumers remain unsupported and reject the new profile. Direct H100 requires its separate implementation."
+  ],
+  "source_edits_by_reviewer": 0,
+  "worker_admitted": false,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity"
+}

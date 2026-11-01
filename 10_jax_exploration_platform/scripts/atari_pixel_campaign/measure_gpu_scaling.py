@@ -140,6 +140,8 @@ def load_prepared(directory):
     """Require staged committed helpers, the exact Python executable and unchanged frozen source."""
     directory = Path(directory).resolve(strict=True)
     plan, ready = (json.loads((directory / name).read_text()) for name in ("scaling_plan.json", "scaling_prepared.json"))
+    if "configured_isolation" in plan:
+        raise ValueError("configured-isolation scaling/multiple-device execution is unsupported")
     if ready.get("plan_sha256") != training.file_sha256(directory / "scaling_plan.json"):
         raise ValueError("the prepared scaling plan changed")
     if Path(__file__).resolve() != directory / "code/measure_gpu_scaling.py":

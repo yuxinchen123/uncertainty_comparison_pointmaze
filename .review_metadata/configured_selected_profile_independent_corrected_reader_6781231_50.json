@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_independent_corrected_reader_findings",
+  "extra": {
+    "reduced_renderer_accepted": {
+      "rooms": 2,
+      "cases": 8,
+      "synthetic_pixel_cases": 1,
+      "actual_source_room_count": 33,
+      "actual_source_cases": 132,
+      "actual_source_synthetic_cases": 11,
+      "unrelated_mocked_checks": [
+        "source",
+        "physical binding",
+        "original configuration"
+      ],
+      "constants_source": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study/src/jaxtari/games/montezuma_revenge/core.py",
+      "constants_sha256": "20cd004ffe6c3c0ce3de9cceec271d7920a8069252c1fcf0032d8e4a69abc4c9",
+      "renderer_source": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py",
+      "renderer_sha256": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+    }
+  },
+  "freeze_sha256": "8968590f633c189a8d02c0e58fc4fe4c45be97a5bb35830d50238a503d291bb3",
+  "process_start_time": "52419737",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_50/user/task_0\n",
+  "job_id": "6781231",
+  "step_id": "50",
+  "modules": [
+    "test_configured_measurement.QualificationReaderTests"
+  ],
+  "tests_run": 10,
+  "failures": [],
+  "errors": [],
+  "before": {
+    "configured_measurement.py": "cab3276c05495c14ebb87e2bb63a641629e047fb9c737b1caedf428ae2a80d9c",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "cf2b2dc225592ff866a8eea392b8eb8bc4ede437bfd06359776f853c41038866",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "cab3276c05495c14ebb87e2bb63a641629e047fb9c737b1caedf428ae2a80d9c",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "cf2b2dc225592ff866a8eea392b8eb8bc4ede437bfd06359776f853c41038866",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 2.214975595474243,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "allowed_isolated_import_probes": [],
+  "wrapper_sha256": "ece0e7341e4676c751a61ba9aaf956e602e9a26693033b3149f870dcffd7be09",
+  "numerical_work": false,
+  "job_actions": 0
+}
