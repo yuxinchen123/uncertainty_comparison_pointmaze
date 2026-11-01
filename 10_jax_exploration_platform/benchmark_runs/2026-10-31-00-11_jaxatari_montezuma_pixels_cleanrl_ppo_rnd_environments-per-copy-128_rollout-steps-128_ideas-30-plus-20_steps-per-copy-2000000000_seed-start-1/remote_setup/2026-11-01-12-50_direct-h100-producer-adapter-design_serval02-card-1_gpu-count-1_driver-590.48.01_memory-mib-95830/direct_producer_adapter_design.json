@@ -1,0 +1,215 @@
+{
+  "actual_work_this_design": {
+    "GPU_or_direct_host_queries": 0,
+    "environment_transitions": 0,
+    "jobs_or_processes_started": 0,
+    "numerical_updates": 0,
+    "source_edits": 0,
+    "test_cases_executed": 0,
+    "work_performed": "Read exact published source bytes and local approved design/core receipts; write this unique design document only."
+  },
+  "at_utc": "2026-11-01T20:50:41.584593+00:00",
+  "current_code_findings": [
+    {
+      "after": "Add a separate direct_support/explicit direct plan branch, leaving default and UVA branch results unchanged. Direct branch never calls default preflight or frozen global sampler, never creates/replaces a standing lock, and yields its exact existing acquired descriptor to core custody checks.",
+      "before": "configured_support recognizes only configured_isolation. Default direct preflight runs before binding and frozen paired memory observation can use global process queries. card_admission opens a+ and yields no descriptor.",
+      "file": "measure_selected.py"
+    },
+    {
+      "after": "Only the explicit direct branch records supervisor custody, passes exactly that descriptor to Nsight, validates inherited custody in the actual child before JAX and rejects a lost descriptor. Parent never binds/initializes CUDA and retains custody through exact child/Nsight terminal and summary evidence.",
+      "before": "Parent uses measurement.card_admission but receives no descriptor. Nsight Popen does not pass that descriptor. Parent or child goes through the default direct preflight if no UVA plan.",
+      "file": "profile_selected.py"
+    },
+    {
+      "after": "Reuse existing strict query parsing, complete-window mechanics and unchanged original gate logic through explicit direct identity/qualification entry points. Keep UVA public validation and outputs fixed for existing UVA inputs; do not pass arbitrary total/model/driver overrides or present direct evidence as UVA.",
+      "before": "Sampler constructor accepts only UVA binding and has fixed20470MiB counters and UVA proof kind. Original qualification runner and raw reader include UVA-specific binding and terminal-job assumptions.",
+      "file": "configured_measurement.py"
+    }
+  ],
+  "direct_core_dependency": {
+    "author_receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fifth_author_6781231_64.json",
+      "sha256": "73f02868b1c7c6d7159aa386417f7e672e4c1eafd9ba886ccb64f65b51a52609"
+    },
+    "freeze": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fifth_source_freeze.json",
+      "sha256": "b2c047f372d2d5f9689555ae98f49cfb5b1b621167ff50411e42433bcd6046b6"
+    },
+    "independent_core_approval_and_publication_required": true,
+    "source_sha256": "c20e0c4dbeea362886cd0346a3ee1d5618c9f24b6ed5c616a969380a19066e21",
+    "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830"
+  },
+  "guard_locations": {
+    "measure_gpu_scaling.py": "Refuse direct profile/binding before any allocation/UUID query or child creation.",
+    "measure_selected.py": "Before prepare/run/import/compute reject mixed or unsupported direct flags; explicit dispatch only; prepared option overrides reject.",
+    "portable_evidence callers": "Any operational direct consumer given a resolver/portable manifest refuses. Historical unchanged original120 replay keeps its explicit frozen mappings because that is prerequisite evidence, not portable direct qualification/admission.",
+    "post_comparison_validation.py": "Recognize direct_binding/direct_record/helper declaration. Explicit intermediate native confirmation may call strict direct local reader only with matching direct profile; final/packing/current operational readers refuse.",
+    "profile_selected.py": "Direct-only baseline/qualification reader; descriptor handoff/actual-child metadata before NUM; parent GPU binding refusal.",
+    "validate_training_deployment.py": "Refuse direct binding/profile/qualification records in target/final admission or completion until separately implemented."
+  },
+  "host_and_device_sequence": [
+    "Owned-compute replay of all original120/exit before any direct contact; exact publication and explicit launch review remain prerequisites.",
+    "Actual new direct process records/fsyncs its current registration and independent copied ledger snapshot, retains immutable historical inputs, verifies live source/sentinel and exact own host/all4UIDs/birth before lock/device operations.",
+    "Explicit direct card-admission branch opens only the existing reviewed inode withO_NOFOLLOW/noO_CREAT, proves regular UID/device/inode/mode, acquires one exclusive nonblockingFLOCK and yields its descriptor. Busy/missing/changed custody refuses without CUDA or automatic retry. Defaults keep their prior behavior.",
+    "Collect core metadata under actual descriptor, initialize only exact singleton JAX, then native existing-context UUID/PCI proof, assigned-UUID hardware/proc/minor join and immutable mapped-driver capture before model/environment work.",
+    "Check H100 MIG-disabled and confidential-computing-off using only the bound exact UUID. Retain the old conservative used-memory threshold1024MiB before learner initialization, at this explicitly later post-context stage; own process is expected and foreign rows remain forbidden. If own startup allocations exceed that threshold, refuse rather than silently relax. Pre-context occupancy remains unobserved and is not claimed.",
+    "Record/capture the actually mapped backend image using the existing generic capture_backend_image contract without invoking capacity instrumentation; bind actual PID/path/SHA/package and read captured immutable bytes in later local validators.",
+    "Begin assigned observer before unchanged learner/environment warmup/test/measured work, preserve source/lock checks through all windows and publish exact direct results only after complete sampler and numerical verification."
+  ],
+  "kind": "direct_serval02_card1_producer_adapter_design",
+  "new_adapter_api": [
+    "core() loads only adjacent committed serval02_card1_binding.py",
+    "helper_names() returns conditional direct closure plus shared observer helpers",
+    "configure_plan(plan,profile,history_inputs,consumer) freezes approved direct schema",
+    "collect/direct core calls receive the actual held descriptor and optional exact parent custody receipt",
+    "bound_hardware(plan,metadata,binding) uses metadata.after.identity and fresh native/hardware proof, never the UVA process shape",
+    "validate_observer_binding(binding,unit) rechecks exact saved plan/metadata/binding and returns only the fixed direct policy identity",
+    "MemoryObservation(device,binding,reserved_directory).begin()/finish()",
+    "validate_window(proof,unit) requires full direct identity before shared fixed-policy counter/window checks",
+    "paired_observer(paired,binding,unit) replaces/restores only MemoryObservation within explicit direct work",
+    "observed_work(device,binding,directory) preserves original numerical exception and all sampler evidence",
+    "run_qualification/verify_direct_qualification_inputs/verify_saved_measurement are explicit direct-only strict entry points"
+  ],
+  "pending_root_decisions": [
+    "Approve exact minimal shared policy refactor while preserving UVA/default output semantics.",
+    "Approve explicit later post-current-context conservative1024MiB/H100 mode checks and honest unobserved pre-context scope; no silent replacement of old default preflight evidence.",
+    "Approve implementation only after direct core independent approval/publication; no source edits under this design."
+  ],
+  "plan_and_cli": {
+    "history_gate": "Rebuild exact initial120 raw cases and exact original25-owned-job/direct-child exit from true frozen snapshots on owned compute before any new contact. Recheck on the new actual process before lock/CUDA. No completed-fifty proof or prior new direct qualification is required to run the standalone qualification.",
+    "new_explicit_options": [
+      "--direct-binding-profile",
+      "--direct-history-inputs",
+      "--direct-target-qualification",
+      "--direct-qualification-record",
+      "--direct-qualification-review"
+    ],
+    "ordinary_gate": "Intermediate correctness/confirmation/profile require actual complete direct qualification and exact independent direct-process terminal review for this UUID/software/source/asset/profile. Profile also keeps the existing complete original summaries and explicit accepted intermediate baseline confirmation. No final/fifty admission is introduced.",
+    "preparation_refusal": "Reject mixed UVA/direct flags, unknown profile, missing exact history, wrong UUID/context, capacity/final/learning/scaling/portable fields and any preparation option with --prepared-unit. Private inherited-FD capture option is accepted only for its exact prepared direct profile capture child.",
+    "qualification_fields": "Use separate direct_qualification protocol and direct_qualification_inputs, separate direct_qualification_result.json kind direct_serval02_card1_full_original_qualification. Never reuse UVA result kind or review schema.",
+    "source_fields": "Add only plan.direct_binding using the approved core schema. Known authorized UUID remains literal; physical PCI/minor/context remain pending in the immutable plan. Do not create configured_isolation or rewrite measurement_plan.json."
+  },
+  "profiling_descriptor_chain": {
+    "child": "Wait for existing exact capture release, prove parent/Nsight/child births, process group and own inherited descriptor fstat/fdinfo/FLOCK with original holderPID. Use unit direct metadata and binding. Missing/dropped/renumbered/ambiguous descriptor refuses before CUDA; no second acquisition or busy-path inference.",
+    "launch": "Popen passes only the recorded lock descriptor with pass_fds=(fd,), start_new_session=True, exact recorded command/PID/birth and current launch refs. The private child descriptor value is an actual sidecar/argv observation, never a frozen-plan placeholder rewrite.",
+    "supervisor": "Metadata only; output unit/supervisor/direct_process_metadata.json. Hold the actual acquired descriptor through capture, terminal proof and trace summaries. It must never create a device binding.",
+    "terminal": "Retain exact actual child/Nsight return, PID/birth/command/capture refs and positive trace/API summaries before parent descriptor closes. Cleanup touches only this newly created recorded profiler group. Failure evidence remains distinct from valid profile evidence."
+  },
+  "proposed_file_ownership": {
+    "new": "direct_measurement.py and tests/test_direct_measurement.py",
+    "producer_changes": [
+      "measure_selected.py",
+      "profile_selected.py"
+    ],
+    "protected": [
+      "serval02_card1_binding.py after independent approval/publication",
+      "uva_slurm_configured_isolation.py and its exact service/configuration policy",
+      "all frozen numerical D28 files",
+      "original admission,worker process and attempted packets"
+    ],
+    "shared_mechanics_only": "configured_measurement.py; bounded internal literal policy dispatch for shared sampling/window/original-gate mechanics, with existing public UVA behavior retained",
+    "tests": [
+      "tests/test_measure_selected.py",
+      "tests/test_profile_selected.py",
+      "tests/test_configured_measurement.py",
+      "focused unsupported-reader/staging tests"
+    ],
+    "unsupported_reader_guards": [
+      "post_comparison_validation.py",
+      "validate_training_deployment.py",
+      "measure_gpu_scaling.py"
+    ]
+  },
+  "published_producer_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
+  "qualification_logic": {
+    "configuration": "Exactly one policy copy,128environments,128rollout steps,four epochs,four minibatches,50normalization-warmup rollouts,whole-iteration group1/no report readout and original full2B-schedule configuration. Equal reference/candidate allowed only for this explicit zero-credit qualification; ordinary equality rejection remains.",
+    "controlled_learning": "After full tests/renderer, initialize/warm the original trainer and perform one actual complete reference update. Require actual iteration1/optimizer16,parameters/target/optimizer float32 and statistics float64, finite state,frozen target unchanged and policy changed. Retain actual state/counter evidence.",
+    "credits": "Every qualification credit exactly integer0;worker_admitted=false,admission_granted=false. New actual qualification does not edit original SOURCE_AND_GATES_READY or admit workers.",
+    "original_gates": "Reuse audited full original runner and contracts through explicit identity-bound helper arguments; no UVA configuration policy calls. All collected original48 test cases and complete renderer33rooms/four variants/132cases/eleven synthetic cases must be reconstructed from pinned source and actual reports, not copied success labels. Same already bound actual process runs pytest.main and renderer.",
+    "preconditions": "Only approved direct source/history/exit/current process/lock and exact full original software/assets/source inputs. No prior direct qualification,accepted baseline,completed-fifty proof or final record can be required for this first qualification.",
+    "saved_reader": "Distinct direct strict local reader rederives full source/config/renderer/test/precision/memory/library/asset evidence and exact actual own direct-process terminal status0 with PID/birth and launch/lock refs. It cannot reuse UVA job_id review fields or accept an old generic success.",
+    "software": "Bind full exact original CleanRL source, actual shared package/JAXtari/assets software metadata and actual current mapped libraries. Shared UVA software metadata supplies package/assets bytes only; it does not infer H100 driver or physical identity. Use separately captured590.48.01 current driver/backend evidence.",
+    "work_accounting": "Record controlled warmup819200agent transitions and training16384agent transitions only after actual counters confirm those operations; these are not raw game frames. Record complete actual test collection/outcomes and renderer case counts, but leave test/renderer/whole-job transition totals unknown. No whole-job total is invented and no zero-credit run is represented as the final2B training."
+  },
+  "schema_version": 1,
+  "scope": {
+    "consumers": [
+      "standalone full-original zero-credit qualification",
+      "intermediate selected correctness",
+      "intermediate selected confirmation",
+      "component profile"
+    ],
+    "driver": "590.48.01",
+    "gpu_count": 1,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "hostname": "serval02",
+    "model": "NVIDIA H100 NVL",
+    "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "physical_memory_mib": 95830,
+    "unsupported": [
+      "packing",
+      "instrumented device capacity",
+      "final confirmation",
+      "learning-check",
+      "fixed-total or multi-GPU scaling",
+      "final training",
+      "portable admission/readers",
+      "another host,UUID,driver,total or profile"
+    ]
+  },
+  "shared_observer_design": {
+    "boundaries": "Begin/end recheck core.check_live_admission including current detached-clean exact source bytes and core.live_custody on the same descriptor/holder birth. Shutdown and raw proof publication must still occur when that recheck or allocator sampling fails. Original numerical exception keeps precedence.",
+    "entry": "The shared MemoryObservation constructor may dispatch only on exact validated binding kinds. Existing UVA kind keeps its current hardcoded policy. Direct kind must call direct_measurement.validate_observer_binding; unknown/mixed kinds refuse before any query.",
+    "no_arbitrary_override": "Internal policy names are literal reviewed UVA-A4500 or direct-serval02-card-one; each fixes proof kind and expected total. No caller-provided total/model/driver or arbitrary callback can create admission.",
+    "paired": "Temporarily replace frozen paired.MemoryObservation only within direct selected work and restore it on success/failure. Executor, seeds, precision, update windows, reports, numerical tolerances,confirmation thresholds and>=15percent actual physical free-memory rule stay unchanged.",
+    "proof": "Use separate direct_assigned_uuid_own_process_complete_window_v1 proof kind with exact plan/metadata/binding refs, actual process PID/birth and original selector. Each physical sample must be exact95830MiB from the actual bound hardware; CUDA/allocator totals remain separate.",
+    "pure_reuse": "Reuse configured_measurement.bounded_query, process_sample and validate_process_sample unchanged. Factor current window counter/timing validation into a private helper taking only one literal policy name. Public configured validate_window stays UVA-only; direct validate_window calls its literal policy only after complete direct saved-binding verification.",
+    "sampling": "Retain0.2s interval, successful initial/final boundaries, joined sampler, alive-at-stop and normal-requested-stop evidence, anonymous failed/foreign capture facts, strictUTF8/raw hashes/counts and existing contamination/headroom/timing rules. Assigned-UUID occupancy uses only approved gpu_uuid,pid,used_gpu_memory query and exactly the actual child PID; no foreign-process inspection.",
+    "startup": "Record startup_memory_observed=false because CUDA initialization precedes current-context binding. Never claim lifetime memory/peak coverage; capacity/startup instrumentation remains unsupported."
+  },
+  "source_evidence": {
+    "configured_measurement.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "sha256": "29ecb15d446ecc4b9e43d2754f0d87b354be438fa411693481db3ef43465eddd"
+    },
+    "device_memory_limit.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    "measure_gpu_scaling.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py",
+      "sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3"
+    },
+    "measure_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f"
+    },
+    "post_comparison_validation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888"
+    },
+    "profile_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "sha256": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571"
+    },
+    "validate_training_deployment.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1"
+    }
+  },
+  "staging_and_tests": {
+    "closure": "Default helper list unchanged. UVA list unchanged. Explicit direct selected/profile list is union of producer/shared observer/direct adapter and approved direct core22helpers, each committed/disk/stagedSHA checked. No unconditional new sibling import.",
+    "future_gpu_tests": "After source independent review/publication and exact old120/exit, root may authorize a separately reviewed full-original zero-credit direct qualification and separately scoped actual Nsight descriptor/capture check. No GPU launch is authorized by this design.",
+    "metadata_only_required": [
+      "Default,UVA,direct and combined cold -I-B staged imports; missing direct sibling/changed staged byte refusal without ambient fallback",
+      "Unknown/mixed profile,context,UUID,source,history,qualification,capacity/final/learning/scaling/portable flags and prepared overrides refuse",
+      "Own/inherited fd custody,wrong parent/child birth,dropped descriptor and parent binding substitution refuse before NUM",
+      "Direct total/model/driver cannot be changed or replaced by UVA values; old UVA sampler outputs and default helper tuples remain identical",
+      "Assigned-only device/process commands,encoding/capture/foreign-row failures,sampler unexpected exit,normal repeated close,allocator error and original numerical-error precedence",
+      "Full-original standalone qualification needs no prior qualification/fifty evidence and retains exact full config,test source roster and33/132/11renderer; reduced matrix/skip/Boolean impostors refuse",
+      "Saved direct qualification/intermediate/profile reader rederives actual raw records and terminal ownprocess proof; no generic successful result or remembered UUID substitutes",
+      "Unsupported formal/packing/final/scaling/portable readers reject;conditional helper union remains complete"
+    ]
+  },
+  "status": "design_only_pending_independent_and_root_review"
+}

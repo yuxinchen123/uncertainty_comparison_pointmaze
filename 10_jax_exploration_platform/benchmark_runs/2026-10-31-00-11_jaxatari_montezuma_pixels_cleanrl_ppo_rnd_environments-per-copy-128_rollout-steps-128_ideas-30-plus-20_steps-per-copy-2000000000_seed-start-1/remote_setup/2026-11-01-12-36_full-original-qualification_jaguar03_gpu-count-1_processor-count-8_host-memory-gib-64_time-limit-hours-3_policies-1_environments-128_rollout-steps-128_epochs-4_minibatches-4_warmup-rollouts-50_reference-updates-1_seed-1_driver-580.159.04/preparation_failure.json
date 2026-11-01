@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "job_id": "6781231",
+  "step_id": "65",
+  "error_type": "RuntimeError",
+  "error": "device/library/network operation forbidden during preparation",
+  "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/prepare_packet.py\", line 96, in <module>\n    try:main()\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/prepare_packet.py\", line 42, in main\n    import diagnose_gpu_execution as diagnostic\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-12-36_full-original-qualification-source_commit-43eade68238a8d010ad1d1ea681e348022a00060/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py\", line 10, in <module>\n    import ctypes\n  File \"/usr/lib/python3.10/ctypes/__init__.py\", line 464, in <module>\n    pythonapi = PyDLL(None)\n  File \"/usr/lib/python3.10/ctypes/__init__.py\", line 374, in __init__\n    self._handle = _dlopen(self._name, mode)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/prepare_packet.py\", line 24, in audit\n    BLOCKED.append([event,str(args)[:200]]);raise RuntimeError('device/library/network operation forbidden during preparation')\nRuntimeError: device/library/network operation forbidden during preparation\n",
+  "commands": [],
+  "blocked_attempts": [
+    [
+      "ctypes.dlopen",
+      "(None,)"
+    ]
+  ],
+  "no_submission": true,
+  "gpu_operations": 0
+}

@@ -1,0 +1,53 @@
+{
+  "actual_binding_or_release_performed": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-01T20:45:05.388514+00:00",
+  "basename_bytes": 254,
+  "case_credit": 0,
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04",
+  "final_inputs_name": "owned_allocation_inputs.json",
+  "final_keys": [
+    "schema_version",
+    "kind",
+    "job_id",
+    "plan",
+    "ledger",
+    "submissions",
+    "submission",
+    "release",
+    "submission_row"
+  ],
+  "final_kind": "uva_configured_isolation_owned_inputs",
+  "gpu_uuid_in_frozen_plan": null,
+  "helper_source_root": "/p/rlprojects/RND_worktrees/2026-11-01-12-36_full-original-qualification-source_commit-43eade68238a8d010ad1d1ea681e348022a00060",
+  "idea_credit": 0,
+  "job_id": null,
+  "kind": "uva_full_original_qualification_pre_release_interface",
+  "measurement_plan_name": "measurement_plan.json",
+  "measurement_prepared_name": "measurement_prepared.json",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04",
+  "permitted_derivation": "Preserve every pre-release field exactly; change only kind and add release={path,sha256} referencing the actual successful fsynced release receipt.",
+  "pre_release_inputs_name": "configured_isolation_pre_release_inputs.json",
+  "pre_release_keys": [
+    "schema_version",
+    "kind",
+    "job_id",
+    "plan",
+    "ledger",
+    "submissions",
+    "submission",
+    "submission_row"
+  ],
+  "pre_release_kind": "uva_configured_isolation_pre_release_inputs",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
+  "startup_barrier": {
+    "clock": "monotonic",
+    "failure_evidence": "Retain actual absent/failed metadata and elapsed time without repair or retry.",
+    "maximum_seconds": 180,
+    "position": "before srun and any numerical import or device access",
+    "present_file_action": "Require exact pre/final derivation and strict core.owned_inputs. Malformed,conflicting,failed or symlinked input refuses immediately.",
+    "wait_only_while_final_file_absent": true
+  }
+}

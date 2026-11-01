@@ -1,0 +1,32 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-01T20:37:55.257175+00:00",
+  "frozen_plan_rewrite_permitted": false,
+  "job_id": null,
+  "kind": "actual_release_receipt_and_startup_order_review",
+  "maximum_startup_wait_seconds": 180,
+  "placeholder_hash_permitted": false,
+  "procedure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_jaguar03-full-original-qualification-release-preparation_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3/release_preparation.json",
+    "sha256": "7b0bb8a0b5af5031581acd2100936c02372bb59bf7ec23faac9506f217cd6d7f"
+  },
+  "release_executed": false,
+  "required_metadata_cases": [
+    "Complete actual-shaped release/input chain proceeds without wait",
+    "Absent sidecar then complete chain proceeds within180seconds",
+    "Absent sidecar at180seconds refuses before numerical imports/device operations",
+    "Partial or conflicting sidecar refuses and retains metadata",
+    "Changed receipt/plan/ID/ledger/row/release bytes refuse",
+    "Default/fixed-source plan remains byte-identical"
+  ],
+  "root_reviewed_sequence": [
+    "Freeze actual held submission,plan,and copied ledger bindings",
+    "Job metadata wait, maximum180seconds, before numerical imports or device access",
+    "One exact fixed-owned-ID release",
+    "Fsync actual scheduler return,stdout,stderr and release receipt",
+    "Atomically/fsync final owned_allocation_inputs with the actual release receipt SHA"
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "waiting_behavior": "Only absent final input file may continue waiting; malformed, conflicting, symlinked or failed referenced data must preserve failure and refuse. Complete exact input chain returns only after strict owned-input verification. Deadline uses monotonic elapsed time."
+}

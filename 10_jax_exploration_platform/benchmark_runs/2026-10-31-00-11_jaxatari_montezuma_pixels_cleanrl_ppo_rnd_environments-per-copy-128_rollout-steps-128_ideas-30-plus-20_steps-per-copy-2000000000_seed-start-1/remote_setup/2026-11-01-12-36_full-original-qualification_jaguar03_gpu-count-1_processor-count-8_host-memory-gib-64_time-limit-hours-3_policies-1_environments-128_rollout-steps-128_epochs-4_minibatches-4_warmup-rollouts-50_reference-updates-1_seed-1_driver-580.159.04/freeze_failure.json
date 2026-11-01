@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "packet_freeze_author_check_failure",
+  "job_id": "6781231",
+  "step_id": "68",
+  "error_type": "KeyError",
+  "error": "num_iterations_obs_norm_init",
+  "meaning": "Author verification script used a non-existent learner field; actual immutable plan correctly records observation_warmup_iterations=50. Failure occurred before launch files or manifests were written.",
+  "source_sha256": "2b22619ed1d8d008cffa70c1846f55a16ec2a89e6ba99a4d078e585e07e4ebc0",
+  "accounting_file": "freeze_accounting.txt",
+  "accounting_command": [
+    "sacct",
+    "-j",
+    "6781231",
+    "--noheader",
+    "--parsable2",
+    "--format=JobIDRaw,State,ExitCode,Start,End"
+  ],
+  "no_submission": true,
+  "no_gpu_operations": true
+}

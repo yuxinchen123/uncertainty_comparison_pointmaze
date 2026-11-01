@@ -1,0 +1,130 @@
+{
+  "at_utc": "2026-11-01T20:37:34.674082+00:00",
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "data_unit": null,
+  "executable_release_command": null,
+  "job_id": null,
+  "kind": "uva_full_original_qualification_release_preparation",
+  "limitations": [
+    "This is a local procedure only, not an executable release authorization.",
+    "No submission, binding, release, scheduler query, SSH, serval02 contact, GPU/library action or admission occurred.",
+    "Historical fixed-ID utilities are references only and will not be edited or reused with text substitution in an attempted packet."
+  ],
+  "not_yet_available": [
+    "Actual unique packet/data directories and all preparation hashes",
+    "Actual held returned job ID and exact local ledger membership",
+    "Actual submission and held identifier bindings",
+    "Fresh full-monitor held proof",
+    "Fixed-ID release utility, tests and independent approval",
+    "Publication commit containing every concrete release input"
+  ],
+  "owned_input_contract": {
+    "keys": [
+      "schema_version",
+      "kind",
+      "job_id",
+      "plan",
+      "ledger",
+      "submissions",
+      "submission",
+      "release",
+      "submission_row"
+    ],
+    "kind": "uva_configured_isolation_owned_inputs",
+    "ledger_snapshot": "<actual data unit>/configured_isolation_owned_job_ids.txt",
+    "plan": "<actual data unit>/measurement_plan.json receipt",
+    "release_kind": "owned_uva_configured_isolation_release",
+    "required_release_fields": [
+      "schema_version=1 exact integer",
+      "kind",
+      "cluster=uva",
+      "job_id exact actual ID",
+      "plan_sha256",
+      "data_unit",
+      "returncode=0 exact integer",
+      "command=[scontrol,release,actual ID]",
+      "submission_receipt_sha256"
+    ],
+    "row": [
+      "actual job ID",
+      "actual measurement plan kind",
+      "plan.helpers.source_commit",
+      "absolute packet/job.sbatch"
+    ],
+    "schema_version": 1,
+    "submission_kind": "owned_uva_configured_isolation_submission",
+    "submissions_snapshot": "<actual data unit>/configured_isolation_owned_submissions.tsv"
+  },
+  "packet": null,
+  "required_sequence": [
+    {
+      "requires": "Actual four standard records and complete source/asset/configuration/static preparation verification from the packet author. Compare every immutable packet/data file with published source43eade and the frozen original numerical source. Preserve unresolved GPU UUID and plan identities.",
+      "stage": "packet_review"
+    },
+    {
+      "requires": "Root submits once with --hold and --no-requeue, saves every actual sbatch return, appends/fsyncs exact returned ID to separate UVA/global ledgers and exact four-column submissions.tsv row, then saves immutable actual submission receipt. No guessed job ID.",
+      "stage": "one_held_submission"
+    },
+    {
+      "requires": "Freeze exact actual ID, source, script, data unit, receipt, separate immutable copied ledgers/row and held binding. Do not update the frozen plan. Original numerical/helper checkouts remain clean and unchanged.",
+      "stage": "actual_held_binding"
+    },
+    {
+      "requires": "Actual current persistent full report and same-turn recurring or approved persistent-monitor evidence cover this exact owned ID. Save full owned scontrol query before parsing. Verify PENDING/JobHeldUser, owner2618919/sl5nw, account/partition/QOS, exact requested jaguar03 reservation and typed single A4500, eight CPUs,64GiB,three hours, Requeue0/Restarts0. Use actual packet/account/resource spelling; never infer physical GPU from Slurm selector.",
+      "stage": "monitor_review"
+    },
+    {
+      "requires": "Only after actual ID exists, author fixed-ID one-shot utility, frozen input snapshot, focused metadata tests and independent/root review. Its only mutation command is [scontrol,release,<actual owned ID>]. Default mode is local validation only. Require all exact utility/review/held proof/submission/prepared bytes published before action.",
+      "stage": "concrete_release_utility"
+    },
+    {
+      "requires": "Validate ordinary paths, all immutable bytes/source/private interpreter as applicable, no prior release artifacts and exact owned ledgers. Create an exclusive fsynced release intent before any live query. Query only the fixed owned job once, retain raw stdout/stderr/return bytes before strict validation. Any error retains evidence and prevents automatic retry.",
+      "stage": "exclusive_attempt"
+    },
+    {
+      "requires": "After fresh exact held query succeeds, issue one exact scontrol release. Fsync raw command return, stdout/stderr and successful owned_uva_configured_isolation_release receipt before derived input publication. Preserve unexpected return/timeout and never retry/release again.",
+      "stage": "single_release"
+    },
+    {
+      "requires": "Derive and atomically publish owned_allocation_inputs.json only from actual successful release receipt and pre-reviewed actual plan/ledger/submission hashes. Its release ref includes the exact actual receipt SHA. Verify with the current strict core reader. No future receipt is fabricated; frozen plans stay unchanged.",
+      "stage": "actual_owned_inputs"
+    },
+    {
+      "requires": "Packet must wait for complete final owned inputs and exact referenced release receipt before any numerical import, CUDA/library/device operation or learner initialization. Wait is bounded, metadata-only and fail-closed, preserving partial failure. This covers immediate scheduler start after release while local receipt publication finishes.",
+      "stage": "startup_barrier"
+    },
+    {
+      "requires": "Root verifies the actual owned job/report and raw gates. Execution and saved result provide zero worker/science/case/idea admission until separate full independent evidence review.",
+      "stage": "post_release"
+    }
+  ],
+  "reviewed_mechanics": {
+    "current_owned_input_reader": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    "previous_fixed_id_release": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py",
+      "sha256": "d644c53cf0239c4ab3554e695c004f9b34ebf432c047a999b57757fc02e57b0d"
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "admission_granted": false,
+    "automatic_retry_permitted": false,
+    "case_credit": 0,
+    "cluster": "uva",
+    "host": "jaguar03",
+    "idea_credit": 0,
+    "requested_cpu_count": 8,
+    "requested_gpu_count": 1,
+    "requested_gpu_type": "a4500",
+    "requested_host_memory_gib": 64,
+    "scientific_credit": 0,
+    "serval02_contact": false,
+    "time_limit_hours": 3,
+    "worker_admitted": false
+  },
+  "source_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
+  "state": "waiting_for_actual_packet_and_one_held_submission"
+}
