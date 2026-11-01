@@ -80,7 +80,7 @@ def training_assets(record, expected, evidence):
     return identity, str(physical_manifest), str(physical_root)
 
 
-def validate_deployed_training_admission(path, resolver=None):
+def validate_deployed_training_admission(path, resolver=None, *, historical_read_only=False):
     """Rebuild the exact deployment receipt and admit its explicit operational source/configuration/seeds."""
     evidence = validation.Evidence(resolver)
     specification = evidence.read(path)
@@ -104,7 +104,8 @@ def validate_deployed_training_admission(path, resolver=None):
             or receipt.get("specification_digest") != validation.canonical_digest(receipt["specification"])):
         raise ValueError("deployment verification needs its exact original specification and explicit specification_path")
     rebuilt = deployment.validate_deployment(receipt["specification"], resolver=resolver,
-                                             specification_path=receipt["specification_path"])
+                                             specification_path=receipt["specification_path"],
+                                             historical_read_only=historical_read_only)
     if rebuilt != receipt:
         raise ValueError("deployment raw evidence changed or no longer passes its recorded target/global gates")
     runtime = validation.runtime_environment(specification["runtime_environment"])

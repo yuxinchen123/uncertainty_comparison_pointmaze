@@ -31,7 +31,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import launch_queue
 
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
-TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "short_learning.py", "portable_evidence.py", "infrastructure_retry.py", "pregather_async_retry.py",
+                 "device_memory_limit.py", "validate_training_deployment.py",
                  "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                  "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
                  "controller.py", "ideas.py",
@@ -107,6 +108,23 @@ def verify_receipt(receipt):
         raise ValueError("an original admission/evidence file changed: " + receipt["path"])
 
 
+def reader_feature_dependencies(trees):
+    """Retain shared portable files for either committed reader while preserving older caller identities."""
+    features = {"SHORT_LEARNING_MODULE": ("short_learning.py", {"short_learning.py", "portable_evidence.py"}),
+        "DEVICE_MEMORY_LIMIT_MODULE": ("device_memory_limit.py", {"device_memory_limit.py", "validate_training_deployment.py", "portable_evidence.py"})}
+    needed = set()
+    for tree in trees:
+        for node in tree.body:
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id in features:
+                        name, dependencies = features[target.id]
+                        if not isinstance(node.value, ast.Constant) or node.value.value != name:
+                            raise ValueError("a committed final reader changed its declared dependency filename")
+                        needed.update(dependencies)
+    return needed, set().union(*(value[1] for value in features.values()))
+
+
 def frozen_helpers(root, commit):
     """Pin the original runtime closure required by the committed caller source."""
     root = Path(root).resolve(strict=True)
@@ -125,6 +143,9 @@ def frozen_helpers(root, commit):
     if not any(isinstance(node, ast.Constant) and node.value == "pregather_async_retry.py"
                for tree in callers for node in ast.walk(tree)):
         paths.remove(PREFIX + "pregather_async_retry.py")
+    needed, universe = reader_feature_dependencies(callers)
+    for name in universe - needed:
+        paths.remove(PREFIX + name)
     h100_declared = any(isinstance(node, ast.Constant) and node.value == "h100_nvl_slurm_queue.py"
                        for tree in callers for node in ast.walk(tree))
     if not h100_declared:
@@ -262,6 +283,9 @@ def prepared_unit(run, proposal):
     specification, admitted = (read(paths[key]) for key in ("final_specification", "training_admission_receipt"))
     receipt = admitted.get("validation", {})
     final = read(specification["final_verification"])
+    if (type(final.get("schema_version")) is not int or final["schema_version"] != 2
+            or final.get("short_learning_checks_passed") is not True or final.get("fixed_total_scaling_complete") is not True):
+        raise ValueError("new final workers require version-two learning and fixed-total validation")
     if (receipt.get("kind") != "training_admission" or receipt.get("specification_digest") != digest(specification)
             or receipt.get("source_commit") != specification["source_commit"]
             or receipt.get("configuration_digest") != digest(specification["configuration"])
@@ -438,6 +462,11 @@ def verify_unit(unit):
         raise ValueError("final unit no longer owns its unique reserved global seed block")
     if frozen_helpers(unit["helpers"]["source_root"], unit["helpers"]["source_commit"]) != unit["helpers"]:
         raise ValueError("the original final-unit helper identity changed")
+    validator = module(unit, "post_comparison_validation.py")
+    if not hasattr(validator, "require_current_final"):
+        raise ValueError("historical final readers cannot authorize a current worker or completion")
+    specification = read(unit["final_specification"]["path"])
+    validator.require_current_final(read(specification["final_verification"]))
 
 
 def final_training_identity(run, unit):

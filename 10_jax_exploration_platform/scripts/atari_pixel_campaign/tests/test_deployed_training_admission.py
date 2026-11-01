@@ -31,7 +31,7 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
         self.fixture.setUp()
         self.directory = self.fixture.directory
         self.deployment_specification = self.fixture.write(self.directory / "deployment_specification.json", self.fixture.specification)
-        self.deployment = admission.deployment.validate_deployment(self.fixture.specification, specification_path=self.deployment_specification)
+        self.deployment = self.fixture.read_historical_deployment(self.fixture.specification, specification_path=self.deployment_specification)
         self.receipt = self.fixture.write(self.directory / "deployment_verification.json", self.deployment)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -53,12 +53,16 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
         """Retain exact test input bytes after an explicit requested-field mutation."""
         self.fixture.write(self.path, self.specification)
 
+    def read_historical_admission(self, path, **options):
+        """Read the original operational fixture only through the explicit historical metadata path."""
+        return admission.validate_deployed_training_admission(path, historical_read_only=True, **options)
+
     def test_target_selected_count_is_compatible_with_training_specification_validation(self):
         """The deployed two-policy configuration is admitted separately from the global NVL count of one."""
         original = self.path.read_bytes()
         with patch.object(admission.validation, "validate_training_admission", side_effect=AssertionError("old NVL admission must not be used")), \
                 patch.object(Path, "rglob", side_effect=AssertionError("admission must not walk game assets")):
-            admitted = admission.validate_deployed_training_admission(self.path)
+            admitted = self.read_historical_admission(self.path)
         self.assertEqual(admitted["configuration"]["learner"]["n_copies"], 2)
         self.assertEqual(admitted["validation"]["kind"], "deployed_training_admission")
         self.assertEqual(admitted["copy_seeds"], [1001, 1002])
@@ -73,33 +77,33 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
 
     def test_api_deployment_receipt_with_explicit_none_path_is_also_rebuilt(self):
         """Direct API receipts remain explicit, with no inferred specification-file search."""
-        direct = admission.deployment.validate_deployment(self.fixture.specification)
+        direct = self.fixture.read_historical_deployment(self.fixture.specification)
         self.assertIsNone(direct["specification_path"])
         self.fixture.write(self.receipt, direct)
         self.specification["deployment_verification_sha256"] = hashlib.sha256(self.receipt.read_bytes()).hexdigest()
         self.write_specification()
-        self.assertEqual(admission.validate_deployed_training_admission(self.path)["validation"]["selected_copies"], 2)
+        self.assertEqual(self.read_historical_admission(self.path)["validation"]["selected_copies"], 2)
 
     def test_changed_receipt_hash_or_missing_original_specification_path_is_rejected(self):
         """A receipt cannot be replaced or admitted through an unissued prototype format."""
         self.specification["deployment_verification_sha256"] = "a" * 64
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "required SHA256"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
         changed = copy.deepcopy(self.deployment)
         changed.pop("specification_path")
         self.fixture.write(self.receipt, changed)
         self.specification["deployment_verification_sha256"] = hashlib.sha256(self.receipt.read_bytes()).hexdigest()
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "explicit specification_path"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_changed_raw_target_evidence_invalidates_the_saved_deployment(self):
         """Even still-parseable raw data cannot reuse a saved raw-evidence deployment receipt."""
         path = Path(self.fixture.specification["confirmation_record"])
         path.write_bytes(path.read_bytes() + b"\n")
         with self.assertRaisesRegex(ValueError, "deployment raw evidence changed"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_operational_config_seed_source_runtime_and_unit_must_match_target(self):
         """Explicit operational fields cannot replace the count/configuration established on PCIe."""
@@ -113,13 +117,13 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
             self.specification = {**original, key: value}
             self.write_specification()
             with self.subTest(field=key), self.assertRaises(ValueError):
-                admission.validate_deployed_training_admission(self.path)
+                self.read_historical_admission(self.path)
         changed = copy.deepcopy(original["configuration"])
         changed["learner"]["anneal_learning_rate"] = 1
         self.specification = {**original, "configuration": changed}
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "exact target"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_an_identical_global_proof_at_another_path_is_not_the_declared_identity(self):
         """The operational specification retains the exact globally verified logical proof path."""
@@ -128,18 +132,18 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
         self.specification["final_verification"] = str(other)
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "another global final-verification"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_operational_asset_manifest_must_match_the_deployment_asset_identity(self):
         """A different manifest cannot be introduced by changing its operational SHA alongside it."""
         path = Path(self.specification["asset_record"]["manifest"])
         path.write_bytes(path.read_bytes() + b"\n")
         with self.assertRaisesRegex(ValueError, "asset manifest differs"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
         self.specification["asset_record"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "game assets differ"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_full_ast_fields_and_actual_detached_git_roots_are_required(self):
         """Unknown/missing fields and an archive below a Git root cannot borrow its identity."""
@@ -152,11 +156,11 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
         self.specification["jaxtari_source_root"] = str(archive)
         self.write_specification()
         with self.assertRaisesRegex(ValueError, "unchanged detached Git source"):
-            admission.validate_deployed_training_admission(self.path)
+            self.read_historical_admission(self.path)
 
     def test_portability_keeps_logical_specification_and_returns_physical_paths_separately(self):
         """Deleting every original source/evidence path changes transport locations, not training identities."""
-        original = admission.validate_deployed_training_admission(self.path)
+        original = self.read_historical_admission(self.path)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         staging = Path(temporary.name)
@@ -184,7 +188,7 @@ class DeployedTrainingAdmissionTests(unittest.TestCase):
         resolver = admission.portable_evidence.ExactPathResolver(manifest_path)
         shutil.rmtree(self.directory)
         shutil.rmtree(self.fixture.fixture.directory)
-        moved = admission.validate_deployed_training_admission(self.path, resolver=resolver)
+        moved = self.read_historical_admission(self.path, resolver=resolver)
         self.assertEqual(moved["validation"], original["validation"])
         for key, value in self.specification.items():
             self.assertEqual(moved[key], value)

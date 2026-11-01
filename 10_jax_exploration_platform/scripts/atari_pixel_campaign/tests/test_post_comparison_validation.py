@@ -482,7 +482,7 @@ class PostComparisonTests(unittest.TestCase):
                 VALIDATION.validate_final_verification(self.specification)
 
     def test_admission_revalidates_hashes_and_binds_exact_runtime(self):
-        """Changed raw evidence and a different compiler runtime cannot reuse an admitted final receipt."""
+        """Historical reads still revalidate bytes; their old protocol cannot authorize a new worker."""
         receipt = VALIDATION.validate_final_verification(self.specification)
         final = self.write("final_verification.json", receipt)
         training = self.write("training.json", {"schema_version": 1, "source_root": str(self.source),
@@ -492,13 +492,15 @@ class PostComparisonTests(unittest.TestCase):
         def source_query(command, **options):
             """Retain actual source/Git reads while suppressing unrelated test-tree status changes."""
             return "" if "status" in command else original_query(command, **options)
+        with self.assertRaisesRegex(ValueError, "version-two"):
+            VALIDATION.validate_training_admission(training)
         with patch.object(VALIDATION.subprocess, "check_output", side_effect=source_query):
-            admitted = VALIDATION.validate_training_admission(training)
+            admitted = VALIDATION.validate_training_admission(training, historical_read_only=True)
         self.assertEqual(admitted["validation"]["selected_copies"], 1)
         path = Path(self.specification["contexts"]["h100"]["confirmation_record"])
         path.write_text(path.read_text() + "\n")
         with self.assertRaisesRegex(ValueError, "evidence changed"):
-            VALIDATION.validate_training_admission(training)
+            VALIDATION.validate_training_admission(training, historical_read_only=True)
 
     def test_completion_requires_exact_budget_and_checkpoint_bytes(self):
         """Verify the finished checkpoint through its readable sidecar without unpickling arrays."""
