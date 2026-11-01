@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-01T22:22:59.316663+00:00",
+  "target_job_id": "6782778",
+  "approved_for_exact_one_release_after_publication": true,
+  "source_sha256": "7240b11f232a329f3cd09471f7caedcf831d6492c24a0ee2598981265b4bdf9e",
+  "source_read_in_full": true,
+  "publication_roster_sha256": "425e8cd57ab026b8591bf2db559de823c97d8389a012d14d523aeaab67edbef8",
+  "verified_roster_files": 77,
+  "author_tests_passed": 12,
+  "independent_tests_passed": 16,
+  "independent_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-19-52_qualification-release-independent-review_job-6782778_gpu-count-0_processor-count-1/review.json",
+  "independent_review_sha256": "8559ec75be0f048939e5f860e39355e96a730f64da5cd3204e15104b6a4c4223",
+  "local_default_exit_code": 0,
+  "local_default_scheduler_queries": 0,
+  "local_default_release_calls": 0,
+  "intent_exists": false,
+  "basis": [
+    "Exact fresh job and resource shape; all frozen original packet inputs preserved",
+    "Default performs only read-only metadata checks",
+    "Exclusive durable intent precedes exact owned held query and a single release",
+    "Successful actual release receipt is durable before atomic final owned inputs",
+    "Actual staged core validates final inputs; failures remain failures with no repeated action"
+  ],
+  "scientific_credit": 0,
+  "qualification_credit": 0
+}

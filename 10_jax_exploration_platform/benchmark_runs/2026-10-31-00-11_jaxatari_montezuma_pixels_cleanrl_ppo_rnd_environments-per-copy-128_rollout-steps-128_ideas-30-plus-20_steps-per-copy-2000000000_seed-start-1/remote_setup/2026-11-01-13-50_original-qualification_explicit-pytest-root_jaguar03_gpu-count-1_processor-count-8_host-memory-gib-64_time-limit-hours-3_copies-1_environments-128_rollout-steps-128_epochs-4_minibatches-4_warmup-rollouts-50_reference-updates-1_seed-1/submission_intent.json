@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "kind": "owned_uva_configured_isolation_submission_intent",
+  "at_utc": "2026-11-01T22:04:22.886353+00:00",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=03:00:00",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch"
+  ],
+  "publication_commit": "c14a408c09766cdcc5dd764d46fd73d74b92c309",
+  "plan_sha256": "7ba87ca5feb87aecc756d5d19e7b2a382f8c654c014a1187aef2d6b9388dbbbd",
+  "script_sha256": "0e707010b2f1d0851c160a65ae5ec4ac98e1bf7e9834152007637565de86158d",
+  "root_review_sha256": "c7eab8ecda71fbf9bac3332fe4719a02725e3ed6b5990f13bb5b1df249e98e72",
+  "automatic_retry_permitted": false
+}

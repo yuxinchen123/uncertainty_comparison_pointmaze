@@ -1,0 +1,32 @@
+{
+  "actual_success_receipt_before_final_input_publication": true,
+  "admission_granted": false,
+  "command": [
+    "scontrol",
+    "release",
+    "6782778"
+  ],
+  "default_mode_release_calls": 0,
+  "default_mode_scheduler_queries": 0,
+  "final_envelope_matches_pre_release_except_kind_and_actual_release": true,
+  "frozen_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/release_frozen_inputs_6782778.json",
+    "sha256": "8565557a5572eceee2553791f96f83ce32e80cebcea421c1a3035311c2a62df8"
+  },
+  "held_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/actual_held_monitor_proof.json",
+    "sha256": "cdf54a30199a8d19760a07df4f3fafd05b3d9795716e895364a3adb465f959f6"
+  },
+  "job_id": "6782778",
+  "kind": "fixed_owned_uva_qualification_release_implementation_review",
+  "maximum_startup_wait_seconds": 180,
+  "no_automatic_retry": true,
+  "publication_required": true,
+  "raw_results_before_parsing": true,
+  "release_executed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_sha256": "7240b11f232a329f3cd09471f7caedcf831d6492c24a0ee2598981265b4bdf9e",
+  "strict_core_reader_after_atomic_final_publication": true,
+  "test_source_sha256": "c5145326eebda1e860e471d3806407d92ceb63aa36572de8241c3898582fa8a3"
+}

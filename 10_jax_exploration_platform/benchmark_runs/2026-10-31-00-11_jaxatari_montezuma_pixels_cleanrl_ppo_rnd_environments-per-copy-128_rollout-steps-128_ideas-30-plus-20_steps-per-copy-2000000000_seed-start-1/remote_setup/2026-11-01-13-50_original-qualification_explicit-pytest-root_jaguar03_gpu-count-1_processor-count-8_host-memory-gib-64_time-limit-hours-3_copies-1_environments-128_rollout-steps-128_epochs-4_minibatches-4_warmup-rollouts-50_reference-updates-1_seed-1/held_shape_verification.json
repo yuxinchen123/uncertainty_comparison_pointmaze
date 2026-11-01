@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "kind": "actual_owned_qualification_held_scheduler_query",
+  "job_id": "6782778",
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "6782778",
+    "--oneliner"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-01T22:14:27.956485+00:00",
+  "stdout_sha256": "2b5baeef7d1a201bd31075bc47dccd0d034679e1b1ed5bacd6db392512d45fe6",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "passed": true,
+  "fields": {
+    "JobId": "6782778",
+    "UserId": "sl5nw(2618919)",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Account": "sl5nw_base",
+    "QOS": "csresnolim",
+    "Partition": "gpu",
+    "Requeue": "0",
+    "Restarts": "0",
+    "NumCPUs": "8",
+    "NumTasks": "1",
+    "TimeLimit": "03:00:00",
+    "ReqNodeList": "jaguar03",
+    "Reservation": "sl5nw_168",
+    "TresPerNode": "gres/gpu:nvidia_rtx_a4500:1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "actual_owned_qualification_held_scheduler_query",
+  "job_id": "6782778",
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "6782778",
+    "--oneliner"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-01T22:14:27.956485+00:00",
+  "stdout_sha256": "2b5baeef7d1a201bd31075bc47dccd0d034679e1b1ed5bacd6db392512d45fe6",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
