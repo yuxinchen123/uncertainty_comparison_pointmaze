@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import subprocess
 
-from common import PLATFORM, append_json, enqueue, now, queue_counts, read_json, write_json, queue_lock
+from common import PLATFORM, append_json, enqueue, now, own_live_jobs, queue_counts, read_json, write_json, queue_lock
 
 HERE = Path(__file__).resolve().parent
 ADVERSARIAL = ('high_start_cell', 'high_start_region', 'high_interior_pair',
@@ -299,6 +299,44 @@ def stage_finished(run_dir, prefix):
     return not active
 
 
+def confirmation_source_ready(run_dir):
+    """Require earlier-source research workers to exit before exposing confirmation tasks."""
+    source = read_json(run_dir/'source.json')
+    required = source['commit']
+    if not isinstance(required, str) or not required:
+        raise ValueError('Confirmation requires a recorded current source commit.')
+    live = own_live_jobs(run_dir)
+    blockers = []
+    for path in (run_dir/'slurm/submissions').glob('*.json'):
+        job = read_json(path)
+        if (job['job_id'] in live and job['stage'] == 'research' and not job.get('canary', False)
+                and job.get('source_commit') != required):
+            blockers.append({'job_id': job['job_id'], 'source_commit': job.get('source_commit'),
+                             'state': live[job['job_id']][3]})
+    blockers.sort(key=lambda row: row['job_id'])
+    status = {'required_source_commit': required, 'ready': not blockers,
+              'prior_source_live_research_jobs': blockers}
+    path = run_dir/'confirmation_source_status.json'
+    previous = read_json(path) if path.exists() else None
+    if previous is None or any(previous.get(name) != value for name, value in status.items()):
+        append_json(run_dir/'research_decisions.jsonl', {'at': now(),
+            'event': 'confirmation_source_readiness', **status})
+    write_json(path, dict(status, at=now()))
+    return status['ready']
+
+
+def confirmation_source_guard(run_dir, state):
+    """Record why confirmation waits while leaving healthy development workers running."""
+    ready = confirmation_source_ready(run_dir)
+    if not ready:
+        state['waiting_for_confirmation_source'] = True
+        state['waiting_reason'] = 'Earlier-source research jobs are still running or pending; confirmation has not been queued.'
+    else:
+        state.pop('waiting_for_confirmation_source', None)
+        state.pop('waiting_reason', None)
+    return ready
+
+
 def advance(run_dir):
     """Advance known research phases without selecting from fresh confirmation results."""
     state_path = run_dir / 'campaign_state.json'
@@ -354,8 +392,9 @@ def advance(run_dir):
         else:
             state.update(phase='complete', outcome='Development produced no eligible matched comparison.')
     elif phase == 'fine-tuning' and stage_finished(run_dir, 'fine-tuning_'):
-        add_confirmation(run_dir, state['selected_comparisons'], result_records(run_dir, 'fine-tuning'))
-        state['phase'] = 'confirmation'
+        if confirmation_source_guard(run_dir, state):
+            add_confirmation(run_dir, state['selected_comparisons'], result_records(run_dir, 'fine-tuning'))
+            state['phase'] = 'confirmation'
     elif phase == 'confirmation' and stage_finished(run_dir, 'confirmation_'):
         remaining = (datetime.fromisoformat(state['deadline'])-datetime.now().astimezone()).total_seconds()
         if remaining > 8*3600:
@@ -372,9 +411,7 @@ def advance(run_dir):
             development = result_records(run_dir)
             comparisons = state.get('selected_comparisons') or choose_comparisons(development)
             if comparisons:
-                add_confirmation(run_dir, comparisons, development)
-                state.update(phase='confirmation', selected_comparisons=comparisons,
-                             reserve_started_at=now())
+                # Defer unstarted development before waiting, so old workers finish their current unit and exit.
                 with queue_lock(run_dir):
                     destination = run_dir / 'queue/deferred'
                     destination.mkdir(exist_ok=True)
@@ -382,6 +419,10 @@ def advance(run_dir):
                         task = read_json(path)
                         if task['stage'] == 'research' and not path.name.startswith('confirmation_'):
                             path.rename(destination/path.name)
+                if confirmation_source_guard(run_dir, state):
+                    add_confirmation(run_dir, comparisons, development)
+                    state.update(phase='confirmation', selected_comparisons=comparisons,
+                                 reserve_started_at=now())
             else:
                 state.update(phase='complete', outcome='Confirmation reserve reached without an eligible matched comparison.')
     state['updated_at'] = now()

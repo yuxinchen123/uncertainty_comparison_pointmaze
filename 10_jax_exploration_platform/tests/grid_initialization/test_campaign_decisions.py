@@ -187,3 +187,40 @@ def test_comparison_pools_parameter_slices_and_excludes_confirmation():
     assert len(chosen) == 1 and chosen[0]['field_kind'] == 'high_start_region'
     assert 'setting_offset' not in chosen[0] and 'settings' not in chosen[0]
     assert campaign.choose_comparisons(list(reversed(records))) == chosen
+
+
+def test_confirmation_source_guard_blocks_prior_running_and_pending_workers(tmp_path, monkeypatch):
+    """Any earlier-source research worker can claim fresh tasks until its Slurm job exits."""
+    campaign.write_json(tmp_path/'source.json', {'commit': 'current-source'})
+    records = [
+        {'job_id': '11', 'stage': 'research', 'source_commit': 'old-source', 'canary': False},
+        {'job_id': '12', 'stage': 'research', 'source_commit': 'old-source', 'canary': False},
+        {'job_id': '13', 'stage': 'research', 'source_commit': 'current-source', 'canary': False},
+        {'job_id': '14', 'stage': 'research', 'source_commit': 'old-source', 'canary': True},
+        {'job_id': '15', 'stage': 'report', 'source_commit': 'old-source'},
+        {'job_id': '16', 'stage': 'monitor', 'source_commit': 'old-source'}]
+    for record in records:
+        campaign.write_json(tmp_path/'slurm/submissions'/f"{record['job_id']}.json", record)
+    live = {str(identifier): [str(identifier), 'sl5nw', 'gpu', state]
+            for identifier, state in ((11, 'RUNNING'), (12, 'PENDING'), (13, 'RUNNING'),
+                                      (14, 'RUNNING'), (15, 'RUNNING'), (16, 'RUNNING'))}
+    monkeypatch.setattr(campaign, 'own_live_jobs', lambda run_dir: live)
+    state = {}
+    assert not campaign.confirmation_source_guard(tmp_path, state)
+    assert state['waiting_for_confirmation_source'] and state['waiting_reason']
+    status = campaign.read_json(tmp_path/'confirmation_source_status.json')
+    assert {job['job_id'] for job in status['prior_source_live_research_jobs']} == {'11', '12'}
+    live.pop('11')
+    assert not campaign.confirmation_source_ready(tmp_path)
+    live.pop('12')
+    assert campaign.confirmation_source_guard(tmp_path, state)
+    assert 'waiting_for_confirmation_source' not in state and 'waiting_reason' not in state
+
+
+def test_confirmation_source_guard_requires_recorded_source(tmp_path, monkeypatch):
+    """Missing source evidence cannot admit workers into canonical-field confirmation."""
+    import pytest
+
+    monkeypatch.setattr(campaign, 'own_live_jobs', lambda run_dir: {})
+    with pytest.raises(FileNotFoundError):
+        campaign.confirmation_source_ready(tmp_path)
