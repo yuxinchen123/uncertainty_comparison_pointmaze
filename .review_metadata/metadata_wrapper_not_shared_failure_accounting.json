@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "exact_owned_step_accounting_for_prior_wrapper_failure",
+  "query": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6781231",
+    "--format=JobIDRaw,JobName,State,ExitCode,Start,End"
+  ],
+  "raw_exact_row": "6781231.35|env|FAILED|2:0|2026-11-01T14:14:37|2026-11-01T14:14:37",
+  "prior_failure": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/metadata_wrapper_not_shared_failure.json",
+  "prior_failure_sha256": "a0f0ff3585b6aab69bede5d033ae815a3112d48a68d2b6ec80f3b722e1370444",
+  "step_id": "35",
+  "tests_started": false,
+  "numerical_work": false
+}

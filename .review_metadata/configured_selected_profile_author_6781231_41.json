@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_author_metadata",
+  "job_id": "6781231",
+  "step_id": "41",
+  "modules": [
+    "test_device_memory_limit.DeviceMemoryLimitTests.test_portable_reader_requires_all_exact_bytes_after_original_paths_are_removed",
+    "test_validate_training_deployment.TrainingDeploymentTests.test_memory_limit_target_is_portable_after_all_original_sources_are_removed",
+    "test_validate_training_deployment.TrainingDeploymentTests.test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed"
+  ],
+  "tests_run": 3,
+  "failures": [],
+  "errors": [],
+  "before": {
+    "configured_measurement.py": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+    "measure_selected.py": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+    "measure_selected.py": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 20.10964798927307,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "allowed_isolated_import_probes": [],
+  "wrapper_sha256": "99bb9e4ec4a6410b31a6ab33c2422188a9f09f7b54ff6c881feae5ad86e98685",
+  "numerical_work": false,
+  "job_actions": 0
+}

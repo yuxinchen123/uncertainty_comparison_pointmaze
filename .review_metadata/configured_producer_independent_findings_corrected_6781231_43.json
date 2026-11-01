@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "configured_producer_independent_initial_findings",
+  "freeze_sha256": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011",
+  "job_id": "6781231",
+  "step_id": "43",
+  "pid": 646877,
+  "birth": "52274426",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_43/user/task_0\n",
+  "tests": 16,
+  "errors": [],
+  "failures": [],
+  "findings": {
+    "allocator_failure_before_raw_proof_save": true,
+    "invalid_successful_device_row_before_raw_failure_save": true,
+    "oversized_complete_process_capture_rejected_by_csv_field_limit": {
+      "bytes": 1048628,
+      "limit": 1048576,
+      "no_proven_bypass": true
+    },
+    "invalid_qualification_semantics_accepted": {
+      "wrong_precision": true,
+      "zero_finite_state_leaves": true,
+      "failed_renderer": true,
+      "setup_only_report": true,
+      "memory_pid_uuid_differs_from_binding": true,
+      "loaded_library_fields_absent": true,
+      "unrelated_checks_mocked": [
+        "physical binding",
+        "source receipts"
+      ]
+    }
+  },
+  "before": {
+    "configured_measurement.py": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+    "measure_selected.py": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "aceed06c31037c9d872bac53bef158f09423b8d2c05819b01a70a3b124a600e4",
+    "measure_selected.py": "e1acc97087f06ee9d1ed460b2b0a7fddffc79721257b4a6b1611779ce586c495",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "e15c15c22894fafd37fc80dd6c6196dcbec7eb03754f25aade5bbc144806654d",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 0.14103364944458008,
+  "numerical_work": false,
+  "job_actions": 0,
+  "limits": "Stage-local reader reproductions deliberately replace unrelated already-reviewed physical/source gates; this is not valid physical qualification."
+}

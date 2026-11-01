@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_author_metadata",
+  "job_id": "6781231",
+  "step_id": "31",
+  "modules": [
+    "test_configured_measurement",
+    "test_measure_selected",
+    "test_profile_selected",
+    "test_post_comparison_validation"
+  ],
+  "tests_run": 78,
+  "failures": [],
+  "errors": [],
+  "before": {
+    "configured_measurement.py": "e424d76e744def96b44b7ba6ab7ce57316ea38b48c9185555a67af4f4bdc536f",
+    "measure_selected.py": "8a08bb707800e2305b562ca54605a2e2b2b934f41b132cbc4e20aefd34d04a0f",
+    "profile_selected.py": "5591e83eea8cd32e5c126fa93cb6d9c6048552bdf123880b2b9286622097d268",
+    "post_comparison_validation.py": "30e10d4fae16ac37bc7e9b8ca340124af78154ad6f674bcfce62e56decd69ff4",
+    "tests/test_configured_measurement.py": "1aaf6179e36488e42f93ecf37140e63fad6a649158d01cb9e60d4489151a5dd5",
+    "uva_slurm_configured_isolation.py": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+  },
+  "after": {
+    "configured_measurement.py": "e424d76e744def96b44b7ba6ab7ce57316ea38b48c9185555a67af4f4bdc536f",
+    "measure_selected.py": "8a08bb707800e2305b562ca54605a2e2b2b934f41b132cbc4e20aefd34d04a0f",
+    "profile_selected.py": "5591e83eea8cd32e5c126fa93cb6d9c6048552bdf123880b2b9286622097d268",
+    "post_comparison_validation.py": "30e10d4fae16ac37bc7e9b8ca340124af78154ad6f674bcfce62e56decd69ff4",
+    "tests/test_configured_measurement.py": "1aaf6179e36488e42f93ecf37140e63fad6a649158d01cb9e60d4489151a5dd5",
+    "uva_slurm_configured_isolation.py": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 11.882705450057983,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "numerical_work": false,
+  "job_actions": 0
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_native_renderer_source_freeze",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity",
+  "branch": "implement-selected-configured-isolation-2026-11-01",
+  "base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "core_publication": "1376186870cf92cd32938a6bb6a56a822d0b99da",
+  "own_files": {
+    "configured_measurement.py": "29ecb15d446ecc4b9e43d2754f0d87b354be438fa411693481db3ef43465eddd",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "47a3bb29db8f6bf9f171d646eb98c20d905d4ec6b6d10eea487df2764dbb4602"
+  },
+  "borrowed_dependency": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+    "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+    "author_commit": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178",
+    "owned_by_this_publication": false
+  },
+  "GPU_experiments": 0,
+  "new_jobs": 0,
+  "source_admission_changed": false,
+  "default_helper_rosters_changed": false,
+  "default_identity_and_global_paired_observer_unchanged": true,
+  "unsupported_consumers": [
+    "capacity",
+    "final training",
+    "scaling",
+    "portable evidence",
+    "default admission"
+  ],
+  "direct_H100_observer_followup_required": true,
+  "actual_target_qualification_required_before_selected_use": true,
+  "prior_freeze_sha256": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011",
+  "changed_files_since_prior": [
+    "configured_measurement.py",
+    "measure_selected.py",
+    "tests/test_configured_measurement.py"
+  ],
+  "corrections": [
+    "pure source/CleanRL/software receipt reconstruction",
+    "full AST/actual pytest collection and phase coverage",
+    "actual renderer/dtype/finite/library/backend/asset and bound memory reconstruction",
+    "durable sampler evidence before allocator failure propagation",
+    "anonymous invalid successful device-query capture",
+    "actual memory counters retained without unobserved reserve equality",
+    "mandatory prior qualification in selected readers; no caller bypass argument",
+    "typed zero-credit qualification counters"
+  ],
+  "prior_corrected_freeze_sha256": "8968590f633c189a8d02c0e58fc4fe4c45be97a5bb35830d50238a503d291bb3",
+  "changed_files_since_corrected_freeze": [
+    "configured_measurement.py",
+    "tests/test_configured_measurement.py"
+  ],
+  "final_renderer_correction": "Derive every indexed room, variants-per-room and synthetic fixture count from exact frozen renderer and JAXtari backend Python bytes; compare plan/result/raw counts to that complete contract.",
+  "typed_process_completeness_required": true,
+  "prior_renderer_freeze_sha256": "25171871314015fa9e17266bedd9ce5c1505de6c7953588f068cf5357781fb2c",
+  "changed_files_since_renderer_freeze": [
+    "configured_measurement.py",
+    "tests/test_configured_measurement.py"
+  ],
+  "native_scope_correction": "Traverse same-function statement blocks, including the actual D28 x64 context, but exclude nested functions/classes; reject duplicate or missing enclosing assignments.",
+  "actual_native_author_case": {
+    "job_id": "6781231",
+    "step_id": "56",
+    "tests_passed": 46,
+    "receipt_sha256": "b56da0e0be7ebf25eb4951f3b7194ca72c424e45c0bbecf04fd870e8ec15e49b"
+  },
+  "additional_nested_substitution_negative": {
+    "job_id": "6781231",
+    "step_id": "57",
+    "tests_passed": 1,
+    "receipt_sha256": "70b2ad1d1b122a33206b403fb47dd17ca1cd5059ab488fe579acb4524f83d51d"
+  }
+}

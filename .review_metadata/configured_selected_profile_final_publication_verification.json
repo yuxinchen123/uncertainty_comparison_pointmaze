@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_final_source_publication_verification",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_producer_native_renderer_source_freeze.json",
+    "sha256": "8398f24bfe62254523d84d5187fc3c5b1c52d7aa73b8b9b5600778ac349e4523"
+  },
+  "final_independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_final_independent_review_6781231_58.json",
+    "sha256": "d1c92729e50f0f2b1c4ade634a2ca4d71a58a5597d0d7c1022ea6d6fb56c2cd3"
+  },
+  "final_independent_focus": {
+    "job_id": "6781231",
+    "step_id": "58",
+    "tests_passed": 51,
+    "receipt_sha256": "da12fa79c400738ad8084eee681b0c32f7c7adb9955011ce09ef021c46fb84bb"
+  },
+  "prior_full_suite": {
+    "job_id": "6781231",
+    "step_id": "54",
+    "tests_run": 173,
+    "passed": 172,
+    "failed": 1,
+    "failure": "actual source room_ids nested with-block; fixed and independently rechecked",
+    "receipt_sha256": "efc08f682f14d8286fd0920233f9cd2b83132b1821d9bf8530ade7105020c8bc"
+  },
+  "author_native_and_scope": {
+    "steps": [
+      "6781231.56",
+      "6781231.57"
+    ],
+    "passed": [
+      46,
+      1
+    ]
+  },
+  "protected_numerical_files_unchanged": 13,
+  "protected_prior_metadata_files_unchanged": 25,
+  "all_final_own_hashes_unchanged": true,
+  "source_and_metadata_approved_only": true,
+  "actual_GPU_qualification_run": false,
+  "new_jobs": 0,
+  "GPU_operations": 0,
+  "worker_admission_changed": false,
+  "borrowed_core_excluded": {
+    "schema_version": 1,
+    "kind": "excluded_borrowed_core_source_references",
+    "excluded_from_owned_publication": [
+      ".review_metadata/first_full_suite_source/uva_slurm_configured_isolation.py",
+      ".review_metadata/source_before_independent_corrections/uva_slurm_configured_isolation.py",
+      ".review_metadata/source_before_native_renderer_scope_correction/uva_slurm_configured_isolation.py",
+      ".review_metadata/source_before_renderer_contract_correction/uva_slurm_configured_isolation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    "all_preserved_locally": true,
+    "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+    "published_source_commit": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178",
+    "published_path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+    "reason": "The independently owned production core and its identical copies remain excluded; their exact bytes are already preserved in the separate published core commit."
+  },
+  "actual_entry_and_remaining_boundaries": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_execution_interfaces.json"
+}
