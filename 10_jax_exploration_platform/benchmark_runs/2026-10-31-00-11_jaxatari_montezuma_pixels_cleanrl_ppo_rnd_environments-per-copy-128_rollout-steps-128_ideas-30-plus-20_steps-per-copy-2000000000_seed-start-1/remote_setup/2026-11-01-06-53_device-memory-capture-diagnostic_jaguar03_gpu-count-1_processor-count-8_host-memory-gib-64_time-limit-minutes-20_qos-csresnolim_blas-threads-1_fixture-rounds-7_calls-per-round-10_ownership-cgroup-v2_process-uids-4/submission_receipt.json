@@ -1,0 +1,51 @@
+{
+  "kind": "owned_uva_device_memory_capture_diagnostic_submission",
+  "at_utc": "2026-11-01T14:59:01.593181+00:00",
+  "cluster": "uva",
+  "owner": {
+    "username": "sl5nw",
+    "uid": 2618919
+  },
+  "published_preparation_commit": "ba1b672485cde63a6b2e4da98f8725bc9cf6663e",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=00:20:00",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--job-name=rnd-memory-capture-diagnostic",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.out",
+    "--error=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.err",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch"
+  ],
+  "plan_sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+  "manifest_sha256": "71ff6b8f0774e248f7dcdaf25517401ab4ad0afe60be5ffb3d0db152b7c51528",
+  "job_script_sha256": "584d4b6f2a4cd8e680e018620e89ffd75d350cfadafb0cb482ccd31998b20428",
+  "independent_review_sha256": "9a63ef435a67df169028847a77a036a7789f37d61ef8912f41f5e99c0d86cabd",
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "worker_admission": false,
+  "job_id": "6781128",
+  "submission_row": [
+    "6781128",
+    "device-memory-capture-diagnostic",
+    "474907ef8623aa50f2979954ef2466e14173c05f",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch"
+  ],
+  "submission_intent_sha256": "654e516bb7cf09f41e539c035826ae4b18d0175e984d466c64504e1016dc9ce8",
+  "submission_return_sha256": "e15c8de7108f8d45769b6511352773728c204541e88037354b754cde2ca05bf9",
+  "released": false
+}

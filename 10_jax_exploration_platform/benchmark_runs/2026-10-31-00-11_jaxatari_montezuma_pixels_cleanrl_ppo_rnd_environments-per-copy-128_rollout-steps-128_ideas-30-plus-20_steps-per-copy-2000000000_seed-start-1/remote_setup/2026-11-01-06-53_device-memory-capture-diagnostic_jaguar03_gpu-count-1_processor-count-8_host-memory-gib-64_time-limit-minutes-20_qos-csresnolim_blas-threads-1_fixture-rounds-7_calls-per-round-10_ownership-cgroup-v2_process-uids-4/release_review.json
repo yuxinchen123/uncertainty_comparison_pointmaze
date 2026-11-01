@@ -1,0 +1,49 @@
+{
+  "kind": "exact_owned_diagnostic_release_review",
+  "at_utc": "2026-11-01T15:03:43.489506+00:00",
+  "cluster": "uva",
+  "job_id": "6781128",
+  "held_monitor_step": "6781087.9",
+  "held_row": [
+    "6781128",
+    "PENDING",
+    "",
+    "gres/gpu:nvidia_rtx_a4500:1",
+    "(JobHeldUser)"
+  ],
+  "exact_held_shape": {
+    "JobId": "6781128",
+    "UserId": "sl5nw(2618919)",
+    "Account": "sl5nw_base",
+    "QOS": "csresnolim",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Requeue": "0",
+    "TimeLimit": "00:20:00",
+    "Partition": "gpu",
+    "ReqNodeList": "jaguar03",
+    "NumNodes": "1-1",
+    "NumCPUs": "8",
+    "NumTasks": "1",
+    "CPUs/Task": "8",
+    "MinMemoryNode": "64G",
+    "Reservation": "sl5nw_168",
+    "TresPerNode": "gres/gpu:nvidia_rtx_a4500:1",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch"
+  },
+  "submission_receipt_sha256": "b9152ae201be520a4e648b06e5bb74a2fd5cdcf492a030c5982e2ad9f1b8cdc0",
+  "held_observation_sha256": "b94eb20e29bd2dcb26b761264816df3a3f1b1910fe2d5fcf1942089945946667",
+  "full_monitor_verification_sha256": "aa66b22c3ba16f2b94f09dd02cd2617896318857e2a743b92ccd16be63a4271f",
+  "independent_packet_completion_sha256": "9a63ef435a67df169028847a77a036a7789f37d61ef8912f41f5e99c0d86cabd",
+  "session_cron_id": "68c2907b-e4bc-483d-8148-57ff55eb43ee",
+  "release_command": [
+    "scontrol",
+    "release",
+    "6781128"
+  ],
+  "release_attempted": false,
+  "formal_memory_rule_enabled": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "worker_admission": false
+}
