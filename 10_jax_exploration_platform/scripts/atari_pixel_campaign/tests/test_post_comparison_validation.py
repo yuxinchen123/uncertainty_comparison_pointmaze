@@ -270,6 +270,42 @@ class PostComparisonTests(unittest.TestCase):
         self.assertFalse(result["complete"])
         self.assertEqual(result["next_copies"], 4)
 
+    def test_instrumented_plan_cannot_supply_an_ordinary_looking_packing_point(self):
+        """A completed record cannot hide its extra sampler by omitting the diagnostic kind marker."""
+        record = self.packing('h100', 1, 1., 8001)
+        path = self.write('instrumented_ordinary_looking/result.json', record)
+        self.write('instrumented_ordinary_looking/measurement_plan.json', {'device_memory_limit_protocol': {}})
+        with self.assertRaisesRegex(ValueError, 'remeasure'):
+            VALIDATION.packing_point(path, 'h100', self.commit, self.runtime, VALIDATION.Evidence())
+        Path(path).parent.joinpath('measurement_plan.json').unlink()
+        record['kind'] = 'instrumented_device_memory_attempt_completion'
+        Path(path).write_text(json.dumps(record))
+        with self.assertRaisesRegex(ValueError, 'remeasure'):
+            VALIDATION.packing_point(path, 'h100', self.commit, self.runtime, VALIDATION.Evidence())
+
+    def test_portable_instrumented_plan_rejection_and_new_helper_plan_requirement(self):
+        """The reader cannot bypass a mapped instrumented plan or omit a new producer's original plan."""
+        from portable_evidence import ExactPathResolver
+        record = self.packing('h100', 1, 1., 8002)
+        prefix = '10_jax_exploration_platform/scripts/atari_pixel_campaign/'
+        record['helpers'] = {'files': {prefix + 'device_memory_limit.py': 'a' * 64}}
+        path = self.write('portable_instrumented/result.json', record)
+        plan = self.write('portable_instrumented/measurement_plan.json', {'device_memory_limit_protocol': {}})
+        manifest = {'schema_version': 1, 'kind': 'portable_raw_evidence', 'files': [], 'git_roots': []}
+        for index, original in enumerate((path, plan)):
+            target = self.directory / ('portable_copy_' + str(index) + '.json')
+            target.write_bytes(original.read_bytes())
+            manifest['files'].append({'original_path': str(original), 'relative_path': target.name,
+                'sha256': hashlib.sha256(target.read_bytes()).hexdigest()})
+            original.unlink()
+        manifest_path = self.write('portable_instrumented_manifest.json', manifest)
+        evidence = VALIDATION.Evidence(ExactPathResolver(manifest_path, hashlib.sha256(manifest_path.read_bytes()).hexdigest()))
+        with self.assertRaisesRegex(ValueError, 'remeasure'):
+            VALIDATION.packing_point(path, 'h100', self.commit, self.runtime, evidence)
+        path.write_text(json.dumps(record))
+        with self.assertRaises(FileNotFoundError):
+            VALIDATION.packing_point(path, 'h100', self.commit, self.runtime, VALIDATION.Evidence())
+
     def test_missing_matched_count_cannot_be_hidden_by_registry_flags(self):
         """Every count is checked against an original result rather than summary success fields."""
         registry = json.loads(Path(self.specification["study_registry"]).read_text())

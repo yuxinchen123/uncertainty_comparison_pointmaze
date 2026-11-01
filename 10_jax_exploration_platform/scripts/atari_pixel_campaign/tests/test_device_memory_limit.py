@@ -7,6 +7,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import threading
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -157,6 +158,8 @@ class DeviceMemoryLimitTests(unittest.TestCase):
                 'capture': backend_capture}, 'captured_driver_image': driver_capture,
             'host_memory_before': counters, 'host_memory_after': copy.deepcopy(counters),
             'memory_samples': [{'device': copy.deepcopy(memory), 'allocator': allocator} for _ in range(2)], 'sampler_errors': [],
+            'sampler_shutdown': {'sampler_started': True, 'alive_at_first_shutdown': True, 'stop_requested': True,
+                'joined': True, 'exit_reason': 'requested_stop'},
             'loaded_gpu_libraries': self.original_result['loaded_gpu_libraries'], 'failure_progress': {'state': 'compile_warmup'}}
         observation['loaded_gpu_libraries']['loaded_shared_libraries'].append(str(driver))
         observation['memory_samples'][0]['device']['timestamp_seconds'] = 1000.1
@@ -695,6 +698,54 @@ class DeviceMemoryLimitTests(unittest.TestCase):
         shared.write_bytes(b'changed captured driver')
         with self.assertRaisesRegex(ValueError, 'recorded bytes'):
             capacity.validate_exclusion(spec['packing_memory_limit_record'], spec, validation.Evidence())
+
+    def test_unexpected_sampler_exception_is_recorded_instead_of_silently_losing_the_thread(self):
+        """Ordinary type/memory errors invalidate sampling, while process-control exceptions still propagate."""
+        for failure in (TypeError('injected sampler type error'), MemoryError('injected sampler memory error'), KeyboardInterrupt()):
+            capture = capacity.Capture.__new__(capacity.Capture)
+            capture.stop, capture.samples, capture.errors = threading.Event(), [], []
+            def sample():
+                """Inject a sampler failure without any thread, subprocess or device operation."""
+                raise failure
+            capture.sampler = SimpleNamespace(sample=sample)
+            if isinstance(failure, Exception):
+                capture._sample()
+                self.assertEqual(capture.errors, [repr(failure)])
+            else:
+                with self.assertRaises(KeyboardInterrupt):
+                    capture._sample()
+                self.assertEqual(capture.errors, [])
+
+    def test_normal_sampler_stop_is_idempotent_and_unexpected_thread_exit_is_rejected(self):
+        """Only the first shutdown records liveness; an uncaught daemon exit cannot be replaced by manual samples."""
+        for unexpected in (False, True):
+            capture = capacity.Capture.__new__(capacity.Capture)
+            capture.stop, capture.samples, capture.errors = threading.Event(), [], []
+            capture.sampler_shutdown, capture.sampler_exit_reason = None, 'not_started'
+            entered = threading.Event()
+            def sample():
+                """Start a real metadata-only thread with either a normal sample or an uncaught exit."""
+                entered.set()
+                if unexpected:
+                    raise SystemExit('injected unexpected sampler exit')
+                return {}
+            capture.sampler = SimpleNamespace(sample=sample)
+            capture.device = SimpleNamespace(memory_stats=lambda: {})
+            capture.thread = threading.Thread(target=capture._sample)
+            with patch.object(threading, 'excepthook'):
+                capture.thread.start()
+                self.assertTrue(entered.wait(2))
+                if unexpected:
+                    capture.thread.join()
+                state = capture.close()
+            self.assertIs(capture.close(), state)
+            if unexpected:
+                self.assertFalse(state['alive_at_first_shutdown'])
+                self.assertEqual(state['exit_reason'], 'unexpected_thread_exit')
+                with self.assertRaisesRegex(ValueError, 'normal requested stop'):
+                    capacity.validate_sampler_shutdown(state)
+            else:
+                self.assertEqual(capacity.validate_sampler_shutdown(state), state)
 
 
 if __name__ == '__main__':

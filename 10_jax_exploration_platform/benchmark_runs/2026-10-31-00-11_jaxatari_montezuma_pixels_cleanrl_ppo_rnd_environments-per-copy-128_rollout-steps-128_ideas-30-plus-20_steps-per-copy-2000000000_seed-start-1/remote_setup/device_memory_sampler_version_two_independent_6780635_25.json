@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_sampler_version_two_independent_review",
+  "at_utc": "2026-11-01T12:35:53.868061+00:00",
+  "job_id": "6780635",
+  "step_id": "25",
+  "hostname": "slurm5",
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_sampler_version_two_freeze_2026-11-01.json",
+    "sha256": "c1bdafa41243be619fc27f24add9d1c6a6ea7e632f15894292b3e60425bdba39"
+  },
+  "before_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e"
+  },
+  "after_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e"
+  },
+  "source_unchanged": true,
+  "tests": {
+    "modules": [
+      "test_device_memory_limit",
+      "test_measure_selected"
+    ],
+    "cases": 49,
+    "passed": true,
+    "seconds": 53.66201789001934,
+    "failures": 0,
+    "errors": 0,
+    "stdout_stderr": ".................................................\n----------------------------------------------------------------------\nRan 49 tests in 53.511s\n\nOK\n"
+  },
+  "reviewed": [
+    "Ordinary sampling exceptions are recorded and invalidate capacity evidence.",
+    "Unexpected thread exit is distinguished from the first requested normal shutdown.",
+    "First-close liveness and completion record is preserved by subsequent close calls.",
+    "Version-two capability prevents silent reinterpretation of version-one evidence."
+  ],
+  "live_gpu_scheduler_network_actions_forbidden": true,
+  "numerical_imports": [],
+  "actual_gpu_regression_passed": false,
+  "enabled_for_campaign": false,
+  "source_admission_changed": false,
+  "remaining_before_enablement": [
+    "Separate diagnostic producer/job review and actual GPU regression.",
+    "Resolve the completed-instrumented measurement cohort policy."
+  ]
+}

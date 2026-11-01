@@ -1,0 +1,32 @@
+{
+  "kind": "completed_instrumented_attempt_zero_credit_author_validation",
+  "created_utc": "2026-11-01T12:44:39.730851+00:00",
+  "job_id": "6780635",
+  "step_id": "27",
+  "before_sha256": {
+    "measure_selected.py": "6cf85ca310b678a6d52412b37d0c1ac21d85a0eb9ee5013b3e09bb8c967e6d8b",
+    "post_comparison_validation.py": "6a6004c11b882212fb8f90ef0e5b94870a6ae1e35e25b61c2e7a2567b3873e9f",
+    "validate_training_deployment.py": "a11c1c12829f6c00042d363691b739024a4b52bef653bc758ed7a754d0085580",
+    "tests/test_measure_selected.py": "b34bfd9f35da86563fe0d2c5f4658e3e3fb752a77be925eef0b433987e08e62a",
+    "tests/test_post_comparison_validation.py": "101f6fbb47509de77e28c11b913cece0652343a2dc2069ac1ef66ede060f6f94",
+    "tests/test_validate_training_deployment.py": "ce75654d3133baffef967a7a89585f73afb7e2b450fb701ced0b7244a445c72e"
+  },
+  "after_sha256": {
+    "measure_selected.py": "6cf85ca310b678a6d52412b37d0c1ac21d85a0eb9ee5013b3e09bb8c967e6d8b",
+    "post_comparison_validation.py": "6a6004c11b882212fb8f90ef0e5b94870a6ae1e35e25b61c2e7a2567b3873e9f",
+    "validate_training_deployment.py": "a11c1c12829f6c00042d363691b739024a4b52bef653bc758ed7a754d0085580",
+    "tests/test_measure_selected.py": "b34bfd9f35da86563fe0d2c5f4658e3e3fb752a77be925eef0b433987e08e62a",
+    "tests/test_post_comparison_validation.py": "101f6fbb47509de77e28c11b913cece0652343a2dc2069ac1ef66ede060f6f94",
+    "tests/test_validate_training_deployment.py": "ce75654d3133baffef967a7a89585f73afb7e2b450fb701ced0b7244a445c72e"
+  },
+  "source_unchanged": true,
+  "tests_run": 63,
+  "successful": false,
+  "failures": 2,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": "...................................................F..F........\n======================================================================\nFAIL: test_instrumented_plan_is_rejected_even_with_ordinary_looking_target_result (test_validate_training_deployment.TrainingDeploymentTests)\nTarget evidence cannot reuse an extra-sampler process as an ordinary packing point.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py\", line 263, in test_instrumented_plan_is_rejected_even_with_ordinary_looking_target_result\n    with self.assertRaisesRegex(ValueError, 'instrumented'):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_missing_global_asset_proof_or_manifest_inside_assets_is_rejected (test_validate_training_deployment.TrainingDeploymentTests)\nA global success flag cannot replace its actual producer receipt and external manifest.\n----------------------------------------------------------------------\nValueError: the complete original final verification changed or no longer passes\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py\", line 308, in test_missing_global_asset_proof_or_manifest_inside_assets_is_rejected\n    with self.assertRaisesRegex(ValueError, \"outside its asset root\"):\nAssertionError: \"outside its asset root\" does not match \"the complete original final verification changed or no longer passes\"\n\n----------------------------------------------------------------------\nRan 63 tests in 71.806s\n\nFAILED (failures=2)\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false
+}

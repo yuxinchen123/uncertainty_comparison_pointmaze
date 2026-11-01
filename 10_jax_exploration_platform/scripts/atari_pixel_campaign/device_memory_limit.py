@@ -23,8 +23,8 @@ import traceback
 import uuid
 
 
-PROTOCOL = {"schema_version": 1, "kind": "instrumented_device_memory_limit",
-            "producer_capability": "native_gpu_bfc_and_same_context_cuda_allocation_v1"}
+PROTOCOL = {"schema_version": 2, "kind": "instrumented_device_memory_limit",
+            "producer_capability": "native_gpu_bfc_same_context_cuda_and_requested_sampler_stop_v2"}
 ZERO_CREDIT = {"completed": False, "measurement_valid": False, "packing_point_credit": 0,
                "case_credit": 0, "idea_credit": 0, "throughput_credit": 0, "admission_granted": False}
 OWNERS = {'uva': {'username': 'sl5nw', 'uid': 2618919}, 'aces': {'username': 'u.sl359075', 'uid': 56626}}
@@ -572,6 +572,7 @@ class Capture:
         self.sampler_factory, self.device = sampler_factory, None
         self.write_artifact, self.encode_json = write_artifact, encode_json
         self.samples, self.errors, self.stop, self.thread = [], [], threading.Event(), None
+        self.sampler_shutdown, self.sampler_exit_reason = None, 'not_started'
         # Actual owner, allocation, configured GRES mapping and host counters precede any JAX import.
         self.owned_before, self.host_before = ownership(self.plan), host_memory_counters()
 
@@ -596,19 +597,34 @@ class Capture:
 
     def _sample(self):
         """Keep actual device and allocator observations through initialization, warmup and failure."""
-        while not self.stop.is_set():
-            try:
-                self.samples.append({"device": self.sampler.sample(), "allocator": self.device.memory_stats() or {}})
-            except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-                self.errors.append(repr(error))
-                return
-            self.stop.wait(.2)
+        self.sampler_exit_reason = 'running'
+        try:
+            while not self.stop.is_set():
+                try:
+                    self.samples.append({"device": self.sampler.sample(), "allocator": self.device.memory_stats() or {}})
+                except Exception as error:
+                    # Any ordinary sampler error invalidates the proof; process-control exceptions still propagate.
+                    self.errors.append(repr(error))
+                    self.sampler_exit_reason = 'ordinary_error'
+                    return
+                self.stop.wait(.2)
+            self.sampler_exit_reason = 'requested_stop'
+        finally:
+            if self.sampler_exit_reason == 'running':
+                self.sampler_exit_reason = 'unexpected_thread_exit'
 
     def close(self):
         """Finish the lifetime sampler without touching learner state or allocator settings."""
+        if self.sampler_shutdown is not None:
+            return self.sampler_shutdown
+        started = self.thread is not None
+        alive = started and self.thread.is_alive()
         self.stop.set()
-        if self.thread is not None:
+        if started:
             self.thread.join()
+        self.sampler_shutdown = {'sampler_started': started, 'alive_at_first_shutdown': alive,
+            'stop_requested': True, 'joined': started and not self.thread.is_alive(), 'exit_reason': self.sampler_exit_reason}
+        return self.sampler_shutdown
 
     def failure(self, error):
         """Save original evidence before the diagnostic allocation and retain unknown outcomes explicitly."""
@@ -632,6 +648,7 @@ class Capture:
         self.samples.append({'device': self.sampler.sample(), 'allocator': self.device.memory_stats()})
         self.close()
         require(not self.errors and self.samples, 'capacity memory sampling was incomplete')
+        validate_sampler_shutdown(self.sampler_shutdown)
         observation = {"schema_version": 1, "kind": 'instrumented_device_memory_limit_observation', **ZERO_CREDIT,
             "protocol": self.plan['device_memory_limit_protocol'], "source_commit": self.plan['source_commit'],
             "original_exception": original, "native_allocation": parsed, "cuda_allocation_check": diagnostic,
@@ -639,6 +656,7 @@ class Capture:
             "pre_probe_capture_time_seconds": captured_at,
             "native_backend": self.native_backend,
             'captured_driver_image': driver_capture,
+            'sampler_shutdown': self.sampler_shutdown,
             "ownership_before": self.owned_before, "ownership_after": ownership(self.plan),
             "host_memory_before": self.host_before, "host_memory_after": host_memory_counters(),
             "memory_samples": sorted(self.samples, key=lambda row: row['device']['timestamp_seconds']), "sampler_errors": self.errors,
@@ -740,6 +758,14 @@ def protocol(value):
     require(value['allocation_kind'] in {'direct', 'slurm'} and value['cluster'] in {'uva', 'aces'},
             'the instrumented protocol needs an exact allocation kind and cluster')
     require((value['owned_job_ledger'] is None) == (value['allocation_kind'] == 'direct'), 'Slurm requires a frozen owned-job ledger')
+    return value
+
+
+def validate_sampler_shutdown(value):
+    """Require a live sampler to finish through the first explicitly requested stop, never an unexpected daemon exit."""
+    require(isinstance(value, dict) and set(value) == {'sampler_started', 'alive_at_first_shutdown', 'stop_requested', 'joined', 'exit_reason'}
+            and all(value[key] is True for key in ('sampler_started', 'alive_at_first_shutdown', 'stop_requested', 'joined'))
+            and value['exit_reason'] == 'requested_stop', 'the lifetime sampler did not finish through a normal requested stop')
     return value
 
 
@@ -966,6 +992,7 @@ def validate_exclusion(path, specification, evidence):
     require(parsed['native_counters']['Limit'] <= physical_total, 'native allocator limit exceeds current-context capacity')
     samples = observation['memory_samples']
     require(observation['sampler_errors'] == [] and isinstance(samples, list) and len(samples) >= 2, 'lost capacity sampler evidence')
+    validate_sampler_shutdown(observation['sampler_shutdown'])
     for value in samples:
         device, allocator = value['device'], value['allocator']
         require(device['gpu_uuid'] == plan['gpu_uuid'] and device['total_bytes'] == nvml_total

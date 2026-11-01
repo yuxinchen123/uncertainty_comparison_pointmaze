@@ -1,0 +1,18 @@
+{
+  "kind": "device_memory_sampler_version_two_and_completed_instrumented_zero_credit_freeze",
+  "created_utc": "2026-11-01T12:47:44.441603+00:00",
+  "base_commit": "a5453784cae2a8ce2d46fd1b4a717e8955a1a128",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "6cf85ca310b678a6d52412b37d0c1ac21d85a0eb9ee5013b3e09bb8c967e6d8b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "b34bfd9f35da86563fe0d2c5f4658e3e3fb752a77be925eef0b433987e08e62a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": "fdcc24b11453e46809c837cb54f73856ca5e53e2dcdd2fde14e4c246d9e4f6da",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "ce75654d3133baffef967a7a89585f73afb7e2b450fb701ced0b7244a445c72e"
+  },
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "scope": "Requested-stop lifetime sampler, separate zero-credit artifact for completed instrumented attempts, ordinary point/target refusal with original plan and exact portable map, unchanged ordinary legacy output."
+}

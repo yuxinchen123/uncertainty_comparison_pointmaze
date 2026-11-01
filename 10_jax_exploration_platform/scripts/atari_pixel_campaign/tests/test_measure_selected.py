@@ -217,6 +217,25 @@ class SelectedMeasurementTests(unittest.TestCase):
         self.assertTrue(parsed.instrumented_child)
         self.assertNotIn('jax', sys.modules)
 
+    def test_completed_instrumented_attempt_retains_raw_data_without_ordinary_result_credit(self):
+        """A successful extra-sampler attempt needs a fresh ordinary measurement before throughput can be used."""
+        directory = self.run_dir / 'completed_instrumented'
+        directory.mkdir()
+        plan = {'mode': 'packing-point', 'device_memory_limit_protocol': {}}
+        raw = {'completed': True, 'rounds': [{'seconds': 2., 'training_transitions': 163840, 'memory': {'actual': True}}]}
+        PRODUCER.save_measurement_result(directory, plan, raw)
+        self.assertFalse((directory / 'result.json').exists())
+        result = json.loads((directory / 'instrumented_completion.json').read_text())
+        self.assertEqual(result['rounds'], raw['rounds'])
+        self.assertFalse(result['measurement_valid'])
+        self.assertFalse(result['formal_packing_evidence'])
+        for key in ('packing_point_credit', 'throughput_credit', 'case_credit', 'idea_credit'):
+            self.assertEqual(result[key], 0)
+        ordinary = self.run_dir / 'ordinary_completed'
+        ordinary.mkdir()
+        PRODUCER.save_measurement_result(ordinary, {'mode': 'packing-point'}, raw)
+        self.assertEqual(json.loads((ordinary / 'result.json').read_text()), raw)
+
     def test_algorithm_changes_and_output_reuse_are_rejected(self):
         """No source preparation or partial artifact can authorize a changed CleanRL setting."""
         arguments = self.arguments()

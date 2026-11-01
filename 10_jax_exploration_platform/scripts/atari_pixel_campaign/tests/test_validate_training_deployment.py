@@ -254,6 +254,15 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.write(path, result)
         return path
 
+    def test_instrumented_plan_is_rejected_even_with_ordinary_looking_target_result(self):
+        """Target evidence cannot reuse an extra-sampler process as an ordinary packing point."""
+        path = Path(self.specification['packing_records'][0])
+        plan = json.loads((path.parent / 'measurement_plan.json').read_text())
+        plan['device_memory_limit_protocol'] = {}
+        self.write_prepared_plan(path.parent, plan)
+        with self.assertRaisesRegex(ValueError, 'instrumented'):
+            deployment.target_record(path, 'packing-point', self.specification, deployment.DeploymentEvidence())
+
     def test_memory_limit_target_validates_boundary_backend_and_preserves_selected_count(self):
         """A low-headroom target proof is checked fully without admitting its larger copy count."""
         boundary = self.memory_limited_target()
