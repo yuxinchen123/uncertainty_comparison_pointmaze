@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "aces_local_held_submission_adoption_utility_author_verification",
+  "at_utc": "2026-11-01T11:08:01.692309+00:00",
+  "passed": true,
+  "files_before": {
+    "adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/adopt_aces_full_site_held.py",
+      "sha256": "88a8fcd670d0984cf2768e9bbc8404fe4cce388e9ead2fbe9c98c66ecfc07268",
+      "bytes": 14435
+    },
+    "test_adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_adopt_aces_full_site_held.py",
+      "sha256": "5fc2eb7e72114efd77bf75ae96a82ad6ca6dd0ce7e682f89e51c2d607e72fbb1",
+      "bytes": 9290
+    }
+  },
+  "files_after": {
+    "adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/adopt_aces_full_site_held.py",
+      "sha256": "88a8fcd670d0984cf2768e9bbc8404fe4cce388e9ead2fbe9c98c66ecfc07268",
+      "bytes": 14435
+    },
+    "test_adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_adopt_aces_full_site_held.py",
+      "sha256": "5fc2eb7e72114efd77bf75ae96a82ad6ca6dd0ce7e682f89e51c2d607e72fbb1",
+      "bytes": 9290
+    }
+  },
+  "frozen_wrapper_source_unchanged": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/submit_aces_full_site_held.py",
+    "sha256": "be81fb18909a933592e5cdb6824698b5e94439f19495f053305c0505d2e1e64b",
+    "bytes": 24471
+  },
+  "wrapper_plan_sha256": "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f",
+  "tests": {
+    "cases": 6,
+    "seconds": 0.7948966630501673,
+    "stdout": "test_busy_or_linked_local_ledgers_never_write (tested_local_adoption_author.AdoptionTests) ... ok\ntest_changed_returned_hash_or_source_identity_never_appends (tested_local_adoption_author.AdoptionTests) ... ok\ntest_exact_native_receipt_is_published_only_after_both_local_appends (tested_local_adoption_author.AdoptionTests) ... ok\ntest_existing_or_inconsistent_local_ids_reject_without_an_intent (tested_local_adoption_author.AdoptionTests) ... ok\ntest_missing_remote_ledger_membership_and_boolean_credit_reject (tested_local_adoption_author.AdoptionTests) ... ok\ntest_publication_failure_keeps_durable_id_intent_and_forbids_retry (tested_local_adoption_author.AdoptionTests) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.794s\n\nOK\n",
+    "all_subprocess_and_network_calls_forbidden": true
+  },
+  "checks": [
+    "Exact seven artifacts against raw wrapper response and native hashes/paths.",
+    "Remote ID/row ledger membership; exact pinned native receipt and raw return.",
+    "Exclusive adoption intent, local ledger locks, duplicate/inconsistent ID rejection.",
+    "Both local ledger appends/fsync before exact native receipt publication.",
+    "Native intent saved separately; original local wrapper intent unchanged.",
+    "Publication failure preserves intent and durable ID, blocks automatic retry."
+  ],
+  "adoption_not_performed": true,
+  "local_campaign_ledgers_changed": false,
+  "ssh_calls": 0,
+  "submissions": 0,
+  "release_calls": 0,
+  "numerical_imports": [],
+  "publication_before_adoption_required": true
+}

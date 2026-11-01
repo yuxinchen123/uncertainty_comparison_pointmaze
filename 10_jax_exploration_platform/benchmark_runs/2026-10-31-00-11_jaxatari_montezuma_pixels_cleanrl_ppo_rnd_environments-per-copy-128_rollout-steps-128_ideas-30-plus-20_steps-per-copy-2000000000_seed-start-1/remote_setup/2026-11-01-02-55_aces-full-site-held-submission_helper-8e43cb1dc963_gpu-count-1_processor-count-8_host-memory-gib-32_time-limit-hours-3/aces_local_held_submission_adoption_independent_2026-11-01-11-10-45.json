@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "kind": "aces_local_held_submission_adoption_independent_verification",
+  "at_utc": "2026-11-01T11:10:45.467023+00:00",
+  "passed": true,
+  "files": {
+    "adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/adopt_aces_full_site_held.py",
+      "sha256": "88a8fcd670d0984cf2768e9bbc8404fe4cce388e9ead2fbe9c98c66ecfc07268",
+      "bytes": 14435
+    },
+    "test_adopt_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_adopt_aces_full_site_held.py",
+      "sha256": "5fc2eb7e72114efd77bf75ae96a82ad6ca6dd0ce7e682f89e51c2d607e72fbb1",
+      "bytes": 9290
+    },
+    "aces_full_site_held_submission_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_full_site_held_submission_plan.json",
+      "sha256": "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f",
+      "bytes": 43446
+    },
+    "submit_aces_full_site_held.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/submit_aces_full_site_held.py",
+      "sha256": "be81fb18909a933592e5cdb6824698b5e94439f19495f053305c0505d2e1e64b",
+      "bytes": 24471
+    }
+  },
+  "tests": {
+    "cases": 6,
+    "seconds": 1.617999879992567,
+    "stdout": "test_busy_or_linked_local_ledgers_never_write (independent_adoption_tests.AdoptionTests) ... ok\ntest_changed_returned_hash_or_source_identity_never_appends (independent_adoption_tests.AdoptionTests) ... ok\ntest_exact_native_receipt_is_published_only_after_both_local_appends (independent_adoption_tests.AdoptionTests) ... ok\ntest_existing_or_inconsistent_local_ids_reject_without_an_intent (independent_adoption_tests.AdoptionTests) ... ok\ntest_missing_remote_ledger_membership_and_boolean_credit_reject (independent_adoption_tests.AdoptionTests) ... ok\ntest_publication_failure_keeps_durable_id_intent_and_forbids_retry (independent_adoption_tests.AdoptionTests) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 1.618s\n\nOK\n",
+    "all_process_and_network_actions_forbidden": true
+  },
+  "actual_returned_evidence": {
+    "job_id": "2274632",
+    "submission_row": [
+      "2274632",
+      "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "8e43cb1dc963045fc28f4e611411097efd93185a",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+    ],
+    "native_artifact_sha256": {
+      "submission_receipt.json": "6daf1d1ec87886d80669be07ef6830e629840e92669386ac5c1c28df447af0ec",
+      "held_submission_intent.json": "15d6af1491a7a28a4738d32ed2be494a49089b983349d71f4cb8540547901d92",
+      "held_submission_stdout.raw": "535cb4d1d742a71579bc65fc8325466a21615452f8d0fea7510d801b6bc99abc",
+      "held_submission_stderr.raw": "53094e9cc1248243a15f9af244f1f13fa120d8905fec7a163b6273d3f6dfef26",
+      "held_submission_return.json": "a0ffeb098d95e77f11dfb81ddf75c2f22bdfb1cf6a3676ff5ac7f208edfd3866",
+      "submitted_jobids_aces.txt": "9d33b875ff3df1b026fbf547c5ffdc57113589a0459e00320b5b57d37dc2fe9f",
+      "submissions_aces.tsv": "b1a7912bb65c2daa6f49ebc13193e84453a9d06add432e7b19d15d0f30282d13"
+    },
+    "published_preparation_commit": "942e29f2e7396574511beef5508d27485b9383ed",
+    "original_local_intent_sha256": "c8cc864c5282630fc4d68a499a8409d7ad8d2c86a793bed5ca81aa24965435da",
+    "native_receipt_sha256": "6daf1d1ec87886d80669be07ef6830e629840e92669386ac5c1c28df447af0ec",
+    "native_artifact_count": 7,
+    "held_command": [
+      "sbatch",
+      "--parsable",
+      "--hold",
+      "--account=158590754315",
+      "--partition=gpu",
+      "--qos=normal",
+      "--nodes=1",
+      "--ntasks=1",
+      "--gres=gpu:h100:1",
+      "--cpus-per-task=8",
+      "--mem=32G",
+      "--time=03:00:00",
+      "--job-name=ACES_H100_full_site_qualification",
+      "--output=/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/aces_full_site_qualification_%j.log",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/job.sbatch"
+    ]
+  },
+  "local_ledgers_before": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt",
+      "sha256": "31152d678c75461aee127ff8ffce7dc3cf605b77bb445eab9fcbbdc511416095",
+      "bytes": 16
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions_aces.tsv",
+      "sha256": "90fa3912345b5bedb6317af283613bc92798999a43099c6299a9bf0aa67112a3",
+      "bytes": 759
+    }
+  ],
+  "local_ledgers_after": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt",
+      "sha256": "31152d678c75461aee127ff8ffce7dc3cf605b77bb445eab9fcbbdc511416095",
+      "bytes": 16
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions_aces.tsv",
+      "sha256": "90fa3912345b5bedb6317af283613bc92798999a43099c6299a9bf0aa67112a3",
+      "bytes": 759
+    }
+  ],
+  "checks": [
+    "Exact reviewed wrapper plan and driver hashes preserved.",
+    "Actual seven returned artifacts match original raw response, native paths and byte hashes.",
+    "Actual job 2274632 receipt binds native source, data unit, held command, separate remote ledger membership and zero credit.",
+    "Exclusive local adoption intent and nonblocking exact local ledger locks precede mutations.",
+    "Both local append/fsync operations precede native receipt publication; original local intent is retained separately from native intent.",
+    "Partial publication failure remains recorded and automatic adoption retry is rejected."
+  ],
+  "blocking_findings": [],
+  "adoption_performed": false,
+  "local_campaign_ledgers_changed": false,
+  "ssh_calls": 0,
+  "submissions": 0,
+  "release_calls": 0,
+  "numerical_imports": [],
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}
