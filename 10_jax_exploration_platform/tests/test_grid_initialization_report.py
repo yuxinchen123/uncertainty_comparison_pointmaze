@@ -287,3 +287,48 @@ def test_early_visitation_skips_budgets_missing_from_any_condition():
     complete = lambda steps: {'visit_count_history_complete': True, 'visit_count_history_steps': np.asarray(steps)}
     assert REPORT.early_visitation_budgets([complete([2**16, 2**18, 2**20]),
                                           complete([2**16, 2**20])]) == [2**16, 2**20]
+
+
+def test_completed_repeatability_probe_is_reported_without_claiming_goal_time_difference(tmp_path):
+    """Use recorded probe observations in both reports while preserving the probe's stopping limit."""
+    # The two cases differ in action time, while both stop before observing a first-goal-time difference.
+    stable = {'repetitions': 20, 'different_repetitions': [], 'maximum_absolute_difference': 0.0}
+    case = {'initial_parameters_equal': True, 'initial_action_keys_equal': True,
+            'initial_minibatch_permutations_equal': True, 'initial_rollout_actions_equal': True,
+            'first_rng_key_difference': None,
+            'fixed_minibatch_gradient_repeats': {'maximum_absolute_difference': 1.2e-7},
+            'simultaneous_repeated_state_accumulation': {'maximum_absolute_difference': 1.2e-7},
+            'unique_state_row_gradient_repeats': stable, 'ordered_state_accumulation': stable,
+            'first_parameter_difference': {'after_iteration': 1},
+            'first_action_difference': {'iteration': 22, 'transition': 5777},
+            'first_counter_difference': {'after_iteration': 25},
+            'capture_matches_training_counts': True, 'first_goal_time_difference': None}
+    second = {**case, 'first_action_difference': {'iteration': 346, 'transition': 88790},
+              'first_counter_difference': {'after_iteration': 347}}
+    path = tmp_path/'data/repeatability/duplicate_tabular_policy_seeds.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({'completed': True, 'cases': [case, second]}))
+    REPORT.generate_report(tmp_path)
+    markdown = (tmp_path/'analysis/analysis.md').read_text()
+    tex = (tmp_path/'analysis/results.tex').read_text()
+    for document in (markdown, tex):
+        assert 'Repeatability of tabular training' in document
+        assert '5,777, 88,790' in document
+        assert '20/20' in document
+        assert 'counts remain exact for the recorded actions' in document
+        assert 'stopped without observing a first-goal-time difference' in document
+        assert 'primary training code remains frozen' in document
+        assert 'https://docs.jax.dev/en/latest/' in document
+
+
+def test_missing_or_incomplete_repeatability_probe_produces_no_observation_claims(tmp_path):
+    """Never turn a missing or unfinished probe into a reported experimental observation."""
+    # No completed marker means the case data cannot enter the report yet.
+    assert REPORT.tabular_repeatability_observations(tmp_path) is None
+    path = tmp_path/'data/repeatability/duplicate_tabular_policy_seeds.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({'completed': False, 'cases': []}))
+    assert REPORT.tabular_repeatability_observations(tmp_path) is None
+    REPORT.generate_report(tmp_path)
+    assert 'Repeatability of tabular training' not in (tmp_path/'analysis/analysis.md').read_text()
+    assert 'Repeatability of tabular training' not in (tmp_path/'analysis/results.tex').read_text()

@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-01T02:57:27.049220-05:00",
+  "job_id": "6780550",
+  "task": {
+    "name": "long-confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-16777216_seeds-10112-10127_variant-rollout-128",
+    "stage": "research",
+    "limit_seconds": 10800,
+    "minimum_device_memory_mb": 7000,
+    "command": [
+      "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_2041e37d78c2f63d2263f4f00bd680fe68dc4be2/10_jax_exploration_platform/scripts/grid_initialization_campaign/train_unit.py",
+      "--run-dir",
+      "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511",
+      "--specification",
+      "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/specifications/long-confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-16777216_seeds-10112-10127_variant-rollout-128.json"
+    ],
+    "created_at": "2026-11-01T02:34:09.763537-05:00",
+    "job_id": "6780550",
+    "account": "sl5nw",
+    "started_at": "2026-11-01T02:44:10.740935-05:00",
+    "hostname": "jaguar03"
+  },
+  "last_progress_before_replacement": {
+    "at": "2026-11-01T02:57:25.654799-05:00",
+    "batch_offset": 0,
+    "completed_copies": 0,
+    "total_copies": 32,
+    "iteration": 122881,
+    "total_iterations": 131072,
+    "goal_fraction": 1.0
+  },
+  "reason": "Replace one-card reservation admission with full-node admission; completed artifacts are retained."
+}
