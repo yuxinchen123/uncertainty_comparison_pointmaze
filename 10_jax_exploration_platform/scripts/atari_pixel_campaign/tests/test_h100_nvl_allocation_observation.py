@@ -1,6 +1,7 @@
 """Verify metadata collection boundaries without GPUs, numerical imports or scheduler access."""
 
 import importlib.util
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -96,6 +97,8 @@ class AllocationObservationTests(unittest.TestCase):
         self.assertEqual((self.directory / "experiment_background.md").read_text().count("## "), 4)
         self.assertIn(" -I ", (self.directory / "job.sbatch").read_text())
         self.assertIn("export TZ=UTC", (self.directory / "job.sbatch").read_text())
+        self.assertIn("--cpu-bind=threads", (self.directory / "job.sbatch").read_text())
+        self.assertNotIn("--cpu-bind=cores", (self.directory / "job.sbatch").read_text())
         self.assertFalse((self.run / "queue").exists())
         self.assertFalse((self.run / "SOURCE_AND_GATES_READY.json").exists())
         for name, value in observation.BOUNDARY.items():
@@ -237,6 +240,7 @@ class AllocationObservationTests(unittest.TestCase):
                 patch.dict(os.environ, {**self.environment, "PRIVATE_TOKEN": "must not read or record"}, clear=True), \
                 patch.object(observation.subprocess, "run", side_effect=query) as queries, \
                 patch.object(observation, "owned_allocation", wraps=observation.owned_allocation) as allocation, \
+                patch.object(observation, "device_isolation_observations", return_value={"device_isolation_verified": False}), \
                 patch.object(observation, "host_inventory", return_value={"hardware fields": "only"}):
             original_read = Path.open
             def read_file(path, *args, **kwargs):
@@ -273,6 +277,143 @@ class AllocationObservationTests(unittest.TestCase):
         self.assertIn("allocation-observation", row["run"])
         self.assertEqual(row["gpu"], ["NVIDIA H100 NVL"])
         self.assertFalse((self.run / "queue").exists())
+
+    def placement_fixture(self, filesystem):
+        """Create only this process's synthetic cgroup files and one deliberately unread sibling."""
+        proc = self.root / (filesystem + " proc self")
+        (proc / "ns").mkdir(parents=True)
+        (proc / "ns/cgroup").touch()
+        (proc / "stat").write_text(str(os.getpid()) + " (own metadata process) S " + "0 " * 18 + "12345 " + "0 " * 6)
+        cgroup_path = "/slurm/uid_" + str(os.getuid()) + "/job_123/step_0/task_0"
+        controllers = ["devices", "cpuset"] if filesystem == "cgroup" else [""]
+        lines, mounts, targets = [], [], []
+        for index, controller in enumerate(controllers):
+            mount = self.root / (filesystem + " " + (controller or "unified") + " mount")
+            escaped = str(mount).replace(" ", "\\040")
+            mounts.append(f"{10 + index} 1 0:5 / {escaped} rw - {filesystem} cgroup rw" + ("," + controller if controller else ""))
+            lines.append(str(index + 1 if controller else 0) + ":" + controller + ":" + cgroup_path)
+            for relative in (cgroup_path.rsplit("/step_", 1)[0], cgroup_path.rsplit("/task_", 1)[0], cgroup_path):
+                target = mount / relative.lstrip("/")
+                target.mkdir(parents=True, exist_ok=True)
+                if controller == "devices":
+                    (target / "devices.list").write_text("c 195:1 rwm\n")
+                else:
+                    (target / ("cpuset.cpus.effective" if filesystem == "cgroup2" else "cpuset.effective_cpus")).write_text("8-15\n")
+                targets.append(target)
+            sibling = mount / "slurm/uid_999/job_999/step_0/task_0"
+            sibling.mkdir(parents=True)
+            (sibling / "devices.list").write_text("private sibling must never be read")
+        mounts.append("99 1 0:9 / /unrelated rw - ext4 /unrelated/source rw,private")
+        (proc / "mountinfo").write_text("\n".join(mounts) + "\n")
+        cgroup = "\n".join(lines) + "\n"
+        (proc / "cgroup").write_text(cgroup)
+        return proc, cgroup, {**self.environment, "SLURM_LOCALID": "0"}, targets
+
+    def test_configuration_capture_filters_bytes_and_records_explicit_scope(self):
+        """Neither node-local nor public configuration records retain unrelated fields."""
+        config = self.root / "cgroup.conf"
+        config.write_text("CgroupPlugin=cgroup/v2\nConstrainDevices=yes\nConstrainCores=yes\nSecret=do not save\n")
+        proc, cgroup, environment, _ = self.placement_fixture("cgroup2")
+        public = "TaskPlugin = task/cgroup,task/affinity\nProctrackType = proctrack/cgroup\nCredentialField = do not save\n"
+        with patch.object(observation.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, public, "")) as query:
+            record = observation.device_isolation_observations(environment, cgroup, config, proc)
+        local = record["node_cgroup_configuration"]
+        running = record["running_slurm_configuration"]
+        self.assertEqual(query.call_args.args[0], ["scontrol", "show", "config"])
+        self.assertEqual(local["fields"]["ConstrainDevices"], "yes")
+        self.assertEqual(local["file"]["owner_uid"], os.getuid())
+        self.assertEqual(local["file"]["mode"], oct(stat.S_IMODE(config.stat().st_mode)))
+        self.assertEqual(local["file"]["mtime_ns"], config.stat().st_mtime_ns)
+        for value in (local, running):
+            self.assertEqual(value["sha256"], hashlib.sha256(value["filtered_bytes"].encode()).hexdigest())
+            self.assertIn("only the selected entries", value["hash_scope"])
+            self.assertTrue(value["selected_keys"])
+        self.assertEqual(set(running["fields"]), {"TaskPlugin", "ProctrackType"})
+        self.assertNotIn("CredentialField", json.dumps(record))
+        self.assertNotIn("Secret", json.dumps(record))
+        self.assertNotIn("do not save", json.dumps(record))
+        self.assertFalse(record["device_isolation_verified"])
+        self.assertFalse(record["mapping_accepted"])
+
+    def test_v1_own_placement_reads_exact_ancestors_and_effective_cpuset(self):
+        """Only this PID's job, step and task paths supply inode and device-list evidence."""
+        proc, cgroup, environment, targets = self.placement_fixture("cgroup")
+        reads = []
+        original_read = Path.read_text
+        def own_read(path, *args, **kwargs):
+            """Fail if the collector ever reads another job's synthetic cgroup files."""
+            self.assertNotIn("job_999", str(path))
+            reads.append(path)
+            return original_read(path, *args, **kwargs)
+        with patch.object(Path, "read_text", own_read), \
+                patch.object(observation.os, "sched_getaffinity", return_value={7, 6, 5, 4, 3, 2, 1, 0}):
+            record = observation.own_placement(environment, cgroup, proc)
+        self.assertEqual(record["pid"], os.getpid())
+        self.assertEqual(record["uid"], os.getuid())
+        self.assertEqual(record["process_start_time"], "12345")
+        self.assertEqual(record["cpu_affinity"], list(range(8)))
+        self.assertEqual(record["process_stat_file"]["path"], str(proc / "stat"))
+        self.assertEqual(record["own_cgroup_file"]["file"]["owner_uid"], os.getuid())
+        self.assertEqual(record["own_cgroup_file"]["sha256"], hashlib.sha256(cgroup.encode()).hexdigest())
+        self.assertIn("current-process", record["own_cgroup_file"]["hash_scope"])
+        self.assertEqual(record["cgroup_namespace"]["inode"], (proc / "ns/cgroup").stat().st_ino)
+        self.assertEqual(len(record["cgroups"]), 2)
+        entries = [level for group in record["cgroups"] for mount in group["mounts"] for level in mount["levels"]]
+        self.assertEqual({level["level"] for level in entries}, {"job", "step", "task"})
+        self.assertEqual({level["directory"]["path"] for level in entries}, {str(path) for path in targets})
+        self.assertTrue(all(level["directory"]["inode"] > 0 for level in entries))
+        self.assertEqual(sum(path.name == "devices.list" for path in reads), 3)
+        self.assertEqual(sum(path.name == "cpuset.effective_cpus" for path in reads), 3)
+        self.assertNotIn("unrelated", record["cgroup_mountinfo"]["filtered_bytes"])
+        self.assertEqual(len(record["cgroup_mountinfo"]["entries"]), 2)
+
+    def test_v2_records_effective_cpuset_without_claiming_bpf_inspection(self):
+        """A cgroup2 placement records its own paths and explicitly leaves device rules unverified."""
+        proc, cgroup, environment, _ = self.placement_fixture("cgroup2")
+        record = observation.own_placement(environment, cgroup, proc)
+        self.assertFalse(record["bpf_device_rules_independently_inspected"])
+        mount = record["cgroups"][0]["mounts"][0]
+        self.assertIn("not independently inspected", mount["device_rule_scope"])
+        self.assertFalse(mount["bpf_device_rules_independently_inspected"])
+        for level in mount["levels"]:
+            self.assertNotIn("devices_list", level)
+            self.assertEqual(level["effective_cpuset"]["text"], "8-15\n")
+
+    def test_foreign_or_traversing_cgroup_paths_are_never_inspected(self):
+        """A mismatched own-path record cannot cause inspection of a sibling job or parent directory."""
+        proc, _, environment, _ = self.placement_fixture("cgroup")
+        for path in ("/slurm/uid_999/job_999/step_0/task_0", "/slurm/job_123/../job_999/step_0/task_0", "/slurm/job_123/step_9/task_0"):
+            with self.subTest(path=path):
+                record = observation.own_placement(environment, "7:devices:" + path + "\n", proc)
+                self.assertEqual(record["cgroups"][0]["mounts"], [])
+                self.assertEqual(record["cgroups"][0]["status"], "not independently inspected")
+                self.assertIn("error", record["cgroups"][0])
+
+    def test_missing_or_denied_configuration_and_own_device_rules_stay_unknown(self):
+        """Missing permission is reported explicitly and never substituted with another path's values."""
+        missing = observation.selected_config_file(self.root / "absent cgroup.conf", observation.CGROUP_CONFIG_FIELDS)
+        self.assertEqual(missing["status"], "absent")
+        self.assertIn("cannot read", missing["error"])
+        config = self.root / "denied cgroup.conf"
+        config.write_text("ConstrainDevices=yes\n")
+        proc, cgroup, environment, _ = self.placement_fixture("cgroup")
+        original_read = Path.read_text
+        def denied(path, *args, **kwargs):
+            """Represent unreadable selected configuration and only this unit's device-list files."""
+            if path == config or path.name == "devices.list":
+                raise PermissionError("fixture permission denial")
+            return original_read(path, *args, **kwargs)
+        with patch.object(Path, "read_text", denied):
+            local = observation.selected_config_file(config, observation.CGROUP_CONFIG_FIELDS)
+            placement = observation.own_placement(environment, cgroup, proc)
+        self.assertEqual(local["status"], "permission denied")
+        self.assertEqual(local["fields"], {})
+        levels = placement["cgroups"][0]["mounts"][0]["levels"]
+        self.assertTrue(all(level["devices_list"]["status"] == "permission denied" for level in levels))
+        with patch.object(observation.subprocess, "run", side_effect=subprocess.CalledProcessError(1, ["scontrol"], stderr="do not save")):
+            running = observation.running_slurm_config()
+        self.assertEqual(running["status"], "unavailable")
+        self.assertNotIn("do not save", json.dumps(running))
 
     def test_guard_failure_is_monitored_without_any_hardware_query(self):
         """An extra GPU allocation writes a failed metadata shard and never reads host inventory."""

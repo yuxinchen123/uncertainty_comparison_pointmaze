@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import shlex
 import socket
@@ -18,7 +18,13 @@ RELATIVE_PATH = "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_n
 HOSTS = ("serval06", "serval07", "serval08", "serval09")
 ALLOCATION_FIELDS = ("SLURM_JOB_ID", "SLURM_STEP_ID", "SLURM_JOB_GPUS", "SLURM_STEP_GPUS",
     "SLURM_GPUS_ON_NODE", "SLURM_CPUS_PER_TASK", "SLURM_CPU_BIND_TYPE", "SLURM_CPU_BIND_LIST",
-    "SLURM_CPU_BIND", "CUDA_VISIBLE_DEVICES")
+    "SLURM_CPU_BIND", "SLURM_JOB_NODELIST", "SLURM_NODELIST", "SLURM_STEP_NODELIST", "SLURMD_NODENAME",
+    "SLURM_NTASKS", "SLURM_PROCID", "SLURM_LOCALID", "SLURM_NODEID", "SLURM_CPUS_ON_NODE",
+    "SLURM_GPUS", "SLURM_GPUS_PER_NODE", "SLURM_GPUS_PER_TASK", "SLURM_GPU_BIND", "SLURM_TRES_BIND",
+    "CUDA_VISIBLE_DEVICES", "CUDA_DEVICE_ORDER", "NVIDIA_VISIBLE_DEVICES")
+CGROUP_CONFIG_FIELDS = ("CgroupPlugin", "ConstrainDevices", "ConstrainCores", "CgroupMountpoint",
+                        "IgnoreSystemd", "IgnoreSystemdOnFailure")
+SLURM_CONFIG_FIELDS = ("TaskPlugin", "ProctrackType")
 BOUNDARY = {"mapping_accepted": False, "compatibility_verified": False, "workers_permitted": False,
             "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
 PCI_ADDRESS = re.compile(r"[0-9a-fA-F]{4,8}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-7]")
@@ -131,7 +137,7 @@ def prepare(directory, run, source_root, submission_path, python):
         "--output=" + str(run / "slurm/jobs/h100_nvl_allocation_observation_%j.log"), str(directory / "job.sbatch")]
     capture_command = [str(python), "-I", str(Path(source["source_root"]) / RELATIVE_PATH), "capture", "--directory", str(directory)]
     script = "#!/bin/bash\nset -euo pipefail\nexport TZ=UTC\nexec " + shlex.join([
-        "srun", "--unbuffered", "--ntasks=1", "--cpus-per-task=8", "--cpu-bind=cores", *capture_command]) + "\n"
+        "srun", "--unbuffered", "--ntasks=1", "--cpus-per-task=8", "--cpu-bind=threads", *capture_command]) + "\n"
     background = ("## Purpose\n\nRecord actual Slurm allocation identifiers and NVIDIA GPU hardware inventory. "
         "No GPU mapping, site compatibility or source admission is accepted by this collection.\n\n"
         "## Key hyperparameters\n\nOne H100 NVL, eight CPUs, 64 GiB host memory and five minutes. "
@@ -213,6 +219,167 @@ def read_hardware_file(path):
         return {"status": "absent" if isinstance(error, FileNotFoundError) else "permission denied"}
 
 
+def path_metadata(path):
+    """Record metadata for an explicitly selected configuration or own-cgroup path."""
+    try:
+        information = path.stat()
+        return {"path": str(path), "status": "readable", "owner_uid": information.st_uid,
+                "owner_gid": information.st_gid, "mode": oct(stat.S_IMODE(information.st_mode)),
+                "mtime_ns": information.st_mtime_ns, "inode": information.st_ino, "device": information.st_dev}
+    except (FileNotFoundError, PermissionError) as error:
+        return {"path": str(path), "status": "absent" if isinstance(error, FileNotFoundError) else "permission denied",
+                "error": "cannot inspect the explicitly selected path: " + type(error).__name__}
+
+
+def selected_config(text, names):
+    """Hash and save only explicit allowed configuration entries, never the remaining configuration."""
+    fields = {}
+    for line in text.splitlines():
+        key, separator, value = line.partition("=")
+        key = key.strip()
+        if separator and key in names:
+            if key in fields:
+                raise ValueError("duplicate selected configuration field: " + key)
+            fields[key] = value.split("#", 1)[0].strip()
+    filtered = "".join(name + "=" + fields[name] + "\n" for name in names if name in fields)
+    return {"selected_keys": list(names), "fields": fields, "missing_fields": [name for name in names if name not in fields],
+            "filtered_bytes": filtered, "sha256": hashlib.sha256(filtered.encode()).hexdigest(),
+            "hash_scope": "only the selected entries, in the listed key order, encoded as UTF-8 key=value lines"}
+
+
+def selected_config_file(path, names):
+    """Describe unavailable node-local configuration explicitly and retain only selected readable bytes."""
+    contents = read_hardware_file(path)
+    record = {"file": path_metadata(path), "status": contents["status"], **selected_config(contents.get("text", ""), names)}
+    if contents["status"] != "readable":
+        record["error"] = "cannot read the selected node-local configuration: " + contents["status"]
+    return record
+
+
+def running_slurm_config():
+    """Read public running Slurm settings and discard every field except the two explicit plugin names."""
+    command = ["scontrol", "show", "config"]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=20)
+        return {"command": command, "status": "readable", "returncode": result.returncode,
+                **selected_config(result.stdout, SLURM_CONFIG_FIELDS)}
+    except (OSError, subprocess.SubprocessError) as error:
+        return {"command": command, "status": "unavailable", "error": "public selected Slurm configuration query failed: " + type(error).__name__,
+                **selected_config("", SLURM_CONFIG_FIELDS)}
+
+
+def mount_path(value):
+    """Decode only the documented escaped characters in an explicit mountinfo path."""
+    return re.sub(r"\\(040|011|012|134)", lambda match: chr(int(match[1], 8)), value)
+
+
+def own_cgroup_mounts(text):
+    """Retain only cgroup mountinfo entries rather than unrelated filesystem mounts."""
+    entries = []
+    for line in text.splitlines():
+        left, separator, right = line.partition(" - ")
+        tail = right.split()
+        if not separator or len(tail) < 3 or tail[0] not in {"cgroup", "cgroup2"}:
+            continue
+        fields = left.split()
+        if len(fields) < 6:
+            raise ValueError("invalid selected cgroup mountinfo entry")
+        entries.append({"filesystem": tail[0], "root": mount_path(fields[3]), "mountpoint": mount_path(fields[4]),
+                        "controllers": tail[2].split(",") if tail[0] == "cgroup" else [], "original_line": line})
+    filtered = "".join(entry["original_line"] + "\n" for entry in entries)
+    return {"entries": entries, "filtered_bytes": filtered, "sha256": hashlib.sha256(filtered.encode()).hexdigest(),
+            "hash_scope": "only the original cgroup and cgroup2 mountinfo lines, each followed by one newline"}
+
+
+def scoped_cgroup_levels(cgroup_path, environment):
+    """Select only the current process's exact job, step and task ancestors, with no sibling inspection."""
+    path = PurePosixPath(cgroup_path)
+    if not path.is_absolute() or ".." in path.parts:
+        raise ValueError("own cgroup path must be absolute and must not contain parent traversal")
+    parts = path.parts
+    expected = ("job_" + environment["SLURM_JOB_ID"], "step_" + environment.get("SLURM_STEP_ID", ""))
+    positions = []
+    for component in expected:
+        matches = [index for index, value in enumerate(parts) if value == component]
+        if len(matches) != 1:
+            raise ValueError("own cgroup path does not identify the exact current job and step")
+        positions.append(matches[0])
+    if positions[1] <= positions[0]:
+        raise ValueError("own step cgroup must descend from its exact job")
+    task = "task_" + environment.get("SLURM_LOCALID", "")
+    task_positions = [index for index, value in enumerate(parts) if value == task]
+    levels = [("job", positions[0]), ("step", positions[1])]
+    if len(task_positions) == 1 and task_positions[0] > positions[1]:
+        levels.append(("task", task_positions[0]))
+    return [{"level": name, "cgroup_path": str(PurePosixPath(*parts[:position + 1]))} for name, position in levels]
+
+
+def own_placement(environment, cgroup, proc_self=Path("/proc/self")):
+    """Inspect only this process's cgroup paths and mark device-rule evidence that was not inspected."""
+    process_stat = (proc_self / "stat").read_text()
+    fields = process_stat.rsplit(")", 1)[1].split()
+    if int(process_stat.split(" ", 1)[0]) != os.getpid() or len(fields) < 20 or not fields[19].isdigit():
+        raise ValueError("own process stat does not identify the current PID and birth counter")
+    mounts = own_cgroup_mounts((proc_self / "mountinfo").read_text())
+    records = []
+    for line in cgroup.splitlines():
+        hierarchy, controllers, cgroup_path = line.split(":", 2)
+        controller_names = controllers.split(",") if controllers else []
+        record = {"hierarchy": hierarchy, "controllers": controller_names, "cgroup_path": cgroup_path,
+                  "mounts": [], "status": "not independently inspected"}
+        try:
+            levels = scoped_cgroup_levels(cgroup_path, environment)
+        except ValueError as error:
+            record["error"] = str(error)
+            records.append(record)
+            continue
+        for mount in mounts["entries"]:
+            if (mount["filesystem"] == "cgroup" and not set(controller_names).intersection(mount["controllers"])) or (
+                    mount["filesystem"] == "cgroup2" and (hierarchy != "0" or controllers)):
+                continue
+            root = PurePosixPath(mount["root"])
+            mountpoint = Path(mount["mountpoint"])
+            evidence = {"mountpoint": str(mountpoint), "filesystem": mount["filesystem"], "levels": [],
+                "bpf_device_rules_independently_inspected": False,
+                "device_rule_scope": "v1 devices.list only" if mount["filesystem"] == "cgroup" else "v2 BPF device rules were not independently inspected"}
+            for level in levels:
+                try:
+                    relative = PurePosixPath(level["cgroup_path"]).relative_to(root)
+                except ValueError:
+                    evidence["levels"].append({**level, "status": "own ancestor is outside the recorded mount root"})
+                    continue
+                target = mountpoint.joinpath(*relative.parts)
+                if not target.resolve().is_relative_to(mountpoint.resolve()):
+                    raise ValueError("own cgroup path escaped its recorded mountpoint")
+                entry = {**level, "directory": path_metadata(target)}
+                if mount["filesystem"] == "cgroup" and "devices" in controller_names:
+                    entry["devices_list"] = {"path": str(target / "devices.list"), **read_hardware_file(target / "devices.list")}
+                cpuset_name = "cpuset.cpus.effective" if mount["filesystem"] == "cgroup2" else "cpuset.effective_cpus"
+                if mount["filesystem"] == "cgroup2" or "cpuset" in controller_names:
+                    entry["effective_cpuset"] = {"path": str(target / cpuset_name), **read_hardware_file(target / cpuset_name)}
+                evidence["levels"].append(entry)
+            record["mounts"].append(evidence)
+        record["status"] = "own paths observed" if record["mounts"] else "matching cgroup mount not available"
+        record["task_path_observed"] = any(level["level"] == "task" for level in levels)
+        records.append(record)
+    return {"pid": os.getpid(), "uid": os.getuid(), "process_start_time": fields[19],
+            "cpu_affinity": sorted(os.sched_getaffinity(0)),
+            "process_stat_file": path_metadata(proc_self / "stat"),
+            "own_cgroup_file": {"file": path_metadata(proc_self / "cgroup"), "text": cgroup,
+                "sha256": hashlib.sha256(cgroup.encode()).hexdigest(),
+                "hash_scope": "only the UTF-8 encoded current-process entries read from /proc/self/cgroup"},
+            "cgroup_namespace": path_metadata(proc_self / "ns/cgroup"),
+            "mountinfo_file": path_metadata(proc_self / "mountinfo"), "cgroup_mountinfo": mounts, "cgroups": records,
+            "bpf_device_rules_independently_inspected": False}
+
+
+def device_isolation_observations(environment, cgroup, cgroup_config=Path("/etc/slurm/cgroup.conf"), proc_self=Path("/proc/self")):
+    """Collect explicit configuration and own-placement observations without claiming device isolation is verified."""
+    return {"node_cgroup_configuration": selected_config_file(cgroup_config, CGROUP_CONFIG_FIELDS),
+            "running_slurm_configuration": running_slurm_config(), "own_placement": own_placement(environment, cgroup, proc_self),
+            "device_isolation_verified": False, **BOUNDARY}
+
+
 def host_inventory(proc_root=Path("/proc/driver/nvidia/gpus"), pci_root=Path("/sys/bus/pci/devices"),
                    device_root=Path("/dev"), gres_path=Path("/etc/slurm/gres.conf")):
     """Read only full-host NVIDIA GPU hardware identifiers, device numbers and GPU GRES declarations."""
@@ -278,7 +445,8 @@ def collect(directory, unit, plan):
     hardware.update(gpu_query=", ".join((index, model, memory + " MiB", driver, gpu)),
                     observed_gpu_uuid=gpu, observed_pci_bus_id=pci)
     atomic_json(unit / "hardware.json", hardware)
-    observations.update(visible_gpu_queries=queries, host_gpu_inventory=host_inventory())
+    observations.update(visible_gpu_queries=queries, host_gpu_inventory=host_inventory(),
+                        device_isolation_observations=device_isolation_observations(environment, owned["cgroup"]))
     write_once(unit / "hardware_observations.json", observations)
     result = {"schema_version": 1, "kind": "h100_nvl_allocation_observation_result", "passed": True,
               "observations": file_record(unit / "hardware_observations.json"), "observations_completed": True, **BOUNDARY}

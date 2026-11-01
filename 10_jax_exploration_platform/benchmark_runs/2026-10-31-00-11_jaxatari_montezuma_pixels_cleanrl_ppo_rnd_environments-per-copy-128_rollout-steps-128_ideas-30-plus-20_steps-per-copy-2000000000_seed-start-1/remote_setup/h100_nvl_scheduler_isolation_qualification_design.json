@@ -1,0 +1,44 @@
+{
+  "kind": "slurm_gpu_qualification_design",
+  "created_at_utc": "2026-11-01T00:36:17.612285+00:00",
+  "implemented": false,
+  "qualified": false,
+  "mapping_reconstructed": false,
+  "source_version_reviewed": "Slurm 23.11.6",
+  "design": [
+    "Treat JOB_GPUS, STEP_GPUS and detailed GRES IDX as scheduler identifiers; validate them within the scheduler record.",
+    "Observe configured task/cgroup device enforcement and exact current job/step/task cgroup membership.",
+    "Independently identify the sole visible whole physical GPU by UUID, PCI address, model, memory and driver, and bind the same UUID in the actual numerical child.",
+    "Record v1 readable device rules when available; v2 configured isolation relies on the scheduler because live BPF rules were not independently inspected.",
+    "Keep the observed driver580.159.04 qualification distinct from the original direct-reference driver590.48.01, while preserving full numerical/source/precision/software gates."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/SchedMD/slurm/blob/slurm-23-11-6-1/src/plugins/task/cgroup/task_cgroup_devices.c",
+      "supports": "Allocated GRES device descriptors are enforced by character-device major/minor rules."
+    },
+    {
+      "url": "https://github.com/SchedMD/slurm/blob/slurm-23-11-6-1/src/plugins/gres/common/gres_common.c",
+      "supports": "Slurm GPU environment identifiers and local visibility are distinct namespaces."
+    },
+    {
+      "url": "https://github.com/SchedMD/slurm/blob/slurm-23-11-6-1/src/plugins/gres/gpu/gres_gpu.c",
+      "supports": "The merged GRES list ordering uses File and Links self-position; physical PCI/minor rank alone is insufficient."
+    },
+    {
+      "url": "https://github.com/SchedMD/slurm/blob/slurm-23-11-6-1/doc/man/man5/cgroup.conf.5",
+      "supports": "ConstrainDevices configures device enforcement."
+    },
+    {
+      "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html#device-controller",
+      "supports": "Version2 device restrictions use BPF rather than devices.list."
+    },
+    {
+      "url": "https://docs.nvidia.com/deploy/nvml-api/latest/api/group__nvmlDeviceQueries.html",
+      "supports": "Current NVML handle index is not a historical Slurmd enumeration proof."
+    }
+  ],
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

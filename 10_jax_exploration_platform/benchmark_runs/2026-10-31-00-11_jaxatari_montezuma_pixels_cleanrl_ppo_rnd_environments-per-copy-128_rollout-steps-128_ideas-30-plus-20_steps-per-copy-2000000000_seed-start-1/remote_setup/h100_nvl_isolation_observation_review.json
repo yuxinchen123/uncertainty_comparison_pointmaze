@@ -1,0 +1,18 @@
+{
+  "kind": "h100_nvl_isolation_observation_review",
+  "reviewed_at_utc": "2026-11-01T00:36:51.215041+00:00",
+  "metadata_tests_passed": 19,
+  "independent_review_passed": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_allocation_observation.py": "9a0907bcb98fe8048d657b296a7b7e2c6e3367515df945d6a13f4e8d5f3677ee"
+  },
+  "scope": "Record filtered device-isolation settings and only this process placement, including actual affinity and exact own cgroup ancestors. Observation only; live BPF rules are not independently inspected.",
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "device_isolation_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "gpu_job_submitted": false
+}
