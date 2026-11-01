@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-11-01T19:10:37.113792+00:00",
+  "hash_matched_recovery_claimed": false,
+  "initial_core_sha256": "f9c67f143c5337e48f84908032fe91813bd74e202ccce6742f05caa9affae8e6",
+  "initial_separate_source_byte_copy_exists": false,
+  "initial_source_freeze_sha256": "cb3c2e59637be0503dc9ee165f757340928c9fdd0b0eecb58bea26b06c68b62c",
+  "initial_test_sha256": "c3dbffb23caada5a38ed13793f1a0995924237084eedb54318a58753b6ffc52f",
+  "kind": "initial_source_archive_limit",
+  "limitation": "The original source creation and full reader text remain in the tool/conversation history. No separate initial source files were copied before correction; no unverifiable reconstruction is labelled preserved. Correction/review was not delayed for recovery.",
+  "retained_evidence": [
+    "uva_configured_isolation_initial_source_freeze.json",
+    "uva_configured_isolation_author_6781231_27.json",
+    "uva_configured_isolation_initial_independent_6781231_29.json"
+  ],
+  "schema_version": 1,
+  "second_copy_hashes": {
+    "test_uva_slurm_configured_isolation.py": "17e89ea9ee0ea6584b21c32289c11f7c2d8a342472507fcb63d0ae06c64da7e6",
+    "uva_slurm_configured_isolation.py": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+  },
+  "second_reviewed_source_copy": "/p/rlprojects/RND_worktrees/2026-11-01-10-41_uva-jaguar03-configured-isolation_gpu-count-1_service-uid-64030/.review_metadata/second_core_source_reviewed"
+}

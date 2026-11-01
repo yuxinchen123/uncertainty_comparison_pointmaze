@@ -1,0 +1,18 @@
+{
+  "GPU_or_job_actions": false,
+  "encoding": "JSON indent=2 sort_keys=true final newline",
+  "expected_settings_sha256": {
+    "/etc/slurm/cgroup.conf": "1420e513b551d2f850e7ac8b1acdb643e311e8609918a74a9e24a7fce4f7f8fe",
+    "/etc/slurm/gres.conf": "6d3d1b5c4d3679d234a62540e3b243e0025fd21fdafd82b342886225d721e7f3",
+    "/etc/slurm/nodes.conf": "2bec9f6cb4cbefdeb06d87c3476bebe7d579d68215d1cb2a58b4cc7110daa9b4",
+    "/etc/slurm/partitions.conf": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "/etc/slurm/slurm.conf": "7344e4a24b9bf79e33bb0d46255dc33c3a25bcefc45031b4209e6e7535c7579d"
+  },
+  "kind": "actual_nonsecret_configuration_excerpt_list_hashes",
+  "observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/passive_observation.json",
+    "sha256": "b52907bbe47942918eb147e1e403c89c2114f69b1aa3970423cda5f81fa61f16"
+  },
+  "raw_private_configuration_retained": false,
+  "schema_version": 1
+}

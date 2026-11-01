@@ -1,0 +1,106 @@
+{
+  "actual_excerpt_proof": {
+    "/etc/slurm/cgroup.conf": {
+      "excerpt_sha256": "1420e513b551d2f850e7ac8b1acdb643e311e8609918a74a9e24a7fce4f7f8fe",
+      "full_sha256": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9",
+      "rows": 4
+    },
+    "/etc/slurm/gres.conf": {
+      "excerpt_sha256": "6d3d1b5c4d3679d234a62540e3b243e0025fd21fdafd82b342886225d721e7f3",
+      "full_sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+      "rows": 22
+    },
+    "/etc/slurm/nodes.conf": {
+      "excerpt_sha256": "2bec9f6cb4cbefdeb06d87c3476bebe7d579d68215d1cb2a58b4cc7110daa9b4",
+      "full_sha256": "1c9dc0acd626a1f794feddae773da4295d5807e06e872a9330a722eac2e59a5c",
+      "rows": 73
+    },
+    "/etc/slurm/partitions.conf": {
+      "excerpt_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "full_sha256": "161b848c4ee1281341d7791391e516df99fb4a98ea16d07d57355b4553871d8c",
+      "rows": 0
+    },
+    "/etc/slurm/slurm.conf": {
+      "excerpt_sha256": "7344e4a24b9bf79e33bb0d46255dc33c3a25bcefc45031b4209e6e7535c7579d",
+      "full_sha256": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a",
+      "rows": 7
+    }
+  },
+  "all_process_commands_restricted_to_local_temporary_git": true,
+  "at_utc": "2026-11-01T19:14:59.021808+00:00",
+  "birth": "52132432",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_36/user/task_0\n",
+  "cold_probe_sha256": "b61d3ca217e2734466b5eb4847eb863fa55d4bf45342e2bd081d990d1f4e6b5d",
+  "cold_staged_imports": [
+    {
+      "kind": "complete_staged_closure",
+      "result": {
+        "loaded": {
+          "device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+          "h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+          "passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+          "uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+          "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+        },
+        "owner": "/tmp/tmpklnzfh81/stage/uva_active_configuration_observation.py",
+        "passed": true
+      },
+      "returncode": 0
+    },
+    {
+      "kind": "missing_staged_dependency_refused",
+      "returncode": 1,
+      "stderr_sha256": "273ba561b5c678148814126ba3faa8e66d9a7242040844a621e90938ec48da32"
+    }
+  ],
+  "cpu_affinity": [
+    10
+  ],
+  "errors": 0,
+  "failures": 0,
+  "gpu_qualification": false,
+  "job_id": "6781231",
+  "kind": "uva_configured_isolation_final_independent_metadata_review",
+  "limits": [
+    "metadata/source approval only; no actual GPU qualification",
+    "combined producer parent/child and default/helper-union checks remain required",
+    "initial f9/c3 physical source-byte archive was unavailable and is not claimed recovered"
+  ],
+  "numerical_imports_attempted": [],
+  "operational_admission": false,
+  "passed": true,
+  "pid": 622984,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loading_prohibited": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "source_approved": true,
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "source_freeze_sha256": "1324a712f31f9f9fb0f57cbffc07e86b6b6b6009b17292e80a6b2b496ff68a29",
+  "step_id": "36",
+  "tests_run": 25,
+  "verified_regressions": [
+    {
+      "name": "published_sorted_metadata_roundtrip_passes",
+      "verified": true
+    },
+    {
+      "name": "changed_allowed_excerpts_reject_under_unchanged_full_file_sha",
+      "verified": true
+    },
+    {
+      "name": "own_query_raw_capture_hash_count_mutation_rejects",
+      "verified": true
+    },
+    {
+      "name": "invalid_utf8_raw_query_is_explicit_failure",
+      "verified": true
+    }
+  ]
+}

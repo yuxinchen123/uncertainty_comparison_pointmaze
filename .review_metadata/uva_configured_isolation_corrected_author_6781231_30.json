@@ -1,0 +1,31 @@
+{
+  "all_process_commands_restricted_to_local_temporary_git": true,
+  "at_utc": "2026-11-01T19:00:20.409623+00:00",
+  "birth": "52044800",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_30/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "errors": 0,
+  "failures": 0,
+  "gpu_qualification": false,
+  "job_id": "6781231",
+  "kind": "uva_configured_isolation_author_metadata_tests",
+  "numerical_imports_attempted": [],
+  "passed": true,
+  "pid": 621505,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loading_prohibited": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": "17e89ea9ee0ea6584b21c32289c11f7c2d8a342472507fcb63d0ae06c64da7e6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": "17e89ea9ee0ea6584b21c32289c11f7c2d8a342472507fcb63d0ae06c64da7e6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+  },
+  "source_freeze_sha256": "166a8b5c1e9bce9be8770321a967c6e18ba8286a20fe3f65adc809645c7994cd",
+  "step_id": "30",
+  "tests_run": 22
+}
