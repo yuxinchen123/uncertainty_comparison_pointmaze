@@ -2456,9 +2456,10 @@ execution group or reporting interval without padding or partial updates.
 The order alternates between reference first and candidate first. A change
 is accepted only with valid correctness checks, uncontended measurements, a
 median speed ratio above one, and a one-sided paired sign probability at most
-$0.05$. Small or inconsistent gains remain inconclusive. The selected combination
-must receive a separate correctness check and confirmation with seven pairs of
-ten complete updates per variant before final training. Training-only
+$0.05$. Small or inconsistent gains remain inconclusive. The common combination first requires its own correctness check and seven pairs
+of ten complete updates per variant. The final implementation, chosen after
+all fifty mechanisms, requires eleven pairs of at least twenty complete
+updates per variant before final training. Training-only
 timing and the report-readout comparison are kept separate. The latter compares
 downloading metrics after each update with downloading their device-accumulated
 values every ten updates; the published rows and their schedule must agree.
@@ -2489,25 +2490,25 @@ timing result applies to that recorded allocator setting.
 \greyrule
 specified mechanisms & 30 \\
 \greyrule
-specified mechanisms investigated on both GPU types & 22 of 30 \\
+specified mechanisms investigated on both GPU types & 30 of 30 \\
 \greyrule
-specified mechanisms timed correctly on both GPU types & 22 of 30 \\
+specified mechanisms timed correctly on both GPU types & 30 of 30 \\
 \greyrule
-specified mechanisms covering every required copy count & 22 of 30 \\
+specified mechanisms covering every required copy count & 30 of 30 \\
 \greyrule
 additional mechanisms chosen from profiles & 0 of 20 \\
 \greyrule
 additional mechanisms investigated on both GPU types & 0 of 20 \\
 \greyrule
-controller phase & initial benchmarks \\
+controller phase & adaptive research pending \\
 \greyrule
-registered queue cases completed & 104 \\
+registered queue cases completed & 120 \\
 \greyrule
 registered queue cases failed & 0 \\
 \greyrule
-registered queue cases pending & 15 \\
+registered queue cases pending & 0 \\
 \greyrule
-registered queue cases running & 1 \\
+registered queue cases running & 0 \\
 \blackrule
 \end{tabular}
 % <<< AUTO-GENERATED TABLE END: pixel-montezuma-study-status
@@ -2544,11 +2545,11 @@ at matched per-GPU copy counts, with a common wall-clock measurement interval.
 \blackrule
 \textbf{Registered case outcome} & \textbf{H100} & \textbf{Jaguar03 RTX A4500} \\
 \greyrule
-accepted timing & 9 & 16 \\
+accepted timing & 12 & 16 \\
 \greyrule
-inconclusive timing & 15 & 16 \\
+inconclusive timing & 21 & 16 \\
 \greyrule
-rejected timing & 20 & 28 \\
+rejected timing & 27 & 28 \\
 \greyrule
 correctness rejected & 0 & 0 \\
 \greyrule
@@ -2572,17 +2573,23 @@ fully deterministic reference. Separate controls investigate the setting for
 deterministic execution and the physical data layout used by convolutions;
 their completion is not a prerequisite for those comparisons.
 
-At one independent policy copy, caching room backgrounds passed the numerical
-checks and timing acceptance rule on both GPU types
-(\Cref{fig:pixel-montezuma-cache-h100-one-copy,fig:pixel-montezuma-cache-a4500-one-copy}). Measurements at larger
-matched copy counts and comparisons of the remaining mechanisms are still in
-progress. The planned $2$-billion-step training has not begun. The section's
-generator reads only registry-indexed case results, retains failed
-and inconclusive attempts in its complete report, and produces paired-speed
-plots only after statistical analysis on a compute host. Standalone capacity
-probes and execution diagnostics do not enter those paired results. Training
-curves and best-configuration learning results will be added when the
-corresponding training records exist.
+All thirty specified mechanisms have completed their four initial comparisons:
+one and two independent policy copies on each GPU type. Caching room
+backgrounds and rendering only the final two game states each passed the
+correctness and timing acceptance rules in all four cases. These separate
+results do not establish that their combination is correct or faster; the
+common two-change combination has not yet received its own correctness check
+or confirmation. The twenty mechanisms to be chosen from subsequent profiles
+remain unchosen, and the planned $2$-billion-step final training has not begun.
+
+The plotted ratios describe the completed initial comparisons against their
+matched original references. They do not measure the speed of the untested
+combination, a final selected implementation, or learning returns. The
+section's generator reads only registry-indexed case results and retains
+rejected and inconclusive attempts in its complete report. Standalone capacity
+probes, target-qualification work, and execution diagnostics do not contribute
+paired-case or mechanism credit. Training curves and final learning results
+will be added when the corresponding training records exist.
 
 % >>> AUTO-GENERATED FIGURES START: pixel-montezuma-paired-measurements
 \begin{figure}[H]
@@ -2610,6 +2617,13 @@ corresponding training records exist.
 
 \begin{figure}[H]
 \centering
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_03d1e4ea43a37dbce7fbe3c96d2bccb8319c01121068a34a4c42cd9a6be2115a_panel-01-of-01.pdf}}
+\caption{Paired execution-speed measurements on H100 (serval02), with 1 independent policy copy. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training with report readout. Reference configuration hash: \texttt{effc9e3a0b9cda09aac82046d0b839fdff3231601232d913e09c83d12ec02f2b}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
+\label{fig:pixel-montezuma-paired-03d1e4ea43a37dbce7fbe3c96d2bccb8319c01121068a34a4c42cd9a6be2115a_panel-01-of-01}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-03.pdf}}
 \caption{Paired execution-speed measurements on H100 (serval02), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 1 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
 \label{fig:pixel-montezuma-paired-17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-01-of-03}
@@ -2627,6 +2641,13 @@ corresponding training records exist.
 \includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-03-of-03.pdf}}
 \caption{Paired execution-speed measurements on H100 (serval02), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training iteration execution. Reference configuration hash: \texttt{15df2f4de69cb86175e1ac5820eaaa43d61dd0cab872e4a992bb21a19c4d9852}. Panel 3 of 3 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
 \label{fig:pixel-montezuma-paired-17ae4115731f4f64263d421603f980f4ae3f540314a42bf9dab2d1f6126543fb_panel-03-of-03}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/plots/paired-speed-ratios_0eeefe1815ec992395913a0a9964dd4d3f1e2517c38d0fd32c1a4fdf754dee73_panel-01-of-01.pdf}}
+\caption{Paired execution-speed measurements on H100 (serval02), with 2 independent policy copies. Source commit: \texttt{d28e6735e79788f618acb0ebfde8609db1f776af}. Measurement scope: training with report readout. Reference configuration hash: \texttt{8f46fff9aca348a32bb081491d65420d1c55fde31b23544c3a5c44f89f76cd8e}. Panel 1 of 1 for this configuration. Each circle is one paired reference-to-candidate duration ratio; the diamond is its median. Ratios above one favor the candidate. Each panel has its own horizontal range. These execution timings do not establish learning returns, larger-copy performance, or performance of the final combination.}
+\label{fig:pixel-montezuma-paired-0eeefe1815ec992395913a0a9964dd4d3f1e2517c38d0fd32c1a4fdf754dee73_panel-01-of-01}
 \end{figure}
 
 \begin{figure}[H]

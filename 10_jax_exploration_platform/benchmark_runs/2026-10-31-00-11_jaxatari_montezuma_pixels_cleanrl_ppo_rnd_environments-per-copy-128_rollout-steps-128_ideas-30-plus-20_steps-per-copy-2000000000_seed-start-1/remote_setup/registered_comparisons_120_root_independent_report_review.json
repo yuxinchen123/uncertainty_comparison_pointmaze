@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "root_independent_registered_comparisons_120_report_review",
+  "at_utc": "2026-11-01T21:11:05.859391+00:00",
+  "passed": true,
+  "author_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/registered_comparisons_120_report_verification.json",
+    "sha256": "2dd4a9c8a1d0fc505c646a258db66edbdf4614a0c93d66503750d3a2489f90e3"
+  },
+  "publication_roster": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/analysis_executions/registered-comparisons-120_publication_files.json",
+    "sha256": "7325b525f4f8551a76f5081ae7718493373afa32d15a9c07f52791dcbdfdd15b"
+  },
+  "publication_paths_checked": 38,
+  "raw_initial_audit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-50_initial-comparisons-completion_ideas-30_gpu-types-2_copies-1-2_comparisons-120_source-d28e6735e797/initial_comparisons_audit.json",
+    "sha256": "0ab4af11340d5755980674c081fc962d77f9018e26fb057b04bd69c3b9d84d41"
+  },
+  "decision_counts": {
+    "accepted": 28,
+    "inconclusive": 37,
+    "rejected": 55
+  },
+  "actual_pages_viewed": [
+    {
+      "page": 39,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/report_snapshots/2026-11-01-12-55_report-registered-comparisons-120_monitor-job-6781231_step-74_retained-grid-edition-registered-comparisons-100/rendered_pages/page-39.png",
+      "sha256": "397495f4c32586ad211749568f258b130fd25ed8a8795940a61d741cd93a06bb",
+      "actual_visual_review": "Readable full labels/captions and no overlap or clipping."
+    },
+    {
+      "page": 46,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/report_snapshots/2026-11-01-12-55_report-registered-comparisons-120_monitor-job-6781231_step-74_retained-grid-edition-registered-comparisons-100/rendered_pages/page-46.png",
+      "sha256": "12b235154b0dc1db3d8d61e6be246eb3288ddeae2ae34f278c4c5b69b450dbec",
+      "actual_visual_review": "Readable full labels/captions and no overlap or clipping."
+    },
+    {
+      "page": 47,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/report_snapshots/2026-11-01-12-55_report-registered-comparisons-120_monitor-job-6781231_step-74_retained-grid-edition-registered-comparisons-100/rendered_pages/page-47.png",
+      "sha256": "f02cfd1e57f5678d15e013425e9764f4c1d35c3170d2f60ba9668d20eaa08d0e",
+      "actual_visual_review": "Readable full labels/captions and no overlap or clipping."
+    }
+  ],
+  "pdf": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.pdf",
+    "sha256": "1de7948aafcefaa72b4b3826f0ba0ef4841a1d699739ca080b22e2af5be93619",
+    "pages": 67,
+    "frozen_snapshot_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/report_snapshots/2026-11-01-12-55_report-registered-comparisons-120_monitor-job-6781231_step-74_retained-grid-edition-registered-comparisons-100/build/RND_JAX_exploration_development_document.pdf"
+  },
+  "original_pdf_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/development_document/code/2026-10-31-01-28_pixel-montezuma-infrastructure-tables/data/analysis_executions/6781231_82_registered-comparisons-120_original-pdf-preservation.json",
+    "sha256": "f451e55afdc0da977747ec8a560e8830ac9b20e91d193f94ad3209c2765cc69c"
+  },
+  "no_original_checkout_build_inputs": [],
+  "combined_configuration_unconfirmed": true,
+  "all_120_medians_and_840_pairs_have_owned_compute_checks": true,
+  "adaptive_ideas_selected": 0,
+  "final_training_started": 0,
+  "no_build_or_analysis_repeated_for_this_review": true
+}
