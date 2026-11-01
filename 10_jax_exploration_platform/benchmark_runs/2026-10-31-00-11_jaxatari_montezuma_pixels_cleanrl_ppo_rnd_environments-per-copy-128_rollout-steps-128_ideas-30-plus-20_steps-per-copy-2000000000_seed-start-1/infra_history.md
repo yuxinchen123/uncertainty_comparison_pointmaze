@@ -396,3 +396,34 @@ Read-only assessment found full NVIDIA XML and logical-index/minor equality assu
 The first no-process-query design would leave required own-process memory and contamination evidence unknown, so formal readers must reject it. Independent addendum review 905ab2b8658c182a8e7153ea555483cc7b042f5f61a523d5c8d77fe643b1b508 permits only bound assigned-UUID compute-app observations after physical identity. Complete actual own samples and normal whole-window sampler coverage are required; unknown, failed or other-process observations reject credit. No global or foreign-process inspection, default scientific-gate change or admission.
 
 Core qualifier passed fifteen author metadata cases on 6781231.27; independent review and producer implementation continue in isolated worktrees. A separate full-original target-qualification entry must avoid circular baseline prerequisites and count all actual work with zero scientific credit. No new target packet or GPU job exists. Full monitor 6781231.26 remains at 117 of 120 comparisons.
+
+
+## 2026-11-01 10:57 PST — first core source remains unapproved pending reproduced corrections
+
+Independent step 6781231.29 passed fifteen original metadata cases and reproduced four additional source gaps; receipt SHA256 8c26425293aad91cfcc772dc963d6071fcab58cc7dca18aa1e4b4ae03c558c15. Preserve initial bytes and all passing/failed fixtures. Batched capture, ownership, resource, immutable-ledger, current-context and failure-record corrections are in progress. No actual GPU collection, source admission or worker change. A tentative raw-stat equality concern was withdrawn after checking the actual stable identity helper.
+
+One bounded read-only serval02 observation reverified recorded supervisor 3567981, child 1007334, exact birth counters, parent relationship, selected UUID and held lock descriptor. Receipt SHA256 4460eabea8a25e322b2c0054fe16873612692a59a6295be92212ce631e32e136. It performed no GPU query or process action; the remote shell's conda-not-found startup line is retained separately in stderr.
+
+
+## 2026-11-01 11:00 PST — recurring prompt updated for current isolated corrections
+
+Created and verified recurring task bb5f4f5f-7595-434c-9a35-003c560d28b8 before deleting its predecessor. Cadence remains twenty minutes, expiry November eighth at 11:00 UTC. Several locally rejected over-limit drafts created no tasks. Prompt now records the unapproved initial core, concrete independent findings, isolated authors, approved assigned-device observer addendum and separate zero-credit qualification entry. Persistent full monitor 6781231 continues unchanged. No new Slurm submission, release, worker or admission action.
+
+
+## 2026-11-01 11:15 PST — corrected core source approved; incoming review remains
+
+Final core d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694 passed twenty-five author and independent metadata cases, four regressions, exact actual baseline/excerpt checks and two cold-staging checks. Independent step 6781231.36 receipt SHA256 1c8c6537bf7902423818cb255aecfb58e2fc884cce4edba1f53a73c80bcc2355. Source integration only is approved; producer review, actual qualification and any admission remain separate.
+
+The first uncommitted core/test copies were not saved before correction. Hashes and test receipts remain, with an explicit archive-limit record; no recovery is claimed. Previous corrected and final bytes are now physically preserved with matching hashes and read-only modes. No original numerical data or source changed.
+
+Both existing masters passed at 19:01:27 UTC, next explicit check no earlier than 20:01:28 UTC. Full monitor 6781231.32 remains at 117 of 120 comparisons. Recurring and persistent monitors both continue every twenty minutes.
+
+
+## 2026-11-01 11:20 PST — exact reviewed allocation core integrated
+
+Merged approved author fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178 as 1376186870cf92cd32938a6bb6a56a822d0b99da and pushed it. Actual tree equals independent expected tree 4424f60fb4fcf4a77c62575d4c09a193bb3fd928; all twenty-seven working-file hashes match. Incoming review SHA256 a9fe0b9d763960a24a10089a9675b208a914731df741b57c169c617162213cca. Original checkout/index, frozen numerical source and current admission remain unchanged. Producer review and actual GPU qualification are still pending; no new GPU job or scientific credit.
+
+
+## 2026-11-01 11:26 PST — later direct H100 observer needs its own explicit binding
+
+Current default H100 selected/profile path still enters the frozen global process sampler. A separate direct-card-one design is being prepared; it must use fresh actual identity and the standing lock after all original comparisons and exact worker exits. No new direct process or admission. Full monitor 6781231.39 passes 117 of 120, with the current case at round six of seven; ACES remains waiting for priority.

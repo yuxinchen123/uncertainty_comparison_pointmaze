@@ -1,0 +1,15 @@
+{
+  "kind": "independent_metadata_reproduction_harness_fixture_failure",
+  "at_utc": "2026-11-01T18:55:35.751944+00:00",
+  "source_harness": "/p/rlprojects/RND_worktrees/2026-11-01-10-41_uva-jaguar03-configured-isolation_gpu-count-1_service-uid-64030/.review_metadata/run_uva_configured_isolation_initial_independent_tests.py",
+  "harness_sha256": "0decc2454ffb559ba9d198f00137fbd19d0d0ddca6b6d1d92d2964f2eb8f79c3",
+  "actual_owned_job_id": "6781231",
+  "actual_step_id": null,
+  "step_attribution": "not returned before the independent harness failed; no guessed step number",
+  "original_suite_tests": 15,
+  "original_suite_failures": 0,
+  "original_suite_errors": 0,
+  "failure": "Synthetic SimpleNamespace omitted UVA_CGROUP_V2_OWNERSHIP_PROFILE; the 15 source tests passed before this extra reproduction fixture failed.",
+  "production_source_changed": false,
+  "numerical_GPU_or_live_commands": false
+}

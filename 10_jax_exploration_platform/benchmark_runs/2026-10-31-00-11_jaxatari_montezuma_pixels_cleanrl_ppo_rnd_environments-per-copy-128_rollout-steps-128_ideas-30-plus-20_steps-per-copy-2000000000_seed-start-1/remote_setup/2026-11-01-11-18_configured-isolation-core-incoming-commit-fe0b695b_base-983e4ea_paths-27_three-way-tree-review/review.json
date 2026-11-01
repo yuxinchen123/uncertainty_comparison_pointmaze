@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "kind": "independent_configured_isolation_core_incoming_commit_tree_review",
+  "at_utc": "2026-11-01T19:18:25.471773+00:00",
+  "approved_for_exact_integration_merge": true,
+  "incoming_commit": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178",
+  "base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "integration_head_before": "8a17b68855e841aa0716012d4b4fe4b65bb315fe",
+  "integration_head_after": "8a17b68855e841aa0716012d4b4fe4b65bb315fe",
+  "integration_branch": "merge-atari-cleanrl",
+  "author_roster_sha256": "8e18cf346079889ed583d978a05f66af378bad9c392970150a5e271de67facbc",
+  "actual_pushed_author_ref": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178\trefs/heads/uva-jaguar03-configured-isolation-single-gpu-service-uid-64030\n",
+  "incoming_path_count": 27,
+  "incoming_bytes": {
+    ".review_metadata/final_core_source_pre_author/test_uva_slurm_configured_isolation.py": {
+      "sha256": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "6b3f056abfe2c4c8261494a836c1004c9cdebca0"
+      }
+    },
+    ".review_metadata/final_core_source_pre_author/uva_slurm_configured_isolation.py": {
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "f2fef8c6d2b25f629d6a19602c275f80b4249ff2"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_corrected_metadata_tests.py": {
+      "sha256": "5eb58440e05d8cd2fd0a208489bd09b6577cfd3819bc39364f7b505ea5a40a3a",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e25f93a5a7b8fac78c0d7d85e426b12a5b2acc44"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_final_independent_tests.py": {
+      "sha256": "5d5de80ec02981ddee148f84ee72e7469b410e09967ca3570f2f505176aa626d",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "ba79d3bdb925ad78d2005c974ec8ecc908e93871"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_final_metadata_tests.py": {
+      "sha256": "184d1e4b854a54a428a29edf7dc15bab7a5fb0792ac67e44e1c571a8d8083712",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "7b36140f11f14a312424957220d40e42a45c2c88"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_initial_independent_tests.py": {
+      "sha256": "0decc2454ffb559ba9d198f00137fbd19d0d0ddca6b6d1d92d2964f2eb8f79c3",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "0a771b67d6b80312644dbf9b490608d8c1cdfb1b"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_initial_independent_tests_corrected_fixture.py": {
+      "sha256": "b00eae69f1e233f7fb5cc94b51ac12e3456035a39fba5fd4402c42e5ddeddb59",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "6d0b3a57a3ed9000f26a79e1fd491d26e9cab149"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_metadata_tests.py": {
+      "sha256": "df5743424b15542cc7d4cb0e8e0742037c011462abfb30932e28f730a1a641b2",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "66a5e34522cbe0aaf4c83feff93bbcddbf674fd4"
+      }
+    },
+    ".review_metadata/run_uva_configured_isolation_second_independent_tests.py": {
+      "sha256": "3d8b05217383c124531ff60b7243628954892887306e0fe66d7ff4146f10ec9f",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "251407d65f2493fb30447b7297bb3cdb51b97127"
+      }
+    },
+    ".review_metadata/second_core_source_reviewed/test_uva_slurm_configured_isolation.py": {
+      "sha256": "17e89ea9ee0ea6584b21c32289c11f7c2d8a342472507fcb63d0ae06c64da7e6",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "0c2c5de4330bd2e33eafb7ee21aeb26c5178000b"
+      }
+    },
+    ".review_metadata/second_core_source_reviewed/uva_slurm_configured_isolation.py": {
+      "sha256": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "49fa050a990a5ad03b65358be5d597e9ffaff554"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_actual_basis_comparison.json": {
+      "sha256": "224f582b551e8c156c4acd015c00d55924526e033d56b998caa9d3af33c6e6f7",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "5406c257f50208799cdcbffabc6b4244075f77cd"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_author_6781231_27.json": {
+      "sha256": "20d8678a8a6b0abf6e18bed9b781f27a98bc4052cbabe05ff4abbd9a64a2e702",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "aadece4c8d7190fa31eadd4ac3661f84321b959e"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_corrected_author_6781231_30.json": {
+      "sha256": "771b56eb6767ec19b7b3bef997cd9349fa0ef1f83ec0db210c3e10a4fd2d411b",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "0c6d8e2d24114c89910c11e77749d990e500f2d0"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_corrected_source_freeze.json": {
+      "sha256": "166a8b5c1e9bce9be8770321a967c6e18ba8286a20fe3f65adc809645c7994cd",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e9b33d0beceb02e36e94312138bc1e496ff60ce8"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_expected_excerpts.json": {
+      "sha256": "53d22bd96a87dcfdb85880d38102791295801322344fa0807ff63ff4ab4a4dd6",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "49f9d3a23f59c5749a95f2c43bc6ebc4d2c6725b"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_final_author_6781231_34.json": {
+      "sha256": "d198197a319c336bf40a420a458a0fc4079ce004ba3d5ca5e33c57bfbe70e846",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "52270b6dd2924227b8396bc4085267820f3382db"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_final_independent_6781231_36.json": {
+      "sha256": "1c8c6537bf7902423818cb255aecfb58e2fc884cce4edba1f53a73c80bcc2355",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "9d0f387228ae2580d48e4eaecade8355095a2406"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_final_source_freeze.json": {
+      "sha256": "1324a712f31f9f9fb0f57cbffc07e86b6b6b6009b17292e80a6b2b496ff68a29",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "460eacbc1f98923595a84179abe47273e8a282da"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_initial_archive_limit.json": {
+      "sha256": "257fc94f4b6f7b2b4633a9200878a137015c37281ae639f5556c6039b39bf73f",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "c3e0b73db932a6457727657ec928c1ee5505251d"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_initial_independent_6781231_29.json": {
+      "sha256": "8c26425293aad91cfcc772dc963d6071fcab58cc7dca18aa1e4b4ae03c558c15",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "c3f6f11f6c65a03694c6af3f8af1a4bcb351bd02"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_initial_independent_fixture_failure.json": {
+      "sha256": "13536d93cb759dd6140fcdef3ef2fe105855cb81e63a50907ff543343b719589",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "9e10f55e925bb13562d3d81864e62659d0f6db98"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_initial_source_freeze.json": {
+      "sha256": "cb3c2e59637be0503dc9ee165f757340928c9fdd0b0eecb58bea26b06c68b62c",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e8871b5fa435ceefa729f936c6b8f4eaba0a81bd"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_publication_roster.json": {
+      "sha256": "e58eb43029699f04d95b9fe8423ce202e4a0eab33ef9108dfa6374b6dafd4a7a",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "df37b7a00d6866c50b81d8eb8201c8ea7211b72b"
+      }
+    },
+    ".review_metadata/uva_configured_isolation_second_independent_6781231_33.json": {
+      "sha256": "e32be2174c6c53f537e33e47c5e24ab996d3a4b365776a489bbb290d224ad065",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "fc5185c1c20cf7cb0ba147f5f750d1b1e1a5be91"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": {
+      "sha256": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "6b3f056abfe2c4c8261494a836c1004c9cdebca0"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "f2fef8c6d2b25f629d6a19602c275f80b4249ff2"
+      }
+    }
+  },
+  "committed_path_overlaps": [],
+  "dirty_incoming_overlaps_before": [],
+  "dirty_incoming_overlaps_after": [],
+  "ignored_paths_checked_only_for_incoming_and_parents": [
+    ".review_metadata/uva_configured_isolation_actual_basis_comparison.json",
+    ".review_metadata/uva_configured_isolation_author_6781231_27.json",
+    ".review_metadata/uva_configured_isolation_corrected_author_6781231_30.json",
+    ".review_metadata/uva_configured_isolation_corrected_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_expected_excerpts.json",
+    ".review_metadata/uva_configured_isolation_final_author_6781231_34.json",
+    ".review_metadata/uva_configured_isolation_final_independent_6781231_36.json",
+    ".review_metadata/uva_configured_isolation_final_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_initial_archive_limit.json",
+    ".review_metadata/uva_configured_isolation_initial_independent_6781231_29.json",
+    ".review_metadata/uva_configured_isolation_initial_independent_fixture_failure.json",
+    ".review_metadata/uva_configured_isolation_initial_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_publication_roster.json",
+    ".review_metadata/uva_configured_isolation_second_independent_6781231_33.json"
+  ],
+  "untracked_or_ignored_existing_path_collisions": [],
+  "symlink_or_non_directory_parent_collisions": [],
+  "staged_diff_empty": true,
+  "integration_index_before": {
+    "mode": "0o664",
+    "inode": 4531016,
+    "device": 76,
+    "size": 1948453,
+    "mtime_ns": 1793558973235054606,
+    "ctime_ns": 1793558973235054606,
+    "kind": "file",
+    "sha256": "b4fbd2aefdc570b29df57ed358003ca4d49692968c7925de1b9d1221fe207ab6",
+    "stable": true
+  },
+  "integration_index_after": {
+    "mode": "0o664",
+    "inode": 4531016,
+    "device": 76,
+    "size": 1948453,
+    "mtime_ns": 1793558973235054606,
+    "ctime_ns": 1793558973235054606,
+    "kind": "file",
+    "sha256": "b4fbd2aefdc570b29df57ed358003ca4d49692968c7925de1b9d1221fe207ab6",
+    "stable": true
+  },
+  "integration_index_unchanged": true,
+  "original_index_unchanged": true,
+  "original_HEAD_bytes_unchanged": true,
+  "dirty_paths_before": 153,
+  "dirty_paths_after": 153,
+  "concurrent_outside_incoming_changes": {},
+  "checkout_three_way_dry_run_returncode": 0,
+  "index_only_three_way_read_tree_returncode": 0,
+  "unmerged_index_entries": "",
+  "result_tree": "4424f60fb4fcf4a77c62575d4c09a193bb3fd928",
+  "result_paths_changed_from_integration": [
+    ".review_metadata/final_core_source_pre_author/test_uva_slurm_configured_isolation.py",
+    ".review_metadata/final_core_source_pre_author/uva_slurm_configured_isolation.py",
+    ".review_metadata/run_uva_configured_isolation_corrected_metadata_tests.py",
+    ".review_metadata/run_uva_configured_isolation_final_independent_tests.py",
+    ".review_metadata/run_uva_configured_isolation_final_metadata_tests.py",
+    ".review_metadata/run_uva_configured_isolation_initial_independent_tests.py",
+    ".review_metadata/run_uva_configured_isolation_initial_independent_tests_corrected_fixture.py",
+    ".review_metadata/run_uva_configured_isolation_metadata_tests.py",
+    ".review_metadata/run_uva_configured_isolation_second_independent_tests.py",
+    ".review_metadata/second_core_source_reviewed/test_uva_slurm_configured_isolation.py",
+    ".review_metadata/second_core_source_reviewed/uva_slurm_configured_isolation.py",
+    ".review_metadata/uva_configured_isolation_actual_basis_comparison.json",
+    ".review_metadata/uva_configured_isolation_author_6781231_27.json",
+    ".review_metadata/uva_configured_isolation_corrected_author_6781231_30.json",
+    ".review_metadata/uva_configured_isolation_corrected_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_expected_excerpts.json",
+    ".review_metadata/uva_configured_isolation_final_author_6781231_34.json",
+    ".review_metadata/uva_configured_isolation_final_independent_6781231_36.json",
+    ".review_metadata/uva_configured_isolation_final_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_initial_archive_limit.json",
+    ".review_metadata/uva_configured_isolation_initial_independent_6781231_29.json",
+    ".review_metadata/uva_configured_isolation_initial_independent_fixture_failure.json",
+    ".review_metadata/uva_configured_isolation_initial_source_freeze.json",
+    ".review_metadata/uva_configured_isolation_publication_roster.json",
+    ".review_metadata/uva_configured_isolation_second_independent_6781231_33.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+  ],
+  "all_other_integration_tree_entries_identical": true,
+  "all_incoming_result_entries_exact": true,
+  "isolated_object_directory": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+  "existing_object_store_read_only_alternate": "/p/rlprojects/RND/.git/objects",
+  "protected_D28_numerical_and_paired_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "source_admission_changed": false,
+  "actual_merge_or_ref_update_performed": false,
+  "original_or_integration_worktree_writes": false,
+  "numeric_library_device_network_cluster_or_job_actions": false,
+  "auxiliary_Slurm_steps": 0,
+  "proposed_parent_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge",
+      "--no-ff",
+      "--no-edit",
+      "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD^{tree}"
+    ]
+  ],
+  "expected_result_tree_after_parent_merge": "4424f60fb4fcf4a77c62575d4c09a193bb3fd928"
+}

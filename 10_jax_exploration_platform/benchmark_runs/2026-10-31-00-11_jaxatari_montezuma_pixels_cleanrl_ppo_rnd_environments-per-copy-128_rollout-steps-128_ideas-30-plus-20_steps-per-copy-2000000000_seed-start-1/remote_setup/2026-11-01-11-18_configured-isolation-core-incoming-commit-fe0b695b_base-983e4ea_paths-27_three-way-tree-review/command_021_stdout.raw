@@ -1,0 +1,54 @@
+{
+  "at_utc": "2026-11-01T19:03:17.040346+00:00",
+  "gpu_batch_shape_basis": {
+    "job_id": "6780569",
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-10-41_uva-jaguar03-configured-isolation_gpu-count-1_service-uid-64030/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_checkpoint_allocation_6780569.json",
+    "scope": "Historical owned batch resource-format evidence only; no fresh numeric-step qualification or current allocation claim.",
+    "selected_fields": {
+      "AllocTRES": [
+        "cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1"
+      ],
+      "CPUs/Task": [
+        "8"
+      ],
+      "NodeList": [
+        "jaguar03"
+      ],
+      "NumCPUs": [
+        "8"
+      ],
+      "NumTasks": [
+        "1"
+      ],
+      "Partition": [
+        "gpu"
+      ],
+      "QOS": [
+        "csresnolim"
+      ],
+      "ReqTRES": [
+        "cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1"
+      ],
+      "TresPerNode": [
+        "gres/gpu:nvidia_rtx_a4500:1"
+      ]
+    },
+    "sha256": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+  },
+  "installed_binary_matches_upstream_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "kind": "uva_configured_isolation_actual_metadata_basis_comparison",
+  "live_queries_or_numeric_work": false,
+  "passive_basis": {
+    "compiled_five_file_hashes_match": true,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/passive_observation.json",
+    "service_name": "slurm",
+    "service_uid": 64030,
+    "sha256": "b52907bbe47942918eb147e1e403c89c2114f69b1aa3970423cda5f81fa61f16"
+  },
+  "physical_gres_mapping_verified": false,
+  "qualification_credit": 0,
+  "schema_version": 1,
+  "strict_eight_cpu_rule": "The existing GPU batch requested and allocated eight CPUs. The CPU monitor one-request/two-allocated SMT exception is not applied to GPU work. A fresh numeric step must still provide exact CPU8, 64GiB and eight actual affinity entries; no topology or allocation is inferred from old records.",
+  "worker_admitted": false
+}

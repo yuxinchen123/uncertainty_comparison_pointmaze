@@ -1,0 +1,1471 @@
+[
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-list",
+      "--parents",
+      "-n",
+      "1",
+      "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:13.940235+00:00",
+    "stdout": {
+      "relative_path": "command_000_stdout.raw",
+      "bytes": 82,
+      "sha256": "004a3e6af1a8d0c087ab7924ec1cd623489382672de13a65a06855198b4a76e9"
+    },
+    "stderr": {
+      "relative_path": "command_000_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:13.999993+00:00",
+    "stdout": {
+      "relative_path": "command_001_stdout.raw",
+      "bytes": 41,
+      "sha256": "11b84c31585b731e9c3dd07c27cb2a00b5f752eb617f4e9b8683971fb36ad954"
+    },
+    "stderr": {
+      "relative_path": "command_001_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:14.059856+00:00",
+    "stdout": {
+      "relative_path": "command_002_stdout.raw",
+      "bytes": 20,
+      "sha256": "96939b30bac01888aa207cb1700e8e6e8cf2e5456f682e0c59bd562c99922ecb"
+    },
+    "stderr": {
+      "relative_path": "command_002_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge-base",
+      "--is-ancestor",
+      "983e4ea2b1b484f48a97757bad6a047df09ae795",
+      "8a17b68855e841aa0716012d4b4fe4b65bb315fe"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:14.123400+00:00",
+    "stdout": {
+      "relative_path": "command_003_stdout.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "relative_path": "command_003_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "--git-path",
+      "index"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:14.172796+00:00",
+    "stdout": {
+      "relative_path": "command_004_stdout.raw",
+      "bytes": 59,
+      "sha256": "92189bdc15521b309d8363ffccf908b0b811a6724f0078a9cfeff93f9ed9775b"
+    },
+    "stderr": {
+      "relative_path": "command_004_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "status",
+      "--porcelain=v1",
+      "-z",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:16.450879+00:00",
+    "stdout": {
+      "relative_path": "command_005_stdout.raw",
+      "bytes": 53565,
+      "sha256": "e063ca535fd608c01b9b0182ccf3140fc6f12f885ed013bff6846cb13b55476a"
+    },
+    "stderr": {
+      "relative_path": "command_005_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "diff",
+      "--cached",
+      "--binary",
+      "--no-ext-diff"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.193729+00:00",
+    "stdout": {
+      "relative_path": "command_006_stdout.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "relative_path": "command_006_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-rz",
+      "983e4ea2b1b484f48a97757bad6a047df09ae795"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.297873+00:00",
+    "stdout": {
+      "relative_path": "command_007_stdout.raw",
+      "bytes": 1840833,
+      "sha256": "ccdec27140704a067c0c2e545b9e5b816e8822b04713727ba870039669e69bca"
+    },
+    "stderr": {
+      "relative_path": "command_007_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-rz",
+      "8a17b68855e841aa0716012d4b4fe4b65bb315fe"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.450502+00:00",
+    "stdout": {
+      "relative_path": "command_008_stdout.raw",
+      "bytes": 1844341,
+      "sha256": "f35d8d401d9a68f06e94b7d3580167a4077df3aaca5ebba1d9bb5b47ff16f35f"
+    },
+    "stderr": {
+      "relative_path": "command_008_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-rz",
+      "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.747302+00:00",
+    "stdout": {
+      "relative_path": "command_009_stdout.raw",
+      "bytes": 1844311,
+      "sha256": "37f734eb48c69109bbd44ee6cca6aad199455de7d8a898aea0c4a087cd515666"
+    },
+    "stderr": {
+      "relative_path": "command_009_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "6b3f056abfe2c4c8261494a836c1004c9cdebca0"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.873270+00:00",
+    "stdout": {
+      "relative_path": "command_010_stdout.raw",
+      "bytes": 30436,
+      "sha256": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2"
+    },
+    "stderr": {
+      "relative_path": "command_010_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "f2fef8c6d2b25f629d6a19602c275f80b4249ff2"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:17.941139+00:00",
+    "stdout": {
+      "relative_path": "command_011_stdout.raw",
+      "bytes": 42994,
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    "stderr": {
+      "relative_path": "command_011_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "e25f93a5a7b8fac78c0d7d85e426b12a5b2acc44"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.007844+00:00",
+    "stdout": {
+      "relative_path": "command_012_stdout.raw",
+      "bytes": 3391,
+      "sha256": "5eb58440e05d8cd2fd0a208489bd09b6577cfd3819bc39364f7b505ea5a40a3a"
+    },
+    "stderr": {
+      "relative_path": "command_012_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "ba79d3bdb925ad78d2005c974ec8ecc908e93871"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.075447+00:00",
+    "stdout": {
+      "relative_path": "command_013_stdout.raw",
+      "bytes": 9567,
+      "sha256": "5d5de80ec02981ddee148f84ee72e7469b410e09967ca3570f2f505176aa626d"
+    },
+    "stderr": {
+      "relative_path": "command_013_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "7b36140f11f14a312424957220d40e42a45c2c88"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.141955+00:00",
+    "stdout": {
+      "relative_path": "command_014_stdout.raw",
+      "bytes": 3383,
+      "sha256": "184d1e4b854a54a428a29edf7dc15bab7a5fb0792ac67e44e1c571a8d8083712"
+    },
+    "stderr": {
+      "relative_path": "command_014_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "0a771b67d6b80312644dbf9b490608d8c1cdfb1b"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.345933+00:00",
+    "stdout": {
+      "relative_path": "command_015_stdout.raw",
+      "bytes": 7093,
+      "sha256": "0decc2454ffb559ba9d198f00137fbd19d0d0ddca6b6d1d92d2964f2eb8f79c3"
+    },
+    "stderr": {
+      "relative_path": "command_015_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "6d0b3a57a3ed9000f26a79e1fd491d26e9cab149"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.412553+00:00",
+    "stdout": {
+      "relative_path": "command_016_stdout.raw",
+      "bytes": 7192,
+      "sha256": "b00eae69f1e233f7fb5cc94b51ac12e3456035a39fba5fd4402c42e5ddeddb59"
+    },
+    "stderr": {
+      "relative_path": "command_016_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "66a5e34522cbe0aaf4c83feff93bbcddbf674fd4"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.479755+00:00",
+    "stdout": {
+      "relative_path": "command_017_stdout.raw",
+      "bytes": 3379,
+      "sha256": "df5743424b15542cc7d4cb0e8e0742037c011462abfb30932e28f730a1a641b2"
+    },
+    "stderr": {
+      "relative_path": "command_017_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "251407d65f2493fb30447b7297bb3cdb51b97127"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.547132+00:00",
+    "stdout": {
+      "relative_path": "command_018_stdout.raw",
+      "bytes": 5232,
+      "sha256": "3d8b05217383c124531ff60b7243628954892887306e0fe66d7ff4146f10ec9f"
+    },
+    "stderr": {
+      "relative_path": "command_018_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "0c2c5de4330bd2e33eafb7ee21aeb26c5178000b"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.613662+00:00",
+    "stdout": {
+      "relative_path": "command_019_stdout.raw",
+      "bytes": 27411,
+      "sha256": "17e89ea9ee0ea6584b21c32289c11f7c2d8a342472507fcb63d0ae06c64da7e6"
+    },
+    "stderr": {
+      "relative_path": "command_019_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "49fa050a990a5ad03b65358be5d597e9ffaff554"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.678637+00:00",
+    "stdout": {
+      "relative_path": "command_020_stdout.raw",
+      "bytes": 40527,
+      "sha256": "f7aae76ef671701a47e10c75026e534f45a7df7e9c39f058589ad45e16d1b68e"
+    },
+    "stderr": {
+      "relative_path": "command_020_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "5406c257f50208799cdcbffabc6b4244075f77cd"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.744044+00:00",
+    "stdout": {
+      "relative_path": "command_021_stdout.raw",
+      "bytes": 2403,
+      "sha256": "224f582b551e8c156c4acd015c00d55924526e033d56b998caa9d3af33c6e6f7"
+    },
+    "stderr": {
+      "relative_path": "command_021_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "aadece4c8d7190fa31eadd4ac3661f84321b959e"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.810833+00:00",
+    "stdout": {
+      "relative_path": "command_022_stdout.raw",
+      "bytes": 1433,
+      "sha256": "20d8678a8a6b0abf6e18bed9b781f27a98bc4052cbabe05ff4abbd9a64a2e702"
+    },
+    "stderr": {
+      "relative_path": "command_022_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "0c6d8e2d24114c89910c11e77749d990e500f2d0"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.878678+00:00",
+    "stdout": {
+      "relative_path": "command_023_stdout.raw",
+      "bytes": 1433,
+      "sha256": "771b56eb6767ec19b7b3bef997cd9349fa0ef1f83ec0db210c3e10a4fd2d411b"
+    },
+    "stderr": {
+      "relative_path": "command_023_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "e9b33d0beceb02e36e94312138bc1e496ff60ce8"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:18.944681+00:00",
+    "stdout": {
+      "relative_path": "command_024_stdout.raw",
+      "bytes": 694,
+      "sha256": "166a8b5c1e9bce9be8770321a967c6e18ba8286a20fe3f65adc809645c7994cd"
+    },
+    "stderr": {
+      "relative_path": "command_024_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "49f9d3a23f59c5749a95f2c43bc6ebc4d2c6725b"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.011512+00:00",
+    "stdout": {
+      "relative_path": "command_025_stdout.raw",
+      "bytes": 1300,
+      "sha256": "53d22bd96a87dcfdb85880d38102791295801322344fa0807ff63ff4ab4a4dd6"
+    },
+    "stderr": {
+      "relative_path": "command_025_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "52270b6dd2924227b8396bc4085267820f3382db"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.079896+00:00",
+    "stdout": {
+      "relative_path": "command_026_stdout.raw",
+      "bytes": 1433,
+      "sha256": "d198197a319c336bf40a420a458a0fc4079ce004ba3d5ca5e33c57bfbe70e846"
+    },
+    "stderr": {
+      "relative_path": "command_026_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "9d0f387228ae2580d48e4eaecade8355095a2406"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.141716+00:00",
+    "stdout": {
+      "relative_path": "command_027_stdout.raw",
+      "bytes": 4540,
+      "sha256": "1c8c6537bf7902423818cb255aecfb58e2fc884cce4edba1f53a73c80bcc2355"
+    },
+    "stderr": {
+      "relative_path": "command_027_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "460eacbc1f98923595a84179abe47273e8a282da"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.207478+00:00",
+    "stdout": {
+      "relative_path": "command_028_stdout.raw",
+      "bytes": 1032,
+      "sha256": "1324a712f31f9f9fb0f57cbffc07e86b6b6b6009b17292e80a6b2b496ff68a29"
+    },
+    "stderr": {
+      "relative_path": "command_028_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "c3e0b73db932a6457727657ec928c1ee5505251d"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.274938+00:00",
+    "stdout": {
+      "relative_path": "command_029_stdout.raw",
+      "bytes": 1429,
+      "sha256": "257fc94f4b6f7b2b4633a9200878a137015c37281ae639f5556c6039b39bf73f"
+    },
+    "stderr": {
+      "relative_path": "command_029_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "c3f6f11f6c65a03694c6af3f8af1a4bcb351bd02"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.342726+00:00",
+    "stdout": {
+      "relative_path": "command_030_stdout.raw",
+      "bytes": 2332,
+      "sha256": "8c26425293aad91cfcc772dc963d6071fcab58cc7dca18aa1e4b4ae03c558c15"
+    },
+    "stderr": {
+      "relative_path": "command_030_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "9e10f55e925bb13562d3d81864e62659d0f6db98"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.408951+00:00",
+    "stdout": {
+      "relative_path": "command_031_stdout.raw",
+      "bytes": 909,
+      "sha256": "13536d93cb759dd6140fcdef3ef2fe105855cb81e63a50907ff543343b719589"
+    },
+    "stderr": {
+      "relative_path": "command_031_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "e8871b5fa435ceefa729f936c6b8f4eaba0a81bd"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.473178+00:00",
+    "stdout": {
+      "relative_path": "command_032_stdout.raw",
+      "bytes": 596,
+      "sha256": "cb3c2e59637be0503dc9ee165f757340928c9fdd0b0eecb58bea26b06c68b62c"
+    },
+    "stderr": {
+      "relative_path": "command_032_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "df37b7a00d6866c50b81d8eb8201c8ea7211b72b"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.539600+00:00",
+    "stdout": {
+      "relative_path": "command_033_stdout.raw",
+      "bytes": 5836,
+      "sha256": "e58eb43029699f04d95b9fe8423ce202e4a0eab33ef9108dfa6374b6dafd4a7a"
+    },
+    "stderr": {
+      "relative_path": "command_033_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "fc5185c1c20cf7cb0ba147f5f750d1b1e1a5be91"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.603971+00:00",
+    "stdout": {
+      "relative_path": "command_034_stdout.raw",
+      "bytes": 1951,
+      "sha256": "e32be2174c6c53f537e33e47c5e24ab996d3a4b365776a489bbb290d224ad065"
+    },
+    "stderr": {
+      "relative_path": "command_034_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "6b3f056abfe2c4c8261494a836c1004c9cdebca0"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.669484+00:00",
+    "stdout": {
+      "relative_path": "command_035_stdout.raw",
+      "bytes": 30436,
+      "sha256": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2"
+    },
+    "stderr": {
+      "relative_path": "command_035_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "f2fef8c6d2b25f629d6a19602c275f80b4249ff2"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.737746+00:00",
+    "stdout": {
+      "relative_path": "command_036_stdout.raw",
+      "bytes": 42994,
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    "stderr": {
+      "relative_path": "command_036_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "check-ignore",
+      "--no-index",
+      "-z",
+      "--stdin"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.806573+00:00",
+    "stdout": {
+      "relative_path": "command_037_stdout.raw",
+      "bytes": 1003,
+      "sha256": "14c12cc909645d15d3e801507517c11556d70977e35ace6ae37b5ca118a3e24d"
+    },
+    "stderr": {
+      "relative_path": "command_037_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "--git-common-dir"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:19.871049+00:00",
+    "stdout": {
+      "relative_path": "command_038_stdout.raw",
+      "bytes": 23,
+      "sha256": "5e69cec14c674c5b6bc1a399b929177317169d7f65ead44096dd8864dc3ff1d2"
+    },
+    "stderr": {
+      "relative_path": "command_038_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "read-tree",
+      "--dry-run",
+      "-m",
+      "-u",
+      "983e4ea2b1b484f48a97757bad6a047df09ae795",
+      "8a17b68855e841aa0716012d4b4fe4b65bb315fe",
+      "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:22.646490+00:00",
+    "stdout": {
+      "relative_path": "command_039_stdout.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "relative_path": "command_039_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {
+      "GIT_OBJECT_DIRECTORY": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/p/rlprojects/RND/.git/objects",
+      "GIT_INDEX_FILE": "/tmp/rnd-configured-core-commit-review.etzkzopx/checkout_dry_run.index"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "read-tree",
+      "-m",
+      "983e4ea2b1b484f48a97757bad6a047df09ae795",
+      "8a17b68855e841aa0716012d4b4fe4b65bb315fe",
+      "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:22.813251+00:00",
+    "stdout": {
+      "relative_path": "command_040_stdout.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "relative_path": "command_040_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {
+      "GIT_OBJECT_DIRECTORY": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/p/rlprojects/RND/.git/objects",
+      "GIT_INDEX_FILE": "/tmp/rnd-configured-core-commit-review.etzkzopx/merged_result.index"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "-u",
+      "-z"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:22.902042+00:00",
+    "stdout": {
+      "relative_path": "command_041_stdout.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "relative_path": "command_041_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {
+      "GIT_OBJECT_DIRECTORY": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/p/rlprojects/RND/.git/objects",
+      "GIT_INDEX_FILE": "/tmp/rnd-configured-core-commit-review.etzkzopx/merged_result.index"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "write-tree"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:22.964979+00:00",
+    "stdout": {
+      "relative_path": "command_042_stdout.raw",
+      "bytes": 41,
+      "sha256": "e57b4b54030d5a6c8aacdfa1fbb1f83e51e46ee09ea32e04afe5d9724b822856"
+    },
+    "stderr": {
+      "relative_path": "command_042_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {
+      "GIT_OBJECT_DIRECTORY": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/p/rlprojects/RND/.git/objects",
+      "GIT_INDEX_FILE": "/tmp/rnd-configured-core-commit-review.etzkzopx/merged_result.index"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-rz",
+      "4424f60fb4fcf4a77c62575d4c09a193bb3fd928"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.097670+00:00",
+    "stdout": {
+      "relative_path": "command_043_stdout.raw",
+      "bytes": 1847819,
+      "sha256": "bc3023df3a3d0028ef21fb6edfdd708b9a33b298889bad1a1457665cca6eb02d"
+    },
+    "stderr": {
+      "relative_path": "command_043_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {
+      "GIT_OBJECT_DIRECTORY": "/tmp/rnd-configured-core-commit-review.etzkzopx/isolated_objects",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/p/rlprojects/RND/.git/objects",
+      "GIT_INDEX_FILE": "/tmp/rnd-configured-core-commit-review.etzkzopx/merged_result.index"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-rz",
+      "d28e6735e79788f618acb0ebfde8609db1f776af"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.309961+00:00",
+    "stdout": {
+      "relative_path": "command_044_stdout.raw",
+      "bytes": 444832,
+      "sha256": "0f7a8c28b8df7f2a417e41b4076724d491517cc5f34a55267ea1da3f668f7d82"
+    },
+    "stderr": {
+      "relative_path": "command_044_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "a35e4ad455d162b679ea2733d8f7ec0ee1ee822c"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.411776+00:00",
+    "stdout": {
+      "relative_path": "command_045_stdout.raw",
+      "bytes": 27714,
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+    },
+    "stderr": {
+      "relative_path": "command_045_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "d955b6bf730a844699ed6ea77e30a086af69ef6c"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.479673+00:00",
+    "stdout": {
+      "relative_path": "command_046_stdout.raw",
+      "bytes": 37009,
+      "sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+    },
+    "stderr": {
+      "relative_path": "command_046_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "daf0e475c0d110997216b961f0432ea05febecce"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.545410+00:00",
+    "stdout": {
+      "relative_path": "command_047_stdout.raw",
+      "bytes": 151,
+      "sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+    },
+    "stderr": {
+      "relative_path": "command_047_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "ab5c05941539d870e547f9b662fc3f46e7781095"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.706495+00:00",
+    "stdout": {
+      "relative_path": "command_048_stdout.raw",
+      "bytes": 1181,
+      "sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+    },
+    "stderr": {
+      "relative_path": "command_048_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "f775f78ce2e2045b3aa1505728bacf40fe3610d2"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.770247+00:00",
+    "stdout": {
+      "relative_path": "command_049_stdout.raw",
+      "bytes": 8559,
+      "sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+    },
+    "stderr": {
+      "relative_path": "command_049_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "801e016a2f539ab851d4528cfbc861fb137757e1"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.837492+00:00",
+    "stdout": {
+      "relative_path": "command_050_stdout.raw",
+      "bytes": 23242,
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+    },
+    "stderr": {
+      "relative_path": "command_050_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "70aab9f5ab213b9721743799ed060e80d2acc146"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.904707+00:00",
+    "stdout": {
+      "relative_path": "command_051_stdout.raw",
+      "bytes": 3736,
+      "sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+    },
+    "stderr": {
+      "relative_path": "command_051_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "57184ab6af081710a12f3db37b0d9c60c692c426"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:23.965582+00:00",
+    "stdout": {
+      "relative_path": "command_052_stdout.raw",
+      "bytes": 10533,
+      "sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+    },
+    "stderr": {
+      "relative_path": "command_052_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "59565d844fe81852731f4db553cef35191ab9061"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.024704+00:00",
+    "stdout": {
+      "relative_path": "command_053_stdout.raw",
+      "bytes": 5018,
+      "sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+    },
+    "stderr": {
+      "relative_path": "command_053_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "1e9811032b012ce2924f0c6802314118d2a8b26d"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.082968+00:00",
+    "stdout": {
+      "relative_path": "command_054_stdout.raw",
+      "bytes": 1302,
+      "sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+    },
+    "stderr": {
+      "relative_path": "command_054_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "ace2f8d617db4a21998018f3f958527a4957ccf1"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.142325+00:00",
+    "stdout": {
+      "relative_path": "command_055_stdout.raw",
+      "bytes": 6960,
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+    },
+    "stderr": {
+      "relative_path": "command_055_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "fb83197978002f4461d25b85f9693bbbcd591879"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.200936+00:00",
+    "stdout": {
+      "relative_path": "command_056_stdout.raw",
+      "bytes": 32717,
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+    },
+    "stderr": {
+      "relative_path": "command_056_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-remote",
+      "--heads",
+      "origin",
+      "refs/heads/uva-jaguar03-configured-isolation-single-gpu-service-uid-64030"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.617949+00:00",
+    "stdout": {
+      "relative_path": "command_057_stdout.raw",
+      "bytes": 115,
+      "sha256": "999876e28b68270b870c22ebd7a2baae2f73e8540f044c5707117a83e0b1f847"
+    },
+    "stderr": {
+      "relative_path": "command_057_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "status",
+      "--porcelain=v1",
+      "-z",
+      "--untracked-files=all"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:24.833357+00:00",
+    "stdout": {
+      "relative_path": "command_058_stdout.raw",
+      "bytes": 53565,
+      "sha256": "e063ca535fd608c01b9b0182ccf3140fc6f12f885ed013bff6846cb13b55476a"
+    },
+    "stderr": {
+      "relative_path": "command_058_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "at_utc": "2026-11-01T19:18:25.393764+00:00",
+    "stdout": {
+      "relative_path": "command_059_stdout.raw",
+      "bytes": 41,
+      "sha256": "11b84c31585b731e9c3dd07c27cb2a00b5f752eb617f4e9b8683971fb36ad954"
+    },
+    "stderr": {
+      "relative_path": "command_059_stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "temporary_git_environment": {}
+  }
+]
