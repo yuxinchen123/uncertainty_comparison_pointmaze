@@ -1,0 +1,31 @@
+{
+  "kind": "instrumented_memory_limit_cli_corrected_source_freeze",
+  "base_commit": "0f694d32e6c904e57cf601c27f9530cba991697d",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15",
+  "created_utc": "2026-11-01T12:03:14.955616+00:00",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "0094c51006237770272e3464a78df6a5c66ca429f8767863e8064c105c1faab8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "5fb21243bdd424c1cdaa1015c1e01a5ac0f3ec871e21fcd22ad7ce1388fb8359",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "3982af6dcaa8597c291a66b9ac2aa0feaeb7feede135beff8a72c2d30b76e69f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467"
+  },
+  "changed_from_prior_review": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py"
+  ],
+  "prior_source_freeze_sha256": "a55a281d31f0b12ee44666e9f929c2d076604a192c853caba4838de338f2c1f6",
+  "prior_source_bytes_preserved_snapshot_sha256": "56fcbf8853a4d1071383740b1df61eb3e7e81cac491685640d89c9d99d6b9b47",
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_cli_author_6780635_16.json",
+    "sha256": "79ba1f8a2c00d9523acd0aee50d0f86a9b1ecf1143b407ec61d4a8d7718405a4"
+  },
+  "enabled": false,
+  "actual_gpu_regression_passed": false
+}

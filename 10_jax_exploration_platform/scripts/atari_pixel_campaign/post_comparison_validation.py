@@ -43,6 +43,8 @@ H100_NVL_SLURM_QUEUE_MODULE = "h100_nvl_slurm_queue.py"
 H100_NVL_SLURM_DEPENDENCIES = ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py",
                              "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py")
 H100_NVL_SLURM_QUALIFICATION_DEPENDENCIES = ("h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py")
+DEVICE_MEMORY_LIMIT_MODULE = 'device_memory_limit.py'
+DEVICE_MEMORY_LIMIT_DEPENDENCIES = (DEVICE_MEMORY_LIMIT_MODULE, 'validate_training_deployment.py', 'portable_evidence.py')
 
 
 def canonical_digest(value):
@@ -88,7 +90,8 @@ def helper_requirements(required, verified_files):
             tree = ast.parse(verified_files[path])
             declarations.update(node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and isinstance(node.value, str))
     for declaration, dependencies in ((PREGATHER_ASYNC_RETRY_MODULE, (PREGATHER_ASYNC_RETRY_MODULE,)),
-                                      (H100_NVL_SLURM_QUEUE_MODULE, H100_NVL_SLURM_DEPENDENCIES)):
+                                      (H100_NVL_SLURM_QUEUE_MODULE, H100_NVL_SLURM_DEPENDENCIES),
+                                      (DEVICE_MEMORY_LIMIT_MODULE, DEVICE_MEMORY_LIMIT_DEPENDENCIES)):
         for name in dependencies:
             relative = prefix + name
             if declaration in declarations:
@@ -438,12 +441,15 @@ def validate_packing(specification, evidence):
     context, source = specification["hardware_class"], specification["source_commit"]
     runtime = runtime_environment(specification["runtime_environment"])
     rule = specification.get("packing_stop_rule")
-    if "packing_stop_rule" in specification and rule != "measured_memory_headroom":
-        raise ValueError("packing_stop_rule must explicitly name measured_memory_headroom")
-    points = [packing_point(path, context, source, runtime, evidence, require_headroom=rule is None)
+    if "packing_stop_rule" in specification and rule not in {'measured_memory_headroom', 'instrumented_device_memory_limit'}:
+        raise ValueError("packing_stop_rule must explicitly name a supported measured-memory protocol")
+    if rule != 'instrumented_device_memory_limit' and 'packing_memory_limit_record' in specification:
+        raise ValueError('a capacity exclusion requires its explicit instrumented stop rule')
+    points = [packing_point(path, context, source, runtime, evidence, require_headroom=rule != 'measured_memory_headroom')
               for path in specification["packing_records"]]
     points.sort(key=lambda point: point["copies"])
-    if len(points) < 2 or points[0]["copies"] != 1 or any(later["copies"] != 2 * earlier["copies"] for earlier, later in zip(points, points[1:])):
+    minimum = 1 if rule == 'instrumented_device_memory_limit' else 2
+    if len(points) < minimum or points[0]["copies"] != 1 or any(later["copies"] != 2 * earlier["copies"] for earlier, later in zip(points, points[1:])):
         raise ValueError("packing measurements must double from one without missing a count")
     baseline = configuration_without_copies(points[0]["configuration"])
     processes = set()
@@ -457,6 +463,8 @@ def validate_packing(specification, evidence):
             raise ValueError("packing points must use distinct fresh processes")
         processes.add(process)
     gains = [later["throughput"] / earlier["throughput"] - 1 for earlier, later in zip(points, points[1:])]
+    if rule == 'instrumented_device_memory_limit':
+        return instrumented_memory_packing(specification, points, gains, processes, evidence)
     if rule == "measured_memory_headroom":
         return memory_limited_packing(specification, points, gains, processes, evidence)
     below = [index for index, gain in enumerate(gains) if gain < .10]
@@ -491,6 +499,62 @@ def validate_packing(specification, evidence):
             "selected_copies": boundary[0], "configuration": points[-2]["configuration"],
             "points": points, "marginal_gains": gains, "confirmation": repeated,
             "confirmed_marginal_gain": repeated_gain, "stop_reason": "confirmed_doubling_gain_below_ten_percent"}
+
+
+def instrumented_memory_packing(specification, points, gains, processes, evidence):
+    """Use a separately instrumented failed doubling without granting its partial work packing credit."""
+    import device_memory_limit as capacity
+    import validate_training_deployment as deployment
+    if any(gain < .10 for gain in gains):
+        raise ValueError('packing must stop at an earlier below-ten-percent doubling before a memory exclusion')
+    exclusion = capacity.validate_exclusion(specification['packing_memory_limit_record'], specification, evidence)
+    fitting = points[-1]
+    if (exclusion['copies'] != 2 * fitting['copies']
+            or exclusion['iterations'] != fitting['iterations']
+            or configuration_without_copies(exclusion['configuration']) != configuration_without_copies(fitting['configuration'])
+            or exclusion['copy_seeds'] != list(range(fitting['copy_seeds'][0], fitting['copy_seeds'][0] + exclusion['copies']))
+            or tuple(exclusion['process']) in processes or exclusion['gpu_uuid'] != fitting['gpu_uuid']):
+        raise ValueError('a capacity exclusion must be the exact next doubling in a new owned process')
+    paths = specification.get('packing_confirmation_records', [])
+    if len(paths) > 1:
+        raise ValueError('a device-memory limit repeats only its largest completed fitting count')
+    repeated = [packing_point(path, specification['hardware_class'], specification['source_commit'],
+                              runtime_environment(specification['runtime_environment']), evidence) for path in paths]
+    if repeated and (repeated[0]['configuration'] != fitting['configuration']
+            or repeated[0]['copy_seeds'] != fitting['copy_seeds'] or repeated[0]['iterations'] != fitting['iterations']
+            or repeated[0]['gpu_uuid'] != fitting['gpu_uuid'] or tuple(repeated[0]['process']) in processes
+            or repeated[0]['process'] == exclusion['process']):
+        raise ValueError('device-memory confirmation must repeat the fitting count in a distinct full process')
+    # All completed points still require the full real producer, source, backend, asset and grouped-window checks.
+    for path in specification['packing_records'] + paths:
+        record = evidence.read(path)
+        rows = list(csv.reader(record['hardware']['gpu_query'].splitlines()))
+        if len(rows) != 1 or len(rows[0]) != 4:
+            raise ValueError('instrumented packing requires the exact full hardware query')
+        gpu, model, memory, driver = [part.strip() for part in rows[0]]
+        query_specification = {**specification, 'source_root': exclusion['source_root'],
+            'campaign_run_dir': exclusion['campaign_run_dir'], 'target': {'server': 'packing-context',
+                'hostnames': [record['hardware']['hostname']], 'gpu_model': model,
+                'total_memory_bytes': int(re.fullmatch(r'(\d+) MiB', memory)[1]) * 2 ** 20, 'driver_version': driver}}
+        full = deployment.DeploymentEvidence(evidence.resolver)
+        _, _, _, actual, backend, assets = deployment.target_record(path, 'packing-point', query_specification, full)
+        if (record['hardware']['hostname'] != exclusion['hardware']['hostname']
+                or record['hardware']['gpu_query'] != exclusion['hardware']['gpu_query']
+                or actual != exclusion['runtime'] or backend != exclusion['backend'] or assets['identity'] != exclusion['assets']['identity']):
+            raise ValueError('capacity exclusion crossed source, physical hardware, runtime, backend or asset groups')
+        full.recheck_images()
+        evidence.receipts.update(full.receipts)
+    if not repeated:
+        return {'complete': False, 'hardware_class': specification['hardware_class'], 'next_action': 'repeat_largest_fitting_count',
+                'required_confirmation_counts': [fitting['copies']], 'points': points, 'marginal_gains': gains,
+                'capacity_exclusion': exclusion}
+    if type(specification.get('selected_copies')) is not int or specification['selected_copies'] != fitting['copies']:
+        raise ValueError('the instrumented device-memory rule selects only the largest completed fitting doubling count')
+    return {'complete': True, 'hardware_class': specification['hardware_class'], 'source_commit': specification['source_commit'],
+            'selected_copies': fitting['copies'], 'configuration': fitting['configuration'], 'points': points,
+            'marginal_gains': gains, 'confirmation': repeated, 'capacity_exclusion': exclusion,
+            'stop_reason': 'instrumented_next_doubling_capacity_exclusion',
+            'selection_scope': 'largest_completed_fitting_tested_doubling_count'}
 
 
 def validate_scaling(specification, evidence):

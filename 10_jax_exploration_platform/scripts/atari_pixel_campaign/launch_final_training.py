@@ -35,7 +35,7 @@ TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrast
                  "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                  "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
                  "controller.py", "ideas.py",
-                 "queue_worker.py", "diagnose_gpu_execution.py")
+                 "queue_worker.py", "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')
 ACTIVE = {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED", "RESIZING", "REQUEUED", "REQUEUE_FED", "SIGNALING", "STAGE_OUT"}
 TERMINAL = {"COMPLETED", "CANCELLED", "FAILED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}
 TARGET_UPDATES = 2_000_000_000 // (128 * 128)
@@ -125,6 +125,10 @@ def frozen_helpers(root, commit):
     if not any(isinstance(node, ast.Constant) and node.value == "pregather_async_retry.py"
                for tree in callers for node in ast.walk(tree)):
         paths.remove(PREFIX + "pregather_async_retry.py")
+    if not any(isinstance(node, ast.Constant) and node.value == 'device_memory_limit.py'
+               for tree in callers for node in ast.walk(tree)):
+        for name in ('device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py'):
+            paths.remove(PREFIX + name)
     h100_declared = any(isinstance(node, ast.Constant) and node.value == "h100_nvl_slurm_queue.py"
                        for tree in callers for node in ast.walk(tree))
     if not h100_declared:

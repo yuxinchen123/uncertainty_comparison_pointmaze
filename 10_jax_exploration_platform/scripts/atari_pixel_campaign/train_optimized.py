@@ -942,7 +942,7 @@ def run(arguments):
                      "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                      "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
                      "controller.py", "ideas.py", "queue_worker.py",
-                     "diagnose_gpu_execution.py")])
+                     "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')])
     runtime = enforce_runtime(specification["runtime_environment"], os.environ)
     for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):
         if not (arguments.run_dir / name).is_file():

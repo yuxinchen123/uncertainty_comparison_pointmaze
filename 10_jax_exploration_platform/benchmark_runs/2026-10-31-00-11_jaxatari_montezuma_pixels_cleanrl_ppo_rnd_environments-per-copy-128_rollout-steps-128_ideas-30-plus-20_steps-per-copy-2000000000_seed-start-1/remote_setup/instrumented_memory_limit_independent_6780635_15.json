@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "kind": "instrumented_memory_limit_independent_metadata_review",
+  "at_utc": "2026-11-01T11:53:34.044339+00:00",
+  "job_id": "6780635",
+  "step_id": "15",
+  "hostname": "slurm5",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_corrected_freeze_2026-11-01.json",
+    "sha256": "a55a281d31f0b12ee44666e9f929c2d076604a192c853caba4838de338f2c1f6"
+  },
+  "before_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "9943912d7e2f55b5783e1c6c963a2fb77bf6968b893dbaa0620720dd8171105d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "5fb21243bdd424c1cdaa1015c1e01a5ac0f3ec871e21fcd22ad7ce1388fb8359",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "fd202de071d7f5f8c95a81708f9e09bb70d03dd8770fa952cac1061f8ffdf360",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467"
+  },
+  "after_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "9943912d7e2f55b5783e1c6c963a2fb77bf6968b893dbaa0620720dd8171105d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "5fb21243bdd424c1cdaa1015c1e01a5ac0f3ec871e21fcd22ad7ce1388fb8359",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "fd202de071d7f5f8c95a81708f9e09bb70d03dd8770fa952cac1061f8ffdf360",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467"
+  },
+  "source_unchanged": true,
+  "tests": {
+    "modules": [
+      "test_device_memory_limit",
+      "test_measure_selected",
+      "test_post_comparison_validation",
+      "test_validate_training_deployment",
+      "test_launch_final_training",
+      "test_train_optimized",
+      "test_train_deployed"
+    ],
+    "cases": 141,
+    "passed": true,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 125.83611674403073,
+    "stdout_stderr": ".............................................................................................................................................\n----------------------------------------------------------------------\nRan 141 tests in 125.836s\n\nOK\n"
+  },
+  "allowed_subprocess_counts_including_nested_wrapper_calls": {
+    "git": 29594,
+    "python": 0
+  },
+  "numerical_import_attempts_rejected": true,
+  "real_gpu_calls_forbidden": true,
+  "live_scheduler_and_network_calls_forbidden": true,
+  "numerical_modules_loaded": [],
+  "actual_gpu_regression_passed": false,
+  "enabled_for_campaign": false,
+  "source_admission_changed": false,
+  "review_findings_resolved": [
+    "Exact cluster owner, job/step resource and UID cgroup binding.",
+    "Root-owned configuration chain, explicit GRES File mapping and same-process CUDA UUID/PCI.",
+    "Distinct valid parent/child identities and ordinary failed wait.",
+    "Exact prepared seven-round complete ten-update/group/report windows.",
+    "Original native BFC bytes/map/counters; same-context diagnostic semantics.",
+    "Immutable shared driver and backend images; CPU and portable readers use captured copies.",
+    "Canonical campaign ledger snapshot with exact one ID and valid lifetime memory counters.",
+    "Full fitting points, exact next doubling, fresh largest fitting repeat, >=15% free, prior gain stop preserved.",
+    "Optional global/target consumers and final-reader helper closure; old default paths remain supported."
+  ],
+  "remaining_requirements": [
+    "Root publication and separate actual producer regression/job review before this optional protocol is enabled."
+  ]
+}

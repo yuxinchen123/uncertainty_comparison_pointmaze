@@ -36,7 +36,7 @@ import train_optimized as training
 HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
            "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
-           "train_optimized.py")
+           "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')
 CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 MODES = ("correctness", "confirmation", "packing-point")
 
@@ -171,6 +171,23 @@ def prepare(args):
         "python": str(args.python.absolute()),
         "compilation_cache_policy": "disabled", "hypothesis_count_contribution": 0,
         "selected_by_producer": False, "jobs_submitted_by_producer": False}
+    if getattr(args, 'record_device_memory_limit', False):
+        # This diagnostic capability is explicitly separate from ordinary completed packing evidence.
+        import device_memory_limit as capacity
+        if (args.mode != 'packing-point' or args.memory_limit_allocation_kind not in {'direct', 'slurm'}
+                or args.minimum_updates_per_round != 10):
+            raise ValueError('instrumented device-memory limits require an explicit isolated packing allocation')
+        ledger_source = capacity.file_receipt(args.memory_limit_owned_job_ledger) if args.memory_limit_owned_job_ledger else None
+        if ledger_source and ledger_source['path'] != str(run_dir / 'slurm' / ('submitted_jobids_' + args.memory_limit_cluster + '.txt')):
+            raise ValueError('the instrumented allocation ledger must be this campaign and cluster exact ledger')
+        ledger_bytes = Path(ledger_source['path']).read_bytes() if ledger_source else b''
+        if ledger_source and hashlib.sha256(ledger_bytes).hexdigest() != ledger_source['sha256']:
+            raise ValueError('the owned job ledger changed during immutable snapshot preparation')
+        ledger = {'path': str(directory / 'capacity_owned_job_ledger.txt'), 'sha256': ledger_source['sha256']} if ledger_source else None
+        plan['device_memory_limit_protocol'] = capacity.protocol({**capacity.PROTOCOL,
+            'allocation_kind': args.memory_limit_allocation_kind, 'cluster': args.memory_limit_cluster,
+            'owned_job_ledger': ledger})
+        plan['device_memory_limit_ledger_source'] = ledger_source
     artifacts = {directory / "measurement_plan.json": json_bytes(plan),
         directory / "manifest.yaml": json_bytes(plan), directory / "config_resolved.yaml": json_bytes({
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
@@ -178,6 +195,8 @@ def prepare(args):
                                               "--prepared-unit", str(directory)]) + "\n").encode()}
     for name in HELPERS:
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
+    if 'device_memory_limit_protocol' in plan:
+        artifacts[directory / 'capacity_owned_job_ledger.txt'] = ledger_bytes
     background = ("## Purpose\n\nMeasure an explicitly supplied combined configuration or one isolated policy-copy count. "
         "The producer chooses no hypotheses or configurations and submits no jobs.\n\n"
         "## Key hyperparameters\n\nOriginal CleanRL policy optimization with Random Network Distillation: "
@@ -416,7 +435,25 @@ def run_prepared(directory):
                 training.atomic_json(directory / "asset_receipt.json", assets)
                 backend = installed_backend_receipt(jaxtari, libraries)
                 training.atomic_json(directory / "installed_backend.json", backend)
-                _compute(directory, plan, hardware, backend)
+                if 'device_memory_limit_protocol' in plan:
+                    import device_memory_limit as capacity
+                    capacity.protocol(plan['device_memory_limit_protocol'])
+                    capture = capacity.Capture(directory, plan, hardware, backend, MemoryObservation, write_once, json_bytes)
+                    try:
+                        _compute(directory, plan, hardware, backend, failure_capture=capture)
+                    except BaseException as error:
+                        # Preserve the original failure even when the extra diagnostic is unsupported or fails.
+                        try:
+                            capture.failure(error)
+                        except BaseException as diagnostic_error:
+                            write_once(directory / 'capacity_capture_failure.json', json_bytes({
+                                'error': repr(diagnostic_error), 'traceback': traceback.format_exc(),
+                                'original_error': repr(error), 'capacity_credit': 0}))
+                        raise
+                    finally:
+                        capture.close()
+                else:
+                    _compute(directory, plan, hardware, backend)
         except BaseException as error:
             diagnostic.atomic_json(directory / "failure.json", {"error": repr(error), "exception_type": type(error).__name__,
                 "traceback": traceback.format_exc(), "source_commit": plan["source_commit"], "mode": plan["mode"],
@@ -437,7 +474,7 @@ def verify_imported_sources(root, paired):
         raise ValueError("the imported JAXtari package differs from the verified installed Python files")
 
 
-def _compute(directory, plan, hardware, installed_backend):
+def _compute(directory, plan, hardware, installed_backend, failure_capture=None):
     """Import the exact core only after card/source/runtime/assets checks, then execute the requested fixed protocol."""
     started_at = time.time()
     if "jax" in sys.modules:
@@ -460,6 +497,8 @@ def _compute(directory, plan, hardware, installed_backend):
     expected = "H100" if plan["hardware_class"] == "h100" else "A4500"
     if expected not in devices[0].device_kind:
         raise ValueError("JAX selected another GPU type")
+    if failure_capture is not None:
+        failure_capture.bind(devices[0])
     selected = plan["configuration"]
     reference = plan["reference_configuration"]
     seeds = tuple(plan["copy_seeds"])
@@ -529,6 +568,11 @@ def parse_arguments(argv=None):
     """Expose explicit inputs and a metadata-only preparation path, never hidden algorithm overrides."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--prepared-unit", type=Path)
+    parser.add_argument('--instrumented-child', action='store_true', help=argparse.SUPPRESS)
+    parser.add_argument('--record-device-memory-limit', action='store_true')
+    parser.add_argument('--memory-limit-allocation-kind', choices=('direct', 'slurm'))
+    parser.add_argument('--memory-limit-cluster', choices=('uva', 'aces'))
+    parser.add_argument('--memory-limit-owned-job-ledger', type=Path)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--mode", choices=MODES)
     parser.add_argument("--source-root", type=Path)
@@ -548,12 +592,27 @@ def parse_arguments(argv=None):
     parser.add_argument("--minimum-updates-per-round", type=int, default=10)
     parser.add_argument("--python", type=Path, default=Path("/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"))
     args = parser.parse_args(argv)
+    memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger')
     if args.prepared_unit is not None:
-        if args.prepare_only or any(getattr(args, name) is not None for name in (
+        if args.prepare_only or args.record_device_memory_limit or any(getattr(args, name) is not None for name in (
                 "mode", "source_root", "source_commit", "configuration", "reference_configuration",
-                "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies")):
+                "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
+        if args.instrumented_child:
+            # The private child entry is meaningful only inside this exact declared prepared protocol.
+            import device_memory_limit as capacity
+            try:
+                plan = capacity.json_document((args.prepared_unit / 'measurement_plan.json').read_bytes())
+                capacity.protocol(plan.get('device_memory_limit_protocol'))
+                if plan.get('kind') != 'selected_configuration_measurement' or plan.get('mode') != 'packing-point':
+                    raise ValueError('the prepared plan is not an instrumented isolated packing point')
+            except (OSError, ValueError, TypeError, KeyError) as error:
+                parser.error('--instrumented-child requires a prepared instrumented packing plan: ' + str(error))
         return args
+    if args.instrumented_child:
+        parser.error('--instrumented-child requires --prepared-unit and its declared instrumented protocol')
+    if not args.record_device_memory_limit and any(getattr(args, name) is not None for name in memory_options):
+        parser.error('memory-limit preparation options require --record-device-memory-limit')
     required = ("mode", "source_root", "source_commit", "configuration", "runtime_environment", "asset_record",
                 "run_dir", "unit_id", "gpu_uuid", "hardware_class")
     if any(getattr(args, name) is None for name in required):
@@ -564,6 +623,11 @@ def parse_arguments(argv=None):
 if __name__ == "__main__":
     arguments = parse_arguments()
     if arguments.prepared_unit is not None:
+        plan = json.loads((arguments.prepared_unit / 'measurement_plan.json').read_text())
+        if 'device_memory_limit_protocol' in plan and not arguments.instrumented_child:
+            import device_memory_limit as capacity
+            result = capacity.run_child(arguments.prepared_unit, sys.executable)
+            raise SystemExit(result if result >= 0 else 128 - result)
         run_prepared(arguments.prepared_unit)
     else:
         unit = prepare(arguments)
