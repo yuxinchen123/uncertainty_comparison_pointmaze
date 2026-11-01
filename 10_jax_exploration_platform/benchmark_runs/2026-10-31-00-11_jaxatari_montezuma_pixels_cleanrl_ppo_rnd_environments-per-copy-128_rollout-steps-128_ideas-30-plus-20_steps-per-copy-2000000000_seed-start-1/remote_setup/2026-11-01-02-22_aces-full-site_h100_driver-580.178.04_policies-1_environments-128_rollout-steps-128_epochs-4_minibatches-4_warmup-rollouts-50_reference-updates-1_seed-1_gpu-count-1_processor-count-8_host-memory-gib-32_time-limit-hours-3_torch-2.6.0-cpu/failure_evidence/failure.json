@@ -1,0 +1,13 @@
+{
+  "kind": "aces_full_site_failure",
+  "passed": false,
+  "error": "root-owned cache and running task/cgroup settings must agree",
+  "exception_type": "ValueError",
+  "traceback": "Traceback (most recent call last):\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py\", line 612, in run\n    assignment = policy.validate_allocation(observation)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py\", line 275, in validate_allocation\n    configuration = validate_configuration(observation[\"cached_configuration\"], observation[\"device_isolation_observations\"], host)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py\", line 229, in validate_configuration\n    require(slurm.get(\"TaskPlugin\") == running[\"fields\"].get(\"TaskPlugin\") == \"task/cgroup,task/affinity\"\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py\", line 40, in require\n    raise ValueError(message)\nValueError: root-owned cache and running task/cgroup settings must agree\n",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "kind": "aces_autodetect_failed_profile_independent_review",
+  "reviewed_at_utc": "2026-11-01T12:49:11.012937+00:00",
+  "job_id": "2274632",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+  "evidence": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/failure.json",
+      "sha256": "11dd619f4c4fc48896ead6e51834efef74b060451ca37837374b043e57ba4e5a"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/parent_allocation_observation.json",
+      "sha256": "cd003ebf0f136e858ee7a2e5ea54d6de2db9589ce60be92f28ef12be972d7274"
+    }
+  ],
+  "findings": {
+    "task_plugin_difference": "Slurm 25.11.7 canonicalizes the two configured plugins into reverse alphabetical order; the raw lists contain the same two plugins.",
+    "matching_gres": "NodeName=ac[041,045,049,055] AutoDetect=nvml",
+    "explicit_gpu_files_present": false,
+    "kernel_device_exclusion_proved": false,
+    "device_lists": "a *:* rwm at owned job, step and task levels",
+    "logical_gpu_index": "5",
+    "visible_gpu_uuid": "GPU-4a2f4802-1b15-9fc3-de9a-0ce4b9b1f43d",
+    "visible_gpu_pci": "0000:15:00.0",
+    "proc_device_minor": 5,
+    "logical_index_to_physical_assignment_proved": false,
+    "same_process_cuda_identity_available": false
+  },
+  "proposed_profile": "Separate versioned AutoDetect=nvml configured-isolation profile; retain logical scheduler agreement independently from same-process CUDA UUID/PCI and proc minor proof. Preserve old profile and failed records.",
+  "required_new_evidence": [
+    "fresh exact owned job and numeric step, resource and account evidence",
+    "fresh root-owned unambiguous host-matching AutoDetect cache with cache-directory-chain trust metadata",
+    "same-process CUDA/JAX UUID and PCI before full gates/probe, joined uniquely to visible NVML and proc identity",
+    "full frozen numerical/source/assets/software gates and shared captured mapped driver bytes"
+  ],
+  "sources": [
+    "https://raw.githubusercontent.com/SchedMD/slurm/slurm-25-11-7-1/src/common/read_config.c",
+    "https://slurm.schedmd.com/slurm.conf.html",
+    "https://slurm.schedmd.com/gres.conf.html",
+    "https://slurm.schedmd.com/gres.html",
+    "https://slurm.schedmd.com/cgroup.conf.html"
+  ],
+  "no_live_commands": true,
+  "no_source_edits": true,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}
