@@ -1,0 +1,18 @@
+{
+  "kind": "aces_local_publication_preflight_failure",
+  "at_utc": "2026-11-01T11:07:14.492152+00:00",
+  "commit": "e8e368337b592b0de56960c50dc3112e944c7347",
+  "missing_or_changed_publication": [
+    {
+      "relative_path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-40_aces-private-reference-environment_python-3.12.14_torch-2.6.0-cpu_private-packages-7_inherited-packages-77_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/received/setup/selected_private_python_verification.json",
+      "missing": true,
+      "stderr": "fatal: Not a valid object name e8e368337b592b0de56960c50dc3112e944c7347:10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-40_aces-private-reference-environment_python-3.12.14_torch-2.6.0-cpu_private-packages-7_inherited-packages-77_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/received/setup/selected_private_python_verification.json\n",
+      "expected_sha256": "54b9bf97aa5c946cacf07158684e681d320f38fc3771a7fe87700fa1827cccb4"
+    }
+  ],
+  "local_submission_intent_exists": false,
+  "execution_directory_exists": false,
+  "ssh_calls": 0,
+  "sbatch_calls": 0,
+  "jobs_submitted": 0
+}
