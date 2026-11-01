@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "passive_installed_slurm_observer_author_metadata_tests",
+  "at_utc": "2026-11-01T17:13:42.831845+00:00",
+  "job_id": "6781231",
+  "step_id": "2",
+  "hostname": "slurm1",
+  "cpu_affinity": [
+    10
+  ],
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-08-57_passive-installed-slurm-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "base": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "source_hashes_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py": "96dad56427f45a5515af4e344d5a1fd7df182af9c2a5b0921c8152e19c335198",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "source_hashes_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py": "96dad56427f45a5515af4e344d5a1fd7df182af9c2a5b0921c8152e19c335198",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "source_unchanged": true,
+  "test_count": 29,
+  "expected_test_count": 29,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 0.071439438033849,
+  "stdout": "test_account_context_omits_password_gecos_and_unrelated_users (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nUID64030 and observed Slurm identities retain only selected public account fields. ... ok\ntest_birth_change_refuses_even_when_pid_is_unchanged (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA reused PID cannot pass the same-process continuation check. ... ok\ntest_changed_alias_is_not_silently_bound_to_old_target (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nChanging a program alias during capture is retained without stable candidate bytes. ... ok\ntest_changed_inode_is_retained_as_changed_without_parsing (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA changed file does not become a stable installed-image claim. ... ok\ntest_claims_are_all_zero_and_no_runtime_entry_is_exposed (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nThis source draft cannot qualify a profile or expose a Slurm submission command. ... ok\ntest_configuration_limit_preserves_explicit_incomplete_state (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA limited include tree cannot silently appear complete. ... ok\ntest_controller_command_scope_and_filtered_output (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nOnly two reviewed controller reads can execute, and full output is not retained. ... ok\ntest_directory_listing_is_bounded_and_does_not_recurse (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nOnly matching direct entries are returned and excess entries invalidate the listing. ... ok\ntest_elf_build_identity_is_parsed_without_execution (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nThe passive parser reads the expected build note and declares no loading. ... ok\ntest_elf_dependency_and_search_paths_are_only_passively_parsed (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nDynamic string metadata is resolved inside captured load bytes without ldd or dlopen. ... ok\ntest_elf_segments_and_class_cannot_leave_captured_bytes (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nMalformed ELF metadata is unsupported rather than delegated to an external utility. ... ok\ntest_foreign_current_process_refuses_before_controller_query (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA saved foreign PID cannot authorize metadata collection in the current process. ... ok\ntest_glob_and_outside_include_never_open (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nUnsupported wildcard or outside paths stay unresolved without a broad file scan. ... ok\ntest_late_directory_symlink_replacement_is_not_followed (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nDescriptor-relative non-following traversal rejects a changed parent before listing. ... ok\ntest_literal_include_order_and_cycle_are_recorded (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nLiteral child order is kept while cycles refuse any complete-tree claim. ... ok\ntest_manual_decompression_cannot_expand_without_limit (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA compressed ordinary manual retains its image hash but excessive expansion is unsupported. ... ok\ntest_package_metadata_keeps_only_selected_labels_and_matching_rosters (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nSelected package labels and file membership do not become a binary equivalence claim. ... ok\ntest_parent_link_is_recorded_without_expanding_namespace (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nAn internal parent alias is explicit and an escaping alias remains unread. ... ok\ntest_path_spellings_and_namespaces_reject_traversal (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nNo relative path, hidden traversal or external namespace becomes readable. ... ok\ntest_plugin_dir_ambiguity_never_selects_a_plugin (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nConflicting controller PluginDir values cannot be collapsed into a chosen image. ... ok\ntest_proc_runtime_changes_do_not_invent_a_new_birth_identity (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nChanging process statistics do not prevent a metadata-only same-process continuation. ... ok\ntest_program_discovery_has_no_relative_or_unbounded_path_scan (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nOnly exact safe program names are derived from bounded installed PATH entries. ... ok\ntest_reader_keeps_pinned_regular_bytes_and_owner (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nCaptured hashes and ownership belong to the descriptor actually read. ... ok\ntest_service_metadata_redacts_environment_and_unknown_arguments (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nNo environment-file bytes or unreviewed execution values enter saved metadata. ... ok\ntest_service_substitutions_cannot_select_a_program (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nSystemd substitutions and shell continuations remain unresolved. ... ok\ntest_settings_filter_preserves_duplicates_without_secrets (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nOnly named safe keys are retained, in original order and case. ... ok\ntest_size_limit_keeps_prefix_out_of_parsed_content (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nAn over-limit file cannot supply accepted settings or an ELF record. ... ok\ntest_symlink_cycle_and_nonregular_inode_remain_unavailable (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nA cycle or a directory is never opened as a metadata byte stream. ... ok\ntest_unparseable_configuration_retains_hash_and_partial_record (test_passive_installed_slurm_observation.PassiveInstalledSlurmTests)\nInvalid text encoding keeps its original file metadata and an unresolved parser result. ... ok\n\n----------------------------------------------------------------------\nRan 29 tests in 0.023s\n\nOK\n",
+  "blocked_attempts": [],
+  "numerical_modules_loaded": [],
+  "passed": true,
+  "live_controller_query": false,
+  "slurmd_executed": false,
+  "GPU_or_device_access": false,
+  "environment_transitions": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "admission_granted": false
+}
