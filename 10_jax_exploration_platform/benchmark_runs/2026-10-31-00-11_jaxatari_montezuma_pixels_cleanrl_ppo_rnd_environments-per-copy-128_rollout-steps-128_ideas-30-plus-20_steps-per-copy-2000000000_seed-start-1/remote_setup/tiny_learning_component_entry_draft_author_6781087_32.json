@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_component_entry_draft_author_metadata_validation",
+  "created_utc": "2026-11-01T15:52:18.235126+00:00",
+  "job_id": "6781087",
+  "step_id": "32",
+  "before": {
+    "short_learning.py": "7527d7e65978f4bc76c20a7dd711a1aa141a1f4cf712646f364e0d0d02a9a8f1",
+    "tests/test_learning_latency_component.py": "3393bf2a6dcbe277a0283dc3445aaf3246f7b1d5f61d1ee1c9b5f85b749b5f81"
+  },
+  "after": {
+    "short_learning.py": "7527d7e65978f4bc76c20a7dd711a1aa141a1f4cf712646f364e0d0d02a9a8f1",
+    "tests/test_learning_latency_component.py": "3393bf2a6dcbe277a0283dc3445aaf3246f7b1d5f61d1ee1c9b5f85b749b5f81"
+  },
+  "source_unchanged": true,
+  "tests_run": 7,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "test_changed_shape_seeds_horizon_or_formal_proof_is_rejected (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe component cannot expose a generic override for another shape or a formal study proof. ... ok\ntest_component_dispatch_is_explicit_and_keeps_zero_formal_credit (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nOnly the separate entry selects the component implementation and its distinctly labelled result. ... ok\ntest_existing_final_reader_rejects_renamed_component_record (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nEven an ordinary result.json filename and rehashed preparation retain the forbidden component producer kind. ... ok\ntest_formal_contract_keeps_fifty_warmups_and_component_records_actual_zero (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe approved diagnostic has128 complete updates per arm without changing formal protocol defaults. ... ok\ntest_formal_full_configuration_dispatch_retains_the_original_contract (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe unchanged formal shape continues through the formal entry; this test does not execute a trainer. ... ok\ntest_formal_run_rejects_component_or_tiny_plan_before_jax_and_memory (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nRenaming the diagnostic entry cannot turn its one-environment/zero-warmup plan into formal learning. ... ok\ntest_grouping_is_separate_from_active_readout_and_windows_remain_complete (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nScheduled/per-update controls remain ungrouped; grouped no-readout rounds up to129 complete updates. ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.007s\n\nOK\n",
+  "blocked_actions": [],
+  "producer_complete": false,
+  "gpu_run_performed": false,
+  "formal_credit": 0,
+  "jobs_submitted": false,
+  "source_admission_changed": false
+}

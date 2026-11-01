@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_latency_component_source_freeze",
+  "created_utc": "2026-11-01T16:19:38.737638+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11",
+  "original_base_commit": "841ad6e89a41699d60f4ece7d540198eb6cc39b2",
+  "current_base_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+  "files": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "5e3d1fe16b67ad2790226b77d9ac15dce0e3dda5a23ff4eda30a0130ebab7cfb",
+    "tests/test_learning_latency_component.py": "c44d48e99b9ee391b657f5f17884f231ba75b147ba0f11e8688e207f550fbddf"
+  },
+  "combined_source_update": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_combined_source_update_2026-11-01.json",
+    "sha256": "a3c2b51efff7d2c511d31acb00625b3985c2d4cddb976c2b58dd6a7fd7884c3e"
+  },
+  "author_receipts": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_entry_draft_author_6781087_32.json",
+      "sha256": "b5ce3ace8b71acc9e77037844c93192480b5a52c63a2ec9e39f8decb2a1c92a9"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_producer_first_author_6781087_42.json",
+      "sha256": "4d670eabc97a1fe9feec426cc12b90797f45fca788df3455e8074a26c892ce03"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+      "sha256": "d18fc83ad2f9b255fdb5b676c5a4356416508f8afdd8d8abb0569f4890721b89"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_completed_draft_author_6781087_49.json",
+      "sha256": "8e1874b5a4a36301d89f1efa7b52dbce4d4919d0ede5452c12bad4bf9389311e"
+    }
+  ],
+  "formal_helper_unchanged_since_62_case_pass": true,
+  "current_focused_metadata_cases": 20,
+  "recipe": {
+    "copies": 1,
+    "environments": 1,
+    "rollout_steps": 2,
+    "epochs": 1,
+    "minibatches": 1,
+    "normalization_warmup_iterations": 0,
+    "copy_seeds": [
+      11
+    ],
+    "state_donation": true,
+    "annealing_horizon": 2000000000
+  },
+  "planned_shape": {
+    "hostname": "jaguar03",
+    "gpu_type": "nvidia_rtx_a4500",
+    "gpu_count": 1,
+    "requested_processors": 8,
+    "host_memory_gib": 64,
+    "time_limit_minutes": 30,
+    "qos": "csresnolim"
+  },
+  "changes": [
+    {
+      "before": "Formal short-learning run shared its only protocol with any supplied learner shape, and protocol metadata always declared50 normalization warmups.",
+      "after": "Formal protocol remains unchanged; formal run rejects tiny/component plans before JAX. A separate checked component_protocol/run_component accepts only the explicit tiny recipe and records actual zero normalization warmup with a distinct zero-credit kind."
+    },
+    {
+      "before": "No actual tiny-game producer exercised the new learning and single-update latency paths.",
+      "after": "Separate source-bound component producer stages full helpers/defaults, requires actual owned numeric-step and explicit physical File/proc mapping before JAX, verifies package/source/assets/loaded libraries/current CUDA UUID+PCI, calls the actual checked component learning implementation and three valid latency cases, retains all raw failure records, and counts actual primary and additional clone work separately."
+    }
+  ],
+  "source_and_precision": "Original frozen numerical sourceD28/full networks remain unchanged, float32 networks/Adam and float64 statistics checked from actual states, highest matmul precision and deterministic operations retain the fixed2B horizon.",
+  "execution_cases": "Learning is ungrouped scheduled versus ungrouped per-update with a four-update report window (128updates/arm). Latency cases separately cover scheduled,per-update,and grouping3 with no readout; active readout with grouping>1 is rejected.",
+  "work_accounting": "Primary256updates/512policy transitions on successful learning; separately reconstruct every actual compiler warmup,observer comparison,replay,latency and selected-Executor clone count from raw successful records. Initialization/native-frame/reset counters are recorded separately. Failures report only recorded primary rows and explicitly leave unrecorded/additional work unknown.",
+  "mapping_limit": "Existing explicit root-owned File/proc physical assignment requirements remain. Actual UVA AutoDetect-only mapping is currently unsupported; this producer deliberately fails before JAX instead of adding an ordinal/minor or visibility fallback. No GPU packet is prepared.",
+  "actual_gpu_component_passed": false,
+  "jobs_submitted": false,
+  "source_profile_revision": false,
+  "source_admission_changed": false,
+  "formal_learning_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_credit": 0,
+  "throughput_credit": 0,
+  "final_training_credit": 0,
+  "git_status": " M 10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py\n?? 10_jax_exploration_platform/scripts/atari_pixel_campaign/learning_latency_component.py\n?? 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_learning_latency_component.py\n"
+}

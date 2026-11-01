@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_latency_component_completed_draft_author_metadata_validation",
+  "created_utc": "2026-11-01T16:17:36.901429+00:00",
+  "job_id": "6781087",
+  "step_id": "49",
+  "before": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "5e3d1fe16b67ad2790226b77d9ac15dce0e3dda5a23ff4eda30a0130ebab7cfb",
+    "tests/test_learning_latency_component.py": "c44d48e99b9ee391b657f5f17884f231ba75b147ba0f11e8688e207f550fbddf"
+  },
+  "after": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "5e3d1fe16b67ad2790226b77d9ac15dce0e3dda5a23ff4eda30a0130ebab7cfb",
+    "tests/test_learning_latency_component.py": "c44d48e99b9ee391b657f5f17884f231ba75b147ba0f11e8688e207f550fbddf"
+  },
+  "source_unchanged": true,
+  "tests_run": 20,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "....................\n----------------------------------------------------------------------\nRan 20 tests in 1.365s\n\nOK\n",
+  "blocked_actions": [],
+  "affected_formal_suite": "tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+  "formal_helper_unchanged_from_62_case_pass": true,
+  "actual_gpu_component_passed": false,
+  "formal_credit": 0,
+  "jobs_submitted": false,
+  "source_admission_changed": false
+}

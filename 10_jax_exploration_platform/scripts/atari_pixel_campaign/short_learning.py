@@ -16,6 +16,11 @@ import time
 
 MINIMUM_UPDATES = 128
 CONTRACT = "finite_learning_independent_trajectories_strict_replay_reviewed_comparison"
+COMPONENT_KIND = "tiny_pixel_learning_and_latency_component"
+COMPONENT_CONTRACT = "tiny_pixel_learning_component_no_formal_evidence"
+COMPONENT_RECIPE = {"n_copies": 1, "n_envs": 1, "num_steps": 2, "update_epochs": 1,
+    "num_minibatches": 1, "observation_warmup_iterations": 0, "total_timesteps": 2_000_000_000,
+    "donate_state": True, "copy_seeds": [11]}
 METRICS = {"loss", "policy_loss", "value_loss", "predictor_loss", "entropy", "approximate_kl",
            "gradient_norm", "reward_ext_sum", "intrinsic_reward_mean", "episode_count",
            "episode_return_sum", "steps_per_policy"}
@@ -60,6 +65,57 @@ def latency_protocol(configuration):
         "selected_report_every_iterations": options["report_every_iterations"],
         "report_rows_per_window": window // interval if options["report_readout"] != "none" else 0,
         "agreement_policy": OBSERVER_AGREEMENT}
+
+
+def component_protocol(configurations):
+    """Describe only the explicitly approved tiny recipe, keeping the formal contract unchanged."""
+    for configuration in configurations:
+        learner, options = configuration['learner'], configuration['execution']
+        if any(type(learner.get(name)) is not type(value) or learner[name] != value
+                for name, value in COMPONENT_RECIPE.items() if name != 'copy_seeds'):
+            raise ValueError('the component requires its exact approved tiny learner recipe')
+        if type(configuration['environment'].get('num_envs')) is not int or configuration['environment']['num_envs'] != 1:
+            raise ValueError('the component requires exactly one actual game environment')
+        if (options['compilation_mode'] != 'whole_iteration'
+                or type(options['iterations_per_call']) is not int or options['iterations_per_call'] not in {1, 3}
+                or options['report_readout'] not in {'scheduled', 'per_update', 'none'}
+                or options['report_every_iterations'] != 4
+                or options['iterations_per_call'] > 1 and options['report_readout'] != 'none'):
+            raise ValueError('the component requires valid ungrouped readout or grouped no-readout execution')
+    declared = protocol(configurations)
+    return {**declared, 'kind': COMPONENT_CONTRACT, 'normalization_warmup_iterations': 0,
+        'component_only': True, 'formal_learning_credit': 0, 'case_credit': 0, 'idea_credit': 0,
+        'packing_point_credit': 0, 'throughput_credit': 0, 'admission_granted': False}
+
+
+def checked_formal_protocol(plan):
+    """Reject tiny or component plans before a formal producer can import JAX or create a memory observer."""
+    configurations = [plan['reference_configuration'], plan['configuration']]
+    original = {'n_envs': 128, 'num_steps': 128, 'update_epochs': 4, 'num_minibatches': 4,
+                'observation_warmup_iterations': 50, 'total_timesteps': 2_000_000_000}
+    if (plan.get('kind') != 'selected_configuration_measurement' or plan.get('mode') != 'learning-check'
+            or 'component_recipe' in plan
+            or any(type(configuration['learner'].get(name)) is not int or configuration['learner'][name] != value
+                   for configuration in configurations for name, value in original.items())
+            or any(type(configuration['environment'].get('num_envs')) is not int
+                   or configuration['environment']['num_envs'] != 128 for configuration in configurations)
+            or plan.get('learning_protocol') != protocol(configurations)):
+        raise ValueError('formal short learning requires the original full configuration and fifty normalization warmups')
+    return plan['learning_protocol']
+
+
+def checked_component_protocol(plan):
+    """Allow the separate component entry only for its exact kind, recipe, seeds and complete protocol."""
+    configurations = [plan['reference_configuration'], plan['configuration']]
+    declared = component_protocol(configurations)
+    recipe = plan.get('component_recipe')
+    if (plan.get('kind') != COMPONENT_KIND or not isinstance(recipe, dict) or set(recipe) != set(COMPONENT_RECIPE)
+            or any(type(recipe[name]) is not type(value) or recipe[name] != value for name, value in COMPONENT_RECIPE.items())
+            or plan.get('copy_seeds') != [11] or any(type(seed) is not int for seed in plan['copy_seeds'])
+            or plan.get('learning_protocol') != declared
+            or any(name in plan for name in ('completed_study', 'final_confirmation_protocol', 'completed_registry_sha256'))):
+        raise ValueError('the component entry cannot execute a formal or differently prepared plan')
+    return declared
 
 
 def _parameter_changes(before, after, copies):
@@ -214,6 +270,23 @@ def _precision(state, paired):
 
 
 def run(directory, plan, paired, config_type, trainer_type, environment_type, progress, memory_factory):
+    """Run only original full-configuration formal learning after its normal producer admission."""
+    declared = checked_formal_protocol(plan)
+    return _run_with_memory(directory, plan, paired, config_type, trainer_type, environment_type,
+                            progress, memory_factory, declared)
+
+
+def run_component(directory, plan, paired, config_type, trainer_type, environment_type, progress, memory_factory):
+    """Exercise the approved tiny diagnostic through an explicit separate entry that grants no formal credit."""
+    declared = checked_component_protocol(plan)
+    result = _run_with_memory(directory, plan, paired, config_type, trainer_type, environment_type,
+                              progress, memory_factory, declared)
+    return {**result, 'kind': COMPONENT_KIND, 'component_recipe': COMPONENT_RECIPE,
+        'formal_learning_credit': 0, 'case_credit': 0, 'idea_credit': 0, 'packing_point_credit': 0,
+        'throughput_credit': 0, 'admission_granted': False}
+
+
+def _run_with_memory(directory, plan, paired, config_type, trainer_type, environment_type, progress, memory_factory, declared):
     """Retain whole-check physical-memory and competing-process observations even on failure."""
     import jax
     import train_optimized as training
@@ -221,7 +294,7 @@ def run(directory, plan, paired, config_type, trainer_type, environment_type, pr
     memory = memory_factory(jax.devices()[0], plan["gpu_uuid"])
     memory.begin()
     try:
-        result = _run(directory, plan, paired, config_type, trainer_type, environment_type, progress)
+        result = _run(directory, plan, paired, config_type, trainer_type, environment_type, progress, declared)
     finally:
         observed = memory.finish()
         training.atomic_json(Path(directory) / "learning_memory.json", observed)
@@ -231,14 +304,13 @@ def run(directory, plan, paired, config_type, trainer_type, environment_type, pr
     return result
 
 
-def _run(directory, plan, paired, config_type, trainer_type, environment_type, progress):
+def _run(directory, plan, paired, config_type, trainer_type, environment_type, progress, declared):
     """Collect independent short trajectories, complete curves and strict same-implementation replay."""
     import jax
     import numpy as np
     import train_optimized as training
 
     configurations = {"reference": plan["reference_configuration"], "candidate": plan["configuration"]}
-    declared = protocol(list(configurations.values()))
     if plan.get("learning_protocol") != declared:
         raise ValueError("the short-learning budget or health contract changed after preparation")
     copies, seeds = len(plan["copy_seeds"]), tuple(plan["copy_seeds"])
