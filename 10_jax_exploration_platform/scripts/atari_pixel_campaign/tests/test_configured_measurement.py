@@ -380,8 +380,12 @@ class ProducerBoundaryTests(unittest.TestCase):
 
     def test_ordinary_equal_comparison_rejection_is_still_present(self):
         """The equality exception is restricted to the explicit target qualification branch."""
-        source = (SCRIPTS / "measure_selected.py").read_text()
-        self.assertIn('reference == selected and not qualification', source)
+        from test_measure_selected import SelectedMeasurementTests
+        fixture = SelectedMeasurementTests(); fixture.setUp(); self.addCleanup(fixture.doCleanups)
+        arguments = fixture.arguments(); arguments.configuration = fixture.files["reference"]
+        with self.assertRaisesRegex(ValueError, "distinct implemented setting"):
+            fixture.prepare(arguments)
+        self.assertFalse((fixture.run_dir / "data").exists())
         self.assertNotIn("configured_isolation", (SCRIPTS / "paired_benchmark.py").read_text())
 
     def test_fresh_isolated_process_resolves_only_complete_staged_helper_rosters(self):
@@ -429,11 +433,11 @@ class QualificationReaderTests(unittest.TestCase):
         test = source / "10_jax_exploration_platform/tests/atari_pixels/test_fixture.py"
         test.parent.mkdir(parents=True)
         test.write_text("def test_plain(): pass\n@pytest.mark.parametrize('value', [False, True])\ndef test_pair(value): pass\n")
-        self.nodes = ["atari_pixels/test_fixture.py::test_plain", "atari_pixels/test_fixture.py::test_pair[False]",
-                      "atari_pixels/test_fixture.py::test_pair[True]"]
-        self.tests = {"command": [sys.executable, "-m", "pytest", "-q", str(source / "10_jax_exploration_platform/tests/atari_pixels"),
+        self.nodes = ["tests/atari_pixels/test_fixture.py::test_plain", "tests/atari_pixels/test_fixture.py::test_pair[False]",
+                      "tests/atari_pixels/test_fixture.py::test_pair[True]"]
+        self.tests = {"command": [sys.executable, "-m", "pytest", "--rootdir", str(source / "10_jax_exploration_platform"), "-q", str(source / "10_jax_exploration_platform/tests/atari_pixels"),
             str(source / "10_jax_exploration_platform/tests/test_atari_pixel_environment.py")], "returncode": 0,
-            "collection_rootdir": str(source / "10_jax_exploration_platform/tests"), "collected_nodeids": self.nodes,
+            "collection_rootdir": str(source / "10_jax_exploration_platform"), "collected_nodeids": self.nodes,
             "deselected_nodeids": [], "collection_reports": [{"nodeid": "atari_pixels/test_fixture.py", "outcome": "passed"}],
             "reports": [{"nodeid": node, "phase": phase, "outcome": "passed", "duration_seconds": .01}
                 for node in self.nodes for phase in ("setup", "call", "teardown")]}

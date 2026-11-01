@@ -1,0 +1,64 @@
+{
+  "actual_gpu_operations": false,
+  "actual_host_contact": false,
+  "at_utc": "2026-11-01T22:14:37.708654+00:00",
+  "birth": "53209219",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_114/user/task_0\n",
+  "error_details": [
+    {
+      "test": "test_direct_measurement.DirectMeasurementTests.test_cold_direct_and_combined_closures_require_every_exact_sibling",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py\", line 289, in test_cold_direct_and_combined_closures_require_every_exact_sibling\n    for names in (selected.required_helpers(False, True), profile.required_helpers(False, True), selected.required_helpers(True, True)):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py\", line 188, in required_helpers\n    raise ValueError(\"direct and UVA helper policies cannot be mixed\")\nValueError: direct and UVA helper policies cannot be mixed\n"
+    },
+    {
+      "test": "test_direct_measurement.DirectMeasurementTests.test_production_waiter_does_not_turn_child_failure_into_nsight_success",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py\", line 245, in test_production_waiter_does_not_turn_child_failure_into_nsight_success\n    metadata = self.run_waiter_fixture(7)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py\", line 232, in run_waiter_fixture\n    observed = direct.run_profile_waiter(f.plan, f.unit, f.fd)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py\", line 381, in run_profile_waiter\n    parent = identity.read_receipt(parent_ref); identity.validate_metadata(plan, parent)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 660, in validate_metadata\n    and value[\"source\"] == source_identity(plan) and value[\"history\"] == validate_history(plan)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 103, in source_identity\n    raw = subprocess.check_output([\"git\", \"-C\", str(root), \"show\", value[\"source_commit\"] + \":\" + relative])\n  File \"/usr/lib/python3.10/subprocess.py\", line 421, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n  File \"/usr/lib/python3.10/subprocess.py\", line 503, in run\n    with Popen(*popenargs, **kwargs) as process:\nAttributeError: __enter__\n"
+    },
+    {
+      "test": "test_direct_measurement.DirectMeasurementTests.test_production_waiter_spawns_one_exact_child_and_records_actual_zero_wait",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py\", line 241, in test_production_waiter_spawns_one_exact_child_and_records_actual_zero_wait\n    metadata = self.run_waiter_fixture(0)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py\", line 232, in run_waiter_fixture\n    observed = direct.run_profile_waiter(f.plan, f.unit, f.fd)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py\", line 381, in run_profile_waiter\n    parent = identity.read_receipt(parent_ref); identity.validate_metadata(plan, parent)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 660, in validate_metadata\n    and value[\"source\"] == source_identity(plan) and value[\"history\"] == validate_history(plan)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 103, in source_identity\n    raw = subprocess.check_output([\"git\", \"-C\", str(root), \"show\", value[\"source_commit\"] + \":\" + relative])\n  File \"/usr/lib/python3.10/subprocess.py\", line 421, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n  File \"/usr/lib/python3.10/subprocess.py\", line 503, in run\n    with Popen(*popenargs, **kwargs) as process:\nAttributeError: __enter__\n"
+    }
+  ],
+  "errors": 3,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6781231",
+  "kind": "direct_adapter_third_metadata_test_result",
+  "numerical_import_attempts": [],
+  "passed": false,
+  "pid": 690395,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Synthetic direct adapter plus default/UVA/root-directory metadata checks; no GPU or qualification credit; draft not approved.",
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "85d299b46163f9157158fa1269e7a326fa3d642370a55e00fb9a7eeef88b48f8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f6170392d0ca03235b975f7633c5f5a2c7bca6c4a167e2c2f7f529032fac0ec1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "1038701a748c2a012ee7c97265870d19c297e4c213edaaab3b4fee8bb8513e43",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py": "97737560778bd73e1383f865e25ad31903e156e3ae88fcd0edd6b67cd405277c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "85d299b46163f9157158fa1269e7a326fa3d642370a55e00fb9a7eeef88b48f8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f6170392d0ca03235b975f7633c5f5a2c7bca6c4a167e2c2f7f529032fac0ec1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "1038701a748c2a012ee7c97265870d19c297e4c213edaaab3b4fee8bb8513e43",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py": "97737560778bd73e1383f865e25ad31903e156e3ae88fcd0edd6b67cd405277c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "step_id": "114",
+  "tests": 110
+}

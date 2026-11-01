@@ -1,0 +1,12 @@
+{
+  "base_commit": "c851fa90f7b25d6ced54b7bac31457106ac91aa3",
+  "base_review_metadata_paths": 234,
+  "commit_created": false,
+  "correction": "Compare each materialized owned metadata path to the base; refuse any inherited overlap and stage only newly created owned paths.",
+  "failure": "The initial script required no .review_metadata files in the base commit; the sparse worktree hides inherited entries. That assertion stopped before staging or roster creation.",
+  "index_modified": false,
+  "kind": "direct_author_publication_preflight_guard_failure",
+  "push_attempted": false,
+  "schema_version": 1,
+  "source_modified": false
+}

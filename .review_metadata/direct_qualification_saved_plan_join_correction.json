@@ -1,0 +1,50 @@
+{
+  "actual_gpu_work": false,
+  "after": {
+    "author_120_cases": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/direct_adapter_fifth_author_6781231_129.json",
+      "sha256": "be965dfb1444998a90334d9d9b19e3b3d675511674ef5d8000cd2134c0309120"
+    },
+    "behavior": "Typed full equality joins saved source, hardware, runtime, assets, full direct binding and seeds to the original qualified plan. Finite positive ordered execution time and exact host/PID/birth join the actual metadata process. Same source root/Python/runtime/assets/profile are required for the outer consumer, whose optimized configuration, seeds, consumer and history may differ.",
+    "freeze": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/direct_adapter_fifth_source_freeze.json",
+      "sha256": "5dd2f095d336de79b7e1e943f5741af979f16fae87ae71d58af99376075c1c95"
+    }
+  },
+  "at_utc": "2026-11-01T22:36:28.005593+00:00",
+  "before": {
+    "author_112_cases": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/direct_adapter_fourth_author_6781231_116.json",
+      "sha256": "edb7227c1ae934590bb52f7c25d11b1eb0c385a351cc776f75158015c2755fb6"
+    },
+    "behavior": "Saved result runtime, full binding, seeds and execution process could differ from the qualified plan/process under isolated unrelated proof stubs.",
+    "freeze": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/direct_adapter_fourth_source_freeze.json",
+      "sha256": "5077dfd415a3514a19478bcaee3577e30157c1bcbfb85981aa0c3639dcc64de0"
+    },
+    "independent_four_gap_reproductions": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/direct_qualification_saved_join_reproductions_6781231_121.json",
+      "sha256": "3662fbe22359c6e40464060d9888c13283ee64fe7661327fc99a3036087f87d2"
+    }
+  },
+  "changed_production_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py"
+  ],
+  "direct_host_contact": false,
+  "independent_review_pending": true,
+  "kind": "direct_qualification_saved_plan_join_correction",
+  "new_semantic_test_file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_qualification_reader.py",
+  "new_semantic_test_methods": 8,
+  "qualification_credit": 0,
+  "schema_version": 1,
+  "semantic_test_stubs_grant_evidence": false,
+  "source_admission_changed": false,
+  "unrelated_semantic_test_stubs": [
+    "source/native/lock binding",
+    "current source/gates",
+    "whole memory window",
+    "startup/backend capture",
+    "actual terminal lifecycle"
+  ],
+  "worker_admitted": false
+}

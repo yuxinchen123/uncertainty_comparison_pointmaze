@@ -263,7 +263,7 @@ def target_record(path, mode, specification, evidence):
         raise ValueError("target measurements must be direct prepared units in their recorded target campaign")
     result = evidence.read(path)
     plan = evidence.read(directory / "measurement_plan.json")
-    if "configured_isolation" in plan or "configured_isolation" in result:
+    if "direct_binding" in plan or validation.direct_record(result) or "configured_isolation" in plan or "configured_isolation" in result:
         raise ValueError("configured-isolation target/final/portable records are unsupported")
     if 'device_memory_limit_protocol' in plan:
         raise ValueError('an instrumented attempt cannot supply ordinary target measurements; remeasure it normally')

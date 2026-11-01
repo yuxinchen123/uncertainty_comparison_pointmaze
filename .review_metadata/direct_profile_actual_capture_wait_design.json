@@ -1,0 +1,52 @@
+{
+  "actual_direct_host_contact": false,
+  "actual_profile_or_gpu_launch": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-01T21:59:57.344524+00:00",
+  "capture_gate": "Actual capture waits at most180 monotonic seconds only for absent own launch binding. Once present, verify exact waiter\u2192capture ancestry/birth/UID/group/argv and same descriptor/holder custody against current own metadata before the unchanged inherited core collects/binds. No fake profile-owner binding or original plan rewrite.",
+  "chain": [
+    "Owner holding existing exact FLOCK descriptor",
+    "Nsight wrapper in its new recorded process group",
+    "Private staged metadata-only waiter as Nsight primary",
+    "Exactly one actual Python capture child inheriting the same descriptor"
+  ],
+  "kind": "explicit_direct_profile_actual_capture_wait_design",
+  "official_sources": [
+    {
+      "interpretation": "Use explicit --wait=primary only in the direct branch. This documents waiting, not actual application exit-status propagation; do not infer capture status from Nsight return.",
+      "short_quote": "If primary, the CLI will wait on the application process termination.",
+      "subject": "CLI --wait primary/all",
+      "url": "https://docs.nvidia.com/nsight-systems/UserGuide/"
+    },
+    {
+      "interpretation": "The process ID occupies bits24 through47. Decode (value//0x1000000)%0x1000000 for both recorded global identifiers; do not reinterpret this as a GPU index or physical assignment.",
+      "subject": "Serialized globalPid/globalTid identity fields",
+      "url": "https://docs.nvidia.com/nsight-systems/AnalysisGuide/"
+    }
+  ],
+  "parent_terminal_gate": "Parent retains descriptor through actual capture wait proof, waiter/Nsight terminal return, positive trace and source/custody checks. Nsight return alone never proves capture return.",
+  "required_metadata_cases": [
+    "Exact retained FD chain and actual one-child wait return pass in a synthetic CPU-only fixture.",
+    "Dropped/changed descriptor,wrong owner/Nsight/waiter/capture birth/UID/argv/group refuses before NUM.",
+    "Actual child nonzero/signal/unknown wait refuses despite synthetic Nsight zero.",
+    "No second child,existing launch/wait record or descriptor reacquisition accepted.",
+    "Synthetic SQLite positive capture kernel/API records pass; wrong/relabelled PID,missing table/columns/zero duration/zero rows/changed database refuses.",
+    "Default/UVA Nsight command and sampler output remain unchanged."
+  ],
+  "root_approved_design_extension": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Only explicit direct card-one profiling; default/UVA behavior and approved core80bb remain unchanged.",
+  "trace_process_gate": "After existing immutable Nsight stats export, inspect only its exact hash-bound read-only SQLite derivative. Supported CUPTI kernel/globalPid and runtime-or-driver/globalTid tables must have positive duration rows belonging only to the exact capture PID. Require positive capture kernel/API counts; any missing schema,unavailable ID,foreign or ambiguous row refuses. Join with actual direct binding/process and trace hash; no zero-trace or remembered-PID credit.",
+  "waiter_entry": {
+    "child_launch": "One Popen of exact recorded Python plus staged profile_selected.py --capture-unit unit --direct-held-lock-fd actualFD, pass_fds=(actualFD,). No retry or second child.",
+    "child_record": "unit/direct_capture_launch.json; actual child PID/birth/all4UIDs/rawstat/argv/parent/group plus waiter receipt, fsynced before child publishes capture identity or imports NUM.",
+    "descriptor_option": "--direct-held-lock-fd",
+    "failures": "Preserve partial records and stop/wait only this newly created owned capture process/group while retaining parent descriptor. Missing/ambiguous custody/identity or unsupported core chain refuses before CUDA.",
+    "own_record": "unit/direct_profile_waiter.json; own raw process/UID and lock metadata, owner/Nsight/plan receipts.",
+    "preconditions": "Exact staged prepared direct component profile; no NUM module import; own all4UIDs/host/PID/birth, owner metadata/current source/history and unchanged inherited FD/inode/FLOCK/holder birth; exact recorded Nsight parent/source command and process group.",
+    "private_option": "--direct-waiter-unit",
+    "wait_record": "unit/direct_capture_wait_return.json; actual Popen wait return integer, exact child command/PID/birth/UID and parent/waiter refs. Negative signal or nonzero return remains failure; never replace with zero."
+  },
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830"
+}

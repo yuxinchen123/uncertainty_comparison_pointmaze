@@ -1,0 +1,21 @@
+{
+  "actual_gpu_operations": false,
+  "at_utc": "2026-11-01T21:52:22.715137+00:00",
+  "base_commit": "c851fa90f7b25d6ced54b7bac31457106ac91aa3",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "97e60ef68aa2d28b811bed5900a5f652fece10cdc3fe43353b39c9c556d8df91",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "7ca3a4dae9f2ab8915ddc29c405c806a64dcb19cea24aa3ba423344033e5c7c4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "dc61a923b5ee64e5d04a3dcedf2c2044bb875baba443e5efbc3d63249e315765",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "47a3bb29db8f6bf9f171d646eb98c20d905d4ec6b6d10eea487df2764dbb4602",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "kind": "direct_adapter_initial_source_before_legacy_metadata_tests",
+  "not_final_approval": true,
+  "schema_version": 1,
+  "scope": "Draft adapter source; tests only existing default/UVA producer contracts. New direct-only tests and remaining strict guards are still in progress."
+}

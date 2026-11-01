@@ -1,0 +1,52 @@
+{
+  "actual_GPU_work": false,
+  "actual_direct_or_scheduler_operations": false,
+  "after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "a46f2c721349bd15bda6ddef4037fd008da45aba0919b76554198c2335011b0d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f6170392d0ca03235b975f7633c5f5a2c7bca6c4a167e2c2f7f529032fac0ec1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "1038701a748c2a012ee7c97265870d19c297e4c213edaaab3b4fee8bb8513e43",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py": "2ea8ffcc73bdf97380ee1d56da0c98ccdbd059e18b49f4fec8f115bf954e3ebc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "at_utc": "2026-11-01T22:24:45.797655+00:00",
+  "before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "a46f2c721349bd15bda6ddef4037fd008da45aba0919b76554198c2335011b0d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f6170392d0ca03235b975f7633c5f5a2c7bca6c4a167e2c2f7f529032fac0ec1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "1038701a748c2a012ee7c97265870d19c297e4c213edaaab3b4fee8bb8513e43",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py": "2ea8ffcc73bdf97380ee1d56da0c98ccdbd059e18b49f4fec8f115bf954e3ebc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "defects_demonstrated": [
+    "full saved direct_binding can be reduced to profile only",
+    "result seed is not joined to saved plan",
+    "execution PID is not joined to saved process",
+    "result+outer runtime can differ from saved qualified plan"
+  ],
+  "errors": [],
+  "failures": [],
+  "freeze_sha256": "5077dfd415a3514a19478bcaee3577e30157c1bcbfb85981aa0c3639dcc64de0",
+  "independent_review_approved": false,
+  "job": "6781231",
+  "kind": "direct_qualification_reader_saved_join_defect_reproductions",
+  "qualification_credit": 0,
+  "schema_version": 1,
+  "scope": "Deliberately synthetic renderer/library/raw-test fixtures; source/native/lock/window/startup/backend/terminal proofs stubbed solely to isolate actual saved-result reader joins. This establishes no physical, scientific or qualification evidence.",
+  "step": "121",
+  "tests": 5
+}

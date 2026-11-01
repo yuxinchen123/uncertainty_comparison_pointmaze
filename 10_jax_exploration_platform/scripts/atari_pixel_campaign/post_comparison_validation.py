@@ -259,9 +259,16 @@ def configured_record(record):
         Path(path).name == "uva_slurm_configured_isolation.py" for path in record.get("helpers", {}).get("files", {}))
 
 
+def direct_record(record):
+    """Keep direct evidence explicit even if a result marker was removed."""
+    return "direct_binding" in record or record.get("direct_binding_record") is True or any(
+        Path(path).name in {"direct_measurement.py", "serval02_card1_binding.py"}
+        for path in record.get("helpers", {}).get("files", {}))
+
+
 def identity(record, context, source_commit, runtime):
     """Keep the default physical-identity contract closed to new configured-isolation records."""
-    if configured_record(record):
+    if direct_record(record) or configured_record(record):
         raise ValueError("this consumer does not support configured-isolation evidence")
     _identity_fields(record, context, source_commit, runtime)
 
@@ -326,8 +333,19 @@ def validate_combination(specification, evidence, *, final=False):
         raise ValueError("combination correctness and confirmation reused the same process execution")
     context, source = specification["hardware_class"], specification["source_commit"]
     runtime = runtime_environment(specification["runtime_environment"])
-    configured = configured_record(first) or configured_record(second)
-    if configured:
+    direct = direct_record(first) or direct_record(second)
+    configured = not direct and (configured_record(first) or configured_record(second))
+    if direct:
+        if final or evidence.resolver is not None or not all(direct_record(record) for record in (first, second)):
+            raise ValueError("direct final,portable or mixed evidence requires separate explicit support")
+        import direct_measurement as support
+        profile = specification.get("direct_binding_profile")
+        support.core().require_profile(profile)
+        for path, record in ((first_path, first), (second_path, second)):
+            plan, unused = support.verify_saved_measurement(Path(path).parent, record)
+            if plan["direct_binding"]["profile"] != profile:
+                raise ValueError("the direct confirmation profile differs from its actual qualified process")
+    elif configured:
         if final or evidence.resolver is not None:
             raise ValueError("configured-isolation final/portable evidence needs separate explicit support")
         import configured_measurement as support
@@ -338,7 +356,7 @@ def validate_combination(specification, evidence, *, final=False):
             if plan["configured_isolation"]["profile"] != profile:
                 raise ValueError("the explicit selected profile differs from the actual qualified target")
     for record in (first, second):
-        if configured:
+        if configured or direct:
             _identity_fields(record, context, source, runtime)
         else:
             identity(record, context, source, runtime)
@@ -383,7 +401,7 @@ def packing_point(path, context, source, runtime, evidence, *, require_headroom=
     has_plan = (plan_path.exists() if evidence.resolver is None else str(plan_path) in evidence.resolver.files)
     new_helper = '10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py' in record.get('helpers', {}).get('files', {})
     plan = json.loads(evidence.file(plan_path, record=new_helper)) if has_plan or new_helper else {}
-    if ('configured_isolation' in plan or configured_record(record)
+    if ('direct_binding' in plan or direct_record(record) or 'configured_isolation' in plan or configured_record(record)
             or record.get('kind') == 'instrumented_device_memory_attempt_completion'
             or 'device_memory_limit_protocol' in plan or record.get('requires_uninstrumented_remeasurement') is True):
         raise ValueError('an instrumented completion is not an ordinary packing point; remeasure that count normally')
@@ -1182,7 +1200,7 @@ def measurement_binding(path, mode, specification, evidence):
     """Bind new final records to prepared source, assets, helpers, physical process and full configurations."""
     directory = Path(path).parent
     result, plan = evidence.read(path), evidence.read(directory / "measurement_plan.json")
-    if "configured_isolation" in plan or "configured_isolation" in result:
+    if "direct_binding" in plan or direct_record(result) or "configured_isolation" in plan or "configured_isolation" in result:
         raise ValueError("configured-isolation final/packing/portable evidence is unsupported")
     if (Path(path).name != "result.json" or directory.parent != Path(plan.get("campaign_run_dir", "")) / "data"
             or directory.name != plan.get("unit_id")

@@ -19,6 +19,7 @@ import os
 from pathlib import Path
 import shlex
 import socket
+import stat
 import statistics
 import subprocess
 import sys
@@ -172,17 +173,22 @@ def validate_correctness_protocol(configurations):
                          "use supported groups or a separately reviewed numerical harness")
 
 
-def helper_receipt(configured=False):
+def helper_receipt(configured=False, direct=False):
     """Freeze only committed producer/helper bytes, separately from the unchanged numerical core."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured)]
+    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct)]
     receipt = training.source_receipt(root, commit, paths)
     return receipt
 
 
-def required_helpers(configured=False):
+def required_helpers(configured=False, direct=False):
     """Keep historical helper closure unchanged and explicitly add the opt-in dependency union."""
+    if configured and direct:
+        raise ValueError("direct and UVA helper policies cannot be mixed")
+    if direct:
+        import direct_measurement as support
+        return tuple(dict.fromkeys((*HELPERS, *support.helper_names())))
     if not configured:
         return HELPERS
     import configured_measurement as support
@@ -206,6 +212,16 @@ def configured_support(plan):
     return support
 
 
+def producer_support(plan):
+    """Keep the separate direct policy explicit before the existing UVA/default dispatch."""
+    if "direct_binding" in plan:
+        import direct_measurement as support
+        return support.support(plan)
+    if "direct_qualification" in plan or "direct_qualification_inputs" in plan:
+        raise ValueError("direct qualification requires its explicit direct binding profile")
+    return configured_support(plan)
+
+
 def validate_complete_fields(root, config):
     """Require the pinned source's complete learner/environment fields before constructing arrays."""
     defaults = diagnostic.default_configuration(root)
@@ -220,7 +236,15 @@ def prepare(args):
     if getattr(args, 'memory_limit_ownership_profile', None) is not None and not getattr(args, 'record_device_memory_limit', False):
         raise ValueError('an ownership profile requires explicit device-memory instrumentation')
     configured = getattr(args, "configured_isolation_profile", None) is not None
+    direct = getattr(args, "direct_binding_profile", None) is not None
     qualification = getattr(args, "target_qualification", False)
+    direct_qualification = getattr(args, "direct_target_qualification", False)
+    if direct and (configured or qualification or args.hardware_class != "h100" or args.gpu_uuid != CARD1
+            or args.mode not in {"correctness", "confirmation"} or getattr(args, "record_device_memory_limit", False)
+            or getattr(args, "final_confirmation", False)):
+        raise ValueError("direct support is only the approved card-one intermediate or standalone qualification path")
+    if direct_qualification and (not direct or args.mode != "correctness"):
+        raise ValueError("standalone direct qualification requires explicit direct correctness")
     if qualification and (not configured or args.mode != "correctness"):
         raise ValueError("target qualification requires explicit configured-isolation correctness")
     if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"
@@ -251,7 +275,7 @@ def prepare(args):
         reference, reference_input = read_document(args.reference_configuration)
         reference = validation.configuration(reference)
         validate_complete_fields(source_root, reference)
-        if reference["learner"]["n_copies"] != selected["learner"]["n_copies"] or reference == selected and not qualification:
+        if reference["learner"]["n_copies"] != selected["learner"]["n_copies"] or reference == selected and not (qualification or direct_qualification):
             raise ValueError("comparison variants need the same copy count and a distinct implemented setting")
         validate_correctness_protocol([reference, selected])
     elif args.reference_configuration is not None:
@@ -265,7 +289,7 @@ def prepare(args):
     copies = selected["learner"]["n_copies"]
     if args.seed_start + copies > 2 ** 32:
         raise ValueError("the independent policy seed range exceeds unsigned 32-bit values")
-    helpers = helper_receipt(configured)
+    helpers = helper_receipt(configured, True) if direct else helper_receipt(configured)
     if final or args.mode == "learning-check":
         validation.committed_measurement_sources(helpers, validation.Evidence())
     configurations = [selected] + ([reference] if reference is not None else [])
@@ -298,6 +322,18 @@ def prepare(args):
             support.qualification_sources(plan, args.cleanrl_source_root, args.qualification_software_result)
         else:
             support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
+    if direct:
+        import direct_measurement as support
+        profile, profile_input = read_document(args.direct_binding_profile)
+        support.configure_plan(plan, profile, args.direct_history_inputs, "selected_measurement")
+        plan["inputs"]["direct_binding_profile"] = profile_input
+        plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
+        if direct_qualification:
+            support.validate_original_qualification(plan)
+            plan["direct_qualification"] = support.QUALIFICATION
+            support.qualification_sources(plan, args.cleanrl_source_root, args.qualification_software_result)
+        else:
+            support.prepare_qualification_inputs(plan, args.direct_qualification_record, args.direct_qualification_review)
     if getattr(args, 'record_device_memory_limit', False):
         # This diagnostic capability is explicitly separate from ordinary completed packing evidence.
         import device_memory_limit as capacity
@@ -346,7 +382,7 @@ def prepare(args):
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/measure_selected.py"),
                                               "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured):
+    for name in required_helpers(configured, direct):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     if 'device_memory_limit_protocol' in plan:
         artifacts[directory / 'capacity_owned_job_ledger.txt'] = ledger_bytes
@@ -464,6 +500,27 @@ def preflight(plan):
 def card_admission(directory, plan):
     """Hold the standing card lock per direct-host unit without creating a waiting CUDA context."""
     host = socket.gethostname().split(".")[0]
+    if "direct_binding" in plan:
+        support = producer_support(plan); identity = support.core()
+        identity.validate_history(plan)
+        if host != "serval02" or os.getuid() != 2618919:
+            raise ValueError("direct descriptor admission requires the exact approved host and owner")
+        pinned = os.open(identity.PROFILE["standing_lock"], os.O_PATH | os.O_NOFOLLOW)
+        try:
+            observed = os.fstat(pinned); profile = identity.PROFILE
+            if (not stat.S_ISREG(observed.st_mode) or observed.st_uid != profile["uid"]
+                    or observed.st_dev != profile["lock_device"] or observed.st_ino != profile["lock_inode"]
+                    or stat.S_IMODE(observed.st_mode) != profile["lock_mode"]):
+                raise ValueError("the existing standing-lock inode or owner changed")
+            # This intentional kernel descriptor alias opens only the proved regular inode.
+            descriptor = os.open("/proc/self/fd/" + str(pinned), os.O_RDWR)
+        finally:
+            os.close(pinned)
+        with os.fdopen(descriptor, "r+") as stream:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            identity.validate_lock(identity.lock_metadata(descriptor), os.getpid())
+            yield stream
+        return
     path = None
     if host == "serval05" or any(word in host for word in ("portal", "login")):
         raise ValueError("selected measurements require serval02 card 1 or a Slurm compute host")
@@ -545,7 +602,7 @@ class MemoryObservation:
 
 def verify_prepared(directory, plan):
     """Check staged helper bytes and unchanged numerical source before any device import."""
-    for name in required_helpers("configured_isolation" in plan):
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan):
         relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
         expected = plan["helpers"]["files"][relative]
         if training.file_sha256(directory / "code" / name) != expected:
@@ -562,7 +619,7 @@ def verify_prepared(directory, plan):
     if 'ownership_profile' in plan:
         import device_memory_limit as capacity
         capacity.require_ownership_source(plan)
-    configured_support(plan)
+    producer_support(plan)
     verify_completed_study_plan(plan)
     if "completed_study" in plan:
         validation.committed_measurement_sources(plan["helpers"], validation.Evidence())
@@ -581,22 +638,31 @@ def run_prepared(directory):
         raise ValueError("execute the exact recorded Python environment")
     if directory != Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]:
         raise ValueError("measurement output directory differs from its original immutable plan")
-    if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json', 'target_qualification_result.json')):
+    if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json', 'target_qualification_result.json', 'direct_qualification_result.json')):
         raise ValueError("retain the previous result/failure and use a new measurement unit")
     with (directory / "measurement.lock").open("a+") as stream:
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json', 'target_qualification_result.json')):
+        if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json', 'target_qualification_result.json', 'direct_qualification_result.json')):
             raise ValueError("retain the previous result/failure and use a new measurement unit")
         verify_prepared(directory, plan)
+        if "direct_binding" in plan and any((directory / name).exists() for name in (
+                "direct_process_metadata.json", "direct_device_binding.json", "direct_device_binding_attempt.json", "direct_startup_checks.json")):
+            raise ValueError("preserve the previous direct attempt and use a new immutable unit before numerical import")
         for name, expected in (("XLA_PYTHON_CLIENT_PREALLOCATE", "false"), ("JAXTARI_SKIP_SPRITE_UPDATE", "1")):
             if os.environ.get(name, expected) != expected:
                 raise ValueError("measurement runtime differs from the frozen worker setting: " + name)
             os.environ[name] = expected
         runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
         try:
-            with card_admission(directory, plan):
-                support = configured_support(plan)
-                if support is not None:
+            with card_admission(directory, plan) as held:
+                support = producer_support(plan)
+                direct = "direct_binding" in plan
+                if direct:
+                    metadata_record = support.core().collect_metadata(plan, directory, held.fileno())
+                    hardware = {"direct_process_metadata": metadata_record, "runtime_environment": runtime}
+                    if "direct_qualification" not in plan:
+                        support.verify_qualification_inputs(plan)
+                elif support is not None:
                     isolation_metadata = support.core().collect_metadata(plan, directory)
                     hardware = {"configured_isolation_metadata": isolation_metadata, "runtime_environment": runtime}
                     if "target_qualification" not in plan:
@@ -611,7 +677,7 @@ def run_prepared(directory):
                 training.atomic_json(directory / "asset_receipt.json", assets)
                 backend = installed_backend_receipt(jaxtari, libraries)
                 training.atomic_json(directory / "installed_backend.json", backend)
-                if support is not None and "target_qualification" in plan:
+                if support is not None and ("target_qualification" in plan or "direct_qualification" in plan):
                     support.verify_qualification_backend(plan, backend)
                 if 'device_memory_limit_protocol' in plan:
                     import device_memory_limit as capacity
@@ -675,12 +741,16 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
     expected = "H100" if plan["hardware_class"] == "h100" else "A4500"
     if expected not in devices[0].device_kind:
         raise ValueError("JAX selected another GPU type")
-    support = configured_support(plan)
+    support = producer_support(plan)
+    direct = "direct_binding" in plan
     binding, numerical_paths = None, None
     if support is not None:
         numerical_paths = support.numerical_module_paths(plan)
-        metadata_record = hardware["configured_isolation_metadata"]
+        metadata_record = hardware["direct_process_metadata" if direct else "configured_isolation_metadata"]
         binding = support.core().bind_process(plan, metadata_record, devices[0], directory)
+        if direct:
+            support.post_binding_checks(plan, metadata_record, binding, directory)
+            support.capture_backend(directory, binding)
         hardware = {**support.bound_hardware(plan, metadata_record, binding), "runtime_environment": plan["runtime_environment"]}
         training.atomic_json(directory / "hardware.json", hardware)
         initial_process = support.process_sample(binding["gpu_uuid"], os.getpid())
@@ -688,99 +758,109 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
         support.validate_process_sample(initial_process, binding["gpu_uuid"], os.getpid())
     if failure_capture is not None:
         failure_capture.bind(devices[0])
-    selected = plan["configuration"]
-    reference = plan["reference_configuration"]
-    seeds = tuple(plan["copy_seeds"])
-    def progress(value):
-        """Publish actual computation stages in the normal per-unit monitoring location."""
-        diagnostic.record_progress(directory, value["state"], **{name: item for name, item in value.items() if name != "state"})
-    if "target_qualification" in plan:
-        with support.observed_work(devices[0], binding, directory / "qualification_memory") as observed:
-            result = support.run_qualification(directory, plan, paired, jax, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment)
-        result["qualification_memory"] = observed
-    elif plan["mode"] == "learning-check":
-        short_learning = staged_short_learning(directory, plan)
-        result = short_learning.run(directory, plan, paired, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment, progress, MemoryObservation)
-    elif plan["mode"] == "confirmation":
-        if "final_confirmation_protocol" in plan:
+    whole_scope = support.observed_work(devices[0], binding, directory / (plan["mode"] + "_memory")) if direct and "direct_qualification" not in plan else nullcontext({})
+    with whole_scope as whole_memory:
+        selected = plan["configuration"]
+        reference = plan["reference_configuration"]
+        seeds = tuple(plan["copy_seeds"])
+        def progress(value):
+            """Publish actual computation stages in the normal per-unit monitoring location."""
+            diagnostic.record_progress(directory, value["state"], **{name: item for name, item in value.items() if name != "state"})
+        if "target_qualification" in plan or "direct_qualification" in plan:
+            with support.observed_work(devices[0], binding, directory / "qualification_memory") as observed:
+                with support.paired_observer(paired, binding, directory) if direct else nullcontext():
+                    result = support.run_qualification(directory, plan, paired, jax, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment)
+            result["qualification_memory"] = observed
+        elif plan["mode"] == "learning-check":
             short_learning = staged_short_learning(directory, plan)
-            if plan.get("single_update_latency_protocol") != {arm: short_learning.latency_protocol(value)
-                    for arm, value in (("reference", reference), ("candidate", selected))}:
-                raise ValueError("the predeclared selected reporting and per-update latency contract changed")
-        changes = {scope: {name: value for name, value in selected[scope].items() if reference[scope][name] != value}
-                   for scope in ("learner", "environment")}
-        with support.paired_observer(paired, binding, directory) if support is not None else nullcontext():
-            result = paired.run_paired_benchmark(PixelPPOConfig(**reference["learner"]),
-                changes["learner"], changes["environment"], selected["execution"],
-                rounds=plan["rounds"], iterations=plan["iterations"], seed_start=seeds[0], progress=progress,
-                reference_environment=reference["environment"], reference_execution=reference["execution"])
-        if "final_confirmation_protocol" in plan:
-            short_learning = staged_short_learning(directory, plan)
-            latency_memory = MemoryObservation(devices[0], plan["gpu_uuid"])
-            latency_memory.begin()
-            try:
-                result["synchronized_per_update_latency"] = short_learning.single_update_latencies(
-                    paired, selected, reference, seeds, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment)
-            finally:
-                observed = latency_memory.finish()
-                training.atomic_json(directory / "single_update_latency_memory.json", observed)
-            if observed["other_gpu_processes"]:
-                raise ValueError("another process occupied the GPU during synchronized single-update latency")
-            result["synchronized_per_update_latency_memory"] = observed
-    else:
-        configs = [("candidate", selected)] if plan["mode"] == "packing-point" else [("reference", reference), ("candidate", selected)]
-        executors, initial = {}, {}
-        for label, config in configs:
-            progress({"state": "initializing", "variant": label})
-            trainer = PixelPPORND(PixelPPOConfig(**config["learner"]), AtariPixelEnvironment(**config["environment"]))
-            executor = paired.Executor(trainer, config["execution"])
-            progress({"state": "normalization_warmup", "variant": label})
-            state = trainer.warmup(trainer.initialize(seeds))
-            initial[label] = paired.host_copy(paired.canonical_training_state(executor, state)) if plan["mode"] == "correctness" else paired.host_copy(state)
-            executors[label] = executor
-            del state
-        if plan["mode"] == "correctness":
-            initialized = paired.agreement(initial["reference"], initial["candidate"])
-            checks, unused = paired.correctness_checks(executors["reference"], executors["candidate"], initial["reference"])
-            del unused
-            result = {"correctness_passed": True, "correctness_attempted": True, "implementation_distinct": True,
-                      "correctness": {"initialization": initialized, **checks}, "reference": reference, "candidate": selected,
-                      "copies": len(seeds), "measurement_valid": False, "decision": "correctness_passed"}
+            result = short_learning.run(directory, plan, paired, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment, progress, MemoryObservation)
+        elif plan["mode"] == "confirmation":
+            if "final_confirmation_protocol" in plan:
+                short_learning = staged_short_learning(directory, plan)
+                if plan.get("single_update_latency_protocol") != {arm: short_learning.latency_protocol(value)
+                        for arm, value in (("reference", reference), ("candidate", selected))}:
+                    raise ValueError("the predeclared selected reporting and per-update latency contract changed")
+            changes = {scope: {name: value for name, value in selected[scope].items() if reference[scope][name] != value}
+                       for scope in ("learner", "environment")}
+            with support.paired_observer(paired, binding, directory) if support is not None else nullcontext():
+                result = paired.run_paired_benchmark(PixelPPOConfig(**reference["learner"]),
+                    changes["learner"], changes["environment"], selected["execution"],
+                    rounds=plan["rounds"], iterations=plan["iterations"], seed_start=seeds[0], progress=progress,
+                    reference_environment=reference["environment"], reference_execution=reference["execution"])
+            if "final_confirmation_protocol" in plan:
+                short_learning = staged_short_learning(directory, plan)
+                latency_memory = MemoryObservation(devices[0], plan["gpu_uuid"])
+                latency_memory.begin()
+                try:
+                    result["synchronized_per_update_latency"] = short_learning.single_update_latencies(
+                        paired, selected, reference, seeds, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment)
+                finally:
+                    observed = latency_memory.finish()
+                    training.atomic_json(directory / "single_update_latency_memory.json", observed)
+                if observed["other_gpu_processes"]:
+                    raise ValueError("another process occupied the GPU during synchronized single-update latency")
+                result["synchronized_per_update_latency_memory"] = observed
         else:
-            executor = executors["candidate"]
-            progress({"state": "compile_warmup"})
-            host, warmup = paired.warm_executor(executor, initial["candidate"], plan["iterations"])
-            training_origin = int(host.iteration)
-            memory = MemoryObservation(devices[0], plan["gpu_uuid"])
-            measured = []
-            for index in range(7):
-                progress({"state": "running", "variant": "candidate", "round": index + 1, "total_rounds": 7})
-                row, host = paired.measure_round(executor, host, plan["iterations"], memory)
-                measured.append(row)
-                diagnostic.atomic_json(directory / "rounds.json", measured)
-            if any(row["memory"]["other_gpu_processes"] for row in measured):
-                raise RuntimeError("another process occupied the measured GPU during the isolated packing point")
-            result = {"completed": True, "isolated_variant": True, "configuration": selected,
-                "normalization_warmup_iterations": 50, "copies": len(seeds), "copy_seeds": list(seeds),
-                "warmup": warmup, "rounds": measured, "hardware": hardware,
-                "training_start_iteration": training_origin,
-                "median_transitions_per_second": statistics.median(row["transitions_per_second_total"] for row in measured)}
-    result.update(source_commit=plan["source_commit"], hardware_class=plan["hardware_class"],
-        hardware=hardware,
-        installed_backend=installed_backend,
-        loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
-        runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
-        helpers=plan["helpers"], copy_seeds=list(seeds), protocol={"rounds": plan["rounds"],
-            "requested_minimum_updates_per_round": plan["minimum_updates_per_round"], "actual_updates_per_round": plan["iterations"]},
-        execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(), "process_start_time": hardware["process_start_time"],
-                            "started_at_seconds": started_at, "finished_at_seconds": time.time()})
-    if support is not None:
-        result.update(configured_isolation=plan["configured_isolation"], resolved_device_binding=binding,
-            configured_isolation_record=True, numerical_module_paths=numerical_paths, memory_note=("Complete own-only active compute rows on the bound assigned UUID, "
-                "actual assigned-device memory samples and separate JAX lifetime allocator peak; "
-                "no claim of continuous kernel enforcement or absence of graphics/system activity"), **support.BOUNDARY)
-        if "target_qualification" not in plan:
-            result["target_qualification_inputs"] = plan["target_qualification_inputs"]
+            configs = [("candidate", selected)] if plan["mode"] == "packing-point" else [("reference", reference), ("candidate", selected)]
+            executors, initial = {}, {}
+            for label, config in configs:
+                progress({"state": "initializing", "variant": label})
+                trainer = PixelPPORND(PixelPPOConfig(**config["learner"]), AtariPixelEnvironment(**config["environment"]))
+                executor = paired.Executor(trainer, config["execution"])
+                progress({"state": "normalization_warmup", "variant": label})
+                state = trainer.warmup(trainer.initialize(seeds))
+                initial[label] = paired.host_copy(paired.canonical_training_state(executor, state)) if plan["mode"] == "correctness" else paired.host_copy(state)
+                executors[label] = executor
+                del state
+            if plan["mode"] == "correctness":
+                initialized = paired.agreement(initial["reference"], initial["candidate"])
+                checks, unused = paired.correctness_checks(executors["reference"], executors["candidate"], initial["reference"])
+                del unused
+                result = {"correctness_passed": True, "correctness_attempted": True, "implementation_distinct": True,
+                          "correctness": {"initialization": initialized, **checks}, "reference": reference, "candidate": selected,
+                          "copies": len(seeds), "measurement_valid": False, "decision": "correctness_passed"}
+            else:
+                executor = executors["candidate"]
+                progress({"state": "compile_warmup"})
+                host, warmup = paired.warm_executor(executor, initial["candidate"], plan["iterations"])
+                training_origin = int(host.iteration)
+                memory = MemoryObservation(devices[0], plan["gpu_uuid"])
+                measured = []
+                for index in range(7):
+                    progress({"state": "running", "variant": "candidate", "round": index + 1, "total_rounds": 7})
+                    row, host = paired.measure_round(executor, host, plan["iterations"], memory)
+                    measured.append(row)
+                    diagnostic.atomic_json(directory / "rounds.json", measured)
+                if any(row["memory"]["other_gpu_processes"] for row in measured):
+                    raise RuntimeError("another process occupied the measured GPU during the isolated packing point")
+                result = {"completed": True, "isolated_variant": True, "configuration": selected,
+                    "normalization_warmup_iterations": 50, "copies": len(seeds), "copy_seeds": list(seeds),
+                    "warmup": warmup, "rounds": measured, "hardware": hardware,
+                    "training_start_iteration": training_origin,
+                    "median_transitions_per_second": statistics.median(row["transitions_per_second_total"] for row in measured)}
+        result.update(source_commit=plan["source_commit"], hardware_class=plan["hardware_class"],
+            hardware=hardware,
+            installed_backend=installed_backend,
+            loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
+            runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
+            helpers=plan["helpers"], copy_seeds=list(seeds), protocol={"rounds": plan["rounds"],
+                "requested_minimum_updates_per_round": plan["minimum_updates_per_round"], "actual_updates_per_round": plan["iterations"]},
+            execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(), "process_start_time": hardware["process_start_time"],
+                                "started_at_seconds": started_at, "finished_at_seconds": time.time()})
+        if direct:
+            result.update(direct_binding=plan["direct_binding"], resolved_device_binding=binding,
+                direct_binding_record=True, numerical_module_paths=numerical_paths, **support.BOUNDARY)
+            if "direct_qualification" not in plan:
+                result["direct_qualification_inputs"] = plan["direct_qualification_inputs"]
+        elif support is not None:
+            result.update(configured_isolation=plan["configured_isolation"], resolved_device_binding=binding,
+                configured_isolation_record=True, numerical_module_paths=numerical_paths, memory_note=("Complete own-only active compute rows on the bound assigned UUID, "
+                    "actual assigned-device memory samples and separate JAX lifetime allocator peak; "
+                    "no claim of continuous kernel enforcement or absence of graphics/system activity"), **support.BOUNDARY)
+            if "target_qualification" not in plan:
+                result["target_qualification_inputs"] = plan["target_qualification_inputs"]
+    if direct and "direct_qualification" not in plan:
+        result["direct_whole_work_memory"] = whole_memory
     save_measurement_result(directory, plan, result)
 
 
@@ -793,11 +873,16 @@ def save_measurement_result(directory, plan, result):
             'packing_point_credit': 0, 'throughput_credit': 0, 'case_credit': 0, 'idea_credit': 0,
             'formal_packing_evidence': False, 'requires_uninstrumented_remeasurement': True}
     qualification = "target_qualification" in plan
+    direct_qualification = "direct_qualification" in plan
     if qualification:
         result.update(kind="uva_configured_isolation_full_original_qualification", measurement_valid=False,
             scientific_credit=0, case_credit=0, idea_credit=0, packing_point_credit=0, throughput_credit=0, site_qualification_credit=0,
             worker_admitted=False, admission_granted=False)
-    filename = 'target_qualification_result.json' if qualification else ('instrumented_completion.json' if instrumented else 'result.json')
+    if direct_qualification:
+        import direct_measurement as support
+        result.update(kind="direct_serval02_card1_full_original_qualification", measurement_valid=False, **support.BOUNDARY)
+    filename = ('direct_qualification_result.json' if direct_qualification else 'target_qualification_result.json'
+        if qualification else ('instrumented_completion.json' if instrumented else 'result.json'))
     diagnostic.atomic_json(directory / filename, result)
     diagnostic.record_progress(directory, 'completed_instrumented_attempt_requires_normal_remeasurement' if instrumented else 'completed',
         completed=True, mode=plan['mode'], decision=result.get('decision'), rounds=len(result.get('rounds', [])))
@@ -819,6 +904,11 @@ def parse_arguments(argv=None):
     parser.add_argument("--target-qualification", action="store_true")
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
+    parser.add_argument("--direct-binding-profile", type=Path)
+    parser.add_argument("--direct-history-inputs", type=Path)
+    parser.add_argument("--direct-target-qualification", action="store_true")
+    parser.add_argument("--direct-qualification-record", type=Path)
+    parser.add_argument("--direct-qualification-review", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--mode", choices=MODES)
     parser.add_argument("--source-root", type=Path)
@@ -845,17 +935,20 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger', 'memory_limit_ownership_profile')
     if args.prepared_unit is not None:
-        if args.prepare_only or args.target_qualification or args.record_device_memory_limit or args.final_confirmation or args.rounds is not None or args.minimum_updates_per_round is not None or any(getattr(args, name) is not None for name in (
+        if args.prepare_only or args.target_qualification or args.direct_target_qualification or args.record_device_memory_limit or args.final_confirmation or args.rounds is not None or args.minimum_updates_per_round is not None or any(getattr(args, name) is not None for name in (
                 "mode", "source_root", "source_commit", "configuration", "reference_configuration",
                 "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies",
                 "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256",
-                "configured_isolation_profile", "target_qualification_record", "target_qualification_review", "cleanrl_source_root", "qualification_software_result", *memory_options)):
+                "configured_isolation_profile", "target_qualification_record", "target_qualification_review", "cleanrl_source_root", "qualification_software_result",
+                "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
         if args.instrumented_child:
             # The private child entry is meaningful only inside this exact declared prepared protocol.
             import device_memory_limit as capacity
             try:
                 plan = capacity.json_document((args.prepared_unit / 'measurement_plan.json').read_bytes())
+                if "direct_binding" in plan:
+                    raise ValueError("the direct binding profile cannot run an instrumented capacity child")
                 capacity.protocol(plan.get('device_memory_limit_protocol'))
                 capacity.selected_ownership_profile(plan)
                 if plan.get('kind') != 'selected_configuration_measurement' or plan.get('mode') != 'packing-point':
@@ -867,10 +960,26 @@ def parse_arguments(argv=None):
         parser.error('--instrumented-child requires --prepared-unit and its declared instrumented protocol')
     if not args.record_device_memory_limit and any(getattr(args, name) is not None for name in memory_options):
         parser.error('memory-limit preparation options require --record-device-memory-limit')
-    if (args.cleanrl_source_root is not None or args.qualification_software_result is not None) and not args.target_qualification:
+    if (args.cleanrl_source_root is not None or args.qualification_software_result is not None) and not (args.target_qualification or args.direct_target_qualification):
         parser.error("the original CleanRL source applies only to the separate target qualification")
     if args.configured_isolation_profile is None and (args.target_qualification or args.target_qualification_record or args.target_qualification_review):
         parser.error("target qualification options require an explicit configured-isolation profile")
+    direct_options = (args.direct_history_inputs, args.direct_qualification_record, args.direct_qualification_review)
+    if args.direct_binding_profile is None and (args.direct_target_qualification or any(value is not None for value in direct_options)):
+        parser.error("direct options require the separate explicit direct binding profile")
+    if args.direct_binding_profile is not None:
+        if (args.configured_isolation_profile is not None or args.target_qualification or args.target_qualification_record
+                or args.target_qualification_review or args.hardware_class != "h100" or args.gpu_uuid != CARD1
+                or args.mode not in {"correctness", "confirmation"} or args.record_device_memory_limit or args.final_confirmation
+                or args.direct_history_inputs is None or any(value is not None for value in (
+                    args.completed_study_proof, args.completed_study_review, args.completed_study_manifest, args.completed_study_manifest_sha256))):
+            parser.error("direct support requires only its exact known-UUID intermediate or standalone qualification protocol")
+        if args.direct_target_qualification:
+            if (args.mode != "correctness" or args.direct_qualification_record or args.direct_qualification_review
+                    or args.cleanrl_source_root is None or args.qualification_software_result is None):
+                parser.error("standalone direct qualification cannot depend on a previous direct qualification")
+        elif not args.direct_qualification_record or not args.direct_qualification_review:
+            parser.error("ordinary direct work requires exact actual qualification and independent review")
     if args.configured_isolation_profile is not None:
         if args.gpu_uuid is not None or args.record_device_memory_limit or args.final_confirmation or args.mode not in {"correctness", "confirmation"}:
             parser.error("configured isolation requires an unresolved intermediate comparison")
@@ -890,6 +999,8 @@ if __name__ == "__main__":
     arguments = parse_arguments()
     if arguments.prepared_unit is not None:
         plan = json.loads((arguments.prepared_unit / 'measurement_plan.json').read_text())
+        if "direct_binding" in plan:
+            producer_support(plan)
         if 'device_memory_limit_protocol' in plan and not arguments.instrumented_child:
             import device_memory_limit as capacity
             result = capacity.run_child(arguments.prepared_unit, sys.executable)
