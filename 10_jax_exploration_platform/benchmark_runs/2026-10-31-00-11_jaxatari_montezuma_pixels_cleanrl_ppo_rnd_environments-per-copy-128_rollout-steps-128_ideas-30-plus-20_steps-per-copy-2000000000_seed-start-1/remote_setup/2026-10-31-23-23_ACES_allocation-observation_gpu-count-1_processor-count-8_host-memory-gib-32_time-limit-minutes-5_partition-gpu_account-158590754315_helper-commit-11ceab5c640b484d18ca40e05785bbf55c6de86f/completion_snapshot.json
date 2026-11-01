@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "kind": "aces_allocation_monitor_snapshot",
+  "cluster": "aces",
+  "user": "u.sl359075",
+  "job_id": "2274380",
+  "origin_host": "portal05",
+  "query_host": "alogin1.cluster",
+  "local_campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "remote_campaign_run_dir": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "plan_sha256": "aa8c3f57c8b6dd42f2973c33a343fce6bc4cbb1c4bdb90007152a810bcc0b0d6",
+  "job_script_sha256": "a4e52191f1f7380b3ebb6b0227ef56b9271a6194375aff23aa01eb80c96af7b9",
+  "submission_receipt_sha256": "ed4c5b394284c83d17f5a631f1a7c12fad802fc96b4bd3faeeed767121d6bef9",
+  "release_receipt_sha256": "b9980f8eb36619bd678a6feeb3f55d88b55dbd14d9d14cf5888d4b17394c8970",
+  "observed_at_utc": "2026-11-01T07:21:18.152396+00:00",
+  "squeue": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "2274380",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "slurm_load_jobs error: Invalid job id specified\n"
+  },
+  "sacct": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-j",
+      "2274380",
+      "--format=JobIDRaw,User%64,State%64,ExitCode,NodeList"
+    ],
+    "returncode": 0,
+    "stdout": "2274380|u.sl359075|COMPLETED|0:0|ac041\n",
+    "stderr": ""
+  },
+  "mirrored_files": {
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware.json",
+      "sha256": "53937b9f38edc1496b2361d868aeeb53443021357880412263feb6ed5c11f36a"
+    },
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware_observations.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware_observations.json",
+      "sha256": "49484372e779cd103d803257114e6efe7fc44e40518dddcbd1ae081b87581fd2"
+    },
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/nvidia_hardware_queries.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/nvidia_hardware_queries.json",
+      "sha256": "a6b505824d5ea853da28bf92647fb2ea0a63353fc2468a68e8197d935fd8b19f"
+    },
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/owned_allocation.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/owned_allocation.json",
+      "sha256": "0d603cb7cbbc6d2c8d89e353d9174592fa1244716586d338c296b13af09599a2"
+    },
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/progress.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/progress.json",
+      "sha256": "3ce06be527b1858f2f317c0c81770022608a101c510bc85138869df957e62c3a"
+    },
+    "data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/result.json": {
+      "source_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/result.json",
+      "sha256": "c0f431f8a7fe3cb46318c80c2271053aa9b38655bed9440981867bcaf268f9d7"
+    }
+  }
+}

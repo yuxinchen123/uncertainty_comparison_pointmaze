@@ -1,0 +1,37 @@
+{
+  "gpu_csv": {
+    "command": [
+      "nvidia-smi",
+      "--query-gpu=index,uuid,name,pci.bus_id,memory.total,driver_version",
+      "--format=csv,noheader,nounits"
+    ],
+    "returncode": 0,
+    "stdout": "0, GPU-578457c3-53f3-226f-9b16-12423da85ead, NVIDIA H100 PCIe, 00000000:14:00.0, 81559, 580.178.04\n",
+    "stderr": "",
+    "fields": [
+      "index",
+      "uuid",
+      "name",
+      "pci.bus_id",
+      "memory.total",
+      "driver_version"
+    ]
+  },
+  "minor_number_field": {
+    "command": [
+      "nvidia-smi",
+      "--help-query-gpu"
+    ],
+    "returncode": 0,
+    "supported": false,
+    "help_stdout_sha256": "a33e898a7df3678e5540dd91d25d35b9f63f2db9a447ee8d14c450b937b865d9",
+    "reason": "installed query help did not declare minor_number",
+    "stderr": ""
+  },
+  "gpu_xml": {
+    "status": "not_collected",
+    "reason": "Full NVIDIA XML includes process information; no process query is permitted.",
+    "constructed_substitute": false,
+    "documentation": "https://docs.nvidia.com/deploy/nvidia-smi/"
+  }
+}

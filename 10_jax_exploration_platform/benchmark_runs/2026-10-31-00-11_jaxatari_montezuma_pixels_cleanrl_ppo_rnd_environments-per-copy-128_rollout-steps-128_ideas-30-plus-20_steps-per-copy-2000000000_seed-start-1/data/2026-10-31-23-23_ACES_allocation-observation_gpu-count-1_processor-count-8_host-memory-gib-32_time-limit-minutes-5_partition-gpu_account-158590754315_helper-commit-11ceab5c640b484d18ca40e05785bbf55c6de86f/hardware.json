@@ -1,0 +1,26 @@
+{
+  "cluster": "aces",
+  "hostname": "ac041",
+  "slurm_job_id": "2274380",
+  "slurm_step_id": "0",
+  "pid": 3578750,
+  "process_start_time": "581876087",
+  "requested_gpu_count": 1,
+  "observed_hardware_rows": [
+    {
+      "index": "0",
+      "uuid": "GPU-578457c3-53f3-226f-9b16-12423da85ead",
+      "name": "NVIDIA H100 PCIe",
+      "pci.bus_id": "00000000:14:00.0",
+      "memory.total": "81559",
+      "driver_version": "580.178.04"
+    }
+  ],
+  "gpu_query": "",
+  "gpu_uuid_selected": false,
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

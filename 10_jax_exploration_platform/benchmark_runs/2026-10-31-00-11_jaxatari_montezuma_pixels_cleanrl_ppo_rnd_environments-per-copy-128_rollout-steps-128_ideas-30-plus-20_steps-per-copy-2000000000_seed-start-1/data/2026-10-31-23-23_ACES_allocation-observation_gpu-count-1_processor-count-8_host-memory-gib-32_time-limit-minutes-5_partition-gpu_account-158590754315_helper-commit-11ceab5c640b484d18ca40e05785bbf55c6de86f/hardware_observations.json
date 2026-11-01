@@ -1,0 +1,1186 @@
+{
+  "schema_version": 1,
+  "kind": "aces_allocation_hardware_observations",
+  "cluster": "aces",
+  "observed_at_utc": "2026-11-01T07:09:18.623044+00:00",
+  "plan": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/allocation_observation_plan.json",
+    "sha256": "aa8c3f57c8b6dd42f2973c33a343fce6bc4cbb1c4bdb90007152a810bcc0b0d6"
+  },
+  "owned_allocation": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/owned_allocation.json",
+    "sha256": "0d603cb7cbbc6d2c8d89e353d9174592fa1244716586d338c296b13af09599a2"
+  },
+  "hostname": "ac041",
+  "job_id": "2274380",
+  "step_id": "0",
+  "allocation_environment": {
+    "SLURM_JOB_ID": "2274380",
+    "SLURM_STEP_ID": "0",
+    "SLURM_JOB_GPUS": "4",
+    "SLURM_STEP_GPUS": "4",
+    "SLURM_GPUS_ON_NODE": "1",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_CPU_BIND_TYPE": "mask_cpu:",
+    "SLURM_CPU_BIND_LIST": "0x000000000FF0000000000000",
+    "SLURM_CPU_BIND": "quiet,mask_cpu:0x000000000FF0000000000000",
+    "SLURM_JOB_NODELIST": "ac041",
+    "SLURM_NODELIST": "ac041",
+    "SLURM_STEP_NODELIST": "ac041",
+    "SLURMD_NODENAME": "ac041",
+    "SLURM_NTASKS": "1",
+    "SLURM_PROCID": "0",
+    "SLURM_LOCALID": "0",
+    "SLURM_NODEID": "0",
+    "SLURM_CPUS_ON_NODE": "8",
+    "SLURM_GPUS": null,
+    "SLURM_GPUS_PER_NODE": null,
+    "SLURM_GPUS_PER_TASK": null,
+    "SLURM_GPU_BIND": null,
+    "SLURM_TRES_BIND": null,
+    "CUDA_VISIBLE_DEVICES": "0",
+    "CUDA_DEVICE_ORDER": null,
+    "NVIDIA_VISIBLE_DEVICES": null,
+    "SLURM_CONF": "/var/spool/slurmd/conf-cache/slurm.conf"
+  },
+  "absent_allocation_fields": [
+    "SLURM_GPUS",
+    "SLURM_GPUS_PER_NODE",
+    "SLURM_GPUS_PER_TASK",
+    "SLURM_GPU_BIND",
+    "SLURM_TRES_BIND",
+    "CUDA_DEVICE_ORDER",
+    "NVIDIA_VISIBLE_DEVICES"
+  ],
+  "hardware_queries": {
+    "gpu_csv": {
+      "command": [
+        "nvidia-smi",
+        "--query-gpu=index,uuid,name,pci.bus_id,memory.total,driver_version",
+        "--format=csv,noheader,nounits"
+      ],
+      "returncode": 0,
+      "stdout": "0, GPU-578457c3-53f3-226f-9b16-12423da85ead, NVIDIA H100 PCIe, 00000000:14:00.0, 81559, 580.178.04\n",
+      "stderr": "",
+      "fields": [
+        "index",
+        "uuid",
+        "name",
+        "pci.bus_id",
+        "memory.total",
+        "driver_version"
+      ]
+    },
+    "minor_number_field": {
+      "command": [
+        "nvidia-smi",
+        "--help-query-gpu"
+      ],
+      "returncode": 0,
+      "supported": false,
+      "help_stdout_sha256": "a33e898a7df3678e5540dd91d25d35b9f63f2db9a447ee8d14c450b937b865d9",
+      "reason": "installed query help did not declare minor_number",
+      "stderr": ""
+    },
+    "gpu_xml": {
+      "status": "not_collected",
+      "reason": "Full NVIDIA XML includes process information; no process query is permitted.",
+      "constructed_substitute": false,
+      "documentation": "https://docs.nvidia.com/deploy/nvidia-smi/"
+    }
+  },
+  "hardware_query_receipt": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/nvidia_hardware_queries.json",
+    "sha256": "a6b505824d5ea853da28bf92647fb2ea0a63353fc2468a68e8197d935fd8b19f"
+  },
+  "host_gpu_inventory": {
+    "proc_gpu_inventory": {
+      "path": "/proc/driver/nvidia/gpus",
+      "status": "present",
+      "cards": [
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:10:00.0/information",
+          "pci_directory": "0000:10:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-e0ddfde5-0a38-e4e2-0014-f9e7aecd3c60",
+            "Bus Location": "0000:10:00.0",
+            "Device Minor": "0"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:11:00.0/information",
+          "pci_directory": "0000:11:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-64a1454a-4751-dd8e-17a6-b2cefab11ed5",
+            "Bus Location": "0000:11:00.0",
+            "Device Minor": "1"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:12:00.0/information",
+          "pci_directory": "0000:12:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-62eae321-5ad5-1500-45f7-d0fe27693ae1",
+            "Bus Location": "0000:12:00.0",
+            "Device Minor": "2"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:13:00.0/information",
+          "pci_directory": "0000:13:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-8d9ba948-b1bc-2108-7d58-978284aedcac",
+            "Bus Location": "0000:13:00.0",
+            "Device Minor": "3"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:14:00.0/information",
+          "pci_directory": "0000:14:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-578457c3-53f3-226f-9b16-12423da85ead",
+            "Bus Location": "0000:14:00.0",
+            "Device Minor": "4"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:15:00.0/information",
+          "pci_directory": "0000:15:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-00a60b73-5eca-2c11-f71b-341d58a33bc8",
+            "Bus Location": "0000:15:00.0",
+            "Device Minor": "5"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:16:00.0/information",
+          "pci_directory": "0000:16:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-54124e53-da2b-3b1f-3b5d-296277c4f905",
+            "Bus Location": "0000:16:00.0",
+            "Device Minor": "6"
+          }
+        },
+        {
+          "path": "/proc/driver/nvidia/gpus/0000:17:00.0/information",
+          "pci_directory": "0000:17:00.0",
+          "status": "readable",
+          "fields": {
+            "Model": "NVIDIA H100 PCIe",
+            "GPU UUID": "GPU-9f4a985b-8759-1f18-5d55-f83ed039b6b9",
+            "Bus Location": "0000:17:00.0",
+            "Device Minor": "7"
+          }
+        }
+      ]
+    },
+    "pci_gpu_inventory": {
+      "path": "/sys/bus/pci/devices",
+      "status": "present",
+      "cards": [
+        {
+          "path": "/sys/bus/pci/devices/0000:10:00.0",
+          "pci_address": "0000:10:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:11:00.0",
+          "pci_address": "0000:11:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:12:00.0",
+          "pci_address": "0000:12:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:13:00.0",
+          "pci_address": "0000:13:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:14:00.0",
+          "pci_address": "0000:14:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:15:00.0",
+          "pci_address": "0000:15:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:16:00.0",
+          "pci_address": "0000:16:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        },
+        {
+          "path": "/sys/bus/pci/devices/0000:17:00.0",
+          "pci_address": "0000:17:00.0",
+          "fields": {
+            "vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "device": {
+              "status": "readable",
+              "text": "0x2331"
+            },
+            "class": {
+              "status": "readable",
+              "text": "0x030200"
+            },
+            "subsystem_vendor": {
+              "status": "readable",
+              "text": "0x10de"
+            },
+            "subsystem_device": {
+              "status": "readable",
+              "text": "0x1626"
+            }
+          }
+        }
+      ]
+    },
+    "device_files": [
+      {
+        "path": "/dev/nvidia0",
+        "character_device": true,
+        "major": 195,
+        "minor": 0
+      },
+      {
+        "path": "/dev/nvidia1",
+        "character_device": true,
+        "major": 195,
+        "minor": 1
+      },
+      {
+        "path": "/dev/nvidia2",
+        "character_device": true,
+        "major": 195,
+        "minor": 2
+      },
+      {
+        "path": "/dev/nvidia3",
+        "character_device": true,
+        "major": 195,
+        "minor": 3
+      },
+      {
+        "path": "/dev/nvidia4",
+        "character_device": true,
+        "major": 195,
+        "minor": 4
+      },
+      {
+        "path": "/dev/nvidia5",
+        "character_device": true,
+        "major": 195,
+        "minor": 5
+      },
+      {
+        "path": "/dev/nvidia6",
+        "character_device": true,
+        "major": 195,
+        "minor": 6
+      },
+      {
+        "path": "/dev/nvidia7",
+        "character_device": true,
+        "major": 195,
+        "minor": 7
+      }
+    ],
+    "gpu_gres_mapping": {
+      "path": "/etc/slurm/gres.conf",
+      "status": "absent",
+      "lines": [],
+      "path_basis": "default inventory candidate only; the active configuration location is unknown or ambiguous"
+    }
+  },
+  "device_isolation_observations": {
+    "node_cgroup_configuration": {
+      "status": "ambiguous",
+      "file": {
+        "path": null,
+        "status": "not_located"
+      },
+      "selected_keys": [
+        "CgroupPlugin",
+        "ConstrainDevices",
+        "ConstrainCores",
+        "CgroupMountpoint",
+        "IgnoreSystemd",
+        "IgnoreSystemdOnFailure"
+      ],
+      "fields": {},
+      "missing_fields": [
+        "CgroupPlugin",
+        "ConstrainDevices",
+        "ConstrainCores",
+        "CgroupMountpoint",
+        "IgnoreSystemd",
+        "IgnoreSystemdOnFailure"
+      ],
+      "filtered_bytes": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "hash_scope": "only the selected entries, in the listed key order, encoded as UTF-8 key=value lines"
+    },
+    "node_cgroup_configuration_candidates": [
+      {
+        "file": {
+          "path": "/etc/slurm/cgroup.conf",
+          "status": "absent",
+          "error": "cannot inspect the explicitly selected path: FileNotFoundError"
+        },
+        "status": "absent",
+        "selected_keys": [
+          "CgroupPlugin",
+          "ConstrainDevices",
+          "ConstrainCores",
+          "CgroupMountpoint",
+          "IgnoreSystemd",
+          "IgnoreSystemdOnFailure"
+        ],
+        "fields": {},
+        "missing_fields": [
+          "CgroupPlugin",
+          "ConstrainDevices",
+          "ConstrainCores",
+          "CgroupMountpoint",
+          "IgnoreSystemd",
+          "IgnoreSystemdOnFailure"
+        ],
+        "filtered_bytes": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hash_scope": "only the selected entries, in the listed key order, encoded as UTF-8 key=value lines",
+        "error": "cannot read the selected node-local configuration: absent"
+      },
+      {
+        "file": {
+          "path": "/var/spool/slurmd/conf-cache/cgroup.conf",
+          "status": "readable",
+          "owner_uid": 0,
+          "owner_gid": 0,
+          "mode": "0o644",
+          "mtime_ns": 1793416568838064778,
+          "inode": 16841177,
+          "device": 64772
+        },
+        "status": "readable",
+        "selected_keys": [
+          "CgroupPlugin",
+          "ConstrainDevices",
+          "ConstrainCores",
+          "CgroupMountpoint",
+          "IgnoreSystemd",
+          "IgnoreSystemdOnFailure"
+        ],
+        "fields": {
+          "ConstrainCores": "yes",
+          "ConstrainDevices": "yes"
+        },
+        "missing_fields": [
+          "CgroupPlugin",
+          "CgroupMountpoint",
+          "IgnoreSystemd",
+          "IgnoreSystemdOnFailure"
+        ],
+        "filtered_bytes": "ConstrainDevices=yes\nConstrainCores=yes\n",
+        "sha256": "a8a1a7fada9c2f5d5c2d00123f4e9be5c2a8302f1d5cb6e61ab52a6b077cd648",
+        "hash_scope": "only the selected entries, in the listed key order, encoded as UTF-8 key=value lines"
+      }
+    ],
+    "configuration_path_observations": [
+      {
+        "source": "allowlisted environment SLURM_CONF",
+        "path": "/var/spool/slurmd/conf-cache/slurm.conf"
+      },
+      {
+        "source": "running Slurm SLURM_CONF",
+        "path": "/etc/slurm/slurm.conf"
+      }
+    ],
+    "observed_configuration_directories": [
+      "/etc/slurm",
+      "/var/spool/slurmd/conf-cache"
+    ],
+    "running_slurm_configuration": {
+      "command": [
+        "scontrol",
+        "show",
+        "config"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "status": "readable",
+      "selected_keys": [
+        "TaskPlugin",
+        "ProctrackType",
+        "SLURM_CONF"
+      ],
+      "fields": {
+        "ProctrackType": "proctrack/cgroup",
+        "SLURM_CONF": "/etc/slurm/slurm.conf",
+        "TaskPlugin": "task/cgroup,task/affinity"
+      },
+      "missing_fields": [],
+      "filtered_bytes": "TaskPlugin=task/cgroup,task/affinity\nProctrackType=proctrack/cgroup\nSLURM_CONF=/etc/slurm/slurm.conf\n",
+      "sha256": "057017be63f3084d3255de98398c868e23754a6761a713952401aa2160167035",
+      "hash_scope": "only the selected entries, in the listed key order, encoded as UTF-8 key=value lines"
+    },
+    "own_placement": {
+      "pid": 3578750,
+      "uid": 56626,
+      "process_start_time": "581876087",
+      "cpu_affinity": [
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ],
+      "process_stat_file": {
+        "path": "/proc/self/stat",
+        "status": "readable",
+        "owner_uid": 56626,
+        "owner_gid": 56626,
+        "mode": "0o444",
+        "mtime_ns": 1793516957838641270,
+        "inode": 680719247,
+        "device": 5
+      },
+      "own_cgroup_file": {
+        "file": {
+          "path": "/proc/self/cgroup",
+          "status": "readable",
+          "owner_uid": 56626,
+          "owner_gid": 56626,
+          "mode": "0o444",
+          "mtime_ns": 1793516958468637589,
+          "inode": 681164140,
+          "device": 5
+        },
+        "text": "12:memory:/slurm/uid_56626/job_2274380/step_0/task_0\n11:freezer:/slurm/uid_56626/job_2274380/step_0\n10:cpu,cpuacct:/slurm/uid_56626/job_2274380/step_0/task_0\n9:blkio:/system.slice/slurmd.service\n8:cpuset:/slurm/uid_56626/job_2274380/step_0/task_0\n7:perf_event:/\n6:net_cls,net_prio:/\n5:pids:/system.slice/slurmd.service\n4:rdma:/\n3:devices:/slurm/uid_56626/job_2274380/step_0/task_0\n2:hugetlb:/\n1:name=systemd:/system.slice/slurmd.service\n",
+        "sha256": "e20fe8d83d13e4b5d49b908d04978e972856dfb3cd93c6e2bb92670c4d9c836d",
+        "hash_scope": "only the UTF-8 encoded current-process entries read from /proc/self/cgroup"
+      },
+      "cgroup_namespace": {
+        "path": "/proc/self/ns/cgroup",
+        "status": "readable",
+        "owner_uid": 0,
+        "owner_gid": 0,
+        "mode": "0o444",
+        "mtime_ns": 1793516958599636824,
+        "inode": 4026531835,
+        "device": 4
+      },
+      "mountinfo_file": {
+        "path": "/proc/self/mountinfo",
+        "status": "readable",
+        "owner_uid": 56626,
+        "owner_gid": 56626,
+        "mode": "0o444",
+        "mtime_ns": 1793516958597636835,
+        "inode": 681164161,
+        "device": 5
+      },
+      "cgroup_mountinfo": {
+        "entries": [
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/systemd",
+            "controllers": [
+              "rw",
+              "xattr",
+              "release_agent=/usr/lib/systemd/systemd-cgroups-agent",
+              "name=systemd"
+            ],
+            "original_line": "30 29 0:26 / /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime shared:5 - cgroup cgroup rw,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/hugetlb",
+            "controllers": [
+              "rw",
+              "hugetlb"
+            ],
+            "original_line": "34 29 0:30 / /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime shared:6 - cgroup cgroup rw,hugetlb"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/devices",
+            "controllers": [
+              "rw",
+              "devices"
+            ],
+            "original_line": "35 29 0:31 / /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime shared:7 - cgroup cgroup rw,devices"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/rdma",
+            "controllers": [
+              "rw",
+              "rdma"
+            ],
+            "original_line": "36 29 0:32 / /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime shared:8 - cgroup cgroup rw,rdma"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/pids",
+            "controllers": [
+              "rw",
+              "pids"
+            ],
+            "original_line": "37 29 0:33 / /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime shared:9 - cgroup cgroup rw,pids"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/net_cls,net_prio",
+            "controllers": [
+              "rw",
+              "net_cls",
+              "net_prio"
+            ],
+            "original_line": "38 29 0:34 / /sys/fs/cgroup/net_cls,net_prio rw,nosuid,nodev,noexec,relatime shared:10 - cgroup cgroup rw,net_cls,net_prio"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/perf_event",
+            "controllers": [
+              "rw",
+              "perf_event"
+            ],
+            "original_line": "39 29 0:35 / /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime shared:11 - cgroup cgroup rw,perf_event"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/cpuset",
+            "controllers": [
+              "rw",
+              "cpuset"
+            ],
+            "original_line": "40 29 0:36 / /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime shared:12 - cgroup cgroup rw,cpuset"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/blkio",
+            "controllers": [
+              "rw",
+              "blkio"
+            ],
+            "original_line": "41 29 0:37 / /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime shared:13 - cgroup cgroup rw,blkio"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/cpu,cpuacct",
+            "controllers": [
+              "rw",
+              "cpu",
+              "cpuacct"
+            ],
+            "original_line": "42 29 0:38 / /sys/fs/cgroup/cpu,cpuacct rw,nosuid,nodev,noexec,relatime shared:14 - cgroup cgroup rw,cpu,cpuacct"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/freezer",
+            "controllers": [
+              "rw",
+              "freezer"
+            ],
+            "original_line": "43 29 0:39 / /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime shared:15 - cgroup cgroup rw,freezer"
+          },
+          {
+            "filesystem": "cgroup",
+            "root": "/",
+            "mountpoint": "/sys/fs/cgroup/memory",
+            "controllers": [
+              "rw",
+              "memory"
+            ],
+            "original_line": "44 29 0:40 / /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime shared:16 - cgroup cgroup rw,memory"
+          }
+        ],
+        "filtered_bytes": "30 29 0:26 / /sys/fs/cgroup/systemd rw,nosuid,nodev,noexec,relatime shared:5 - cgroup cgroup rw,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd\n34 29 0:30 / /sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime shared:6 - cgroup cgroup rw,hugetlb\n35 29 0:31 / /sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime shared:7 - cgroup cgroup rw,devices\n36 29 0:32 / /sys/fs/cgroup/rdma rw,nosuid,nodev,noexec,relatime shared:8 - cgroup cgroup rw,rdma\n37 29 0:33 / /sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime shared:9 - cgroup cgroup rw,pids\n38 29 0:34 / /sys/fs/cgroup/net_cls,net_prio rw,nosuid,nodev,noexec,relatime shared:10 - cgroup cgroup rw,net_cls,net_prio\n39 29 0:35 / /sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime shared:11 - cgroup cgroup rw,perf_event\n40 29 0:36 / /sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime shared:12 - cgroup cgroup rw,cpuset\n41 29 0:37 / /sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime shared:13 - cgroup cgroup rw,blkio\n42 29 0:38 / /sys/fs/cgroup/cpu,cpuacct rw,nosuid,nodev,noexec,relatime shared:14 - cgroup cgroup rw,cpu,cpuacct\n43 29 0:39 / /sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime shared:15 - cgroup cgroup rw,freezer\n44 29 0:40 / /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime shared:16 - cgroup cgroup rw,memory\n",
+        "sha256": "ca49dda170698aca7b24f1928b3ed7f4ff96dbc343fbe3fe8190a2a500f16d88",
+        "hash_scope": "only the original cgroup and cgroup2 mountinfo lines, each followed by one newline"
+      },
+      "cgroups": [
+        {
+          "hierarchy": "12",
+          "controllers": [
+            "memory"
+          ],
+          "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+          "mounts": [
+            {
+              "mountpoint": "/sys/fs/cgroup/memory",
+              "filesystem": "cgroup",
+              "levels": [
+                {
+                  "level": "job",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/memory/slurm/uid_56626/job_2274380",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957695642106,
+                    "inode": 1360707,
+                    "device": 40
+                  }
+                },
+                {
+                  "level": "step",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/memory/slurm/uid_56626/job_2274380/step_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957835641288,
+                    "inode": 1360899,
+                    "device": 40
+                  }
+                },
+                {
+                  "level": "task",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/memory/slurm/uid_56626/job_2274380/step_0/task_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957837641276,
+                    "inode": 1360931,
+                    "device": 40
+                  }
+                }
+              ],
+              "bpf_device_rules_independently_inspected": false,
+              "device_rule_scope": "v1 devices.list only"
+            }
+          ],
+          "status": "own paths observed",
+          "task_path_observed": true
+        },
+        {
+          "hierarchy": "11",
+          "controllers": [
+            "freezer"
+          ],
+          "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+          "mounts": [
+            {
+              "mountpoint": "/sys/fs/cgroup/freezer",
+              "filesystem": "cgroup",
+              "levels": [
+                {
+                  "level": "job",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/freezer/slurm/uid_56626/job_2274380",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957693642117,
+                    "inode": 188704,
+                    "device": 39
+                  }
+                },
+                {
+                  "level": "step",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/freezer/slurm/uid_56626/job_2274380/step_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957836641282,
+                    "inode": 188736,
+                    "device": 39
+                  }
+                }
+              ],
+              "bpf_device_rules_independently_inspected": false,
+              "device_rule_scope": "v1 devices.list only"
+            }
+          ],
+          "status": "own paths observed",
+          "task_path_observed": false
+        },
+        {
+          "hierarchy": "10",
+          "controllers": [
+            "cpu",
+            "cpuacct"
+          ],
+          "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+          "mounts": [
+            {
+              "mountpoint": "/sys/fs/cgroup/cpu,cpuacct",
+              "filesystem": "cgroup",
+              "levels": [
+                {
+                  "level": "job",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpu,cpuacct/slurm/uid_56626/job_2274380",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957711642012,
+                    "inode": 676213,
+                    "device": 38
+                  }
+                },
+                {
+                  "level": "step",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpu,cpuacct/slurm/uid_56626/job_2274380/step_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957837641276,
+                    "inode": 676270,
+                    "device": 38
+                  }
+                },
+                {
+                  "level": "task",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpu,cpuacct/slurm/uid_56626/job_2274380/step_0/task_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957837641276,
+                    "inode": 676289,
+                    "device": 38
+                  }
+                }
+              ],
+              "bpf_device_rules_independently_inspected": false,
+              "device_rule_scope": "v1 devices.list only"
+            }
+          ],
+          "status": "own paths observed",
+          "task_path_observed": true
+        },
+        {
+          "hierarchy": "9",
+          "controllers": [
+            "blkio"
+          ],
+          "cgroup_path": "/system.slice/slurmd.service",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "8",
+          "controllers": [
+            "cpuset"
+          ],
+          "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+          "mounts": [
+            {
+              "mountpoint": "/sys/fs/cgroup/cpuset",
+              "filesystem": "cgroup",
+              "levels": [
+                {
+                  "level": "job",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957694642111,
+                    "inode": 558850,
+                    "device": 36
+                  },
+                  "effective_cpuset": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380/cpuset.effective_cpus",
+                    "status": "readable",
+                    "text": "52-59\n"
+                  }
+                },
+                {
+                  "level": "step",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380/step_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957834641293,
+                    "inode": 558958,
+                    "device": 36
+                  },
+                  "effective_cpuset": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380/step_0/cpuset.effective_cpus",
+                    "status": "readable",
+                    "text": "52-59\n"
+                  }
+                },
+                {
+                  "level": "task",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380/step_0/task_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957863641124,
+                    "inode": 558976,
+                    "device": 36
+                  },
+                  "effective_cpuset": {
+                    "path": "/sys/fs/cgroup/cpuset/slurm/uid_56626/job_2274380/step_0/task_0/cpuset.effective_cpus",
+                    "status": "readable",
+                    "text": "52-59\n"
+                  }
+                }
+              ],
+              "bpf_device_rules_independently_inspected": false,
+              "device_rule_scope": "v1 devices.list only"
+            }
+          ],
+          "status": "own paths observed",
+          "task_path_observed": true
+        },
+        {
+          "hierarchy": "7",
+          "controllers": [
+            "perf_event"
+          ],
+          "cgroup_path": "/",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "6",
+          "controllers": [
+            "net_cls",
+            "net_prio"
+          ],
+          "cgroup_path": "/",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "5",
+          "controllers": [
+            "pids"
+          ],
+          "cgroup_path": "/system.slice/slurmd.service",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "4",
+          "controllers": [
+            "rdma"
+          ],
+          "cgroup_path": "/",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "3",
+          "controllers": [
+            "devices"
+          ],
+          "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+          "mounts": [
+            {
+              "mountpoint": "/sys/fs/cgroup/devices",
+              "filesystem": "cgroup",
+              "levels": [
+                {
+                  "level": "job",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957696642100,
+                    "inode": 339771,
+                    "device": 31
+                  },
+                  "devices_list": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380/devices.list",
+                    "status": "readable",
+                    "text": "a *:* rwm\n"
+                  }
+                },
+                {
+                  "level": "step",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380/step_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957835641288,
+                    "inode": 339819,
+                    "device": 31
+                  },
+                  "devices_list": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380/step_0/devices.list",
+                    "status": "readable",
+                    "text": "a *:* rwm\n"
+                  }
+                },
+                {
+                  "level": "task",
+                  "cgroup_path": "/slurm/uid_56626/job_2274380/step_0/task_0",
+                  "directory": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380/step_0/task_0",
+                    "status": "readable",
+                    "owner_uid": 0,
+                    "owner_gid": 0,
+                    "mode": "0o755",
+                    "mtime_ns": 1793516957863641124,
+                    "inode": 339827,
+                    "device": 31
+                  },
+                  "devices_list": {
+                    "path": "/sys/fs/cgroup/devices/slurm/uid_56626/job_2274380/step_0/task_0/devices.list",
+                    "status": "readable",
+                    "text": "a *:* rwm\n"
+                  }
+                }
+              ],
+              "bpf_device_rules_independently_inspected": false,
+              "device_rule_scope": "v1 devices.list only"
+            }
+          ],
+          "status": "own paths observed",
+          "task_path_observed": true
+        },
+        {
+          "hierarchy": "2",
+          "controllers": [
+            "hugetlb"
+          ],
+          "cgroup_path": "/",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        },
+        {
+          "hierarchy": "1",
+          "controllers": [
+            "name=systemd"
+          ],
+          "cgroup_path": "/system.slice/slurmd.service",
+          "mounts": [],
+          "status": "not independently inspected",
+          "error": "own cgroup path does not identify the exact current job and step"
+        }
+      ],
+      "bpf_device_rules_independently_inspected": false
+    }
+  },
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

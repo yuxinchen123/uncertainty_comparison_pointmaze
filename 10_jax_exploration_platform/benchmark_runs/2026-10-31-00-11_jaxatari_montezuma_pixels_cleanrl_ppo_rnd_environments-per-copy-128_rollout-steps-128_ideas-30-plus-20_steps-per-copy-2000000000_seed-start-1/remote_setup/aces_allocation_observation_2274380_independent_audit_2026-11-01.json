@@ -1,0 +1,188 @@
+{
+  "actual_fields": {
+    "account": "158590754315",
+    "cached_cgroup_configuration": {
+      "ConstrainCores": "yes",
+      "ConstrainDevices": "yes",
+      "path": "/var/spool/slurmd/conf-cache/cgroup.conf",
+      "selected_fields_sha256": "a8a1a7fada9c2f5d5c2d00123f4e9be5c2a8302f1d5cb6e61ab52a6b077cd648"
+    },
+    "cluster": "aces",
+    "cpu_affinity": [
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "cpus": 8,
+    "cuda_visible_devices": "0",
+    "devices_list": {
+      "job": "a *:* rwm\n",
+      "step": "a *:* rwm\n",
+      "task": "a *:* rwm\n"
+    },
+    "driver_version": "580.178.04",
+    "environment_slurm_conf": "/var/spool/slurmd/conf-cache/slurm.conf",
+    "exit_code": "0:0",
+    "gpu_model": "NVIDIA H100 PCIe",
+    "gpu_type": "h100",
+    "hostname": "ac041",
+    "job_id": "2274380",
+    "memory": "32G",
+    "memory_mib": 81559,
+    "nodes": 1,
+    "nvml_index": "0",
+    "observed_nvml_rows": 1,
+    "partition": "gpu",
+    "pid": 3578750,
+    "process_start_time": "581876087",
+    "qos": "normal",
+    "running_proctrack_type": "proctrack/cgroup",
+    "running_slurm_conf": "/etc/slurm/slurm.conf",
+    "running_task_plugin": "task/cgroup,task/affinity",
+    "selected_configuration_status": "ambiguous",
+    "slurm_job_gpus": "4",
+    "slurm_step_gpus": "4",
+    "step_id": "0",
+    "tasks": 1,
+    "terminal_state": "COMPLETED",
+    "typed_gpu_count": 1,
+    "uid": 56626,
+    "username": "u.sl359075",
+    "visible_device_nodes": [
+      "/dev/nvidia0",
+      "/dev/nvidia1",
+      "/dev/nvidia2",
+      "/dev/nvidia3",
+      "/dev/nvidia4",
+      "/dev/nvidia5",
+      "/dev/nvidia6",
+      "/dev/nvidia7"
+    ]
+  },
+  "audit_method": "Read existing local mirrored records only; 41 metadata and byte checks passed. This receipt records that completed audit; no numerical work, SSH, jobs or repeated audit was run to save it.",
+  "campaign_claims_permitted": false,
+  "check_categories": [
+    "exact owner/job/step/host and owned ledger membership/hash",
+    "submission row equality and plan/manifest/job hashes",
+    "release and snapshot receipt bindings",
+    "all six mirrored data file bytes and original remote paths",
+    "result to observations to owned allocation and NVIDIA query hash chain",
+    "strict false admission flags and integer zero scientific credit",
+    "original terminal accounting owner/job/state/exit/node",
+    "requested shape and raw owned job/step scheduler resources",
+    "own process cgroup and eight-CPU affinity",
+    "published helper Git blob hashes",
+    "six embedded selected-field raw hashes"
+  ],
+  "checks_passed": 41,
+  "comparison_credit": 0,
+  "compatibility_verified": false,
+  "completion_snapshot": {
+    "copy_method": "exact reviewed source bytes, SHA-256 checked before write, exclusive creation and fsync",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/completion_snapshot.json",
+    "sha256": "a438b3bda8d85c55833dffaf0c62acec5b8de4b9c8e8f4d7ddfec5f98b836e93",
+    "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/remote_monitor_snapshot.json",
+    "source_observed_at_utc": "2026-11-01T07:21:18.152396+00:00"
+  },
+  "created_at_utc": "2026-11-01T07:26:35.123385+00:00",
+  "kind": "independent_aces_allocation_observation_audit",
+  "mapping_accepted": false,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "raw_files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/allocation_observation_plan.json",
+      "sha256": "aa8c3f57c8b6dd42f2973c33a343fce6bc4cbb1c4bdb90007152a810bcc0b0d6"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/manifest.yaml",
+      "sha256": "316e9b3da44200f098179bb2bb645bcb1fb7f59be167b3d78665151c71ac65bd"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/job.sbatch",
+      "sha256": "a4e52191f1f7380b3ebb6b0227ef56b9271a6194375aff23aa01eb80c96af7b9"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/submission_receipt.json",
+      "sha256": "ed4c5b394284c83d17f5a631f1a7c12fad802fc96b4bd3faeeed767121d6bef9"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/release_receipt.json",
+      "sha256": "b9980f8eb36619bd678a6feeb3f55d88b55dbd14d9d14cf5888d4b17394c8970"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/completion_snapshot.json",
+      "sha256": "a438b3bda8d85c55833dffaf0c62acec5b8de4b9c8e8f4d7ddfec5f98b836e93"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/result.json",
+      "sha256": "c0f431f8a7fe3cb46318c80c2271053aa9b38655bed9440981867bcaf268f9d7"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware_observations.json",
+      "sha256": "49484372e779cd103d803257114e6efe7fc44e40518dddcbd1ae081b87581fd2"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/owned_allocation.json",
+      "sha256": "0d603cb7cbbc6d2c8d89e353d9174592fa1244716586d338c296b13af09599a2"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/nvidia_hardware_queries.json",
+      "sha256": "a6b505824d5ea853da28bf92647fb2ea0a63353fc2468a68e8197d935fd8b19f"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware.json",
+      "sha256": "53937b9f38edc1496b2361d868aeeb53443021357880412263feb6ed5c11f36a"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/progress.json",
+      "sha256": "3ce06be527b1858f2f317c0c81770022608a101c510bc85138869df957e62c3a"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_hypothesis_credit": 0,
+  "separate_aces_qualification_needs": [
+    "An explicit ACES model/memory/driver profile and reviewed placement policy.",
+    "Authoritative scheduler-to-physical mapping and defensible isolation evidence without probing unassigned devices.",
+    "Same-process initialized JAX/CUDA ordinal, UUID and PCI identity bound to exact owner/job/step/PID/start time/cgroup.",
+    "Preserved actual driver bytes plus package, loaded-library, source, JAXtari asset and runtime hashes.",
+    "Original learner and renderer gates and a complete reference update proving float32 networks, float64 statistics and required precision.",
+    "A separate verified site-result chain before any worker admission or placement change."
+  ],
+  "site_qualification_credit": 0,
+  "supported_physical_association": {
+    "does_not_establish": [
+      "same-process CUDA/JAX ordinal-to-UUID mapping",
+      "authoritative Slurm GRES ID-to-physical-device mapping",
+      "exclusive device enforcement",
+      "unrestricted access to other visible device nodes"
+    ],
+    "evidence": "The single NVML CSV row and readable /proc/driver/nvidia/gpus/0000:14:00.0/information agree on UUID and PCI; the /proc entry reports Device Minor 4.",
+    "gpu_uuid": "GPU-578457c3-53f3-226f-9b16-12423da85ead",
+    "linux_device_minor": 4,
+    "pci_address": "0000:14:00.0"
+  },
+  "uncertainties": [
+    "The observer did not initialize JAX/CUDA or select a GPU UUID. CUDA_VISIBLE_DEVICES=0 and NVML index 0 do not establish a same-process CUDA physical identity.",
+    "No authoritative active GRES configuration was found; /etc/slurm/gres.conf was absent. Numeric agreement between Slurm ID 4 and Linux minor 4 is not independent mapping proof.",
+    "All eight character-device paths were visible, but no device was opened or initialized to test access.",
+    "Wildcard-looking v1 devices.list records prove neither presence nor absence of device restrictions. No statement about actual access enforcement is made.",
+    "Environment and running Slurm identify different configuration directories. The cached ConstrainDevices=yes entry is a candidate observation, not an attestation of active enforcement.",
+    "Configuration SHA-256 values cover only the recorded selected fields, not complete configuration files.",
+    "No numerical correctness, performance, precision, site compatibility, packing or capacity qualification was performed."
+  ],
+  "upstream_devices_list_caveat": {
+    "scope": "Upstream implementation and documentation supplied by root; not an attestation of the actual patched RHEL kernel on ac041.",
+    "sources": [
+      "https://linux.googlesource.com/linux/kernel/git/torvalds/linux/+/c1481c94e74c955e0448ddf46b8615a44d840c1e/security/device_cgroup.c",
+      "https://docs.kernel.org/admin-guide/cgroup-v1/devices.html#device-control-group"
+    ],
+    "statement": "Upstream devcgroup_seq_show prints a *:* rwm when behavior is DEVCG_DEFAULT_ALLOW; exceptions are printed in the other branch. This display alone does not prove unrestricted access or effective restriction."
+  },
+  "worker_admission_credit": 0,
+  "workers_permitted": false
+}
