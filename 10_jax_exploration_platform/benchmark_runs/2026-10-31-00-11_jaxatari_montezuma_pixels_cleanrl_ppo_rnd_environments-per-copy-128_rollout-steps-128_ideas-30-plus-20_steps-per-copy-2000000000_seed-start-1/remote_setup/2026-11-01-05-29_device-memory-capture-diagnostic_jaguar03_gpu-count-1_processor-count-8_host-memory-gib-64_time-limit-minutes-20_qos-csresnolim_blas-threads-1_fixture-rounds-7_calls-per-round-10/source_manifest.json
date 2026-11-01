@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_source_preparation",
+  "sources": {
+    "driver": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "source_commit": "fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "capture": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "source_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "numerical": {
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "jaxtari": {
+      "source_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "status_porcelain": "",
+      "detached": true
+    }
+  },
+  "wrapper_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_checks.py": {
+      "source_path": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c/10_jax_exploration_platform/scripts/atari_pixel_campaign/run_checks.py",
+      "captured_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-29_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10/wrapper/run_checks.py",
+      "sha256": "d1e7188f75dc221a0caee4f0e7218b8cc5b7b5387a90ce0f8346daa9aeb3ea63"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_unit.py": {
+      "source_path": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c/10_jax_exploration_platform/scripts/atari_pixel_campaign/run_unit.py",
+      "captured_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-29_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10/wrapper/run_unit.py",
+      "sha256": "d879e539ca21afd49f071b14a6f729b9dcbda09e1836db80999cc9fb462a35d8"
+    }
+  },
+  "asset_record_source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/asset_record.json",
+  "asset_record_sha256": "66caaa96b0e352a602c1f1fe22f1bbe0deadfccce66819a143fc6b05f42ff99f",
+  "runtime_environment_source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/runtime_environment.json",
+  "runtime_environment_sha256": "b13ef06c6db458ee2eef9db8b699ec4370684f4790c9186684e76610e8013c70",
+  "asset_manifest": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/assets_manifest.json",
+  "asset_manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+  "jaxtari_derivation": "Manifest source_commit equals the actual clean reference_repos/jaxtari_pixel_study Git HEAD; no source path was supplied by the manifest."
+}

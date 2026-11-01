@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "kind": "draft_aces_autodetect_incremental_commands",
+  "executed": false,
+  "local_git_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge-base",
+      "--is-ancestor",
+      "8e43cb1dc963045fc28f4e611411097efd93185a",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge-base",
+      "--is-ancestor",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+      "0000000000000000000000000000000000000000"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "-c",
+      "pack.threads=2",
+      "-c",
+      "pack.windowMemory=64m",
+      "-c",
+      "pack.deltaCacheSize=32m",
+      "-c",
+      "pack.window=5",
+      "-c",
+      "pack.depth=20",
+      "bundle",
+      "create",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle.incomplete",
+      "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+      "^8e43cb1dc963045fc28f4e611411097efd93185a"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "bundle",
+      "verify",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle.incomplete"
+    ],
+    [
+      "git",
+      "bundle",
+      "list-heads",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle.incomplete"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "-d",
+      "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ]
+  ],
+  "local_git_conditions": [
+    "Create only the new compare-and-swap temporary reference.",
+    "Bound bundle Git processes to two GiB address space and two packing threads.",
+    "Verify the exact one advertised TIP reference and all required prerequisites; fsync/rename only new bundle bytes.",
+    "Always remove only the temporary reference created by this operation; preserve all incomplete artifacts."
+  ],
+  "ssh_prefix": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=5",
+    "aces"
+  ],
+  "separate_master_checks": 0,
+  "transport_constraints": [
+    "Only an already open master may carry the one-shot metadata operation; never authenticate or retry.",
+    "First validate owner u.sl359075 UID 56626, exact existing private Python and no numerical modules.",
+    "Revalidate all recorded old native roots, 13 inputs, 72 mappings, private software and all 4531 assets before mutation.",
+    "Transfer a newly hashed incremental bundle to a fresh path; fsync temporary bytes then publish without overwriting a conflict.",
+    "Record expected bundle SHA256 and size after local creation; neither value is claimed by this draft.",
+    "Verify remote bundle prerequisites, tree identity, and exact advertised reference before import.",
+    "Require fresh helper/packet/data destinations absent; do not adopt or modify an existing root or packet."
+  ],
+  "remote_git_commands_after_transport": [
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "bundle",
+      "verify",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle"
+    ],
+    [
+      "git",
+      "bundle",
+      "list-heads",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "-c",
+      "pack.threads=2",
+      "fetch",
+      "--no-tags",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle",
+      "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38:refs/heads/study-helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ],
+    [
+      "git",
+      "--git-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+      "worktree",
+      "add",
+      "--detach",
+      "--no-checkout",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+      "sparse-checkout",
+      "init",
+      "--cone"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+      "sparse-checkout",
+      "set",
+      "10_jax_exploration_platform/src",
+      "10_jax_exploration_platform/configs",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign"
+    ],
+    [
+      "git",
+      "-C",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+      "checkout",
+      "--detach",
+      "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+    ]
+  ],
+  "native_prepare_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true",
+    "JAX_ENABLE_COMPILATION_CACHE": "false",
+    "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": "",
+    "JAXTARI_SKIP_SPRITE_UPDATE": "1",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "OMP_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONUNBUFFERED": "1",
+    "CLEANRL_REFERENCE_FILE": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source/cleanrl/ppo_rnd_envpool.py",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "native_prepare_argv": [
+    "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+    "-I",
+    "-B",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py",
+    "prepare",
+    "--run-dir",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--output-dir",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+    "--python",
+    "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+    "--cleanrl-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source",
+    "--asset-record",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-43_aces-exact-asset-view_expected-files-4531_source-04ab9aec318c_manifest-049004b3b7e2/asset_record.json",
+    "--jaxtari-source-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+    "--admission-run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--evidence-manifest",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/portable_evidence.json",
+    "--evidence-manifest-sha256",
+    "7489ef34efd50d79d3e3010e6f178491e03aee68bab94a16d2d98ae3e407c579",
+    "--helper-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+    "--qualification-profile",
+    "aces-h100-pcie-driver-580.178.04-autodetect-nvml-configured-isolation"
+  ],
+  "native_post_prepare_verification_argv": [
+    "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+    "-I",
+    "-B",
+    "-c",
+    "Load the new exact committed helper via importlib; call prepared(new_packet) and checked_software(plan), compare the full observed software to the old exact baseline, require the explicit AutoDetect profile and 18 helper hashes, confirm no numerical modules."
+  ],
+  "native_post_prepare_verification_is_prose_placeholder": true,
+  "no_submission_commands_in_this_plan": true
+}

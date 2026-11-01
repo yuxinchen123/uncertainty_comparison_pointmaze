@@ -1,0 +1,47 @@
+{
+  "kind": "new_frozen_cpu_monitor_root_full_preparation_review",
+  "passed": true,
+  "at_utc": "2026-11-01T14:17:46.155024+00:00",
+  "job_id": "6780635",
+  "step_id": "65",
+  "hostname": "slurm5",
+  "pid": 800582,
+  "source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
+  "roster_sha256": "5d8d630ea69fff17c898e397006971a413d4be149dad40ae9f6434de7b6033a7",
+  "all_250_roster_paths_verified": true,
+  "source_verification": "{\"source_commit\": \"4814459cb7befc872d8f0e30682c23f4aa79b625\", \"files_verified\": 237, \"full_tick_executed\": false, \"numerical_imports\": false}\n",
+  "full_tick_returncode": 0,
+  "formal_queue_counts": {
+    "pending": 6,
+    "running": 1,
+    "completed": 113,
+    "failed": 0
+  },
+  "planned_diagnostics_correctly_superseded": [
+    {
+      "run": "2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "superseded",
+      "progress": "superseded before submission; 0 completed fixtures",
+      "age_seconds": 3584.7116754055023
+    },
+    {
+      "run": "2026-11-01-05-29_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "superseded",
+      "progress": "superseded before submission; 0 completed fixtures",
+      "age_seconds": 2787.4752235412598
+    }
+  ],
+  "raw_preparations_unchanged": true,
+  "full_report": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-13_pixel-study-monitor_source-commit-4814459cb7befc872d8f0e30682c23f4aa79b625_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_full_tick_report.md",
+    "sha256": "1ca67fe0e82cd1328ac4a4b9c9a308c08b4af143285620aa1232587634af290c"
+  },
+  "jobs_submitted": false,
+  "numerical_imports": false
+}

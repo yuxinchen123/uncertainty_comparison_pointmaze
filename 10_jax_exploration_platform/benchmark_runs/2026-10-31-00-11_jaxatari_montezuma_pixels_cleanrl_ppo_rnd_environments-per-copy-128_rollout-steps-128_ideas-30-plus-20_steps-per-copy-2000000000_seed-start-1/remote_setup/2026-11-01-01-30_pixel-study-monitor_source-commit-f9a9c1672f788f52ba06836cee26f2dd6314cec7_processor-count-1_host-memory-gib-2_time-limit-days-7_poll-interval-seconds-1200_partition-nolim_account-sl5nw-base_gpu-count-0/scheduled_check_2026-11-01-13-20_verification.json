@@ -1,0 +1,48 @@
+{
+  "kind": "owned_full_scheduled_monitor_check",
+  "passed": true,
+  "checked_at_utc": "2026-11-01T13:21:42.853470+00:00",
+  "monitor_job_id": "6780635",
+  "step_id": "45",
+  "source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "returncode": 0,
+  "queue_counts": {
+    "pending": 7,
+    "running": 1,
+    "completed": 112,
+    "failed": 0
+  },
+  "site_rows": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "snapshot_sha256": "eff4613311a925e56c81d58b3dbdac51bd41df006a570e5481dca4142a9d0dbf",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2274632",
+        "data_unit_name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+        "state": "failed",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "site failed: root-owned cache and running task/cgroup settings must agree",
+        "observed_host": "ac045",
+        "observed_at_utc": "2026-11-01T13:00:50.388147+00:00"
+      }
+    }
+  ],
+  "report_sha256": "799ef9360a48324df0a37d72fb47da7b7780d633f26b5b0ce374e829e4fd9aab",
+  "status_sha256": "d42e71f52de5439490fad0e02705362254d819ca6e828ae8f82d35b83f67e697"
+}

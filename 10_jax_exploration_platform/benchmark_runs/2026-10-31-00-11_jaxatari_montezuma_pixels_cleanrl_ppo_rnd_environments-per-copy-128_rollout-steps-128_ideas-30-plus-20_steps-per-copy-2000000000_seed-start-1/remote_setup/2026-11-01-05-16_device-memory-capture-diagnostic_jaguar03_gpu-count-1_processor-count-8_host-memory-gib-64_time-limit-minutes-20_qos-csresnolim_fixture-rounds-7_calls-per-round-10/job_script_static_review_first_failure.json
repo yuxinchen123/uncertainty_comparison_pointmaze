@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_checksum_preparation_first_failure",
+  "created_utc": "2026-11-01T13:21:40.138529+00:00",
+  "exception_type": "AssertionError",
+  "tool_chunk_id": "ced068",
+  "failed_path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+  "reason": "The author checksum wrapper used the whole core file record as a digest; core.files entries contain git_blob and sha256. No experiment executed and no source or existing packet artifact changed.",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 27, in <module>\nAssertionError: /p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh\n",
+  "correction": "Use the original core record sha256 field, retaining the original git_blob separately in regression_plan.json."
+}

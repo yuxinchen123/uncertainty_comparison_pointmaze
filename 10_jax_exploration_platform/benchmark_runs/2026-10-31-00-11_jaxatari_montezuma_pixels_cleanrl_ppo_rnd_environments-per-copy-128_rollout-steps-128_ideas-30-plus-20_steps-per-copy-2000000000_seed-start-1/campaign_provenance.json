@@ -1,5 +1,5 @@
 {
-  "cron_id": "033ef06f-9dcc-4f2a-aa59-6e16592d1fd8",
+  "cron_id": "7a5d90f6-20c5-4923-be41-e6a43dcc18d3",
   "merge_complete": true,
   "current_branch_integrated_commit": "9920914aa768d0d5d136527cad3cf6c6aa1b4215",
   "original_local_edits_preserved": true,
@@ -37,14 +37,14 @@
   "gpu_mapping_verified": true,
   "h100_worker_supervisor_pid": 3567981,
   "queue_status_at_check": {
-    "pending": 8,
+    "pending": 6,
     "running": 1,
-    "completed": 111,
+    "completed": 113,
     "failed": 0
   },
   "gpu_mapping_fix_previous_pending_description": "NVML allocation filters remap visible indices; resolve the single allocated UUID with minor-number validation before submitting replacements.",
   "gpu_mapping_fix_status": "Resolved. The committed launcher validates one visible CSV GPU against its XML device minor number and UUID. All eight A4500 numerical processes have the UUID recorded in their own leases.",
-  "queue_status_checked_at": "2026-11-01T12:47:55.250485+00:00",
+  "queue_status_checked_at": "2026-11-01T14:08:01.286156+00:00",
   "liveness_audit_checked_at": "2026-10-31T20:40:46+00:00",
   "liveness_audit": "One bounded metadata call verified supervisor 3567981 and then-active runner 3890375 with their process start times, parent relationship, frozen source and canonical Python. Only the owned runner used selected card 1. That one-policy case later completed valid correctness and seven timing pairs; the two-policy case then started normally.",
   "a4500_future_worker_host_memory_gib": 64,
@@ -201,7 +201,7 @@
     "result_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/jaguar03_optimized_training_checks_6f55596a4b69/result.json"
   },
   "persistent_monitor_source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
-  "persistent_monitor_verified_utc": "2026-11-01T12:47:55.250485+00:00",
+  "persistent_monitor_verified_utc": "2026-11-01T14:08:01.286156+00:00",
   "correctness_cache_diagnosis_job_id": "6777949",
   "cache_release_diagnosis": {
     "job_id": "6777949",
@@ -300,10 +300,10 @@
   "latest_report_pdf_pages": 64,
   "latest_report_pdf_sha256": "a4effb41f19718d25d77bdcf1f44c7c2dfef5b8ce0329bc24cd22dd1f8f39af2",
   "latest_report_verification_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/registered_comparisons_100_report_verification.json",
-  "cron_verified_utc": "2026-11-01T12:52:24.471665+00:00",
-  "existing_remote_connections_last_verified": "2026-11-01T12:22:07.994287+00:00",
-  "existing_remote_connections_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_remote_connections_2026-11-01-12-22-07.json",
-  "initial_h100_comparisons_completed": 51,
+  "cron_verified_utc": "2026-11-01T14:13:11.013258+00:00",
+  "existing_remote_connections_last_verified": "2026-11-01T13:22:51.208006+00:00",
+  "existing_remote_connections_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_remote_connections_2026-11-01-13-22-50.json",
+  "initial_h100_comparisons_completed": 53,
   "original_branch_integrated_utc": "2026-11-01T06:56:35.887902+00:00",
   "aces_allocation_observation_job_id": "2274380",
   "aces_allocation_observation_state": "released pending priority",

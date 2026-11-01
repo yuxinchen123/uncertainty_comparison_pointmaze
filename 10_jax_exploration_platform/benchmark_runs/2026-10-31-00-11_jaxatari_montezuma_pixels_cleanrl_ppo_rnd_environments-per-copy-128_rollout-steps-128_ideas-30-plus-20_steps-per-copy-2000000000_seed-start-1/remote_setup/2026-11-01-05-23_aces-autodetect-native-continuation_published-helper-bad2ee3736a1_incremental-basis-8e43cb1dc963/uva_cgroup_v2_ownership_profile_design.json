@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "kind": "uva_cgroup_v2_ownership_profile_local_design",
+  "created_at_utc": "2026-11-01T13:45:01.220608+00:00",
+  "state": "design_for_root_review_no_source_edits",
+  "profile": {
+    "schema_version": 1,
+    "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+    "cluster": "uva",
+    "username": "sl5nw",
+    "uid": 2618919,
+    "cgroup_version": 2,
+    "path_prefix": "/system.slice/slurmstepd.scope",
+    "numeric_step_required": true,
+    "task_name": "task_0",
+    "uid_encoded_in_cgroup_path": false,
+    "kernel_device_enforcement_verified": false
+  },
+  "actual_design_evidence": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_cgroup_v2_numeric_step_observation_2026-11-01-13-40-16.json",
+      "sha256": "041551ef9c6c3e9cc495be561e44b4d84c628baf10f019615f2453249aa78eb3"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/allocation_guard.json",
+      "sha256": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+    }
+  ],
+  "evidence_limits": [
+    "6780635.50 proves a real owned numeric-step v2 directory/UID/membership shape on slurm5; it has no GPU and only one requested CPU.",
+    "6780569 proves an actual jaguar03 GPU job uses generic allocated GPU TRES and v2 batch-path shape; its batch step is not a new numeric-step qualification.",
+    "Neither old observation may qualify or supply retrospective GPU/profile credit."
+  ],
+  "selection": {
+    "new_plan_field": "ownership_profile",
+    "exact_value_required": {
+      "schema_version": 1,
+      "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+      "cluster": "uva",
+      "username": "sl5nw",
+      "uid": 2618919,
+      "cgroup_version": 2,
+      "path_prefix": "/system.slice/slurmstepd.scope",
+      "numeric_step_required": true,
+      "task_name": "task_0",
+      "uid_encoded_in_cgroup_path": false,
+      "kernel_device_enforcement_verified": false
+    },
+    "legacy_missing_field": "Execute the existing UID-in-path validation unchanged; do not auto-detect or upgrade missing-profile receipts.",
+    "allowed_scope": "Explicit UVA Slurm numeric step only; reject direct, ACES, batch, extern, unknown layout and a malformed profile.",
+    "capability": "Declare an exact versioned profile constant in the pinned producer source. Require the new profile declaration through source_capability before any v2 evidence can pass.",
+    "protocol": "Keep the existing native allocation/sampler protocol and legacy capability unchanged; the separately versioned ownership profile is explicit in the frozen plan and every ownership record."
+  },
+  "producer_checks": [
+    "Require exact canonical own campaign UVA ledger and frozen real-ID snapshot before any owned query.",
+    "Capture own /proc/self/status allowlisted Uid fields, exact /proc/self/stat, current PID/PPID, os.getuid/geteuid, original /proc/self/cgroup and cgroup2 mountinfo. Repeat own stat/cgroup/UID after metadata capture to reject changed birth, owner or placement.",
+    "All four Uid values must be strict integers 2618919; stat PID/PPID/start-time must match the existing actual process identity and remain positive.",
+    "Require exactly one unified 0:: membership and /system.slice/slurmstepd.scope/job_<exactID>/step_<numericID>/user/task_0, bound to the exact SLURM_JOB_ID/SLURM_STEP_ID.",
+    "Require an unambiguous cgroup2 mount at /sys/fs/cgroup with root / and exact mountinfo identity. Capture the cgroup namespace metadata.",
+    "Capture complete lexical directory chain from /sys/fs/cgroup through system.slice/slurmstepd.scope/job/step/user/task; each path must be ordinary, root-owned and not group/other writable, with no symlink or escape. Record explicit absent/unreadable/error rows before rejecting.",
+    "Capture each own job/step/user/task cgroup.procs file literally with its hash and root-owned ordinary-file metadata. Require current PID exactly once in task membership. Do not require the PID in empty ancestor lists and do not inspect any other PID.",
+    "Recheck raw scheduler job and numeric-step UserId/JobId/StepId/state/node/resources against UID2618919, the same owned ledger, and explicit approved diagnostic shape.",
+    "Retain the existing root-owned Slurm/GRES configuration, explicit File/proc UUID/PCI/minor proof, selected physical UUID, same-process CUDA/context, parent-child births and terminal wait checks unchanged.",
+    "Persist collected raw own-process/directory/scheduler observations before strict profile validation can raise, using a new explicit capture callback or collector/validator split only for this opt-in path. No validation failure may discard already collected raw evidence."
+  ],
+  "minimal_code_scope": [
+    "Prefer a separate profile constant plus collect/validate functions inside device_memory_limit.py, avoiding a new general dependency or a global cgroup relaxation.",
+    "Dispatch only from the exact optional frozen ownership_profile; missing profile keeps current v1 behavior and existing records unchanged.",
+    "Require the profile source declaration in source_capability; old7f producer helpers cannot be paired with the new profile.",
+    "Add explicit preparation-only selection to the diagnostic and selected instrumented producer if used; reject it with prepared-unit overrides, incompatible allocation kind or cluster.",
+    "Carry the unchanged profile through resolved runtime plans, parent and both child/capture ownership records and portable validation; use a fresh published helper commit for the diagnostic.",
+    "Keep host_counter_paths unchanged: it already covers v2 task/user/step/job memory.events."
+  ],
+  "meaningful_tests": [
+    "Actual CPU numeric observation passes the structural UID/path validator only; full GPU ownership rejects its zero GPUs and wrong job shape.",
+    "Actual jaguar03 batch observation remains rejected for numeric-step profile selection.",
+    "Reject wrong or mixed four Uid fields, missing/duplicate Uid line, wrong stat PID/PPID/birth or process replacement.",
+    "Reject foreign job/step, batch/extern, missing/duplicate unified membership, unexpected mount root or mountpoint, and namespace/path changes.",
+    "Reject directory or cgroup.procs symlinks, writable/non-root ancestors, changed before/after metadata, missing own task PID and duplicated own PID; preserve raw metadata on every rejection.",
+    "Missing/false/extra-key profile and old producer capability cannot enable v2; direct and ACES cannot select it.",
+    "Portable validation reconstructs the same raw nested ownership evidence without live queries; old v1 golden and negative cases remain unchanged.",
+    "Exact one A4500/eight CPU/64GiB/twenty-minute generic-allocation plus typed-request/reservation proofs and full native captured-image checks remain mandatory for the actual future canary."
+  ],
+  "no_source_mutation": true,
+  "ssh_gpu_job_actions": 0,
+  "workers_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "actual_gpu_profile_qualified": false
+}

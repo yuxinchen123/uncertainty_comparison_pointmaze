@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_resource_preparation_first_failure",
+  "created_utc": "2026-11-01T13:30:44.814534+00:00",
+  "exception_type": "AssertionError",
+  "tool_chunk_id": "aabf70",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 43, in <module>\nAssertionError\n",
+  "reason": "The author metadata recorder required an IDLE reserved node. A later exact node observation records MIXED+RESERVED with four CPUs and 32 GiB allocated, without allocated GPUs. Scheduling observations are retained rather than replacing actual state with the earlier idle observation.",
+  "experiment_executed": false,
+  "jobs_submitted": false
+}

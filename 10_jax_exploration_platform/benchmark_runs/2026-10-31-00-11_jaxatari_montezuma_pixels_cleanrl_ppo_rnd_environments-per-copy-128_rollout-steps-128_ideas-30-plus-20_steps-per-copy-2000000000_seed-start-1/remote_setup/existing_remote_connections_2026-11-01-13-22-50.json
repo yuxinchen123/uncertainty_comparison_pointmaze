@@ -1,0 +1,84 @@
+{
+  "kind": "existing_connection_metadata_check",
+  "checked_from": "portal05",
+  "records": [
+    {
+      "alias": "aces",
+      "checked_at_utc": "2026-11-01T13:22:50.895902+00:00",
+      "new_authentication_attempted": false,
+      "existing_master": true,
+      "master_check_command": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=5",
+        "-O",
+        "check",
+        "aces"
+      ],
+      "master_check": "Master running (pid=3888482)",
+      "master_check_returncode": 0,
+      "existing_master_command": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=5",
+        "aces",
+        "/usr/bin/hostname"
+      ],
+      "existing_master_command_exit": 0,
+      "hostname": "alogin1.cluster",
+      "error": ""
+    },
+    {
+      "alias": "deltaai",
+      "checked_at_utc": "2026-11-01T13:22:51.208006+00:00",
+      "new_authentication_attempted": false,
+      "existing_master": true,
+      "master_check_command": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=5",
+        "-O",
+        "check",
+        "deltaai"
+      ],
+      "master_check": "Master running (pid=3878537)",
+      "master_check_returncode": 0,
+      "existing_master_command": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=5",
+        "deltaai",
+        "/usr/bin/hostname"
+      ],
+      "existing_master_command_exit": 0,
+      "hostname": "gh-login02.delta.ncsa.illinois.edu",
+      "error": ""
+    }
+  ],
+  "mit_connection_attempted_in_this_check": false,
+  "experiment_or_submission_performed": false
+}

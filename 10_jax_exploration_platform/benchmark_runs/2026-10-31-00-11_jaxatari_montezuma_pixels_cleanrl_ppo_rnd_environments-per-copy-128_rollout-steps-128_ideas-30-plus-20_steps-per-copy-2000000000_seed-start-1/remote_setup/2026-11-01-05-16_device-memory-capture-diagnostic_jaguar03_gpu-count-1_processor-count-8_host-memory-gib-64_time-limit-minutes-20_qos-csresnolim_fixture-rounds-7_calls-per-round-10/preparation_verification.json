@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_preparation_verification",
+  "created_utc": "2026-11-01T13:23:32.356237+00:00",
+  "packet_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10/packet_manifest.json",
+    "sha256": "d801c6c04196414f0aff2c353f9553e9892352c0fecf0d68caee0c7fa369c051"
+  },
+  "preparation_execution": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10/preparation_execution.json",
+    "sha256": "52a2a48c0866310bf5b57502f453a147e564d02f947e80f16748cb19d43310d8"
+  },
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10/job.sbatch",
+    "sha256": "473ef701238e79ca43b99ddc92ff4f74323a4dcec2c9053307427c79c30182c9"
+  },
+  "source_checksums": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10/source_checksums.sha256",
+    "sha256": "1d7a7ff6c28796b354b0f0762b679418018eff0cd4e915908e5bd1063c8d8ec9"
+  },
+  "source_roots_after": {
+    "driver": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "source_commit": "fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "capture": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "source_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "numerical": {
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "jaxtari": {
+      "source_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "status_porcelain": "",
+      "detached": true
+    }
+  },
+  "packet_file_count_before_self_records": 17,
+  "data_unit_file_count": 24,
+  "static_plan_sha256": "fbf51e0658e47e066dcfe25c7f50b7587c42548e77692b1eaf097079fbe1eb3b",
+  "static_job_id": null,
+  "static_gpu_uuid": null,
+  "static_reservation": null,
+  "single_numeric_srun_step": true,
+  "held_command_contains_current_owned_reservation": "sl5nw_168",
+  "job_script_syntax_passed": true,
+  "source_checksum_paths_verified": 55,
+  "experiment_executed": false,
+  "jobs_submitted": false,
+  "submission_or_release_artifacts_created": false,
+  "source_admission_changed": false,
+  "actual_gpu_regression_passed": false,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "workers_permitted": false,
+  "before_release_requirements": [
+    "Independently review and publish the exact packet and frozen source identities.",
+    "Recheck actual reservation and maintenance at submission; use exact held command only.",
+    "Record the returned real held ID durably in the exact campaign UVA ledger and session ledgers before any release.",
+    "The actual compute parent alone creates the immutable ledger snapshot, resolves the physical UUID through GRES File/proc evidence, and writes resolved child plans.",
+    "Retain zero credit regardless of diagnostic success; formal full-size failed doubling and fresh full fitting repeat remain mandatory."
+  ],
+  "preserved_first_author_failure": "job_script_static_review_first_failure.json"
+}

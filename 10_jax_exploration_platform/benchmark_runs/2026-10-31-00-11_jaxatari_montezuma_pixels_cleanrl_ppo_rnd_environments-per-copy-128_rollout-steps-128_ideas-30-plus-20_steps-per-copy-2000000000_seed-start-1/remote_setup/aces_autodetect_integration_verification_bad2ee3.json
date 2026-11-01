@@ -1,0 +1,43 @@
+{
+  "kind": "separate_aces_autodetect_integration_verification",
+  "at_utc": "2026-11-01T13:16:22.643426+00:00",
+  "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+  "all_fourteen_incoming_paths_match": true,
+  "protected_helper_and_numerical_files": 17,
+  "old_default_unchanged": true,
+  "new_profile": {
+    "schema_version": 1,
+    "name": "aces-h100-pcie-driver-580.178.04-autodetect-nvml-configured-isolation",
+    "cluster": "aces",
+    "username": "u.sl359075",
+    "uid": 56626,
+    "model": "NVIDIA H100 PCIe",
+    "memory_mib": 81559,
+    "driver": "580.178.04",
+    "scheduler_version": "25.11.7",
+    "configuration_directory": "/var/spool/slurmd/conf-cache",
+    "configuration_sources": [
+      "https://slurm.schedmd.com/gres.conf.html",
+      "https://slurm.schedmd.com/gres.html",
+      "https://raw.githubusercontent.com/SchedMD/slurm/slurm-25-11-7-1/src/common/read_config.c"
+    ],
+    "isolation_basis": "trusted root-owned NVML AutoDetect and task/cgroup configuration; logical GRES mapping and kernel device enforcement not independently verified",
+    "kernel_device_enforcement_verified": false,
+    "workers_permitted": false,
+    "campaign_claims_permitted": false,
+    "scientific_hypothesis_credit": 0,
+    "gres_configuration": "AutoDetect=nvml",
+    "controller_configuration_path": "/etc/slurm/slurm.conf",
+    "physical_gres_mapping_verified": false
+  },
+  "committed_helper_closure_count": 18,
+  "actual_site_success": false,
+  "source_admission_changed": false,
+  "numerical_modules_loaded": [],
+  "preserved_initial_wrapper_failure": {
+    "exception_type": "TypeError",
+    "error": "unsupported operand type(s) for +: 'PosixPath' and 'str'",
+    "phase": "receipt output path construction after read-only verification",
+    "source_changed": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_job_script_static_review",
+  "created_utc": "2026-11-01T13:21:40.228093+00:00",
+  "command": [
+    "bash",
+    "-n",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10/job.sbatch"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "job_script_sha256": "473ef701238e79ca43b99ddc92ff4f74323a4dcec2c9053307427c79c30182c9",
+  "source_checksums_sha256": "1d7a7ff6c28796b354b0f0762b679418018eff0cd4e915908e5bd1063c8d8ec9",
+  "source_paths_checked": 55,
+  "all_source_checksums_passed": true,
+  "single_numeric_srun_step": true,
+  "wrapper_files_match_published_fd9": true,
+  "wrapper_operational_source_commit": "fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+  "underlying_numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "no_cuda_selector_assumption": true,
+  "actual_job_id_required_from_environment": true,
+  "reservation_in_submission_only": "sl5nw_168",
+  "static_producer_identifiers": {
+    "job_id": null,
+    "gpu_uuid": null,
+    "reservation": null
+  },
+  "prior_failure_retained": "job_script_static_review_first_failure.json",
+  "jobs_submitted": false,
+  "experiment_executed": false
+}

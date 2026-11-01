@@ -1,0 +1,58 @@
+{
+  "shape": {
+    "nodes": 1,
+    "ntasks": 1,
+    "gpu_type": "nvidia_rtx_a4500",
+    "gpu_count": 1,
+    "cpus_per_task": 8,
+    "host_memory_gib": 64,
+    "time_limit_minutes": 20,
+    "hostname": "jaguar03",
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "fixture": {
+    "failure_request": "next 256-byte multiple strictly greater than measured current-context capacity",
+    "repeat_elements": 4096,
+    "repeat_rounds": 7,
+    "synchronized_calls_per_round": 10
+  },
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "asset_record": {
+    "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "manifest": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/assets_manifest.json",
+    "sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6"
+  },
+  "sources": {
+    "driver": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "source_commit": "fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "capture": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "source_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "numerical": {
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "jaxtari": {
+      "source_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "status_porcelain": "",
+      "detached": true
+    }
+  },
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
+}

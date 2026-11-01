@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_resource_preparation",
+  "observed_utc": "2026-11-01T13:16:53.113200+00:00",
+  "host_timezone_names": [
+    "EST",
+    "EDT"
+  ],
+  "observations": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "reservation",
+        "sl5nw_168"
+      ],
+      "returncode": 0,
+      "stdout": "ReservationName=sl5nw_168 StartTime=2026-10-20T09:39:06 EndTime=2026-11-03T23:59:59 Duration=14-15:20:53\n   Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES\n   TRES=cpu=384\n   Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a\n   MaxStartDelay=(null)\n\n",
+      "stderr": "",
+      "recorded_scope": "complete output",
+      "full_stdout_sha256": "26e05e619f49a7562a5ab9054e4c9d821d1af3b4408184b6aa18ac7d9f287887",
+      "observed_utc": "2026-11-01T13:16:53.034495+00:00"
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "node",
+        "jaguar03"
+      ],
+      "returncode": 0,
+      "stdout": "NodeName=jaguar03 Arch=x86_64 CoresPerSocket=56 \n   CPUAlloc=0 CPUEfctv=222 CPUTot=224 CPULoad=0.01\n   AvailableFeatures=a4500,amd_epyc_7663\n   ActiveFeatures=a4500,amd_epyc_7663\n   Gres=gpu:nvidia_rtx_a4500:8(S:0-1)\n   NodeAddr=jaguar03 NodeHostName=jaguar03 Version=23.11.6\n   OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025 \n   RealMemory=1024000 AllocMem=0 FreeMem=956433 Sockets=2 Boards=1\n   CoreSpecCount=1 CPUSpecList=222-223 MemSpecLimit=4000\n   State=IDLE+RESERVED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A\n   Partitions=gpu \n   BootTime=2026-10-26T14:35:24 SlurmdStartTime=2026-10-26T14:37:45\n   LastBusyTime=2026-11-01T03:13:31 ResumeAfterTime=None\n   CfgTRES=cpu=222,mem=1000G,billing=153838,gres/gpu=8\n   AllocTRES=\n   CapWatts=n/a\n   CurrentWatts=0 AveWatts=0\n   ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n   ReservationName=sl5nw_168\n\n",
+      "stderr": "",
+      "recorded_scope": "complete output",
+      "full_stdout_sha256": "3e60c6293d20e9cedd46199829ad095527082613891ccd77b704f00d1091f8d3",
+      "observed_utc": "2026-11-01T13:16:53.065174+00:00"
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu"
+      ],
+      "returncode": 0,
+      "stdout": "PartitionName=gpu\n   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL\n   AllocNodes=ALL Default=NO QoS=cspartgpu\n   DefaultTime=02:00:00 DisableRootJobs=YES ExclusiveUser=NO GraceTime=0 Hidden=NO\n   MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED\n   Nodes=adriatic[01-06],affogato[11,13-15],ai[01-04,06],cheetah[01-04,08-09],jaguar[01-03,05-06],lotus,lynx[01-07,10],nekomata[01-02],serval[03,06-09]\n   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO\n   OverTimeLimit=NONE PreemptMode=OFF\n   State=UP TotalCPUs=2144 TotalNodes=42 SelectTypeParameters=NONE\n   JobDefaults=(null)\n   DefMemPerCPU=256 MaxMemPerNode=UNLIMITED\n   TRES=cpu=2058,mem=22318000M,node=42,billing=3350078,gres/gpu=160\n   TRESBillingWeights=CPU=1.0,Mem=0.15,GRES/gpu=2.0\n\n",
+      "stderr": "",
+      "recorded_scope": "complete output",
+      "full_stdout_sha256": "f5c227c6ffe9c590de23d97d9776dcebb8dba28e5c0ac65d9706e41591e4b798",
+      "observed_utc": "2026-11-01T13:16:53.092397+00:00"
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "reservation",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "ReservationName=sl5nw_168 StartTime=2026-10-20T09:39:06 EndTime=2026-11-03T23:59:59 Duration=14-15:20:53 Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES TRES=cpu=384 Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)\n",
+      "stderr": "",
+      "recorded_scope": "own reservation and maintenance rows; full raw output SHA256 also retained",
+      "full_stdout_sha256": "aec3d5f4983a64ff77f758aad20d8820d4e4de760bb56323022da729b207b98e",
+      "observed_utc": "2026-11-01T13:16:53.113125+00:00"
+    }
+  ],
+  "maintenance_rows": [],
+  "maintenance_observation": "No MAINT reservation row returned",
+  "requested_time_seconds": 1200,
+  "partition_max_time": "4-00:00:00",
+  "reservation_end_local": "2026-11-03T23:59:59",
+  "reservation": "sl5nw_168",
+  "requires_fresh_submission_time_recheck": true,
+  "no_job_queries_or_gpu_commands": true
+}
