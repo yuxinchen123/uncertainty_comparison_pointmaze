@@ -537,6 +537,30 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
     _save_figure(figure, plots_dir, figure_name + '_maps')
     plt.close(figure)
 
+    # Separate field profiles expose neural variation without the large adversarial map color range.
+    figure, axes = plt.subplots(1, len(selected), figsize=(4.5 * len(selected), 3.5), squeeze=False,
+                                layout='constrained')
+    for column, (row, values) in enumerate(zip(selected, data)):
+        axis = axes[0, column]
+        fields = values['initial_fields']
+        distance = np.linspace(0, 1, fields.shape[1])
+        _, unique_indices = np.unique(values['field_seed_ids'], return_index=True)
+        for number, index in enumerate(unique_indices):
+            axis.plot(distance, fields[index], color=COLORS[column % len(COLORS)], alpha=.22,
+                      linewidth=.8, label='One field seed' if number == 0 else None)
+        axis.plot(distance, fields.mean(axis=0), color=COLORS[column % len(COLORS)], linewidth=2,
+                  label='Mean initial bonus')
+        axis.axhline(1, color='#555555', linestyle='dotted', linewidth=1, label='Uniform reference: 1')
+        if np.all(fields > 0):
+            axis.set_yscale('log')
+        axis.set_xlim(0, 1)
+        axis.set_xlabel('Normalized distance along path')
+        axis.set_ylabel('Initial bonus; separate scale per panel')
+        axis.set_title(field_label(row['specification']), fontsize=10)
+        axis.legend(fontsize=7)
+    _save_figure(figure, plots_dir, figure_name + '_initial_profiles')
+    plt.close(figure)
+
     # Sampled training positions across all seeds show persistent concentration over actual training time.
     figure, axes = plt.subplots(2, len(selected), figsize=(4.5 * len(selected), 6), squeeze=False,
                                 layout='constrained')
@@ -559,12 +583,27 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         axes[0, column].set_xlabel('Training transitions per policy')
         axes[0, column].set_ylabel('Distance along path')
         axes[0, column].legend(fontsize=7, loc='lower right')
-        axes[1, column].plot(steps, values['trajectories'][index], linewidth=.8, color=COLORS[column % len(COLORS)])
+        axes[1, column].plot(steps, values['trajectories'][index], linewidth=.8, color=COLORS[column % len(COLORS)],
+                             label='Recorded position samples')
         axes[1, column].set_xlabel('Training transitions per policy')
         axes[1, column].set_ylabel('Representative sampled position')
+        # Use the exact recorded goal arrival, since a sampled position can skip an immediate reset.
+        first_goal = int(values['first_goal_steps'][index])
+        for axis in axes[:, column]:
+            axis.set_ylim(0, len(values['positions'])-1)
+            axis.set_xlim(0, row['specification']['total_timesteps'])
+            if first_goal >= 0:
+                axis.axvline(first_goal, color='#D55E00', linestyle='dashed', linewidth=1,
+                             label=f'Exact first goal: {first_goal:,} transitions')
+            else:
+                axis.text(.03, .95, 'Goal not reached within budget', transform=axis.transAxes,
+                          fontsize=7, va='top', bbox={'facecolor': 'white', 'alpha': .8, 'edgecolor': 'none'})
+            axis.legend(fontsize=7, loc='lower right')
         representatives.append({'condition': field_label(row['specification']),
                                 'policy_seed': int(values['seed_ids'][index]),
-                                'field_seed': int(values['field_seed_ids'][index])})
+                                'field_seed': int(values['field_seed_ids'][index]),
+                                'first_goal_step': first_goal})
+    figure.suptitle('Recorded training positions; goal arrivals reset to the start, including after the first goal', fontsize=11)
     _save_figure(figure, plots_dir, figure_name + '_movement')
     plt.close(figure)
 
@@ -690,8 +729,13 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_compari
     for figure in figure_groups:
         for suffix, caption in (('maps', 'Initial bonus, cumulative visitation, and final-window visitation. '
                 'Each row uses a common color scale across initializations. Dark cells are walls; white visitation cells have zero visits.'),
+                ('initial_profiles', 'Initial bonuses against normalized path distance. Faint curves are independent field seeds; '
+                'thick curves are mean initial bonuses. Each panel has its own vertical scale, logarithmic when all bonuses are positive. '
+                'The dotted line is the uniform reference of one.'),
                 ('movement', 'Sampled training positions across all seeds, followed by a representative seed selected by median capped first-goal time. '
-                'Orange lines show its farthest discovered state. Samples use the recorded training-transition times.'),
+                'Orange lines show its farthest discovered state. Dashed vertical markers use the exact first-goal transition, '
+                'rather than a sampled position. All panels span zero to the goal. Goal arrivals reset to the start; '
+                'post-goal samples therefore need not remain near the goal.'),
                 ('policy', 'Final legal-action probabilities near the most visited late state. Cell color is the probability assigned to blocked actions.'),
                 ('discovery', 'Fraction of independent policy copies that have reached the goal by each transition budget, including failed copies.')):
             filename = analysis_dir / 'plots' / (figure['name'] + '_' + suffix + '.pdf')
@@ -787,7 +831,7 @@ def generate_report(run_dir):
             signature = hashlib.sha256((json.dumps(comparison_rows, sort_keys=True)+
                 hashlib.sha256(Path(__file__).read_bytes()).hexdigest()).encode()).hexdigest()
             required = [plots_dir/f'{name}_{suffix}.{extension}' for suffix in (
-                'maps', 'movement', 'policy', 'discovery') for extension in ('png', 'pdf')]
+                'maps', 'initial_profiles', 'movement', 'policy', 'discovery') for extension in ('png', 'pdf')]
             required.append(plots_dir/f'{name}_sampled_positions.html')
             if render_history.get(name, {}).get('digest') == signature and all(path.exists() for path in required):
                 representatives = render_history[name]['representatives']
@@ -797,8 +841,11 @@ def generate_report(run_dir):
             figure_groups.append({'name': name, 'representatives': representatives})
             pieces.append(f'### {geometry_label(comparison_rows[0]["specification"])}; '
                           f'{comparison_rows[0]["specification"]["policy_kind"]} policy\n\n')
-            for suffix in ('maps', 'movement', 'policy', 'discovery'):
+            for suffix in ('maps', 'initial_profiles', 'movement', 'policy', 'discovery'):
                 pieces.append(f'![{suffix.capitalize()}](plots/{name}_{suffix}.png)\n\n')
+            pieces.append('Initial-profile panels use separate vertical scales so neural-field variation remains visible. '
+                          'Movement panels share the full zero-to-goal range; exact first-goal markers use saved transition counts. '
+                          'Goal arrivals reset to the start, including after the first goal.\n\n')
             pieces.append(f'[Play the recorded training-position samples](plots/{name}_sampled_positions.html). '
                           'Intermediate actions are not shown.\n\n')
             for example in representatives:
