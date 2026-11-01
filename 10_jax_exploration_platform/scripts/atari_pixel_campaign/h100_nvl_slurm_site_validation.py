@@ -48,6 +48,7 @@ GATE_ENVIRONMENT_POLICY = {"reject_nonempty_prefixes": ["PYTEST_"], "reject_none
 HELPERS = ("h100_nvl_slurm_site_validation.py", "controller.py", "ideas.py", "admit_measurements.py",
            "train_optimized.py", "diagnose_gpu_execution.py", "post_comparison_validation.py",
            "infrastructure_retry.py", "pregather_async_retry.py")
+QUALIFICATION_HELPERS = ("h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py")
 PACKAGE_NAMES = ("jax", "jaxlib", "jax-cuda12-plugin", "jax-cuda12-pjrt", "nvidia-cudnn-cu12",
                  "nvidia-cublas-cu12", "nvidia-cuda-runtime-cu12", "jaxtari", "flax", "optax", "numpy")
 EXPECTED_DTYPES = {name: ["float64"] if "statistics" in name else ["float32"] for name in
@@ -70,6 +71,38 @@ def load(name):
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     return module
+
+
+def qualification_profile(plan):
+    """Accept only the explicit optional target profile; keep the original reference driver unchanged."""
+    profile = plan.get("qualification_profile")
+    if profile is not None:
+        if plan.get("schema_version") != 3:
+            raise ValueError("the optional Slurm qualification profile is absent or unsupported")
+        load("h100_nvl_slurm_qualification").require_profile(profile)
+    return profile
+
+
+def expected_driver(plan):
+    """Separate the opt-in target driver from the original direct-server reference identity."""
+    profile = qualification_profile(plan)
+    return profile["expected_driver"] if profile is not None else plan["reference"]["driver"]
+
+
+def required_helpers(profile):
+    """Pin the two extra metadata files only for the explicit target-driver qualification."""
+    return HELPERS + QUALIFICATION_HELPERS if profile is not None else HELPERS
+
+
+def profile_background(profile):
+    """Describe the separately qualified driver and the exact limits of configured-isolation evidence."""
+    if profile is None:
+        return ""
+    return ("The original direct-server reference driver 590.48.01 is retained. The explicit Slurm profile separately qualifies "
+        "target driver 580.159.04. It trusts configured scheduler task/cgroup device isolation; live BPF device rules are not "
+        "independently inspected, and a numeric Slurm-to-NVML/minor/PCI mapping is not reconstructed. Every parent and child "
+        "must provide fresh own allocation and task evidence, and the reference probe must bind its actual JAX CUDA ordinal "
+        "to the selected physical UUID and PCI address.\n\n")
 
 
 def read(path):
@@ -408,7 +441,11 @@ def prepare(arguments):
     if not arguments.python.is_absolute() or not os.access(arguments.python, os.X_OK):
         raise ValueError("the site validation Python must name the existing shared approved interpreter")
     commit = query(["git", "-C", str(helper), "rev-parse", "HEAD"]).strip()
-    helpers = source_identity(helper, commit, [PREFIX + name for name in HELPERS])
+    profile_name = getattr(arguments, "qualification_profile", None)
+    profile = None if profile_name is None else load("h100_nvl_slurm_qualification").PROFILE
+    if profile is not None and profile_name != profile["name"]:
+        raise ValueError("the requested Slurm qualification profile is unsupported")
+    helpers = source_identity(helper, commit, [PREFIX + name for name in required_helpers(profile)])
     if Path(__file__).resolve() != helper / PREFIX / "h100_nvl_slurm_site_validation.py":
         raise ValueError("prepare through the exact detached committed helper checkout")
     admission = snapshot_admission(run)
@@ -432,6 +469,9 @@ def prepare(arguments):
         "submission_control": SUBMISSION_CONTROL,
         "workers_permitted": False, "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0,
         "created_at_utc": datetime.now(timezone.utc).isoformat()}
+    if profile is not None:
+        # Before: original driver 590 reference identity. After: same reference plus a separately named driver 580 target profile.
+        plan.update(schema_version=3, qualification_profile=profile)
     directory.mkdir()
     plan["admission_archive"] = archive_admission(directory, admission)
     write_once(directory / "site_validation_plan.json", plan)
@@ -445,8 +485,9 @@ def prepare(arguments):
     write_once(directory / "job.sbatch", "\n".join(batch) + "\n")
     submission = submission_command(run, directory)
     write_once(directory / "command.txt", shlex.join(submission) + "\n")
-    write_once(directory / "config_resolved.yaml", {"configuration": plan["configuration"], "runtime": RUNTIME, "job_shape": JOB_SHAPE})
-    write_once(directory / "experiment_background.md", "## Purpose\n\nVerify one matching Slurm H100 NVL site before any separately reviewed worker placement. This site validation admits no workers and claims no campaign cases.\n\n## Key hyperparameters\n\nThe original one-policy reference uses 128 environments, 128 rollout steps, four epochs, four minibatches, fifty warmup rollouts and one complete training update. The original full learner and renderer gates run first in fresh sequential children.\n\n## Code and config changes\n\nKeep the frozen numerical source, highest float32 neural arithmetic, float64 statistics, deterministic operations and original allocator settings. Require the reference model, memory, driver, backend and library identities. Resolve the allocated physical UUID inside srun and bind eight CPUs. Submit held. The parent must write and fsync the exact UVA job ID and submission receipt, then run scontrol release for only that saved ID. This helper never submits or releases a job.\n\n## Git state\n\nNumerical source: " + SOURCE_COMMIT + ". Metadata helpers: " + commit + ". Exact input identities are in site_validation_plan.json. No submission or current admission change is performed by preparation.\n")
+    write_once(directory / "config_resolved.yaml", {"configuration": plan["configuration"], "runtime": RUNTIME, "job_shape": JOB_SHAPE,
+        **({"qualification_profile": profile} if profile is not None else {})})
+    write_once(directory / "experiment_background.md", "## Purpose\n\nVerify one matching Slurm H100 NVL site before any separately reviewed worker placement. This site validation admits no workers and claims no campaign cases.\n\n## Key hyperparameters\n\nThe original one-policy reference uses 128 environments, 128 rollout steps, four epochs, four minibatches, fifty warmup rollouts and one complete training update. The original full learner and renderer gates run first in fresh sequential children.\n\n## Code and config changes\n\nKeep the frozen numerical source, highest float32 neural arithmetic, float64 statistics, deterministic operations and original allocator settings. Require the reference model, memory, backend and library identities, and the selected qualification driver. Resolve the allocated physical UUID inside srun and bind eight CPUs. Submit held. The parent must write and fsync the exact UVA job ID and submission receipt, then run scontrol release for only that saved ID. This helper never submits or releases a job.\n\n" + profile_background(profile) + "## Git state\n\nNumerical source: " + SOURCE_COMMIT + ". Metadata helpers: " + commit + ". Exact input identities are in site_validation_plan.json. No submission or current admission change is performed by preparation.\n")
     write_once(directory / "manifest.yaml", {"plan": receipt(directory / "site_validation_plan.json"), "job_script": receipt(directory / "job.sbatch"),
         "helpers": helpers, "state": "prepared_not_submitted", "submission_command": submission,
         "submission_control": SUBMISSION_CONTROL})
@@ -458,9 +499,10 @@ def prepared(directory):
     directory = Path(directory).resolve(strict=True)
     manifest = read(directory / "manifest.yaml")
     plan = bound(manifest["plan"])
+    profile = qualification_profile(plan)
     if (manifest["plan"]["path"] != str(directory / "site_validation_plan.json")
             or receipt(directory / "job.sbatch") != manifest["job_script"]
-            or plan.get("schema_version") != 2 or plan.get("kind") != "h100_nvl_slurm_site_validation"
+            or plan.get("schema_version") != (3 if profile is not None else 2) or plan.get("kind") != "h100_nvl_slurm_site_validation"
             or plan.get("source_commit") != SOURCE_COMMIT or plan.get("runtime_environment") != RUNTIME
             or plan.get("job_shape") != JOB_SHAPE or plan.get("reference_updates") != 1
             or plan.get("submission_control") != SUBMISSION_CONTROL
@@ -474,7 +516,7 @@ def prepared(directory):
     verify_source_identity(plan["numerical_source"])
     if cleanrl_identity(plan["cleanrl_reference"]["source_root"]) != plan["cleanrl_reference"]:
         raise ValueError("the original CleanRL reference changed after preparation")
-    if (set(plan["helpers"]["files"]) != {PREFIX + name for name in HELPERS}
+    if (set(plan["helpers"]["files"]) != {PREFIX + name for name in required_helpers(profile)}
             or plan["numerical_source"]["source_commit"] != SOURCE_COMMIT
             or plan["numerical_source"]["source_root"] != plan["admission"]["source_root"]
             or sorted(plan["numerical_source"]["files"]) != numerical_paths(plan["numerical_source"]["source_root"])):
@@ -514,9 +556,17 @@ def placement(directory, plan):
         "cpu_affinity": sorted(os.sched_getaffinity(0)), "pid": os.getpid(),
         "process_start_time": process_start_time(os.getpid())})
     write_once(directory / "allocation_details.json", capture_allocation_details(owned))
-    proof = resolve_allocation(os.environ, host, csv_text, xml_text)
-    if proof["driver"] != plan["reference"]["driver"]:
-        raise ValueError("the allocated driver differs from the original H100 reference; stop before JAX")
+    profile = qualification_profile(plan)
+    if profile is None:
+        proof = resolve_allocation(os.environ, host, csv_text, xml_text)
+    else:
+        qualifier = load("h100_nvl_slurm_qualification")
+        observation = qualifier.capture(load("h100_nvl_allocation_observation"), os.environ, host, csv_text, xml_text,
+            query, process_start_time(os.getpid()))
+        write_once(directory / "qualification_observation.json", observation)
+        proof = qualifier.validate_allocation(observation)
+    if proof["driver"] != expected_driver(plan):
+        raise ValueError("the allocated driver differs from the selected H100 qualification profile; stop before JAX")
     gpu = proof["gpu_uuid"]
     cpu = load("infrastructure_retry").cpu_allocation(os.environ, [gpu], os.sched_getaffinity(0))
     cpus = cpu["gpu_cpu_affinities"][gpu]
@@ -529,6 +579,8 @@ def placement(directory, plan):
         "cpu_affinity": cpus, "runtime_environment": require_runtime(os.environ), "gpu_modes": modes,
         "parent_pid": os.getpid(), "parent_start_time": process_start_time(os.getpid()),
         "step_environment": {name: os.environ[name] for name in ALLOCATION_KEYS if name in os.environ}}
+    if profile is not None:
+        record["qualification_observation"] = receipt(directory / "qualification_observation.json")
     write_once(directory / "site_assignment.json", record)
     return record
 
@@ -538,10 +590,17 @@ def verify_assignment(record, plan):
     proof = record["allocation"]
     environment = {**proof["slurm_allocations"], "SLURM_JOB_ID": proof["job_id"],
                    "CUDA_VISIBLE_DEVICES": proof["cuda_visible_devices_original"]}
-    if resolve_allocation(environment, proof["hostname"], proof["gpu_csv"], proof["gpu_xml"]) != proof:
+    profile = qualification_profile(plan)
+    rebuilt = (resolve_allocation(environment, proof["hostname"], proof["gpu_csv"], proof["gpu_xml"]) if profile is None
+        else load("h100_nvl_slurm_qualification").validate_allocation(bound(record["qualification_observation"])))
+    if rebuilt != proof:
         raise ValueError("the site allocation record changed")
-    if proof["driver"] != plan["reference"]["driver"] or record["runtime_environment"] != RUNTIME:
-        raise ValueError("the site driver or runtime differs from the original reference")
+    if profile is not None:
+        observation = bound(record["qualification_observation"])
+        if observation["pid"] != record["parent_pid"] or observation["process_start_time"] != record["parent_start_time"]:
+            raise ValueError("the qualification assignment substituted another parent process")
+    if proof["driver"] != expected_driver(plan) or record["runtime_environment"] != RUNTIME:
+        raise ValueError("the site driver or runtime differs from the selected qualification profile")
     gpu = proof["gpu_uuid"]
     cpu = record["cpu_allocation"]
     recomputed = load("infrastructure_retry").cpu_allocation({"SLURM_CPUS_PER_TASK": cpu["slurm_cpus_per_task"],
@@ -675,6 +734,17 @@ def child(directory, kind):
         "gate_environment_policy": GATE_ENVIRONMENT_POLICY,
         "asset_receipt": assets, "installed_backend": installed,
         "original_command": original_command(plan, kind) if kind != "probe" else None}
+    if qualification_profile(plan) is not None:
+        qualifier = load("h100_nvl_slurm_qualification")
+        child_csv = query(["nvidia-smi", "-i", proof["gpu_uuid"],
+            "--query-gpu=index,uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits"])
+        child_xml = query(["nvidia-smi", "-i", proof["gpu_uuid"], "-q", "-x"])
+        child_observation = qualifier.capture(load("h100_nvl_allocation_observation"), os.environ, proof["hostname"],
+            child_csv, child_xml, query, process_start_time(os.getpid()))
+        child_allocation = qualifier.validate_allocation(child_observation)
+        if any(child_allocation[name] != proof[name] for name in ("job_id", "step_id", "hostname", "gpu_uuid", "pci_address")):
+            raise ValueError("the qualification child changed its actual job, step or physical GPU")
+        process["qualification_observation"] = child_observation
     write_once(directory / (kind + "_process.json"), process)
     if kind != "probe":
         command = original_command(plan, kind)
@@ -695,6 +765,11 @@ def reference_probe(directory, plan, process, training):
     devices = jax.devices()
     if len(devices) != 1 or devices[0].platform != "gpu" or devices[0].device_kind != MODEL:
         raise ValueError("the reference probe must see exactly the assigned whole H100 NVL")
+    cuda_identity = None
+    if qualification_profile(plan) is not None:
+        qualifier = load("h100_nvl_slurm_qualification")
+        allocation = qualifier.validate_allocation(process["qualification_observation"])
+        cuda_identity = qualifier.validate_cuda_identity(qualifier.cuda_device_identity(devices[0]), allocation, process["pid"])
     from exploration_platform.atari_pixels.config import PixelPPOConfig
     from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
     from exploration_platform.atari_pixels.training import PixelPPORND
@@ -738,6 +813,8 @@ def reference_probe(directory, plan, process, training):
         "pid": os.getpid(), "process_start_time": process_start_time(os.getpid()), "gpu_uuid": process["gpu_uuid"],
         "iteration": int(state.iteration), "dtypes": dtypes, "finite_state": finite,
         "loaded_libraries": loaded, "numerical_module_paths": numerical_paths}
+    if cuda_identity is not None:
+        result["qualification_cuda_identity"] = cuda_identity
     write_once(directory / "probe_result.json", result)
     return result
 
@@ -757,7 +834,7 @@ def validate_loaded(loaded, plan, installed):
         if sha256(path) != verified[path]["sha256"]:
             raise ValueError("a mapped site GPU image changed")
     drivers = [path for path in loaded.get("loaded_shared_libraries", []) if Path(path).name.startswith("libcuda.so")]
-    if not drivers or any(not path.endswith("." + plan["reference"]["driver"]) for path in drivers):
+    if not drivers or any(not path.endswith("." + expected_driver(plan)) for path in drivers):
         raise ValueError("the actual loaded CUDA driver does not match the recorded H100 driver version")
 
 
@@ -798,6 +875,8 @@ def run_site_validation(directory):
                     for kind in ("learner", "renderer", "probe")}, "probe": receipt(directory / "probe_result.json"),
                 "workers_permitted": False, "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0,
                 "completed_at_utc": datetime.now(timezone.utc).isoformat()}
+            if qualification_profile(plan) is not None:
+                result["qualification_profile"] = plan["qualification_profile"]
             # The public verifier rebuilds this exact proof; no source-ready or queue file is published.
             verify_result(directory, plan, result)
             write_once(directory / "result.json", result)
@@ -816,6 +895,8 @@ def verify_result(directory, plan, result):
             or result.get("workers_permitted") is not False or result.get("campaign_claims_permitted") is not False
             or result.get("scientific_hypothesis_credit") != 0 or result.get("plan") != receipt(directory / "site_validation_plan.json")):
         raise ValueError("a site result cannot grant workers, source admission or scientific credit")
+    if result.get("qualification_profile") != qualification_profile(plan):
+        raise ValueError("the site result omitted or changed its explicit target qualification profile")
     if result["assignment"]["path"] != str(directory / "site_assignment.json") or result["probe"]["path"] != str(directory / "probe_result.json"):
         raise ValueError("a site result substituted another assignment or probe record")
     assignment = bound(result["assignment"])
@@ -837,6 +918,12 @@ def verify_result(directory, plan, result):
                 or process.get("cpu_affinity") != assignment["cpu_affinity"] or process.get("source_commit") != SOURCE_COMMIT
                 or process.get("configuration") != plan["configuration"]):
             raise ValueError("site gates need distinct recorded successful children with the exact source/runtime/allocation")
+        if qualification_profile(plan) is not None:
+            child_proof = load("h100_nvl_slurm_qualification").validate_allocation(process.get("qualification_observation", {}))
+            if (process["qualification_observation"]["pid"] != process["pid"]
+                    or process["qualification_observation"]["process_start_time"] != process["process_start_time"]
+                    or any(child_proof[name] != proof[name] for name in ("job_id", "step_id", "hostname", "gpu_uuid", "pci_address"))):
+                raise ValueError("site child lacks its actual qualified process, cgroup and physical GPU identity")
         processes.add(identity)
         if process.get("original_command") != (original_command(plan, kind) if kind != "probe" else None):
             raise ValueError("the site gate did not execute the original full check command")
@@ -859,10 +946,16 @@ def verify_result(directory, plan, result):
             or finite["floating_leaves_checked"] < 1 or finite.get("scope") != "complete updated PixelTrainState"):
         raise ValueError("the site probe lacks a successful finite check of the complete updated state")
     validate_loaded(probe["loaded_libraries"], plan, process["installed_backend"])
+    if qualification_profile(plan) is not None:
+        identity = load("h100_nvl_slurm_qualification").validate_cuda_identity(probe.get("qualification_cuda_identity", {}), proof, process["pid"])
+        if (identity["driver_library"] not in probe["loaded_libraries"]["loaded_shared_libraries"]
+                or sha256(identity["driver_library"]) != identity["driver_library_sha256"]):
+            raise ValueError("the actual JAX CUDA identity changed its mapped qualified driver image bytes")
     validate_numerical_paths(probe.get("numerical_module_paths", {}), plan["numerical_source"]["source_root"])
     return {"passed": True, "scope": "one exact allocated H100 NVL site only", "hostname": proof["hostname"],
         "gpu_uuid": proof["gpu_uuid"], "job_id": proof["job_id"], "workers_permitted": False,
-        "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+        "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0,
+        **({"qualification_profile": plan["qualification_profile"]} if qualification_profile(plan) is not None else {})}
 
 
 def verify(directory):
@@ -881,6 +974,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     preparation = commands.add_parser("prepare")
+    preparation.add_argument("--qualification-profile", choices=("slurm-configured-device-isolation-driver-580.159.04",))
     for name in ("run-dir", "helper-root", "reference-directory", "software-result", "installed-backend", "asset-receipt", "asset-record", "jaxtari-source-root", "cleanrl-root", "output-dir", "python"):
         preparation.add_argument("--" + name, type=Path, required=True)
     for name in ("run", "verify", "child"):
