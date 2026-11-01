@@ -1,0 +1,56 @@
+{
+  "checked_at_utc": "2026-11-01T06:03:26.131455+00:00",
+  "checks": [
+    {
+      "command": [
+        "sacct",
+        "-X",
+        "-j",
+        "2271806",
+        "-n",
+        "-P",
+        "-o",
+        "JobID,User,State,ExitCode,AllocTRES,MaxRSS"
+      ],
+      "returncode": 0,
+      "stdout": "2271806|u.sl359075|COMPLETED|0:0|billing=8,cpu=8,gres/gpu:h100=1,gres/gpu=1,mem=32G,node=1|\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sinfo",
+        "-h",
+        "-N",
+        "-p",
+        "gpu,gpu_debug",
+        "-O",
+        "NodeHost:18,StateCompact:12,Gres:30,GresUsed:36"
+      ],
+      "returncode": 0,
+      "stdout": "ac041             mix-        gpu:h100:8(S:0)               gpu:h100:8(IDX:0-7)                 \nac045             mix-        gpu:h100:8(S:0)               gpu:h100:5(IDX:0-3,7)               \nac049             mix         gpu:h100:4(S:0)               gpu:h100:4(IDX:0-3)                 \nac055             mix-        gpu:h100:4(S:0)               gpu:h100:4(IDX:0-3)                 \nac064             mix         gpu:a30:2(S:0)                gpu:a30:2(IDX:0-1)                  \nac064             mix         gpu:a30:2(S:0)                gpu:a30:2(IDX:0-1)                  \nac065             mix-        gpu:a30:2(S:0)                gpu:a30:2(IDX:0-1)                  \nac065             mix-        gpu:a30:2(S:0)                gpu:a30:2(IDX:0-1)                  \nac096             drain*      gpu:h100:4                    gpu:h100:0                          \nac098             drain*      gpu:h100:2                    gpu:h100:0                          \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "myproject",
+        "-j",
+        "158590754315"
+      ],
+      "returncode": 0,
+      "stdout": "Account-wide job history omitted; this command is not used for campaign job monitoring.",
+      "stderr": "",
+      "scope_error": "myproject -j reports unrelated account jobs; corrected with allocation-only myproject and exact campaign IDs for all job queries."
+    },
+    {
+      "checked_at_utc": "2026-11-01T06:04:09.846238+00:00",
+      "command": [
+        "myproject"
+      ],
+      "returncode": 0,
+      "stdout": "run 'myproject -h' to see the other options.\n================================================================================================\n                List of u.sl359075's Project Accounts\n------------------------------------------------------------------------------------------------\n|  Account   |  FY  | Default | Allocation |Used & Pending SUs|   Balance  |          PI        |\n------------------------------------------------------------------------------------------------\n|158590754315|  2027|        Y|   145000.00|          55640.41|    89359.59|Liu, Shuze Daniel   |\n------------------------------------------------------------------------------------------------\n",
+      "stderr": ""
+    }
+  ],
+  "authentication_attempted": false,
+  "jobs_submitted": 0
+}

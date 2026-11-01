@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "aces_observation_monitor_author_validation",
+  "job_id": "6779550",
+  "step_id": "34",
+  "hostname": "slurm5",
+  "started_at_utc": "2026-11-01T06:18:22.229169+00:00",
+  "finished_at_utc": "2026-11-01T06:18:23.083183+00:00",
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+    "-p",
+    "test_monitor*.py",
+    "-q"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "----------------------------------------------------------------------\nRan 57 tests in 0.657s\n\nOK\n",
+  "source_hashes_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "460f6f0e3c22769c709d2b235bea8468a8c6a9cdde5036006f993f851149a549",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_aces_allocation_observation.py": "ddbad9d7c0565c7717817901291792de95757160759f76100329f5f81310d5b2"
+  },
+  "source_hashes_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "460f6f0e3c22769c709d2b235bea8468a8c6a9cdde5036006f993f851149a549",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_aces_allocation_observation.py": "ddbad9d7c0565c7717817901291792de95757160759f76100329f5f81310d5b2"
+  },
+  "no_network_or_experiment": true
+}

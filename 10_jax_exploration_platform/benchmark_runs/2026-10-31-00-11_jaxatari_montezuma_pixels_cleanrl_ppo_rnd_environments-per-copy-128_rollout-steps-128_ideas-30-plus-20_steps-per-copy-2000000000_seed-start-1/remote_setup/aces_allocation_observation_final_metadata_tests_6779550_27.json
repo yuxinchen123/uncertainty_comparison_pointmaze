@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "aces_allocation_observation_final_metadata_tests",
+  "job_step": "6779550.27",
+  "host": "slurm5",
+  "checked_at_utc": "2026-11-01T06:14:25.519502+00:00",
+  "test_count": 16,
+  "successful": true,
+  "files": {
+    "aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+    "h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "tests/test_aces_allocation_observation.py": "41826c9b0d07e4ce0ae3115927ca7c9c4c953c5675815d27a8fb548dc9c98513"
+  },
+  "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_allocation_observation_final_metadata_tests_6779550_27.log",
+  "output_sha256": "f4aac83f968bb65010c8cf47c953c89100c2612ed5b9995c12b89d0522c786eb",
+  "numerical_imports": false
+}

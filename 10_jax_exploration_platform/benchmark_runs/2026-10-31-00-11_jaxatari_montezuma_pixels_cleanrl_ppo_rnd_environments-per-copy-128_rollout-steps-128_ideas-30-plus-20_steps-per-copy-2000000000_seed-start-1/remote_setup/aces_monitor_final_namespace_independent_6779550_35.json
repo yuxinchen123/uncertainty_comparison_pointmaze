@@ -1,0 +1,24 @@
+{
+  "kind": "independent_final_aces_namespace_correction_review",
+  "created_utc": "2026-11-01T06:18:59.544735+00:00",
+  "step_id": "6779550.35",
+  "hostname": "slurm5",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_monitor_aces_allocation_observation.ACESObservationMonitorTests.test_malformed_null_list_and_wrong_kind_receipts_stay_unknown_without_uva_suppression",
+    "test_monitor_aces_allocation_observation.ACESObservationMonitorTests.test_wrong_namespace_does_not_claim_a_generic_data_leaf",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_malformed_null_list_and_wrong_kind_receipts_stay_unknown_without_uva_suppression (test_monitor_aces_allocation_observation.ACESObservationMonitorTests)\nCorrupt recognized metadata packets never become generic UVA jobs or suppress an owned job. ... ok\ntest_wrong_namespace_does_not_claim_a_generic_data_leaf (test_monitor_aces_allocation_observation.ACESObservationMonitorTests)\nAn arbitrary packet name cannot use an ACES receipt to exclude another data directory. ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.040s\n\nOK\n",
+  "source_sha256": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "460f6f0e3c22769c709d2b235bea8468a8c6a9cdde5036006f993f851149a549",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_aces_allocation_observation.py": "ddbad9d7c0565c7717817901291792de95757160759f76100329f5f81310d5b2"
+  },
+  "numerical_code_executed": false,
+  "new_allocation_submitted": false
+}

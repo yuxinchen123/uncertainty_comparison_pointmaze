@@ -1,0 +1,22 @@
+{
+  "kind": "reviewed_aces_allocation_observation_and_monitor",
+  "schema_version": 1,
+  "time": "2026-11-01T06:19:40.045583+00:00",
+  "source_hashes": {
+    "aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+    "monitor.py": "460f6f0e3c22769c709d2b235bea8468a8c6a9cdde5036006f993f851149a549",
+    "tests/test_aces_allocation_observation.py": "41826c9b0d07e4ce0ae3115927ca7c9c4c953c5675815d27a8fb548dc9c98513",
+    "tests/test_monitor_aces_allocation_observation.py": "ddbad9d7c0565c7717817901291792de95757160759f76100329f5f81310d5b2"
+  },
+  "unchanged_uva_collector": true,
+  "collector_tests": 16,
+  "monitor_tests": 57,
+  "final_namespace_independent_tests": 2,
+  "prior_focused_independent_tests": 26,
+  "additional_schema_checks": 4,
+  "validation_allocation": "6779550",
+  "actual_gpu_job_submitted": false,
+  "scientific_idea_credit": 0,
+  "formal_case_credit": 0,
+  "release_requires": "published standard records, exact held-job ledger receipts, fresh actual held snapshot and independently verified replacement persistent monitor"
+}

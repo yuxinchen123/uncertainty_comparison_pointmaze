@@ -491,6 +491,240 @@ def site_validation_rows(directory, jobs):
     return rows, owned, status
 
 
+def aces_observation_packet(directory, packet, receipt, identifiers):
+    """Bind an ACES observation mirror to its exact cluster ledger and immutable remote packet."""
+    # A remote job number remains an ACES identity even when UVA issued the same number.
+    identifier = receipt.get("job_id")
+    if (receipt.get("cluster") != "aces" or type(receipt.get("schema_version")) is not int or receipt["schema_version"] != 1
+            or not isinstance(identifier, str) or not re.fullmatch(r"[1-9][0-9]*", identifier)
+            or identifier not in identifiers or packet.is_symlink() or packet.resolve().parent != directory / "remote_setup"):
+        raise ValueError("ACES observation requires its exact ACES ledger and direct-child packet")
+    remote_run = Path("/scratch/user/u.sl359075/rnd_atari_pixels/runs") / directory.name
+    remote_packet = remote_run / "remote_setup" / packet.name
+    files = {}
+    for name, key in (("allocation_observation_plan.json", "plan_sha256"), ("manifest.yaml", "manifest_sha256"),
+                      ("job.sbatch", "job_script_sha256")):
+        path = packet / name
+        if path.is_symlink() or path.resolve().parent != packet or hashlib.sha256(path.read_bytes()).hexdigest() != receipt.get(key):
+            raise ValueError("ACES observation byte receipt differs: " + name)
+        files[name] = path
+    plan, manifest = read_json(files["allocation_observation_plan.json"]), read_json(files["manifest.yaml"])
+    unit = directory / "data" / packet.name
+    if unit.is_symlink() or unit.resolve().parent != directory / "data":
+        raise ValueError("ACES observation data shard must remain inside this campaign's data directory")
+    if (type(plan.get("schema_version")) is not int or plan["schema_version"] != 1 or plan.get("kind") != "aces_allocation_observation"
+            or plan.get("cluster") != "aces" or plan.get("campaign_run_dir") != str(remote_run)
+            or plan.get("data_unit") != {"path": str(remote_run / "data" / packet.name), "name": packet.name}
+            or receipt.get("data_unit") != plan["data_unit"]):
+        raise ValueError("ACES observation plan must identify its original remote campaign and exact data shard")
+    if (manifest.get("kind") != "aces_allocation_observation_preparation" or manifest.get("cluster") != "aces"
+            or type(manifest.get("schema_version")) is not int or manifest["schema_version"] != 1
+            or plan.get("owner", {}).get("username") != "u.sl359075" or type(plan["owner"].get("uid")) is not int
+            or plan["owner"]["uid"] < 1):
+        raise ValueError("ACES preparation needs its exact metadata schema and actual account owner")
+    shape = plan.get("job_shape", {})
+    expected_shape = {"account": "158590754315", "qos": "normal", "nodes": 1, "ntasks": 1,
+                      "gres": "gpu:h100:1", "cpus_per_task": 8, "memory": "32G", "time": "00:05:00"}
+    if (shape.get("partition") not in {"gpu", "gpu_debug"} or any(type(shape.get(key)) is not type(value)
+            or shape.get(key) != value for key, value in expected_shape.items())):
+        raise ValueError("ACES observation plan changed its exact requested pool or resource shape")
+    boundary = {"mapping_accepted": False, "compatibility_verified": False, "workers_permitted": False,
+                "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+    for record in (plan, manifest, receipt):
+        if any(type(record.get(key)) is not type(value) or record.get(key) != value for key, value in boundary.items()):
+            raise ValueError("ACES metadata cannot accept a mapping, compatibility, admission or research credit")
+    command = receipt.get("held_command")
+    if (not isinstance(command, list) or command != manifest.get("submission_command") or command[:1] != ["sbatch"]
+            or "--hold" not in command or command[-1] != str(remote_packet / "job.sbatch")
+            or "--account=158590754315" not in command or "--qos=normal" not in command
+            or "--gres=gpu:h100:1" not in command or "--cpus-per-task=8" not in command
+            or "--mem=32G" not in command or "--time=00:05:00" not in command
+            or not any("--partition=" + name in command for name in ("gpu", "gpu_debug"))):
+        raise ValueError("ACES observation must retain its held one-H100, eight-CPU, five-minute command")
+    required = {"allocation_observation_plan.json", "config_resolved.yaml", "job.sbatch", "command.txt", "experiment_background.md",
+                "resource_basis/aces_submitted_jobids.txt"}
+    for name, original in manifest.get("artifacts", {}).items():
+        path = packet / name
+        if (name not in required or path.is_symlink() or not path.resolve().is_relative_to(packet)
+                or original.get("path") != str(remote_packet / name)
+                or hashlib.sha256(path.read_bytes()).hexdigest() != original.get("sha256")):
+            raise ValueError("ACES prepared artifact changed: " + name)
+    if set(manifest.get("artifacts", {})) != required:
+        raise ValueError("ACES observation must retain all launch artifacts and its resource ledger snapshot")
+    release_path = packet / "release_receipt.json"
+    release = read_json(release_path)
+    if release is not None and (release_path.is_symlink() or type(release.get("schema_version")) is not int
+            or release["schema_version"] != 1 or release.get("kind") != "owned_aces_allocation_observation_release"
+            or release.get("cluster") != "aces" or release.get("job_id") != identifier
+            or release.get("command") != ["scontrol", "release", identifier] or type(release.get("returncode")) is not int
+            or release["returncode"] != 0 or release.get("submission_receipt_sha256") != hashlib.sha256((packet / "submission_receipt.json").read_bytes()).hexdigest()):
+        raise ValueError("ACES release receipt must bind this exact owned submission")
+    rows = (directory / "slurm/submissions_aces.tsv").read_text().splitlines()
+    matching = [line for line in rows if line.split("\t", 1)[0] == identifier]
+    expected_row = [identifier, packet.name, plan["helpers"]["source_commit"], str(remote_run)]
+    if len(matching) != 1 or receipt.get("submission_row") != expected_row or "\t".join(expected_row) != matching[0]:
+        raise ValueError("ACES observation needs its one exact recorded submission row")
+    if receipt.get("ledger_path") != str(remote_run / "slurm/submitted_jobids_aces.txt"):
+        raise ValueError("ACES submission must name its literal original ACES ledger")
+    return identifier, plan, unit, remote_run, boundary
+
+
+def aces_observation_snapshot(directory, packet, receipt, remote_run, identifier):
+    """Read one fresh root-mirrored exact-ID observation without opening a remote connection."""
+    # Before: original remote argv/stdout and copied bytes; after: one bounded local status.
+    path = packet / "remote_monitor_snapshot.json"
+    snapshot = read_json(path)
+    expected = {"schema_version": 1, "kind": "aces_allocation_monitor_snapshot", "cluster": "aces",
+                "user": "u.sl359075", "job_id": identifier, "local_campaign_run_dir": str(directory),
+                "origin_host": "portal05", "query_host": "alogin1.cluster",
+                "remote_campaign_run_dir": str(remote_run), "plan_sha256": receipt["plan_sha256"],
+                "job_script_sha256": receipt["job_script_sha256"],
+                "submission_receipt_sha256": hashlib.sha256((packet / "submission_receipt.json").read_bytes()).hexdigest(),
+                "release_receipt_sha256": hashlib.sha256((packet / "release_receipt.json").read_bytes()).hexdigest()
+                    if (packet / "release_receipt.json").exists() else None}
+    if (not snapshot or path.is_symlink() or not set(expected) <= set(snapshot)
+            or any(type(snapshot.get(key)) is not type(value) or snapshot.get(key) != value
+                                               for key, value in expected.items())):
+        raise ValueError("ACES status snapshot is absent or identifies another cluster, owner or submission")
+    observed = datetime.fromisoformat(snapshot["observed_at_utc"].replace("Z", "+00:00"))
+    if observed.tzinfo is None or observed.utcoffset().total_seconds() != 0:
+        raise ValueError("ACES observation timestamp must explicitly use UTC")
+    age = (datetime.now(timezone.utc) - observed).total_seconds()
+    if age < 0 or age > 2400:
+        displayed = observed.astimezone(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
+        raise ValueError("ACES remote status requires a fresh observation; last snapshot " + displayed)
+    queue, accounting = snapshot["squeue"], snapshot["sacct"]
+    queue_command = ["squeue", "-h", "-j", identifier, "-o", "%i|%u|%T|%N|%R"]
+    accounting_command = ["sacct", "-X", "-n", "-P", "-j", identifier, "--format=JobIDRaw,User%64,State%64,ExitCode,NodeList"]
+    queue_absent = (queue.get("returncode") == 1 and not queue.get("stdout")
+                    and queue.get("stderr", "").strip() == "slurm_load_jobs error: Invalid job id specified")
+    if (queue.get("command") != queue_command or type(queue.get("returncode")) is not int
+            or queue["returncode"] != 0 and not queue_absent or accounting.get("command") != accounting_command
+            or type(accounting.get("returncode")) is not int or accounting["returncode"] != 0):
+        raise ValueError("ACES snapshot must retain successful exact-ID queue and accounting queries")
+    parsed = []
+    for record, count in ((queue, 5), (accounting, 5)):
+        rows = [line.strip().split("|") for line in record.get("stdout", "").splitlines() if line.strip()]
+        if len(rows) > 1 or any(len(row) != count or row[:2] != [identifier, "u.sl359075"] for row in rows):
+            raise ValueError("ACES scheduler snapshot contains duplicate, foreign or mismatched rows")
+        parsed.append(rows[0] if rows else None)
+    if expected["release_receipt_sha256"] is None and (not parsed[0] or parsed[0][2] != "PENDING" or parsed[0][4] != "JobHeldUser"):
+        raise ValueError("an unreleased ACES observation requires an actual current JobHeldUser row")
+    # Each transported file retains its original remote path and exact unchanged bytes.
+    names = {"progress.json", "hardware.json", "owned_allocation.json", "hardware_observations.json",
+             "nvidia_hardware_queries.json", "result.json", "failure.json"}
+    for relative, record in snapshot.get("mirrored_files", {}).items():
+        destination = directory / relative
+        if (Path(relative).parts[:2] != ("data", packet.name) or len(Path(relative).parts) != 3
+                or destination.name not in names or destination.is_symlink()
+                or destination.resolve().parent != (directory / "data" / packet.name).absolute()
+                or record.get("source_path") != str(remote_run / relative)
+                or hashlib.sha256(destination.read_bytes()).hexdigest() != record.get("sha256")):
+            raise ValueError("ACES transported observation bytes changed or escaped their exact data shard")
+    return snapshot, parsed[0], parsed[1]
+
+
+def aces_allocation_observation_rows(directory):
+    """Display only owned ACES metadata jobs; never query ACES identifiers on UVA."""
+    ledger = directory / "slurm/submitted_jobids_aces.txt"
+    identifiers = set(ledger.read_text().splitlines()) if ledger.exists() else set()
+    rows, records = [], []
+    for path in sorted((directory / "remote_setup").glob("*/submission_receipt.json")):
+        packet = path.parent
+        namespace = packet.name.replace("-", " ").replace("_", " ").lower()
+        recognized = (packet.parent == directory / "remote_setup" and not packet.is_symlink()
+                      and packet.resolve().parent == directory / "remote_setup"
+                      and "aces" in namespace.split() and "allocation observation" in namespace)
+        if not recognized:
+            continue
+        receipt_error = None
+        try:
+            receipt = read_json(path)
+        except (OSError, ValueError) as error:
+            receipt, receipt_error = {}, "ACES submission receipt cannot be read: " + str(error)
+        if not isinstance(receipt, dict) or receipt.get("kind") != "owned_aces_allocation_observation_submission":
+            receipt, receipt_error = {}, receipt_error or "ACES submission receipt has an invalid object shape or kind"
+        row = {"kind": "allocation_observation", "cluster": "aces", "run": "ACES allocation observation",
+               "pool": "ACES gpu/u.sl359075", "gpu": ["H100"], "state": "unknown", "slurm_job_id": receipt.get("job_id", ""),
+               "progress": "current remote status requires observation", "metadata_collected": False,
+               "qualification_verified": False, "mapping_accepted": False, "compatibility_verified": False,
+               "workers_permitted": False, "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+        # An invalid foreign receipt must never route its named metadata shard into UVA job suppression.
+        row["data_unit_name"] = packet.name
+        record = {"packet": str(packet)}
+        try:
+            if receipt_error:
+                raise ValueError(receipt_error)
+            identifier, plan, unit, remote_run, boundary = aces_observation_packet(directory, packet, receipt, identifiers)
+            row["data_unit_name"] = unit.name
+            row["pool"] = "ACES " + plan["job_shape"]["partition"] + "/u.sl359075"
+            snapshot, queued, accounting = aces_observation_snapshot(directory, packet, receipt, remote_run, identifier)
+            record["snapshot_sha256"] = hashlib.sha256((packet / "remote_monitor_snapshot.json").read_bytes()).hexdigest()
+            row["observed_at_utc"] = snapshot["observed_at_utc"]
+            mirrored = snapshot.get("mirrored_files", {})
+            result_key, failure_key = str(Path("data") / unit.name / "result.json"), str(Path("data") / unit.name / "failure.json")
+            if queued:
+                _, _, state, node, reason = queued
+                if state in {"RUNNING", "COMPLETING", "CONFIGURING"}:
+                    row["observed_host"] = node
+                row.update(state="held" if reason == "JobHeldUser" else "waiting" if state == "PENDING" else "running"
+                           if state in {"RUNNING", "COMPLETING", "CONFIGURING"} else "unknown", progress=reason or state)
+            elif accounting:
+                _, _, state, exit_code, node = accounting
+                state = state.split()[0].removesuffix("+")
+                row["observed_host"] = node
+                terminal = {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}
+                if state not in terminal:
+                    raise ValueError("ACES job is absent from queue but accounting is not terminal: " + state)
+                if result_key in mirrored and state == "COMPLETED" and exit_code == "0:0":
+                    result = read_json(unit / "result.json")
+                    observations_key = str(Path("data") / unit.name / "hardware_observations.json")
+                    if (result.get("kind") != "aces_allocation_observation_result" or type(result.get("schema_version")) is not int
+                            or result["schema_version"] != 1
+                            or result.get("cluster") != "aces" or result.get("job_id") != identifier
+                            or result.get("data_unit") != plan["data_unit"]
+                            or result.get("plan") != {"path": str(remote_run / "remote_setup" / packet.name / "allocation_observation_plan.json"),
+                                                       "sha256": receipt["plan_sha256"]}
+                            or result.get("passed") is not True or result.get("observations_completed") is not True
+                            or any(type(result.get(key)) is not type(value) or result.get(key) != value for key, value in boundary.items())
+                            or observations_key not in mirrored
+                            or result.get("observations") != {"path": str(remote_run / observations_key), "sha256": mirrored[observations_key]["sha256"]}):
+                        raise ValueError("ACES collection result differs from its raw observation bytes or zero-credit boundary")
+                    observations = read_json(unit / "hardware_observations.json")
+                    owned_key = str(Path("data") / unit.name / "owned_allocation.json")
+                    if (type(observations.get("schema_version")) is not int or observations["schema_version"] != 1
+                            or observations.get("kind") != "aces_allocation_hardware_observations" or observations.get("cluster") != "aces"
+                            or observations.get("job_id") != identifier or observations.get("plan") != result["plan"]
+                            or observations.get("step_id") != result.get("step_id") or owned_key not in mirrored
+                            or observations.get("owned_allocation") != {"path": str(remote_run / owned_key), "sha256": mirrored[owned_key]["sha256"]}):
+                        raise ValueError("ACES observations must bind their exact job, step, plan and owned allocation")
+                    owned = read_json(unit / "owned_allocation.json")
+                    if (type(owned.get("schema_version")) is not int or owned["schema_version"] != 1
+                            or owned.get("kind") != "aces_owned_allocation" or owned.get("cluster") != "aces"
+                            or owned.get("job_id") != identifier or owned.get("step_id") != result.get("step_id")
+                            or type(owned.get("uid")) is not int or owned.get("uid") != plan["owner"]["uid"] or owned.get("hostname") != node
+                            or any(type(owned.get(key)) is not type(value) or owned.get(key) != value for key, value in boundary.items())
+                            or any(type(observations.get(key)) is not type(value) or observations.get(key) != value for key, value in boundary.items())):
+                        raise ValueError("ACES raw collection belongs to another owner, node, job or admission boundary")
+                    row.update(state="completed", display_state="COLLECTED", metadata_collected=True,
+                               progress="metadata collected; qualification required; zero case and idea credit")
+                elif failure_key in mirrored:
+                    failure = read_json(unit / "failure.json")
+                    row.update(state="failed", progress="collection failed: " + str(failure.get("error", "inspect raw failure")))
+                else:
+                    row.update(state="failed", progress="job ended " + state + "; exit " + exit_code + "; no completed collection")
+            else:
+                raise ValueError("ACES exact job has no current queue or accounting row")
+            displayed = datetime.fromisoformat(snapshot["observed_at_utc"].replace("Z", "+00:00")).astimezone(
+                ZoneInfo("America/Los_Angeles")).strftime("%m-%d %H:%M PT")
+            row["progress"] += "; observed " + displayed
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+            row.update(state="unknown", progress="remote status unknown: " + str(error))
+        rows.append(row)
+        records.append({**record, "row": row})
+    return rows, records
+
+
 def tick(directory):
     """Write a combined report, preserving distinctions between active and planned work."""
     directory = directory.resolve()
@@ -511,9 +745,10 @@ def tick(directory):
     final_training = advance_final_training(directory, controller_state=controller_state, controller_error=controller_error)
     jobs = own_jobs(directory)
     sites, site_jobs, site_status = site_validation_rows(directory, jobs)
-    excluded_units = {row["data_unit_name"] for row in sites if row.get("data_unit_name")}
+    aces_rows, aces_status = aces_allocation_observation_rows(directory)
+    excluded_units = {row["data_unit_name"] for row in sites + aces_rows if row.get("data_unit_name")}
     units = unit_rows(directory, excluded_unit_names=excluded_units)
-    display_units = units + sites
+    display_units = units + sites + aces_rows
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
     rows.append("TRAINING")
@@ -525,6 +760,8 @@ def tick(directory):
             names[identifier] = kind
     observed_jobs = set()
     for path in (directory / "data").glob("*/hardware.json"):
+        if path.parent.name in excluded_units:
+            continue
         hardware = read_json(path)
         observed_jobs.add(hardware.get("slurm_job_id", ""))
     observed_jobs.update(unit.get("slurm_job_id", "") for unit in units)
@@ -588,6 +825,8 @@ def tick(directory):
                           f"{counts.get('pending', 0)} awaiting current runs"))
     rows.append(table_row("next study phase", "study", "H100 / A4500", "PLANNED",
                           campaign.get("next_action", campaign["phase"]).replace("_", " ")))
+    for index, unit in enumerate((row for row in aces_rows if row["state"] == "unknown"), 1):
+        rows.extend(textwrap.wrap(str(index) + ". " + unit["run"] + ": UNKNOWN; " + unit["progress"], width=100))
     # Mark the end of the complete study only after the controller verifies every stage.
     text = "\n".join(rows) + "\n"
     print(text, flush=True)
@@ -595,7 +834,8 @@ def tick(directory):
     (reports / "latest_report.md").write_text(report)
     (reports / "latest_status.json").write_text(json.dumps({
         "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training,
-        "site_validation": site_status, "allocation_observations": site_status["allocation_observations"]}, indent=2) + "\n")
+        "site_validation": site_status, "allocation_observations": site_status["allocation_observations"],
+        "aces_allocation_observations": aces_status}, indent=2) + "\n")
     return (directory / "STUDY_COMPLETE").exists()
 
 
