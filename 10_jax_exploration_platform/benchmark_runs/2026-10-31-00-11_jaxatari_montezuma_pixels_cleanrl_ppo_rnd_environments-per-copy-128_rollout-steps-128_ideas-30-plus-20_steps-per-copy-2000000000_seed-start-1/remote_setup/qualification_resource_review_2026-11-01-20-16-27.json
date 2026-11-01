@@ -1,0 +1,91 @@
+{
+  "kind": "owned_uva_qualification_resource_review",
+  "at_utc": "2026-11-01T20:16:27.641000+00:00",
+  "timezone": "UTC",
+  "queries": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "node",
+        "jaguar03",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "NodeName=jaguar03 Arch=x86_64 CoresPerSocket=56  CPUAlloc=4 CPUEfctv=222 CPUTot=224 CPULoad=0.40 AvailableFeatures=a4500,amd_epyc_7663 ActiveFeatures=a4500,amd_epyc_7663 Gres=gpu:nvidia_rtx_a4500:8(S:0-1) NodeAddr=jaguar03 NodeHostName=jaguar03 Version=23.11.6 OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025  RealMemory=1024000 AllocMem=32768 FreeMem=954712 Sockets=2 Boards=1 CoreSpecCount=1 CPUSpecList=222-223 MemSpecLimit=4000 State=MIXED+RESERVED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=gpu  BootTime=2026-10-26T18:35:24 SlurmdStartTime=2026-10-26T18:37:45 LastBusyTime=2026-11-01T20:14:39 ResumeAfterTime=None CfgTRES=cpu=222,mem=1000G,billing=153838,gres/gpu=8 AllocTRES=cpu=4,mem=32G CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a ReservationName=sl5nw_168\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "PartitionName=gpu AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=cspartgpu DefaultTime=02:00:00 DisableRootJobs=YES ExclusiveUser=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=adriatic[01-06],affogato[11,13-15],ai[01-04,06],cheetah[01-04,08-09],jaguar[01-03,05-06],lotus,lynx[01-07,10],nekomata[01-02],serval[03,06-09] PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=2144 TotalNodes=42 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=256 MaxMemPerNode=UNLIMITED TRES=cpu=2058,mem=22318000M,node=42,billing=3350078,gres/gpu=160 TRESBillingWeights=CPU=1.0,Mem=0.15,GRES/gpu=2.0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "reservation",
+        "sl5nw_168",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "ReservationName=sl5nw_168 StartTime=2026-10-20T13:39:06 EndTime=2026-11-04T04:59:59 Duration=14-15:20:53 Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES TRES=cpu=384 Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sacctmgr",
+        "-n",
+        "-P",
+        "show",
+        "assoc",
+        "where",
+        "user=sl5nw",
+        "account=sl5nw_base",
+        "format=Cluster,Account,User,Partition,QOS,DefaultQOS"
+      ],
+      "returncode": 0,
+      "stdout": "cs|sl5nw_base|sl5nw||csresnolim,normal|\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sacctmgr",
+        "-n",
+        "-P",
+        "show",
+        "qos",
+        "where",
+        "name=csresnolim,cspartgpu",
+        "format=Name,Flags,MaxWall,MaxTRESPU,MaxTRES,MinTRES,MaxJobsPU,MaxSubmitPU"
+      ],
+      "returncode": 0,
+      "stdout": "cspartgpu|DenyOnLimit||cpu=400,gres/gpu=40,mem=4T||||\ncsresnolim|OverPartQOS,RequiresReservation||cpu=16384,gres/gpu=1024,mem=1P|||65536|\n",
+      "stderr": ""
+    }
+  ],
+  "job_queries": 0,
+  "all_user_queues_queried": false,
+  "gpu_operations": 0,
+  "ssh_actions": 0,
+  "submission_or_admission": false,
+  "proposed_shape": {
+    "gpu": "nvidia_rtx_a4500",
+    "gpu_count": 1,
+    "cpus": 8,
+    "host_memory_gib": 64,
+    "time_limit_hours": 3,
+    "node": "jaguar03",
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim",
+    "reservation": "sl5nw_168"
+  }
+}

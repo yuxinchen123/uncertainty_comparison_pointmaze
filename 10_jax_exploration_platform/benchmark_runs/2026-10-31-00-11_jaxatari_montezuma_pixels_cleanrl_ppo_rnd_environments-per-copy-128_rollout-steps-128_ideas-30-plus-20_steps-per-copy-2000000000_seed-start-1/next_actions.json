@@ -218,8 +218,8 @@
     "session_cron_id": "bb5f4f5f-7595-434c-9a35-003c560d28b8",
     "contains_reviewed_checkpoint_and_deadline_fixes": true,
     "future_adaptive_source_qualification_still_required": true,
-    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-20-00_verification.json",
-    "last_verified_at_utc": "2026-11-01T20:02:40.916965+00:00",
+    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-20-22_verification.json",
+    "last_verified_at_utc": "2026-11-01T20:22:50.618244+00:00",
     "display_correction": {
       "source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
       "published": true,
@@ -1155,7 +1155,7 @@
     "core_state": "independently_reviewed_merged_pushed_exact_tree",
     "producer_worktree": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity",
     "producer_branch": "implement-selected-configured-isolation-2026-11-01",
-    "producer_state": "full_renderer_scope_and_boolean_capture_narrow_correction_pending",
+    "producer_state": "final_source_independently_approved_author_commit_pending",
     "no_gpu_packet_or_job": true,
     "target_qualification_accounting": "Exact controlled full-original warmup/reference work plus complete per-test execution/outcomes; unquantified test-fixture work marked explicitly. Never claim unknown work is zero or assert an unknown whole-job transition total.",
     "core_source_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
@@ -1182,7 +1182,7 @@
     "producer_broad_step": "6781231.40",
     "producer_local_copy_rerun_passed_cases": 3,
     "producer_local_copy_rerun_step": "6781231.41",
-    "producer_final_source_freeze_sha256": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011",
+    "producer_final_source_freeze_sha256": "8398f24bfe62254523d84d5187fc3c5b1c52d7aa73b8b9b5600778ac349e4523",
     "target_qualification_reference_inputs": {
       "reference_packet_plan": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-38_h100-nvl_shared-driver-image-capture_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
       "reference_packet_plan_sha256": "5c61bac04fb86d1abfb2f7e2cf8724ba09f1db2d9b2f9275d2fa7ddc8f4a7225",
@@ -1212,7 +1212,7 @@
       "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
       "meaning": "Reference inputs only. Raw validation/preparation on owned compute and new actual target evidence still required."
     },
-    "producer_source_approved": false,
+    "producer_source_approved": true,
     "producer_initial_independent_step": "6781231.43",
     "producer_initial_independent_findings": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_producer_independent_findings_corrected_6781231_43.json",
     "producer_initial_independent_findings_sha256": "49d4bec4fa55d9bbabb34077f054e01ea4d70d9144fe2ce26801fb8a55100979",
@@ -1225,7 +1225,12 @@
     "producer_remaining_scope_review_sha256": "f6def2057a2ad1e98a50b7410ba158bb1b6eda56ea4853926c43e3866dd40351",
     "producer_required_renderer_rooms": 33,
     "producer_required_renderer_variants": 132,
-    "producer_required_renderer_synthetic_cases": 11
+    "producer_required_renderer_synthetic_cases": 11,
+    "producer_final_independent_checks": 51,
+    "producer_final_independent_step": "6781231.58",
+    "producer_final_independent_review": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_selected_profile_final_independent_review_6781231_58.json",
+    "producer_final_independent_review_sha256": "d1c92729e50f0f2b1c4ade634a2ca4d71a58a5597d0d7c1022ea6d6fb56c2cd3",
+    "producer_actual_target_qualification": false
   },
   "direct_serval02_observer_preparation": {
     "state": "isolated_core_implementation_first_test_corrections_pending",
@@ -1253,5 +1258,13 @@
     "first_author_total": 18,
     "first_author_receipt_sha256": "a204c6dfd31f8d818047230dd888d0f678667e0405b562a198a66cd88798a9a1",
     "first_source_and_test_bytes_archived": true
+  },
+  "current_initial_numerical_child": {
+    "pid": 1108742,
+    "birth": "52458150",
+    "supervisor_pid": 3567981,
+    "supervisor_birth": "41082317",
+    "unit": "idea-position-30__combine_running_statistic_reductions__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af",
+    "authority": "actual current queue/leases entry; recheck changing facts before any process action"
   }
 }

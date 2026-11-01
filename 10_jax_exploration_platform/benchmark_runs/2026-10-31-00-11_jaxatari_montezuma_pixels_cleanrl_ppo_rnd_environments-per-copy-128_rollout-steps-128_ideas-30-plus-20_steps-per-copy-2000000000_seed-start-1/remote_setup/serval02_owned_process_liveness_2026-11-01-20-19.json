@@ -1,0 +1,17 @@
+{
+  "kind": "owned_serval02_liveness_command_return",
+  "at_utc": "2026-11-01T20:19:25.536086+00:00",
+  "command": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=10",
+    "serval02",
+    "/usr/bin/python3 -B -c 'import pathlib,os,json,time,datetime\ndef snap(pid,known=None):\n p=pathlib.Path('\\''/proc'\\'')/str(pid);s=(p/'\\''status'\\'').read_text();u=next(x.split()[1:] for x in s.splitlines() if x.startswith('\\''Uid:'\\''))\n if u!=['\\''2618919'\\'']*4:raise RuntimeError('\\''recorded own process UID changed'\\'')\n raw=(p/'\\''stat'\\'').read_text();v=raw[raw.rfind('\\'')'\\'')+2:].split()\n if known is not None and v[19]!=known:raise RuntimeError('\\''recorded process birth changed'\\'')\n d={'\\''pid'\\'':pid,'\\''birth'\\'':v[19],'\\''parent_pid'\\'':int(v[1]),'\\''uid_fields'\\'':u,'\\''cpu_ticks'\\'':int(v[11])+int(v[12]),'\\''state'\\'':v[0],'\\''cwd'\\'':os.readlink(p/'\\''cwd'\\''),'\\''command'\\'':(p/'\\''cmdline'\\'').read_bytes().decode().split(chr(0))[:-1],'\\''io'\\'':(p/'\\''io'\\'').read_text()}\n if pid==3567981:d.update(lock_path=os.readlink(p/'\\''fd/4'\\''),lock_fdinfo=(p/'\\''fdinfo/4'\\'').read_text())\n else:d['\\''selected_environment'\\'']={x.split('\\''='\\'',1)[0]:x.split('\\''='\\'',1)[1] for x in (p/'\\''environ'\\'').read_bytes().decode().split(chr(0)) if x.startswith('\\''CUDA_VISIBLE_DEVICES='\\'')}\n return d\nout={'\\''kind'\\'':'\\''own_serval02_cpu_liveness_observation'\\'','\\''started_utc'\\'':datetime.datetime.now(datetime.timezone.utc).isoformat(),'\\''gpu_queries'\\'':0,'\\''signals'\\'':0,'\\''framework_imports'\\'':0}\ntry:\n out['\\''before'\\'']=[snap(3567981,'\\''41082317'\\''),snap(1095980)]\n if out['\\''before'\\''][1]['\\''parent_pid'\\'']!=3567981:raise RuntimeError('\\''current child parent differs'\\'')\n if out['\\''before'\\''][1]['\\''selected_environment'\\''].get('\\''CUDA_VISIBLE_DEVICES'\\'')!='\\''GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3'\\'':raise RuntimeError('\\''current child UUID selector changed'\\'')\n time.sleep(10)\n out['\\''after'\\'']=[snap(x['\\''pid'\\''],x['\\''birth'\\'']) for x in out['\\''before'\\'']]\n out['\\''child_cpu_ticks_delta'\\'']=out['\\''after'\\''][1]['\\''cpu_ticks'\\'']-out['\\''before'\\''][1]['\\''cpu_ticks'\\'']\n out['\\''clock_ticks_per_second'\\'']=os.sysconf('\\''SC_CLK_TCK'\\'')\n out['\\''passed'\\'']=True\nexcept Exception as error:out['\\''error'\\'']={'\\''type'\\'':type(error).__name__,'\\''message'\\'':str(error)};out['\\''passed'\\'']=False\nout['\\''finished_utc'\\'']=datetime.datetime.now(datetime.timezone.utc).isoformat()\nprint(json.dumps(out))\n'"
+  ],
+  "returncode": 0,
+  "stdout": "{\"kind\": \"own_serval02_cpu_liveness_observation\", \"started_utc\": \"2026-11-01T20:19:25.523665+00:00\", \"gpu_queries\": 0, \"signals\": 0, \"framework_imports\": 0, \"error\": {\"type\": \"FileNotFoundError\", \"message\": \"[Errno 2] No such file or directory: '/proc/1095980/status'\"}, \"passed\": false, \"finished_utc\": \"2026-11-01T20:19:25.524245+00:00\"}\n",
+  "stderr": "/u/sl5nw/.bashrc: line 55: conda: command not found\n",
+  "automatic_retry_permitted": false
+}
