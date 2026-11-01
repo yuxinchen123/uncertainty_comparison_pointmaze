@@ -97,10 +97,12 @@ def select_maps(records):
             geometry = record['specification']['geometry']
             identity = (geometry['width'], geometry['turns'])
             policy = record['specification']['policy_kind']
-            best = best_setting(record)
+            reliable = [row for row in record['settings'] if row['goal_fraction'] >= .75]
+            if not reliable:
+                continue
+            best = min(reliable, key=setting_rank)
             previous = scores.setdefault(identity, {}).get(policy)
-            if previous is None or (-best['goal_fraction'], best['capped_mean_first_goal_steps']) < (
-                    -previous['goal_fraction'], previous['capped_mean_first_goal_steps']):
+            if previous is None or setting_rank(best) < setting_rank(previous):
                 scores[identity][policy] = best
         eligible = [(identity, list(values.values())) for identity, values in scores.items()
                     if set(values) == {'tabular', 'neural'}
@@ -122,9 +124,14 @@ def add_field_search(run_dir, maps):
                       coarse_settings(), budget=1048576)
 
 
+def setting_rank(row):
+    """Rank the primary capped mean first, using discovery frequency only to break ties."""
+    return row['capped_mean_first_goal_steps'], -row['goal_fraction']
+
+
 def best_setting(record):
-    """Choose a successful setting before comparing its discovery time."""
-    return min(record['settings'], key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))
+    """Choose the smallest capped mean without conditioning on successful discovery."""
+    return min(record['settings'], key=setting_rank)
 
 
 def choose_comparisons(records):
@@ -143,9 +150,10 @@ def choose_comparisons(records):
                        and item['specification']['total_timesteps'] == spec['total_timesteps']]
             if not uniform:
                 continue
-            control = min((best_setting(item) for item in uniform), key=lambda row: row['capped_mean_first_goal_steps'])
-            if control['goal_fraction'] < .75:
+            reliable = [row for item in uniform for row in item['settings'] if row['goal_fraction'] >= .75]
+            if not reliable:
                 continue
+            control = min(reliable, key=setting_rank)
             impaired = best_setting(record)
             ratio = impaired['capped_mean_first_goal_steps'] / max(control['capped_mean_first_goal_steps'], 1)
             candidates.append((ratio, record))
@@ -212,9 +220,10 @@ def add_confirmation(run_dir, comparisons, tuning, extended=False):
                    (record['specification']['field_kind'], record['specification']['severity_exponent']) in allowed
                    and record['specification'].get('variant', 'primary') in {'primary', 'rollout-64', 'rollout-256'}]
         uniform = [record for record in matched if record['specification']['field_kind'] == 'uniform']
-        if not uniform or max(best_setting(record)['goal_fraction'] for record in uniform) < .75:
+        reliable = [row for item in uniform for row in item['settings'] if row['goal_fraction'] >= .75]
+        if not reliable:
             continue
-        shared = min((row for item in uniform for row in item['settings']), key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))['configuration']
+        shared = min(reliable, key=setting_rank)['configuration']
         seen = set()
         for record in matched:
             candidate = record['specification']
@@ -223,7 +232,7 @@ def add_confirmation(run_dir, comparisons, tuning, extended=False):
                 continue
             seen.add(identity)
             same_field = [row for item in matched if item['specification']['field_kind'] == identity[0] and item['specification']['severity_exponent'] == identity[1] for row in item['settings']]
-            tuned = min(same_field, key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))['configuration']
+            tuned = min(same_field, key=setting_rank)['configuration']
             configurations = [dict(shared, comparison='shared'), dict(tuned, comparison='independently-tuned')]
             groups = {}
             for configuration in configurations:
