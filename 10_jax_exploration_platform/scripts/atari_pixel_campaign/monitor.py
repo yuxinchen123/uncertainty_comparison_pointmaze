@@ -608,7 +608,8 @@ def aces_observation_snapshot(directory, packet, receipt, remote_run, identifier
         if len(rows) > 1 or any(len(row) != count or row[:2] != [identifier, "u.sl359075"] for row in rows):
             raise ValueError("ACES scheduler snapshot contains duplicate, foreign or mismatched rows")
         parsed.append(rows[0] if rows else None)
-    if expected["release_receipt_sha256"] is None and (not parsed[0] or parsed[0][2] != "PENDING" or parsed[0][4] != "JobHeldUser"):
+    if expected["release_receipt_sha256"] is None and (not parsed[0] or parsed[0][2] != "PENDING"
+            or parsed[0][4] not in {"JobHeldUser", "(JobHeldUser)"}):
         raise ValueError("an unreleased ACES observation requires an actual current JobHeldUser row")
     # Each transported file retains its original remote path and exact unchanged bytes.
     names = {"progress.json", "hardware.json", "owned_allocation.json", "hardware_observations.json",
@@ -667,7 +668,7 @@ def aces_allocation_observation_rows(directory):
                 _, _, state, node, reason = queued
                 if state in {"RUNNING", "COMPLETING", "CONFIGURING"}:
                     row["observed_host"] = node
-                row.update(state="held" if reason == "JobHeldUser" else "waiting" if state == "PENDING" else "running"
+                row.update(state="held" if reason in {"JobHeldUser", "(JobHeldUser)"} else "waiting" if state == "PENDING" else "running"
                            if state in {"RUNNING", "COMPLETING", "CONFIGURING"} else "unknown", progress=reason or state)
             elif accounting:
                 _, _, state, exit_code, node = accounting

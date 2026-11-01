@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "owned_aces_allocation_observation_submission",
+  "cluster": "aces",
+  "job_id": "2274380",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=158590754315",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--gres=gpu:h100:1",
+    "--cpus-per-task=8",
+    "--mem=32G",
+    "--time=00:05:00",
+    "--job-name=ACES_H100_allocation_observation",
+    "--output=/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/aces_allocation_observation_%j.log",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/job.sbatch"
+  ],
+  "submission_row": [
+    "2274380",
+    "2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+    "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+  ],
+  "ledger_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt",
+  "data_unit": {
+    "name": "2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f"
+  },
+  "plan_sha256": "aa8c3f57c8b6dd42f2973c33a343fce6bc4cbb1c4bdb90007152a810bcc0b0d6",
+  "manifest_sha256": "316e9b3da44200f098179bb2bb645bcb1fb7f59be167b3d78665151c71ac65bd",
+  "job_script_sha256": "a4e52191f1f7380b3ebb6b0227ef56b9271a6194375aff23aa01eb80c96af7b9",
+  "submitted_at_utc": "2026-11-01T06:29:12.996736+00:00",
+  "published_preparation_commit": "391f99a4c3e029d85c6a01ed19345574d1f0c32d",
+  "stdout": "2274380\n",
+  "stderr": "sbatch: Job submitted using account 158590754315\nsbatch: Current account balance = 89359.591667\n",
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

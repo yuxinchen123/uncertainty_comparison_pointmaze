@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "independent_aces_parenthesized_held_reason_review",
+  "job_step": "6779550.39",
+  "host": "slurm5",
+  "reviewed_at_utc": "2026-11-01T06:32:03.506538+00:00",
+  "test_count": 13,
+  "successful": true,
+  "source_sha256": "686fb6123a05ed42e45ec8adfc45883789c11e26b10780b8ceb4b4bb7def92ae",
+  "test_sha256": "88416c3b5c0bd8e84fe7af69861ead61d308c0beb2d16daf98815321f2af4d21",
+  "actual_owned_aces_job_id": "2274380",
+  "actual_row": {
+    "kind": "allocation_observation",
+    "cluster": "aces",
+    "run": "ACES allocation observation",
+    "pool": "ACES gpu/u.sl359075",
+    "gpu": [
+      "H100"
+    ],
+    "state": "held",
+    "slurm_job_id": "2274380",
+    "progress": "(JobHeldUser); observed 10-31 23:29 PT",
+    "metadata_collected": false,
+    "qualification_verified": false,
+    "mapping_accepted": false,
+    "compatibility_verified": false,
+    "workers_permitted": false,
+    "campaign_claims_permitted": false,
+    "scientific_hypothesis_credit": 0,
+    "data_unit_name": "2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+    "observed_at_utc": "2026-11-01T06:29:32.845490+00:00"
+  },
+  "actual_snapshot_sha256": "d4bcb53a81f7f30de241ffea86cf2a6e96211ce48f11743a6182407d52f13baa",
+  "raw_squeue_stdout": "2274380|u.sl359075|PENDING||(JobHeldUser)\n",
+  "raw_snapshot_modified": false,
+  "correction_scope": "Only exact bare or single-parenthesized JobHeldUser accepted; other wrapping rejected",
+  "ssh_commands": 0,
+  "job_actions": 0,
+  "numerical_imports": false,
+  "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_parenthesized_reason_independent_review_6779550_39.log",
+  "output_sha256": "34233263f20496d8ca5f85489f40b05df65a1cf3e5e2ec2afc6854bbcb45c34e"
+}

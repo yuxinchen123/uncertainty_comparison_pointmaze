@@ -1,0 +1,32 @@
+{
+  "kind": "independent_actual_aces_parenthesized_held_reason_review",
+  "checked_utc": "2026-11-01T06:32:10.682337+00:00",
+  "step_id": "6779550.40",
+  "host": "slurm5",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_monitor_aces_allocation_observation.ACESObservationMonitorTests.test_actual_parenthesized_held_reason_retains_raw_bytes_and_rejects_other_wrapping",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_actual_parenthesized_held_reason_retains_raw_bytes_and_rejects_other_wrapping (test_monitor_aces_allocation_observation.ACESObservationMonitorTests)\nAccept the actual ACES JobHeldUser row without stripping arbitrary parentheses or changing raw output. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.019s\n\nOK\n",
+  "reviewed_source_sha256": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "686fb6123a05ed42e45ec8adfc45883789c11e26b10780b8ceb4b4bb7def92ae",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_aces_allocation_observation.py": "88416c3b5c0bd8e84fe7af69861ead61d308c0beb2d16daf98815321f2af4d21"
+  },
+  "actual_snapshot": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/remote_monitor_snapshot.json",
+    "sha256": "d4bcb53a81f7f30de241ffea86cf2a6e96211ce48f11743a6182407d52f13baa"
+  },
+  "actual_owned_job_id": "2274380",
+  "actual_adapter_state": "held",
+  "raw_snapshot_bytes_unchanged": true,
+  "source_11ce_accounting_argv_already_matches_User64": true,
+  "full_candidate_tick_executed": false,
+  "new_job_submitted": false,
+  "observer_released": false
+}

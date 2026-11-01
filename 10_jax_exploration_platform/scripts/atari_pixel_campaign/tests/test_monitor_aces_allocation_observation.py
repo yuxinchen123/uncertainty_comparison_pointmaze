@@ -38,7 +38,7 @@ class ACESObservationMonitorTests(unittest.TestCase):
         self.unit = self.root / "data" / self.packet.name
         self.remote = Path("/scratch/user/u.sl359075/rnd_atari_pixels/runs") / self.root.name
         self.remote_packet = self.remote / "remote_setup" / self.packet.name
-        self.commit, self.identifier = "a" * 40, "123"
+        self.commit, self.identifier = "a" * 40, "2274380"
         self.plan = {"schema_version": 1, "kind": "aces_allocation_observation", "cluster": "aces",
             "campaign_run_dir": str(self.remote), "data_unit": {"path": str(self.remote / "data" / self.unit.name), "name": self.unit.name},
             "helpers": {"source_commit": self.commit}, "owner": {"username": "u.sl359075", "uid": 1001},
@@ -145,6 +145,22 @@ class ACESObservationMonitorTests(unittest.TestCase):
         self.assertEqual(self.rows()[0][0]["state"], "unknown")
         self.make_snapshot(queue_state="RUNNING")
         self.assertEqual(self.rows()[0][0]["state"], "unknown")
+
+    def test_actual_parenthesized_held_reason_retains_raw_bytes_and_rejects_other_wrapping(self):
+        """Accept the actual ACES JobHeldUser row without stripping arbitrary parentheses or changing raw output."""
+        (self.packet / "release_receipt.json").unlink()
+        self.make_snapshot(reason="(JobHeldUser)")
+        actual = "2274380|u.sl359075|PENDING||(JobHeldUser)\n"
+        self.snapshot["squeue"]["stdout"] = actual
+        self.save_snapshot()
+        row = self.rows()[0][0]
+        self.assertEqual(row["state"], "held")
+        self.assertEqual(json.loads((self.packet / "remote_monitor_snapshot.json").read_text())["squeue"]["stdout"], actual)
+        for reason in ("((JobHeldUser))", "(JobHeldUser", "JobHeldUser)", "(Priority)", "(another reason)"):
+            self.snapshot["squeue"]["stdout"] = "2274380|u.sl359075|PENDING||" + reason + "\n"
+            self.save_snapshot()
+            with self.subTest(reason=reason):
+                self.assertEqual(self.rows()[0][0]["state"], "unknown")
 
     def test_running_all_hardware_rows_do_not_infer_two_allocated_gpus_or_pcie(self):
         """Multiple observed UUID rows remain hardware metadata, never an allocated-card count."""
