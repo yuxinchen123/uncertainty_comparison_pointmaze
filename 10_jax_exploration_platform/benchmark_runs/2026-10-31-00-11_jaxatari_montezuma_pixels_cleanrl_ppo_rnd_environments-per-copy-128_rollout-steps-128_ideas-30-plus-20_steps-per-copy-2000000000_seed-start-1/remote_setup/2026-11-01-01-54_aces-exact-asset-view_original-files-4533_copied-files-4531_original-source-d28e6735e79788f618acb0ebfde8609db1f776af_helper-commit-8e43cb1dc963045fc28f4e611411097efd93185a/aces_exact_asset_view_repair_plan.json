@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "aces_exact_asset_view_native_preparation_plan",
+  "original_staging_plan": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_full_site_native_staging_plan.json",
+    "sha256": "30892127adbc487f157dcb36d89e79635041278b09ca746d7b9e7139d9cb9d8f"
+  },
+  "base_driver": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+    "sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a"
+  },
+  "asset_observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_asset_roster_observation_2026-11-01-09-39-43.json",
+    "sha256": "62706387149a3cf1718caab9ea76f6ba75e5561fa3fb883ee0486e7f3545bc69"
+  },
+  "failed_execution": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-36_aces-native-preparation_helper-commit-8e43cb1dc963045fc28f4e611411097efd93185a_input-files-13_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/stdout.raw",
+    "sha256": "ddfff580d00d98d09a79d8913d9f4a96537d690e990bbf7e3a881478129fe7e1"
+  },
+  "repair_directory": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-43_aces-exact-asset-view_expected-files-4531_source-04ab9aec318c_manifest-049004b3b7e2",
+  "asset_view": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-43_aces-exact-asset-view_expected-files-4531_source-04ab9aec318c_manifest-049004b3b7e2/asset_view",
+  "asset_record": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-43_aces-exact-asset-view_expected-files-4531_source-04ab9aec318c_manifest-049004b3b7e2/asset_record.json",
+  "expected_manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+  "expected_file_count": 4531,
+  "original_asset_count": 4533,
+  "excluded_operational_files": [
+    "asset_verification.log",
+    "assets_tree.sha256"
+  ],
+  "new_packet_name": "2026-11-01-01-43_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "native_packet_directory": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-43_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "native_data_unit": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-01-43_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "source_helper_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "copied_asset_bytes_must_match_original_manifest": true,
+  "reuse_existing_verified_inputs_and_clones": true,
+  "rerun_original_driver": false,
+  "numeric_code_permitted": false,
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "kind": "aces_exact_asset_view_repair_independent_review",
+  "at_utc": "2026-11-01T09:53:41.761998+00:00",
+  "passed": true,
+  "files_before": {
+    "prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/prepare_aces_exact_asset_view.py",
+      "sha256": "8e8e784b66b16d06daa48f7bbc57d5fbdff50b950f1b7ad942713213ba63aa8d",
+      "bytes": 25877
+    },
+    "test_prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_prepare_aces_exact_asset_view.py",
+      "sha256": "4ed7c5ec19d7f151bfea92440e934359fd7676302ea8fe776eaa58ef2782f33f",
+      "bytes": 11091
+    },
+    "aces_exact_asset_view_repair_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_repair_plan.json",
+      "sha256": "cb3185e5cbedacb31a8aebc801f78a69112c91591588a5582c59fd3d3a65756c",
+      "bytes": 4190
+    },
+    "aces_exact_asset_view_expected_asset_record.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_expected_asset_record.json",
+      "sha256": "64bd649cac39eaf93c9cf27db272a243a2ffbc5773093c3276a6257c166fe3bb",
+      "bytes": 446
+    },
+    "stage_aces_full_site_inputs.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+      "sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+      "bytes": 29177
+    }
+  },
+  "files_after": {
+    "prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/prepare_aces_exact_asset_view.py",
+      "sha256": "8e8e784b66b16d06daa48f7bbc57d5fbdff50b950f1b7ad942713213ba63aa8d",
+      "bytes": 25877
+    },
+    "test_prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_prepare_aces_exact_asset_view.py",
+      "sha256": "4ed7c5ec19d7f151bfea92440e934359fd7676302ea8fe776eaa58ef2782f33f",
+      "bytes": 11091
+    },
+    "aces_exact_asset_view_repair_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_repair_plan.json",
+      "sha256": "cb3185e5cbedacb31a8aebc801f78a69112c91591588a5582c59fd3d3a65756c",
+      "bytes": 4190
+    },
+    "aces_exact_asset_view_expected_asset_record.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_expected_asset_record.json",
+      "sha256": "64bd649cac39eaf93c9cf27db272a243a2ffbc5773093c3276a6257c166fe3bb",
+      "bytes": 446
+    },
+    "stage_aces_full_site_inputs.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+      "sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+      "bytes": 29177
+    }
+  },
+  "tests": {
+    "cases": 10,
+    "passed": true,
+    "seconds": 2.5383471170207486,
+    "stdout": "test_bootstrap_hash_is_checked_before_remote_function_can_execute (independent_exact_asset_tests.AssetViewTests)\nThe small metadata wrapper accepts only the exact supplied reviewed source hash. ... ok\ntest_changed_missing_or_linked_source_asset_cannot_prepare_a_view (independent_exact_asset_tests.AssetViewTests)\nA source mismatch, missing file or symlink stops the copy without changing original bytes. ... ok\ntest_changed_plan_or_source_or_observation_never_starts_network (independent_exact_asset_tests.AssetViewTests)\nA foreign repair plan or edited observed input fails before any SSH process is possible. ... ok\ntest_effective_command_changes_only_asset_record_and_new_packet_path (independent_exact_asset_tests.AssetViewTests)\nEvery original source/config/runtime input remains identical in the new prepare command. ... ok\ntest_exact_returned_metadata_binds_all_packet_and_repair_bytes (independent_exact_asset_tests.AssetViewTests)\nA complete zero-job repair stream is saved under only the exact expected local mirror paths. ... ok\ntest_existing_view_is_preserved_and_wrong_hash_cannot_be_relaxed (independent_exact_asset_tests.AssetViewTests)\nExisting destinations remain untouched and a revised expected hash is never inferred. ... ok\ntest_fresh_view_copies_only_expected_bytes_into_distinct_physical_files (independent_exact_asset_tests.AssetViewTests)\nExact new files share neither inodes nor links with any original, and logs remain outside the view. ... ok\ntest_real_local_frozen_inputs_and_observation_have_exact_known_names (independent_exact_asset_tests.AssetViewTests)\nThe real4533-file observation contains all4531 original hashes plus the two known logs. ... ok\ntest_returned_paths_identity_and_credit_are_strict (independent_exact_asset_tests.AssetViewTests)\nForeign paths, changed repair identity and Boolean credit substitutes cannot pass. ... ok\ntest_roster_rejects_extra_symlink_even_when_outside_manifest (independent_exact_asset_tests.AssetViewTests)\nThe old root observation cannot silently omit an unexpected linked file. ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 2.538s\n\nOK\n",
+    "allowed_local_synthetic_bootstrap_calls": [
+      [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "<reviewed synthetic bootstrap>",
+        "0a7c1539b1337b5bbb168191b80d220a16aac6cc378871923a0bd1c581fb3da8"
+      ],
+      [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "<reviewed synthetic bootstrap>",
+        "0a7c1539b1337b5bbb168191b80d220a16aac6cc378871923a0bd1c581fb3da8"
+      ],
+      [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "<reviewed synthetic bootstrap>",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "<reviewed synthetic bootstrap>",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ]
+    ]
+  },
+  "actual_roster": {
+    "observation": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_asset_roster_observation_2026-11-01-09-39-43.json",
+      "sha256": "62706387149a3cf1718caab9ea76f6ba75e5561fa3fb883ee0486e7f3545bc69",
+      "bytes": 763610
+    },
+    "expected_manifest": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/expected_assets_manifest.json",
+      "sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+      "bytes": 561770
+    },
+    "observed_files": 4533,
+    "expected_files": 4531,
+    "missing": [],
+    "changed": [],
+    "extra_operational_files": [
+      "asset_verification.log",
+      "assets_tree.sha256"
+    ]
+  },
+  "findings": [],
+  "reviewed": {
+    "physical_exclusive_copy_and_rehash": true,
+    "no_asset_links": true,
+    "old_roster_and_thirteen_inputs_preserved_before_after": true,
+    "old_and_cloned_git_roots_preserved_before_after": true,
+    "seventy_two_exact_mappings_reused": true,
+    "expected_manifest_unchanged": true,
+    "only_new_asset_record_and_output_paths_in_prepare": true,
+    "metadata_only_existing_master_transport_without_checks_or_retries": true,
+    "original_staging_main_not_run": true,
+    "native_execution_not_performed_by_review": true
+  },
+  "limitations": [
+    "Native copying and metadata preparation remain to be executed and verified on ACES by the root agent.",
+    "This review grants no numerical qualification, worker admission, idea credit or comparison credit."
+  ],
+  "ssh_calls": 0,
+  "jobs_submitted": 0,
+  "numerical_imports": [],
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

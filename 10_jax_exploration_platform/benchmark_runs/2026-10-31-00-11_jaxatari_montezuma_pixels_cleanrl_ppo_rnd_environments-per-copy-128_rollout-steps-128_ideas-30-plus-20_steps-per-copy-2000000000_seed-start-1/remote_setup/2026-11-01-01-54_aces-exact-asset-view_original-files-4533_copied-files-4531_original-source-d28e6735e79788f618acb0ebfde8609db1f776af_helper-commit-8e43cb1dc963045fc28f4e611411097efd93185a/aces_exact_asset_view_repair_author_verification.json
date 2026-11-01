@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "kind": "aces_exact_asset_view_repair_author_verification",
+  "at_utc": "2026-11-01T09:51:22.097970+00:00",
+  "files": {
+    "prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/prepare_aces_exact_asset_view.py",
+      "sha256": "8e8e784b66b16d06daa48f7bbc57d5fbdff50b950f1b7ad942713213ba63aa8d"
+    },
+    "test_prepare_aces_exact_asset_view.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_prepare_aces_exact_asset_view.py",
+      "sha256": "4ed7c5ec19d7f151bfea92440e934359fd7676302ea8fe776eaa58ef2782f33f"
+    },
+    "aces_exact_asset_view_repair_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_repair_plan.json",
+      "sha256": "cb3185e5cbedacb31a8aebc801f78a69112c91591588a5582c59fd3d3a65756c"
+    },
+    "aces_exact_asset_view_expected_asset_record.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_expected_asset_record.json",
+      "sha256": "64bd649cac39eaf93c9cf27db272a243a2ffbc5773093c3276a6257c166fe3bb"
+    },
+    "aces_exact_asset_view_repair_description.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_exact_asset_view_repair_description.json",
+      "sha256": "19aa747ce643e4acab9b449039144011575ae62ffff772b81cc91327c5a4c2e8"
+    }
+  },
+  "tests": {
+    "command": [
+      "/usr/bin/python3",
+      "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_prepare_aces_exact_asset_view.py",
+      "-v"
+    ],
+    "passed": true,
+    "cases": 10,
+    "seconds": 2.52
+  },
+  "actual_local_validation": {
+    "passed": true,
+    "all_original_thirteen_local_files_rehashed": true,
+    "observation_matches_expected4531_plus_two_logs": true
+  },
+  "original_asset_root_files": 4533,
+  "expected_view_files": 4531,
+  "unchanged_expected_manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+  "original_assets_inputs_clones_failure_records_read_only": true,
+  "physical_copy_algorithm": "O_NOFOLLOW original descriptor; exclusive new ordinary file; incremental expected SHA and length; distinct inode and linkcount1; exhaustive post-copy destination rehash",
+  "native_prepare_only_changes": [
+    "new output-dir",
+    "new operational asset-record with a fresh asset root"
+  ],
+  "helper_source_unchanged": true,
+  "original_staging_driver_not_rerun": true,
+  "existing_72_mappings_reused_and_reverified": true,
+  "existing_master_only_ssh_options_verified": true,
+  "master_checks": 0,
+  "ssh_calls": 0,
+  "authentication_attempts": 0,
+  "numerical_imports": [],
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "execution_requires_root_review_and_publication": true
+}

@@ -1,0 +1,28 @@
+{
+  "recorded_at_utc": "2026-11-01T09:37:23.526638+00:00",
+  "plan_sha256": "30892127adbc487f157dcb36d89e79635041278b09ca746d7b9e7139d9cb9d8f",
+  "driver_sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+  "ssh_options": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "NumberOfPasswordPrompts=0",
+    "-o",
+    "ConnectionAttempts=1",
+    "-o",
+    "ConnectTimeout=10",
+    "aces"
+  ],
+  "remote_code_bytes": 29177,
+  "remote_code_sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+  "timeout_seconds": 600,
+  "master_separately_checked": false,
+  "authentication_retry_permitted": false,
+  "submission_permitted": false
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "aces_native_asset_coverage_failure_diagnosis",
+  "at_utc": "2026-11-01T09:48:40.132815+00:00",
+  "native_helper_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "staging_driver_sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+  "raw_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-36_aces-native-preparation_helper-commit-8e43cb1dc963045fc28f4e611411097efd93185a_input-files-13_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/stdout.raw",
+    "sha256": "ddfff580d00d98d09a79d8913d9f4a96537d690e990bbf7e3a881478129fe7e1"
+  },
+  "actual_prepare_returncode": 1,
+  "exact_error": "asset manifest does not cover exactly the available asset files",
+  "observed_asset_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_asset_roster_observation_2026-11-01-09-39-43.json",
+    "sha256": "62706387149a3cf1718caab9ea76f6ba75e5561fa3fb883ee0486e7f3545bc69"
+  },
+  "expected_files": 4531,
+  "actual_files": 4533,
+  "missing": [],
+  "changed_expected_bytes": [],
+  "extras": [
+    "asset_verification.log",
+    "assets_tree.sha256"
+  ],
+  "standard_packet_created": false,
+  "site_job_submitted": false,
+  "repair": "Fresh physical asset copy of exactly the4531 unchanged expected files; preserve all old4533 files and the failed native inputs/Git clones. New operational asset record and packet; no original-driver rerun.",
+  "scientific_credit": 0
+}
