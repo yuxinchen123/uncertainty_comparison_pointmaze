@@ -1,0 +1,21 @@
+{
+  "kind": "owned_uva_persistent_monitor_release_intent",
+  "cluster": "uva",
+  "job_id": "6782816",
+  "command": [
+    "scontrol",
+    "release",
+    "6782816"
+  ],
+  "at_utc": "2026-11-01T22:45:47.585202+00:00",
+  "published_release_commit": "bd5083160842d66f4f1c8e34cfd837971b164cb0",
+  "submission_receipt_sha256": "74685cccf6f349244aed89d53481583ec25c92f8be76ab45148f52f943778d2d",
+  "held_monitor_review_sha256": "43cf45d0eca313fc9a82e860360929e2d48d35b75163b2801550f9a5761688ce",
+  "release_review_sha256": "fc11c2506b542daef1ac70c065d8773ebc0e8d0dfef6a9875ffe9074a16b17eb",
+  "release_source_sha256": "95be614c6acff984d4c2f92f3bb113df735653045fc82d388ec3a5497d2a6fae",
+  "automatic_retry_permitted": false,
+  "old_monitor_job_id": "6781231",
+  "old_monitor_stopped": false,
+  "scientific_hypothesis_credit": 0,
+  "worker_admission": false
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "sacct",
+    "-X",
+    "-n",
+    "-P",
+    "-j",
+    "6781231",
+    "--format=JobIDRaw,State%48,ExitCode"
+  ],
+  "returncode": 0,
+  "stdout": "6781231|CANCELLED by 2618919|0:0\n",
+  "stderr": "",
+  "at_utc": "2026-11-01T22:55:58.790008+00:00"
+}
