@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "passive_wrapper_source_review_freeze",
+  "at_utc": "2026-11-01T17:52:13.178380+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-09-43_passive-installed-slurm-wrapper_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "branch": "prepare-passive-slurm-wrapper-2026-11-01",
+  "base": "f5b353822d3383cac3082c2442e7e9e5a0dd7279",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_run_passive_installed_slurm_observation.py": "c2d327b4b3aa9a9b0b0b5155f21e1abaee9af9eb7d5017f8c41ede39df3021b5"
+  },
+  "unchanged_dependencies": {
+    "passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-09-43_passive-installed-slurm-wrapper_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/.review_metadata/passive_wrapper_author_6781231_10.json",
+    "sha256": "0657239f670fb73f2e34ae18607896b3fc16740b3657b58314b355f0cf413626",
+    "tests": 18,
+    "job_id": "6781231",
+    "numeric_step": "10"
+  },
+  "ownership_composition": "Reuse unchanged strict source/process/allocation validators with a new bounded owned-job/numeric-step collector; never call the old full file-collection path.",
+  "runtime_guards": [
+    "Null original job/reservation/GPU fields; actual returned held identifier bound separately after canonical ledger fsync.",
+    "Exact staged wrapper/library/ownership module paths and all committed bytes checked before and after collection.",
+    "Current own UID fields, PID/birth, exact numeric cgroup membership, held ledger snapshot and current canonical owned ID checked before scheduler queries.",
+    "Only exact own job/step and owned node reads; bounded query pipes before decoding; two-logical-processor charge requires actual ThreadsPerCore2.",
+    "Raw ownership/passive failures remain immutable with no result success and all scientific/profile/admission fields zero."
+  ],
+  "job_submitted": false,
+  "actual_packet_prepared": false,
+  "profile_changed": false,
+  "admission_granted": false
+}
