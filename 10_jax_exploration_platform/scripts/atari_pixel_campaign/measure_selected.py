@@ -413,11 +413,11 @@ def run_prepared(directory):
         raise ValueError("execute the exact recorded Python environment")
     if directory != Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]:
         raise ValueError("measurement output directory differs from its original immutable plan")
-    if (directory / "result.json").exists() or (directory / "failure.json").exists():
+    if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json')):
         raise ValueError("retain the previous result/failure and use a new measurement unit")
     with (directory / "measurement.lock").open("a+") as stream:
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        if (directory / "result.json").exists() or (directory / "failure.json").exists():
+        if any((directory / name).exists() for name in ('result.json', 'failure.json', 'instrumented_completion.json')):
             raise ValueError("retain the previous result/failure and use a new measurement unit")
         verify_prepared(directory, plan)
         for name, expected in (("XLA_PYTHON_CLIENT_PREALLOCATE", "false"), ("JAXTARI_SKIP_SPRITE_UPDATE", "1")):
@@ -559,9 +559,21 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
             "requested_minimum_updates_per_round": plan["minimum_updates_per_round"], "actual_updates_per_round": plan["iterations"]},
         execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(), "process_start_time": hardware["process_start_time"],
                             "started_at_seconds": started_at, "finished_at_seconds": time.time()})
-    diagnostic.atomic_json(directory / "result.json", result)
-    diagnostic.record_progress(directory, "completed", completed=True, mode=plan["mode"],
-                               decision=result.get("decision"), rounds=len(result.get("rounds", [])))
+    save_measurement_result(directory, plan, result)
+
+
+def save_measurement_result(directory, plan, result):
+    """Keep a completed instrumented attempt outside ordinary packing and throughput evidence."""
+    instrumented = 'device_memory_limit_protocol' in plan
+    if instrumented:
+        # The extra lifetime sampler changes the workload; retain raw observations and remeasure normally.
+        result = {**result, 'kind': 'instrumented_device_memory_attempt_completion', 'measurement_valid': False,
+            'packing_point_credit': 0, 'throughput_credit': 0, 'case_credit': 0, 'idea_credit': 0,
+            'formal_packing_evidence': False, 'requires_uninstrumented_remeasurement': True}
+    filename = 'instrumented_completion.json' if instrumented else 'result.json'
+    diagnostic.atomic_json(directory / filename, result)
+    diagnostic.record_progress(directory, 'completed_instrumented_attempt_requires_normal_remeasurement' if instrumented else 'completed',
+        completed=True, mode=plan['mode'], decision=result.get('decision'), rounds=len(result.get('rounds', [])))
 
 
 def parse_arguments(argv=None):

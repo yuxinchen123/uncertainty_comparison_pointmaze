@@ -236,6 +236,8 @@ def global_asset_proof(final, evidence):
     directory = Path(path).parent
     result = evidence.read(path)
     plan = evidence.read(directory / "measurement_plan.json")
+    if 'device_memory_limit_protocol' in plan:
+        raise ValueError('an instrumented attempt cannot supply ordinary target measurements; remeasure it normally')
     if (evidence.read(directory / "measurement_prepared.json") != {
             "plan_sha256": hashlib.sha256(evidence.file(directory / "measurement_plan.json")).hexdigest()}
             or type(plan.get("schema_version")) is not int or plan["schema_version"] != 1
@@ -261,6 +263,8 @@ def target_record(path, mode, specification, evidence):
         raise ValueError("target measurements must be direct prepared units in their recorded target campaign")
     result = evidence.read(path)
     plan = evidence.read(directory / "measurement_plan.json")
+    if 'device_memory_limit_protocol' in plan:
+        raise ValueError('an instrumented attempt cannot supply ordinary target measurements; remeasure it normally')
     if evidence.read(directory / "measurement_prepared.json") != {
             "plan_sha256": hashlib.sha256(evidence.file(directory / "measurement_plan.json")).hexdigest()}:
         raise ValueError("target result differs from its immutable preparation")

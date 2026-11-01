@@ -318,6 +318,13 @@ def validate_combination(specification, evidence):
 def packing_point(path, context, source, runtime, evidence, *, require_headroom=True):
     """Validate one isolated process, its fixed update window and measured memory headroom."""
     record = evidence.read(path)
+    plan_path = Path(path).parent / 'measurement_plan.json'
+    has_plan = (plan_path.exists() if evidence.resolver is None else str(plan_path) in evidence.resolver.files)
+    new_helper = '10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py' in record.get('helpers', {}).get('files', {})
+    plan = json.loads(evidence.file(plan_path, record=new_helper)) if has_plan or new_helper else {}
+    if (record.get('kind') == 'instrumented_device_memory_attempt_completion'
+            or 'device_memory_limit_protocol' in plan or record.get('requires_uninstrumented_remeasurement') is True):
+        raise ValueError('an instrumented completion is not an ordinary packing point; remeasure that count normally')
     identity(record, context, source, runtime)
     current = configuration(record["configuration"])
     copies = current["learner"]["n_copies"]

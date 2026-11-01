@@ -1,0 +1,25 @@
+{
+  "kind": "device_memory_sampler_version_two_author_metadata_validation",
+  "created_utc": "2026-11-01T12:27:34.368817+00:00",
+  "job_id": "6780635",
+  "step_id": "23",
+  "before_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e"
+  },
+  "after_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e"
+  },
+  "source_unchanged": true,
+  "tests_run": 49,
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": ".................................................\n----------------------------------------------------------------------\nRan 49 tests in 53.372s\n\nOK\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "scope": "ordinary sampler exceptions recorded; first-stop liveness and normal-stop completion required; close idempotent; process-control exceptions propagate"
+}
