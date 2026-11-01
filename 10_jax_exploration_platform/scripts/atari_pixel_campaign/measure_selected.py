@@ -117,6 +117,8 @@ def prepare(args):
     """Create the unit's full launch records and frozen helper bytes without GPU or numerical imports."""
     if args.mode not in MODES or args.hardware_class not in validation.CONTEXTS:
         raise ValueError("the measurement mode or hardware class is outside this study")
+    if getattr(args, 'memory_limit_ownership_profile', None) is not None and not getattr(args, 'record_device_memory_limit', False):
+        raise ValueError('an ownership profile requires explicit device-memory instrumentation')
     if not args.gpu_uuid.startswith("GPU-") or Path(args.unit_id).name != args.unit_id or args.unit_id in {"", ".", ".."}:
         raise ValueError("record a physical GPU UUID and a plain descriptive unit identifier")
     if args.rounds != 7 or not 0 <= args.seed_start < 2 ** 32:
@@ -188,6 +190,12 @@ def prepare(args):
             'allocation_kind': args.memory_limit_allocation_kind, 'cluster': args.memory_limit_cluster,
             'owned_job_ledger': ledger})
         plan['device_memory_limit_ledger_source'] = ledger_source
+        if getattr(args, 'memory_limit_ownership_profile', None) is not None:
+            if args.memory_limit_ownership_profile != capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']:
+                raise ValueError('unknown explicit instrumented ownership profile')
+            plan['ownership_profile'] = dict(capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+            capacity.selected_ownership_profile(plan)
+            capacity.require_ownership_source(plan)
     artifacts = {directory / "measurement_plan.json": json_bytes(plan),
         directory / "manifest.yaml": json_bytes(plan), directory / "config_resolved.yaml": json_bytes({
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
@@ -398,6 +406,9 @@ def verify_prepared(directory, plan):
     if training.source_receipt(Path(plan["source_root"]), plan["source_commit"],
                                list(plan["paired_source"]["files"])) != plan["paired_source"]:
         raise ValueError("the frozen Executor changed after preparation")
+    if 'ownership_profile' in plan:
+        import device_memory_limit as capacity
+        capacity.require_ownership_source(plan)
 
 
 def run_prepared(directory):
@@ -585,6 +596,7 @@ def parse_arguments(argv=None):
     parser.add_argument('--memory-limit-allocation-kind', choices=('direct', 'slurm'))
     parser.add_argument('--memory-limit-cluster', choices=('uva', 'aces'))
     parser.add_argument('--memory-limit-owned-job-ledger', type=Path)
+    parser.add_argument('--memory-limit-ownership-profile', choices=('uva_slurm_cgroup_v2_process_uid_ownership',))
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--mode", choices=MODES)
     parser.add_argument("--source-root", type=Path)
@@ -604,7 +616,7 @@ def parse_arguments(argv=None):
     parser.add_argument("--minimum-updates-per-round", type=int, default=10)
     parser.add_argument("--python", type=Path, default=Path("/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"))
     args = parser.parse_args(argv)
-    memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger')
+    memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger', 'memory_limit_ownership_profile')
     if args.prepared_unit is not None:
         if args.prepare_only or args.record_device_memory_limit or any(getattr(args, name) is not None for name in (
                 "mode", "source_root", "source_commit", "configuration", "reference_configuration",
@@ -616,6 +628,7 @@ def parse_arguments(argv=None):
             try:
                 plan = capacity.json_document((args.prepared_unit / 'measurement_plan.json').read_bytes())
                 capacity.protocol(plan.get('device_memory_limit_protocol'))
+                capacity.selected_ownership_profile(plan)
                 if plan.get('kind') != 'selected_configuration_measurement' or plan.get('mode') != 'packing-point':
                     raise ValueError('the prepared plan is not an instrumented isolated packing point')
             except (OSError, ValueError, TypeError, KeyError) as error:

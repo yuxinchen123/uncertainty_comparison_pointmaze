@@ -217,6 +217,37 @@ class SelectedMeasurementTests(unittest.TestCase):
         self.assertTrue(parsed.instrumented_child)
         self.assertNotIn('jax', sys.modules)
 
+    def test_explicit_ownership_profile_requires_instrumentation_and_rejects_execution_override(self):
+        """A profile cannot be silently ignored during ordinary preparation or prepared execution."""
+        name = 'uva_slurm_cgroup_v2_process_uid_ownership'
+        with patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+            self.arguments('--memory-limit-ownership-profile', name)
+        ordinary = self.prepare(self.arguments())
+        with patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+            PRODUCER.parse_arguments(['--prepared-unit', str(ordinary), '--memory-limit-ownership-profile', name])
+
+    def test_explicit_uva_profile_is_staged_only_for_matching_instrumented_allocation(self):
+        """Mock publication only; real profile selection rejects direct or ACES use before producing artifacts."""
+        import device_memory_limit as capacity
+        args = self.arguments(); args.unit_id += '_explicit_ownership'
+        args.mode, args.reference_configuration = 'packing-point', None
+        args.record_device_memory_limit = True
+        args.memory_limit_ownership_profile = capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']
+        args.memory_limit_allocation_kind, args.memory_limit_cluster = 'direct', 'uva'
+        args.memory_limit_owned_job_ledger = None
+        with self.assertRaisesRegex(ValueError, 'only for UVA Slurm'):
+            self.prepare(args)
+        ledger = self.run_dir / 'slurm/submitted_jobids_uva.txt'
+        ledger.parent.mkdir(); ledger.write_text('123\n')
+        args.memory_limit_allocation_kind, args.memory_limit_owned_job_ledger = 'slurm', ledger
+        with patch.object(capacity, 'require_ownership_source') as source:
+            directory = self.prepare(args)
+        plan = json.loads((directory / 'measurement_plan.json').read_text())
+        self.assertEqual(plan['ownership_profile'], capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+        self.assertEqual(source.call_args.args[0]['ownership_profile'], plan['ownership_profile'])
+        self.assertEqual((directory / 'capacity_owned_job_ledger.txt').read_bytes(), b'123\n')
+        self.assertNotIn('jax', sys.modules)
+
     def test_completed_instrumented_attempt_retains_raw_data_without_ordinary_result_credit(self):
         """A successful extra-sampler attempt needs a fresh ordinary measurement before throughput can be used."""
         directory = self.run_dir / 'completed_instrumented'

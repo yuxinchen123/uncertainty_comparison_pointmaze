@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "explicit_uva_cgroup_v2_ownership_author_metadata_validation",
+  "created_utc": "2026-11-01T14:16:15.418820+00:00",
+  "job_id": "6780635",
+  "step_id": "64",
+  "before": {
+    "device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+    "device_memory_capture_regression.py": "24298ed51607edadfb8a1ca37a2730743ed3933125b1c18501dbcd1ae3799477",
+    "tests/test_uva_cgroup_v2_ownership.py": "42a4198e9146375b930e70697aa5a4be5d3ba800501dadd5b3d2fefdb0fdcd27",
+    "tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "tests/test_device_memory_capture_regression.py": "652ffae4d84078f915977cec5764b6a260a77131d4af2a856bcfdc136db963f9",
+    "tests/fixtures/uva_owned_cpu_numeric_step_6780635_50.json": "041551ef9c6c3e9cc495be561e44b4d84c628baf10f019615f2453249aa78eb3"
+  },
+  "after": {
+    "device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+    "device_memory_capture_regression.py": "24298ed51607edadfb8a1ca37a2730743ed3933125b1c18501dbcd1ae3799477",
+    "tests/test_uva_cgroup_v2_ownership.py": "42a4198e9146375b930e70697aa5a4be5d3ba800501dadd5b3d2fefdb0fdcd27",
+    "tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "tests/test_device_memory_capture_regression.py": "652ffae4d84078f915977cec5764b6a260a77131d4af2a856bcfdc136db963f9",
+    "tests/fixtures/uva_owned_cpu_numeric_step_6780635_50.json": "041551ef9c6c3e9cc495be561e44b4d84c628baf10f019615f2453249aa78eb3"
+  },
+  "source_unchanged": true,
+  "modules": [
+    "test_uva_cgroup_v2_ownership",
+    "test_device_memory_capture_regression",
+    "test_measure_selected",
+    "test_device_memory_limit"
+  ],
+  "tests_run": 84,
+  "successful": false,
+  "errors": 1,
+  "failures": 0,
+  "stdout_stderr": ".............................................................................E......\n======================================================================\nERROR: test_portable_reader_requires_all_exact_bytes_after_original_paths_are_removed (test_device_memory_limit.DeviceMemoryLimitTests)\nThe original failed bytes, native protobuf, driver image and Git helpers all use exact staging entries.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py\", line 258, in test_portable_reader_requires_all_exact_bytes_after_original_paths_are_removed\n    self.fixture.test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed()\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py\", line 478, in test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed\n    subprocess.run([\"git\", \"clone\", \"-q\", \"--no-hardlinks\", str(root), str(target)], check=True)\n  File \"/usr/lib/python3.10/subprocess.py\", line 503, in run\n    with Popen(*popenargs, **kwargs) as process:\n  File \"/usr/lib/python3.10/subprocess.py\", line 971, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n  File \"/usr/lib/python3.10/subprocess.py\", line 1735, in _execute_child\n    sys.audit(\"subprocess.Popen\", executable, args, cwd, env)\n  File \"<stdin>\", line 12, in audit\nRuntimeError: only local Git metadata allowed\n\n----------------------------------------------------------------------\nRan 84 tests in 52.776s\n\nFAILED (errors=1)\n",
+  "blocked_actions": [
+    [
+      "subprocess.Popen",
+      "['git', 'clone', '-q', '--no-hardlinks', '/tmp/tmpx6ip2tcb/numerical_source', '/tmp/tmpw76whhrm/repositories/numerical']"
+    ]
+  ],
+  "numerical_modules_loaded": [],
+  "actual_gpu_regression_passed": false,
+  "jobs_submitted": false,
+  "scientific_credit": 0,
+  "admission_credit": 0,
+  "fixture_limit": "CPU6780635.50 and GPU6780569 are separate original records. All profile-shape additions or combined test data are synthetic; no prior observation qualifies the future GPU profile."
+}

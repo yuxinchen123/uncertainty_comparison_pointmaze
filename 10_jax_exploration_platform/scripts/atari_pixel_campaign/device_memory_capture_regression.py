@@ -71,7 +71,7 @@ def next_request(total):
     return result
 
 
-def require_capture_version(root):
+def require_capture_version(root, profile=None):
     """Refuse published helpers that predate the requested-stop sampler contract."""
     path = Path(root) / '10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py'
     values = [ast.literal_eval(node.value) for node in ast.parse(path.read_bytes()).body if isinstance(node, ast.Assign)
@@ -79,6 +79,15 @@ def require_capture_version(root):
     capacity.require(len(values) == 1 and type(values[0].get('schema_version')) is int and values[0]['schema_version'] == 2
         and values[0]['producer_capability'] == 'native_gpu_bfc_same_context_cuda_and_requested_sampler_stop_v2',
         'the diagnostic requires the separately reviewed version-two capture helper publication')
+    if profile is not None:
+        capacity.selected_ownership_profile({'ownership_profile': profile,
+            'device_memory_limit_protocol': {'allocation_kind': 'slurm', 'cluster': 'uva'}})
+        expected = {'UVA_CGROUP_V2_OWNERSHIP_PROFILE': profile,
+            'UVA_CGROUP_V2_OWNERSHIP_CAPABILITY': capacity.UVA_CGROUP_V2_OWNERSHIP_CAPABILITY}
+        for name, value in expected.items():
+            found = [ast.literal_eval(node.value) for node in ast.parse(path.read_bytes()).body if isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == name for target in node.targets)]
+            capacity.require(found == [value], 'the capture source lacks the explicit version-two ownership capability: ' + name)
 
 
 def prepare(args):
@@ -97,7 +106,11 @@ def prepare(args):
     deployment.git_root(str(helper_root), helper_commit, validation.Evidence())
     helpers = training.source_receipt(capture_root, CAPTURE_HELPER_COMMIT,
         ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in HELPERS])
-    require_capture_version(capture_root)
+    selected_profile = getattr(args, 'ownership_profile', None)
+    if selected_profile is not None:
+        capacity.require(selected_profile == capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind'], 'unknown explicit diagnostic ownership profile')
+    profile = dict(capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE) if selected_profile is not None else None
+    require_capture_version(capture_root, profile)
     driver_source = training.source_receipt(helper_root, helper_commit,
         ['10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py'])
     unit = run / 'data' / args.unit_id
@@ -110,6 +123,8 @@ def prepare(args):
         'allocation_binding': 'created once on owned compute after the exact returned held ID is in the live ledger',
         'environment_transitions': 0, 'learner_updates': 0, 'packing_point_credit': 0, 'case_credit': 0,
         'idea_credit': 0, 'admission_granted': False, 'jobs_submitted_by_producer': False}
+    if profile is not None:
+        plan['ownership_profile'] = profile
     command = [plan['python'], str(unit / 'code/device_memory_capture_regression.py'), 'run', str(unit)]
     artifacts = {'regression_plan.json': measurement.json_bytes(plan), 'manifest.yaml': measurement.json_bytes(plan),
         'config_resolved.yaml': measurement.json_bytes({'runtime_environment': runtime, 'shape': SHAPE, 'fixture': FIXTURE}),
@@ -153,7 +168,10 @@ def verify_static(unit, *, execution=False):
     capacity.require(training.source_receipt(Path(helpers['source_root']), helpers['source_commit'], list(helpers['files'])) == helpers,
                      'diagnostic source receipt changed')
     capacity.require(helpers['source_commit'] == CAPTURE_HELPER_COMMIT, 'the reviewed published capture helper changed')
-    require_capture_version(Path(helpers['source_root']))
+    if 'ownership_profile' in plan:
+        capacity.selected_ownership_profile({'ownership_profile': plan['ownership_profile'],
+            'device_memory_limit_protocol': {'allocation_kind': 'slurm', 'cluster': 'uva'}})
+    require_capture_version(Path(helpers['source_root']), plan.get('ownership_profile'))
     for relative, expected in helpers['files'].items():
         capacity.require(training.file_sha256(unit / 'code' / Path(relative).name) == expected, 'a staged diagnostic helper changed')
     driver = plan['driver_source']
@@ -278,6 +296,12 @@ def admit(unit, plan):
         'query': {'command': command, 'returncode': query.returncode,
         'stdout': query.stdout, 'stderr': query.stderr}, 'ledger_origin': {'path': str(ledger), 'sha256': hashlib.sha256(contents).hexdigest()}}
     write(unit / 'allocation_bootstrap.json', bootstrap)
+    if 'ownership_profile' in plan:
+        bootstrap_plan = {**plan, 'device_memory_limit_protocol': {**capacity.PROTOCOL,
+            'allocation_kind': 'slurm', 'cluster': 'uva',
+            'owned_job_ledger': capacity.file_receipt(unit / 'diagnostic_owned_job_ledger.txt')}}
+        capacity.capture_v2_ownership(bootstrap_plan, process, identifier, environment.get('SLURM_STEP_ID', ''),
+            unit / 'allocation_bootstrap_cgroup_v2.json')
     capacity.require(query.returncode == 0 and capacity.scheduler_field(query.stdout, 'JobId') == identifier
         and capacity.scheduler_field(query.stdout, 'UserId') == 'sl5nw(2618919)'
         and capacity.scheduler_field(query.stdout, 'JobState') == 'RUNNING'
@@ -295,12 +319,14 @@ def admit(unit, plan):
         'device_memory_limit_protocol': {**capacity.PROTOCOL, 'allocation_kind': 'slurm', 'cluster': 'uva',
             'owned_job_ledger': capacity.file_receipt(unit / 'diagnostic_owned_job_ledger.txt')},
         'device_memory_limit_ledger_source': bootstrap['ledger_origin']}
-    owned = capacity.ownership(runtime_plan)
+    owned = capacity.recorded_ownership(runtime_plan, unit, 'allocation_owned_observation.json')
     validate_shape(owned, reservation)
     admission = {'schema_version': 1, 'kind': KIND + '_allocation', 'static_plan': capacity.file_receipt(unit / 'regression_plan.json'),
         'bootstrap': capacity.file_receipt(unit / 'allocation_bootstrap.json'), 'job_id': identifier, 'gpu_uuid': gpu,
         'resolution': capacity.file_receipt(unit / 'allocation_resolution.json'), 'reservation': reservation,
         'runtime_plan': runtime_plan, 'ownership': owned}
+    if 'ownership_profile' in plan:
+        admission['bootstrap_ownership_profile'] = capacity.file_receipt(unit / 'allocation_bootstrap_cgroup_v2.json')
     write(unit / 'allocation_admission.json', admission)
     return admission
 
@@ -335,6 +361,11 @@ def validate_admission(unit, plan):
         'device_memory_limit_ledger_source': bootstrap['ledger_origin']}
     capacity.require(value['runtime_plan'] == expected, 'runtime inputs may add only measured allocation identity to the frozen plan')
     capacity.validate_ownership(value['ownership'], expected)
+    if 'ownership_profile' in plan:
+        capacity.require(value.get('bootstrap_ownership_profile') == capacity.file_receipt(unit / 'allocation_bootstrap_cgroup_v2.json'),
+                         'the original pre-GRES ownership observation changed')
+        capacity.validate_v2_ownership(read(unit / 'allocation_bootstrap_cgroup_v2.json'), bootstrap['process'],
+            value['job_id'], bootstrap['environment']['SLURM_STEP_ID'])
     validate_shape(value['ownership'], value['reservation'])
     capacity.require(value['ownership']['process'] == bootstrap['process'], 'admission process differs from its original bootstrap')
     capacity.require(all(value['ownership']['environment'].get(name) == original for name, original in
@@ -398,7 +429,7 @@ def child(unit, phase):
     runtime = training.enforce_runtime(plan['runtime_environment'], os.environ)
     directory = unit / phase
     capacity.require(directory.is_dir() and not (directory / 'fixture_identity.json').exists(), 'the parent must create one fresh child directory')
-    owned = capacity.ownership(runtime_plan)
+    owned = capacity.recorded_ownership(runtime_plan, directory, 'fixture_owned_observation.json')
     assets = training.verify_assets(plan['asset_record'], os.environ)
     installed = measurement.installed_backend_receipt(training.jaxtari_python_receipt(plan['jaxtari_source_root']), training.installed_gpu_library_receipts())
     hardware = {**owned['process'], 'gpu_uuid': admission['gpu_uuid'], 'runtime_environment': runtime}
@@ -751,6 +782,7 @@ def main(argv=None):
         preparation.add_argument('--' + name, type=Path, required=True)
     preparation.add_argument('--source-commit', required=True)
     preparation.add_argument('--unit-id', required=True)
+    preparation.add_argument('--ownership-profile', choices=('uva_slurm_cgroup_v2_process_uid_ownership',))
     for action in ('run', 'verify', 'child'):
         command = commands.add_parser(action)
         command.add_argument('unit', type=Path)

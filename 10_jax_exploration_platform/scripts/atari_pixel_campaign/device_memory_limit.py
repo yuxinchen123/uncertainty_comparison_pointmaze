@@ -25,6 +25,12 @@ import uuid
 
 PROTOCOL = {"schema_version": 2, "kind": "instrumented_device_memory_limit",
             "producer_capability": "native_gpu_bfc_same_context_cuda_and_requested_sampler_stop_v2"}
+UVA_CGROUP_V2_OWNERSHIP_PROFILE = {
+    'schema_version': 1, 'kind': 'uva_slurm_cgroup_v2_process_uid_ownership', 'cluster': 'uva',
+    'username': 'sl5nw', 'uid': 2618919, 'cgroup_version': 2,
+    'path_prefix': '/system.slice/slurmstepd.scope', 'numeric_step_required': True, 'task_name': 'task_0',
+    'uid_encoded_in_cgroup_path': False, 'kernel_device_enforcement_verified': False}
+UVA_CGROUP_V2_OWNERSHIP_CAPABILITY = 'own_proc_uids_stat_and_root_cgroup2_task_membership_v1'
 ZERO_CREDIT = {"completed": False, "measurement_valid": False, "packing_point_credit": 0,
                "case_credit": 0, "idea_credit": 0, "throughput_credit": 0, "admission_granted": False}
 OWNERS = {'uva': {'username': 'sl5nw', 'uid': 2618919}, 'aces': {'username': 'u.sl359075', 'uid': 56626}}
@@ -145,8 +151,207 @@ def scheduler_field(text, name):
     return values[0]
 
 
-def ownership(plan):
+def selected_ownership_profile(plan):
+    """Require the exact explicit UVA numeric-step profile; absence retains the original UID-in-path rule."""
+    if 'ownership_profile' not in plan:
+        return None
+    value = plan['ownership_profile']
+    require(isinstance(value, dict) and set(value) == set(UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+        and all(type(value[key]) is type(expected) and value[key] == expected
+            for key, expected in UVA_CGROUP_V2_OWNERSHIP_PROFILE.items()), 'unsupported explicit ownership profile')
+    specification = plan['device_memory_limit_protocol']
+    require(specification['allocation_kind'] == 'slurm' and specification['cluster'] == 'uva',
+            'the explicit cgroup version-two profile is only for UVA Slurm numeric steps')
+    return value
+
+
+def require_ownership_source(plan, evidence=None):
+    """Require literal committed profile and capability declarations; older helpers cannot enable this profile."""
+    if selected_ownership_profile(plan) is None:
+        return
+    import ast
+    import validate_training_deployment as deployment
+    if evidence is None:
+        import post_comparison_validation as validation
+        evidence = validation.Evidence()
+    helpers = plan['helpers']
+    deployment.committed_files(helpers, deployment.REQUIRED_HELPERS, evidence)
+    relative = deployment.PREFIX + 'device_memory_limit.py'
+    require(relative in helpers['files'], 'the explicit ownership profile needs its committed capacity helper')
+    root = evidence.git_root(helpers['source_root'], helpers['source_commit'])
+    raw = subprocess.check_output(['git', '-C', str(root), 'show', helpers['source_commit'] + ':' + relative])
+    expected = {'UVA_CGROUP_V2_OWNERSHIP_PROFILE': UVA_CGROUP_V2_OWNERSHIP_PROFILE,
+                'UVA_CGROUP_V2_OWNERSHIP_CAPABILITY': UVA_CGROUP_V2_OWNERSHIP_CAPABILITY}
+    for name, value in expected.items():
+        found = [ast.literal_eval(node.value) for node in ast.parse(raw).body if isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == name for target in node.targets)]
+        require(found == [value], 'the committed producer lacks the exact versioned ownership capability: ' + name)
+
+
+def ownership_snapshot(path, value):
+    """Preserve one raw opt-in observation before rejecting it; existing bytes are never replaced."""
+    path = Path(path)
+    require(path.is_absolute() and path.parent.resolve(strict=True) == path.parent and not path.is_symlink(),
+            'ownership snapshots require an exact existing shared directory')
+    with path.open('x') as stream:
+        json.dump(value, stream, indent=2, allow_nan=False)
+        stream.write('\n')
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def recorded_ownership(plan, directory, filename):
+    """Add a raw snapshot only for explicitly selected version-two ownership, preserving legacy observations."""
+    return ownership(plan, Path(directory) / filename) if selected_ownership_profile(plan) is not None else ownership(plan)
+
+
+def v2_file(path):
+    """Retain ordinary cgroup metadata, literal bytes and read failures without following a substituted link."""
+    value = {'path': str(path)}
+    try:
+        information = path.lstat()
+        value.update(status='readable', uid=information.st_uid, mode=stat.S_IMODE(information.st_mode),
+            inode=information.st_ino, device=information.st_dev, regular_file=stat.S_ISREG(information.st_mode),
+            directory=stat.S_ISDIR(information.st_mode), symlink=stat.S_ISLNK(information.st_mode),
+            exact_path=path.resolve(strict=True) == path)
+        if value['regular_file'] and not value['symlink']:
+            raw = path.read_text()
+            value.update(raw=raw, sha256=hashlib.sha256(raw.encode()).hexdigest())
+    except OSError as error:
+        value.update(status='absent' if isinstance(error, FileNotFoundError) else 'unreadable' if isinstance(error, PermissionError) else 'error',
+            exception_type=type(error).__name__, error=str(error))
+    return value
+
+
+def v2_process_metadata(observation=None):
+    """Read only this process's UID/stat/placement and its intentional kernel namespace alias."""
+    result = {} if observation is None else observation
+    result.update(pid=os.getpid(), uid=os.getuid(), effective_uid=os.geteuid())
+    status = Path('/proc/self/status').read_text()
+    selected = ''.join(line + '\n' for line in status.splitlines() if line.startswith('Uid:'))
+    result['status'] = {'path': '/proc/self/status', 'uid_bytes': selected,
+        'uid_sha256': hashlib.sha256(selected.encode()).hexdigest(), 'full_sha256': hashlib.sha256(status.encode()).hexdigest()}
+    raw_stat = Path('/proc/self/stat').read_text()
+    result['stat'] = {'path': '/proc/self/stat', 'raw': raw_stat, 'sha256': hashlib.sha256(raw_stat.encode()).hexdigest()}
+    cgroup = Path('/proc/self/cgroup').read_text()
+    result['cgroup'] = {'path': '/proc/self/cgroup', 'raw': cgroup, 'sha256': hashlib.sha256(cgroup.encode()).hexdigest()}
+    namespace = Path('/proc/self/ns/cgroup')
+    result['namespace'] = {'path': '/proc/self/ns/cgroup', 'target': os.readlink(namespace), 'inode': namespace.stat().st_ino}
+    return result
+
+
+def v2_paths(job, step):
+    """Name only the exact recorded numeric step, without inventing a UID component."""
+    require(re.fullmatch(r'[1-9][0-9]*', job) and re.fullmatch(r'[0-9]+', step), 'version-two ownership needs an exact numeric job and step')
+    group = '/system.slice/slurmstepd.scope/job_' + job + '/step_' + step + '/user/task_0'
+    task = Path('/sys/fs/cgroup' + group)
+    chain = [Path('/sys/fs/cgroup'), Path('/sys/fs/cgroup/system.slice'),
+        Path('/sys/fs/cgroup/system.slice/slurmstepd.scope'), *list(reversed([task, *list(task.parents)[:3]]))]
+    return group, chain
+
+
+def capture_v2_ownership(plan, process, job, step, path):
+    """Save complete or partial own-process evidence before strict version-two validation can raise."""
+    require(selected_ownership_profile(plan) is not None, 'version-two capture requires its explicit plan profile')
+    value = {'schema_version': 1, 'kind': 'uva_cgroup_v2_ownership_observation',
+        'ownership_profile': plan['ownership_profile'], 'ownership_capability': UVA_CGROUP_V2_OWNERSHIP_CAPABILITY,
+        'directories_before': [], 'directories_after': [], 'memberships': []}
+    try:
+        group, chain = v2_paths(job, step)
+        value['before'] = {}
+        value['before'] = v2_process_metadata(value['before'])
+        # The observed own path must agree before any job directory is read.
+        require(value['before']['cgroup']['raw'].splitlines() == ['0::' + group], 'the actual own cgroup is not this exact numeric step')
+        mount = Path('/proc/self/mountinfo').read_text()
+        selected = ''.join(line + '\n' for line in mount.splitlines() if ' - cgroup2 ' in line)
+        value['mountinfo'] = {'path': '/proc/self/mountinfo', 'raw': selected,
+            'sha256': hashlib.sha256(selected.encode()).hexdigest(), 'full_sha256': hashlib.sha256(mount.encode()).hexdigest()}
+        value['directories_before'] = [v2_file(directory) for directory in chain]
+        value['memberships'] = [v2_file(directory / 'cgroup.procs') for directory in chain[-4:]]
+        value['directories_after'] = [v2_file(directory) for directory in chain]
+        value['after'] = {}
+        value['after'] = v2_process_metadata(value['after'])
+    except BaseException as error:
+        value['capture_error'] = {'exception_type': type(error).__name__, 'error': repr(error)}
+        raise
+    finally:
+        ownership_snapshot(path, value)
+    validate_v2_ownership(value, process, job, step)
+    return value
+
+
+def validate_v2_ownership(value, process, job, step):
+    """Rebuild current UID, birth and exact root-owned cgroup membership from saved metadata alone."""
+    require(type(value.get('schema_version')) is int and value['schema_version'] == 1
+        and value.get('kind') == 'uva_cgroup_v2_ownership_observation' and 'capture_error' not in value
+        and value.get('ownership_capability') == UVA_CGROUP_V2_OWNERSHIP_CAPABILITY,
+        'incomplete or unsupported version-two ownership evidence')
+    selected_ownership_profile({'ownership_profile': value['ownership_profile'],
+        'device_memory_limit_protocol': {'allocation_kind': 'slurm', 'cluster': 'uva'}})
+    group, chain = v2_paths(job, step)
+    for record in (value['before'], value['after']):
+        require(record['pid'] == process['pid'] and type(record['pid']) is int
+            and record['uid'] == record['effective_uid'] == process['uid'] == OWNERS['uva']['uid'], 'current process owner changed')
+        status, raw_stat, membership = record['status'], record['stat'], record['cgroup']
+        require(status['path'] == '/proc/self/status' and raw_stat['path'] == '/proc/self/stat'
+            and membership['path'] == '/proc/self/cgroup'
+            and hashlib.sha256(status['uid_bytes'].encode()).hexdigest() == status['uid_sha256']
+            and hashlib.sha256(raw_stat['raw'].encode()).hexdigest() == raw_stat['sha256']
+            and hashlib.sha256(membership['raw'].encode()).hexdigest() == membership['sha256'], 'saved own proc bytes changed')
+        rows = status['uid_bytes'].splitlines()
+        require(len(rows) == 1 and re.fullmatch(r'Uid:\s*([0-9]+\s+){3}[0-9]+', rows[0])
+            and list(map(int, rows[0].split()[1:])) == [OWNERS['uva']['uid']] * 4, 'all four actual process UIDs must identify this owner')
+        raw = raw_stat['raw']
+        require(re.match(r'^[1-9][0-9]* \(', raw) and ')' in raw
+            and re.match(r' [A-Za-z] ', raw[raw.rfind(')') + 1:]), 'invalid own proc stat')
+        fields = raw[raw.rfind(')') + 2:].split()
+        require(len(fields) >= 20 and raw.split(' ', 1)[0] == str(process['pid'])
+            and fields[1] == str(process['parent_pid']) and fields[19] == process['process_start_time']
+            and re.fullmatch(r'[1-9][0-9]*', fields[19]) and process['pid'] != process['parent_pid'], 'own process PID, parent or birth changed')
+        require(membership['raw'] == process['cgroup'] and membership['raw'].splitlines() == ['0::' + group], 'own unified cgroup placement changed')
+        namespace = record['namespace']
+        integer(namespace['inode'], 'own cgroup namespace inode', 1)
+        require(namespace['path'] == '/proc/self/ns/cgroup' and namespace['target'] == 'cgroup:[' + str(namespace['inode']) + ']', 'own cgroup namespace changed')
+    require(value['before']['namespace'] == value['after']['namespace'], 'the process changed its cgroup namespace')
+    mount = value['mountinfo']
+    require(mount['path'] == '/proc/self/mountinfo' and hashlib.sha256(mount['raw'].encode()).hexdigest() == mount['sha256'], 'cgroup mount bytes changed')
+    lines = mount['raw'].splitlines()
+    require(len(lines) == 1 and ' - cgroup2 ' in lines[0], 'one unambiguous unified cgroup mount is required')
+    left, right = lines[0].split(' - ', 1)
+    fields = left.split()
+    require(len(fields) >= 6 and fields[3:5] == ['/', '/sys/fs/cgroup'] and right.split()[0] == 'cgroup2', 'unexpected cgroup mount root or mountpoint')
+    device = fields[2].split(':')
+    require(len(device) == 2 and all(number.isdecimal() for number in device), 'invalid cgroup mount device')
+    for name in ('directories_before', 'directories_after'):
+        rows = value[name]
+        require([row['path'] for row in rows] == list(map(str, chain)), 'the complete exact owned directory chain is required')
+        for row in rows:
+            require(row.get('status') == 'readable' and type(row.get('uid')) is int and row['uid'] == 0
+                and type(row.get('mode')) is int and row['mode'] & 0o022 == 0 and row.get('directory') is True
+                and row.get('symlink') is False and row.get('exact_path') is True
+                and type(row.get('device')) is int and (os.major(row['device']), os.minor(row['device'])) == tuple(map(int, device)),
+                'owned cgroup directories must be ordinary, root-owned and not writable by another owner')
+            integer(row['inode'], 'owned cgroup directory inode', 1)
+    require(value['directories_before'] == value['directories_after'], 'owned cgroup directories changed during capture')
+    rows = value['memberships']
+    require([row['path'] for row in rows] == [str(directory / 'cgroup.procs') for directory in chain[-4:]], 'exact job/step/user/task membership files are required')
+    for row in rows:
+        require(row.get('status') == 'readable' and row.get('regular_file') is True and row.get('symlink') is False
+            and row.get('exact_path') is True and type(row.get('uid')) is int and row['uid'] == 0
+            and type(row.get('mode')) is int and row['mode'] & 0o022 == 0
+            and type(row.get('device')) is int and (os.major(row['device']), os.minor(row['device'])) == tuple(map(int, device))
+            and hashlib.sha256(row['raw'].encode()).hexdigest() == row['sha256'], 'untrusted owned cgroup membership file')
+        integer(row['inode'], 'owned cgroup membership inode', 1)
+        pids = row['raw'].splitlines()
+        require(all(re.fullmatch(r'[1-9][0-9]*', pid) for pid in pids) and len(pids) == len(set(pids)), 'ambiguous owned cgroup process list')
+    require(rows[-1]['raw'].splitlines().count(str(process['pid'])) == 1, 'current PID is absent from its own task membership')
+    return value
+
+
+def ownership(plan, capture_path=None):
     """Capture only this process and its recorded direct lock or exact owned Slurm allocation."""
+    if selected_ownership_profile(plan) is not None:
+        return v2_owned_allocation(plan, capture_path)
     identity = process_identity()
     specification = plan['device_memory_limit_protocol']
     environment = {name: os.environ[name] for name in ('CUDA_VISIBLE_DEVICES', 'SLURM_CONF', 'SLURM_JOB_ID', 'SLURM_STEP_ID',
@@ -191,9 +396,50 @@ def ownership(plan):
     return result
 
 
+def v2_owned_allocation(plan, capture_path):
+    """Capture the exact opt-in owned allocation and preserve partial raw evidence on every rejection."""
+    require(capture_path is not None, 'explicit version-two ownership needs an immutable raw snapshot path')
+    result = {'kind': 'slurm', 'cluster': 'uva', 'ownership_profile': plan['ownership_profile'],
+        'ownership_capability': UVA_CGROUP_V2_OWNERSHIP_CAPABILITY}
+    try:
+        require_ownership_source(plan)
+        specification = plan['device_memory_limit_protocol']
+        identity = process_identity()
+        environment = {name: os.environ[name] for name in ('CUDA_VISIBLE_DEVICES', 'SLURM_CONF', 'SLURM_JOB_ID',
+            'SLURM_STEP_ID', 'SLURM_JOB_GPUS', 'SLURM_STEP_GPUS', 'SLURM_GPUS_ON_NODE', 'SLURM_CPUS_PER_TASK') if name in os.environ}
+        result.update(process=identity, environment=environment)
+        job, step = environment.get('SLURM_JOB_ID', ''), environment.get('SLURM_STEP_ID', '')
+        v2_paths(job, step)
+        ledger = Path(specification['owned_job_ledger']['path'])
+        origin = plan['device_memory_limit_ledger_source']
+        require(origin['path'] == str(Path(plan['campaign_run_dir']) / 'slurm/submitted_jobids_uva.txt')
+            and origin['sha256'] == specification['owned_job_ledger']['sha256']
+            and file_receipt(ledger) == specification['owned_job_ledger'] and ledger.read_text().splitlines().count(job) == 1,
+            'the exact numeric job is absent from its frozen UVA ledger')
+        result.update(ledger=specification['owned_job_ledger'], job_id=job, step_id=step)
+        result['cgroup_v2_ownership'] = capture_v2_ownership(plan, identity, job, step,
+            Path(capture_path).with_name(Path(capture_path).stem + '_process.json'))
+        for key, command in (('job', ['scontrol', 'show', 'job', '-d', job]),
+                ('step', ['scontrol', 'show', 'step', '-d', job + '.' + step]),
+                ('node', ['scontrol', 'show', 'node', '-d', identity['hostname']])):
+            result[key] = {'command': command, 'status': 'started'}
+            query = subprocess.run(command, capture_output=True, text=True, timeout=20, check=False)
+            result[key] = {'command': command, 'returncode': query.returncode, 'stdout': query.stdout, 'stderr': query.stderr}
+        result['physical_mapping'] = {}
+        collect_mapping(environment, plan['gpu_uuid'], 'uva', observation=result['physical_mapping'])
+        validate_ownership(result, plan)
+        return result
+    except BaseException as error:
+        result['capture_error'] = {'exception_type': type(error).__name__, 'error': repr(error)}
+        raise
+    finally:
+        ownership_snapshot(capture_path, result)
+
+
 def validate_ownership(value, plan):
     """Rebuild owner/job/step/lock checks from raw observations without querying another server."""
     protocol = plan['device_memory_limit_protocol']
+    profile = selected_ownership_profile(plan)
     process, environment = value['process'], value['environment']
     owner = OWNERS[protocol['cluster']]
     for key in ('pid', 'uid', 'parent_pid'):
@@ -215,11 +461,19 @@ def validate_ownership(value, plan):
         return
     require(value['kind'] == 'slurm' and value['cluster'] == protocol['cluster'] in {'uva', 'aces'}
             and value['ledger'] == protocol['owned_job_ledger'], 'capacity allocation cluster or ledger changed')
+    if profile is not None:
+        selected_ownership_profile({**plan, 'ownership_profile': value.get('ownership_profile')})
+        require('capture_error' not in value and value.get('ownership_profile') == profile
+            and value.get('ownership_capability') == UVA_CGROUP_V2_OWNERSHIP_CAPABILITY, 'explicit ownership profile changed or capture failed')
+        validate_v2_ownership(value['cgroup_v2_ownership'], process, value['job_id'], value['step_id'])
+    else:
+        require('ownership_profile' not in value and 'ownership_capability' not in value and 'cgroup_v2_ownership' not in value,
+                'a missing-profile plan cannot use version-two ownership observations')
     job, step = value['job_id'], value['step_id']
     require(re.fullmatch(r'[1-9][0-9]*', job) and re.fullmatch(r'(?:[0-9]+|batch)', step)
             and environment.get('SLURM_JOB_ID') == job and environment.get('SLURM_STEP_ID') == step
             and environment.get('SLURM_GPUS_ON_NODE') == '1'
-            and re.search(r'(?:^|/)uid_' + str(owner['uid']) + r'(?:/|$)', process['cgroup'], re.M)
+            and (profile is not None or re.search(r'(?:^|/)uid_' + str(owner['uid']) + r'(?:/|$)', process['cgroup'], re.M))
             and re.search(r'(?:^|/)job_' + job + r'(?:/|$)', process['cgroup'], re.M)
             and re.search(r'(?:^|/)step_' + step + r'(?:/|$)', process['cgroup'], re.M), 'capacity job/step/cgroup mismatch')
     for key, arguments in (('job', ['scontrol', 'show', 'job', '-d', job]),
@@ -254,9 +508,16 @@ def validate_ownership(value, plan):
     validate_mapping(value['physical_mapping'], value, plan['gpu_uuid'])
 
 
-def collect_mapping(environment, gpu_uuid, cluster):
+def collect_mapping(environment, gpu_uuid, cluster, observation=None):
     """Read explicit root-owned node-cache files and the assigned GPU's hardware association only."""
+    if observation is not None:
+        observation['running_configuration'] = {'command': ['scontrol', 'show', 'config'], 'status': 'started'}
     query = subprocess.run(['scontrol', 'show', 'config'], capture_output=True, text=True, timeout=20, check=False)
+    if observation is not None:
+        partial = ''.join(line for line in query.stdout.splitlines(keepends=True)
+            if re.match(r'\s*(?:SLURM_CONF|TaskPlugin|ProctrackType)\s*=', line))
+        observation['running_configuration'] = {'command': ['scontrol', 'show', 'config'], 'returncode': query.returncode,
+            'filtered_bytes': partial, 'filtered_sha256': hashlib.sha256(partial.encode()).hexdigest(), 'stderr': query.stderr}
     require(query.returncode == 0, 'running Slurm configuration query failed')
     filtered = ''.join(line for line in query.stdout.splitlines(keepends=True)
         if re.match(r'\s*(?:SLURM_CONF|TaskPlugin|ProctrackType)\s*=', line))
@@ -267,9 +528,10 @@ def collect_mapping(environment, gpu_uuid, cluster):
         selected = matches[0]
     require(Path(selected).is_absolute() and Path(selected).name == 'slurm.conf', 'an explicit active node-cache path is required')
     directory = Path(selected).parent
-    result = {'slurm_conf': selected, 'configuration': [], 'running_configuration': {
+    result = {} if observation is None else observation
+    result.update({'slurm_conf': selected, 'configuration': [], 'running_configuration': {
         'command': ['scontrol', 'show', 'config'], 'returncode': query.returncode,
-        'filtered_bytes': filtered, 'filtered_sha256': hashlib.sha256(filtered.encode()).hexdigest()}}
+        'filtered_bytes': filtered, 'filtered_sha256': hashlib.sha256(filtered.encode()).hexdigest()}})
     result['profile'] = CONFIGURATION_PROFILES[cluster]
     result['directory_chain'] = []
     for path in reversed((directory, *directory.parents)):
@@ -574,7 +836,8 @@ class Capture:
         self.samples, self.errors, self.stop, self.thread = [], [], threading.Event(), None
         self.sampler_shutdown, self.sampler_exit_reason = None, 'not_started'
         # Actual owner, allocation, configured GRES mapping and host counters precede any JAX import.
-        self.owned_before, self.host_before = ownership(self.plan), host_memory_counters()
+        self.owned_before = recorded_ownership(self.plan, self.directory, 'capacity_ownership_before.json')
+        self.host_before = host_memory_counters()
 
     def bind(self, device):
         """Bind the initialized device before learner initialization without creating another CUDA context."""
@@ -657,7 +920,8 @@ class Capture:
             "native_backend": self.native_backend,
             'captured_driver_image': driver_capture,
             'sampler_shutdown': self.sampler_shutdown,
-            "ownership_before": self.owned_before, "ownership_after": ownership(self.plan),
+            "ownership_before": self.owned_before,
+            "ownership_after": recorded_ownership(self.plan, self.directory, 'capacity_ownership_after.json'),
             "host_memory_before": self.host_before, "host_memory_after": host_memory_counters(),
             "memory_samples": sorted(self.samples, key=lambda row: row['device']['timestamp_seconds']), "sampler_errors": self.errors,
             "loaded_gpu_libraries": training.actual_gpu_library_receipt(self.device.client, self.installed['gpu_libraries']),
@@ -804,6 +1068,7 @@ def source_capability(plan, evidence):
     declarations = [ast.literal_eval(node.value) for node in ast.parse(raw).body if isinstance(node, ast.Assign)
                     and any(isinstance(target, ast.Name) and target.id == 'PROTOCOL' for target in node.targets)]
     require(declarations == [PROTOCOL], 'the committed producer does not declare this exact capability')
+    require_ownership_source(plan, evidence)
     for relative, expected in helpers['files'].items():
         staged = Path(plan['campaign_run_dir']) / 'data' / plan['unit_id'] / 'code' / Path(relative).name
         require(hashlib.sha256(evidence.file(staged)).hexdigest() == expected, 'a staged instrumented helper changed')
