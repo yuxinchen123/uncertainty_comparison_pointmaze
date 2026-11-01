@@ -45,19 +45,33 @@ def geometry_candidates():
 
 def research_task(run_dir, wave, geometry, policy, field, severity, settings,
                   budget=262144, seed_start=0, seed_count=16, variant="primary", **overrides):
-    """Define a batch of fully independent settings and seeds for the shared queue."""
-    name = (f'{wave}_{geometry["kind"]}-width-{geometry["width"]}-turns-{geometry["turns"]}'
+    """Divide large parameter lists into independently claimable units of at most sixteen settings."""
+    if not settings or seed_count < 1:
+        raise ValueError('Research units require nonempty settings and a positive seed count.')
+    base_name = (f'{wave}_{geometry["kind"]}-width-{geometry["width"]}-turns-{geometry["turns"]}'
             f'_policy-{policy}_bonus-{field}_severity-exponent-{severity}'
             f'_steps-{budget}_seeds-{seed_start}-{seed_start+seed_count-1}_variant-{variant}')
-    specification = {'name': name, 'wave': wave, 'geometry': geometry, 'policy_kind': policy,
-        'field_kind': field, 'severity_exponent': severity, 'settings': settings,
-        'total_timesteps': budget, 'seed_start': seed_start, 'seed_count': seed_count, 'variant': variant, **overrides}
-    location = run_dir / 'specifications' / (name + '.json')
-    write_json(location, specification)
-    return enqueue(run_dir, {'name': name, 'stage': 'research', 'limit_seconds': 10800,
-        'minimum_device_memory_mb': 7000,
-        'command': [str(HERE / 'train_unit.py'), '--run-dir', str(run_dir),
-                    '--specification', str(location)]})
+    split, created = len(settings) > 16, False
+    # Before: 181 settings in one task; after: twelve tasks retaining the same seed identities.
+    for start in range(0, len(settings), 16):
+        selected = settings[start:start+16]
+        end = start + len(selected) - 1
+        name = base_name + (f'_settings-start-{start}-end-{end}' if split else '')
+        specification = {'name': name, 'wave': wave, 'geometry': geometry, 'policy_kind': policy,
+            'field_kind': field, 'severity_exponent': severity, 'settings': selected,
+            'total_timesteps': budget, 'seed_start': seed_start, 'seed_count': seed_count,
+            'variant': variant, **overrides}
+        if split:
+            specification.update(setting_offset=start, setting_range=[start, end],
+                                 total_setting_count=len(settings))
+        location = run_dir / 'specifications' / (name + '.json')
+        write_json(location, specification)
+        added = enqueue(run_dir, {'name': name, 'stage': 'research', 'limit_seconds': 10800,
+            'minimum_device_memory_mb': 7000,
+            'command': [str(HERE / 'train_unit.py'), '--run-dir', str(run_dir),
+                        '--specification', str(location)]})
+        created = added or created
+    return created
 
 
 def coarse_settings():
@@ -135,16 +149,30 @@ def best_setting(record):
 
 
 def choose_comparisons(records):
-    """Require a successful matched uniform condition before choosing a slowdown."""
+    """Pool development parameter slices before comparing each condition's best capped mean."""
+    pooled = {}
+    for record in records:
+        spec = record['specification']
+        if spec.get('wave') in {'confirmation', 'long-confirmation'}:
+            continue
+        identity = (json.dumps(spec['geometry'], sort_keys=True), spec['policy_kind'],
+                    spec['field_kind'], spec['severity_exponent'], spec['total_timesteps'])
+        if identity not in pooled:
+            # Retain scientific identifiers only; a physical task's partial settings are not a condition.
+            scientific = {name: spec[name] for name in ('geometry', 'policy_kind',
+                'field_kind', 'severity_exponent', 'total_timesteps')}
+            pooled[identity] = {'specification': scientific, 'settings': []}
+        pooled[identity]['settings'].extend(record['settings'])
+    conditions = list(pooled.values())
     chosen = []
     for kind, policy in itertools.product(('straight', 'snake'), ('tabular', 'neural')):
         candidates = []
-        for record in records:
+        for record in conditions:
             spec = record['specification']
             relevant = spec['field_kind'] in ADVERSARIAL if kind == 'straight' else spec['field_kind'] == 'random_network'
             if spec['geometry']['kind'] != kind or spec['policy_kind'] != policy or not relevant:
                 continue
-            uniform = [item for item in records if item['specification']['geometry'] == spec['geometry']
+            uniform = [item for item in conditions if item['specification']['geometry'] == spec['geometry']
                        and item['specification']['policy_kind'] == policy
                        and item['specification']['field_kind'] == 'uniform'
                        and item['specification']['total_timesteps'] == spec['total_timesteps']]
