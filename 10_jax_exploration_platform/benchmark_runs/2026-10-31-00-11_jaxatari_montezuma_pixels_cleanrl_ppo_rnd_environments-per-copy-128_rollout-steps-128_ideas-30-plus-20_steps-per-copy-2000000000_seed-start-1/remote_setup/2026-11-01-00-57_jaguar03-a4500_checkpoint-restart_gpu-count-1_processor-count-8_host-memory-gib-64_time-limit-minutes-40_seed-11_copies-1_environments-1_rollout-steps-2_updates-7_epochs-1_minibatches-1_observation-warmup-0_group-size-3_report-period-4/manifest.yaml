@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+  "description": "Bounded full-state checkpoint and original-update fallback component validation.",
+  "git": {
+    "commit": "8a96999408d4e214b212074d932f0eeabcbb5eea",
+    "dirty": false
+  },
+  "source_root": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/8a96999408d4e214b212074d932f0eeabcbb5eea",
+  "config_resolved_sha256": "7c476fa60b29c48acd029695a4f5d5b18ac8dc0d7ed800833eb58353730763ac",
+  "compile_signature": {
+    "copies": 1,
+    "environments_per_copy": 1,
+    "rollout_steps": 2,
+    "epochs": 1,
+    "minibatches": 1,
+    "network_dtype": "float32",
+    "statistics_dtype": "float64"
+  },
+  "seeding": {
+    "base_seed": 11,
+    "mode": "paired"
+  },
+  "artifacts": {
+    "data": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+    "plan": "validation_plan.json",
+    "source_snapshot": "source_snapshot.json"
+  },
+  "scientific_hypothesis_credit": 0,
+  "initial_case_credit": 0,
+  "adaptive_idea_credit": 0,
+  "final_training_credit": 0,
+  "worker_admission": false,
+  "source_admission_changed": false
+}

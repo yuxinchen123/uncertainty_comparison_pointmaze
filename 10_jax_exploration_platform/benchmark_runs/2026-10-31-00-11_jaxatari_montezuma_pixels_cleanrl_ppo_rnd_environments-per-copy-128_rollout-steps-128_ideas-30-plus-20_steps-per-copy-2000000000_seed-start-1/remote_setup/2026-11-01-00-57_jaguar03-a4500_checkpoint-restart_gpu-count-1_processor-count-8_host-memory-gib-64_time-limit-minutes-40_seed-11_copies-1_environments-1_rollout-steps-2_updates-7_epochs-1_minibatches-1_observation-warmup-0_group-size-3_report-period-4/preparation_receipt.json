@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "checkpoint_restart_packet_preparation",
+  "job_id": "6780433",
+  "step_id": "35",
+  "packet_directory": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+  "packet_manifest_sha256": "6bfb8c2275f801cc29da6dec125872bede29475fbb20a2ed8f62aa3e518e95a2",
+  "source_visibility": {
+    "argv": [
+      "/usr/bin/python3",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/verify_source.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\"source_commit\": \"8a96999408d4e214b212074d932f0eeabcbb5eea\", \"files_verified\": 218, \"pixel_numerical_files_verified\": 10, \"numerical_imports\": false}\n",
+    "stderr": "",
+    "observed_at_utc": "2026-11-01T07:57:15.608769+00:00"
+  },
+  "shell_syntax": {
+    "argv": [
+      "bash",
+      "-n",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/job.sbatch"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "observed_at_utc": "2026-11-01T07:57:15.615084+00:00"
+  },
+  "allocation_guard_golden_passed": true,
+  "allocation_guard_negative_fields": [
+    "UserId",
+    "JobId",
+    "NumCPUs",
+    "MinMemoryNode",
+    "JobState",
+    "TresPerNode"
+  ],
+  "source_files_verified": 218,
+  "pixel_numerical_files_verified": 10,
+  "numeric_code_executed": false,
+  "submission_occurred": false,
+  "release_occurred": false,
+  "git_commit_occurred": false,
+  "scientific_hypothesis_credit": 0,
+  "initial_case_credit": 0,
+  "adaptive_idea_credit": 0,
+  "final_training_credit": 0,
+  "worker_admission": false,
+  "source_admission_changed": false
+}
