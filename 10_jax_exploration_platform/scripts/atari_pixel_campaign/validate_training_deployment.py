@@ -26,7 +26,7 @@ REQUIRED_HELPERS = {PREFIX + name for name in ("measure_selected.py", "diagnose_
                                                "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
                                                "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                                                "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
-                                               "train_optimized.py")}
+                                               "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')}
 
 
 def sha256(value):
@@ -370,6 +370,9 @@ def global_processes(final, evidence):
         processes.add(validation.execution_identity(evidence.read(context[name])))
     for point in final["selected"]["h100"]["packing"]["points"] + final["selected"]["h100"]["packing"]["confirmation"]:
         processes.add(tuple(point["process"]))
+    capacity = final['selected']['h100']['packing'].get('capacity_exclusion')
+    if capacity is not None:
+        processes.add(tuple(capacity['process']))
     registry = evidence.read(final["specification"]["study_registry"])
     entries = list(registry["initial_ideas"]) + [entry for batch in registry["adaptive_batches"] for entry in batch["hypotheses"]]
     for entry in entries:
@@ -389,8 +392,13 @@ def validate_deployment(specification, resolver=None, specification_path=None):
     required = {"schema_version", "final_verification", "source_root", "source_commit", "hardware_class", "runtime_environment",
         "campaign_run_dir", "target", "correctness_record", "confirmation_record", "packing_records", "packing_confirmation_records",
         "selected_copies", "unit_id", "copy_seeds", "seed_manifest"}
-    if (set(specification) not in (required, required | {"packing_stop_rule"})
-            or "packing_stop_rule" in specification and specification["packing_stop_rule"] != "measured_memory_headroom"
+    extras = ({'packing_stop_rule', 'packing_memory_limit_record'}
+              if specification.get('packing_stop_rule') == 'instrumented_device_memory_limit' else {'packing_stop_rule'})
+    if (set(specification) not in (required, required | extras)
+            or "packing_stop_rule" in specification and specification["packing_stop_rule"] not in {
+                "measured_memory_headroom", 'instrumented_device_memory_limit'}
+            or (specification.get('packing_stop_rule') == 'instrumented_device_memory_limit'
+                and 'packing_memory_limit_record' not in specification)
             or type(specification["schema_version"]) is not int or specification["schema_version"] != 1
             or specification["hardware_class"] != "h100"):
         raise ValueError("this deployment specification requires the exact version-one H100 target fields")
@@ -431,6 +439,18 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         backend, actual = observed_backend, observed_runtime
         observations.append({"path": evidence.path_identity(path), "mode": mode, "process": list(process),
                              "gpu_uuid": result["hardware"]["gpu_uuid"], "asset_proof": observed_assets})
+    if specification.get('packing_stop_rule') == 'instrumented_device_memory_limit':
+        # Rebuild the separate failed-target proof independently; never admit it through target_record's completed windows.
+        import device_memory_limit as capacity
+        excluded = capacity.validate_exclusion(specification['packing_memory_limit_record'], specification, evidence)
+        process = tuple(excluded['process'])
+        hardware_identity(excluded['hardware'], specification['target'])
+        if (process in used or process in identities or excluded['backend'] != backend or excluded['runtime'] != actual
+                or excluded['assets']['identity'] != global_assets['identity']):
+            raise ValueError('target capacity exclusion reused a process or crossed its qualified backend/runtime/assets')
+        observations.append({'path': evidence.path_identity(specification['packing_memory_limit_record']),
+            'mode': 'device-memory-capacity-exclusion', 'process': list(process), 'gpu_uuid': excluded['gpu_uuid'],
+            'asset_proof': excluded['assets'], 'packing_point_credit': 0})
     seeds = seed_admission(specification["seed_manifest"], specification["unit_id"], specification["copy_seeds"],
                            packing["configuration"], "h100", evidence)
     evidence.recheck_images()

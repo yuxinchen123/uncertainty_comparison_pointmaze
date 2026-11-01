@@ -33,7 +33,7 @@ class TrainingDeploymentTests(unittest.TestCase):
             "src/exploration_platform/atari_pixels/config.py", "src/exploration_platform/atari_pixels/environment.py")]
         relatives += [deployment.PREFIX + name for name in ("paired_benchmark.py", "ideas.py", "worker_environment.sh",
             "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
-            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py", "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py", "train_optimized.py")]
+            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py", "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py", "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')]
         for relative in relatives:
             target = self.source / relative
             target.parent.mkdir(parents=True, exist_ok=True)

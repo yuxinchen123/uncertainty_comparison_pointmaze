@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import io
 from pathlib import Path
 import subprocess
 import sys
@@ -150,6 +151,71 @@ class SelectedMeasurementTests(unittest.TestCase):
         expected = copy.deepcopy(plan["configuration"])
         expected["learner"]["n_copies"] = 1
         self.assertEqual(expected, json.loads(json.dumps(self.selected)))
+        self.assertNotIn('device_memory_limit_protocol', plan)
+        self.assertFalse((directory / 'capacity_owned_job_ledger.txt').exists())
+
+    def test_instrumented_packing_opt_in_snapshots_ledger_without_gpu_access(self):
+        """The optional capability copies ownership bytes once while leaving ordinary preparation unchanged."""
+        arguments = self.arguments()
+        ledger = self.run_dir / 'slurm/submitted_jobids_uva.txt'
+        ledger.parent.mkdir()
+        ledger.write_text('123\n')
+        arguments.mode, arguments.reference_configuration, arguments.copies = 'packing-point', None, 2
+        arguments.record_device_memory_limit = True
+        arguments.memory_limit_allocation_kind, arguments.memory_limit_cluster = 'slurm', 'uva'
+        arguments.memory_limit_owned_job_ledger = ledger
+        directory = self.prepare(arguments)
+        plan = json.loads((directory / 'measurement_plan.json').read_text())
+        snapshot = directory / 'capacity_owned_job_ledger.txt'
+        self.assertEqual(snapshot.read_bytes(), b'123\n')
+        self.assertEqual(plan['device_memory_limit_protocol']['owned_job_ledger']['path'], str(snapshot))
+        self.assertEqual(plan['device_memory_limit_ledger_source']['path'], str(ledger))
+        ledger.write_text('123\n124\n')
+        self.assertEqual(snapshot.read_bytes(), b'123\n')
+        self.assertNotIn('jax', sys.modules)
+
+    def test_memory_limit_opt_in_refuses_paired_comparison_modes(self):
+        """Diagnostic memory failures cannot be attached to ordinary correctness or confirmation work."""
+        arguments = self.arguments()
+        arguments.record_device_memory_limit = True
+        arguments.memory_limit_allocation_kind, arguments.memory_limit_cluster = 'direct', 'uva'
+        arguments.memory_limit_owned_job_ledger = None
+        with self.assertRaisesRegex(ValueError, 'isolated packing'):
+            self.prepare(arguments)
+
+    def test_prepared_execution_rejects_all_memory_preparation_overrides(self):
+        """Execution cannot silently ignore a memory-protocol preparation flag."""
+        for extra in (['--record-device-memory-limit'], ['--memory-limit-allocation-kind', 'slurm'],
+                      ['--memory-limit-cluster', 'uva'], ['--memory-limit-owned-job-ledger', '/unused/ledger.txt']):
+            with self.subTest(extra=extra), patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+                PRODUCER.parse_arguments(['--prepared-unit', '/unused/prepared-unit', *extra])
+
+    def test_memory_preparation_options_require_explicit_opt_in(self):
+        """A misplaced memory option fails at parsing before any launch artifact is created."""
+        before = sorted(path.relative_to(self.run_dir) for path in self.run_dir.rglob('*'))
+        for extra in (['--memory-limit-allocation-kind', 'direct'], ['--memory-limit-cluster', 'uva'],
+                      ['--memory-limit-owned-job-ledger', '/unused/ledger.txt']):
+            with self.subTest(extra=extra), patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+                self.arguments(*extra)
+        self.assertEqual(before, sorted(path.relative_to(self.run_dir) for path in self.run_dir.rglob('*')))
+
+    def test_private_child_flag_requires_a_declared_prepared_packing_protocol(self):
+        """The private entry cannot be attached to preparation or an ordinary prepared measurement."""
+        with patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+            self.arguments('--instrumented-child')
+        ordinary = self.prepare(self.arguments())
+        with patch.object(sys, 'stderr', io.StringIO()), self.assertRaises(SystemExit):
+            PRODUCER.parse_arguments(['--prepared-unit', str(ordinary), '--instrumented-child'])
+        arguments = self.arguments()
+        arguments.unit_id += '_instrumented'
+        arguments.mode, arguments.reference_configuration = 'packing-point', None
+        arguments.record_device_memory_limit = True
+        arguments.memory_limit_allocation_kind, arguments.memory_limit_cluster = 'direct', 'uva'
+        arguments.memory_limit_owned_job_ledger = None
+        instrumented = self.prepare(arguments)
+        parsed = PRODUCER.parse_arguments(['--prepared-unit', str(instrumented), '--instrumented-child'])
+        self.assertTrue(parsed.instrumented_child)
+        self.assertNotIn('jax', sys.modules)
 
     def test_algorithm_changes_and_output_reuse_are_rejected(self):
         """No source preparation or partial artifact can authorize a changed CleanRL setting."""

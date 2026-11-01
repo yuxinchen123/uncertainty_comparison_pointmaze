@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "kind": "instrumented_memory_limit_final_cli_independent_review",
+  "at_utc": "2026-11-01T12:04:20.835893+00:00",
+  "job_id": "6780635",
+  "step_id": "18",
+  "hostname": "slurm5",
+  "passed": true,
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_cli_corrected_freeze_2026-11-01.json",
+    "sha256": "8cc14d08ecffe64a73cdab4bbfaae447bfe05dc77cda46e703aa7abccb9d6b1e"
+  },
+  "before_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "0094c51006237770272e3464a78df6a5c66ca429f8767863e8064c105c1faab8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "5fb21243bdd424c1cdaa1015c1e01a5ac0f3ec871e21fcd22ad7ce1388fb8359",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "3982af6dcaa8597c291a66b9ac2aa0feaeb7feede135beff8a72c2d30b76e69f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467"
+  },
+  "after_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "0094c51006237770272e3464a78df6a5c66ca429f8767863e8064c105c1faab8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "5fb21243bdd424c1cdaa1015c1e01a5ac0f3ec871e21fcd22ad7ce1388fb8359",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "3982af6dcaa8597c291a66b9ac2aa0feaeb7feede135beff8a72c2d30b76e69f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467"
+  },
+  "source_unchanged": true,
+  "only_changes_since_full_141": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py"
+  ],
+  "prior_independent_full_suite": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_independent_6780635_15.json",
+    "sha256": "14d738513474240234fcbe0380afa55ec100c1cbd2437ce465aff87fe7172e65",
+    "cases": 141,
+    "passed": true
+  },
+  "focused_tests": {
+    "module": "test_measure_selected",
+    "cases": 19,
+    "seconds": 1.3435329989879392,
+    "failures": 0,
+    "errors": 0,
+    "stdout_stderr": "...................\n----------------------------------------------------------------------\nRan 19 tests in 1.236s\n\nOK\n"
+  },
+  "reviewed_cli_behavior": [
+    "All new memory preparation flags reject under prepared-unit execution.",
+    "Memory preparation options require explicit opt-in.",
+    "Private instrumented-child flag requires a versioned prepared packing protocol.",
+    "The recorded protocol and all other nine source files remain unchanged from the full independent review."
+  ],
+  "live_scheduler_network_gpu_actions_forbidden": true,
+  "numerical_imports": [],
+  "actual_gpu_regression_passed": false,
+  "enabled_for_campaign": false,
+  "source_admission_changed": false,
+  "approval_scope": "Reviewed source may be published; actual producer regression and separate reviewed job remain required before enablement."
+}
