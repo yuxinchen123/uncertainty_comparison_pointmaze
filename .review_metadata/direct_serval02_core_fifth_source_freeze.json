@@ -1,0 +1,18 @@
+{
+  "actual_gpu_operations": false,
+  "base_commit": "0c42861e4ac209138ead5253fb8d1612cd3d3e3c",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "c20e0c4dbeea362886cd0346a3ee1d5618c9f24b6ed5c616a969380a19066e21",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "050ec8b9aa98de66aa32042dede491fe9d73a8d888149c7a5944080c971fe4e3"
+  },
+  "independent_findings_sha256": "e286b560e631b272e0bfe680c82dc153a33e6d8ee3e8e7eb48ae5703d38859b2",
+  "kind": "direct_serval02_core_source_freeze",
+  "physical_source_copies": {
+    ".review_metadata/direct_core_fifth_source/serval02_card1_binding.py": "c20e0c4dbeea362886cd0346a3ee1d5618c9f24b6ed5c616a969380a19066e21",
+    ".review_metadata/direct_core_fifth_source/test_serval02_card1_binding.py": "050ec8b9aa98de66aa32042dede491fe9d73a8d888149c7a5944080c971fe4e3"
+  },
+  "previous_freeze_sha256": "65486c2ca069888cb88412b64fa891d679aef94816ff1f650d49419202fc42f9",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "version": "fifth"
+}

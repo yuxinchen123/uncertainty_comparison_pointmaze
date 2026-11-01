@@ -1,0 +1,50 @@
+{
+  "actual_gpu_operations": false,
+  "actual_serval02_contact": false,
+  "at_utc": "2026-11-01T20:38:15.304203+00:00",
+  "birth": "52632086",
+  "blocked_numerical_imports": [],
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_63/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "error_details": [],
+  "errors": 0,
+  "extra": {
+    "external_metadata_and_binding_directory_accepted": true,
+    "missing_live_numerical_root_accepted": {
+      "scope": "stage-local active-source helper, synthetic admission hash only; no actual authority changed",
+      "source_root": "/synthetic/frozen/source"
+    },
+    "omitted_manifest_child_accepted": {
+      "raw_lease_still_in_frozen_manifest": true,
+      "remaining_direct_processes": 1,
+      "removed_original_child_pid": 79,
+      "scope": "all-source/gate constants explicitly synthetic as in author fixture; real unchanged cohort reader used",
+      "validated_comparisons": 120
+    },
+    "profile_parent_owner_binding_accepted": true
+  },
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6781231",
+  "kind": "direct_serval02_core_independent_initial_findings",
+  "passed": true,
+  "pid": 675809,
+  "process_calls_limited_to_local_git": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loads_blocked": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e4d1e429cb0215258627be901d04c820394b4d473dfbf1f432d0c4e8a85c63a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "9554d6281049dd08f24e18d8f7da1ce05b6e2f8c49f8de68220da28b618770c7"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e4d1e429cb0215258627be901d04c820394b4d473dfbf1f432d0c4e8a85c63a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "9554d6281049dd08f24e18d8f7da1ce05b6e2f8c49f8de68220da28b618770c7"
+  },
+  "source_freeze_sha256": "65486c2ca069888cb88412b64fa891d679aef94816ff1f650d49419202fc42f9",
+  "step_id": "63",
+  "temporary_fork_test_uses_only_own_lock_metadata": true,
+  "tests": 4
+}

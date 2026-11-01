@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-11-01T21:16:30.967116+00:00",
+  "branch_created": false,
+  "cause": "This optional producer helper was added after the detached author base0c42861; it is absent from both that base and author checkout.",
+  "commit_created": false,
+  "correction": "Check the base Git roster before requiring optional later helpers; do not copy or stage them.",
+  "error_type": "FileNotFoundError",
+  "files_staged": false,
+  "kind": "direct_core_publication_precheck_failure",
+  "operation": "Read-only pre-commit protected-helper check",
+  "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+  "schema_version": 1,
+  "source_bytes_changed": false
+}
