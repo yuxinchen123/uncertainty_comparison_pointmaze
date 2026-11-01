@@ -388,5 +388,27 @@
   "final_training_started": 0,
   "new_zero_credit_qualification_job_id": "6782778",
   "failed_qualification_job_id": "6782640",
-  "latest_qualification_state": "failed_test_root_validation_corrected_source_preparing_fresh_attempt"
+  "latest_qualification_state": "failed_test_root_validation_corrected_source_preparing_fresh_attempt",
+  "latest_actual_target_qualification_release": {
+    "job_id": "6782778",
+    "at_utc": "2026-11-01T22:23:12.249529+00:00",
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+    "publication_commit": "550425fd8ec68f11e60fb93f873bd77ee7b06f0b",
+    "release_receipt_sha256": "093f9e720988d1ff585a253aa67552d2ac267ece0375e7d7a73c108c78e199d0",
+    "final_owned_inputs_sha256": "9e12c41186974ac21251ecb11e848792477cee3d4296a2cd13147f60cef37bd9",
+    "actual_core_reader_passed": true,
+    "independent_release_startup_review_sha256": "e2d843f180dfcdef56c6063400d7e75257f2da524cc7ec6a8e39123c114055d1",
+    "qualification_success": false,
+    "scientific_credit": 0,
+    "worker_admission": false
+  },
+  "last_verified_full_monitor": {
+    "monitor_job_id": "6781231",
+    "step": "123",
+    "time_utc": "2026-11-01T22:25:40.206263+00:00",
+    "initial_comparisons_complete": 120,
+    "cadence_seconds": 1200,
+    "native_cron_id": "93b649f6-992a-436e-88b7-39b6d2e21343",
+    "verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-22-28_verification.json"
+  }
 }

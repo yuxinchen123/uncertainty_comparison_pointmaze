@@ -1,0 +1,30 @@
+{
+  "command": [
+    "nvidia-smi",
+    "-i",
+    "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "--query-compute-apps=gpu_uuid,pid,used_gpu_memory",
+    "--format=csv,noheader,nounits"
+  ],
+  "started_at_seconds": 1793571818.9121113,
+  "finished_at_seconds": 1793571818.9619832,
+  "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "own_pid": 2017280,
+  "returncode": 0,
+  "stdout_sha256": "ff2155cc5dd70da2536dfe1e8e547a1a844fa146e0e0e591981d9a8f0018dcbf",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 55,
+  "stderr_bytes": 0,
+  "complete": true,
+  "capture_error": null,
+  "valid": true,
+  "other_active_compute_rows": 0,
+  "stdout": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b, 2017280, 196\n",
+  "stderr": "",
+  "own": {
+    "pid": 2017280,
+    "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "bytes": 205520896
+  },
+  "row_count": 1
+}

@@ -1,0 +1,19 @@
+{
+  "hostname": "jaguar03",
+  "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "gpu_query": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b, NVIDIA RTX A4500, 20470 MiB, 580.159.04",
+  "pid": 2017280,
+  "process_start_time": "53207206",
+  "slurm_job_id": "6782778",
+  "cuda_visible_devices_original": "0",
+  "cuda_visible_devices": "0",
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "worker_admitted": false,
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  }
+}

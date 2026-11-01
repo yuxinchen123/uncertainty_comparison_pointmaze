@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "prepared_monitor_safe_handover_protocol",
+  "source_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "old_monitor_job_id": "6781231",
+  "new_monitor_job_id": null,
+  "candidate_full_tick_performed": false,
+  "root_coordinates_fresh_site_mirrors_before_candidate": true,
+  "ordered_requirements": [
+    "Independent static source/archive/resource/script review passes.",
+    "Root refreshes only the owned remote-site snapshots before the actual candidate tick.",
+    "Run one candidate_full_tick.py on old owned6781231 compute; retain actual source/owner/report/raw evidence and verify120 initial cases, zero new credit and unchanged admission/protected records.",
+    "Root publishes reviewed packet and candidate evidence before one held submission.",
+    "Refuse any existing intent/attempt/receipt; fsync one exact held intent, raw return and actual returned identifier in both UVA/global ledgers and its exact source/script TSV row before any release.",
+    "Root independently verifies the held actual owner/source/CPU/memory/zero-GPU/time/no-requeue shape and releases that exact identifier once.",
+    "New source verifier and allocation guard must pass, then a first complete report and runtime allocation must be independently reviewed.",
+    "Query only exact old6781231 accounting; every numeric auxiliary step must be terminal. Preserve all old reports and proofs.",
+    "Only root may stop old6781231 by exact identifier after new runtime/report proof and old auxiliary drain; never blanket cancel or stop the new monitor.",
+    "Root updates canonical monitor records and twenty-minute recurring supervision. A post-handover full tick runs on the new owned monitor allocation."
+  ],
+  "resource_shape": {
+    "requested_cpus": 1,
+    "host_memory_gib": 2,
+    "gpus": 0,
+    "time_limit": "7-00:00:00",
+    "partition": "nolim",
+    "account": "sl5nw_base",
+    "qos": "normal",
+    "requeue": false,
+    "interval_seconds": 1200
+  },
+  "supports_corrected_a4500_readers": true,
+  "future_direct_adapter_supported": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "job_actions_by_preparation": 0
+}

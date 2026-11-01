@@ -1,0 +1,34 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-01T22:23:12.249529+00:00",
+  "automatic_retry_permitted": false,
+  "case_credit": 0,
+  "cluster": "uva",
+  "command": [
+    "scontrol",
+    "release",
+    "6782778"
+  ],
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+  "frozen_inputs_sha256": "8565557a5572eceee2553791f96f83ce32e80cebcea421c1a3035311c2a62df8",
+  "held_monitor_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/actual_held_monitor_proof.json",
+    "sha256": "cdf54a30199a8d19760a07df4f3fafd05b3d9795716e895364a3adb465f959f6"
+  },
+  "idea_credit": 0,
+  "job_id": "6782778",
+  "kind": "owned_uva_configured_isolation_release",
+  "packing_point_credit": 0,
+  "plan_sha256": "7ba87ca5feb87aecc756d5d19e7b2a382f8c654c014a1187aef2d6b9388dbbbd",
+  "publication_commit": "550425fd8ec68f11e60fb93f873bd77ee7b06f0b",
+  "release_source_sha256": "7240b11f232a329f3cd09471f7caedcf831d6492c24a0ee2598981265b4bdf9e",
+  "returncode": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "stderr": "",
+  "stdout": "",
+  "submission_receipt_sha256": "2b88a94af6caf0771954796933c525b0d2297418357b08dcd6fe4c5c6a149aee",
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

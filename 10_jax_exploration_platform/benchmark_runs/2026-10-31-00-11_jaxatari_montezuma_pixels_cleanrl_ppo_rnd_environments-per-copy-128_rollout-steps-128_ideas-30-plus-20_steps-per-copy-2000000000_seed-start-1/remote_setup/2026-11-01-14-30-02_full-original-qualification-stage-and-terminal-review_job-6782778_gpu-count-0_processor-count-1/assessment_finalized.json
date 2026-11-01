@@ -1,0 +1,146 @@
+{
+  "actual_48_tests_and_144_phases_passed": true,
+  "actual_exit_field_at_single_inspection": "0:0",
+  "actual_helper": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "actual_renderer": {
+    "cases": 132,
+    "checks": {
+      "cache": "passed",
+      "fused": "passed",
+      "palette": "passed"
+    },
+    "device": "cuda:0",
+    "rooms": 33,
+    "synthetic_pixel_cases": 11
+  },
+  "actual_source": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "actual_state_at_single_inspection": "RUNNING",
+  "actual_target_job_id": "6782778",
+  "admission_granted": false,
+  "at_utc": "2026-11-01T22:31:08.700110+00:00",
+  "case_credit": 0,
+  "completed_checks": [
+    "staged helper measure_selected.py unchanged",
+    "staged helper diagnose_gpu_execution.py unchanged",
+    "staged helper post_comparison_validation.py unchanged",
+    "staged helper infrastructure_retry.py unchanged",
+    "staged helper pregather_async_retry.py unchanged",
+    "staged helper h100_nvl_slurm_queue.py unchanged",
+    "staged helper h100_nvl_slurm_case.py unchanged",
+    "staged helper h100_nvl_slurm_evidence.py unchanged",
+    "staged helper h100_nvl_slurm_site_validation.py unchanged",
+    "staged helper h100_nvl_slurm_qualification.py unchanged",
+    "staged helper h100_nvl_allocation_observation.py unchanged",
+    "staged helper train_optimized.py unchanged",
+    "staged helper short_learning.py unchanged",
+    "staged helper device_memory_limit.py unchanged",
+    "staged helper validate_training_deployment.py unchanged",
+    "staged helper portable_evidence.py unchanged",
+    "staged helper configured_measurement.py unchanged",
+    "staged helper uva_slurm_configured_isolation.py unchanged",
+    "staged helper uva_active_configuration_observation.py unchanged",
+    "staged helper passive_installed_slurm_observation.py unchanged",
+    "reader imported from exact staged path",
+    "exact staged full-original source,20helpers,CleanRL/shared-software receipts validate read-only",
+    "own numeric step,unmodified selectors,current CUDA/JAX context,physicalUUID/PCI/minor and captured580driver validate",
+    "actual complete48tests/144setup-call-teardown outcomes pass without deselection",
+    "actual full33-room132-variant11-synthetic renderer passes source-bound matrix",
+    "actual installed backend equals original shared-software receipt",
+    "exact queried target exists once in own ledger",
+    "exact-owned-ID accounting query returned0",
+    "actual job accounting row is unique",
+    "no numerical import attempted by metadata review"
+  ],
+  "controlled_full_reference_work": "unknown while dedicated completed result absent; no zero inference",
+  "corrected_terminal_wrapper_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/review_actual_qualification_corrected.py",
+    "sha256": "596b72c0d886f6c0cf784ab4e38581c903e64b2e096e8788bc5274fe1ee3368f"
+  },
+  "failure_present_at_single_inspection": false,
+  "final_training_credit": 0,
+  "finalizer_job_id": "6781231",
+  "finalizer_step_id": "126",
+  "first_receipt_wrapper_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/failure.json",
+    "sha256": "b4a7217fba7828853878607b4c439078743d692b6628bb9fdffb1999c4cbaaab"
+  },
+  "first_wrapper_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/review_actual_qualification.py",
+    "sha256": "2aadee75c0fa85c4b455509ae6da8ea1742610dc18feaccf649421d4ca58a6d6"
+  },
+  "full_gate_reader_passed": false,
+  "gpu_actions": 0,
+  "idea_credit": 0,
+  "installed_binary_matches_upstream_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "kind": "full_original_qualification_current_stage_assessment",
+  "network_actions": 0,
+  "no_target_poll_or_scheduler_query_in_finalizer": true,
+  "numerical_imports": 0,
+  "original_inspection_job_id": "6781231",
+  "original_inspection_step_id": "125",
+  "passed": true,
+  "physical_gres_mapping_verified": false,
+  "physical_identity": {
+    "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "pci_address": "0000:03:00.0",
+    "physical_minor": 0
+  },
+  "saved_artifacts": {
+    "asset_receipt.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/asset_receipt.json.snapshot",
+      "sha256": "c08087854a726fc0699620ffbb072d00ed99c8d6e94dd6c03169d1846d2ce555"
+    },
+    "assigned_process_admission.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/assigned_process_admission.json.snapshot",
+      "sha256": "64cbaa80ab272eb9b25ae2ba99099fa089d8e0557edd3e217f32a938ae1b451b"
+    },
+    "configured_isolation_metadata.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/configured_isolation_metadata.json.snapshot",
+      "sha256": "99f28ff0744753bbaab7928171983bf9382023521fb7a4414a8fa908be1ebf86"
+    },
+    "hardware.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/hardware.json.snapshot",
+      "sha256": "988aa403ed076335794fa9cc0205e019372f142401342880fd58ad491b91c65a"
+    },
+    "installed_backend.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/installed_backend.json.snapshot",
+      "sha256": "0abe0f6339fff971e5bf2b279f29915a22be69aaf8d512cc9306542a6ab5b620"
+    },
+    "original_renderer.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/original_renderer.json.snapshot",
+      "sha256": "16fd402e617f5844f07605d0b75f32ed213cd11b6102a71c197207e445b36fbf"
+    },
+    "original_tests.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/original_tests.json.snapshot",
+      "sha256": "1fb43ac9f0a439d36afce8a3c5016a99a4161032ebab8f1d939759ad4213d07d"
+    },
+    "original_tests.stderr.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/original_tests.stderr.snapshot",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "original_tests.stdout.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/original_tests.stdout.snapshot",
+      "sha256": "ec6bd7396d49e73ae63f9e7af92a7767be7ef01f0e29148a9587571944530184"
+    },
+    "resolved_device_binding.json.snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/resolved_device_binding.json.snapshot",
+      "sha256": "4731a99b9779d7159afc1e67911dc5a515b04040173e12ee0e3b363dd2494d66"
+    },
+    "terminal_accounting.stderr.raw": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/terminal_accounting.stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "terminal_accounting.stdout.raw": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/terminal_accounting.stdout.raw",
+      "sha256": "dd8e3287b7385cb4c2685f38ef28774a51f8204058331b16bce5016c963bd82c"
+    }
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "source_and_backend_and_assets_validated_from_exact_staged_reader": true,
+  "target_result_present_at_single_inspection": false,
+  "test_fixture_work": "actual test/renderer work is unquantified; no whole-job transition total claimed",
+  "worker_admitted": false
+}

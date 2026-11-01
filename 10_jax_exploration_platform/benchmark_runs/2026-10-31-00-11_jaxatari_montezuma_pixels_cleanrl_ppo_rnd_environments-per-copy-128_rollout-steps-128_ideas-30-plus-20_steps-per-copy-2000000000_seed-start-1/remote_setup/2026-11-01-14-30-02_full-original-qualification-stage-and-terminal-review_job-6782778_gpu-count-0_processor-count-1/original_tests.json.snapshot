@@ -1,0 +1,966 @@
+{
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-m",
+    "pytest",
+    "--rootdir",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform",
+    "-q",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py"
+  ],
+  "execution": "same already identity-bound process via pytest.main",
+  "returncode": 0,
+  "reports": [
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.23659518000204116
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.323888807906769
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00025258201640099287
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00038017192855477333
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 32.21758387598675
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00037183298263698816
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004311429802328348
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.7560442090034485
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002972320653498173
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002660719910636544
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.0229547679191455
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002708910033106804
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00023369200062006712
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.684646788984537
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00023602100554853678
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00023097102530300617
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.2013415119145066
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002435109345242381
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021946104243397713
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0007959849899634719
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.002133370959199965
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022606109268963337
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 20.686897526029497
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.000255812075920403
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004092419985681772
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.5577285499311984
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00028151203878223896
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003772219642996788
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.3911654419498518
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00026987201999872923
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003796219825744629
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.7271679670084268
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002729210536926985
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003866420593112707
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.015327484929002821
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002476220251992345
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021237100008875132
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 4.432395937968977
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001542610116302967
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001320509472861886
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 4.047982034040615
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0003455119440332055
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00013842107728123665
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.9054768820060417
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00025790208019316196
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004284130409359932
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.9923427649773657
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002545219613239169
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002865310525521636
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.22302003402728587
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00026444101240485907
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022095104213804007
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0005773929879069328
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00021825102157890797
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00023378105834126472
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0016544089885428548
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00019977206829935312
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021771201863884926
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.790350085007958
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012711004819720984
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001004999503493309
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.50217416905798
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00025012099649757147
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00023274088744074106
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 11.649232225958258
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012434099335223436
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010576099157333374
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.509177063009702
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00011748995166271925
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 19.461525841034018
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 9.216868603019975
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00034551206044852734
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004580930108204484
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.148257864988409
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00018917105626314878
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0010891660349443555
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 7.422474991064519
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.000189700978808105
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00013982108794152737
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.121499274973758
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014027103316038847
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00013648008462041616
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.813363402034156
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001175709767267108
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.000190370948985219
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 14.958534721983597
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00029822206124663353
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00041501305531710386
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.8762432049261406
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014187104534357786
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00019865098875015974
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.0072049651062116
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013469101395457983
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00018568092491477728
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.839326958055608
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00015251105651259422
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021091103553771973
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.7084403579356149
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013709103222936392
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00011886097490787506
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.915660304017365
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00015862099826335907
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00036000204272568226
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.4308580019278452
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002439409727230668
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022077199537307024
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.0956353310029954
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00023696105927228928
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021588103845715523
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.1322117330273613
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002448810264468193
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021386099979281425
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.6413872370030731
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002389419823884964
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002176209818571806
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.344111255952157
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002435420174151659
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002361719962209463
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.0814023519633338
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00023622100707143545
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00021817104425281286
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.8063999470323324
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001403109636157751
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00012083095498383045
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.7965930229984224
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00021254096645861864
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.000122971017844975
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.8086771009257063
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013079994823783636
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010384002234786749
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.4918040829943493
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001168600283563137
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010892003774642944
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.0985810610000044
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013751001097261906
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00012389093171805143
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.455977788078599
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00011882104445248842
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010119099169969559
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.677522195968777
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012924103066325188
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010426098015159369
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.736211266950704
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00016683095600456
+    }
+  ],
+  "collected_nodeids": [
+    "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+    "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+    "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+    "tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+    "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+    "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+    "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+    "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+    "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+    "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+    "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+    "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+    "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+    "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+    "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+    "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+    "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+    "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+    "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+    "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+    "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+    "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+    "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+    "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+    "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+    "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+    "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+    "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+    "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+    "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+    "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+    "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+    "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+    "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+    "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+    "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+    "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+    "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+    "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+    "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+    "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+    "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+    "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction"
+  ],
+  "collection_rootdir": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform",
+  "collection_reports": [
+    {
+      "nodeid": "",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_equations.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_indexed_frames.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_optimizations.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_scalar_settings.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels/test_training.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/atari_pixels",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "tests/test_atari_pixel_environment.py",
+      "outcome": "passed"
+    }
+  ],
+  "deselected_nodeids": []
+}

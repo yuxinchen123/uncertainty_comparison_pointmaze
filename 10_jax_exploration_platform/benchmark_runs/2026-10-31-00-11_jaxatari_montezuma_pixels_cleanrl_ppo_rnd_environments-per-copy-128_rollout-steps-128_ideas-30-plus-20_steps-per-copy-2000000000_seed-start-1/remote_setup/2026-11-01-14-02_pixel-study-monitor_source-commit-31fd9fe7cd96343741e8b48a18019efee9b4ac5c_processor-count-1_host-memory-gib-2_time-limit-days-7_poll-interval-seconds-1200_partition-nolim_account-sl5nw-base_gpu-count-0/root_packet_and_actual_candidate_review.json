@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "at_utc": "2026-11-01T22:29:16.970067+00:00",
+  "approved_packet_for_reviewed_held_submission": true,
+  "approved_submission_utility": false,
+  "source_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "static_packet_files_verified": 27,
+  "source_files_verified": 260,
+  "static_independent_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-13-14_replacement-monitor-independent-static-review_source-31fd9fe7_gpu-count-0_processor-count-1/review.json",
+  "static_independent_review_sha256": "43d8b11bb1a735af4374d34be8ae4577a17661a7bb16f1ebb0fe0d8ddf5b0b58",
+  "actual_candidate_independent_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-27-12_monitor-candidate-exact-report-framing-independent-review_source-31fd9fe7_gpu-count-0_processor-count-1/review.json",
+  "actual_candidate_independent_review_sha256": "2e2b994c327dc8174a9beeb2fa4e2666ed75ef703b8bfb23995bef1cc6876366",
+  "actual_candidate_step": "6781231.119",
+  "original_candidate_wrapper_failed": true,
+  "original_failure_preserved": true,
+  "exact_framing_correction_passed": true,
+  "candidate_full_tick_repeated": false,
+  "old_monitor_remains_active": "6781231",
+  "future_direct_adapter_supported": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "conditions": [
+    "Publish reviewed immutable packet, actual candidate bytes, original failure, independent exact-framing proof and reviewed one-time submission utility before one held submission",
+    "Record actual returned ID in both ledgers and exact row before release",
+    "Separate exact held review and one-time release; actual allocation and first full report independently verified before canonical switch",
+    "Drain exact old auxiliary steps before any exact old-job cancellation"
+  ]
+}

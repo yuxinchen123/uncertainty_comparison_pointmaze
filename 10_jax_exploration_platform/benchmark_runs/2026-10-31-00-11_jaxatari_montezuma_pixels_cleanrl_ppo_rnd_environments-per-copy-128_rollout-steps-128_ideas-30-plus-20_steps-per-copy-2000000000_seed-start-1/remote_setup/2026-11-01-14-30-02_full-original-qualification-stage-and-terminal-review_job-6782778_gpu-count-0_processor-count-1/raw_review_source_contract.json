@@ -1,0 +1,24 @@
+{
+  "all_other_statements_including_every_raw_predicate_retained": true,
+  "kind": "exact_raw_review_source_contract",
+  "new_raw_reader": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/raw_qualification_checks.py",
+    "sha256": "e48ad26d098e3b0ddf6c698a903306343d94a54fd893c1040da48c9aa25f75b6"
+  },
+  "no_actual_result_read_or_scheduler_query_at_preparation": true,
+  "original_function": "verify_qualification_inputs",
+  "raw_function": "verify_unreviewed_actual_raw_qualification",
+  "removed_statement_indices": [
+    4,
+    42
+  ],
+  "removed_statements": [
+    "review = identity.read_receipt(inputs['review'])",
+    "require(type(review.get('schema_version')) is int and review['schema_version'] == 1 and (review.get('kind') == 'independent_full_original_target_qualification_review') and (review.get('result') == inputs['result']) and (review.get('approved') is True) and (review.get('admission_granted') is False) and (type(review.get('scientific_credit')) is int) and (review['scientific_credit'] == 0) and (review.get('job_id') == metadata['inputs']['job_id']) and (review.get('actual_terminal_state') == 'COMPLETED') and (review.get('actual_exit_code') == '0:0'), 'an exact independent actual qualification review is required')"
+  ],
+  "schema_version": 1,
+  "staged_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/code/configured_measurement.py",
+    "sha256": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c"
+  }
+}

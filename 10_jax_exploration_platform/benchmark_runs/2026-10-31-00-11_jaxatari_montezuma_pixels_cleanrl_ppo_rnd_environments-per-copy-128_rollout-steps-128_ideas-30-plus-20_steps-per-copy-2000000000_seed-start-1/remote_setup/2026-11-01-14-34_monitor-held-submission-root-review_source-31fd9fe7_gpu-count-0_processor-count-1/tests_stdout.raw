@@ -1,0 +1,17 @@
+test_ambiguous_success_cannot_select_one_identifier (__main__.IndependentHeldSubmissionControls) ... ok
+test_broken_symlink_attempt_cannot_be_repeated (__main__.IndependentHeldSubmissionControls) ... ok
+test_default_cli_only_validates_publication_and_does_not_submit (__main__.IndependentHeldSubmissionControls) ... ok
+test_duplicate_returned_id_refuses_without_partial_ledger_appends (__main__.IndependentHeldSubmissionControls) ... ok
+test_existing_intent_or_receipt_cannot_be_retried (__main__.IndependentHeldSubmissionControls) ... ok
+test_existing_packet_row_refuses_even_without_receipt (__main__.IndependentHeldSubmissionControls) ... ok
+test_failed_return_keeps_exact_raw_bytes_and_never_writes_ledgers (__main__.IndependentHeldSubmissionControls) ... ok
+test_one_exact_held_call_records_both_ledgers_and_row_before_receipt (__main__.IndependentHeldSubmissionControls) ... ok
+test_partial_ledger_failure_retains_intent_and_blocks_second_submission (__main__.IndependentHeldSubmissionControls) ... ok
+test_publication_failure_precedes_intent_and_scheduler (__main__.IndependentHeldSubmissionControls) ... ok
+test_timeout_is_preserved_and_never_retried (__main__.IndependentHeldSubmissionControls) ... ok
+test_wrong_execution_owner_or_host_refuses_before_intent (__main__.IndependentHeldSubmissionControls) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.164s
+
+OK
