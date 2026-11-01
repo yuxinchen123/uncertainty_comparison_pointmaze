@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "independent_cold_staging_fixture_layout_failure",
+  "at_utc": "2026-11-01T21:13:27.875194+00:00",
+  "job_id": "6781231",
+  "actual_step_id": null,
+  "step_attribution": "not printed before fixture assertion; not guessed",
+  "source_freeze": "af07c0e781890e438fb4235ba9a24e475041e17a1fa4147ae3f4f00a67a7a6a0",
+  "error": "reviewer placed staged helpers directly under /tmp/directory; train_optimized expects the actual deeper data/unit/code layout for pure path constants",
+  "actual_production_source_defect": false,
+  "correction": "use the exact actual staged data/unit/code directory depth",
+  "numerical_imports": false,
+  "direct_queries": 0,
+  "GPU_operations": 0,
+  "job_actions": 0,
+  "first_driver_sha256": "c4dc71c6c5f979f042daf05f1aad0cdd1855e144dc0ec5c51e2f57b899855671",
+  "corrected_driver_sha256": "1f0388e34698a81089399bc6bcbaa9c00eb9633ca1cdba2f809ac662ec1ddc83"
+}

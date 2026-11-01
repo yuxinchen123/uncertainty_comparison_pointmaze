@@ -1,0 +1,18 @@
+{
+  "actual_gpu_operations": false,
+  "base_commit": "0c42861e4ac209138ead5253fb8d1612cd3d3e3c",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "f5b93a2bd1b33103a95713a514c12d48f9ddff0b19e42480b8fb12cbd47c5148"
+  },
+  "kind": "direct_serval02_core_source_freeze",
+  "physical_source_copies": {
+    ".review_metadata/direct_core_sixth_source/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+    ".review_metadata/direct_core_sixth_source/test_serval02_card1_binding.py": "f5b93a2bd1b33103a95713a514c12d48f9ddff0b19e42480b8fb12cbd47c5148"
+  },
+  "previous_freeze_sha256": "b2c047f372d2d5f9689555ae98f49cfb5b1b621167ff50411e42433bcd6046b6",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Exact campaign data-tree and case-campaign join added; earlier source/role/exit fixes unchanged.",
+  "version": "sixth"
+}

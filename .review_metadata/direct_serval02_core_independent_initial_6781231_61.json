@@ -1,0 +1,47 @@
+{
+  "actual_gpu_operations": false,
+  "actual_serval02_contact": false,
+  "at_utc": "2026-11-01T20:36:42.001722+00:00",
+  "birth": "52622185",
+  "blocked_numerical_imports": [],
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_61/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "error_details": [
+    {
+      "test": "__main__.DirectReproductions.test_frozen_exit_plan_can_omit_manifest_covered_child",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/run_direct_serval02_core_independent_initial.py\", line 81, in test_frozen_exit_plan_can_omit_manifest_covered_child\n    with patch.object(core,'validate_history',side_effect=wrapped):f.test_real_existing_reader_rederives_frozen_synthetic_120_case_history()\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py\", line 328, in test_real_existing_reader_rederives_frozen_synthetic_120_case_history\n    checked = core.validate_history(plan)\n  File \"/usr/lib/python3.10/unittest/mock.py\", line 1114, in __call__\n    return self._mock_call(*args, **kwargs)\n  File \"/usr/lib/python3.10/unittest/mock.py\", line 1118, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n  File \"/usr/lib/python3.10/unittest/mock.py\", line 1179, in _execute_mock_call\n    result = effect(*args, **kwargs)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/run_direct_serval02_core_independent_initial.py\", line 80, in wrapped\n    result=original(plan);seen.append(result);return result\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 237, in validate_history\n    stop = snapshot_exit_history(documents[\"exit_plan\"], documents[\"exit_observations\"], documents[\"worker_stop\"], documents[\"exit_status\"])\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 183, in snapshot_exit_history\n    require(waiting == [] and exact(stop, rebuilt) and status.get(\"state\") == \"complete\" and status.get(\"waiting\") == [],\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py\", line 60, in require\n    raise ValueError(message)\nValueError: the original stop receipt does not replay exactly from the frozen raw observations\n"
+    }
+  ],
+  "errors": 1,
+  "extra": {
+    "external_metadata_and_binding_directory_accepted": true,
+    "missing_live_numerical_root_accepted": {
+      "scope": "stage-local active-source helper, synthetic admission hash only; no actual authority changed",
+      "source_root": "/synthetic/frozen/source"
+    }
+  },
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6781231",
+  "kind": "direct_serval02_core_independent_initial_findings",
+  "passed": false,
+  "pid": 674895,
+  "process_calls_limited_to_local_git": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loads_blocked": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e4d1e429cb0215258627be901d04c820394b4d473dfbf1f432d0c4e8a85c63a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "9554d6281049dd08f24e18d8f7da1ce05b6e2f8c49f8de68220da28b618770c7"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e4d1e429cb0215258627be901d04c820394b4d473dfbf1f432d0c4e8a85c63a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "9554d6281049dd08f24e18d8f7da1ce05b6e2f8c49f8de68220da28b618770c7"
+  },
+  "source_freeze_sha256": "65486c2ca069888cb88412b64fa891d679aef94816ff1f650d49419202fc42f9",
+  "step_id": "61",
+  "temporary_fork_test_uses_only_own_lock_metadata": true,
+  "tests": 23
+}

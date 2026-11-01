@@ -1,0 +1,63 @@
+{
+  "actual_gpu_operations": false,
+  "actual_serval02_contact": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-01T20:51:27.172632+00:00",
+  "author_result": {
+    "actual_step": "6781231.64",
+    "errors": 0,
+    "failures": 0,
+    "passed": 23,
+    "source_before_equals_after": true,
+    "tests": 23
+  },
+  "corrections": [
+    {
+      "after": "Execution/window admission rechecks exact admitted ordinary numerical root,detached original commit,clean full source scopes and every actual Git-blob byte; assume-unchanged edits refuse. Historical replay remains frozen-only.",
+      "before": "Current admission checked only the original sentinel SHA."
+    },
+    {
+      "after": "Selected owner output is only unit;profile owner only unit/supervisor;inherited child and binding only unit. Aliases and wrong roles refuse before collection/device work.",
+      "before": "Caller could choose an outside output directory."
+    },
+    {
+      "after": "Profile device binding requires actual inherited role and descriptor/birth custody;metadata-only parent remains separate.",
+      "before": "A profile owner could supply its own device binding in place of the inherited child."
+    },
+    {
+      "after": "Exit input file universe must equal all frozen worker/lease/ownership entries;every validated original hardware record joins exact covered direct child/parent birth or terminal owned Slurm ID. Removing both lease and manifest entry still refuses uncovered child.",
+      "before": "Exit inputs could coherently omit a manifest-covered lease/child."
+    }
+  ],
+  "evidence": {
+    "direct_serval02_core_author_review.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_author_review.json",
+      "sha256": "292bb8a5e95cf26549f03202ce2f706df430f80f5c21163a4542fc9c7766c1d5"
+    },
+    "direct_serval02_core_fifth_author_6781231_64.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fifth_author_6781231_64.json",
+      "sha256": "73f02868b1c7c6d7159aa386417f7e672e4c1eafd9ba886ccb64f65b51a52609"
+    },
+    "direct_serval02_core_fifth_source_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fifth_source_freeze.json",
+      "sha256": "b2c047f372d2d5f9689555ae98f49cfb5b1b621167ff50411e42433bcd6046b6"
+    },
+    "direct_serval02_core_fourth_author_6781231_60.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fourth_author_6781231_60.json",
+      "sha256": "5513b18c14597498f1b6a2472ec7bf5ac0fb295e8bf84c40b413359e377520ea"
+    },
+    "direct_serval02_core_fourth_source_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_fourth_source_freeze.json",
+      "sha256": "65486c2ca069888cb88412b64fa891d679aef94816ff1f650d49419202fc42f9"
+    },
+    "direct_serval02_core_independent_findings_corrected_6781231_63.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/.review_metadata/direct_serval02_core_independent_findings_corrected_6781231_63.json",
+      "sha256": "e286b560e631b272e0bfe680c82dc153a33e6d8ee3e8e7eb48ae5703d38859b2"
+    }
+  },
+  "independent_source_read": "Reviewer reports four gaps closed; independent corrected tests remain pending higher-priority actualA4500 packet review.",
+  "kind": "direct_serval02_core_four_finding_correction_review",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "test_scope": "Synthetic current-source,host,device,process and full120-case fixtures; actual temporary own-FLOCK inheritance is a CPU kernel observation. No actual original completion,exit or physical GPU proof is claimed."
+}
