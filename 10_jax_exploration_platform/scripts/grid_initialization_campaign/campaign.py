@@ -91,15 +91,20 @@ def select_maps(records):
         uniform = [record for record in records
                    if record['specification']['geometry']['kind'] == kind
                    and record['specification']['field_kind'] == 'uniform']
-        # Choose geometry from both policy families' average performance, not one seed.
+        # Retried budgets add records; retain each policy's best successful development result.
         scores = {}
         for record in uniform:
             geometry = record['specification']['geometry']
             identity = (geometry['width'], geometry['turns'])
-            best = min(record['settings'], key=lambda row: row['capped_mean_first_goal_steps'])
-            scores.setdefault(identity, []).append(best)
-        eligible = [(identity, values) for identity, values in scores.items()
-                    if len(values) == 2 and min(value['goal_fraction'] for value in values) >= .75]
+            policy = record['specification']['policy_kind']
+            best = best_setting(record)
+            previous = scores.setdefault(identity, {}).get(policy)
+            if previous is None or (-best['goal_fraction'], best['capped_mean_first_goal_steps']) < (
+                    -previous['goal_fraction'], previous['capped_mean_first_goal_steps']):
+                scores[identity][policy] = best
+        eligible = [(identity, list(values.values())) for identity, values in scores.items()
+                    if set(values) == {'tabular', 'neural'}
+                    and min(value['goal_fraction'] for value in values.values()) >= .75]
         ordered = sorted(eligible,
                          key=lambda pair: sum(row['capped_mean_first_goal_steps'] for row in pair[1]),
                          reverse=True)

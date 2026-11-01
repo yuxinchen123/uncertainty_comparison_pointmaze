@@ -37,6 +37,16 @@ def test_comparison_requires_matched_successful_uniform():
     assert len(chosen) == 1 and chosen[0]["field_kind"] == "high_start_cell"
 
 
+def test_map_selection_accepts_successful_retries_without_counting_them_as_extra_policies():
+    """Original and retry records for the same two policies still describe two policy families."""
+    original = [record("uniform", .25, 900, policy=policy) for policy in ("tabular", "neural")]
+    retried = [record("uniform", 1., 200, policy=policy) for policy in ("tabular", "neural")]
+    expected = [{"kind": "straight", "width": 32, "turns": 0}]
+    assert campaign.select_maps(original + retried) == expected
+    assert campaign.select_maps(retried + original) == expected
+    assert campaign.select_maps(original + retried[:1]) == []
+
+
 def test_comparison_chooses_relative_slowdown():
     """Prefer measured initialization delay rather than general map difficulty."""
     records = [record("uniform", 1., 100), record("high_start_cell", 0., 1000),

@@ -147,6 +147,34 @@ def test_copy_batch_size_preserves_first_policy(policy_kind):
             np.testing.assert_allclose(first[:1], second, rtol=2e-5, atol=2e-5)
 
 
+@pytest.mark.parametrize("policy_kind", ["tabular", "neural"])
+@pytest.mark.parametrize("changes", [
+    {"hoist_values": True, "hoist_log_probabilities": True, "hoist_bonus": True,
+     "batch_random_keys": True, "flat_state_gather": True},
+    {"flat_parameters": True, "flatten_update_scan": True, "pre_gather_minibatches": True},
+    {"associative_gae": True, "rsqrt_bonus": True, "rollout_unroll": 2, "update_unroll": 2},
+    {"precompute_all_states": True, "all_states_minibatch": True},
+    {"fuse_optimizer": True},
+    {"donate_state": True},
+])
+def test_uneven_fields_multistep_equivalence(policy_kind, changes):
+    """Several learned rollouts agree on sharply uneven independent initial fields."""
+    baseline, _ = fixture(policy_kind)
+    uneven = jnp.asarray([[0.015625, 16., 0.0625], [8., 0.03125, 2.]], jnp.float32)
+    baseline = GridTrainer(baseline.configuration, baseline.transition_table,
+        baseline.coordinates, uneven)
+    candidate = GridTrainer(replace(baseline.configuration, **changes),
+        baseline.transition_table, baseline.coordinates, uneven)
+    expected = baseline.initialize([17, 31])
+    actual = candidate.initialize([17, 31])
+    # Each check includes positions, lifetime counts, reset state, both critics and Adam moments.
+    for _ in range(5):
+        expected, expected_metrics = baseline.train_iteration(expected)
+        actual, actual_metrics = candidate.train_iteration(actual)
+        assert_trees_close(expected, actual, tolerance=2e-5)
+        assert_trees_close(expected_metrics, actual_metrics, tolerance=2e-5)
+
+
 def test_invalid_configuration_and_inputs():
     """Invalid settings and non-finite frozen fields fail before tracing."""
     with pytest.raises(ValueError, match="minibatches"):

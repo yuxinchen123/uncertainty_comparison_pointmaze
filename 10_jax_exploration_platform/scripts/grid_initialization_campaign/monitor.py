@@ -133,6 +133,8 @@ def tick(run_dir):
     # Re-read after submissions so newly queued jobs appear in this tick's report.
     live = own_live_jobs(run_dir)
     counts = queue_counts(run_dir)
+    from performance_report import write_report
+    write_report(run_dir)
     summary = {'at': now(), 'phase': state['phase'], 'counts': counts,
                'deadline': state.get('deadline'), 'deadline_reached': expired,
                'cadence_seconds': 1200, 'jobs': list(live.values())}
