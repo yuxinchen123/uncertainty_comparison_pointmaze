@@ -1,0 +1,27 @@
+{
+  "kind": "device_memory_capture_component_regression_corrected_author_metadata_validation",
+  "created_utc": "2026-11-01T13:01:46.929013+00:00",
+  "job_id": "6780635",
+  "step_id": "37",
+  "before_sha256": {
+    "device_memory_capture_regression.py": "3538df525026ae327079de34867068df0e9b77abd28328c9082178ac04bb05f4",
+    "tests/test_device_memory_capture_regression.py": "22458a24073071f1d4d9e3fd924390acc0867aaf4f67eb6d05d1e59839ae50fe"
+  },
+  "after_sha256": {
+    "device_memory_capture_regression.py": "3538df525026ae327079de34867068df0e9b77abd28328c9082178ac04bb05f4",
+    "tests/test_device_memory_capture_regression.py": "22458a24073071f1d4d9e3fd924390acc0867aaf4f67eb6d05d1e59839ae50fe"
+  },
+  "source_unchanged": true,
+  "tests_run": 15,
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": "...............\n----------------------------------------------------------------------\nRan 15 tests in 1.068s\n\nOK\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "prior_freeze": "device_memory_capture_regression_freeze_2026-11-01.json",
+  "scope": "Metadata only: exact pre-import fifteen-helper roster and actual staged deployment module, normal repeat sampler shutdown, immutable two-stage plan, ledger/raw selector/GRES File/proc binding, exact job shape, parent/child birth, context absence refusal, native bytes/context/sample binding and formal reader refusal. Publication/configuration mocks are labeled in tests."
+}

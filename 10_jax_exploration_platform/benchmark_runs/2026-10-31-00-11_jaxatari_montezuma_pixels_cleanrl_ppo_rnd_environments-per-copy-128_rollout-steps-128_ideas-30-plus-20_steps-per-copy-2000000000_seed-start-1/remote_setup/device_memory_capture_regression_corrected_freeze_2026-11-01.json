@@ -1,0 +1,20 @@
+{
+  "kind": "device_memory_capture_component_regression_corrected_source_freeze",
+  "created_utc": "2026-11-01T13:02:06.082301+00:00",
+  "base_commit": "d4688adbef4e51623af6e31e16831ce6bae6c52e",
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "3538df525026ae327079de34867068df0e9b77abd28328c9082178ac04bb05f4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "22458a24073071f1d4d9e3fd924390acc0867aaf4f67eb6d05d1e59839ae50fe"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_capture_regression_corrected_author_6780635_37.json",
+    "sha256": "ac9a018f4a886af9575c0bcbca377d150ab27731e94e6024b8f6b62cff8e3846"
+  },
+  "prior_freeze_preserved": "device_memory_capture_regression_freeze_2026-11-01.json",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "standard_packet_prepared": false,
+  "jobs_submitted": false,
+  "correction": "Require exact complete fifteen-helper roster and actual staged deployment-module path before numerical imports; save and validate first successful repeat sampler stop before fixture result, retaining finally close idempotence. New negatives cover all three, with previous job-resource/parent-child-birth cases retained."
+}

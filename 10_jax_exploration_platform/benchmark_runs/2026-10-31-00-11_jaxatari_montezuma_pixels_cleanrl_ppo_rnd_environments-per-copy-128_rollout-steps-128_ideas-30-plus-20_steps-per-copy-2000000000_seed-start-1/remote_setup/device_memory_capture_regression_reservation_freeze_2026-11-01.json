@@ -1,0 +1,23 @@
+{
+  "kind": "device_memory_capture_component_regression_reservation_source_freeze",
+  "created_utc": "2026-11-01T13:06:26.689056+00:00",
+  "base_commit": "d4688adbef4e51623af6e31e16831ce6bae6c52e",
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "b737cf140efd333ab11271c524a4c6ac7973b3a621b09648d28a9ecd3038c077",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "e368a1834590e795590753fd8d0091e72a5e9cf3412e71a25ce8fab220e2a1a5"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_capture_regression_reservation_author_6780635_40.json",
+    "sha256": "01d54e1f1cb2948148b3f19e1f3b0d7f7ad1c1839cdd27672bd07d00c08f4fbb"
+  },
+  "prior_freezes_preserved": [
+    "device_memory_capture_regression_freeze_2026-11-01.json",
+    "device_memory_capture_regression_corrected_freeze_2026-11-01.json"
+  ],
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "standard_packet_prepared": false,
+  "jobs_submitted": false,
+  "correction": "Exact resource shape now uses required reservation QOS csresnolim. Generic frozen plan keeps reservation null; the actual returned-ID-owned allocation query supplies reservation only to new immutable allocation/child sidecars. Every fresh child and capture ownership query must retain that same reservation. Synthetic tests retain distinct GRES index, CUDA selector and physical minor."
+}
