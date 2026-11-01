@@ -1,0 +1,21 @@
+{
+  "actual_gpu_operations": false,
+  "kind": "direct_adapter_reviewed_upstream_root_fix_application",
+  "no_integration_worktree_change": true,
+  "patch": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/reviewed_qualification_pytest_root_upstream.patch",
+    "sha256": "d33a2d2011312ac276a2caf3cc282901d1f1a6c70a6c3ab9f8dff92a4ec4924f"
+  },
+  "paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py"
+  ],
+  "root_integration_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "schema_version": 1,
+  "source_history_before_application": "direct_adapter_first_source_freeze.json and first_source_before_legacy_tests/",
+  "uncommitted_adapter_identity_routing_retained": true,
+  "upstream_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "upstream_parent": "c851fa90f7b25d6ced54b7bac31457106ac91aa3"
+}

@@ -1,0 +1,24 @@
+{
+  "correction": "Use git add --sparse for the exact reviewed owned path roster only.",
+  "failure": "git add without --sparse refused owned review/history paths outside the sparse checkout. It staged the source paths but made no commit or push.",
+  "git_returncode": 1,
+  "integration_index_or_head_changed": false,
+  "kind": "direct_author_sparse_index_add_refusal",
+  "partially_staged_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_qualification_reader.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+  ],
+  "preserved_first_roster_sha256": "b253d84de3c0ccaeb3ecd81cd0a4ec8d5ec521a67bfdc110200407e2c4abb720",
+  "schema_version": 1,
+  "source_bytes_changed": false
+}

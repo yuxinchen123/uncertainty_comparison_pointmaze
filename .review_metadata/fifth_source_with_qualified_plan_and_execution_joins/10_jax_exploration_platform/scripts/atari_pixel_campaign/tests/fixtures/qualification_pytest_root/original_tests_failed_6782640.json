@@ -1,0 +1,964 @@
+{
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py"
+  ],
+  "execution": "same already identity-bound process via pytest.main",
+  "returncode": 0,
+  "reports": [
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.2386395470239222
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.171359744970687
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002498410176485777
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00039399194065481424
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 32.3271225419594
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00044294202234596014
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003892619861289859
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.7829351710388437
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00038979295641183853
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002540209097787738
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.9870226280763745
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002073909854516387
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00019362103193998337
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.533744843909517
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014362100046128035
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00012690096627920866
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.2440943769179285
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00025201099924743176
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002249720273539424
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0005951329367235303
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0019986609695479274
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00023957202211022377
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 20.569667581934482
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002849720185622573
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004835929721593857
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.427343129995279
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00029042200185358524
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00038278207648545504
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.44769751094281673
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002773120068013668
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00038055202458053827
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.7075098550412804
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00024038099218159914
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003587920218706131
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.014257538947276771
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00021787104196846485
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001848909305408597
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 4.636317163007334
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00024849106557667255
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002414820482954383
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 4.243762138066813
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00024593097623437643
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022453197743743658
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.9166488499613479
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002461919793859124
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0003257020143792033
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.8996657469542697
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002697219606488943
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.000330301932990551
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.25945577304810286
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00023176195099949837
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00020145101007074118
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0004305019974708557
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001726610353216529
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00020073098130524158
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.0014909679302945733
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00018338102381676435
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00019439100287854671
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.5294318640371785
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00011907098814845085
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010249100159853697
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.516600523958914
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002490220358595252
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00024154095444828272
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 11.225257684942335
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013287109322845936
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010799092706292868
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.362298857071437
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013437005691230297
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 19.37953924795147
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 8.843287823954597
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0003670819569379091
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004948730347678065
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.135174509952776
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00015054107643663883
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0011895570205524564
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 7.199491439969279
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00017285102512687445
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001296310219913721
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.03716716193594
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013151101302355528
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00012480095028877258
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 7.0638740240829065
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012182991486042738
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00020334101282060146
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 14.882607611012645
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0003047320060431957
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0004233630606904626
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.9241685590241104
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014529097825288773
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00019271101336926222
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.084036180982366
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014678097795695066
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00019453105051070452
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.895320470095612
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001438100589439273
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00018828094471246004
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.7152081039967015
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001676309620961547
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00012827105820178986
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 6.209273799089715
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00039449206087738276
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00039120204746723175
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.38917518907692283
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002419319935142994
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022106105461716652
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.0906998550053686
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.000237781903706491
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022058107424527407
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 2.084574554930441
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00027194200083613396
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00022655108477920294
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.6238765659509227
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0002391809830442071
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0002275410806760192
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.3172085069818422
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00013966101687401533
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00024250091519206762
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.1172439109068364
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00020761089399456978
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001913110027089715
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.831071550026536
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001740899169817567
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00015967106446623802
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.8261466729454696
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00014145101886242628
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001293310197070241
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.8343751190695912
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001347310608252883
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001238610129803419
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 0.49906730791553855
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012776092626154423
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00018095097038894892
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.53110134601593
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.0001389109529554844
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00011252099648118019
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 5.5341743130702525
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00015510001685470343
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.0001383309718221426
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 1.7897534080548212
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00012523098848760128
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "setup",
+      "outcome": "passed",
+      "duration_seconds": 0.00010645994916558266
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "call",
+      "outcome": "passed",
+      "duration_seconds": 3.7769550550729036
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction",
+      "phase": "teardown",
+      "outcome": "passed",
+      "duration_seconds": 0.00023334205616265535
+    }
+  ],
+  "collected_nodeids": [
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[False]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original[True]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_empty_predictor_mask",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-vmap]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-vmap]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nchw-grouped]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation[nhwc-grouped]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[False]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward[True]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_donation_and_zero_warmup",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_learning_rates-values0]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation[per_copy_intrinsic_coefficients-values1]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[entropy_coefficient-0.01]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[value_coefficient-1.0]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[clip_coefficient-0.0]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[extrinsic_coefficient-0.5]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies[intrinsic_coefficient-4.0]",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset",
+    "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction"
+  ],
+  "collection_rootdir": "/p/rlprojects/RND_worktrees",
+  "collection_reports": [
+    {
+      "nodeid": "",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_equations.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels/test_training.py",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py",
+      "outcome": "passed"
+    }
+  ],
+  "deselected_nodeids": []
+}

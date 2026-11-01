@@ -70,16 +70,16 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt(configured=False):
+def helper_receipt(configured=False, direct=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured)])
+    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct)])
 
 
-def required_helpers(configured=False):
+def required_helpers(configured=False, direct=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
-    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured))))
+    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct))))
 
 
 @contextmanager
@@ -119,6 +119,9 @@ def initial_summaries_complete(registry):
 def prepare(args):
     """Stage immutable profile inputs without loading an array library or touching a GPU."""
     configured = getattr(args, "configured_isolation_profile", None) is not None
+    direct = getattr(args, "direct_binding_profile", None) is not None
+    if direct and (configured or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1):
+        raise ValueError("direct profiling requires only its separately approved card-one profile")
     if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"):
         raise ValueError("configured profiling needs an unresolved single A4500 plan")
     if (Path(args.unit_id).name != args.unit_id or args.unit_id in {"", ".", ".."}
@@ -151,7 +154,17 @@ def prepare(args):
         raise ValueError("the profile configuration is not its explicit accepted combined baseline")
     if "configured_isolation" in confirmation and not configured:
         raise ValueError("default profiling cannot consume a configured-isolation measurement")
-    if configured:
+    if "direct_binding" in confirmation and not direct:
+        raise ValueError("default profiling cannot consume an explicit direct-binding measurement")
+    if direct:
+        import direct_measurement as support
+        profile, unused_profile_input = measurement.read_document(args.direct_binding_profile)
+        support.core().require_profile(profile)
+        if baseline.get("direct_binding_profile") != profile:
+            raise ValueError("the accepted baseline must name the exact separate direct profile")
+        support.verify_saved_measurement(Path(confirmation_input["path"]).parent, confirmation)
+        validation._identity_fields(confirmation, args.hardware_class, args.source_commit, runtime)
+    elif configured:
         import configured_measurement as support
         explicit_profile, unused_profile_input = measurement.read_document(args.configured_isolation_profile)
         support.core().require_profile(explicit_profile)
@@ -171,7 +184,7 @@ def prepare(args):
         raise ValueError("the profile policy seeds exceed unsigned 32-bit values")
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
-        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured),
+        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured, True) if direct else helper_receipt(configured),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -192,13 +205,20 @@ def prepare(args):
         support.configure_plan(plan, profile, "component_profile")
         plan["inputs"]["configured_isolation_profile"] = profile_input
         support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
+    if direct:
+        import direct_measurement as support
+        profile, profile_input = measurement.read_document(args.direct_binding_profile)
+        support.configure_plan(plan, profile, args.direct_history_inputs, "component_profile")
+        plan["inputs"]["direct_binding_profile"] = profile_input
+        plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
+        support.prepare_qualification_inputs(plan, args.direct_qualification_record, args.direct_qualification_review)
     artifacts = {directory / "measurement_plan.json": measurement.json_bytes(plan),
         directory / "manifest.yaml": measurement.json_bytes(plan),
         directory / "config_resolved.yaml": measurement.json_bytes(configuration),
         directory / "inputs/study_registry.json": args.study_registry.read_bytes(),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/profile_selected.py"),
                                                "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured):
+    for name in required_helpers(configured, direct):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -230,7 +250,7 @@ def verify_prepared(directory, plan):
         raise ValueError("the immutable profile plan changed")
     if Path(__file__).resolve() != directory / "code/profile_selected.py" or str(Path(sys.executable).absolute()) != plan["python"]:
         raise ValueError("execute the staged profile entrypoint with its exact recorded Python")
-    for name in required_helpers("configured_isolation" in plan):
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -238,7 +258,7 @@ def verify_prepared(directory, plan):
                          ("post_comparison_validation.py", validation), ("train_optimized.py", training)):
         if Path(module.__file__).resolve() != directory / "code" / name:
             raise ValueError("the profile imported a mutable helper: " + name)
-    measurement.configured_support(plan)
+    measurement.producer_support(plan)
     if diagnostic.core_identity(Path(plan["source_root"]), plan["source_commit"]) != plan["core"]:
         raise ValueError("the profile core changed after preparation")
     if training.source_receipt(Path(plan["source_root"]), plan["source_commit"],
@@ -276,12 +296,22 @@ def validate_measured_baseline(directory, plan):
         "accepted_combination": baseline, "cohort_runtime_provenance": proofs, "evidence": evidence.records()})
 
 
-def child_command(directory, plan):
+def child_command(directory, plan, held_descriptor=None):
     """Record a CUDA-profiler-range capture that cannot silently run without Nsight."""
-    return [plan["profile_tool"]["path"], "profile", "--trace=cuda,cudnn", "--sample=none", "--cpuctxsw=none",
+    command = [plan["profile_tool"]["path"], "profile", "--trace=cuda,cudnn", "--sample=none", "--cpuctxsw=none",
             "--cuda-graph-trace=node", "--capture-range=cudaProfilerApi", "--capture-range-end=stop",
             "--stop-on-exit=true", "--force-overwrite=false", "--output=" + str(directory / "trace/capture"),
             plan["python"], str(directory / "code/profile_selected.py"), "--capture-unit", str(directory)]
+    if "direct_binding" in plan:
+        if type(held_descriptor) is not int or held_descriptor < 0:
+            raise ValueError("direct profiling requires its actual retained descriptor")
+        # The metadata-only primary waits on the actual Python capture child.
+        command.insert(command.index(plan["python"]), "--wait=primary")
+        command[command.index("--capture-unit")] = "--direct-waiter-unit"
+        command += ["--direct-held-lock-fd", str(held_descriptor)]
+    elif held_descriptor is not None:
+        raise ValueError("a descriptor override applies only to the explicit direct profile")
+    return command
 
 
 def stop_own_child(child):
@@ -295,15 +325,23 @@ def stop_own_child(child):
             child.wait()
 
 
-def capture_and_summarize(directory, plan):
+def capture_and_summarize(directory, plan, held_descriptor=None):
     """Retain the card lock in the caller while recording/releasing one new profiler child."""
     trace = directory / "trace"
     trace.mkdir()
-    command = child_command(directory, plan)
+    direct = "direct_binding" in plan
+    command = child_command(directory, plan, held_descriptor) if direct else child_command(directory, plan)
     diagnostic.atomic_json(directory / "executed_command.json", command)
     started = time.monotonic()
     with (directory / "capture.log").open("x") as log:
-        child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        if direct:
+            support = measurement.producer_support(plan)
+            parent_metadata = support.core().read_receipt(support.core().receipt(directory / "supervisor/direct_process_metadata.json"))
+            support.core().live_custody(parent_metadata, held_descriptor)
+            child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True, pass_fds=(held_descriptor,))
+        else:
+            child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        owner = None
         try:
             # Any receipt failure after process creation must stop this child before its card lock closes.
             owner = {"pid": child.pid, "process_start_time": process_birth(child.pid), "parent_pid": os.getpid(),
@@ -322,10 +360,30 @@ def capture_and_summarize(directory, plan):
                 raise ValueError("the recorded capture process is not this live Nsight child")
             diagnostic.atomic_json(directory / "capture_release.json", {**owner, "capture_identity": identity})
             remaining = max(.001, plan["maximum_active_seconds"] - (time.monotonic() - started))
-            if child.wait(timeout=remaining) != 0:
+            actual_returncode = child.wait(timeout=remaining)
+            if actual_returncode != 0:
                 raise RuntimeError("the selected-baseline capture exited unsuccessfully; inspect capture.log")
+            if direct:
+                support.core().live_custody(parent_metadata, held_descriptor)
+                metadata = support.core().read_receipt(support.core().receipt(directory / "direct_process_metadata.json"))
+                support.validate_capture_wait(directory, metadata)
+                support.core().publish(directory / "direct_profile_terminal.json", {
+                    "schema_version": 1, "kind": "direct_retained_descriptor_profile_terminal",
+                    "profiler_process": owner, "capture_identity": identity, "command": command,
+                    "returncode": actual_returncode, "parent_custody": support.core().receipt(directory / "supervisor/direct_process_metadata.json"),
+                    "capture_release": support.core().receipt(directory / "capture_release.json"),
+                    "capture_wait": support.core().receipt(directory / "direct_capture_wait_return.json"),
+                    "capture_result": support.core().receipt(directory / "capture_result.json"), **support.BOUNDARY})
         except BaseException:
-            stop_own_child(child)
+            if direct:
+                if owner is None:
+                    raw = support.core().capture_owner_process(child.pid)
+                    fields = raw["stat"].rsplit(")", 1)[1].split()
+                    support.core().validate_owner_process(raw, child.pid, fields[19], os.getpid())
+                    owner = {"pid": child.pid, "process_start_time": fields[19], "parent_pid": os.getpid()}
+                support.stop_profile_descendants(directory, child, parent_metadata, held_descriptor, owner)
+            else:
+                stop_own_child(child)
             raise
     if tool_record(plan["profile_tool"]["path"]) != plan["profile_tool"]:
         raise ValueError("the profiling executable changed during capture")
@@ -337,6 +395,10 @@ def capture_and_summarize(directory, plan):
             raise ValueError("a positive profile summary changed before publication")
     result = {**captured, "completed": True, "trace_analysis_record": str(trace / "analysis.json"),
               "trace_report_sha256": training.file_sha256(trace / "capture.nsys-rep"), "profile_tool": plan["profile_tool"]}
+    if direct:
+        support.core().live_custody(parent_metadata, held_descriptor)
+        metadata = support.core().read_receipt(support.core().receipt(directory / "direct_process_metadata.json"))
+        result["direct_trace_process_proof"] = support.trace_process_proof(directory, metadata)
     diagnostic.atomic_json(directory / "result.json", result)
     diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
 
@@ -360,9 +422,15 @@ def run_prepared(directory):
                 raise ValueError("the profile inherited an unsupported runtime setting: " + name)
             os.environ[name] = value
         try:
-            with interruption_cleanup(), measurement.card_admission(directory, plan):
-                support = measurement.configured_support(plan)
-                if support is not None:
+            with interruption_cleanup(), measurement.card_admission(directory, plan) as held:
+                support = measurement.producer_support(plan)
+                direct = "direct_binding" in plan
+                if direct:
+                    supervisor = directory / "supervisor"; supervisor.mkdir(exist_ok=False)
+                    metadata_record = support.core().collect_metadata(plan, supervisor, held.fileno())
+                    hardware = {"direct_process_metadata": metadata_record}
+                    support.verify_qualification_inputs(plan)
+                elif support is not None:
                     supervisor = directory / "supervisor"
                     supervisor.mkdir(exist_ok=False)
                     metadata_record = support.core().collect_metadata(plan, supervisor)
@@ -379,7 +447,10 @@ def run_prepared(directory):
                 diagnostic.atomic_json(directory / "supervisor_metadata.json", {"hardware": hardware, "runtime_environment": runtime})
                 diagnostic.atomic_json(directory / "asset_receipt.json", assets)
                 diagnostic.atomic_json(directory / "installed_backend.json", installed)
-                capture_and_summarize(directory, plan)
+                if direct:
+                    capture_and_summarize(directory, plan, held.fileno())
+                else:
+                    capture_and_summarize(directory, plan)
         except BaseException as error:
             diagnostic.atomic_json(directory / "failure.json", {"error": repr(error), "traceback": traceback.format_exc(),
                                     "source_commit": plan["source_commit"], "kind": KIND})
@@ -387,14 +458,28 @@ def run_prepared(directory):
             raise
 
 
-def capture(directory):
+def capture(directory, direct_held_lock_fd=None):
     """Wait for the recorded parent release before importing the unchanged core/Executor."""
     directory = Path(directory).resolve(strict=True)
     plan = json.loads((directory / "measurement_plan.json").read_text())
     verify_prepared(directory, plan)
+    direct = "direct_binding" in plan
+    if direct:
+        support = measurement.producer_support(plan); identity_reader = support.core()
+        if type(direct_held_lock_fd) is not int or direct_held_lock_fd < 0:
+            raise ValueError("the direct capture child lost its exact inherited descriptor")
+        parent_metadata = identity_reader.read_receipt(identity_reader.receipt(directory / "supervisor/direct_process_metadata.json"))
+        identity_reader.validate_process(identity_reader.current_process())
+        identity_reader.validate_lock(identity_reader.lock_metadata(direct_held_lock_fd), parent_metadata["before"]["identity"]["pid"])
+        support.validate_waiter_chain(plan, directory, identity_reader.current_process(), direct_held_lock_fd, live=True)
+    elif direct_held_lock_fd is not None:
+        raise ValueError("an inherited descriptor is supported only by the explicit direct capture child")
     identity = {"hostname": socket.gethostname().split(".")[0], "pid": os.getpid(),
                 "process_start_time": process_birth(os.getpid())}
-    diagnostic.atomic_json(directory / "capture_identity.json", identity)
+    if direct:
+        identity_reader.publish(directory / "capture_identity.json", identity)
+    else:
+        diagnostic.atomic_json(directory / "capture_identity.json", identity)
     started = time.monotonic()
     while not (directory / "capture_release.json").exists():
         if time.monotonic() - started > 180:
@@ -407,8 +492,13 @@ def capture(directory):
             or process_birth(release["pid"]) != release["process_start_time"]
             or os.getpgrp() != release["pid"] or process_parent(release["pid"]) != release["parent_pid"]):
         raise ValueError("the capture release does not belong to this live recorded parent")
-    support = measurement.configured_support(plan)
-    hardware = {"configured_isolation_metadata": support.core().collect_metadata(plan, directory)} if support is not None else measurement.preflight(plan)
+    support = measurement.producer_support(plan)
+    if direct:
+        metadata_record = support.core().collect_metadata(plan, directory, direct_held_lock_fd,
+            support.core().receipt(directory / "supervisor/direct_process_metadata.json"))
+        hardware = {"direct_process_metadata": metadata_record}
+    else:
+        hardware = {"configured_isolation_metadata": support.core().collect_metadata(plan, directory)} if support is not None else measurement.preflight(plan)
     runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
     hardware["runtime_environment"] = runtime
     installed = json.loads((directory / "installed_backend.json").read_text())
@@ -435,12 +525,16 @@ def _capture_core(directory, plan, hardware, installed):
     expected = "H100" if plan["hardware_class"] == "h100" else "A4500"
     if len(devices) != 1 or devices[0].platform != "gpu" or expected not in devices[0].device_kind:
         raise ValueError("the profile did not select its recorded single GPU type")
-    support = measurement.configured_support(plan)
+    support = measurement.producer_support(plan)
+    direct = "direct_binding" in plan
     binding, numerical_paths = None, None
     if support is not None:
         numerical_paths = support.numerical_module_paths(plan)
-        metadata_record = hardware["configured_isolation_metadata"]
+        metadata_record = hardware["direct_process_metadata" if direct else "configured_isolation_metadata"]
         binding = support.core().bind_process(plan, metadata_record, devices[0], directory)
+        if direct:
+            support.post_binding_checks(plan, metadata_record, binding, directory)
+            support.capture_backend(directory, binding)
         hardware = {**support.bound_hardware(plan, metadata_record, binding), "runtime_environment": plan["runtime_environment"]}
     with support.observed_work(devices[0], binding, directory / "profile_memory") if support is not None else measurement.nullcontext({}) as observed:
         configuration = plan["configuration"]
@@ -481,7 +575,11 @@ def _capture_core(directory, plan, hardware, installed):
             actual_runtime_environment=hardware["runtime_environment"],
             cuda_profiler_runtime=str(runtime_path), execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(),
                 "process_start_time": hardware["process_start_time"], "started_at_seconds": execution_started, "finished_at_seconds": time.time()})
-        if support is not None:
+        if direct:
+            result.update(direct_binding=plan["direct_binding"], resolved_device_binding=binding,
+                direct_binding_record=True, numerical_module_paths=numerical_paths,
+                direct_qualification_inputs=plan["direct_qualification_inputs"], **support.BOUNDARY)
+        elif support is not None:
             result.update(configured_isolation=plan["configured_isolation"], resolved_device_binding=binding,
                 configured_isolation_record=True, numerical_module_paths=numerical_paths, target_qualification_inputs=plan["target_qualification_inputs"], **support.BOUNDARY)
     if support is not None:
@@ -497,11 +595,17 @@ def parse_arguments(argv=None):
     operation = parser.add_mutually_exclusive_group()
     operation.add_argument("--prepared-unit", type=Path)
     operation.add_argument("--capture-unit", type=Path)
+    operation.add_argument("--direct-waiter-unit", type=Path, help=argparse.SUPPRESS)
     operation.add_argument("--inspect-profile-tool", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--configured-isolation-profile", type=Path)
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
+    parser.add_argument("--direct-binding-profile", type=Path)
+    parser.add_argument("--direct-history-inputs", type=Path)
+    parser.add_argument("--direct-qualification-record", type=Path)
+    parser.add_argument("--direct-qualification-review", type=Path)
+    parser.add_argument("--direct-held-lock-fd", type=int, help=argparse.SUPPRESS)
     for name in ("source-root", "configuration", "runtime-environment", "asset-record", "study-registry",
                  "accepted-baseline-specification", "profile-tool-record", "jaxtari-source-root", "run-dir"):
         parser.add_argument("--" + name, type=Path)
@@ -514,17 +618,35 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     fields = ("source_root", "source_commit", "configuration", "runtime_environment", "asset_record", "study_registry",
               "accepted_baseline_specification", "profile_tool_record", "run_dir", "unit_id", "gpu_uuid", "hardware_class")
-    if args.prepared_unit or args.capture_unit or args.inspect_profile_tool:
+    if args.prepared_unit or args.capture_unit or args.direct_waiter_unit or args.inspect_profile_tool:
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
-                                                                              "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review")):
+                                                                              "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
+                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review")):
             parser.error("execution/tool inspection cannot override a prepared configuration")
+        if args.direct_held_lock_fd is not None:
+            if (args.capture_unit is None and args.direct_waiter_unit is None) or args.direct_held_lock_fd < 0:
+                parser.error("the actual inherited descriptor applies only to a prepared direct capture child")
+            plan = json.loads(((args.capture_unit or args.direct_waiter_unit) / "measurement_plan.json").read_text())
+            if "direct_binding" not in plan:
+                parser.error("the descriptor cannot be supplied to a default or UVA capture")
+            measurement.producer_support(plan)
+        elif args.direct_waiter_unit is not None:
+            parser.error("the direct waiter requires its actual inherited descriptor")
         return args
+    if args.direct_held_lock_fd is not None:
+        parser.error("the actual inherited descriptor requires a prepared direct capture child")
     if args.configured_isolation_profile is not None:
         if args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500" or not args.target_qualification_record or not args.target_qualification_review:
             parser.error("configured profiling needs null physical identity and actual qualification/review")
         fields = tuple(name for name in fields if name != "gpu_uuid")
     elif args.target_qualification_record or args.target_qualification_review:
         parser.error("target qualification inputs require an explicit configured-isolation profile")
+    if args.direct_binding_profile is not None:
+        if (args.configured_isolation_profile is not None or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1
+                or args.direct_history_inputs is None or args.direct_qualification_record is None or args.direct_qualification_review is None):
+            parser.error("direct profiling requires its exact known-UUID profile,history and actual direct qualification/review")
+    elif any(value is not None for value in (args.direct_history_inputs, args.direct_qualification_record, args.direct_qualification_review)):
+        parser.error("direct profile inputs require the separate direct binding profile")
     if any(getattr(args, name) is None for name in fields):
         parser.error("preparation needs explicit source/config/runtime/assets/initial study/baseline/tool/GPU/output inputs")
     args.seed_start = 1 if args.seed_start is None else args.seed_start
@@ -541,7 +663,15 @@ if __name__ == "__main__":
     elif arguments.prepared_unit:
         run_prepared(arguments.prepared_unit)
     elif arguments.capture_unit:
-        capture(arguments.capture_unit)
+        if arguments.direct_held_lock_fd is not None:
+            capture(arguments.capture_unit, arguments.direct_held_lock_fd)
+        else:
+            capture(arguments.capture_unit)
+    elif arguments.direct_waiter_unit:
+        directory = arguments.direct_waiter_unit.resolve(strict=True)
+        plan = json.loads((directory / "measurement_plan.json").read_text())
+        verify_prepared(directory, plan)
+        raise SystemExit(measurement.producer_support(plan).run_profile_waiter(plan, directory, arguments.direct_held_lock_fd))
     else:
         directory = prepare(arguments)
         print(json.dumps({"prepared": True, "unit_directory": str(directory)}, indent=2), flush=True)

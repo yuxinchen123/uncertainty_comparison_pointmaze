@@ -19,6 +19,7 @@ import time
 
 
 CAPABILITY = "assigned_uuid_own_process_complete_window_v1"
+DIRECT_OBSERVATION_CAPABILITY = "direct_assigned_uuid_own_process_complete_window_v1"
 QUERY_LIMIT = 1024 * 1024
 INTERVAL = .2
 BOUNDARY = {"physical_gres_mapping_verified": False, "kernel_device_enforcement_verified": False,
@@ -48,6 +49,36 @@ def core():
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     return module
+
+
+def direct_support():
+    """Load the separate direct policy only for an explicit direct binding."""
+    path = Path(__file__).with_name("direct_measurement.py").resolve(strict=True)
+    name = "direct_measurement"
+    if name in sys.modules:
+        module = sys.modules[name]
+        require(Path(module.__file__).resolve(strict=True) == path, "the direct adapter must be this exact staged sibling")
+        return module
+    specification = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[name] = module
+    try:
+        specification.loader.exec_module(module)
+    except BaseException:
+        if sys.modules.get(name) is module:
+            del sys.modules[name]
+        raise
+    return module
+
+
+def qualification_identity(plan):
+    """Share original gate mechanics while keeping target policies separate."""
+    if "direct_binding" in plan:
+        require("configured_isolation" not in plan, "direct and UVA qualification policies cannot be mixed")
+        identity = direct_support().core()
+        identity.validate_plan(plan)
+        return identity
+    return core()
 
 
 def helper_names():
@@ -206,6 +237,15 @@ class MemoryObservation:
 
     def __init__(self, device, binding, directory):
         """Require the current bound worker before making any process query."""
+        self.policy = "uva_a4500"
+        if binding.get("kind") == "serval02_card1_current_process_resolved_device_binding":
+            self.direct = direct_support()
+            self.direct_inputs = self.direct.observer_inputs(binding, directory)
+            self.policy = "direct_serval02_card_one"
+            self.device, self.binding, self.directory = device, binding, Path(directory)
+            self.uuid, self.pid = binding["gpu_uuid"], os.getpid()
+            self.stop, self.thread, self.counter = threading.Event(), None, 0
+            return
         require(binding.get("kind") == "uva_current_process_resolved_device_binding"
             and binding["process"]["pid"] == os.getpid() and binding["gpu_uuid"] == binding["native"]["gpu_uuid"],
             "memory observation requires this actual resolved child")
@@ -225,6 +265,8 @@ class MemoryObservation:
 
     def sample(self):
         """Preserve anonymous capture facts for every failed device query or parsing branch."""
+        if getattr(self, "policy", "uva_a4500") == "direct_serval02_card_one":
+            self.direct.core().live_custody(self.direct_inputs["metadata"], self.direct_inputs["metadata"]["lock_after"]["fd"])
         birth = Path("/proc/self/stat").read_text().rsplit(")", 1)[1].split()[19]
         require(os.getpid() == self.pid and birth == self.binding["process"]["process_start_time"]
             and all(os.environ.get(key) == value for key, value in self.binding["original_environment"].items()),
@@ -246,7 +288,8 @@ class MemoryObservation:
             require(all(re.fullmatch(r"(?:0|[1-9][0-9]*)", value.strip()) for value in rows[0][1:]),
                 "device memory counters are unavailable")
             amounts = [int(value.strip()) * 2 ** 20 for value in rows[0][1:]]
-            require(amounts[0] == 20470 * 2 ** 20 and all(0 <= value <= amounts[0] for value in amounts[1:]),
+            expected_total = 95830 * 2 ** 20 if getattr(self, "policy", "uva_a4500") == "direct_serval02_card_one" else 20470 * 2 ** 20
+            require(amounts[0] == expected_total and all(0 <= value <= amounts[0] for value in amounts[1:]),
                 "device memory counters exceed the actual physical total")
         except Exception as error:
             self.directory.mkdir(parents=True, exist_ok=True)
@@ -280,6 +323,12 @@ class MemoryObservation:
     def begin(self):
         """Capture the successful initial boundary before the measured interval begins."""
         require(self.thread is None or not self.thread.is_alive(), "previous sampler is still active")
+        if getattr(self, "policy", "uva_a4500") == "direct_serval02_card_one":
+            try:
+                self.direct_before = self.direct.window_boundary(self.direct_inputs)
+            except BaseException as error:
+                self.direct.record_window_failure(self.directory, self.counter, "begin", error)
+                raise
         self.samples, self.errors, self.normal_stop = [], [], False
         self.stop.clear()
         self.samples.append(self.sample())
@@ -306,11 +355,22 @@ class MemoryObservation:
             self.samples.append(self.sample())
         except Exception as error:
             self.errors.append(type(error).__name__ + ": " + str(error))
-        proof = {"schema_version": 1, "kind": CAPABILITY, "gpu_uuid": self.uuid, "pid": self.pid,
+        direct = getattr(self, "policy", "uva_a4500") == "direct_serval02_card_one"
+        after = None
+        if direct:
+            try:
+                after = self.direct.window_boundary(self.direct_inputs)
+            except BaseException as error:
+                self.errors.append("direct source or lock boundary failed: " + type(error).__name__)
+                self.direct.record_window_failure(self.directory, self.counter, "finish", error)
+        proof = {"schema_version": 1, "kind": DIRECT_OBSERVATION_CAPABILITY if direct else CAPABILITY, "gpu_uuid": self.uuid, "pid": self.pid,
             "window_started_at_seconds": self.window_started, "window_finished_at_seconds": ended,
             "interval_seconds": INTERVAL, "samples": self.samples, "errors": self.errors,
             "alive_at_requested_stop": alive, "normal_requested_stop": self.normal_stop,
             "joined": self.thread is not None and not self.thread.is_alive()}
+        if direct:
+            proof.update(direct_binding=self.direct_inputs["binding_ref"], direct_before=self.direct_before,
+                direct_after=after, startup_memory_observed=False)
         allocator_error = None
         try:
             allocator = self.device.memory_stats()
@@ -327,7 +387,7 @@ class MemoryObservation:
             json.dump(proof, stream, indent=2, allow_nan=False)
             stream.write("\n"); stream.flush(); os.fsync(stream.fileno())
         try:
-            return validate_window(proof)
+            return self.direct.validate_window(proof, self.directory.parent) if direct else validate_window(proof)
         except BaseException:
             if numerical_error is None:
                 if allocator_error is not None:
@@ -341,7 +401,15 @@ class MemoryObservation:
 
 def validate_window(proof):
     """Recompute real own-process peak and complete boundaries without weakening old round gates."""
-    require(proof.get("kind") == CAPABILITY and proof.get("schema_version") == 1
+    return _validate_window_for_policy(proof, "uva_a4500")
+
+
+def _validate_window_for_policy(proof, policy):
+    """Use only the two reviewed literal policies, never a caller-supplied total."""
+    require(policy in {"uva_a4500", "direct_serval02_card_one"}, "unsupported assigned-device window policy")
+    capability = CAPABILITY if policy == "uva_a4500" else DIRECT_OBSERVATION_CAPABILITY
+    total = (20470 if policy == "uva_a4500" else 95830) * 2 ** 20
+    require(proof.get("kind") == capability and proof.get("schema_version") == 1
         and type(proof["schema_version"]) is int and not proof["errors"] and proof["alive_at_requested_stop"] is True
         and proof["normal_requested_stop"] is True and proof["joined"] is True, "sampler lifecycle was incomplete")
     samples = proof["samples"]
@@ -359,7 +427,7 @@ def validate_window(proof):
     peaks = []
     for sample in samples:
         # Keep physical device counters separate from the sampled own process and allocator peaks.
-        require(sample["gpu_uuid"] == proof["gpu_uuid"] and sample["total_bytes"] == 20470 * 2 ** 20
+        require(sample["gpu_uuid"] == proof["gpu_uuid"] and sample["total_bytes"] == total
             and type(sample["used_bytes"]) is int and type(sample["free_bytes"]) is int
             and 0 <= sample["used_bytes"] <= sample["total_bytes"] and 0 <= sample["free_bytes"] <= sample["total_bytes"],
             "saved device counters changed")
@@ -380,7 +448,7 @@ def validate_window(proof):
         peaks.append(amount)
     allocator = proof.get("allocator")
     require(isinstance(allocator, dict) and type(allocator.get("peak_bytes_in_use")) is int
-        and 0 < allocator["peak_bytes_in_use"] <= 20470 * 2 ** 20, "actual lifetime allocator peak is unavailable")
+        and 0 < allocator["peak_bytes_in_use"] <= total, "actual lifetime allocator peak is unavailable")
     if "bytes_in_use" in allocator:
         require(type(allocator["bytes_in_use"]) is int and 0 <= allocator["bytes_in_use"] <= allocator["peak_bytes_in_use"],
             "actual lifetime allocator counters are inconsistent")
@@ -481,7 +549,7 @@ def qualification_source_paths(root, commit):
 
 def renderer_contract(plan, backend):
     """Derive the complete indexed-room and synthetic matrices from exact original source bytes."""
-    identity = core()
+    identity = qualification_identity(plan)
     renderer_relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py"
     renderer_path = Path(plan["source_root"]) / renderer_relative
     source = backend["jaxtari_source"]
@@ -539,7 +607,7 @@ def renderer_contract(plan, backend):
 def qualification_sources(plan, cleanrl_root, software_result):
     """Bind every unchanged original gate and external CleanRL model before any numerical import."""
     import train_optimized as training
-    identity = core().adjacent("h100_nvl_slurm_site_validation")
+    identity = qualification_identity(plan).adjacent("h100_nvl_slurm_site_validation")
     root = Path(plan["source_root"])
     paths = qualification_source_paths(root, plan["source_commit"])
     plan["qualification_sources"] = training.source_receipt(root, plan["source_commit"], paths)
@@ -549,13 +617,13 @@ def qualification_sources(plan, cleanrl_root, software_result):
     software_result = Path(software_result)
     plan["qualification_software"] = identity.software_reference(software_result,
         software_result.with_name("installed_backend.json"), software_result.with_name("asset_receipt.json"))
-    plan["renderer_contract"] = renderer_contract(plan, core().read_receipt(plan["qualification_software"]["installed_backend"]))
+    plan["renderer_contract"] = renderer_contract(plan, qualification_identity(plan).read_receipt(plan["qualification_software"]["installed_backend"]))
 
 
 def verify_qualification_source_receipts(plan):
     """Rebuild original test, external model and actual software receipts without changing process state."""
     import train_optimized as training
-    identity = core().adjacent("h100_nvl_slurm_site_validation")
+    identity = qualification_identity(plan).adjacent("h100_nvl_slurm_site_validation")
     recorded = plan["qualification_sources"]
     require(training.source_receipt(Path(plan["source_root"]), plan["source_commit"],
         qualification_source_paths(Path(plan["source_root"]), plan["source_commit"])) == recorded,
@@ -571,10 +639,10 @@ def verify_qualification_source_receipts(plan):
 def verify_qualification_sources(plan):
     """Apply execution-only original test controls after the read-only source proof succeeds."""
     verify_qualification_source_receipts(plan)
-    identity = core().adjacent("h100_nvl_slurm_site_validation")
+    identity = qualification_identity(plan).adjacent("h100_nvl_slurm_site_validation")
     identity.require_gate_controls(os.environ, plan["cleanrl_reference"])
-    require(core().exact(plan["renderer_contract"], renderer_contract(plan,
-        core().read_receipt(plan["qualification_software"]["installed_backend"]))), "the frozen original renderer matrix changed")
+    require(qualification_identity(plan).exact(plan["renderer_contract"], renderer_contract(plan,
+        qualification_identity(plan).read_receipt(plan["qualification_software"]["installed_backend"]))), "the frozen original renderer matrix changed")
     os.environ["CLEANRL_REFERENCE_FILE"] = plan["cleanrl_reference"]["file"]["path"]
 
 
@@ -659,7 +727,7 @@ def validate_test_collection(plan, tests, stdout):
 
 def verify_qualification_backend(plan, backend):
     """Match actual installed package/source/library bytes to the completed original UVA software packet."""
-    identity = core()
+    identity = qualification_identity(plan)
     reference = plan["qualification_software"]
     expected = identity.read_receipt(reference["installed_backend"])
     require(backend == expected, "actual installed packages/JAXtari/CUDA libraries differ from the original software packet")
@@ -926,7 +994,7 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment
         "dtypes": dtypes, "finite_state_leaves": len(leaves), "reference_iteration": int(state.iteration),
         "reference_optimizer_step": int(state.optimizer.step), "frozen_target_unchanged": target_equal,
         "policy_parameters_changed": policy_changed,
-        "gate_artifacts": {name: core().receipt(directory / name) for name in (
+        "gate_artifacts": {name: qualification_identity(plan).receipt(directory / name) for name in (
             "original_tests.json", "original_tests.stdout", "original_tests.stderr", "original_renderer.json")},
         "executed_work": {"full_reference_warmup_transitions": 50 * 128 * 128,
             "full_reference_training_transitions": 128 * 128, "full_reference_updates": 1,

@@ -380,8 +380,12 @@ class ProducerBoundaryTests(unittest.TestCase):
 
     def test_ordinary_equal_comparison_rejection_is_still_present(self):
         """The equality exception is restricted to the explicit target qualification branch."""
-        source = (SCRIPTS / "measure_selected.py").read_text()
-        self.assertIn('reference == selected and not qualification', source)
+        from test_measure_selected import SelectedMeasurementTests
+        fixture = SelectedMeasurementTests(); fixture.setUp(); self.addCleanup(fixture.doCleanups)
+        arguments = fixture.arguments(); arguments.configuration = fixture.files["reference"]
+        with self.assertRaisesRegex(ValueError, "distinct implemented setting"):
+            fixture.prepare(arguments)
+        self.assertFalse((fixture.run_dir / "data").exists())
         self.assertNotIn("configured_isolation", (SCRIPTS / "paired_benchmark.py").read_text())
 
     def test_fresh_isolated_process_resolves_only_complete_staged_helper_rosters(self):
