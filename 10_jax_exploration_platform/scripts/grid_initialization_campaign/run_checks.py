@@ -13,6 +13,7 @@ def main():
     """Require the grid tests and record their actual process status."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--run-dir', required=True, type=Path)
+    parser.add_argument('--document-only', action='store_true')
     args = parser.parse_args()
     if not os.environ.get('SLURM_JOB_ID'):
         raise RuntimeError('Numerical tests require a Slurm allocation.')
@@ -38,6 +39,13 @@ def main():
         [str(PYTHON), str(Path(__file__).parent/'check_training_records.py'), '--run-dir', str(args.run_dir)],
         [str(PYTHON), str(Path(__file__).parent/'build_report.py'), '--run-dir', str(args.run_dir)]]
     results = []
+    if args.document_only:
+        from common import read_json
+        previous = read_json(args.run_dir/'checks.json')['results']
+        if len(previous) != 4 or any(item['exit_code'] for item in previous[:3]):
+            raise RuntimeError('Document-only verification requires completed numerical and production checks.')
+        results = previous[:3]
+        commands = commands[-1:]
     for command in commands:
         result = subprocess.run(command, env=environment)
         results.append({'command': command, 'exit_code': result.returncode})

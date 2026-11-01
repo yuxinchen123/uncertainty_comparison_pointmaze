@@ -31,9 +31,9 @@ def main():
         if match:
             page = int(match.group(1))
             output = args.run_dir/'analysis/plots'/('verification_table_'+label)
-            subprocess.run(['/usr/bin/gs', '-q', '-dSAFER', '-dBATCH', '-dNOPAUSE',
-                '-sDEVICE=png16m', '-r150', f'-dFirstPage={page}', f'-dLastPage={page}',
-                '-sOutputFile='+str(output)+'.png', str(document.with_suffix('.pdf'))], check=True)
+            import pymupdf
+            with pymupdf.open(document.with_suffix('.pdf')) as pdf:
+                pdf[page-1].get_pixmap(dpi=150, alpha=False).save(str(output)+'.png')
             pages.append({'label': label, 'page': page, 'image': str(output)+'.png'})
     write_json(args.run_dir/'document_checks.json', {'at': now(), 'compiled': True, 'table_pages': pages})
 
