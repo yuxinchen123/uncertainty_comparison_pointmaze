@@ -29,6 +29,7 @@ import pickle
 import shlex
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import time
@@ -389,50 +390,327 @@ def validate_report_state(report, execution, iteration):
         raise ValueError("checkpoint reporting window disagrees with the true iteration")
 
 
+def checkpoint_paths(path, create=False):
+    """Bound every transaction file to one real directory and the reserved checkpoint names."""
+    path = Path(path).absolute()
+    if path.name != "latest.pkl" or path != path.resolve():
+        raise ValueError("checkpoint requires an exact latest.pkl path without symlink ancestors")
+    if create:
+        missing, parent = [], path.parent
+        while not parent.exists():
+            missing.append(parent)
+            parent = parent.parent
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # Persist new directory entries as well as the checkpoint's own later file entries.
+        for created in reversed(missing):
+            descriptor = os.open(created.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+    directory = path.parent
+    if (directory.resolve(strict=True) != directory or not directory.is_dir()
+            or directory.stat().st_uid != os.getuid()):
+        raise ValueError("checkpoint directory must be an existing real local directory")
+    names = {"payload": "latest.pkl", "metadata": "latest.metadata.json", "lock": "checkpoint.lock",
+             "marker": "latest.transaction.json", "marker_next": "latest.transaction.next.json",
+             "previous_payload": "latest.previous.pkl", "previous_metadata": "latest.previous.metadata.json",
+             "next_payload": "latest.next.pkl", "next_metadata": "latest.next.metadata.json"}
+    paths = {name: directory / basename for name, basename in names.items()}
+    for reserved in paths.values():
+        if reserved.is_symlink():
+            raise ValueError("checkpoint transaction paths cannot be symlinks")
+        if reserved.exists():
+            observed = reserved.stat()
+            if not stat.S_ISREG(observed.st_mode) or observed.st_uid != os.getuid():
+                raise ValueError("checkpoint transaction paths must be regular files owned by this user")
+    return paths
+
+
+@contextmanager
+def checkpoint_lock(path, create=False):
+    """Serialize save, restore, and metadata recovery without waiting for an active writer."""
+    paths = checkpoint_paths(path, create=create)
+    descriptor = os.open(paths["lock"], os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "a+") as stream:
+        observed = os.fstat(stream.fileno())
+        if not stat.S_ISREG(observed.st_mode) or observed.st_uid != os.getuid():
+            raise ValueError("checkpoint lock must be a regular file owned by this user")
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # Recheck paths after acquiring the same lock used by every checkpoint operation.
+        yield checkpoint_paths(path)
+
+
+def checkpoint_sync_directory(paths):
+    """Persist renames and removals before advancing or discarding a transaction record."""
+    descriptor = os.open(paths["payload"].parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def checkpoint_write(path, writer):
+    """Create one reserved staged file without replacing any existing file."""
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "wb") as stream:
+        writer(stream)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def checkpoint_json_bytes(value):
+    """Keep the existing readable checkpoint sidecar encoding."""
+    return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def checkpoint_publish_marker(paths, marker):
+    """Replace a complete durable marker before any canonical checkpoint file changes."""
+    checkpoint_write(paths["marker_next"], lambda stream: stream.write(checkpoint_json_bytes(marker)))
+    paths["marker_next"].replace(paths["marker"])
+    checkpoint_sync_directory(paths)
+
+
+def validate_checkpoint_metadata(metadata_record, identity, path):
+    """Verify a raw sidecar's exact schedule, precision identity, seeds, and payload binding."""
+    required = {"schema_version", "kind", "checkpoint_path", "checkpoint_sha256", "identity_digest",
+                "source_commit", "configuration_digest", "iteration", "copy_seeds", "target_updates",
+                "steps_per_copy", "pending_report_updates", "elapsed_seconds", "written_utc",
+                "loaded_gpu_libraries"}
+    if not isinstance(metadata_record, dict) or set(metadata_record) != required:
+        raise ValueError("checkpoint metadata is incomplete or has unknown fields")
+    if metadata_record["identity_digest"] != canonical_digest(identity):
+        raise ValueError("checkpoint identity differs from the admitted training run")
+    learner = identity["configuration"]["learner"]
+    iteration = metadata_record["iteration"]
+    target = learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"])
+    expected = {"kind": "optimized_training_checkpoint", "checkpoint_path": str(path),
+                "identity_digest": canonical_digest(identity), "source_commit": identity["source_commit"],
+                "configuration_digest": canonical_digest(identity["configuration"]),
+                "copy_seeds": identity["copy_seeds"], "target_updates": target}
+    if (type(metadata_record["schema_version"]) is not int or metadata_record["schema_version"] != 1
+            or any(metadata_record[name] != value for name, value in expected.items())
+            or type(iteration) is not int or not 0 <= iteration <= target
+            or type(metadata_record["target_updates"]) is not int
+            or not isinstance(metadata_record["copy_seeds"], list)
+            or any(type(seed) is not int for seed in metadata_record["copy_seeds"])
+            or type(metadata_record["steps_per_copy"]) is not int
+            or metadata_record["steps_per_copy"] != iteration * learner["n_envs"] * learner["num_steps"]):
+        raise ValueError("checkpoint metadata differs from the admitted identity or original schedule")
+    checksum = metadata_record["checkpoint_sha256"]
+    if not isinstance(checksum, str) or len(checksum) != 64 or any(c not in "0123456789abcdef" for c in checksum):
+        raise ValueError("checkpoint metadata requires a literal SHA256 payload hash")
+    elapsed, count = metadata_record["elapsed_seconds"], metadata_record["pending_report_updates"]
+    execution = identity["configuration"]["execution"]
+    if (type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed < 0
+            or type(count) is not int or count < 0 or count > iteration
+            or (execution["report_readout"] == "none" and count != 0)
+            or (execution["report_readout"] != "none" and count >= execution["report_every_iterations"])):
+        raise ValueError("checkpoint metadata reporting counters or elapsed runtime are invalid")
+    written = datetime.fromisoformat(metadata_record["written_utc"])
+    if written.tzinfo is None or written.utcoffset().total_seconds() != 0:
+        raise ValueError("checkpoint metadata requires a timezone-aware UTC write time")
+    if iteration:
+        validate_gpu_library_receipt(metadata_record["loaded_gpu_libraries"], identity["backend"])
+
+
+def checkpoint_pair_record(paths, identity, payload_name="payload", metadata_name="metadata"):
+    """Read a complete pair without importing or unpickling numerical state."""
+    payload, sidecar = paths[payload_name], paths[metadata_name]
+    if not payload.exists() and not sidecar.exists():
+        return None
+    if not payload.exists() or not sidecar.exists():
+        raise ValueError("checkpoint payload and metadata must both exist")
+    metadata_record = json.loads(sidecar.read_text())
+    validate_checkpoint_metadata(metadata_record, identity, paths["payload"])
+    checksum = file_sha256(payload)
+    if checksum != metadata_record["checkpoint_sha256"]:
+        raise ValueError("checkpoint payload hash differs from its complete metadata pair")
+    return {"checkpoint_sha256": checksum, "metadata_sha256": file_sha256(sidecar), "metadata": metadata_record}
+
+
+def validate_checkpoint_pair_record(record, identity, path):
+    """Reject forged marker records before they can authorize any file replacement."""
+    if not isinstance(record, dict) or set(record) != {"checkpoint_sha256", "metadata_sha256", "metadata"}:
+        raise ValueError("checkpoint transaction pair record is incomplete")
+    validate_checkpoint_metadata(record["metadata"], identity, path)
+    for name in ("checkpoint_sha256", "metadata_sha256"):
+        checksum = record[name]
+        if not isinstance(checksum, str) or len(checksum) != 64 or any(c not in "0123456789abcdef" for c in checksum):
+            raise ValueError("checkpoint transaction requires literal SHA256 hashes")
+    if record["checkpoint_sha256"] != record["metadata"]["checkpoint_sha256"]:
+        raise ValueError("checkpoint transaction payload hashes disagree")
+
+
+def validate_checkpoint_marker(marker, paths, identity):
+    """Accept only this writer's two transaction phases and exact full admitted identity."""
+    fields = {"schema_version", "kind", "phase", "checkpoint_path", "identity", "identity_digest", "previous", "next"}
+    if (not isinstance(marker, dict) or set(marker) != fields or type(marker["schema_version"]) is not int
+            or marker["schema_version"] != 1 or marker["kind"] != "optimized_checkpoint_transaction"
+            or marker["phase"] not in ("preparing", "prepared")
+            or marker["checkpoint_path"] != str(paths["payload"])
+            or canonical_digest(marker["identity"]) != canonical_digest(identity)
+            or marker["identity_digest"] != canonical_digest(identity)):
+        raise ValueError("checkpoint transaction differs from the admitted identity or reserved path")
+    if marker["previous"] is not None:
+        validate_checkpoint_pair_record(marker["previous"], identity, paths["payload"])
+    if marker["phase"] == "prepared":
+        validate_checkpoint_pair_record(marker["next"], identity, paths["payload"])
+    elif marker["next"] is not None:
+        raise ValueError("a preparing checkpoint transaction cannot claim a complete next pair")
+
+
+def checkpoint_matches(path, record, role):
+    """Match an existing reserved file to the exact bytes captured in its pair record."""
+    return path.exists() and record is not None and file_sha256(path) == record[role + "_sha256"]
+
+
+def checkpoint_cleanup(paths):
+    """Remove temporary generations before removing their durable transaction marker last."""
+    for name in ("previous_payload", "previous_metadata", "next_payload", "next_metadata", "marker_next"):
+        if paths[name].exists():
+            paths[name].unlink()
+            checkpoint_sync_directory(paths)
+    paths["marker"].unlink()
+    checkpoint_sync_directory(paths)
+
+
+def recover_checkpoint_locked(paths, identity):
+    """Finish only a fully recorded generation, or discard a still uncommitted preparation."""
+    transient = ("previous_payload", "previous_metadata", "next_payload", "next_metadata", "marker_next")
+    if not paths["marker"].exists():
+        # Before the first marker rename, only its reserved temporary file can exist.
+        # A complete canonical pair proves the previous generation is still intact;
+        # no bytes from that uncommitted temporary file authorize any state change.
+        if paths["marker_next"].exists() and not any(paths[name].exists() for name in transient[:-1]):
+            if checkpoint_pair_record(paths, identity) is None:
+                raise ValueError("uncommitted marker has no previous complete checkpoint")
+            paths["marker_next"].unlink()
+            checkpoint_sync_directory(paths)
+            return {"recovered": True, "action": "discarded_uncommitted_marker"}
+        if any(paths[name].exists() for name in transient):
+            raise ValueError("checkpoint transaction files exist without a durable marker")
+        checkpoint_pair_record(paths, identity)
+        return {"recovered": False}
+    marker = json.loads(paths["marker"].read_text())
+    validate_checkpoint_marker(marker, paths, identity)
+    previous, following = marker["previous"], marker["next"]
+    if marker["phase"] == "preparing":
+        if checkpoint_pair_record(paths, identity) != previous:
+            raise ValueError("uncommitted checkpoint preparation changed its previous complete pair")
+        for name, role in (("previous_payload", "checkpoint"), ("previous_metadata", "metadata")):
+            if paths[name].exists() and not checkpoint_matches(paths[name], previous, role):
+                raise ValueError("previous checkpoint hard link differs from the transaction")
+        checkpoint_cleanup(paths)
+        return {"recovered": True, "action": "discarded_uncommitted_preparation"}
+    # Example: canonical(old payload, old metadata) -> canonical(new payload, old metadata)
+    # -> canonical(new payload, new metadata). Every present byte must have a known role.
+    for name, role in (("payload", "checkpoint"), ("metadata", "metadata")):
+        if paths[name].exists() and not any(checkpoint_matches(paths[name], record, role) for record in (previous, following)):
+            raise ValueError("canonical checkpoint file differs from both recorded generations")
+    for prefix, record in (("previous", previous), ("next", following)):
+        for suffix, role in (("payload", "checkpoint"), ("metadata", "metadata")):
+            if paths[prefix + "_" + suffix].exists() and not checkpoint_matches(paths[prefix + "_" + suffix], record, role):
+                raise ValueError("staged checkpoint file differs from its recorded generation")
+    for name in ("metadata", "previous_metadata", "next_metadata"):
+        if paths[name].exists():
+            records = [record for record in (previous, following) if checkpoint_matches(paths[name], record, "metadata")]
+            if not records or not any(json.loads(paths[name].read_text()) == record["metadata"] for record in records):
+                raise ValueError("checkpoint sidecar bytes disagree with the transaction's recorded metadata")
+    if paths["marker_next"].exists():
+        raise ValueError("prepared checkpoint has an unexpected second transaction marker")
+    # Prove both next files before changing either canonical file. A metadata-only
+    # observer verifies hashes and JSON here; numerical restore remains in load_checkpoint.
+    for name, role in (("payload", "checkpoint"), ("metadata", "metadata")):
+        candidates = [paths[name], paths["next_" + name]]
+        matching = [candidate for candidate in candidates if checkpoint_matches(candidate, following, role)]
+        if not matching or (name == "metadata" and json.loads(matching[0].read_text()) != following["metadata"]):
+            raise ValueError("checkpoint transaction has no complete recorded next generation")
+    complete = all(checkpoint_matches(paths[name], following, role)
+                   for name, role in (("payload", "checkpoint"), ("metadata", "metadata")))
+    if not complete and previous is not None and not all(
+            checkpoint_matches(paths[name], previous, role)
+            for name, role in (("previous_payload", "checkpoint"), ("previous_metadata", "metadata"))):
+        raise ValueError("checkpoint publication lost its previous complete generation")
+    for name, role in (("payload", "checkpoint"), ("metadata", "metadata")):
+        if not checkpoint_matches(paths[name], following, role):
+            staged = paths["next_" + name]
+            if not checkpoint_matches(staged, following, role):
+                raise ValueError("checkpoint transaction has no complete recorded next generation")
+            staged.replace(paths[name])
+            checkpoint_sync_directory(paths)
+    if checkpoint_pair_record(paths, identity) != following:
+        raise ValueError("published checkpoint pair differs from the durable transaction")
+    checkpoint_cleanup(paths)
+    return {"recovered": True, "action": "finished_prepared_generation", "checkpoint_sha256": following["checkpoint_sha256"]}
+
+
+def recover_checkpoint(path, identity):
+    """Recover metadata only under the shared lock; callers must prove the previous process stopped."""
+    with checkpoint_lock(path) as paths:
+        return recover_checkpoint_locked(paths, identity)
+
+
 def save_checkpoint(path, state, report, identity, iteration, elapsed_seconds, loaded_libraries=None):
-    """Atomically preserve the full host state and an unfinished reporting window."""
+    """Keep the previous complete generation until the next payload and sidecar are durable."""
     validate_host_state(state, identity, iteration)
     validate_report_state(report, identity["configuration"]["execution"], iteration)
+    if type(elapsed_seconds) not in (int, float) or not math.isfinite(elapsed_seconds) or elapsed_seconds < 0:
+        raise ValueError("checkpoint elapsed runtime is invalid")
     if iteration:
         validate_gpu_library_receipt(loaded_libraries, identity["backend"])
     payload = {"schema_version": 1, "identity": identity, "identity_digest": canonical_digest(identity),
                "iteration": iteration, "elapsed_seconds": elapsed_seconds, "written_utc": utc_now(),
                "state": state, "report_state": report, "loaded_gpu_libraries": loaded_libraries}
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + f".tmp-{os.getpid()}")
-    with temporary.open("wb") as stream:
-        pickle.dump(payload, stream, protocol=pickle.HIGHEST_PROTOCOL)
-        stream.flush()
-        os.fsync(stream.fileno())
-    temporary.replace(path)
-    # A raw metadata consumer can verify completion without unpickling array modules.
-    learner = identity["configuration"]["learner"]
-    atomic_json(path.with_name("latest.metadata.json"), {
-        "schema_version": 1, "kind": "optimized_training_checkpoint", "checkpoint_path": str(path.resolve()),
-        "checkpoint_sha256": file_sha256(path), "identity_digest": payload["identity_digest"],
-        "source_commit": identity["source_commit"], "configuration_digest": canonical_digest(identity["configuration"]),
-        "iteration": iteration, "copy_seeds": identity["copy_seeds"],
-        "target_updates": learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"]),
-        "steps_per_copy": iteration * learner["n_envs"] * learner["num_steps"],
-        "pending_report_updates": report["pending_count"], "elapsed_seconds": elapsed_seconds,
-        "written_utc": payload["written_utc"], "loaded_gpu_libraries": loaded_libraries})
+    with checkpoint_lock(path, create=True) as paths:
+        recover_checkpoint_locked(paths, identity)
+        previous = checkpoint_pair_record(paths, identity)
+        marker = {"schema_version": 1, "kind": "optimized_checkpoint_transaction", "phase": "preparing",
+                  "checkpoint_path": str(paths["payload"]), "identity": identity,
+                  "identity_digest": canonical_digest(identity), "previous": previous, "next": None}
+        checkpoint_publish_marker(paths, marker)
+        if previous is not None:
+            os.link(paths["payload"], paths["previous_payload"], follow_symlinks=False)
+            os.link(paths["metadata"], paths["previous_metadata"], follow_symlinks=False)
+            checkpoint_sync_directory(paths)
+        checkpoint_write(paths["next_payload"], lambda stream: pickle.dump(payload, stream, protocol=pickle.HIGHEST_PROTOCOL))
+        learner = identity["configuration"]["learner"]
+        metadata_record = {"schema_version": 1, "kind": "optimized_training_checkpoint",
+            "checkpoint_path": str(paths["payload"]), "checkpoint_sha256": file_sha256(paths["next_payload"]),
+            "identity_digest": payload["identity_digest"], "source_commit": identity["source_commit"],
+            "configuration_digest": canonical_digest(identity["configuration"]), "iteration": iteration,
+            "copy_seeds": identity["copy_seeds"], "target_updates": learner["total_timesteps"] // (learner["n_envs"] * learner["num_steps"]),
+            "steps_per_copy": iteration * learner["n_envs"] * learner["num_steps"], "pending_report_updates": report["pending_count"],
+            "elapsed_seconds": elapsed_seconds, "written_utc": payload["written_utc"], "loaded_gpu_libraries": loaded_libraries}
+        checkpoint_write(paths["next_metadata"], lambda stream: stream.write(checkpoint_json_bytes(metadata_record)))
+        checkpoint_sync_directory(paths)
+        marker.update(phase="prepared", next=checkpoint_pair_record(paths, identity, "next_payload", "next_metadata"))
+        checkpoint_publish_marker(paths, marker)
+        recover_checkpoint_locked(paths, identity)
 
 
 def load_checkpoint(path, identity):
-    """Refuse changed source, execution, seeds, flags, or backend before device restore."""
-    with path.open("rb") as stream:
-        payload = pickle.load(stream)
-    if (payload.get("schema_version") != 1 or payload.get("identity") != identity
-            or payload.get("identity_digest") != canonical_digest(identity)):
-        raise ValueError("checkpoint identity differs from the admitted training run")
-    validate_host_state(payload["state"], identity, payload["iteration"])
-    validate_report_state(payload["report_state"], identity["configuration"]["execution"], payload["iteration"])
-    if payload["iteration"]:
-        validate_gpu_library_receipt(payload.get("loaded_gpu_libraries"), identity["backend"])
-    elapsed = payload["elapsed_seconds"]
-    if type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed < 0:
-        raise ValueError("checkpoint elapsed runtime is invalid")
-    return payload
+    """Refuse changed source, configuration, seeds, precision, or mismatched checkpoint bytes."""
+    with checkpoint_lock(path) as paths:
+        recover_checkpoint_locked(paths, identity)
+        pair = checkpoint_pair_record(paths, identity)
+        if pair is None:
+            raise ValueError("checkpoint payload and metadata are missing")
+        with paths["payload"].open("rb") as stream:
+            payload = pickle.load(stream)
+        if (type(payload.get("schema_version")) is not int or payload["schema_version"] != 1
+                or canonical_digest(payload.get("identity")) != canonical_digest(identity)
+                or payload.get("identity_digest") != canonical_digest(identity)):
+            raise ValueError("checkpoint identity differs from the admitted training run")
+        validate_host_state(payload["state"], identity, payload["iteration"])
+        validate_report_state(payload["report_state"], identity["configuration"]["execution"], payload["iteration"])
+        if payload["iteration"]:
+            validate_gpu_library_receipt(payload.get("loaded_gpu_libraries"), identity["backend"])
+        metadata_record = pair["metadata"]
+        if (any(payload[name] != metadata_record[name] for name in ("iteration", "elapsed_seconds", "written_utc", "loaded_gpu_libraries"))
+                or payload["report_state"]["pending_count"] != metadata_record["pending_report_updates"]):
+            raise ValueError("checkpoint payload counters differ from the verified sidecar")
+        return payload
 
 
 def next_update_count(iteration, target, group_size):

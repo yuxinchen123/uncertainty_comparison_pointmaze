@@ -1,0 +1,31 @@
+{
+  "kind": "checkpoint_unmarked_stage_author_tests",
+  "job_id": "6780433",
+  "step_id": "21",
+  "source_hashes": {
+    "train_optimized.py": "ce4a8f63f2023fd8adac0e2f76eeba20aa16ce8ae391a5cd3db5aae9e25e2a8e",
+    "launch_final_training.py": "392a105d3a849d09a7af52bccc2fb293dcf2eb27bf634d0e7f80ab0dbbcad361",
+    "launch_deployed_training.py": "f83b64839399c9dcaf696e4417285d19917c646e696e7add8bbaa36fed50847b",
+    "tests/test_checkpoint_transaction.py": "dcb0d06fb1651cc623a42bb97728dbde6763d15048b84bcd740612b255325f80",
+    "tests/test_checkpoint_continuation.py": "530e33c7d1252b8f07879895c01c3c17b0d45620632a0ffba84f621628b82592",
+    "tests/test_launch_final_training.py": "b0a11b3a88b3913c591bfc2997a92181e2db44a1e365e667a38cac2986ab7c4a",
+    "tests/gpu_train_optimized_restart.py": "5e39f6e097adec43c9eccf64a20a78f27db306886060905d2219d4bfd3b9de5a"
+  },
+  "base_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/monitor_validation/checkpoint_final_identity_author_6780433_19.json",
+    "sha256": "96ecd2f2db8f5903c55b20a4926ac35324e835ca7927de516f9b13b46430e8a9"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "tests.test_checkpoint_continuation",
+    "tests.test_launch_final_training.FinalLauncherTests.test_eight_gpus_use_one_generic_job_and_ids_are_durable_before_release",
+    "tests.test_launch_deployed_training.DeployedLauncherTests.test_one_gpu_submission_records_exact_id_before_worker_release_and_uses_reserved_resources"
+  ],
+  "returncode": 0,
+  "stdout": "SUBMITTED_ACES_JOB_ID=9001\n",
+  "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 2.718s\n\nOK\n",
+  "scientific_hypothesis_credit": 0,
+  "numerical_imports": false
+}

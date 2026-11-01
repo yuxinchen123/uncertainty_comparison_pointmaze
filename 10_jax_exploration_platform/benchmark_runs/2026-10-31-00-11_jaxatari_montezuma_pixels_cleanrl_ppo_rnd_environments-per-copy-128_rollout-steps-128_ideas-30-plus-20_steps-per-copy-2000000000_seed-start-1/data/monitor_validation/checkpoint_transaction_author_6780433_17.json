@@ -1,0 +1,92 @@
+{
+  "kind": "checkpoint_transaction_and_continuation_author_tests",
+  "job_id": "6780433",
+  "step_id": "17",
+  "source_hashes": {
+    "train_optimized.py": "ce4a8f63f2023fd8adac0e2f76eeba20aa16ce8ae391a5cd3db5aae9e25e2a8e",
+    "launch_final_training.py": "cc7b2cba89e0bf2afe89712a0bcc311f0436712aee93a64996aa5d3d956d14ae",
+    "launch_deployed_training.py": "776f70bb05660bb42bf4ee588bf8ec4c348f8160b7956913a4964a43ae8f1d2b",
+    "tests/test_checkpoint_transaction.py": "dcb0d06fb1651cc623a42bb97728dbde6763d15048b84bcd740612b255325f80",
+    "tests/test_checkpoint_continuation.py": "f9c3245fda10cb0acc5d9d89384259788115776085b0f9f6415b01b57d3e7382",
+    "tests/test_launch_final_training.py": "b0a11b3a88b3913c591bfc2997a92181e2db44a1e365e667a38cac2986ab7c4a",
+    "tests/gpu_train_optimized_restart.py": "5e39f6e097adec43c9eccf64a20a78f27db306886060905d2219d4bfd3b9de5a"
+  },
+  "results": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_checkpoint_transaction"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "...........\n----------------------------------------------------------------------\nRan 11 tests in 1.429s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_train_optimized"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.127s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_checkpoint_continuation"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 1.427s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_final_training_scheduler_state"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.016s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_launch_final_training"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "...........................fatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py' does not exist in 'be79c24c1837ac620c79a57e5edffcdbbab4db1c'\nfatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py' does not exist in '3f5d10380e71b6bf4051be30543c290c7d477564'\nfatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py' does not exist in '6364ad2876d4c94ab77e1be2cf6c1ff053f87100'\n.\n----------------------------------------------------------------------\nRan 28 tests in 3.296s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_launch_deployed_training"
+      ],
+      "returncode": 0,
+      "stdout": "SUBMITTED_ACES_JOB_ID=9001\nSUBMITTED_ACES_JOB_ID=9002\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 unknown | HELD | JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\nFINISHED\nPLANNED\n\nSUBMITTED_ACES_JOB_ID=9001\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: a deployed status lacks its exact original ACES unit/cluster identity\nFINISHED\nPLANNED\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nexplicit h100 policy seed 101 | ACES | 1 H100 PCIe | READY | 0/122070 updates\nHELD\nFINISHED\nPLANNED\nACES continuation | ACES | 1 H100 PCIe | SUBMITTED | one generic H100 job durably recorded\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: ready H100 raw admission changed before allocation submission\nFINISHED\nPLANNED\n\n",
+      "stderr": "..................................\n----------------------------------------------------------------------\nRan 34 tests in 9.411s\n\nOK\n"
+    }
+  ],
+  "shared_storage": {
+    "parent": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/monitor_validation",
+    "tests_run": 11,
+    "output": "test_changed_source_config_runtime_seeds_helpers_and_backend_hold_without_mutation (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nA durable marker cannot authorize changing any part of the current admitted identity. ... ok\ntest_every_publication_and_cleanup_boundary_retains_complete_state (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nBoth files and all state fields recover after each durable second-save boundary. ... ok\ntest_first_checkpoint_interruption_never_invents_a_committed_state (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nAn unprepared first save stays absent; a fully prepared first save finishes exactly. ... ok\ntest_forged_sidecar_description_does_not_authorize_file_replacement (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nReal file hashes alone do not excuse a marker describing different metadata values. ... ok\ntest_interrupted_first_marker_recovers_intact_previous_pair_without_trusting_partial_json (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nOnly the known temporary marker can be discarded when the prior pair still proves complete. ... ok\ntest_legacy_valid_pair_is_unchanged_and_unmarked_mismatch_is_held (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nSchema-one pairs need no rewrite; an unmarked mismatch is never guessed or repaired. ... ok\ntest_missing_or_unknown_prepared_files_hold_before_changing_either_canonical_file (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nBoth next roles must validate before either file is moved into its canonical path. ... ok\ntest_partial_payload_sidecar_or_replacement_marker_keeps_previous_pair (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nA failed stage write while preparing discards only uncommitted reserved files. ... ok\ntest_save_load_and_metadata_recovery_share_one_nonblocking_lock (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nAll three operations reject an active lock without changing the previous checkpoint. ... ok\ntest_symlink_ancestor_reserved_symlink_and_nonregular_file_are_rejected (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nNo checkpoint path can redirect recovery outside its real reserved directory. ... ok\ntest_unknown_unmarked_stage_or_malformed_marker_is_held (tests.test_checkpoint_transaction.CheckpointTransactionTests)\nUnknown records never count as a valid legacy pair or permission to repair one. ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 1.920s\n\nOK\n",
+    "temporary_directories_removed": true
+  },
+  "gpu_component_syntax_passed": true,
+  "gpu_component_executed": false,
+  "numeric_imports": false,
+  "scientific_hypothesis_credit": 0
+}

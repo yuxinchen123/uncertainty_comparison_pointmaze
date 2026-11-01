@@ -1,0 +1,4637 @@
+{
+  "schema_version": 1,
+  "kind": "checkpoint_transaction_independent_review",
+  "started_at_utc": "2026-11-01T07:25:29.155454+00:00",
+  "finished_at_utc": "2026-11-01T07:25:32.673999+00:00",
+  "job_id": "6780433",
+  "step_id": "20",
+  "hostname": "slurm5",
+  "source_sha256": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "ce4a8f63f2023fd8adac0e2f76eeba20aa16ce8ae391a5cd3db5aae9e25e2a8e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "cc7b2cba89e0bf2afe89712a0bcc311f0436712aee93a64996aa5d3d956d14ae",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": "7c58288ea2745bc36f278f112734bbde9b03559f434aadfb7ca83e828e1ad807",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_checkpoint_transaction.py": "dcb0d06fb1651cc623a42bb97728dbde6763d15048b84bcd740612b255325f80",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_checkpoint_continuation.py": "e58659ef2a0a819d4d24cf7db9ca9bd8f1524aa4d4028a533dc3beb3a59049c0",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_train_optimized.py": "7cc7a9bbce394ea5aab17104e810a3729e4abd484a0fffec4574e292e4d0ec51",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "b0a11b3a88b3913c591bfc2997a92181e2db44a1e365e667a38cac2986ab7c4a",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_deployed_training.py": "910875d4dd4b3b8d18bd717547b58eac262b86f2b0d27efd5350acedd1f3d762",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_training_scheduler_state.py": "5d8360caff03835f42e269b98b8e9acf05af51dfdd94000331c3dd61ee5e0ca5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/gpu_train_optimized_restart.py": "5e39f6e097adec43c9eccf64a20a78f27db306886060905d2219d4bfd3b9de5a"
+  },
+  "author_freeze_verified": true,
+  "source_unchanged": true,
+  "tests_run": 42,
+  "test_names": [
+    "tests.test_train_optimized.TrainingMetadataTests.test_asset_manifest_rejects_changed_and_unrecorded_inputs",
+    "tests.test_train_optimized.TrainingMetadataTests.test_boolean_only_admission_fails_before_source_or_numerical_import",
+    "tests.test_train_optimized.TrainingMetadataTests.test_checkpoint_retains_every_state_component_and_rejects_changed_identity",
+    "tests.test_train_optimized.TrainingMetadataTests.test_component_commit_cannot_ascend_to_a_parent_repository",
+    "tests.test_train_optimized.TrainingMetadataTests.test_direct_preflight_holds_the_standing_lock_until_training_returns",
+    "tests.test_train_optimized.TrainingMetadataTests.test_execution_dispatch_uses_group_and_original_tail",
+    "tests.test_train_optimized.TrainingMetadataTests.test_existing_outputs_cannot_be_reused_for_another_specification",
+    "tests.test_train_optimized.TrainingMetadataTests.test_fixed_contract_and_no_hyperparameter_search",
+    "tests.test_train_optimized.TrainingMetadataTests.test_group_tail_and_schedule_boundary_do_not_pad_updates",
+    "tests.test_train_optimized.TrainingMetadataTests.test_installed_jaxtari_python_matches_pinned_git_blobs",
+    "tests.test_train_optimized.TrainingMetadataTests.test_loaded_gpu_library_receipt_matches_installed_bytes_and_checkpoint",
+    "tests.test_train_optimized.TrainingMetadataTests.test_pending_report_checkpoint_keeps_chronological_position",
+    "tests.test_train_optimized.TrainingMetadataTests.test_placement_requires_the_authorized_card_or_slurm",
+    "tests.test_train_optimized.TrainingMetadataTests.test_resume_attempts_preserve_previous_failures",
+    "tests.test_train_optimized.TrainingMetadataTests.test_runtime_matches_validated_flags_and_records_extended_environment",
+    "tests.test_train_optimized.TrainingMetadataTests.test_runtime_source_must_match_committed_helper_bytes",
+    "tests.test_train_optimized.TrainingMetadataTests.test_scheduled_window_continues_after_host_checkpoint",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_changed_source_config_runtime_seeds_helpers_and_backend_hold_without_mutation",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_every_publication_and_cleanup_boundary_retains_complete_state",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_first_checkpoint_interruption_never_invents_a_committed_state",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_forged_sidecar_description_does_not_authorize_file_replacement",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_interrupted_first_marker_recovers_intact_previous_pair_without_trusting_partial_json",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_legacy_valid_pair_is_unchanged_and_unmarked_mismatch_is_held",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_missing_or_unknown_prepared_files_hold_before_changing_either_canonical_file",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_partial_payload_sidecar_or_replacement_marker_keeps_previous_pair",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_save_load_and_metadata_recovery_share_one_nonblocking_lock",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_symlink_ancestor_reserved_symlink_and_nonregular_file_are_rejected",
+    "tests.test_checkpoint_transaction.CheckpointTransactionTests.test_unknown_unmarked_stage_or_malformed_marker_is_held",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_aces_identity_then_recovery_precede_terminal_snapshot_and_portable_validator",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_aces_old_status_cannot_recover_other_job_current_placement",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_current_failure_or_changed_admitted_assets_holds_before_recovery",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_no_transaction_leaves_legacy_readers_and_helpers_unchanged",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_pre_recovery_identity_uses_fresh_pinned_dependencies_and_checks_exact_digest",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_uva_active_or_requeued_job_never_invokes_recovery",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_uva_old_terminal_status_cannot_recover_newer_job_or_pid",
+    "tests.test_checkpoint_continuation.CheckpointContinuationTests.test_uva_recovers_before_checkpoint_reads_and_keeps_validation_required",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_aces_current_running_state_overrides_old_timeout_and_retains_raw_proof",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_duplicate_foreign_unknown_or_terminal_queue_rows_are_rejected",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_failed_query_is_not_empty_and_exact_invalid_job_requires_accounting",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_foreign_cluster_ids_are_rejected_before_any_queue_or_accounting_query",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_missing_accounting_can_only_yield_a_proven_current_active_state",
+    "tests.test_final_training_scheduler_state.FinalTrainingSchedulerStateTests.test_uva_requeued_active_state_overrides_preempted_accounting"
+  ],
+  "failures": 0,
+  "errors": 0,
+  "successful": true,
+  "forbidden_command_attempts": [],
+  "live_scheduler_or_network_commands": false,
+  "numerical_imports": [],
+  "allowed_external_commands": [
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/tmppdrg09wn/detached_helpers"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/tmppdrg09wn/detached_helpers"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "add",
+        "."
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "add",
+        "."
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "-c",
+        "user.name=Metadata test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Create synthetic helper bytes"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "-c",
+        "user.name=Metadata test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Create synthetic helper bytes"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "checkout",
+        "-q",
+        "--detach",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "checkout",
+        "-q",
+        "--detach",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmppdrg09wn/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/tmpetc32i3m/detached_helpers"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "init",
+        "-q",
+        "/tmp/tmpetc32i3m/detached_helpers"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "add",
+        "."
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "add",
+        "."
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "-c",
+        "user.name=Metadata test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Create synthetic helper bytes"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "-c",
+        "user.name=Metadata test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Create synthetic helper bytes"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "checkout",
+        "-q",
+        "--detach",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "checkout",
+        "-q",
+        "--detach",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "--show-toplevel"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "local_git_fixture",
+      "command": [
+        "git",
+        "-C",
+        "/tmp/tmpetc32i3m/detached_helpers",
+        "show",
+        "faad9ea5711a00cef5c2413592dc1e738466c51c:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py"
+      ]
+    },
+    {
+      "kind": "exact_pinned_stdlib_identity_fixture",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import json, sys\nsys.path.insert(0, sys.argv[1])\nimport validate_deployed_training_completion as validator\nrequest = json.load(sys.stdin)\nevidence = validator.deployment.DeploymentEvidence()\nidentity_digest = validator.checkpoint_identity(request[\"admitted\"], request[\"deployment\"], request[\"identity\"], evidence)\nif any(name.split(\".\")[0] in {\"jax\", \"jaxlib\", \"numpy\", \"torch\", \"flax\", \"optax\"} for name in sys.modules):\n    raise RuntimeError(\"checkpoint identity validation imported a numerical runtime\")\nprint(json.dumps(identity_digest))\n",
+        "/tmp/tmpcu1q15ax/10_jax_exploration_platform/scripts/atari_pixel_campaign"
+      ]
+    },
+    {
+      "kind": "exact_pinned_stdlib_identity_fixture",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import json, sys\nsys.path.insert(0, sys.argv[1])\nimport validate_deployed_training_completion as validator\nrequest = json.load(sys.stdin)\nevidence = validator.deployment.DeploymentEvidence()\nidentity_digest = validator.checkpoint_identity(request[\"admitted\"], request[\"deployment\"], request[\"identity\"], evidence)\nif any(name.split(\".\")[0] in {\"jax\", \"jaxlib\", \"numpy\", \"torch\", \"flax\", \"optax\"} for name in sys.modules):\n    raise RuntimeError(\"checkpoint identity validation imported a numerical runtime\")\nprint(json.dumps(identity_digest))\n",
+        "/tmp/tmpcu1q15ax/10_jax_exploration_platform/scripts/atari_pixel_campaign"
+      ]
+    }
+  ],
+  "gpu_test_compilation_only": "tests/gpu_train_optimized_restart.py",
+  "gpu_test_executed": false,
+  "prior_runner_setup_failure": "An earlier attempt ended before test execution because tests is a namespace package without __init__.py; this runner declares that namespace explicitly.",
+  "log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/checkpoint_transaction_independent_review_6780433_20.log",
+    "sha256": "c3b011c403b1ea95da5023970d4605b42d6a6ed50e2c8132477b26c8fee4826e"
+  }
+}

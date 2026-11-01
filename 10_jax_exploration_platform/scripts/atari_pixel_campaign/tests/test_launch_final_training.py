@@ -151,8 +151,9 @@ class FinalLauncherTests(unittest.TestCase):
         """Represent actual result/identity/sidecar bytes without creating or unpickling arrays."""
         directory = self.run / "data" / unit["unit_id"]
         iteration = final.TARGET_UPDATES if completed else 100
-        identity = {"source_root": unit["numerical_source"]["root"], "source_commit": self.commit,
+        identity = {"schema_version": 1, "source_root": unit["numerical_source"]["root"], "source_commit": self.commit,
             "hardware_class": "jaguar03_rtx_a4500", "helpers": self.helpers, "configuration": self.configuration,
+            "assets": {"root": str(self.asset_root), **unit["assets"]["identity"]},
             "copy_seeds": unit["copy_seeds"], "runtime_environment": self.runtime,
             "backend": {"driver_version": self.backend["driver_version"], "packages": self.installed["packages"],
                 "installed_gpu_libraries": self.installed["gpu_libraries"], "jaxtari_source": self.installed["jaxtari_source"]}}

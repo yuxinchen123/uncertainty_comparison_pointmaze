@@ -362,7 +362,9 @@ def submit(run, policy, *, monitor=False):
         if any(row["state"] in metadata.ACTIVE for row in rows.values()):
             raise ValueError("an exact owned ACES job of this kind is already active or pending")
         for binding in policy["bindings"].values():
-            verify_binding(run, binding)
+            unit, _, _ = verify_binding(run, binding)
+            if not monitor and metadata.checkpoint_transaction_pending(run, unit):
+                raise ValueError("unresolved checkpoint transaction prevents a new deployed worker")
         shape = resource_shape(run, policy)
         identifier = kind + "_" + uuid.uuid4().hex
         directory = run / "slurm/deployed_training" / identifier
@@ -573,6 +575,29 @@ def verify_checkpoint_receipt(run, unit, status):
     return proof
 
 
+def pre_recovery_identity(unit, admitted, deployment_receipt, identity):
+    """Validate identity in a fresh pinned stdlib process without reusing controller dependencies."""
+    if metadata.digest(identity.get("helpers")) != metadata.digest(unit["helpers"]):
+        raise ValueError("checkpoint recovery changed the exact operational helper identity")
+    helper_directory = Path(unit["helpers"]["source_root"]) / metadata.PREFIX
+    code = """import json, sys
+sys.path.insert(0, sys.argv[1])
+import validate_deployed_training_completion as validator
+request = json.load(sys.stdin)
+evidence = validator.deployment.DeploymentEvidence()
+identity_digest = validator.checkpoint_identity(request["admitted"], request["deployment"], request["identity"], evidence)
+if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch", "flax", "optax"} for name in sys.modules):
+    raise RuntimeError("checkpoint identity validation imported a numerical runtime")
+print(json.dumps(identity_digest))
+"""
+    request = {"admitted": admitted, "deployment": deployment_receipt, "identity": identity}
+    command = [unit["python"], "-I", "-c", code, str(helper_directory)]
+    result = subprocess.run(command, input=json.dumps(request, allow_nan=False), capture_output=True, text=True,
+                            check=True, timeout=120, env={**os.environ, "PYTHONNOUSERSITE": "1"})
+    if json.loads(result.stdout) != metadata.digest(identity):
+        raise ValueError("the original helper did not verify the exact pre-recovery deployed identity")
+
+
 def refresh(run, policy):
     """Continue only exact terminal owned jobs through the shared strict checkpoint validator."""
     owned_compute(run)
@@ -582,10 +607,16 @@ def refresh(run, policy):
     states, _ = accounting(run, [item["job_id"] for item in jobs])
     result = []
     for name, binding in policy["bindings"].items():
-        unit, _, _ = verify_binding(run, binding)
+        unit, admitted, deployment_receipt = verify_binding(run, binding)
         path = queue / "status" / (name + ".json")
         status = metadata.read(path)
         if status["state"] in {"ready", "held", "completed"}:
+            try:
+                if status["state"] != "held" and metadata.checkpoint_transaction_pending(run, unit):
+                    raise ValueError("a ready or completed deployed unit still has an unresolved checkpoint transaction")
+            except (ValueError, OSError) as error:
+                status.update(state="held", reason=f"{type(error).__name__}: {error}")
+                metadata.atomic(path, status)
             if status["state"] != "held" and status.get("checkpoint_validation"):
                 try:
                     proof = verify_checkpoint_receipt(run, unit, status)
@@ -606,9 +637,18 @@ def refresh(run, policy):
             result.append(status)
             continue
         try:
-            terminal = terminal_receipt(run, unit, job) if states[job]["state"] in INFRASTRUCTURE else None
             if states[job]["state"] not in INFRASTRUCTURE | {"COMPLETED"}:
                 raise ValueError("application failure, OOM or other terminal state requires diagnosis")
+            directory = run / "data" / unit["unit_id"]
+            if metadata.checkpoint_transaction_pending(run, unit):
+                if directory != directory.resolve() or (directory / "training_identity.json").is_symlink():
+                    raise ValueError("deployed checkpoint identity requires its exact real unit directory")
+                identity = metadata.read(directory / "training_identity.json")
+                pre_recovery_identity(unit, admitted, deployment_receipt, identity)
+                recovery = metadata.recover_terminal_checkpoint(run, unit, job, states[job]["state"], CLUSTER, identity)
+                if recovery is not None:
+                    status["checkpoint_transaction_recovery"] = recovery
+            terminal = terminal_receipt(run, unit, job) if states[job]["state"] in INFRASTRUCTURE else None
             proof = validation_command(unit, binding, run, checkpoint=True, terminal=terminal,
                                        proof_attempt=checkpoint_selector(run, unit, status))
             proof_path = queue / "validation" / (name + "_job-" + job + "_" + uuid.uuid4().hex + ".json")

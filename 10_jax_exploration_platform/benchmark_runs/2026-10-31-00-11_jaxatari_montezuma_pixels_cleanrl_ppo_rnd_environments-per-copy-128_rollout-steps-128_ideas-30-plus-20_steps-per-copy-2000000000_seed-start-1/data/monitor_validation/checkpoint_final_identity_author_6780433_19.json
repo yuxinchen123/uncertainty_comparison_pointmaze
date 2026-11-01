@@ -1,0 +1,45 @@
+{
+  "kind": "checkpoint_final_pinned_identity_author_tests",
+  "job_id": "6780433",
+  "step_id": "19",
+  "source_hashes": {
+    "train_optimized.py": "ce4a8f63f2023fd8adac0e2f76eeba20aa16ce8ae391a5cd3db5aae9e25e2a8e",
+    "launch_final_training.py": "cc7b2cba89e0bf2afe89712a0bcc311f0436712aee93a64996aa5d3d956d14ae",
+    "launch_deployed_training.py": "7c58288ea2745bc36f278f112734bbde9b03559f434aadfb7ca83e828e1ad807",
+    "tests/test_checkpoint_transaction.py": "dcb0d06fb1651cc623a42bb97728dbde6763d15048b84bcd740612b255325f80",
+    "tests/test_checkpoint_continuation.py": "e58659ef2a0a819d4d24cf7db9ca9bd8f1524aa4d4028a533dc3beb3a59049c0",
+    "tests/test_launch_final_training.py": "b0a11b3a88b3913c591bfc2997a92181e2db44a1e365e667a38cac2986ab7c4a",
+    "tests/gpu_train_optimized_restart.py": "5e39f6e097adec43c9eccf64a20a78f27db306886060905d2219d4bfd3b9de5a"
+  },
+  "base_full_and_shared_storage_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/monitor_validation/checkpoint_transaction_author_6780433_17.json",
+    "sha256": "3800ba68d710800b957c7ba6e7936bed24535b0e9ea482b4a056d0429ccd1404"
+  },
+  "unchanged_sources_verified_against_base": true,
+  "results": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_checkpoint_continuation"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 1.466s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "tests.test_launch_deployed_training"
+      ],
+      "returncode": 0,
+      "stdout": "SUBMITTED_ACES_JOB_ID=9001\nSUBMITTED_ACES_JOB_ID=9002\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 unknown | HELD | JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\nFINISHED\nPLANNED\n\nSUBMITTED_ACES_JOB_ID=9001\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: a deployed status lacks its exact original ACES unit/cluster identity\nFINISHED\nPLANNED\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nexplicit h100 policy seed 101 | ACES | 1 H100 PCIe | READY | 0/122070 updates\nHELD\nFINISHED\nPLANNED\nACES continuation | ACES | 1 H100 PCIe | SUBMITTED | one generic H100 job durably recorded\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: ready H100 raw admission changed before allocation submission\nFINISHED\nPLANNED\n\n",
+      "stderr": "..................................\n----------------------------------------------------------------------\nRan 34 tests in 9.487s\n\nOK\n"
+    }
+  ],
+  "scientific_hypothesis_credit": 0,
+  "numerical_imports": false
+}

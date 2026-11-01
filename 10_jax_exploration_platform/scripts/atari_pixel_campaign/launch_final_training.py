@@ -440,6 +440,102 @@ def verify_unit(unit):
         raise ValueError("the original final-unit helper identity changed")
 
 
+def final_training_identity(run, unit):
+    """Check the full actual source, helper, seeds, configuration and selected backend before recovery."""
+    directory = Path(run) / "data" / unit["unit_id"]
+    if directory != directory.resolve() or (directory / "training_identity.json").is_symlink():
+        raise ValueError("final training identity requires its exact real unit directory")
+    identity = read(directory / "training_identity.json")
+    specification = read(unit["final_specification"]["path"])
+    expected_keys = {"schema_version", "source_root", "source_commit", "hardware_class", "configuration", "copy_seeds",
+                     "runtime_environment", "backend", "helpers", "assets"}
+    expected = {"source_root": unit["numerical_source"]["root"], "source_commit": unit["numerical_source"]["commit"],
+                "helpers": unit["helpers"], "copy_seeds": unit["copy_seeds"], "hardware_class": "jaguar03_rtx_a4500",
+                "assets": {"root": str(Path(specification["asset_record"]["root"]).resolve()), **unit["assets"]["identity"]}}
+    if (set(identity) != expected_keys or type(identity["schema_version"]) is not int or identity["schema_version"] != 1
+            or any(digest(identity.get(key)) != digest(value) for key, value in expected.items())
+            or digest(identity["configuration"]) != unit["configuration_digest"]):
+        raise ValueError("actual final identity differs from its admitted source/configuration/seeds")
+    expected_backend, backend = unit["target_backend"], identity["backend"]
+    if (backend.get("driver_version") != expected_backend["driver_version"]
+            or backend.get("packages") != expected_backend["installed_backend"]["packages"]
+            or backend.get("installed_gpu_libraries") != expected_backend["installed_backend"]["gpu_libraries"]
+            or backend.get("jaxtari_source") != expected_backend["installed_backend"]["jaxtari_source"]
+            or digest({name: identity["runtime_environment"].get(name) for name in (
+                "JAX_ENABLE_X64", "JAX_DEFAULT_MATMUL_PRECISION", "XLA_FLAGS")}) != unit["runtime_environment_digest"]):
+        raise ValueError("checkpoint backend/runtime differs from the actual selected final evidence")
+    return identity
+
+
+def verify_checkpoint_attempt(run, unit, job, cluster):
+    """Bind the current nonfailed process attempt and its actual hardware to the exact terminal job."""
+    directory = Path(run) / "data" / unit["unit_id"]
+    if directory != directory.resolve():
+        raise ValueError("checkpoint recovery requires the exact real unit directory")
+    progress = read(directory / "progress.json")
+    attempt = progress.get("attempt")
+    if type(attempt) is not int or attempt < 1 or progress.get("state") == "failed":
+        raise ValueError("checkpoint recovery requires its exact current nonfailed attempt")
+    attempt_directory = directory / "attempts" / f"attempt-{attempt:04d}"
+    required = [directory / "progress.json", directory / "hardware.json", attempt_directory / "progress.json"]
+    if cluster == "aces":
+        required.append(attempt_directory / "placement_hardware.json")
+    if any(path.is_symlink() or path != path.resolve() or not path.is_file() for path in required):
+        raise ValueError("checkpoint recovery attempt records require exact real regular paths")
+    hardware = read(directory / "hardware.json")
+    if (digest(read(attempt_directory / "progress.json")) != digest(progress)
+            or type(progress.get("pid")) is not int or progress["pid"] < 1
+            or hardware.get("pid") != progress["pid"] or hardware.get("slurm_job_id") != job):
+        raise ValueError("checkpoint recovery current attempt belongs to another process or job")
+    if cluster == "aces":
+        placement = read(attempt_directory / "placement_hardware.json")
+        if (placement.get("slurm_job_id") != job or placement.get("pid") != progress["pid"]
+                or placement.get("hostname") != hardware.get("hostname", "").split(".")[0]):
+            raise ValueError("checkpoint recovery current placement belongs to another process or job")
+    if (attempt_directory / "failure.json").exists() or (attempt_directory / "failure.json").is_symlink():
+        raise ValueError("the current final attempt failed and requires diagnosis before recovery")
+    failure = directory / "failure.json"
+    if failure.is_symlink() or (failure.exists() and (type(read(failure).get("attempt")) is not int
+                                                   or read(failure)["attempt"] >= attempt)):
+        raise ValueError("a failed or ambiguous final attempt requires diagnosis before recovery")
+    return attempt
+
+
+def checkpoint_transaction_pending(run, unit):
+    """Distinguish a clean legacy checkpoint from recorded recovery or unmarked reserved stages."""
+    directory = Path(run) / "data" / unit["unit_id"] / "checkpoints"
+    markers = [directory / name for name in ("latest.transaction.json", "latest.transaction.next.json")]
+    stages = [directory / name for name in ("latest.previous.pkl", "latest.previous.metadata.json",
+                                            "latest.next.pkl", "latest.next.metadata.json")]
+    marked = any(path.exists() or path.is_symlink() for path in markers)
+    if not marked and any(path.exists() or path.is_symlink() for path in stages):
+        raise ValueError("unmarked reserved checkpoint generation files require diagnosis before continuation")
+    return marked
+
+
+def recover_terminal_checkpoint(run, unit, job, state, cluster, identity=None):
+    """Recover a transaction only after exact owned terminal proof and a fresh current-queue absence."""
+    if not checkpoint_transaction_pending(run, unit):
+        return None
+    checkpoint = Path(run) / "data" / unit["unit_id"] / "checkpoints/latest.pkl"
+    if state not in {"COMPLETED", "TIMEOUT", "PREEMPTED", "NODE_FAIL"}:
+        raise ValueError("checkpoint transaction recovery requires a proven eligible terminal attempt")
+    current, observation = active_owned_jobs(run, [job], cluster)
+    if current:
+        raise ValueError("checkpoint transaction recovery refuses a job still active in the current queue")
+    verify_checkpoint_attempt(run, unit, job, cluster)
+    if identity is None:
+        if cluster != "uva":
+            raise ValueError("deployed checkpoint recovery requires its fully verified deployment identity")
+        identity = final_training_identity(run, unit)
+    runner = module(unit, "train_optimized")
+    if not hasattr(runner, "recover_checkpoint"):
+        raise ValueError("this unit's original helper cannot recover a checkpoint transaction")
+    recovery = runner.recover_checkpoint(checkpoint, identity)
+    return {"job_cluster": cluster, "job_id": job, "terminal_state": state,
+            "current_queue": observation, "helper_commit": unit["helpers"]["source_commit"], "recovery": recovery}
+
+
 def checkpoint_record(run, unit, *, require_terminal_result=True):
     """Read actual result, identity and checkpoint sidecar without unpickling any array."""
     directory = Path(run) / "data" / unit["unit_id"]
@@ -456,13 +552,9 @@ def checkpoint_record(run, unit, *, require_terminal_result=True):
             raise ValueError("a failed final unit requires diagnosis before any continuation")
     if progress.get("state") == "failed":
         raise ValueError("the current final attempt failed and requires diagnosis before continuation")
-    identity = read(directory / "training_identity.json")
+    identity = final_training_identity(run, unit)
     checkpoint = read(directory / "checkpoints/latest.metadata.json")
-    expected = {"source_root": unit["numerical_source"]["root"], "source_commit": unit["numerical_source"]["commit"],
-                "helpers": unit["helpers"], "copy_seeds": unit["copy_seeds"], "hardware_class": "jaguar03_rtx_a4500"}
-    if (any(identity.get(key) != value for key, value in expected.items())
-            or digest(identity["configuration"]) != unit["configuration_digest"]
-            or checkpoint.get("identity_digest") != digest(identity)
+    if (checkpoint.get("identity_digest") != digest(identity)
             or checkpoint.get("configuration_digest") != unit["configuration_digest"]
             or checkpoint.get("copy_seeds") != unit["copy_seeds"]
             or checkpoint.get("kind") != "optimized_training_checkpoint"
@@ -476,15 +568,6 @@ def checkpoint_record(run, unit, *, require_terminal_result=True):
     if (type(iteration) is not int or not 0 <= iteration <= TARGET_UPDATES
             or checkpoint.get("steps_per_copy") != iteration * 128 * 128):
         raise ValueError("checkpoint update count is outside the original 2B schedule")
-    expected_backend = unit["target_backend"]
-    backend = identity["backend"]
-    if (backend.get("driver_version") != expected_backend["driver_version"]
-            or backend.get("packages") != expected_backend["installed_backend"]["packages"]
-            or backend.get("installed_gpu_libraries") != expected_backend["installed_backend"]["gpu_libraries"]
-            or backend.get("jaxtari_source") != expected_backend["installed_backend"]["jaxtari_source"]
-            or digest({name: identity["runtime_environment"].get(name) for name in (
-                "JAX_ENABLE_X64", "JAX_DEFAULT_MATMUL_PRECISION", "XLA_FLAGS")}) != unit["runtime_environment_digest"]):
-        raise ValueError("checkpoint backend/runtime differs from the actual selected final evidence")
     # An abrupt scheduler stop has no graceful result; resume its verified state without claiming completion.
     if not require_terminal_result:
         return None, checkpoint
@@ -505,7 +588,15 @@ def refresh(run, queue, states):
         unit = read(queue / "units" / path.name)
         if unit["hardware_class"] != "jaguar03_rtx_a4500":
             continue
-        if status["state"] in {"ready", "held"}:
+        if status["state"] == "ready":
+            try:
+                if checkpoint_transaction_pending(run, unit):
+                    raise ValueError("a ready final unit still has an unresolved checkpoint transaction")
+            except (ValueError, OSError) as error:
+                status.update(state="held", reason=f"{type(error).__name__}: {error}")
+                atomic(path, status)
+            continue
+        if status["state"] == "held":
             continue
         job = status.get("last_job_id")
         if status.get("last_job_cluster") != "uva":
@@ -517,6 +608,9 @@ def refresh(run, queue, states):
         try:
             verify_unit(unit)
             periodic = status["state"] == "running" and states[job] in {"TIMEOUT", "PREEMPTED", "NODE_FAIL"}
+            recovery = recover_terminal_checkpoint(run, unit, job, states[job], "uva")
+            if recovery is not None:
+                status["checkpoint_transaction_recovery"] = recovery
             result, checkpoint = checkpoint_record(run, unit, require_terminal_result=not periodic)
             if periodic:
                 status.update(state="ready", resume_checkpoint_sha256=checkpoint["checkpoint_sha256"],

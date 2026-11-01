@@ -14,12 +14,14 @@ tolerances; they do not change the frozen learner or its correctness rules.
 """
 
 from dataclasses import asdict
+import json
 import os
 from pathlib import Path
 import socket
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 
 if os.environ.get("RND_RUN_GPU_COMPONENT_TESTS") != "1":
@@ -140,7 +142,7 @@ class TrainingGPUComponentTests(unittest.TestCase):
         self.assertEqual(self.jaxtari_source["source_commit"], training.JAXTARI_COMMIT)
 
     def test_scheduled_pending_report_resume_matches_uninterrupted_executor(self):
-        """Save two updates into a four-update report window and preserve its next published row."""
+        """Recover interrupted update-three publication and preserve the next four-update report row."""
         options = {**paired.DEFAULT_EXECUTION, "report_readout": "scheduled", "report_every_iterations": 4}
         identity = self.identity(options)
         original = paired.Executor(self.trainer, options)
@@ -167,13 +169,39 @@ class TrainingGPUComponentTests(unittest.TestCase):
             checkpoint = Path(temporary) / "latest.pkl"
             training.save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(interrupted.report),
                                      identity, 2, 1.0)
+            old_payload_sha256 = training.file_sha256(checkpoint)
+            old_metadata = checkpoint.with_name("latest.metadata.json").read_bytes()
+            state, _, rows = interrupted.advance(state, 1, 2)
+            self.assertEqual(rows, [])
+            jax.block_until_ready(state)
+            original_sync = training.checkpoint_sync_directory
+
+            def interrupt_after_payload(paths):
+                """Stop after the new payload is durable while the previous sidecar remains canonical."""
+                original_sync(paths)
+                marker = json.loads(paths["marker"].read_text()) if paths["marker"].exists() else None
+                if (marker is not None and marker["phase"] == "prepared"
+                        and training.file_sha256(paths["payload"]) == marker["next"]["checkpoint_sha256"]
+                        and paths["metadata"].read_bytes() == old_metadata):
+                    raise InterruptedError("component checkpoint publication interruption")
+
+            with mock.patch.object(training, "checkpoint_sync_directory", side_effect=interrupt_after_payload):
+                with self.assertRaisesRegex(InterruptedError, "component checkpoint"):
+                    training.save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(interrupted.report),
+                                             identity, 3, 1.5)
+            self.assertEqual(checkpoint.with_name("latest.metadata.json").read_bytes(), old_metadata)
+            self.assertEqual(training.file_sha256(checkpoint.with_name("latest.previous.pkl")), old_payload_sha256)
+            with mock.patch.object(training.pickle, "load", side_effect=AssertionError("metadata recovery cannot unpickle")):
+                recovered = training.recover_checkpoint(checkpoint, identity)
+            self.assertEqual(recovered["action"], "finished_prepared_generation")
             restored = training.load_checkpoint(checkpoint, identity)
-            self.assertEqual(restored["report_state"]["pending_count"], 2)
+            self.assertEqual(restored["iteration"], 3)
+            self.assertEqual(restored["report_state"]["pending_count"], 3)
             restored["report_state"]["pending_sums"] = paired.device_copy(restored["report_state"]["pending_sums"])
             resumed = self.execution(options, restored["report_state"], self.restarted_trainer())
             state = paired.device_copy(restored["state"])
             reports = []
-            for iteration in range(2, 7):
+            for iteration in range(3, 7):
                 state, metrics, rows = resumed.advance(state, 1, iteration)
                 reports.extend(rows)
             jax.block_until_ready(state)
