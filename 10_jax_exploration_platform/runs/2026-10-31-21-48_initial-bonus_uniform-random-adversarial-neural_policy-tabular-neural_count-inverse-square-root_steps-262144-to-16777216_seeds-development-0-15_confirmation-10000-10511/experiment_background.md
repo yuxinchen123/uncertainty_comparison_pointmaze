@@ -13,3 +13,5 @@ New grid_initialization trainer and grid_initialization_campaign scripts. Thirty
 ## Git state
 
 Current source commit: `bc07177e9150c8653927c70f6ba15d959459144a`. Source changes and verification attempts are recorded in `infrastructure_events.jsonl`; each submitted job runs an immutable snapshot. Existing unrelated working-tree changes are excluded from this study.
+
+Confirmation reuses archived raw and normalized initial bonus arrays per base field geometry, generator source, kind, severity and field seed. Field transforms apply after loading. Earlier-source research jobs must exit before fresh-seed tasks are queued. Development results are retained as generated. Behavior figures now include initial-bonus profiles and exact first-goal transition markers; later resets do not imply failure to discover the goal.
