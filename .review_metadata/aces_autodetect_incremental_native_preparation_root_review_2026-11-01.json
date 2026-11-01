@@ -1,0 +1,41 @@
+{
+  "kind": "aces_incremental_native_preparation_root_independent_review",
+  "at_utc": "2026-11-01T15:22:00.383750+00:00",
+  "files": {
+    "continue_aces_autodetect_native_preparation.py": "bb4076d7bd6bacedf3ab139394724b38b4c111b186bc6fe47731bb801e070f6e",
+    "test_aces_autodetect_incremental_native_preparation.py": "d831c932456ee09c31eb451d01b0efcdd60fbdf7379fc57a5349a16b09266781",
+    "aces_autodetect_incremental_native_preparation_driver_plan.json": "9c1700a4e1fe7f526563d0f59243afec9f41b7dda16be95975e98ca6b8ff8fdc",
+    "run_aces_continuation_metadata_tests.py": "42b4859601eadd162aa3a100a09c3607e8be8abd1abfaaa2cf39a27c6a51917f"
+  },
+  "metadata_cases_passed": 14,
+  "metadata_receipt": "/p/rlprojects/RND_worktrees/2026-11-01-06-43_aces-autodetect-incremental-native-preparation_helper-bad2ee3736a1_basis-8e43cb1dc963/.review_metadata/aces_continuation_metadata_author_2026-11-01-15-18-58.json",
+  "metadata_receipt_sha256": "c18a91a2e3726c20c879b8b86e6d39559b0586a3da1bdcff6fd13cd4b994df4a",
+  "actual_owned_test_step": "6781087.16",
+  "additional_exact_sparse_checkout_sequence": {
+    "actual_owned_step": "6781087.18",
+    "actual_small_local_git_repository": true,
+    "initial_no_checkout_index_empty": true,
+    "documented_sparse_init_set_checkout_sequence_produced_clean_detached_source": true,
+    "ssh_calls": 0
+  },
+  "actual_local_thirteen_document_check_passed": true,
+  "complete_driver_source_read": true,
+  "preserved_remote_targets_not_reused": true,
+  "incremental_bundle_hash_reference_and_prerequisites_verified": true,
+  "new_reference_created_with_compare_and_swap": true,
+  "raw_transport_and_failures_durable_before_parsing": true,
+  "old_source_environment_wheels_assets_mappings_checked_before_and_after": true,
+  "separate_master_checks": 0,
+  "authentication_retries": 0,
+  "no_installs_or_numerical_commands": true,
+  "native_execution_performed": false,
+  "jobs_submitted": 0,
+  "actual_site_success": false,
+  "workers_permitted": false,
+  "review_result": "approved for publication and one existing-master metadata preparation; no site qualification or worker admission",
+  "limits": [
+    "Actual remote files may have changed; unchanged driver must refuse them.",
+    "A failed or partial execution must never be reused or retried.",
+    "Actual GPU/site gates remain entirely unrun for this separate profile."
+  ]
+}

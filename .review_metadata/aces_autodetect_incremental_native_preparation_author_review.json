@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "kind": "aces_autodetect_incremental_native_preparation_author_review",
+  "at_utc": "2026-11-01T15:18:01.830694+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-06-43_aces-autodetect-incremental-native-preparation_helper-bad2ee3736a1_basis-8e43cb1dc963",
+  "base_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "files": {
+    "continue_aces_autodetect_native_preparation.py": "bb4076d7bd6bacedf3ab139394724b38b4c111b186bc6fe47731bb801e070f6e",
+    "test_aces_autodetect_incremental_native_preparation.py": "d831c932456ee09c31eb451d01b0efcdd60fbdf7379fc57a5349a16b09266781",
+    "aces_autodetect_incremental_native_preparation_driver_plan.json": "9c1700a4e1fe7f526563d0f59243afec9f41b7dda16be95975e98ca6b8ff8fdc",
+    "run_aces_continuation_metadata_tests.py": "42b4859601eadd162aa3a100a09c3607e8be8abd1abfaaa2cf39a27c6a51917f"
+  },
+  "author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-43_aces-autodetect-incremental-native-preparation_helper-bad2ee3736a1_basis-8e43cb1dc963/.review_metadata/aces_continuation_metadata_author_2026-11-01-15-15-18.json",
+    "sha256": "f1aa855a3f69f63d049a2eb07303a818bdb0adbe3fc1fc26ca9ee999f956271b",
+    "passed": true,
+    "cases": 14,
+    "owned_job_id": "6781087",
+    "owned_step_id": "14",
+    "process": {
+      "hostname": "slurm2",
+      "pid": 656485,
+      "process_start_time": "50691756",
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_14/user/task_0\n"
+    }
+  },
+  "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+  "basis_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "new_native_helper_root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+  "new_native_packet": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "new_native_data": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "local_execution": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/execution",
+  "remote_execution": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963_execution",
+  "reviewed_command_refinement": "Import verified incremental objects with git bundle unbundle, then compare-and-swap only the new remote reference; never fetch into or reuse an existing destination.",
+  "before_after_required": {
+    "old_detached_roots": 8,
+    "original_inputs": 13,
+    "exact_mapping_files": 72,
+    "physical_assets": 4531,
+    "base_packages": 77,
+    "effective_packages": 84,
+    "private_packages": 7,
+    "locked_installed_files": 13342,
+    "active_dependency_requirements": 128,
+    "retained_wheels": 7,
+    "copied_private_python_matches_base": true
+  },
+  "limits": {
+    "packing_threads": 2,
+    "git_address_space_bytes": 2147483648,
+    "maximum_bundle_bytes": 268435456,
+    "maximum_return_bytes": 67108864,
+    "metadata_source_document_bytes_before_json_encoding": 5736115,
+    "separate_master_checks": 0,
+    "ssh_calls_when_executed": 1,
+    "authentication_retry_count": 0
+  },
+  "local_check_command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-06-43_aces-autodetect-incremental-native-preparation_helper-bad2ee3736a1_basis-8e43cb1dc963/.review_metadata/continue_aces_autodetect_native_preparation.py",
+    "--plan",
+    "/p/rlprojects/RND_worktrees/2026-11-01-06-43_aces-autodetect-incremental-native-preparation_helper-bad2ee3736a1_basis-8e43cb1dc963/.review_metadata/aces_autodetect_incremental_native_preparation_driver_plan.json"
+  ],
+  "root_execute_after_review_and_publication": "same command plus --execute, from portal05 only",
+  "native_execution_performed": false,
+  "bundle_created_for_actual_campaign": false,
+  "installs": 0,
+  "numerical_imports": [],
+  "job_submissions": 0,
+  "releases": 0,
+  "workers_permitted": false,
+  "actual_site_success": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "publication_files": [
+    "continue_aces_autodetect_native_preparation.py",
+    "test_aces_autodetect_incremental_native_preparation.py",
+    "aces_autodetect_incremental_native_preparation_driver_plan.json",
+    "run_aces_continuation_metadata_tests.py",
+    "aces_continuation_metadata_author_2026-11-01-15-15-18.json"
+  ]
+}
