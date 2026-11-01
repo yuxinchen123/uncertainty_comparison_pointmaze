@@ -1,0 +1,40 @@
+{
+  "kind": "reviewed_inactive_slurm_configured_isolation_qualification",
+  "reviewed_at_utc": "2026-11-01T01:14:30.071023+00:00",
+  "helper_commit": "3c8b28402a78535f05f00b23905c9249f5dbdf99",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "62cecaa4eaa55fbf9f3a89a141bc44f02f309813acc96f603e9ac5ed9a1c5033",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_qualification.py": "f33035994c1796c121f18c6c5f77ce64310c55e8ed5519887644f4114c976f66"
+  },
+  "test_groups": {
+    "new_profile": 15,
+    "existing_site": 28
+  },
+  "author_and_independent_review_passed": true,
+  "metadata_preparation_step": "6779145.8",
+  "original_reference_driver": "590.48.01",
+  "separate_target_driver": "580.159.04",
+  "numeric_gpu_mapping_reconstructed": false,
+  "version2_device_rules_independently_inspected": false,
+  "configured_device_isolation_is_scheduler_trusted": true,
+  "full_numerical_configuration_and_gates_preserved": true,
+  "actual_site_success": false,
+  "worker_and_historical_schema3_adapter": "in progress; inactive",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "prerequisite_actual_allocation_observation_job_id": "6779358",
+  "prepared_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-10_h100-nvl_slurm-configured-device-isolation_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+  "prepared_packet_independent_review_passed": true,
+  "prepared_packet_hashes": {
+    "site_validation_plan.json": "c5e2133a14527434a018184eb1493b70a62dad8ff5ed8be0b521c8b820c8eaa3",
+    "manifest.yaml": "7f7ea4dd3abdde6e60c91a91fb37e60a6e094cf70818502731bab4d13aa7d5b6",
+    "job.sbatch": "3e211029691a6d434ab3b1f2aff98f744c67391e0a13e7d129bf8fc7bf65c0c2",
+    "preparation_execution.json": "45692286731964f4055d8cf5fa06f2fdc00d9f99f82ff2718e865707751a0587"
+  },
+  "streamed_preparation_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/prepare_h100_nvl_configured_isolation_driver_580.py",
+    "sha256": "8420a04817f9b0b2a5653ecd5804df3533579a2aa421e1218ec37c7ad7cc8e8c"
+  }
+}

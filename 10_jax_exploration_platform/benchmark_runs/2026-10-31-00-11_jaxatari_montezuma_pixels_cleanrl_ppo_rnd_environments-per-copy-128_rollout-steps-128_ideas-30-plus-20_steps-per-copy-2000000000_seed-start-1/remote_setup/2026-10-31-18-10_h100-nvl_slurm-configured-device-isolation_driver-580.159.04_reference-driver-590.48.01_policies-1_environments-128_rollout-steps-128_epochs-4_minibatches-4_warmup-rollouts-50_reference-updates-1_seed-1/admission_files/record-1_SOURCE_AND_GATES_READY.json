@@ -1,0 +1,25 @@
+{
+  "authorized": true,
+  "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "contexts": [
+    "h100",
+    "jaguar03_rtx_a4500"
+  ],
+  "matched_copy_counts": [
+    1,
+    2
+  ],
+  "gate_records": {
+    "h100": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/h100.json",
+    "jaguar03_rtx_a4500": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/jaguar03_rtx_a4500.json"
+  },
+  "reference_configuration_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/reference_configuration.json",
+  "reference_configuration_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/jaguar03_pixel_reference_copies_2_source_1d488ab23e11/config_resolved.json",
+    "sha256": "ae540f4765134d073ed7420d98bbdcd119a9aea4d70caa79046e06a493d57002"
+  },
+  "seed_start": 1,
+  "rounds": 7,
+  "iterations": 1
+}
