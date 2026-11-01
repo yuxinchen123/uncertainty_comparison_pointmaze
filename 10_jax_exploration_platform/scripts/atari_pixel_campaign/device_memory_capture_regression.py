@@ -34,7 +34,7 @@ import train_optimized as training
 import validate_training_deployment as deployment
 
 KIND = 'device_memory_capture_component_regression'
-CAPTURE_HELPER_COMMIT = '7f5bf87a8400a73afff08098c1422642ecad69f9'
+CAPTURE_HELPER_COMMIT = '8fd2187fbe1b4a4f0907c64d012da15438d1bd02'
 SHAPE = {'nodes': 1, 'ntasks': 1, 'gres': 'gpu:nvidia_rtx_a4500:1', 'cpus_per_task': 8,
          'host_memory_gib': 64, 'time_limit_minutes': 20, 'hostname': 'jaguar03',
          'account': 'sl5nw_base', 'partition': 'gpu', 'qos': 'csresnolim'}

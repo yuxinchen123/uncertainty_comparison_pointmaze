@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_capture_published_profile_helper_pin_author_metadata_validation",
+  "created_utc": "2026-11-01T14:47:05.843942+00:00",
+  "job_id": "6781087",
+  "step_id": "3",
+  "before": {
+    "device_memory_capture_regression.py": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976",
+    "tests/test_device_memory_capture_regression.py": "520757f68ac72c2b5319dedf522d20be1fca6fa0e6add93290479270eed75d2f"
+  },
+  "after": {
+    "device_memory_capture_regression.py": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976",
+    "tests/test_device_memory_capture_regression.py": "520757f68ac72c2b5319dedf522d20be1fca6fa0e6add93290479270eed75d2f"
+  },
+  "source_unchanged": true,
+  "capture_helper_root": "/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "capture_helper_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "capture_files_before": {
+    "measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+    "diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "post_comparison_validation.py": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+    "infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+    "pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+    "h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+    "h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "validate_training_deployment.py": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+    "portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+  },
+  "capture_files_after": {
+    "measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+    "diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "post_comparison_validation.py": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+    "infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+    "pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+    "h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+    "h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+    "device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "validate_training_deployment.py": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+    "portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+  },
+  "modules": [
+    "test_device_memory_capture_regression"
+  ],
+  "tests_run": 19,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "test_absent_current_context_has_no_creation_or_allocation_fallback (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn empty current context refuses the regression without trying another CUDA context. ... ok\ntest_actual_owned_uva_job_uses_generic_allocation_and_separate_typed_request (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOnly the original forty-minute time limit is changed to twenty minutes in this actual-record-derived shape check. ... ok\ntest_actual_returned_id_is_resolved_once_without_rewriting_static_plan (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA real returned-ID snapshot and physical UUID belong in a separate immutable second-stage record. ... ok\ntest_admission_cannot_change_source_or_array_fixture (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOnly actual allocation fields may be added after the static source and fixture are frozen. ... ok\ntest_bootstrap_own_process_proof_is_saved_before_any_gres_resolution (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA version-two metadata rejection cannot erase own-process evidence or reach a GPU selection guess. ... ok\ntest_deployment_module_must_be_imported_from_the_exact_staged_unit (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOne stale imported deployment reader is rejected even when the other five modules match staged paths. ... ok\ntest_diagnostic_bytes_are_rejected_by_both_formal_readers (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nRenaming array-fixture bytes cannot turn them into full 128-environment capacity evidence. ... ok\ntest_explicit_profile_checks_capture_declaration_before_staging (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe optional profile is frozen explicitly; an actual old source without its declaration is rejected. ... ok\ntest_job_shape_rejects_changed_processors_host_memory_gpu_count_or_time (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn otherwise owned job cannot silently change any approved diagnostic resource. ... ok\ntest_known_diagnostic_artifacts_cannot_be_symlinks_to_identical_bytes (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn unrelated unit's original bytes cannot replace this diagnostic's exact artifact path. ... ok\ntest_missing_helper_cannot_pass_pre_import_static_verification (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nRehashing a plan cannot hide a producer dependency omitted before numerical imports. ... ok\ntest_native_diagnostic_connection_accepts_exact_raw_request_without_formal_credit (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nConnection checks reparse native bytes and bind actual context fields without making the array fixture packing evidence. ... ok\ntest_native_diagnostic_connection_rejects_changed_scope_context_native_image_or_samples (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nSelf-consistent summaries cannot replace the original native request, child, driver or lifetime observations. ... ok\ntest_parent_and_child_births_are_bound_to_the_original_waited_processes (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nChanging a birth counter while retaining the same PID cannot replace a fresh diagnostic child. ... ok\ntest_preparation_has_no_guessed_id_uuid_or_array_training_claim (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nGeneric records describe one card and explicit zero training work before an allocation exists. ... ok\ntest_published_detached_profile_helper_is_verified_and_staged_exactly (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe actual published capture root supplies all staged bytes and the explicit ownership capability. ... ok\ntest_request_uses_actual_context_capacity_and_exact_small_alignment (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe request is the next 256-byte multiple rather than an assumed card-memory number. ... ok\ntest_successful_repeat_requires_its_first_normal_requested_sampler_stop (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA dead sampler, unexpected exit or recorded ordinary error cannot qualify the successful child's lifecycle. ... ok\ntest_unrecorded_id_or_foreign_owner_stops_before_queries (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAdmission cannot ask the scheduler or hardware about an unrecorded job or another owner. ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 4.136s\n\nOK\n",
+  "blocked_actions": [],
+  "numerical_modules_loaded": [],
+  "actual_detached_source_and_staged_sha_checks": true,
+  "synthetic_scope": "Only unpublished driver/core publication prerequisites are mocked in preparation; actual detached capture root, declarations, complete committed fifteen-file receipt and staged bytes are verified, including altered-byte rejection.",
+  "actual_gpu_regression_passed": false,
+  "jobs_submitted": false,
+  "memory_rule_enabled": false,
+  "scientific_credit": 0,
+  "admission_credit": 0
+}

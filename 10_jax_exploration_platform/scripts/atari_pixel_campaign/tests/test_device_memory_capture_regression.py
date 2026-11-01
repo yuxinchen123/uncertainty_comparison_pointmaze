@@ -423,6 +423,44 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'explicit version-two ownership capability'):
             regression.require_capture_version(old, regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
 
+    def test_published_detached_profile_helper_is_verified_and_staged_exactly(self):
+        """The actual published capture root supplies all staged bytes and the explicit ownership capability."""
+        # Check the real detached source before mocking only this unpublished driver's preparation identity.
+        capture = Path('/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02')
+        self.assertEqual(regression.CAPTURE_HELPER_COMMIT, '8fd2187fbe1b4a4f0907c64d012da15438d1bd02')
+        self.assertEqual(regression.deployment.git_root(str(capture), regression.CAPTURE_HELPER_COMMIT,
+            regression.validation.Evidence()), capture)
+        profile = regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE
+        regression.require_capture_version(capture, profile)
+        relative = ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in regression.HELPERS]
+        self.assertEqual(len(relative), 15)
+        source_receipt = regression.training.source_receipt
+        expected = source_receipt(capture, regression.CAPTURE_HELPER_COMMIT, relative)
+
+        # For example, the committed capacity helper becomes the identical code/device_memory_limit.py artifact.
+        self.arguments.capture_helper_root = capture
+        self.arguments.ownership_profile = profile['kind']
+        unit = self.prepare()
+        plan = regression.read(unit / 'regression_plan.json')
+        self.assertEqual(plan['helpers'], expected)
+        self.assertEqual(plan['ownership_profile'], profile)
+        for name, digest in expected['files'].items():
+            self.assertEqual(hashlib.sha256((unit / 'code' / Path(name).name).read_bytes()).hexdigest(), digest)
+
+        # Only the unpublished driver/core identity is synthetic; capture-source verification remains real.
+        def receipt(root, commit, paths):
+            """Verify actual published capture bytes while retaining the separate synthetic driver identity."""
+            return source_receipt(root, commit, paths) if Path(root) == capture else self.source_receipt(root, commit, paths)
+        with patch.object(regression.training, 'source_receipt', side_effect=receipt), \
+                patch.object(regression.diagnostic, 'core_identity', return_value=plan['core']):
+            self.assertEqual(regression.verify_static(unit), plan)
+            path = unit / 'code/device_memory_limit.py'
+            path.write_bytes(path.read_bytes() + b'\n# Changed staged fixture bytes.\n')
+            with self.assertRaisesRegex(ValueError, 'staged diagnostic helper changed'):
+                regression.verify_static(unit)
+        self.assertNotIn('jax', sys.modules)
+        self.assertNotIn('numpy', sys.modules)
+
     def test_bootstrap_own_process_proof_is_saved_before_any_gres_resolution(self):
         """A version-two metadata rejection cannot erase own-process evidence or reach a GPU selection guess."""
         self.arguments.ownership_profile = regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']
