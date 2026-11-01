@@ -1,0 +1,909 @@
+{
+  "passed": true,
+  "distribution_count": 84,
+  "active_dependency_count": 128,
+  "requested_extras": {
+    "etils": [
+      "epath",
+      "epy"
+    ]
+  },
+  "dependencies": [
+    {
+      "package": "ale-py",
+      "requirement": "numpy>1.20",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "absl-py>=2.3.1",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "typing_extensions>=4.15.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "jax>=0.7.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "jaxlib>=0.7.0",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "numpy>=1.24.1",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "toolz>=1.0.0",
+      "provider": "toolz",
+      "version": "1.2.0",
+      "passed": true
+    },
+    {
+      "package": "contourpy",
+      "requirement": "numpy>=2.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "fsspec ; extra == \"epath\"",
+      "provider": "fsspec",
+      "version": "2026.9.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epath\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "zipp ; extra == \"epath\"",
+      "provider": "zipp",
+      "version": "4.1.2",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "etils[epy] ; extra == \"epath\"",
+      "provider": "etils",
+      "version": "1.14.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epy\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "numpy>=1.23.2",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "jax>=0.10.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "msgpack",
+      "provider": "msgpack",
+      "version": "1.2.4",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "optax",
+      "provider": "optax",
+      "version": "0.2.8",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "orbax-checkpoint",
+      "provider": "orbax-checkpoint",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "tensorstore",
+      "provider": "tensorstore",
+      "version": "0.1.86",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "rich>=11.1",
+      "provider": "rich",
+      "version": "15.0.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "typing_extensions>=4.2",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "PyYAML>=5.4.1",
+      "provider": "pyyaml",
+      "version": "6.0.3",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "treescope>=0.1.7",
+      "provider": "treescope",
+      "version": "0.1.10",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "numpy>=1.21.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "cloudpickle>=1.2.0",
+      "provider": "cloudpickle",
+      "version": "3.1.2",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "typing-extensions>=4.3.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "farama-notifications>=0.0.1",
+      "provider": "farama-notifications",
+      "version": "0.0.6",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "jax",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "flax",
+      "provider": "flax",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "gymnasium",
+      "provider": "gymnasium",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "matplotlib",
+      "provider": "matplotlib",
+      "version": "3.11.2",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "seaborn",
+      "provider": "seaborn",
+      "version": "0.13.2",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "jaxlib<=0.11.0,>=0.11.0",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "numpy>=2.1",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "opt_einsum",
+      "provider": "opt-einsum",
+      "version": "3.4.0",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "scipy>=1.15",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jax-cuda12-plugin",
+      "requirement": "jax-cuda12-pjrt==0.11.0",
+      "provider": "jax-cuda12-pjrt",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "scipy>=1.14",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "numpy>=2.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "absl-py>=2.3",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "ale-py>=0.11.1",
+      "provider": "ale-py",
+      "version": "0.12.1",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "chex>=0.1.87",
+      "provider": "chex",
+      "version": "0.1.92",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "flax",
+      "provider": "flax",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "gymnasium>=1.2.0",
+      "provider": "gymnasium",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "gymnax>=0.0.8",
+      "provider": "gymnax",
+      "version": "0.0.9",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "jax",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "ml-dtypes",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "numpy",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "opt-einsum>=3.4.0",
+      "provider": "opt-einsum",
+      "version": "3.4.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "platformdirs>=4.5.1",
+      "provider": "platformdirs",
+      "version": "4.14.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "requests>=2.32.5",
+      "provider": "requests",
+      "version": "2.34.2",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "scipy>=1.15.3",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "toolz>=1.0.0",
+      "provider": "toolz",
+      "version": "1.2.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "typing-extensions>=4.14.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "jinja2",
+      "requirement": "MarkupSafe>=2.0",
+      "provider": "markupsafe",
+      "version": "3.0.3",
+      "passed": true
+    },
+    {
+      "package": "markdown-it-py",
+      "requirement": "mdurl~=0.1",
+      "provider": "mdurl",
+      "version": "0.1.2",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "contourpy>=1.0.1",
+      "provider": "contourpy",
+      "version": "1.4.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "cycler>=0.10",
+      "provider": "cycler",
+      "version": "0.12.1",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "fonttools>=4.28.2",
+      "provider": "fonttools",
+      "version": "4.68.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "kiwisolver>=1.3.1",
+      "provider": "kiwisolver",
+      "version": "1.5.1",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "numpy>=1.25",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "packaging>=20.0",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "pillow>=9",
+      "provider": "pillow",
+      "version": "13.0.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "pyparsing>=3",
+      "provider": "pyparsing",
+      "version": "3.3.3",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "python-dateutil>=2.7",
+      "provider": "python-dateutil",
+      "version": "3.0.0",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.21",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.21.2; python_version >= \"3.10\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.23.3; python_version >= \"3.11\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.26.0; python_version >= \"3.12\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cublas-cu12",
+      "requirement": "nvidia-cuda-nvrtc-cu12",
+      "provider": "nvidia-cuda-nvrtc-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cudnn-cu12",
+      "requirement": "nvidia-cublas-cu12",
+      "provider": "nvidia-cublas-cu12",
+      "version": "12.9.2.10",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cufft-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-cublas-cu12",
+      "provider": "nvidia-cublas-cu12",
+      "version": "12.9.2.10",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-cusparse-cu12",
+      "provider": "nvidia-cusparse-cu12",
+      "version": "12.5.10.65",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusparse-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-nvshmem-cu12",
+      "requirement": "nvidia-cuda-cccl-cu12",
+      "provider": "nvidia-cuda-cccl-cu12",
+      "version": "12.9.27",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "absl-py>=0.7.1",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "jax>=0.5.3",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "jaxlib>=0.5.3",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "numpy>=1.18.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "absl-py",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "etils[epath, epy]",
+      "provider": "etils",
+      "version": "1.14.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "typing_extensions",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "msgpack",
+      "provider": "msgpack",
+      "version": "1.2.4",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "jax >= 0.6.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "numpy",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "prometheus-client >= 0.20.0",
+      "provider": "prometheus-client",
+      "version": "0.26.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "pyyaml",
+      "provider": "pyyaml",
+      "version": "6.0.3",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "tensorstore >= 0.1.84",
+      "provider": "tensorstore",
+      "version": "0.1.86",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "aiofiles",
+      "provider": "aiofiles",
+      "version": "25.1.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "protobuf",
+      "provider": "protobuf",
+      "version": "7.36.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "humanize",
+      "provider": "humanize",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "simplejson >= 3.16.0",
+      "provider": "simplejson",
+      "version": "4.2.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "psutil",
+      "provider": "psutil",
+      "version": "7.2.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "uvloop; platform_system != \"Windows\"",
+      "provider": "uvloop",
+      "version": "0.23.0",
+      "passed": true
+    },
+    {
+      "package": "pandas",
+      "requirement": "numpy>=2.0.2; python_version < \"3.14\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "pandas",
+      "requirement": "python-dateutil>=2.9.0",
+      "provider": "python-dateutil",
+      "version": "3.0.0",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "iniconfig>=2",
+      "provider": "iniconfig",
+      "version": "2.3.1",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "packaging>=24",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "pluggy<2,>=1.6",
+      "provider": "pluggy",
+      "version": "1.7.0",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "pygments>=2.15",
+      "provider": "pygments",
+      "version": "2.21.0",
+      "passed": true
+    },
+    {
+      "package": "python-dateutil",
+      "requirement": "six>=1.6",
+      "provider": "six",
+      "version": "1.17.0",
+      "passed": true
+    },
+    {
+      "package": "python-dateutil",
+      "requirement": "tzdata",
+      "provider": "tzdata",
+      "version": "2026.6",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "charset_normalizer<4,>=2",
+      "provider": "charset-normalizer",
+      "version": "3.5.2",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "idna<4,>=2.5",
+      "provider": "idna",
+      "version": "3.20",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "urllib3<3,>=1.26",
+      "provider": "urllib3",
+      "version": "2.8.0",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "certifi>=2023.5.7",
+      "provider": "certifi",
+      "version": "2026.10.23",
+      "passed": true
+    },
+    {
+      "package": "rich",
+      "requirement": "markdown-it-py (>=2.2.0)",
+      "provider": "markdown-it-py",
+      "version": "4.2.0",
+      "passed": true
+    },
+    {
+      "package": "rich",
+      "requirement": "pygments (>=2.13.0,<3.0.0)",
+      "provider": "pygments",
+      "version": "2.21.0",
+      "passed": true
+    },
+    {
+      "package": "scipy",
+      "requirement": "numpy<2.8,>=2.0.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "numpy>=1.20,!=1.24.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "pandas>=1.2",
+      "provider": "pandas",
+      "version": "3.1.0",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "matplotlib>=3.4,!=3.6.1",
+      "provider": "matplotlib",
+      "version": "3.11.2",
+      "passed": true
+    },
+    {
+      "package": "sympy",
+      "requirement": "mpmath <1.4,>=1.1.0",
+      "provider": "mpmath",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "tensorstore",
+      "requirement": "numpy>=1.22.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "tensorstore",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "filelock",
+      "provider": "filelock",
+      "version": "4.2.4",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "typing-extensions (>=4.10.0)",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "networkx",
+      "provider": "networkx",
+      "version": "3.7",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "jinja2",
+      "provider": "jinja2",
+      "version": "3.1.6",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "fsspec",
+      "provider": "fsspec",
+      "version": "2026.9.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "setuptools ; python_version >= \"3.12\"",
+      "provider": "setuptools",
+      "version": "84.0.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "sympy (==1.13.1) ; python_version >= \"3.9\"",
+      "provider": "sympy",
+      "version": "1.13.1",
+      "passed": true
+    },
+    {
+      "package": "treescope",
+      "requirement": "numpy>=1.25.2",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "wheel",
+      "requirement": "packaging >= 24.0",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    }
+  ]
+}

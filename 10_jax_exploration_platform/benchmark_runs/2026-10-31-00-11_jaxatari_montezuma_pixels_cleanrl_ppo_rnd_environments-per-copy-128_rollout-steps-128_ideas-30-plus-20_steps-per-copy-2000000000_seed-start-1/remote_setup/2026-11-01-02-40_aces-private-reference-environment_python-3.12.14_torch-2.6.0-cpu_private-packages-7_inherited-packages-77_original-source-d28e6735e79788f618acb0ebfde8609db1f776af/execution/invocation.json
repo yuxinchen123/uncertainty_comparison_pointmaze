@@ -1,0 +1,26 @@
+{
+  "plan_sha256": "6aa2df602816394ea46f59393ef666428dbdd385c99e2f8b19600426fe9852cd",
+  "driver_sha256": "6e92e04f707dacb39eed31cad8e6a3fcfc380f24f00b9dcfd38b713fbfe77210",
+  "bootstrap_sha256": "b59bd3cafa075f6082d0406d81153422b03442c2b282d8b5b3224160029722ef",
+  "ssh_options": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "NumberOfPasswordPrompts=0",
+    "-o",
+    "ConnectionAttempts=1",
+    "-o",
+    "ConnectTimeout=10",
+    "aces"
+  ],
+  "master_separately_checked": false,
+  "timeout_seconds": 1260,
+  "automatic_retry_permitted": false,
+  "jobs_submitted": 0
+}

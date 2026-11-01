@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "kind": "aces_actual_native_private_preparation_independent_verification",
+  "at_utc": "2026-11-01T10:51:06.724426+00:00",
+  "passed": true,
+  "execution_directory": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-40_aces-private-reference-environment_python-3.12.14_torch-2.6.0-cpu_private-packages-7_inherited-packages-77_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution",
+  "transport_stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-40_aces-private-reference-environment_python-3.12.14_torch-2.6.0-cpu_private-packages-7_inherited-packages-77_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/stdout.raw",
+    "sha256": "3cb7353fd3fe5b068f51c243cfb6ef4ddd6edd019fce5379ca803a4317f3ccfb",
+    "bytes": 9019170
+  },
+  "actual_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-40_aces-private-reference-environment_python-3.12.14_torch-2.6.0-cpu_private-packages-7_inherited-packages-77_original-source-d28e6735e79788f618acb0ebfde8609db1f776af/execution/received/setup/native_private_reference_preparation_receipt.json",
+    "sha256": "a59a9db1a6c90a87600c2acea6fa30137ba5c770a6e9d5ef66c7e1f488cbfbf3"
+  },
+  "verified_returned_records": 42,
+  "base_distribution_count": 77,
+  "private_distribution_count": 7,
+  "effective_distribution_count": 84,
+  "active_dependency_count": 128,
+  "required_extras": {
+    "etils": [
+      "epath",
+      "epy"
+    ]
+  },
+  "base_shared_file_hashes_unchanged": 2910,
+  "base_metadata_file_hashes_unchanged": 549,
+  "gpu_package_library_hashes_bound_to_base": 11,
+  "private_installed_file_hashes_compared_with_original_wheel_bytes": 13342,
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "source_files": 32,
+  "helper_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "helper_files": 17,
+  "admission_archive_files": 4,
+  "source_evidence_manifest_file_count": 72,
+  "preserved_original_input_files": 13,
+  "jaxtari_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+  "jaxtari_committed_python_file_hashes": 193,
+  "asset_manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+  "verified_asset_count_reported_by_actual_helper": 4531,
+  "configuration_digest": "8eb84f6e16c532719f87c7c807f5b067071d4b2dd0a962ddaf31942b4dfe1935",
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true",
+    "JAX_ENABLE_COMPILATION_CACHE": "false",
+    "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": "",
+    "JAXTARI_SKIP_SPRITE_UPDATE": "1",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "OMP_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONUNBUFFERED": "1"
+  },
+  "private_python": "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+  "private_packages": {
+    "torch": "2.6.0+cpu",
+    "filelock": "4.2.4",
+    "networkx": "3.7",
+    "jinja2": "3.1.6",
+    "sympy": "1.13.1",
+    "mpmath": "1.3.0",
+    "markupsafe": "3.0.3"
+  },
+  "held_submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=158590754315",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--gres=gpu:h100:1",
+    "--cpus-per-task=8",
+    "--mem=32G",
+    "--time=03:00:00",
+    "--job-name=ACES_H100_full_site_qualification",
+    "--output=/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/aces_full_site_qualification_%j.log",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/job.sbatch"
+  ],
+  "job_shape": {
+    "account": "158590754315",
+    "partition": "gpu",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "gres": "gpu:h100:1",
+    "cpus_per_task": 8,
+    "memory": "32G",
+    "time": "03:00:00"
+  },
+  "reference_updates_planned": 1,
+  "actual_selected_private_python_software_verification": {
+    "kind": "selected_private_python_preparation_verification",
+    "passed": true,
+    "python": "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+    "software_at_prepare": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/software_at_prepare.json",
+      "sha256": "889d77cae78088cf5e9aaf05776c8dad8fbbde95eef0c02254bfa4e9900ec8c7"
+    },
+    "numerical_imports": []
+  },
+  "native_packet_file_hashes": {
+    "packet/experiment_background.md": "8b97ecb985a5ac0bdfa11150e0bdd7483814566d63c5cf1c9a0de96637a5e2bd",
+    "packet/manifest.yaml": "10e717ac3d54d639aaae7926343cd283065b382b706ab0937c6caa3d95a9103c",
+    "packet/config_resolved.yaml": "ec4c9aaee1123672c20e9ed56d9141799654fc2b0e7702f2cdfedde87fbf0a1a",
+    "packet/command.txt": "d94758bf6da74e96562a334860d35673f5c27f12530054509bb43eb8f5c865c5",
+    "packet/site_validation_plan.json": "ec4c9aaee1123672c20e9ed56d9141799654fc2b0e7702f2cdfedde87fbf0a1a",
+    "packet/software_at_prepare.json": "889d77cae78088cf5e9aaf05776c8dad8fbbde95eef0c02254bfa4e9900ec8c7",
+    "packet/job.sbatch": "4f12852e362a13c4dd770225619d51afc721795e6b3d1832862709ff77566a84",
+    "packet/admission_files/record-1_SOURCE_AND_GATES_READY.json": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+    "packet/admission_files/record-2_reference_configuration.json": "84ed1aa073a169a46957318ea769a649958a2b8c6f8652ddaaa22105fcd643f8",
+    "packet/admission_files/record-3_h100.json": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+    "packet/admission_files/record-4_jaguar03_rtx_a4500.json": "2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7",
+    "data/experiment_background.md": "8b97ecb985a5ac0bdfa11150e0bdd7483814566d63c5cf1c9a0de96637a5e2bd",
+    "data/manifest.yaml": "10e717ac3d54d639aaae7926343cd283065b382b706ab0937c6caa3d95a9103c",
+    "data/config_resolved.yaml": "ec4c9aaee1123672c20e9ed56d9141799654fc2b0e7702f2cdfedde87fbf0a1a",
+    "data/command.txt": "d94758bf6da74e96562a334860d35673f5c27f12530054509bb43eb8f5c865c5"
+  },
+  "limits": [
+    "This audit reads exact saved metadata and raw returned bytes; it makes no new remote observation.",
+    "Remote base/package/asset file hashes are trusted recorded observations from the reviewed metadata process; remote binary bytes were not copied for a fresh local read.",
+    "No GPU allocation, CUDA initialization, actual loaded-driver proof, ABI import, full learner/renderer gate or numerical update has run for this packet.",
+    "A future owned held job and monitored release are still required for site qualification; metadata preparation grants no case/idea/final-run credit or worker admission."
+  ],
+  "ssh_calls": 0,
+  "numerical_imports": [],
+  "jobs_submitted_by_reviewer": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}
