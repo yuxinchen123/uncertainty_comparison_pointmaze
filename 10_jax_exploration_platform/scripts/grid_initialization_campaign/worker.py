@@ -66,8 +66,11 @@ def main():
             result = subprocess.run(command, timeout=590)
         except subprocess.TimeoutExpired:
             write_json(output, {'completed': False, 'failure': 'Compatibility measurement exceeded 590 seconds.',
-                               'hardware': card})
+                               'hardware': card, 'gpu_type': gpu_class})
             raise SystemExit(124)
+        if not output.exists():
+            write_json(output, {'completed': False, 'failure': 'Compatibility process ended before producing measurements.',
+                               'exit_code': result.returncode, 'hardware': card, 'gpu_type': gpu_class})
         if output.exists():
             record = read_json(output)
             record.update(gpu_type=gpu_class, hardware=card)

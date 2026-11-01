@@ -146,14 +146,22 @@ intrinsic advantage before the combined advantage is normalized, following the C
 \textbf{fine intrinsic weights} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $2^{-6}$ through $2^{6}$ in factors of two; thirteen values} \\
 \greyrule
 \textbf{field severity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath Exponents $2,4,6,8$; four values for each adversarial or random shape} \\
+\greyrule
+\textbf{entropy sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $0,2^{-14},2^{-10},2^{-6}$; four values} \\
+\greyrule
+\textbf{intrinsic horizon sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath Horizons $64,256,1024,4096$, with discount one minus inverse horizon} \\
+\greyrule
+\textbf{rollout sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $64,256$ transitions; two values with the twelve coarse settings} \\
 \blackrule
 \multicolumn{3}{@{}l}{\textit{Configuration and seed counts}} \\
 \greyrule
 coarse configurations per field and map & $3$ learning rates $\times4$ intrinsic weights $=12$ & same \\
 \greyrule
-fine configurations per field and map & $9$ learning rates $\times13$ intrinsic weights $=117$ & same \\
+fine base configurations per field and map & $9$ learning rates $\times13$ intrinsic weights $=117$ & same \\
 \greyrule
-total across both policy representations & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{$24$ coarse or $234$ fine configurations per field and map, before seed replication} \\
+sensitivity configurations per field and map & $4$ selected settings $\times4$ entropy values $\times4$ horizons, plus $12$ settings $\times2$ rollout lengths: $88$ & same \\
+\greyrule
+total across both policy representations & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{$24$ coarse or $410$ fine and sensitivity configurations per field and map, before seed replication} \\
 \greyrule
 development copies & $16$ policy seeds per configuration & same \\
 \greyrule
