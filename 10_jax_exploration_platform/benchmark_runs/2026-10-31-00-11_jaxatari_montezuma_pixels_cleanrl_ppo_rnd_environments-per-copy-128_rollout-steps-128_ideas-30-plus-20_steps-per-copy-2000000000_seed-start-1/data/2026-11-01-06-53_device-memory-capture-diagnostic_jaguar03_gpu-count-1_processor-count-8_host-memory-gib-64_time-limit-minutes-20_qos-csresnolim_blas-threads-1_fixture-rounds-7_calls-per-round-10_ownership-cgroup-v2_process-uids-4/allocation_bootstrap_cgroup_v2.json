@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "kind": "uva_cgroup_v2_ownership_observation",
+  "ownership_profile": {
+    "schema_version": 1,
+    "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+    "cluster": "uva",
+    "username": "sl5nw",
+    "uid": 2618919,
+    "cgroup_version": 2,
+    "path_prefix": "/system.slice/slurmstepd.scope",
+    "numeric_step_required": true,
+    "task_name": "task_0",
+    "uid_encoded_in_cgroup_path": false,
+    "kernel_device_enforcement_verified": false
+  },
+  "ownership_capability": "own_proc_uids_stat_and_root_cgroup2_task_membership_v1",
+  "directories_before": [
+    {
+      "path": "/sys/fs/cgroup",
+      "status": "readable",
+      "uid": 0,
+      "mode": 365,
+      "inode": 1,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 71,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 4729,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 367762,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368056,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368098,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user/task_0",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368224,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    }
+  ],
+  "directories_after": [
+    {
+      "path": "/sys/fs/cgroup",
+      "status": "readable",
+      "uid": 0,
+      "mode": 365,
+      "inode": 1,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 71,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 4729,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 367762,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368056,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368098,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user/task_0",
+      "status": "readable",
+      "uid": 0,
+      "mode": 493,
+      "inode": 368224,
+      "device": 29,
+      "regular_file": false,
+      "directory": true,
+      "symlink": false,
+      "exact_path": true
+    }
+  ],
+  "memberships": [
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/cgroup.procs",
+      "status": "readable",
+      "uid": 0,
+      "mode": 420,
+      "inode": 367764,
+      "device": 29,
+      "regular_file": true,
+      "directory": false,
+      "symlink": false,
+      "exact_path": true,
+      "raw": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/cgroup.procs",
+      "status": "readable",
+      "uid": 0,
+      "mode": 420,
+      "inode": 368058,
+      "device": 29,
+      "regular_file": true,
+      "directory": false,
+      "symlink": false,
+      "exact_path": true,
+      "raw": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user/cgroup.procs",
+      "status": "readable",
+      "uid": 0,
+      "mode": 420,
+      "inode": 368100,
+      "device": 29,
+      "regular_file": true,
+      "directory": false,
+      "symlink": false,
+      "exact_path": true,
+      "raw": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6781128/step_0/user/task_0/cgroup.procs",
+      "status": "readable",
+      "uid": 0,
+      "mode": 420,
+      "inode": 368226,
+      "device": 29,
+      "regular_file": true,
+      "directory": false,
+      "symlink": false,
+      "exact_path": true,
+      "raw": "1974986\n1974996\n",
+      "sha256": "bef1ab80408a5b805c5c664a0081f7c73f86c8151e8a1611171b1946ecbc56f8"
+    }
+  ],
+  "before": {
+    "pid": 1974996,
+    "uid": 2618919,
+    "effective_uid": 2618919,
+    "status": {
+      "path": "/proc/self/status",
+      "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+      "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1",
+      "full_sha256": "811405fe05f1643c6f633514c52c253473531c8600f44fe00a0a66e501de0603"
+    },
+    "stat": {
+      "path": "/proc/self/stat",
+      "raw": "1974996 (python) R 1974986 1974986 1974979 0 -1 4194304 7710 8209 0 60 31 6 8 16 20 0 1 0 50574869 49983488 9614 68719476736 93862659837952 93862662265629 140737319716896 0 0 0 0 16781312 2 0 0 0 17 3 0 0 0 0 0 93862663690992 93862665672432 93863233089536 140737319718911 140737319719981 140737319719981 140737319727043 0\n",
+      "sha256": "ad0e0e67f0f71b444812f66e83cbf8bdf7bd20e88b9e225f88e785ec01b6becb"
+    },
+    "cgroup": {
+      "path": "/proc/self/cgroup",
+      "raw": "0::/system.slice/slurmstepd.scope/job_6781128/step_0/user/task_0\n",
+      "sha256": "8e2c4e7af8c3aacec35d2b454893fc41bbbc19656daace57212a919b2317444f"
+    },
+    "namespace": {
+      "path": "/proc/self/ns/cgroup",
+      "target": "cgroup:[4026531835]",
+      "inode": 4026531835
+    }
+  },
+  "mountinfo": {
+    "path": "/proc/self/mountinfo",
+    "raw": "34 24 0:29 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:9 - cgroup2 cgroup2 rw,nsdelegate,memory_recursiveprot\n",
+    "sha256": "53883c403add93f39276bb9f04f2d327a159553a4213d2e0283a95af796fd8e5",
+    "full_sha256": "5ae352d99a5befe1ccf284a09ad284a66ea394974a83c3cedf46aa165e16deed"
+  },
+  "after": {
+    "pid": 1974996,
+    "uid": 2618919,
+    "effective_uid": 2618919,
+    "status": {
+      "path": "/proc/self/status",
+      "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+      "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1",
+      "full_sha256": "811405fe05f1643c6f633514c52c253473531c8600f44fe00a0a66e501de0603"
+    },
+    "stat": {
+      "path": "/proc/self/stat",
+      "raw": "1974996 (python) R 1974986 1974986 1974979 0 -1 4194304 7710 8209 0 60 32 6 8 16 20 0 1 0 50574869 49983488 9614 68719476736 93862659837952 93862662265629 140737319716896 0 0 0 0 16781312 2 0 0 0 17 3 0 0 0 0 0 93862663690992 93862665672432 93863233089536 140737319718911 140737319719981 140737319719981 140737319727043 0\n",
+      "sha256": "966966330c0ff06197c2c9ffa6e1395cd9d953e5ef81245487a7b59a2d3f8e9c"
+    },
+    "cgroup": {
+      "path": "/proc/self/cgroup",
+      "raw": "0::/system.slice/slurmstepd.scope/job_6781128/step_0/user/task_0\n",
+      "sha256": "8e2c4e7af8c3aacec35d2b454893fc41bbbc19656daace57212a919b2317444f"
+    },
+    "namespace": {
+      "path": "/proc/self/ns/cgroup",
+      "target": "cgroup:[4026531835]",
+      "inode": 4026531835
+    }
+  }
+}

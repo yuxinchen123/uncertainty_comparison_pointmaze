@@ -1,0 +1,64 @@
+{
+  "job": "JobId=6781128 JobName=rnd-memory-capture-diagnostic\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=405 Nice=0 Account=sl5nw_base QOS=csresnolim\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   DerivedExitCode=0:0\n   RunTime=00:00:02 TimeLimit=00:20:00 TimeMin=N/A\n   SubmitTime=2026-11-01T09:59:01 EligibleTime=2026-11-01T10:04:09\n   AccrueTime=2026-11-01T10:04:09\n   StartTime=2026-11-01T10:04:31 EndTime=2026-11-01T10:24:31 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T10:04:31 Scheduler=Backfill\n   Partition=gpu AllocNode:Sid=portal05:1545863\n   ReqNodeList=jaguar03 ExcNodeList=(null)\n   NodeList=jaguar03\n   BatchHost=jaguar03\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1\n   AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   JOB_GRES=gpu:nvidia_rtx_a4500:1\n     Nodes=jaguar03 CPU_IDs=0-7 Mem=65536 GRES=gpu:nvidia_rtx_a4500:1(IDX:0)\n   MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   Reservation=sl5nw_168\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch\n   WorkDir=/p/rlprojects/RND\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_6781128.err\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_6781128.out\n   Power=\n   TresPerNode=gres/gpu:nvidia_rtx_a4500:1\n   TresPerTask=cpu:8\n   \n\n",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "SLURM_CONF": "/etc/slurm/slurm.conf",
+    "SLURM_JOB_ID": "6781128",
+    "SLURM_STEP_ID": "0",
+    "SLURM_JOB_GPUS": "0",
+    "SLURM_STEP_GPUS": "0",
+    "SLURM_GPUS_ON_NODE": "1",
+    "SLURM_CPUS_PER_TASK": "8"
+  },
+  "proc_information": [
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:03:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 449\nGPU UUID: \t GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:03:00.0\nDevice Minor: \t 0\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "8075087753221717a338c20d30083cd9b7dbd39667b40bc05739c8323398204e"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:04:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 450\nGPU UUID: \t GPU-d1e25d82-ba81-32d7-796a-aa7bcc4bbb97\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:04:00.0\nDevice Minor: \t 1\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "48af14a9243f622f20839ed3f2ef3fa76177b979455459a317aa0f516db4d891"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:43:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 451\nGPU UUID: \t GPU-35bb2671-62cc-0591-a4f0-35e6e33cee83\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:43:00.0\nDevice Minor: \t 2\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "5808accfb42978b6d0dfa3470def7ec87b0cc0be30ee49276def8eca2265abce"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:44:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 452\nGPU UUID: \t GPU-07a0479f-02a7-c386-8b13-cd4689c3ae68\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:44:00.0\nDevice Minor: \t 3\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "075a40478f1bf9bab732c0bcb140bf619a5c1e5c929f27af767c8439bbef721d"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:83:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 453\nGPU UUID: \t GPU-598e6dda-6f62-4dc7-37bc-41e2a7b0d522\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:83:00.0\nDevice Minor: \t 4\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "addee84e2e428964904ae3e5d830bb7bc4dab930cde5ad0ded4f406b452c13e3"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:84:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 454\nGPU UUID: \t GPU-3b271832-ffd4-e52b-60d3-8f135143fa4a\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:84:00.0\nDevice Minor: \t 5\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "a8af61ee31ce94aafb6ab341abe057373ff18867f92a779cffc4c7865726b750"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:c3:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 455\nGPU UUID: \t GPU-bbfc7bde-831c-5df2-a1cd-4e7922e850d7\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:c3:00.0\nDevice Minor: \t 6\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "773cd2d11bcb4f1a687efb41476680c6ca769aedd597b1be1d6c779c36cc5edd"
+    },
+    {
+      "path": "/proc/driver/nvidia/gpus/0000:c4:00.0/information",
+      "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 456\nGPU UUID: \t GPU-64277967-ffaf-8020-36ec-53303faba0ac\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:c4:00.0\nDevice Minor: \t 7\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+      "sha256": "8c1314b20c70fbacadc8a0254f377504a49142fd502d170bc6608860b1942015"
+    }
+  ],
+  "gres_file": {
+    "path": "/etc/slurm/gres.conf",
+    "owner_uid": 64030,
+    "mode": 420,
+    "regular_file": true,
+    "symlink": false,
+    "raw": "# --- UVA CS Ansible File ---\n#\n# This file is managed by the UVA CS Ansible Server.\n# Any changes made to this file outside of Ansible will be overwritten!\n#\n##################################################################\n# Slurm's Generic Resource (GRES) configuration file.\n# UVA Computer Science Dept.\n# This file is distributed by puppet for CentOS and Ubuntu.\n# Node ranges can be specified to have a number of leading zeros\n# for example, 'NodeName=ai[00-10]'.\n##################################################################\nNodeName=ai[00-10] AutoDetect=nvml\nNodeName=adriatic[01-06] AutoDetect=nvml\nNodeName=affogato[11,13-15] AutoDetect=nvml\nNodeName=cheetah[01-05,08-09] AutoDetect=nvml\nNodeName=jaguar[01-03,05-06] AutoDetect=nvml\nNodeName=jinx[01-02] AutoDetect=nvml\nNodeName=lynx[01-07,10-11] AutoDetect=nvml\nNodeName=lotus AutoDetect=nvml\nNodeName=nekomata[01-02] AutoDetect=nvml\nNodeName=serval[03,06-09] AutoDetect=nvml\n\n# titanx05 removed temporarily for direct access, CSHD-12527\nNodeName=titanx[02-03] AutoDetect=nvml\n",
+    "sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7"
+  }
+}

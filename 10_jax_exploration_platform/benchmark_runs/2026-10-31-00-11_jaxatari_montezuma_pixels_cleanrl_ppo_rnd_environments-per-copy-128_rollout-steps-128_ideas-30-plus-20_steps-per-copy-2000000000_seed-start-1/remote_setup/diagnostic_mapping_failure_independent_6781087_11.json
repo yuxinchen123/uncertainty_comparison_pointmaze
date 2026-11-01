@@ -1,0 +1,31 @@
+{
+  "kind": "independent_actual_device_mapping_failure_audit",
+  "at_utc": "2026-11-01T15:08:51.936563+00:00",
+  "verification_job_id": "6781087",
+  "verification_step_id": "11",
+  "failed_job_id": "6781128",
+  "actual_numeric_ownership_profile_verified": true,
+  "allocation_admitted": false,
+  "numerical_children_started": false,
+  "jax_imported": false,
+  "raw_resolution_rejection": "explicit root-owned UVA GRES file required",
+  "actual_gres_owner_uid": 64030,
+  "actual_gres_mode": 420,
+  "actual_gres_sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+  "raw_artifacts": {
+    "allocation_bootstrap.json": "49892eee8b88a27d9b9834ffd5c3e571d5d779390c58c4a787b3ac9d0889076b",
+    "allocation_bootstrap_cgroup_v2.json": "968f65297409b696bf23fbd0bbc2850fc46503324f102c38d1e7e71f60256c23",
+    "allocation_resolution.json": "7c0d18e6687d6b63fdfa86ebfdb2d8323edd8f25ae1d5fcdece2f5ced814b19a",
+    "regression_plan.json": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+    "result.json": "516462cca13356a246a45f624025d42a365d57bbc4d0722d0fae8e5dfa6c96be",
+    "failure.json": "0c4e38e47b331368ec7c84e9230ce3c804a8f3b1764b2701f45b8eb2fc1973d0"
+  },
+  "credit": {
+    "case": 0,
+    "idea": 0,
+    "packing": 0,
+    "native_capture_qualification": 0,
+    "worker_admission": 0
+  },
+  "next_action": "separate owned zero-GPU metadata observation; current mapping profiles unchanged"
+}

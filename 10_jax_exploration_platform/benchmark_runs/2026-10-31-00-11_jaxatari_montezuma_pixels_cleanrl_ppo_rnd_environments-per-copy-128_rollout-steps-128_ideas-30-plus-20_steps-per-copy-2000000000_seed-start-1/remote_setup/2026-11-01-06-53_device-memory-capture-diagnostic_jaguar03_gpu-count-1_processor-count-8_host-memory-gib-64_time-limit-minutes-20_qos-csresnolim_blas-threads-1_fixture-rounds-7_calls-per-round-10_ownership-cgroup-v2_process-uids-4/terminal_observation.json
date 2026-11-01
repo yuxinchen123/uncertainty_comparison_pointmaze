@@ -1,0 +1,18 @@
+{
+  "kind": "owned_diagnostic_terminal_observation",
+  "at_utc": "2026-11-01T15:09:57.669628+00:00",
+  "command": [
+    "sacct",
+    "-X",
+    "-n",
+    "-P",
+    "-j",
+    "6781128",
+    "--format=JobIDRaw,User%32,State%32,ExitCode,NodeList"
+  ],
+  "returncode": 0,
+  "stdout": "6781128|sl5nw|FAILED|1:0|jaguar03\n",
+  "stderr": "",
+  "numerical_children_started": false,
+  "native_capture_qualified": false
+}
