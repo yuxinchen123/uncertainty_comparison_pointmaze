@@ -7,7 +7,26 @@ import subprocess
 import sys
 import time
 
-from common import PYTHON, claim, finish, now, write_json
+from common import PYTHON, claim, finish, now, queue_lock, read_json, write_json
+
+
+def retry_memory_failure(run_dir, task):
+    """Reduce physical packing after a confirmed memory failure while keeping completed seeds."""
+    if task['stage'] != 'research' or task.get('memory_retries', 0) >= 4:
+        return False
+    gpu_class = os.environ.get('GRID_GPU_CLASS', 'default')
+    override = run_dir/'infrastructure'/('batch_limit_'+gpu_class+'.json')
+    previous = read_json(override)['copies'] if override.exists() else 32
+    if previous <= 1:
+        return False
+    with queue_lock(run_dir):
+        write_json(override, {'copies': max(1, previous//2), 'reason': 'Measured device memory exhaustion.', 'at': now()})
+        task = dict(task, memory_retries=task.get('memory_retries', 0)+1)
+        failed = run_dir/'queue/failed'/(task['name']+'.json')
+        write_json(run_dir/'queue/attempt_history'/(str(task['memory_retries'])+'_'+failed.name), read_json(failed))
+        write_json(run_dir/'queue/pending'/failed.name, task)
+        failed.unlink()
+    return True
 
 
 def hardware():
@@ -50,7 +69,6 @@ def main():
                                'hardware': card})
             raise SystemExit(124)
         if output.exists():
-            from common import read_json
             record = read_json(output)
             record.update(gpu_type=gpu_class, hardware=card)
             write_json(output, record)
@@ -74,7 +92,7 @@ def main():
         with (folder / (task['name'] + '.log')).open('a') as log:
             process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT,
                                        env=environment, start_new_session=True)
-            limit = task.get('limit_seconds', min(7200, int(deadline-time.monotonic()-60)))
+            limit = min(task.get('limit_seconds', 7200), int(deadline-time.monotonic()-60))
             timed_out = False
             try:
                 return_code = process.wait(timeout=limit)
@@ -93,6 +111,10 @@ def main():
                   'log': str(folder / (task['name'] + '.log'))}
         # Every failed measurement remains a visible, completed measurement attempt.
         finish(args.run_dir, task, result, successful=return_code == 0)
+        if return_code:
+            text = (folder/(task['name']+'.log')).read_text()
+            if any(message in text for message in ('RESOURCE_EXHAUSTED', 'out of memory', 'CUDA_ERROR_OUT_OF_MEMORY')):
+                retry_memory_failure(args.run_dir, task)
         print(task['name'], result, flush=True)
 
 

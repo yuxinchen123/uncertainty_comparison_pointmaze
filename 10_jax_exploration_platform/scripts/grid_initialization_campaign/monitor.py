@@ -141,6 +141,14 @@ def tick(run_dir):
     lines = status_lines(run_dir, state, live, counts)
     (run_dir/'status.txt').write_text('\n'.join(lines)+'\n')
     print('\n'.join(lines), flush=True)
+    # Numerical aggregation and rendering are allowed only inside the compute monitor.
+    completed_results = len(list((run_dir/'data/research').glob('*/summary.json')))
+    rendered_path = run_dir/'last_rendered_result_count.json'
+    rendered = read_json(rendered_path)['count'] if rendered_path.exists() else 0
+    if os.environ.get('SLURM_JOB_ID') and completed_results > rendered:
+        subprocess.run([str(PYTHON), str(Path(__file__).parent/'build_report.py'),
+                        '--run-dir', str(run_dir)], check=True)
+        write_json(rendered_path, {'count': completed_results, 'at': now()})
     return state, live
 
 

@@ -2,7 +2,7 @@
 
 import argparse
 import gc
-from dataclasses import fields as dataclass_fields
+from dataclasses import asdict, fields as dataclass_fields
 import json
 import os
 from pathlib import Path
@@ -173,9 +173,7 @@ def main():
             seed_ids=seeds, field_seed_ids=field_seeds, setting_indices=setting_indices)
         write_json(shard, {'completed': True, 'copies': current_records,
             'behavior_file': behavior_path.name, 'wall_seconds': time.monotonic()-batch_started,
-            'configuration': {
-                'episode_length': configuration.episode_length, 'rollout_steps': configuration.num_steps,
-                'normalization': configuration.normalize_intrinsic_rewards},
+            'configuration': asdict(configuration), 'physical_packing_profile': profile,
             'field_metadata': [field_cache[int(seed)].metadata for seed in field_seeds]})
         records.extend(current_records)
         arrays.append(behavior_path)
