@@ -1115,7 +1115,7 @@
     "actual_site_success": false
   },
   "uva_jaguar03_configured_isolation_preparation": {
-    "state": "design_only_independent_review_pending",
+    "state": "design_independently_reviewed_isolated_implementation_authorized",
     "design": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/configured_isolation_design.json",
     "design_sha256": "3cd21aae4e1356684166c00e8994f59ac499afb3015cefc88ae4187dff7844a1",
     "basis_actual_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/passive_observer_actual_independent_6781231_24.json",
@@ -1126,6 +1126,12 @@
     "scientific_credit": 0,
     "physical_gres_mapping_verified": false,
     "kernel_device_enforcement_verified": false,
-    "installed_binary_matches_upstream_verified": false
+    "installed_binary_matches_upstream_verified": false,
+    "independent_design_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/independent_configured_isolation_design_review.json",
+    "independent_design_review_sha256": "d9a44277efcdfbddc6953056856a78ecb854ce208b09534dc08042ee1ba45503",
+    "root_implementation_decision": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/root_isolated_implementation_decision.json",
+    "readiness_assessment": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/post_initial_comparisons_readiness_117_results_2026-11-01.json",
+    "readiness_assessment_sha256": "1ef6f9f1dd1099abb6c942630c78736ea0d21ae9cbebc76f9f3ba8c3866b8eb2",
+    "next_action": "Implement isolated opt-in single-GPU configuration/identity and selected/profiling support; independently review and publish before actual target tests. Keep current/default, capacity, multi-GPU and final admissions unchanged."
   }
 }

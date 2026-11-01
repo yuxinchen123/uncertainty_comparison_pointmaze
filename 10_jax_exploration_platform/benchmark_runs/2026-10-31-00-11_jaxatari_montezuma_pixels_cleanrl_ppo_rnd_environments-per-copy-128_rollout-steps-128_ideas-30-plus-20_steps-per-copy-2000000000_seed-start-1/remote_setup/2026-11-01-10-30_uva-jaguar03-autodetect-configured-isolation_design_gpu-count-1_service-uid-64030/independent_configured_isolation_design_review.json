@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "kind": "independent_uva_configured_isolation_design_review",
+  "at_utc": "2026-11-01T18:34:15.415244+00:00",
+  "design_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/configured_isolation_design.json",
+  "design_sha256": "3cd21aae4e1356684166c00e8994f59ac499afb3015cefc88ae4187dff7844a1",
+  "actual_basis_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/passive_observation.json",
+  "actual_basis_sha256": "b52907bbe47942918eb147e1e403c89c2114f69b1aa3970423cda5f81fa61f16",
+  "conclusion": "The five captured configuration files and the stated administrator trust assumptions can support a separately named single-GPU configured-isolation profile. They do not prove scheduler-to-physical mapping, kernel enforcement, active daemon identity or installed build equivalence.",
+  "approved_for_isolated_implementation": true,
+  "approved_for_job_or_worker_admission": false,
+  "files_and_owner_chains_verified": {
+    "/etc/slurm/slurm.conf": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a",
+    "/etc/slurm/nodes.conf": "1c9dc0acd626a1f794feddae773da4295d5807e06e872a9330a722eac2e59a5c",
+    "/etc/slurm/partitions.conf": "161b848c4ee1281341d7791391e516df99fb4a98ea16d07d57355b4553871d8c",
+    "/etc/slurm/gres.conf": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+    "/etc/slurm/cgroup.conf": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9"
+  },
+  "service_identity_verified": {
+    "name": "slurm",
+    "uid": 64030,
+    "gid": 64030,
+    "identity_alone_establishes_trust": false
+  },
+  "trust_is_explicit_policy_not_observed_enforcement": true,
+  "additional_passive_binary_capture_required_for_this_stated_basis": false,
+  "implementation_requirements": [
+    "Use an exact opt-in source capability and a complete versioned profile. Old/default plans, callers and consumers retain their current checks.",
+    "Introduce an explicit unresolved pre-submission physical-identity schema. Preserve null physical UUID and original scheduler/CUDA selectors; never bootstrap through logical-index/NVML-index/minor equality or a remembered GPU.",
+    "Write a separate immutable resolved binding tied to the exact source/configuration hashes, job/numeric step, ledger/submission/binding/release records and current PID/birth/all four UIDs. Do not modify the frozen plan.",
+    "Require fresh exact one-GPU typed logical job/step allocation and original matching job/step selectors, complete root-owned cgroup-v2 task membership, actual mount/namespace records and declared CPU/memory limits before GPU or numerical work.",
+    "Re-read exactly the five approved files and their exact include scope through unchanged ordinary descriptors and protected owner chains; require exact service identity, no group/other write permission and no competing cache/overrides. A changed baseline requires new review.",
+    "In the actual worker process keep CUDA_VISIBLE_DEVICES unchanged, require one CUDA-visible device and one JAX GPU, and join native CUDA UUID/PCI to one proc identity and Linux character-device major/minor. Never infer Linux minor from a Slurm index or CUDA compute-capability minor.",
+    "Select physical hardware metadata by the freshly observed UUID/PCI identity, not by numeric scheduler/NVML order. A host-wide NVML roster is inventory, not the allocated-device set. Retain model/memory/driver/runtime identity checks and immutable mapped-image capture.",
+    "If a parent sampler needs the physical UUID before worker timing, define the metadata-resolution/immutable-binding/ready sequence explicitly and preserve the full claimed capture interval. No guessed UUID or silent startup-peak omission; unsupported instrumented-capacity consumers must refuse.",
+    "Current, portable, final-training and capacity readers must each explicitly understand this profile and unresolved/resolved schema before accepting it. Unsupported paths fail closed; raw earlier failures cannot be relabelled.",
+    "Retain independent source/configuration/assets/software/precision and full numerical checks, then run separately reviewed zero-credit real producer fixtures before any formal or final admission."
+  ],
+  "required_negative_cases": [
+    "Absent/implicit profile; Boolean or changed profile fields; foreign/missing/duplicated ledger or submission rows; wrong UID, PID/birth, numeric step or task membership.",
+    "Missing/changed file, service owner, passwd identity, include list, protected directory chain, writable path, alias, duplicate config, competing cache or unsupported GRES override.",
+    "Rewritten CUDA selector, stale resolved binding, guessed physical UUID, logical-index/minor equality requirement, ambiguous UUID/PCI/minor roster, mismatched CUDA/JAX device or changed mapped driver/backend bytes.",
+    "Unresolved plan accepted by an old reader, current/final/capacity worker admitted without its own explicit support, or metadata-only design/result granting admission.",
+    "More than one GPU/process/device or another host passed through the single-card profile."
+  ],
+  "scope_limit": "One typed RTX A4500 on jaguar03, one owned numeric step and one worker process. No eight-card or other-host admission follows automatically.",
+  "controller_local_authority": "The controller cgroup defaults and local cgroup.conf are separate observations; accepting the named local configuration is an explicit trust premise, not measured enforcement.",
+  "primary_source_checks": [
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/slurmctld/proc_req.c",
+      "lines": "273-276",
+      "observation": "The controller builds its configuration response with cgroup_get_conf_list."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/interfaces/cgroup.c",
+      "lines": "149-167,174-207,263-303",
+      "observation": "Upstream initializes constraint defaults, reads cgroup.conf and packs configuration for stepd; this is not an attestation of the installed custom binary."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/doc/man/man5/cgroup.conf.5",
+      "lines": "5-15",
+      "observation": "The versioned manual places cgroup.conf beside slurm.conf and describes daemon reload/restart application."
+    }
+  ],
+  "no_new_numeric_or_metadata_gpu_collection": true,
+  "no_source_profile_or_admission_change": true,
+  "job_actions": 0,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "site_qualification_credit": 0,
+  "worker_admitted": false
+}

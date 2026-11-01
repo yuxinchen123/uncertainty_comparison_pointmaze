@@ -1,0 +1,20 @@
+{
+  "kind": "root_uva_configured_isolation_isolated_implementation_decision",
+  "at_utc": "2026-11-01T18:35:48.842623+00:00",
+  "design_sha256": "3cd21aae4e1356684166c00e8994f59ac499afb3015cefc88ae4187dff7844a1",
+  "independent_review_sha256": "d9a44277efcdfbddc6953056856a78ecb854ce208b09534dc08042ee1ba45503",
+  "approved_action": "Implement and independently test one isolated opt-in single-GPU configured-isolation profile and the corresponding selected/profiling producer support. Publish exact reviewed source before any real target qualification.",
+  "current_default_source_admission_changed": false,
+  "frozen_d28_changed": false,
+  "worker_admitted": false,
+  "gpu_job_authorized_by_this_record": false,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "capacity_or_multigpu_or_final_profile_implicitly_enabled": false,
+  "unresolved_plan_identities_required": true,
+  "fresh_immutable_physical_binding_required": true,
+  "original_selectors_unchanged": true,
+  "unsupported_consumers_must_refuse": true,
+  "no_further_passive_job_required_for_limited_trust_design": true
+}
