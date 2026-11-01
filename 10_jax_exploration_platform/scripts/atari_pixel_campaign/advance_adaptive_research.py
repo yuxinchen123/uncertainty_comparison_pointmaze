@@ -381,6 +381,7 @@ def producer_record(path, mode, run_dir, root, commit, runtime, context, core, e
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
         "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
         "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+        "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
         "train_optimized.py")])
     for relative, expected_hash in plan["helpers"]["files"].items():
         if sha256(evidence.file(path.parent / "code" / Path(relative).name)) != expected_hash:
@@ -450,6 +451,7 @@ def profile_record(path, run_dir, root, commit, runtime, context, baseline, core
     committed_files(plan["helpers"], evidence, [SCRIPT_PREFIX + name for name in (
         "profile_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
         "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+        "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
         "train_optimized.py")])
     committed_files(plan["paired_source"], evidence,
                     [SCRIPT_PREFIX + name for name in ("paired_benchmark.py", "ideas.py")], require_worktree=True)

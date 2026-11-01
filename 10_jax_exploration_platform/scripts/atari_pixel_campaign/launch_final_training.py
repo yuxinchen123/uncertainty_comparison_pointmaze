@@ -33,6 +33,7 @@ import launch_queue
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 TRAIN_HELPERS = ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
                  "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+                 "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
                  "controller.py", "ideas.py",
                  "queue_worker.py", "diagnose_gpu_execution.py")
 ACTIVE = {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED", "RESIZING", "REQUEUED", "REQUEUE_FED", "SIGNALING", "STAGE_OUT"}
@@ -124,9 +125,25 @@ def frozen_helpers(root, commit):
     if not any(isinstance(node, ast.Constant) and node.value == "pregather_async_retry.py"
                for tree in callers for node in ast.walk(tree)):
         paths.remove(PREFIX + "pregather_async_retry.py")
-    if not any(isinstance(node, ast.Constant) and node.value == "h100_nvl_slurm_queue.py"
-               for tree in callers for node in ast.walk(tree)):
+    h100_declared = any(isinstance(node, ast.Constant) and node.value == "h100_nvl_slurm_queue.py"
+                       for tree in callers for node in ast.walk(tree))
+    if not h100_declared:
         for name in ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py"):
+            paths.remove(PREFIX + name)
+    qualification_declared = False
+    if h100_declared:
+        # Parse only the exact already checked Git blobs; a working-tree marker cannot add dependencies.
+        for name in ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_evidence.py"):
+            relative = PREFIX + name
+            original = subprocess.check_output(["git", "-C", str(root), "show", commit + ":" + relative])
+            if (root / relative).read_bytes() != original:
+                raise ValueError("a pinned H100 helper differs from its Git blob")
+            tree = ast.parse(original)
+            qualification_declared |= any(isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "H100_NVL_SLURM_QUALIFICATION_MODULE" for target in node.targets)
+                and isinstance(node.value, ast.Constant) and node.value.value == "h100_nvl_slurm_qualification.py" for node in tree.body)
+    if not qualification_declared:
+        for name in ("h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py"):
             paths.remove(PREFIX + name)
     changes = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all", "--", *paths], text=True)
     if (Path(top).resolve(strict=True) != root or actual != commit or branch.returncode != 1

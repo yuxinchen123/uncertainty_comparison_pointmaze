@@ -672,7 +672,8 @@ class FrozenHelperTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             h100_names = {"h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py"}
-            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names)
+            qualification_names = {"h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py"}
+            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names | qualification_names)
             for name in old_names:
                 path = root / final.PREFIX / name
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -693,7 +694,7 @@ class FrozenHelperTests(unittest.TestCase):
             (root / final.PREFIX / "post_comparison_validation.py").write_text("PREGATHER_ASYNC_RETRY_MODULE = 'pregather_async_retry.py'\n")
             (root / final.PREFIX / "pregather_async_retry.py").write_text("# future adjacent helper\n")
             current = final.frozen_helpers(root, commit())
-            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names})
+            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names | qualification_names})
             # A new H100 caller must pin all four adjacent readers rather than reusing the older receipt.
             caller = root / final.PREFIX / "post_comparison_validation.py"
             caller.write_text(caller.read_text() + "H100_NVL_SLURM_QUEUE_MODULE = 'h100_nvl_slurm_queue.py'\n")
@@ -704,7 +705,18 @@ class FrozenHelperTests(unittest.TestCase):
                 final.frozen_helpers(root, commit())
             (root / final.PREFIX / missing).write_text("# final required H100 metadata reader\n")
             complete = final.frozen_helpers(root, commit())
-            self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS})
+            self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in qualification_names})
+            # A declared qualification profile adds both adjacent files only for the new pinned caller.
+            queue = root / final.PREFIX / "h100_nvl_slurm_queue.py"
+            queue.write_text(queue.read_text() + "H100_NVL_SLURM_QUALIFICATION_MODULE = 'h100_nvl_slurm_qualification.py'\n")
+            with self.assertRaises((ValueError, subprocess.CalledProcessError, FileNotFoundError)):
+                final.frozen_helpers(root, commit())
+            (root / final.PREFIX / "h100_nvl_slurm_qualification.py").write_text("# committed qualification metadata\n")
+            with self.assertRaises((ValueError, subprocess.CalledProcessError, FileNotFoundError)):
+                final.frozen_helpers(root, commit())
+            (root / final.PREFIX / "h100_nvl_allocation_observation.py").write_text("# committed hardware observation metadata\n")
+            qualified = final.frozen_helpers(root, commit())
+            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS})
 
     def test_exact_git_top_is_required_for_helpers(self):
         """A nested ignored copy cannot borrow the containing checkout's committed identity."""

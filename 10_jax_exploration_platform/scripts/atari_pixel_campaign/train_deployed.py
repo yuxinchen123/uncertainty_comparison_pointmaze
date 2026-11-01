@@ -29,6 +29,7 @@ SCRIPTS = Path(__file__).resolve().parent
 HELPERS = ("train_deployed.py", "deployed_training_admission.py", "validate_training_deployment.py", "portable_evidence.py",
            "train_optimized.py", "measure_selected.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+           "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
            "controller.py", "ideas.py", "queue_worker.py", "diagnose_gpu_execution.py")
 
 

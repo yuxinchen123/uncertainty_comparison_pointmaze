@@ -35,6 +35,7 @@ import train_optimized as training
 
 HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+           "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
            "train_optimized.py")
 CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 MODES = ("correctness", "confirmation", "packing-point")
