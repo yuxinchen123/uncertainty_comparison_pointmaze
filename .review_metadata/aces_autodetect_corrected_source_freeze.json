@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "aces_autodetect_corrected_configured_isolation_source_freeze",
+  "created_at_utc": "2026-11-01T13:09:31.757111+00:00",
+  "base_commit": "83b178766ad3d1a2c0906fe12b56ba4db1d2c091",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_autodetect_qualification.py": "f4d4f70897a165977e6aab529b00873f5ddaee2f214e2d8507f3bb68332d066a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": "9166ba2bf26d5573d9ee7e85f20dbf8a8d155e4b3084d1989ef99964e8841092",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_slurm_autodetect_qualification.py": "5124df66aaaaa1bfe8b072a32478c12e5769cc8e0cecf2522a0069504d8b998a"
+  },
+  "protected_unchanged_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+  },
+  "frozen_numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "unchanged_numerical_files": {
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/.review_metadata/aces_autodetect_corrected_author_6780635_41.json",
+    "sha256": "b2aebdc8dc00a2851aa82346ddb26fb19bf4c949e484d378663380ad5b46e95b",
+    "count": 38,
+    "job_id": "6780635",
+    "step_id": "41"
+  },
+  "prior_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/.review_metadata/aces_autodetect_source_freeze.json",
+    "sha256": "c74eb9843e66c6442ee98fa09c386f622b66199d23c170de8eb5811d7f96d297"
+  },
+  "preserved_prior_source_folder": "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/.review_metadata/first_autodetect_frozen_source",
+  "independent_findings": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/.review_metadata/aces_autodetect_independent_findings_6780635_39.json",
+    "sha256": "d1592c7528ec0d3008a5f4d9f0a7163cd08eb46abdc5762a35fcd385abc1e482"
+  },
+  "corrections": [
+    "exact reviewed controller path and exact cache path",
+    "unique complete normalized PCI addresses in both inventories",
+    "explicit directory/file absent, unreadable and error records; complete parent observation saved before rejection"
+  ],
+  "no_new_packet": true,
+  "no_live_actions": true,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "remaining_requirements": [
+    "independent review and publication",
+    "fresh explicit new-profile native packet and actual owned allocation",
+    "fresh actual cache-directory trust plus same-process CUDA UUID/PCI and full original source/gates/assets/driver proof"
+  ]
+}

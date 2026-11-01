@@ -1,8 +1,8 @@
 """Prepare and verify a separate ACES full-site check without admitting workers.
 
 Original numerical source admission and the UVA helper defaults are unchanged.
-Fresh root-owned cached configuration must establish the allocated physical
-device before an identity child initializes JAX with Slurm's original selector.
+Each selected profile states its physical-mapping trust basis explicitly. An
+identity child initializes JAX with Slurm's original selector before full gates.
 """
 
 import argparse
@@ -51,9 +51,19 @@ def common():
     return load("h100_nvl_slurm_site_validation")
 
 
-def qualifier():
-    """Keep the explicit ACES device policy separate from the unchanged UVA default."""
-    return load("aces_slurm_qualification")
+def qualifier(profile=None):
+    """Select one complete declared ACES profile while retaining the explicit-File default."""
+    policy = load("aces_slurm_qualification")
+    name = profile.get("name") if isinstance(profile, dict) else profile
+    if name in (None, policy.PROFILE["name"]):
+        selected = policy
+    elif name == "aces-h100-pcie-driver-580.178.04-autodetect-nvml-configured-isolation":
+        selected = load("aces_slurm_autodetect_qualification")
+    else:
+        raise ValueError("an exact reviewed ACES qualification profile must be selected explicitly")
+    if isinstance(profile, dict):
+        selected.require_profile(profile)
+    return selected
 
 
 def ordinary_path(path, *, directory=False):
@@ -91,10 +101,11 @@ def require_boundary(value):
             raise ValueError("an ACES site check cannot grant credit or admission: " + name)
 
 
-def helpers():
+def helpers(profile=None):
     """Pin the complete existing helper closure and both new ACES entry points."""
     old = common()
-    return tuple(dict.fromkeys((*old.HELPERS, *old.QUALIFICATION_HELPERS,
+    extra = () if qualifier(profile).PROFILE == qualifier().PROFILE else ("aces_slurm_autodetect_qualification.py",)
+    return tuple(dict.fromkeys((*old.HELPERS, *old.QUALIFICATION_HELPERS, *extra,
         "aces_allocation_observation.py", "aces_slurm_qualification.py", "aces_slurm_site_validation.py",
         "aces_source_admission.py", "portable_evidence.py", "h100_nvl_slurm_evidence.py")))
 
@@ -146,7 +157,7 @@ def checked_software(plan):
 
 def prepare(arguments):
     """Write a new unsubmitted ACES plan and standard records using the selected actual interpreter."""
-    old, policy = common(), qualifier()
+    old, policy = common(), qualifier(getattr(arguments, "qualification_profile", None))
     run, helper = arguments.run_dir.resolve(strict=True), arguments.helper_root.resolve(strict=True)
     directory = arguments.output_dir.absolute()
     if (directory.parent != run / "remote_setup" or directory.exists() or directory.is_symlink()
@@ -155,7 +166,7 @@ def prepare(arguments):
     if str(Path(sys.executable).absolute()) != str(arguments.python.absolute()):
         raise ValueError("prepare with the actual selected ACES interpreter; do not infer another environment")
     commit = old.query(["git", "-C", str(helper), "rev-parse", "HEAD"]).strip()
-    identity = old.source_identity(helper, commit, [PREFIX + name for name in helpers()])
+    identity = old.source_identity(helper, commit, [PREFIX + name for name in helpers(policy.PROFILE)])
     if Path(__file__).resolve() != helper / PREFIX / "aces_slurm_site_validation.py":
         raise ValueError("prepare through the exact detached committed ACES entry point")
     # The optional mapping relocates original bytes; native software is still observed below.
@@ -217,13 +228,14 @@ def prepare(arguments):
 
 def prepared(directory):
     """Verify immutable preparation and source bytes without reading historical node-local driver files."""
-    old, policy = common(), qualifier()
+    old = common()
     directory = ordinary_path(directory, directory=True)
     manifest = read_exact(directory / "manifest.yaml")
     if (type(manifest.get("schema_version")) is not int or manifest["schema_version"] != 1
             or manifest.get("kind") != "aces_full_site_qualification_preparation" or manifest.get("cluster") != "aces"):
         raise ValueError("the ACES preparation manifest has a different schema, kind or cluster")
     plan = bound(manifest["artifacts"]["site_validation_plan.json"])
+    policy = qualifier(plan["qualification_profile"])
     require_boundary(manifest)
     require_boundary(plan)
     policy.require_profile(plan["qualification_profile"])
@@ -245,7 +257,7 @@ def prepared(directory):
     if plan.get("software_at_prepare") != manifest["artifacts"]["software_at_prepare.json"]:
         raise ValueError("the target software baseline must be its exact immutable prepared artifact")
     if (Path(__file__).resolve() != Path(plan["helpers"]["source_root"]) / PREFIX / "aces_slurm_site_validation.py"
-            or set(plan["helpers"]["files"]) != {PREFIX + name for name in helpers()}):
+            or set(plan["helpers"]["files"]) != {PREFIX + name for name in helpers(policy.PROFILE)}):
         raise ValueError("execute the complete committed ACES helper closure")
     old.verify_source_identity(plan["helpers"])
     old.verify_source_identity(plan["numerical_source"])
@@ -270,7 +282,7 @@ def prepared(directory):
 
 def owned_job(plan, directory, environment, *, wait_seconds=30):
     """Bind exact ACES owner, durable held submission and release before collecting allocation metadata."""
-    old, policy = common(), qualifier()
+    old, policy = common(), qualifier(plan.get("qualification_profile"))
     run = Path(plan["campaign_run_dir"])
     job, step = environment.get("SLURM_JOB_ID", ""), environment.get("SLURM_STEP_ID", "")
     cgroup = Path("/proc/self/cgroup").read_text()
@@ -309,7 +321,7 @@ def owned_job(plan, directory, environment, *, wait_seconds=30):
 
 def allocation_observation(plan, directory):
     """Save original scheduler, hardware and root-owned configuration before any numerical import."""
-    old, policy, observer = common(), qualifier(), load("aces_allocation_observation")
+    old, policy, observer = common(), qualifier(plan.get("qualification_profile")), load("aces_allocation_observation")
     ownership = owned_job(plan, directory, os.environ)
     host = socket.gethostname().split(".")[0]
     if not re.fullmatch(r"ac[0-9]+", host):
@@ -374,7 +386,7 @@ def run_child(plan, directory, unit, kind, assignment):
 
 def initialize_identity(plan, unit, process):
     """Initialize only the assigned JAX device and capture its already mapped driver bytes."""
-    old, policy = common(), qualifier()
+    old, policy = common(), qualifier(plan.get("qualification_profile"))
     if any(name == prefix or name.startswith(prefix + ".") for name in sys.modules
             for prefix in ("jax", "numpy", "jaxtari", "exploration_platform")):
         raise ValueError("the identity stage needs a fresh process without numerical imports")
@@ -454,8 +466,9 @@ def reference_probe(plan, unit, process, jax, device, identity):
 
 def child(directory, kind):
     """Recheck this exact released child and actual allocation before executing its required original stage."""
-    old, policy = common(), qualifier()
+    old = common()
     directory, unit, plan = prepared(directory)
+    policy = qualifier(plan.get("qualification_profile"))
     old.require_runtime(os.environ)
     old.require_gate_controls(os.environ, plan["cleanrl_reference"])
     parent = read_exact(unit / "parent_owner.json")
@@ -497,7 +510,7 @@ def child(directory, kind):
 
 def verify_identity_result(value, process, unit, kind):
     """Verify saved same-process CUDA identity and captured shared driver bytes portably."""
-    policy, old = qualifier(), common()
+    policy, old = qualifier(process["allocation"].get("qualification_profile")), common()
     require_boundary(value)
     if value.get("completed") is not True or any(value.get(key) != expected for key, expected in process.items() if key != "kind"):
         raise ValueError("the saved identity belongs to another actual child")
@@ -516,7 +529,7 @@ def verify_identity_result(value, process, unit, kind):
 
 def verify_result(directory, unit, plan, result):
     """Rebuild successful required stages without touching any historical node-local CUDA driver."""
-    old, policy = common(), qualifier()
+    old, policy = common(), qualifier(plan.get("qualification_profile"))
     ordinary_path(directory, directory=True)
     ordinary_path(unit, directory=True)
     require_boundary(result)
@@ -594,13 +607,16 @@ def verify_result(directory, unit, plan, result):
     old.validate_numerical_paths(probe["numerical_module_paths"], plan["numerical_source"]["source_root"])
     return {"passed": True, "scope": "one exact original-source ACES site qualification only",
         "hostname": assignment["hostname"], "job_id": assignment["job_id"], "gpu_uuid": assignment["gpu_uuid"],
-        "kernel_device_enforcement_verified": False, **policy.BOUNDARY}
+        "kernel_device_enforcement_verified": False,
+        **({"physical_gres_mapping_verified": False} if "physical_gres_mapping_verified" in policy.PROFILE else {}),
+        **policy.BOUNDARY}
 
 
 def run(directory):
     """Stop on ambiguous preflight evidence or execute the required stages without publishing admission."""
-    old, policy = common(), qualifier()
+    old = common()
     directory, unit, plan = prepared(directory)
+    policy = qualifier(plan.get("qualification_profile"))
     if any((unit / name).exists() for name in ("result.json", "failure.json", "parent_allocation_observation.json")):
         raise ValueError("a previous ACES site launch is immutable; prepare a new packet")
     try:
@@ -644,6 +660,9 @@ def main():
     preparation = commands.add_parser("prepare")
     for flag in ("run-dir", "helper-root", "output-dir", "python", "cleanrl-root", "asset-record", "jaxtari-source-root"):
         preparation.add_argument("--" + flag, type=Path, required=True)
+    preparation.add_argument("--qualification-profile", choices=(qualifier().PROFILE["name"],
+        "aces-h100-pcie-driver-580.178.04-autodetect-nvml-configured-isolation"),
+        default=qualifier().PROFILE["name"])
     preparation.add_argument("--admission-run-dir", type=Path)
     preparation.add_argument("--evidence-manifest", type=Path)
     preparation.add_argument("--evidence-manifest-sha256")

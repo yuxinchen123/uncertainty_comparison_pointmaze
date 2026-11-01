@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "aces_failed_2274632_missing_directory_independent_check",
+  "at_utc": "2026-11-01T13:03:24.236908+00:00",
+  "job_id": "6780635",
+  "step_id": "38",
+  "actual_failed_aces_job_id": "2274632",
+  "observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/parent_allocation_observation.json",
+    "sha256": "cd003ebf0f136e858ee7a2e5ea54d6de2db9589ce60be92f28ef12be972d7274"
+  },
+  "outcomes": {
+    "aces_slurm_qualification": {
+      "exception_type": "ValueError",
+      "error": "root-owned cache and running task/cgroup settings must agree",
+      "accepted": false
+    },
+    "aces_slurm_autodetect_qualification": {
+      "exception_type": "ValueError",
+      "error": "the complete separate ACES NVML AutoDetect configured-isolation profile is required",
+      "accepted": false
+    },
+    "new_configuration_without_invented_evidence": {
+      "exception_type": "KeyError",
+      "error": "'cache_directory_chain'",
+      "accepted": false
+    }
+  },
+  "raw_bytes_unchanged": true,
+  "synthetic_directory_rows_added": false,
+  "numerical_imports_forbidden": true,
+  "live_commands_forbidden": true,
+  "source_files": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "/p/rlprojects/RND_worktrees/2026-11-01-04-50_aces-autodetect-nvml_configured-cgroup-isolation_driver-580.178.04_gpu-count-1_processor-count-8/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_autodetect_qualification.py": "b75abc11053057e6731aa8dfcb50a02d09f7ce960a29edb32fc26119abf4df71"
+  },
+  "workers_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
