@@ -1,0 +1,19 @@
+{
+  "kind": "h100_nvl_allocation_observation_review",
+  "reviewed_at_utc": "2026-11-01T00:24:54.158800+00:00",
+  "metadata_tests_passed": 14,
+  "independent_review_passed": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "172b7a9aecd5ee1123dd2551e4d047e54bef72e019cc0a1474760a9ee8331e2d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_allocation_observation.py": "5b163db7624743ff3565c87d9e1998bfb6ee47179aeaadf20164f8e555e87283"
+  },
+  "live_preparation_performed": false,
+  "gpu_job_submitted": false,
+  "neural_code_executed": false,
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "scope": "A five-minute owned single-GPU hardware observation only. Exact ledger, cgroup, host and typed allocation checks precede hardware reads. No process XML, process query or unrelated environment values are read. Prepared metadata is bound to the actual detached committed helper and a monitored data shard."
+}
