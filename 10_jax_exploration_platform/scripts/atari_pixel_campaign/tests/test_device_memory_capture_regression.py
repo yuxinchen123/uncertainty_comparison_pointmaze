@@ -68,7 +68,7 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
         return ('JobId=123 UserId=sl5nw(2618919) JobState=RUNNING NodeList=jaguar03 '
             'GRES=gpu:nvidia_rtx_a4500:1(IDX:4) Account=sl5nw_base Partition=gpu QOS=csresnolim Reservation=sl5nw_12345 '
             'NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 TimeLimit=00:20:00 '
-            'AllocTRES=cpu=8,mem=64G,node=1,gres/gpu=1,gres/gpu:nvidia_rtx_a4500=1')
+            'AllocTRES=cpu=8,mem=64G,node=1,gres/gpu=1 TresPerNode=gres/gpu:nvidia_rtx_a4500:1')
 
     def admit(self, unit):
         """Exercise the second stage with an explicitly recorded returned ID and no real scheduler query."""
@@ -386,6 +386,32 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
                 regression.validate_repeat_shutdown({**normal, **change}, [])
         with self.assertRaisesRegex(ValueError, 'lost its lifetime memory sampler'):
             regression.validate_repeat_shutdown(normal, ["TypeError('injected ordinary sampler error')"])
+
+    def test_actual_owned_uva_job_uses_generic_allocation_and_separate_typed_request(self):
+        """Only the original forty-minute time limit is changed to twenty minutes in this actual-record-derived shape check."""
+        path = SCRIPTS / 'tests/fixtures/uva_owned_checkpoint_allocation_6780569.json'
+        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
+            '3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85')
+        observed = json.loads(path.read_text())
+        self.assertEqual(observed['job_id'], '6780569')
+        self.assertEqual(observed['expected']['time_limit'], '00:40:00')
+        self.assertEqual(observed['stdout'].count('TimeLimit=00:40:00'), 1)
+        raw = observed['stdout'].replace('TimeLimit=00:40:00', 'TimeLimit=00:20:00')
+        self.assertEqual(regression.validate_shape({'job': {'stdout': raw}}), 'sl5nw_168')
+        self.assertNotIn('gres/gpu:nvidia_rtx_a4500=1', raw)
+        self.assertIn('TresPerNode=gres/gpu:nvidia_rtx_a4500:1', raw)
+        optional = raw.replace('AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1',
+            'AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1,gres/gpu:nvidia_rtx_a4500=1')
+        self.assertEqual(regression.validate_shape({'job': {'stdout': optional}}), 'sl5nw_168')
+        mutations = [lambda text: text.replace('TresPerNode=gres/gpu:nvidia_rtx_a4500:1', 'TresPerNode=gres/gpu:h100:1'),
+            lambda text: text.replace('TresPerNode=gres/gpu:nvidia_rtx_a4500:1', 'TresPerNode=gres/gpu:nvidia_rtx_a4500:2'),
+            lambda text: text.replace('AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1',
+                'AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=2'),
+            lambda text: text.replace('gres/gpu:nvidia_rtx_a4500=1', 'gres/gpu:nvidia_rtx_a4500=2'),
+            lambda text: text.replace('gres/gpu:nvidia_rtx_a4500=1', 'gres/gpu:h100=1')]
+        for mutation in mutations:
+            with self.subTest(change=mutation), self.assertRaises(ValueError):
+                regression.validate_shape({'job': {'stdout': mutation(optional)}})
 
 
 if __name__ == '__main__':

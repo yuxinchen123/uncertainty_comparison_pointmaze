@@ -247,8 +247,11 @@ def validate_shape(owned, reservation=None):
     capacity.require(all(len(pair) == 2 for pair in pairs) and len({pair[0] for pair in pairs}) == len(pairs),
                      'duplicate diagnostic job resource')
     resources = dict(pairs)
+    typed = {key for key in resources if key.startswith('gres/gpu:')}
     capacity.require(resources.get('cpu') == '8' and resources.get('mem') == '64G' and resources.get('node') == '1'
-        and resources.get('gres/gpu') == resources.get('gres/gpu:nvidia_rtx_a4500') == '1',
+        and resources.get('gres/gpu') == '1'
+        and typed <= {'gres/gpu:nvidia_rtx_a4500'} and all(resources[key] == '1' for key in typed)
+        and capacity.scheduler_field(raw, 'TresPerNode') == 'gres/gpu:nvidia_rtx_a4500:1',
         'diagnostic needs exactly eight CPUs, 64 GiB host memory, one node and one allocated A4500')
     actual = capacity.scheduler_field(raw, 'Reservation')
     capacity.require(re.fullmatch(r'sl5nw_[1-9][0-9]*', actual) and (reservation is None or actual == reservation),
