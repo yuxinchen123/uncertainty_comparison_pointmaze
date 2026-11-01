@@ -77,7 +77,7 @@
         "sha256": "529f702f920a4c2b897146029c3ce761c1bc6bb60aacd97cbc251981c73b9d99"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -95,13 +95,15 @@
       "donate_training_buffers",
       "recompute_network_activations",
       "channels_last_convolutions",
-      "group_independent_convolutions"
+      "group_independent_convolutions",
+      "einsum_independent_dense_layers"
     ],
     "wrapped_labels": [
       "donate training buffers",
       "recompute network activations",
       "channels last convolutions",
-      "group independent convolutions"
+      "group independent convolutions",
+      "einsum independent dense layers"
     ],
     "results": [
       {
@@ -119,9 +121,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-14__group_independent_convolutions__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "af5d453f2d552a50801a5c5668af36fd5672b01068d3fc60c47d4b7976af74c3"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-15__einsum_independent_dense_layers__hardware-h100__copies-1__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "04e236d6acae5ad3db785d68f232e018ec8c8f50c9b23edf109432cd0fa79a4b"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -201,7 +207,7 @@
         "sha256": "a8b2d87bfa962a702a5282a7b27240b304984f39ba05411ca546809d9afbb79f"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -218,12 +224,14 @@
     "mechanism_names": [
       "donate_training_buffers",
       "recompute_network_activations",
-      "channels_last_convolutions"
+      "channels_last_convolutions",
+      "group_independent_convolutions"
     ],
     "wrapped_labels": [
       "donate training buffers",
       "recompute network activations",
-      "channels last convolutions"
+      "channels last convolutions",
+      "group independent convolutions"
     ],
     "results": [
       {
@@ -237,9 +245,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-13__channels_last_convolutions__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "adbc33380f09c4c371a09dca99d381441196e5c82314daf864597ec878fa318a"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-14__group_independent_convolutions__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "87836493ee3575a2616b052a240cada3bad8bac040c89121438f32cc85d1c425"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -319,7 +331,7 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -399,7 +411,7 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -473,7 +485,7 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -499,7 +511,7 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -525,7 +537,7 @@
         "sha256": "54f879a03eb4aa6044c1149504745e3f45061ed5f4c234b8badd7a6385cdbe32"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -605,7 +617,7 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -685,7 +697,7 @@
         "sha256": "bc6d2e329b86dcc412bf0616a75b894463f8cb9715596e19d654a97c65fb6b4a"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -753,7 +765,7 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   },
   {
     "schema_version": 2,
@@ -779,6 +791,6 @@
         "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
       }
     ],
-    "input_fingerprint": "13bee765033642f748e18d2fd545915b8d71b3cdadca054012735b8eca089843"
+    "input_fingerprint": "3a7e7b53603066fb5d25f801908eda26955b4be47e97671012ce7059480e9eed"
   }
 ]
