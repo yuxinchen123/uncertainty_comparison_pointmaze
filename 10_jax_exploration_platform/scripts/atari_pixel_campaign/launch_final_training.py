@@ -370,6 +370,35 @@ def prepare(run, input_path):
     return units
 
 
+def active_owned_jobs(run, identifiers, cluster):
+    """Observe only exact owned identifiers and refuse unknown or conflicting current queue rows."""
+    # A PREEMPTED accounting row followed by current PENDING remains active.
+    if cluster not in {"uva", "aces"}:
+        raise ValueError("current job observation requires the literal UVA or ACES cluster")
+    identifiers = sorted(set(identifiers))
+    ledger = Path(run) / "slurm" / ("submitted_jobids_" + cluster + ".txt")
+    owned = set(ledger.read_text().splitlines())
+    if any(not isinstance(identifier, str) or not identifier.isdecimal() or identifier not in owned for identifier in identifiers):
+        raise ValueError("current queue query is outside the exact " + cluster.upper() + " ledger")
+    if not identifiers:
+        return {}, None
+    command = ["squeue", "-h", "-j", ",".join(identifiers), "-o", "%i|%T"]
+    result = subprocess.run(command, capture_output=True, text=True, check=False, timeout=20,
+                            env={**os.environ, "TZ": "UTC"})
+    absent = (result.returncode == 1 and not result.stdout
+              and result.stderr.strip() == "slurm_load_jobs error: Invalid job id specified")
+    if result.returncode and not absent:
+        raise ValueError("exact owned current queue query failed; terminal state is unproved")
+    states = {}
+    for line in result.stdout.splitlines():
+        fields = line.split("|")
+        if len(fields) != 2 or fields[0] not in identifiers or fields[0] in states or fields[1] not in ACTIVE:
+            raise ValueError("current queue returned a duplicate, foreign or unknown active state")
+        states[fields[0]] = fields[1]
+    return states, {"command": command, "returncode": result.returncode, "stdout": result.stdout,
+                    "stderr": result.stderr, "observed_at_utc": datetime.now(timezone.utc).isoformat()}
+
+
 def job_states(run, identifiers):
     """Query only exact final-worker IDs contained in this campaign's UVA ledger."""
     identifiers = sorted(set(identifiers))
@@ -386,6 +415,8 @@ def job_states(run, identifiers):
         if job not in identifiers or job in states or state not in ACTIVE | TERMINAL:
             raise ValueError("scheduler returned duplicate, foreign or unknown final-job state")
         states[job] = state
+    current, _ = active_owned_jobs(run, identifiers, "uva")
+    states.update(current)
     if set(states) != set(identifiers):
         raise ValueError("previous exact final-job state is unknown; continuation requires diagnosis")
     return states
@@ -600,7 +631,7 @@ def submit(run, *, gpus, walltime_seconds, host_memory_gib_per_gpu, cpus_per_gpu
             str(directory / "launch_final_training.py"), "job", "--plan", str(directory / "job_plan.json")]) + "\n")
         intent = queue / "submissions" / (identifier + ".json")
         atomic(intent, {"state": "submitting", "cluster": "uva", "script": str(script)})
-        arguments = ["sbatch", "--parsable", "--partition=gpu", "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
+        arguments = ["sbatch", "--parsable", "--no-requeue", "--partition=gpu", "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
             "--gres=gpu:nvidia_rtx_a4500:" + str(gpus), "--cpus-per-task=" + str(gpus * cpus_per_gpu),
             "--mem=" + str(gpus * host_memory_gib_per_gpu) + "G", "--time=" + str(math.ceil(walltime_seconds / 60)),
             "--signal=B:USR1@" + str(checkpoint_reserve_seconds), "--job-name=atari_final_training",

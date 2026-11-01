@@ -1,0 +1,34 @@
+{
+  "kind": "final_training_scheduler_author_tests",
+  "job_id": "6780433",
+  "step_id": "10",
+  "source_hashes": {
+    "launch_final_training.py": "00cc0d7ba1ce0b270b026fca1fc3e64e4da3913f47fb8badea4e2831920c0da9",
+    "launch_deployed_training.py": "6c023d62ca735b3dbc9ea1521eea4e9bb891891b5990193a05615fe14ebe6215",
+    "tests/test_final_training_scheduler_state.py": "5d8360caff03835f42e269b98b8e9acf05af51dfdd94000331c3dd61ee5e0ca5",
+    "tests/test_launch_final_training.py": "e28500004abed3a310e820918ed667b955604e95dca194cf64dea9c960e828af",
+    "tests/test_launch_deployed_training.py": "910875d4dd4b3b8d18bd717547b58eac262b86f2b0d27efd5350acedd1f3d762"
+  },
+  "results": [
+    {
+      "test": "test_final_training_scheduler_state",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.015s\n\nOK\n"
+    },
+    {
+      "test": "test_launch_final_training",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "...........................fatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py' does not exist in '3c82a6980c1d2a1fbb899f29833304afef00f916'\nfatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py' does not exist in '5387c34c28334b710be7b433b838a39e5108ccde'\nfatal: path '10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py' does not exist in 'ac65f9ad14b76299f569f8bca1bb818b0fd56561'\n.\n----------------------------------------------------------------------\nRan 28 tests in 3.263s\n\nOK\n"
+    },
+    {
+      "test": "test_launch_deployed_training",
+      "returncode": 0,
+      "stdout": "SUBMITTED_ACES_JOB_ID=9001\nSUBMITTED_ACES_JOB_ID=9002\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 unknown | HELD | JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\nFINISHED\nPLANNED\n\nSUBMITTED_ACES_JOB_ID=9001\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: a deployed status lacks its exact original ACES unit/cluster identity\nFINISHED\nPLANNED\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nexplicit h100 policy seed 101 | ACES | 1 H100 PCIe | READY | 0/122070 updates\nHELD\nFINISHED\nPLANNED\nACES continuation | ACES | 1 H100 PCIe | SUBMITTED | one generic H100 job durably recorded\n\nrun or job | pool | gpu | state | progress\nTRAINING\nWAITING\nHELD\nACES continuation | ACES | 1 H100 PCIe | HELD | ValueError: ready H100 raw admission changed before allocation submission\nFINISHED\nPLANNED\n\n",
+      "stderr": "..................................\n----------------------------------------------------------------------\nRan 34 tests in 9.547s\n\nOK\n"
+    }
+  ],
+  "numeric_imports": false,
+  "scientific_hypothesis_credit": 0
+}

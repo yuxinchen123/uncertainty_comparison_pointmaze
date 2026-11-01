@@ -293,9 +293,14 @@ def accounting(run, identifiers):
         if job not in identifiers or job in rows or state not in metadata.ACTIVE | metadata.TERMINAL:
             raise ValueError("scheduler returned a duplicate, foreign or unknown ACES state")
         rows[job] = {"state": state, "exit_code": code, "end": end, "raw": line}
+    current, current_proof = metadata.active_owned_jobs(run, identifiers, CLUSTER)
+    for job, state in current.items():
+        rows.setdefault(job, {"exit_code": None, "end": None, "raw": None})
+        rows[job].update(state=state, active_in_scheduler=True)
     if set(rows) != set(identifiers):
         raise ValueError("an exact ACES scheduler state is unknown; diagnosis is required")
-    return rows, {"command": command, "returncode": result.returncode, "stdout": result.stdout}
+    return rows, {"command": command, "returncode": result.returncode, "stdout": result.stdout,
+                  "current_queue": current_proof}
 
 
 def record_submission(run, job, kind, record):

@@ -159,11 +159,13 @@ class DeployedLauncherTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "exact ACES"):
                 launch.accounting(self.run, ["777"])
             query.assert_not_called()
-        with patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout="500|COMPLETED|0:0|2026-10-31T00:00:00|\n", returncode=0)) as query:
+        with patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout="500|COMPLETED|0:0|2026-10-31T00:00:00|\n", returncode=0)) as query, \
+                patch.object(launch.metadata, "active_owned_jobs", return_value=({}, None)):
             rows, proof = launch.accounting(self.run, ["500"])
             self.assertEqual(rows["500"]["state"], "COMPLETED")
             self.assertEqual(query.call_args.args[0][4], "--format=" + launch.TERMINAL_COLUMNS)
-        with patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout="", returncode=0)):
+        with patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout="", returncode=0)), \
+                patch.object(launch.metadata, "active_owned_jobs", return_value=({}, None)):
             with self.assertRaisesRegex(ValueError, "unknown"):
                 launch.accounting(self.run, ["500"])
 
@@ -174,7 +176,8 @@ class DeployedLauncherTests(unittest.TestCase):
         try:
             with patch.dict(launch.os.environ, {"TZ": "America/Los_Angeles"}), \
                     patch.object(launch.subprocess, "check_output", return_value="JobId=500 EndTime=2026-11-01T06:30:00 ") as control, \
-                    patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout=raw, returncode=0)) as accounting:
+                    patch.object(launch.subprocess, "run", return_value=SimpleNamespace(stdout=raw, returncode=0)) as accounting, \
+                    patch.object(launch.metadata, "active_owned_jobs", return_value=({}, None)):
                 launch.time.tzset()
                 self.assertEqual(launch.scheduler_end("500"), expected)
                 self.assertEqual(control.call_args.kwargs["env"]["TZ"], "UTC")

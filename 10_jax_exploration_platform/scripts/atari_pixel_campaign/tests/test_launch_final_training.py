@@ -345,7 +345,7 @@ class FinalLauncherTests(unittest.TestCase):
         self.assertEqual(call.call_count, 1)
         arguments = call.call_args.args[0]
         for value in ("--nodes=1", "--ntasks=1", "--gres=gpu:nvidia_rtx_a4500:8", "--mem=512G",
-                      "--cpus-per-task=64", "--signal=B:USR1@1800"):
+                      "--cpus-per-task=64", "--signal=B:USR1@1800", "--no-requeue"):
             self.assertIn(value, arguments)
         self.assertNotIn(self.proposals[0]["unit_id"], " ".join(arguments))
         self.assertEqual(final.read(record["plan"])["gpus"], 8)
@@ -460,11 +460,13 @@ class FinalLauncherTests(unittest.TestCase):
                 final.job_states(self.run, ["123"])
             call.assert_not_called()
         self.write("slurm/submitted_jobids_uva.txt", "123\n")
-        with mock.patch.object(final.subprocess, "check_output", return_value="123|COMPLETED|\n") as call:
+        with mock.patch.object(final.subprocess, "check_output", return_value="123|COMPLETED|\n") as call, \
+                mock.patch.object(final, "active_owned_jobs", return_value=({}, None)):
             self.assertEqual(final.job_states(self.run, ["123"]), {"123": "COMPLETED"})
             self.assertEqual(call.call_args.args[0][3], "123")
             self.assertNotIn("-u", call.call_args.args[0])
-        with mock.patch.object(final.subprocess, "check_output", return_value=""):
+        with mock.patch.object(final.subprocess, "check_output", return_value=""), \
+                mock.patch.object(final, "active_owned_jobs", return_value=({}, None)):
             with self.assertRaisesRegex(ValueError, "unknown"):
                 final.job_states(self.run, ["123"])
 
