@@ -1,0 +1,145 @@
+{
+  "kind": "incremental_aces_helper_transport",
+  "commands": [
+    [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-O",
+      "check",
+      "aces"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'REMOTE_BASE='\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git'\"'\"'\nBASIS='\"'\"'8118d12e7924d0c2978db5391b32c258a0a5d20f'\"'\"'\nimport hashlib,json,os,resource,subprocess,sys\nfrom pathlib import Path\nbase=Path(REMOTE_BASE)\nrepository=base/\"repository.git\"\ncommands=[]\ndef limit():\n    resource.setrlimit(resource.RLIMIT_AS,(2*2**30,2*2**30))\ndef invoke(command,allowed=(0,)):\n    commands.append(command)\n    result=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=180,preexec_fn=limit)\n    if result.returncode not in allowed:\n        raise RuntimeError(json.dumps({\"command\":command,\"exit_code\":result.returncode,\"stdout\":result.stdout,\"stderr\":result.stderr}))\n    return result\ndef old_roots():\n    records=[]\n    expected=[(\"numerical_source_d28e6735e797\",\"d28e6735e79788f618acb0ebfde8609db1f776af\"),\n              (\"study_helpers_535efed3d25c\",\"535efed3d25c9276bba5f503b3825b1a68c5183d\"),(\"study_helpers_8118d12e7924\",BASIS),(\"jaxtari_source_04ab9aec318c\",\"04ab9aec318c72162e2e53503a594a489d7e162b\")]\n    for name,commit in expected:\n        root=base/\"checkouts\"/name\n        top=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"--show-toplevel\"]).stdout.strip()\n        actual=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD\"]).stdout.strip()\n        branch=invoke([\"git\",\"-C\",str(root),\"symbolic-ref\",\"--quiet\",\"HEAD\"],(0,1))\n        status=invoke([\"git\",\"-C\",str(root),\"status\",\"--porcelain\",\"--untracked-files=all\"]).stdout\n        if top!=str(root) or actual!=commit or branch.returncode!=1 or status:\n            raise RuntimeError(\"an existing pinned checkout is changed; preserve it: \"+str(root))\n        records.append({\"root\":str(root),\"commit\":commit,\"tree\":invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD^{tree}\"]).stdout.strip(),\n                        \"detached_head\":True,\"git_status_porcelain\":status})\n    return records\ndef sha(path):\n    value=hashlib.sha256()\n    with path.open(\"rb\") as stream:\n        for block in iter(lambda:stream.read(2**20),b\"\"):value.update(block)\n    return value.hexdigest()\n\nif invoke([\"git\",\"--git-dir\",str(repository),\"rev-parse\",\"--is-bare-repository\"]).stdout.strip()!=\"true\":raise RuntimeError(\"destination is not the dedicated bare repository\")\ninvoke([\"git\",\"--git-dir\",str(repository),\"cat-file\",\"-e\",BASIS+\"^{commit}\"])\nprint(json.dumps({\"old_roots\":old_roots(),\"python\":sys.executable,\"python_version\":sys.version,\"commands\":commands}))\n'"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge-base",
+      "--is-ancestor",
+      "8118d12e7924d0c2978db5391b32c258a0a5d20f",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f^{tree}"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "refs/remotes/origin/merge-atari-cleanrl"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge-base",
+      "--is-ancestor",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "refs/transfer/aces_helpers_11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "0000000000000000000000000000000000000000"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "-c",
+      "pack.threads=2",
+      "-c",
+      "pack.windowMemory=64m",
+      "-c",
+      "pack.deltaCacheSize=32m",
+      "-c",
+      "pack.window=5",
+      "-c",
+      "pack.depth=20",
+      "bundle",
+      "create",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f-since-8118d12e7924d0c2978db5391b32c258a0a5d20f.bundle.incomplete",
+      "refs/transfer/aces_helpers_11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "^8118d12e7924d0c2978db5391b32c258a0a5d20f"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "bundle",
+      "verify",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f-since-8118d12e7924d0c2978db5391b32c258a0a5d20f.bundle.incomplete"
+    ],
+    [
+      "git",
+      "bundle",
+      "list-heads",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f-since-8118d12e7924d0c2978db5391b32c258a0a5d20f.bundle.incomplete"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-ref",
+      "-d",
+      "refs/transfer/aces_helpers_11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'TARGET='\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f-since-8118d12e7924d0c2978db5391b32c258a0a5d20f.bundle'\"'\"'\nEXPECTED='\"'\"'a46fb921524c97cdbda892e44248134e056d968e1ba6a8d3ba149c6dd7e886b7'\"'\"'\nSIZE=60866\nfrom pathlib import Path\nimport hashlib,json,os,sys,tempfile\ntarget=Path(TARGET)\ntarget.parent.mkdir(parents=True,exist_ok=True)\nvalue=hashlib.sha256();count=0\nwith tempfile.NamedTemporaryFile(prefix=\"incoming-helpers-11ce-\",dir=target.parent,delete=False) as stream:\n    temporary=Path(stream.name)\n    for block in iter(lambda:sys.stdin.buffer.read(2**20),b\"\"):\n        stream.write(block);value.update(block);count+=len(block)\n    stream.flush();os.fsync(stream.fileno())\nif value.hexdigest()!=EXPECTED or count!=SIZE:raise RuntimeError(\"transported bundle bytes differ; incomplete file preserved\")\ntry:os.link(temporary,target)\nexcept FileExistsError:\n    check=hashlib.sha256()\n    with target.open(\"rb\") as stream:\n        for block in iter(lambda:stream.read(2**20),b\"\"):check.update(block)\n    if check.hexdigest()!=EXPECTED:raise RuntimeError(\"existing target differs; both files preserved\")\ntemporary.unlink()\ndirectory=os.open(target.parent,os.O_RDONLY);os.fsync(directory);os.close(directory)\nprint(json.dumps({\"bundle\":str(target),\"sha256\":value.hexdigest(),\"bytes\":count,\"authentication_attempted\":False}))\n'"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'REMOTE_BASE='\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git'\"'\"'\nBASIS='\"'\"'8118d12e7924d0c2978db5391b32c258a0a5d20f'\"'\"'\nTIP='\"'\"'11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"'\nREF='\"'\"'refs/transfer/aces_helpers_11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"'\nREMOTE_REF='\"'\"'refs/heads/study-helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"'\nBUNDLE='\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-11ceab5c640b484d18ca40e05785bbf55c6de86f-since-8118d12e7924d0c2978db5391b32c258a0a5d20f.bundle'\"'\"'\nEXPECTED='\"'\"'a46fb921524c97cdbda892e44248134e056d968e1ba6a8d3ba149c6dd7e886b7'\"'\"'\nROOT='\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b'\"'\"'\nTREE='\"'\"'da0b49b6efccc48a14633d92a067b4bdbf7f0bad'\"'\"'\nSPARSE=['\"'\"'10_jax_exploration_platform/src'\"'\"', '\"'\"'10_jax_exploration_platform/configs'\"'\"', '\"'\"'10_jax_exploration_platform/scripts/atari_pixel_campaign'\"'\"']\nBEFORE=[{'\"'\"'root'\"'\"': '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'d28e6735e79788f618acb0ebfde8609db1f776af'\"'\"', '\"'\"'tree'\"'\"': '\"'\"'68b796b0cb903194fb4eec30dec10c21386015a5'\"'\"', '\"'\"'detached_head'\"'\"': True, '\"'\"'git_status_porcelain'\"'\"': '\"'\"''\"'\"'}, {'\"'\"'root'\"'\"': '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'535efed3d25c9276bba5f503b3825b1a68c5183d'\"'\"', '\"'\"'tree'\"'\"': '\"'\"'b3de88152396df2ef9ab9b25f00e9b59752e5882'\"'\"', '\"'\"'detached_head'\"'\"': True, '\"'\"'git_status_porcelain'\"'\"': '\"'\"''\"'\"'}, {'\"'\"'root'\"'\"': '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8118d12e7924'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'8118d12e7924d0c2978db5391b32c258a0a5d20f'\"'\"', '\"'\"'tree'\"'\"': '\"'\"'294547e8aced8ce38454bab55ae4eca0c99b5337'\"'\"', '\"'\"'detached_head'\"'\"': True, '\"'\"'git_status_porcelain'\"'\"': '\"'\"''\"'\"'}, {'\"'\"'root'\"'\"': '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'04ab9aec318c72162e2e53503a594a489d7e162b'\"'\"', '\"'\"'tree'\"'\"': '\"'\"'fce02bbb48a9e85b68a78731b588f591b593db38'\"'\"', '\"'\"'detached_head'\"'\"': True, '\"'\"'git_status_porcelain'\"'\"': '\"'\"''\"'\"'}]\nimport hashlib,json,os,resource,subprocess,sys\nfrom pathlib import Path\nbase=Path(REMOTE_BASE)\nrepository=base/\"repository.git\"\ncommands=[]\ndef limit():\n    resource.setrlimit(resource.RLIMIT_AS,(2*2**30,2*2**30))\ndef invoke(command,allowed=(0,)):\n    commands.append(command)\n    result=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=180,preexec_fn=limit)\n    if result.returncode not in allowed:\n        raise RuntimeError(json.dumps({\"command\":command,\"exit_code\":result.returncode,\"stdout\":result.stdout,\"stderr\":result.stderr}))\n    return result\ndef old_roots():\n    records=[]\n    expected=[(\"numerical_source_d28e6735e797\",\"d28e6735e79788f618acb0ebfde8609db1f776af\"),\n              (\"study_helpers_535efed3d25c\",\"535efed3d25c9276bba5f503b3825b1a68c5183d\"),(\"study_helpers_8118d12e7924\",BASIS),(\"jaxtari_source_04ab9aec318c\",\"04ab9aec318c72162e2e53503a594a489d7e162b\")]\n    for name,commit in expected:\n        root=base/\"checkouts\"/name\n        top=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"--show-toplevel\"]).stdout.strip()\n        actual=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD\"]).stdout.strip()\n        branch=invoke([\"git\",\"-C\",str(root),\"symbolic-ref\",\"--quiet\",\"HEAD\"],(0,1))\n        status=invoke([\"git\",\"-C\",str(root),\"status\",\"--porcelain\",\"--untracked-files=all\"]).stdout\n        if top!=str(root) or actual!=commit or branch.returncode!=1 or status:\n            raise RuntimeError(\"an existing pinned checkout is changed; preserve it: \"+str(root))\n        records.append({\"root\":str(root),\"commit\":commit,\"tree\":invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD^{tree}\"]).stdout.strip(),\n                        \"detached_head\":True,\"git_status_porcelain\":status})\n    return records\ndef sha(path):\n    value=hashlib.sha256()\n    with path.open(\"rb\") as stream:\n        for block in iter(lambda:stream.read(2**20),b\"\"):value.update(block)\n    return value.hexdigest()\n\nbundle=Path(BUNDLE)\nif sha(bundle)!=EXPECTED:raise RuntimeError(\"bundle changed before import\")\nverified=invoke([\"git\",\"--git-dir\",str(repository),\"bundle\",\"verify\",str(bundle)])\nheads=invoke([\"git\",\"bundle\",\"list-heads\",str(bundle)]).stdout\nif heads.strip()!=TIP+\" \"+REF:raise RuntimeError(\"unexpected transported reference\")\ninvoke([\"git\",\"--git-dir\",str(repository),\"-c\",\"pack.threads=2\",\"-c\",\"pack.windowMemory=64m\",\"-c\",\"pack.deltaCacheSize=32m\",\"fetch\",\"--no-tags\",str(bundle),REF+\":\"+REMOTE_REF])\ninvoke([\"git\",\"--git-dir\",str(repository),\"merge-base\",\"--is-ancestor\",BASIS,TIP])\nroot=Path(ROOT)\ncreated=not root.exists()\nif created:\n    invoke([\"git\",\"--git-dir\",str(repository),\"worktree\",\"add\",\"--detach\",\"--no-checkout\",str(root),TIP])\n    invoke([\"git\",\"-C\",str(root),\"sparse-checkout\",\"init\",\"--cone\"])\n    invoke([\"git\",\"-C\",str(root),\"sparse-checkout\",\"set\"]+SPARSE)\n    invoke([\"git\",\"-C\",str(root),\"checkout\",\"--detach\",TIP])\ntop=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"--show-toplevel\"]).stdout.strip()\ncommit=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD\"]).stdout.strip()\ntree=invoke([\"git\",\"-C\",str(root),\"rev-parse\",\"HEAD^{tree}\"]).stdout.strip()\nbranch=invoke([\"git\",\"-C\",str(root),\"symbolic-ref\",\"--quiet\",\"HEAD\"],(0,1))\nstatus=invoke([\"git\",\"-C\",str(root),\"status\",\"--porcelain\",\"--untracked-files=all\"]).stdout\nsparse=invoke([\"git\",\"-C\",str(root),\"sparse-checkout\",\"list\"]).stdout.splitlines()\nif top!=str(root) or commit!=TIP or tree!=TREE or branch.returncode!=1 or status or set(sparse)!=set(SPARSE):raise RuntimeError(\"new source checkout differs from the exact clean detached request\")\nafter=old_roots()\nif after!=BEFORE:raise RuntimeError(\"an old pinned root changed during staging\")\nrecord={\"kind\":\"verified_incremental_helper_git_checkout\",\"source_commit\":commit,\"source_tree\":tree,\"basis_commit\":BASIS,\n        \"bare_repository\":str(repository),\"remote_reference\":REMOTE_REF,\"checkout_root\":str(root),\"created_new_checkout\":created,\n        \"detached_head\":True,\"git_status_porcelain\":status,\"sparse_paths\":sparse,\"bundle\":str(bundle),\"bundle_sha256\":EXPECTED,\n        \"bundle_verify_stdout\":verified.stdout,\"bundle_verify_stderr\":verified.stderr,\"old_roots_before\":BEFORE,\"old_roots_after\":after,\n        \"commands\":commands,\"numerical_imports\":False,\"jobs_submitted\":0,\"source_admission_changed\":False}\nreceipt=base/(\"helpers-\"+TIP+\".receipt.json\")\ncontents=(json.dumps(record,indent=2)+\"\\n\").encode()\nwith receipt.open(\"xb\") as stream:stream.write(contents);stream.flush();os.fsync(stream.fileno())\nprint(json.dumps(record))\n'"
+    ]
+  ],
+  "existing_master_only": true,
+  "authentication_attempted": false,
+  "jobs_submitted": 0,
+  "numerical_imports": false,
+  "source_admission_changed": false,
+  "completed_at_utc": "2026-11-01T06:21:11.360207+00:00"
+}

@@ -1,0 +1,64 @@
+{
+  "commands": [
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'from pathlib import Path\nimport hashlib,json\nrun=Path('\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1'\"'\"')\nrecords=[]\nfor name in ['\"'\"'slurm/submitted_jobids_aces.txt'\"'\"', '\"'\"'slurm/submissions_aces.tsv'\"'\"', '\"'\"'slurm/aces_reference_d28e673.sbatch'\"'\"', '\"'\"'data/aces_reference_copies_1_source_d28e6735e797/hardware.json'\"'\"', '\"'\"'data/aces_reference_copies_1_source_d28e6735e797/progress.json'\"'\"']:\n    path=run/name\n    if path.is_symlink():raise RuntimeError(\"resource basis path is a symlink: \"+str(path))\n    records.append({\"relative_path\":name,\"exists\":path.is_file(),\"sha256\":hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None})\nprint(json.dumps({\"files\":records,\"files_written\":0}))\n'"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'from pathlib import Path\nimport importlib.util,json\nspec=importlib.util.spec_from_file_location(\"actual_committed_aces_observer\",'\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py'\"'\"')\nmodule=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\nsource=module.helper_source('\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b'\"'\"')\nif source[\"source_commit\"]!='\"'\"'11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"':raise RuntimeError(\"helper commit differs before preparation\")\nbasis,snapshot=module.resource_basis(Path('\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1'\"'\"'),\"2271806\")\nprint(json.dumps({\"helpers\":source,\"resource_basis\":basis,\"existing_aces_ledger_bytes\":len(snapshot),\"numerical_imports\":False}))\n'"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'import json,subprocess\ncommand=['\"'\"'/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py'\"'\"', '\"'\"'prepare'\"'\"', '\"'\"'--directory'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"', '\"'\"'--campaign'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1'\"'\"', '\"'\"'--helper-root'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b'\"'\"', '\"'\"'--python'\"'\"', '\"'\"'/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python'\"'\"', '\"'\"'--basis-job-id'\"'\"', '\"'\"'2271806'\"'\"', '\"'\"'--partition'\"'\"', '\"'\"'gpu'\"'\"']\np=subprocess.run(command,capture_output=True,text=True)\nif p.returncode:raise RuntimeError(json.dumps({\"command\":command,\"returncode\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr}))\nprint(json.dumps({\"command\":command,\"returncode\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr,\"prepared\":json.loads(p.stdout)}))\n'"
+    ],
+    [
+      "ssh",
+      "-T",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=5",
+      "aces",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python -c 'from pathlib import Path\nimport base64,hashlib,json\nrecords=[]\nfor role,root,names in [('\"'\"'packet'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"', ['\"'\"'allocation_observation_plan.json'\"'\"', '\"'\"'config_resolved.yaml'\"'\"', '\"'\"'command.txt'\"'\"', '\"'\"'job.sbatch'\"'\"', '\"'\"'experiment_background.md'\"'\"', '\"'\"'manifest.yaml'\"'\"', '\"'\"'resource_basis/aces_submitted_jobids.txt'\"'\"']), ('\"'\"'data'\"'\"', '\"'\"'/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f'\"'\"', ['\"'\"'experiment_background.md'\"'\"', '\"'\"'manifest.yaml'\"'\"', '\"'\"'config_resolved.yaml'\"'\"', '\"'\"'command.txt'\"'\"', '\"'\"'progress.json'\"'\"'])]:\n    for name in names:\n        path=Path(root)/name\n        if path.is_symlink():raise RuntimeError(\"prepared artifact is a symlink\")\n        contents=path.read_bytes()\n        records.append({\"role\":role,\"relative_path\":name,\"remote_path\":str(path),\"sha256\":hashlib.sha256(contents).hexdigest(),\"bytes\":len(contents),\"base64\":base64.b64encode(contents).decode()})\nprint(json.dumps({\"files\":records}))\n'"
+    ]
+  ],
+  "existing_master_only": true,
+  "authentication_attempted": false,
+  "numerical_imports": false,
+  "jobs_submitted": 0
+}

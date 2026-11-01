@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "independent_aces_allocation_observation_packet_review",
+  "reviewed_at_utc": "2026-11-01T06:26:57.528101+00:00",
+  "state": "passed prepare-only packet review",
+  "local_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "remote_packet": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "helper_commit": "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "plan_sha256": "aa8c3f57c8b6dd42f2973c33a343fce6bc4cbb1c4bdb90007152a810bcc0b0d6",
+  "manifest_sha256": "316e9b3da44200f098179bb2bb645bcb1fb7f59be167b3d78665151c71ac65bd",
+  "job_script_sha256": "a4e52191f1f7380b3ebb6b0227ef56b9271a6194375aff23aa01eb80c96af7b9",
+  "remote_source_checkout_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/remote_checkout_receipt.json",
+    "sha256": "6a692f6cce7ae3a91c96de0819a51050b027f19b67c3c10f6fd4f6cfb5104a53"
+  },
+  "exact_mirror_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/observation_mirror_receipt.json",
+    "sha256": "91463596fd7780b7b90e7b419610ade82de7ce2fcd1f6628bf884ffe8e9ae808"
+  },
+  "packet_files_verified": 7,
+  "data_files_verified": 5,
+  "all_standard_data_files_equal_packet": true,
+  "no_host_pin": true,
+  "requested_resources": {
+    "account": "158590754315",
+    "partition": "gpu",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "gres": "gpu:h100:1",
+    "cpus_per_task": 8,
+    "memory": "32G",
+    "time": "00:05:00"
+  },
+  "old_remote_sources_unchanged": true,
+  "scientific_credit": 0,
+  "qualification_verified": false,
+  "submission_or_release_performed_by_reviewer": false,
+  "release_condition": "Root may submit held only after publishing exact preparation. Persist the returned ACES ID in remote and local exact ledgers, capture a fresh actual held snapshot, verify and hand over the replacement CPU monitor, then release the observer."
+}

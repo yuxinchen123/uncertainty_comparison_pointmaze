@@ -1,0 +1,11 @@
+{
+  "kind": "new_monitor_draft_visibility_prerequisite_correction",
+  "reason": "The old template required candidate_before.json to exist before its candidate started; the new actual-ACES candidate writes its own before record only after validating the real held snapshot. Startup now waits for static prepared records only.",
+  "prior_script_hashes": {
+    "verify_source.py": "8d4f8e5c474617659289bfd965d2c641a783544d5fe7c6ed7bf832ff24f0c8ac",
+    "monitor.sbatch": "7d5d5b7feb5afc74890f6bff9d7fe414e226f4b43ebb7214fff09ebcccc95e10",
+    "candidate_tick.sh": "7db45a556e782b03a9905c7b20d1bb94581536a7e5512dc3468fd11ef18b7d2f"
+  },
+  "candidate_run": false,
+  "submission_made": false
+}

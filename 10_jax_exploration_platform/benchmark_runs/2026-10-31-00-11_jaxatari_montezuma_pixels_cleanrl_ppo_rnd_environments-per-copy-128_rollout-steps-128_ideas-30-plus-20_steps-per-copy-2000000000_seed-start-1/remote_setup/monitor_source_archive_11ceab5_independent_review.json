@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "independent_monitor_source_archive_and_packet_review",
+  "reviewed_at_utc": "2026-11-01T06:27:03.472966+00:00",
+  "source_commit": "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-24_pixel-study-monitor_source-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "plan_sha256": "6fa2799526a6da6e4825aee18e34f460a953bae2a117ee329f073686c9408e53",
+  "manifest_sha256": "77ef5245a7df826e0842cf1fbe48cb281422a5f5dd52127babc8b2b0ee6c9b21",
+  "source_snapshot_sha256": "d0f94742531f1093c972f8c12ea84033f0c3dad79f8eba185ae8eaf93dfb029c",
+  "archive_sha256": "70c86a485e28f873b6d207d815819a2921249cb8a0547ccdf7f5810f1ea9bab1",
+  "verified_source_files": 209,
+  "all_git_blob_sha256_tar_bytes_and_executable_modes_match": true,
+  "standard_records_and_exact_held_command_match": true,
+  "cpu_only_resource_shape": {
+    "account": "sl5nw_base",
+    "partition": "nolim",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "gpus_per_node": 0,
+    "time": "7-00:00:00",
+    "interval_seconds": 1200
+  },
+  "old_owned_monitor_id": "6779550",
+  "source_review_passed": true,
+  "actual_candidate_or_new_submission_verified": false,
+  "remaining_gates": [
+    "Actual held owned ACES snapshot and full candidate report before monitor submission",
+    "New monitor first complete report and all required old-allocation steps terminal before old monitor cancellation",
+    "ACES observation release only after handover verification"
+  ],
+  "numerical_imports": false,
+  "ssh_commands": 0,
+  "job_actions": 0
+}

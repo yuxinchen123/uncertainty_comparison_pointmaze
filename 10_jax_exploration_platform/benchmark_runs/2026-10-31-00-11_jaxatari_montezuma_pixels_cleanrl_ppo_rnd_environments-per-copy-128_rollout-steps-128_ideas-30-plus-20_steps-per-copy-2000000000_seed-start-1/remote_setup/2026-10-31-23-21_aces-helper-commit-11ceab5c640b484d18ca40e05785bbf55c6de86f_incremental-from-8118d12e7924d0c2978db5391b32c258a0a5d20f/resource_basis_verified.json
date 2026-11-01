@@ -1,0 +1,31 @@
+{
+  "helpers": {
+    "source_root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_11ceab5c640b",
+    "source_commit": "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    }
+  },
+  "resource_basis": {
+    "job_id": "2271806",
+    "ledger_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt",
+    "submission_row": "2271806\taces_reference_copies_1_source_d28e6735e797\td28e6735e79788f618acb0ebfde8609db1f776af",
+    "hardware": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/hardware.json",
+      "sha256": "0cab192abe04a2f73196d7af4553746b9a899671c585b46c8b312dcbef9e5556"
+    },
+    "progress": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/progress.json",
+      "sha256": "633eff11401fc16cb262290d4e59a9a0e3c291bbad55e94980493fbb1d47ac9d"
+    },
+    "job_script": {
+      "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/aces_reference_d28e673.sbatch",
+      "sha256": "ad5d40cd910ada7e7cfb9071cba576d7903c75151a6c149b59339cad04259912"
+    },
+    "qualification_credit": 0,
+    "precision_verified": false
+  },
+  "existing_aces_ledger_bytes": 8,
+  "numerical_imports": false
+}
