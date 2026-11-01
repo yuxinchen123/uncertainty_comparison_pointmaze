@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_observer_source_freeze",
+  "created_utc": "2026-11-01T15:20:07.168432+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "base_commit": "306a3b32470048d8806245d9590fe61336c5571a",
+  "files": {
+    "uva_active_configuration_observation.py": "90779eb1588b6840f991a7b19824774f576032d4dcc1c560bf90e9382acad449",
+    "tests/test_uva_active_configuration_observation.py": "041f1ff064536e3e99e728ae3e24688c0889d9db1b5ddc008fdb6e9d4499c9f1"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_active_configuration_observer_author_6781087_17.json",
+    "sha256": "7436457837f24dbaea2dfbded67ffe3d51b1b1407783dab8fed74665d8454c17"
+  },
+  "scope": "Separate standard-library metadata observer only. No existing source profile, diagnostic, learner, active worker, source admission or failed record is changed.",
+  "requests": {
+    "hostname": "jaguar03",
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim",
+    "reservation": "fresh actual owned sl5nw_168"
+  },
+  "cpu_observation": "Record actual one-or-two simultaneous threads and affinity; never assert one actual affinity entry from one requested CPU.",
+  "settings_allowlist": [
+    "SLURM_CONF",
+    "SlurmdSpoolDir",
+    "TaskPlugin",
+    "ProctrackType",
+    "GresTypes"
+  ],
+  "candidate_paths": "/etc/slurm/{slurm,gres,cgroup}.conf plus only the unique absolute actual SlurmdSpoolDir/conf-cache/{slurm,gres,cgroup}.conf",
+  "returned_identifier_sequence": "Prepare null-ID immutable plan and stage exact published source; root submits --hold --no-requeue, fsyncs actual returned ID in canonical ledger, invokes bind-held-identifier with that returned ID and freshly observed owned reservation, verifies root submission/held state, then root releases. Numeric run rechecks both frozen and live exact canonical ledger membership and returned-ID binding before any owned ID query.",
+  "raw_scope": "Filtered slurm.conf and running configuration only; ordinary gres/cgroup exact bytes/base64/hash; owner/mode/path-chain metadata and explicit absence/read errors. No NVML, CUDA, JAX, slurmd execution or device opens.",
+  "new_live_packet_prepared": false,
+  "jobs_submitted": false,
+  "gpu_actions": false,
+  "profile_revision": false,
+  "physical_assignment_verified": false,
+  "source_admission_changed": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_credit": 0,
+  "throughput_credit": 0,
+  "admission_credit": 0,
+  "git_status": "?? 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_active_configuration_observation.py\n?? 10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py\n"
+}
