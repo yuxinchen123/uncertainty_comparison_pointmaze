@@ -332,3 +332,50 @@ def test_missing_or_incomplete_repeatability_probe_produces_no_observation_claim
     REPORT.generate_report(tmp_path)
     assert 'Repeatability of tabular training' not in (tmp_path/'analysis/analysis.md').read_text()
     assert 'Repeatability of tabular training' not in (tmp_path/'analysis/results.tex').read_text()
+
+
+def _completed_findings_family(wave='confirmation'):
+    """Create four completed paired-case records for a fixed settings protocol."""
+    # Synthetic ratios exercise presentation; their settings are never selected or changed by the summary.
+    return [{'wave': wave, 'budget': 4194304 if wave == 'confirmation' else 16777216,
+        'comparison': 'independently-tuned', 'geometry': {'kind': geometry, 'width': 32, 'turns': 0},
+        'policy_kind': policy, 'confirmation_complete': True, 'paired_seed_count': 128,
+        'mean_ratio': 18.0 if wave == 'long-confirmation' else 3.0,
+        'mean_ratio_interval': [12., 28.] if wave == 'long-confirmation' else [2., 4.],
+        'candidate_goal_fraction': 1.0, 'uniform_goal_fraction': 1.0}
+        for geometry in ('straight', 'snake') for policy in ('tabular', 'neural')]
+
+
+def test_completed_findings_separate_budgets_and_explain_eventual_neural_success():
+    """Keep the final overview tied to all four completed cases at each frozen budget."""
+    # The longer restarted family is displayed separately and its all-seed success stays explicit.
+    summary = REPORT.completed_confirmation_findings(_completed_findings_family()+
+                                                     _completed_findings_family('long-confirmation'))
+    assert summary['family_count'] == 2
+    for document in (summary['markdown'], summary['tex']):
+        assert 'Primary confirmation' in document and 'Secondary confirmation' in document
+        assert 'independently tuned settings' in document
+        assert '98.75' in document and '128/128' in document
+        assert 'restarted from initialization' in document
+        assert 'learning-rate annealing spans the longer budget' in document
+        assert 'All 128 independently tuned neural-policy seeds' in document
+        assert '18.000 [12.000, 28.000]' in document
+        assert 'permanent' not in document
+
+
+@pytest.mark.parametrize('state', ['absent', 'partial', 'interim'])
+def test_completed_findings_never_claim_a_partial_family_is_complete(state):
+    """A missing case or unfinished planned seed set cannot enter a completed-family overview."""
+    # Existing individual estimates remain available in the full tables, outside this final summary.
+    rows = _completed_findings_family()
+    if state == 'absent':
+        rows = []
+    elif state == 'partial':
+        rows = rows[:3]
+    else:
+        rows[0] = {**rows[0], 'confirmation_complete': False}
+    summary = REPORT.completed_confirmation_findings(rows)
+    assert summary['family_count'] == 0
+    assert 'No complete four-case confirmation family' in summary['markdown']
+    assert 'Primary confirmation' not in summary['markdown']
+    assert '\\begin{table}' not in summary['tex']

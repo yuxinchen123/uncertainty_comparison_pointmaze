@@ -768,6 +768,79 @@ def _latex_escape(value):
     return ''.join(replacements.get(character, character) for character in str(value))
 
 
+def completed_confirmation_findings(comparisons):
+    """Summarize only complete four-case families without selecting settings from confirmation data."""
+    # A family contains both geometries and both policy representations under one frozen protocol.
+    grouped = defaultdict(list)
+    for comparison in comparisons:
+        grouped[(comparison['wave'], comparison['budget'], comparison['comparison'])].append(comparison)
+    required = {(geometry, policy) for geometry in ('straight', 'snake') for policy in ('tabular', 'neural')}
+    families = []
+    for identity, rows in grouped.items():
+        cases = {(row['geometry']['kind'], row['policy_kind']) for row in rows}
+        if len(rows) == 4 and cases == required and all(row.get('confirmation_complete', False) for row in rows):
+            families.append((identity, sorted(rows, key=lambda row: (
+                0 if row['geometry']['kind'] == 'straight' else 1, row['policy_kind']))))
+    families.sort(key=lambda family: (WAVE_ORDER.index(family[0][0]),
+                                      0 if family[0][2] == 'independently-tuned' else 1))
+    markdown = ['## Completed confirmation findings\n\n']
+    tex = ['\\paragraph{Completed confirmation findings.}\n']
+    if not families:
+        message = 'No complete four-case confirmation family is available yet. Partial results remain interim in the full tables.\n\n'
+        return {'markdown': markdown[0]+message, 'tex': tex[0]+message, 'family_count': 0}
+
+    # Keep the primary and longer budgets separate, with goals counted over every paired policy.
+    scope = ('Straight-grid cases compare the frozen selected adversarial initial field with uniform bonuses. '
+             'Snake-grid cases compare frozen coordinate-network initial fields with uniform bonuses. '
+             'Ratios are capped mean first-goal times relative to uniform initialization. '
+             'Intervals adjust for four cases within each settings protocol and budget. '
+             'The study measures delays and failures within fixed transition budgets.')
+    markdown.append(scope+'\n\n')
+    tex.append(_latex_escape(scope)+'\n\n')
+    for (wave, budget, protocol), rows in families:
+        stage = 'Primary confirmation: about 4 million transitions' if wave == 'confirmation' else 'Secondary confirmation: about 16 million transitions'
+        protocol_name = comparison_label({'configuration': {'comparison': protocol}})
+        title = stage+'; '+protocol_name.lower()
+        markdown.append('### '+title+'\n\n| Case | Ratio [98.75% interval] | Adverse goals | Uniform goals | Paired policies |\n'
+                        '|---|---:|---:|---:|---:|\n')
+        tex.append('\\begin{table}[H]\n\\centering\n\\setlength{\\tabcolsep}{3pt}\n'
+            '\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{3.7cm}'
+            '>{\\raggedright\\arraybackslash}p{3.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.6cm}@{}}\n\\toprule\n'
+            'Case & Ratio, 98.75\\% interval & Adverse goals & Uniform goals & Paired policies \\\\\n\\midrule\n')
+        for row in rows:
+            case = row['geometry']['kind'].capitalize()+' grid, '+row['policy_kind']+' policy'
+            count = row['paired_seed_count']
+            adverse_goals = f"{round(row['candidate_goal_fraction']*count)}/{count}"
+            uniform_goals = f"{round(row['uniform_goal_fraction']*count)}/{count}"
+            ratio = _format_interval(row['mean_ratio'], row['mean_ratio_interval'], decimals=3)
+            markdown.append(f'| {case} | {ratio} | {adverse_goals} | {uniform_goals} | {count} |\n')
+            tex.append(_latex_escape(case)+' & '+_latex_escape(ratio)+' & '+adverse_goals+' & '+uniform_goals+f' & {count} \\\\\n')
+        markdown.append('\n')
+        tex.append('\\bottomrule\n\\end{tabular}\n\\caption{'+_latex_escape(title)+
+            '. Each row retains its frozen configuration and all paired policy seeds.}\n\\end{table}\n')
+
+    # The longer stage starts again from initialization and has a different annealing duration.
+    if any(identity[0] == 'long-confirmation' for identity, rows in families):
+        note = ('The 16-million-transition stage restarted from initialization with the same frozen seeds and settings. '
+                'Its learning-rate annealing spans the longer budget; these are separate restarted runs.')
+        markdown.append(note+'\n\n')
+        tex.append(_latex_escape(note)+'\n\n')
+    for (wave, budget, protocol), rows in families:
+        if wave == 'long-confirmation' and protocol == 'independently-tuned':
+            row = next(item for item in rows if item['geometry']['kind'] == 'snake' and item['policy_kind'] == 'neural')
+            if row['candidate_goal_fraction'] == 1:
+                note = (f"All {row['paired_seed_count']} independently tuned neural-policy seeds on the snake grid reached the goal "
+                        'within the longer budget. Their capped mean first-goal-time ratio was '+
+                        _format_interval(row['mean_ratio'], row['mean_ratio_interval'], decimals=3)+
+                        '; this case demonstrates delayed discovery with eventual success within the measured budget.')
+                markdown.append(note+'\n\n')
+                tex.append(_latex_escape(note)+'\n\n')
+    return {'markdown': ''.join(markdown), 'tex': ''.join(tex), 'family_count': len(families)}
+
+
 def tabular_repeatability_observations(run_dir):
     """Describe only observations recorded by the completed duplicate-seed repeatability probe."""
     # Absent and unfinished probes contribute no experimental claims to either report.
@@ -827,6 +900,7 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_compari
     """Write generated result tables and selected behavior figures for the development document."""
     # Keep results separate across budgets and shared versus independently tuned comparisons.
     pieces = ['% Generated by scripts/grid_initialization_campaign/report.py; edit that generator.\n']
+    pieces.append(completed_confirmation_findings(paired_comparisons)['tex'])
     if not display_rows:
         pieces.append('No completed training records are available yet. No failure case has been established.\n')
     groups = defaultdict(list)
@@ -939,6 +1013,7 @@ def generate_report(run_dir):
               'Development rows choose settings using development results. Confirmation comparisons retain settings '
               'chosen before their fresh seeds ran. Shared and independently tuned settings appear separately. '
               'These results concern the recorded finite budget; they do not establish permanent trapping.\n\n']
+    pieces.append(completed_confirmation_findings(paired_comparisons)['markdown'])
     pieces.append('## Numerical results\n\nEvery measured map remains in these summaries and in the seed records. '
                   'Large figures and the main document use only the maps already chosen by the campaign.\n\n')
     if not display_rows:
