@@ -77,7 +77,7 @@
         "sha256": "529f702f920a4c2b897146029c3ce761c1bc6bb60aacd97cbc251981c73b9d99"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -151,7 +151,7 @@
         "sha256": "0f12fa1aa3485de708ce179592809afd8ac2597c2dc98316afe1619d9f8104f3"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -231,7 +231,7 @@
         "sha256": "a8b2d87bfa962a702a5282a7b27240b304984f39ba05411ca546809d9afbb79f"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -253,7 +253,8 @@
       "einsum_independent_dense_layers",
       "fuse_network_bias_and_activation",
       "cache_frozen_training_target_features",
-      "batch_rollout_intrinsic_rewards"
+      "batch_rollout_intrinsic_rewards",
+      "flat_parameter_and_optimizer_buffers"
     ],
     "wrapped_labels": [
       "donate training buffers",
@@ -263,7 +264,8 @@
       "einsum independent dense layers",
       "fuse network bias and activation",
       "cache frozen training target features",
-      "batch rollout intrinsic rewards"
+      "batch rollout intrinsic rewards",
+      "flat parameter and optimizer buffers"
     ],
     "results": [
       {
@@ -297,9 +299,13 @@
       {
         "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-18__batch_rollout_intrinsic_rewards__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
         "sha256": "df2de8a5feb34cbe0bd89be100ee87ca5331c253bd4c5a8b663294192d568291"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-19__flat_parameter_and_optimizer_buffers__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "54b0b50fa3497a85dbc9d917cae259f9357815d997cb295d7a2f105ac656f107"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -379,7 +385,7 @@
         "sha256": "1022afb61d68bf8d08b3c2bb7fe20400ff37d56113c3b3ca4b334ce5ed904ecf"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -459,7 +465,7 @@
         "sha256": "453097846a9f20e02da72148ff3d6ba61e3869de7741fef968863bd36117baea"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -533,7 +539,7 @@
         "sha256": "45ba0a60e266be6fcc4d3dc8fc913608817a2b008f67150265f1744bafb38d82"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -559,7 +565,7 @@
         "sha256": "4e758c871b5505d38419393e53ac7d48d519a96608a54d4581aa73f7e46af0d5"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -585,7 +591,7 @@
         "sha256": "54f879a03eb4aa6044c1149504745e3f45061ed5f4c234b8badd7a6385cdbe32"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -665,7 +671,7 @@
         "sha256": "c5add3691316b038022a5771d9858ae30ebffa973b1b9ef2a27a16f220476d17"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -745,7 +751,7 @@
         "sha256": "bc6d2e329b86dcc412bf0616a75b894463f8cb9715596e19d654a97c65fb6b4a"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -813,7 +819,7 @@
         "sha256": "a8404b7461e134b4bf91ac2678eb4bcb0367777b9ba26962b5c3e191a819c968"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   },
   {
     "schema_version": 2,
@@ -839,6 +845,6 @@
         "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
       }
     ],
-    "input_fingerprint": "95106122f5f6429719734cd9a5574e45443af8c596e748b56031274803d1b909"
+    "input_fingerprint": "e05ef88cda834d9f8bb73755cb25148f12c21a62e231316b1ea368ba9398db31"
   }
 ]
