@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "root_independent_direct_observer_design_review_and_implementation_decision",
+  "at_utc": "2026-11-01T19:34:34.327316+00:00",
+  "design_sha256": "b91973ef255a7daaec27f63d3fcd8d870a5adfefcd8ce14e490ee67d16c48342",
+  "evidence_refs_verified": 5,
+  "approved_for_isolated_implementation": true,
+  "approved_for_launch_or_worker_admission": false,
+  "conditions": [
+    "The 120-case/worker-stop start gate applies to NEW direct observer qualification or measurement work; existing authorized read-only initial-worker monitoring continues.",
+    "Snapshot historical process/admission/worker-stop inputs into immutable unit evidence before new process registration. Later appends to live process ledgers must not invalidate a frozen historical proof or substitute for the required current row membership. Never use a mutable live ledger as its own snapshot.",
+    "Same-process selected work holds and proves its own descriptor. Profiling parent holds and passes the descriptor; child must prove inherited descriptor/custody and process births before CUDA, or refuse. No busy-path inference or reacquisition.",
+    "Implement the separate direct binding/core tests in an isolated worktree first. Producer integration must use the reviewed shared observer interface after the A4500 producer is published; preserve both existing defaults and the fixed UVA policy.",
+    "Every actual context/UUID/PCI/proc/driver and occupancy/headroom sample is newly observed only on the approved UUID. Historical hardware is an expected constraint, not current proof.",
+    "Unsupported capacity, packing, final, scaling, other-device and portable consumers reject until separately supported and qualified."
+  ],
+  "existing_monitoring_remains_authorized": true,
+  "no_current_admission_change": true,
+  "no_remote_or_GPU_operations_in_review": true,
+  "scientific_credit": 0,
+  "worker_admitted": false
+}
