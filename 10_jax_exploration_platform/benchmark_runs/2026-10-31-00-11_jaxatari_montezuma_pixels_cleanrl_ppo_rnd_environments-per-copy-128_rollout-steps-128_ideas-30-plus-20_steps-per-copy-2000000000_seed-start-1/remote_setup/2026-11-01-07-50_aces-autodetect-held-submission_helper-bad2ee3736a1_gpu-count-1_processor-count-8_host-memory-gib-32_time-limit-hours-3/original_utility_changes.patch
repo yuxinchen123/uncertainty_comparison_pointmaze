@@ -1,0 +1,52 @@
+--- original/submit_aces_full_site_held.py
++++ fresh_autodetect/submit_aces_full_site_held.py
+@@ -23,7 +23,7 @@
+ import sys
+ 
+ 
+-PLAN_SHA = "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f"
++PLAN_SHA = "50d36dc21fe5842ddace8d84b4d7d91d584e0013b9aaaf4f19e2da778e7c6bae"
+ BASE_SHA = "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a"
+ BOUNDARY = {"workers_permitted": False, "campaign_claims_permitted": False,
+     "scientific_hypothesis_credit": 0, "comparison_credit": 0, "idea_credit": 0, "admission_credit": 0}
+@@ -141,7 +141,11 @@
+             or shlex.split((packet / "command.txt").read_text()) != plan["held_command"]
+             or plan["held_command"][0:3] != ["sbatch", "--parsable", "--hold"]
+             or native["source_commit"] != "d28e6735e79788f618acb0ebfde8609db1f776af"
+-            or native["helpers"]["source_commit"] != "8e43cb1dc963045fc28f4e611411097efd93185a"):
++            or native["helpers"]["source_commit"] != "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
++            or native.get("qualification_profile") != plan.get("qualification_profile")
++            or native["qualification_profile"].get("name") != "aces-h100-pcie-driver-580.178.04-autodetect-nvml-configured-isolation"
++            or native["qualification_profile"].get("physical_gres_mapping_verified") is not False
++            or native["qualification_profile"].get("kernel_device_enforcement_verified") is not False):
+         raise ValueError("the held packet changed its source, interpreter, owner or exact command")
+     for name in ("held_submission_intent.json", "submission_receipt.json", "release_receipt.json", "held_submission_failure.json"):
+         if (packet / name).exists() or (packet / name).is_symlink():
+--- original/adopt_aces_full_site_held.py
++++ fresh_autodetect/adopt_aces_full_site_held.py
+@@ -12,8 +12,8 @@
+ import tempfile
+ 
+ 
+-PLAN_SHA = "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f"
+-DRIVER_SHA = "be81fb18909a933592e5cdb6824698b5e94439f19495f053305c0505d2e1e64b"
++PLAN_SHA = "50d36dc21fe5842ddace8d84b4d7d91d584e0013b9aaaf4f19e2da778e7c6bae"
++DRIVER_SHA = "48ef07150dffb1d7f366e61ae77813c37934da11479d1e4b0e5b7b0baa6d84a6"
+ BOUNDARY = {"workers_permitted": False, "campaign_claims_permitted": False,
+     "scientific_hypothesis_credit": 0, "comparison_credit": 0, "idea_credit": 0, "admission_credit": 0}
+ ARTIFACTS = {"submission_receipt.json", "held_submission_intent.json", "held_submission_stdout.raw",
+--- original/test_submit_aces_full_site_held.py
++++ fresh_autodetect/test_submit_aces_full_site_held.py
+@@ -50,10 +50,10 @@
+             return SimpleNamespace(returncode=returncode)
+         return invoke
+ 
+-    def test_real_local_twenty_frozen_inputs_validate_without_commands(self):
++    def test_real_local_frozen_inputs_validate_without_commands(self):
+         with mock.patch.object(driver.subprocess, "run", side_effect=AssertionError("commands forbidden")):
+             payload, plan = driver.local_payload(PLAN)
+-        self.assertEqual(len(plan["local_files"]), 20)
++        self.assertEqual(len(plan["local_files"]), 523)
+         self.assertEqual(plan["private_python"], json.loads(Path(plan["local_packet"]).joinpath("site_validation_plan.json").read_bytes())["python"])
+         self.assertNotIn("torch", sys.modules)
+ 

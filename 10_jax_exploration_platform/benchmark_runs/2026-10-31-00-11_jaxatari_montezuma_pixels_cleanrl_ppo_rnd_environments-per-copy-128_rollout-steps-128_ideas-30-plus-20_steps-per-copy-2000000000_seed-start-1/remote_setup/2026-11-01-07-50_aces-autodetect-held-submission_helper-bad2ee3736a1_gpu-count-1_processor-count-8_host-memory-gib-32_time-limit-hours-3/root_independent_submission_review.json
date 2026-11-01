@@ -1,0 +1,29 @@
+{
+  "kind": "fresh_aces_autodetect_submission_root_independent_review",
+  "at_utc": "2026-11-01T16:16:40.416166+00:00",
+  "metadata_tests": 22,
+  "metadata_step": "6781087.41",
+  "metadata_receipt_sha256": "0f352d52f85d5c02504b48267a51e3c5cf4445d364879c8f0fddcbed3f5d57d5",
+  "files": {
+    "submit_aces_full_site_held.py": "48ef07150dffb1d7f366e61ae77813c37934da11479d1e4b0e5b7b0baa6d84a6",
+    "adopt_aces_full_site_held.py": "4710655837443f8305c0d76a7ea9ea44c8aef67b1d76181f580d38e293d92467",
+    "submission_base_metadata.py": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+    "test_submit_aces_full_site_held.py": "b1c26e0ef3872ed42b896729601418a67f93dd8f703779c12714063e14b9a459",
+    "test_adopt_aces_full_site_held.py": "5fc2eb7e72114efd77bf75ae96a82ad6ca6dd0ce7e682f89e51c2d607e72fbb1",
+    "test_fresh_autodetect_submission_contract.py": "c2029e73e24ac6baf8868c9114ef521e43889a481f0a72685de12ecddf4f1ac4",
+    "aces_full_site_held_submission_plan.json": "50d36dc21fe5842ddace8d84b4d7d91d584e0013b9aaaf4f19e2da778e7c6bae"
+  },
+  "complete_original_utility_diff_reviewed": true,
+  "change_scope": "exact new preparation pins, bad2 helper/profile and explicit false mapping/enforcement flags; original ledger, intent, transport and adoption logic preserved",
+  "default_local_validation_passed": true,
+  "default_validation_stdout": "{\n  \"plan_sha256\": \"50d36dc21fe5842ddace8d84b4d7d91d584e0013b9aaaf4f19e2da778e7c6bae\",\n  \"held_command\": [\n    \"sbatch\",\n    \"--parsable\",\n    \"--hold\",\n    \"--account=158590754315\",\n    \"--partition=gpu\",\n    \"--qos=normal\",\n    \"--nodes=1\",\n    \"--ntasks=1\",\n    \"--gres=gpu:h100:1\",\n    \"--cpus-per-task=8\",\n    \"--mem=32G\",\n    \"--time=03:00:00\",\n    \"--job-name=ACES_H100_full_site_qualification\",\n    \"--output=/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/aces_full_site_qualification_%j.log\",\n    \"/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/job.sbatch\"\n  ],\n  \"native_python\": \"/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python\",\n  \"network_calls\": 0,\n  \"submissions\": 0\n}\n",
+  "canonical_mirror_proof_sha256": "72aa9e25a4f73c539bbfc188fa4e3f16d91eb3ea81dda6abd90eefef49665806",
+  "actual_native_preparation_audit_sha256": "456e77c35f9759ec5d5689750f73508f8e56cd5369d27c5e751b4fbd7950bec1",
+  "reviewed_for_one_new_held_submission_and_local_adoption": true,
+  "release_authorized_by_this_review": false,
+  "site_success_or_worker_admission": false,
+  "jobs_submitted": 0,
+  "network_calls_in_review": 0,
+  "old_job_2274632_changed": false,
+  "scientific_credit": 0
+}

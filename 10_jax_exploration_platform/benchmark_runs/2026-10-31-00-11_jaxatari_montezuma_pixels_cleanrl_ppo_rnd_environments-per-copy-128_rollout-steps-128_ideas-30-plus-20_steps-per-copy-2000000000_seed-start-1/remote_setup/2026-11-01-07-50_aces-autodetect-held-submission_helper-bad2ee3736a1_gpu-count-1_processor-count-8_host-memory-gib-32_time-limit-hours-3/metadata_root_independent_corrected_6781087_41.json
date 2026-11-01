@@ -1,0 +1,32 @@
+{
+  "kind": "fresh_aces_held_submission_root_independent_metadata_corrected_guard",
+  "at_utc": "2026-11-01T16:08:20.618464+00:00",
+  "job_id": "6781087",
+  "step_id": "41",
+  "files": {
+    "submit_aces_full_site_held.py": "48ef07150dffb1d7f366e61ae77813c37934da11479d1e4b0e5b7b0baa6d84a6",
+    "adopt_aces_full_site_held.py": "4710655837443f8305c0d76a7ea9ea44c8aef67b1d76181f580d38e293d92467",
+    "submission_base_metadata.py": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+    "test_submit_aces_full_site_held.py": "b1c26e0ef3872ed42b896729601418a67f93dd8f703779c12714063e14b9a459",
+    "test_adopt_aces_full_site_held.py": "5fc2eb7e72114efd77bf75ae96a82ad6ca6dd0ce7e682f89e51c2d607e72fbb1",
+    "test_fresh_autodetect_submission_contract.py": "c2029e73e24ac6baf8868c9114ef521e43889a481f0a72685de12ecddf4f1ac4",
+    "aces_full_site_held_submission_plan.json": "50d36dc21fe5842ddace8d84b4d7d91d584e0013b9aaaf4f19e2da778e7c6bae"
+  },
+  "source_unchanged": true,
+  "tests": 22,
+  "passed": true,
+  "errors": 0,
+  "failures": 0,
+  "exact_synthetic_stdlib_children": 2,
+  "test_output": "test_bootstrap_checks_source_before_invoking_a_metadata_function (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_busy_ledger_lock_blocks_before_any_submission_or_intent (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_exact_response_keeps_remote_bytes_separate_without_local_ledger_changes (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_failed_or_ambiguous_return_preserves_raw_and_does_not_append (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_foreign_publication_is_rejected_before_any_local_intent (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_incomplete_or_duplicate_existing_ledger_stops_before_submission (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_linked_ledger_or_existing_immutable_intent_is_never_replaced (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_real_local_frozen_inputs_validate_without_commands (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_receipt_matches_existing_full_site_monitor_contract (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_returned_existing_id_never_duplicates_the_ledger (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_success_is_held_once_and_both_remote_ledgers_precede_receipt (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_timeout_keeps_intent_and_raw_without_guessing_a_job_id (test_submit_aces_full_site_held.HeldSubmissionTests) ... ok\ntest_busy_or_linked_local_ledgers_never_write (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_changed_returned_hash_or_source_identity_never_appends (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_exact_native_receipt_is_published_only_after_both_local_appends (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_existing_or_inconsistent_local_ids_reject_without_an_intent (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_missing_remote_ledger_membership_and_boolean_credit_reject (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_publication_failure_keeps_durable_id_intent_and_forbids_retry (test_adopt_aces_full_site_held.AdoptionTests) ... ok\ntest_actual_new_packet_is_supported_and_original_wrapper_remains_unchanged (test_fresh_autodetect_submission_contract.FreshAutoDetectContractTests)\nThe new pin accepts bad2/AutoDetect; the historical wrapper still refuses this new helper. ... ok\ntest_all_frozen_local_inputs_fit_the_unchanged_adoption_read_bound (test_fresh_autodetect_submission_contract.FreshAutoDetectContractTests)\nReturning many small audit files does not silently exceed the original bounded local reader. ... ok\ntest_default_validation_has_no_intent_ledger_or_cluster_action (test_fresh_autodetect_submission_contract.FreshAutoDetectContractTests)\nRead all actual prepared inputs while every real process call is forbidden. ... ok\ntest_rehashed_profile_or_helper_changes_are_rejected (test_fresh_autodetect_submission_contract.FreshAutoDetectContractTests)\nA coherent rewritten test plan cannot change the fixed profile or enable mapping/enforcement claims. ... ok\n\n----------------------------------------------------------------------\nRan 22 tests in 1.384s\n\nOK\n",
+  "previous_guard_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/metadata_root_independent_6781087_39.json",
+    "sha256": "be5e27d518c982e125074723a67989fdf24dd0cf544d5438f4e3fc973ca7d971",
+    "reason": "the test loads the driver under its test-module variable rather than the production module name; only guard lookup corrected"
+  },
+  "network": false,
+  "native_library_loads": false,
+  "actual_submission_or_adoption": false,
+  "gpu": false,
+  "scientific_credit": 0
+}
