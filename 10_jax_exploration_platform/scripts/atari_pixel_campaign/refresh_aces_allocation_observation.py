@@ -15,7 +15,6 @@ import json
 import os
 from pathlib import Path
 import pwd
-import re
 import shlex
 import socket
 import subprocess
@@ -158,10 +157,8 @@ def command_result(command, timeout):
 
 def receive(inputs):
     """Reuse an existing ACES control master for one bounded metadata-only remote command."""
-    # ProxyCommand=false prevents a missing master from opening another connection.
-    master = command_result(["ssh", "-O", "check", "aces"], 10)
-    if master["returncode"] != 0 or not re.search(r"Master running \(pid=[0-9]+\)", master["stderr"]):
-        raise RuntimeError("the existing ACES master is unavailable; no connection was opened")
+    # Reuse the configured socket; the false proxy prevents a new connection if it is absent.
+    # Explicit master checks belong to the separate hourly resource review.
     request = {"remote_campaign_run_dir": str(inputs["remote"]), "campaign_name": inputs["run"].name,
                "packet_name": inputs["packet"].name, "job_id": inputs["identifier"],
                "packet_hashes": inputs["packet_hashes"], "data_filenames": sorted(DATA_FILES)}
@@ -171,8 +168,9 @@ def receive(inputs):
     received = command_result(command, 120)
     if received["returncode"] != 0 or len(received["stdout"].encode()) > MAX_RESPONSE_BYTES:
         raise RuntimeError("existing-master ACES metadata command failed: " + received["stderr"][:4000])
-    return json.loads(received["stdout"]), {"master": master, "remote_returncode": received["returncode"],
-                                          "remote_stderr": received["stderr"], "remote_python": REMOTE_PYTHON}
+    return json.loads(received["stdout"]), {"master_check": {"performed": False,
+        "reason": "not separately checked; explicit checks belong to the hourly resource review"},
+        "remote_returncode": received["returncode"], "remote_stderr": received["stderr"], "remote_python": REMOTE_PYTHON}
 
 
 def decoded_file(record, expected_path):

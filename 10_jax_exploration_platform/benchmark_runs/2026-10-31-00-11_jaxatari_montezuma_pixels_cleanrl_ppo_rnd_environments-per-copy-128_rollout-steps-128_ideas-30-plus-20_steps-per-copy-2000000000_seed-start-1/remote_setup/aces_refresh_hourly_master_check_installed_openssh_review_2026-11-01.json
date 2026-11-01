@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kind": "installed_openssh_basis_for_hourly_master_check_correction",
+  "recorded_at_utc": "2026-11-01T06:58:20.613791+00:00",
+  "installed_document": {
+    "path": "/usr/share/man/man5/ssh_config.5.gz",
+    "sha256": "e7c4afc12c8bba73530d40a225b619ac98d48dc74205f24aeedc5b2530441d8e"
+  },
+  "installed_version_from_local_only_version_probe": "OpenSSH_8.9p1 Ubuntu-3ubuntu0.17, OpenSSL 3.0.2 15 Mar 2022",
+  "configuration_source": "/u/sl5nw/.ssh/config",
+  "relevant_aces_alias": {
+    "HostName": "login.aces.hprc.tamu.edu",
+    "User": "u.sl359075",
+    "ProxyJump": "aces-jump",
+    "ControlMaster": "auto",
+    "ControlPath": "/localtmp/sl5nw/ssh-cm-%r@%h:%p",
+    "ControlPersist": "yes"
+  },
+  "documented_behavior_paraphrased": [
+    "ControlMaster=no sessions still reuse a matching configured ControlPath.",
+    "When the control socket is unavailable, the ordinary connection path uses ProxyCommand.",
+    "The first specified ProxyCommand or ProxyJump setting prevents a later competing setting from taking effect.",
+    "Command-line options take precedence over the later user configuration."
+  ],
+  "conclusion_kind": "inference from installed documented behavior and the actual alias configuration",
+  "conclusion": "Retain ControlMaster=no, ProxyCommand=false and BatchMode=yes on the single refresh query. The existing socket is reused; without it, false supplies no network transport, so the query fails before remote authentication.",
+  "change": "Remove all explicit ssh -O checks from periodic refreshes. Keep them only in the separate at-most-hourly resource review. Record master_check.performed=false and do not claim the master was separately verified.",
+  "cache_added": false,
+  "source_sha256": "a96082f1d66827ccb4552aa01860abef00bab4d8b77e0a76a75744809cbdee79",
+  "tests_sha256": "2827a3dd45b235cbcce9525b91c926e94d572201a86790a73afe956d9ffac156",
+  "test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_refresh_hourly_master_check_tests_6780433_2.json",
+    "sha256": "a668ddaf1e486d64e5c84d97dd696c0ba4deb8c987bdf698114ac5cf10f3823d"
+  },
+  "live_ssh_commands": 0,
+  "job_submissions": 0,
+  "numerical_imports": false
+}

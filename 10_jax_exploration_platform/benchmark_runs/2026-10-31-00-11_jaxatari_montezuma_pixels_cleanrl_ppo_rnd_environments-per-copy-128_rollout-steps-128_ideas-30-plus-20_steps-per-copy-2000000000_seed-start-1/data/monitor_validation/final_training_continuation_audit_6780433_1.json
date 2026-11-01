@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "kind": "final_training_continuation_read_only_audit",
+  "job_id": "6780433",
+  "step_id": "1",
+  "hostname": "slurm5",
+  "started_at_utc": "2026-11-01T06:54:58.995206+00:00",
+  "finished_at_utc": "2026-11-01T06:54:59.010982+00:00",
+  "results": {
+    "interrupted_checkpoint_publication": {
+      "injected_failure": "simulated interruption after payload replacement",
+      "old_complete_iteration": 3,
+      "current_payload_iteration": 4,
+      "retained_metadata_iteration": 3,
+      "old_payload_sha256": "b78e3521901c27b2e5b7b56bcd84e760b8a482c2fb89bbd12de8181d4bed3b73",
+      "current_payload_sha256": "5bf1ef8d7041e5fa6da3800bec3e7141098e3b1e48569a87d793a96225cff75d",
+      "retained_metadata_payload_sha256": "b78e3521901c27b2e5b7b56bcd84e760b8a482c2fb89bbd12de8181d4bed3b73",
+      "old_payload_retained": false,
+      "old_metadata_retained": true,
+      "payload_matches_retained_metadata": false
+    },
+    "uva_requeued_terminal_proof": {
+      "synthetic_accounting_state": "PREEMPTED",
+      "synthetic_current_queue_state": "PENDING",
+      "returned_state": "PREEMPTED",
+      "commands": [
+        [
+          "sacct",
+          "-X",
+          "-j",
+          "9001",
+          "--format=JobIDRaw,State",
+          "-P",
+          "-n"
+        ]
+      ],
+      "current_queue_queried": false
+    },
+    "aces_requeued_terminal_proof": {
+      "synthetic_accounting_state": "PREEMPTED",
+      "synthetic_current_queue_state": "PENDING",
+      "returned_state": "PREEMPTED",
+      "commands": [
+        [
+          "sacct",
+          "-X",
+          "-j",
+          "9001",
+          "--format=JobIDRaw,State,ExitCode,End",
+          "-P",
+          "-n"
+        ]
+      ],
+      "current_queue_queried": false
+    }
+  },
+  "source_hashes": {
+    "train_optimized.py": "bddd5ce6cc749ca9ad852155f0de14c693e7908542f3a2889a748821e7165e67",
+    "launch_final_training.py": "4c25b95de90cb92f40b47566fcc3685fe69a9a0fc6cea48e16e382032868f2c7",
+    "launch_deployed_training.py": "920fbc18876b6a5ec9ef64d13cacac5ccb5c10a340636a22aecdbb838e71bf97"
+  },
+  "integration_edits": false,
+  "live_scheduler_queries": 0,
+  "live_ssh_calls": 0,
+  "experiments_launched": 0
+}

@@ -53,9 +53,8 @@ class ACESObservationRefreshTests(unittest.TestCase):
             "observed_at_utc": self.fixture.snapshot["observed_at_utc"]}
 
     def response(self, payload):
-        """Return one existing-master check and one remote result without using a network."""
-        return [{"returncode": 0, "stdout": "", "stderr": "Master running (pid=400)\n"},
-                {"returncode": 0, "stdout": json.dumps(payload), "stderr": ""}]
+        """Return one remote result without checking a master or using a network."""
+        return [{"returncode": 0, "stdout": json.dumps(payload), "stderr": ""}]
 
     def test_existing_master_only_exact_owned_id_and_unchanged_preparation(self):
         """Refresh uses one owned ACES identifier, even when UVA issued the same number."""
@@ -64,9 +63,11 @@ class ACESObservationRefreshTests(unittest.TestCase):
         with patch.object(refresh, "command_result", side_effect=self.response(payload)) as command:
             result = refresh.refresh(self.run, self.packet)
         self.assertEqual((result["state"], result["observed_state"]), ("refreshed", "waiting"))
-        self.assertEqual(command.call_count, 2)
-        self.assertEqual(command.call_args_list[0].args[0], ["ssh", "-O", "check", "aces"])
-        argv = command.call_args_list[1].args[0]
+        self.assertEqual(command.call_count, 1)
+        argv = command.call_args_list[0].args[0]
+        self.assertNotIn("-O", argv)
+        self.assertFalse(result["transport"]["master_check"]["performed"])
+        self.assertNotIn("master", result["transport"])
         for option in ("ControlMaster=no", "ProxyCommand=false", "BatchMode=yes"):
             self.assertIn(option, argv)
         remote = shlex.split(argv[-1])
@@ -78,8 +79,20 @@ class ACESObservationRefreshTests(unittest.TestCase):
         self.assertEqual(before, {name: (self.packet / name).read_bytes() for name in before})
         self.assertEqual(refresh.MONITOR.aces_allocation_observation_rows(self.run)[0][0]["state"], "waiting")
 
+    def test_repeated_refreshes_keep_master_checks_in_the_separate_hourly_review(self):
+        """Three status refreshes make three forced socket-reuse commands and zero explicit master checks."""
+        payload = self.payload()
+        with patch.object(refresh, "command_result", side_effect=self.response(payload) * 3) as command:
+            results = [refresh.refresh(self.run, self.packet) for _ in range(3)]
+        self.assertEqual(command.call_count, 3)
+        for call in command.call_args_list:
+            self.assertNotIn("-O", call.args[0])
+            for option in ("ControlMaster=no", "ProxyCommand=false", "BatchMode=yes"):
+                self.assertIn(option, call.args[0])
+        self.assertTrue(all(result["transport"]["master_check"]["performed"] is False for result in results))
+
     def test_foreign_ids_wrong_portal_and_path_fail_before_any_command(self):
-        """Local ownership, host and packet bounds fail before checking or using a master."""
+        """Local ownership, host and packet bounds fail before any transport command."""
         for kind in ("foreign_id", "wrong_portal", "outside_packet"):
             previous = (self.packet / "remote_monitor_snapshot.json").read_bytes()
             with self.subTest(kind=kind), patch.object(refresh, "command_result") as command:
@@ -104,6 +117,9 @@ class ACESObservationRefreshTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "prior snapshot retained=True"):
                 refresh.refresh(self.run, self.packet)
         self.assertEqual(command.call_count, 1)
+        self.assertNotIn("-O", command.call_args.args[0])
+        for option in ("ControlMaster=no", "ProxyCommand=false", "BatchMode=yes"):
+            self.assertIn(option, command.call_args.args[0])
         self.assertEqual((self.packet / "remote_monitor_snapshot.json").read_bytes(), previous)
         errors = list((self.run / "20_mins_monitoring/aces_refresh_errors").glob("*.json"))
         self.assertEqual(len(errors), 1)
