@@ -427,3 +427,15 @@ Merged approved author fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178 as 1376186870cf9
 ## 2026-11-01 11:26 PST — later direct H100 observer needs its own explicit binding
 
 Current default H100 selected/profile path still enters the frozen global process sampler. A separate direct-card-one design is being prepared; it must use fresh actual identity and the standing lock after all original comparisons and exact worker exits. No new direct process or admission. Full monitor 6781231.39 passes 117 of 120, with the current case at round six of seven; ACES remains waiting for priority.
+
+
+## 2026-11-01 11:40 PST — producer publication waits for saved-evidence corrections
+
+Independent step 6781231.43 reproduced missing saved qualification reconstruction and observer failure-evidence handling; source freeze remains unapproved pending a narrow correction. Receipt SHA256 49d4bec4fa55d9bbabb34077f054e01ea4d70d9144fe2ce26801fb8a55100979. Preserve the separate disproved oversized-output test failure from step .42. Actual used/free values remain bounded observations; remove the unsupported near-total equality without changing actual headroom requirements. No actual target test, new job or admission.
+
+Additional direct-design review cbfe896d083f2473f61f81458f98dd4b40c04d2f7f1e8e2d1816b73daedbc255 confirms evidence and lock-custody requirements; all-original-case completion and worker exit are still required.
+
+
+## 2026-11-01 11:44 PST — current monitor remains valid for initial cases
+
+Full check 6781231.44 passes 117 of 120 original comparisons, two pending, one running and zero failed. Current H100 case reached round seven. Mark a frozen-monitor upgrade required before formal results use the new configured/direct profile readers; this does not change current source or its admission. Both recurring and persistent checks remain every twenty minutes.

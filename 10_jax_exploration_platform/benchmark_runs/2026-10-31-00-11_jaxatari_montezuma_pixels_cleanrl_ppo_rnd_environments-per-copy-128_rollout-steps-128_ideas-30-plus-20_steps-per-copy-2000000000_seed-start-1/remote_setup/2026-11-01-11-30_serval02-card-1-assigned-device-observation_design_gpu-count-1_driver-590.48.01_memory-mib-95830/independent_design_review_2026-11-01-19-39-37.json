@@ -1,0 +1,64 @@
+{
+  "GPU_queries": 0,
+  "actions": [
+    "Read existing ordinary local design/evidence files",
+    "Write this immutable metadata review receipt"
+  ],
+  "actual_gpu_qualification": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-01T19:39:37.102814+00:00",
+  "case_credit": 0,
+  "design": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-11-30_serval02-card-1-assigned-device-observation_design_gpu-count-1_driver-590.48.01_memory-mib-95830/direct_observer_binding_design.json",
+    "sha256": "b91973ef255a7daaec27f63d3fcd8d870a5adfefcd8ce14e490ee67d16c48342"
+  },
+  "design_approved": true,
+  "direct_connections": 0,
+  "evidence": {
+    "latest_bound_hardware": {
+      "actual_sha256": "819bd58a12007c3ef1c56a838dafb420b32362c3c38db0d98b774dd30f9e6042",
+      "expected_sha256": "819bd58a12007c3ef1c56a838dafb420b32362c3c38db0d98b774dd30f9e6042",
+      "matches": true,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-29__accumulate_scheduled_reports_on_device__hardware-h100__copies-2__seed-start-1__updates-per-round-10__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/hardware.json"
+    },
+    "original_admission": {
+      "actual_sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+      "expected_sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+      "matches": true,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json"
+    },
+    "original_h100_gates": {
+      "actual_sha256": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+      "expected_sha256": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+      "matches": true,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/h100.json"
+    },
+    "original_process_ledger": {
+      "actual_sha256": "a14a6c738515e9a89e16983628c7de99308abf82fef441b147e8e47e342463fa",
+      "expected_sha256": "a14a6c738515e9a89e16983628c7de99308abf82fef441b147e8e47e342463fa",
+      "matches": true,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.json"
+    },
+    "owned_lock_and_process_audit": {
+      "actual_sha256": "6afb2faa3cba21675a104279aec232143305943982326682c0c843092ba90447",
+      "expected_sha256": "6afb2faa3cba21675a104279aec232143305943982326682c0c843092ba90447",
+      "matches": true,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-06_serval02-card1_owned-process-liveness_supervisor-3567981_child-1007334_interval-seconds-10/independent_owned_process_liveness_review.json"
+    }
+  },
+  "findings": [],
+  "idea_credit": 0,
+  "implementation_approved": false,
+  "job_actions": 0,
+  "kind": "independent_direct_serval02_observer_design_review",
+  "launch_or_query_approved": false,
+  "required_implementation_details": [
+    "An inherited lock FD may report the original holder PID: verify the exact shared open-file description/inode and original holder birth through the recorded parent/Nsight/child chain, rather than demanding the child become a separate flock owner or reacquiring the lock. Missing FD custody must refuse before CUDA.",
+    "The all-120/worker-exit prerequisite and current process births must be rederived from exact current ledgers and fresh receipts before any authorized direct contact. This design review does not establish that prerequisite.",
+    "Keep this exact direct policy distinct from UVA configuration trust and physical-memory constants. Retain original selectors and all unsupported-consumer refusals; later accepted numerical source still requires its own explicit admission and qualification.",
+    "Apply the separately identified sampler/qualification-reader corrections before sharing observer mechanics. No direct reuse of the uncorrected producer freeze1108 is approved."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_edits": 0
+}
