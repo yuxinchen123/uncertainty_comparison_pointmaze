@@ -1,0 +1,25 @@
+{
+  "kind": "root_independent_review_exact_owned_scheduler_requeue_disable",
+  "passed": true,
+  "at_utc": "2026-11-01T16:45:42.262702+00:00",
+  "job_id": "2275518",
+  "source_sha256": "565f180aae6daed1932139651f9dff40a4c6efc59a3bd9f39f1b76ffff76a5d5",
+  "independent_owned_step": "6781087.66",
+  "independent_metadata_cases": 8,
+  "independent_receipt_sha256": "7ee5dcf88afc7c5d0b5f97cf744caa6c5fdfe3ae13d5b0a5350af11a572c4389",
+  "command": [
+    "scontrol",
+    "update",
+    "JobId=2275518",
+    "Requeue=0"
+  ],
+  "requires_publication_before_action": true,
+  "native_pre_post_owner_resources_and_zero_restarts_required": true,
+  "skip_mutation_if_already_zero": true,
+  "exclusive_local_native_intents_and_no_retry": true,
+  "original_packet_unchanged": true,
+  "no_requeue_release_submission_or_cancel": true,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "execute_calls": 0
+}

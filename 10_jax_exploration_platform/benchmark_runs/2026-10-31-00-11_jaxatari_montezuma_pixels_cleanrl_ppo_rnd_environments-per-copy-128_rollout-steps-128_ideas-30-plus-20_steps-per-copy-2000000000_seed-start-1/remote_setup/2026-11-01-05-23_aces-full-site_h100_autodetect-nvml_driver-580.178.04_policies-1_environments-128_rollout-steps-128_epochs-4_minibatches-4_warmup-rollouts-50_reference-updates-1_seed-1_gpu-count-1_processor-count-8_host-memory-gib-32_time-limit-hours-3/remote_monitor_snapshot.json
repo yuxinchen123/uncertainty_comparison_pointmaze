@@ -12,8 +12,8 @@
   "manifest_sha256": "705ef412378b68eee1578e292a053c87d85df65b0377df17d01362df57c701e8",
   "job_script_sha256": "1c6932ea4f2286943d22668f33473de3095237a85ff4c5a724a7550f204bb44d",
   "submission_receipt_sha256": "358f16cc1eaa369638153ee7dc090572cca49652ed5ae1595714e2617ef8735f",
-  "release_receipt_sha256": null,
-  "observed_at_utc": "2026-11-01T16:25:55.991463+00:00",
+  "release_receipt_sha256": "9b9ab540b0ab616dbeff749eee5a6ea28a2dd16925008d793caca14d02d796c1",
+  "observed_at_utc": "2026-11-01T16:38:23.687646+00:00",
   "squeue": {
     "command": [
       "squeue",
@@ -24,7 +24,7 @@
       "%i|%u|%T|%N|%R"
     ],
     "returncode": 0,
-    "stdout": "2275518|u.sl359075|PENDING||(JobHeldUser)\n",
+    "stdout": "2275518|u.sl359075|PENDING||(Priority)\n",
     "stderr": ""
   },
   "sacct": {

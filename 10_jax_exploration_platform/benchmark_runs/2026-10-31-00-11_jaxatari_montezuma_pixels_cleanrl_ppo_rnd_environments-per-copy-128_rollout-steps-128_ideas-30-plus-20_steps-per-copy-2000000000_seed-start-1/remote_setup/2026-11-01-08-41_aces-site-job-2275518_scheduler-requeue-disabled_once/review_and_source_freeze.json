@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "kind": "aces_site_2275518_scheduler_requeue_policy_review_and_freeze",
+  "created_at_utc": "2026-11-01T16:43:57.176934+00:00",
+  "job_id": "2275518",
+  "needed": true,
+  "reason": "The actual native release preflight records Requeue=1 and Restarts=0. Our own retry prohibition does not change Slurm scheduler policy. This immutable site packet must not be started again by ordinary node-failure requeue policy.",
+  "concrete_before": "Exact owned ACES2275518 is released, with saved Requeue=1. The submission/release wrappers prohibit their own retries but did not disable scheduler requeue.",
+  "concrete_after": "One separately recorded scontrol update JobId=2275518 Requeue=0, only after fresh exact ownership/request/Restarts=0 checks, followed by a fresh raw check showing Requeue=0 and Restarts=0. No batch restart, new submission, release or cancel is performed.",
+  "native_action_argv": [
+    "scontrol",
+    "update",
+    "JobId=2275518",
+    "Requeue=0"
+  ],
+  "native_pre_and_post_query_argv": [
+    "scontrol",
+    "show",
+    "job",
+    "-o",
+    "2275518"
+  ],
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/disable_requeue_2275518.py",
+    "sha256": "565f180aae6daed1932139651f9dff40a4c6efc59a3bd9f39f1b76ffff76a5d5",
+    "bytes": 16091
+  },
+  "tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/test_disable_requeue_2275518.py",
+    "sha256": "5f7ca5b49cca4f4737e9abec52d3590cf4f54ced6ba91b8a1780ad4906c72ba7",
+    "bytes": 6085
+  },
+  "author_metadata": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/author_metadata_6781087_64.json",
+    "sha256": "4ce293b913a2e47d1553add376ad74cc22ae5af944a2593a9e352d1f8660f6d5",
+    "bytes": 3698
+  },
+  "default_cli": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/default_cli_verification.json",
+    "sha256": "f108abede5a445cfaf805619aa5579a48c42025c0bdb43ff234baaa8329b98a8",
+    "bytes": 786
+  },
+  "metadata_tests": 8,
+  "metadata_step": "6781087.64",
+  "source_frozen_after_author_test": true,
+  "prerequisites": [
+    "Root independently reviews and publishes the exact source plus immutable input receipts before supplying the actual full publication commit.",
+    "Native/local exact ACES ownership ledgers and submission/release byte hashes must remain unchanged. The native owner is u.sl359075 UID56626 on alogin1.",
+    "Fresh native preflight must identify only2275518 with exact account158590754315, gpu/normal request oneH100/eightCPU/32GiB/threehours, original command path and Restarts=0; allow onlyPENDING orRUNNING.",
+    "Existing local or native action intent prevents a retry. Native query stdout/stderr and return are preserved before strict checks. Unknown, terminal, restarted, foreign or duplicate metadata prevents the update.",
+    "If the actual flag is already0, record no update and verify it again. If1, invoke exactly one update and then require actual0 and unchanged zero restarts.",
+    "Use the existing master only, with ControlMaster=no, ProxyCommand=false, BatchMode=yes and no separate master check. No authentication retry.",
+    "Keep the original site packet, source, intents, raw release and failed2274632 files unchanged. All new local/native evidence is in a separate action directory."
+  ],
+  "future_exact_local_argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/disable_requeue_2275518.py",
+    "--publication-commit",
+    "<actual full commit supplied by root after review and push>",
+    "--execute"
+  ],
+  "publication_prerequisite_filled": false,
+  "evidence_location": "This action directory and a same-named native remote_setup directory; original packet receives no new writes.",
+  "failure_rule": "Preserve every attempted command and raw return. No automatic retry even if a post-update query fails. A successful update without a verified post-check remains unresolved evidence.",
+  "limits": "Requeue=0 disables the ordinary per-job requeue policy. It does not prove that configured force-requeue policies or later administrator changes cannot override it. Such overrides are not investigated or changed by this action.",
+  "sources": [
+    {
+      "title": "SchedMD scontrol manual",
+      "url": "https://slurm.schedmd.com/scontrol.html",
+      "supports": "Requeue0 disables requeue after node failure; job updates are available to an effective owner subject to site policy."
+    },
+    {
+      "title": "SchedMD sbatch manual",
+      "url": "https://slurm.schedmd.com/sbatch.html",
+      "supports": "The no-requeue option controls job restart policy; configured ForceRequeueOnFail can override it."
+    },
+    {
+      "title": "SchedMD slurm.conf manual",
+      "url": "https://slurm.schedmd.com/slurm.conf.html",
+      "supports": "Certain force-requeue settings can override a job request not to requeue."
+    }
+  ],
+  "ssh_actions_performed": 0,
+  "scheduler_actions_performed": 0,
+  "job_restarted": false,
+  "new_submission": false,
+  "new_release": false,
+  "profile_changed": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

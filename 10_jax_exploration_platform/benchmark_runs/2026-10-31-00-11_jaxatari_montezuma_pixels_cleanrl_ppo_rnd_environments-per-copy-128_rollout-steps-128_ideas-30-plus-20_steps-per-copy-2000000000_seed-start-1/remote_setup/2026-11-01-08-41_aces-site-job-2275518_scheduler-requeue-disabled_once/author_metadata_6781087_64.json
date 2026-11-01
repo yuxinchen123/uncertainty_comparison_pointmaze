@@ -1,0 +1,25 @@
+{
+  "kind": "aces_2275518_requeue_disable_author_metadata_verification",
+  "actual_job_id": "6781087",
+  "actual_step_id": "64",
+  "pid": 695999,
+  "uid": 2618919,
+  "host": "slurm2",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_64/user/task_0\n",
+  "proc_stat": "695999 (python) R 695983 695999 695982 0 -1 4194560 4676 0 0 0 17 2 0 0 20 0 1 0 51218349 40177664 7008 2147483648 94897213210624 94897215638301 140736654896656 0 0 0 0 16781312 2 0 0 0 17 32 0 0 0 0 0 94897217063664 94897219045104 94897268895744 140736654902934 140736654903301 140736654903301 140736654909379 0\n",
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/disable_requeue_2275518.py": "565f180aae6daed1932139651f9dff40a4c6efc59a3bd9f39f1b76ffff76a5d5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/test_disable_requeue_2275518.py": "5f7ca5b49cca4f4737e9abec52d3590cf4f54ced6ba91b8a1780ad4906c72ba7"
+  },
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/disable_requeue_2275518.py": "565f180aae6daed1932139651f9dff40a4c6efc59a3bd9f39f1b76ffff76a5d5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-41_aces-site-job-2275518_scheduler-requeue-disabled_once/test_disable_requeue_2275518.py": "5f7ca5b49cca4f4737e9abec52d3590cf4f54ced6ba91b8a1780ad4906c72ba7"
+  },
+  "test_count": 8,
+  "passed": true,
+  "elapsed_seconds": 0.21955623000394553,
+  "test_output": "test_actual_default_metadata_has_no_action (tests.Tests.test_actual_default_metadata_has_no_action) ... ok\ntest_complete_and_already_disabled_response (tests.Tests.test_complete_and_already_disabled_response) ... ok\ntest_execute_requires_publication (tests.Tests.test_execute_requires_publication) ... ok\ntest_foreign_terminal_restarted_duplicate_or_wrong_resources_reject (tests.Tests.test_foreign_terminal_restarted_duplicate_or_wrong_resources_reject) ... ok\ntest_intent_first_and_exact_update_only_in_mocked_existing_master_stream (tests.Tests.test_intent_first_and_exact_update_only_in_mocked_existing_master_stream) ... ok\ntest_same_native_parser_and_actual_saved_release_shape (tests.Tests.test_same_native_parser_and_actual_saved_release_shape) ... ok\ntest_substituted_identity_command_or_claim_refused (tests.Tests.test_substituted_identity_command_or_claim_refused) ... ok\ntest_timeout_preserves_attempt_and_does_not_retry (tests.Tests.test_timeout_preserves_attempt_and_does_not_retry) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.127s\n\nOK\n",
+  "live_commands": 0,
+  "network_calls": 0,
+  "numerical_modules_present": []
+}
