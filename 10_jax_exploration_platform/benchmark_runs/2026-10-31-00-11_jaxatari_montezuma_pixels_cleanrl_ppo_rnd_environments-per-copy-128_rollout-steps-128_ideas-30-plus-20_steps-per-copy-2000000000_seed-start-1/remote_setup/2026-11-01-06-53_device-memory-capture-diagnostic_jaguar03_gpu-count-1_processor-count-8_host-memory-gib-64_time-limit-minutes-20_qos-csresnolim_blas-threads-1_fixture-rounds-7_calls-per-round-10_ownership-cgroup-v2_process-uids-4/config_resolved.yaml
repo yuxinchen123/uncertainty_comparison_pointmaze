@@ -1,0 +1,52 @@
+{
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUNBUFFERED": "1",
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+    "JAX_ENABLE_COMPILATION_CACHE": "false",
+    "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": "",
+    "JAXTARI_SKIP_SPRITE_UPDATE": "1",
+    "XDG_DATA_HOME": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "OMP_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+  },
+  "shape": {
+    "nodes": 1,
+    "ntasks": 1,
+    "gpu_type": "nvidia_rtx_a4500",
+    "gpu_count": 1,
+    "cpus_per_task": 8,
+    "host_memory_gib": 64,
+    "time_limit_minutes": 20,
+    "hostname": "jaguar03",
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "fixture": {
+    "failure_request": "next 256-byte multiple strictly greater than measured current-context capacity",
+    "repeat_elements": 4096,
+    "repeat_rounds": 7,
+    "synchronized_calls_per_round": 10
+  },
+  "ownership_profile": {
+    "schema_version": 1,
+    "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+    "cluster": "uva",
+    "username": "sl5nw",
+    "uid": 2618919,
+    "cgroup_version": 2,
+    "path_prefix": "/system.slice/slurmstepd.scope",
+    "numeric_step_required": true,
+    "task_name": "task_0",
+    "uid_encoded_in_cgroup_path": false,
+    "kernel_device_enforcement_verified": false
+  }
+}

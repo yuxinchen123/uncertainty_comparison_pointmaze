@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-06-52_device-memory-capture-diagnostic_source-commit-474907ef8623aa50f2979954ef2466e14173c05f/10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py",
+    "prepare",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--unit-id",
+    "2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+    "--source-root",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "--source-commit",
+    "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "--capture-helper-root",
+    "/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+    "--asset-record",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/asset_record.json",
+    "--runtime-environment",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/runtime_environment.json",
+    "--jaxtari-source-root",
+    "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+    "--python",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "--ownership-profile",
+    "uva_slurm_cgroup_v2_process_uid_ownership"
+  ],
+  "execution_location": "owned CPU allocation 6781087; metadata only",
+  "numerical_imports_permitted": false
+}

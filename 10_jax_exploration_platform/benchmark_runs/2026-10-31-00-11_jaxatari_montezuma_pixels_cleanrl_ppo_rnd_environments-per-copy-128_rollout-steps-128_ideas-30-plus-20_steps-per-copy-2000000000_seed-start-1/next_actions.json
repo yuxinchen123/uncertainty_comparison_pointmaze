@@ -586,7 +586,7 @@
     "old_monitor_preserved": "6780608"
   },
   "packing_device_memory_failure_receipt": {
-    "state": "published_inactive_actual_capture_diagnostic_pending",
+    "state": "reviewed_published_producer_fresh_packet_prepared_unsubmitted",
     "reason": "existing completed low-headroom rule cannot close a genuine failed next doubling",
     "current_rule_and_admission_unchanged": true,
     "failed_attempt_scientific_credit": 0,
@@ -637,11 +637,9 @@
     },
     "actual_gpu_regression_passed": false,
     "required_before_gpu_diagnostic": [
-      "publish reviewed actual UVA resource-shape correction",
-      "implement and independently review explicit source-gated UVA cgroup-v2 ownership profile with raw process UID/scheduler/ledger/root task membership proof",
-      "review and publish profile-capable producer/helper source without changing old prepared units",
-      "prepare and independently review a fresh standard packet",
-      "record returned exact held job ID before release and verify both monitors"
+      "publish reviewed standard packet and immutable data records",
+      "record exact held identifier in both owned ledgers",
+      "verify persistent full held-job report and recurring schedule before single release"
     ],
     "original_published_source_commit": "c5d26451b8703e65fa45df26ce8cffc1a6528b90",
     "completed_source_corrections": [
@@ -662,17 +660,17 @@
       "cases": 64,
       "passed": true
     },
-    "diagnostic_source_commit": "fd9fe16a760d5ae07af2923a9102e47bb02f090c",
-    "diagnostic_driver_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-10_device-memory-capture-diagnostic_source-commit-fd9fe16a760d5ae07af2923a9102e47bb02f090c",
-    "diagnostic_capture_root": "/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9",
-    "diagnostic_source_state": "publication_blocked_pending_actual_uva_shape_and_explicit_cgroup_v2_profile",
+    "diagnostic_source_commit": "474907ef8623aa50f2979954ef2466e14173c05f",
+    "diagnostic_driver_root": "/p/rlprojects/RND_worktrees/2026-11-01-06-52_device-memory-capture-diagnostic_source-commit-474907ef8623aa50f2979954ef2466e14173c05f",
+    "diagnostic_capture_root": "/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+    "diagnostic_source_state": "separately_pinned_reviewed_published",
     "diagnostic_source_independent_review": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_capture_regression_reservation_independent_6780635_41.json",
       "sha256": "dad549a79788c1616c45efcaa4cd5b220b3f6a4f5193d863bc58479ec06f752b",
       "cases": 15,
       "passed": true
     },
-    "diagnostic_current_source_launch_permitted": false,
+    "diagnostic_current_source_launch_permitted": true,
     "reviewed_unpublished_shape_correction": {
       "commit": "fbd6f64374b76d4b14d35807f761d3fb624b2c5c",
       "author_cases": 16,
@@ -705,7 +703,11 @@
     "profile_capable_published_source_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
     "ownership_profile_state": "independently_reviewed_published_pending_separate_diagnostic_pin_and_gpu_regression",
     "ownership_profile_independent_cases": 84,
-    "ownership_profile_independent_receipt_sha256": "a29af5ce2e90713b21b095e2545e1ce50b3560eeffe5b15e45e0efa156414b23"
+    "ownership_profile_independent_receipt_sha256": "a29af5ce2e90713b21b095e2545e1ce50b3560eeffe5b15e45e0efa156414b23",
+    "diagnostic_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+    "diagnostic_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+    "diagnostic_packet_independent_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_packet_ownership_profile_independent_completion_2026-11-01.json",
+    "diagnostic_packet_independent_review_sha256": "9a63ef435a67df169028847a77a036a7789f37d61ef8912f41f5e99c0d86cabd"
   },
   "final_evidence_protocol_completion": {
     "state": "isolated_implementation_and_metadata_tests_in_progress_inactive",

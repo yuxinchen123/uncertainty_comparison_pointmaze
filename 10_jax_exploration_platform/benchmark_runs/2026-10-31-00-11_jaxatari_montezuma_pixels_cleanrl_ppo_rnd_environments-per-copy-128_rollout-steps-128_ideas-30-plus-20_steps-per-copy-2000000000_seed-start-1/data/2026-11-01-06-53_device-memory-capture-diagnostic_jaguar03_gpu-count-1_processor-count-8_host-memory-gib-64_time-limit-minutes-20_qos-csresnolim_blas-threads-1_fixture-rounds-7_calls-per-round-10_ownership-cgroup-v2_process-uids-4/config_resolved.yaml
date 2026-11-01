@@ -1,0 +1,30 @@
+{
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "shape": {
+    "nodes": 1,
+    "ntasks": 1,
+    "gres": "gpu:nvidia_rtx_a4500:1",
+    "cpus_per_task": 8,
+    "host_memory_gib": 64,
+    "time_limit_minutes": 20,
+    "hostname": "jaguar03",
+    "account": "sl5nw_base",
+    "partition": "gpu",
+    "qos": "csresnolim"
+  },
+  "fixture": {
+    "allocation_dtype": "uint8",
+    "allocation_alignment_bytes": 256,
+    "failure_request": "smallest 256-byte multiple strictly greater than measured current-context capacity",
+    "repeat_elements": 4096,
+    "repeat_rounds": 7,
+    "synchronized_calls_per_round": 10,
+    "environment_transitions": 0,
+    "learner_updates": 0,
+    "formal_packing_evidence": false
+  }
+}

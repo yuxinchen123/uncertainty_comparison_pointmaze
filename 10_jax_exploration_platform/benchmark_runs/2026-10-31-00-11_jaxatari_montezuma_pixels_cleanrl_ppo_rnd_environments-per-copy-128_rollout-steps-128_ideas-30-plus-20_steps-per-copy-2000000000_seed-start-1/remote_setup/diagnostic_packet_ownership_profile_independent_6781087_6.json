@@ -1,0 +1,503 @@
+{
+  "schema_version": 1,
+  "kind": "independent_actual_diagnostic_packet_metadata_review",
+  "created_utc": "2026-11-01T14:56:10.882235+00:00",
+  "job_id": "6781087",
+  "step_id": "6",
+  "hostname": "slurm2",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "successful": true,
+  "error": null,
+  "checks": [
+    "actual staged static verification passes without mocked source checks",
+    "exact separate driver and capture commits",
+    "all four actual source roots clean detached at exact recorded commits",
+    "exact numerical source unchanged",
+    "complete fifteen capture helpers plus separate driver staged",
+    "explicit versioned ownership profile and false unproven claims",
+    "no guessed static job device or reservation",
+    "exact canonical campaign ledger namespace",
+    "no execution or submission artifacts",
+    "standard records both packet and unit",
+    "prepared manifest equals immutable plan",
+    "source manifest records exact original twenty-four artifacts",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/device_memory_capture_regression.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/device_memory_limit.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/diagnose_gpu_execution.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_allocation_observation.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_slurm_case.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_slurm_evidence.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_slurm_qualification.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_slurm_queue.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/h100_nvl_slurm_site_validation.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/infrastructure_retry.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/measure_selected.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/portable_evidence.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/post_comparison_validation.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/pregather_async_retry.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/train_optimized.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/code/validate_training_deployment.py",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/command.txt",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/config_resolved.yaml",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/experiment_background.md",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/manifest.yaml",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/regression_plan.json",
+    "manifest hash and bytes data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/regression_prepared.json",
+    "manifest hash and bytes remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/wrapper/run_checks.py",
+    "manifest hash and bytes remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/wrapper/run_unit.py",
+    "checksum roster exact and unique",
+    "bash syntax passes",
+    "one exact numeric step command matches execution metadata",
+    "exact recorded startup environment",
+    "canonical startup constraints",
+    "inherited cache prefixes removed before explicit settings",
+    "Slurm selector not overwritten in launch shell",
+    "three-field runtime preserved",
+    "diagnostic zero transitions learner throughput and science credits",
+    "separate uint8 capacity and small seven-by-ten fixture",
+    "command text exactly matches held command",
+    "held resource command exactly one assigned A4500 eight CPUs 64GiB twenty minutes",
+    "current captured node reserved idle and resources fit",
+    "captured active owned reservation fits requested duration",
+    "unchanged frozen wrapper run_checks.py at 474907ef8623aa50f2979954ef2466e14173c05f",
+    "unchanged frozen wrapper run_checks.py at fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+    "unchanged frozen wrapper run_unit.py at 474907ef8623aa50f2979954ef2466e14173c05f",
+    "unchanged frozen wrapper run_unit.py at fd9fe16a760d5ae07af2923a9102e47bb02f090c",
+    "wrapper scope operational only",
+    "asset manifest hash exact",
+    "JAXtari source derived from actual asset manifest",
+    "preparation actual owned CPU metadata step successful",
+    "static declaration capability and physical mapping remain separate"
+  ],
+  "checks_passed": 59,
+  "before": {
+    "packet": {
+      "command.txt": {
+        "sha256": "93c10ebf166c912a145a58a8eeb49d545b9cc29200ad8d0ee7e1b01ba39def33",
+        "bytes": 1816
+      },
+      "config_resolved.yaml": {
+        "sha256": "ecb8d9eeffe9ee95ffee1abaa2a534f769698fe1c5c793b57a304ba940ec3c1e",
+        "bytes": 1619
+      },
+      "execution_command.json": {
+        "sha256": "4503d5fe02e34719d2204dc9572ace79e2d5d32d1e2ebbcf36b127e73221d15b",
+        "bytes": 4281
+      },
+      "experiment_background.md": {
+        "sha256": "b9efdeaf9fc8803ed16ea1f8de38e291fe1758080eb668f9cad95cb7c6674ac0",
+        "bytes": 1059
+      },
+      "job.sbatch": {
+        "sha256": "584d4b6f2a4cd8e680e018620e89ffd75d350cfadafb0cb482ccd31998b20428",
+        "bytes": 4513
+      },
+      "job_script_static_review.json": {
+        "sha256": "a0f80ae3cf6bb9d6bf5b71b84f2b86b692bac32da1d8ec1fdf2af2af5d50cf67",
+        "bytes": 722
+      },
+      "manifest.yaml": {
+        "sha256": "71ff6b8f0774e248f7dcdaf25517401ab4ad0afe60be5ffb3d0db152b7c51528",
+        "bytes": 6813
+      },
+      "partition_and_maintenance_observation.json": {
+        "sha256": "7e04466649571052967b39a4da4fb1bd7054f8e4e8ed4b57898a6cea7e5ead2f",
+        "bytes": 2060
+      },
+      "preparation_command.json": {
+        "sha256": "951754a30eb36f3749e1d21ebb593b690a7f729e56327884640ce0d1345e5ccc",
+        "bytes": 2268
+      },
+      "preparation_execution.json": {
+        "sha256": "7d5e10da0c382acd11606db0a5c943f6341e786dbf154b3f78f568c04f0dacfe",
+        "bytes": 2759
+      },
+      "resource_observations.json": {
+        "sha256": "309d9e42dbc7e1430e03dd9fe34e1d9558fc66d6134926b4e27d75b635657d76",
+        "bytes": 1496
+      },
+      "source_checksums.sha256": {
+        "sha256": "ec70024a4a8fb664c995d47bd3675760cf98b9d3869b83de00dbb2d67eef24c1",
+        "bytes": 13935
+      },
+      "source_manifest.json": {
+        "sha256": "d920462e28a379227a20c60c7b1d191a9c020e2ac7d8946ff67236506af7b851",
+        "bytes": 15055
+      },
+      "wrapper/run_checks.py": {
+        "sha256": "d1e7188f75dc221a0caee4f0e7218b8cc5b7b5387a90ce0f8346daa9aeb3ea63",
+        "bytes": 2109
+      },
+      "wrapper/run_unit.py": {
+        "sha256": "d879e539ca21afd49f071b14a6f729b9dcbda09e1836db80999cc9fb462a35d8",
+        "bytes": 12730
+      }
+    },
+    "unit": {
+      "code/device_memory_capture_regression.py": {
+        "sha256": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976",
+        "bytes": 59882
+      },
+      "code/device_memory_limit.py": {
+        "sha256": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+        "bytes": 94436
+      },
+      "code/diagnose_gpu_execution.py": {
+        "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+        "bytes": 24860
+      },
+      "code/h100_nvl_allocation_observation.py": {
+        "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+        "bytes": 33665
+      },
+      "code/h100_nvl_slurm_case.py": {
+        "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+        "bytes": 14137
+      },
+      "code/h100_nvl_slurm_evidence.py": {
+        "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+        "bytes": 53301
+      },
+      "code/h100_nvl_slurm_qualification.py": {
+        "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+        "bytes": 26893
+      },
+      "code/h100_nvl_slurm_queue.py": {
+        "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+        "bytes": 35187
+      },
+      "code/h100_nvl_slurm_site_validation.py": {
+        "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+        "bytes": 71539
+      },
+      "code/infrastructure_retry.py": {
+        "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+        "bytes": 35158
+      },
+      "code/measure_selected.py": {
+        "sha256": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+        "bytes": 42930
+      },
+      "code/portable_evidence.py": {
+        "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+        "bytes": 8731
+      },
+      "code/post_comparison_validation.py": {
+        "sha256": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+        "bytes": 69610
+      },
+      "code/pregather_async_retry.py": {
+        "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+        "bytes": 45049
+      },
+      "code/train_optimized.py": {
+        "sha256": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+        "bytes": 74035
+      },
+      "code/validate_training_deployment.py": {
+        "sha256": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+        "bytes": 37162
+      },
+      "command.txt": {
+        "sha256": "5395ca6cac552dc7f529fb8eeef947773dc8b486b04c3ec22d8464c0ad681181",
+        "bytes": 1070
+      },
+      "config_resolved.yaml": {
+        "sha256": "0abec47ec2b3e06b46669fab40ad95515eb931576ff2433cb3757f5c3e1e93b9",
+        "bytes": 841
+      },
+      "experiment_background.md": {
+        "sha256": "7225c9205682e783151961138b29840863e549d0e293078a5ca8559560a4d8a8",
+        "bytes": 962
+      },
+      "manifest.yaml": {
+        "sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+        "bytes": 9349
+      },
+      "progress.json": {
+        "sha256": "227bf310bbc146fc27ca02442419ec266cdce767fe1cd7c8233222d8437535a9",
+        "bytes": 514
+      },
+      "regression_plan.json": {
+        "sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+        "bytes": 9349
+      },
+      "regression_prepared.json": {
+        "sha256": "b783f9d287185442464f666a1a2d138c2906f58c0a5984ece23421052322237d",
+        "bytes": 623
+      }
+    }
+  },
+  "after": {
+    "packet": {
+      "command.txt": {
+        "sha256": "93c10ebf166c912a145a58a8eeb49d545b9cc29200ad8d0ee7e1b01ba39def33",
+        "bytes": 1816
+      },
+      "config_resolved.yaml": {
+        "sha256": "ecb8d9eeffe9ee95ffee1abaa2a534f769698fe1c5c793b57a304ba940ec3c1e",
+        "bytes": 1619
+      },
+      "execution_command.json": {
+        "sha256": "4503d5fe02e34719d2204dc9572ace79e2d5d32d1e2ebbcf36b127e73221d15b",
+        "bytes": 4281
+      },
+      "experiment_background.md": {
+        "sha256": "b9efdeaf9fc8803ed16ea1f8de38e291fe1758080eb668f9cad95cb7c6674ac0",
+        "bytes": 1059
+      },
+      "job.sbatch": {
+        "sha256": "584d4b6f2a4cd8e680e018620e89ffd75d350cfadafb0cb482ccd31998b20428",
+        "bytes": 4513
+      },
+      "job_script_static_review.json": {
+        "sha256": "a0f80ae3cf6bb9d6bf5b71b84f2b86b692bac32da1d8ec1fdf2af2af5d50cf67",
+        "bytes": 722
+      },
+      "manifest.yaml": {
+        "sha256": "71ff6b8f0774e248f7dcdaf25517401ab4ad0afe60be5ffb3d0db152b7c51528",
+        "bytes": 6813
+      },
+      "partition_and_maintenance_observation.json": {
+        "sha256": "7e04466649571052967b39a4da4fb1bd7054f8e4e8ed4b57898a6cea7e5ead2f",
+        "bytes": 2060
+      },
+      "preparation_command.json": {
+        "sha256": "951754a30eb36f3749e1d21ebb593b690a7f729e56327884640ce0d1345e5ccc",
+        "bytes": 2268
+      },
+      "preparation_execution.json": {
+        "sha256": "7d5e10da0c382acd11606db0a5c943f6341e786dbf154b3f78f568c04f0dacfe",
+        "bytes": 2759
+      },
+      "resource_observations.json": {
+        "sha256": "309d9e42dbc7e1430e03dd9fe34e1d9558fc66d6134926b4e27d75b635657d76",
+        "bytes": 1496
+      },
+      "source_checksums.sha256": {
+        "sha256": "ec70024a4a8fb664c995d47bd3675760cf98b9d3869b83de00dbb2d67eef24c1",
+        "bytes": 13935
+      },
+      "source_manifest.json": {
+        "sha256": "d920462e28a379227a20c60c7b1d191a9c020e2ac7d8946ff67236506af7b851",
+        "bytes": 15055
+      },
+      "wrapper/run_checks.py": {
+        "sha256": "d1e7188f75dc221a0caee4f0e7218b8cc5b7b5387a90ce0f8346daa9aeb3ea63",
+        "bytes": 2109
+      },
+      "wrapper/run_unit.py": {
+        "sha256": "d879e539ca21afd49f071b14a6f729b9dcbda09e1836db80999cc9fb462a35d8",
+        "bytes": 12730
+      }
+    },
+    "unit": {
+      "code/device_memory_capture_regression.py": {
+        "sha256": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976",
+        "bytes": 59882
+      },
+      "code/device_memory_limit.py": {
+        "sha256": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+        "bytes": 94436
+      },
+      "code/diagnose_gpu_execution.py": {
+        "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+        "bytes": 24860
+      },
+      "code/h100_nvl_allocation_observation.py": {
+        "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+        "bytes": 33665
+      },
+      "code/h100_nvl_slurm_case.py": {
+        "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+        "bytes": 14137
+      },
+      "code/h100_nvl_slurm_evidence.py": {
+        "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+        "bytes": 53301
+      },
+      "code/h100_nvl_slurm_qualification.py": {
+        "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+        "bytes": 26893
+      },
+      "code/h100_nvl_slurm_queue.py": {
+        "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+        "bytes": 35187
+      },
+      "code/h100_nvl_slurm_site_validation.py": {
+        "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+        "bytes": 71539
+      },
+      "code/infrastructure_retry.py": {
+        "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+        "bytes": 35158
+      },
+      "code/measure_selected.py": {
+        "sha256": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+        "bytes": 42930
+      },
+      "code/portable_evidence.py": {
+        "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+        "bytes": 8731
+      },
+      "code/post_comparison_validation.py": {
+        "sha256": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+        "bytes": 69610
+      },
+      "code/pregather_async_retry.py": {
+        "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+        "bytes": 45049
+      },
+      "code/train_optimized.py": {
+        "sha256": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+        "bytes": 74035
+      },
+      "code/validate_training_deployment.py": {
+        "sha256": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+        "bytes": 37162
+      },
+      "command.txt": {
+        "sha256": "5395ca6cac552dc7f529fb8eeef947773dc8b486b04c3ec22d8464c0ad681181",
+        "bytes": 1070
+      },
+      "config_resolved.yaml": {
+        "sha256": "0abec47ec2b3e06b46669fab40ad95515eb931576ff2433cb3757f5c3e1e93b9",
+        "bytes": 841
+      },
+      "experiment_background.md": {
+        "sha256": "7225c9205682e783151961138b29840863e549d0e293078a5ca8559560a4d8a8",
+        "bytes": 962
+      },
+      "manifest.yaml": {
+        "sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+        "bytes": 9349
+      },
+      "progress.json": {
+        "sha256": "227bf310bbc146fc27ca02442419ec266cdce767fe1cd7c8233222d8437535a9",
+        "bytes": 514
+      },
+      "regression_plan.json": {
+        "sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+        "bytes": 9349
+      },
+      "regression_prepared.json": {
+        "sha256": "b783f9d287185442464f666a1a2d138c2906f58c0a5984ece23421052322237d",
+        "bytes": 623
+      }
+    }
+  },
+  "frozen_files_unchanged": true,
+  "proof": {
+    "source_identities": {
+      "driver": {
+        "root": "/p/rlprojects/RND_worktrees/2026-11-01-06-52_device-memory-capture-diagnostic_source-commit-474907ef8623aa50f2979954ef2466e14173c05f",
+        "commit": "474907ef8623aa50f2979954ef2466e14173c05f",
+        "detached": true,
+        "clean": true
+      },
+      "capture": {
+        "root": "/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+        "commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+        "detached": true,
+        "clean": true
+      },
+      "numerical": {
+        "root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+        "detached": true,
+        "clean": true
+      },
+      "jaxtari": {
+        "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+        "commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+        "detached": true,
+        "clean": true
+      }
+    },
+    "plan_sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+    "job_script_sha256": "584d4b6f2a4cd8e680e018620e89ffd75d350cfadafb0cb482ccd31998b20428",
+    "checksum_sha256": "ec70024a4a8fb664c995d47bd3675760cf98b9d3869b83de00dbb2d67eef24c1",
+    "driver_files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976"
+    },
+    "capture_files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    "shape": {
+      "nodes": 1,
+      "ntasks": 1,
+      "gres": "gpu:nvidia_rtx_a4500:1",
+      "cpus_per_task": 8,
+      "host_memory_gib": 64,
+      "time_limit_minutes": 20,
+      "hostname": "jaguar03",
+      "account": "sl5nw_base",
+      "partition": "gpu",
+      "qos": "csresnolim"
+    },
+    "ownership_profile": {
+      "schema_version": 1,
+      "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+      "cluster": "uva",
+      "username": "sl5nw",
+      "uid": 2618919,
+      "cgroup_version": 2,
+      "path_prefix": "/system.slice/slurmstepd.scope",
+      "numeric_step_required": true,
+      "task_name": "task_0",
+      "uid_encoded_in_cgroup_path": false,
+      "kernel_device_enforcement_verified": false
+    },
+    "held_command": [
+      "sbatch",
+      "--parsable",
+      "--hold",
+      "--no-requeue",
+      "--nodes=1",
+      "--ntasks=1",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=00:20:00",
+      "--gres=gpu:nvidia_rtx_a4500:1",
+      "--partition=gpu",
+      "--account=sl5nw_base",
+      "--qos=csresnolim",
+      "--nodelist=jaguar03",
+      "--reservation=sl5nw_168",
+      "--job-name=rnd-memory-capture-diagnostic",
+      "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.out",
+      "--error=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.err",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch"
+    ],
+    "source_manifest_artifacts": 24,
+    "physical_mapping": {
+      "supported_preparation": "Exact root-owned explicit GRES File roster index resolved through captured proc minor-to-UUID evidence, then same-process CUDA UUID/PCI.",
+      "actual_owned_gpu_mapping_observed": false,
+      "gpu_regression_passed": false
+    }
+  },
+  "blocked_actions": [],
+  "git_call_count": 44,
+  "numerical_modules_loaded": [],
+  "live_scheduler_queries": 0,
+  "gpu_actions": 0,
+  "jobs_submitted": 0,
+  "scientific_credit": 0,
+  "memory_rule_enabled": false,
+  "maintenance_evidence": "No partition or maintenance observation in this exact packet at review time; root to bind a separate current record before submission."
+}

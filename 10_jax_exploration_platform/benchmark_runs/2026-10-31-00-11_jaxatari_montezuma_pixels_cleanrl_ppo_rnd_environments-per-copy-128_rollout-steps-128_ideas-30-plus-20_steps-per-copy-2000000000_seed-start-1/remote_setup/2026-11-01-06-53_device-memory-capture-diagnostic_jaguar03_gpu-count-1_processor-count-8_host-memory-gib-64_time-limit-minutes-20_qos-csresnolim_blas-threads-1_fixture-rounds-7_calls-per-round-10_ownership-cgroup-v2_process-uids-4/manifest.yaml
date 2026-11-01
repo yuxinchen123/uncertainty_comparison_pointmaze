@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "kind": "device_memory_capture_diagnostic_preparation",
+  "created_at_utc": "2026-11-01T14:53:07.047268+00:00",
+  "created_at_pacific": "2026-11-01T06:53:07.047268-08:00",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "unit_id": "2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "sources": {
+    "driver": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-06-52_device-memory-capture-diagnostic_source-commit-474907ef8623aa50f2979954ef2466e14173c05f",
+      "source_commit": "474907ef8623aa50f2979954ef2466e14173c05f",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "capture": {
+      "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+      "source_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "numerical": {
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "status_porcelain": "",
+      "detached": true
+    },
+    "jaxtari": {
+      "source_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "status_porcelain": "",
+      "detached": true
+    }
+  },
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "shape": {
+    "nodes": 1,
+    "ntasks": 1,
+    "gpu_type": "nvidia_rtx_a4500",
+    "gpu_count": 1,
+    "cpus_per_task": 8,
+    "host_memory_gib": 64,
+    "time_limit_minutes": 20,
+    "hostname": "jaguar03",
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "fixture": {
+    "failure_request": "next 256-byte multiple strictly greater than measured current-context capacity",
+    "repeat_elements": 4096,
+    "repeat_rounds": 7,
+    "synchronized_calls_per_round": 10
+  },
+  "ownership_profile": {
+    "schema_version": 1,
+    "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+    "cluster": "uva",
+    "username": "sl5nw",
+    "uid": 2618919,
+    "cgroup_version": 2,
+    "path_prefix": "/system.slice/slurmstepd.scope",
+    "numeric_step_required": true,
+    "task_name": "task_0",
+    "uid_encoded_in_cgroup_path": false,
+    "kernel_device_enforcement_verified": false
+  },
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "workers_permitted": false,
+  "formal_packing_evidence": false,
+  "job_id": null,
+  "gpu_uuid": null,
+  "static_plan_reservation": null,
+  "observed_submission_reservation": "sl5nw_168",
+  "held_submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=00:20:00",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--job-name=rnd-memory-capture-diagnostic",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.out",
+    "--error=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/slurm/job_%j.err",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/job.sbatch"
+  ],
+  "earlier_preparations_preserved": [
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-29_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10"
+  ]
+}

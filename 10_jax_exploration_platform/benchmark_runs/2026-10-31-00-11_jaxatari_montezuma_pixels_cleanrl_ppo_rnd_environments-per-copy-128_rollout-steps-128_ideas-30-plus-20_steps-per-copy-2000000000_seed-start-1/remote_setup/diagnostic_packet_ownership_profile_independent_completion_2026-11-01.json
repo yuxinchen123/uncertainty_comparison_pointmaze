@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "independent_actual_diagnostic_packet_review_completion",
+  "created_utc": "2026-11-01T14:57:30.898945+00:00",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+  "approved_prepared_packet": true,
+  "findings": [],
+  "compute_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_packet_ownership_profile_independent_6781087_6.json",
+    "sha256": "b731909d035a03552f85af2b5e86ce4efbd843207ef73da6c087f9c180679e26",
+    "owned_job_id": "6781087",
+    "owned_step_id": "6",
+    "checks_passed": 59,
+    "actual_staged_verify_static_execution": true,
+    "frozen_files_unchanged": true
+  },
+  "partition_and_maintenance_evidence": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/partition_and_maintenance_observation.json",
+    "sha256": "7e04466649571052967b39a4da4fb1bd7054f8e4e8ed4b57898a6cea7e5ead2f",
+    "at_utc": "2026-11-01T14:55:16.237835+00:00",
+    "exact_raw_commands": [
+      [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu",
+        "-o"
+      ],
+      [
+        "sinfo",
+        "-n",
+        "jaguar03",
+        "-h",
+        "-o",
+        "%N|%P|%T|%E|%G"
+      ],
+      [
+        "scontrol",
+        "show",
+        "reservation",
+        "sl5nw_168",
+        "-o"
+      ]
+    ],
+    "all_return_codes_zero": true,
+    "gpu_partition_up": true,
+    "partition_time_limit": "4-00:00:00",
+    "node_state": "reserved",
+    "node_maintenance_reason": "none",
+    "owned_reservation": "sl5nw_168",
+    "owned_reservation_state": "ACTIVE",
+    "owned_reservation_end_local_slurm_time": "2026-11-03T23:59:59",
+    "requested_walltime": "00:20:00"
+  },
+  "correction_to_first_receipt": "The first receipt preserved a sentence saying partition/maintenance evidence had not yet been examined. This completion checks the separately added actual raw record above. No first receipt or frozen launch file was rewritten.",
+  "physical_resolution_review": "Published source preserves Slurm CUDA selector through raw ownership bootstrap, resolves the actual GRES index through the root-owned explicit increasing File roster and proc physical minor-to-UUID evidence, then requires same-process CUDA UUID/PCI. No numeric GRES/CUDA/NVML/minor equality is assumed. Fresh actual GPU allocation evidence remains required.",
+  "wrapper_review": "Both run_checks.py and run_unit.py equal committed bytes at exact driver474907 and earlier fd9; only run_checks main executes, using hardware_record and atomic_json from run_unit. It records operational command status only. The producer writes distinct diagnostic verification and formal-reader refusal artifacts; no training entry point is called.",
+  "required_actual_followup": "Root may submit only this reviewed exact held command, fsync the real returned ID to owned ledgers, bind fresh actual allocation/reservation and retain immutable null pre-submission plan. No release before root verification and monitoring. Successful diagnostic capture still cannot substitute for formal128-environment failed-next-doubling plus fresh complete fitting repeat.",
+  "job_script_sha256": "584d4b6f2a4cd8e680e018620e89ffd75d350cfadafb0cb482ccd31998b20428",
+  "plan_sha256": "c4bce16b1bd7215fbac0426a75faa12d212055175243fa5d76b3186f90ec7f01",
+  "packet_manifest_sha256": "71ff6b8f0774e248f7dcdaf25517401ab4ad0afe60be5ffb3d0db152b7c51528",
+  "source_checksums_sha256": "ec70024a4a8fb664c995d47bd3675760cf98b9d3869b83de00dbb2d67eef24c1",
+  "all_previously_frozen_bytes_still_unchanged": true,
+  "new_job_or_release_performed": false,
+  "gpu_executed": false,
+  "actual_gpu_regression_passed": false,
+  "memory_rule_enabled": false,
+  "source_admission_changed": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_credit": 0,
+  "throughput_credit": 0,
+  "admission_credit": 0
+}
