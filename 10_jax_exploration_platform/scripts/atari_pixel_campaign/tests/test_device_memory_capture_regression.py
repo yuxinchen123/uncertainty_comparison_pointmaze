@@ -1,5 +1,6 @@
 """Test diagnostic preparation and refusal boundaries with metadata and mocked APIs only."""
 
+import ast
 import copy
 from contextlib import ExitStack
 import ctypes
@@ -460,6 +461,26 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
                 regression.verify_static(unit)
         self.assertNotIn('jax', sys.modules)
         self.assertNotIn('numpy', sys.modules)
+
+    def test_later_measurement_helpers_cannot_change_the_pinned_capture_list(self):
+        """A later measurement dependency cannot enter an older captured helper receipt."""
+        capture = Path('/p/rlprojects/RND_worktrees/2026-11-01-06-41_memory-capture-helper_source-commit-8fd2187fbe1b4a4f0907c64d012da15438d1bd02')
+        source = capture / '10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py'
+        declarations = [ast.literal_eval(node.value) for node in ast.parse(source.read_bytes()).body
+            if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'HELPERS'
+                for target in node.targets)]
+        self.assertEqual(declarations, [regression.HELPERS])
+
+        # Before: current measurement has an extra reader. After: capture still stages its fifteen exact files.
+        self.arguments.capture_helper_root = capture
+        self.arguments.ownership_profile = regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']
+        with patch.object(regression.measurement, 'HELPERS', (*regression.measurement.HELPERS, 'future_reader.py')):
+            unit = self.prepare()
+        files = regression.read(unit / 'regression_plan.json')['helpers']['files']
+        self.assertEqual(len(files), 15)
+        self.assertNotIn('future_reader.py', {Path(name).name for name in files})
+        for relative, digest in files.items():
+            self.assertEqual(hashlib.sha256((unit / 'code' / Path(relative).name).read_bytes()).hexdigest(), digest)
 
     def test_bootstrap_own_process_proof_is_saved_before_any_gres_resolution(self):
         """A version-two metadata rejection cannot erase own-process evidence or reach a GPU selection guess."""

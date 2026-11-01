@@ -1,0 +1,20 @@
+{
+  "kind": "reviewed_diagnostic_pinned_helper_list_correction",
+  "at_utc": "2026-11-01T15:41:18.795037+00:00",
+  "before": "a later sixteen-file measurement helper list changed the diagnostic pinned to an older fifteen-file capture source",
+  "after": "the diagnostic stages and verifies exactly the fifteen helper files of its immutable capture source",
+  "base_commit": "c127915c0e24a58e69f34d54c69acab2e2a518c9",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "5ebdee14f4ccff227d62c5fd500283ac770442cb094633edd00b979e944daa9c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "f7dadd729afac493313402e1a627a81b2dd791ea4a0dcb31008e2dc5cff047cd"
+  },
+  "pinned_capture_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "reproduction_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_pinned_helpers_reproduction_6781087_23.json",
+  "author_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_pinned_helpers_author_6781087_24.json",
+  "independent_receipt_sha256": "a76b1994d07a0ffc07f7708d134ffde9a1e2de9e960487a7b1065d373f341daf",
+  "author_cases": 20,
+  "independent_cases": 20,
+  "failed_uva_mapping_qualified": false,
+  "memory_rule_enabled": false,
+  "old_job_or_packet_changed": false
+}

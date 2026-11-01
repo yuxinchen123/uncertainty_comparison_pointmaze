@@ -42,7 +42,12 @@ FIXTURE = {'allocation_dtype': 'uint8', 'allocation_alignment_bytes': 256,
            'failure_request': 'smallest 256-byte multiple strictly greater than measured current-context capacity',
            'repeat_elements': 4096, 'repeat_rounds': 7, 'synchronized_calls_per_round': 10,
            'environment_transitions': 0, 'learner_updates': 0, 'formal_packing_evidence': False}
-HELPERS = measurement.HELPERS
+# The pinned capture source has fifteen helpers; later measurement readers cannot change this list.
+HELPERS = ('measure_selected.py', 'diagnose_gpu_execution.py', 'post_comparison_validation.py',
+           'infrastructure_retry.py', 'pregather_async_retry.py', 'h100_nvl_slurm_queue.py',
+           'h100_nvl_slurm_case.py', 'h100_nvl_slurm_evidence.py', 'h100_nvl_slurm_site_validation.py',
+           'h100_nvl_slurm_qualification.py', 'h100_nvl_allocation_observation.py', 'train_optimized.py',
+           'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')
 
 
 def write(path, value):

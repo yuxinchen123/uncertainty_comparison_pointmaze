@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_pinned_helper_independent_review",
+  "passed": true,
+  "at_utc": "2026-11-01T15:38:50.848923+00:00",
+  "source_hashes": {
+    "device_memory_capture_regression.py": "5ebdee14f4ccff227d62c5fd500283ac770442cb094633edd00b979e944daa9c",
+    "test_device_memory_capture_regression.py": "f7dadd729afac493313402e1a627a81b2dd791ea4a0dcb31008e2dc5cff047cd"
+  },
+  "source_unchanged": true,
+  "tests_passed": 20,
+  "pinned_capture_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "pinned_git_blob_declaration_matches": true,
+  "pinned_helper_count": 15,
+  "current_measurement_changes_do_not_change_receipt": true,
+  "read_only_git_calls": 87,
+  "owned_job_id": "6781087",
+  "owned_step_id": "26",
+  "process": {
+    "hostname": "slurm2",
+    "pid": 685103,
+    "birth": "50832856",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_26/user/task_0\n"
+  },
+  "seconds": 3.432483243988827,
+  "numerical_imports": [],
+  "native_library_loads": 0,
+  "network_calls": 0,
+  "live_scheduler_queries": 0,
+  "job_submissions": 0,
+  "source_edits": 0,
+  "profile_changes": 0,
+  "actual_gpu_mapping_qualified": false,
+  "test_output": "test_absent_current_context_has_no_creation_or_allocation_fallback (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn empty current context refuses the regression without trying another CUDA context. ... ok\ntest_actual_owned_uva_job_uses_generic_allocation_and_separate_typed_request (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOnly the original forty-minute time limit is changed to twenty minutes in this actual-record-derived shape check. ... ok\ntest_actual_returned_id_is_resolved_once_without_rewriting_static_plan (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA real returned-ID snapshot and physical UUID belong in a separate immutable second-stage record. ... ok\ntest_admission_cannot_change_source_or_array_fixture (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOnly actual allocation fields may be added after the static source and fixture are frozen. ... ok\ntest_bootstrap_own_process_proof_is_saved_before_any_gres_resolution (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA version-two metadata rejection cannot erase own-process evidence or reach a GPU selection guess. ... ok\ntest_deployment_module_must_be_imported_from_the_exact_staged_unit (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nOne stale imported deployment reader is rejected even when the other five modules match staged paths. ... ok\ntest_diagnostic_bytes_are_rejected_by_both_formal_readers (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nRenaming array-fixture bytes cannot turn them into full 128-environment capacity evidence. ... ok\ntest_explicit_profile_checks_capture_declaration_before_staging (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe optional profile is frozen explicitly; an actual old source without its declaration is rejected. ... ok\ntest_job_shape_rejects_changed_processors_host_memory_gpu_count_or_time (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn otherwise owned job cannot silently change any approved diagnostic resource. ... ok\ntest_known_diagnostic_artifacts_cannot_be_symlinks_to_identical_bytes (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAn unrelated unit's original bytes cannot replace this diagnostic's exact artifact path. ... ok\ntest_later_measurement_helpers_cannot_change_the_pinned_capture_list (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA later measurement dependency cannot enter an older captured helper receipt. ... ok\ntest_missing_helper_cannot_pass_pre_import_static_verification (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nRehashing a plan cannot hide a producer dependency omitted before numerical imports. ... ok\ntest_native_diagnostic_connection_accepts_exact_raw_request_without_formal_credit (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nConnection checks reparse native bytes and bind actual context fields without making the array fixture packing evidence. ... ok\ntest_native_diagnostic_connection_rejects_changed_scope_context_native_image_or_samples (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nSelf-consistent summaries cannot replace the original native request, child, driver or lifetime observations. ... ok\ntest_parent_and_child_births_are_bound_to_the_original_waited_processes (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nChanging a birth counter while retaining the same PID cannot replace a fresh diagnostic child. ... ok\ntest_preparation_has_no_guessed_id_uuid_or_array_training_claim (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nGeneric records describe one card and explicit zero training work before an allocation exists. ... ok\ntest_published_detached_profile_helper_is_verified_and_staged_exactly (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe actual published capture root supplies all staged bytes and the explicit ownership capability. ... ok\ntest_request_uses_actual_context_capacity_and_exact_small_alignment (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe request is the next 256-byte multiple rather than an assumed card-memory number. ... ok\ntest_successful_repeat_requires_its_first_normal_requested_sampler_stop (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nA dead sampler, unexpected exit or recorded ordinary error cannot qualify the successful child's lifecycle. ... ok\ntest_unrecorded_id_or_foreign_owner_stops_before_queries (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nAdmission cannot ask the scheduler or hardware about an unrecorded job or another owner. ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 3.236s\n\nOK\n"
+}
