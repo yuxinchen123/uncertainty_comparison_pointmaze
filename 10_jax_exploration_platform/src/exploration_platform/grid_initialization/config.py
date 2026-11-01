@@ -38,6 +38,8 @@ class GridPPOConfig:
     anneal_learning_rate: bool = True
     normalize_intrinsic_rewards: bool = False
     upstream_reward_filter_axis: bool = True
+    associative_reward_filter: bool = False
+    moment_reduction: str = "two_pass"
     per_copy_scalar_settings: tuple | Mapping = ()
     rollout_unroll: int = 1
     update_unroll: int = 1
@@ -61,6 +63,8 @@ class GridPPOConfig:
         # A single policy owns one environment, so num_steps is its entire rollout batch.
         if self.policy_kind not in {"tabular", "neural"}:
             raise ValueError("policy_kind must be tabular or neural")
+        if self.moment_reduction not in {"two_pass", "raw_moments"}:
+            raise ValueError("moment_reduction must be two_pass or raw_moments")
         if min(self.n_copies, self.hidden_width, self.num_steps, self.update_epochs,
                self.num_minibatches, self.total_timesteps, self.episode_length,
                self.rollout_unroll, self.update_unroll) < 1:

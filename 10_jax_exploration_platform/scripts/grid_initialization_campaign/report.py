@@ -3,6 +3,7 @@
 import argparse
 import csv
 from collections import defaultdict
+import html
 import json
 from pathlib import Path
 import sys
@@ -16,7 +17,7 @@ sys.path.insert(0, str(PLATFORM / 'src'))
 from exploration_platform.grid_initialization.fields import ADVERSARIAL_FIELD_KINDS
 
 
-WAVE_ORDER = ('calibration', 'field-search', 'fine-tuning', 'confirmation', 'long-confirmation')
+WAVE_ORDER = ('calibration', 'field-search', 'diagnosis', 'fine-tuning', 'confirmation', 'long-confirmation')
 LABELS = {'uniform': 'Uniform initial bonuses', 'none': 'No intrinsic bonus',
           'random_log_uniform': 'Random initial bonuses', 'random_network': 'Frozen coordinate networks'}
 COLORS = ('#0072B2', '#E69F00', '#009E73', '#CC79A7', '#D55E00')
@@ -69,6 +70,13 @@ def geometry_label(specification):
     return f"{geometry['kind'].capitalize()} grid, width {geometry['width']}, turns {geometry['turns']}"
 
 
+def condition_variant(specification):
+    """Keep sensitivity conditions separate while treating rollout length as a training setting."""
+    # Different rollout lengths already appear in configuration; transforms and normalization do not.
+    variant = specification.get('variant', 'primary')
+    return 'primary' if variant.startswith('rollout-') else variant
+
+
 def collect_rows(run_dir):
     """Combine seed batches only when their geometry, field, settings, and budget match."""
     # Completed summaries supply selection and metrics; behavior archives are loaded only for plots.
@@ -79,7 +87,8 @@ def collect_rows(run_dir):
             configuration = setting['configuration']
             identity = json.dumps([specification['wave'], specification['geometry'],
                 specification['policy_kind'], specification['field_kind'],
-                specification['severity_exponent'], specification['total_timesteps'], configuration],
+                specification['severity_exponent'], specification['total_timesteps'], configuration,
+                condition_variant(specification)],
                 sort_keys=True)
             if identity not in grouped:
                 grouped[identity] = {'identity': identity, 'specification': specification,
@@ -127,7 +136,7 @@ def select_reporting_rows(rows):
         comparison = row['configuration'].get('comparison', 'development best')
         key = json.dumps([specification['wave'], specification['geometry'], specification['policy_kind'],
                           specification['field_kind'], specification['severity_exponent'],
-                          specification['total_timesteps'], comparison], sort_keys=True)
+                          specification['total_timesteps'], comparison, condition_variant(specification)], sort_keys=True)
         if key in selected and confirmation:
             raise ValueError('A frozen confirmation comparison contains multiple different configurations.')
         if key not in selected or row['capped_mean_first_goal_steps'] < selected[key]['capped_mean_first_goal_steps']:
@@ -135,7 +144,83 @@ def select_reporting_rows(rows):
     return sorted(selected.values(), key=lambda row: (
         WAVE_ORDER.index(row['specification']['wave']), geometry_label(row['specification']),
         row['specification']['policy_kind'], row['configuration'].get('comparison', ''),
+        condition_variant(row['specification']),
         field_label(row['specification'])))
+
+
+def paired_confirmation_comparisons(rows, repetitions=8000):
+    """Estimate paired adverse-minus-uniform effects with four-comparison adjusted intervals."""
+    # Primary comparisons exclude shuffled fields, flattened fields, normalization, and path controls.
+    confirmed = [row for row in rows if row['specification']['wave'] in (
+        'confirmation', 'long-confirmation') and condition_variant(row['specification']) == 'primary']
+    references = {}
+    for row in confirmed:
+        spec = row['specification']
+        if spec['field_kind'] == 'uniform':
+            key = (spec['wave'], json.dumps(spec['geometry'], sort_keys=True), spec['policy_kind'],
+                   spec['total_timesteps'], row['configuration'].get('comparison', 'development best'))
+            references[key] = row
+    comparisons = []
+    for row in confirmed:
+        spec = row['specification']
+        requested = spec['field_kind'] in ADVERSARIAL_FIELD_KINDS if spec['geometry']['kind'] == 'straight' else spec['field_kind'] == 'random_network'
+        if not requested:
+            continue
+        key = (spec['wave'], json.dumps(spec['geometry'], sort_keys=True), spec['policy_kind'],
+               spec['total_timesteps'], row['configuration'].get('comparison', 'development best'))
+        if key not in references:
+            continue
+        reference = references[key]
+        reference_indices = {int(seed): index for index, seed in enumerate(reference['policy_seeds'])}
+        candidate_indices = {int(seed): index for index, seed in enumerate(row['policy_seeds'])}
+        paired_seeds = sorted(reference_indices.keys() & candidate_indices.keys())
+        if not paired_seeds:
+            continue
+
+        # Align raw outcomes by policy seed before applying censoring or forming differences.
+        first_reference = np.asarray([reference['first_goal_steps'][reference_indices[seed]] for seed in paired_seeds])
+        first_candidate = np.asarray([row['first_goal_steps'][candidate_indices[seed]] for seed in paired_seeds])
+        reference_steps = capped_first_goal_steps(first_reference, spec['total_timesteps'])
+        candidate_steps = capped_first_goal_steps(first_candidate, spec['total_timesteps'])
+        if reference_steps.mean() <= 0:
+            raise ValueError('A first-goal ratio requires a positive reference first-goal time.')
+        groups = [row['field_seeds'][candidate_indices[seed]] for seed in paired_seeds] if spec['field_kind'] == 'random_network' else paired_seeds
+        unique, inverse = np.unique(groups, return_inverse=True)
+        reference_sums = np.bincount(inverse, weights=reference_steps, minlength=len(unique))
+        candidate_sums = np.bincount(inverse, weights=candidate_steps, minlength=len(unique))
+        counts = np.bincount(inverse, minlength=len(unique))
+        difference_interval = ratio_interval = [None, None]
+        if len(unique) >= 2:
+            generator = np.random.default_rng(seed_for('paired_confirmation', *key, spec['field_kind']))
+            sampled = generator.integers(0, len(unique), (repetitions, len(unique)))
+            total_reference = reference_sums[sampled].sum(axis=1)
+            total_candidate = candidate_sums[sampled].sum(axis=1)
+            total_counts = counts[sampled].sum(axis=1)
+            # Two-sided 98.75% intervals allocate 5% across four environment/policy comparisons.
+            difference_interval = np.quantile((total_candidate-total_reference)/total_counts, [.00625, .99375]).tolist()
+            ratio_interval = np.quantile(total_candidate/total_reference, [.00625, .99375]).tolist()
+        reference_goal = float((first_reference >= 0).mean())
+        candidate_goal = float((first_candidate >= 0).mean())
+        label = 'No confirmed increase in first-goal time'
+        if difference_interval[0] is not None and difference_interval[0] > 0:
+            label = 'Increased first-goal time'
+            if ratio_interval[0] >= 2 and reference_goal >= .75:
+                label = 'At least twice the capped mean first-goal time'
+        if reference_goal < .75:
+            label += '; uniform initialization did not reach the 75 percent discovery requirement'
+        comparisons.append({'wave': spec['wave'], 'geometry': spec['geometry'], 'policy_kind': spec['policy_kind'],
+            'comparison': key[-1], 'field_kind': spec['field_kind'], 'field_label': field_label(spec),
+            'budget': spec['total_timesteps'], 'paired_seed_count': len(paired_seeds),
+            'independent_group_count': len(unique), 'uniform_capped_mean': float(reference_steps.mean()),
+            'candidate_capped_mean': float(candidate_steps.mean()),
+            'mean_difference': float((candidate_steps-reference_steps).mean()),
+            'mean_difference_interval': difference_interval,
+            'mean_ratio': float(candidate_steps.mean()/reference_steps.mean()),
+            'mean_ratio_interval': ratio_interval, 'interval_confidence': .9875,
+            'family_comparison_count': 4, 'uniform_goal_fraction': reference_goal,
+            'candidate_goal_fraction': candidate_goal, 'effect_label': label,
+            'all_current_seeds_paired': len(paired_seeds) == len(reference_indices) == len(candidate_indices)})
+    return comparisons
 
 
 def _load_behavior(run_dir, row):
@@ -212,13 +297,58 @@ def _save_figure(figure, directory, name):
     figure.savefig(directory / (name + '.png'), bbox_inches='tight', dpi=180)
 
 
-def _plot_comparison(run_dir, rows, plots_dir, figure_name):
-    """Compare equal-budget initial fields, visits, movement, and learned action probabilities."""
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-    from matplotlib.colors import LogNorm, Normalize
+def _write_sampled_position_animation(rows, data, directory, name):
+    """Write a standalone browser animation of recorded training-position samples."""
+    # Before: positions at recorded training times; after: a slider that never invents intermediate actions.
+    conditions = []
+    for row, values in zip(rows, data):
+        index = representative_seed_index(values['first_goal_steps'], row['specification']['total_timesteps'],
+                                         values['seed_ids'], values['field_seed_ids'])
+        conditions.append({'label': field_label(row['specification']),
+            'policy_seed': int(values['seed_ids'][index]), 'field_seed': int(values['field_seed_ids'][index]),
+            'states': values['trajectories'][index].tolist(), 'steps': values['trajectory_steps'][index].tolist(),
+            'visits': values['visit_counts'].mean(axis=0).tolist()})
+    payload = json.dumps({'positions': data[0]['positions'].tolist(), 'shape': list(data[0]['grid'].shape),
+                          'conditions': conditions}).replace('</', '<\\/')
+    title = html.escape(geometry_label(rows[0]['specification']) + '; ' + rows[0]['specification']['policy_kind'] + ' policy')
 
+    # All styles, geometry, seed identifiers and sampled positions are embedded; no network is needed.
+    page = '''<!doctype html><html lang="en"><meta charset="utf-8"><title>Sampled training positions</title>
+<style>body{font:16px system-ui;margin:24px;color:#202020}h1{font-size:22px}button,input{font:inherit}
+.cards{display:flex;flex-wrap:wrap;gap:16px}.card{border:1px solid #aaa;padding:12px;flex:1;min-width:260px}
+svg{display:block;width:100%;height:220px;background:#505050}.note{max-width:900px}button{margin-right:12px}
+input{width:min(700px,70vw)}.detail{font-size:14px}</style>
+<h1>''' + title + '''</h1><p class="note">Recorded position samples during training. Intermediate actions are not shown.
+Each condition uses the seed nearest its median capped first-goal time. Background colors show final mean visitation;
+the red marker shows the selected seed's recorded cell. The marker may span several cells for visibility.</p>
+<p><button id="play">Play</button><input id="sample" type="range" min="0" value="0"><span id="time"></span></p>
+<div id="cards" class="cards"></div><script>
+const evidence=''' + payload + ''';
+const ns='http://www.w3.org/2000/svg';const markers=[];const details=[];
+const make=(tag,attributes)=>{const item=document.createElementNS(ns,tag);for(const [key,value]of Object.entries(attributes))item.setAttribute(key,value);return item};
+const maximum=Math.max(...evidence.conditions.flatMap(condition=>condition.visits));
+for(const condition of evidence.conditions){const card=document.createElement('section');card.className='card';
+const heading=document.createElement('h2');heading.style.fontSize='17px';heading.textContent=condition.label;card.append(heading);
+const seed=document.createElement('p');seed.className='detail';seed.textContent=`Policy seed ${condition.policy_seed}; field seed ${condition.field_seed}`;card.append(seed);
+const svg=make('svg',{viewBox:`-0.5 -0.5 ${evidence.shape[1]} ${evidence.shape[0]}`,preserveAspectRatio:'none'});
+for(let state=0;state<evidence.positions.length;state++){const [row,column]=evidence.positions[state];
+const fraction=Math.log1p(condition.visits[state])/Math.log1p(Math.max(1,maximum));
+const shade=Math.round(255-190*fraction);svg.append(make('rect',{x:column-.5,y:row-.5,width:1,height:1,fill:`rgb(${shade},${shade},255)`}));}
+const marker=make('circle',{r:Math.max(.35,evidence.shape[1]/100,evidence.shape[0]/100),fill:'#d55e00',stroke:'white','stroke-width':.1});
+svg.append(marker);card.append(svg);const detail=document.createElement('p');detail.className='detail';card.append(detail);details.push(detail);markers.push(marker);document.querySelector('#cards').append(card);}
+const slider=document.querySelector('#sample');slider.max=Math.max(...evidence.conditions.map(condition=>condition.states.length))-1;
+const draw=()=>{const sample=Number(slider.value);for(let index=0;index<markers.length;index++){const condition=evidence.conditions[index];
+const location=Math.min(sample,condition.states.length-1);const state=condition.states[location];const [row,column]=evidence.positions[state];
+markers[index].setAttribute('cx',column);markers[index].setAttribute('cy',row);details[index].textContent=`Training transitions: ${condition.steps[location].toLocaleString()}; distance along path: ${state}`;}
+document.querySelector('#time').textContent=` Sample ${sample+1} of ${Number(slider.max)+1}`;};slider.addEventListener('input',draw);
+let timer=null;document.querySelector('#play').addEventListener('click',()=>{if(timer!==null){clearInterval(timer);timer=null;document.querySelector('#play').textContent='Play';return;}
+document.querySelector('#play').textContent='Pause';timer=setInterval(()=>{slider.value=(Number(slider.value)+1)%(Number(slider.max)+1);draw();},350);});draw();
+</script></html>'''
+    (directory / (name + '_sampled_positions.html')).write_text(page)
+
+
+def select_behavior_rows(rows):
+    """Use the recorded reference fields and one development-selected adverse field in figures."""
     # Select at most one development adversary by the largest tuned capped mean, then freeze that view.
     priority = ('uniform', 'random_log_uniform', 'none', 'random_network')
     selected = [row for kind in priority for row in rows if row['specification']['field_kind'] == kind]
@@ -231,7 +361,18 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         kind = row['specification']['field_kind']
         if kind not in unique or row['capped_mean_first_goal_steps'] > unique[kind]['capped_mean_first_goal_steps']:
             unique[kind] = row
-    selected = list(unique.values())
+    return list(unique.values())
+
+
+def _plot_comparison(run_dir, rows, plots_dir, figure_name):
+    """Compare equal-budget initial fields, visits, movement, and learned action probabilities."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import LogNorm, Normalize
+
+    # Tables and figures use the same presentation subset; all measured rows remain in the data.
+    selected = select_behavior_rows(rows)
     data = [_load_behavior(run_dir, row) for row in selected]
     if not selected:
         return []
@@ -330,17 +471,18 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
     axis.legend(fontsize=8)
     _save_figure(figure, plots_dir, figure_name + '_discovery')
     plt.close(figure)
+    _write_sampled_position_animation(selected, data, plots_dir, figure_name)
     return representatives
 
 
-def _format_interval(value, interval, percentage=False):
+def _format_interval(value, interval, percentage=False, decimals=1):
     """Render an estimate and its 95-percent interval in a compact plain-text cell."""
     # Single independent groups have no estimable interval and are marked explicitly.
     scale = 100 if percentage else 1
-    estimate = f'{value * scale:.1f}'
+    estimate = f'{value * scale:.{decimals}f}'
     if interval[0] is None:
         return estimate + ' (interval N/A)'
-    return estimate + f' [{interval[0] * scale:.1f}, {interval[1] * scale:.1f}]'
+    return estimate + f' [{interval[0] * scale:.{decimals}f}, {interval[1] * scale:.{decimals}f}]'
 
 
 def _latex_escape(value):
@@ -351,7 +493,7 @@ def _latex_escape(value):
     return ''.join(replacements.get(character, character) for character in str(value))
 
 
-def _write_results_tex(analysis_dir, display_rows, figure_groups):
+def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_comparisons):
     """Write generated result tables and selected behavior figures for the development document."""
     # Keep results separate across budgets and shared versus independently tuned comparisons.
     pieces = ['% Generated by scripts/grid_initialization_campaign/report.py; edit that generator.\n']
@@ -361,10 +503,15 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups):
     for row in display_rows:
         spec = row['specification']
         identity = (spec['wave'], geometry_label(spec), spec['policy_kind'],
-                    spec['total_timesteps'], row['configuration'].get('comparison', 'development best'))
+                    spec['total_timesteps'], row['configuration'].get('comparison', 'development best'),
+                    condition_variant(spec))
         groups[identity].append(row)
+    latest = max((WAVE_ORDER.index(row['specification']['wave']) for row in display_rows), default=-1)
     for group_index, (identity, rows) in enumerate(groups.items()):
-        wave, geometry, policy, budget, comparison = identity
+        wave, geometry, policy, budget, comparison, variant = identity
+        if WAVE_ORDER.index(wave) != latest:
+            continue
+        rows = select_behavior_rows(rows)
         pieces.append('\n\\begin{table}[H]\n\\centering\n\\setlength{\\tabcolsep}{3pt}\n'
                       '\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{4.0cm}'
                       '>{\\raggedright\\arraybackslash}p{3.7cm}'
@@ -382,12 +529,22 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups):
             pieces.append(_latex_escape(field_label(row['specification'])) + ' & ' + value + ' & ' +
                           _latex_escape(goal) + f" & {row['seed_count']} \\\\\n")
         pieces.append('\\bottomrule\n\\end{tabular}\n\\caption{' + _latex_escape(
-            f'{geometry}; {policy} policy; {wave.replace("-", " ")}; {comparison.replace("-", " ")}. '
+            f'{geometry}; {policy} policy; {wave.replace("-", " ")}; {comparison.replace("-", " ")}; {variant.replace("-", " ")}. '
             f'Every failed seed contributes the full {budget:,}-transition budget. '
             'Intervals resample network or random-field seeds as groups, retaining their policy seeds; '
             'deterministic fields resample policy seeds. Development rows select the lowest development mean; '
-            'confirmation rows retain frozen settings.') + '}\n'
+            'confirmation rows retain frozen settings. All development fields and settings remain in the run records.') + '}\n'
             + f'\\label{{tab:grid-initialization-results-{group_index}}}\n\\end{{table}}\n')
+    if paired_comparisons:
+        pieces.append('\n\\paragraph{Paired confirmation comparisons.} The difference is adverse initialization minus uniform initialization; '
+                      'the ratio is their capped means. The same policy seeds are paired. '
+                      'Two-sided 98.75\\% intervals adjust for four geometry/policy comparisons within each comparison rule and budget.\n')
+        for index, comparison in enumerate(paired_comparisons):
+            description = geometry_label({'geometry': comparison['geometry']}) + '; ' + comparison['policy_kind'] + ' policy; ' + comparison['comparison']
+            pieces.append('\\noindent ' + _latex_escape(description) + ': difference ' +
+                _latex_escape(_format_interval(comparison['mean_difference'], comparison['mean_difference_interval'])) +
+                ' transitions; ratio ' + _latex_escape(_format_interval(comparison['mean_ratio'], comparison['mean_ratio_interval'], decimals=3)) +
+                '; ' + _latex_escape(comparison['effect_label']) + '.\\par\n')
     for figure in figure_groups:
         for suffix, caption in (('maps', 'Initial bonus, cumulative visitation, and final-window visitation. '
                 'Each row uses a common color scale across initializations. Dark cells are walls; white visitation cells have zero visits.'),
@@ -411,6 +568,7 @@ def generate_report(run_dir):
     plots_dir.mkdir(parents=True, exist_ok=True)
     rows = collect_rows(run_dir)
     display_rows = select_reporting_rows(rows)
+    paired_comparisons = paired_confirmation_comparisons(display_rows)
     pieces = ['<!-- Generated by scripts/grid_initialization_campaign/report.py; edit that generator. -->\n',
               '# Initial bonus differences and exploration\n\n', f'Updated {pacific()}.\n\n',
               'For policy seed $i$, let $T_i$ be the number of training transitions before its first goal, '
@@ -430,7 +588,8 @@ def generate_report(run_dir):
     for row in display_rows:
         specification = row['specification']
         heading = (specification['wave'], geometry_label(specification), specification['policy_kind'],
-                   specification['total_timesteps'], row['configuration'].get('comparison', 'development best'))
+                   specification['total_timesteps'], row['configuration'].get('comparison', 'development best'),
+                   condition_variant(specification))
         if heading != previous:
             pieces.append('\n## ' + '; '.join(map(str, heading)) + '\n\n'
                           '| Initialization | Mean steps [95% interval] | Goal found, % | Coverage, % | Seeds |\n'
@@ -440,6 +599,21 @@ def generate_report(run_dir):
             _format_interval(row['capped_mean_first_goal_steps'], row['capped_mean_interval']) + ' | ' +
             _format_interval(row['goal_fraction'], row['goal_fraction_interval'], percentage=True) +
             f" | {100 * row['coverage_mean']:.1f} | {row['seed_count']} |\n")
+    if paired_comparisons:
+        pieces.append('\n## Paired confirmation comparisons\n\n'
+            'Differences are adverse initialization minus uniform initialization. Ratios divide their capped means. '
+            'The same policy seeds are paired. Two-sided 98.75% bootstrap intervals adjust for four '
+            'geometry/policy comparisons within each comparison rule and transition budget. '
+            'Network-field comparisons resample whole field seeds; adversarial fields resample policy seeds. '
+            'An unfinished confirmation uses the paired seeds currently available and remains interim.\n\n')
+        for comparison in paired_comparisons:
+            pieces.append('### ' + geometry_label({'geometry': comparison['geometry']}) + '; ' + comparison['policy_kind'] +
+                ' policy; ' + comparison['comparison'] + '; ' + comparison['wave'] + '\n\n' +
+                comparison['field_label'] + '. ' + comparison['effect_label'] + '.\n\n' +
+                '- Paired seeds: ' + str(comparison['paired_seed_count']) + '; independent groups: ' + str(comparison['independent_group_count']) + '.\n' +
+                '- Mean difference in transitions [98.75% interval]: ' + _format_interval(comparison['mean_difference'], comparison['mean_difference_interval']) + '.\n' +
+                '- Ratio of capped means [98.75% interval]: ' + _format_interval(comparison['mean_ratio'], comparison['mean_ratio_interval'], decimals=3) + '.\n' +
+                f"- Goal found: uniform {100*comparison['uniform_goal_fraction']:.1f}%; adverse {100*comparison['candidate_goal_fraction']:.1f}%.\n\n")
 
     # Refresh behavior figures for the latest completed phase while preserving older phase files.
     figure_groups = []
@@ -450,7 +624,7 @@ def generate_report(run_dir):
             spec = row['specification']
             if WAVE_ORDER.index(spec['wave']) == latest:
                 key = json.dumps([spec['geometry'], spec['policy_kind'], spec['total_timesteps'],
-                    row['configuration'].get('comparison', 'development best')], sort_keys=True)
+                    row['configuration'].get('comparison', 'development best'), condition_variant(spec)], sort_keys=True)
                 grouped[key].append(row)
         pieces.append('\n## Behavior\n\nMaps show means over every completed seed at the displayed setting. '
                       'Movement examples use the seed nearest the median capped first-goal time, '
@@ -465,6 +639,8 @@ def generate_report(run_dir):
                           f'{comparison_rows[0]["specification"]["policy_kind"]} policy\n\n')
             for suffix in ('maps', 'movement', 'policy', 'discovery'):
                 pieces.append(f'![{suffix.capitalize()}](plots/{name}_{suffix}.png)\n\n')
+            pieces.append(f'[Play the recorded training-position samples](plots/{name}_sampled_positions.html). '
+                          'Intermediate actions are not shown.\n\n')
             for example in representatives:
                 pieces.append(f"- {example['condition']}: policy seed {example['policy_seed']}, field seed {example['field_seed']}.\n")
             pieces.append('\n')
@@ -475,14 +651,14 @@ def generate_report(run_dir):
     with (data_dir / 'seed_metrics.csv').open('w', newline='') as handle:
         writer = csv.writer(handle)
         writer.writerow(['wave', 'geometry', 'policy', 'field', 'configuration', 'budget',
-                         'policy_seed', 'field_seed', 'first_goal_steps', 'capped_first_goal_steps'])
+                         'policy_seed', 'field_seed', 'first_goal_steps', 'capped_first_goal_steps', 'variant'])
         for row in rows:
             spec = row['specification']
             capped = capped_first_goal_steps(row['first_goal_steps'], spec['total_timesteps'])
             for index in range(row['seed_count']):
                 writer.writerow([spec['wave'], geometry_label(spec), spec['policy_kind'], field_label(spec),
                     json.dumps(row['configuration'], sort_keys=True), spec['total_timesteps'],
-                    row['policy_seeds'][index], row['field_seeds'][index], row['first_goal_steps'][index], capped[index]])
+                    row['policy_seeds'][index], row['field_seeds'][index], row['first_goal_steps'][index], capped[index], condition_variant(spec)])
     pieces.append('\n## Records and visualization sources\n\n'
                   '[Every seed metric](data/seed_metrics.csv) is retained, including unselected development settings. '
                   'Every task retains its complete seed arrays in `data/research/<task>/behavior.npz`.\n\n'
@@ -490,9 +666,10 @@ def generate_report(run_dir):
                   '[trajectory and coverage comparisons](https://proceedings.neurips.cc/paper_files/paper/2023/file/9c7900fac04a701cbed83256b76dbaa3-Paper-Conference.pdf), '
                   'and [initial random-network bonus maps](https://proceedings.mlr.press/v235/yang24w.html).\n')
     (analysis_dir / 'analysis.md').write_text(''.join(pieces))
-    _write_results_tex(analysis_dir, display_rows, figure_groups)
+    _write_results_tex(analysis_dir, display_rows, figure_groups, paired_comparisons)
     write_json(analysis_dir / 'data/aggregate_results.json', {'generated_at': pacific(),
-        'completed_setting_groups': len(rows), 'reported_groups': display_rows, 'figures': figure_groups})
+        'completed_setting_groups': len(rows), 'reported_groups': display_rows, 'figures': figure_groups,
+        'paired_confirmation_comparisons': paired_comparisons})
     return {'completed_setting_groups': len(rows), 'reported_rows': len(display_rows),
             'figure_comparisons': len(figure_groups), 'report': str(analysis_dir / 'analysis.md')}
 

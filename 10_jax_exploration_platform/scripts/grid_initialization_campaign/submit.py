@@ -52,7 +52,7 @@ def allowed_seconds(partition, reservation=None, canary=False):
 
 
 def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=None,
-               cards=1, reservation=None, monitor=False, canary=False):
+               cards=1, reservation=None, monitor=False, canary=False, exclude_nodes=()):
     """Submit one recorded source snapshot through the account's exact-id wrapper."""
     # Build scripts from the frozen snapshot, never from the mutable project source.
     run_dir = Path(run_dir)
@@ -97,6 +97,8 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
     command += ['--gpus-per-node', '0'] if monitor else ['--gres', f'gpu:{gpu_type}:{cards}']
     if node:
         command += ['--nodelist', node]
+    if exclude_nodes:
+        command += ['--exclude', ','.join(sorted(exclude_nodes))]
     if reservation:
         command += ['--reservation', reservation, '--qos', 'csresnolim']
     command.append(str(script))
@@ -108,6 +110,7 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         'stage': 'monitor' if monitor else stage, 'node': node, 'gpu_type': gpu_type,
         'cards': 0 if monitor else cards, 'cpus': cpus, 'memory_gib': memory,
         'partition': partition, 'canary': canary, 'source_commit': source.get('commit'),
+        'excluded_nodes': sorted(exclude_nodes),
         'submitted_at': now(), 'script': str(script), 'wall_seconds': seconds})
     return job_id
 
@@ -207,6 +210,8 @@ def top_up(run_dir, stage):
     nodes = node_resources(subprocess.check_output(['scontrol', 'show', 'nodes', '-o'], text=True))
     classes = read_json(RESOURCE_FILE)['classes']
     held_nodes = {record['node'] for record in active if record.get('node')}
+    held_nodes.update(row[5] for row in live.values() if row[3] == 'RUNNING'
+                      and row[5] in nodes)
     ready, failed = compatibility_classes(run_dir)
     type_counts = {}
     for record in classes:
@@ -262,6 +267,48 @@ def top_up(run_dir, stage):
                     budget['memory_gib'] -= MEMORY_GIB_PER_CARD*cards
                     if len(jobs) % 10 == 0:
                         time.sleep(30)
+                    break
+    # Let large-card requests age while cards are occupied, without pinning a waiting job.
+    # One compatibility request per type precedes full-node requests of that measured type.
+    if stage == 'research' and remaining > 0:
+        queued_types = set()
+        for record in ordered:
+            gpu_type = record['gres_type']
+            if (gpu_type in queued_types or gpu_type in failed
+                    or record.get('capability_rank', 999) > 2):
+                continue
+            queued_types.add(gpu_type)
+            canary = gpu_type not in ready
+            if canary and any(entry.get('gpu_type') == gpu_type for entry in active):
+                continue
+            if canary and any(entry.get('gpu_type') == gpu_type for entry in (
+                    read_json(path) for path in (run_dir/'slurm/submissions').glob('*.json'))
+                    if entry['job_id'] in jobs):
+                continue
+            cards = 1 if canary else record['gpus_per_node']
+            for identity in ('uva-sl5nw', 'uva-yuxinchen'):
+                budget = budgets.get((identity, record['partition']))
+                if not budget:
+                    continue
+                submitted_here = False
+                while (remaining >= cards and type_counts[gpu_type] >= cards
+                        and budget['cards'] >= cards and budget['cpus'] >= CPU_PER_CARD*cards
+                        and budget['memory_gib'] >= MEMORY_GIB_PER_CARD*cards):
+                    identifier = submit_job(run_dir, identity, stage,
+                        partition=record['partition'], gpu_type=gpu_type, cards=cards,
+                        canary=canary, exclude_nodes=held_nodes)
+                    jobs.append(identifier)
+                    submitted_here = True
+                    remaining -= cards
+                    type_counts[gpu_type] -= cards
+                    budget['cards'] -= cards
+                    budget['cpus'] -= CPU_PER_CARD*cards
+                    budget['memory_gib'] -= MEMORY_GIB_PER_CARD*cards
+                    if len(jobs) % 10 == 0:
+                        time.sleep(30)
+                    if canary:
+                        break
+                if canary and submitted_here:
                     break
     return jobs
 

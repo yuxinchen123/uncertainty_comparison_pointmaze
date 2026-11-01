@@ -16,9 +16,20 @@ from common import PLATFORM, append_json, now, read_json, seed_for, write_json
 def memory_profile(run_dir, policy_kind):
     """Use measured production packing, with a conservative first compatibility batch."""
     path = run_dir / 'infrastructure/production.json'
+    gpu_class = os.environ.get('GRID_GPU_CLASS', 'default')
+    compatibility = run_dir/'infrastructure/compatibility'/(gpu_class+'.json')
+    measured = read_json(compatibility) if compatibility.exists() else None
     if path.exists():
-        record = read_json(path)
-        return record.get(policy_kind, {'copies': 32, 'changes': {}})
+        record = read_json(path).get(policy_kind, {'copies': 32, 'changes': {}})
+        # The jaguar03 packing result is not evidence for an older GPU class.
+        if measured is None or record.get('device_kind') == measured.get('device_kind'):
+            return record
+    if measured is not None:
+        cases = [case for case in measured.get('cases', []) if case['policy_kind'] == policy_kind
+                 and case.get('completed') and case.get('correctness', {}).get('passed')]
+        if cases:
+            return {'copies': min(case['copies'] for case in cases), 'changes': {},
+                    'source': str(compatibility), 'device_kind': measured.get('device_kind')}
     return {'copies': 32, 'changes': {}}
 
 
@@ -49,6 +60,7 @@ def main():
     # Before: settings x seeds; after: independent copies whose seed ignores setting/packing.
     copies = [(setting_index, seed) for setting_index in range(len(spec['settings']))
               for seed in range(spec['seed_start'], spec['seed_start']+spec['seed_count'])]
+    total_scientific_copies = len(copies)
     records, arrays, field_cache = [], [], {}
     completed_ids = set()
     for completed_path in sorted(folder.glob('completed_copies_*.json')):
@@ -80,6 +92,7 @@ def main():
     if override.exists():
         batch_size = min(batch_size, read_json(override)['copies'])
     for offset in range(0, len(copies), batch_size):
+        batch_started = time.monotonic()
         selected = copies[offset:offset+batch_size]
         shard_identifier = f'{selected[0][0]}-{selected[0][1]}_to_{selected[-1][0]}-{selected[-1][1]}'
         shard = folder / f'completed_copies_{shard_identifier}.json'
@@ -136,7 +149,7 @@ def main():
                 steps.append((iteration+1)*configuration.num_steps)
                 maximums.append(np.asarray(host['maximum_progress']).copy())
                 append_json(folder / 'progress.jsonl', {'at': now(), 'batch_offset': offset,
-                    'completed_copies': len(records), 'total_copies': len(copies),
+                    'completed_copies': len(records), 'total_copies': total_scientific_copies,
                     'iteration': iteration+1, 'total_iterations': configuration.total_iterations,
                     'goal_fraction': float((np.asarray(host['first_goal_step']) >= 0).mean())})
         first = np.asarray(jax.device_get(state.first_goal_step))
@@ -159,7 +172,8 @@ def main():
             maximum_progress_history=np.stack(maximums), first_goal_steps=first,
             seed_ids=seeds, field_seed_ids=field_seeds, setting_indices=setting_indices)
         write_json(shard, {'completed': True, 'copies': current_records,
-            'behavior_file': behavior_path.name, 'configuration': {
+            'behavior_file': behavior_path.name, 'wall_seconds': time.monotonic()-batch_started,
+            'configuration': {
                 'episode_length': configuration.episode_length, 'rollout_steps': configuration.num_steps,
                 'normalization': configuration.normalize_intrinsic_rewards},
             'field_metadata': [field_cache[int(seed)].metadata for seed in field_seeds]})
@@ -191,7 +205,8 @@ def main():
                 for name in loaded[0].files}
     np.savez_compressed(folder / 'behavior.npz', **combined)
     write_json(folder / 'summary.json', {'completed': True, 'specification': spec,
-        'settings': summaries, 'copy_records': records, 'wall_seconds': time.monotonic()-started,
+        'settings': summaries, 'copy_records': records,
+        'wall_seconds': sum(read_json(path).get('wall_seconds', 0.) for path in folder.glob('completed_copies_*.json')),
         'wall_seconds_this_attempt': time.monotonic()-started, 'resumed_copy_count': len(completed_ids),
         'finished_at': now(), 'behavior': str(folder / 'behavior.npz')})
 

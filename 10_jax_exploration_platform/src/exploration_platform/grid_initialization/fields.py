@@ -157,7 +157,7 @@ def make_random_network_bonus_field(geometry: GridWorld, seed: int = 0,
     # Before: target/predictor features [S,512]; after: one fixed nonnegative error per state.
     target = evaluate_network("target")
     predictor = evaluate_network("predictor")
-    raw = np.asarray(jnp.mean(jnp.square(predictor - target), axis=-1), dtype=np.float32)
+    raw = np.asarray(0.5 * jnp.sum(jnp.square(predictor - target), axis=-1), dtype=np.float32)
     metadata = {"kind": "random_network", "seed": int(seed), "state_count": geometry.state_count,
                 "coordinate_transform": "centered and isotropically scaled",
                 "constant_coordinate": bool(constant_coordinate),
@@ -167,6 +167,6 @@ def make_random_network_bonus_field(geometry: GridWorld, seed: int = 0,
                 "predictor_extra_activations": "rectified linear",
                 "output_activation": "linear", "weight_initialization": "orthogonal",
                 "weight_scale": math.sqrt(2), "bias_initialization": "zero",
-                "error_reduction": "mean squared feature error",
+                "error_reduction": "one half times sum of squared feature errors, as in CleanRL",
                 "seed_scheme": "sha256_named_quantities_v1", "trained": False}
     return _archive_field(raw, metadata)

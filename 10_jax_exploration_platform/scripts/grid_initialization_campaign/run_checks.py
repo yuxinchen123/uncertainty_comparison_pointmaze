@@ -21,6 +21,7 @@ def main():
     reference_python = PROJECT/'.venvs/atari_pixels_jax/bin/python'
     commands = [[str(reference_python), '-m', 'pytest', '-q',
         str(PLATFORM/'tests/test_grid_initialization_environment.py'),
+        str(PLATFORM/'tests/test_grid_initialization_report.py'),
         str(PLATFORM/'tests/grid_initialization'),
         str(PLATFORM/'scripts/grid_initialization_campaign/tests')],
         [str(PYTHON), '-c',
@@ -34,6 +35,7 @@ def main():
          't=GridTrainer(c,w.transition_table,w.coordinates,np.ones((2,4),np.float32)); '
          's,m=t.train_iteration(t.initialize([1,2]));jax.block_until_ready(s); '
          'assert np.asarray(s.counts).sum()==16; print("Production environment GPU smoke passed.")'],
+        [str(PYTHON), str(Path(__file__).parent/'check_training_records.py'), '--run-dir', str(args.run_dir)],
         [str(PYTHON), str(Path(__file__).parent/'build_report.py'), '--run-dir', str(args.run_dir)]]
     results = []
     for command in commands:

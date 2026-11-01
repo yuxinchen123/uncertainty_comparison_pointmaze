@@ -4,7 +4,6 @@ import argparse
 from datetime import datetime
 import os
 from pathlib import Path
-import statistics
 import subprocess
 import time
 
@@ -87,7 +86,7 @@ def stop_workers(run_dir, live):
 
 def status_lines(run_dir, state, live, counts):
     """Display actual pools and card requests separately from completed unit counts."""
-    lines = ['run or job                   pool                  gpu                   state      progress']
+    lines = ['run or job           pool              gpu                state      progress']
     submissions = {record['job_id']: record for path in (run_dir/'slurm/submissions').glob('*.json')
                    if (record := read_json(path))['job_id'] in live}
     for group, running in (('TRAINING', True), ('WAITING', False)):
@@ -102,7 +101,7 @@ def status_lines(run_dir, state, live, counts):
             pool = f'{row[2]} {row[1]}'
             card = f'{record.get("cards", 0)} {record.get("gpu_type") or "none"}'
             progress = f'{counts["done"]} done; {counts["running"]} active'
-            lines.append(f'{name[:28]:28} {pool[:21]:21} {card[:21]:21} {row[3][:10]:10} {progress}')
+            lines.append(f'{name[:20]:20} {pool[:17]:17} {card[:18]:18} {row[3][:10]:10} {progress}')
     lines += ['FINISHED', f'completed study units: {counts["done"]}; failed units: {counts["failed"]}',
               'PLANNED', f'{counts["pending"]} queued units; phase {state["phase"]}', 'Updated '+pacific()]
     return lines

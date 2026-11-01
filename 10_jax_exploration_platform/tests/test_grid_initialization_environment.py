@@ -84,7 +84,8 @@ def test_nonzero_fields_are_strictly_positive_and_mean_one(kind):
     assert result.raw.dtype == result.normalized.dtype == np.float32
     assert np.all(result.raw > 0) and np.all(result.normalized > 0)
     assert np.all(np.isfinite(result.normalized))
-    np.testing.assert_allclose(result.normalized.mean(), 1, rtol=2e-7)
+    np.testing.assert_allclose(result.normalized.mean(), 1, rtol=5e-7)
+    np.testing.assert_allclose(result.normalized.astype(np.float64).mean(), 1, rtol=1e-7)
     assert result.metadata["kind"] == kind
     assert result.metadata["raw_mean"] == float(result.raw.astype(np.float64).mean())
 
@@ -128,7 +129,7 @@ def test_frozen_network_field_is_positive_reproducible_and_archived():
     control = make_random_network_bonus_field(geometry, seed=13, constant_coordinate=True)
     np.testing.assert_array_equal(first.raw, repeated.raw)
     assert first.raw.shape == (14,) and np.all(first.raw > 0)
-    np.testing.assert_allclose(first.normalized.mean(), 1, rtol=2e-7)
+    np.testing.assert_allclose(first.normalized.astype(np.float64).mean(), 1, rtol=2e-7)
     assert not np.array_equal(first.raw, control.raw)
     assert first.metadata["target_widths"] == [2, 32, 64, 64, 512]
     assert first.metadata["predictor_widths"] == [2, 32, 64, 64, 512, 512, 512]

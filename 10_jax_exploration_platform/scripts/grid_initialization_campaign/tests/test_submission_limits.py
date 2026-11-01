@@ -100,6 +100,35 @@ class SubmissionLimitTests(unittest.TestCase):
             self.assertNotIn('--all', run.call_args.args[0])
             self.assertTrue((root/'STOP').exists())
 
+    def test_busy_large_cards_receive_one_unpinned_compatibility_request(self):
+        """Keep a standing request while busy cards are unavailable, within physical depth."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for state in ('pending', 'running'):
+                (root/'queue'/state).mkdir(parents=True)
+            (root/'slurm/submissions').mkdir(parents=True)
+            for index in range(8):
+                (root/'queue/pending'/f'{index}.json').write_text(json.dumps({'stage': 'research'}))
+            catalog = root/'catalog.json'
+            catalog.write_text(json.dumps({'classes': [{'nodes': ['busy'], 'partition': 'gpu',
+                'gres_type': 'h100', 'gpu_mem_mb': 94000, 'gpus_per_node': 2, 'capability_rank': 1}]}))
+            capacity = {'uva-sl5nw': capacity_record(), 'uva-yuxinchen': capacity_record()}
+            node = ('NodeName=busy CPUTot=32 CPUAlloc=8 RealMemory=131072 '
+                    'AllocMem=32768 State=MIXED Gres=gpu:h100:2 AllocTRES=gres/gpu=2')
+            def output(command, **kwargs):
+                """Supply capacity and an occupied healthy node without real scheduler calls."""
+                return json.dumps(capacity) if '--json' in command else node
+            with patch.object(submit, 'RESOURCE_FILE', catalog), patch.object(submit, 'own_live_jobs', return_value={}), \
+                    patch.object(submit, 'owner_reservation', return_value=None), \
+                    patch.object(submit, 'compatibility_classes', return_value=(set(), set())), \
+                    patch.object(submit.subprocess, 'check_output', side_effect=output), \
+                    patch.object(submit, 'submit_job', return_value='101') as call:
+                identifiers = submit.top_up(root, 'research')
+            self.assertEqual(identifiers, ['101'])
+            self.assertIsNone(call.call_args.kwargs.get('node'))
+            self.assertEqual(call.call_args.kwargs['cards'], 1)
+            self.assertTrue(call.call_args.kwargs['canary'])
+
 
 if __name__ == '__main__':
     unittest.main()
