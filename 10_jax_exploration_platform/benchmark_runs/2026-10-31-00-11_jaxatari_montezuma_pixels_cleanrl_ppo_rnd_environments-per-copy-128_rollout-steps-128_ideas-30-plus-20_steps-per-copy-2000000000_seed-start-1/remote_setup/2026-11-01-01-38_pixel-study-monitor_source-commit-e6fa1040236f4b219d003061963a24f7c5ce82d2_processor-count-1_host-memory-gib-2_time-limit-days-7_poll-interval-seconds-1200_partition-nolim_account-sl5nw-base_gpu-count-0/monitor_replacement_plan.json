@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "kind": "persistent_pixel_study_monitor_replacement",
+  "state": "prepared; corrected requested-versus-SMT-allocated CPU guard; not submitted",
+  "created_at_utc": "2026-11-01T08:38:15.773719+00:00",
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "helper_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/e6fa1040236f4b219d003061963a24f7c5ce82d2/10_jax_exploration_platform",
+  "source_snapshot": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot.json",
+    "sha256": "f0a0b66cb1bad9858eb0f0969242ff3fb2c80a857231a6b4e2fe7a8143e99dba"
+  },
+  "job_shape": {
+    "account": "sl5nw_base",
+    "partition": "nolim",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "gpus_per_node": 0,
+    "time": "7-00:00:00",
+    "interval_seconds": 1200,
+    "requeue": false
+  },
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch",
+    "sha256": "dce42c29d99413cb86507236f1fe562a3de7acf41c953079908cab25b9511e47"
+  },
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--account=sl5nw_base",
+    "--partition=nolim",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--gpus-per-node=0",
+    "--time=7-00:00:00",
+    "--job-name=pixel_study_monitor",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "old_monitor_job_id": "6780433",
+  "cadence_seconds": 1200,
+  "required_submission_row": [
+    "<exact_returned_job_id>",
+    "monitor",
+    "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "resource_basis": {
+    "previous_plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor_replacement_plan.json",
+      "sha256": "f0568cf19877a9e5de29b104ce90c1a107d095fcacced1704fe8415ee6979e6e"
+    },
+    "previous_submission": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/submission_receipt.json",
+      "sha256": "4777508eb1ee5e36a5809be24fe509a86168f51048a13bda7c2f17d10edc8e9a"
+    },
+    "smt_record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/smt_resource_basis.json",
+      "sha256": "4c992293850ca10e9a2aff1be0bc94896941fd78b0e29bbace549177989fafdf"
+    }
+  },
+  "reviewed_metadata_regression": {
+    "tests": 14,
+    "actual_campaign_rows": 144,
+    "receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitor_existing_filename_lookup_independent_2026-11-01-08-27-19.json",
+    "sha256": "857253c009b80ac450b251455f67ef6750c7d518cfc157fcc84fd723f4ee7628"
+  },
+  "full_tick_rehearsal_performed": false,
+  "first_full_tick_required_on_actual_released_compute": true,
+  "new_job_submitted": false,
+  "replacement_order": [
+    "Publish complete immutable packet.",
+    "Submit exact held command and fsync returned ID plus exact monitor submission row.",
+    "Verify recurring monitoring task before release.",
+    "Release only the new owned ID and verify its first full report on compute."
+  ],
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0,
+  "final_training_credit": 0,
+  "worker_admission": false,
+  "source_admission_changed": false,
+  "supersedes_unsubmitted_packet": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-32_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+    "plan_sha256": "d84a8efc249d6280ac42238e73b3a7368bd94dddbb35d29071b6891b4244c117",
+    "manifest_sha256": "6b6cdf874b8f63b6fc442f6caf94222c3baec330845d99c5e49dec6abbeb4afd",
+    "reason": "The first guard incorrectly equated a one-CPU request with one allocated logical CPU; actual owned Slurm evidence allocates two SMT threads."
+  },
+  "cpu_allocation_policy": {
+    "requested_cpus": 1,
+    "accepted_allocated_logical_cpus": [
+      1,
+      2
+    ],
+    "two_requires_actual_node_threads_per_core": 2,
+    "requested_and_allocated_nodes": 1,
+    "requested_and_allocated_memory": "2G",
+    "requested_and_allocated_gpus": 0
+  }
+}

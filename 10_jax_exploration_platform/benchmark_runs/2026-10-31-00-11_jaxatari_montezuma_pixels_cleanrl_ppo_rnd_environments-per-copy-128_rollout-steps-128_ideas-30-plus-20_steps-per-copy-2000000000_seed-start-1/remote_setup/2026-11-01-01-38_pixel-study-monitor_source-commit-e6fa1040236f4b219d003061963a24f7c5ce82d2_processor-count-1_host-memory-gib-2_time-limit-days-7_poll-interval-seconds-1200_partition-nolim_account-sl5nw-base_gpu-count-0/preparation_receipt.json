@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "kind": "smt_corrected_persistent_monitor_static_preparation",
+  "observed_at_utc": "2026-11-01T08:38:16.048002+00:00",
+  "source_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "manifest_sha256": "fa3cc0fbd5a36779879bc4ea142352c46ffa294a85024533941bca35ecfe04a2",
+  "plan_sha256": "b22c1a490718b191feef01c216c719e670f8af504e2f60a33b6fa87ae854718d",
+  "job_script_sha256": "dce42c29d99413cb86507236f1fe562a3de7acf41c953079908cab25b9511e47",
+  "old_unsubmitted_packet_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-32_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+    "all_static_hashes_unchanged": true,
+    "hashes": {
+      "monitor.sbatch": "add42db59decd4c8a46816f709d41a13c8b7d20ad7ef7cf8234175fa9f5a26ff",
+      "verify_source.py": "27a27df3303b66a51a2c9aeb49f23f53fe67c481e06d7dc65140f7b383b10d3a",
+      "command.txt": "cf9e739d770c538d614b59801915948d6b8d452771974db46f344737ff7dc0bf",
+      "experiment_background.md": "c753cc1e39b032361c8688a7d6b2fa0c6736e57376626ef7b5591484f9b1d939",
+      "monitor_replacement_plan.json": "d84a8efc249d6280ac42238e73b3a7368bd94dddbb35d29071b6891b4244c117",
+      "source_snapshot.json": "f0a0b66cb1bad9858eb0f0969242ff3fb2c80a857231a6b4e2fe7a8143e99dba",
+      "config_resolved.yaml": "71eae571190e84f08e7ded014b214cdd5f2bb5f9d0b3c5bd777a99e0b39b531b",
+      "allocation_guard.py": "f18872e11c76f12d2a0f826aa997c717ccbd4138e77e9dc19cc0d38115bb58a8",
+      "preparation_receipt.json": "3f52711ec96bfce4b84975c2567a9052cd1c12de760d85f710d914d25e0237cc",
+      "manifest.yaml": "6b6cdf874b8f63b6fc442f6caf94222c3baec330845d99c5e49dec6abbeb4afd"
+    }
+  },
+  "actual_old_smt_resource_replay_passed": true,
+  "one_and_two_allocated_cpu_golden_cases_passed": true,
+  "negative_cases_rejected": [
+    "requested_two",
+    "allocated_three",
+    "allocated_mismatch",
+    "wrong_topology",
+    "foreign_node",
+    "requested_gpu",
+    "allocated_gpu",
+    "requested_memory",
+    "allocated_memory",
+    "requested_nodes",
+    "allocated_nodes",
+    "requested_task_cpus"
+  ],
+  "source_visibility": {
+    "returncode": 0,
+    "stdout": "{\"source_commit\": \"e6fa1040236f4b219d003061963a24f7c5ce82d2\", \"files_verified\": 222, \"full_tick_executed\": false, \"numerical_imports\": false}\n",
+    "stderr": ""
+  },
+  "shell_syntax_returncode": 0,
+  "full_tick_executed": false,
+  "numerical_imports": false,
+  "new_jobs_submitted": false,
+  "scientific_hypothesis_credit": 0,
+  "worker_admission": false
+}

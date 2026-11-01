@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "replacement_cpu_monitor_independent_review",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-38_pixel-study-monitor_source-commit-e6fa1040236f4b219d003061963a24f7c5ce82d2_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "started_at_utc": "2026-11-01T08:40:26.600358+00:00",
+  "finished_at_utc": "2026-11-01T08:40:26.697027+00:00",
+  "hostname": "portal05",
+  "source_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "source_files_verified": 222,
+  "git_blob_sha256_executable_and_roster_checks": true,
+  "packet_sha256": {
+    "manifest.yaml": "fa3cc0fbd5a36779879bc4ea142352c46ffa294a85024533941bca35ecfe04a2",
+    "monitor_replacement_plan.json": "b22c1a490718b191feef01c216c719e670f8af504e2f60a33b6fa87ae854718d",
+    "allocation_guard.py": "83d418e55f39908daa1fcb298682be0ca34e4ca7421ccb0ae8c2f29f9d98d26e",
+    "monitor.sbatch": "dce42c29d99413cb86507236f1fe562a3de7acf41c953079908cab25b9511e47"
+  },
+  "cpu_golden_cases": 2,
+  "cpu_negative_cases": 16,
+  "exact_old_resources_replayed": true,
+  "old_unsubmitted_packet_preserved": true,
+  "source_visibility_verifier_output": "{\"source_commit\": \"e6fa1040236f4b219d003061963a24f7c5ce82d2\", \"files_verified\": 222, \"full_tick_executed\": false, \"numerical_imports\": false}\n",
+  "full_tick_executed": false,
+  "numerical_imports": false,
+  "live_scheduler_ssh_or_gpu_commands": false,
+  "forbidden_command_attempts": [],
+  "review_result": "Passed; one requested CPU and consistent one/two allocated logical CPUs are bound to the actual named node topology, with zero requested or allocated GPUs. Root must submit held, record/fsync the exact ID and row, release that ID and verify its first full report on compute."
+}
