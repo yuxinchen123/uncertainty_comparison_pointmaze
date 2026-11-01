@@ -1,0 +1,54 @@
+{
+  "kind": "owned_aces_full_site_actual_held_monitor_verification",
+  "passed": true,
+  "job_id": "2274632",
+  "monitor_job_id": "6780635",
+  "monitor_tick_step_id": "6780635.5",
+  "verification_step_id": "8",
+  "monitor_source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "at_utc": "2026-11-01T11:14:28.953371+00:00",
+  "held_rows": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "snapshot_sha256": "0a307e350623939e007c4156cb1234744ebdac7bd01ad3e520cfc3010d34b930",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2274632",
+        "data_unit_name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+        "state": "held",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "(JobHeldUser)",
+        "observed_host": "",
+        "observed_at_utc": "2026-11-01T11:11:52.978413+00:00"
+      }
+    }
+  ],
+  "actual_monitor_returncode": 0,
+  "first_verification_wrapper_exit_code": 1,
+  "correction": "Read actual nested row field; actual monitor exited zero and exact full stdout matches report body. No monitor rerun.",
+  "queue_counts": {
+    "pending": 11,
+    "running": 1,
+    "completed": 108,
+    "failed": 0
+  },
+  "full_status_sha256": "06299e323d0c9c6aad849197eb96945ba4a90bc81b0ac7e5dac462c0e5e6843c",
+  "full_report_sha256": "8f0ec71b5cee5e06e2a764ae4087b67a7a0b10507d1692b711097c084e94d484",
+  "snapshot_sha256": "0a307e350623939e007c4156cb1234744ebdac7bd01ad3e520cfc3010d34b930",
+  "zero_scientific_credit": true
+}

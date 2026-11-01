@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "owned_aces_full_site_qualification_submission",
+  "cluster": "aces",
+  "job_id": "2274632",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=158590754315",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--gres=gpu:h100:1",
+    "--cpus-per-task=8",
+    "--mem=32G",
+    "--time=03:00:00",
+    "--job-name=ACES_H100_full_site_qualification",
+    "--output=/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/aces_full_site_qualification_%j.log",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/job.sbatch"
+  ],
+  "submission_row": [
+    "2274632",
+    "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+    "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+  ],
+  "ledger_path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_aces.txt",
+  "data_unit": {
+    "name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu"
+  },
+  "plan_sha256": "ec4c9aaee1123672c20e9ed56d9141799654fc2b0e7702f2cdfedde87fbf0a1a",
+  "manifest_sha256": "10e717ac3d54d639aaae7926343cd283065b382b706ab0937c6caa3d95a9103c",
+  "job_script_sha256": "4f12852e362a13c4dd770225619d51afc721795e6b3d1832862709ff77566a84",
+  "submitted_at_utc": "2026-11-01T11:07:55.363431+00:00",
+  "published_preparation_commit": "942e29f2e7396574511beef5508d27485b9383ed",
+  "submission_plan_sha256": "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f",
+  "submission_driver_sha256": "be81fb18909a933592e5cdb6824698b5e94439f19495f053305c0505d2e1e64b",
+  "stdout": "2274632\n",
+  "stderr": "sbatch: Job submitted using account 158590754315\nsbatch: Current account balance = 89359.553889\n",
+  "automatic_retry_permitted": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

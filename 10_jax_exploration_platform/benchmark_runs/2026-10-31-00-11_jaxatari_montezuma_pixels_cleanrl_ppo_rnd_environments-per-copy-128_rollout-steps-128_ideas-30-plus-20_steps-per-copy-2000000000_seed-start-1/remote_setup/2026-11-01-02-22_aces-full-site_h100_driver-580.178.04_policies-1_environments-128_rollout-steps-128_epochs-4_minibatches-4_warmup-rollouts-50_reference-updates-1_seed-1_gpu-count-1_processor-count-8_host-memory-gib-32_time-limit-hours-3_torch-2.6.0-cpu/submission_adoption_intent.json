@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_local_adoption_intent",
+  "at_utc": "2026-11-01T11:11:47.868784+00:00",
+  "job_id": "2274632",
+  "submission_row": [
+    "2274632",
+    "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+    "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1"
+  ],
+  "native_artifact_sha256": {
+    "submission_receipt.json": "6daf1d1ec87886d80669be07ef6830e629840e92669386ac5c1c28df447af0ec",
+    "held_submission_intent.json": "15d6af1491a7a28a4738d32ed2be494a49089b983349d71f4cb8540547901d92",
+    "held_submission_stdout.raw": "535cb4d1d742a71579bc65fc8325466a21615452f8d0fea7510d801b6bc99abc",
+    "held_submission_stderr.raw": "53094e9cc1248243a15f9af244f1f13fa120d8905fec7a163b6273d3f6dfef26",
+    "held_submission_return.json": "a0ffeb098d95e77f11dfb81ddf75c2f22bdfb1cf6a3676ff5ac7f208edfd3866",
+    "submitted_jobids_aces.txt": "9d33b875ff3df1b026fbf547c5ffdc57113589a0459e00320b5b57d37dc2fe9f",
+    "submissions_aces.tsv": "b1a7912bb65c2daa6f49ebc13193e84453a9d06add432e7b19d15d0f30282d13"
+  },
+  "wrapper_plan_sha256": "14797308244bd53c70da15d4c1284820e92e2105d9cf7106e86e20bdf09ad58f",
+  "wrapper_source_sha256": "be81fb18909a933592e5cdb6824698b5e94439f19495f053305c0505d2e1e64b",
+  "automatic_retry_permitted": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

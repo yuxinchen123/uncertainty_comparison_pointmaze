@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_monitor_snapshot",
+  "cluster": "aces",
+  "user": "u.sl359075",
+  "job_id": "2274632",
+  "origin_host": "portal05",
+  "query_host": "alogin1.cluster",
+  "local_campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "remote_campaign_run_dir": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "plan_sha256": "ec4c9aaee1123672c20e9ed56d9141799654fc2b0e7702f2cdfedde87fbf0a1a",
+  "manifest_sha256": "10e717ac3d54d639aaae7926343cd283065b382b706ab0937c6caa3d95a9103c",
+  "job_script_sha256": "4f12852e362a13c4dd770225619d51afc721795e6b3d1832862709ff77566a84",
+  "submission_receipt_sha256": "6daf1d1ec87886d80669be07ef6830e629840e92669386ac5c1c28df447af0ec",
+  "release_receipt_sha256": null,
+  "observed_at_utc": "2026-11-01T11:11:52.978413+00:00",
+  "squeue": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "2274632",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "2274632|u.sl359075|PENDING||(JobHeldUser)\n",
+    "stderr": ""
+  },
+  "sacct": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-j",
+      "2274632",
+      "--format=JobIDRaw,User%64,State%64,ExitCode,NodeList"
+    ],
+    "returncode": 0,
+    "stdout": "2274632|u.sl359075|PENDING|0:0|None assigned\n",
+    "stderr": ""
+  },
+  "mirrored_files": {}
+}

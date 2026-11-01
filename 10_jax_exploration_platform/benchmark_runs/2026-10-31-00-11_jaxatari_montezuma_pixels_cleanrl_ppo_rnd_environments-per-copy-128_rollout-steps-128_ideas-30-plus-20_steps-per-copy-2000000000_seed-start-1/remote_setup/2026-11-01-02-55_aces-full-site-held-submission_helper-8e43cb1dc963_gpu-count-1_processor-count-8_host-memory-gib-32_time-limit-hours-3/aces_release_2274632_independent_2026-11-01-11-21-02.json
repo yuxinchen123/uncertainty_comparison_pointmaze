@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "aces_exact_job_release_driver_independent_review",
+  "at_utc": "2026-11-01T11:21:02.977860+00:00",
+  "passed": true,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/release_aces_full_site_2274632.py",
+    "sha256": "8a06d6d645f3706a30963243815ea29c75ab6afb11c309845f79ae6f14c73499",
+    "bytes": 10691,
+    "unchanged": true
+  },
+  "remote_program_sha256": "f2fdf7c079d99f8a757c27d43e040db312f94ad0d5f940835b52368769ebd187",
+  "job_id": "2274632",
+  "actual_default_validation": {
+    "validated": true,
+    "job_id": "2274632",
+    "ssh_calls": 0,
+    "release_calls": 0
+  },
+  "actual_held_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/held_monitor_verification.json",
+    "sha256": "f6fb9922114a729fa7e7f2d1f1b3d261024db7a64a024fa30407c1b0b4958afd"
+  },
+  "snapshot_sha256": "0a307e350623939e007c4156cb1234744ebdac7bd01ad3e520cfc3010d34b930",
+  "tests": {
+    "golden_cases": 1,
+    "negative_cases": [
+      {
+        "case": "foreign-proof-kind",
+        "rejected": true
+      },
+      {
+        "case": "boolean-monitor-return",
+        "rejected": true
+      },
+      {
+        "case": "duplicate-held-row",
+        "rejected": true
+      },
+      {
+        "case": "nonzero-credit-row",
+        "rejected": true
+      },
+      {
+        "case": "changed-snapshot-hash",
+        "rejected": true
+      }
+    ],
+    "all_live_actions_forbidden": true,
+    "one_actual_local_git_read": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "f9a9c1672f788f52ba06836cee26f2dd6314cec7:10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_site_monitor.py"
+    ],
+    "pinned_adapter_sha256": "a54ae7f242d6494fa46c2489b1a68dbaacbfd6a02467e9093d3df7305164f9b4",
+    "cached_exact_adapter_reads": 3
+  },
+  "reviewed": [
+    "Exact local/native job and filtered ledger rows.",
+    "Pinned F9 adapter reconstructs exact HELD record with zero credit and fresh aware UTC.",
+    "Exclusive local/native intents before the exact job query and release.",
+    "Raw release return persisted before native receipt and return.",
+    "Typed native receipt/intent/raw-return checks and exact local returned bytes.",
+    "Existing-master-only transport with no retry or broad query."
+  ],
+  "release_calls": 0,
+  "ssh_calls": 0,
+  "scheduler_queries": 0,
+  "numerical_imports": [],
+  "local_packet_writes": 0,
+  "root_publication_required_before_actual_release": true
+}
