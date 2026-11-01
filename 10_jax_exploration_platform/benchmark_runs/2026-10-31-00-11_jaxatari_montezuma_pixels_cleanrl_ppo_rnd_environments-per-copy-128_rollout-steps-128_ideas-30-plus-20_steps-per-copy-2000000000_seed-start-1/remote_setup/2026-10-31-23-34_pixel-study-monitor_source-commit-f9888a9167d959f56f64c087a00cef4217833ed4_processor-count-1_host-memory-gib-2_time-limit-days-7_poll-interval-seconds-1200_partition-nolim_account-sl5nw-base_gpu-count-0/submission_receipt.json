@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "owned_pixel_study_monitor_submission",
+  "cluster": "uva",
+  "job_id": "6780433",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=nolim",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--gpus-per-node=0",
+    "--time=7-00:00:00",
+    "--job-name=pixel_study_monitor",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "source_commit": "f9888a9167d959f56f64c087a00cef4217833ed4",
+  "plan_sha256": "f0568cf19877a9e5de29b104ce90c1a107d095fcacced1704fe8415ee6979e6e",
+  "manifest_sha256": "7e04a3b6c46fa000ab34857a5af5f9b01f1b6d97ec4dd6571bf2f0cb9a16e7eb",
+  "job_script_sha256": "944801e1287a0d64f5799776d31fe6bdc0bb5a37db9e6b82673c739fea6013e3",
+  "candidate_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_tick_verification.json",
+    "sha256": "e6f577601c94dad369696f7691a6f6fc0bd7d1fd82b94c81d480c0c1b3cd619a"
+  },
+  "stdout": "6780433\n",
+  "stderr": "",
+  "submitted_at_utc": "2026-11-01T06:38:32.905998+00:00",
+  "previous_owned_monitor": "6779550",
+  "observer_remains_held": "2274380"
+}
