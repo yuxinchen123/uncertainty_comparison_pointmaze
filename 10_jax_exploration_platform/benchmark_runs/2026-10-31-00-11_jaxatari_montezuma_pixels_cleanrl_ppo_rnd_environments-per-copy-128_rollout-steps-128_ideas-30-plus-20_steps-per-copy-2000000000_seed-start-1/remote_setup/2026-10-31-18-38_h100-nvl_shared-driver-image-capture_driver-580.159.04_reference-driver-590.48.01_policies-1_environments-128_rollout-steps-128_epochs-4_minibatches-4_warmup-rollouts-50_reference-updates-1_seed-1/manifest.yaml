@@ -1,0 +1,61 @@
+{
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-38_h100-nvl_shared-driver-image-capture_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
+    "sha256": "5c61bac04fb86d1abfb2f7e2cf8724ba09f1db2d9b2f9275d2fa7ddc8f4a7225"
+  },
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-38_h100-nvl_shared-driver-image-capture_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch",
+    "sha256": "5d89f50bf7b39a22107b193b88c4824721f959f9af495136e869b4fc58f03872"
+  },
+  "helpers": {
+    "source_root": "/p/rlprojects/RND_worktrees/atari-h100-nvl-shared-driver-helpers-c9f094f4abca",
+    "source_commit": "c9f094f4abca0742bad2087eae301587082dad57",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "f0446661376871ea3c3c925946c6a95da5ef3144548473b0eb62e15b6028bf62",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "bddd5ce6cc749ca9ad852155f0de14c693e7908542f3a2889a748821e7165e67",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "4cb701b2bb6cc54b11674dd393f6019f1c12dcf9caf4882db5b987a9c49f31fc",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    }
+  },
+  "state": "prepared_not_submitted",
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--constraint=h100_94gb&amd_epyc_9354",
+    "--gres=gpu:nvidia_h100_nvl:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=03:00:00",
+    "--job-name=atari_h100_nvl_site_validation",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_site_validation_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-38_h100-nvl_shared-driver-image-capture_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch"
+  ],
+  "submission_control": {
+    "submit_held": true,
+    "helper_submits_or_releases": false,
+    "release_exact_saved_id_only": true,
+    "parent_procedure": [
+      "Submit the recorded command with --hold.",
+      "Write and fsync the exact returned UVA job ID in slurm/submitted_jobids_uva.txt and write and fsync its submission receipt.",
+      "Only after both records are durable, release that exact saved ID with scontrol release."
+    ],
+    "release_command_template": [
+      "scontrol",
+      "release",
+      "<exact_saved_uva_job_id>"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "kind": "reviewed_inactive_shared_driver_site_qualification",
+  "reviewed_at_utc": "2026-11-01T01:41:16.543338+00:00",
+  "helper_commit": "c9f094f4abca0742bad2087eae301587082dad57",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "4cb701b2bb6cc54b11674dd393f6019f1c12dcf9caf4882db5b987a9c49f31fc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_qualification.py": "3293da005c5972db64a7425d98d34ffbf5761c4067cc927b06fab5e7fd4c30cd",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_queue.py": "ca110a5b17fbcc62cf807c6d1ce90bfa8e6394dfedc8be0ebb826b6cd5b833fa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_schema3_evidence.py": "1276d881c7dbb8f3e06f65c664e5a59d1853b7c13eb594d257b0c6649a0d8a85"
+  },
+  "independent_test_groups": {
+    "schema3_historical_and_capture": 7,
+    "qualification_profile": 16,
+    "original_site": 28
+  },
+  "author_and_independent_review_passed": true,
+  "prepared_packet_independent_review_passed": true,
+  "prepared_packet_hashes": {
+    "site_validation_plan.json": "5c61bac04fb86d1abfb2f7e2cf8724ba09f1db2d9b2f9275d2fa7ddc8f4a7225",
+    "manifest.yaml": "b6ce17a6e723eb5f041b41f9621e445b3aaa7adba3508a23d37ac7092ddf6b03",
+    "job.sbatch": "5d89f50bf7b39a22107b193b88c4824721f959f9af495136e869b4fc58f03872",
+    "command.txt": "9ef7a1ba71bc55ac4465f263c54fb73442f1150dcc3e44cc1c33f6b59f03e5b8",
+    "config_resolved.yaml": "fb9bd65740e6c57cb12168468d207d7d576e973a9d0a591cc3a0f7012614489d",
+    "experiment_background.md": "e80d397ff49aa2312ba1c99949ce6e953b3c63520b5f423c8fa4701c085a3278",
+    "preparation_execution.json": "3e3ca57afdab069192d63bda0bed36909d90a2fee3dec888d10583179f3ae0e0"
+  },
+  "streamed_preparation_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/prepare_h100_nvl_shared_driver_qualification.py",
+    "sha256": "4b0fbd1ecf7d9cb25c392ab98f81d535b9b73707a2c818fafed6266654e27abe"
+  },
+  "metadata_preparation_step": "6779145.10",
+  "original_reference_driver": "590.48.01",
+  "separate_target_driver": "580.159.04",
+  "driver_capture_before_site_success_and_job_exit": true,
+  "case_driver_capture_after_timing_before_publication": true,
+  "historical_driver_input": "only captured shared artifact through supplied Evidence; original node-local path is identity only",
+  "normal_cpu_origin_deleted_test_passed": true,
+  "strict_capture_mapping_and_mutation_tests_passed": true,
+  "numerical_source_changed": false,
+  "original_current_admission_changed": false,
+  "actual_site_success": false,
+  "source_scope": "original D28 initial comparison cases; later adaptive source/configuration needs separate qualification",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "prerequisite_owned_observation_job_id": "6779358",
+  "superseded_unsubmitted_packet_commit": "b785024eba821f85bf0e31dd321951504d360355",
+  "prepared_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-38_h100-nvl_shared-driver-image-capture_driver-580.159.04_reference-driver-590.48.01_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1"
+}
