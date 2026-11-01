@@ -174,17 +174,17 @@
     "next_action": "Preserve this failed raw site. Actual observation6779358 must be reviewed before submission of the separately prepared580-driver schema3 packet. Full site success and reviewed placement remain required."
   },
   "monitoring_session_cron": {
-    "id": "695b4320-737a-4f31-9b54-3bb746ef6f63",
-    "current_id": "695b4320-737a-4f31-9b54-3bb746ef6f63",
-    "previous_id": "e98d3733-7d55-4ab9-b28d-e7dc82b5ce3d",
+    "id": "07e28732-828d-456d-8d73-218f107687dd",
+    "current_id": "07e28732-828d-456d-8d73-218f107687dd",
+    "previous_id": "695b4320-737a-4f31-9b54-3bb746ef6f63",
     "cron": "*/20 * * * *",
     "cadence_seconds": 1200,
     "timezone": "America/Los_Angeles",
     "expires_at": "2026-11-08T11:00:00Z",
     "expires_at_utc": "2026-11-08T11:00:00Z",
-    "next_run_at_utc": "2026-11-01T11:20:00Z",
+    "next_run_at_utc": "2026-11-01T11:40:00Z",
     "replacement_verified_before_old_deleted": true,
-    "verified_at_utc": "2026-11-01T11:17:18.363927+00:00"
+    "verified_at_utc": "2026-11-01T11:34:13.171398+00:00"
   },
   "h100_slurm_site_validation_previous_failure": {
     "state": "failed_before_gpu_initialization",
@@ -225,7 +225,7 @@
     "previous_owned_cpu_monitor_job_id": "6780608",
     "previous_monitor_stopped_only_after_new_verification_and_old_step_drain": true,
     "first_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/independent_runtime_and_first_report_6780635.json",
-    "session_cron_id": "695b4320-737a-4f31-9b54-3bb746ef6f63",
+    "session_cron_id": "07e28732-828d-456d-8d73-218f107687dd",
     "contains_reviewed_checkpoint_and_deadline_fixes": true,
     "future_adaptive_source_qualification_still_required": true
   },
@@ -579,10 +579,78 @@
     "old_monitor_preserved": "6780608"
   },
   "packing_device_memory_failure_receipt": {
-    "state": "isolated_implementation_and_metadata_tests_in_progress_inactive",
+    "state": "isolated_independent_review_corrections_in_progress_inactive",
     "reason": "existing completed low-headroom rule cannot close a genuine failed next doubling",
     "current_rule_and_admission_unchanged": true,
     "failed_attempt_scientific_credit": 0,
-    "actual_producer_regression_required_before_activation": true
+    "actual_producer_regression_required_before_activation": true,
+    "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15",
+    "published": false,
+    "independent_approval": false,
+    "latest_required_corrections": [
+      "bind expected owner UID in task cgroup",
+      "bind distinct parent and child birth identities",
+      "validate original failed full seven-round ten-update complete window",
+      "capture actual mapped driver bytes to immutable shared storage before allocation ends"
+    ],
+    "diagnostic_canary_authorized_shape": {
+      "host": "jaguar03",
+      "gpu_type": "RTX A4500",
+      "gpu_count": 1,
+      "processor_count": 8,
+      "host_memory_gib": 64,
+      "time_limit_minutes": 20,
+      "fresh_children": 2,
+      "environment_transitions": 0,
+      "idea_credit": 0,
+      "comparison_credit": 0,
+      "formal_capacity_credit": 0
+    },
+    "diagnostic_canary_submitted": false
+  },
+  "final_evidence_protocol_completion": {
+    "state": "isolated_implementation_and_metadata_tests_in_progress_inactive",
+    "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673",
+    "base_commit": "2646fc1358766e7349b502f82068507bfe0f10cb",
+    "new_final_schema_version": 2,
+    "current_source_admission_changed": false,
+    "final_confirmation": {
+      "paired_rounds": 11,
+      "minimum_complete_updates_per_round": 20,
+      "packing": "actual selected copy count",
+      "synchronized_update_latency_required": true
+    },
+    "short_learning_contract": {
+      "minimum_complete_updates_per_arm": 128,
+      "round_up_only_for_complete_group_and_report_windows": true,
+      "full_training_horizon": 2000000000,
+      "hardware_contexts": [
+        "h100",
+        "jaguar03_rtx_a4500"
+      ],
+      "original_configuration_and_warmup_required": true,
+      "independent_free_learning_trajectories": true,
+      "finite_state_and_actual_policy_predictor_updates_required": true,
+      "strict_within_implementation_replay_required": true,
+      "existing_fixed_supplied_input_tolerances_unchanged": true,
+      "per_update_and_episode_diagnostics_required": true,
+      "independent_comparative_analysis_required": true,
+      "learning_equivalence_established": false,
+      "zero_extrinsic_reward_alone_insufficient": true
+    },
+    "fixed_total_scaling": {
+      "common_total_policy_copies": 8,
+      "arrangements": [
+        "one A4500 with eight copies",
+        "eight A4500 cards with one copy each"
+      ],
+      "global_seed_identities_and_common_wall_windows_required": true,
+      "not_applicable_requires_exact_eight_copy_memory_evidence": true,
+      "throughput_stop_or_smaller_copy_failure_does_not_prove_not_applicable": true
+    },
+    "new_final_admission_requires_version_two": true,
+    "historical_schema_one_readers_preserved": true,
+    "gpu_regression_submitted": false,
+    "source_publication_and_independent_review_required": true
   }
 }
