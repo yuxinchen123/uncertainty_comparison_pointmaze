@@ -1,0 +1,35 @@
+{
+  "actual_gpu_operations": false,
+  "actual_serval02_contact": false,
+  "at_utc": "2026-11-01T21:04:52.389551+00:00",
+  "birth": "52790014",
+  "blocked_numerical_imports": [],
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_83/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6781231",
+  "kind": "direct_serval02_core_author_metadata_tests",
+  "passed": true,
+  "pid": 681336,
+  "process_calls_limited_to_local_git": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loads_blocked": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "f5b93a2bd1b33103a95713a514c12d48f9ddff0b19e42480b8fb12cbd47c5148"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "f5b93a2bd1b33103a95713a514c12d48f9ddff0b19e42480b8fb12cbd47c5148"
+  },
+  "source_freeze_sha256": "af07c0e781890e438fb4235ba9a24e475041e17a1fa4147ae3f4f00a67a7a6a0",
+  "step_id": "83",
+  "temporary_fork_test_uses_only_own_lock_metadata": true,
+  "tests": 23
+}

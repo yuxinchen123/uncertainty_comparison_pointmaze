@@ -1,0 +1,41 @@
+{
+  "actual_release_calls": 0,
+  "actual_scheduler_queries": 0,
+  "at_utc": "2026-11-01T21:12:57.111790+00:00",
+  "birth": "52840851",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_88/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "error_details": [],
+  "errors": 0,
+  "extra": {
+    "actual_local_default_check": true,
+    "actual_saved_held_shape": true
+  },
+  "failure_details": [],
+  "failures": 0,
+  "final_owned_inputs_written": false,
+  "job_id": "6781231",
+  "kind": "qualification_release_author_metadata_tests",
+  "numerical_imports_blocked": true,
+  "only_real_subprocesses_are_read_only_git": true,
+  "passed": true,
+  "pid": 683978,
+  "schema_version": 1,
+  "shared_library_loads_blocked": true,
+  "source_after": {
+    "release_frozen_inputs_6782640.json": "b71f1641d485af4178ce1186f39441760bd563cf3861d5cb75fe6b23bc843ee5",
+    "release_implementation_review_6782640.json": "62c25e43901e121fa79b867c6c11485b631dc5a2ade74da0c1b05d143713aecd",
+    "release_qualification_6782640.py": "3013dd7a44c9da170543f60bd1f05061aa0e5fec3c1c05b3e55e30b128f9e743",
+    "test_release_qualification_6782640.py": "e8e1c489f3eeccae7097bf5b3c65282868fd192a0c5d89a2b326914ff967633a"
+  },
+  "source_before": {
+    "release_frozen_inputs_6782640.json": "b71f1641d485af4178ce1186f39441760bd563cf3861d5cb75fe6b23bc843ee5",
+    "release_implementation_review_6782640.json": "62c25e43901e121fa79b867c6c11485b631dc5a2ade74da0c1b05d143713aecd",
+    "release_qualification_6782640.py": "3013dd7a44c9da170543f60bd1f05061aa0e5fec3c1c05b3e55e30b128f9e743",
+    "test_release_qualification_6782640.py": "e8e1c489f3eeccae7097bf5b3c65282868fd192a0c5d89a2b326914ff967633a"
+  },
+  "step_id": "88",
+  "tests": 8
+}

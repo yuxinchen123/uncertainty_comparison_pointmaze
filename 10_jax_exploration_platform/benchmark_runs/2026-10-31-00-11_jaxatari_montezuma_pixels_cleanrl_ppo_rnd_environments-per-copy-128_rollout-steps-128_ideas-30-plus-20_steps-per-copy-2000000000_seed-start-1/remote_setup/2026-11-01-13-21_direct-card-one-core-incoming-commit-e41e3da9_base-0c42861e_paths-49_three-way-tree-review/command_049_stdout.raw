@@ -1,0 +1,28 @@
+{
+  "at_utc": "2026-11-01T20:10:09.975518+00:00",
+  "base_commit": "0c42861e4ac209138ead5253fb8d1612cd3d3e3c",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "348f35420b5690b46b2a1232d2c299c66f6158717564e0da8bc754712a4c805c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "e1fcdec78fa691a018eab86ffeaa0c4af7a28aae49df1455fdfa1df5d67e5f6f"
+  },
+  "gpu_or_direct_operations": false,
+  "kind": "direct_serval02_core_second_source_freeze",
+  "materialized_numerical_files_match_base": {
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "previous_source_freeze_sha256": "a762c20149007725cff259dd028d9e0c1e7182135ce4d4cabae8a404e21e1a73",
+  "schema_version": 1,
+  "source_copies": {
+    ".review_metadata/direct_core_second_source/serval02_card1_binding.py": "348f35420b5690b46b2a1232d2c299c66f6158717564e0da8bc754712a4c805c",
+    ".review_metadata/direct_core_second_source/test_serval02_card1_binding.py": "e1fcdec78fa691a018eab86ffeaa0c4af7a28aae49df1455fdfa1df5d67e5f6f"
+  }
+}

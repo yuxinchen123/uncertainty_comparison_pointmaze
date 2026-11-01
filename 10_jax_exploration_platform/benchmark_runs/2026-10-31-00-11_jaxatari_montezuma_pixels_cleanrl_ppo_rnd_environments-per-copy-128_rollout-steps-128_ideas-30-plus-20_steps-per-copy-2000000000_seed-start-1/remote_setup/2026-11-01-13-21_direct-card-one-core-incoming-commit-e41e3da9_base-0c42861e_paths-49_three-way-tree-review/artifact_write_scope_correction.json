@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "direct_core_incoming_review_artifact_write_scope_correction",
+  "review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-21_direct-card-one-core-incoming-commit-e41e3da9_base-0c42861e_paths-49_three-way-tree-review/review.json",
+    "sha256": "9dea175a2be54f37d20eff22f8ccea3f708d14340c064c71fb3ccd69f6e952d4"
+  },
+  "corrected_field": "original_or_integration_worktree_writes",
+  "original_checkout_writes": false,
+  "existing_integration_source_or_other_existing_file_writes": false,
+  "new_review_artifact_writes_under_integration": true,
+  "new_review_artifact_directory": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-21_direct-card-one-core-incoming-commit-e41e3da9_base-0c42861e_paths-49_three-way-tree-review",
+  "explanation": "The review reused a template field whose false value was too broad. Unlike the older template execution in an external temporary directory, this review wrote only its authorized new metadata, copied indices and private objects inside the unique campaign review directory. The original receipt is preserved; all exact tree/index/source/original-byte checks remain valid.",
+  "concurrent_changed_or_added_paths_inside_own_review_directory": 176,
+  "concurrent_changed_or_added_paths_outside_own_review_directory": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/next_actions.json"
+  ],
+  "original_preserved_paths": 6454,
+  "original_preserved_pdfs": 646,
+  "original_dirty_entries": 6167,
+  "protected_numerical_files": 13,
+  "approval_unchanged": true
+}

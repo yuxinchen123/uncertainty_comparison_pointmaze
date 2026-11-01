@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "kind": "unconfirmed_common_candidate_intermediate_readiness",
+  "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "configuration_inputs": [
+    {
+      "policy_copies": 1,
+      "seed_start": 1,
+      "copy_seeds": [
+        1
+      ],
+      "reference": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/original_policy-copies-1_seed-start-1.json",
+        "sha256": "7ad5ff84179581b84f5d78754b4c21a818a06d1193806e8158c51024c5d68590"
+      },
+      "unconfirmed_candidate": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/candidate_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1_seed-start-1.json",
+        "sha256": "44c8b0a49638030ffdb9d0823d9831e3f12537c488adcfc5237b4bbedee9c15a"
+      },
+      "exact_difference": [
+        {
+          "field": "environment.render_final_two_only",
+          "before": false,
+          "after": true
+        },
+        {
+          "field": "environment.cache_room_backgrounds",
+          "before": false,
+          "after": true
+        }
+      ],
+      "all_full_fields_retained": true
+    },
+    {
+      "policy_copies": 2,
+      "seed_start": 1,
+      "copy_seeds": [
+        1,
+        2
+      ],
+      "reference": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/original_policy-copies-2_seed-start-1.json",
+        "sha256": "07c16fc8f0660a1920102ef07c57e8d2bd6f90bab36cfcbaa80fb12532ccf9ee"
+      },
+      "unconfirmed_candidate": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/candidate_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-2_seed-start-1.json",
+        "sha256": "00bc395cbd7d221c01f23312d78c335d25914e00ad51b0ac2febdc335abc7391"
+      },
+      "exact_difference": [
+        {
+          "field": "environment.render_final_two_only",
+          "before": false,
+          "after": true
+        },
+        {
+          "field": "environment.cache_room_backgrounds",
+          "before": false,
+          "after": true
+        }
+      ],
+      "all_full_fields_retained": true
+    }
+  ],
+  "runtime_environment": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/runtime_environment.json",
+    "sha256": "b13ef06c6db458ee2eef9db8b699ec4370684f4790c9186684e76610e8013c70"
+  },
+  "hardware_classes": [
+    "h100",
+    "jaguar03_rtx_a4500"
+  ],
+  "correctness_required_before_timing": true,
+  "timing_rounds": 7,
+  "full_updates_per_variant_per_round": 10,
+  "variant_orders": [
+    [
+      "reference",
+      "candidate"
+    ],
+    [
+      "candidate",
+      "reference"
+    ],
+    [
+      "reference",
+      "candidate"
+    ],
+    [
+      "candidate",
+      "reference"
+    ],
+    [
+      "reference",
+      "candidate"
+    ],
+    [
+      "candidate",
+      "reference"
+    ],
+    [
+      "reference",
+      "candidate"
+    ]
+  ],
+  "measurement_scope": "training_iteration_execution",
+  "initially_selected_mechanisms": {
+    "cache_room_backgrounds": {
+      "cache_room_backgrounds": true
+    },
+    "render_final_two_game_states": {
+      "render_final_two_only": true
+    }
+  },
+  "unconfirmed_combination": true,
+  "prerequisites": [
+    "Actual target qualification must complete and receive independent review.",
+    "The published persistent monitor must support the actual producer records.",
+    "The applicable explicit assigned-device producer/binding must be reviewed and published.",
+    "Separate full-input and copied-state correctness must pass for this combination before its timing."
+  ],
+  "formal_units_prepared": false,
+  "future_qualification_paths_or_hashes_invented": false,
+  "new_correctness_credit": 0,
+  "new_timing_credit": 0,
+  "new_case_credit": 0,
+  "new_idea_credit": 0,
+  "admission_granted": false,
+  "jobs_submitted": false
+}

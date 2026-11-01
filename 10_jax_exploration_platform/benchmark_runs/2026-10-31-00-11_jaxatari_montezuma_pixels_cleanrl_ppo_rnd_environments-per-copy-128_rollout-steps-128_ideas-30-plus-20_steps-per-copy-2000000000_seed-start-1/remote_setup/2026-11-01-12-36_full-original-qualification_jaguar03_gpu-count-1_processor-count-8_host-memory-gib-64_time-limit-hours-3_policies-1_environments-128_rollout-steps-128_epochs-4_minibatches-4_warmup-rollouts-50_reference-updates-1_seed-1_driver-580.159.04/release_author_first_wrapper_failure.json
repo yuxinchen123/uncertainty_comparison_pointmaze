@@ -1,0 +1,19 @@
+{
+  "actual_release_calls": 0,
+  "actual_scheduler_queries": 0,
+  "allocation_job_id": "6781231",
+  "at_utc": "2026-11-01T21:12:32.420236+00:00",
+  "cause": "Actual saved command is scontrol show job6782640 --oneliner; source expected equivalent -o ordering. Saved raw query is unchanged.",
+  "error": "the saved exact owned held query changed",
+  "error_type": "ValueError",
+  "extra_actual_default_check": "failed",
+  "final_inputs_written": false,
+  "kind": "qualification_release_first_author_wrapper_failure",
+  "schema_version": 1,
+  "source_sha256": "ee5b89a912250a8165678ebaf16efe7c49de9e8643199bd3900183184a9a7ad6",
+  "step_attribution_limitation": "The first wrapper wrote actual step only after its extra checks; that check raised before receipt publication. No step is inferred.",
+  "step_id": null,
+  "test_source_sha256": "e8e1c489f3eeccae7097bf5b3c65282868fd192a0c5d89a2b326914ff967633a",
+  "unit_tests": 8,
+  "unit_tests_passed": 8
+}

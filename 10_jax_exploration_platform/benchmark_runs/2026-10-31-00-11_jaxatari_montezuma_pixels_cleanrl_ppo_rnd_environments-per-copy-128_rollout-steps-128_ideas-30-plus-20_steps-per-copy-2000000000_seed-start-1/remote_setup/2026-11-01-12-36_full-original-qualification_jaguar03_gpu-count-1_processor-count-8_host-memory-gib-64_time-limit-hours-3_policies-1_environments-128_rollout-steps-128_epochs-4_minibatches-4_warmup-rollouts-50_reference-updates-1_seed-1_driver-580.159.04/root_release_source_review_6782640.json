@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "root_fixed_owned_qualification_release_source_review",
+  "job_id": "6782640",
+  "at_utc": "2026-11-01T21:24:45.880997+00:00",
+  "source_sha256": "3013dd7a44c9da170543f60bd1f05061aa0e5fec3c1c05b3e55e30b128f9e743",
+  "publication_roster": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/release_publication_roster_6782640.json",
+    "sha256": "e04085226ffd2ed43140e49384e5292a8cc5b432a88d0676ff5745c04849b738"
+  },
+  "exact_paths_checked": 91,
+  "independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-21-00_qualification-release-independent-review_job-6782640_gpu-count-0_processor-count-1/review.json",
+    "sha256": "985a69fceda153613f9dcb10aeaa50d78305658c8b3eb766a1fa6bc4285a9a83"
+  },
+  "independent_step": "6781231.91",
+  "independent_passed_tests": 12,
+  "root_complete_source_read": true,
+  "default_cli": {
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/release_qualification_6782640.py"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "54ecdc5969f672e10b28189250e305fe65db5bbdd09a22d89fac4ac4414d59d6",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result": {
+      "validated": true,
+      "job_id": "6782640",
+      "command": [
+        "scontrol",
+        "release",
+        "6782640"
+      ],
+      "scheduler_queries": 0,
+      "release_calls": 0,
+      "final_inputs_written": false
+    }
+  },
+  "approved_for_one_release_after_exact_publication_and_fresh_builtin_checks": true,
+  "publication_commit": null,
+  "publication_must_contain_exact_frozen_inputs_and_reviewed_utility": true,
+  "exclusive_attempt_required": true,
+  "only_mutation_command": [
+    "scontrol",
+    "release",
+    "6782640"
+  ],
+  "actual_receipt_before_atomic_final_inputs_required": true,
+  "held_proof_expires_at_utc": "2026-11-01T21:29:11.192640+00:00",
+  "actual_release_executed": false,
+  "source_or_plan_modified": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false
+}

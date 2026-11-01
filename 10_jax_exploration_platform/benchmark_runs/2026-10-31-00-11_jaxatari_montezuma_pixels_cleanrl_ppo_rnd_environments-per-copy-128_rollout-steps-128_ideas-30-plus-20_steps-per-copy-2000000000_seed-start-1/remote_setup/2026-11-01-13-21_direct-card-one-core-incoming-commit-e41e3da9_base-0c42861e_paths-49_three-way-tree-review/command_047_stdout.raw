@@ -1,0 +1,13 @@
+{
+  "at_utc": "2026-11-01T21:16:54.032568+00:00",
+  "cause": "git add refused explicit review metadata outside the sparse checkout.",
+  "commit_created": false,
+  "correction": "Use git add --sparse for only the approved explicit source/history path list; no sparse source tree or integration index change.",
+  "kind": "direct_core_author_sparse_staging_failure",
+  "schema_version": 1,
+  "source_bytes_changed": false,
+  "staged_before_correction": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py"
+  ]
+}

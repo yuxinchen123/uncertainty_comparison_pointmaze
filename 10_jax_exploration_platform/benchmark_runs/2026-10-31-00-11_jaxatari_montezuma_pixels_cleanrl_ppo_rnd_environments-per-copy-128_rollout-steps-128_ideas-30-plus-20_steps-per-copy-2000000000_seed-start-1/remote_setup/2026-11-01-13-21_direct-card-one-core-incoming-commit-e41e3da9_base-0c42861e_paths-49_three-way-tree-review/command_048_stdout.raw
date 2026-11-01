@@ -1,0 +1,40 @@
+{
+  "actual_gpu_operations": false,
+  "actual_serval02_contact": false,
+  "at_utc": "2026-11-01T20:10:25.928214+00:00",
+  "birth": "52464211",
+  "blocked_numerical_imports": [],
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_52/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "error_details": [
+    {
+      "test": "test_serval02_card1_binding.DirectBindingTests.test_real_existing_reader_rederives_frozen_synthetic_120_case_history",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py\", line 309, in test_real_existing_reader_rederives_frozen_synthetic_120_case_history\n    checked = core.validate_history(plan)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py\", line 194, in validate_history\n    validation = adjacent(\"post_comparison_validation\"); evidence = validation.Evidence(resolver)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-11-40_serval02-card-1-current-device-binding_gpu-count-1_driver-590.48.01_memory-mib-95830/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py\", line 157, in __init__\n    raise TypeError(\"portable evidence requires the strict exact-path resolver\")\nTypeError: portable evidence requires the strict exact-path resolver\n"
+    }
+  ],
+  "errors": 1,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6781231",
+  "kind": "direct_serval02_core_author_metadata_tests",
+  "passed": false,
+  "pid": 660185,
+  "process_calls_limited_to_local_git": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "shared_library_loads_blocked": true,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "348f35420b5690b46b2a1232d2c299c66f6158717564e0da8bc754712a4c805c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "e1fcdec78fa691a018eab86ffeaa0c4af7a28aae49df1455fdfa1df5d67e5f6f"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "348f35420b5690b46b2a1232d2c299c66f6158717564e0da8bc754712a4c805c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": "e1fcdec78fa691a018eab86ffeaa0c4af7a28aae49df1455fdfa1df5d67e5f6f"
+  },
+  "source_freeze_sha256": "2a993b2536d787a20ef1068242b3ef154e0638f5a89f517b2c05db9b3f2a69ff",
+  "step_id": "52",
+  "temporary_fork_test_uses_only_own_lock_metadata": true,
+  "tests": 18
+}
