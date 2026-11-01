@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "kind": "owned_checkpoint_restart_component_completion_verification",
+  "observed_at_utc": "2026-11-01T08:22:55.645308+00:00",
+  "passed_for_two_fixture_component_validation": true,
+  "cluster": "uva",
+  "job_id": "6780569",
+  "source_commit": "8a96999408d4e214b212074d932f0eeabcbb5eea",
+  "verifier": {
+    "hostname": "portal05",
+    "pid": 1199325,
+    "uid": 2618919,
+    "mode": "read_only_stdlib_metadata",
+    "numerical_imports": false,
+    "owned_cpu_attempt": {
+      "job_id": "6780433",
+      "started": false,
+      "reason": "srun reported the old allocation expired; no new allocation or retry was made"
+    }
+  },
+  "ownership": {
+    "ledger_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "ledger_sha256_at_observation": "5dbc32393b208bde14335c8fc8a854358e916f7b579d8e9aefce9e288da167ee",
+    "submission_row": [
+      "6780569",
+      "checkpoint-restart-component-validation",
+      "8a96999408d4e214b212074d932f0eeabcbb5eea",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/job.sbatch"
+    ]
+  },
+  "scheduler": {
+    "accounting": {
+      "command": [
+        "sacct",
+        "-X",
+        "-j",
+        "6780569",
+        "--format=JobIDRaw,User,Account,Partition,QOS,State%64,ExitCode,Elapsed,NodeList,Start,End",
+        "-P",
+        "-n"
+      ],
+      "returncode": 0,
+      "stdout": "6780569|sl5nw|sl5nw_base|gpu|csresnolim|COMPLETED|0:0|00:06:41|jaguar03|2026-11-01T08:06:50|2026-11-01T08:13:31\n",
+      "stderr": "",
+      "observed_at_utc": "2026-11-01T08:22:50.144574+00:00"
+    },
+    "current_queue": {
+      "command": [
+        "squeue",
+        "-h",
+        "-j",
+        "6780569",
+        "-o",
+        "%i|%u|%T|%N|%R"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "slurm_load_jobs error: Invalid job id specified\n",
+      "observed_at_utc": "2026-11-01T08:22:50.174875+00:00"
+    },
+    "terminal_state": "COMPLETED",
+    "exit_code": "0:0"
+  },
+  "packet": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+    "published_preparation_commit": "771291cf4bc505dba97506f816a8271bc09b1394",
+    "manifest_sha256": "6bfb8c2275f801cc29da6dec125872bede29475fbb20a2ed8f62aa3e518e95a2",
+    "static_artifacts_verified": 13,
+    "static_hashes": {
+      "environment_registry.json": "92e7340d752951fab2432686adb2dd0a54aa49e6cf1177109d0a46bcc2ab2bb4",
+      "command.txt": "509d803644f3fc1bb4f8fec6fa4bec440b9b99af23b14890df26c92616020ec6",
+      "source_snapshot.json": "719319c537039146cf4b81bf53c7c308fd2d5c513032be832710483d31613433",
+      "verify_source.py": "92ca063db21c7ad172c7e87518e13c31563b38fd9a4946669567e2fd166b06db",
+      "allocation_guard.py": "983a0fd0250d09f5d376d19b5ccb1cd4f6f20b9ab2fd9caaaaf4e520772e9960",
+      "config_resolved.yaml": "7c476fa60b29c48acd029695a4f5d5b18ac8dc0d7ed800833eb58353730763ac",
+      "manifest.yaml": "b62499b1c49ae9a613f8721f402e8df3dc1f18ad571a381b0cf6c52e4de82f57",
+      "validation_plan.json": "a093b3756094afa460a8557507c01641cee4df2cbf15f1a32fd68c3241ec64fb",
+      "prepare_packet.py": "9f76e98073a64bca1b48222dd37a33fde0c0481af72bd0a203cdfe59dd53d1b4",
+      "experiment_background.md": "df61b1bd5bf8889cbfa148a08a403d5b2273f4f907673070f80f1a8a69ac0fdd",
+      "runtime_metadata.json": "a976110606905e4bc501d5ef39069465d5eba763e3873ff9ff27a7ca264f8a07",
+      "job.sbatch": "62faf901c1fbdaa4a9b4d495aa6122fb4b559c5c079c4677563bf421b293a6d4",
+      "preparation_observations.json": "c89228a5aa4c511e37f29731d29cc736dfc7f03d6cee45ec3a2a3c3a1ee9c79b"
+    },
+    "submission_receipt_sha256": "d3b96795c88d4c663041efe9071248f1b6b740ba3411fc0436a2e9c1dc9a69c2",
+    "release_receipt_sha256": "3e82620c46c79cc2aad9892cfbf492764ad27750e2f639a71108816e0bdcd47d",
+    "monitoring_before_release_sha256": "ca36bc4e95569ef9ad7e743f57fafe8346fe84fac60e09d8269b9d94aa23b605"
+  },
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/8a96999408d4e214b212074d932f0eeabcbb5eea",
+    "files_verified": 218,
+    "pixel_numerical_files_verified": 10,
+    "pixel_reference_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "all_git_bytes_modes_and_hashes_match": true
+  },
+  "actual_hardware": {
+    "hostname": "jaguar03",
+    "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "gpu_model": "NVIDIA RTX A4500",
+    "memory": "20470 MiB",
+    "driver": "580.159.04",
+    "typed_gpus": 1,
+    "cpus": 8,
+    "host_memory": "64G",
+    "time_limit": "00:40:00",
+    "captured_runtime": {
+      "JAX_ENABLE_X64": "true",
+      "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+      "XLA_FLAGS": " --xla_gpu_exclude_nondeterministic_ops=true",
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+      "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+      "OMP_NUM_THREADS": "8",
+      "XDG_DATA_HOME": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets"
+    }
+  },
+  "unit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+    "hashes": {
+      "allocation_guard.json": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85",
+      "hardware.json": "7c03990595555d7c90cbcfb9a3d33b334c084ebd95ed5c1067d3bbc67bc879f5",
+      "progress.json": "7c82d8a64c124a2525948f95452d566f86c73c591697439f127673ed047fc828",
+      "result.json": "ddfd7405cb3fc855f2f076a52fe98c494166de2b9aeff5e69620fe81c6adb487"
+    },
+    "started_at": "2026-11-01T08:06:53.008123+00:00",
+    "finished_at": "2026-11-01T08:13:31.414756+00:00",
+    "wrapper_elapsed_seconds": 398.406633,
+    "passed": true,
+    "exit_code": 0
+  },
+  "log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/checkpoint-restart-validation_source-8a96999408d4e214b212074d932f0eeabcbb5eea_job-6780569.log",
+    "sha256": "fa7588522ef2a4a919ae2afcfedf60d7be98ceca7e0ab712878025aa2812086b",
+    "tests_passed": 2,
+    "warnings": 1,
+    "pytest_seconds": 391.81
+  },
+  "verified_fixture_scope": [
+    "Independent restored-buffer continuations [3,1] and [1,3] agree with seven original full updates and final metrics.",
+    "Interrupted update-three publication retains the previous generation; metadata recovery forbids pickle.load before actual restore.",
+    "Scheduled report rows and unfinished report state agree with uninterrupted execution through update seven."
+  ],
+  "precision_warning": {
+    "prior_audit_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/precision_warning_audit.json",
+    "prior_audit_sha256": "e757a30c3e4741be8b90208eecfaa155091f08b1883efd4b30881527667e5024",
+    "same_warning_text_as_prior_audit": true,
+    "warning_text_sha256": "f3f1315da9417d922b78376828523375cd9e0536a03e3de102ffaf983ef67365",
+    "warning_call_stack_captured": false,
+    "interpretation": "The integer-width warning is consistent with the prior game-only x64-disabled-context audit and does not establish a float64 learner-statistics failure."
+  },
+  "missing_evidence_or_scope_limits": [
+    "No separate current-state dtype receipt was saved by this job. Float64 learner statistics are bound to unchanged source and enabled runtime rather than a new persisted dtype dump.",
+    "Fixture checkpoints and arrays used temporary directories and were removed. Retained proof consists of frozen assertions and passing output, not independently reloadable per-test states.",
+    "This tiny GPU job does not exercise the final-training deadline loop over a sustained20-minute interval or establish128-environment/2B-step completion. Deadline scheduling has separate reviewed stdlib tests.",
+    "Runtime metadata was captured by the correctness wrapper. Its full child-process environment and the resolver raw NVML XML were not separately persisted."
+  ],
+  "scientific_hypothesis_credit": 0,
+  "initial_case_credit": 0,
+  "adaptive_idea_credit": 0,
+  "formal_case_credit": 0,
+  "final_training_credit": 0,
+  "worker_admission": false,
+  "source_admission_changed": false,
+  "new_gpu_or_numerical_work_performed": false,
+  "new_jobs_submitted": false
+}

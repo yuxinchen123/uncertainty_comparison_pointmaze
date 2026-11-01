@@ -1,0 +1,33 @@
+{
+  "source_commit": "8a96999408d4e214b212074d932f0eeabcbb5eea",
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/8a96999408d4e214b212074d932f0eeabcbb5eea/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/gpu_train_optimized_restart.py"
+  ],
+  "started_at": "2026-11-01T08:06:53.008123+00:00",
+  "hardware": {
+    "hostname": "jaguar03",
+    "gpu_query": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b, NVIDIA RTX A4500, 20470 MiB, 580.159.04",
+    "cuda_visible_devices": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "slurm_job_id": "6780569",
+    "pid": 1936976,
+    "runtime_environment": {
+      "JAX_ENABLE_X64": "true",
+      "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+      "XLA_FLAGS": " --xla_gpu_exclude_nondeterministic_ops=true",
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+      "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+      "OMP_NUM_THREADS": "8",
+      "XDG_DATA_HOME": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets"
+    }
+  },
+  "passed": true,
+  "exit_code": 0,
+  "finished_at": "2026-11-01T08:13:31.414756+00:00",
+  "state": "completed",
+  "pid": 1936976,
+  "completed": true
+}

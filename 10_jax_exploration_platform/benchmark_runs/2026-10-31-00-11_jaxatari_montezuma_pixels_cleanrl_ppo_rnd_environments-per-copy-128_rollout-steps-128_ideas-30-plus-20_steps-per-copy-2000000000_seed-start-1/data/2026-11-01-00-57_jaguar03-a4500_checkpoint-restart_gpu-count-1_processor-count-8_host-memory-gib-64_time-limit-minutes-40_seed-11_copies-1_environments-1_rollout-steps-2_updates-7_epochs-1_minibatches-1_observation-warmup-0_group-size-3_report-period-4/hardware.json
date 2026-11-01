@@ -1,0 +1,16 @@
+{
+  "hostname": "jaguar03",
+  "gpu_query": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b, NVIDIA RTX A4500, 20470 MiB, 580.159.04",
+  "cuda_visible_devices": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "slurm_job_id": "6780569",
+  "pid": 1936976,
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": " --xla_gpu_exclude_nondeterministic_ops=true",
+    "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85",
+    "OMP_NUM_THREADS": "8",
+    "XDG_DATA_HOME": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "component_monitoring_before_release",
+  "at_utc": "2026-11-01T08:06:50.646146+00:00",
+  "job_id": "6780569",
+  "cron_id": "6319a0a6-b9b0-4284-b5c0-caaa63f81d5a",
+  "cadence_seconds": 1200,
+  "persistent_monitor_job_id": "6780433",
+  "persistent_monitor_source_commit": "f9888a9167d959f56f64c087a00cef4217833ed4",
+  "full_status_time": "2026-11-01 01:05:44 PT",
+  "actual_owned_held_row": [
+    "6780569",
+    "PENDING",
+    "",
+    "gres/gpu:nvidia_rtx_a4500:1",
+    "(JobHeldUser)"
+  ],
+  "actual_scontrol_before_release": "JobId=6780569 JobName=pixel_checkpoint_restart UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=0 Nice=0 Account=sl5nw_base QOS=csresnolim JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:40:00 TimeMin=N/A SubmitTime=2026-11-01T03:04:38 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T03:04:38 Scheduler=Main Partition=gpu AllocNode:Sid=portal05:1181222 ReqNodeList=jaguar03 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 Reservation=sl5nw_168 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/job.sbatch WorkDir=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1 StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/checkpoint-restart-validation_source-8a96999408d4e214b212074d932f0eeabcbb5eea_job-6780569.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/checkpoint-restart-validation_source-8a96999408d4e214b212074d932f0eeabcbb5eea_job-6780569.log Power= TresPerNode=gres/gpu:nvidia_rtx_a4500:1 TresPerTask=cpu:8 \n",
+  "scientific_hypothesis_credit": 0
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "owned_uva_component_submit_intent",
+  "at_utc": "2026-11-01T08:04:38.468486+00:00",
+  "command": [
+    "sbatch",
+    "--hold",
+    "--no-requeue",
+    "--parsable",
+    "--nodes=1",
+    "--ntasks=1",
+    "--job-name=pixel_checkpoint_restart",
+    "--account=sl5nw_base",
+    "--partition=gpu",
+    "--qos=csresnolim",
+    "--reservation=sl5nw_168",
+    "--nodelist=jaguar03",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=00:40:00",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/checkpoint-restart-validation_source-8a96999408d4e214b212074d932f0eeabcbb5eea_job-%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4/job.sbatch"
+  ],
+  "published_preparation_commit": "771291cf4bc505dba97506f816a8271bc09b1394",
+  "node": "NodeName=jaguar03 Arch=x86_64 CoresPerSocket=56  CPUAlloc=0 CPUEfctv=222 CPUTot=224 CPULoad=0.56 AvailableFeatures=a4500,amd_epyc_7663 ActiveFeatures=a4500,amd_epyc_7663 Gres=gpu:nvidia_rtx_a4500:8(S:0-1) NodeAddr=jaguar03 NodeHostName=jaguar03 Version=23.11.6 OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025  RealMemory=1024000 AllocMem=0 FreeMem=956420 Sockets=2 Boards=1 CoreSpecCount=1 CPUSpecList=222-223 MemSpecLimit=4000 State=IDLE+RESERVED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=gpu  BootTime=2026-10-26T18:35:24 SlurmdStartTime=2026-10-26T18:37:45 LastBusyTime=2026-11-01T07:58:32 ResumeAfterTime=None CfgTRES=cpu=222,mem=1000G,billing=153838,gres/gpu=8 AllocTRES= CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a ReservationName=sl5nw_168\n",
+  "reservation": "ReservationName=sl5nw_168 StartTime=2026-10-20T13:39:06 EndTime=2026-11-04T04:59:59 Duration=14-15:20:53 Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES TRES=cpu=384 Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)\n",
+  "no_second_submission_without_exact_diagnosis": true
+}
