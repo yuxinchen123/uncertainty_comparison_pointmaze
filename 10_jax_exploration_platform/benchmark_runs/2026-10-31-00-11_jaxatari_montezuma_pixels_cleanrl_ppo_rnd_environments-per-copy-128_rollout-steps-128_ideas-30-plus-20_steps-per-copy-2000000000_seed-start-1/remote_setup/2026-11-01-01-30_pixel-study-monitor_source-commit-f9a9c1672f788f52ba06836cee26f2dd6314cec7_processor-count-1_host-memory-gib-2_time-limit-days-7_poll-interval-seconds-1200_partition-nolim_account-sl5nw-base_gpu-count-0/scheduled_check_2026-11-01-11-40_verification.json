@@ -1,0 +1,48 @@
+{
+  "kind": "owned_full_scheduled_monitor_check",
+  "passed": true,
+  "checked_at_utc": "2026-11-01T11:41:55.918150+00:00",
+  "monitor_job_id": "6780635",
+  "step_id": "13",
+  "source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "returncode": 0,
+  "queue_counts": {
+    "pending": 10,
+    "running": 1,
+    "completed": 109,
+    "failed": 0
+  },
+  "site_rows": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "snapshot_sha256": "445ad1232ba77a95c1e123159a60b46ade887e6bee0cedfb797718d0d7d7a377",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2274632",
+        "data_unit_name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+        "state": "waiting",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "(Priority)",
+        "observed_host": "",
+        "observed_at_utc": "2026-11-01T11:40:26.227672+00:00"
+      }
+    }
+  ],
+  "report_sha256": "a0115d1785ce5f38ee2324c09dd777e38ddafced3911633f7330f842d871231a",
+  "status_sha256": "95b5754e6029286166621d56e74916c06d586d5f6eb74b6f578ad600840a7a46"
+}
