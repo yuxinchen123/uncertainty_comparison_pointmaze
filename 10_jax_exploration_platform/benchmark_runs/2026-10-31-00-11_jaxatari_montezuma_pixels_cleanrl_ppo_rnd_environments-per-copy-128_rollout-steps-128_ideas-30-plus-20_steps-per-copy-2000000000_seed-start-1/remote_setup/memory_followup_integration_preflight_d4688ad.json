@@ -1,0 +1,104 @@
+{
+  "kind": "reviewed_sampler_and_completed_attempt_integration_preflight",
+  "at_utc": "2026-11-01T12:53:06.234485+00:00",
+  "integration_head": "3e30d1203de6a56fa25bd46df7cf4586b40ced54",
+  "reviewed_commit": "d4688adbef4e51623af6e31e16831ce6bae6c52e",
+  "review_base": "a5453784cae2a8ce2d46fd1b4a717e8955a1a128",
+  "files": [
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/completed_instrumented_attempt_author_6780635_27.json",
+      "base_sha256": null,
+      "incoming_sha256": "009db21f426934ed19446a7ed84e43ebdd300fecc277a499ff5dc2582a617f45",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/completed_instrumented_attempt_corrected_author_6780635_28.json",
+      "base_sha256": null,
+      "incoming_sha256": "fe1386dcf13339be9d8373a63c798369356dc2d685d31c2aa90099a75f112da2",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_sampler_and_completed_attempt_freeze_2026-11-01.json",
+      "base_sha256": null,
+      "incoming_sha256": "751c9307e04c2da40b7e874b992a83a18c9217405c98b735c9c22eb2cd79f6a4",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_sampler_version_two_author_6780635_23.json",
+      "base_sha256": null,
+      "incoming_sha256": "d7a84799fbc97f16f2e2be80dbb184357da1fcd0f60f2f493e19ab67f2cc6150",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_sampler_version_two_freeze_2026-11-01.json",
+      "base_sha256": null,
+      "incoming_sha256": "c1bdafa41243be619fc27f24add9d1c6a6ea7e632f15894292b3e60425bdba39",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_sampler_version_two_independent_6780635_25.json",
+      "base_sha256": null,
+      "incoming_sha256": "0ee5a46e75a76c4eb4e8026402076607e8491d77e7a1d5104a1e567322e8c3b0",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_completion_independent_6780635_31.json",
+      "base_sha256": null,
+      "incoming_sha256": "5dafe82821e5213ddf1a9b81a0c7da212dfbdc553b2cf8f259d946819c5e6b23",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+      "base_sha256": "647b261836e8fb868195d878ef9c5047c96609d5e34e8c6e269249875a98d8d6",
+      "incoming_sha256": "1b3dd2ea8f9b620118cc5e00beb1bc0fc3c8da1d93cf18d4e17af4cc83da6c4a",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "base_sha256": "0094c51006237770272e3464a78df6a5c66ca429f8767863e8064c105c1faab8",
+      "incoming_sha256": "6cf85ca310b678a6d52412b37d0c1ac21d85a0eb9ee5013b3e09bb8c967e6d8b",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "base_sha256": "321a47805913834a574b1081a7ceeb333b5273c869f19e6356e10dd4d3892a2d",
+      "incoming_sha256": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py",
+      "base_sha256": "fb6f7809f8ee52ea3e3100843532230d3e2a5c67f76592fe84fa792eb144762d",
+      "incoming_sha256": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py",
+      "base_sha256": "3982af6dcaa8597c291a66b9ac2aa0feaeb7feede135beff8a72c2d30b76e69f",
+      "incoming_sha256": "b34bfd9f35da86563fe0d2c5f4658e3e3fb752a77be925eef0b433987e08e62a",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py",
+      "base_sha256": "79fe6a21f5f4be8fa06da4ed41a3246631606d582f190f61e3d5b33b33d401e8",
+      "incoming_sha256": "fdcc24b11453e46809c837cb54f73856ca5e53e2dcdd2fde14e4c246d9e4f6da",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py",
+      "base_sha256": "feed670596c5d27c7896678e7ad8de337bdfa5692b3346531d9d0a63c5194ebe",
+      "incoming_sha256": "ce75654d3133baffef967a7a89585f73afb7e2b450fb701ced0b7244a445c72e",
+      "current_matches_review_base": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "base_sha256": "c03f7b828582090df33881a7bfd2ad08003e6edaced38e0ac770b63ac8a9fb14",
+      "incoming_sha256": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+      "current_matches_review_base": true
+    }
+  ],
+  "all_incoming_bytes_checked": true,
+  "reviewed_freeze_sha256": "751c9307e04c2da40b7e874b992a83a18c9217405c98b735c9c22eb2cd79f6a4",
+  "independent_review_sha256": "5dafe82821e5213ddf1a9b81a0c7da212dfbdc553b2cf8f259d946819c5e6b23",
+  "enabled": false,
+  "numerical_imports": false
+}
