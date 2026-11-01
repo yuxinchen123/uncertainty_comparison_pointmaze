@@ -370,6 +370,8 @@ def _load_behavior(run_dir, row):
     # Before: archives containing all settings; after: matching copies concatenated along seed axis.
     gathered = defaultdict(list)
     trajectories, trajectory_steps, maximum_history = [], [], []
+    count_histories, count_history_presence = [], []
+    checkpoint_steps = None
     positions = grid = None
     for source in row['sources']:
         path = Path(run_dir) / 'data/research' / source['task'] / 'behavior.npz'
@@ -379,6 +381,22 @@ def _load_behavior(run_dir, row):
                                           not np.array_equal(grid, archive['grid'])):
                 raise ValueError('A reporting group contains incompatible physical grids.')
             positions, grid = archive['positions'].copy(), archive['grid'].copy()
+            # Old development archives omit both keys; partially recorded histories are never combined.
+            history_keys = ('visit_count_history', 'visit_count_history_steps')
+            present = [key in archive.files for key in history_keys]
+            if any(present) and not all(present):
+                raise ValueError('Visit-count history requires both its counts and checkpoint steps.')
+            count_history_presence.append(all(present))
+            if all(present):
+                counts, checkpoints = archive[history_keys[0]], archive[history_keys[1]]
+                if counts.shape != (len(checkpoints), len(selected), len(positions)) or checkpoints.ndim != 1:
+                    raise ValueError('Visit-count history must be [checkpoint,copies,states] with one step per checkpoint.')
+                if not len(checkpoints) or np.any(np.diff(checkpoints) <= 0) or checkpoints[0] <= 0:
+                    raise ValueError('Visit-count checkpoints must be positive and strictly increasing.')
+                if checkpoint_steps is not None and not np.array_equal(checkpoint_steps, checkpoints):
+                    raise ValueError('One condition has inconsistent visit-count checkpoints across seed batches.')
+                checkpoint_steps = checkpoints.copy()
+                count_histories.append(counts[:, selected, :].copy())
             for key in ('initial_fields', 'visit_counts', 'late_visit_counts', 'policy_probabilities',
                         'first_goal_steps', 'seed_ids', 'field_seed_ids'):
                 gathered[key].append(archive[key][selected].copy())
@@ -389,9 +407,27 @@ def _load_behavior(run_dir, row):
     arrays = {key: np.concatenate(values, axis=0) for key, values in gathered.items()}
     arrays.update(positions=positions, grid=grid, trajectories=trajectories,
                   trajectory_steps=trajectory_steps, maximum_history=maximum_history)
+    complete = bool(count_history_presence) and all(count_history_presence)
+    arrays.update(visit_count_history_complete=complete,
+                  visit_count_history=np.concatenate(count_histories, axis=1) if complete else None,
+                  visit_count_history_steps=checkpoint_steps if complete else None)
     if len(arrays['seed_ids']) != row['seed_count']:
         raise ValueError('Behavior archive seed count disagrees with completed summary metrics.')
     return arrays
+
+
+def early_visitation_budgets(data):
+    """Choose the same recorded early transition budgets for every displayed seed and condition."""
+    # A missing old archive disables this figure rather than silently dropping its seeds.
+    if not data or not all(values['visit_count_history_complete'] for values in data):
+        return []
+    common = set(map(int, data[0]['visit_count_history_steps']))
+    for values in data[1:]:
+        common.intersection_update(map(int, values['visit_count_history_steps']))
+    budgets = [budget for budget in (2 ** 16, 2 ** 18, 2 ** 20) if budget in common]
+    if not budgets and common and max(common) < 2 ** 16:
+        return [max(common)]
+    return budgets
 
 
 def representative_seed_index(first_goal_steps, budget, seed_ids, field_seed_ids):
@@ -518,6 +554,7 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
     data = [_load_behavior(run_dir, row) for row in selected]
     if not selected:
         return []
+    early_budgets = early_visitation_budgets(data)
 
     # Every map in a row uses the same color scale and equal transition budgets.
     summaries = [[values[key].mean(axis=0) for values in data]
@@ -536,6 +573,24 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
     figure.suptitle(geometry_label(selected[0]['specification']) + '; ' + selected[0]['specification']['policy_kind'] + ' policy', fontsize=12)
     _save_figure(figure, plots_dir, figure_name + '_maps')
     plt.close(figure)
+
+    if early_budgets:
+        # Before: [checkpoint,copies,states]; after: one mean-visitation map per common budget.
+        figure, axes = plt.subplots(len(early_budgets), len(selected),
+            figsize=(4.5 * len(selected), 2.5 * len(early_budgets)), squeeze=False, layout='constrained')
+        for budget_index, budget in enumerate(early_budgets):
+            fields = [values['visit_count_history'][np.flatnonzero(
+                values['visit_count_history_steps'] == budget)[0]].mean(axis=0) for values in data]
+            maximum = max(float(field.max()) for field in fields)
+            positive = [float(field[field > 0].min()) for field in fields if np.any(field > 0)]
+            minimum = min(positive) if positive else 1
+            normalization = LogNorm(vmin=minimum, vmax=max(minimum * 2, maximum))
+            for column, (row, values, field) in enumerate(zip(selected, data, fields)):
+                title = field_label(row['specification']) + f'\nAfter {budget:,} training transitions'
+                mesh = _draw_map(axes[budget_index, column], field, values['grid'], title, normalization)
+            figure.colorbar(mesh, ax=axes[budget_index].tolist(), label='Mean visits per seed')
+        _save_figure(figure, plots_dir, figure_name + '_early_visitation')
+        plt.close(figure)
 
     # Separate field profiles expose neural variation without the large adversarial map color range.
     figure, axes = plt.subplots(1, len(selected), figsize=(4.5 * len(selected), 3.5), squeeze=False,
@@ -602,7 +657,7 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         representatives.append({'condition': field_label(row['specification']),
                                 'policy_seed': int(values['seed_ids'][index]),
                                 'field_seed': int(values['field_seed_ids'][index]),
-                                'first_goal_step': first_goal})
+                                'first_goal_step': first_goal, 'early_visitation_budgets': early_budgets})
     figure.suptitle('Recorded training positions; goal arrivals reset to the start, including after the first goal', fontsize=11)
     _save_figure(figure, plots_dir, figure_name + '_movement')
     plt.close(figure)
@@ -742,6 +797,13 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_compari
             pieces.append('\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\linewidth]{\\detokenize{' +
                           str(filename) + '}}\n\\caption{' + _latex_escape(caption) +
                           '}\n\\end{figure}\n')
+        if figure.get('early_visitation_budgets'):
+            filename = analysis_dir/'plots'/(figure['name']+'_early_visitation.pdf')
+            budgets = ', '.join(f'{value:,}' for value in figure['early_visitation_budgets'])
+            pieces.append('\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\linewidth]{\\detokenize{'+str(filename)+
+                '}}\n\\caption{Mean visits per seed after '+budgets+' training transitions. Every condition uses the same recorded budgets '
+                'and a shared color scale within each row. White cells have zero visits; dark cells are walls. '
+                'Every displayed seed has a complete checkpoint history.}\n\\end{figure}\n')
     (analysis_dir / 'results.tex').write_text(''.join(pieces))
 
 
@@ -833,16 +895,29 @@ def generate_report(run_dir):
             required = [plots_dir/f'{name}_{suffix}.{extension}' for suffix in (
                 'maps', 'initial_profiles', 'movement', 'policy', 'discovery') for extension in ('png', 'pdf')]
             required.append(plots_dir/f'{name}_sampled_positions.html')
+            cached_representatives = render_history.get(name, {}).get('representatives', [])
+            if cached_representatives and cached_representatives[0].get('early_visitation_budgets'):
+                required.extend(plots_dir/f'{name}_early_visitation.{extension}' for extension in ('png', 'pdf'))
             if render_history.get(name, {}).get('digest') == signature and all(path.exists() for path in required):
                 representatives = render_history[name]['representatives']
             else:
                 representatives = _plot_comparison(run_dir, comparison_rows, plots_dir, name)
                 render_history[name] = {'digest': signature, 'representatives': representatives}
-            figure_groups.append({'name': name, 'representatives': representatives})
+            early_budgets = representatives[0].get('early_visitation_budgets', []) if representatives else []
+            figure_groups.append({'name': name, 'representatives': representatives,
+                                  'early_visitation_budgets': early_budgets})
             pieces.append(f'### {geometry_label(comparison_rows[0]["specification"])}; '
                           f'{comparison_rows[0]["specification"]["policy_kind"]} policy\n\n')
             for suffix in ('maps', 'initial_profiles', 'movement', 'policy', 'discovery'):
                 pieces.append(f'![{suffix.capitalize()}](plots/{name}_{suffix}.png)\n\n')
+            if early_budgets:
+                pieces.append(f'![Early visitation](plots/{name}_early_visitation.png)\n\n'
+                    'Mean visits per seed after '+', '.join(f'{budget:,}' for budget in early_budgets)+
+                    ' training transitions. Every displayed condition and seed uses the same recorded budgets; '
+                    'each row has a shared color scale. White cells have zero visits and dark cells are walls.\n\n')
+            else:
+                pieces.append('Early visitation maps require complete checkpoint histories for every displayed seed and condition; '
+                              'incomplete or missing histories are not combined.\n\n')
             pieces.append('Initial-profile panels use separate vertical scales so neural-field variation remains visible. '
                           'Movement panels share the full zero-to-goal range; exact first-goal markers use saved transition counts. '
                           'Goal arrivals reset to the start, including after the first goal.\n\n')

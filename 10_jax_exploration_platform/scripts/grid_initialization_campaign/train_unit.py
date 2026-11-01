@@ -14,6 +14,18 @@ from common import PLATFORM, append_json, now, read_json, seed_for, write_json
 from initial_field_archive import load_or_create_initial_field, uses_canonical_archive
 
 
+def visitation_checkpoint_steps(total_timesteps, rollout_steps):
+    """List exact powers-of-two visitation checkpoints from 1024 transitions through the budget."""
+    if total_timesteps < 1 or rollout_steps < 1:
+        raise ValueError('Visitation checkpoints require a positive budget and rollout length.')
+    steps = [1 << exponent for exponent in range(10, total_timesteps.bit_length())]
+    if not steps or steps[-1] != total_timesteps:
+        steps.append(total_timesteps)
+    if any(step % rollout_steps for step in steps):
+        raise ValueError('Exact visitation checkpoints must align with complete rollout boundaries.')
+    return steps
+
+
 def memory_profile(run_dir, policy_kind):
     """Use measured production packing, with a conservative first compatibility batch."""
     path = run_dir / 'infrastructure/production.json'
@@ -144,11 +156,18 @@ def main():
         state = trainer.initialize(policy_seeds)
         log_interval = max(1, configuration.total_iterations // 128)
         snapshots, steps, maximums = [], [], []
+        visitation_steps = (visitation_checkpoint_steps(configuration.total_timesteps,
+                            configuration.num_steps) if canonical_fields else [])
+        visitation_step_set = set(visitation_steps)
+        visitation_counts = []
         late_start = None
         for iteration in range(configuration.total_iterations):
             if iteration == int(.9 * configuration.total_iterations):
                 late_start = np.asarray(jax.device_get(state.counts)).copy()
             state, metrics = trainer.train_iteration(state)
+            # Confirmation records the actual lifetime counts, before later goals and resets can hide delay.
+            if canonical_fields and (iteration+1)*configuration.num_steps in visitation_step_set:
+                visitation_counts.append(np.asarray(jax.device_get(state.counts)).copy())
             if iteration % log_interval == 0 or iteration == configuration.total_iterations-1:
                 host = jax.device_get(metrics)
                 position = np.asarray(jax.device_get(state.positions))
@@ -172,12 +191,16 @@ def main():
             'goal_arrivals': int(np.asarray(jax.device_get(state.successes))[index]),
             'blocked_fraction': float(blocked[index]/spec['total_timesteps'])}
             for index, ((setting_index, seed), field_seed) in enumerate(zip(selected, field_seeds))]
+        # Before: cumulative counts at selected times; after: [snapshot,copies,states] without changing RNG.
+        history = ({'visit_count_history': np.stack(visitation_counts),
+                    'visit_count_history_steps': np.asarray(visitation_steps, np.int64)}
+                   if canonical_fields else {})
         np.savez_compressed(behavior_path, initial_fields=initial_fields, raw_initial_fields=np.stack(raw_fields),
             visit_counts=counts, late_visit_counts=counts-late_start if late_start is not None else counts,
             policy_probabilities=probabilities, positions=geometry.positions, grid=geometry.grid,
             trajectory_states=np.stack(snapshots), trajectory_steps=np.asarray(steps),
             maximum_progress_history=np.stack(maximums), first_goal_steps=first,
-            seed_ids=seeds, field_seed_ids=field_seeds, setting_indices=setting_indices)
+            seed_ids=seeds, field_seed_ids=field_seeds, setting_indices=setting_indices, **history)
         write_json(shard, {'completed': True, 'copies': current_records,
             'behavior_file': behavior_path.name, 'wall_seconds': time.monotonic()-batch_started,
             'configuration': asdict(configuration), 'physical_packing_profile': profile,
@@ -205,6 +228,23 @@ def main():
     loaded = [np.load(path) for path in arrays]
     axis_one = {'trajectory_states', 'maximum_progress_history'}
     fixed = {'positions', 'grid', 'trajectory_steps'}
+    if canonical_fields:
+        axis_one.add('visit_count_history')
+        fixed.add('visit_count_history_steps')
+        expected_steps = np.asarray(visitation_checkpoint_steps(spec['total_timesteps'],
+            spec['settings'][0].get('rollout_steps', 128)), np.int64)
+        for path, data in zip(arrays, loaded):
+            if not {'visit_count_history', 'visit_count_history_steps'}.issubset(data.files):
+                raise ValueError(f'Completed confirmation shard has no exact visitation history: {path}')
+            saved_steps, saved_counts = data['visit_count_history_steps'], data['visit_count_history']
+            if not np.array_equal(saved_steps, expected_steps):
+                raise ValueError(f'Confirmation shards have different visitation checkpoint steps: {path}')
+            if saved_counts.shape != (len(expected_steps), len(data['seed_ids']), geometry.state_count):
+                raise ValueError(f'Confirmation visitation history has the wrong shape: {path}')
+            if (np.any(saved_counts < 0) or np.any(np.diff(saved_counts, axis=0) < 0)
+                    or not np.all(saved_counts.sum(axis=2) == expected_steps[:, None])
+                    or not np.array_equal(saved_counts[-1], data['visit_counts'])):
+                raise ValueError(f'Confirmation visitation history disagrees with exact lifetime counts: {path}')
     combined = {name: loaded[0][name] if name in fixed else
                 np.concatenate([data[name] for data in loaded], axis=1 if name in axis_one else 0)
                 for name in loaded[0].files}

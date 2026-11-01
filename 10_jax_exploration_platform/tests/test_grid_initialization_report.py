@@ -88,7 +88,7 @@ def test_paired_confirmation_keeps_neural_field_groups_and_reports_no_effect():
     assert REPORT.paired_confirmation_comparisons(_paired_rows([30, 30, 30, 30], variant='field-shuffle')) == []
 
 
-def _write_completed_fixture(run_dir, kind, first_goal_steps):
+def _write_completed_fixture(run_dir, kind, first_goal_steps, include_visit_history=False):
     """Create a complete tiny archive without running a training algorithm."""
     # Four copies share two random-field seeds and three recorded training-position samples.
     folder = run_dir / 'data/research' / kind
@@ -104,13 +104,15 @@ def _write_completed_fixture(run_dir, kind, first_goal_steps):
                                                    'settings': [setting]}))
     states = np.asarray([[0, 0, 0, 0], [1, 0, 1, 0], [3, 1, 3, 1]], dtype=np.int32)
     visits = np.asarray([[4, 3, 2, 1], [7, 3, 0, 0], [4, 3, 2, 1], [7, 3, 0, 0]], dtype=np.int32)
+    history = {'visit_count_history': np.stack([visits//4, visits//2, visits]),
+               'visit_count_history_steps': np.asarray([8, 16, 32])} if include_visit_history else {}
     np.savez(folder / 'behavior.npz', initial_fields=np.ones((4, 4)), visit_counts=visits,
              late_visit_counts=visits, policy_probabilities=np.full((4, 4, 4), 0.25),
              positions=np.asarray([[0, 0], [0, 1], [0, 2], [0, 3]], dtype=np.int32),
              grid=np.asarray([[0, 1, 2, 3]], dtype=np.int32), trajectory_states=states,
              trajectory_steps=np.asarray([1, 16, 32]), maximum_progress_history=states,
              first_goal_steps=np.asarray(first_goal_steps), seed_ids=np.arange(4),
-             field_seed_ids=np.asarray([0, 0, 1, 1]), setting_indices=np.zeros(4, dtype=np.int32))
+             field_seed_ids=np.asarray([0, 0, 1, 1]), setting_indices=np.zeros(4, dtype=np.int32), **history)
 
 
 def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_path, monkeypatch):
@@ -167,3 +169,52 @@ def test_empty_report_has_no_claimed_failure_and_no_behavior_figures(tmp_path):
     assert result['completed_setting_groups'] == result['figure_comparisons'] == 0
     assert 'No failure case has been established' in (tmp_path / 'analysis/analysis.md').read_text()
     assert not list((tmp_path / 'analysis/plots').iterdir())
+
+
+def test_early_visitation_uses_complete_histories_and_recorded_common_steps(tmp_path, monkeypatch):
+    """Check checkpoint/copy/state axes and render only fully matched early budgets."""
+    # Tiny complete archives use the final common step 32 instead of pretending to contain 65,536.
+    _write_completed_fixture(tmp_path, 'uniform', [10, 12, 14, 16], include_visit_history=True)
+    _write_completed_fixture(tmp_path, 'random_network', [20, -1, 30, -1], include_visit_history=True)
+    row = next(item for item in REPORT.collect_rows(tmp_path) if item['specification']['field_kind'] == 'uniform')
+    loaded = REPORT._load_behavior(tmp_path, row)
+    assert loaded['visit_count_history'].shape == (3, 4, 4)
+    np.testing.assert_array_equal(loaded['visit_count_history_steps'], [8, 16, 32])
+    np.testing.assert_array_equal(loaded['visit_count_history'][1, 1], [3, 1, 0, 0])
+    captured = {}
+    original_save = REPORT._save_figure
+
+    def record_early_titles(figure, directory, name):
+        """Retain the labels actually rendered by the early-visitation figure."""
+        # The colorbar is an extra axis; both map titles must name the same actual step budget.
+        if name.endswith('_early_visitation'):
+            captured['titles'] = [axis.get_title() for axis in figure.axes if axis.get_title()]
+        original_save(figure, directory, name)
+
+    monkeypatch.setattr(REPORT, '_save_figure', record_early_titles)
+    REPORT.generate_report(tmp_path)
+    assert len(captured['titles']) == 2
+    assert all('After 32 training transitions' in title for title in captured['titles'])
+    for extension in ('png', 'pdf'):
+        assert (tmp_path/f'analysis/plots/confirmation_comparison-0_early_visitation.{extension}').stat().st_size > 1000
+    assert 'Early visitation' in (tmp_path/'analysis/analysis.md').read_text()
+    assert 'early_visitation.pdf' in (tmp_path/'analysis/results.tex').read_text()
+
+    # A mixed old/new seed archive keeps ordinary results valid but provides no partial early map.
+    path = tmp_path/'data/research/random_network/behavior.npz'
+    with np.load(path) as archive:
+        old = {key: archive[key].copy() for key in archive.files if not key.startswith('visit_count_history')}
+    np.savez(path, **old)
+    mixed_row = {**row, 'seed_count': 8, 'sources': row['sources']+[{'task': 'random_network', 'setting_index': 0}]}
+    mixed = REPORT._load_behavior(tmp_path, mixed_row)
+    assert mixed['visit_count_history_complete'] is False
+    assert mixed['visit_count_history'] is None
+    assert REPORT.early_visitation_budgets([loaded, mixed]) == []
+
+
+def test_early_visitation_skips_budgets_missing_from_any_condition():
+    """Do not compare one condition at 65,536 steps with another at a later budget."""
+    # Only checkpoints shared by every complete condition may appear in a comparison row.
+    complete = lambda steps: {'visit_count_history_complete': True, 'visit_count_history_steps': np.asarray(steps)}
+    assert REPORT.early_visitation_budgets([complete([2**16, 2**18, 2**20]),
+                                          complete([2**16, 2**20])]) == [2**16, 2**20]
