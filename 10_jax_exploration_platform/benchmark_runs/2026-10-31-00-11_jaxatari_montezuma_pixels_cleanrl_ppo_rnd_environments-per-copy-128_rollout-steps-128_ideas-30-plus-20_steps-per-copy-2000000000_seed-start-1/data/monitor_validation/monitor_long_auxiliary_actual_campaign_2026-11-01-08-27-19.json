@@ -1,0 +1,21 @@
+{
+  "kind": "monitor_long_auxiliary_actual_campaign_metadata_smoke",
+  "observed_at_utc": "2026-11-01T08:27:19.630994+00:00",
+  "source_sha256": "85aef9f6665b3030513daebfc44047d7d8a4b17b3e5b6e9a5fc991580775dff2",
+  "unit_rows_read": 144,
+  "long_auxiliary_row": {
+    "run": "2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+    "pool": "jaguar03",
+    "gpu": [
+      "NVIDIA RTX A4500"
+    ],
+    "slurm_job_id": "6780569",
+    "state": "completed",
+    "progress": "checks passed",
+    "age_seconds": 819.4154601097107
+  },
+  "live_commands_forbidden": true,
+  "numerical_imports": false,
+  "queue_or_source_admission_modified": false,
+  "scientific_hypothesis_credit": 0
+}

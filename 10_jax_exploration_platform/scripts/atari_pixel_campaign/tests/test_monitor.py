@@ -73,6 +73,48 @@ class MonitorTests(unittest.TestCase):
         self.assertNotIn("JobHeldUser", waiting)
         self.assertIn("JobHeldUser", held)
 
+    def test_long_auxiliary_name_stays_separate_from_registered_case(self):
+        """A completed 252-byte auxiliary name adds no paired-case credit and survives both metadata lookups."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            auxiliary_name = "checkpoint_restart_validation_" + "a" * (252 - len("checkpoint_restart_validation_"))
+            self.assertEqual(len(auxiliary_name.encode()), 252)
+            auxiliary = root / "data" / auxiliary_name
+            formal = root / "data/registered_case"
+            specifications = root / "queue/specifications"
+            final_statuses = root / "final_training_queue/status"
+            for path in (auxiliary, formal, specifications, final_statuses):
+                path.mkdir(parents=True)
+            (auxiliary / "progress.json").write_text(json.dumps({"state": "completed", "passed": True}))
+            (auxiliary / "result.json").write_text(json.dumps({"passed": True, "scientific_hypothesis_credit": 0,
+                "initial_case_credit": 0, "final_training_credit": 0}))
+            (formal / "progress.json").write_text(json.dumps({"state": "completed"}))
+            (formal / "result.json").write_text(json.dumps({"case_completed": True,
+                "decision": "accepted", "paired_rounds": 7, "median_speedup": 1.11}))
+            (specifications / "registered_case.json").write_text(json.dumps({
+                "hypothesis": "cache_room_backgrounds", "configuration": {"n_copies": 1}}))
+            (final_statuses / "registered_case.json").write_text(json.dumps({
+                "unit_id": "registered_case", "state": "completed"}))
+            rows = {row["run"]: row for row in monitor.unit_rows(root)}
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[auxiliary_name]["state"], "completed")
+        self.assertEqual(rows[auxiliary_name]["progress"], "checks passed")
+        self.assertEqual(rows["cache room backgrounds (1 copy)"]["progress"], "7/7 pairs; accepted; +11.0%")
+        self.assertEqual(sum("pairs" in row["progress"] for row in rows.values()), 1)
+
+    def test_malformed_registered_specification_still_raises(self):
+        """Existing malformed input is still an error rather than being treated as an auxiliary unit."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unit = root / "data/registered_case"
+            unit.mkdir(parents=True)
+            specifications = root / "queue/specifications"
+            specifications.mkdir(parents=True)
+            (unit / "progress.json").write_text(json.dumps({"state": "completed"}))
+            (specifications / "registered_case.json").write_text('{"hypothesis":')
+            with self.assertRaises(json.JSONDecodeError):
+                monitor.unit_rows(root)
+
     def test_training_gpu_uuid_selects_its_card_from_a_full_node_query(self):
         """Eight allocated cards remain distinguishable when a child records its UUID last."""
         with tempfile.TemporaryDirectory() as temporary:

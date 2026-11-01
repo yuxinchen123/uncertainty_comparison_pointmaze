@@ -103,12 +103,17 @@ def unit_rows(directory, excluded_unit_names=()):
     rows = []
     processes = read_json(directory / "processes.json") or []
     hosts = {record["unit"]: record["host"] for record in processes}
+    # A 252-byte auxiliary directory is valid, but adding ".json" would exceed
+    # the filesystem's filename limit. Match only filenames that actually exist.
+    specifications = {path.stem: path for path in (directory / "queue/specifications").glob("*.json")}
+    final_statuses = {path.stem: path for path in (directory / "final_training_queue/status").glob("*.json")}
     for path in sorted((directory / "data").glob("*/progress.json")):
         if path.parent.name in excluded_unit_names:
             continue
         value = read_json(path)
         hardware = read_json(path.parent / "hardware.json") or {}
-        specification = read_json(directory / "queue" / "specifications" / (path.parent.name + ".json"))
+        specification_path = specifications.get(path.parent.name)
+        specification = read_json(specification_path) if specification_path is not None else None
         result = read_json(path.parent / "result.json") if value["state"] == "completed" else None
         age = time.time() - path.stat().st_mtime
         phase = value["state"]
@@ -157,7 +162,8 @@ def unit_rows(directory, excluded_unit_names=()):
                         queries[0] if len(queries) == 1 else [])
         name = path.parent.name
         group = recorded_scaling_group(path.parent) if not hardware else None
-        final_status = read_json(directory / "final_training_queue/status" / (name + ".json"))
+        final_status_path = final_statuses.get(name)
+        final_status = read_json(final_status_path) if final_status_path is not None else None
         if final_status and final_status.get("unit_id") == name and final_status.get("state") == "held":
             state, progress = "held", final_status.get("reason", "final unit requires diagnosis")
         if specification:
