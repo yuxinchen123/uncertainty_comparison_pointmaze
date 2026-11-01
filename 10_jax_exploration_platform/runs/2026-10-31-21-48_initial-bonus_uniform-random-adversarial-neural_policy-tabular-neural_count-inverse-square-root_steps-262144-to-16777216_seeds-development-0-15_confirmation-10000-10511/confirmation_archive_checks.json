@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "source_commit": "a9db504",
+  "allocated_job_id": "6780344",
+  "allocated_step_id": "1",
+  "hostname": "heartpiece",
+  "tests_passed": 60,
+  "subsequent_behavior_report_tests_passed": 8,
+  "behavior_report_test_seconds": 8.24,
+  "test_seconds": 68.92,
+  "shared_filesystem_base_directory": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/infrastructure/confirmation_archive_checks",
+  "coverage": [
+    "archived initial fields",
+    "concurrent publication",
+    "source transition guard",
+    "scheduler limits",
+    "primary metric selection",
+    "report fixtures",
+    "real network field round trip",
+    "training entry point"
+  ]
+}

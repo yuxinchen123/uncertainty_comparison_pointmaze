@@ -113,11 +113,30 @@ def _write_completed_fixture(run_dir, kind, first_goal_steps):
              field_seed_ids=np.asarray([0, 0, 1, 1]), setting_indices=np.zeros(4, dtype=np.int32))
 
 
-def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_path):
+def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_path, monkeypatch):
     """Exercise the actual summary and behavior schemas before live results arrive."""
     # Complete uniform and random-network fixtures are a schema check, not experimental evidence.
     _write_completed_fixture(tmp_path, 'uniform', [10, 12, 14, 16])
     _write_completed_fixture(tmp_path, 'random_network', [20, -1, 30, -1])
+    captured = {}
+    original_save = REPORT._save_figure
+
+    def record_figure_axes(figure, directory, name):
+        """Inspect the real axes before saving without changing the underlying figure data."""
+        # The uniform median seed reaches the goal at 12, which is absent from position samples.
+        if name.endswith('_movement'):
+            captured['limits'] = [axis.get_ylim() for axis in figure.axes]
+            captured['markers'] = [float(line.get_xdata()[0]) for axis in figure.axes for line in axis.lines
+                                   if line.get_label().startswith('Exact first goal:')]
+            captured['failures'] = sum(text.get_text() == 'Goal not reached within budget'
+                                       for axis in figure.axes for text in axis.texts)
+        if name.endswith('_initial_profiles'):
+            captured['scales'] = [axis.get_yscale() for axis in figure.axes]
+            captured['profile_extent'] = [(float(axis.lines[0].get_xdata()[0]),
+                                           float(axis.lines[0].get_xdata()[-1])) for axis in figure.axes]
+        original_save(figure, directory, name)
+
+    monkeypatch.setattr(REPORT, '_save_figure', record_figure_axes)
     result = REPORT.generate_report(tmp_path)
     assert result['reported_rows'] == 2
     assert result['figure_comparisons'] == 1
@@ -125,7 +144,7 @@ def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_p
     assert 'A failure contributes $B$' in report
     assert '28.5' in report
     assert (tmp_path / 'analysis/data/seed_metrics.csv').read_text().count('\n') == 9
-    for suffix in ('maps', 'movement', 'policy', 'discovery'):
+    for suffix in ('maps', 'initial_profiles', 'movement', 'policy', 'discovery'):
         for extension in ('png', 'pdf'):
             assert (tmp_path / f'analysis/plots/confirmation_comparison-0_{suffix}.{extension}').stat().st_size > 1000
     tex = (tmp_path / 'analysis/results.tex').read_text()
@@ -134,6 +153,11 @@ def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_p
     animation = (tmp_path / 'analysis/plots/confirmation_comparison-0_sampled_positions.html').read_text()
     assert 'Intermediate actions are not shown' in animation
     assert 'field seed' in animation
+    assert captured['limits'] == [(0., 3.)] * 4
+    assert captured['markers'] == [12., 12.]
+    assert captured['failures'] == 2
+    assert captured['scales'] == ['log', 'log']
+    assert captured['profile_extent'] == [(0., 1.)] * 2
 
 
 def test_empty_report_has_no_claimed_failure_and_no_behavior_figures(tmp_path):
