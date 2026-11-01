@@ -21,6 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 import diagnose_gpu_execution as diagnostic
 import launch_final_training as final
 import train_optimized as training
+import post_comparison_validation as validation
 
 
 class FinalLauncherTests(unittest.TestCase):
@@ -69,8 +70,9 @@ class FinalLauncherTests(unittest.TestCase):
             "packing_records": [str(self.evidence("packing", copies)) for copies in (1, 2)],
             "packing_confirmation_records": [str(self.evidence("repeat", copies)) for copies in (1, 2)]}
         spec = {"study_registry": str(self.run / "study_registry.json"), "source_commit": self.commit,
-                "contexts": {"jaguar03_rtx_a4500": context}}
-        self.verified = {"kind": "final_verification", "source_commit": self.commit, "specification": spec,
+                "contexts": {"jaguar03_rtx_a4500": context}, "final_protocol": copy.deepcopy(validation.FINAL_PROTOCOL)}
+        self.verified = {"schema_version": 2, "kind": "final_verification", "source_commit": self.commit, "specification": spec,
+            "short_learning_checks_passed": True, "fixed_total_scaling_complete": True,
             "specification_digest": final.digest(spec), "selected": {"jaguar03_rtx_a4500": {"configuration": self.configuration}},
             **{name: True for name in ("final_combination_correctness_passed", "final_confirmation_passed",
                                       "h100_packing_complete", "a4500_packing_complete", "eight_gpu_scaling_complete")}}
@@ -78,7 +80,7 @@ class FinalLauncherTests(unittest.TestCase):
         self.proposals = [self.proposal(index) for index in range(1, 9)]
         self.proposal_path = self.write("final_unit_inputs.json", {"schema_version": 1, "units": self.proposals})
         mock.patch.object(final, "frozen_helpers", return_value=self.helpers).start()
-        mock.patch.object(final, "module", return_value=training).start()
+        mock.patch.object(final, "module", side_effect=lambda unit, name: validation if name == "post_comparison_validation.py" else training).start()
         self.addCleanup(mock.patch.stopall)
         for signum in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT):
             self.addCleanup(signal.signal, signum, signal.getsignal(signum))
@@ -453,6 +455,21 @@ class FinalLauncherTests(unittest.TestCase):
         final.refresh(self.run, self.queue, {"9001": "COMPLETED"})
         self.assertEqual(final.read(status)["state"], "completed")
 
+    def test_historical_reader_cannot_authorize_worker_or_current_completion(self):
+        """A registered unit with a valid-looking completion stays held under an older read-only helper."""
+        unit = self.prepare(1)[0]
+        metadata = self.checkpoint(unit, completed=True)
+        status = self.queue / "status" / (unit["unit_id"] + ".json")
+        final.atomic(status, {"state": "running", "unit_id": unit["unit_id"],
+            "last_job_id": "9001", "last_job_cluster": "uva"})
+        self.write(self.queue / "completion" / status.name, self.completion(unit, metadata))
+        with mock.patch.object(final, "module", return_value=types.SimpleNamespace()):
+            with self.assertRaisesRegex(ValueError, "historical final readers"):
+                final.verify_unit(unit)
+            final.refresh(self.run, self.queue, {"9001": "COMPLETED"})
+        self.assertEqual(final.read(status)["state"], "held")
+        self.assertIn("historical final readers", final.read(status)["reason"])
+
     def test_scheduler_queries_are_only_exact_uva_ids(self):
         """Foreign cluster ledgers or missing state cannot authorize a continuation."""
         self.write("slurm/submitted_jobids_aces.txt", "123\n")
@@ -502,7 +519,7 @@ class FinalLauncherTests(unittest.TestCase):
         self.addCleanup(lambda: lock.unlink(missing_ok=True))
         with mock.patch.dict(os.environ, {"CUDA_VISIBLE_DEVICES": "GPU-synthetic"}), \
                 mock.patch.object(final, "owned_compute", return_value="9001") as placement, \
-                mock.patch.object(final, "module", return_value=validator), mock.patch.object(final, "probe", side_effect=probe), \
+                mock.patch.object(final, "module", side_effect=lambda unit, name: validation if name == "post_comparison_validation.py" else validator), mock.patch.object(final, "probe", side_effect=probe), \
                 mock.patch.object(final, "process_birth", return_value="synthetic birth"), \
                 mock.patch.object(final.subprocess, "check_output", return_value=""), \
                 mock.patch.object(final.subprocess, "Popen", return_value=process) as spawn:
@@ -547,7 +564,7 @@ class FinalLauncherTests(unittest.TestCase):
                 events.append("held")
             return original(path, value, **kwargs)
         with mock.patch.dict(os.environ, {"CUDA_VISIBLE_DEVICES": "GPU-cleanup"}), \
-                mock.patch.object(final, "owned_compute", return_value="9001"), mock.patch.object(final, "module", return_value=validator), \
+                mock.patch.object(final, "owned_compute", return_value="9001"), mock.patch.object(final, "module", side_effect=lambda unit, name: validation if name == "post_comparison_validation.py" else validator), \
                 mock.patch.object(final, "probe"), mock.patch.object(final, "process_birth", return_value="birth"), \
                 mock.patch.object(final.subprocess, "check_output", return_value=""), \
                 mock.patch.object(final.subprocess, "Popen", return_value=child), mock.patch.object(final, "atomic", side_effect=publish):
@@ -578,7 +595,7 @@ class FinalLauncherTests(unittest.TestCase):
         lock = Path("/tmp/sl5nw_atari_pixel_benchmark_GPU-wait-cleanup.lock")
         self.addCleanup(lambda: lock.unlink(missing_ok=True))
         with mock.patch.dict(os.environ, {"CUDA_VISIBLE_DEVICES": "GPU-wait-cleanup"}), \
-                mock.patch.object(final, "owned_compute", return_value="9001"), mock.patch.object(final, "module", return_value=validator), \
+                mock.patch.object(final, "owned_compute", return_value="9001"), mock.patch.object(final, "module", side_effect=lambda unit, name: validation if name == "post_comparison_validation.py" else validator), \
                 mock.patch.object(final, "probe"), mock.patch.object(final, "process_birth", return_value="birth"), \
                 mock.patch.object(final.subprocess, "check_output", return_value=""), \
                 mock.patch.object(final.subprocess, "Popen", return_value=child):
@@ -676,8 +693,8 @@ class FrozenHelperTests(unittest.TestCase):
             root = Path(temporary)
             h100_names = {"h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py"}
             qualification_names = {"h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py"}
-            memory_names = {'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py'}
-            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names | qualification_names | memory_names)
+            reader_names = {"short_learning.py", "portable_evidence.py", "device_memory_limit.py", "validate_training_deployment.py"}
+            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names | qualification_names | reader_names)
             for name in old_names:
                 path = root / final.PREFIX / name
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -698,7 +715,7 @@ class FrozenHelperTests(unittest.TestCase):
             (root / final.PREFIX / "post_comparison_validation.py").write_text("PREGATHER_ASYNC_RETRY_MODULE = 'pregather_async_retry.py'\n")
             (root / final.PREFIX / "pregather_async_retry.py").write_text("# future adjacent helper\n")
             current = final.frozen_helpers(root, commit())
-            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names | qualification_names | memory_names})
+            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names | qualification_names | reader_names})
             # A new H100 caller must pin all four adjacent readers rather than reusing the older receipt.
             caller = root / final.PREFIX / "post_comparison_validation.py"
             caller.write_text(caller.read_text() + "H100_NVL_SLURM_QUEUE_MODULE = 'h100_nvl_slurm_queue.py'\n")
@@ -709,7 +726,7 @@ class FrozenHelperTests(unittest.TestCase):
                 final.frozen_helpers(root, commit())
             (root / final.PREFIX / missing).write_text("# final required H100 metadata reader\n")
             complete = final.frozen_helpers(root, commit())
-            self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in qualification_names | memory_names})
+            self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in qualification_names | reader_names})
             # A declared qualification profile adds both adjacent files only for the new pinned caller.
             queue = root / final.PREFIX / "h100_nvl_slurm_queue.py"
             queue.write_text(queue.read_text() + "H100_NVL_SLURM_QUALIFICATION_MODULE = 'h100_nvl_slurm_qualification.py'\n")
@@ -720,15 +737,15 @@ class FrozenHelperTests(unittest.TestCase):
                 final.frozen_helpers(root, commit())
             (root / final.PREFIX / "h100_nvl_allocation_observation.py").write_text("# committed hardware observation metadata\n")
             qualified = final.frozen_helpers(root, commit())
-            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in memory_names})
-            # Only a new pinned caller's declaration admits the separate device-memory reader.
+            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in reader_names})
+            # A memory-only caller needs its full reader group while unused learning remains absent.
             caller.write_text(caller.read_text() + "DEVICE_MEMORY_LIMIT_MODULE = 'device_memory_limit.py'\n")
             with self.assertRaises((ValueError, subprocess.CalledProcessError, FileNotFoundError)):
                 final.frozen_helpers(root, commit())
-            for name in memory_names:
+            for name in reader_names - {"short_learning.py"}:
                 (root / final.PREFIX / name).write_text('# committed optional capacity reader dependency\n')
             memory = final.frozen_helpers(root, commit())
-            self.assertEqual(set(memory['files']), {final.PREFIX + name for name in final.TRAIN_HELPERS})
+            self.assertEqual(set(memory['files']), {final.PREFIX + name for name in final.TRAIN_HELPERS if name != "short_learning.py"})
 
     def test_exact_git_top_is_required_for_helpers(self):
         """A nested ignored copy cannot borrow the containing checkout's committed identity."""

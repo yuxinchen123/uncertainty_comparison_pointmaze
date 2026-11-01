@@ -938,11 +938,11 @@ def run(arguments):
     source_receipt(source_root, specification["source_commit"])
     helper_commit = subprocess.check_output(["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"], text=True).strip()
     helpers = source_receipt(PROJECT_ROOT, helper_commit, [str((SCRIPT_ROOT / name).relative_to(PROJECT_ROOT))
-        for name in ("train_optimized.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+        for name in ("train_optimized.py", "post_comparison_validation.py", "short_learning.py", "portable_evidence.py", "infrastructure_retry.py", "pregather_async_retry.py",
                      "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                      "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
                      "controller.py", "ideas.py", "queue_worker.py",
-                     "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')])
+                     "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py')])
     runtime = enforce_runtime(specification["runtime_environment"], os.environ)
     for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):
         if not (arguments.run_dir / name).is_file():

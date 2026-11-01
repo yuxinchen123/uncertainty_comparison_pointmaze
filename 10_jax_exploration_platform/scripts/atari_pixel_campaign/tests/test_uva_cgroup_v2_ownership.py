@@ -1,5 +1,6 @@
 """Check an explicit UVA ownership profile using synthetic metadata, never a GPU qualification."""
 
+import ast
 import copy
 import hashlib
 import json
@@ -192,8 +193,14 @@ class ExplicitUvaOwnershipTests(unittest.TestCase):
     def test_old_published_helper_cannot_declare_the_new_profile(self):
         """The actual old7f publication has the native sampler but no explicit version-two ownership capability."""
         root = Path('/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9')
+        raw = subprocess.check_output(['git', '-C', str(root), 'show',
+            '7f5bf87a8400a73afff08098c1422642ecad69f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py'])
+        declarations = [ast.literal_eval(node.value) for node in ast.parse(raw).body if isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == 'HELPERS' for target in node.targets)]
+        self.assertEqual(len(declarations), 1)
+        self.assertNotIn('short_learning.py', declarations[0])
         helpers = training.source_receipt(root, '7f5bf87a8400a73afff08098c1422642ecad69f9',
-            ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in measurement.HELPERS])
+            ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in declarations[0]])
         with self.assertRaisesRegex(ValueError, 'exact versioned ownership capability'):
             capacity.require_ownership_source({**self.plan, 'helpers': helpers})
 

@@ -1,0 +1,310 @@
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py
+@@ -36,7 +36,7 @@
+                  "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+                  "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
+                  "controller.py", "ideas.py",
+-                 "queue_worker.py", "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')
++                 "queue_worker.py", "diagnose_gpu_execution.py")
+ ACTIVE = {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED", "RESIZING", "REQUEUED", "REQUEUE_FED", "SIGNALING", "STAGE_OUT"}
+ TERMINAL = {"COMPLETED", "CANCELLED", "FAILED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}
+ TARGET_UPDATES = 2_000_000_000 // (128 * 128)
+@@ -143,16 +143,9 @@
+     if not any(isinstance(node, ast.Constant) and node.value == "pregather_async_retry.py"
+                for tree in callers for node in ast.walk(tree)):
+         paths.remove(PREFIX + "pregather_async_retry.py")
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-    if not any(isinstance(node, ast.Constant) and node.value == 'device_memory_limit.py'
+-               for tree in callers for node in ast.walk(tree)):
+-        for name in ('device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py'):
+-            paths.remove(PREFIX + name)
+-=======
+     needed, universe = reader_feature_dependencies(callers)
+     for name in universe - needed:
+         paths.remove(PREFIX + name)
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+     h100_declared = any(isinstance(node, ast.Constant) and node.value == "h100_nvl_slurm_queue.py"
+                        for tree in callers for node in ast.walk(tree))
+     if not h100_declared:
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py
+@@ -37,11 +37,7 @@
+ HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+            "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-           "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')
+-=======
+-           "train_optimized.py", "short_learning.py", "portable_evidence.py")
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
++           "train_optimized.py", "short_learning.py", "device_memory_limit.py", "validate_training_deployment.py", "portable_evidence.py")
+ CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
+ MODES = ("correctness", "confirmation", "packing-point", "learning-check")
+ 
+@@ -258,12 +254,11 @@
+         "python": str(args.python.absolute()),
+         "compilation_cache_policy": "disabled", "hypothesis_count_contribution": 0,
+         "selected_by_producer": False, "jobs_submitted_by_producer": False}
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+     if getattr(args, 'record_device_memory_limit', False):
+         # This diagnostic capability is explicitly separate from ordinary completed packing evidence.
+         import device_memory_limit as capacity
+         if (args.mode != 'packing-point' or args.memory_limit_allocation_kind not in {'direct', 'slurm'}
+-                or args.minimum_updates_per_round != 10):
++                or minimum != 10):
+             raise ValueError('instrumented device-memory limits require an explicit isolated packing allocation')
+         ledger_source = capacity.file_receipt(args.memory_limit_owned_job_ledger) if args.memory_limit_owned_job_ledger else None
+         if ledger_source and ledger_source['path'] != str(run_dir / 'slurm' / ('submitted_jobids_' + args.memory_limit_cluster + '.txt')):
+@@ -282,7 +277,6 @@
+             plan['ownership_profile'] = dict(capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+             capacity.selected_ownership_profile(plan)
+             capacity.require_ownership_source(plan)
+-=======
+     if final:
+         plan["final_confirmation_protocol"] = validation.FINAL_PROTOCOL
+     if completed_study is not None:
+@@ -303,7 +297,6 @@
+             plan["learning_protocol"] = contract.protocol(configurations)
+             if plan["learning_protocol"]["updates"] != learning_updates:
+                 raise ValueError("short learning preparation changed its complete-window budget")
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+     artifacts = {directory / "measurement_plan.json": json_bytes(plan),
+         directory / "manifest.yaml": json_bytes(plan), directory / "config_resolved.yaml": json_bytes({
+             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
+@@ -515,15 +508,12 @@
+     if training.source_receipt(Path(plan["source_root"]), plan["source_commit"],
+                                list(plan["paired_source"]["files"])) != plan["paired_source"]:
+         raise ValueError("the frozen Executor changed after preparation")
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+     if 'ownership_profile' in plan:
+         import device_memory_limit as capacity
+         capacity.require_ownership_source(plan)
+-=======
+     verify_completed_study_plan(plan)
+     if "completed_study" in plan:
+         validation.committed_measurement_sources(plan["helpers"], validation.Evidence())
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+ 
+ 
+ def run_prepared(directory):
+@@ -759,16 +749,10 @@
+     args = parser.parse_args(argv)
+     memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger', 'memory_limit_ownership_profile')
+     if args.prepared_unit is not None:
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-        if args.prepare_only or args.record_device_memory_limit or any(getattr(args, name) is not None for name in (
+-                "mode", "source_root", "source_commit", "configuration", "reference_configuration",
+-                "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies", *memory_options)):
+-=======
+-        if args.prepare_only or args.final_confirmation or args.rounds is not None or args.minimum_updates_per_round is not None or any(getattr(args, name) is not None for name in (
++        if args.prepare_only or args.record_device_memory_limit or args.final_confirmation or args.rounds is not None or args.minimum_updates_per_round is not None or any(getattr(args, name) is not None for name in (
+                 "mode", "source_root", "source_commit", "configuration", "reference_configuration",
+                 "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies",
+-                "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256")):
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
++                "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256", *memory_options)):
+             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
+         if args.instrumented_child:
+             # The private child entry is meaningful only inside this exact declared prepared protocol.
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py
+@@ -26,11 +26,7 @@
+                                                "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+                                                "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+                                                "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-                                               "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')}
+-=======
+-                                               "train_optimized.py", "short_learning.py", "portable_evidence.py")}
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
++                                               "train_optimized.py", "short_learning.py", "device_memory_limit.py", "validate_training_deployment.py", "portable_evidence.py")}
+ 
+ 
+ def sha256(value):
+@@ -406,7 +402,8 @@
+     required = {"schema_version", "final_verification", "source_root", "source_commit", "hardware_class", "runtime_environment",
+         "campaign_run_dir", "target", "correctness_record", "confirmation_record", "packing_records", "packing_confirmation_records",
+         "selected_copies", "unit_id", "copy_seeds", "seed_manifest"}
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
++    if not historical_read_only:
++        required |= {"learning_record", "learning_analysis_record"}
+     extras = ({'packing_stop_rule', 'packing_memory_limit_record'}
+               if specification.get('packing_stop_rule') == 'instrumented_device_memory_limit' else {'packing_stop_rule'})
+     if (set(specification) not in (required, required | extras)
+@@ -414,12 +411,6 @@
+                 "measured_memory_headroom", 'instrumented_device_memory_limit'}
+             or (specification.get('packing_stop_rule') == 'instrumented_device_memory_limit'
+                 and 'packing_memory_limit_record' not in specification)
+-=======
+-    if not historical_read_only:
+-        required |= {"learning_record", "learning_analysis_record"}
+-    if (set(specification) not in (required, required | {"packing_stop_rule"})
+-            or "packing_stop_rule" in specification and specification["packing_stop_rule"] != "measured_memory_headroom"
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+             or type(specification["schema_version"]) is not int or specification["schema_version"] != 1
+             or specification["hardware_class"] != "h100"):
+         raise ValueError("this deployment specification requires the exact version-one H100 target fields")
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py
+@@ -693,13 +693,8 @@
+             root = Path(temporary)
+             h100_names = {"h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py"}
+             qualification_names = {"h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py"}
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-            memory_names = {'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py'}
+-            old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names | qualification_names | memory_names)
+-=======
+             reader_names = {"short_learning.py", "portable_evidence.py", "device_memory_limit.py", "validate_training_deployment.py"}
+             old_names = tuple(name for name in final.TRAIN_HELPERS if name != "pregather_async_retry.py" and name not in h100_names | qualification_names | reader_names)
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+             for name in old_names:
+                 path = root / final.PREFIX / name
+                 path.parent.mkdir(parents=True, exist_ok=True)
+@@ -720,11 +715,7 @@
+             (root / final.PREFIX / "post_comparison_validation.py").write_text("PREGATHER_ASYNC_RETRY_MODULE = 'pregather_async_retry.py'\n")
+             (root / final.PREFIX / "pregather_async_retry.py").write_text("# future adjacent helper\n")
+             current = final.frozen_helpers(root, commit())
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-            self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names | qualification_names | memory_names})
+-=======
+             self.assertEqual(set(current["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in h100_names | qualification_names | reader_names})
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+             # A new H100 caller must pin all four adjacent readers rather than reusing the older receipt.
+             caller = root / final.PREFIX / "post_comparison_validation.py"
+             caller.write_text(caller.read_text() + "H100_NVL_SLURM_QUEUE_MODULE = 'h100_nvl_slurm_queue.py'\n")
+@@ -735,11 +726,7 @@
+                 final.frozen_helpers(root, commit())
+             (root / final.PREFIX / missing).write_text("# final required H100 metadata reader\n")
+             complete = final.frozen_helpers(root, commit())
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-            self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in qualification_names | memory_names})
+-=======
+             self.assertEqual(set(complete["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in qualification_names | reader_names})
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+             # A declared qualification profile adds both adjacent files only for the new pinned caller.
+             queue = root / final.PREFIX / "h100_nvl_slurm_queue.py"
+             queue.write_text(queue.read_text() + "H100_NVL_SLURM_QUALIFICATION_MODULE = 'h100_nvl_slurm_qualification.py'\n")
+@@ -750,19 +737,15 @@
+                 final.frozen_helpers(root, commit())
+             (root / final.PREFIX / "h100_nvl_allocation_observation.py").write_text("# committed hardware observation metadata\n")
+             qualified = final.frozen_helpers(root, commit())
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+-            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in memory_names})
+-            # Only a new pinned caller's declaration admits the separate device-memory reader.
++            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in reader_names})
++            # A memory-only caller needs its full reader group while unused learning remains absent.
+             caller.write_text(caller.read_text() + "DEVICE_MEMORY_LIMIT_MODULE = 'device_memory_limit.py'\n")
+             with self.assertRaises((ValueError, subprocess.CalledProcessError, FileNotFoundError)):
+                 final.frozen_helpers(root, commit())
+-            for name in memory_names:
++            for name in reader_names - {"short_learning.py"}:
+                 (root / final.PREFIX / name).write_text('# committed optional capacity reader dependency\n')
+             memory = final.frozen_helpers(root, commit())
+-            self.assertEqual(set(memory['files']), {final.PREFIX + name for name in final.TRAIN_HELPERS})
+-=======
+-            self.assertEqual(set(qualified["files"]), {final.PREFIX + name for name in final.TRAIN_HELPERS if name not in reader_names})
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
++            self.assertEqual(set(memory['files']), {final.PREFIX + name for name in final.TRAIN_HELPERS if name != "short_learning.py"})
+ 
+     def test_exact_git_top_is_required_for_helpers(self):
+         """A nested ignored copy cannot borrow the containing checkout's committed identity."""
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py
+@@ -33,12 +33,8 @@
+             "src/exploration_platform/atari_pixels/config.py", "src/exploration_platform/atari_pixels/environment.py")]
+         relatives += [deployment.PREFIX + name for name in ("paired_benchmark.py", "ideas.py", "worker_environment.sh",
+             "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+-<<<<<<< 8fd2187fbe1b4a4f0907c64d012da15438d1bd02
+             "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py", "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py", "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')]
+-=======
+-            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py", "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py", "train_optimized.py")]
+         relatives += [deployment.PREFIX + path.name for path in SCRIPTS.glob("*.py") if deployment.PREFIX + path.name not in relatives]
+->>>>>>> 841ad6e89a41699d60f4ece7d540198eb6cc39b2
+         for relative in relatives:
+             target = self.source / relative
+             target.parent.mkdir(parents=True, exist_ok=True)
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py
+@@ -117,8 +117,7 @@
+             callers.append(tree)
+             declarations.update(node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and isinstance(node.value, str))
+     for declaration, dependencies in ((PREGATHER_ASYNC_RETRY_MODULE, (PREGATHER_ASYNC_RETRY_MODULE,)),
+-                                      (H100_NVL_SLURM_QUEUE_MODULE, H100_NVL_SLURM_DEPENDENCIES),
+-                                      (DEVICE_MEMORY_LIMIT_MODULE, DEVICE_MEMORY_LIMIT_DEPENDENCIES)):
++                                      (H100_NVL_SLURM_QUEUE_MODULE, H100_NVL_SLURM_DEPENDENCIES)):
+         for name in dependencies:
+             relative = prefix + name
+             if declaration in declarations:
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py
+@@ -942,7 +942,7 @@
+                      "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+                      "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
+                      "controller.py", "ideas.py", "queue_worker.py",
+-                     "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py')])
++                     "diagnose_gpu_execution.py", 'device_memory_limit.py', 'validate_training_deployment.py')])
+     runtime = enforce_runtime(specification["runtime_environment"], os.environ)
+     for name in ("experiment_background.md", "manifest.yaml", "config_resolved.yaml", "command.txt"):
+         if not (arguments.run_dir / name).is_file():
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py
+@@ -243,9 +243,11 @@
+         self.assertEqual(result['capacity_exclusion']['copies'], 4)
+ 
+     def test_target_deployment_independently_rebuilds_capacity_exclusion(self):
+-        """The final target verifies the failed boundary separately and retains every completed numerical gate."""
+-        spec = self.build()
+-        result = deployment.validate_deployment(spec)
++        """The historical reader retains its failed boundary while the current operational gate refuses this old fixture."""
++        spec = self.build()
++        with self.assertRaises(ValueError):
++            deployment.validate_deployment(spec)
++        result = deployment.validate_deployment(spec, historical_read_only=True)
+         self.assertEqual(result['configuration']['learner']['n_copies'], 1)
+         excluded = [row for row in result['executions'] if row['mode'] == 'device-memory-capacity-exclusion']
+         self.assertEqual(len(excluded), 1)
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py
+@@ -1,5 +1,6 @@
+ """Check an explicit UVA ownership profile using synthetic metadata, never a GPU qualification."""
+ 
++import ast
+ import copy
+ import hashlib
+ import json
+@@ -192,8 +193,14 @@
+     def test_old_published_helper_cannot_declare_the_new_profile(self):
+         """The actual old7f publication has the native sampler but no explicit version-two ownership capability."""
+         root = Path('/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9')
++        raw = subprocess.check_output(['git', '-C', str(root), 'show',
++            '7f5bf87a8400a73afff08098c1422642ecad69f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py'])
++        declarations = [ast.literal_eval(node.value) for node in ast.parse(raw).body if isinstance(node, ast.Assign)
++            and any(isinstance(target, ast.Name) and target.id == 'HELPERS' for target in node.targets)]
++        self.assertEqual(len(declarations), 1)
++        self.assertNotIn('short_learning.py', declarations[0])
+         helpers = training.source_receipt(root, '7f5bf87a8400a73afff08098c1422642ecad69f9',
+-            ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in measurement.HELPERS])
++            ['10_jax_exploration_platform/scripts/atari_pixel_campaign/' + name for name in declarations[0]])
+         with self.assertRaisesRegex(ValueError, 'exact versioned ownership capability'):
+             capacity.require_ownership_source({**self.plan, 'helpers': helpers})
+ 
+--- automatic_three_way/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py
++++ resolved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py
+@@ -87,6 +87,17 @@
+         self.assertIs(receipt['short_learning']['learning_equivalence_established'], False)
+         self.assertFalse(any(name in sys.modules for name in ('jax', 'numpy', 'torch')))
+ 
++    def test_global_learning_process_is_reserved_and_historical_absence_is_preserved(self):
++        """A target cannot reuse global learning, while an older context keeps its original process set."""
++        final = json.loads(self.data.final_path.read_bytes())
++        context = final['specification']['contexts']['h100']
++        learning = validation.execution_identity(json.loads(Path(context['learning_record']).read_bytes()))
++        used = deployment.global_processes(final, deployment.DeploymentEvidence())
++        self.assertIn(learning, used)
++        historical = copy.deepcopy(final)
++        del historical['specification']['contexts']['h100']['learning_record']
++        self.assertEqual(deployment.global_processes(historical, deployment.DeploymentEvidence()), used - {learning})
++
+     def test_current_target_rejects_legacy_rounds_and_missing_independent_learning_analysis(self):
+         """Old seven-by-ten target confirmation and absent learning proof cannot admit a current worker."""
+         path = Path(self.specification['confirmation_record'])

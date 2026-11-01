@@ -26,7 +26,7 @@ REQUIRED_HELPERS = {PREFIX + name for name in ("measure_selected.py", "diagnose_
                                                "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
                                                "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
                                                "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
-                                               "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')}
+                                               "train_optimized.py", "short_learning.py", "device_memory_limit.py", "validate_training_deployment.py", "portable_evidence.py")}
 
 
 def sha256(value):
@@ -310,13 +310,17 @@ def target_record(path, mode, specification, evidence):
         multiple = math.lcm(multiple, execution["iterations_per_call"])
         if execution["report_readout"] != "none":
             multiple = math.lcm(multiple, execution["report_every_iterations"])
-    updates = ((10 + multiple - 1) // multiple) * multiple
-    if (plan.get("rounds") != 7 or plan.get("minimum_updates_per_round") != 10 or plan.get("iterations") != updates
-            or result.get("protocol") != {"rounds": 7, "requested_minimum_updates_per_round": 10, "actual_updates_per_round": updates}):
-        raise ValueError("target measurements require seven complete ten-update-or-longer group/report windows")
+    final_confirmation = mode == "confirmation" and "final_confirmation_protocol" in plan
+    rounds_count, minimum = (11, 20) if final_confirmation else (7, 10)
+    updates = ((minimum + multiple - 1) // multiple) * multiple
+    if final_confirmation:
+        validation.final_protocol(plan["final_confirmation_protocol"])
+    if (plan.get("rounds") != rounds_count or plan.get("minimum_updates_per_round") != minimum or plan.get("iterations") != updates
+            or result.get("protocol") != {"rounds": rounds_count, "requested_minimum_updates_per_round": minimum, "actual_updates_per_round": updates}):
+        raise ValueError("target measurements changed their complete final-confirmation or seven-by-ten packing protocol")
     rounds = result.get("rounds", [])
     rows = [pair[arm] for pair in rounds for arm in ("reference", "candidate")] if mode == "confirmation" else rounds
-    if mode != "correctness" and (len(rounds) != 7 or any(row.get("iterations") != updates for row in rows)):
+    if mode not in {"correctness", "learning-check"} and (len(rounds) != rounds_count or any(row.get("iterations") != updates for row in rows)):
         raise ValueError("target rounds changed their prepared complete-update window")
     if mode == "correctness" and rounds:
         raise ValueError("target result differs from its prepared full configuration")
@@ -370,7 +374,9 @@ def global_processes(final, evidence):
     """Collect already used H100 process identities so a new target cannot reuse NVL executions."""
     context = final["specification"]["contexts"]["h100"]
     processes = set()
-    for name in ("correctness_record", "confirmation_record"):
+    for name in ("correctness_record", "confirmation_record", "learning_record"):
+        if name not in context:
+            continue
         processes.add(validation.execution_identity(evidence.read(context[name])))
     for point in final["selected"]["h100"]["packing"]["points"] + final["selected"]["h100"]["packing"]["confirmation"]:
         processes.add(tuple(point["process"]))
@@ -390,12 +396,14 @@ def global_processes(final, evidence):
     return processes
 
 
-def validate_deployment(specification, resolver=None, specification_path=None):
+def validate_deployment(specification, resolver=None, specification_path=None, *, historical_read_only=False):
     """Rebuild global evidence and derive one target-bound training configuration and seed admission."""
     evidence = DeploymentEvidence(resolver)
     required = {"schema_version", "final_verification", "source_root", "source_commit", "hardware_class", "runtime_environment",
         "campaign_run_dir", "target", "correctness_record", "confirmation_record", "packing_records", "packing_confirmation_records",
         "selected_copies", "unit_id", "copy_seeds", "seed_manifest"}
+    if not historical_read_only:
+        required |= {"learning_record", "learning_analysis_record"}
     extras = ({'packing_stop_rule', 'packing_memory_limit_record'}
               if specification.get('packing_stop_rule') == 'instrumented_device_memory_limit' else {'packing_stop_rule'})
     if (set(specification) not in (required, required | extras)
@@ -412,6 +420,9 @@ def validate_deployment(specification, resolver=None, specification_path=None):
     runtime = validation.runtime_environment(specification["runtime_environment"])
     specification = {**specification, "runtime_environment": runtime}
     final = evidence.read(specification["final_verification"])
+    if not historical_read_only:
+        validation.require_current_final(final)
+        specification["completed_registry_sha256"] = hashlib.sha256(evidence.file(final["specification"]["study_registry"])).hexdigest()
     rebuilt = validation.validate_final_verification(final["specification"], validation.Evidence(resolver), final.get("specification_path"))
     if rebuilt != final or final.get("kind") != "final_verification":
         raise ValueError("the complete original final verification changed or no longer passes")
@@ -419,7 +430,10 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         raise ValueError("target deployment must retain the globally verified numerical source and runtime")
     global_assets = global_asset_proof(final, evidence)
     used = global_processes(final, evidence)
-    combination = validation.validate_combination(specification, evidence)
+    combination = validation.validate_combination(specification, evidence, final=not historical_read_only)
+    if not historical_read_only:
+        final_confirmation = validation.validate_final_confirmation(specification, evidence)
+        short_learning = validation.validate_short_learning(specification, final_confirmation, evidence)
     packing = validation.validate_packing(specification, evidence)
     selected = final["selected"]["h100"]["configuration"]
     if (not packing["complete"] or packing["configuration"] != combination["configuration"]
@@ -427,6 +441,8 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         raise ValueError("target packing/confirmation must select the same globally accepted implementation")
     original_reference = evidence.read(final["specification"]["contexts"]["h100"]["confirmation_record"])["reference"]
     paths = [(specification["correctness_record"], "correctness"), (specification["confirmation_record"], "confirmation")]
+    if not historical_read_only:
+        paths.append((specification["learning_record"], "learning-check"))
     paths += [(path, "packing-point") for path in specification["packing_records"] + specification["packing_confirmation_records"]]
     identities, backend, actual, observations = set(), None, None, []
     for path, mode in paths:
@@ -458,7 +474,7 @@ def validate_deployment(specification, resolver=None, specification_path=None):
     seeds = seed_admission(specification["seed_manifest"], specification["unit_id"], specification["copy_seeds"],
                            packing["configuration"], "h100", evidence)
     evidence.recheck_images()
-    return {"schema_version": 1, "kind": "training_deployment_verification", "source_root": specification["source_root"],
+    receipt = {"schema_version": 1, "kind": "training_deployment_verification", "source_root": specification["source_root"],
         "source_commit": specification["source_commit"], "hardware_class": "h100", "target": specification["target"],
         "configuration": packing["configuration"], "copy_seeds": specification["copy_seeds"], "unit_id": specification["unit_id"],
         "runtime_environment": runtime, "actual_runtime_environment": actual, "backend": backend,
@@ -466,10 +482,14 @@ def validate_deployment(specification, resolver=None, specification_path=None):
         "global_final_verification": {"path": evidence.path_identity(specification["final_verification"]),
             "sha256": hashlib.sha256(evidence.file(specification["final_verification"])).hexdigest(),
             "specification_digest": final["specification_digest"]},
-        "combination": combination, "packing": packing, "seed_admission": seeds, "executions": observations,
+        "combination": combination, "packing": packing,
+        "seed_admission": seeds, "executions": observations,
         "specification": original_specification, "specification_digest": validation.canonical_digest(original_specification),
         "specification_path": evidence.path_identity(specification_path) if specification_path is not None else None,
         "evidence": evidence.records()}
+    if not historical_read_only:
+        receipt["short_learning"] = short_learning
+    return receipt
 
 
 def match_actual_backend(receipt, server, hardware, installed_backend, loaded_gpu_libraries):

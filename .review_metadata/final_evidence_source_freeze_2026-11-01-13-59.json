@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "final_evidence_author_source_freeze",
+  "at_utc": "2026-11-01T13:58:09.805081+00:00",
+  "base_commit": "2646fc1358766e7349b502f82068507bfe0f10cb",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py": "3c04b8dbcc9b5125084c814e6634ae68eb4c7b9946e3614a494e3b6b00089874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": "15470dc4298685b6e5fc4c6ecaf9d38422571cc29765eb7443df5fce87912a35",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "30988ef9950e99c535602cdd70c1e472613fdc343d0e75fffa6e9f2c7a129f93",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a0df8c46c89f573704aa26da66ff74e95cb1cb2eeef04677712664dd0473dac1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "d2cf52cf9510e63f1296f495f3ddeadef4c02ce4e8b0ba51f206d2a3d0593114",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "c15f58407e9c50532d56835bad4d21e6cdd3ff8c83c920bc8d2abd02f3faceba",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/final_phase_fixtures.py": "c33d9c22606fbd553cd45bc07ca1c5966b0f9f93c6da7b49d6c51306030b7553",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_deployed_training_admission.py": "61d9da102b99c72585d552213d240a1fb067071083576131b28a1c8356500520",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py": "4d6138cea500bf2e0d4b1fc2eb325362fa0c14a8321c9a0ba0ee5e215494a5a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_evidence.py": "705882c7e1ca0cd3f1340cd7ab4bd9cba31666ccaf035e558ea58b14581b3650",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_readiness.py": "dd36a2185801af848e3fb3ebdd40cfebf18b49dec9d898eb95f5531171496d64",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_deployed_training.py": "0f3999c31561975748275d502e146c60b0fd88cdf60cb74a00805117aafa542b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "e3943c734c76e0b73d6ecc9b3feebdd2fefe3153e9797285ec8d2340670b337a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_gpu_scaling.py": "2b30b4b437efc3ee8a81cd98285b5f1d7781a1a6ffaad24d0eaae07d7173bf67",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": "770968b5baf0120a0344ef5fac64841fc4c32344e79b0d821c6ef6ce59cd96a8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_deployed_training_completion.py": "1b1de46fa7423acaafcd8f2dc72a5c2d2e9233265b3e71d0b22c687f3596b519",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "c474dada1d965f6c5e117a2285e8744e3f7d634764f41be09ed7c01da32a4f59",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "d3843b716b3d8b628e777b995cc81f375c986f385f951baf6ed02ad4946b68c6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "cc386c63a32f4d10c8c07e6eae7379a2d00dadbadb87ea18569bafcff01fb4e3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py": "e64dce2ee7ce59e4ae136b68d004e623789a64ba81163291b818401e04209f61",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "042cd8c209b78832376e4b8b50c78ec41dd6f79ea426b279098e60f0e281f9f6"
+  },
+  "status": "source_frozen_pending_final_author_tests_and_independent_review",
+  "live_actions": {
+    "ssh": 0,
+    "gpu_jobs": 0,
+    "submissions": 0,
+    "releases": 0,
+    "integration_edits": 0
+  },
+  "pending_combined_tree_proof": "actual exact-eight exclusion using newly reviewed profile-capable device_memory_limit helper; shared helper declaration union retains both features",
+  "required_before_enable": "independent review, publication, actual producer GPU fixtures"
+}

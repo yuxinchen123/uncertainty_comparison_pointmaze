@@ -1,0 +1,32 @@
+{
+  "kind": "final_evidence_author_source_freeze",
+  "at_utc": "2026-11-01T13:54:07.238771+00:00",
+  "base_commit": "2646fc1358766e7349b502f82068507bfe0f10cb",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py": "3c04b8dbcc9b5125084c814e6634ae68eb4c7b9946e3614a494e3b6b00089874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": "15470dc4298685b6e5fc4c6ecaf9d38422571cc29765eb7443df5fce87912a35",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "bf383b71802b2b20acd9ec6c550e6300a0dad108715a277da3078ff6378f5e78",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a0df8c46c89f573704aa26da66ff74e95cb1cb2eeef04677712664dd0473dac1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "0c4014f6b69227d60d1070a07b238e9db96dcdbf95f652e310570218e820fb3e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "c15f58407e9c50532d56835bad4d21e6cdd3ff8c83c920bc8d2abd02f3faceba",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/final_phase_fixtures.py": "26548c0fbc934f677beb7148fedfc299ffdc6461324a62fae8c299f2f578623e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_deployed_training_admission.py": "61d9da102b99c72585d552213d240a1fb067071083576131b28a1c8356500520",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py": "4d6138cea500bf2e0d4b1fc2eb325362fa0c14a8321c9a0ba0ee5e215494a5a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_evidence.py": "3b66b5de359a0b3d6c1f03b98d121b108dcb04edf38247444f2656613f162ef1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_readiness.py": "dd36a2185801af848e3fb3ebdd40cfebf18b49dec9d898eb95f5531171496d64",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_deployed_training.py": "0f3999c31561975748275d502e146c60b0fd88cdf60cb74a00805117aafa542b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "e3943c734c76e0b73d6ecc9b3feebdd2fefe3153e9797285ec8d2340670b337a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": "770968b5baf0120a0344ef5fac64841fc4c32344e79b0d821c6ef6ce59cd96a8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_deployed_training_completion.py": "1b1de46fa7423acaafcd8f2dc72a5c2d2e9233265b3e71d0b22c687f3596b519",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "c474dada1d965f6c5e117a2285e8744e3f7d634764f41be09ed7c01da32a4f59",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "d3843b716b3d8b628e777b995cc81f375c986f385f951baf6ed02ad4946b68c6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "cc386c63a32f4d10c8c07e6eae7379a2d00dadbadb87ea18569bafcff01fb4e3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py": "e64dce2ee7ce59e4ae136b68d004e623789a64ba81163291b818401e04209f61",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "042cd8c209b78832376e4b8b50c78ec41dd6f79ea426b279098e60f0e281f9f6"
+  },
+  "status": "frozen_during_active_metadata_batch",
+  "known_remaining_source_followup": "fixed-total path must record full installed package metadata and compare selected backend; historical same-per-card producer remains unchanged",
+  "no_live_actions": true
+}

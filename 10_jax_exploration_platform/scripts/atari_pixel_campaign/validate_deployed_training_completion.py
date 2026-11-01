@@ -301,9 +301,10 @@ def checkpoint_schedule(admitted, digest, checkpoint):
 
 
 def validate_deployed_training_checkpoint(specification_path, unit_directory, resolver=None, terminal_receipt=None,
-                                         checkpoint_proof_attempt=None, unit_snapshot=None):
+                                         checkpoint_proof_attempt=None, unit_snapshot=None, *, historical_read_only=False):
     """Validate full completion or one safely resumable checkpoint from raw owned terminal evidence."""
-    admitted = admission.validate_deployed_training_admission(specification_path, resolver=resolver)
+    admitted = admission.validate_deployed_training_admission(specification_path, resolver=resolver,
+                                                              historical_read_only=historical_read_only)
     evidence = deployment.DeploymentEvidence(resolver)
     directory = Path(evidence.path_identity(unit_directory, strict=True))
     if directory.name != admitted["unit_id"]:
@@ -382,10 +383,11 @@ def validate_deployed_training_checkpoint(specification_path, unit_directory, re
 
 
 def validate_deployed_training_completion(specification_path, unit_directory, resolver=None, terminal_receipt=None,
-                                         checkpoint_proof_attempt=None, unit_snapshot=None):
+                                         checkpoint_proof_attempt=None, unit_snapshot=None, *, historical_read_only=False):
     """Require true full-budget completion from the same strict checkpoint/admission implementation."""
     result = validate_deployed_training_checkpoint(specification_path, unit_directory, resolver, terminal_receipt,
-                                                   checkpoint_proof_attempt, unit_snapshot)
+                                                   checkpoint_proof_attempt, unit_snapshot,
+                                                   historical_read_only=historical_read_only)
     if result["completed"] is not True:
         raise ValueError("deployed training has not completed the exact original per-policy update/report schedule")
     return {**result, "kind": "deployed_training_completion"}
@@ -403,12 +405,14 @@ def main():
     parser.add_argument("--evidence-manifest", type=Path)
     parser.add_argument("--evidence-manifest-sha256")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--historical-read-only", action="store_true")
     args = parser.parse_args()
     if args.evidence_manifest_sha256 and args.evidence_manifest is None:
         parser.error("an expected manifest hash requires --evidence-manifest")
     resolver = portable_evidence.ExactPathResolver(args.evidence_manifest, args.evidence_manifest_sha256) if args.evidence_manifest else None
     validate = validate_deployed_training_checkpoint if args.checkpoint else validate_deployed_training_completion
-    result = validate(args.specification, args.unit_directory, resolver, args.terminal_receipt, args.checkpoint_proof_attempt, args.unit_snapshot)
+    result = validate(args.specification, args.unit_directory, resolver, args.terminal_receipt,
+                      args.checkpoint_proof_attempt, args.unit_snapshot, historical_read_only=args.historical_read_only)
     contents = (json.dumps(result, indent=2, allow_nan=False) + "\n").encode()
     if args.output is None:
         print(contents.decode(), end="")

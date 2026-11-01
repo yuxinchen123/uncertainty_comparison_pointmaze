@@ -69,6 +69,15 @@ def prepare(arguments):
     if set(assets) != {"root", "manifest", "sha256"}:
         raise ValueError("asset_record requires an immutable asset root, manifest and manifest hash")
     copies = configuration["learner"]["n_copies"]
+    mode = getattr(arguments, "scaling_mode", "same_copies_per_card")
+    total = getattr(arguments, "total_copies", None)
+    if mode not in {"same_copies_per_card", "fixed_total_copies"}:
+        raise ValueError("scaling mode must explicitly identify per-card or fixed-total policy work")
+    if (mode == "fixed_total_copies" and (type(total) is not int or total < 8 or total % 8
+            or total != copies * len(roster))) or mode == "same_copies_per_card" and total is not None:
+        raise ValueError("fixed-total scaling requires a positive multiple of eight equal to copies times GPU count")
+    completed_study, completed_mapping = selected.completed_study_inputs(arguments, arguments.source_commit,
+        runtime, configuration, required=mode == "fixed_total_copies", hardware_class="jaguar03_rtx_a4500")
     if not 0 <= arguments.seed_start <= 2 ** 32 - copies * len(roster):
         raise ValueError("the independent per-card policy seed blocks exceed unsigned 32-bit values")
     window = selected.measurement_window([configuration], arguments.minimum_updates_per_round)
@@ -92,6 +101,11 @@ def prepare(arguments):
         "campaign_run_dir": str(run), "unit_id": arguments.unit_id,
         "inputs": {"configuration": config_input, "runtime_environment": runtime_input, "asset_record": asset_input},
         "jobs_submitted_by_producer": False, "selected_by_producer": False, "hypothesis_count_contribution": 0}
+    if mode == "fixed_total_copies":
+        plan["scaling_protocol"] = {"kind": mode, "total_copies": total,
+            "global_copy_seeds": list(range(arguments.seed_start, arguments.seed_start + total)),
+            "gradient_averaging": False, "measurement_scope": "synchronized_gpu_group_wall_time"}
+        plan["completed_study"], plan["completed_study_manifest"] = completed_study, completed_mapping
     directory = run / "data" / arguments.unit_id
     command = [str(arguments.python), str(directory / "code/measure_gpu_scaling.py"), "--prepared-unit", str(directory)]
     background = ("## Purpose\n\nMeasure an explicitly selected full configuration on one or eight distinct RTX A4500 GPUs. "
@@ -449,6 +463,8 @@ def _measure_group(directory, plan, proof, assignment, children, started):
             "execution_identity": {"hostname": "jaguar03", "pid": os.getpid(),
                 "process_start_time": assignment["parent_process_start_time"],
                 "started_at_seconds": started, "finished_at_seconds": clock_now(assignment)}}
+        if "scaling_protocol" in plan:
+            result["scaling_protocol"] = plan["scaling_protocol"]
         diagnostic.atomic_json(directory / "result.json", result)
         diagnostic.record_progress(directory, "completed", completed=True, rounds=7, gpu_count=plan["gpu_count"])
     except BaseException as error:
@@ -461,6 +477,13 @@ def _measure_group(directory, plan, proof, assignment, children, started):
     finally:
         for child in children:
             child["channel"].close()
+
+
+def worker_backend_receipt(plan, jaxtari, libraries):
+    """Add complete installed versions for the new fixed-total comparison while preserving old records."""
+    if plan.get("scaling_protocol", {}).get("kind") == "fixed_total_copies":
+        return selected.installed_backend_receipt(jaxtari, libraries)
+    return {"jaxtari_source": jaxtari, "gpu_libraries": libraries}
 
 
 def run_worker(directory, index, channel_fd):
@@ -482,7 +505,7 @@ def run_worker(directory, index, channel_fd):
         libraries = training.installed_gpu_library_receipts()
         diagnostic.atomic_json(worker_dir / "hardware.json", {**hardware, "runtime_environment": runtime})
         diagnostic.atomic_json(worker_dir / "asset_receipt.json", assets)
-        diagnostic.atomic_json(worker_dir / "installed_backend.json", {"jaxtari_source": jaxtari, "gpu_libraries": libraries})
+        diagnostic.atomic_json(worker_dir / "installed_backend.json", worker_backend_receipt(plan, jaxtari, libraries))
         compute_worker(directory, worker_dir, plan, index, channel, hardware, libraries)
     except BaseException as error:
         diagnostic.atomic_json(worker_dir / "failure.json", {"error": repr(error), "traceback": traceback.format_exc()})
@@ -589,6 +612,12 @@ def parse_arguments(argv=None):
     parser.add_argument("--unit-id")
     parser.add_argument("--gpu-uuid", action="append", default=[])
     parser.add_argument("--seed-start", type=int, default=1)
+    parser.add_argument("--scaling-mode", choices=("same_copies_per_card", "fixed_total_copies"), default="same_copies_per_card")
+    parser.add_argument("--total-copies", type=int)
+    parser.add_argument("--completed-study-proof", type=Path)
+    parser.add_argument("--completed-study-review", type=Path)
+    parser.add_argument("--completed-study-manifest", type=Path)
+    parser.add_argument("--completed-study-manifest-sha256")
     parser.add_argument("--minimum-updates-per-round", type=int, default=10)
     parser.add_argument("--barrier-timeout-seconds", type=float, default=3600)
     parser.add_argument("--python", type=Path, default=Path("/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"))
@@ -596,9 +625,10 @@ def parse_arguments(argv=None):
     if args.prepared_unit is not None or args.worker_unit is not None:
         if args.prepared_unit is not None and args.worker_unit is not None:
             parser.error("choose the parent or its private child entrypoint")
-        if args.prepare_only or args.gpu_uuid or any(getattr(args, name) is not None for name in (
+        if args.prepare_only or args.gpu_uuid or args.total_copies is not None or args.scaling_mode != "same_copies_per_card" or any(getattr(args, name) is not None for name in (
                 "source_root", "source_commit", "configuration", "runtime_environment", "asset_record",
-                "jaxtari_source_root", "run_dir", "unit_id")):
+                "jaxtari_source_root", "run_dir", "unit_id", "completed_study_proof", "completed_study_review",
+                "completed_study_manifest", "completed_study_manifest_sha256")):
             parser.error("prepared execution cannot take preparation overrides")
         if args.worker_unit is not None and (args.worker_index is None or args.channel_fd is None):
             parser.error("a private numerical child needs its parent channel and assignment index")

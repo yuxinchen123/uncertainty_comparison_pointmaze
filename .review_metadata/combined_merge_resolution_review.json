@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "kind": "combined_final_evidence_and_profile_memory_merge_review",
+  "at_utc": "2026-11-01T15:15:01.373532+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies",
+  "parents": {
+    "published_profile_memory": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+    "reviewed_final_evidence": "841ad6e89a41699d60f4ece7d540198eb6cc39b2"
+  },
+  "manual_resolution_files": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py",
+      "published_memory_parent_sha256": "24fb4c6779916c91041985e832a1fa379ac337387c80f37b9d5bd41030483bb6",
+      "final_evidence_parent_sha256": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5",
+      "combined_sha256": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "published_memory_parent_sha256": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+      "final_evidence_parent_sha256": "65915f384ec5d456bf277d8b35f2fa087caf7dae8ec2f062e141c29e523ef17b",
+      "combined_sha256": "d1411042253a694f4f4d2ebfa8421710815363283f9260b2d00a1bbf0809c18b"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "published_memory_parent_sha256": "7bdc75a2f68c1b537e7f8717a75902f07590b43e00fceb5e2d54455c1a28f8af",
+      "final_evidence_parent_sha256": "042cd8c209b78832376e4b8b50c78ec41dd6f79ea426b279098e60f0e281f9f6",
+      "combined_sha256": "863b43d078f66ebc5d22f44f99df39a7a5b88d1c82c85efb6725495815e89453"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "published_memory_parent_sha256": "ba1ac004931c9d784dd54f76456ed505086b4569a569c7ef73eec5460d2d4b6d",
+      "final_evidence_parent_sha256": "1f42c06a4b779e36847e02774826ba89a28b10e3a634194edd3e3d11669a3713",
+      "combined_sha256": "6bbdd94e1dcf1391bf21f5758263932c01a4a42877de7f108a9e9a44b6c39c06"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "published_memory_parent_sha256": "985d851e96fb321545b98fa7b19994473ac7563392609d6d257f476d7e0192e0",
+      "final_evidence_parent_sha256": "cc386c63a32f4d10c8c07e6eae7379a2d00dadbadb87ea18569bafcff01fb4e3",
+      "combined_sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py",
+      "published_memory_parent_sha256": "d7b6b1d42ce45a2ece1d5f980df5b761e0a7c0542eb4df2aad9a3e6faaaa6467",
+      "final_evidence_parent_sha256": "e3943c734c76e0b73d6ecc9b3feebdd2fefe3153e9797285ec8d2340670b337a",
+      "combined_sha256": "f01db983e1f1387fadc07af626e2e6fe31aa4980a9e97ebec14574a44eff0ec2"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py",
+      "published_memory_parent_sha256": "ce75654d3133baffef967a7a89585f73afb7e2b450fb701ced0b7244a445c72e",
+      "final_evidence_parent_sha256": "c474dada1d965f6c5e117a2285e8744e3f7d634764f41be09ed7c01da32a4f59",
+      "combined_sha256": "0560a4823ed10cb28d3318a6a7a648f347837d1616fc29c64adbe70138882b79"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py",
+      "published_memory_parent_sha256": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e",
+      "final_evidence_parent_sha256": null,
+      "combined_sha256": "c6e10e26e53b464fe65fb32b5222f6b3810c4ee927e06818c1a939feff2de319"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py",
+      "published_memory_parent_sha256": "42a4198e9146375b930e70697aa5a4be5d3ba800501dadd5b3d2fefdb0fdcd27",
+      "final_evidence_parent_sha256": null,
+      "combined_sha256": "779c8262bf981cca607b2f60c02e78f49bdc1cbb1a9617a5c897e6a0870a7aa4"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py",
+      "published_memory_parent_sha256": null,
+      "final_evidence_parent_sha256": "151a3317bccaa8b025aab0c5097c12f7eade3a731df38245ac833ac435c10c6f",
+      "combined_sha256": "7656f832e7aa0166548ab80910307e56f85c014aa2425b8be9546369c8e18a7a"
+    }
+  ],
+  "resolutions": [
+    {
+      "before": "Both branches append different required helper files.",
+      "after": "Each executed helper closure contains the union once, including the shared portable reader."
+    },
+    {
+      "before": "One preparation branch records device-memory ownership, while the other records final study/learning contracts.",
+      "after": "Both blocks remain, both source checks run, and prepared execution rejects the union of all preparation overrides."
+    },
+    {
+      "before": "The instrumented branch reads the original minimum argument, while the new CLI represents omitted defaults as null.",
+      "after": "Instrumentation checks the already resolved ten-update minimum; an explicit regression prepares omitted default rounds successfully."
+    },
+    {
+      "before": "The old memory-only discard loop could remove the shared portable helper before the new dependency union.",
+      "after": "The reviewed feature-union logic alone selects the memory/learning/shared group; historical verified files remain supported."
+    },
+    {
+      "before": "One target schema permits strict instrumented exclusions, and the other requires current learning evidence.",
+      "after": "The combined schema requires current learning by default and retains the strict optional exclusion fields; historical reads remain explicit."
+    },
+    {
+      "before": "Legacy capacity target fixtures use the default operational entry and an old helper negative requests current helper names.",
+      "after": "The legacy target is rejected by default and rechecked only with historical_read_only=True; old7f helper names come from that exact committed source."
+    },
+    {
+      "before": "Global learning-process coverage was reported as missing during a read-only review.",
+      "after": "Exact T Git bytes already cover it. Production stays unchanged; a regression checks its inclusion and historical absence."
+    }
+  ],
+  "synthetic_exact_eight_checks": [
+    "actual unmocked capacity and final fixed-total readers",
+    "eight-copy failure with explicit derived UVA v2 metadata",
+    "wrong count/profile/source refusal",
+    "diagnostic and completed-result refusal",
+    "portable copies after original roots are renamed away",
+    "missing and changed portable bytes refusal"
+  ],
+  "retained_receipts": {
+    "combined_exact_eight_first_6781087_7.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies/.review_metadata/combined_exact_eight_first_6781087_7.json",
+      "sha256": "5456a6eb2038d08ad32574b9613a7a26d1000ee2425ddd9a0291935f87644368"
+    },
+    "combined_exact_eight_focused_6781087_8.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies/.review_metadata/combined_exact_eight_focused_6781087_8.json",
+      "sha256": "1604ad962bec9ba825419fe2d6359f04a9fb4ed99caaaf12c47fca21a9824a8a"
+    },
+    "combined_final_memory_corrections_6781087_13.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies/.review_metadata/combined_final_memory_corrections_6781087_13.json",
+      "sha256": "ae890203e67c4628840c680a908bfda8e8727b3dd461781680629687f74a9367"
+    },
+    "combined_final_memory_full_6781087_10.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies/.review_metadata/combined_final_memory_full_6781087_10.json",
+      "sha256": "8ca528db6eaf927e7dced9be02b35cce6bca3394419170e0dc8f09c921b58fba"
+    }
+  },
+  "source_hashes": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py": "e64dce2ee7ce59e4ae136b68d004e623789a64ba81163291b818401e04209f61",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "863b43d078f66ebc5d22f44f99df39a7a5b88d1c82c85efb6725495815e89453",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_a4500_diagnostics.py": "6b79ad7dc5dc7d31b10ad20d023606d7361bdc59b0e76fb8def88288ef1d361c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "d1411042253a694f4f4d2ebfa8421710815363283f9260b2d00a1bbf0809c18b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_diagnostic.py": "4dd0bf6f4ea63866b9c3ab88949432e1a870d24805478f5b3c0048dd2d88f059",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "30988ef9950e99c535602cdd70c1e472613fdc343d0e75fffa6e9f2c7a129f93",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py": "a96082f1d66827ccb4552aa01860abef00bab4d8b77e0a76a75744809cbdee79",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "24298ed51607edadfb8a1ca37a2730743ed3933125b1c18501dbcd1ae3799477",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py": "7025f5a5cd204c445e3c7d0964c1c93d0018fef409b49957d9332d898e8bb391",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/final_training_monitor.py": "64317fdde1549a05df8d4afee7d80ee0e74f1d1ee4303b4ac1545bfa9fc3e826",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_checks.py": "d1e7188f75dc221a0caee4f0e7218b8cc5b7b5387a90ce0f8346daa9aeb3ea63",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_capacity_diagnoses.py": "139b4103d94978eb698163acc436e67b577ab29a161e60223a4298b77c0baa85",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "fc08e56bff0a86bed88d8442607809fe71ccb9580efb89a5d3f5df968e61d0e5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/submit_uva.py": "33afed486f9a9298d5b3cc310ee981ce1070a673be144647c9d438a3bf9cb5c0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry_worker.py": "8dc0b1d77229ef17825a6b6f6b0aa8b097058f183748e11c5edc3bc4848a14f2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "2a25c3a2d7300d6827ed3b7566edf744a3be11ad2c4dda0a227adaf8093cc94b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py": "edeb3d8dea4856b157c654ee258391fb5f71311487cee600b4c577ba3e18e5ea",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_original_scaling_component.py": "f6f3a24a2424c4c93b85753cd3c0013617a9e877cf394cbb2c047b6eea3c15bb",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_autodetect_qualification.py": "f4d4f70897a165977e6aab529b00873f5ddaee2f214e2d8507f3bb68332d066a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_case.py": "d0fc717a16a5de7d40c1f14bd2f2091a44722e7888150ea3975951d12ee92a5d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": "15470dc4298685b6e5fc4c6ecaf9d38422571cc29765eb7443df5fce87912a35",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "3d0113a421330c7003c4a5716b41e3b14aaacd14e7eda6d9bf1e7dd2bf02e5e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_source_admission.py": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_queue.py": "6f6a1e6d25622ddfa6680da0cfa37f460a8fce1231b82e78d4226da1df094a8d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py": "3c04b8dbcc9b5125084c814e6634ae68eb4c7b9946e3614a494e3b6b00089874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_allocator_region.py": "1bf47967fff49dd16e832f28f27ea26d20747ecec2b34dda2fdc139a7fd25b85",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_pregather_async_retry.py": "8ad515150ac6aad5b2d0ca3eb35553706643a6d8bdbd24561fcba7bec04ba1c9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_infrastructure_retry.py": "fbcffc51d2c5df18672f9cfac57ee38c6c8aa1fa4d11b3d385a621ea068d94de",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_pregather_allocator.py": "24866fdf0089e8ef6bd19cc9a4d2869f6ecf28e0f4de814b8467f99b17eb63ba",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "69692f45f29ba10c48f2e13321f045041c22729d04fe7140963b639d51eb10a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_correctness_cache.py": "e3b7f68e28a6771c268b49b01b319a1cc6f317570366a4dbeab2fcd27e3f9035",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "6bbdd94e1dcf1391bf21f5758263932c01a4a42877de7f108a9e9a44b6c39c06",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_unit.py": "d879e539ca21afd49f071b14a6f729b9dcbda09e1836db80999cc9fb462a35d8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_direct.py": "04980346988e9fab8ebbfb376275528529950f63639264a7c683a167bb484411",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/setup_assets.py": "865197dad1234ab3a0c51783eb57df0bac09d55e780e6dea09deb93bea6d6d0f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_portable_evidence.py": "56a8bb77bf294094ba74baf523d1598c9602523fe032027b5e1a2051f1360fac",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_site_monitor.py": "a54ae7f242d6494fa46c2489b1a68dbaacbfd6a02467e9093d3df7305164f9b4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/advance_adaptive_research.py": "67585e04f972ac91ffbc4e8278d3f7776e373d1be268e92102a988c24b6af410",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": "9166ba2bf26d5573d9ee7e85f20dbf8a8d155e4b3084d1989ef99964e8841092"
+  },
+  "helper_module_unchanged_from_published_profile": true,
+  "gpu_qualification": false,
+  "worker_admission": false,
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0,
+  "final_training_credit": 0,
+  "actual_gpu_fixture_pending": true,
+  "jobs_submitted": 0,
+  "ssh_connections": 0,
+  "integration_checkout_edited": false,
+  "original_sources_edited": false,
+  "final_exact_commit_suite_pending": true
+}
