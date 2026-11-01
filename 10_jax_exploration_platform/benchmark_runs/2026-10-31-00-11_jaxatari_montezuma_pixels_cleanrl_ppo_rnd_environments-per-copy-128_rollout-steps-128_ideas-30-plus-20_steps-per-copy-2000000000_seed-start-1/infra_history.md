@@ -389,3 +389,10 @@ Published exact release source and reviews as 37e382c8b7797111591a21dda0bcb0509b
 Passive observation 6781903 completed 0:0; independent audit 6781231.24 verifies raw/source/ownership/release evidence and all ninety preserved files, SHA256 9407efac53a8308ecf3e23eafbd278f8447fd42c8f31c182ba4ffcb903a98d18. Installed custom Slurm binary/plugin/manual bytes remain unavailable under its frozen file scope. All mapping, enforcement, qualification and admission flags stay false.
 
 Read-only assessment found full NVIDIA XML and logical-index/minor equality assumptions in selected measurement and scaling, inherited by profiling, plus an unfiltered paired-timing process query. Required separate configured-isolation design is under review; no source or admission change yet. Full monitor 6781231.23 passes 117 of 120 original comparisons. New recurring task 74538a37-b39e-46ef-b184-5a3287b6ec81 was verified before deleting its predecessor; both monitors remain every twenty minutes.
+
+
+## 2026-11-01 10:49 PST — preserve strict memory evidence in the new observer
+
+The first no-process-query design would leave required own-process memory and contamination evidence unknown, so formal readers must reject it. Independent addendum review 905ab2b8658c182a8e7153ea555483cc7b042f5f61a523d5c8d77fe643b1b508 permits only bound assigned-UUID compute-app observations after physical identity. Complete actual own samples and normal whole-window sampler coverage are required; unknown, failed or other-process observations reject credit. No global or foreign-process inspection, default scientific-gate change or admission.
+
+Core qualifier passed fifteen author metadata cases on 6781231.27; independent review and producer implementation continue in isolated worktrees. A separate full-original target-qualification entry must avoid circular baseline prerequisites and count all actual work with zero scientific credit. No new target packet or GPU job exists. Full monitor 6781231.26 remains at 117 of 120 comparisons.

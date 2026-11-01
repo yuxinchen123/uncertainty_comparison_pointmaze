@@ -218,8 +218,8 @@
     "session_cron_id": "74538a37-b39e-46ef-b184-5a3287b6ec81",
     "contains_reviewed_checkpoint_and_deadline_fixes": true,
     "future_adaptive_source_qualification_still_required": true,
-    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-18-26_verification.json",
-    "last_verified_at_utc": "2026-11-01T18:33:14.958049+00:00",
+    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-18-40_verification.json",
+    "last_verified_at_utc": "2026-11-01T18:49:17.482013+00:00",
     "display_correction": {
       "source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
       "published": true,
@@ -1115,7 +1115,7 @@
     "actual_site_success": false
   },
   "uva_jaguar03_configured_isolation_preparation": {
-    "state": "design_independently_reviewed_isolated_implementation_authorized",
+    "state": "isolated_core_and_producer_implementation_in_progress",
     "design": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/configured_isolation_design.json",
     "design_sha256": "3cd21aae4e1356684166c00e8994f59ac499afb3015cefc88ae4187dff7844a1",
     "basis_actual_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/passive_observer_actual_independent_6781231_24.json",
@@ -1132,6 +1132,18 @@
     "root_implementation_decision": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/root_isolated_implementation_decision.json",
     "readiness_assessment": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/post_initial_comparisons_readiness_117_results_2026-11-01.json",
     "readiness_assessment_sha256": "1ef6f9f1dd1099abb6c942630c78736ea0d21ae9cbebc76f9f3ba8c3866b8eb2",
-    "next_action": "Implement isolated opt-in single-GPU configuration/identity and selected/profiling support; independently review and publish before actual target tests. Keep current/default, capacity, multi-GPU and final admissions unchanged."
+    "next_action": "Implement isolated opt-in single-GPU configuration/identity and selected/profiling support; independently review and publish before actual target tests. Keep current/default, capacity, multi-GPU and final admissions unchanged.",
+    "core_worktree": "/p/rlprojects/RND_worktrees/2026-11-01-10-41_uva-jaguar03-configured-isolation_gpu-count-1_service-uid-64030",
+    "core_author": "aces_preparation",
+    "producer_author": "report_refresh",
+    "independent_reviewer": "next_phase_review",
+    "core_initial_author_cases": 15,
+    "core_initial_author_step": "6781231.27",
+    "assigned_gpu_occupancy_addendum_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/independent_assigned_gpu_occupancy_addendum_review.json",
+    "assigned_gpu_occupancy_addendum_review_sha256": "905ab2b8658c182a8e7153ea555483cc7b042f5f61a523d5c8d77fe643b1b508",
+    "assigned_gpu_occupancy_addendum_decision": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-30_uva-jaguar03-autodetect-configured-isolation_design_gpu-count-1_service-uid-64030/root_assigned_gpu_occupancy_addendum_decision.json",
+    "target_qualification_entry": "Explicit isolated opt-in correctness target qualification with equal full original configurations; zero scientific credit, separate actual-work accounting and full original gates.",
+    "target_qualification_prepared": false,
+    "target_qualification_submitted": false
   }
 }

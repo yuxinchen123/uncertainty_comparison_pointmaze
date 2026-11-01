@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "kind": "independent_assigned_gpu_occupancy_addendum_review",
+  "at_utc": "2026-11-01T18:47:15.363180+00:00",
+  "original_design_sha256": "3cd21aae4e1356684166c00e8994f59ac499afb3015cefc88ae4187dff7844a1",
+  "original_independent_review_sha256": "d9a44277efcdfbddc6953056856a78ecb854ce208b09534dc08042ee1ba45503",
+  "original_design_preserved": true,
+  "before": "The initial design queried no process rows. Process occupancy and own process memory remained unknown, so records could receive no formal measurement credit under the unchanged strict gate.",
+  "after": "Only after the actual worker has its immutable same-process physical binding, query active compute rows for that one assigned GPU UUID. Validate every row UUID, keep full successful own-only sample evidence and reject unknown or other-process observations. Existing scientific gates stay unchanged.",
+  "scope_approved_for_isolated_implementation": true,
+  "actual_qualification_still_required": true,
+  "source_profile_or_admission_changed": false,
+  "exact_permitted_command": [
+    "nvidia-smi",
+    "-i",
+    "<immutable current assigned GPU UUID>",
+    "--query-compute-apps=gpu_uuid,pid,used_gpu_memory",
+    "--format=csv,noheader,nounits"
+  ],
+  "existing_reader_gate": {
+    "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+    "function": "measured_round",
+    "conditions": [
+      "other_gpu_processes must equal an actually observed empty list",
+      "sampled_process_peak_bytes must be positive",
+      "allocator peak_bytes_in_use must be positive",
+      "full original per-round work and timing checks unchanged"
+    ],
+    "changed": false
+  },
+  "requirements": [
+    "Accept only the actual immutable resolved UUID from this current process, job and numeric step. Before binding, all process queries remain forbidden; no logical-index, minor-number or remembered-UUID fallback.",
+    "Use one exact assigned-device command or the same reviewed selected_query helper with the exact UUID and field allowlist. No global query, full XML, another GPU UUID, foreign /proc, UID lookup, process name, command, signal or modification.",
+    "Check the installed query result: success return code, empty stderr, bounded complete stdout, exact three-column CSV, canonical UUID equal to the bound UUID in every row, unique positive integer PIDs and finite nonnegative memory. Any malformed, duplicate, wrong-UUID, unsupported or unavailable result is unknown and rejects formal credit.",
+    "A valid successful sample must contain exactly one row for the actual current PID and no other PID. Keep the complete bounded stdout, its hash/count, exact argv, start/end timestamps, bound UUID and typed own-PID/memory row. Independent readers must recompute all typed rows and the positive maximum own process memory.",
+    "If any other PID row appears, retain only anonymous presence/count, bounded output hashes/counts and failure category; discard foreign identifying rows and memory details. Mark contaminated or failed and reject formal credit, even if the other row reports zero memory. Missing own PID is unknown, never an empty success.",
+    "Start the sampler before the declared measured window, capture successful boundary samples before and after that window, retain every intermediate sample, timestamps, configured interval and actual gaps, and stop/join normally. A query failure, timeout, dropped/incomplete sample, lingering thread or late failure invalidates the whole measurement. A positive early sample cannot mask a later failure.",
+    "The numerical paired source and every source/configuration/seeding/correctness/timing/significance rule remain unchanged. A scoped new-profile observer adapter must restore original functions/classes on every exit and cannot preserve an internally inferred false contamination flag after an invalid sample.",
+    "Only complete successful own-only samples may produce the actual other_gpu_processes=[] field and positive sampled_process_peak_bytes required by the existing gate. Preserve query scope as active compute rows on the assigned GPU, not a claim of continuous kernel enforcement or absence of graphics/system activity.",
+    "Keep actual assigned-device total/free/used samples with UUID, physical total and complete timing coverage. Compute headroom from those actual samples and keep own process peak and JAX lifetime allocator peak separate; do not substitute zero, allocator bytes or aggregate device usage for a missing process peak.",
+    "Current/formal readers must explicitly verify this new profile, resolved binding, sample proof and actual qualification before accepting its record. Until that separately reviewed source/fixture support exists, the new profile remains without formal/admission credit. Unsupported capacity, final-training, scaling or portable consumers continue to refuse.",
+    "Preserve the initial no-query design and zero-credit limitation as history. Record this explicit addendum and concrete before/after before implementing it; no automatic broadening of the command or reader bypass is permitted."
+  ],
+  "minimum_metadata_tests": [
+    "Reject a process query before binding, a substituted UUID, another-device command, global process query, XML query, unsupported fields or selector rewrite.",
+    "Accept complete own-only raw samples and independently recompute typed rows/positive own peak; reject changed raw bytes/hash/timestamps/UUID/PID or peak.",
+    "Reject missing own PID, foreign PID even with zero memory, duplicate own or foreign rows, wrong GPU UUID, negative/nonfinite/unavailable memory, malformed CSV, nonzero exit, stderr, partial capture and timeout.",
+    "Check foreign details never enter saved records/logs; only presence/count and capture hashes/counts remain.",
+    "Reject a late sampler error after an early positive sample, missing boundary coverage, unjoined/abnormally stopped sampler or changed actual UUID; preserve every failed attempt.",
+    "Exercise the scoped frozen paired adapter and its restoration on success/exception; confirm unknown/contaminated evidence cannot become measurement_valid=true or other_gpu_processes=[].",
+    "Keep default/historical/ACES cases unchanged and unsupported consumers rejecting."
+  ],
+  "primary_reference": {
+    "title": "NVIDIA System Management Interface documentation",
+    "url": "https://docs.nvidia.com/deploy/nvidia-smi/index.html",
+    "reviewed_sections": [
+      "Selective Query Options --query-compute-apps",
+      "Selective Query Options optional -i/--id"
+    ],
+    "support": "NVIDIA documents active compute-process queries and selecting a single GPU by UUID. Runtime field/row validation remains mandatory; this reference is not evidence that a particular installed query succeeded."
+  },
+  "existing_reviewed_handle_by_uuid_process_reader_found": false,
+  "all_unproved_claims": {
+    "physical_gres_mapping_verified": false,
+    "kernel_device_enforcement_verified": false,
+    "installed_binary_matches_upstream_verified": false
+  },
+  "actual_queries_or_GPU_library_or_device_operations": 0,
+  "job_actions": 0,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "worker_admitted": false
+}
