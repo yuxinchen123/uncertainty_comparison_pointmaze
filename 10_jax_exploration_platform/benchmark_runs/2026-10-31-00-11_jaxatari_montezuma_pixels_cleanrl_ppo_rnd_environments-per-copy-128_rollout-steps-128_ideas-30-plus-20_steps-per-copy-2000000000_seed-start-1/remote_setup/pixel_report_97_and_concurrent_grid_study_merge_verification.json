@@ -1,0 +1,39 @@
+{
+  "kind": "pixel_report_and_concurrent_initial_bonus_merge_verification",
+  "parents": [
+    "b3b039640ed0eecd896a9928177f44fde1e91ed8",
+    "b2ed56d87151485ddc116a2b985fe8760f488efc"
+  ],
+  "merge_conflicts": [],
+  "other_study_files_preserved_exactly": 40,
+  "shared_document_retains_pixel_snapshot": 97,
+  "original_checkout_unchanged_by_merge_preparation": true,
+  "frozen_numerical_and_retry_source_clean": true,
+  "full_verified_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/original_checkout_preservation/merged_report_document_verified.json",
+    "sha256": "175bdb721c7d3dc93948017818eb526d38438f7a9d3847e7a4f2679eaa6be421"
+  },
+  "pdf": {
+    "path": "/p/rlprojects/RND_worktrees/merge-pixel-report-and-initial-bonus-2026-10-31-22-39/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.pdf",
+    "sha256": "c062020625053804ef9eeaafaed155ea2f615831b93a71eee8c2e169fc2bc9d6",
+    "pages": 55
+  },
+  "layout_warnings": [],
+  "visual_review_passed": true,
+  "analysis_step_id": "6779550.12",
+  "image_transfer_step_id": "6779550.14",
+  "numerical_experiments_rerun": false,
+  "initial_failed_build": {
+    "step": "6779550.11",
+    "state": "FAILED",
+    "exit_code": "12:0",
+    "cause": "The new worktree lacked two ignored historical figure PDFs. Exact reviewed prior figure bytes were copied before the successful build."
+  },
+  "preserved_other_study_whitespace_warning": {
+    "path": "10_jax_exploration_platform/src/exploration_platform/grid_initialization/config.py",
+    "line": 126,
+    "warning": "new blank line at EOF",
+    "source_commit": "b2ed56d87151485ddc116a2b985fe8760f488efc",
+    "source_bytes_preserved": true
+  }
+}

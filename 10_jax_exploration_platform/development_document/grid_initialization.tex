@@ -1,0 +1,206 @@
+% Initial-bonus study. Root document supplies \GridInitializationRunPath for generated results.
+\section{Uneven initial bonuses in deterministic grid exploration}
+\label{sec:grid-initialization}
+
+\subsection{Question and measurements}
+Uniform initial bonuses and exact visit-count decay provide the reference condition.
+The experiments test whether changing only the initial bonus field delays goal discovery,
+and whether untrained coordinate networks produce such fields on a snake-shaped path.
+Tabular policies and neural policies are evaluated separately.
+
+Let $s$ denote a traversable cell, $c(s)$ its fixed initial bonus, and $n$ its arrival count
+after the current transition. Let $w(s)$ be the raw initial field and $\mathcal S$ the set of
+traversable cells. Positive fields have a common initial mean and an identical decay rule:
+\begin{align}
+c(s) &= \frac{w(s)}{|\mathcal S|^{-1}\sum_{u\in\mathcal S}w(u)}, &
+b(s,n) &= \frac{c(s)}{\sqrt n}.
+\end{align}
+The no-intrinsic-bonus comparison sets the bonus to zero. Counts persist across episode
+resets and are updated on the reached cell, including blocked moves and goal arrivals.
+Automatic resets do not add a second arrival reward.
+
+Let $T_i$ be the first-goal time in training transitions for policy copy $i$, $B$ its
+transition budget, and $K$ the number of completed copies. For a copy that never reaches the
+goal, take $T_i>B$. The primary metric is the mean capped first-goal time:
+\begin{equation}
+M=\frac{1}{K}\sum_{i=1}^{K}\min(T_i,B).
+\end{equation}
+Lower values are better. The goal-found percentage includes every copy; unsuccessful copies
+are never dropped from the primary mean. Coverage is the fraction of traversable cells visited.
+Reported intervals resample independent random-field seeds as groups, retaining the policy
+seeds belonging to each field. Deterministic fields resample policy seeds instead.
+These measurements establish behavior within a finite budget, rather than permanent trapping.
+
+\subsection{Environment specification}
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}
+?>{\raggedright\arraybackslash}p{4.3cm}
+?>{\raggedright\arraybackslash}p{4.3cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Straight grid} & \textbf{Snake grid} \\
+& This work & This work \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Map and observations}} \\
+\greyrule
+traversable cells & One horizontal corridor & Horizontal corridors separated by one wall row; alternating ends are joined \\
+\greyrule
+development widths & $32,64,128,256,512,1024$ cells & $16,32,64,128$ cells per horizontal corridor \\
+\greyrule
+turns & $0$ & $2,4,8,16$; one more horizontal corridor than turns \\
+\greyrule
+start and goal & Left end and right end & Top left and bottom right \\
+\greyrule
+state identifiers & Distance along the path, starting at zero & same \\
+\greyrule
+coordinate observations & Centered horizontal and vertical coordinates, scaled by one common maximum extent & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Transitions and rewards}} \\
+\greyrule
+actions & Up, right, down, left & same \\
+\greyrule
+blocked action & Remain in the same cell & same \\
+\greyrule
+transition noise & None & same \\
+\greyrule
+task reward & One on reaching the goal; zero otherwise & same \\
+\greyrule
+episode ending & Goal arrival or the next power of two at least eight times the path length & same \\
+\greyrule
+reset & Return to the fixed start & same \\
+\blackrule
+\end{tabular}
+\caption{Deterministic exploration environments. Snake turns change the physical embedding of a path.
+With matching bonuses along the path and state-dependent action relabeling, tabular straight and snake
+environments have the same transition graph.}
+\label{tab:grid-initialization-environments}
+\end{table}
+
+\subsection{Training and initialization comparisons}
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}
+?>{\raggedright\arraybackslash}p{4.3cm}
+?>{\raggedright\arraybackslash}p{4.3cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Tabular policy and values} & \textbf{Neural policy and values} \\
+& Exact state tables, this work & Coordinate networks, this work \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Policy training}} \\
+\greyrule
+policy optimizer & CleanRL random-network-distillation proximal policy optimization, with exact counts substituted for predictor errors & same \\
+\greyrule
+representation & Four logits and two scalar value estimates per cell; no shared learned features & Shared coordinate trunk, separate action branch and residual value branch; hidden width $64$ \\
+\greyrule
+environments per policy & $1$ & same \\
+\greyrule
+rollout and updates & $128$ transitions; four epochs and four minibatches & same \\
+\greyrule
+task and intrinsic returns & Episodic task returns; continuing intrinsic returns through the reset observation & same \\
+\greyrule
+intrinsic normalization & No running reward normalization in the primary comparison & same \\
+\greyrule
+task advantage weight & $2$ & same \\
+\greyrule
+entropy coefficient & $2^{-10}$ & same \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Initial fields}} \\
+\greyrule
+comparisons & Uniform, independent log-uniform random values, ten adversarial shapes, frozen coordinate-network errors, and no bonus & same \\
+\greyrule
+adversarial shapes & High start cell; high start region; high interior pair; smooth interior peak; decreasing exponential; low middle interval; repeated low intervals; repeated smooth peaks; alternating high and low cells; decreasing steps & same \\
+\greyrule
+network initialization & Independent orthogonal target and predictor weights, zero biases; neither network is trained & same \\
+\greyrule
+target and predictor widths & Target: $2,32,64,64,512$. Predictor: $2,32,64,64,512,512,512$ & same \\
+\blackrule
+\end{tabular}
+\caption{Fixed training and initialization settings. The intrinsic coefficient weights the
+intrinsic advantage before the combined advantage is normalized, following the CleanRL update.}
+\label{tab:grid-initialization-training}
+\end{table}
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}
+?>{\raggedright\arraybackslash}p{4.3cm}
+?>{\raggedright\arraybackslash}p{4.3cm}@{}}
+\blackrule
+\textbf{Parameter} & \textbf{Tabular policy and values} & \textbf{Neural policy and values} \\
+& Exact state tables, this work & Coordinate networks, this work \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Swept parameters}} \\
+\greyrule
+\textbf{coarse learning rates} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $2^{-14},2^{-10},2^{-6}$; three values} \\
+\greyrule
+\textbf{coarse intrinsic weights} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $2^{-6},2^{-2},2^{2},2^{6}$; four values} \\
+\greyrule
+\textbf{fine learning rates} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $2^{-14}$ through $2^{-6}$ in factors of two; nine values} \\
+\greyrule
+\textbf{fine intrinsic weights} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $2^{-6}$ through $2^{6}$ in factors of two; thirteen values} \\
+\greyrule
+\textbf{field severity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath Exponents $2,4,6,8$; four values for each adversarial or random shape} \\
+\greyrule
+\textbf{entropy sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $0,2^{-14},2^{-10},2^{-6}$; four values} \\
+\greyrule
+\textbf{intrinsic horizon sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath Horizons $64,256,1024,4096$, with discount one minus inverse horizon} \\
+\greyrule
+\textbf{rollout sensitivity} & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{\bfseries\boldmath $64,256$ transitions; two values with the twelve coarse settings} \\
+\blackrule
+\multicolumn{3}{@{}l}{\textit{Configuration and seed counts}} \\
+\greyrule
+coarse configurations per field and map & $3$ learning rates $\times4$ intrinsic weights $=12$ & same \\
+\greyrule
+fine base configurations per field and map & $9$ learning rates $\times13$ intrinsic weights $=117$ & same \\
+\greyrule
+sensitivity configurations per field and map & $4$ selected settings $\times4$ entropy values $\times4$ horizons, plus $12$ settings $\times2$ rollout lengths: $88$ & same \\
+\greyrule
+total across both policy representations & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.9cm}}{$24$ coarse or $410$ fine and sensitivity configurations per field and map, before seed replication} \\
+\greyrule
+development copies & $16$ policy seeds per configuration & same \\
+\greyrule
+confirmation copies & $128$ fresh policy seeds: four policies per random field, giving $32$ field seeds & same \\
+\greyrule
+confirmation settings & Uniform-selected shared settings and independently tuned settings, frozen before confirmation & same \\
+\blackrule
+\end{tabular}
+\caption{Training and initialization comparisons. Swept parameters are bold.
+Configurations are distinct from independent seed copies.}
+\label{tab:grid-initialization-swept}
+\end{table}
+
+\subsection{Behavior and relation to previous work}
+Initial-field maps, total-visitation maps, and late-visitation maps use shared color scales
+within each comparison. Training-position samples and farthest-discovered distance distinguish
+continued progress from repeatedly visiting the same part of a path. Action arrows show legal
+action probabilities; cell colors separately show the probability of blocked moves.
+The representative seed is the one closest to median capped first-goal time, with increasing
+field seed and policy seed as fixed tie breaks. Every seed remains in the numerical results.
+
+Visitation maps and policy arrows follow the presentation in
+\href{https://arxiv.org/pdf/2001.00119}{Long-Term Visitation Value for Deep Exploration in
+Sparse-Reward Reinforcement Learning}, Figures~3 and~19.
+Trajectory and coverage comparisons follow
+\href{https://proceedings.neurips.cc/paper_files/paper/2023/file/9c7900fac04a701cbed83256b76dbaa3-Paper-Conference.pdf}{Maximum
+State Entropy Exploration using Predecessor and Successor Representations}, Figures~1 and~3.
+Uneven initial random-network errors were identified in
+\href{https://proceedings.mlr.press/v235/yang24w.html}{Exploration and Anti-Exploration with
+Distributional Random Network Distillation}. The present experiment holds the count-decay
+rule exact and tests the consequences of the initial field in isolation.
+The inverse-square-root rule is a reference condition here; no universal optimality claim
+is made for every deterministic environment or policy optimizer.
+
+\subsection{Completed results}
+\ifdefined\GridInitializationRunPath
+  \IfFileExists{\GridInitializationRunPath/analysis/results.tex}{%
+    \input{\GridInitializationRunPath/analysis/results.tex}%
+  }{No completed training results have been generated yet.}
+\else
+No run has been attached to this section yet.
+\fi
