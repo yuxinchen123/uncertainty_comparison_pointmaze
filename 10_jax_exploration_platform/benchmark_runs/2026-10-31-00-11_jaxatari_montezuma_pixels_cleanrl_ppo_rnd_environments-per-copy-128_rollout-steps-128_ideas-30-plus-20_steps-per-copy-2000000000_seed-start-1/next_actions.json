@@ -517,7 +517,7 @@
     "verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/checkpoint_restart_completion_verification_job-6780569_source-8a96999408d4e214b212074d932f0eeabcbb5eea.json"
   },
   "aces_full_site_qualification": {
-    "state": "held_actual_monitor_verified_release_pending",
+    "state": "released_waiting_for_scheduler",
     "source_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
     "actual_site_success": false,
     "workers_permitted": false,
@@ -551,7 +551,7 @@
     "published_actual_packet_commit": "7b1633c",
     "initial_qualification_source_commit": "52f0844ee442808ab578106bfab174e08dd67434",
     "job_id": "2274632",
-    "released": false,
+    "released": true,
     "published_submission_preparation_commit": "942e29f2e7396574511beef5508d27485b9383ed",
     "submission_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/submission_receipt.json",
     "submission_receipt_sha256": "6daf1d1ec87886d80669be07ef6830e629840e92669386ac5c1c28df447af0ec",
@@ -561,7 +561,15 @@
     "held_monitor_verified": true,
     "actual_asset_view_files": 4531,
     "checked_utc": "2026-11-01T11:17:18.363927+00:00",
-    "next_action": "Release only exact saved ACES2274632 after publishing reviewed release command and held verification. Preserve current direct worker/source admission. Actual site success and independent complete artifact review remain required before a separate placement change."
+    "next_action": "Monitor only exact owned ACES2274632 through reviewed existing-connection refresher. Review actual result or failure and complete captured driver/source/packages/assets evidence independently on owned compute. No scientific or worker admission credit. No duplicate or retry.",
+    "release_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/release_receipt.json",
+    "release_receipt_sha256": "84553f5fe0d57759be0fea243018b639eca1a9aea8eef9a99722f2b87deef08f",
+    "released_at_utc": "2026-11-01T11:22:00.074083+00:00",
+    "release_preparation_published_commit": "d5c8559cbdbe56b1652d6954c8b371a7183c6f4a",
+    "post_release_monitor_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/post_release_monitor_verification.json",
+    "post_release_monitor_verified": true,
+    "last_observed_state": "waiting",
+    "last_observed_reason": "(Priority)"
   },
   "prepared_full_site_monitor_replacement": {
     "job_id": "6780635",
