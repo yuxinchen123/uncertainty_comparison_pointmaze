@@ -52,7 +52,8 @@ def allowed_seconds(partition, reservation=None, canary=False):
 
 
 def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=None,
-               cards=1, reservation=None, monitor=False, canary=False, exclude_nodes=()):
+               cards=1, reservation=None, monitor=False, canary=False, exclude_nodes=(),
+               report=False, final_report=False):
     """Submit one recorded source snapshot through the account's exact-id wrapper."""
     # Build scripts from the frozen snapshot, never from the mutable project source.
     run_dir = Path(run_dir)
@@ -67,6 +68,10 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
     seconds = allowed_seconds(partition, reservation, canary)
     if monitor:
         body = f'exec {shlex.quote(str(PYTHON))} {shlex.quote(str(directory/"monitor.py"))} --run-dir {shlex.quote(str(run_dir))} --loop\n'
+    elif report:
+        final = ' --final' if final_report else ''
+        body = (f'exec {shlex.quote(str(PYTHON))} {shlex.quote(str(directory/"run_report.py"))} '
+                f'--run-dir {shlex.quote(str(run_dir))}{final}\n')
     else:
         extra = ' --canary' if canary else ''
         body = ('IFS=, read -ra devices <<< "$CUDA_VISIBLE_DEVICES"\n'
@@ -84,8 +89,8 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         f'export PYTHONPATH={shlex.quote(str(Path(source["snapshot"])/"10_jax_exploration_platform/src"))}\n'
         f'cd {shlex.quote(str(PROJECT))}\n'+body)
     # Each subprocess owns one allocated card; processes never share a preallocated pool.
-    memory = 16 if monitor else MEMORY_GIB_PER_CARD*cards
-    cpus = 1 if monitor else CPU_PER_CARD*cards
+    memory = 16 if monitor or report else MEMORY_GIB_PER_CARD*cards
+    cpus = 1 if monitor else 2 if report else CPU_PER_CARD*cards
     command = [str(ACCOUNTS/'submit_as.sh'), identity, '--idfile',
         str(run_dir/'slurm'/f'submitted_jobids_initial_bonus_{account}.txt'),
         '--dir', str(PROJECT), '--', '--job-name', name, '--partition', partition,
@@ -94,7 +99,7 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         '--output', str(run_dir/'logs'/'%x_%j.log'), '--open-mode', 'append']
     # Slurm's bare integer time is minutes, so spell the exact duration as hours:minutes:seconds.
     command[command.index('--time')+1] = f'{seconds//3600}:{seconds%3600//60:02d}:{seconds%60:02d}'
-    command += ['--gpus-per-node', '0'] if monitor else ['--gres', f'gpu:{gpu_type}:{cards}']
+    command += ['--gpus-per-node', '0'] if monitor or report else ['--gres', f'gpu:{gpu_type}:{cards}']
     if node:
         command += ['--nodelist', node]
     if exclude_nodes:
@@ -108,11 +113,29 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         raise ValueError(f'Submission did not return a job identifier: {output}')
     write_json(run_dir/'slurm/submissions'/f'{job_id}.json', {'job_id': job_id, 'account': account,
         'stage': 'monitor' if monitor else stage, 'node': node, 'gpu_type': gpu_type,
-        'cards': 0 if monitor else cards, 'cpus': cpus, 'memory_gib': memory,
+        'cards': 0 if monitor or report else cards, 'cpus': cpus, 'memory_gib': memory,
+        'final_report': final_report,
         'partition': partition, 'canary': canary, 'source_commit': source.get('commit'),
         'excluded_nodes': sorted(exclude_nodes),
         'submitted_at': now(), 'script': str(script), 'wall_seconds': seconds})
     return job_id
+
+
+def submit_report_job(run_dir, final=False):
+    """Submit plotting only to an owner CPU pool with actual processor and memory room."""
+    # Reports never claim graphics cards or the collaborator account's resources.
+    capacity = json.loads(subprocess.check_output(
+        [str(PYTHON), str(ACCOUNTS/'capacity.py'), '--no-mit', '--json'], text=True))
+    owner = capacity.get('uva-sl5nw', {})
+    if not owner.get('reachable'):
+        raise RuntimeError('The report owner account is unavailable.')
+    pools = {pool['partition']: pool for pool in owner['pools']}
+    for partition in ('cpu', 'nolim'):
+        pool = pools.get(partition)
+        if pool and pool['cpu_free'] >= 18 and pool['memory_gib_free'] >= 16:
+            return submit_job(run_dir, 'uva-sl5nw', 'report', partition=partition,
+                              report=True, final_report=final)
+    return None
 
 
 def owner_reservation():
