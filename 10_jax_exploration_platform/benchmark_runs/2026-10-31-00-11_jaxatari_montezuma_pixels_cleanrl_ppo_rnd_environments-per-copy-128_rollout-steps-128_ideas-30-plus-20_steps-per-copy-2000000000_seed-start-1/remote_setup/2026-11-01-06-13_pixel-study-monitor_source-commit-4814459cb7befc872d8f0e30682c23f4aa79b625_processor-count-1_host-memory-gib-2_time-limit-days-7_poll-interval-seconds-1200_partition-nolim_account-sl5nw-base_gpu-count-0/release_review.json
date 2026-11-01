@@ -1,0 +1,24 @@
+{
+  "kind": "exact_owned_cpu_monitor_release_review",
+  "at_utc": "2026-11-01T14:30:19.306234+00:00",
+  "job_id": "6781087",
+  "command": [
+    "scontrol",
+    "release",
+    "6781087"
+  ],
+  "submission_receipt_sha256": "601f69ba83a9fefec07d00e38debf96329c51b597f2f2533559271750b443661",
+  "held_full_review_sha256": "cfd5f26494db32375907dabc94afe9bd58f1b248ef1b609694f64244195a9429",
+  "actual_owned_held_shape_verified": true,
+  "held_requested_node_range": "1-1",
+  "preserved_first_read_only_review_failure": {
+    "expected_NumNodes": "1",
+    "actual_NumNodes": "1-1",
+    "release_attempted": false,
+    "resolution": "accept exact one-node pending range as one requested node; allocated runtime guard remains unchanged"
+  },
+  "recurring_task_id": "31c4400c-a52f-45cf-b589-0c1bbcee7eb1",
+  "old_monitor_job_id": "6780635",
+  "old_monitor_stop_allowed_only_after_new_verified_and_old_auxiliary_steps_terminal": true,
+  "scientific_credit": 0
+}
