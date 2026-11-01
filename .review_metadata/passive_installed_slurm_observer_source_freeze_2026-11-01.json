@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "passive_installed_slurm_observer_review_freeze",
+  "at_utc": "2026-11-01T17:14:02.725423+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-08-57_passive-installed-slurm-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "branch": "prepare-passive-installed-slurm-observation-2026-11-01",
+  "base": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py": "96dad56427f45a5515af4e344d5a1fd7df182af9c2a5b0921c8152e19c335198"
+  },
+  "dependency": {
+    "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+    "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+    "byte_identical_to_base": true
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-08-57_passive-installed-slurm-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/.review_metadata/passive_installed_slurm_author_6781231_2.json",
+    "sha256": "99eee2f5e8bff932a115a6796113c13e9b2a8b1c3d555fe1c6746ab36305875a",
+    "owned_job": "6781231",
+    "numeric_step": "2",
+    "tests": 29,
+    "passed": true
+  },
+  "first_failed_test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-08-57_passive-installed-slurm-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/.review_metadata/passive_installed_slurm_author_6781231_1.json",
+    "sha256": "6c8b54357e00d2d0ff05fd7b095c005f5e4e78aaceb231768008757b35435a64",
+    "reason": "A test searched for the generic word secret and matched its own fixed non-secret status label; the corrected test searches for the unique original fixture value."
+  },
+  "preserved_first_source": {
+    ".review_metadata/first_passive_author_source/passive_installed_slurm_observation.py": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+    ".review_metadata/first_passive_author_source/run_passive_observer_author_tests.py": "d4956fa3d5abb34c0d5646f7a1d01f93c0c9d746a9190e5c9aaaf87781a5d548",
+    ".review_metadata/first_passive_author_source/source_preservation_manifest.json": "a08e8c8b4d340feb427832a18e5b60b86074379c9194e1edd0da25b0389b0a36",
+    ".review_metadata/first_passive_author_source/test_passive_installed_slurm_observation.py": "e9c59adb269966e70bf4aa9fb43ca50ba08076a918422fc411b56fa5e0445ea5"
+  },
+  "source_only_no_executable_entry": true,
+  "launch_requires_separate_reviewed_standard_wrapper": true,
+  "no_observer_packet_prepared": true,
+  "no_job_submitted": true,
+  "no_slurmd_execution": true,
+  "no_GPU_or_device_access": true,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "configured_isolation_qualified": false,
+  "admission_granted": false,
+  "environment_transitions": 0,
+  "idea_credit": 0,
+  "case_credit": 0,
+  "unresolved_by_design": [
+    "effective_systemd_environment_and_execution",
+    "startup_GRES_log_binding",
+    "actual_slurmd_merged_GRES_File_order",
+    "physical_GRES_mapping",
+    "kernel_device_enforcement",
+    "vendor_build_equivalence_to_upstream",
+    "same_process_CUDA_UUID_and_PCI_not_observed_in_zero_GPU_scope"
+  ]
+}
