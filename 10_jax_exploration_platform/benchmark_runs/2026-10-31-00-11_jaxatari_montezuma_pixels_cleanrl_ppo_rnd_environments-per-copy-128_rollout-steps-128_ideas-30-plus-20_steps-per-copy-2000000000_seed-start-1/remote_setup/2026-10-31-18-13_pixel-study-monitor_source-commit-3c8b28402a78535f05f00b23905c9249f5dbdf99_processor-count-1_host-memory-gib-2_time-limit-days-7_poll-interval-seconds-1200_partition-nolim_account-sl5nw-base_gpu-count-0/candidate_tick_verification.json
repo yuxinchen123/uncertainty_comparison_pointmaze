@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "candidate_monitor_verification",
+  "state": "passed",
+  "verified_at_utc": "2026-11-01T01:18:04.169033+00:00",
+  "source_commit": "3c8b28402a78535f05f00b23905c9249f5dbdf99",
+  "source_snapshot": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-13_pixel-study-monitor_source-commit-3c8b28402a78535f05f00b23905c9249f5dbdf99_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot.json",
+    "sha256": "27800cb18e21cbae1382d64ba9980417b212c304fc2e09e1723587904d91b30b"
+  },
+  "source_files_verified": 176,
+  "candidate_tick": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-13_pixel-study-monitor_source-commit-3c8b28402a78535f05f00b23905c9249f5dbdf99_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_tick.json",
+    "sha256": "63ba6a76deb5df0db3525a3db205952846284b03ac71bb9b90e8759439f95ad8"
+  },
+  "parent_launch_observation": {
+    "actual_command": "srun --jobid=6779145 --overlap --ntasks=1 --cpus-per-task=1 --cpu-bind=none /bin/bash -s < /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-13_pixel-study-monitor_source-commit-3c8b28402a78535f05f00b23905c9249f5dbdf99_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_tick.sh",
+    "streamed_script": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-18-13_pixel-study-monitor_source-commit-3c8b28402a78535f05f00b23905c9249f5dbdf99_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_tick.sh",
+      "sha256": "572fe01070a934d4070c21d4bf6708cca237d1f7bd7709bfa7c010434e84cf1c"
+    },
+    "execution_mode": "bash standard input"
+  },
+  "owned_cpu_step": {
+    "job_id": "6779145",
+    "step_id": "6779145.9",
+    "cluster": "uva",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "hostname": "heartpiece",
+    "accounting_row": "6779145.9|COMPLETED|0:0|heartpiece\n"
+  },
+  "scientific_counts_before": {
+    "pending": 32,
+    "running": 1,
+    "completed": 87,
+    "failed": 0
+  },
+  "scientific_counts_after": {
+    "pending": 31,
+    "running": 1,
+    "completed": 88,
+    "failed": 0
+  },
+  "genuine_new_registered_results": [
+    {
+      "result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-14__group_independent_convolutions__hardware-h100__copies-2__seed-start-1__updates-per-round-1__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "87836493ee3575a2616b052a240cada3bad8bac040c89121438f32cc85d1c425"
+      },
+      "case_completed": true,
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+    }
+  ],
+  "observer_count": 1,
+  "observer_job_id": "6779358",
+  "observer_literal_name": "H100 NVL allocation observation",
+  "generic_observer_rows": 0,
+  "observer_credit": 0,
+  "old_failed_site_states": {
+    "6778886": "failed",
+    "6779137": "failed"
+  },
+  "old_monitor_stopped": false,
+  "new_job_submitted": false,
+  "report_rebuilt": false
+}
