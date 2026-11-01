@@ -95,7 +95,25 @@ def helpers():
     """Pin the complete existing helper closure and both new ACES entry points."""
     old = common()
     return tuple(dict.fromkeys((*old.HELPERS, *old.QUALIFICATION_HELPERS,
-        "aces_allocation_observation.py", "aces_slurm_qualification.py", "aces_slurm_site_validation.py")))
+        "aces_allocation_observation.py", "aces_slurm_qualification.py", "aces_slurm_site_validation.py",
+        "aces_source_admission.py", "portable_evidence.py", "h100_nvl_slurm_evidence.py")))
+
+
+def admission_inputs(run, binding=None):
+    """Use explicit exact copied evidence only when ACES preparation requests it."""
+    if binding is not None:
+        return load("aces_source_admission").snapshot(binding)
+    old = common()
+    admission = old.snapshot_admission(run)
+    numerical = old.source_identity(admission["source_root"], SOURCE_COMMIT, old.numerical_paths(admission["source_root"]))
+    return admission, numerical, old.original_configuration(admission["source_root"], admission)
+
+
+def check_admission(plan):
+    """Keep ordinary admission checks unchanged and separately recheck explicit portable inputs."""
+    if "portable_admission" in plan:
+        return load("aces_source_admission").check(plan)
+    return common().check_admission(plan["campaign_run_dir"], plan["admission"])
 
 
 def submission_command(run, directory):
@@ -118,6 +136,14 @@ def software_observations(plan):
     return {"installed_backend": installed, "asset_receipt": assets}
 
 
+def checked_software(plan):
+    """Require actual native package, source, library and asset observations to match preparation."""
+    software = software_observations(plan)
+    if software != bound(plan["software_at_prepare"]):
+        raise ValueError("the actual target packages, JAXtari source, GPU images or assets changed")
+    return software
+
+
 def prepare(arguments):
     """Write a new unsubmitted ACES plan and standard records using the selected actual interpreter."""
     old, policy = common(), qualifier()
@@ -132,8 +158,17 @@ def prepare(arguments):
     identity = old.source_identity(helper, commit, [PREFIX + name for name in helpers()])
     if Path(__file__).resolve() != helper / PREFIX / "aces_slurm_site_validation.py":
         raise ValueError("prepare through the exact detached committed ACES entry point")
-    admission = old.snapshot_admission(run)
-    numerical = old.source_identity(admission["source_root"], SOURCE_COMMIT, old.numerical_paths(admission["source_root"]))
+    # The optional mapping relocates original bytes; native software is still observed below.
+    portable_arguments = [getattr(arguments, name, None) for name in
+        ("admission_run_dir", "evidence_manifest", "evidence_manifest_sha256")]
+    if any(value is not None for value in portable_arguments) and not all(value is not None for value in portable_arguments):
+        raise ValueError("portable ACES preparation needs the original run, exact manifest and SHA256 together")
+    binding = None if portable_arguments[0] is None else {"schema_version": 1,
+        "kind": "aces_original_source_portable_admission", "campaign_run_dir": str(portable_arguments[0]),
+        "evidence_manifest": {"path": str(portable_arguments[1]), "sha256": portable_arguments[2]}}
+    if binding is not None and Path(binding["campaign_run_dir"]).name != run.name:
+        raise ValueError("the portable original and native ACES campaign names differ")
+    admission, numerical, configuration = admission_inputs(run, binding)
     reference = old.cleanrl_identity(arguments.cleanrl_root)
     old.require_gate_controls(os.environ, reference)
     unit = run / "data" / directory.name
@@ -142,7 +177,7 @@ def prepare(arguments):
     plan = {"schema_version": 1, "kind": "aces_full_site_qualification", "cluster": "aces",
         "campaign_run_dir": str(run), "data_unit": {"name": directory.name, "path": str(unit)},
         "source_commit": SOURCE_COMMIT, "helpers": identity, "numerical_source": numerical, "admission": admission,
-        "cleanrl_reference": reference, "configuration": old.original_configuration(admission["source_root"], admission),
+        "cleanrl_reference": reference, "configuration": configuration,
         "runtime_environment": old.RUNTIME, "gate_environment_policy": old.GATE_ENVIRONMENT_POLICY,
         "qualification_profile": policy.PROFILE, "python": str(arguments.python.absolute()),
         "asset_record": read_exact(arguments.asset_record), "jaxtari_source_root": str(arguments.jaxtari_source_root.resolve(strict=True)),
@@ -150,10 +185,13 @@ def prepare(arguments):
         "job_shape": JOB_SHAPE, "submission_control": SUBMISSION_CONTROL,
         "reference_updates": 1, "child_order": list(KINDS), **policy.BOUNDARY,
         "created_at_utc": datetime.now(timezone.utc).isoformat()}
+    if binding is not None:
+        plan["portable_admission"] = binding
     software = software_observations(plan)
     directory.mkdir()
     unit.mkdir()
-    plan["admission_archive"] = old.archive_admission(directory, admission)
+    plan["admission_archive"] = (old.archive_admission(directory, admission) if binding is None else
+        load("aces_source_admission").archive(directory, admission, binding))
     old.write_once(directory / "software_at_prepare.json", software)
     plan["software_at_prepare"] = receipt(directory / "software_at_prepare.json")
     old.write_once(directory / "site_validation_plan.json", plan)
@@ -217,8 +255,11 @@ def prepared(directory):
     if (plan["numerical_source"]["source_commit"] != SOURCE_COMMIT
             or sorted(plan["numerical_source"]["files"]) != old.numerical_paths(plan["numerical_source"]["source_root"])
             or old.cleanrl_identity(plan["cleanrl_reference"]["source_root"]) != plan["cleanrl_reference"]
-            or old.original_configuration(plan["numerical_source"]["source_root"], plan["admission"]) != plan["configuration"]):
+            or ("portable_admission" not in plan and
+                old.original_configuration(plan["numerical_source"]["source_root"], plan["admission"]) != plan["configuration"])):
         raise ValueError("the complete original numerical source, configuration or CleanRL reference changed")
+    if "portable_admission" in plan:
+        check_admission(plan)
     unit = Path(plan["data_unit"]["path"])
     ordinary_path(unit, directory=True)
     if (plan["data_unit"]["name"] != directory.name or unit != Path(plan["campaign_run_dir"]) / "data" / directory.name
@@ -437,9 +478,7 @@ def child(directory, kind):
     selector = parent_allocation["cuda_selector_original"] if kind == "identity" else allocation["gpu_uuid"]
     if os.environ.get("CUDA_VISIBLE_DEVICES") != selector:
         raise ValueError("the ACES child changed the required original or verified CUDA selector")
-    software = software_observations(plan)
-    if software != bound(plan["software_at_prepare"]):
-        raise ValueError("the actual target packages, JAXtari source, GPU images or assets changed")
+    software = checked_software(plan)
     process = {**owner, "source_commit": SOURCE_COMMIT, "configuration": plan["configuration"],
         "runtime_environment": old.require_runtime(os.environ), "cuda_selector": selector, "software": software,
         "allocation": allocation, "allocation_observation": receipt(unit / (kind + "_allocation_observation.json")),
@@ -565,7 +604,7 @@ def run(directory):
     if any((unit / name).exists() for name in ("result.json", "failure.json", "parent_allocation_observation.json")):
         raise ValueError("a previous ACES site launch is immutable; prepare a new packet")
     try:
-        old.check_admission(plan["campaign_run_dir"], plan["admission"])
+        check_admission(plan)
         old.require_runtime(os.environ)
         old.require_gate_controls(os.environ, plan["cleanrl_reference"])
         observation = allocation_observation(plan, directory)
@@ -576,11 +615,11 @@ def run(directory):
         with (Path("/tmp") / ("sl359075_aces_site_" + assignment["gpu_uuid"] + ".lock")).open("a+") as lock, old.interrupted():
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             for kind in KINDS:
-                old.check_admission(plan["campaign_run_dir"], plan["admission"])
+                check_admission(plan)
                 if kind != "identity":
                     verify_identity_result(read_exact(unit / "identity_result.json"), read_exact(unit / "identity_process.json"), unit, "identity")
                 run_child(plan, directory, unit, kind, assignment)
-            old.check_admission(plan["campaign_run_dir"], plan["admission"])
+            check_admission(plan)
             result = {"schema_version": 1, "kind": "aces_full_site_evidence", "passed": True,
                 "plan": receipt(directory / "site_validation_plan.json"), "qualification_profile": policy.PROFILE,
                 "parent_observation": receipt(unit / "parent_allocation_observation.json"), "assignment": receipt(unit / "site_assignment.json"),
@@ -605,6 +644,9 @@ def main():
     preparation = commands.add_parser("prepare")
     for flag in ("run-dir", "helper-root", "output-dir", "python", "cleanrl-root", "asset-record", "jaxtari-source-root"):
         preparation.add_argument("--" + flag, type=Path, required=True)
+    preparation.add_argument("--admission-run-dir", type=Path)
+    preparation.add_argument("--evidence-manifest", type=Path)
+    preparation.add_argument("--evidence-manifest-sha256")
     for name in ("run", "verify", "child"):
         command = commands.add_parser(name)
         command.add_argument("--directory", type=Path, required=True)

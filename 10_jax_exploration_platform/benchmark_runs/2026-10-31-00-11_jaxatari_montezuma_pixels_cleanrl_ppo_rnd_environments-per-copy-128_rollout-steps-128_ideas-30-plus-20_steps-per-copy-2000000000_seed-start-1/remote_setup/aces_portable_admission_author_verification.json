@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "kind": "aces_portable_admission_author_verification",
+  "recorded_at_utc": "2026-11-01T09:12:57.070863+00:00",
+  "base_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673",
+  "source_hashes": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": "1b6474876f5646dfe65d104b6fec8263215da51243a7b3df9eb1c4b0e1557d1c",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_source_admission.py": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_source_admission.py": "d8ccb97a5d1e4bc06d9c999f284386c55807e0c6ca535560d8966cfa0e1012c6"
+  },
+  "tests": [
+    {
+      "pattern": "test_aces_source_admission.py",
+      "cases": 10,
+      "passed": true,
+      "seconds": 72.552
+    },
+    {
+      "pattern": "test_aces_slurm_site_validation.py",
+      "cases": 12,
+      "passed": true,
+      "seconds": 0.745
+    },
+    {
+      "pattern": "test_portable_evidence.py",
+      "cases": 9,
+      "passed": true,
+      "seconds": 6.102
+    }
+  ],
+  "commands": [
+    "/usr/bin/python3 -m unittest discover -s 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests -p test_aces_source_admission.py -v",
+    "/usr/bin/python3 -m unittest discover -s 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests -p test_aces_slurm_site_validation.py -v",
+    "/usr/bin/python3 -m unittest discover -s 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests -p test_portable_evidence.py -v"
+  ],
+  "actual_campaign_check": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_portable_actual_campaign_metadata_check.json",
+    "sha256": "089dd1cf765ab946dc981a87bdab7a1416ca81a41d0f4d16f7e4c181fc534a86"
+  },
+  "original_admission_unchanged": true,
+  "uva_site_helper_unchanged": true,
+  "initial_metadata_check_failure_and_correction": "The actual gate rows include command and hardware beside path/SHA. The adapter now validates the raw receipt and requires those original extra fields to equal its reconstructed full check. No original bytes changed.",
+  "resource_basis": {
+    "job_id": "2271806",
+    "requested_memory": "32G",
+    "completed_reference_rounds": 7,
+    "updates_per_round": 10,
+    "policies": 1,
+    "environments_per_policy": 128,
+    "rollout_steps": 128,
+    "epochs": 4,
+    "minibatches": 4,
+    "warmup_rollouts": 50,
+    "records": [
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_reference_probe/aces_reference_d28e673.sbatch",
+        "sha256": "ad5d40cd910ada7e7cfb9071cba576d7903c75151a6c149b59339cad04259912"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/hardware.json",
+        "sha256": "0cab192abe04a2f73196d7af4553746b9a899671c585b46c8b312dcbef9e5556"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/arguments.json",
+        "sha256": "0612eda27a4bc0e83ab11a23ac289e9af2db39a90af2c30d145a2490a24a7bc2"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/config_resolved.json",
+        "sha256": "84ed1aa073a169a46957318ea769a649958a2b8c6f8652ddaaa22105fcd643f8"
+      },
+      {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797/result.json",
+        "sha256": "a593e91f775b4547492a4bb97f85b04c1d1db4d5f5ef83c666ad34f5814c9abd"
+      }
+    ]
+  },
+  "native_aces_software_observed": false,
+  "numerical_imports": [],
+  "ssh_calls": 0,
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

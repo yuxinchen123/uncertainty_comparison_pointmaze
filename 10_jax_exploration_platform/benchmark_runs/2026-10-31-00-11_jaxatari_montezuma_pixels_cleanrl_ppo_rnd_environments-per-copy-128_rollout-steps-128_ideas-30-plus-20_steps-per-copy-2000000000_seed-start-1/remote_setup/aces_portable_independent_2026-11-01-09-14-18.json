@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kind": "aces_portable_admission_independent_review",
+  "started_at_utc": "2026-11-01T09:13:43.948031+00:00",
+  "finished_at_utc": "2026-11-01T09:14:18.802748+00:00",
+  "source_sha256": {
+    "aces_slurm_site_validation.py": "1b6474876f5646dfe65d104b6fec8263215da51243a7b3df9eb1c4b0e1557d1c",
+    "aces_source_admission.py": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929",
+    "tests/test_aces_source_admission.py": "d8ccb97a5d1e4bc06d9c999f284386c55807e0c6ca535560d8966cfa0e1012c6"
+  },
+  "tests_run": 5,
+  "test_names": [
+    "test_relocated_complete_admission_keeps_original_paths_and_native_source",
+    "test_omitted_mapping_never_uses_original_or_path_prefix",
+    "test_rehashed_partial_gate_command_and_wrong_hardware_reject",
+    "test_recorded_gate_metadata_must_equal_its_raw_record",
+    "test_native_software_is_observed_and_cannot_be_substituted_by_mapping"
+  ],
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "forbidden_command_attempts": [],
+  "numerical_imports": [],
+  "scope": "small standard-library exact-file/Git metadata fixtures only; no native software preparation, SSH or job action",
+  "log": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_portable_independent_2026-11-01-09-14-18.log",
+    "sha256": "346ac78e892f9f6ac45b4a2dce0cb32e1602611a98b5d8bca94cc020af7450ee"
+  }
+}
