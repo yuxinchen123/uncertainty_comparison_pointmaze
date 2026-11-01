@@ -1,0 +1,19 @@
+{
+  "kind": "aces_native_staging_independent_metadata_review",
+  "at_utc": "2026-11-01T09:35:18.457211+00:00",
+  "driver_sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+  "test_sha256": "0a3b5d76acb415ea453edd03de89b9e956453ba164da873a096bb68ec9f5aebb",
+  "plan_sha256": "30892127adbc487f157dcb36d89e79635041278b09ca746d7b9e7139d9cb9d8f",
+  "tests_run": 14,
+  "passed": true,
+  "failures": 0,
+  "errors": 0,
+  "numerical_imports": [],
+  "live_commands_forbidden": true,
+  "reviewed_existing_master_only": true,
+  "reviewed_exact_prepare_only_no_scheduler": true,
+  "actual_native_preparation_performed": false,
+  "actual_cleanrl_clone_sequence_proof_still_pending": true,
+  "scientific_credit": 0,
+  "test_output": "test_bad_or_truncated_stream_never_publishes_a_final_file (independent_native_staging_test.StagingTests)\nA wrong SHA or missing tail leaves no artifact at the reserved final path. ... ok\ntest_complete_metadata_response_binds_all_raw_files_and_zero_credit (independent_native_staging_test.StagingTests)\nAll exact returned records are saved without a native qualification or job claim. ... ok\ntest_complete_receiver_saves_real_bytes_before_returning_its_receipt (independent_native_staging_test.StagingTests)\nThe production receiver returns its complete immutable prepared-file stream without self-reference. ... ok\ntest_existing_master_options_do_not_check_or_authenticate (independent_native_staging_test.StagingTests)\nA missing existing master has no proxy or authentication fallback and no separate check. ... ok\ntest_foreign_plan_and_changed_local_bytes_fail_before_any_network (independent_native_staging_test.StagingTests)\nPlan/hash validation completes before a network process can be created. ... ok\ntest_fresh_checkouts_and_no_other_program_is_allowed (independent_native_staging_test.StagingTests)\nOnly the fixed Git construction and metadata prepare action can reach subprocess.run. ... ok\ntest_linked_file_or_parent_is_rejected_without_external_writes (independent_native_staging_test.StagingTests)\nNeither an artifact nor its parent may redirect copied bytes through a symlink. ... ok\ntest_race_during_new_file_publication_preserves_conflicting_bytes (independent_native_staging_test.StagingTests)\nAn existing path created after validation cannot be overwritten by publication. ... ok\ntest_remote_failure_preserves_commands_and_never_retries (independent_native_staging_test.StagingTests)\nAn actual receiver exception retains command evidence and propagates the failure. ... ok\ntest_response_rejects_path_escape_foreign_plan_and_numeric_credit_substitute (independent_native_staging_test.StagingTests)\nA successful-looking header cannot redirect files or substitute foreign identity or credit. ... ok\ntest_reviewed_plan_layout_and_only_prepare_command (independent_native_staging_test.StagingTests)\nThe original reviewed plan pins all thirteen targets and actual metadata preparation. ... ok\ntest_selector_environment_is_explicit_and_unrelated_gate_controls_reject (independent_native_staging_test.StagingTests)\nNative preparation uses the known assets/reference and rejects inherited pytest selectors. ... ok\ntest_sender_is_bounded_by_exact_length_and_incremental_hash (independent_native_staging_test.StagingTests)\nA sender transmits the full expected input and rejects a changed size or byte value. ... ok\ntest_stream_publication_preserves_identical_or_conflicting_existing_bytes (independent_native_staging_test.StagingTests)\nComplete identical input is retained while a different existing file remains unchanged. ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 3.045s\n\nOK\n"
+}

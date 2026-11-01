@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "kind": "aces_native_staging_driver_author_verification",
+  "recorded_at_utc": "2026-11-01T09:33:40.650085+00:00",
+  "scope": "stdlib metadata and mocked transport only; no SSH, master check, authentication, scheduler action or numerical code",
+  "files": {
+    "stage_aces_full_site_inputs.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+      "sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a"
+    },
+    "test_stage_aces_full_site_inputs.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_stage_aces_full_site_inputs.py",
+      "sha256": "0a3b5d76acb415ea453edd03de89b9e956453ba164da873a096bb68ec9f5aebb"
+    },
+    "aces_full_site_native_staging_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_full_site_native_staging_plan.json",
+      "sha256": "30892127adbc487f157dcb36d89e79635041278b09ca746d7b9e7139d9cb9d8f"
+    },
+    "aces_native_staging_description.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_native_staging_description.json",
+      "sha256": "a7e43d5a93a02b8d60f622af213aa971944ef17e4f581e5536c3da7b1cff383b"
+    }
+  },
+  "test_command": [
+    "/usr/bin/python3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_stage_aces_full_site_inputs.py",
+    "-v"
+  ],
+  "test_cases": 14,
+  "test_seconds": 3.003,
+  "test_passed": true,
+  "real_local_validation_command": [
+    "/usr/bin/python3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+    "--plan",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_full_site_native_staging_plan.json"
+  ],
+  "real_local_thirteen_file_hash_validation_passed": true,
+  "network_calls": 0,
+  "master_separately_checked": false,
+  "authentication_attempts": 0,
+  "remote_metadata_timeout_seconds": 540,
+  "ssh_timeout_seconds": 600,
+  "automatic_retry_permitted": false,
+  "helper_dependency": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963",
+    "commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "status": "parent independently staged and verified; author made no remote call"
+  },
+  "execution_command_requires_root_review": [
+    "/usr/bin/python3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/stage_aces_full_site_inputs.py",
+    "--plan",
+    "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_full_site_native_staging_plan.json",
+    "--execute",
+    "--receipt-directory",
+    "<fresh absolute local metadata receipt directory>"
+  ],
+  "execution_will_only_prepare_native_metadata": true,
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_native_preparation_staging_plan",
+  "state": "local exact inputs ready; native ACES preparation not yet executed",
+  "remote_inputs_directory": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04",
+  "planned_packet_name": "2026-11-01-01-16_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "packet_name_utf8_bytes": 242,
+  "remote_campaign_run_dir": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "remote_packet_directory": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-16_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "remote_data_unit": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-01-16_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "exact_copy_allowlist": [
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7.json",
+      "sha256": "2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7",
+      "bytes": 10136
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/432016ba06fd3334ead85602ac3f92567bd890b6c42569d6680cc956a3bdcc5e.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/432016ba06fd3334ead85602ac3f92567bd890b6c42569d6680cc956a3bdcc5e.json",
+      "sha256": "432016ba06fd3334ead85602ac3f92567bd890b6c42569d6680cc956a3bdcc5e",
+      "bytes": 1451
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c.json",
+      "sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+      "bytes": 1888
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/4ca5c7345f5c2bf5c10b0323d46b59817199640f07bf8c1f43973ba43564f6ad.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/4ca5c7345f5c2bf5c10b0323d46b59817199640f07bf8c1f43973ba43564f6ad.json",
+      "sha256": "4ca5c7345f5c2bf5c10b0323d46b59817199640f07bf8c1f43973ba43564f6ad",
+      "bytes": 1698
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def.json",
+      "sha256": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+      "bytes": 10454
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/84ed1aa073a169a46957318ea769a649958a2b8c6f8652ddaaa22105fcd643f8.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/84ed1aa073a169a46957318ea769a649958a2b8c6f8652ddaaa22105fcd643f8.json",
+      "sha256": "84ed1aa073a169a46957318ea769a649958a2b8c6f8652ddaaa22105fcd643f8",
+      "bytes": 1546
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/b4c1e96fba666582d71e51094b90782f473343d34d769f0be04d387a93151469.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/b4c1e96fba666582d71e51094b90782f473343d34d769f0be04d387a93151469.json",
+      "sha256": "b4c1e96fba666582d71e51094b90782f473343d34d769f0be04d387a93151469",
+      "bytes": 1339
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/raw/e1802df2f524f77678b1bd77d2884d571f459bffef4748a1ff19d693f30cfb6b.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/raw/e1802df2f524f77678b1bd77d2884d571f459bffef4748a1ff19d693f30cfb6b.json",
+      "sha256": "e1802df2f524f77678b1bd77d2884d571f459bffef4748a1ff19d693f30cfb6b",
+      "bytes": 1810
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/portable_evidence.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/portable_evidence.json",
+      "sha256": "7489ef34efd50d79d3e3010e6f178491e03aee68bab94a16d2d98ae3e407c579",
+      "bytes": 36342
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/expected_assets_manifest.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/expected_assets_manifest.json",
+      "sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+      "bytes": 561770
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/actual_campaign_portable_inputs/asset_record.json",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/asset_record.json",
+      "sha256": "f5d7c98fc62f6ddba2e56b65605e11da1f55cc0ba328a4961b25bb356f13c84f",
+      "bytes": 328
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/original_cleanrl_fe8d8a03c41a.bundle",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/original_cleanrl_fe8d8a03c41a.bundle",
+      "sha256": "c99eabaab902116ffefc077e2a6b945b843ceaa03294dc2c16a66afb606ecf80",
+      "bytes": 139625369
+    },
+    {
+      "local_path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_helpers_8e43cb1dc963_incremental_from_11ceab5c640b.bundle",
+      "remote_path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/aces_helpers_8e43cb1dc963_incremental_from_11ceab5c640b.bundle",
+      "sha256": "7459232436c46d1224dda2c021553bbb1f145296a5967bda1689127bcd056128",
+      "bytes": 1654324
+    }
+  ],
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "native_numerical_checkout_required": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/numerical_source",
+    "git_repository": "/scratch/user/u.sl359075/rnd_atari_pixels/git/repository.git",
+    "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "mode": "new clean detached sparse checkout; preserve existing checkouts",
+    "sparse_cones": [
+      "10_jax_exploration_platform/src",
+      "10_jax_exploration_platform/scripts",
+      "10_jax_exploration_platform/tests"
+    ]
+  },
+  "native_cleanrl_checkout_required": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source",
+    "bundle": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/original_cleanrl_fe8d8a03c41a.bundle",
+    "commit": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb",
+    "file": "cleanrl/ppo_rnd_envpool.py",
+    "sha256": "d6ec2fb0f2f1e3f78624b001f02abbe5fc46a645e2f88b2ff644609e3d1e5560",
+    "git_blob": "0c1758274e6b7c47c94dd54818ddf6798506d6fb",
+    "mode": "new actual detached Git checkout; do not infer checkout exists"
+  },
+  "native_prepare_parameters": {
+    "run-dir": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "output-dir": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-16_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+    "python": "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+    "cleanrl-root": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source",
+    "asset-record": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/asset_record.json",
+    "jaxtari-source-root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+    "admission-run-dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "evidence-manifest": "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/portable_evidence.json",
+    "evidence-manifest-sha256": "7489ef34efd50d79d3e3010e6f178491e03aee68bab94a16d2d98ae3e407c579",
+    "helper-root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963"
+  },
+  "required_after_source_publication": [
+    "Inspect and mirror every actual native prepared file retaining remote paths and exact hashes.",
+    "Verify the separately published full-site monitor/refresher against the actual held job before release.",
+    "Register the exact held command, returned jobID and matching owned ACES ledger/row/receipt durably before releasing only that ID."
+  ],
+  "job_shape": {
+    "account": "158590754315",
+    "partition": "gpu",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "gres": "gpu:h100:1",
+    "cpus_per_task": 8,
+    "memory": "32G",
+    "time": "03:00:00"
+  },
+  "host_memory_basis": {
+    "exact_owned_job": "2271806",
+    "requested_memory": "32G",
+    "full_reference_rounds_completed": 7,
+    "updates_per_round": 10,
+    "configuration": "1policy128environments128rollout4epochs4minibatches50warmup"
+  },
+  "portable_scope": "only original admission/source byte reads; actual target package, asset, library and CUDA observations are not replaced by mappings",
+  "native_software_at_prepare_claimed": false,
+  "prepared_packet_claimed": false,
+  "ssh_calls": 0,
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "published_helper_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "native_helper_root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963",
+  "local_published_helper_identity": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/published_helper_source",
+    "source_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "f0446661376871ea3c3c925946c6a95da5ef3144548473b0eb62e15b6028bf62",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "4a646c85e388e08a1580fb00223adcde16a2770e88b50598733132d7a4523f45",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "60adbea534651decaed6112854678d4739e46ec032b4f8a7c38b811fdc6d463c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": "1b6474876f5646dfe65d104b6fec8263215da51243a7b3df9eb1c4b0e1557d1c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_source_admission.py": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    }
+  },
+  "expected_native_helper_identity": {
+    "source_root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963",
+    "source_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "f0446661376871ea3c3c925946c6a95da5ef3144548473b0eb62e15b6028bf62",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "4a646c85e388e08a1580fb00223adcde16a2770e88b50598733132d7a4523f45",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "60adbea534651decaed6112854678d4739e46ec032b4f8a7c38b811fdc6d463c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": "1b6474876f5646dfe65d104b6fec8263215da51243a7b3df9eb1c4b0e1557d1c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_source_admission.py": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    }
+  },
+  "native_prepare_command": [
+    "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+    "-I",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py",
+    "prepare",
+    "--run-dir",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--output-dir",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-16_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+    "--python",
+    "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+    "--cleanrl-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source",
+    "--asset-record",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/asset_record.json",
+    "--jaxtari-source-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+    "--admission-run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--evidence-manifest",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/portable_evidence.json",
+    "--evidence-manifest-sha256",
+    "7489ef34efd50d79d3e3010e6f178491e03aee68bab94a16d2d98ae3e407c579",
+    "--helper-root",
+    "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963"
+  ],
+  "helper_bundle_prerequisite": "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "helper_bundle_target": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "required_before_native_prepare": [
+    "Copy and hash every exact allowlisted file; retain existing different files and stop on conflicts.",
+    "Verify the existing bare repository has helper prerequisite11ce and numericalD28; import only the reviewed incremental helper bundle.",
+    "Create and verify fresh detached helper8e43, numericalD28 and CleanRLfe8 real Git checkouts; preserve old checkouts.",
+    "Use the explicit project Python as actual ACES UID56626; keep inherited pytest selectors and optimization unset.",
+    "Native prepare must verify the expected original assets, actual installed JAXtari Python bytes and actual package/library images before publishing its standard records."
+  ],
+  "prepared_packet_standard_files_expected": [
+    "experiment_background.md",
+    "manifest.yaml",
+    "config_resolved.yaml",
+    "command.txt",
+    "site_validation_plan.json",
+    "software_at_prepare.json",
+    "job.sbatch",
+    "admission_files/record-1_SOURCE_AND_GATES_READY.json",
+    "admission_files/record-2_reference_configuration.json",
+    "admission_files/record-3_h100.json",
+    "admission_files/record-4_jaguar03_rtx_a4500.json"
+  ]
+}

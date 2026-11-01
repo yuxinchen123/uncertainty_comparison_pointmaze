@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "kind": "aces_cleanrl_exact_two_stage_git_verification",
+  "passed": true,
+  "recorded_at_utc": "2026-11-01T09:34:51.214401+00:00",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/original_cleanrl_fe8d8a03c41a.bundle"
+      ],
+      "returncode": 0,
+      "stdout": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb HEAD\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--bare",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/original_cleanrl_fe8d8a03c41a.bundle",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_repository.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into bare repository '/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_repository.git'...\n"
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-checkout",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_repository.git",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source'...\ndone.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "sparse-checkout",
+        "set",
+        "cleanrl"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "checkout",
+        "--detach",
+        "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at fe8d8a0 docs: fix PPO title, variable typo, baselines URL, and PQN doc URL (#549)\n"
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_repository.git",
+        "rev-parse",
+        "--is-bare-repository"
+      ],
+      "returncode": 0,
+      "stdout": "true\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_repository.git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "returncode": 0,
+      "stdout": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "rev-parse",
+        "--abbrev-ref",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "HEAD\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "bundle": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/original_cleanrl_fe8d8a03c41a.bundle",
+    "sha256": "c99eabaab902116ffefc077e2a6b945b843ceaa03294dc2c16a66afb606ecf80"
+  },
+  "actual_file": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/cleanrl_two_stage_verification/cleanrl_source/cleanrl/ppo_rnd_envpool.py",
+    "sha256": "d6ec2fb0f2f1e3f78624b001f02abbe5fc46a645e2f88b2ff644609e3d1e5560"
+  },
+  "clean_detached_commit": "fe8d8a03c41a7ef5b523e2e354bd01c363e786bb",
+  "memory_limit_bytes": 2147483648,
+  "cpu_limit_seconds": 120,
+  "git_configuration": {
+    "pack.threads": 1,
+    "pack.windowMemory": "64m",
+    "core.packedGitLimit": "128m"
+  },
+  "numerical_imports": [],
+  "ssh_calls": 0,
+  "jobs_submitted": 0
+}
