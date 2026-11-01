@@ -182,11 +182,11 @@
     "timezone": "America/Los_Angeles",
     "expires_at": "2026-11-08T11:00:00Z",
     "expires_at_utc": "2026-11-08T11:00:00Z",
-    "next_run_at_utc": "2026-11-01T12:00:00Z",
+    "next_run_at_utc": "2026-11-01T12:20:00Z",
     "replacement_verified_before_old_deleted": true,
     "verified_at_utc": "2026-11-01T11:34:13.171398+00:00",
-    "last_delivery_at_utc": "2026-11-01T11:40:00Z",
-    "last_delivery_verified_at_utc": "2026-11-01T11:41:55.918150+00:00"
+    "last_delivery_at_utc": "2026-11-01T12:00:00Z",
+    "last_delivery_verified_at_utc": "2026-11-01T12:02:02.431122+00:00"
   },
   "h100_slurm_site_validation_previous_failure": {
     "state": "failed_before_gpu_initialization",
@@ -230,8 +230,8 @@
     "session_cron_id": "07e28732-828d-456d-8d73-218f107687dd",
     "contains_reviewed_checkpoint_and_deadline_fixes": true,
     "future_adaptive_source_qualification_still_required": true,
-    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-11-40_verification.json",
-    "last_verified_at_utc": "2026-11-01T11:41:55.918150+00:00"
+    "latest_full_report_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-12-00_verification.json",
+    "last_verified_at_utc": "2026-11-01T12:02:02.431122+00:00"
   },
   "h100_allocation_observation": {
     "state": "submitted_released_waiting_for_allocation",
@@ -583,20 +583,15 @@
     "old_monitor_preserved": "6780608"
   },
   "packing_device_memory_failure_receipt": {
-    "state": "isolated_independent_review_corrections_in_progress_inactive",
+    "state": "reviewed_source_published_inactive_waiting_for_separate_gpu_capture_regression",
     "reason": "existing completed low-headroom rule cannot close a genuine failed next doubling",
     "current_rule_and_admission_unchanged": true,
     "failed_attempt_scientific_credit": 0,
     "actual_producer_regression_required_before_activation": true,
     "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15",
-    "published": false,
+    "published": true,
     "independent_approval": false,
-    "latest_required_corrections": [
-      "bind expected owner UID in task cgroup",
-      "bind distinct parent and child birth identities",
-      "validate original failed full seven-round ten-update complete window",
-      "capture actual mapped driver bytes to immutable shared storage before allocation ends"
-    ],
+    "latest_required_corrections": [],
     "diagnostic_canary_authorized_shape": {
       "host": "jaguar03",
       "gpu_type": "RTX A4500",
@@ -610,7 +605,32 @@
       "comparison_credit": 0,
       "formal_capacity_credit": 0
     },
-    "diagnostic_canary_submitted": false
+    "diagnostic_canary_submitted": false,
+    "corrected_freeze": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_corrected_freeze_2026-11-01.json",
+      "sha256": "a55a281d31f0b12ee44666e9f929c2d076604a192c853caba4838de338f2c1f6"
+    },
+    "corrected_author_suite": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_corrected_author_6780635_14.json",
+      "sha256": "ef1d27ed160aa75a1bf42eecce1b8cb4565f6febca7e27c97c7de7992b385b12",
+      "cases": 141,
+      "passed": true
+    },
+    "corrected_independent_suite": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/instrumented_memory_limit_independent_6780635_15.json",
+      "sha256": "14d738513474240234fcbe0380afa55ec100c1cbd2437ce465aff87fe7172e65",
+      "cases": 141,
+      "passed": true
+    },
+    "published_source_commit": "c5d26451b8703e65fa45df26ce8cffc1a6528b90",
+    "independent_source_review_passed": true,
+    "formal_rule_enabled": false,
+    "source_integration_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/memory_protocol_integration_verification_c5d2645.json",
+    "source_admission_unchanged_verified": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json",
+      "sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c"
+    },
+    "actual_gpu_regression_passed": false
   },
   "final_evidence_protocol_completion": {
     "state": "isolated_implementation_and_metadata_tests_in_progress_inactive",
@@ -655,6 +675,12 @@
     "new_final_admission_requires_version_two": true,
     "historical_schema_one_readers_preserved": true,
     "gpu_regression_submitted": false,
-    "source_publication_and_independent_review_required": true
+    "source_publication_and_independent_review_required": true,
+    "additional_required_checks": [
+      "bind final confirmation and learning to an immutable completed-fifty-idea proof before measurement",
+      "compare the diagnostic observer with actual selected Executor execution and scheduled reports",
+      "load short-learning helper only from its exact staged bytes",
+      "record explicit histogram bins and exact per-lane boundary coverage"
+    ]
   }
 }
