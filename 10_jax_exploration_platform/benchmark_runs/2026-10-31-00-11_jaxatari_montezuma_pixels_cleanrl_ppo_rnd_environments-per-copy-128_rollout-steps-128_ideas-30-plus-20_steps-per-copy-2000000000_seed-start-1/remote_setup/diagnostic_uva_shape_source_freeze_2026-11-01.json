@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_uva_generic_allocated_gpu_typed_request_source_freeze",
+  "created_utc": "2026-11-01T13:37:45.359295+00:00",
+  "base_commit": "5cb72fe6c798327edf92e88a3b2292b943c2e8a3",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "585abcac9dbf42e60e341a4858e2ac7ac6c02b03b2eab587a4c08a74319bde5d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "524ccafa7226faa27252b4ab5141576964c38a737a3c430df5562348ddc24bce",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_checkpoint_allocation_6780569.json": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+  },
+  "author": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_author_6780635_49.json",
+    "sha256": "5c6deab5c19f0a4d1ecce3b18ce605ebf1add23bd7e0d5aa69632eeeec6aa228"
+  },
+  "actual_guard_sha256": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85",
+  "scope": "Require generic allocated GPU count one and exact TresPerNode=gres/gpu:nvidia_rtx_a4500:1; optional typed allocated GPU fields may not contradict. Keep separate explicit configured GRES File/proc mapping unchanged.",
+  "fixture_source": "Actual owned checkpoint allocation6780569 guard copied byte-for-byte. Only the golden test changes its TimeLimit from40 to20minutes.",
+  "preserved_preparation_receipt": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_preparations_preserved_before_uva_shape_followup.json",
+  "known_pending_profile_question": "Actual UVA v2 cgroup lacks uid_N component required by current shared capacity ownership validator; reported to root, not weakened by this shape-only change.",
+  "actual_gpu_regression_passed": false,
+  "jobs_submitted": false,
+  "packing_point_credit": 0,
+  "admission_credit": 0
+}

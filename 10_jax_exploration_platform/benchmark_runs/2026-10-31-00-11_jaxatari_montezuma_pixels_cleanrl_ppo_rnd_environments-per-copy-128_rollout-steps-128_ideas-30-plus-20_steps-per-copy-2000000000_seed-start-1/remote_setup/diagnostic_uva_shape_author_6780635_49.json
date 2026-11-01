@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "diagnostic_uva_generic_allocation_typed_request_author_metadata_validation",
+  "created_utc": "2026-11-01T13:37:10.700352+00:00",
+  "job_id": "6780635",
+  "step_id": "49",
+  "before": {
+    "device_memory_capture_regression.py": "585abcac9dbf42e60e341a4858e2ac7ac6c02b03b2eab587a4c08a74319bde5d",
+    "tests/test_device_memory_capture_regression.py": "524ccafa7226faa27252b4ab5141576964c38a737a3c430df5562348ddc24bce",
+    "tests/fixtures/uva_owned_checkpoint_allocation_6780569.json": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+  },
+  "after": {
+    "device_memory_capture_regression.py": "585abcac9dbf42e60e341a4858e2ac7ac6c02b03b2eab587a4c08a74319bde5d",
+    "tests/test_device_memory_capture_regression.py": "524ccafa7226faa27252b4ab5141576964c38a737a3c430df5562348ddc24bce",
+    "tests/fixtures/uva_owned_checkpoint_allocation_6780569.json": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+  },
+  "source_unchanged": true,
+  "tests_run": 16,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "................\n----------------------------------------------------------------------\nRan 16 tests in 1.288s\n\nOK\n",
+  "blocked_actions": [],
+  "numerical_modules_loaded": [],
+  "actual_guard_sha256": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85",
+  "fixture_alteration": "Actual guard bytes unchanged; the golden shape check alone substitutes TimeLimit=00:40:00 with TimeLimit=00:20:00.",
+  "actual_gpu_regression_passed": false,
+  "jobs_submitted": false,
+  "packing_point_credit": 0,
+  "admission_credit": 0
+}
