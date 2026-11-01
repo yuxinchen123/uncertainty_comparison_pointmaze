@@ -1,0 +1,16 @@
+{
+  "kind": "owned_zero_gpu_observer_release",
+  "at_utc": "2026-11-01T16:00:03.500599+00:00",
+  "job_id": "6781190",
+  "command": [
+    "scontrol",
+    "release",
+    "6781190"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "published_review_commit": "6e2a67af353d4e3a2388dca574a98ed67ebc5255",
+  "release_review_sha256": "6a3464f70c8c8e95cd773c4230e8f6cd39ad645ad1b35a6feca7e6fff978fa68",
+  "gpu_count": 0
+}

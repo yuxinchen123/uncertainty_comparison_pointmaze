@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "kind": "independent_installed_slurm_observation_proposal_review",
+  "at_utc": "2026-11-01T16:25:04.684744+00:00",
+  "state": "design_review_only_no_installed_command_executed",
+  "original_proposal_sha256": "59aa0839e8fd68fc9ec5054fb1ec664b41dde491dccbd19f05d3a26f69492350",
+  "decision": "Approve a separate passive installed-build/configuration/startup-record observation design; do not enable the proposed generic slurmd -G child yet.",
+  "saved_evidence": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/observation.json",
+      "sha256": "390cf8b2ab3f2b3aedbd01a2222590bb53e68f08f1f4cee56a8b2a39026e1bc6"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/resource_observations.json",
+      "sha256": "034c653150525c9254863cb3493dbd055e12bad910b5193812aa9d5bc0c94659"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/allocation_resolution.json",
+      "sha256": "7c0d18e6687d6b63fdfa86ebfdb2d8323edd8f25ae1d5fcdece2f5ced814b19a"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/allocation_bootstrap_cgroup_v2.json",
+      "sha256": "968f65297409b696bf23fbd0bbc2850fc46503324f102c38d1e7e71f60256c23"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/hardware.json",
+      "sha256": "d9d516a99100a5ced5dcc3127c345c583241b7d7f4c4c889e966990fedf1dfcd"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4/failure.json",
+      "sha256": "0c4e38e47b331368ec7c84e9230ce3c804a8f3b1764b2701f45b8eb2fc1973d0"
+    }
+  ],
+  "actual_findings": {
+    "observer_job": "6781190",
+    "failed_job": "6781128",
+    "controller_reported_node_version": "23.11.6",
+    "controller_reported_slurmd_start_time": "2026-10-26T14:37:45",
+    "version_source": {
+      "command": [
+        "scontrol",
+        "show",
+        "node",
+        "jaguar03",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "NodeName=jaguar03 Arch=x86_64 CoresPerSocket=56  CPUAlloc=0 CPUEfctv=222 CPUTot=224 CPULoad=0.07 AvailableFeatures=a4500,amd_epyc_7663 ActiveFeatures=a4500,amd_epyc_7663 Gres=gpu:nvidia_rtx_a4500:8(S:0-1) NodeAddr=jaguar03 NodeHostName=jaguar03 Version=23.11.6 OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025  RealMemory=1024000 AllocMem=0 FreeMem=955976 Sockets=2 Boards=1 CoreSpecCount=1 CPUSpecList=222-223 MemSpecLimit=4000 State=IDLE+RESERVED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=gpu  BootTime=2026-10-26T14:35:23 SlurmdStartTime=2026-10-26T14:37:45 LastBusyTime=2026-11-01T10:04:34 ResumeAfterTime=None CfgTRES=cpu=222,mem=1000G,billing=153838,gres/gpu=8 AllocTRES= CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a ReservationName=sl5nw_168\n",
+      "stderr": ""
+    },
+    "version_limit": "The saved node Version field already exists. It is a controller-reported daemon version, not a hash/build proof for a local executable.",
+    "configurations": [
+      {
+        "path": "/etc/slurm/slurm.conf",
+        "owner_uid": 64030,
+        "sha256": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a",
+        "status": "observed"
+      },
+      {
+        "path": "/etc/slurm/gres.conf",
+        "owner_uid": 64030,
+        "sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+        "status": "observed"
+      },
+      {
+        "path": "/etc/slurm/cgroup.conf",
+        "owner_uid": 64030,
+        "sha256": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9",
+        "status": "observed"
+      },
+      {
+        "path": "/var/spool/slurmd/conf-cache/slurm.conf",
+        "owner_uid": null,
+        "sha256": null,
+        "status": "unavailable"
+      },
+      {
+        "path": "/var/spool/slurmd/conf-cache/gres.conf",
+        "owner_uid": null,
+        "sha256": null,
+        "status": "unavailable"
+      },
+      {
+        "path": "/var/spool/slurmd/conf-cache/cgroup.conf",
+        "owner_uid": null,
+        "sha256": null,
+        "status": "unavailable"
+      }
+    ],
+    "slurm_include_directive_present": true,
+    "physical_mapping_still_unverified": true,
+    "failed_job_integer_zero_is_not_mapping_proof": "The old job records scheduler IDX0, selectors0 and a physical minor0. Matching numbers do not replace the missing actual Slurm File-roster proof."
+  },
+  "concrete_corrections_to_original_proposal": [
+    {
+      "before": "Installed UVA version described only as not recorded by completed observer.",
+      "after": "Use the already retained node-reported23.11.6 as the candidate source version, while still requiring actual binary/package/build/manual proof."
+    },
+    {
+      "before": "The first proposed print child is an unbound installed slurmd -G -f /etc/slurm/slurm.conf.",
+      "after": "First observe installed files/configuration and any existing daemon startup GRES records without executing -G or loading NVML. Only a later reviewed exact-version scope can consider the print child."
+    },
+    {
+      "before": "Generic print-and-exit wording could imply no pre-print daemon/plugin initialization.",
+      "after": "Matching upstream23.11.6 reaches cgroup initialization and configuration/logging work before its GRES print branch. Treat this as a concrete read-only scope concern, not an automatic safe CLI."
+    }
+  ],
+  "primary_source_findings": [
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/slurmd/slurmd/slurmd.c",
+      "lines": [
+        "1501-1512",
+        "1581-1583",
+        "1613-1615",
+        "1014-1015",
+        "2025-2094"
+      ],
+      "finding": "Version parsing exits before configuration setup. The GRES print path loads configuration, auth/hash and cgroup first, calls the GRES loader, and exits zero without returning that loader status. Configuration reading calls logging and stepd-logging routines."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/plugins/cgroup/v2/cgroup_v2.c",
+      "lines": [
+        "939-998"
+      ],
+      "finding": "The cgroup plugin initializer has slurmd system-scope and manual-start migration paths. A read-only claim needs the installed exact branch and build behavior, not just the CLI name."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/interfaces/gres.c",
+      "lines": [
+        "905-954",
+        "2272-2335"
+      ],
+      "finding": "The printed Index derives from trailing file digits. Device bitmap position is a separate counter while consuming ordered records. Keep printed record order and filename/minor/bitmap fields separate."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/doc/man/man8/slurmd.8",
+      "lines": [
+        "96-110",
+        "171-174"
+      ],
+      "finding": "The matching manual describes selected configuration input, merged GRES printing and version printing. It does not certify absence of initialization side effects."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-23-11-6-1/src/plugins/gpu/nvml/gpu_nvml.c",
+      "lines": [
+        "743-756",
+        "1449-1518"
+      ],
+      "finding": "The plugin contains GPU metadata and separate process-accounting interfaces. A later runtime call graph must exclude process-accounting and control paths; the plugin name alone does not define that scope."
+    }
+  ],
+  "proposed_first_observation": {
+    "shape": {
+      "node": "jaguar03",
+      "requested_processors": 1,
+      "allowed_actual_cpu_threads": [
+        1,
+        2
+      ],
+      "host_memory_gib": 2,
+      "minutes": 5,
+      "gpu_count": 0,
+      "numeric_step": true,
+      "no_requeue": true,
+      "reservation": "Freeze the currently owned active reservation during preparation; do not reuse a stale value by assumption."
+    },
+    "job_ownership": "Reuse the reviewed actual UID/process/birth/step/ledger and request-versus-allocation checks. Save partial raw metadata before refusing any missing or contradictory identity.",
+    "installed_program_discovery": [
+      "Read only bounded ordinary systemd unit candidates and their drop-in files, retaining symlink chains and exact ExecStart tokens; do not call systemctl or inspect other process records.",
+      "Observe all slurmd/slurmstepd/scontrol candidates from those units and the captured PATH without executing them. Capture canonical path, full directory chain, owner/mode, regular-file identity, size, SHA256 and ELF build ID/DT_NEEDED/RPATH/RUNPATH using a passive parser. Do not use ldd.",
+      "Capture bounded package-database ownership/version/build metadata and exact installed manual bytes for those same files. A package label alone does not prove a vendor-patched binary equals the upstream tag. Record unsupported or custom builds explicitly.",
+      "Capture only ordinary installed plugin files selected by the observed PluginDir and version: GRES/GPU, cgroup, auth/hash; hash bytes without dlopen. Capture NVIDIA management library file/link metadata only, without loading it or opening devices. No recursive broad package scan."
+    ],
+    "configuration": [
+      "Retain before/after hashes and descriptor-bound file/path metadata for actual slurm.conf/gres.conf/cgroup.conf and only their version-correct bounded Include expansion. Preserve observed UID64030 and the actual service-user fields. Do not pretend these are root owned.",
+      "Record exact Include tokens/order/expansions and only non-secret relevant values: node identity/Gres, GresTypes, PluginDir, SlurmUser/SlurmdUser, SlurmdSpoolDir/log/pid paths, CgroupPlugin, task/proctrack settings and AutoDetect. Never read private keys or publish AuthInfo/credential values. Unknown escaping/globs, inaccessible includes, cycles, count/size limits or changes make the result incomplete.",
+      "Recommended bounds:64 included ordinary files,1MiB per file,64MiB total;32 service drop-in files/64KiB each; each bound has an explicit exceeded/error record and no success inference."
+    ],
+    "existing_runtime_roster": [
+      "If the observed SlurmdLogFile or an explicitly listed ordinary node startup record is readable, copy only bounded recognized startup GRES records tied to the saved/current exact node daemon start, preserving line offsets/order and window hash. Retain only node GRES/configuration fields; do not expose other users job records.",
+      "A missing/inaccessible/rotated log, absent GRES debug records, incomplete startup window or unbound daemon generation is an explicit unresolved result. Never scan an unbounded journal or broaden into other process/job queries.",
+      "A complete existing daemon startup File roster may clarify the running-daemon configuration without a new NVML call. Its source/binary/generation and actual current configuration still need independent review; it grants no job assignment or admission."
+    ],
+    "command_policy": "No slurmd -G, -C, daemon-start/reconfigure options, plugin loading, NVML/CUDA/device calls, privilege changes, other-process queries, controller mutations or configuration writes. A possible future exact-path slurmd -V is a separate small child only after its installed manual/ELF dependencies and exact-version early-exit path are reviewed; it is not needed for the initial passive byte capture.",
+    "output": "New immutable standard packet with zero credit, version/binary/manual/package/config/startup evidence, raw read errors and an explicit unresolved_fields list. Preserve both old units and every failed observation unchanged."
+  },
+  "later_print_child_gate": {
+    "currently_enabled": false,
+    "minimum_review": [
+      "Actual installed executable and all loaded plugin/library identities, matching manual/source/build, exact Include tree and stable config hashes.",
+      "Exact reviewed call graph before GRES print, including logging/stepd notifications, hwloc caches, cgroup/systemd scope/controller migration, authentication/config fetching and plugin constructors. No assumption that unprivileged permission failure makes an attempted write read only.",
+      "If any pre-print branch can write daemon/cgroup state, contact other jobs, fetch configuration or cannot be bounded, keep -G blocked. Prefer a readable existing daemon roster or a separately reviewed supported read-only interface. Do not work around this with synthetic GRES/CgroupPlugin/NodeName or configuration files.",
+      "If later independently shown eligible, bind one fresh exact owned zero-GPU step, exact installed argv and environment, capture stdout/stderr concurrently with bounded complete output, no retry and ordinary exit/signal/timeout. A wrapper timeout may stop only its exact own child, never the Slurm daemon or another process.",
+      "Exit0 alone never passes. Error severity, omitted devices, unknown messages, duplicates, truncated output, unsupported MIG/MultipleFiles, source/config changes or incomplete post-merge record boundaries leave the result unresolved.",
+      "Retain the complete ordered post-merge GPU records exactly as printed. Never sort by PCI/NVML/minor, never rename printed Index to scheduler index, never infer bitmap position without the exact matching source/iteration proof.",
+      "A reconstructed diagnostic roster is not automatically the running daemon generation. Leave physical_gres_mapping_verified false unless independent source/config/generation and fresh owned job/step/same-process physical identity proofs separately pass."
+    ]
+  },
+  "implementation_or_execution_performed": false,
+  "source_or_profile_changes": false,
+  "new_scheduler_queries": 0,
+  "new_slurm_program_calls": 0,
+  "new_ssh_attempts": 0,
+  "gpu_library_or_device_calls": 0,
+  "job_actions": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false
+}

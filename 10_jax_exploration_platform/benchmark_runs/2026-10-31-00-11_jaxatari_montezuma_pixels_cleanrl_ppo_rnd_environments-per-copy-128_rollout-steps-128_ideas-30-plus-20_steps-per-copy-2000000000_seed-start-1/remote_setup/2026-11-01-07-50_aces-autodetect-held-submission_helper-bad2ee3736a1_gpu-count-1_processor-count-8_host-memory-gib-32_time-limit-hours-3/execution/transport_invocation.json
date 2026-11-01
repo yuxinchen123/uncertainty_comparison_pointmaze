@@ -1,0 +1,23 @@
+{
+  "command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "NumberOfPasswordPrompts=0",
+    "-o",
+    "ConnectionAttempts=1",
+    "-o",
+    "ConnectTimeout=10",
+    "aces",
+    "exec /scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python -I -B -c 'import hashlib,json,sys\nraw=sys.stdin.buffer.readline(2097153)\nif len(raw)>2097152 or not raw.endswith(b\"\\n\"): raise ValueError(\"bounded submission metadata required\")\npayload=json.loads(raw)\nif hashlib.sha256(payload[\"driver_source\"].encode()).hexdigest()!=sys.argv[1]: raise ValueError(\"submission source changed\")\nspace={\"__name__\":\"reviewed_aces_held_submission\",\"__file__\":\"<reviewed held submission>\"}\nexec(compile(payload[\"driver_source\"],\"<reviewed held submission>\",\"exec\"),space)\ntry: space[\"remote_submit\"](payload)\nexcept Exception as error:\n failure={\"schema_version\":1,\"kind\":\"aces_held_submission_failure\",\"error_type\":type(error).__name__,\"error\":str(error),\"automatic_retry_permitted\":False}\n sys.stdout.buffer.write((json.dumps(failure)+\"\\n\").encode());sys.stdout.buffer.flush()\n raise\n' 48ef07150dffb1d7f366e61ae77813c37934da11479d1e4b0e5b7b0baa6d84a6"
+  ],
+  "master_separately_checked": false,
+  "authentication_retry_permitted": false,
+  "source_sha256": "48ef07150dffb1d7f366e61ae77813c37934da11479d1e4b0e5b7b0baa6d84a6"
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "kind": "proposed_original_checkout_fast_forward_commands",
+  "created_at_utc": "2026-11-01T15:56:14.949959+00:00",
+  "executed": false,
+  "target": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+  "expected_original_head": "0f694d32e6c904e57cf601c27f9530cba991697d",
+  "expected_original_branch": "Use-RLexplore-RND",
+  "required_before_any_update": [
+    "Parent reviews complete audit.json, both scans and incoming collision records.",
+    "Repeat the read-only preservation and exact incoming collision checks immediately before the update if any observed path, branch or remote head changes.",
+    "No original-only commit, changed staged entry, dirty incoming overlap, ignored or untracked incoming collision, unstable file read or failed alternate-index dry run may remain unresolved.",
+    "Keep every current dirty/untracked file, RLeXplore file, symlink byte, mode and PDF; no stash, reset, forced update or submodule update."
+  ],
+  "commands_for_parent_review": [
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "require_stdout": "0f694d32e6c904e57cf601c27f9530cba991697d\n"
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "symbolic-ref",
+        "--short",
+        "HEAD"
+      ],
+      "require_stdout": "Use-RLexplore-RND\n"
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/Use-RLexplore-RND"
+      ],
+      "require_stdout": "0f694d32e6c904e57cf601c27f9530cba991697d\trefs/heads/Use-RLexplore-RND\n"
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "-c",
+        "submodule.recurse=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "merge",
+        "--ff-only",
+        "--no-edit",
+        "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020"
+      ],
+      "effect": "Only after reviewed gates pass, update this branch by ordinary fast-forward; do not recurse into the dirty submodule or run repository hooks."
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "require_stdout": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020\n"
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "operation": "Repeat complete preservation scan and compare dirty/untracked path content, type/mode/link bytes, staged entries, current RLeXplore files and PDFs against the immediate before scan; preserve concurrent changes explicitly. Never restore a file automatically."
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "push",
+        "origin",
+        "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020:refs/heads/Use-RLexplore-RND"
+      ],
+      "effect": "Ordinary non-forced push only after the after-scan confirms preservation; stop if the remote advanced."
+    },
+    {
+      "cwd": "/p/rlprojects/RND",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/Use-RLexplore-RND"
+      ],
+      "require_stdout": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020\trefs/heads/Use-RLexplore-RND\n"
+    }
+  ],
+  "scope": "This proposal is exact cef3073. A newer target needs a new incoming-path and preservation audit. No command here has updated the original branch, ref, index or worktree."
+}

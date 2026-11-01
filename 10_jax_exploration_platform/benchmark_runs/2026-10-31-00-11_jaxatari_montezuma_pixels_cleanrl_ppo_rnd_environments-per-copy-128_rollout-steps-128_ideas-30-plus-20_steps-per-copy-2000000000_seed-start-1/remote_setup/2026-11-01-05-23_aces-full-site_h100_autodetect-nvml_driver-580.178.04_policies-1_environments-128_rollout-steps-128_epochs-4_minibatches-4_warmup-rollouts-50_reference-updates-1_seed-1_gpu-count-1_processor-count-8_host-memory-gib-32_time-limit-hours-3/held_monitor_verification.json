@@ -1,0 +1,69 @@
+{
+  "kind": "owned_aces_full_site_actual_held_monitor_verification",
+  "passed": true,
+  "at_utc": "2026-11-01T16:27:16.190695+00:00",
+  "job_id": "2275518",
+  "monitor_job_id": "6781087",
+  "monitor_tick_step_id": "6781087.50",
+  "verification_step_id": "51",
+  "monitor_source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
+  "held_rows": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+      "snapshot_sha256": "9d1f7ca15ce17b96610879453276b338f31dc11ec0adb74e1abae324d6a37764",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "slurm_job_id": "2275518",
+        "data_unit_name": "2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+        "state": "held",
+        "qualification_verified": false,
+        "initial_case_credit": 0,
+        "scientific_case_credit": 0,
+        "final_training_credit": 0,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0,
+        "progress": "(JobHeldUser)",
+        "observed_host": "",
+        "observed_at_utc": "2026-11-01T16:25:55.991463+00:00"
+      }
+    }
+  ],
+  "actual_monitor_returncode": 0,
+  "queue_counts": {
+    "pending": 4,
+    "running": 1,
+    "completed": 115,
+    "failed": 0
+  },
+  "full_status_sha256": "a8e36e251ba7887c5442bdee8d5a1e32cfbe8b8b3e05eb585e66220694403d4b",
+  "full_report_sha256": "36b4565ea20cc85ac7b6395d5fdd13786569c26592878a1b1f0f4b2ce1e6fc39",
+  "snapshot_sha256": "9d1f7ca15ce17b96610879453276b338f31dc11ec0adb74e1abae324d6a37764",
+  "native_submission_receipt_sha256": "358f16cc1eaa369638153ee7dc090572cca49652ed5ae1595714e2617ef8735f",
+  "session_cron_id": "16aebd45-eff5-4da1-a46a-0374dcf16332",
+  "session_cron_verified_by_root": true,
+  "cadence_seconds": 1200,
+  "actual_monitor_queue": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781087",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "6781087|sl5nw|RUNNING|slurm2|slurm2\n",
+    "stderr": ""
+  },
+  "zero_scientific_credit": true
+}

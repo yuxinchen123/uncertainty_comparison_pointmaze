@@ -1,0 +1,13 @@
+{
+  "kind": "owned_zero_gpu_observer_release_intent",
+  "at_utc": "2026-11-01T16:00:03.469280+00:00",
+  "job_id": "6781190",
+  "command": [
+    "scontrol",
+    "release",
+    "6781190"
+  ],
+  "published_review_commit": "6e2a67af353d4e3a2388dca574a98ed67ebc5255",
+  "review_sha256": "6a3464f70c8c8e95cd773c4230e8f6cd39ad645ad1b35a6feca7e6fff978fa68",
+  "exact_held_queue": "6781190|sl5nw|PENDING|(JobHeldUser)\n"
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kind": "proposed_read_only_installed_slurm_merged_gres_observation",
+  "created_at_utc": "2026-11-01T16:14:08.667407+00:00",
+  "state": "design_only_not_executed",
+  "basis": {
+    "actual_observer_job": "6781190",
+    "review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-08_uva-active-configuration-observation_job-6781190_independent-review_gpu-count-0/independent_actual_observation_complete_review.json",
+      "sha256": "583119dcf21af5c5c1c01e59aeceabf86a4986a0f8b11072a2e5839d6a04f618"
+    },
+    "installed_uva_slurmd_version": "not_recorded_by_the_completed_observer"
+  },
+  "question": "Can the actual installed node Slurm diagnostic expose its merged GPU file roster and enough version-bound ordering evidence to inspect the scheduler bitmap relationship without guessing from a filename, PCI sort or NVML index?",
+  "concrete_before": "The existing accepted UVA mapping path requires root-owned explicit File records. Actual jaguar03 has UID64030-owned AutoDetect-only configuration and no observed conf-cache. The existing mapping validator must continue to refuse this case.",
+  "concrete_after": "A separate zero-credit observation would preserve installed Slurm binary/plugin/configuration identities and its actual print-only merged-GRES output. It would produce evidence for review only; no mapping profile, admission or numerical result would change.",
+  "proposed_shape": {
+    "hostname": "jaguar03",
+    "nodes": 1,
+    "tasks": 1,
+    "requested_processors": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "allocated_gpu_count": 0,
+    "qos": "csresnolim",
+    "reservation": "must be read from an actual owned reservation before a new frozen packet is prepared"
+  },
+  "scope_difference": [
+    "The completed observer used only standard-library metadata and no GPU libraries. A future slurmd -G with AutoDetect=nvml may load NVML and enumerate GPU metadata even with zero allocated GPUs.",
+    "Any such command requires separate root review and explicit operational authorization of this additional GPU-metadata-library scope. It is not covered by the completed observer scope.",
+    "No numerical kernels, training, environment transitions, memory allocations through CUDA, clock changes, GPU process queries or access to another user process is proposed."
+  ],
+  "first_required_preparation": [
+    "Use a fresh separately named unit and immutable standard records; preserve job6781190 and failed diagnostic6781128 unchanged.",
+    "Reuse the exact owned zero-GPU allocation checks, numeric step, UID fields, process birth, ledger and returned held-identifier sequence. Missing or unfamiliar fields remain raw evidence before failure.",
+    "Resolve the actual installed slurmd executable as an ordinary absolute path. Capture full directory chain, owner/mode, exact bytes SHA256, package/build metadata and installed manual; do not execute a PATH-selected or user-writable binary.",
+    "Capture that exact binary version and compare the installed documented -G/-f semantics with the matching official source version before enabling the print-only child. The cited25.11.7 source is a warning/example, not proof of the unknown installed UVA build.",
+    "Record original SLURM_CONF and the actual running allowlisted settings; do not set synthetic node/GRES/AutoDetect/daemon options. Retain UID64030 and all permissions as observed, without relabelling them root-owned.",
+    "Identify the actual included configuration files by a bounded, read-only, version-reviewed trace or parser. Retain ordinary-path ownership/hash/read traces and allowed content only; preserve inaccessible/missing/changed/include-cycle evidence. Do not publish full secret-bearing Slurm configuration."
+  ],
+  "proposed_print_child": {
+    "argv_template": [
+      "<exact reviewed installed absolute slurmd path>",
+      "-G",
+      "-f",
+      "/etc/slurm/slurm.conf"
+    ],
+    "not_an_executable_command_yet": true,
+    "requirements": [
+      "Only launch after exact installed source confirms print-and-exit before daemon startup, node registration, spool creation and task control. If logging/plugin initialization can write daemon state or fetch configuration, hold for a narrower reviewed observation rather than assuming read-only.",
+      "Preserve exact argv, allowlisted environment, own PID/parent/birth/UID/numeric-step, start/end timestamps, bounded complete stdout/stderr, ordinary exit code/signal/timeout status and any explicit diagnostic errors. No retry.",
+      "Capture actual loaded slurmd/plugin/NVML metadata libraries and their bytes or shared immutable captures if the reviewed runtime can expose them; record missing evidence rather than inventing paths.",
+      "Do not use daemon-start/reconfigure/cleanup/dynamic-node options, sudo, signals, controller mutations or writes to /etc/slurm or /var/spool/slurmd.",
+      "Use no artificial GPU selector to make detection match an expected mapping. Record inherited selectors exactly; an incomplete visible roster is incomplete evidence.",
+      "If the zero-GPU task cannot enumerate the required metadata, save the failure. Do not increase privileges, bypass device isolation or silently rerun with a GPU allocation."
+    ]
+  },
+  "reader_rules_before_any_later_mapping_proposal": [
+    "Treat a successful child exit only as transport evidence. Reject output with errors, omitted configured devices, unsupported/MIG/multiple-file shapes, partial/truncated data, duplicate paths/UUIDs or configuration changes.",
+    "Save the complete actual ordered post-merge GPU file records. Bind each canonical device path to exact device-major/minor metadata and independent physical UUID/PCI evidence in any later owned GPU allocation.",
+    "Do not interpret the printed Index field as the scheduler bitmap index. In the inspected25.11.7 source it is derived from the filename numeric suffix. Establish any bitmap ordering using exact installed source and the complete actual post-merge order, not a generic sort.",
+    "A fresh slurmd diagnostic rebuild is not by itself a receipt from the running daemon. Bind its configuration/build/roster to actual controller/node state and explicitly state any remaining reconstruction trust. A mismatch or missing daemon-generation binding remains unresolved.",
+    "The UID64030 configuration owner is not root. Any future use would require a separately reviewed versioned trust basis tied to the actual Slurm service identity and non-writable path chain. Keep the historical root-owned explicit-File rule unchanged.",
+    "Even a useful merged roster grants no current job physical assignment. Fresh job/step logical GRES, process ownership/cgroup membership and same-process CUDA UUID/PCI/minor proofs remain independently required later.",
+    "If the installed output/source cannot prove the scheduler bitmap-to-device relation, keep physical_gres_mapping_verified=false and leave the unsupported mapping case pending."
+  ],
+  "primary_sources": [
+    {
+      "title": "SchedMD slurmd manual",
+      "url": "https://slurm.schedmd.com/slurmd.html",
+      "observed_at_utc": "2026-11-01T16:14:08.669654+00:00",
+      "supports": "The documented -G command prints merged node GRES configuration and exits; -f selects a configuration file. The installed version must be checked separately."
+    },
+    {
+      "title": "SchedMD GPU generic resources guide",
+      "url": "https://slurm.schedmd.com/gres.html",
+      "supports": "AutoDetect=nvml needs NVML; device-file numbering and NVML PCI ordering can differ. slurmd -G is a configuration diagnostic."
+    },
+    {
+      "title": "SchedMD25.11.7 slurmd source",
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-25-11-7-1/src/slurmd/slurmd/slurmd.c",
+      "supports": "In this version, _print_gres calls _load_gres and then exit(0). Its return code alone does not prove a complete valid mapping. This is not evidence of the installed UVA version."
+    },
+    {
+      "title": "SchedMD25.11.7 generic resources source",
+      "url": "https://raw.githubusercontent.com/SchedMD/slurm/slurm-25-11-7-1/src/interfaces/gres.c",
+      "supports": "The logged Index value is parsed from trailing file digits; the device bitmap index is assigned separately while expanding the finalized ordered records. They must not be equated."
+    }
+  ],
+  "execution_performed": false,
+  "new_ssh_attempts": 0,
+  "jobs_submitted": 0,
+  "gpu_actions": 0,
+  "profile_changes": false,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "worker_admission": false,
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "scientific_credit": 0
+}

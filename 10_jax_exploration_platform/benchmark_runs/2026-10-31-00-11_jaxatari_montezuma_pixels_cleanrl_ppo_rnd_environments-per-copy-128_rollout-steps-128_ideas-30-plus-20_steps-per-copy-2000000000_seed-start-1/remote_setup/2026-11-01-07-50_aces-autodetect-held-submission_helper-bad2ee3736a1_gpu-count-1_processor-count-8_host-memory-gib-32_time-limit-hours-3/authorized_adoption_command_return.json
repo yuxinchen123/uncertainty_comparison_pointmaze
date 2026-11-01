@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/adopt_aces_full_site_held.py",
+    "--plan",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/aces_full_site_held_submission_plan.json",
+    "--adopt"
+  ],
+  "returncode": 0,
+  "stdout": "{\"schema_version\": 1, \"kind\": \"aces_full_site_local_adoption_receipt\", \"passed\": true, \"at_utc\": \"2026-11-01T16:21:44.815684+00:00\", \"job_id\": \"2275518\", \"submission_row\": [\"2275518\", \"2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3\", \"bad2ee3736a1451094d5d1644b36b8cfc2d91c38\", \"/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1\"], \"native_artifact_sha256\": {\"submission_receipt.json\": \"358f16cc1eaa369638153ee7dc090572cca49652ed5ae1595714e2617ef8735f\", \"held_submission_intent.json\": \"4053346ae963c567b7a97f51538f522612795ddbe6ac163f26080e4b6515f22b\", \"held_submission_stdout.raw\": \"cb443d8597217970172ff14c534cd18b813540c981b81646f1570406653eff60\", \"held_submission_stderr.raw\": \"8b0063eab9ff409e8ca79d6e75df390f4deaae0c62c18b6ea4b001b31434142e\", \"held_submission_return.json\": \"3277ffbdfc6e077e348c05e84e0d48b9564491342e30a6a12e1035fed558e05e\", \"submitted_jobids_aces.txt\": \"8dec017fed6d7aefacd2da1183c08da3fde9a60b81af143d55570ed1005c8ad6\", \"submissions_aces.tsv\": \"caec22060607962ac4e70c705ce1a2e4319da16bad0c676b52037d0b0196d12e\"}, \"local_ledgers_fsynced_before_receipt\": true, \"native_receipt_bytes_preserved\": true, \"local_wrapper_intent_unchanged\": true, \"submission_or_release_performed\": false, \"workers_permitted\": false, \"campaign_claims_permitted\": false, \"scientific_hypothesis_credit\": 0, \"comparison_credit\": 0, \"idea_credit\": 0, \"admission_credit\": 0}\n",
+  "stderr": "",
+  "invoked_once": true,
+  "automatic_retry": false
+}

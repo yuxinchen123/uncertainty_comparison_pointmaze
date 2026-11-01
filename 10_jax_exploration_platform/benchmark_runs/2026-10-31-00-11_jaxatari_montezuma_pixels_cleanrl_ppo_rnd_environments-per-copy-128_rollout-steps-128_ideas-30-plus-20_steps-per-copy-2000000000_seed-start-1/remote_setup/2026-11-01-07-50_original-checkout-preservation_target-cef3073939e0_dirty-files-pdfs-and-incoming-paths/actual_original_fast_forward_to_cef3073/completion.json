@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "kind": "exact_original_branch_fast_forward_completion",
+  "passed": true,
+  "completed_at_utc": "2026-11-01T16:08:06.012317+00:00",
+  "old_head": "0f694d32e6c904e57cf601c27f9530cba991697d",
+  "target": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+  "branch": "Use-RLexplore-RND",
+  "actual_remote_row": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020\trefs/heads/Use-RLexplore-RND\n",
+  "dirty_untracked_entries": 6167,
+  "preserved_paths": 6454,
+  "preserved_pdfs": 646,
+  "historical_five_match": true,
+  "preservation": {
+    "files_identical": true,
+    "status_identical": true,
+    "submodule_identical": true,
+    "user_staged_diff_identical": true,
+    "all_reads_stable": true,
+    "changed_files": {}
+  },
+  "original_index_before_sha256": "acb7fbeb1374c76ad897e9adeaf6127c06b0ea12b3709aa37ebeedfc1cb8b9e4",
+  "original_index_after_sha256": "89cf265b29bf4015dbefe942779149a07c33b7c74f86bbbc8148fc14ec276d46",
+  "index_change_expected_for_incoming_committed_files": true,
+  "incoming_paths": 679,
+  "other_local_branch_updates": {},
+  "local_fast_forward_attempts": 1,
+  "ordinary_push_attempts": 1,
+  "force_or_reset_or_stash_or_submodule_update": false,
+  "elapsed_seconds": 30.024972604995128,
+  "merge_return": {
+    "argv": [
+      "git",
+      "-c",
+      "submodule.recurse=false",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "merge",
+      "--ff-only",
+      "--no-edit",
+      "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020"
+    ],
+    "cwd": "/p/rlprojects/RND",
+    "at_utc": "2026-11-01T16:07:48.235336+00:00",
+    "attempt": 1,
+    "GIT_OPTIONAL_LOCKS": "0",
+    "retry_permitted": false,
+    "returncode": 0,
+    "stdout": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_original-checkout-preservation_target-cef3073939e0_dirty-files-pdfs-and-incoming-paths/actual_original_fast_forward_to_cef3073/single_fast_forward_stdout.raw",
+      "sha256": "8d1db0a961357d976b37fd6708b89a57828be68de357ad6c85d3deb1a4d3a491",
+      "bytes": 341083
+    },
+    "stderr": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_original-checkout-preservation_target-cef3073939e0_dirty-files-pdfs-and-incoming-paths/actual_original_fast_forward_to_cef3073/single_fast_forward_stderr.raw",
+      "sha256": "2f9ddaacd4123d9c74bda35434efd113b622c6edaaded143504617502cd9797a",
+      "bytes": 3010
+    },
+    "completed_at_utc": "2026-11-01T16:07:57.783534+00:00"
+  },
+  "push_return": {
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020:refs/heads/Use-RLexplore-RND"
+    ],
+    "cwd": "/p/rlprojects/RND",
+    "at_utc": "2026-11-01T16:08:04.447349+00:00",
+    "attempt": 1,
+    "GIT_OPTIONAL_LOCKS": "0",
+    "retry_permitted": false,
+    "returncode": 0,
+    "stdout": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_original-checkout-preservation_target-cef3073939e0_dirty-files-pdfs-and-incoming-paths/actual_original_fast_forward_to_cef3073/single_nonforced_push_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "stderr": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_original-checkout-preservation_target-cef3073939e0_dirty-files-pdfs-and-incoming-paths/actual_original_fast_forward_to_cef3073/single_nonforced_push_stderr.raw",
+      "sha256": "c220ed0085f2d397d4d86b9272bab18056e765047cad828dc55429a4cf245c03",
+      "bytes": 147
+    },
+    "completed_at_utc": "2026-11-01T16:08:05.627589+00:00"
+  },
+  "process": {
+    "schema_version": 1,
+    "kind": "authorized_exact_original_branch_fast_forward_intent",
+    "at_utc": "2026-11-01T16:07:35.993067+00:00",
+    "expected_old_head": "0f694d32e6c904e57cf601c27f9530cba991697d",
+    "target": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+    "branch": "Use-RLexplore-RND",
+    "original": "/p/rlprojects/RND",
+    "reviewed_audit_sha256": "74f195148288ff834d1c4f2d645a76f792541a62b98cf089288fd826d3d3055a",
+    "driver_sha256": "5de8362e3c4bc857399c7f169a690104cbc1a0cf33a8aea980d9115925433711",
+    "allowed_mutation_argv": [
+      [
+        "git",
+        "-c",
+        "submodule.recurse=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "merge",
+        "--ff-only",
+        "--no-edit",
+        "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020"
+      ],
+      [
+        "git",
+        "push",
+        "origin",
+        "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020:refs/heads/Use-RLexplore-RND"
+      ]
+    ],
+    "retries_permitted": false,
+    "force_permitted": false,
+    "stash_or_reset_permitted": false,
+    "submodule_update_permitted": false,
+    "other_branch_updates_permitted": false,
+    "job_id": "6781087",
+    "step_id": "40",
+    "hostname": "slurm2",
+    "pid": 687564,
+    "birth": "51005718",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_40/user/task_0\n"
+  }
+}

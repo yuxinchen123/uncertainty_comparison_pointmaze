@@ -1,0 +1,22 @@
+{
+  "kind": "own_metadata_scan_stopped_after_first_saved_scan",
+  "at_utc": "2026-11-01T16:00:11.402120+00:00",
+  "target_pid": 686540,
+  "target_birth": "50908924",
+  "target_cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_31/user/task_0\n",
+  "target_cmdline": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "audit_original_checkout.py"
+  ],
+  "signal": "SIGTERM",
+  "only_own_metadata_step": true,
+  "owned_job": "6781087",
+  "target_step": "31",
+  "observer_step": "37",
+  "first_scan_sha256": "accaa8fd32a6a18edff7d3dda5210d43b2a883e4aff269c85140881dc544c385",
+  "first_pdf_paths": 646,
+  "first_hashed_paths": 6454,
+  "reason": "Retain first full discovery; perform second scan from its exact recorded files plus fresh dirty/untracked and targeted incoming paths, avoiding another whole-tree ignored PDF crawl."
+}

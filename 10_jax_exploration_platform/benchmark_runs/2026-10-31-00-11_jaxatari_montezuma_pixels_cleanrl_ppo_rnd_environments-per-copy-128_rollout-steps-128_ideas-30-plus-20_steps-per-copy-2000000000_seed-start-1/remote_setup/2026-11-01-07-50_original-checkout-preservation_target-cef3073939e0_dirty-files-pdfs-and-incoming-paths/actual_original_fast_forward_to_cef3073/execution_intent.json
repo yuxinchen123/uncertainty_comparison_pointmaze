@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "authorized_exact_original_branch_fast_forward_intent",
+  "at_utc": "2026-11-01T16:07:35.993067+00:00",
+  "expected_old_head": "0f694d32e6c904e57cf601c27f9530cba991697d",
+  "target": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+  "branch": "Use-RLexplore-RND",
+  "original": "/p/rlprojects/RND",
+  "reviewed_audit_sha256": "74f195148288ff834d1c4f2d645a76f792541a62b98cf089288fd826d3d3055a",
+  "driver_sha256": "5de8362e3c4bc857399c7f169a690104cbc1a0cf33a8aea980d9115925433711",
+  "allowed_mutation_argv": [
+    [
+      "git",
+      "-c",
+      "submodule.recurse=false",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "merge",
+      "--ff-only",
+      "--no-edit",
+      "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020"
+    ],
+    [
+      "git",
+      "push",
+      "origin",
+      "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020:refs/heads/Use-RLexplore-RND"
+    ]
+  ],
+  "retries_permitted": false,
+  "force_permitted": false,
+  "stash_or_reset_permitted": false,
+  "submodule_update_permitted": false,
+  "other_branch_updates_permitted": false,
+  "job_id": "6781087",
+  "step_id": "40",
+  "hostname": "slurm2",
+  "pid": 687564,
+  "birth": "51005718",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_40/user/task_0\n"
+}

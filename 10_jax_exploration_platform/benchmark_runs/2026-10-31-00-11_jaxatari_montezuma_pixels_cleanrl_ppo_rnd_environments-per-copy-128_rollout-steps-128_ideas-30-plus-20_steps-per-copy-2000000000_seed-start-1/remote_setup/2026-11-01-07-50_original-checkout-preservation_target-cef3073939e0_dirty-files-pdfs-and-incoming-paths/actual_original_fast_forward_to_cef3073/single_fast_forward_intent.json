@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "submodule.recurse=false",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "merge",
+    "--ff-only",
+    "--no-edit",
+    "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020"
+  ],
+  "cwd": "/p/rlprojects/RND",
+  "at_utc": "2026-11-01T16:07:48.235336+00:00",
+  "attempt": 1,
+  "GIT_OPTIONAL_LOCKS": "0",
+  "retry_permitted": false
+}

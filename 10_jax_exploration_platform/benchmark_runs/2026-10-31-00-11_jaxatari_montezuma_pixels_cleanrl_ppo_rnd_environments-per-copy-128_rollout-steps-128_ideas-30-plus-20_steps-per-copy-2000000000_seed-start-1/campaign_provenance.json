@@ -1,7 +1,7 @@
 {
-  "cron_id": "8ab1df2b-41e0-4821-9177-ed6f25332035",
+  "cron_id": "16aebd45-eff5-4da1-a46a-0374dcf16332",
   "merge_complete": true,
-  "current_branch_integrated_commit": "9920914aa768d0d5d136527cad3cf6c6aa1b4215",
+  "current_branch_integrated_commit": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
   "original_local_edits_preserved": true,
   "performance_diagnostic_unit": "serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b",
   "h100_reference_trace_recovery": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b/trace/recovery_2026-10-31-03-22-29/result.json",
@@ -37,14 +37,14 @@
   "gpu_mapping_verified": true,
   "h100_worker_supervisor_pid": 3567981,
   "queue_status_at_check": {
-    "pending": 6,
+    "pending": 4,
     "running": 1,
-    "completed": 113,
+    "completed": 115,
     "failed": 0
   },
   "gpu_mapping_fix_previous_pending_description": "NVML allocation filters remap visible indices; resolve the single allocated UUID with minor-number validation before submitting replacements.",
   "gpu_mapping_fix_status": "Resolved. The committed launcher validates one visible CSV GPU against its XML device minor number and UUID. All eight A4500 numerical processes have the UUID recorded in their own leases.",
-  "queue_status_checked_at": "2026-11-01T14:08:01.286156+00:00",
+  "queue_status_checked_at": "2026-11-01T16:28:55.406669+00:00",
   "liveness_audit_checked_at": "2026-10-31T20:40:46+00:00",
   "liveness_audit": "One bounded metadata call verified supervisor 3567981 and then-active runner 3890375 with their process start times, parent relationship, frozen source and canonical Python. Only the owned runner used selected card 1. That one-policy case later completed valid correctness and seven timing pairs; the two-policy case then started normally.",
   "a4500_future_worker_host_memory_gib": 64,
@@ -183,7 +183,7 @@
       }
     ]
   },
-  "monitoring_verified_utc": "2026-11-01T14:41:32.466073+00:00",
+  "monitoring_verified_utc": "2026-11-01T16:28:55.406669+00:00",
   "monitoring_cadence": "every twenty minutes",
   "cron_verified_active": true,
   "isolated_capacity_diagnosis_job_ids": [
@@ -273,8 +273,8 @@
     "reason": "Owned GPU allocation check rejected the job before claim; the failed log did not capture which field differed."
   },
   "original_branch_preservation_receipt": {
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/original_checkout_preservation/after_e7ea0fb35312799ba5f5b40785c7009918ced5e6.json",
-    "sha256": "e0543a8e9375f146460731f0107dc722153dc13ae3a3a1b7cd438d504a79de37"
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_original-checkout-preservation_target-cef3073939e0_dirty-files-pdfs-and-incoming-paths/actual_original_fast_forward_to_cef3073/completion.json",
+    "sha256": "1445554988f8036191da1f0346652b3bdbb29195858e9245c289a0b74b15f443"
   },
   "gather_formal_fifth_job_id": "6778302",
   "gather_formal_fifth_state": "COMPLETED",
@@ -331,5 +331,24 @@
   "device_memory_capture_diagnostic_job_id": "6781128",
   "device_memory_capture_diagnostic_state": "failed_before_jax",
   "device_memory_capture_diagnostic_qualified": false,
-  "uva_active_configuration_observation_job_id": "6781190"
+  "uva_active_configuration_observation_job_id": "6781190",
+  "operational_record_corrections": [
+    {
+      "at_utc": "2026-11-01T16:28:55.406669+00:00",
+      "previous": {
+        "cron_id": "8ab1df2b-41e0-4821-9177-ed6f25332035",
+        "current_branch_integrated_commit": "9920914aa768d0d5d136527cad3cf6c6aa1b4215",
+        "queue_status_at_check": {
+          "pending": 6,
+          "running": 1,
+          "completed": 113,
+          "failed": 0
+        },
+        "queue_status_checked_at": "2026-11-01T14:08:01.286156+00:00",
+        "original_branch_integrated_utc": "2026-11-01T06:56:35.887902+00:00"
+      },
+      "reason": "Actual completed original-checkout preservation and new exact held ACES submission with verified monitoring."
+    }
+  ],
+  "aces_autodetect_site_job_id": "2275518"
 }
