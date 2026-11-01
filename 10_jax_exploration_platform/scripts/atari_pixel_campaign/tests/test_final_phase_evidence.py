@@ -457,7 +457,9 @@ class FinalRawEvidenceTests(unittest.TestCase):
             validation.verify_completed_study(binding, self.fixture.commit, self.fixture.runtime,
                 validation.Evidence(), before_seconds=11.)
         proof = json.loads(Path(binding["proof"]["path"]).read_bytes())
-        raw_path = Path(proof["evidence"][0]["path"])
+        registry = json.loads(Path(proof["registry"]["path"]).read_bytes())
+        raw_path = Path(registry["initial_ideas"][0]["results"]["h100"][0]["result_path"])
+        self.assertIn(str(raw_path), {receipt["path"] for receipt in proof["evidence"]})
         original = raw_path.read_bytes()
         try:
             raw_path.write_bytes(original + b'\n')
