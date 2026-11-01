@@ -92,7 +92,7 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
             return regression.validate_resolution(evidence)
         with patch.object(regression.capacity, 'process_identity', return_value=process), \
                 patch.dict(os.environ, {'SLURM_JOB_ID': '123', 'SLURM_JOB_GPUS': '4',
-                    'SLURM_STEP_GPUS': '4', 'CUDA_VISIBLE_DEVICES': '0'}, clear=True), \
+                    'SLURM_STEP_ID': '0', 'SLURM_STEP_GPUS': '4', 'CUDA_VISIBLE_DEVICES': '0'}, clear=True), \
                 patch.object(regression.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stderr='',
                     stdout=job)) as query, \
                 patch.object(regression, 'resolve_uuid', side_effect=resolve) as resolver, \
@@ -412,6 +412,33 @@ class CaptureRegressionMetadataTests(unittest.TestCase):
         for mutation in mutations:
             with self.subTest(change=mutation), self.assertRaises(ValueError):
                 regression.validate_shape({'job': {'stdout': mutation(optional)}})
+
+    def test_explicit_profile_checks_capture_declaration_before_staging(self):
+        """The optional profile is frozen explicitly; an actual old source without its declaration is rejected."""
+        self.arguments.ownership_profile = regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']
+        unit = self.prepare()
+        self.assertEqual(regression.read(unit / 'regression_plan.json')['ownership_profile'],
+            regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+        old = Path('/p/rlprojects/RND_worktrees/2026-11-01-05-05_memory-capture-helper_source-commit-7f5bf87a8400a73afff08098c1422642ecad69f9')
+        with self.assertRaisesRegex(ValueError, 'explicit version-two ownership capability'):
+            regression.require_capture_version(old, regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
+
+    def test_bootstrap_own_process_proof_is_saved_before_any_gres_resolution(self):
+        """A version-two metadata rejection cannot erase own-process evidence or reach a GPU selection guess."""
+        self.arguments.ownership_profile = regression.capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE['kind']
+        unit = self.prepare()
+        def rejected(plan, process, job, step, path):
+            """Model a preserved own-process record followed by an explicit pre-GRES failure."""
+            regression.write(path, {'kind': 'synthetic rejected own-process metadata', 'job': job, 'step': step,
+                'uid': process['uid'], 'own_process_metadata': True})
+            raise PermissionError('injected own cgroup metadata rejection')
+        with patch.object(regression.capacity, 'capture_v2_ownership', side_effect=rejected) as capture, self.assertRaises(PermissionError):
+            self.admit(unit)
+        capture.assert_called_once()
+        self.assertEqual(regression.read(unit / 'allocation_bootstrap_cgroup_v2.json')['step'], '0')
+        self.assertTrue((unit / 'allocation_bootstrap.json').is_file())
+        self.assertFalse((unit / 'allocation_resolution.json').exists())
+        self.assertFalse((unit / 'allocation_admission.json').exists())
 
 
 if __name__ == '__main__':
