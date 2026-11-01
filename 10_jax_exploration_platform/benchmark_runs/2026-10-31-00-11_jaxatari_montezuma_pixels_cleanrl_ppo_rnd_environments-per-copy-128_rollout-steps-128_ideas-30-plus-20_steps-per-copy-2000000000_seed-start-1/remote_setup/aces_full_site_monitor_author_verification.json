@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_monitor_author_verification",
+  "at_utc": "2026-11-01T09:21:23.250531+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-01-04_aces-full-site-monitoring_driver-580.178.04_gpu-count-1_processor-count-8",
+  "base_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "source_sha256": {
+    "aces_site_monitor.py": "a54ae7f242d6494fa46c2489b1a68dbaacbfd6a02467e9093d3df7305164f9b4",
+    "refresh_aces_site.py": "edeb3d8dea4856b157c654ee258391fb5f71311487cee600b4c577ba3e18e5ea",
+    "monitor.py": "55043348a7793cddbf5d4382e94a9904e0b86f9f3296120a9586ca9485a16d37",
+    "tests/test_aces_site_monitor.py": "c455aa4610819f361f3a3836d7d5aa74baf5095bd8115b776213e5e55db174c8",
+    "tests/test_refresh_aces_site.py": "e94c14dbe840fdab9d7d26bfafdb797a3ddfdaf71ca9a3d40c221e1bccf2df95"
+  },
+  "tests": {
+    "count": 91,
+    "passed": true,
+    "failures": 0,
+    "errors": 0,
+    "suites": [
+      "test_aces_site_monitor",
+      "test_refresh_aces_site",
+      "test_monitor",
+      "test_monitor_site_validation",
+      "test_monitor_allocation_observation",
+      "test_monitor_aces_allocation_observation",
+      "test_refresh_aces_allocation_observation"
+    ],
+    "guard": "All subprocess.run, check_output and Popen calls forbidden outside explicit test mocks; no numerical imports",
+    "summary_stdout": "{\"tests\": 91, \"passed\": true, \"failures\": 0, \"errors\": 0, \"numerical_imports\": false}",
+    "full_test_log_retained": false
+  },
+  "existing_monitor_functions_byte_unchanged": [
+    "aces_allocation_observation_rows",
+    "aces_observation_packet",
+    "aces_observation_snapshot",
+    "owned_metadata_packet",
+    "site_packet",
+    "site_validation_rows",
+    "unit_rows"
+  ],
+  "existing_allocation_refresher_byte_unchanged": true,
+  "full_site_namespace": "separate aces word and full-site phrase; direct-child packet with actual native submission receipt",
+  "snapshot_kind": "aces_full_site_monitor_snapshot",
+  "payload_kind": "aces_full_site_refresh_payload",
+  "source_cohort_or_admission_changes": false,
+  "live_ssh_scheduler_or_job_actions": false,
+  "native_software_preparation_claimed": false,
+  "kernel_device_enforcement_claimed": false,
+  "small_mirror_requires_independent_full_verification": true
+}

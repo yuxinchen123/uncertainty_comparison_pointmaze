@@ -753,6 +753,9 @@ def tick(directory):
     jobs = own_jobs(directory)
     sites, site_jobs, site_status = site_validation_rows(directory, jobs)
     aces_rows, aces_status = aces_allocation_observation_rows(directory)
+    from aces_site_monitor import rows as aces_full_site_rows
+    aces_sites, aces_site_status = aces_full_site_rows(directory)
+    aces_rows = aces_rows + aces_sites
     excluded_units = {row["data_unit_name"] for row in sites + aces_rows if row.get("data_unit_name")}
     units = unit_rows(directory, excluded_unit_names=excluded_units)
     display_units = units + sites + aces_rows
@@ -796,7 +799,7 @@ def tick(directory):
                               final_training_progress(final_training)))
     for unit in display_units:
         if unit["state"] == "waiting":
-            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") in {"site_validation", "allocation_observation"} else "none"
+            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") in {"site_validation", "allocation_observation", "aces_full_site"} else "none"
             rows.append(table_row(unit["run"], unit["pool"], gpu, "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING" and identifier not in site_jobs:
@@ -842,7 +845,7 @@ def tick(directory):
     (reports / "latest_status.json").write_text(json.dumps({
         "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training,
         "site_validation": site_status, "allocation_observations": site_status["allocation_observations"],
-        "aces_allocation_observations": aces_status}, indent=2) + "\n")
+        "aces_allocation_observations": aces_status, "aces_full_site_checks": aces_site_status}, indent=2) + "\n")
     return (directory / "STUDY_COMPLETE").exists()
 
 
