@@ -1,0 +1,27 @@
+{
+  "root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_bad2ee3736a1",
+  "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+  "source_tree": "8e124d09641989cfccdd016c3cfcb2a1a3471c77",
+  "helper_count": 18,
+  "fresh": true,
+  "bundle": {
+    "path": "/scratch/user/u.sl359075/rnd_atari_pixels/git/bundles/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle",
+    "sha256": "04741112b55a9b26238d30dee5edb9099f483833c06d56f3db70aaee8b18f2d9",
+    "bytes": 712063,
+    "prerequisites": [
+      "8e43cb1dc963045fc28f4e611411097efd93185a"
+    ],
+    "reference": "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+    "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+    "basis_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "source_tree": "8e124d09641989cfccdd016c3cfcb2a1a3471c77",
+    "packing_threads": 2,
+    "address_space_limit_bytes": 2147483648,
+    "temporary_reference_removed": true
+  },
+  "sparse_paths": [
+    "10_jax_exploration_platform/src",
+    "10_jax_exploration_platform/configs",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign"
+  ]
+}

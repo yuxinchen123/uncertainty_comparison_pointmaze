@@ -1,0 +1,21 @@
+{
+  "shape": {
+    "hostname": "jaguar03",
+    "nodes": 1,
+    "ntasks": 1,
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "settings_allowlist": [
+    "SLURM_CONF",
+    "SlurmdSpoolDir",
+    "TaskPlugin",
+    "ProctrackType",
+    "GresTypes"
+  ]
+}

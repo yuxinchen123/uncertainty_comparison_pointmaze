@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+    "merge-base",
+    "--is-ancestor",
+    "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "bad2ee3736a1451094d5d1644b36b8cfc2d91c38"
+  ],
+  "started_at_utc": "2026-11-01T15:28:23.180120+00:00",
+  "finished_at_utc": "2026-11-01T15:28:23.208744+00:00",
+  "returncode": 0,
+  "execution_error": null,
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/execution/command-0001.stdout.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/execution/command-0001.stderr.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  }
+}

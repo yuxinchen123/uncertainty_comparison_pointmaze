@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "kind": "zero_gpu_observer_partition_node_owned_reservation_observation",
+  "at_utc": "2026-11-01T15:42:06.541015+00:00",
+  "records": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "PartitionName=gpu AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=cspartgpu DefaultTime=02:00:00 DisableRootJobs=YES ExclusiveUser=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=4-00:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED Nodes=adriatic[01-06],affogato[11,13-15],ai[01-04,06],cheetah[01-04,08-09],jaguar[01-03,05-06],lotus,lynx[01-07,10],nekomata[01-02],serval[03,06-09] PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=2144 TotalNodes=42 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=256 MaxMemPerNode=UNLIMITED TRES=cpu=2058,mem=22318000M,node=42,billing=3350078,gres/gpu=160 TRESBillingWeights=CPU=1.0,Mem=0.15,GRES/gpu=2.0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "node",
+        "jaguar03",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "NodeName=jaguar03 Arch=x86_64 CoresPerSocket=56  CPUAlloc=0 CPUEfctv=222 CPUTot=224 CPULoad=0.07 AvailableFeatures=a4500,amd_epyc_7663 ActiveFeatures=a4500,amd_epyc_7663 Gres=gpu:nvidia_rtx_a4500:8(S:0-1) NodeAddr=jaguar03 NodeHostName=jaguar03 Version=23.11.6 OS=Linux 5.15.0-151-generic #161-Ubuntu SMP Tue Jul 22 14:25:40 UTC 2025  RealMemory=1024000 AllocMem=0 FreeMem=955976 Sockets=2 Boards=1 CoreSpecCount=1 CPUSpecList=222-223 MemSpecLimit=4000 State=IDLE+RESERVED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=gpu  BootTime=2026-10-26T14:35:23 SlurmdStartTime=2026-10-26T14:37:45 LastBusyTime=2026-11-01T10:04:34 ResumeAfterTime=None CfgTRES=cpu=222,mem=1000G,billing=153838,gres/gpu=8 AllocTRES= CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a ReservationName=sl5nw_168\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "reservation",
+        "sl5nw_168",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "ReservationName=sl5nw_168 StartTime=2026-10-20T09:39:06 EndTime=2026-11-03T23:59:59 Duration=14-15:20:53 Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES TRES=cpu=384 Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sinfo",
+        "-n",
+        "jaguar03",
+        "-h",
+        "-o",
+        "%N|%P|%T|%E|%G"
+      ],
+      "returncode": 0,
+      "stdout": "|cpu|n/a|none|(null)\njaguar03|gpu|reserved|none|gpu:nvidia_rtx_a4500:8(S:0-1)\n|nolim|n/a|none|(null)\n|gnolim|n/a|none|(null)\n",
+      "stderr": ""
+    }
+  ],
+  "derived_availability": {
+    "unallocated_effective_cpu_threads": 222,
+    "unallocated_host_memory_mib": 1024000,
+    "requested_cpu_count": 1,
+    "allowed_allocated_cpu_count": [
+      1,
+      2
+    ],
+    "requested_host_memory_mib": 2048,
+    "requested_gpu_count": 0
+  },
+  "no_job_ids_queried": true,
+  "device_queries": false,
+  "maintenance_scope": "Current node state/reason and partition/owned-reservation limits; no future maintenance absence beyond the captured scheduler records is inferred."
+}

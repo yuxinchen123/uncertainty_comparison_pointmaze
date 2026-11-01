@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "kind": "zero_gpu_observer_packet_preparation_verification",
+  "created_utc": "2026-11-01T15:42:06.891289+00:00",
+  "actual_job_id": "6781087",
+  "actual_step_id": "27",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "source_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "source_root_clean_detached_sparse": true,
+  "source_checked_out_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+  ],
+  "static_verification_passed": true,
+  "bash_syntax": {
+    "returncode": 0,
+    "stderr": ""
+  },
+  "source_checksums": {
+    "returncode": 0,
+    "stderr": "",
+    "file_count": 17
+  },
+  "key_artifacts": {
+    "plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/observation_plan.json",
+      "sha256": "e519aabce26a25b3e8dc5ac64ce59353302d352151989642a7200b5e320ced81",
+      "bytes": 2112
+    },
+    "job_script": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch",
+      "sha256": "87a123c02d8e533ca6fa63c327a836f06a4143f442b02166c1b2111b76599a59",
+      "bytes": 2246
+    },
+    "manifest": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/manifest.yaml",
+      "sha256": "4709af07c32bbe762e692cfadee67c86a8200c1fd86c547a27dec72630e7a4f5",
+      "bytes": 7296
+    },
+    "checksums": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/source_checksums.sha256",
+      "sha256": "91e976f06cbafe5bf602749edd33ae3f4ad9ea6034f34f2023838493f371ecab",
+      "bytes": 8395
+    }
+  },
+  "null_frozen_identities": true,
+  "held_binding_created": false,
+  "jobs_submitted": false,
+  "gpu_actions": false,
+  "source_profile_revision": false,
+  "original_checkout_touched": false,
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "diagnostic_pinned_helper_integration_reproduction",
+  "at_utc": "2026-11-01T15:34:32.856106+00:00",
+  "job_id": "6781087",
+  "step_id": "23",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-07-33_diagnostic-helpers_pinned-capture-source-8fd2187_learning-reader-dependencies",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "8761b0b94464372a13a02a75d7d7dbe493c58a1e484e258ca7152c15d9eec976",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "520757f68ac72c2b5319dedf522d20be1fca6fa0e6add93290479270eed75d2f"
+  },
+  "source_unchanged": true,
+  "tests_run": 1,
+  "successful": false,
+  "errors": 0,
+  "failures": 1,
+  "stdout_stderr": "test_published_detached_profile_helper_is_verified_and_staged_exactly (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe actual published capture root supplies all staged bytes and the explicit ownership capability. ... FAIL\n\n======================================================================\nFAIL: test_published_detached_profile_helper_is_verified_and_staged_exactly (test_device_memory_capture_regression.CaptureRegressionMetadataTests)\nThe actual published capture root supplies all staged bytes and the explicit ownership capability.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-07-33_diagnostic-helpers_pinned-capture-source-8fd2187_learning-reader-dependencies/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py\", line 436, in test_published_detached_profile_helper_is_verified_and_staged_exactly\n    self.assertEqual(len(relative), 15)\nAssertionError: 16 != 15\n\n----------------------------------------------------------------------\nRan 1 test in 0.462s\n\nFAILED (failures=1)\n",
+  "read_only_git_calls": 5,
+  "numerical_imports": false,
+  "network": false,
+  "native_library_loads": false,
+  "jobs_submitted": 0,
+  "scientific_credit": 0
+}

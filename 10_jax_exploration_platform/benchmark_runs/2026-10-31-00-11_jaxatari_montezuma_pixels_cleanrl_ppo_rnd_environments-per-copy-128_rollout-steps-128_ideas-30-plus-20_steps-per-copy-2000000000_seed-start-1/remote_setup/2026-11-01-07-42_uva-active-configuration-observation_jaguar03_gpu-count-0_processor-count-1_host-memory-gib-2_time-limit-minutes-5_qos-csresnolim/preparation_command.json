@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+    "prepare",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--unit-id",
+    "2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+    "--source-root",
+    "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "--source-commit",
+    "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "--python",
+    "/usr/bin/python3"
+  ],
+  "location": "owned CPU allocation6781087; standard-library metadata only"
+}

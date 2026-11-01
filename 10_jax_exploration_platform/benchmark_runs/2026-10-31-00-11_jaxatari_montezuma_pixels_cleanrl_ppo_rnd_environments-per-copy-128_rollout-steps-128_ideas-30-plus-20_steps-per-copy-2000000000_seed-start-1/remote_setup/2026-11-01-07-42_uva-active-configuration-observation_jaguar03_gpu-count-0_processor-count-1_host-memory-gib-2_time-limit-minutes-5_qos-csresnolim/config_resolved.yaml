@@ -1,0 +1,50 @@
+{
+  "shape": {
+    "hostname": "jaguar03",
+    "nodes": 1,
+    "ntasks": 1,
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "source_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "startup_environment": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUNBUFFERED": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+  },
+  "settings_allowlist": [
+    "SLURM_CONF",
+    "SlurmdSpoolDir",
+    "TaskPlugin",
+    "ProctrackType",
+    "GresTypes"
+  ],
+  "static_job_id": null,
+  "static_reservation": null,
+  "static_gpu_uuid": null,
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "aces_actual_autodetect_incremental_native_preparation",
+  "passed": true,
+  "plan_sha256": "9c1700a4e1fe7f526563d0f59243afec9f41b7dda16be95975e98ca6b8ff8fdc",
+  "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+  "source_tree": "8e124d09641989cfccdd016c3cfcb2a1a3471c77",
+  "basis_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "driver_sha256": "bb4076d7bd6bacedf3ab139394724b38b4c111b186bc6fe47731bb801e070f6e",
+  "native_packet": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "native_data_unit": "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+  "private_python": "/scratch/user/u.sl359075/envs/2026-11-01-02-22_rnd-atari-pixels_reference-torch-2.6.0-cpu_base-python-3.12.14_system-site-packages_without-pip_copied-python/bin/python",
+  "preserved_before_after": true,
+  "actual_site_success": false,
+  "numerical_imports": [],
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

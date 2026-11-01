@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_metadata_observation",
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "unit_id": "2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-07-38_uva-active-configuration-observer_source-commit-3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "source_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "owner": {
+    "username": "sl5nw",
+    "uid": 2618919
+  },
+  "shape": {
+    "hostname": "jaguar03",
+    "nodes": 1,
+    "ntasks": 1,
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "python": "/usr/bin/python3",
+  "job_id": null,
+  "reservation": null,
+  "gpu_uuid": null,
+  "owned_job_ledger": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+  "settings_allowlist": [
+    "SLURM_CONF",
+    "SlurmdSpoolDir",
+    "TaskPlugin",
+    "ProctrackType",
+    "GresTypes"
+  ],
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false
+}

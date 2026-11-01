@@ -1,0 +1,22 @@
+{
+  "plan_sha256": "9c1700a4e1fe7f526563d0f59243afec9f41b7dda16be95975e98ca6b8ff8fdc",
+  "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+  "basis_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "driver_sha256": "bb4076d7bd6bacedf3ab139394724b38b4c111b186bc6fe47731bb801e070f6e",
+  "bundle": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-autodetect-native-continuation_published-helper-bad2ee3736a1_incremental-basis-8e43cb1dc963/helpers-bad2ee3736a1451094d5d1644b36b8cfc2d91c38-since-8e43cb1dc963045fc28f4e611411097efd93185a.bundle",
+    "sha256": "04741112b55a9b26238d30dee5edb9099f483833c06d56f3db70aaee8b18f2d9",
+    "bytes": 712063,
+    "prerequisites": [
+      "8e43cb1dc963045fc28f4e611411097efd93185a"
+    ],
+    "reference": "refs/transfer/aces_helpers_bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+    "source_commit": "bad2ee3736a1451094d5d1644b36b8cfc2d91c38",
+    "basis_commit": "8e43cb1dc963045fc28f4e611411097efd93185a",
+    "source_tree": "8e124d09641989cfccdd016c3cfcb2a1a3471c77",
+    "packing_threads": 2,
+    "address_space_limit_bytes": 2147483648,
+    "temporary_reference_removed": true
+  },
+  "created_at_utc": "2026-11-01T15:28:24.873815+00:00"
+}
