@@ -1,0 +1,26 @@
+{
+  "kind": "device_memory_capture_component_regression_author_metadata_validation",
+  "created_utc": "2026-11-01T12:57:30.880784+00:00",
+  "job_id": "6780635",
+  "step_id": "35",
+  "before_sha256": {
+    "device_memory_capture_regression.py": "9b4f565982ea48c3d593bb6fed5b9b8bc547ff97b551e33617339f85a65258ef",
+    "tests/test_device_memory_capture_regression.py": "b820c1a042680b97e57f076a10e9427042a94c2e166b30c55c07bac585e004d0"
+  },
+  "after_sha256": {
+    "device_memory_capture_regression.py": "9b4f565982ea48c3d593bb6fed5b9b8bc547ff97b551e33617339f85a65258ef",
+    "tests/test_device_memory_capture_regression.py": "b820c1a042680b97e57f076a10e9427042a94c2e166b30c55c07bac585e004d0"
+  },
+  "source_unchanged": true,
+  "tests_run": 12,
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.973s\n\nOK\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "scope": "Metadata only: immutable two-stage plan, ledger/raw selector/GRES File/proc binding, exact job shape, parent and child birth counters, absent-context refusal, native bytes/context/sample connection, separate zero-credit kind and formal reader refusal. Git publication prerequisites and shared configuration join mocked where stated in tests."
+}

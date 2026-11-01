@@ -1,0 +1,25 @@
+{
+  "kind": "device_memory_capture_component_regression_author_metadata_validation",
+  "created_utc": "2026-11-01T12:51:19.028403+00:00",
+  "job_id": "6780635",
+  "step_id": "32",
+  "before_sha256": {
+    "device_memory_capture_regression.py": "f2313038f87f7b042df6afef880735c7e95da43e5230cbe8105d3568a0fd096a",
+    "tests/test_device_memory_capture_regression.py": "ad834ee21f5ed3cc33b45a585f20070e11067e09047c73a7065f6f808bb5ab15"
+  },
+  "after_sha256": {
+    "device_memory_capture_regression.py": "f2313038f87f7b042df6afef880735c7e95da43e5230cbe8105d3568a0fd096a",
+    "tests/test_device_memory_capture_regression.py": "ad834ee21f5ed3cc33b45a585f20070e11067e09047c73a7065f6f808bb5ab15"
+  },
+  "source_unchanged": true,
+  "tests_run": 10,
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.931s\n\nOK\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "scope": "Metadata only: immutable two-stage plan, exact ledger ownership, context absence refusal, native bytes/context/sample connection, separate zero-credit kind and formal reader refusal. Git publication prerequisites and configuration join mocked where explicitly stated in tests."
+}

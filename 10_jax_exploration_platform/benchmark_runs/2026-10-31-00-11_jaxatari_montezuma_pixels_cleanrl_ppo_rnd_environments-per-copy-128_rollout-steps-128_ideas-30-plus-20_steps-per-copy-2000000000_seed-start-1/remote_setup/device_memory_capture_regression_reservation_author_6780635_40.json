@@ -1,0 +1,26 @@
+{
+  "kind": "device_memory_capture_component_regression_reservation_author_metadata_validation",
+  "created_utc": "2026-11-01T13:06:02.374161+00:00",
+  "job_id": "6780635",
+  "step_id": "40",
+  "before_sha256": {
+    "device_memory_capture_regression.py": "b737cf140efd333ab11271c524a4c6ac7973b3a621b09648d28a9ecd3038c077",
+    "tests/test_device_memory_capture_regression.py": "e368a1834590e795590753fd8d0091e72a5e9cf3412e71a25ce8fab220e2a1a5"
+  },
+  "after_sha256": {
+    "device_memory_capture_regression.py": "b737cf140efd333ab11271c524a4c6ac7973b3a621b09648d28a9ecd3038c077",
+    "tests/test_device_memory_capture_regression.py": "e368a1834590e795590753fd8d0091e72a5e9cf3412e71a25ce8fab220e2a1a5"
+  },
+  "source_unchanged": true,
+  "tests_run": 15,
+  "successful": true,
+  "failures": 0,
+  "errors": 0,
+  "jax_imported": false,
+  "numpy_imported": false,
+  "stdout_stderr": "...............\n----------------------------------------------------------------------\nRan 15 tests in 1.080s\n\nOK\n",
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "scope": "Require csresnolim; record actual reservation from owned scheduler query only in immutable allocation/child sidecars; original generic plan keeps reservation null. Source/roster/module/resource/birth/sampler/context/native/refusal cases retained. No live commands or numerical imports."
+}

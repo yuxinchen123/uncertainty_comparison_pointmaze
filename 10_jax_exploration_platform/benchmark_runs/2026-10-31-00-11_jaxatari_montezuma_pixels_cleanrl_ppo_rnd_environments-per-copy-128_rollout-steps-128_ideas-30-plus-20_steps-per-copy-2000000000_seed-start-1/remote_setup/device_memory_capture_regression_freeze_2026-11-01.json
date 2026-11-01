@@ -1,0 +1,19 @@
+{
+  "kind": "device_memory_capture_component_regression_source_freeze",
+  "created_utc": "2026-11-01T12:57:49.121289+00:00",
+  "base_commit": "d4688adbef4e51623af6e31e16831ce6bae6c52e",
+  "capture_helper_commit": "7f5bf87a8400a73afff08098c1422642ecad69f9",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "9b4f565982ea48c3d593bb6fed5b9b8bc547ff97b551e33617339f85a65258ef",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "b820c1a042680b97e57f076a10e9427042a94c2e166b30c55c07bac585e004d0"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-31_packing-device-memory-limit_next-doubling_repeat-fitting-count_headroom-fraction-0.15/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/device_memory_capture_regression_author_6780635_35.json",
+    "sha256": "63aa571ebf0fd151638c1ee9352524eaa8c573a32709aacab640a48fd1ec448c"
+  },
+  "enabled": false,
+  "actual_gpu_regression_passed": false,
+  "standard_packet_prepared": false,
+  "jobs_submitted": false,
+  "scope": "One intentional uint8 request strictly larger than actual current-context capacity, then one fresh small correct seven-by-ten array fixture. Zero environment transitions/learner updates/packing points/cases/ideas/admission. Frozen generic plan contains no guessed job ID or UUID; actual owned Slurm ledger/config/proc mapping and allocation-bound child plans are written only after the real job starts. Formal readers must reject diagnostic evidence."
+}
