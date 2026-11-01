@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "aces_support_cpu_monitor_packet_independent_review",
+  "at_utc": "2026-11-01T09:35:14.992947+00:00",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "packet_sha256": {
+    "manifest.yaml": "8127c9571207d29b8d498b588191bb7c7af7d2f1eb5b7becc7d642541b38f6c5",
+    "monitor_replacement_plan.json": "5acfeb456767ac761154cc9ad55c68d0d5162cd10ae9c605ecb6f8a818ce0de8",
+    "source_git_archive.tar": "9a278cd8ee8a55084e66fa3810c6456ba5a5f6d2f96d637e1ea8a60540054678"
+  },
+  "source_files_verified": 231,
+  "archive_files_verified": 231,
+  "git_blob_sha256_modes_and_rosters_verified": true,
+  "guard_logic_identical_to_proven_e6_except_constants": true,
+  "actual_old_resources_replayed": true,
+  "resource_golden_cases": 2,
+  "resource_negative_cases": 4,
+  "static_source_visibility_output": "{\"source_commit\": \"f9a9c1672f788f52ba06836cee26f2dd6314cec7\", \"files_verified\": 231, \"full_tick_executed\": false, \"numerical_imports\": false}\n",
+  "old_monitor_job_id": "6780608",
+  "old_monitor_touched": false,
+  "new_job_submitted": false,
+  "full_tick_executed": false,
+  "numerical_imports": false,
+  "forbidden_command_attempts": [],
+  "review_note": "An initial reviewer-only normalization assertion replaced the commit before the containing packet path; correcting that order confirms exact guard byte equality. No packet content changed.",
+  "remaining_required_actions": [
+    "Owned-compute candidate full tick before submission.",
+    "Root submits the published exact held command and fsyncs the returned ID and row before release.",
+    "New first full report must pass before stopping owned old monitor 6780608."
+  ]
+}

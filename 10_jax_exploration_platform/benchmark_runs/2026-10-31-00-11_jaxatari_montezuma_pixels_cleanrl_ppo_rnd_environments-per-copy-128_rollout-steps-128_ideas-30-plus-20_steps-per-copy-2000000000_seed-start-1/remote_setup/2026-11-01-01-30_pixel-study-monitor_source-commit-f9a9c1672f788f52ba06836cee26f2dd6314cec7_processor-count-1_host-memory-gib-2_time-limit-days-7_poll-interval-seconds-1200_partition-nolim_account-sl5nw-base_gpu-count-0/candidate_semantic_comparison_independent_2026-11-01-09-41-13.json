@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "kind": "independent_candidate_monitor_semantic_comparison",
+  "at_utc": "2026-11-01T09:41:13.604291+00:00",
+  "source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "step_id": "6780608.3",
+  "candidate_returncode": 0,
+  "passed": true,
+  "raw_files_sha256": {
+    "candidate_before_status.json": "6a5f2161ec5f84771f8e196151e8b43c24d27d432842011d15e17e1272245553",
+    "candidate_latest_status.json": "f5976712737f5d9a40339e643adb2769d1fbdf4e0b9f20b3eeb8d1ae26137860",
+    "candidate_before_report.md": "01d6b223a51af6c9bd158012ae2a148c723b50325752d92a4985ae2b346bb5c9",
+    "candidate_latest_report.md": "e17ac478c9c6365b9051a5e2d1ff5c9b27806f50551872cadbdb7e4739f6ffc3",
+    "candidate_stdout.log": "b2323dcd7dc07f444ee39e95039380c13db3ed06dd55e84c324e8d7243ad4f4a",
+    "candidate_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate_full_tick_verification.json": "27b88f7f4df882a541b25930bc0361b5137e7078a398bc9c68941dcf254a1369"
+  },
+  "original_failed_receipt_preserved": true,
+  "original_wrapper_failure_explained": "Strict equality treated seven fresh UTC collection timestamps as UVA semantic changes; no state/schema/source/row fields changed within those metadata sections.",
+  "exact_timestamp_differences": [
+    {
+      "path": [
+        "site_validation",
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "site_validation",
+        "sites",
+        0,
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "site_validation",
+        "sites",
+        1,
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "site_validation",
+        "allocation_observations",
+        0,
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "site_validation",
+        "anomalies",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "site_validation",
+        "anomalies",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    },
+    {
+      "path": [
+        "allocation_observations",
+        0,
+        "observed_at_utc"
+      ],
+      "before": "2026-11-01T09:25:27.362552+00:00",
+      "after": "2026-11-01T09:36:51.301307+00:00"
+    }
+  ],
+  "uva_metadata_semantics_equal_after_only_these_seven_paths": true,
+  "old_aces_observer_rows_exactly_equal": true,
+  "new_aces_site_list_empty": true,
+  "queue_counts": {
+    "pending": 14,
+    "running": 1,
+    "completed": 105,
+    "failed": 0
+  },
+  "jobs_and_final_training_exactly_equal": true,
+  "unit_count": 144,
+  "unit_state_pool_gpu_job_identity_unchanged": true,
+  "independent_live_worker_progress_change": [
+    {
+      "index": 96,
+      "run": "gather epoch minibatches in advance (2 copies)",
+      "field": "progress",
+      "before": "0/7 rounds; initializing; reference",
+      "after": "0/7 rounds; initializing; candidate"
+    }
+  ],
+  "age_seconds_refreshed": true,
+  "retained_252_byte_auxiliary": "2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+  "second_tick_executed": false,
+  "code_or_raw_receipt_edits": false,
+  "ssh_job_or_numerical_actions": false,
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0
+}

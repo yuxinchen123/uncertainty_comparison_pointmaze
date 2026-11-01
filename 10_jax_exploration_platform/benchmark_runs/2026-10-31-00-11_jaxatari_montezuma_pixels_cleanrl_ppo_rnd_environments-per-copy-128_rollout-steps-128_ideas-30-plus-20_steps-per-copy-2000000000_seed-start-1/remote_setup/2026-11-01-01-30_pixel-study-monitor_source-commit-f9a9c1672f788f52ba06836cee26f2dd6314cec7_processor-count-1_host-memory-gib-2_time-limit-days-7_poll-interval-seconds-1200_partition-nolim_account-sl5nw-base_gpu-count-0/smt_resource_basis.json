@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "owned_monitor_smt_resource_basis",
+  "owned_old_job_id": "6780433",
+  "old_handover": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/handover.json",
+    "sha256": "0783b08444fb000d91c0bf3bae207444939f87b8df71e6ca7e4c588a5b364231"
+  },
+  "actual_old_job_raw": "JobId=6780433 JobName=pixel_study_monitor\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=405 Nice=0 Account=sl5nw_base QOS=normal\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   DerivedExitCode=0:0\n   RunTime=00:02:06 TimeLimit=7-00:00:00 TimeMin=N/A\n   SubmitTime=2026-11-01T01:38:32 EligibleTime=2026-11-01T01:38:32\n   AccrueTime=2026-11-01T01:38:32\n   StartTime=2026-11-01T01:38:59 EndTime=2026-11-08T01:38:59 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T01:38:59 Scheduler=Backfill\n   Partition=nolim AllocNode:Sid=portal05:1059687\n   ReqNodeList=(null) ExcNodeList=(null)\n   NodeList=slurm5\n   BatchHost=slurm5\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=2G,node=1,billing=309\n   AllocTRES=cpu=2,mem=2G,node=1,billing=311\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   JOB_GRES=(null)\n     Nodes=slurm5 CPU_IDs=6-7 Mem=2048 GRES=\n   MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-34_pixel-study-monitor_source-commit-f9888a9167d959f56f64c087a00cef4217833ed4_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch\n   WorkDir=/p/rlprojects/RND\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6780433.log\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6780433.log\n   Power=\n   TresPerNode=gres/gpu:0\n   TresPerTask=cpu:1\n   \n\n",
+  "current_node_observation": {
+    "command": [
+      "scontrol",
+      "show",
+      "node",
+      "slurm5",
+      "-o"
+    ],
+    "returncode": 0,
+    "stdout": "NodeName=slurm5 Arch=x86_64 CoresPerSocket=12  CPUAlloc=10 CPUEfctv=22 CPUTot=24 CPULoad=5.07 AvailableFeatures=haswell ActiveFeatures=haswell Gres=(null) NodeAddr=slurm5 NodeHostName=slurm5 Version=23.11.6 OS=Linux 5.15.0-194-generic #204-Ubuntu SMP Wed Sep 2 13:09:23 UTC 2026  RealMemory=256000 AllocMem=180224 FreeMem=188625 Sockets=1 Boards=1 CoreSpecCount=1 CPUSpecList=22-23 MemSpecLimit=4000 State=MIXED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=nolim  BootTime=2026-10-26T14:26:36 SlurmdStartTime=2026-10-26T16:00:54 LastBusyTime=2026-11-01T00:00:03 ResumeAfterTime=None CfgTRES=cpu=22,mem=250G,billing=38444 AllocTRES=cpu=10,mem=176G CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n",
+    "stderr": "",
+    "observed_at_utc": "2026-11-01T08:38:15.753920+00:00"
+  },
+  "observation_scope": "Old owned job requested one CPU and received two logical CPUs on a node with two threads per core. No old scheduling, requeue or runtime state is adopted."
+}
