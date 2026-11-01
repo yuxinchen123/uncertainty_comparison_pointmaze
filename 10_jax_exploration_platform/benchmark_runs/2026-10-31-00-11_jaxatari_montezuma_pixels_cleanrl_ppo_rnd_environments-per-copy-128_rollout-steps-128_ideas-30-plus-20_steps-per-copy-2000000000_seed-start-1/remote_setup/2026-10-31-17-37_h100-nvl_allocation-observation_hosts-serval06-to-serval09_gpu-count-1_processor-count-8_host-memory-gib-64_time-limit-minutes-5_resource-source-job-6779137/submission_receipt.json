@@ -1,0 +1,46 @@
+{
+  "kind": "owned_h100_nvl_allocation_observation_submission",
+  "cluster": "uva",
+  "job_id": "6779358",
+  "recorded_at_utc": "2026-11-01T00:41:29.460537+00:00",
+  "state_at_record": "held",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--account=sl5nw_base",
+    "--partition=gpu",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--constraint=h100_94gb&amd_epyc_9354",
+    "--gres=gpu:nvidia_h100_nvl:1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=00:05:00",
+    "--job-name=H100_NVL_allocation_observation",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_allocation_observation_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137/job.sbatch"
+  ],
+  "published_launch_commit": "75a79e9ff9d8fb2ca4e21ab18bfe93b5a7391686",
+  "helper_commit": "bba2278eb57e1f76fba26f561c448c0698301750",
+  "helper_root": "/p/rlprojects/RND_worktrees/h100-allocation-observation-helpers-bba2278eb57e",
+  "plan_sha256": "4a878f8eedb24cc8efa2090988a2429d8eeffd942fed90f5226f6e43f04f778a",
+  "manifest_sha256": "8bfedf0ccd42f2d3b3dac9a0e865164a77a95f4b4422ad80958d284685e2bd15",
+  "job_script_sha256": "607761e8e0de982384211fbf0bab982c2b5e0d5b44064045b287b82f03fd162e",
+  "data_unit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+    "name": "2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137"
+  },
+  "ledgers": [
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids.txt",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/h100_allocation_observation_jobids.txt"
+  ],
+  "log_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/h100_nvl_allocation_observation_6779358.log",
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
