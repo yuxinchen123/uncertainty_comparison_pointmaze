@@ -1,6 +1,7 @@
 """CleanRL PPO with exact online counts and frozen state-dependent bonus fields."""
 
 from typing import NamedTuple
+from functools import lru_cache
 
 import jax
 import jax.numpy as jnp
@@ -63,12 +64,19 @@ def network_outputs(parameters, states, coordinates, configuration):
     """Evaluate tabular outputs or the coordinate multilayer perceptron for selected states."""
     if configuration.policy_kind == "tabular":
         return gather_states(parameters["table"], states, configuration)
-    # Every neural policy has its own two 64-unit tanh layers and six-output head.
+    # Preserve the CleanRL shared trunk, actor branch, and residual critic branch.
     values = coordinates[states]
     for layer in parameters["hidden"]:
-        values = jnp.tanh(jnp.matmul(values, layer["weight"]) + layer["bias"][:, None])
-    head = parameters["head"]
-    return jnp.matmul(values, head["weight"]) + head["bias"][:, None]
+        values = jax.nn.relu(jnp.matmul(values, layer["weight"]) + layer["bias"][:, None])
+    actor = parameters["actor_hidden"]
+    actor_features = jax.nn.relu(jnp.matmul(values, actor["weight"]) + actor["bias"][:, None])
+    actor = parameters["actor_head"]
+    logits = jnp.matmul(actor_features, actor["weight"]) + actor["bias"][:, None]
+    extra = parameters["critic_extra"]
+    critic_features = values + jax.nn.relu(jnp.matmul(values, extra["weight"]) + extra["bias"][:, None])
+    critic = parameters["critic_head"]
+    critics = jnp.matmul(critic_features, critic["weight"]) + critic["bias"][:, None]
+    return jnp.concatenate((logits, critics), axis=-1)
 
 
 def initialize(configuration, transition_table, coordinates, fields, policy_seeds):
@@ -101,7 +109,10 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
         parameters = {"hidden": (
             initialize_layer(seeds, "grid/policy/hidden/0", width, 2),
             initialize_layer(seeds, "grid/policy/hidden/1", width, width)),
-            "head": initialize_layer(seeds, "grid/policy/head", 6, width, gain=0.01)}
+            "actor_hidden": initialize_layer(seeds, "grid/policy/actor_hidden", width, width, gain=0.01),
+            "actor_head": initialize_layer(seeds, "grid/policy/actor_head", 4, width, gain=0.01),
+            "critic_extra": initialize_layer(seeds, "grid/policy/critic_extra", width, width, gain=0.1),
+            "critic_head": initialize_layer(seeds, "grid/policy/critic_head", 2, width, gain=0.01)}
     # Before: no visits; after: the start is marked reached, with zero arrival counts.
     shape = (configuration.n_copies,)
     counts = jnp.zeros(shape + (state_count,), jnp.int32)
@@ -345,6 +356,14 @@ def train_iteration(state, configuration, transition_table, coordinates, fields)
     return state, metrics
 
 
+@lru_cache(maxsize=8)
+def compiled_iteration(configuration):
+    """Reuse program code while supplying each frozen field as an ordinary device input."""
+    return jax.jit(lambda state, transitions, coordinates, fields: train_iteration(
+        state, configuration, transitions, coordinates, fields),
+        donate_argnums=(0,) if configuration.donate_state else ())
+
+
 class GridTrainer:
     """Bind immutable experiment inputs once and compile complete independent-policy updates."""
 
@@ -354,9 +373,7 @@ class GridTrainer:
         self.transition_table = jnp.asarray(transition_table, jnp.int32)
         self.coordinates = jnp.asarray(coordinates, jnp.float32)
         self.fields = jnp.asarray(fields, jnp.float32)
-        self._iteration = jax.jit(lambda state: train_iteration(state, configuration,
-            self.transition_table, self.coordinates, self.fields),
-            donate_argnums=(0,) if configuration.donate_state else ())
+        self._iteration = compiled_iteration(configuration)
 
     def initialize(self, policy_seeds):
         """Create a fresh independent group after validating immutable inputs."""
@@ -364,7 +381,7 @@ class GridTrainer:
 
     def train_iteration(self, state):
         """Execute one compiled rollout and update without copying data to the host."""
-        return self._iteration(state)
+        return self._iteration(state, self.transition_table, self.coordinates, self.fields)
 
     def capture(self, state):
         """Return a rollout for correctness or visualization without changing its input."""

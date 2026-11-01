@@ -15,6 +15,7 @@ PROJECT = Path('/p/rlprojects/RND')
 PLATFORM = Path(__file__).resolve().parents[2]
 PYTHON = PROJECT / '.venvs/platform_jax/bin/python'
 ACCOUNTS = Path('/p/rlprojects/.claude/skills/submit-as-account/scripts')
+os.umask(0o002)
 
 
 def now():

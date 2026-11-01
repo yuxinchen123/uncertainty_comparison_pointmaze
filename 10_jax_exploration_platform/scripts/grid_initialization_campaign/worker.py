@@ -49,6 +49,11 @@ def main():
             write_json(output, {'completed': False, 'failure': 'Compatibility measurement exceeded 590 seconds.',
                                'hardware': card})
             raise SystemExit(124)
+        if output.exists():
+            from common import read_json
+            record = read_json(output)
+            record.update(gpu_type=gpu_class, hardware=card)
+            write_json(output, record)
         raise SystemExit(result.returncode)
     deadline = time.monotonic() + args.max_seconds
     while time.monotonic() < deadline - 650:

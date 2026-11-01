@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import subprocess
 
-from common import PLATFORM, append_json, enqueue, now, queue_counts, read_json, write_json
+from common import PLATFORM, append_json, enqueue, now, queue_counts, read_json, write_json, queue_lock
 
 HERE = Path(__file__).resolve().parent
 ADVERSARIAL = ('high_start_cell', 'high_start_region', 'high_interior_pair',
@@ -44,14 +44,14 @@ def geometry_candidates():
 
 
 def research_task(run_dir, wave, geometry, policy, field, severity, settings,
-                  budget=262144, seed_start=0, seed_count=16):
+                  budget=262144, seed_start=0, seed_count=16, variant="primary", **overrides):
     """Define a batch of fully independent settings and seeds for the shared queue."""
     name = (f'{wave}_{geometry["kind"]}-width-{geometry["width"]}-turns-{geometry["turns"]}'
             f'_policy-{policy}_bonus-{field}_severity-exponent-{severity}'
-            f'_steps-{budget}_seeds-{seed_start}-{seed_start+seed_count-1}')
+            f'_steps-{budget}_seeds-{seed_start}-{seed_start+seed_count-1}_variant-{variant}')
     specification = {'name': name, 'wave': wave, 'geometry': geometry, 'policy_kind': policy,
         'field_kind': field, 'severity_exponent': severity, 'settings': settings,
-        'total_timesteps': budget, 'seed_start': seed_start, 'seed_count': seed_count}
+        'total_timesteps': budget, 'seed_start': seed_start, 'seed_count': seed_count, 'variant': variant, **overrides}
     location = run_dir / 'specifications' / (name + '.json')
     write_json(location, specification)
     return enqueue(run_dir, {'name': name, 'stage': 'research', 'limit_seconds': 10800,
@@ -100,7 +100,7 @@ def select_maps(records):
             scores.setdefault(identity, []).append(best)
         eligible = [(identity, values) for identity, values in scores.items()
                     if len(values) == 2 and min(value['goal_fraction'] for value in values) >= .75]
-        ordered = sorted(eligible or list(scores.items()),
+        ordered = sorted(eligible,
                          key=lambda pair: sum(row['capped_mean_first_goal_steps'] for row in pair[1]),
                          reverse=True)
         for (width, turns), values in ordered[:2]:
@@ -117,20 +117,57 @@ def add_field_search(run_dir, maps):
                       coarse_settings(), budget=1048576)
 
 
+def best_setting(record):
+    """Choose a successful setting before comparing its discovery time."""
+    return min(record['settings'], key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))
+
+
 def choose_comparisons(records):
-    """Choose development winners separately for geometry and policy family."""
+    """Require a successful matched uniform condition before choosing a slowdown."""
     chosen = []
     for kind, policy in itertools.product(('straight', 'snake'), ('tabular', 'neural')):
         candidates = []
         for record in records:
             spec = record['specification']
             relevant = spec['field_kind'] in ADVERSARIAL if kind == 'straight' else spec['field_kind'] == 'random_network'
-            if spec['geometry']['kind'] == kind and spec['policy_kind'] == policy and relevant:
-                candidates.append(record)
+            if spec['geometry']['kind'] != kind or spec['policy_kind'] != policy or not relevant:
+                continue
+            uniform = [item for item in records if item['specification']['geometry'] == spec['geometry']
+                       and item['specification']['policy_kind'] == policy
+                       and item['specification']['field_kind'] == 'uniform'
+                       and item['specification']['total_timesteps'] == spec['total_timesteps']]
+            if not uniform:
+                continue
+            control = min((best_setting(item) for item in uniform), key=lambda row: row['capped_mean_first_goal_steps'])
+            if control['goal_fraction'] < .75:
+                continue
+            impaired = best_setting(record)
+            ratio = impaired['capped_mean_first_goal_steps'] / max(control['capped_mean_first_goal_steps'], 1)
+            candidates.append((ratio, record))
         if candidates:
-            chosen.append(max(candidates, key=lambda record: min(
-                row['capped_mean_first_goal_steps'] for row in record['settings']))['specification'])
+            chosen.append(max(candidates, key=lambda item: item[0])[1]['specification'])
     return chosen
+
+
+def sensitivity_settings():
+    """Vary entropy and effective intrinsic horizons using powers of two."""
+    return [dict(setting, entropy_coefficient=entropy, gamma_int=1-2.0**(-horizon))
+            for setting in coarse_settings()[::3]
+            for entropy in (0., 2.0**-14, 2.0**-10, 2.0**-6)
+            for horizon in (6, 8, 10, 12)]
+
+
+def add_diagnosis(run_dir, records, maps):
+    """Use measured weak conditions to choose a bounded new development batch."""
+    for geometry, policy in itertools.product(maps, ('tabular', 'neural')):
+        relevant = [row for row in records if row['specification']['geometry'] == geometry
+                    and row['specification']['policy_kind'] == policy
+                    and row['specification']['field_kind'] in ADVERSARIAL]
+        adversary = max(relevant, key=lambda row: best_setting(row)['capped_mean_first_goal_steps'])['specification'] if relevant else {'field_kind':'high_start_region', 'severity_exponent':8}
+        for field, severity in [('uniform', 0), ('random_network', 0),
+                                (adversary['field_kind'], adversary['severity_exponent'])]:
+            research_task(run_dir, 'diagnosis', geometry, policy, field, severity,
+                          sensitivity_settings(), budget=1048576)
 
 
 def add_fine_tuning(run_dir, comparisons):
@@ -138,11 +175,21 @@ def add_fine_tuning(run_dir, comparisons):
     settings = [{'learning_rate': 2.0 ** learning, 'intrinsic_coefficient': 2.0 ** coefficient,
                  'entropy_coefficient': 2.0 ** -10, 'rollout_steps': 128, 'gamma_int': .99}
                 for learning in range(-14, -5) for coefficient in range(-6, 7)]
+    settings += sensitivity_settings()
     for spec in comparisons:
+        adversaries = [record for record in result_records(run_dir, 'field-search')
+                       if record['specification']['geometry'] == spec['geometry']
+                       and record['specification']['policy_kind'] == spec['policy_kind']
+                       and record['specification']['field_kind'] in ADVERSARIAL]
+        adversary = max(adversaries, key=lambda record: best_setting(record)['capped_mean_first_goal_steps'])['specification'] if adversaries else spec
         for field, severity in [('uniform', 0), ('random_log_uniform', 4),
-                                (spec['field_kind'], spec['severity_exponent']), ('random_network', 0)]:
+                                (adversary['field_kind'], adversary['severity_exponent']), ('random_network', 0)]:
             research_task(run_dir, 'fine-tuning', spec['geometry'], spec['policy_kind'], field,
                           severity, settings, budget=1048576)
+            for rollout in (64, 256):
+                structural = [dict(setting, rollout_steps=rollout) for setting in coarse_settings()]
+                research_task(run_dir, 'fine-tuning', spec['geometry'], spec['policy_kind'], field,
+                              severity, structural, budget=1048576, variant=f'rollout-{rollout}')
 
 
 def add_confirmation(run_dir, comparisons, tuning, extended=False):
@@ -152,10 +199,17 @@ def add_confirmation(run_dir, comparisons, tuning, extended=False):
         matched = [record for record in tuning if
                    record['specification']['geometry'] == spec['geometry'] and
                    record['specification']['policy_kind'] == spec['policy_kind']]
+        adversaries = [record for record in matched if record['specification']['field_kind'] in ADVERSARIAL]
+        adversary = max(adversaries, key=lambda record: best_setting(record)['capped_mean_first_goal_steps'])['specification'] if adversaries else spec
+        allowed = {('uniform', 0), ('random_log_uniform', 4), ('random_network', 0),
+                   (adversary['field_kind'], adversary['severity_exponent'])}
+        matched = [record for record in matched if
+                   (record['specification']['field_kind'], record['specification']['severity_exponent']) in allowed
+                   and record['specification'].get('variant', 'primary') in {'primary', 'rollout-64', 'rollout-256'}]
         uniform = [record for record in matched if record['specification']['field_kind'] == 'uniform']
-        if not uniform:
+        if not uniform or max(best_setting(record)['goal_fraction'] for record in uniform) < .75:
             continue
-        shared = min(uniform[0]['settings'], key=lambda row: row['capped_mean_first_goal_steps'])['configuration']
+        shared = min((row for item in uniform for row in item['settings']), key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))['configuration']
         seen = set()
         for record in matched:
             candidate = record['specification']
@@ -163,13 +217,35 @@ def add_confirmation(run_dir, comparisons, tuning, extended=False):
             if identity in seen:
                 continue
             seen.add(identity)
-            tuned = min(record['settings'], key=lambda row: row['capped_mean_first_goal_steps'])['configuration']
+            same_field = [row for item in matched if item['specification']['field_kind'] == identity[0] and item['specification']['severity_exponent'] == identity[1] for row in item['settings']]
+            tuned = min(same_field, key=lambda row: (-row['goal_fraction'], row['capped_mean_first_goal_steps']))['configuration']
             configurations = [dict(shared, comparison='shared'), dict(tuned, comparison='independently-tuned')]
+            groups = {}
+            for configuration in configurations:
+                groups.setdefault(configuration.get('rollout_steps', 128), []).append(configuration)
             for start in range(10000, 10128, 16):
-                research_task(run_dir, 'long-confirmation' if extended else 'confirmation',
-                    candidate['geometry'], candidate['policy_kind'], candidate['field_kind'],
-                    candidate['severity_exponent'], configurations,
-                    budget=16777216 if extended else 4194304, seed_start=start)
+                for rollout, group in groups.items():
+                    research_task(run_dir, 'long-confirmation' if extended else 'confirmation',
+                        candidate['geometry'], candidate['policy_kind'], candidate['field_kind'],
+                        candidate['severity_exponent'], group,
+                        budget=16777216 if extended else 4194304, seed_start=start,
+                        variant=f'rollout-{rollout}')
+            if not extended:
+                for transform in ('reverse', 'shuffle', 'flatten'):
+                    research_task(run_dir, 'confirmation', candidate['geometry'], candidate['policy_kind'],
+                        candidate['field_kind'], candidate['severity_exponent'], [shared],
+                        budget=4194304, seed_start=10000, seed_count=32,
+                        variant=f'field-{transform}', field_transform=transform)
+                research_task(run_dir, 'confirmation', candidate['geometry'], candidate['policy_kind'],
+                    candidate['field_kind'], candidate['severity_exponent'], [shared],
+                    budget=4194304, seed_start=10000, seed_count=32,
+                    variant='cleanrl-normalization', normalize_intrinsic_rewards=True)
+                if candidate['geometry']['kind'] == 'snake' and candidate['field_kind'] == 'random_network':
+                    state_count = (candidate['geometry']['turns']+1)*candidate['geometry']['width']+candidate['geometry']['turns']
+                    for geometry in (candidate['geometry'], {'kind':'straight', 'width':state_count, 'turns':0}):
+                        research_task(run_dir, 'confirmation', geometry, candidate['policy_kind'],
+                            'random_network', 0, [shared], budget=4194304, seed_start=10000,
+                            seed_count=32, variant='shared-path-field', field_geometry={'kind':'straight', 'width':state_count, 'turns':0})
             frozen.append(dict(candidate, settings=configurations))
     write_json(run_dir / ('long_confirmation_frozen.json' if extended else 'confirmation_frozen.json'), frozen)
 
@@ -211,14 +287,30 @@ def advance(run_dir):
     elif phase == 'calibration' and stage_finished(run_dir, 'calibration_'):
         maps = select_maps(result_records(run_dir, 'calibration'))
         if not maps:
-            state['blocked_reason'] = 'Calibration has no complete map results.'
+            if not state.get('calibration_retry'):
+                state['calibration_retry'] = True
+                for geometry, policy in itertools.product(
+                    [{'kind':'straight','width':width,'turns':0} for width in (16,32,64)] +
+                    [{'kind':'snake','width':width,'turns':turns} for width in (8,16) for turns in (2,4)],
+                    ('tabular','neural')):
+                    research_task(run_dir, 'calibration', geometry, policy, 'uniform', 0,
+                                  sensitivity_settings(), budget=1048576, variant='extended-baseline')
+            else:
+                state.update(phase='complete', outcome='No geometry met the prespecified uniform-success criterion.')
         else:
             state.update(phase='field-search', selected_maps=maps)
             add_field_search(run_dir, maps)
     elif phase == 'field-search' and stage_finished(run_dir, 'field-search_'):
         comparisons = choose_comparisons(result_records(run_dir, 'field-search'))
-        state.update(phase='fine-tuning', selected_comparisons=comparisons)
-        add_fine_tuning(run_dir, comparisons)
+        state.update(phase='diagnosis', selected_comparisons=comparisons)
+        add_diagnosis(run_dir, result_records(run_dir, 'field-search'), state['selected_maps'])
+    elif phase == 'diagnosis' and stage_finished(run_dir, 'diagnosis_'):
+        comparisons = choose_comparisons(result_records(run_dir, 'field-search') + result_records(run_dir, 'diagnosis'))
+        if comparisons:
+            state.update(phase='fine-tuning', selected_comparisons=comparisons)
+            add_fine_tuning(run_dir, comparisons)
+        else:
+            state.update(phase='complete', outcome='Development produced no eligible matched comparison.')
     elif phase == 'fine-tuning' and stage_finished(run_dir, 'fine-tuning_'):
         add_confirmation(run_dir, state['selected_comparisons'], result_records(run_dir, 'fine-tuning'))
         state['phase'] = 'confirmation'
@@ -231,12 +323,25 @@ def advance(run_dir):
             state['phase'] = 'complete'
     elif phase == 'long-confirmation' and stage_finished(run_dir, 'long-confirmation_'):
         state['phase'] = 'complete'
-    # The research reserve is enforced even if development has not drained.
-    if state.get('deadline') and state['phase'] in ('calibration', 'field-search', 'fine-tuning'):
+    # Freeze the best available development records when the confirmation reserve starts.
+    if state.get('deadline') and state['phase'] in ('calibration', 'field-search', 'diagnosis', 'fine-tuning'):
         remaining = (datetime.fromisoformat(state['deadline'])-datetime.now().astimezone()).total_seconds()
-        if remaining < 24*3600 and result_records(run_dir, 'fine-tuning'):
-            add_confirmation(run_dir, state.get('selected_comparisons', []), result_records(run_dir, 'fine-tuning'))
-            state['phase'] = 'confirmation'
+        if remaining < 24*3600:
+            development = result_records(run_dir)
+            comparisons = state.get('selected_comparisons') or choose_comparisons(development)
+            if comparisons:
+                add_confirmation(run_dir, comparisons, development)
+                state.update(phase='confirmation', selected_comparisons=comparisons,
+                             reserve_started_at=now())
+                with queue_lock(run_dir):
+                    destination = run_dir / 'queue/deferred'
+                    destination.mkdir(exist_ok=True)
+                    for path in (run_dir/'queue/pending').glob('*.json'):
+                        task = read_json(path)
+                        if task['stage'] == 'research' and not path.name.startswith('confirmation_'):
+                            path.rename(destination/path.name)
+            else:
+                state.update(phase='complete', outcome='Confirmation reserve reached without an eligible matched comparison.')
     state['updated_at'] = now()
     write_json(state_path, state)
     if phase != state['phase']:

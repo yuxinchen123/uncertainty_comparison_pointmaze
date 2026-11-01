@@ -17,10 +17,24 @@ def main():
     if not os.environ.get('SLURM_JOB_ID'):
         raise RuntimeError('Numerical tests require a Slurm allocation.')
     environment = dict(os.environ, PYTHONPATH=str(PLATFORM/'src'), JAX_ENABLE_X64='true')
-    commands = [[str(PYTHON), '-m', 'pytest', '-q',
+    # The reference environment supplies pytest; its JAX versions match production.
+    reference_python = PROJECT/'.venvs/atari_pixels_jax/bin/python'
+    commands = [[str(reference_python), '-m', 'pytest', '-q',
         str(PLATFORM/'tests/test_grid_initialization_environment.py'),
         str(PLATFORM/'tests/grid_initialization'),
-        str(PLATFORM/'scripts/grid_initialization_campaign/tests')]]
+        str(PLATFORM/'scripts/grid_initialization_campaign/tests')],
+        [str(PYTHON), '-c',
+         'import jax,numpy as np; '
+         'from exploration_platform.grid_initialization.config import GridPPOConfig; '
+         'from exploration_platform.grid_initialization.environments import make_geometry; '
+         'from exploration_platform.grid_initialization.training import GridTrainer; '
+         'assert jax.default_backend()=="gpu"; '
+         'w=make_geometry("straight",4); '
+         'c=GridPPOConfig(n_copies=2,num_steps=8,num_minibatches=2,update_epochs=1,total_timesteps=8); '
+         't=GridTrainer(c,w.transition_table,w.coordinates,np.ones((2,4),np.float32)); '
+         's,m=t.train_iteration(t.initialize([1,2]));jax.block_until_ready(s); '
+         'assert np.asarray(s.counts).sum()==16; print("Production environment GPU smoke passed.")'],
+        [str(PYTHON), str(Path(__file__).parent/'build_report.py'), '--run-dir', str(args.run_dir)]]
     results = []
     for command in commands:
         result = subprocess.run(command, env=environment)

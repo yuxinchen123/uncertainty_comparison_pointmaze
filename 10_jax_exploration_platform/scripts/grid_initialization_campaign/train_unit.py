@@ -1,6 +1,7 @@
 """Train many independent grid policies and preserve exact behavioral evidence."""
 
 import argparse
+import gc
 from dataclasses import fields as dataclass_fields
 import json
 import os
@@ -49,6 +50,26 @@ def main():
     copies = [(setting_index, seed) for setting_index in range(len(spec['settings']))
               for seed in range(spec['seed_start'], spec['seed_start']+spec['seed_count'])]
     records, arrays, field_cache = [], [], {}
+    completed_ids = set()
+    for completed_path in sorted(folder.glob('completed_copies_*.json')):
+        completed = read_json(completed_path)
+        if not completed.get('completed'):
+            continue
+        behavior = folder / completed['behavior_file']
+        if not behavior.exists():
+            raise RuntimeError(f'Completed shard has no behavioral archive: {completed_path}')
+        for row in completed['copies']:
+            identity = (row['setting_index'], row['policy_seed'])
+            if identity in completed_ids:
+                raise RuntimeError(f'Duplicate completed scientific copy: {identity}')
+            completed_ids.add(identity)
+            records.append(row)
+        arrays.append(behavior)
+    # Scientific copy identifiers survive a change in physical GPU packing after a retry.
+    copies = [copy for copy in copies if copy not in completed_ids]
+    field_geometry = make_geometry(**spec.get('field_geometry', spec['geometry']))
+    if field_geometry.state_count != geometry.state_count:
+        raise ValueError('A shared path field requires equal state counts.')
     started = time.monotonic()
     batch_size = profile['copies']
     configuration_names = {item.name for item in dataclass_fields(GridPPOConfig)}
@@ -60,12 +81,9 @@ def main():
         batch_size = min(batch_size, read_json(override)['copies'])
     for offset in range(0, len(copies), batch_size):
         selected = copies[offset:offset+batch_size]
-        shard = folder / f'completed_copies_{offset}-{offset+len(selected)-1}.json'
-        behavior_path = folder / f'behavior_copies_{offset}-{offset+len(selected)-1}.npz'
-        if shard.exists():
-            records.extend(read_json(shard)['copies'])
-            arrays.append(behavior_path)
-            continue
+        shard_identifier = f'{selected[0][0]}-{selected[0][1]}_to_{selected[-1][0]}-{selected[-1][1]}'
+        shard = folder / f'completed_copies_{shard_identifier}.json'
+        behavior_path = folder / f'behavior_copies_{shard_identifier}.npz'
         setting_indices = np.asarray([item[0] for item in selected], np.int32)
         seeds = np.asarray([item[1] for item in selected], np.int32)
         # Four distinct policy seeds share each random field; confirmation fields are disjoint.
@@ -74,11 +92,22 @@ def main():
         for field_seed in field_seeds:
             if int(field_seed) not in field_cache:
                 field_cache[int(field_seed)] = make_initial_bonus_field(
-                    spec['field_kind'], geometry, seed=int(field_seed),
+                    spec['field_kind'], field_geometry, seed=int(field_seed),
                     severity_exponent=spec['severity_exponent'])
             field = field_cache[int(field_seed)]
-            bonus_fields.append(field.normalized)
-            raw_fields.append(field.raw)
+            normalized, raw = field.normalized.copy(), field.raw.copy()
+            transform = spec.get('field_transform', 'none')
+            if transform == 'reverse':
+                normalized, raw = normalized[::-1].copy(), raw[::-1].copy()
+            elif transform == 'shuffle':
+                permutation = np.random.default_rng(seed_for('field-shuffle', int(field_seed))).permutation(len(raw))
+                normalized, raw = normalized[permutation], raw[permutation]
+            elif transform == 'flatten':
+                normalized, raw = np.ones_like(normalized), np.full_like(raw, raw.mean())
+            elif transform != 'none':
+                raise ValueError(f'Unknown field transform: {transform}')
+            bonus_fields.append(normalized)
+            raw_fields.append(raw)
         initial_fields = np.stack(bonus_fields)
         per_copy = {name: tuple(spec['settings'][index][name] for index in setting_indices)
                     for name in ('learning_rate', 'intrinsic_coefficient', 'entropy_coefficient', 'gamma_int')}
@@ -88,6 +117,7 @@ def main():
         configuration = GridPPOConfig(n_copies=len(selected), policy_kind=spec['policy_kind'],
             total_timesteps=spec['total_timesteps'], episode_length=1 << (8*geometry.goal_state-1).bit_length(),
             goal_state=geometry.goal_state, num_steps=rollout_steps,
+            normalize_intrinsic_rewards=spec.get('normalize_intrinsic_rewards', False),
             per_copy_scalar_settings=per_copy, **changes)
         trainer = GridTrainer(configuration, geometry.transition_table, geometry.coordinates, initial_fields)
         policy_seeds = np.asarray([seed_for('policy', int(seed)) for seed in seeds], np.uint32)
@@ -117,7 +147,10 @@ def main():
         current_records = [{'setting_index': int(setting_index), 'policy_seed': int(seed),
             'field_seed': int(field_seed), 'first_goal_step': int(first[index]),
             'capped_first_goal_steps': int(first[index]) if first[index] >= 0 else spec['total_timesteps'],
-            'coverage': float(reached[index]), 'blocked_fraction': float(blocked[index]/spec['total_timesteps'])}
+            'coverage': float(reached[index]),
+            'maximum_progress': int(np.asarray(jax.device_get(state.maximum_progress))[index]),
+            'goal_arrivals': int(np.asarray(jax.device_get(state.successes))[index]),
+            'blocked_fraction': float(blocked[index]/spec['total_timesteps'])}
             for index, ((setting_index, seed), field_seed) in enumerate(zip(selected, field_seeds))]
         np.savez_compressed(behavior_path, initial_fields=initial_fields, raw_initial_fields=np.stack(raw_fields),
             visit_counts=counts, late_visit_counts=counts-late_start if late_start is not None else counts,
@@ -125,11 +158,20 @@ def main():
             trajectory_states=np.stack(snapshots), trajectory_steps=np.asarray(steps),
             maximum_progress_history=np.stack(maximums), first_goal_steps=first,
             seed_ids=seeds, field_seed_ids=field_seeds, setting_indices=setting_indices)
-        write_json(shard, {'completed': True, 'copies': current_records})
+        write_json(shard, {'completed': True, 'copies': current_records,
+            'behavior_file': behavior_path.name, 'configuration': {
+                'episode_length': configuration.episode_length, 'rollout_steps': configuration.num_steps,
+                'normalization': configuration.normalize_intrinsic_rewards},
+            'field_metadata': [field_cache[int(seed)].metadata for seed in field_seeds]})
         records.extend(current_records)
         arrays.append(behavior_path)
-        del trainer, state
-        # Structural compilation signatures repeat across many units; keep the JAX cache alive.
+        del trainer, state, probabilities
+        # Keep executable memory bounded across many parameter-vector signatures.
+        jax.clear_caches()
+        gc.collect()
+    expected_count = len(spec['settings']) * spec['seed_count']
+    if len(records) != expected_count:
+        raise RuntimeError(f'Expected {expected_count} completed copies, found {len(records)}')
     summaries = []
     for index, setting in enumerate(spec['settings']):
         rows = [row for row in records if row['setting_index'] == index]
@@ -150,6 +192,7 @@ def main():
     np.savez_compressed(folder / 'behavior.npz', **combined)
     write_json(folder / 'summary.json', {'completed': True, 'specification': spec,
         'settings': summaries, 'copy_records': records, 'wall_seconds': time.monotonic()-started,
+        'wall_seconds_this_attempt': time.monotonic()-started, 'resumed_copy_count': len(completed_ids),
         'finished_at': now(), 'behavior': str(folder / 'behavior.npz')})
 
 

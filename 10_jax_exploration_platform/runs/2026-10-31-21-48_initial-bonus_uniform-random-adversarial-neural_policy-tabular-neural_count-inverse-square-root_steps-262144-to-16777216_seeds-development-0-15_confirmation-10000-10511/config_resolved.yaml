@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "description": "Controlled initial-bonus exploration study with adaptive infrastructure research",
+  "policy_kinds": [
+    "tabular",
+    "neural"
+  ],
+  "geometries": {
+    "straight_lengths": [
+      32,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "snake_widths": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "snake_turns": [
+      2,
+      4,
+      8,
+      16
+    ]
+  },
+  "learning_rate_exponents": [
+    -14,
+    -13,
+    -12,
+    -11,
+    -10,
+    -9,
+    -8,
+    -7,
+    -6
+  ],
+  "intrinsic_coefficient_exponents": [
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "development_seed_count": 16,
+  "confirmation_policy_seeds": 128,
+  "confirmation_field_seeds": 32,
+  "policy_seeds_per_field": 4,
+  "research_hours": 96,
+  "confirmation_reserve_hours": 24,
+  "measurement_limit_seconds": 590,
+  "max_measurement_attempts": 2,
+  "save_checkpoints": false,
+  "git": {
+    "commit": "5f14a5e81ae8a963f364a0826e9d2ac18052e495",
+    "dirty": false,
+    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_5f14a5e81ae8a963f364a0826e9d2ac18052e495"
+  }
+}
