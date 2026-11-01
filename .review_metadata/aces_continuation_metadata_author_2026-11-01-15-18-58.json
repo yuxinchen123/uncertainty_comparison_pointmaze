@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "aces_autodetect_incremental_native_preparation_author_tests",
+  "at_utc": "2026-11-01T15:18:58.341508+00:00",
+  "passed": true,
+  "tests": 14,
+  "seconds": 1.7809823279967532,
+  "files": {
+    "continue_aces_autodetect_native_preparation.py": "bb4076d7bd6bacedf3ab139394724b38b4c111b186bc6fe47731bb801e070f6e",
+    "test_aces_autodetect_incremental_native_preparation.py": "d831c932456ee09c31eb451d01b0efcdd60fbdf7379fc57a5349a16b09266781",
+    "aces_autodetect_incremental_native_preparation_driver_plan.json": "9c1700a4e1fe7f526563d0f59243afec9f41b7dda16be95975e98ca6b8ff8fdc",
+    "run_aces_continuation_metadata_tests.py": "42b4859601eadd162aa3a100a09c3607e8be8abd1abfaaa2cf39a27c6a51917f"
+  },
+  "source_unchanged": true,
+  "actual_owned_job_id": "6781087",
+  "actual_owned_step_id": "16",
+  "process": {
+    "hostname": "slurm2",
+    "pid": 666013,
+    "process_start_time": "50713766",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_16/user/task_0\n"
+  },
+  "local_git_processes": 21,
+  "ssh_calls": 0,
+  "network_calls": 0,
+  "installs": 0,
+  "numerical_imports": [],
+  "job_submissions": 0,
+  "test_output": "test_actual_reviewed_graph_and_forced_existing_master_are_exact (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nThe real plan preserves source, software and original inputs before any network call is possible. ... ok\ntest_bundle_header_binds_one_reference_and_all_prerequisites (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nA foreign reference, omitted basis or duplicate prerequisite cannot be imported. ... ok\ntest_bundle_publication_never_overwrites_a_conflict (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nA different existing target and the new complete temporary bytes both survive. ... ok\ntest_bundle_stream_requires_exact_hash_length_and_no_extra_bytes (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nSuccessful bytes publish once; incomplete, extra or changed bytes stay as partial evidence. ... ok\ntest_changed_plan_or_document_fails_before_network_or_output_creation (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nA changed source/private interpreter/mapping input cannot start the transport or create an intent. ... ok\ntest_changed_raw_payload_or_credit_cannot_publish_an_accepted_return (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nCorrupt bytes and coherent nonzero-credit claims are retained as raw failures, never accepted. ... ok\ntest_command_failure_and_timeout_keep_raw_bytes_before_rejection (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nFailed metadata commands retain their exact intent, status and received stdout/stderr. ... ok\ntest_exact_synthetic_raw_return_retains_native_paths_and_initial_data_bytes (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nThe receiver copies complete actual-shape raw metadata while making no real native-success claim. ... ok\ntest_foreign_local_or_remote_owner_rejects_before_any_mutation (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nNeither a compute host nor a foreign native owner may use the execution path. ... ok\ntest_partial_intent_is_preserved_and_never_reused (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nA failed owned preparation records its failure and a second call stops before any process. ... ok\ntest_real_small_incremental_bundle_has_exact_prerequisite_and_removes_only_its_ref (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nActual local Git proves the bundle is incremental and the temporary reference is removed. ... ok\ntest_response_prefix_or_driver_hash_cannot_create_received_files (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nRaw errors remain available without being interpreted as a successful native preparation. ... ok\ntest_return_roster_rejects_missing_duplicate_foreign_and_escaped_paths (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nOnly complete original-path-bound packet/data artifacts can enter the fresh local receiver. ... ok\ntest_root_flattening_preserves_dedicated_clone_names_and_rejects_conflicts (test_aces_autodetect_incremental_native_preparation.ContinuationTests)\nHuman group labels cannot replace the actual pinned physical root path. ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 1.733s\n\nOK\n",
+  "workers_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
