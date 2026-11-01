@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "owned_compute_actual_held_binding_verification",
+  "at_utc": "2026-11-01T18:13:04.977312+00:00",
+  "verification_job_id": "6781231",
+  "verification_numeric_step": "15",
+  "hostname": "slurm1",
+  "observed_job_id": "6781903",
+  "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+  "source_root_clean": true,
+  "null_frozen_identities_preserved": true,
+  "all11_original_unit_artifacts_unchanged": true,
+  "live_owned_ledgers_and_exact_row_once": true,
+  "binding_files": {
+    "held_identifier_binding.json": "605afe4ef4f47f5bb01b0acc975d45e2f1242ffc6e215fce195104d67f631f01",
+    "passive_held_identifier_binding.json": "fc634785017d3facac1c84b2d08f828ec853a58b7a7bf8e7036fd78f5812b8db",
+    "held_owned_job_ledger_snapshot.txt": "57715685e7fa43eeeaf0ad1385b41e58a96db89f28d01b5e779bcf4b57dc409b"
+  },
+  "first_portal_visibility_failure_sha256": "8c8668fa7c3446b99588fa79e491bf3c47891cb5af8e9e49abdb4785ec3ebd87",
+  "binding_producer_rerun": false,
+  "collection_run": false,
+  "released": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false
+}

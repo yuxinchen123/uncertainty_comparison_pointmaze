@@ -1,0 +1,12 @@
+{
+  "kind": "binding_first_portal_visibility_verification_failure",
+  "at_utc": "2026-11-01T18:12:29.721389+00:00",
+  "job_id": "6781903",
+  "producer_returncode": 0,
+  "producer_stdout_sha256": "8bacbcd9b3fc2eb7c198a347d4d09f5da8b1213988da9f1bce5a989abf8d8de3",
+  "failed_read": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/held_identifier_binding.json",
+  "error_type": "FileNotFoundError",
+  "producer_rerun": false,
+  "job_released": false,
+  "preserve_and_verify_on_owned_compute": true
+}

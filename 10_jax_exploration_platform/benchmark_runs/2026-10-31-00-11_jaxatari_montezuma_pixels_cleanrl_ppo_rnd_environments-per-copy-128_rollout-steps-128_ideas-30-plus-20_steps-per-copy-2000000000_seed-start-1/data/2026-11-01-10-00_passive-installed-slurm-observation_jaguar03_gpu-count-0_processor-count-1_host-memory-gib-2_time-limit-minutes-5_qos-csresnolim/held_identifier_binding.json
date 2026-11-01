@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_metadata_observation_returned_held_identifier_binding",
+  "cluster": "uva",
+  "job_id": "6781903",
+  "reservation": "sl5nw_168",
+  "owner": {
+    "username": "sl5nw",
+    "uid": 2618919
+  },
+  "plan_sha256": "16a820c1979e5bedaf10411f319bf3b518b66aab9f22b30b632e89bd37dfb011",
+  "owned_ledger_origin": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+  "owned_ledger_sha256": "57715685e7fa43eeeaf0ad1385b41e58a96db89f28d01b5e779bcf4b57dc409b",
+  "held_state_verified_by_this_function": false,
+  "job_released_by_producer": false,
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false
+}

@@ -1,0 +1,52 @@
+{
+  "kind": "owned_passive_observer_6781903_release_implementation_review",
+  "job_id": "6781903",
+  "at_utc": "2026-11-01T18:18:30.334728+00:00",
+  "source_sha256": "d644c53cf0239c4ab3554e695c004f9b34ebf432c047a999b57757fc02e57b0d",
+  "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py",
+  "frozen_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_frozen_inputs_6781903.json",
+    "sha256": "d053777060efc639e75d5b2cdf3d66e43decbd42cf45a7e7f15b49e425f09cc6",
+    "count": 32,
+    "original_unit_artifact_count": 11
+  },
+  "submission_receipt_sha256": "43251c8f2d5341ab8c97b55b97c3b9f587370106e46b5cf1c50876a4d649d687",
+  "held_monitor_review_sha256": "7e86e439377125ee36e9cd6f0971232bc014cf1203167421916b66a19f2dec4d",
+  "native_command": [
+    "scontrol",
+    "release",
+    "6781903"
+  ],
+  "requirements": [
+    "Exact live global/UVA ledgers and TSV row, actual immutable receipt, all 11 original unit files and all packet/static/source/binding hashes must remain unchanged.",
+    "Strict ownership binding, passive binding and its frozen actual ledger snapshot must identify only job 6781903, source fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947 and reservation sl5nw_168. Both original plans retain null job, reservation and GPU identities.",
+    "Actual held monitor proof must bind current full monitor 6781231/source fb3071f, source/script/submission/binding hashes and the verified recurring monitor. The proof is checked fresh in UTC.",
+    "The fresh exact-ID query must still show sl5nw UID2618919, sl5nw_base/gpu/csresnolim, ReqNodeList jaguar03, reservation sl5nw_168, requested oneCPU/twoGiB/fiveminutes, Requeue0/Restarts0, PENDING/JobHeldUser, no GRES requested and no TresPerNode field.",
+    "Root must publish exact release source/review/held proof, frozen input map and all in-repository bound artifacts before supplying the actual full publication commit.",
+    "One exclusive intent precedes the saved raw own query and return. Any failed/partial attempt stays immutable and cannot be retried.",
+    "Only one scontrol release 6781903 call may run. It writes raw command stdout/stderr and its return before the successful release receipt. No SSH, new submission, cancellation, collection or canonical campaign change is performed."
+  ],
+  "default_argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py"
+  ],
+  "future_release_argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py",
+    "--publication-commit",
+    "<actual full publication commit supplied by root after independent review>",
+    "--release"
+  ],
+  "publication_placeholder_filled": false,
+  "release_executed": false,
+  "collection_run": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false
+}

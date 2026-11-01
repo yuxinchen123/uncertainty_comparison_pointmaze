@@ -1,0 +1,65 @@
+{
+  "kind": "owned_passive_observer_actual_held_monitor_and_binding_review",
+  "passed": true,
+  "job_id": "6781903",
+  "at_utc": "2026-11-01T18:15:22.711242+00:00",
+  "monitor_job_id": "6781231",
+  "monitor_source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "actual_full_monitor_step": "6781231.16",
+  "monitor_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-18-13_verification.json",
+  "monitor_verification_sha256": "1c676e2f6003b90102fa031be93a35c3beaa8a1f0b1e8fbce8fccbc210df7e44",
+  "held_row": [
+    "6781903",
+    "PENDING",
+    "",
+    "N/A",
+    "(JobHeldUser)"
+  ],
+  "query": {
+    "command": [
+      "scontrol",
+      "show",
+      "job",
+      "-o",
+      "6781903"
+    ],
+    "returncode": 0,
+    "stdout": "JobId=6781903 JobName=job.sbatch UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=0 Nice=0 Account=sl5nw_base QOS=csresnolim JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:05:00 TimeMin=N/A SubmitTime=2026-11-01T13:11:17 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T13:11:17 Scheduler=Main Partition=gpu AllocNode:Sid=portal05:1689606 ReqNodeList=jaguar03 ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=308 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 Reservation=sl5nw_168 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch WorkDir=/p/rlprojects/RND_worktrees/2026-11-01-09-43_passive-installed-slurm-wrapper_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5 StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_6781903.err StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_6781903.out Power= TresPerTask=cpu:1 \n",
+    "stderr": ""
+  },
+  "approved_fields": {
+    "JobId": "6781903",
+    "UserId": "sl5nw(2618919)",
+    "Account": "sl5nw_base",
+    "Partition": "gpu",
+    "QOS": "csresnolim",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "ReqNodeList": "jaguar03",
+    "Reservation": "sl5nw_168",
+    "Requeue": "0",
+    "Restarts": "0",
+    "NumCPUs": "1",
+    "NumTasks": "1",
+    "CPUs/Task": "1",
+    "MinMemoryNode": "2G",
+    "TimeLimit": "00:05:00",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch"
+  },
+  "requested_gpu_count": 0,
+  "tres_per_node_absent": true,
+  "submission_receipt_sha256": "43251c8f2d5341ab8c97b55b97c3b9f587370106e46b5cf1c50876a4d649d687",
+  "binding_sha256": {
+    "held_identifier_binding.json": "605afe4ef4f47f5bb01b0acc975d45e2f1242ffc6e215fce195104d67f631f01",
+    "passive_held_identifier_binding.json": "fc634785017d3facac1c84b2d08f828ec853a58b7a7bf8e7036fd78f5812b8db",
+    "held_owned_job_ledger_snapshot.txt": "57715685e7fa43eeeaf0ad1385b41e58a96db89f28d01b5e779bcf4b57dc409b"
+  },
+  "binding_verification_sha256": "1bf1e6b4d611b42c79b79750843ebeb22c95c1fc331a8d92e70b3f83ffc2e2d3",
+  "passive_plan_sha256": "8598556c53caf13c1660e7d5d94cd35fb7ca28816835db89c5ee6f68572450d0",
+  "script_sha256": "d03ca12de9c67f9dda0c79386ebf4c7da70f9f1a7a1dd808b674cf385cd632a8",
+  "session_cron_id": "ed95cc7b-fde3-47fc-bab9-b7e7be84eace",
+  "session_cron_verified": true,
+  "cadence_seconds": 1200,
+  "all_credit_zero": true,
+  "source_admission_changed": false
+}

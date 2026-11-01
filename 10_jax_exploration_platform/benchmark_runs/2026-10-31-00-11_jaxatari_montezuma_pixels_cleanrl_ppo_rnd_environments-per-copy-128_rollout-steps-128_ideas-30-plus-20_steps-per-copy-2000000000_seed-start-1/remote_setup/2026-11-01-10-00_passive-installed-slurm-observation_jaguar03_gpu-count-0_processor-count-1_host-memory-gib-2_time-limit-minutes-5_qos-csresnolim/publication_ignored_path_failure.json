@@ -1,0 +1,9 @@
+{
+  "kind": "passive_release_publication_staging_failure",
+  "at_utc": "2026-11-01T18:23:13.485140+00:00",
+  "command_kind": "git add without explicit force for reviewed ignored experiment records",
+  "returncode": 1,
+  "commit_created": false,
+  "release_executed": false,
+  "correction": "Use explicit reviewed artifact paths with git add -f; preserve ignore rules."
+}

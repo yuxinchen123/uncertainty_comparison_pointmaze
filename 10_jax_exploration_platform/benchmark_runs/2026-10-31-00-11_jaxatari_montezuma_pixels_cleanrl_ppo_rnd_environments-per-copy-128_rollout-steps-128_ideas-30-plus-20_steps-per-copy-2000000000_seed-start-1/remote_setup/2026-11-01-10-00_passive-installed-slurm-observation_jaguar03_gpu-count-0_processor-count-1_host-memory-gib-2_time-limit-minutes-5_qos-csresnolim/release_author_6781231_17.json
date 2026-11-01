@@ -1,0 +1,25 @@
+{
+  "kind": "passive_observer_6781903_release_author_metadata_verification",
+  "actual_job_id": "6781231",
+  "actual_step_id": "17",
+  "pid": 618152,
+  "uid": 2618919,
+  "hostname": "slurm1",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_17/user/task_0\n",
+  "proc_stat": "618152 (python) R 618145 618152 618144 0 -1 4194560 4285 1496 171 0 28 7 1 0 20 0 1 0 51799085 38760448 6718 2147483648 94602907521024 94602909948701 140733867235104 0 0 0 0 16781312 2 0 0 0 17 10 0 0 0 0 0 94602911374064 94602913355504 94603161944064 140733867238983 140733867239441 140733867239441 140733867245507 0\n",
+  "tests": 6,
+  "passed": true,
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py": "d644c53cf0239c4ab3554e695c004f9b34ebf432c047a999b57757fc02e57b0d",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/test_release_passive_observer_6781903.py": "3025ee44269a8590aed9079a3d51f9ada27d8db1593574ae1ae0d463a1b16fef",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_implementation_review_6781903.json": "f0cbd312f6a741dac3241ed769ed87fbe4ef9e0f232dba0241e25a5e9f9aebab"
+  },
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_passive_observer_6781903.py": "d644c53cf0239c4ab3554e695c004f9b34ebf432c047a999b57757fc02e57b0d",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/test_release_passive_observer_6781903.py": "3025ee44269a8590aed9079a3d51f9ada27d8db1593574ae1ae0d463a1b16fef",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/release_implementation_review_6781903.json": "f0cbd312f6a741dac3241ed769ed87fbe4ef9e0f232dba0241e25a5e9f9aebab"
+  },
+  "test_output": "test_actual_default_metadata_only_and_publication_required (tests.Tests.test_actual_default_metadata_only_and_publication_required) ... ok\ntest_actual_held_record_and_bad_owner_request_restart_or_duplicate (tests.Tests.test_actual_held_record_and_bad_owner_request_restart_or_duplicate) ... ok\ntest_changed_unit_binding_or_foreign_monitor_proof_is_refused_without_writing (tests.Tests.test_changed_unit_binding_or_foreign_monitor_proof_is_refused_without_writing) ... ok\ntest_one_query_then_one_release_and_no_old_job_action (tests.Tests.test_one_query_then_one_release_and_no_old_job_action) ... ok\ntest_query_failure_is_saved_before_parse_and_does_not_release (tests.Tests.test_query_failure_is_saved_before_parse_and_does_not_release) ... ok\ntest_timeout_retains_intent_and_raw_return_without_retry (tests.Tests.test_timeout_retains_intent_and_raw_return_without_retry) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.295s\n\nOK\n",
+  "live_scheduler_or_network_actions": 0,
+  "numerical_modules_present": []
+}

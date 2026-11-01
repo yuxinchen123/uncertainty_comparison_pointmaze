@@ -1,0 +1,26 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6781231",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "env",
+    "PYTHONNOUSERSITE=1",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "/usr/bin/python3",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947/10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py",
+    "bind-held-identifier",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+    "--job-id",
+    "6781903",
+    "--reservation",
+    "sl5nw_168"
+  ],
+  "returncode": 0,
+  "stdout_sha256": "8bacbcd9b3fc2eb7c198a347d4d09f5da8b1213988da9f1bce5a989abf8d8de3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "at_utc": "2026-11-01T18:11:58.153527+00:00",
+  "released": false
+}

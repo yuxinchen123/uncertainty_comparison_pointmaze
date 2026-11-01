@@ -372,3 +372,8 @@ Exact seventeen-file tiny-component merge08d1552 matched the independently const
 ## 2026-11-01 09:59 PT: publish corrected passive collector and strict wrapper
 
 Preserved the first twenty-nine-case suite and three independently found source defects. Corrected library passed42author and42independent cases plus3extra checks before exact thirty-path integration1eca58d. Its separate wrapper passed18author and18independent cases plus3extra checks before exact seven-path integrationfa7b0a2. Both actual merged trees matched independent alternate-index proofs; original files and numerical admission stayed unchanged. The actual standard zero-GPU packet is being prepared from clean detached published source, with no submission or collection yet. Owned resource review confirms oneCPU/twoGiB/five minutes on jaguar03 under sl5nw_168, ending2026-11-04T04:59:59UTC. Fresh full monitor6781231.9 records117/120, two pending, one running and zero formal failures.
+
+
+## 2026-11-01 10:20 PST — held passive observation recorded
+
+Submitted passive metadata observation 6781903 once with hold, synchronized both owned ledgers and the exact row, and verified its separate identifier binding on owned step 6781231.15. Preserved the first portal file-visibility failure without repeating binding. Full monitor 6781231.16 verifies the held row and 117 of 120 original comparisons. Both native recurring task ed95cc7b-fde3-47fc-bab9-b7e7be84eace and persistent monitor 6781231 remain every twenty minutes. Release source review is pending; no collector, source profile, physical mapping or admission has run. Both existing masters passed at 18:01:04 UTC; next explicit check is no earlier than 19:01:05 UTC.
