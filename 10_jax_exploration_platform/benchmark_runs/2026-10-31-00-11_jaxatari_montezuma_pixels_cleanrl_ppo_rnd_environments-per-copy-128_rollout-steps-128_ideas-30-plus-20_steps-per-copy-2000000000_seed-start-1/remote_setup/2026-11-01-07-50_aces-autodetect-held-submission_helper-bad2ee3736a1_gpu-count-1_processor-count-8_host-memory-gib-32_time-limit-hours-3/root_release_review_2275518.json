@@ -1,0 +1,50 @@
+{
+  "kind": "root_independent_review_one_exact_aces_release",
+  "passed": true,
+  "reviewed_at_utc": "2026-11-01T16:37:41.078434+00:00",
+  "job_id": "2275518",
+  "source_sha256": "559a624ed11e079992bb558d1f7941648e169020d21cd4cb6bbd5a7ff1f26727",
+  "independent_tests": 13,
+  "independent_owned_cpu_step": "6781087.60",
+  "independent_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/release_2275518_root_independent_6781087_60.json",
+  "independent_receipt_sha256": "5d492c8413056b895c0c7917118b0bc3f2bdd0cf2b139a8270ec62fa9049f539",
+  "held_full_monitor_step": "6781087.50",
+  "independent_held_verification_step": "6781087.51",
+  "held_proof_sha256": "2fffe9b5fcd07ae3f6144284476e9daa32705bb7dd76ca8a5c5f3072f8165a43",
+  "current_full_report_step": "6781087.57",
+  "current_comparisons": 116,
+  "actual_default_metadata_cli_passed": true,
+  "recurring_task_id": "16aebd45-eff5-4da1-a46a-0374dcf16332",
+  "recurring_task_verified": true,
+  "persistent_monitor_job_id": "6781087",
+  "persistent_monitor_source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
+  "native_release_argv": [
+    "scontrol",
+    "release",
+    "2275518"
+  ],
+  "required_native_shape": {
+    "owner": "u.sl359075(56626)",
+    "state": "PENDING",
+    "reason": "JobHeldUser",
+    "account": "158590754315",
+    "partition": "gpu",
+    "qos": "normal",
+    "gpus": "gpu:h100:1",
+    "cpus": 8,
+    "host_memory_gib": 32,
+    "time_limit": "03:00:00"
+  },
+  "reviewed_controls": [
+    "Exact native/local ledger ID and row, unchanged native receipt and62 immutable input hashes.",
+    "Exclusive durable local/native intents; preserve partial failure and forbid any retry.",
+    "Save exact owned job query raw stdout/stderr and return before strict parsing.",
+    "Native exact release action once, durable raw return and typed receipt before transport returns.",
+    "Exact received eight-file roster and native intent/receipt/command identity; publish native receipt last.",
+    "Existing master only; no separate master check or new authentication.",
+    "All scientific credits zero and worker admission false; full later site review and separate placement still required."
+  ],
+  "old_job_2274632_untouched": true,
+  "code_and_exact_review_must_be_published_before_action": true,
+  "release_not_yet_executed": true
+}

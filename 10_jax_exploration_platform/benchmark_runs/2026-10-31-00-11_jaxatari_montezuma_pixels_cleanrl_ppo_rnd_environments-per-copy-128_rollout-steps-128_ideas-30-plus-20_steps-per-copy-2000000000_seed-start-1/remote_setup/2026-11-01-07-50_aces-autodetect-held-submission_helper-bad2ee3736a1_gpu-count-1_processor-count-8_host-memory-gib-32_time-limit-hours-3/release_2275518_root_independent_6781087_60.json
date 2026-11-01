@@ -1,0 +1,27 @@
+{
+  "kind": "aces_2275518_release_root_independent_metadata_verification",
+  "job_id": "6781087",
+  "step_id": "60",
+  "pid": 695530,
+  "uid": 2618919,
+  "hostname": "slurm2",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_60/user/task_0\n",
+  "proc_stat": "695530 (python) R 695524 695530 695523 0 -1 4194560 4940 972 0 0 20 3 0 1 20 0 1 0 51181729 40370176 7347 2147483648 94528244891648 94528247319325 140722911812432 0 0 0 0 16781312 2 0 0 0 17 8 0 0 0 0 0 94528248744688 94528250726128 94528727040000 140722911818917 140722911820143 140722911820143 140722911825859 0\n",
+  "tests_run": 13,
+  "failures": 0,
+  "errors": 0,
+  "passed": true,
+  "elapsed_seconds": 0.2950867550098337,
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/release_aces_full_site_2275518.py": "559a624ed11e079992bb558d1f7941648e169020d21cd4cb6bbd5a7ff1f26727",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/test_release_aces_full_site_2275518.py": "06aea0a8102e700dea9cc074065902d3d1aa3cc08d781711c3630d798dcfbdfa"
+  },
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/release_aces_full_site_2275518.py": "559a624ed11e079992bb558d1f7941648e169020d21cd4cb6bbd5a7ff1f26727",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-50_aces-autodetect-held-submission_helper-bad2ee3736a1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/test_release_aces_full_site_2275518.py": "06aea0a8102e700dea9cc074065902d3d1aa3cc08d781711c3630d798dcfbdfa"
+  },
+  "test_output": "test_actual_old_shape_derived_fixture_accepts_only_exact_new_job_and_packet (release_tests.ReleaseTests.test_actual_old_shape_derived_fixture_accepts_only_exact_new_job_and_packet) ... ok\ntest_changed_identity_or_boolean_schema_never_accepts (release_tests.ReleaseTests.test_changed_identity_or_boolean_schema_never_accepts) ... ok\ntest_changed_raw_query_and_response_roster_reject (release_tests.ReleaseTests.test_changed_raw_query_and_response_roster_reject) ... ok\ntest_complete_native_response_is_accepted (release_tests.ReleaseTests.test_complete_native_response_is_accepted) ... ok\ntest_default_actual_metadata_validation_creates_no_intent (release_tests.ReleaseTests.test_default_actual_metadata_validation_creates_no_intent) ... ok\ntest_duplicate_and_additional_gpu_resources_reject (release_tests.ReleaseTests.test_duplicate_and_additional_gpu_resources_reject) ... ok\ntest_exact_query_and_release_commands_are_bound (release_tests.ReleaseTests.test_exact_query_and_release_commands_are_bound) ... ok\ntest_existing_intent_prevents_any_stream (release_tests.ReleaseTests.test_existing_intent_prevents_any_stream) ... ok\ntest_intent_saved_before_mocked_stream_and_native_receipt_last (release_tests.ReleaseTests.test_intent_saved_before_mocked_stream_and_native_receipt_last) ... ok\ntest_native_typed_false_boundary_is_required_before_any_observation (release_tests.ReleaseTests.test_native_typed_false_boundary_is_required_before_any_observation) ... ok\ntest_release_cli_requires_publication_before_local_validation (release_tests.ReleaseTests.test_release_cli_requires_publication_before_local_validation) ... ok\ntest_shared_native_program_compiles_and_uses_same_parsers (release_tests.ReleaseTests.test_shared_native_program_compiles_and_uses_same_parsers) ... ok\ntest_transport_timeout_preserves_intent_and_failure_without_retry (release_tests.ReleaseTests.test_transport_timeout_preserves_intent_and_failure_without_retry) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.205s\n\nOK\n",
+  "numerical_modules_present": [],
+  "network_or_scheduler_actions": 0,
+  "synthetic_fixture_note": "Held shape derives only job ID and packet path from saved older ACES held metadata. It does not claim a new actual allocation or execute a cluster command."
+}
