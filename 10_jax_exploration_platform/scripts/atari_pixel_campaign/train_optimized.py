@@ -713,6 +713,135 @@ def load_checkpoint(path, identity):
         return payload
 
 
+class CheckpointDeadline:
+    """Schedule complete calls around measured checkpoint deadlines without claiming real-time bounds."""
+
+    def __init__(self, interval_seconds, save_started, save_completed):
+        """Start the deadline at a completed durable save and retain its actual write duration."""
+        if type(interval_seconds) not in (int, float) or not math.isfinite(interval_seconds) or not 0 < interval_seconds <= 1200:
+            raise ValueError("checkpoint interval must be finite and at most 1200 seconds")
+        self.interval_seconds = interval_seconds
+        self.cold_call_seconds = {}
+        self.maximum_warm_call_seconds = {}
+        self.calls_since_checkpoint = 0
+        self.maximum_save_seconds = self.duration(save_started, save_completed)
+        self.last_completed = save_completed
+
+    @staticmethod
+    def duration(started, completed):
+        """Reject invalid or reversed monotonic observations before using them as timing evidence."""
+        if (any(type(value) not in (int, float) or not math.isfinite(value) for value in (started, completed))
+                or started < 0 or completed < started):
+            raise ValueError("checkpoint scheduling requires valid monotonic timing observations")
+        return completed - started
+
+    @property
+    def save_allowance_seconds(self):
+        """Reserve twice the slowest measured save and at least thirty seconds for variation."""
+        return max(30.0, 2 * self.maximum_save_seconds)
+
+    def plan(self, now, preferred_updates):
+        """Keep a fitting group, use a fitting single update near a deadline, or checkpoint first."""
+        self.duration(self.last_completed, now)
+        if type(preferred_updates) is not int or preferred_updates < 1:
+            raise ValueError("checkpoint scheduling requires a positive complete update count")
+        save = self.save_allowance_seconds
+        single = self.maximum_warm_call_seconds.get(1)
+        single = None if single is None else 2 * single
+        if save >= self.interval_seconds or (single is not None and single + save >= self.interval_seconds):
+            raise ValueError("measured single-update and checkpoint save allowances cannot fit the checkpoint interval")
+        count = preferred_updates
+        call = self.maximum_warm_call_seconds.get(count)
+        call = None if call is None else 2 * call
+        deadline = self.last_completed + self.interval_seconds
+        # Example: 200s grouped allowance cannot use 80s remaining, but a 20s
+        # original update plus 30s save can, without padding or changing the learner.
+        if count > 1 and call is not None:
+            if call + save >= self.interval_seconds:
+                count, call = 1, single
+            elif now + call + save >= deadline and single is not None and now + single + save < deadline:
+                count, call = 1, single
+        if call is None:
+            # An unmeasured/cold variant gets a fresh checkpoint window and an
+            # immediate save after measurement; its first duration is not invented.
+            before = self.calls_since_checkpoint > 0 or now - self.last_completed >= save
+        else:
+            before = now + call + save >= deadline
+        return {"updates": count, "checkpoint_before_call": before, "unmeasured_call": call is None,
+                "call_allowance_seconds": call, "save_allowance_seconds": save}
+
+    def observe_call(self, updates, started, completed):
+        """Keep cold compilation separate from warmed calls through readout and progress writes."""
+        seconds = self.duration(started, completed)
+        if type(updates) is not int or updates < 1 or started < self.last_completed:
+            raise ValueError("checkpoint call observation does not follow its completed checkpoint")
+        if updates not in self.cold_call_seconds:
+            self.cold_call_seconds[updates] = seconds
+            calibration = "cold"
+        else:
+            calibration = "warm_calibration" if updates not in self.maximum_warm_call_seconds else None
+            self.maximum_warm_call_seconds[updates] = max(seconds, self.maximum_warm_call_seconds.get(updates, 0.0))
+        self.calls_since_checkpoint += 1
+        return calibration
+
+    def prepare_call(self, preferred_updates, checkpoint_now, should_stop, clock=time.monotonic):
+        """Recheck signals and the walltime boundary after any pre-call checkpoint finishes."""
+        if should_stop():
+            return None
+        decision = self.plan(clock(), preferred_updates)
+        if decision["checkpoint_before_call"]:
+            checkpoint_now("before_training_call")
+            if should_stop():
+                return None
+            decision = self.plan(clock(), preferred_updates)
+            if decision["checkpoint_before_call"]:
+                raise RuntimeError("checkpoint timing overhead leaves no safe window for the next complete call")
+        return decision["updates"]
+
+    def checkpoint_due(self, now):
+        """Begin writing while the measured serialization allowance still fits the current deadline."""
+        self.duration(self.last_completed, now)
+        return now + self.save_allowance_seconds >= self.last_completed + self.interval_seconds
+
+    def completed_checkpoint(self, started, completed):
+        """Record actual completion spacing, including write time, before resetting the next deadline."""
+        seconds = self.duration(started, completed)
+        if started < self.last_completed:
+            raise ValueError("checkpoint write observation predates the previous completed checkpoint")
+        spacing = completed - self.last_completed
+        self.maximum_save_seconds = max(seconds, self.maximum_save_seconds)
+        self.last_completed = completed
+        self.calls_since_checkpoint = 0
+        return self.record(spacing, seconds)
+
+    def record(self, spacing=None, save_seconds=None):
+        """Expose actual timing and an explicit violation rather than inferred deadline compliance."""
+        return {"checkpoint_interval_seconds": self.interval_seconds,
+                "completed_checkpoint_spacing_seconds": spacing,
+                "checkpoint_save_seconds": self.maximum_save_seconds if save_seconds is None else save_seconds,
+                "maximum_observed_save_seconds": self.maximum_save_seconds,
+                "cold_call_seconds": {str(count): seconds for count, seconds in self.cold_call_seconds.items()},
+                "maximum_observed_warm_call_seconds": {str(count): seconds for count, seconds in self.maximum_warm_call_seconds.items()},
+                "checkpoint_save_allowance_seconds": self.save_allowance_seconds,
+                "checkpoint_deadline_exceeded": spacing is not None and spacing > self.interval_seconds}
+
+
+def checkpoint_with_timing(write_checkpoint, write_timing, interval_seconds, deadline=None, clock=time.monotonic):
+    """Finish the full durable state, publish timing evidence, then reject an observed deadline violation."""
+    started = clock()
+    write_checkpoint()
+    completed = clock()
+    if deadline is None:
+        deadline = CheckpointDeadline(interval_seconds, started, completed)
+        timing = deadline.record()
+    else:
+        timing = deadline.completed_checkpoint(started, completed)
+    write_timing(timing)
+    if timing["checkpoint_deadline_exceeded"]:
+        raise RuntimeError("completed checkpoint spacing exceeded the configured limit; full state was saved and requires diagnosis")
+    return deadline
+
+
 def next_update_count(iteration, target, group_size):
     """Use a complete group when it fits, then single original updates without padding."""
     if any(type(value) is not int for value in (iteration, target, group_size)):
@@ -957,20 +1086,45 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
         append_record(directory / "metrics.jsonl", {"record": "resumed" if checkpoint.exists() else "initialized",
                       "update": update, "process_seconds": time.monotonic() - started, "time": utc_now()})
 
-        def checkpoint_now():
-            """Copy every state leaf and pending report value before atomic serialization."""
-            jax.block_until_ready(state)
-            save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report), identity,
-                            update, prior_seconds + time.monotonic() - started, loaded_libraries)
+        checkpoint_deadline = None
 
-        # The first save avoids repeating completed normalization warmup after interruption.
-        checkpoint_now()
-        last_checkpoint = time.monotonic()
-        while update < target and stop["reason"] is None:
+        def checkpoint_now(reason):
+            """Save every state leaf and preserve timing evidence before any deadline failure."""
+            nonlocal checkpoint_deadline
+
+            def write_checkpoint():
+                """Include device synchronization, transfer, serialization and transaction cleanup in save time."""
+                jax.block_until_ready(state)
+                save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report), identity,
+                                update, prior_seconds + time.monotonic() - started, loaded_libraries)
+
+            def write_timing(timing):
+                """Keep both current-attempt evidence and the metrics history for an observed violation."""
+                record = {"schema_version": 1, "kind": "optimized_training_checkpoint_timing", **timing,
+                          "reason": reason, "update": update, "attempt": attempt, "pid": os.getpid(), "time": utc_now()}
+                atomic_json(attempt_directory / "checkpoint_timing.json", record)
+                atomic_json(directory / "checkpoint_timing.json", record)
+                append_record(directory / "metrics.jsonl", {"record": "checkpoint_timing", **record})
+
+            checkpoint_deadline = checkpoint_with_timing(write_checkpoint, write_timing,
+                                                         arguments.checkpoint_seconds, checkpoint_deadline)
+
+        # The first save also measures serialization on this actual target before training calls.
+        checkpoint_now("initial")
+        def should_stop():
+            """Honor a signal or process time limit again after a proactive checkpoint consumes time."""
+            if stop["reason"] is not None:
+                return True
             if arguments.maximum_seconds and time.monotonic() - started >= arguments.maximum_seconds:
                 stop["reason"] = "maximum_seconds"
+                return True
+            return False
+
+        while update < target and not should_stop():
+            preferred = next_update_count(update, target, executor.group_size)
+            count = checkpoint_deadline.prepare_call(preferred, checkpoint_now, should_stop)
+            if count is None:
                 break
-            count = next_update_count(update, target, executor.group_size)
             before = update
             call_started = time.monotonic()
             state, metrics, reports = execution.advance(state, count, before)
@@ -1005,10 +1159,10 @@ def _train(arguments, specification, source_root, helpers, runtime, assets, dire
                         "pending_report_updates": execution.report["pending_count"],
                         "time": utc_now(), "pid": os.getpid()}
             progress(status)
-            if time.monotonic() - last_checkpoint >= arguments.checkpoint_seconds:
-                checkpoint_now()
-                last_checkpoint = time.monotonic()
-        checkpoint_now()
+            calibration = checkpoint_deadline.observe_call(count, call_started, time.monotonic())
+            if calibration is not None or checkpoint_deadline.checkpoint_due(time.monotonic()):
+                checkpoint_now(calibration + "_call_measured" if calibration else "deadline_approaching")
+        checkpoint_now("final")
         result = {"completed": update == target, "update": update, "target_updates": target,
                   "requested_steps_per_copy": config.total_timesteps, "steps_per_copy": update * config.batch_size,
                   "copy_seeds": specification["copy_seeds"], "copies": config.n_copies,

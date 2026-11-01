@@ -98,7 +98,7 @@ class TrainingGPUComponentTests(unittest.TestCase):
         self.assertEqual(int(jax.device_get(actual.iteration)), self.config.total_iterations)
 
     def test_group_checkpoint_resume_and_unpadded_tail_match_original_updates(self):
-        """A saved three-update group resumes through one more group and one original tail update."""
+        """A saved group resumes with both full-group/tail and single-update/full-group orders."""
         options = {**paired.DEFAULT_EXECUTION, "iterations_per_call": 3}
         identity = self.identity(options)
         # The reference performs seven original updates with their real annealing positions.
@@ -118,25 +118,28 @@ class TrainingGPUComponentTests(unittest.TestCase):
             training.save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report),
                                      identity, 3, 1.0)
             restored = training.load_checkpoint(checkpoint, identity)
-            # Independent leaf buffers also exercise restart with donation enabled.
-            state = paired.device_copy(restored["state"])
-            execution = self.execution(options, restored["report_state"], self.restarted_trainer())
-            calls = []
-            iteration = int(jax.device_get(state.iteration))
-            while iteration < self.config.total_iterations:
-                count = training.next_update_count(iteration, self.config.total_iterations, execution.executor.group_size)
-                state, metrics, _ = execution.advance(state, count, iteration)
-                jax.block_until_ready(state)
-                actual = int(jax.device_get(state.iteration))
-                self.assertEqual(actual, iteration + count)
-                calls.append(count)
-                iteration = actual
-            self.assertEqual(calls, [3, 1])
-            training.save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report),
-                                     identity, iteration, 2.0)
-            self.assertEqual(training.load_checkpoint(checkpoint, identity)["iteration"], 7)
-        self.assert_state_agreement(uninterrupted, state, execution.executor)
-        paired.agreement(jax.device_get(reference_metrics), jax.device_get(metrics))
+            # Each order receives independent restored buffers and static objects;
+            # [1, 3] exercises an original single update before the next full group.
+            for order in ((3, 1), (1, 3)):
+                with self.subTest(remaining_call_order=order):
+                    state = paired.device_copy(restored["state"])
+                    execution = self.execution(options, dict(restored["report_state"]), self.restarted_trainer())
+                    calls = []
+                    iteration = int(jax.device_get(state.iteration))
+                    for count in order:
+                        state, metrics, _ = execution.advance(state, count, iteration)
+                        jax.block_until_ready(state)
+                        actual = int(jax.device_get(state.iteration))
+                        self.assertEqual(actual, iteration + count)
+                        calls.append(count)
+                        iteration = actual
+                    self.assertEqual(calls, list(order))
+                    self.assertEqual(iteration, self.config.total_iterations)
+                    training.save_checkpoint(checkpoint, jax.device_get(state), jax.device_get(execution.report),
+                                             identity, iteration, 2.0)
+                    self.assertEqual(training.load_checkpoint(checkpoint, identity)["iteration"], 7)
+                    self.assert_state_agreement(uninterrupted, state, execution.executor)
+                    paired.agreement(jax.device_get(reference_metrics), jax.device_get(metrics))
         receipt = training.actual_gpu_library_receipt(jax.devices()[0].client, self.installed_gpu_libraries)
         training.validate_gpu_library_receipt(receipt, {"installed_gpu_libraries": self.installed_gpu_libraries})
         self.assertEqual(self.jaxtari_source["source_commit"], training.JAXTARI_COMMIT)
