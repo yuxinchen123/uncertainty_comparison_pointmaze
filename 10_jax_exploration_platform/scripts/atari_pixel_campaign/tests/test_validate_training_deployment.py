@@ -34,6 +34,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         relatives += [deployment.PREFIX + name for name in ("paired_benchmark.py", "ideas.py", "worker_environment.sh",
             "measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
             "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py", "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py", "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')]
+        relatives += [deployment.PREFIX + path.name for path in SCRIPTS.glob("*.py") if deployment.PREFIX + path.name not in relatives]
         for relative in relatives:
             target = self.source / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -208,7 +209,7 @@ class TrainingDeploymentTests(unittest.TestCase):
             runtime_environment=self.runtime, source_commit=self.commit, helpers=self.helpers, measurement_mode=mode,
             copy_seeds=plan["copy_seeds"], protocol={"rounds": 7, "requested_minimum_updates_per_round": 10, "actual_updates_per_round": 10},
             execution_identity={"hostname": "ac049", "pid": pid, "process_start_time": str(pid),
-                "started_at_seconds": 10000. + pid, "finished_at_seconds": 10002. + pid})
+                "started_at_seconds": 100000. + pid, "finished_at_seconds": 100002. + pid})
         self.write(directory / "hardware.json", hardware)
         self.write(directory / "installed_backend.json", self.installed)
         return self.write(directory / "result.json", result)
@@ -224,10 +225,14 @@ class TrainingDeploymentTests(unittest.TestCase):
         if update_backend:
             self.write(path.parent / "installed_backend.json", result["installed_backend"])
 
+    def read_historical_deployment(self, specification, **options):
+        """Inspect the existing version-one fixtures without authorizing a current worker."""
+        return deployment.validate_deployment(specification, historical_read_only=True, **options)
+
     def test_actual_pcie_evidence_selects_its_own_copy_count_and_backend(self):
         """The NVL-selected single policy does not override two-policy PCIe packing evidence."""
         with patch.object(Path, "rglob", side_effect=AssertionError("deployment must not rehash individual assets")):
-            receipt = deployment.validate_deployment(self.specification)
+            receipt = self.read_historical_deployment(self.specification)
         self.assertEqual(receipt["configuration"], self.selected)
         self.assertEqual(receipt["copy_seeds"], self.seeds)
         self.assertEqual(receipt["packing"]["selected_copies"], 2)
@@ -266,7 +271,7 @@ class TrainingDeploymentTests(unittest.TestCase):
     def test_memory_limit_target_validates_boundary_backend_and_preserves_selected_count(self):
         """A low-headroom target proof is checked fully without admitting its larger copy count."""
         boundary = self.memory_limited_target()
-        receipt = deployment.validate_deployment(self.specification)
+        receipt = self.read_historical_deployment(self.specification)
         self.assertEqual(receipt["configuration"], self.selected)
         self.assertEqual(receipt["packing"]["selected_copies"], 2)
         self.assertIn(str(boundary), {row["path"] for row in receipt["executions"]})
@@ -275,7 +280,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.write(boundary, record)
         self.write(boundary.parent / "hardware.json", record["hardware"])
         with self.assertRaisesRegex(ValueError, "physical GPU, host, model, memory or driver"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_memory_limit_target_is_portable_after_all_original_sources_are_removed(self):
         """The strict resolver carries the rejected-size memory proof with its full target backend evidence."""
@@ -289,7 +294,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         registry["adaptive_batches"][-1]["hypotheses"][-1]["results"]["h100"] = []
         self.write(registry_path, registry)
         with self.assertRaisesRegex(ValueError, "unfinished mechanism"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_missing_global_asset_proof_or_manifest_inside_assets_is_rejected(self):
         """A global success flag cannot replace its actual producer receipt and external manifest."""
@@ -298,7 +303,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         original = receipt.read_bytes()
         receipt.unlink()
         with self.assertRaises(FileNotFoundError):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
         receipt.write_bytes(original)
         plan = json.loads((confirmation.parent / "measurement_plan.json").read_text())
         inside = Path(plan["asset_record"]["root"]) / "manifest.json"
@@ -306,14 +311,14 @@ class TrainingDeploymentTests(unittest.TestCase):
         plan["asset_record"]["manifest"] = str(inside)
         self.write_prepared_plan(confirmation.parent, plan)
         with self.assertRaisesRegex(ValueError, "outside its asset root"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_target_asset_manifest_bytes_are_pinned_by_the_prepared_plan(self):
         """Even changed JSON whitespace invalidates the manifest SHA named by the target plan."""
         path = Path(self.target_asset_record["manifest"])
         path.write_bytes(path.read_bytes() + b"\n")
         with self.assertRaisesRegex(ValueError, "manifest differs from its prepared SHA256"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_target_asset_receipt_fields_must_match_its_actual_manifest(self):
         """Tree/source/file-count claims are derived from the manifest rather than trusted separately."""
@@ -322,7 +327,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         for name, value in (("tree_digest", "c" * 64), ("source_commit", "d" * 40), ("file_count", True)):
             self.write(path, {**original, name: value})
             with self.subTest(field=name), self.assertRaisesRegex(ValueError, "game-asset receipt disagrees"):
-                deployment.validate_deployment(self.specification)
+                self.read_historical_deployment(self.specification)
 
     def test_a_consistent_target_asset_tree_still_must_match_the_global_proof(self):
         """Another internally valid asset manifest cannot replace the globally selected game pixels."""
@@ -336,14 +341,14 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.write_prepared_plan(directory, plan)
         self.write_asset_receipt(directory, record)
         with self.assertRaisesRegex(ValueError, "target game assets differ from the global"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_model_driver_memory_and_bound_sidecars_cannot_change(self):
         """A copied NVL result or changed hardware sidecar cannot become PCIe deployment evidence."""
         self.change_result("confirmation_record", lambda result: result["hardware"].update(gpu_query=
             "GPU-target, NVIDIA H100 NVL, 1000 MiB, synthetic-driver"), update_hardware=True)
         with self.assertRaisesRegex(ValueError, "node/model/memory/driver"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_changed_sidecar_and_missing_package_map_are_rejected(self):
         """Backend evidence must come from the exact raw result, with every installed package present."""
@@ -352,12 +357,12 @@ class TrainingDeploymentTests(unittest.TestCase):
         sidecar["pid"] += 1
         self.write(path.parent / "hardware.json", sidecar)
         with self.assertRaisesRegex(ValueError, "exact hardware"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
         result = json.loads(path.read_text())
         self.write(path.parent / "hardware.json", result["hardware"])
         self.change_result("confirmation_record", lambda result: result["installed_backend"]["packages"].pop("numpy"), update_backend=True)
         with self.assertRaisesRegex(ValueError, "every required installed package"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_target_cannot_reuse_an_original_nvl_process_identity(self):
         """Changing paths/model labels cannot make an original execution a fresh target run."""
@@ -372,7 +377,7 @@ class TrainingDeploymentTests(unittest.TestCase):
             result["loaded_gpu_libraries"]["pid"] = identity["pid"]
         self.change_result("correctness_record", reuse, update_hardware=True)
         with self.assertRaisesRegex(ValueError, "original/global"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_confirmation_window_and_packing_selection_stay_strict(self):
         """One-update confirmation and a caller-selected larger packing count cannot pass."""
@@ -380,24 +385,24 @@ class TrainingDeploymentTests(unittest.TestCase):
         original = path.read_bytes()
         self.change_result("confirmation_record", lambda result: result["rounds"][0]["candidate"].update(iterations=1))
         with self.assertRaises(ValueError):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
         path.write_bytes(original)
         self.specification["selected_copies"] = 4
         with self.assertRaisesRegex(ValueError, "smaller copy count"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_global_seed_overlap_is_rejected_and_disjoint_additions_preserve_receipt(self):
         """Reserved H100 seeds remain independent from every final A4500 unit."""
-        before = deployment.validate_deployment(self.specification)
+        before = self.read_historical_deployment(self.specification)
         manifest = json.loads(self.seed_path.read_text())
         manifest["units"]["another_final_unit"] = {"unit_id": "another_final_unit", "hardware_class": "h100",
             "copy_seeds": [2001], "configuration_digest": "b" * 64}
         self.write(self.seed_path, manifest)
-        self.assertEqual(deployment.validate_deployment(self.specification), before)
+        self.assertEqual(self.read_historical_deployment(self.specification), before)
         manifest["units"]["final_a4500_policies"]["copy_seeds"] = [1001, 1002]
         self.write(self.seed_path, manifest)
         with self.assertRaisesRegex(ValueError, "globally disjoint"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_changed_binary_or_jax_tari_tree_cannot_reuse_backend_receipt(self):
         """Package labels cannot replace rehashed GPU images and pinned public Python blobs."""
@@ -405,15 +410,15 @@ class TrainingDeploymentTests(unittest.TestCase):
         original = image.read_bytes()
         image.write_bytes(b"changed CUDA library bytes")
         with self.assertRaisesRegex(ValueError, "recorded bytes"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
         image.write_bytes(original)
         self.change_result("confirmation_record", lambda result: result["installed_backend"]["jaxtari_source"].update(tree_digest="a" * 64), update_backend=True)
         with self.assertRaisesRegex(ValueError, "JAXtari source/version/tree digest"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_actual_backend_match_allows_new_uuid_in_the_same_validated_group(self):
         """A continuation may use another physical card while preserving model/driver/software/capacity."""
-        receipt = deployment.validate_deployment(self.specification)
+        receipt = self.read_historical_deployment(self.specification)
         hardware = json.loads(Path(self.specification["confirmation_record"]).read_text())["hardware"]
         hardware.update(hostname="ac055", pid=9000, process_start_time="9000", gpu_uuid="GPU-new",
                         gpu_query="GPU-new, NVIDIA H100 PCIe, 1000 MiB, synthetic-driver")
@@ -434,21 +439,21 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.change_result("confirmation_record", lambda result: result["hardware"]["runtime_environment"].update(
             XLA_PYTHON_CLIENT_MEM_FRACTION="0.86"), update_hardware=True)
         with self.assertRaisesRegex(ValueError, "different software/runtime groups"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_staged_helper_tampering_is_rejected(self):
         """An immutable plan does not authorize a different executed source file."""
         path = Path(self.specification["confirmation_record"]).parent / "code/measure_selected.py"
         path.write_text("changed helper bytes")
         with self.assertRaisesRegex(ValueError, "staged helper differs"):
-            deployment.validate_deployment(self.specification)
+            self.read_historical_deployment(self.specification)
 
     def test_api_and_saved_spec_receipts_keep_the_original_specification_path_explicit(self):
         """API receipts name no source file; CLI-style receipts retain and hash their explicit original file."""
-        direct = deployment.validate_deployment(self.specification)
+        direct = self.read_historical_deployment(self.specification)
         self.assertIsNone(direct["specification_path"])
         path = self.write(self.directory / "deployment_specification.json", self.specification)
-        saved = deployment.validate_deployment(self.specification, specification_path=path)
+        saved = self.read_historical_deployment(self.specification, specification_path=path)
         self.assertEqual(saved["specification_path"], str(path))
         self.assertIn({"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}, saved["evidence"])
         self.assertEqual({key: value for key, value in direct.items() if key not in {"specification_path", "evidence"}},
@@ -459,16 +464,16 @@ class TrainingDeploymentTests(unittest.TestCase):
         original = copy.deepcopy(self.specification)
         original["runtime_environment"]["XLA_FLAGS"] = "  " + self.runtime["XLA_FLAGS"] + "  "
         path = self.write(self.directory / "deployment_specification.json", original)
-        saved = deployment.validate_deployment(original, specification_path=path)
+        saved = self.read_historical_deployment(original, specification_path=path)
         self.assertEqual(saved["specification"], original)
         self.assertEqual(saved["specification_digest"], deployment.validation.canonical_digest(original))
         self.assertEqual(saved["runtime_environment"], self.runtime)
-        self.assertEqual(deployment.validate_deployment(saved["specification"], specification_path=saved["specification_path"]), saved)
+        self.assertEqual(self.read_historical_deployment(saved["specification"], specification_path=saved["specification_path"]), saved)
 
     def test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed(self):
         """Target binaries, public Git source, global gates and prepared helpers all resolve explicitly."""
         specification_path = self.write(self.directory / "deployment_specification.json", self.specification)
-        original = deployment.validate_deployment(self.specification, specification_path=specification_path)
+        original = self.read_historical_deployment(self.specification, specification_path=specification_path)
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         staging = Path(temporary.name)
@@ -493,7 +498,7 @@ class TrainingDeploymentTests(unittest.TestCase):
         resolver = portable_evidence.ExactPathResolver(manifest_path)
         shutil.rmtree(self.directory)
         shutil.rmtree(self.fixture.directory)
-        self.assertEqual(deployment.validate_deployment(self.specification, resolver=resolver, specification_path=specification_path), original)
+        self.assertEqual(self.read_historical_deployment(self.specification, resolver=resolver, specification_path=specification_path), original)
         self.assertEqual(original["specification_path"], str(specification_path))
         self.assertNotIn("jax", sys.modules)
         self.assertNotIn("numpy", sys.modules)

@@ -84,6 +84,17 @@ class ScalingMeasurementTests(unittest.TestCase):
         self.assertNotIn("jax", sys.modules)
         self.assertNotIn("numpy", sys.modules)
 
+    def test_fixed_total_backend_records_versions_without_changing_historical_default(self):
+        """The new comparison binds actual package versions while the old producer retains its old schema."""
+        old = {"jaxtari_source": {"tree": "actual"}, "gpu_libraries": {"image": "actual"}}
+        full = {**old, "packages": {"jax": "actual installed version"}}
+        with patch.object(SCALING.selected, "installed_backend_receipt", return_value=full) as observe:
+            self.assertEqual(SCALING.worker_backend_receipt({}, old["jaxtari_source"], old["gpu_libraries"]), old)
+            observe.assert_not_called()
+            self.assertEqual(SCALING.worker_backend_receipt({"scaling_protocol": {"kind": "fixed_total_copies"}},
+                old["jaxtari_source"], old["gpu_libraries"]), full)
+            observe.assert_called_once_with(old["jaxtari_source"], old["gpu_libraries"])
+
     def test_control_and_eight_cards_preserve_first_policy_identities_and_work(self):
         """Only the number of physical cards changes between the matching prepared groups."""
         one = json.loads((self.prepare(self.arguments(1)) / "scaling_plan.json").read_text())

@@ -55,14 +55,18 @@ class DeployedLauncherTests(unittest.TestCase):
             "backend": {"packages": {"jax": "synthetic"}}, "actual_runtime_environment": self.runtime,
             "executions": [{"path": str(packing), "mode": "packing-point"}]}
         dep = self.write("evidence/deployment.json", self.deployment)
+        final_record = self.write("evidence/final_verification.json", {**{name: True for name in launch.validation.FINAL_FLAGS},
+            "schema_version": 2, "kind": "final_verification",
+            "short_learning_checks_passed": True, "fixed_total_scaling_complete": True,
+            "specification": {"final_protocol": dict(launch.validation.FINAL_PROTOCOL)}})
         self.specification = {"unit_id": "explicit_h100_policy_seed_101", "source_root": "/logical/source", "source_commit": "a" * 40,
             "hardware_class": "h100", "copy_seeds": [101], "configuration": self.configuration,
-            "runtime_environment": self.runtime, "deployment_verification": str(dep)}
+            "runtime_environment": self.runtime, "deployment_verification": str(dep), "final_verification": str(final_record)}
         self.spec = self.write("evidence/final_specification.json", self.specification)
         self.admitted = {**self.specification, "validation": {"kind": "deployed_training_admission",
             "specification_digest": launch.metadata.digest(self.specification),
             "deployment_digest": launch.metadata.digest(self.deployment),
-            "admission_records": [launch.receipt(self.spec)], "evidence": [launch.receipt(dep), launch.receipt(packing)]}}
+            "admission_records": [launch.receipt(self.spec)], "evidence": [launch.receipt(dep), launch.receipt(packing), launch.receipt(final_record)]}}
         admitted = self.write("evidence/admitted.json", self.admitted)
         self.unit = {"schema_version": 1, "kind": "final_training_unit", "assigned_server": "aces", "hardware_class": "h100",
             "unit_id": self.specification["unit_id"], "numerical_source": {"root": "/logical/source", "commit": "a" * 40},

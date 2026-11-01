@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "kind": "combined_resolution_diff_basis",
+  "published_profile_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "final_evidence_commit": "841ad6e89a41699d60f4ece7d540198eb6cc39b2",
+  "common_base_commit": "2646fc1358766e7349b502f82068507bfe0f10cb",
+  "patch": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-06-47_final-evidence_combined-memory-source-8fd2187_exact-eight-copies_portable-target_helper-dependencies/.review_metadata/combined_resolution_diff.patch",
+    "sha256": "7a1c497e53e10b2ae248296683453e4d8a7a8a536660b695e0e3e01c02c84f44"
+  },
+  "basis": "Recomputed ordinary three-way text merge from exact parent/common Git blobs, with explicit labels; compared with each resolved working file. No rename or source mutation is performed by this reconstruction.",
+  "files": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py",
+      "automatic_three_way_sha256": "9faf1449217070a4581113c36bfdea7e4d1ed178e8a9d8730b23621585f78b8e",
+      "resolved_sha256": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "automatic_three_way_sha256": "de4258e02763bff07b8dd8f94bfa0c4cc2e9218f6b393589d3ef906d8791eaba",
+      "resolved_sha256": "d1411042253a694f4f4d2ebfa8421710815363283f9260b2d00a1bbf0809c18b"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "automatic_three_way_sha256": "ad03e6c4b76f0d0f0f3be8c4bfcaf754e95a4ac873a5ece0d5835af0d3a83484",
+      "resolved_sha256": "863b43d078f66ebc5d22f44f99df39a7a5b88d1c82c85efb6725495815e89453"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py",
+      "automatic_three_way_sha256": "b66621683dc157de9f53dd0dd2b87d6cefc3de4916dfcef762f0743dbe69413d",
+      "resolved_sha256": "f01db983e1f1387fadc07af626e2e6fe31aa4980a9e97ebec14574a44eff0ec2"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py",
+      "automatic_three_way_sha256": "3eff8e2d93eaeae2e79bd82d6503502278c412392c9b22dd95604d4f6ddf790c",
+      "resolved_sha256": "0560a4823ed10cb28d3318a6a7a648f347837d1616fc29c64adbe70138882b79"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "automatic_three_way_sha256": "9c64c4df868926901e33efc5ff6913a69aa56830b0606961c2bab90260fdf452",
+      "resolved_sha256": "6bbdd94e1dcf1391bf21f5758263932c01a4a42877de7f108a9e9a44b6c39c06"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "automatic_three_way_sha256": "4b85324b8a7373ecb8cfa17f6b1f79aa52994989995e9c610268882f5ec96b1f",
+      "resolved_sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py",
+      "automatic_three_way_sha256": "9a6cf0bf32da586b53bd33ac03d3694c2795aec5286377ebbcb34393f76c000e",
+      "resolved_sha256": "c6e10e26e53b464fe65fb32b5222f6b3810c4ee927e06818c1a939feff2de319"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py",
+      "automatic_three_way_sha256": "42a4198e9146375b930e70697aa5a4be5d3ba800501dadd5b3d2fefdb0fdcd27",
+      "resolved_sha256": "779c8262bf981cca607b2f60c02e78f49bdc1cbb1a9617a5c897e6a0870a7aa4"
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py",
+      "automatic_three_way_sha256": "151a3317bccaa8b025aab0c5097c12f7eade3a731df38245ac833ac435c10c6f",
+      "resolved_sha256": "7656f832e7aa0166548ab80910307e56f85c014aa2425b8be9546369c8e18a7a"
+    }
+  ],
+  "profile_helper": {
+    "commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+    "git_blob": "98fc8355b916535ab72ef2b6ec3069c0f727c938",
+    "file_sha256": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761"
+  }
+}

@@ -11,6 +11,7 @@ import csv
 import fcntl
 import hashlib
 import importlib
+import importlib.util
 from importlib import metadata
 import json
 import math
@@ -36,9 +37,23 @@ import train_optimized as training
 HELPERS = ("measure_selected.py", "diagnose_gpu_execution.py", "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
            "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
            "h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py",
-           "train_optimized.py", "device_memory_limit.py", 'validate_training_deployment.py', 'portable_evidence.py')
+           "train_optimized.py", "short_learning.py", "device_memory_limit.py", "validate_training_deployment.py", "portable_evidence.py")
 CARD1 = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
-MODES = ("correctness", "confirmation", "packing-point")
+MODES = ("correctness", "confirmation", "packing-point", "learning-check")
+
+
+def requested_protocol(arguments):
+    """Keep intermediate measurements unchanged and make the final protocol explicit."""
+    # Before: an absent protocol selects seven by ten; after: final confirmation is eleven by twenty.
+    final = getattr(arguments, "final_confirmation", False)
+    if final and arguments.mode != "confirmation":
+        raise ValueError("--final-confirmation applies only to a final paired confirmation")
+    rounds = (11 if final else 7) if arguments.rounds is None else arguments.rounds
+    minimum = (20 if final else 10) if arguments.minimum_updates_per_round is None else arguments.minimum_updates_per_round
+    if (type(rounds) is not int or rounds != (11 if final else 7) or type(minimum) is not int
+            or minimum < (20 if final else 10) or final and minimum != 20):
+        raise ValueError("use eleven rounds of at least twenty updates for final confirmation; seven rounds otherwise")
+    return rounds, minimum, final
 
 
 def read_document(path):
@@ -70,6 +85,66 @@ def write_once(path, contents):
 def json_bytes(value):
     """Use JSON, also valid YAML, for complete launch and configuration records."""
     return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def staged_short_learning(directory, plan):
+    """Load only the exact staged diagnostic helper, regardless of numerical-root imports or module cache."""
+    path = Path(directory) / "code/short_learning.py"
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    expected = plan["helpers"]["files"][relative]
+    raw = path.read_bytes()
+    if (path.is_symlink() or path.parent.is_symlink() or path.parent.resolve(strict=True).parent != Path(directory).resolve(strict=True)
+            or path.resolve(strict=True).parent != path.parent.resolve(strict=True) or hashlib.sha256(raw).hexdigest() != expected):
+        raise ValueError("the exact staged short-learning helper changed its location or bytes")
+    specification = importlib.util.spec_from_file_location("exact_staged_short_learning_" + expected[:16], path)
+    module = importlib.util.module_from_spec(specification)
+    # Execute precisely these verified bytes; cached bytecode and numerical-root imports cannot substitute code.
+    exec(compile(raw, str(path), "exec"), module.__dict__)
+    if Path(module.__file__).resolve() != path.resolve(strict=True):
+        raise ValueError("short learning imported a different helper source")
+    return module
+
+
+def completed_study_inputs(arguments, source, runtime, configuration, *, required=None, hardware_class=None):
+    """Prepare only reviewed completed-study bytes; native login preparation never recomputes science."""
+    proof, review = getattr(arguments, "completed_study_proof", None), getattr(arguments, "completed_study_review", None)
+    manifest = getattr(arguments, "completed_study_manifest", None)
+    manifest_sha = getattr(arguments, "completed_study_manifest_sha256", None)
+    required = (getattr(arguments, "mode", None) == "learning-check" or getattr(arguments, "final_confirmation", False)) if required is None else required
+    if not required:
+        if any(value is not None for value in (proof, review, manifest, manifest_sha)):
+            raise ValueError("completed-study proof inputs apply only to final confirmation or final learning")
+        return None, None
+    if proof is None or review is None or (manifest is None) != (manifest_sha is None):
+        raise ValueError("final preparation requires the completed-study proof, independent review and exact optional mapping hash")
+    resolver, mapping = None, None
+    if manifest is not None:
+        from portable_evidence import ExactPathResolver
+        manifest = Path(manifest).resolve(strict=True)
+        resolver = ExactPathResolver(manifest, manifest_sha)
+        mapping = {"path": str(manifest), "sha256": manifest_sha}
+    evidence = validation.Evidence(resolver)
+    binding = {name: {"path": evidence.path_identity(path), "sha256": hashlib.sha256(evidence.file(path)).hexdigest()}
+               for name, path in (("proof", proof), ("review", review))}
+    validation.verify_completed_study(binding, source, runtime, evidence, before_seconds=time.time(),
+        hardware_class=hardware_class or arguments.hardware_class, selected_configuration=configuration)
+    return binding, mapping
+
+
+def verify_completed_study_plan(plan):
+    """Recheck the exact final-study proof and native mappings immediately before device admission."""
+    if "completed_study" not in plan:
+        if plan.get("mode") == "learning-check" or "final_confirmation_protocol" in plan or plan.get("scaling_protocol", {}).get("kind") == "fixed_total_copies":
+            raise ValueError("final measurement omitted its reviewed completed-fifty-study proof")
+        return
+    resolver = None
+    if plan.get("completed_study_manifest") is not None:
+        from portable_evidence import ExactPathResolver
+        mapping = plan["completed_study_manifest"]
+        resolver = ExactPathResolver(mapping["path"], mapping["sha256"])
+    validation.verify_completed_study(plan["completed_study"], plan["source_commit"],
+        plan["runtime_environment"], validation.Evidence(resolver), before_seconds=time.time(),
+        hardware_class=plan["hardware_class"], selected_configuration=plan["configuration"])
 
 
 def measurement_window(configurations, minimum=10):
@@ -121,8 +196,9 @@ def prepare(args):
         raise ValueError('an ownership profile requires explicit device-memory instrumentation')
     if not args.gpu_uuid.startswith("GPU-") or Path(args.unit_id).name != args.unit_id or args.unit_id in {"", ".", ".."}:
         raise ValueError("record a physical GPU UUID and a plain descriptive unit identifier")
-    if args.rounds != 7 or not 0 <= args.seed_start < 2 ** 32:
-        raise ValueError("use seven rounds and a nonnegative unsigned 32-bit starting seed")
+    rounds, minimum, final = requested_protocol(args)
+    if not 0 <= args.seed_start < 2 ** 32:
+        raise ValueError("use a nonnegative unsigned 32-bit starting seed")
     source_root, run_dir = args.source_root.resolve(strict=True), args.run_dir.resolve(strict=True)
     core = diagnostic.core_identity(source_root, args.source_commit)
     paired_files = ["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
@@ -149,6 +225,7 @@ def prepare(args):
         raise ValueError("an isolated packing point must not retain a reference variant")
     runtime, runtime_input = read_document(args.runtime_environment)
     runtime = validation.runtime_environment(runtime)
+    completed_study, completed_mapping = completed_study_inputs(args, args.source_commit, runtime, selected)
     assets, asset_input = read_document(args.asset_record)
     if set(assets) != {"root", "manifest", "sha256"}:
         raise ValueError("asset_record requires the immutable asset root, manifest path and manifest hash")
@@ -156,7 +233,11 @@ def prepare(args):
     if args.seed_start + copies > 2 ** 32:
         raise ValueError("the independent policy seed range exceeds unsigned 32-bit values")
     helpers = helper_receipt()
-    window = measurement_window([selected] + ([reference] if reference is not None else []), args.minimum_updates_per_round)
+    if final or args.mode == "learning-check":
+        validation.committed_measurement_sources(helpers, validation.Evidence())
+    configurations = [selected] + ([reference] if reference is not None else [])
+    window = measurement_window(configurations, minimum)
+    learning_updates = measurement_window(configurations, 128) if args.mode == "learning-check" else None
     directory = run_dir / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": "selected_configuration_measurement", "mode": args.mode,
         "source_root": str(source_root), "source_commit": args.source_commit, "core": core,
@@ -165,7 +246,7 @@ def prepare(args):
         "jaxtari_source_root": str(args.jaxtari_source_root.resolve()) if args.jaxtari_source_root is not None else None,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "copy_seeds": list(range(args.seed_start, args.seed_start + copies)),
-        "rounds": 7, "minimum_updates_per_round": args.minimum_updates_per_round, "iterations": window,
+        "rounds": rounds, "minimum_updates_per_round": minimum, "iterations": window,
         "window_protocol": "complete groups/report windows; requested minimum and actual count recorded",
         "inputs": {"configuration": selected_input, "reference_configuration": reference_input,
                    "runtime_environment": runtime_input, "asset_record": asset_input},
@@ -177,7 +258,7 @@ def prepare(args):
         # This diagnostic capability is explicitly separate from ordinary completed packing evidence.
         import device_memory_limit as capacity
         if (args.mode != 'packing-point' or args.memory_limit_allocation_kind not in {'direct', 'slurm'}
-                or args.minimum_updates_per_round != 10):
+                or minimum != 10):
             raise ValueError('instrumented device-memory limits require an explicit isolated packing allocation')
         ledger_source = capacity.file_receipt(args.memory_limit_owned_job_ledger) if args.memory_limit_owned_job_ledger else None
         if ledger_source and ledger_source['path'] != str(run_dir / 'slurm' / ('submitted_jobids_' + args.memory_limit_cluster + '.txt')):
@@ -196,6 +277,26 @@ def prepare(args):
             plan['ownership_profile'] = dict(capacity.UVA_CGROUP_V2_OWNERSHIP_PROFILE)
             capacity.selected_ownership_profile(plan)
             capacity.require_ownership_source(plan)
+    if final:
+        plan["final_confirmation_protocol"] = validation.FINAL_PROTOCOL
+    if completed_study is not None:
+        plan["completed_study"] = completed_study
+        plan["completed_study_manifest"] = completed_mapping
+    if final or args.mode == "learning-check":
+        source = SCRIPTS / "short_learning.py"
+        raw = source.read_bytes()
+        relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+        if hashlib.sha256(raw).hexdigest() != helpers["files"][relative]:
+            raise ValueError("the prepared short-learning helper changed its exact source bytes")
+        contract = importlib.util.module_from_spec(importlib.util.spec_from_file_location("prepared_short_learning", source))
+        exec(compile(raw, str(source), "exec"), contract.__dict__)
+        if final:
+            plan["single_update_latency_protocol"] = {arm: contract.latency_protocol(value)
+                for arm, value in (("reference", reference), ("candidate", selected))}
+        if args.mode == "learning-check":
+            plan["learning_protocol"] = contract.protocol(configurations)
+            if plan["learning_protocol"]["updates"] != learning_updates:
+                raise ValueError("short learning preparation changed its complete-window budget")
     artifacts = {directory / "measurement_plan.json": json_bytes(plan),
         directory / "manifest.yaml": json_bytes(plan), directory / "config_resolved.yaml": json_bytes({
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
@@ -208,8 +309,9 @@ def prepare(args):
     background = ("## Purpose\n\nMeasure an explicitly supplied combined configuration or one isolated policy-copy count. "
         "The producer chooses no hypotheses or configurations and submits no jobs.\n\n"
         "## Key hyperparameters\n\nOriginal CleanRL policy optimization with Random Network Distillation: "
-        "128 pixel environments per policy, 128 rollout steps, four epochs, four minibatches, fifty random warmup rollouts. "
-        f"Seven timing rounds contain {window} complete updates each (requested minimum {args.minimum_updates_per_round}). "
+        "128 pixel environments per policy, 128 rollout steps, four epochs, four minibatches, fifty random warmup rollouts. " +
+        (f"Independent learning arms each retain {learning_updates} complete original updates and all diagnostic/report rows. "
+         if args.mode == "learning-check" else f"{rounds} timing rounds contain {window} complete updates each (requested minimum {minimum}). ") +
         "The correctness-only mode performs the supplied-input and complete-iteration gates without timing rounds. "
         "Neural and optimizer arithmetic uses float32; running statistics use float64; matrix precision is highest.\n\n"
         "## Code and config changes\n\nThe exact frozen numerical core and Executor are imported after source/runtime/assets "
@@ -409,6 +511,9 @@ def verify_prepared(directory, plan):
     if 'ownership_profile' in plan:
         import device_memory_limit as capacity
         capacity.require_ownership_source(plan)
+    verify_completed_study_plan(plan)
+    if "completed_study" in plan:
+        validation.committed_measurement_sources(plan["helpers"], validation.Evidence())
 
 
 def run_prepared(directory):
@@ -516,13 +621,34 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
     def progress(value):
         """Publish actual computation stages in the normal per-unit monitoring location."""
         diagnostic.record_progress(directory, value["state"], **{name: item for name, item in value.items() if name != "state"})
-    if plan["mode"] == "confirmation":
+    if plan["mode"] == "learning-check":
+        short_learning = staged_short_learning(directory, plan)
+        result = short_learning.run(directory, plan, paired, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment, progress, MemoryObservation)
+    elif plan["mode"] == "confirmation":
+        if "final_confirmation_protocol" in plan:
+            short_learning = staged_short_learning(directory, plan)
+            if plan.get("single_update_latency_protocol") != {arm: short_learning.latency_protocol(value)
+                    for arm, value in (("reference", reference), ("candidate", selected))}:
+                raise ValueError("the predeclared selected reporting and per-update latency contract changed")
         changes = {scope: {name: value for name, value in selected[scope].items() if reference[scope][name] != value}
                    for scope in ("learner", "environment")}
         result = paired.run_paired_benchmark(PixelPPOConfig(**reference["learner"]),
             changes["learner"], changes["environment"], selected["execution"],
-            rounds=7, iterations=plan["iterations"], seed_start=seeds[0], progress=progress,
+            rounds=plan["rounds"], iterations=plan["iterations"], seed_start=seeds[0], progress=progress,
             reference_environment=reference["environment"], reference_execution=reference["execution"])
+        if "final_confirmation_protocol" in plan:
+            short_learning = staged_short_learning(directory, plan)
+            latency_memory = MemoryObservation(devices[0], plan["gpu_uuid"])
+            latency_memory.begin()
+            try:
+                result["synchronized_per_update_latency"] = short_learning.single_update_latencies(
+                    paired, selected, reference, seeds, PixelPPOConfig, PixelPPORND, AtariPixelEnvironment)
+            finally:
+                observed = latency_memory.finish()
+                training.atomic_json(directory / "single_update_latency_memory.json", observed)
+            if observed["other_gpu_processes"]:
+                raise ValueError("another process occupied the GPU during synchronized single-update latency")
+            result["synchronized_per_update_latency_memory"] = observed
     else:
         configs = [("candidate", selected)] if plan["mode"] == "packing-point" else [("reference", reference), ("candidate", selected)]
         executors, initial = {}, {}
@@ -566,7 +692,7 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
         installed_backend=installed_backend,
         loaded_gpu_libraries=training.actual_gpu_library_receipt(devices[0].client, installed_backend["gpu_libraries"]),
         runtime_environment=plan["runtime_environment"], measurement_mode=plan["mode"],
-        helpers=plan["helpers"], copy_seeds=list(seeds), protocol={"rounds": 7,
+        helpers=plan["helpers"], copy_seeds=list(seeds), protocol={"rounds": plan["rounds"],
             "requested_minimum_updates_per_round": plan["minimum_updates_per_round"], "actual_updates_per_round": plan["iterations"]},
         execution_identity={"hostname": hardware["hostname"], "pid": os.getpid(), "process_start_time": hardware["process_start_time"],
                             "started_at_seconds": started_at, "finished_at_seconds": time.time()})
@@ -612,15 +738,21 @@ def parse_arguments(argv=None):
     parser.add_argument("--hardware-class", choices=validation.CONTEXTS)
     parser.add_argument("--seed-start", type=int, default=1)
     parser.add_argument("--copies", type=int)
-    parser.add_argument("--rounds", type=int, default=7)
-    parser.add_argument("--minimum-updates-per-round", type=int, default=10)
+    parser.add_argument("--rounds", type=int)
+    parser.add_argument("--minimum-updates-per-round", type=int)
+    parser.add_argument("--final-confirmation", action="store_true")
+    parser.add_argument("--completed-study-proof", type=Path)
+    parser.add_argument("--completed-study-review", type=Path)
+    parser.add_argument("--completed-study-manifest", type=Path)
+    parser.add_argument("--completed-study-manifest-sha256")
     parser.add_argument("--python", type=Path, default=Path("/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"))
     args = parser.parse_args(argv)
     memory_options = ('memory_limit_allocation_kind', 'memory_limit_cluster', 'memory_limit_owned_job_ledger', 'memory_limit_ownership_profile')
     if args.prepared_unit is not None:
-        if args.prepare_only or args.record_device_memory_limit or any(getattr(args, name) is not None for name in (
+        if args.prepare_only or args.record_device_memory_limit or args.final_confirmation or args.rounds is not None or args.minimum_updates_per_round is not None or any(getattr(args, name) is not None for name in (
                 "mode", "source_root", "source_commit", "configuration", "reference_configuration",
-                "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies", *memory_options)):
+                "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies",
+                "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
         if args.instrumented_child:
             # The private child entry is meaningful only inside this exact declared prepared protocol.

@@ -15,6 +15,8 @@ import controller
 import ideas
 import test_post_comparison_validation as raw_fixtures
 import test_queue as queue_fixtures
+from final_phase_fixtures import FinalPhaseFixture
+import launch_final_training as final_launcher
 
 
 class RawFinalReadinessTests(unittest.TestCase):
@@ -22,9 +24,10 @@ class RawFinalReadinessTests(unittest.TestCase):
 
     def setUp(self):
         """Reuse complete metadata fixtures and add truthful registry summaries for the controller."""
-        self.fixture = raw_fixtures.PostComparisonTests("runTest")
-        self.fixture.setUp()
-        self.addCleanup(self.fixture.doCleanups)
+        self.current = FinalPhaseFixture()
+        self.addCleanup(self.current.close)
+        self.fixture = self.current.raw
+        self.fixture.specification = self.current.specification
         self.run, self.commit = self.fixture.directory, self.fixture.commit
         self.registry = json.loads(Path(self.fixture.specification["study_registry"]).read_text())
         entries = list(self.registry["initial_ideas"])
@@ -33,7 +36,7 @@ class RawFinalReadinessTests(unittest.TestCase):
             for rows in entry["results"].values():
                 for row in rows:
                     row.update(implementation_distinct=True, measurement_valid=True, correctness_passed=True)
-        controller.atomic_json(self.run / "study_registry.json", self.registry)
+        (self.run / "study_registry.json").write_bytes(Path(self.fixture.specification["study_registry"]).read_bytes())
         self.fixture.specification["study_registry"] = str(self.run / "study_registry.json")
         self.receipt = raw_fixtures.VALIDATION.validate_final_verification(self.fixture.specification)
         self.allocation = mock.patch.object(controller, "final_validation_allocation").start()
@@ -57,6 +60,26 @@ class RawFinalReadinessTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "complete post-comparison validation receipt"):
             self.check(flags)
         self.allocation.assert_not_called()
+
+    def test_historical_read_only_admission_cannot_make_current_work_ready(self):
+        """A valid old inspection receipt cannot authorize a current worker or current final readiness."""
+        historical = copy.deepcopy(self.fixture.specification)
+        historical.pop("final_protocol")
+        receipt = raw_fixtures.VALIDATION.validate_final_verification(historical)
+        final_path = self.fixture.write("historical_final_verification.json", receipt)
+        specification = {"schema_version": 1, "source_root": str(self.current.source), "source_commit": self.commit,
+            "hardware_class": "jaguar03_rtx_a4500", "configuration": receipt["selected"]["jaguar03_rtx_a4500"]["configuration"],
+            "runtime_environment": self.fixture.runtime, "copy_seeds": [1], "final_verification": str(final_path)}
+        specification_path = self.fixture.write("historical_final_specification.json", specification)
+        admitted = raw_fixtures.VALIDATION.validate_training_admission(specification_path, historical_read_only=True)
+        admitted_path = self.fixture.write("historical_read_only_admission.json", admitted)
+        with self.assertRaisesRegex(ValueError, "version-two"):
+            final_launcher.prepared_unit(self.run, {"unit_id": "historical_read_only_inspection",
+                "final_specification": str(specification_path), "training_admission_receipt": str(admitted_path)})
+        with self.assertRaisesRegex(ValueError, "complete post-comparison"):
+            self.check(receipt)
+        self.allocation.assert_not_called()
+        self.assertFalse((self.run / "SWEEP_COMPLETE").exists())
 
     def test_current_source_registry_and_specification_digest_are_bound(self):
         """A genuine receipt from another source or campaign does not authorize current work."""

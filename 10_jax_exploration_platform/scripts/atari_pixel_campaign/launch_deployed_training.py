@@ -73,6 +73,9 @@ def verify_binding(run, binding):
     resolver = resolver_for(binding)
     spec = read_original(unit["final_specification"]["path"], resolver)
     verify_original(unit["final_specification"], resolver)
+    if not isinstance(spec.get("final_verification"), str):
+        raise ValueError("current deployed work requires its exact version-two final verification")
+    validation.require_current_final(read_original(spec["final_verification"], resolver))
     proof = admitted.get("validation", {})
     if (type(unit.get("schema_version")) is not int or unit.get("schema_version") != 1
             or not re.fullmatch(r"[A-Za-z0-9_-]{1,180}", unit.get("unit_id", "")) or unit.get("kind") != "final_training_unit"

@@ -628,7 +628,7 @@ def final_requirements_met(registry, flags, *, run_dir=None, source_commit=None)
     """Rebuild the complete final receipt from original evidence rather than trusting five flags."""
     if len(investigated_hypotheses(registry)) != 50:
         return False
-    if (not isinstance(flags, dict) or flags.get("schema_version") != 1
+    if (not isinstance(flags, dict) or type(flags.get("schema_version")) is not int or flags["schema_version"] != 2
             or flags.get("kind") != "final_verification" or not isinstance(flags.get("specification"), dict)
             or flags.get("specification_digest") != content_digest(flags["specification"])):
         raise ValueError("final_verification.json must be a complete post-comparison validation receipt")
@@ -645,7 +645,8 @@ def final_requirements_met(registry, flags, *, run_dir=None, source_commit=None)
 
     # Recompute all fifty matched-count checks, longer confirmation, packing and synchronized scaling only on compute.
     final_validation_allocation(run_dir)
-    from post_comparison_validation import validate_final_verification
+    from post_comparison_validation import require_current_final, validate_final_verification
+    require_current_final(flags)
     rebuilt = validate_final_verification(flags["specification"],
                                           specification_path=flags.get("specification_path"))
     if rebuilt != flags:

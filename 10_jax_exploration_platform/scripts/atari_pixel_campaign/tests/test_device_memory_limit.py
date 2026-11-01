@@ -243,9 +243,11 @@ class DeviceMemoryLimitTests(unittest.TestCase):
         self.assertEqual(result['capacity_exclusion']['copies'], 4)
 
     def test_target_deployment_independently_rebuilds_capacity_exclusion(self):
-        """The final target verifies the failed boundary separately and retains every completed numerical gate."""
+        """The historical reader retains its failed boundary while the current operational gate refuses this old fixture."""
         spec = self.build()
-        result = deployment.validate_deployment(spec)
+        with self.assertRaises(ValueError):
+            deployment.validate_deployment(spec)
+        result = deployment.validate_deployment(spec, historical_read_only=True)
         self.assertEqual(result['configuration']['learner']['n_copies'], 1)
         excluded = [row for row in result['executions'] if row['mode'] == 'device-memory-capacity-exclusion']
         self.assertEqual(len(excluded), 1)

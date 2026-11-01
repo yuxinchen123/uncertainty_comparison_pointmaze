@@ -30,7 +30,7 @@ class DeployedCompletionTests(unittest.TestCase):
         self.fixture.setUp()
         self.raw = self.fixture.fixture
         self.path = self.fixture.path
-        self.admitted = completion.admission.validate_deployed_training_admission(self.path)
+        self.admitted = self.fixture.read_historical_admission(self.path)
         self.receipt = self.fixture.deployment
         self.directory = self.fixture.directory / "training_campaign/data" / self.admitted["unit_id"]
         self.directory.mkdir(parents=True)
@@ -143,9 +143,22 @@ class DeployedCompletionTests(unittest.TestCase):
             "terminal_unit_snapshot": snapshot}
         return Path(save("terminal.json", receipt)["path"])
 
+    def read_historical_checkpoint(self, *arguments, **options):
+        """Inspect the old fixture without granting current operational admission."""
+        return completion.validate_deployed_training_checkpoint(*arguments, historical_read_only=True, **options)
+
+    def read_historical_completion(self, *arguments, **options):
+        """Read old completion bytes only through the explicit historical inspection path."""
+        return completion.validate_deployed_training_completion(*arguments, historical_read_only=True, **options)
+
+    def test_historical_completion_cannot_pass_default_operational_validation(self):
+        """The optional historical reader cannot mark the old fixture complete operationally."""
+        with self.assertRaisesRegex(ValueError, "version-one H100 target fields|version-two"):
+            completion.validate_deployed_training_completion(self.path, self.directory)
+
     def validate(self):
         """Run full deployed admission and raw completion validation, never ordinary NVL admission."""
-        return completion.validate_deployed_training_completion(self.path, self.directory)
+        return self.read_historical_completion(self.path, self.directory)
 
     def test_exact_completed_schedule_and_target_count_are_validated_without_arrays(self):
         """The PCIe-selected count is two even though the global NVL proof selected one."""
@@ -240,29 +253,29 @@ class DeployedCompletionTests(unittest.TestCase):
         """An exact graceful boundary is resumable; the zero-update state requires installed admission only."""
         for iteration in (125, 0):
             self.boundary(iteration)
-            record = completion.validate_deployed_training_checkpoint(self.path, self.directory)
+            record = self.read_historical_checkpoint(self.path, self.directory)
             self.assertFalse(record["completed"])
             self.assertEqual(record["updates"], iteration)
             self.assertEqual(record["checkpoint_proof_attempt"], 1 if iteration else None)
             with self.assertRaisesRegex(ValueError, "not completed"):
                 self.validate()
         with self.assertRaisesRegex(ValueError, "zero-update"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, checkpoint_proof_attempt=1)
+            self.read_historical_checkpoint(self.path, self.directory, checkpoint_proof_attempt=1)
 
     def test_periodic_checkpoint_requires_owned_terminal_job_proof_and_exact_snapshot(self):
         """TIMEOUT can retain a periodic checkpoint; ledger appends do not invalidate its exact owned row."""
         self.boundary(125)
         terminal = self.terminal()
-        record = completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+        record = self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
         self.assertFalse(record["completed"])
         self.assertEqual(record["terminal"]["state"], "TIMEOUT")
         ledger = self.directory.parent.parent / "slurm/submitted_jobids_aces.txt"
         with ledger.open("a") as stream:
             stream.write("12346\n")
-        self.assertFalse(completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)["completed"])
+        self.assertFalse(self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)["completed"])
         ledger.write_text("12346\n")
         with self.assertRaisesRegex(ValueError, "owned append-only ledger"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+            self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
 
     def test_application_failure_oom_unknown_or_omitted_unit_file_never_auto_resume(self):
         """An owned allocation is insufficient when it failed in the application or its snapshot omitted a file."""
@@ -270,19 +283,19 @@ class DeployedCompletionTests(unittest.TestCase):
         for state in ("OUT_OF_MEMORY", "FAILED", "UNKNOWN", "COMPLETED"):
             terminal = self.terminal(state)
             with self.subTest(state=state), self.assertRaises(ValueError):
-                completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+                self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
         terminal = self.terminal()
         self.write("failure.json", {"attempt": 1, "error": "application error"}, attempt=True)
         with self.assertRaisesRegex(ValueError, "snapshot omitted|include all"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+            self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
         terminal = self.terminal()
         with self.assertRaisesRegex(ValueError, "application-failed"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+            self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
 
     def test_full_checkpoint_terminal_failure_then_completion_uses_explicit_prior_proof(self):
         """A full-budget saved state can be finalized without adding updates or inventing a new library observation."""
         terminal = self.terminal()
-        incomplete = completion.validate_deployed_training_checkpoint(self.path, self.directory, terminal_receipt=terminal)
+        incomplete = self.read_historical_checkpoint(self.path, self.directory, terminal_receipt=terminal)
         self.assertFalse(incomplete["completed"])
         self.assertEqual(incomplete["updates"], 122070)
         # Before: a terminal process saved the final state but no result. After: an installed-admitted process restores it.
@@ -296,7 +309,7 @@ class DeployedCompletionTests(unittest.TestCase):
         self.publish_result()
         with self.assertRaises(FileNotFoundError):
             self.validate()
-        finished = completion.validate_deployed_training_completion(self.path, self.directory, checkpoint_proof_attempt=1)
+        finished = self.read_historical_completion(self.path, self.directory, checkpoint_proof_attempt=1)
         self.assertTrue(finished["completed"])
         self.assertEqual(finished["updates"], 122070)
         self.assertEqual(finished["checkpoint_proof_attempt"], 1)
@@ -307,7 +320,7 @@ class DeployedCompletionTests(unittest.TestCase):
         changed["cudnnGetVersion"] = 1
         prior.write_text(json.dumps(changed))
         with self.assertRaisesRegex(ValueError, "another process/checkpoint"):
-            completion.validate_deployed_training_completion(self.path, self.directory, checkpoint_proof_attempt=1)
+            self.read_historical_completion(self.path, self.directory, checkpoint_proof_attempt=1)
 
     def relocate(self):
         """Move exact byte copies and real detached Git roots, then remove every original evidence directory."""
@@ -343,7 +356,7 @@ class DeployedCompletionTests(unittest.TestCase):
         """All completion files, libraries and real Git roots resolve exactly without rewriting raw evidence."""
         original = self.validate()
         resolver = self.relocate()
-        self.assertEqual(completion.validate_deployed_training_completion(self.path, self.directory, resolver=resolver), original)
+        self.assertEqual(self.read_historical_completion(self.path, self.directory, resolver=resolver), original)
 
     def test_portable_graceful_boundary_requires_explicit_complete_unit_snapshot(self):
         """A mapped absent failure needs a byte-bound snapshot; missing resolver entries never prove absence."""
@@ -354,11 +367,11 @@ class DeployedCompletionTests(unittest.TestCase):
         snapshot["kind"] = "deployed_training_unit_snapshot"
         snapshot_path = terminal_path.parent / "graceful_snapshot.json"
         snapshot_path.write_text(json.dumps(snapshot))
-        original = completion.validate_deployed_training_checkpoint(self.path, self.directory, unit_snapshot=snapshot_path)
+        original = self.read_historical_checkpoint(self.path, self.directory, unit_snapshot=snapshot_path)
         resolver = self.relocate()
         with self.assertRaisesRegex(ValueError, "no exact file entry"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, resolver=resolver)
-        moved = completion.validate_deployed_training_checkpoint(self.path, self.directory, resolver=resolver, unit_snapshot=snapshot_path)
+            self.read_historical_checkpoint(self.path, self.directory, resolver=resolver)
+        moved = self.read_historical_checkpoint(self.path, self.directory, resolver=resolver, unit_snapshot=snapshot_path)
         self.assertEqual(moved, original)
         self.assertFalse(moved["completed"])
         omitted = copy.deepcopy(snapshot)
@@ -377,7 +390,7 @@ class DeployedCompletionTests(unittest.TestCase):
         changed.write_text(json.dumps(manifest))
         conflicting = completion.portable_evidence.ExactPathResolver(changed)
         with self.assertRaisesRegex(ValueError, "explicitly mapped file absent"):
-            completion.validate_deployed_training_checkpoint(self.path, self.directory, resolver=conflicting, unit_snapshot=snapshot_path)
+            self.read_historical_checkpoint(self.path, self.directory, resolver=conflicting, unit_snapshot=snapshot_path)
 
 
 if __name__ == "__main__":

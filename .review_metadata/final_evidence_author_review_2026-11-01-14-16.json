@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "kind": "final_evidence_implementation_author_review",
+  "at_utc": "2026-11-01T14:16:04.752172+00:00",
+  "base_commit": "2646fc1358766e7349b502f82068507bfe0f10cb",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673/.review_metadata/final_evidence_source_freeze_2026-11-01-14-12.json",
+    "sha256": "e142d676246c34e8ae6f521eed4fb13905629666df0a631f4943612ce68467b5"
+  },
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py": "3c04b8dbcc9b5125084c814e6634ae68eb4c7b9946e3614a494e3b6b00089874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": "15470dc4298685b6e5fc4c6ecaf9d38422571cc29765eb7443df5fce87912a35",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": "30988ef9950e99c535602cdd70c1e472613fdc343d0e75fffa6e9f2c7a129f93",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "65915f384ec5d456bf277d8b35f2fa087caf7dae8ec2f062e141c29e523ef17b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "1f42c06a4b779e36847e02774826ba89a28b10e3a634194edd3e3d11669a3713",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "3e7b9789c4b26829007835558e8883ae37bde84bcac164690c52fad8d39a9481",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/final_phase_fixtures.py": "c08a1a250e7705ae58e9dee092e4aec6c64597a137b4872870f6d3508a2cc5fd",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_deployed_training_admission.py": "61d9da102b99c72585d552213d240a1fb067071083576131b28a1c8356500520",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py": "151a3317bccaa8b025aab0c5097c12f7eade3a731df38245ac833ac435c10c6f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_evidence.py": "05f7635afe54dd33bef8e721ccc85cb188f17b6610ef5a001ab54f8cafb97b8f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_readiness.py": "dd36a2185801af848e3fb3ebdd40cfebf18b49dec9d898eb95f5531171496d64",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_deployed_training.py": "0f3999c31561975748275d502e146c60b0fd88cdf60cb74a00805117aafa542b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "e3943c734c76e0b73d6ecc9b3feebdd2fefe3153e9797285ec8d2340670b337a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_gpu_scaling.py": "2b30b4b437efc3ee8a81cd98285b5f1d7781a1a6ffaad24d0eaae07d7173bf67",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": "770968b5baf0120a0344ef5fac64841fc4c32344e79b0d821c6ef6ce59cd96a8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_deployed_training_completion.py": "1b1de46fa7423acaafcd8f2dc72a5c2d2e9233265b3e71d0b22c687f3596b519",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "c474dada1d965f6c5e117a2285e8744e3f7d634764f41be09ed7c01da32a4f59",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "d3843b716b3d8b628e777b995cc81f375c986f385f951baf6ed02ad4946b68c6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "cc386c63a32f4d10c8c07e6eae7379a2d00dadbadb87ea18569bafcff01fb4e3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py": "e64dce2ee7ce59e4ae136b68d004e623789a64ba81163291b818401e04209f61",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "042cd8c209b78832376e4b8b50c78ec41dd6f79ea426b279098e60f0e281f9f6"
+  },
+  "author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673/.review_metadata/final_phase_metadata_author_2026-11-01-14-15-17.json",
+    "sha256": "e9f2d3c27085b0250452f88fc90bfb54f0a78a1a15b1c50817b1d2ca570dc7ec"
+  },
+  "actual_owned_compute": {
+    "job_id": "6780635",
+    "step_id": "62",
+    "process": {
+      "hostname": "slurm5",
+      "pid": 776897,
+      "process_start_time": "50314937",
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6780635/step_62/user/task_0\n"
+    }
+  },
+  "tests_passed": 70,
+  "source_unchanged_during_tests": true,
+  "additional_meaningful_test_receipts": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673/.review_metadata/final_phase_metadata_author_2026-11-01-13-31-58.json",
+      "sha256": "8854d35d73fa6a959f85f4fe9a290bc73f8c0ada10e8476a5ca733ec4029f766"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673/.review_metadata/final_phase_metadata_author_2026-11-01-13-53-50.json",
+      "sha256": "82b95098dc46c115a9a79fe8db6b5af15ae9a10fd3dfcfe37cc700eff8f9f3c9"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-03-12_final-evidence_paired-rounds-11_updates-per-round-20_original-source-d28e673/.review_metadata/final_phase_metadata_author_2026-11-01-14-11-42.json",
+      "sha256": "06974b03b4217ad27c670352ca7fbc5bf0364362c21354e9eddb8f76c4d24179"
+    }
+  ],
+  "scope": {
+    "final_confirmation": "eleven paired complete twenty-update-or-longer rounds, original intermediate seven-by-ten unchanged",
+    "study_binding": "reviewed immutable completed-fifty proof from actual intermediate accepted combinations and exact final source",
+    "short_learning": "128-or-LCM independent full-configuration updates per arm, full2B horizon, every-update curves, selected reports, exact boundary coverage, strict replay, independent comparative analysis, no equivalence claim",
+    "fixed_total": "optimized fixed-total one versus eight cards with stable global seeds, actual concurrent windows and physical/backend/assets binding; exact-eight evidence required for capacity N/A",
+    "per_update_latency": "three complete selected reporting/LCM windows, each original update synchronized, scheduled readout included in per-update timing, compared with actual selected Executor full state and reports",
+    "operational_history": "current operational readiness/admission/worker/completion require current protocol; explicit historical reads cannot authorize them",
+    "helper_dependencies": "both/only-memory/only-learning/neither declaration union cases tested"
+  },
+  "unchanged_numerical_source": {
+    "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "paths": [
+      "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    "diff_files": []
+  },
+  "limits": [
+    "No actual GPU producer fixture has run for this new source; independent review, publication and bounded real GPU fixtures are required before enable.",
+    "The exact-eight instrumented exclusion branch needs combined-tree replay with the separately reviewed profile-capable device_memory_limit helper; no inference from an older disabled helper.",
+    "Free-running comparative trajectories never establish learning equivalence; independent analysis must resolve any anomalies without automatic tolerance changes."
+  ],
+  "live_actions": {
+    "ssh": 0,
+    "gpu_jobs": 0,
+    "submissions": 0,
+    "releases": 0,
+    "integration_edits": 0,
+    "commits": 0
+  },
+  "scientific_hypothesis_credit": 0,
+  "comparison_count_contribution": 0,
+  "final_training_credit": 0,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false
+}
