@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "kind": "planned_diagnostic_monitor_display_corrected_independent_review",
+  "at_utc": "2026-11-01T14:04:39.835117+00:00",
+  "job_id": "6780635",
+  "step_id": "59",
+  "before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "2a25c3a2d7300d6827ed3b7566edf744a3be11ad2c4dda0a227adaf8093cc94b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor.py": "5f22cbbac6bce72f1ca1b4b748a66b15765678e0447f30d7fa03472dcdf6ab66"
+  },
+  "after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "2a25c3a2d7300d6827ed3b7566edf744a3be11ad2c4dda0a227adaf8093cc94b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor.py": "5f22cbbac6bce72f1ca1b4b748a66b15765678e0447f30d7fa03472dcdf6ab66"
+  },
+  "unchanged": true,
+  "tests": {
+    "count": 17,
+    "passed": true,
+    "failures": 0,
+    "errors": 0,
+    "stdout_stderr": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.092s\n\nOK\n"
+  },
+  "independent_behavior_checks": {
+    "submission_receipt_present": {
+      "run": "diagnostic",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "submission recorded; execution not observed",
+      "age_seconds": 0.005697727203369141
+    },
+    "actual_hardware_job_id_present": {
+      "run": "diagnostic",
+      "pool": "jaguar03",
+      "gpu": [],
+      "slurm_job_id": "123",
+      "state": "planned",
+      "progress": "submission recorded; execution not observed",
+      "age_seconds": 0.006396770477294922
+    },
+    "failure_record_present": {
+      "run": "diagnostic",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "recorded prerequisite failure",
+      "age_seconds": 0.006953716278076172
+    },
+    "allocation_evidence_present": {
+      "run": "diagnostic",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "prepared; execution evidence exists",
+      "age_seconds": 0.007485389709472656
+    },
+    "unsubmitted_superseded_preparation": {
+      "run": "diagnostic",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "superseded",
+      "progress": "superseded before submission; 0 completed fixtures",
+      "age_seconds": 0.007964849472045898
+    }
+  },
+  "approved": true,
+  "numerical_imports_and_live_commands_forbidden": true,
+  "active_monitor_changed": false,
+  "raw_campaign_files_changed": false
+}

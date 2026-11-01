@@ -103,6 +103,8 @@ def unit_rows(directory, excluded_unit_names=()):
     rows = []
     processes = read_json(directory / "processes.json") or []
     hosts = {record["unit"]: record["host"] for record in processes}
+    actions = read_json(directory / "next_actions.json") or {}
+    superseded = set(actions.get("packing_device_memory_failure_receipt", {}).get("preserved_unsubmitted_preparations", []))
     # A 252-byte auxiliary directory is valid, but adding ".json" would exceed
     # the filesystem's filename limit. Match only filenames that actually exist.
     specifications = {path.stem: path for path in (directory / "queue/specifications").glob("*.json")}
@@ -170,6 +172,18 @@ def unit_rows(directory, excluded_unit_names=()):
             copies = specification["configuration"]["n_copies"]
             noun = "copy" if copies == 1 else "copies"
             name = specification["hypothesis"].replace("_", " ") + f" ({copies} {noun})"
+        # Before: a prepared diagnostic was called running. After: only submitted work can appear active.
+        if phase == "planned" and not failure and state != "held":
+            packet = directory / "remote_setup" / path.parent.name
+            known_jobs = [value.get("job_id"), value.get("slurm_job_id"), hardware.get("slurm_job_id"),
+                          group.get("slurm_job_id") if group else None]
+            submitted = any(known_jobs) or (packet / "submission_receipt.json").exists()
+            executed = any((path.parent / name).exists() for name in ("result.json", "allocation_admission.json", "child_exit_records.json"))
+            state = "planned"
+            progress = "submission recorded; execution not observed" if submitted else "prepared; execution evidence exists" if executed else "not submitted; 0 completed fixtures"
+            if (value.get("kind") == "device_memory_capture_component_regression"
+                    and not submitted and not executed and str(packet) in superseded):
+                state, progress = "superseded", "superseded before submission; 0 completed fixtures"
         rows.append({"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
                      "gpu": group["gpu"] if group else selected[1:2],
                      "slurm_job_id": group["slurm_job_id"] if group else hardware.get("slurm_job_id", ""),
@@ -820,14 +834,18 @@ def tick(directory):
         rows.append(table_row("final training continuation", "UVA", "RTX A4500", "FINISHED",
                               final_training_progress(final_training)))
     for unit in display_units:
-        if unit["state"] in {"completed", "checkpointed", "failed"}:
+        if unit["state"] in {"completed", "checkpointed", "failed", "superseded"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu),
-                                  unit.get("display_state", "FINISHED" if unit["state"] == "completed" else unit["state"].upper()),
+                                  unit.get("display_state", "FINISHED" if unit["state"] in {"completed", "superseded"} else unit["state"].upper()),
                                   unit["progress"]))
     if controller_error:
         rows.append(table_row("queue controller", "UVA", "none", "FAILED", controller_error))
     rows.append("PLANNED")
+    for unit in display_units:
+        if unit["state"] == "planned":
+            gpu = gpu_label(unit["gpu"][0]) if unit["gpu"] else "none"
+            rows.append(table_row(unit["run"], unit["pool"], gpu, "PLANNED", unit["progress"]))
     state_path = directory / "campaign_state.json"
     campaign = read_json(state_path) or {"phase": "implementation"}
     counts = campaign.get("queue_counts", {})

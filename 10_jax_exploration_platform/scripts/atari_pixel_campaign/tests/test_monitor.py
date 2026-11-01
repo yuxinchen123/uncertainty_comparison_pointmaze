@@ -73,6 +73,69 @@ class MonitorTests(unittest.TestCase):
         self.assertNotIn("JobHeldUser", waiting)
         self.assertIn("JobHeldUser", held)
 
+    def test_unsubmitted_diagnostic_preparations_are_never_running(self):
+        """Current and superseded preparation records retain their actual zero-execution status."""
+        with tempfile.TemporaryDirectory() as temporary, patch.object(monitor, "own_jobs", return_value=[]):
+            root = Path(temporary)
+            for name in ("previous_preparation", "current_preparation"):
+                unit = root / "data" / name
+                unit.mkdir(parents=True)
+                (unit / "progress.json").write_text(json.dumps({"state": "planned",
+                    "kind": "device_memory_capture_component_regression", "job_id": None}))
+            packet = root / "remote_setup/previous_preparation"
+            (root / "next_actions.json").write_text(json.dumps({"packing_device_memory_failure_receipt": {
+                "preserved_unsubmitted_preparations": [str(packet)]}}))
+            rows = {row["run"]: row for row in monitor.unit_rows(root)}
+            self.assertEqual(rows["previous_preparation"]["state"], "superseded")
+            self.assertEqual(rows["current_preparation"]["state"], "planned")
+            with contextlib.redirect_stdout(io.StringIO()):
+                monitor.tick(root)
+            report = (root / "20_mins_monitoring/latest_report.md").read_text()
+            training = report.split("TRAINING\n", 1)[1].split("WAITING\n", 1)[0]
+            finished = report.split("FINISHED\n", 1)[1].split("PLANNED\n", 1)[0]
+            planned = report.split("PLANNED\n", 1)[1]
+            self.assertNotIn("preparation", training)
+            self.assertIn("previous_preparation", finished)
+            self.assertIn("current_preparation", planned)
+            self.assertIn("not submitted", planned)
+
+    def test_submitted_preparation_cannot_be_labelled_superseded(self):
+        """A recorded submission prevents a stale planning note from hiding its queued allocation."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unit = root / "data/preparation"
+            unit.mkdir(parents=True)
+            (unit / "progress.json").write_text(json.dumps({"state": "planned",
+                "kind": "device_memory_capture_component_regression", "job_id": None}))
+            packet = root / "remote_setup/preparation"
+            packet.mkdir(parents=True)
+            (packet / "submission_receipt.json").write_text("{}")
+            (root / "next_actions.json").write_text(json.dumps({"packing_device_memory_failure_receipt": {
+                "preserved_unsubmitted_preparations": [str(packet)]}}))
+            row = monitor.unit_rows(root)[0]
+            self.assertEqual(row["state"], "planned")
+            self.assertNotIn("not submitted", row["progress"])
+            self.assertIn("submission recorded", row["progress"])
+
+    def test_execution_and_failure_evidence_override_superseded_planning_notes(self):
+        """A stale planned record cannot hide a known job, actual execution or a preserved failure."""
+        for filename, value, expected_state in (("hardware.json", {"slurm_job_id": "123"}, "planned"),
+                ("failure.json", {"error": "recorded failure"}, "failed"),
+                ("allocation_admission.json", {}, "planned")):
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                unit = root / "data/preparation"
+                unit.mkdir(parents=True)
+                (unit / "progress.json").write_text(json.dumps({"state": "planned",
+                    "kind": "device_memory_capture_component_regression", "job_id": None}))
+                (unit / filename).write_text(json.dumps(value))
+                packet = root / "remote_setup/preparation"
+                (root / "next_actions.json").write_text(json.dumps({"packing_device_memory_failure_receipt": {
+                    "preserved_unsubmitted_preparations": [str(packet)]}}))
+                row = monitor.unit_rows(root)[0]
+                self.assertEqual(row["state"], expected_state)
+                self.assertNotIn("superseded before submission", row["progress"])
+
     def test_long_auxiliary_name_stays_separate_from_registered_case(self):
         """A completed 252-byte auxiliary name adds no paired-case credit and survives both metadata lookups."""
         with tempfile.TemporaryDirectory() as temporary:
