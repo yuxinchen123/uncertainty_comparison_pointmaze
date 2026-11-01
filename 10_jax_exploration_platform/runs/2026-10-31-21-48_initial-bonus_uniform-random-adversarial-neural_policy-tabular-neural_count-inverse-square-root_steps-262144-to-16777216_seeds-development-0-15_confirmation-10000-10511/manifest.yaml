@@ -63,8 +63,8 @@
   "max_measurement_attempts": 2,
   "save_checkpoints": false,
   "git": {
-    "commit": "6912360f2cf6f710e5eb6785235159aeefbb4339",
-    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_6912360f2cf6f710e5eb6785235159aeefbb4339"
+    "commit": "bc07177e9150c8653927c70f6ba15d959459144a",
+    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_bc07177e9150c8653927c70f6ba15d959459144a"
   },
   "owner_session_id": "01a1955c-f847-70c2-8b61-7d679c7c64d6",
   "rendering_dependency": "PyMuPDF==1.26.6",
@@ -75,10 +75,12 @@
     "document_rendered": true,
     "extended_checks_passed": 22,
     "extended_checks_completed": true,
-    "report_monitor_tests_passed": 43
+    "report_monitor_tests_passed": 43,
+    "report_monitor_and_queue_checks_passed": 47
   },
   "research_started_at": "2026-11-01T01:24:35.319679-04:00",
   "research_deadline": "2026-11-05T01:24:35.319736-04:00",
   "primary_metric": "capped_mean_first_goal_steps",
-  "selection_rule": "Minimize capped mean; discovery fraction breaks ties. Shared uniform controls require at least 0.75 discovery."
+  "selection_rule": "Minimize capped mean; discovery fraction breaks ties. Shared uniform controls require at least 0.75 discovery.",
+  "maximum_settings_per_queue_unit": 16
 }
