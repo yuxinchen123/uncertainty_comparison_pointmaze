@@ -98,12 +98,14 @@ def recorded_scaling_group(directory):
             "slurm_job_id": proof.get("slurm_job_id", "")}
 
 
-def unit_rows(directory):
+def unit_rows(directory, excluded_unit_names=()):
     """Read one small status file per unit without retaining training histories."""
     rows = []
     processes = read_json(directory / "processes.json") or []
     hosts = {record["unit"]: record["host"] for record in processes}
     for path in sorted((directory / "data").glob("*/progress.json")):
+        if path.parent.name in excluded_unit_names:
+            continue
         value = read_json(path)
         hardware = read_json(path.parent / "hardware.json") or {}
         specification = read_json(directory / "queue" / "specifications" / (path.parent.name + ".json"))
@@ -169,8 +171,8 @@ def unit_rows(directory):
     return rows
 
 
-def site_packet(directory, packet, receipt, identifiers):
-    """Bind one direct-child site submission to this campaign's exact owned UVA job."""
+def owned_metadata_packet(directory, packet, receipt, identifiers, plan_filename):
+    """Bind direct-child operational metadata to an exact owned UVA submission and its immutable bytes."""
     # A named packet becomes an owned operational job only after its byte receipts agree.
     identifier = receipt.get("job_id")
     if (receipt.get("cluster") != "uva" or not isinstance(identifier, str)
@@ -180,18 +182,35 @@ def site_packet(directory, packet, receipt, identifiers):
         raise ValueError("site packet must be a direct child of this campaign's remote_setup")
     if (packet / "submission_receipt.json").is_symlink():
         raise ValueError("site submission receipt must stay inside its own packet")
-    for filename, key in (("site_validation_plan.json", "plan_sha256"),
+    for filename, key in ((plan_filename, "plan_sha256"),
                           ("manifest.yaml", "manifest_sha256"), ("job.sbatch", "job_script_sha256")):
         path = packet / filename
         if (path.is_symlink() or path.resolve().parent != packet
                 or hashlib.sha256(path.read_bytes()).hexdigest() != receipt.get(key)):
             raise ValueError("site submission byte receipt differs: " + filename)
-    plan, manifest = read_json(packet / "site_validation_plan.json"), read_json(packet / "manifest.yaml")
+    return identifier, read_json(packet / plan_filename), read_json(packet / "manifest.yaml")
+
+
+def site_packet(directory, packet, receipt, identifiers):
+    """Bind one direct-child site submission to this campaign's exact owned UVA job."""
+    identifier, plan, manifest = owned_metadata_packet(directory, packet, receipt, identifiers, "site_validation_plan.json")
     if (plan.get("kind") != "h100_nvl_slurm_site_validation" or type(plan.get("schema_version")) is not int
-            or plan["schema_version"] not in {1, 2}
+            or plan["schema_version"] not in {1, 2, 3}
             or plan.get("campaign_run_dir") != str(directory)
             or plan.get("job_shape", {}).get("gres") != "gpu:nvidia_h100_nvl:1"):
         raise ValueError("site plan does not identify this campaign and requested H100 NVL")
+    if plan["schema_version"] == 3:
+        # This display check identifies the explicit profile; the pinned site verifier owns full qualification.
+        expected = {"schema_version": 1, "name": "slurm-configured-device-isolation-driver-580.159.04",
+            "expected_driver": "580.159.04", "numeric_gpu_mapping_reconstructed": False,
+            "device_bpf_rules_independently_inspected": False, "workers_permitted": False,
+            "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+        profile = plan.get("qualification_profile")
+        if (not isinstance(profile, dict) or plan.get("reference", {}).get("driver") != "590.48.01"
+                or any(profile.get(key) != value or type(profile.get(key)) is not type(value) for key, value in expected.items())):
+            raise ValueError("schema 3 site display requires the explicit approved qualification profile and unchanged reference driver")
+    elif plan.get("qualification_profile") is not None:
+        raise ValueError("a site qualification profile requires the explicit schema 3 marker")
     for value in (receipt, plan):
         if (value.get("workers_permitted") is not False or value.get("campaign_claims_permitted") is not False
                 or type(value.get("scientific_hypothesis_credit")) is not int
@@ -205,6 +224,90 @@ def site_packet(directory, packet, receipt, identifiers):
             or not receipt.get("held_command") or receipt["held_command"][-1] != str(packet / "job.sbatch")):
         raise ValueError("site submission command differs from its prepared script")
     return identifier, plan
+
+
+def allocation_observation_packet(directory, packet, receipt, identifiers):
+    """Verify an observer's immutable packet and separate data shard without qualifying its allocation."""
+    identifier, plan, manifest = owned_metadata_packet(directory, packet, receipt, identifiers, "allocation_observation_plan.json")
+    unit = directory / "data" / packet.name
+    boundary = {"mapping_accepted": False, "compatibility_verified": False, "workers_permitted": False,
+                "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+    if (plan.get("kind") != "h100_nvl_allocation_observation" or type(plan.get("schema_version")) is not int
+            or plan["schema_version"] != 1 or plan.get("campaign_run_dir") != str(directory)
+            or "allocation observation" not in packet.name.replace("-", " ").replace("_", " ").lower()
+            or plan.get("data_unit") != {"path": str(unit), "name": packet.name} or receipt.get("data_unit") != plan["data_unit"]
+            or unit.is_symlink() or unit.resolve().parent != directory / "data"):
+        raise ValueError("allocation observation must bind its exact campaign and separate data shard")
+    shape = plan.get("job_shape", {})
+    if (shape.get("account") != "sl5nw_base" or shape.get("partition") != "gpu"
+            or shape.get("gres") != "gpu:nvidia_h100_nvl:1"):
+        raise ValueError("allocation observation must identify its UVA gpu/sl5nw pool and one H100 NVL")
+    for value in (receipt, plan, manifest):
+        if any(value.get(key) != expected or type(value.get(key)) is not type(expected) for key, expected in boundary.items()):
+            raise ValueError("allocation observations cannot accept mappings, qualify hardware or grant admission or credit")
+    required = {"allocation_observation_plan.json", "config_resolved.yaml", "job.sbatch", "command.txt", "experiment_background.md"}
+    if (manifest.get("kind") != "prepared_h100_nvl_allocation_observation" or type(manifest.get("schema_version")) is not int
+            or manifest["schema_version"] != 1 or set(manifest.get("artifacts", {})) != required
+            or manifest.get("submission_command") != receipt.get("held_command")):
+        raise ValueError("allocation observation manifest or submission command differs")
+    command = receipt.get("held_command", [])
+    if not command or command[-1] != str(packet / "job.sbatch"):
+        raise ValueError("allocation observation submission points at another script")
+    for argument in ("--account=sl5nw_base", "--partition=gpu", "--gres=gpu:nvidia_h100_nvl:1"):
+        prefix = argument.split("=", 1)[0] + "="
+        if [value for value in command if value.startswith(prefix)] != [argument]:
+            raise ValueError("allocation observation submission differs from its requested pool or GPU")
+    for filename, proof in manifest["artifacts"].items():
+        path = packet / filename
+        if path.is_symlink() or proof != {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}:
+            raise ValueError("allocation observation artifact differs: " + filename)
+    for filename in ("manifest.yaml", "config_resolved.yaml", "command.txt", "experiment_background.md"):
+        if (unit / filename).is_symlink() or (unit / filename).read_bytes() != (packet / filename).read_bytes():
+            raise ValueError("allocation observation data-shard preparation differs: " + filename)
+    return identifier, plan, unit
+
+
+def allocation_observation_hardware(unit, identifier):
+    """Display only the observer's recorded host and single visible GPU, without resolving a physical mapping."""
+    hardware = read_json(unit / "hardware.json")
+    if not hardware:
+        return {"observed_host": None, "observed_gpu": None, "gpu_uuid": None}
+    if str(hardware.get("slurm_job_id")) != identifier:
+        raise ValueError("allocation observation hardware belongs to another job")
+    record = {"observed_host": hardware.get("hostname"), "observed_gpu": None, "gpu_uuid": None}
+    cards = list(csv.reader(hardware.get("gpu_query", "").splitlines(), skipinitialspace=True))
+    if cards:
+        if len(cards) != 1 or len(cards[0]) != 5:
+            raise ValueError("allocation observation hardware does not contain one visible GPU row")
+        index, model, _, driver, gpu = [value.strip() for value in cards[0]]
+        if hardware.get("cuda_visible_devices") not in {index, gpu}:
+            raise ValueError("allocation observation visible selector differs from its recorded query")
+        record.update(observed_gpu=model, gpu=[model], gpu_uuid=gpu, driver=driver)
+    return record
+
+
+def allocation_observation_result(unit, packet, receipt, identifier):
+    """Recognize completed raw collection while explicitly leaving qualification and admission unverified."""
+    result = read_json(unit / "result.json")
+    boundary = {"mapping_accepted": False, "compatibility_verified": False, "workers_permitted": False,
+                "campaign_claims_permitted": False, "scientific_hypothesis_credit": 0}
+    if (type(result.get("schema_version")) is not int or result["schema_version"] != 1 or result.get("kind") != "h100_nvl_allocation_observation_result"
+            or result.get("passed") is not True or result.get("observations_completed") is not True
+            or any(result.get(key) != expected or type(result.get(key)) is not type(expected) for key, expected in boundary.items())):
+        raise ValueError("raw allocation collection cannot claim qualification, admission or research credit")
+    path = unit / "hardware_observations.json"
+    if path.is_symlink() or result.get("observations") != {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}:
+        raise ValueError("raw allocation collection differs from its observation bytes")
+    observations = read_json(path)
+    if (observations.get("job_id") != identifier or observations.get("plan") != {
+            "path": str(packet / "allocation_observation_plan.json"), "sha256": receipt["plan_sha256"]}
+            or any(observations.get(key) != expected or type(observations.get(key)) is not type(expected) for key, expected in boundary.items())):
+        raise ValueError("raw allocation observations identify another job or qualification boundary")
+    hardware = read_json(unit / "hardware.json")
+    if (not hardware or str(hardware.get("slurm_job_id")) != identifier or not hardware.get("gpu_query")
+            or not hardware.get("hostname") or hardware["hostname"] != observations.get("hostname")):
+        raise ValueError("completed allocation collection lacks matching recorded host and GPU metadata")
+    return result
 
 
 def site_hardware(packet, identifier):
@@ -260,7 +363,7 @@ def site_accounting(identifier, identity, cache):
 
 
 def site_validation_rows(directory, jobs):
-    """Keep owned site checks and their operational anomalies separate from scientific cases."""
+    """Keep owned site checks, allocation observations and operational anomalies apart from scientific cases."""
     reports = directory / "20_mins_monitoring"
     reports.mkdir(parents=True, exist_ok=True)
     status_path = reports / "site_validation_status.json"
@@ -287,23 +390,44 @@ def site_validation_rows(directory, jobs):
         record = {"packet": str(packet), "observed_at_utc": now}
         try:
             receipt = read_json(path)
-            if receipt.get("kind") != "owned_h100_nvl_site_validation_submission":
+            observation = receipt.get("kind") == "owned_h100_nvl_allocation_observation_submission"
+            if receipt.get("kind") not in {"owned_h100_nvl_site_validation_submission", "owned_h100_nvl_allocation_observation_submission"}:
                 continue
+            if observation:
+                row.update(kind="allocation_observation", run="H100 NVL allocation observation", pool="UVA gpu/sl5nw",
+                           metadata_collected=False, qualification_verified=False, compatibility_verified=False, mapping_accepted=False)
             if receipt.get("cluster") == "uva" and receipt.get("job_id") in identifiers:
                 identifier = receipt["job_id"]
                 owned.add(identifier)
                 row["slurm_job_id"] = identifier
-            identifier, _ = site_packet(directory, packet, receipt, identifiers)
+                if (observation and "allocation observation" in packet.name.replace("-", " ").replace("_", " ").lower()
+                        and receipt.get("data_unit") == {"path": str(directory / "data" / packet.name), "name": packet.name}):
+                    row["data_unit_name"] = packet.name
+            if observation:
+                identifier, plan, unit = allocation_observation_packet(directory, packet, receipt, identifiers)
+                row.update(data_unit_name=unit.name, **allocation_observation_hardware(unit, identifier))
+            else:
+                identifier, plan = site_packet(directory, packet, receipt, identifiers)
+                unit = packet
+                if plan["schema_version"] == 3:
+                    row.update(qualification_profile_name=plan["qualification_profile"]["name"],
+                               expected_driver=plan["qualification_profile"]["expected_driver"], reference_driver=plan["reference"]["driver"])
             owned.add(identifier)
-            row.update(slurm_job_id=identifier, **site_hardware(packet, identifier))
+            row.update(slurm_job_id=identifier)
+            if not observation:
+                row.update(**site_hardware(packet, identifier))
             identity = {"submission_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                         "plan_sha256": receipt["plan_sha256"], "job_script_sha256": receipt["job_script_sha256"]}
-            record.update(job_id=identifier, identity=identity)
-            if (packet / "failure.json").exists():
-                failure = read_json(packet / "failure.json")
+            record.update(job_id=identifier, identity=identity, submission_receipt={"path": str(path), "sha256": identity["submission_sha256"]})
+            if (unit / "failure.json").exists():
+                failure = read_json(unit / "failure.json")
                 error = failure.get("error") if isinstance(failure, dict) else None
-                row["progress"] = "site failed: " + (str(error) if error else "failure file exists without a valid error record")
-            elif (packet / "result.json").exists():
+                row["progress"] = ("collection failed: " if observation else "site failed: ") + (str(error) if error else "failure file exists without a valid error record")
+            elif observation and (unit / "result.json").exists():
+                allocation_observation_result(unit, packet, receipt, identifier)
+                row.update(state="completed", display_state="COLLECTED", metadata_collected=True,
+                           progress="metadata collected; qualification required; zero case and idea credit")
+            elif (unit / "result.json").exists():
                 result = read_json(packet / "result.json")
                 if (result.get("schema_version") != 1 or result.get("kind") != "h100_nvl_slurm_site_evidence" or result.get("passed") is not True
                         or result.get("workers_permitted") is not False or result.get("campaign_claims_permitted") is not False
@@ -311,6 +435,8 @@ def site_validation_rows(directory, jobs):
                         or result["scientific_hypothesis_credit"] != 0
                         or result.get("plan") != {"path": str(packet / "site_validation_plan.json"), "sha256": receipt["plan_sha256"]}):
                     raise ValueError("raw site result does not retain the no admission and zero credit boundary")
+                if plan["schema_version"] == 3 and result.get("qualification_profile") != plan["qualification_profile"]:
+                    raise ValueError("raw schema 3 site result differs from its explicit qualification profile")
                 row.update(state="completed", progress="raw checks complete; independent review required; no worker admission; zero case and idea credit")
             elif identifier in active:
                 _, state, node, _, reason = active[identifier]
@@ -319,34 +445,45 @@ def site_validation_rows(directory, jobs):
                 elif state == "PENDING":
                     row.update(state="waiting", progress=reason)
                 elif state in {"RUNNING", "COMPLETING", "CONFIGURING"}:
-                    row.update(state="running", progress="site checks " + state.lower())
+                    row.update(state="running", progress="collecting metadata; qualification required" if observation else "site checks " + state.lower())
                     if node and node not in {"(null)", "None"}:
-                        if row["pool"] != "UVA" and row["pool"] != node:
+                        if observation:
+                            if row.get("observed_host") and row["observed_host"] != node:
+                                raise ValueError("recorded observation host differs from its exact owned scheduler job")
+                            row["observed_host"] = node
+                        elif row["pool"] != "UVA" and row["pool"] != node:
                             raise ValueError("recorded site host differs from the exact owned scheduler job")
-                        row["pool"] = node
+                        else:
+                            row["pool"] = node
                 else:
                     row.update(state="held", progress="site scheduler state requires inspection: " + state)
             else:
                 accounting = site_accounting(identifier, identity, cache)
                 record["accounting"] = accounting
-                row.update(state="failed", progress="site job ended without result or failure: " + accounting["state"] + "; exit " + accounting["exit_code"])
+                row.update(state="failed", progress=("allocation observation" if observation else "site") + " job ended without result or failure: " + accounting["state"] + "; exit " + accounting["exit_code"])
                 if accounting["node"] and accounting["node"] not in {"None", "Unknown", "(null)"}:
-                    row["pool"] = accounting["node"]
+                    row["observed_host" if observation else "pool"] = accounting["node"]
                 if not accounting["terminal"]:
                     row.update(state="held", progress="site absent from active query; accounting state " + accounting["state"])
             for filename in ("failure.json", "result.json"):
-                outcome = packet / filename
+                outcome = unit / filename
                 if outcome.exists():
                     record[filename] = {"path": str(outcome), "sha256": hashlib.sha256(outcome.read_bytes()).hexdigest()}
         except (OSError, ValueError, TypeError, KeyError, AttributeError, subprocess.SubprocessError) as error:
-            row.update(state="failed", progress="site monitoring record invalid: " + str(error))
+            label = "allocation observation" if row["kind"] == "allocation_observation" else "site"
+            row.update(state="failed", progress=label + " monitoring record invalid: " + str(error))
+        if row["kind"] == "allocation_observation":
+            host = row.get("observed_host")
+            row["progress"] = (host + "; " if host else "") + row["progress"]
         if row["state"] in {"failed", "held"}:
             anomalies[str(packet)] = {"job_id": identifier, "reason": row["progress"], "observed_at_utc": now}
         rows.append(row)
         records.append({**record, "row": row})
     # The monitor owns only this small operational file, not any site or admission artifact.
     status = {"schema_version": 1, "kind": "site_validation_monitoring", "observed_at_utc": now,
-              "sites": records, "terminal_accounting": cache, "anomalies": anomalies}
+              "sites": [record for record in records if record["row"]["kind"] == "site_validation"],
+              "allocation_observations": [record for record in records if record["row"]["kind"] == "allocation_observation"],
+              "terminal_accounting": cache, "anomalies": anomalies}
     with tempfile.NamedTemporaryFile(mode="w", dir=reports, prefix="site_validation_status.", delete=False) as stream:
         json.dump(status, stream, indent=2)
         stream.write("\n")
@@ -372,8 +509,10 @@ def tick(directory):
                 "error": controller_error, "time": datetime.now(timezone.utc).isoformat()}) + "\n")
     from final_training_monitor import tick as advance_final_training
     final_training = advance_final_training(directory, controller_state=controller_state, controller_error=controller_error)
-    jobs, units = own_jobs(directory), unit_rows(directory)
+    jobs = own_jobs(directory)
     sites, site_jobs, site_status = site_validation_rows(directory, jobs)
+    excluded_units = {row["data_unit_name"] for row in sites if row.get("data_unit_name")}
+    units = unit_rows(directory, excluded_unit_names=excluded_units)
     display_units = units + sites
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
@@ -413,7 +552,7 @@ def tick(directory):
                               final_training_progress(final_training)))
     for unit in display_units:
         if unit["state"] == "waiting":
-            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") == "site_validation" else "none"
+            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") in {"site_validation", "allocation_observation"} else "none"
             rows.append(table_row(unit["run"], unit["pool"], gpu, "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING" and identifier not in site_jobs:
@@ -437,7 +576,7 @@ def tick(directory):
         if unit["state"] in {"completed", "checkpointed", "failed"}:
             gpu = str(unit["gpu"][0]).strip() if unit["gpu"] else "unknown"
             rows.append(table_row(unit["run"], unit["pool"], gpu_label(gpu),
-                                  "FINISHED" if unit["state"] == "completed" else unit["state"].upper(),
+                                  unit.get("display_state", "FINISHED" if unit["state"] == "completed" else unit["state"].upper()),
                                   unit["progress"]))
     if controller_error:
         rows.append(table_row("queue controller", "UVA", "none", "FAILED", controller_error))
@@ -456,7 +595,7 @@ def tick(directory):
     (reports / "latest_report.md").write_text(report)
     (reports / "latest_status.json").write_text(json.dumps({
         "time": now, "jobs": jobs, "units": units, "campaign": campaign, "final_training": final_training,
-        "site_validation": site_status}, indent=2) + "\n")
+        "site_validation": site_status, "allocation_observations": site_status["allocation_observations"]}, indent=2) + "\n")
     return (directory / "STUDY_COMPLETE").exists()
 
 
