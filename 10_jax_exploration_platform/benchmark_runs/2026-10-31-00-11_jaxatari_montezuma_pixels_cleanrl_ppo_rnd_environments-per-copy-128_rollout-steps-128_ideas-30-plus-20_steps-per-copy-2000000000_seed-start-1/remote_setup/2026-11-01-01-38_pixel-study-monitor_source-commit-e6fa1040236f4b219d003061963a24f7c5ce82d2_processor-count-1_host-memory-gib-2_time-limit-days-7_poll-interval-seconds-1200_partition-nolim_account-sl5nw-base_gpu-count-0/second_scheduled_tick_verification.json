@@ -1,0 +1,27 @@
+{
+  "kind": "persistent_monitor_second_scheduled_tick_verification",
+  "job_id": "6780608",
+  "source_commit": "e6fa1040236f4b219d003061963a24f7c5ce82d2",
+  "observed_at_utc": "2026-11-01T09:06:29.495052+00:00",
+  "latest_report_mtime_utc": "2026-11-01T09:05:25.623892+00:00",
+  "report_wall_time": "2026-11-01 01:05:25 PT",
+  "daylight_saving_time_note": "Pacific clock returned to 01:00 at 09:00 UTC; freshness uses actual UTC file time, not ambiguous PT wall text.",
+  "squeue_exact_owned_id": "6780608|sl5nw|RUNNING|heartpiece|gres/gpu:0",
+  "queue_counts": {
+    "pending": 15,
+    "running": 1,
+    "completed": 104,
+    "failed": 0
+  },
+  "gpu_count": 0,
+  "traceback_in_current_log": false,
+  "cadence_seconds": 1200,
+  "checks_only_metadata": true,
+  "scientific_credit": 0,
+  "sha256": {
+    "20_mins_monitoring/latest_status.json": "b512dad0475aee0d64b422880942b46bfe710e61ffef092208905f08c6c520bb",
+    "20_mins_monitoring/latest_report.md": "5dcf52ef072652559fe212831648ed10839ae0489b074eeec89aa0543e944c1b",
+    "campaign_state.json": "8c82f79b566fd9605c7a7373db598e438f30d758f1cb81db7523daeea57d33b6",
+    "slurm/jobs/monitor_6780608.log": "2d29e39851439441e5046ffd2af3ff1d2ae0fb69f3f64edd821fc3ee71d7f1b6"
+  }
+}

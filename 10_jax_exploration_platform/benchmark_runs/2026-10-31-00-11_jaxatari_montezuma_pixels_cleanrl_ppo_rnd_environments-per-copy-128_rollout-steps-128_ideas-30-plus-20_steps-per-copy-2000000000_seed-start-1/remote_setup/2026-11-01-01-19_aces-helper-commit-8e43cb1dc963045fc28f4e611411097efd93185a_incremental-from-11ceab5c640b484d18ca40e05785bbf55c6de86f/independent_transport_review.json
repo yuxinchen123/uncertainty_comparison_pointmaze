@@ -1,0 +1,92 @@
+{
+  "kind": "independent_published_aces_helper_transport_review",
+  "checked_utc": "2026-11-01T09:24:23.676642+00:00",
+  "passed": true,
+  "checks_passed": 26,
+  "checks": [
+    "exact frozen script hash",
+    "preparation source hashes",
+    "source and basis exact",
+    "published local tracking ancestry",
+    "basis ancestry",
+    "source tree exact",
+    "complete five known previous roots",
+    "embedded common Python syntax",
+    "embedded preflight Python syntax",
+    "embedded transfer Python syntax",
+    "embedded checkout Python syntax",
+    "campaign proof path construction",
+    "one actual ACES hourly check",
+    "actual fresh successful master record",
+    "existing-master-only SSH flags",
+    "no explicit master checks",
+    "isolated metadata interpreter",
+    "exclusive local receipt writes",
+    "new checkout only",
+    "old roots checked before and after",
+    "no old-root checkout/reset/removal",
+    "bundle exact hash and references",
+    "remote bundle transfer no overwrite",
+    "local temporary ref expected-value guard",
+    "actual newline native receipt",
+    "no Slurm commands or numerical imports"
+  ],
+  "script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-19_aces-helper-commit-8e43cb1dc963045fc28f4e611411097efd93185a_incremental-from-11ceab5c640b484d18ca40e05785bbf55c6de86f/stage_helpers.py",
+    "sha256": "565fca0e4d38fd589eb2adb1b146803a600b706c0927d74a60a0588418b5fe70"
+  },
+  "preparation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-19_aces-helper-commit-8e43cb1dc963045fc28f4e611411097efd93185a_incremental-from-11ceab5c640b484d18ca40e05785bbf55c6de86f/transport_preparation.json",
+    "sha256": "34e144b9f876cc8da2de5996c5dced1081312f76ddb5a13f6215342198d0e827"
+  },
+  "prior_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-21_aces-helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f_incremental-from-8118d12e7924d0c2978db5391b32c258a0a5d20f/stage_helpers.py",
+    "sha256": "723716cdf4405971592fe869dcf95c0c5999bf8ff9e69aea164b244e6f207df0"
+  },
+  "tip": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "basis": "11ceab5c640b484d18ca40e05785bbf55c6de86f",
+  "source_tree": "e695f975688da8f466d7856c81ea53b4e29fd06b",
+  "known_existing_root_roster": [
+    [
+      "numerical_source_d28e6735e797",
+      "d28e6735e79788f618acb0ebfde8609db1f776af"
+    ],
+    [
+      "study_helpers_535efed3d25c",
+      "535efed3d25c9276bba5f503b3825b1a68c5183d"
+    ],
+    [
+      "study_helpers_8118d12e7924",
+      "8118d12e7924d0c2978db5391b32c258a0a5d20f"
+    ],
+    [
+      "study_helpers_11ceab5c640b",
+      "11ceab5c640b484d18ca40e05785bbf55c6de86f"
+    ],
+    [
+      "jaxtari_source_04ab9aec318c",
+      "04ab9aec318c72162e2e53503a594a489d7e162b"
+    ]
+  ],
+  "hourly_master_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_remote_connections_latest.json",
+    "sha256": "41f8c94422cb40372b34e752d150cbcd1844769177ee414be1c888dc61821542",
+    "actual_record": {
+      "alias": "aces",
+      "checked_at_utc": "2026-11-01T08:58:34.146893+00:00",
+      "new_authentication_attempted": false,
+      "existing_master": true,
+      "master_check": "Master running (pid=3888482)",
+      "existing_master_command_exit": 0,
+      "hostname": "alogin1.cluster",
+      "error": ""
+    },
+    "age_seconds_at_review": 1549.529228
+  },
+  "embedded_remote_python_syntax_passed": true,
+  "ssh_or_remote_commands_executed": false,
+  "jobs_submitted": 0,
+  "actual_transport_and_new_checkout_still_unverified": true,
+  "approval_scope": "Run only this frozen helper transport; create the new helper checkout, preserve all old roots, perform no experiment or admission change.",
+  "nonblocking_note": "One inherited comment still says three old roots; the executable roster correctly verifies all five known roots."
+}
