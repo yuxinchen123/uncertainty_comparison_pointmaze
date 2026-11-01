@@ -39,6 +39,9 @@ ENVIRONMENT = {"num_envs": 128, "frame_skip": 4, "max_episode_steps": 108000,
 FINAL_FLAGS = ("final_combination_correctness_passed", "final_confirmation_passed",
                "h100_packing_complete", "a4500_packing_complete", "eight_gpu_scaling_complete")
 PREGATHER_ASYNC_RETRY_MODULE = "pregather_async_retry.py"
+H100_NVL_SLURM_QUEUE_MODULE = "h100_nvl_slurm_queue.py"
+H100_NVL_SLURM_DEPENDENCIES = ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py",
+                             "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py")
 
 
 def canonical_digest(value):
@@ -64,20 +67,33 @@ def pregather_retry_validation_module():
     return module
 
 
+def h100_nvl_slurm_validation_module():
+    """Load the exact adjacent Slurm execution validator even when this reader is imported under an alias."""
+    specification = importlib.util.spec_from_file_location("pixel_h100_nvl_slurm_validation",
+        Path(__file__).resolve().with_name(H100_NVL_SLURM_QUEUE_MODULE))
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
 def helper_requirements(required, verified_files):
     """Require the new metadata dependency only when the already verified pinned caller declares it."""
     selected = set(required)
-    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + PREGATHER_ASYNC_RETRY_MODULE
-    declares = False
+    prefix = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
+    declarations = set()
     for name in ("post_comparison_validation.py", "controller.py"):
-        path = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
+        path = prefix + name
         if path in verified_files:
             tree = ast.parse(verified_files[path])
-            declares |= any(isinstance(node, ast.Constant) and node.value == PREGATHER_ASYNC_RETRY_MODULE for node in ast.walk(tree))
-    if declares:
-        selected.add(relative)
-    else:
-        selected.discard(relative)
+            declarations.update(node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and isinstance(node.value, str))
+    for declaration, dependencies in ((PREGATHER_ASYNC_RETRY_MODULE, (PREGATHER_ASYNC_RETRY_MODULE,)),
+                                      (H100_NVL_SLURM_QUEUE_MODULE, H100_NVL_SLURM_DEPENDENCIES)):
+        for name in dependencies:
+            relative = prefix + name
+            if declaration in declarations:
+                selected.add(relative)
+            else:
+                selected.discard(relative)
     return selected
 
 
@@ -565,7 +581,24 @@ def validate_cohort_case(path, name, context, copies, source, evidence):
         raise ValueError("a cohort result changed its supplied configuration or has no distinct implementation")
     # An explicit attempt beyond the unchanged original limit requires the separate actual-runtime receipt.
     # Ordinary historical cases retain their original source-protocol reconstruction.
-    if record.get("attempt") == 5:
+    new_h100 = (context == "h100" and (hardware.get("slurm_job_id")
+        or hardware.get("hostname", "").split(".")[0] in ("serval06", "serval07", "serval08", "serval09"))
+        or record.get("execution_kind") == "h100_nvl_slurm_original_case"
+        or hardware.get("execution_kind") == "h100_nvl_slurm_original_case")
+    if new_h100:
+        if Path(path).name != "result.json":
+            raise ValueError("a Slurm H100 cohort must use its exact canonical attempt result path")
+        actual, checked = h100_nvl_slurm_validation_module().validate_execution(
+            Path(path).parent, case, require_completed=True, evidence=evidence)
+        if checked != record:
+            raise ValueError("the Slurm execution receipt differs from the supplied original cohort result")
+        runtime = {"scope": "actual_h100_nvl_slurm_runtime",
+            "runtime_environment": {key: actual["runtime_environment"][key] for key in RUNTIME_KEYS},
+            "actual_runtime_environment": actual["runtime_environment"],
+            "execution_record": {"path": evidence.path_identity(Path(path).parent / "slurm_execution.json"),
+                                 "sha256": hashlib.sha256(evidence.file(Path(path).parent / "slurm_execution.json")).hexdigest()},
+            "placement_policy": actual["placement_policy"], "allocation_validation": actual["allocation_validation"]}
+    elif record.get("attempt") == 5:
         runtime = pregather_retry_validation_module().validate_execution(path, case, evidence=evidence)
     elif (record.get("attempt", 1) > case.get("maximum_attempts", 3)
             or "infrastructure_retry_approval" in hardware):

@@ -1,0 +1,44 @@
+{
+  "kind": "h100_nvl_site_validation_6779137_failure_diagnosis",
+  "checked_at_utc": "2026-11-01T00:10:33.038992+00:00",
+  "job_id": "6779137",
+  "hostname": "serval08",
+  "failed_before_jax": true,
+  "observed_slurm_job_gpus": "1",
+  "observed_slurm_step_gpus": "1",
+  "observed_cuda_visible_devices": "0",
+  "observed_gpu_query": "0, GPU-f3f58504-9006-31ac-f01e-d6d2a085ff2a, NVIDIA H100 NVL, 95830, 580.159.04\n",
+  "observed_driver": "580.159.04",
+  "reference_driver": "590.48.01",
+  "observed_nvml_index": "0",
+  "observed_nvml_minor": "0",
+  "observed_pci_bus_id": "00000000:C1:00.0",
+  "observed_gpu_uuid": "GPU-f3f58504-9006-31ac-f01e-d6d2a085ff2a",
+  "missing_allocation_fields": false,
+  "mapping_accepted": false,
+  "driver_qualification_passed": false,
+  "observation": "The own job records global GPU1 while its single visible NVML device has index0 and Linux minor0. These numeric fields differ. A full host PCI inventory is still required before choosing a physical mapping.",
+  "next_action": "Review and run one metadata-only owned allocation observation to capture GPU PCI/UUID/minor inventory; then define a separate explicit target-driver qualification profile with unchanged full numerical and precision gates.",
+  "scheduler_record": "6779137|FAILED|1:0|serval08|2026-10-31T23:59:28|2026-10-31T23:59:34\n6779137.batch|FAILED|1:0|serval08|2026-10-31T23:59:28|2026-10-31T23:59:34\n6779137.0|FAILED|1:0|serval08|2026-10-31T23:59:29|2026-10-31T23:59:34\n",
+  "files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/failure.json",
+      "sha256": "5f22c420511a87279634005438711c81422ba44ab3d32a629b9a6348702a68d7"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/allocation_observation.json",
+      "sha256": "264a3af3ee6d3323b09cd652590ce1b41643f971b8d9d357ce320e77f30ac39e"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/allocation_details.json",
+      "sha256": "a42435044c29cf229737a09f4d673b19dd7d2d870e7cf847f59438ef6463975b"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
+      "sha256": "1f2b76206c333e4a03140ac497cae9b1a8fce07eb3e177fa8e2c5fd8f788ed32"
+    }
+  ],
+  "workers_admitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

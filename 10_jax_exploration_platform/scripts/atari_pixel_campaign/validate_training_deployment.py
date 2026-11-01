@@ -23,7 +23,9 @@ import train_optimized as training
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 JAXTARI_COMMIT = training.JAXTARI_COMMIT
 REQUIRED_HELPERS = {PREFIX + name for name in ("measure_selected.py", "diagnose_gpu_execution.py",
-                                               "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py", "train_optimized.py")}
+                                               "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py",
+                                               "h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
+                                               "train_optimized.py")}
 
 
 def sha256(value):

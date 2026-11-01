@@ -34,6 +34,7 @@ SOURCE_SCOPES = ("10_jax_exploration_platform/src/exploration_platform/atari_pix
                  "10_jax_exploration_platform/scripts/atari_pixel_campaign")
 QUEUE_STATES = ("pending", "running", "completed", "failed")
 PREGATHER_ASYNC_RETRY_MODULE = "pregather_async_retry.py"
+H100_NVL_SLURM_QUEUE_MODULE = "h100_nvl_slurm_queue.py"
 REFERENCE_ALGORITHM = {
     "n_envs": 128, "num_steps": 128, "action_count": 18,
     "update_epochs": 4, "num_minibatches": 4, "total_timesteps": 2_000_000_000,
@@ -394,7 +395,16 @@ def scientific_case_complete(result):
 
 
 def validate_attempt_completion(run_dir, case, lease, result_path):
-    """Require explicit execution proof for the approved fourth attempt while preserving ordinary results."""
+    """Require exact Slurm H100 or approved retry proof before preserving an ordinary legacy result."""
+    hardware_path = Path(result_path).parent / "hardware.json"
+    hardware = read_json(hardware_path) if hardware_path.exists() else {}
+    identities = (lease, hardware)
+    new_h100 = (lease.get("execution_kind") == "h100_nvl_slurm_original_case" or
+        case.get("hardware_class") == "h100" and any(value.get("slurm_job_id")
+            or value.get("hostname", "").split(".")[0] in ("serval06", "serval07", "serval08", "serval09") for value in identities))
+    if new_h100:
+        return h100_nvl_slurm_validation_module().validate_execution(
+            Path(result_path).parent, case, lease, require_completed=True)
     if lease["attempt"] == 5:
         if (Path(result_path).parent / "failure.json").exists():
             raise ValueError("the fifth attempt retains an application or execution-proof failure")
@@ -414,20 +424,79 @@ def validate_attempt_completion(run_dir, case, lease, result_path):
     return None
 
 
+def h100_nvl_slurm_validation_module():
+    """Load this controller's exact adjacent Slurm metadata validator."""
+    specification = importlib.util.spec_from_file_location("queue_h100_nvl_slurm_validation",
+        Path(__file__).resolve().with_name(H100_NVL_SLURM_QUEUE_MODULE))
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
 def recover_local_claim(run_dir, identifier, expected_token):
-    """Recover a verified dead local attempt; never infer death from elapsed lease age."""
+    """Recover one exact dead local claim, preserving Slurm terminal bytes and all original legacy checks."""
     queue = Path(run_dir) / "queue"
-    path = queue / "running" / f"{identifier}.json"
-    if not path.exists():
-        raise ValueError("the requested case is not running")
-    lease_path = queue / "leases" / path.name
-    lease = read_json(lease_path)
-    if lease["token"] != expected_token or lease["hostname"] != socket.gethostname():
-        raise ValueError("recovery must run on the recorded host with its exact lease token")
-    if process_matches(lease["worker_pid"], lease["worker_start_time"]) or process_matches(
-            lease.get("runner_pid"), lease.get("runner_start_time")):
-        raise ValueError("the recorded worker or runner is still alive; leave its claim alone")
-    case = read_json(path)
+    with queue_lock(run_dir):
+        path = queue / "running" / f"{identifier}.json"
+        if not path.exists():
+            raise ValueError("the requested case is not running")
+        lease_path = queue / "leases" / path.name
+        lease = read_json(lease_path)
+        if lease["token"] != expected_token or lease["hostname"] != socket.gethostname():
+            raise ValueError("recovery must run on the recorded host with its exact lease token")
+        if process_matches(lease["worker_pid"], lease["worker_start_time"]) or process_matches(
+                lease.get("runner_pid"), lease.get("runner_start_time")):
+            raise ValueError("the recorded worker or runner is still alive; leave its claim alone")
+        case = read_json(path)
+        _, attempt = attempt_paths(run_dir, identifier, lease["attempt"])
+        hardware_path = attempt / "hardware.json"
+        hardware = read_json(hardware_path) if hardware_path.exists() else {}
+        identities = (lease, hardware)
+        slurm_h100 = (lease.get("execution_kind") == "h100_nvl_slurm_original_case" or
+            case.get("hardware_class") == "h100" and any(value.get("slurm_job_id")
+                or value.get("hostname", "").split(".")[0] in ("serval06", "serval07", "serval08", "serval09") for value in identities))
+        if not slurm_h100:
+            return recover_legacy_claim(run_dir, identifier, path, lease_path, lease, case)
+        # Query only the exact campaign-owned UVA job after both recorded processes are proven dead.
+        job = lease.get("slurm_job_id", "")
+        ledger = Path(run_dir) / "slurm/submitted_jobids_uva.txt"
+        prefix = ledger.read_text().splitlines() if ledger.exists() else []
+        if not re.fullmatch(r"[1-9][0-9]*", job) or job not in prefix:
+            raise ValueError("Slurm H100 recovery requires its exact campaign-owned UVA job")
+        command = ["sacct", "--noheader", "--parsable2", "--allocations", "--jobs", job, "--format=JobIDRaw,State%64,ExitCode"]
+        raw = subprocess.check_output(command, text=True, timeout=20)
+        rows = [line.strip().split("|") for line in raw.splitlines() if line.strip()]
+        terminal_states = {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "PREEMPTED", "NODE_FAIL", "OUT_OF_MEMORY", "BOOT_FAIL", "DEADLINE", "REVOKED"}
+        if (len(rows) != 1 or len(rows[0]) != 3 or rows[0][0] != job or not rows[0][1].strip()
+                or rows[0][1].split()[0].rstrip("+") not in terminal_states or not re.fullmatch(r"[0-9]+:[0-9]+", rows[0][2])):
+            raise ValueError("the owned Slurm H100 job is not uniquely terminal; leave its claim unchanged")
+        module = h100_nvl_slurm_validation_module()
+        site = module.load("h100_nvl_slurm_site_validation")
+        terminal_path = attempt / "slurm_child_terminal.json"
+        terminal = read_json(terminal_path) if terminal_path.exists() else None
+        code = terminal.get("exit_code") if terminal is not None else -1
+        if type(code) is not int:
+            raise ValueError("the original child terminal record has no actual integer exit code")
+        recovery_path = attempt / "slurm_recovery.json"
+        recovery = {"kind": "owned_h100_nvl_slurm_recovery", "lease_token": expected_token,
+            "job_id": job, "ledger_path": str(ledger), "ledger_prefix": prefix, "accounting_command": command, "accounting_output": raw,
+            "child_terminal": site.receipt(terminal_path) if terminal is not None else None,
+            "actual_child_exit_code": code, "hostname": socket.gethostname()}
+        if recovery_path.exists():
+            existing = read_json(recovery_path)
+            original_prefix = existing.get("ledger_prefix", [])
+            if not original_prefix or prefix[:len(original_prefix)] != original_prefix or job not in original_prefix:
+                raise ValueError("the original recovery ledger prefix changed")
+            recovery["ledger_prefix"] = original_prefix
+        site.write_once(recovery_path, recovery)
+    # finish_claim owns its own token-checked queue lock; never nest it inside the controller lock.
+    module.finish_claim(run_dir, case, lease, code)
+    return case
+
+
+def recover_legacy_claim(run_dir, identifier, path, lease_path, lease, case):
+    """Retain the original direct-server and A4500 recovery payloads under the caller's queue lock."""
+    queue = Path(run_dir) / "queue"
     unit, attempt = attempt_paths(run_dir, identifier, lease["attempt"])
     result_path = attempt / "result.json"
     result = read_json(result_path) if result_path.exists() else None
@@ -712,8 +781,7 @@ def main():
     if args.recover_unit:
         if not args.expected_token:
             raise ValueError("exact lease token is required for recovery")
-        with queue_lock(args.run_dir):
-            recover_local_claim(args.run_dir, args.recover_unit, args.expected_token)
+        recover_local_claim(args.run_dir, args.recover_unit, args.expected_token)
     state = tick(args.run_dir)
     if not args.list_remaining:
         state.pop("remaining_work", None)

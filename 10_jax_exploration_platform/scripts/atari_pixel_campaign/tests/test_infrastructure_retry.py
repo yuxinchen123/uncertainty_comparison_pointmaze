@@ -420,8 +420,7 @@ class RetryTests(unittest.TestCase):
         with patch.object(controller, "process_matches", return_value=False), \
                 patch.object(controller, "validate_attempt_completion", side_effect=actual_retry_proof), \
                 patch.object(Path, "rename", check_publish_order):
-            with controller.queue_lock(self.run):
-                controller.recover_local_claim(self.run, self.unit, lease["token"])
+            controller.recover_local_claim(self.run, self.unit, lease["token"])
             self.assertEqual(controller.index_completed(self.run, registry), 1)
         self.assertEqual(json.loads((path.parent / "lease.json").read_bytes())["state"], "completed")
         self.assertEqual((self.previous / "lease.json").read_bytes(), original_prior)

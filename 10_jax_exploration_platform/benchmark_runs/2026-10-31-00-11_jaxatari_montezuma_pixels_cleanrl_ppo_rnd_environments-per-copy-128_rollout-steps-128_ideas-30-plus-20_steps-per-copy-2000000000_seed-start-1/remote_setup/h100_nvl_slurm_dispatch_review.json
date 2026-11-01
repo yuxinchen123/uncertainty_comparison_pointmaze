@@ -1,0 +1,52 @@
+{
+  "kind": "h100_nvl_slurm_dispatch_review",
+  "reviewed_at_utc": "2026-11-01T00:16:32.670064+00:00",
+  "new_integration_tests_passed": 17,
+  "existing_test_group_runs": [
+    {
+      "scope": "legacy queue, post validation, dependency and UVA launcher",
+      "passed": 78
+    },
+    {
+      "scope": "approved fourth/fifth attempts and frozen helper",
+      "passed": 46
+    },
+    {
+      "scope": "measurement producers and training metadata",
+      "passed": 89
+    },
+    {
+      "scope": "adaptive, deployment and continuation metadata",
+      "passed": 98
+    }
+  ],
+  "independent_review_passed": true,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/advance_adaptive_research.py": "7f551de0b1f9ece0175c1e3523e0767bf312c1a2ce63ea374f8eed0f3e8c707e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "f0446661376871ea3c3c925946c6a95da5ef3144548473b0eb62e15b6028bf62",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": "2349ea379b8cd01eaebd48615d8042e0c33ca8c18cabb7c9e22b3095eba93c5a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "e40ee2eecaa7ddbd0d94b8c969f0625bffc0f74fc47c97e824c292d710a9258f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "b950d98b88e8dbb8301e7b5cb6d3f68a1d4b2670c68fb69464d5d2d1dfd0f6e8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": "9e58eac81d6438064f36ec166785fea20627c7588e4a2f561cec296d4cde60dd",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "c8709bbeacd5c3e7159b3de16f0e4c5cb4fdeb1b91400cd14aecc8518e71101d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "f69ab1bb5b766be905184289f758ccde1df112f70cd85763b7231520454787be",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_queue.py": "8bb99e29f3a28aaba17bd86d0f68ca69062edc5cf5e0418e084d445386d14351",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_infrastructure_retry.py": "428a64e84bc32f66c274fdb668bd503267796b60c79b47dcce55bcaf1aa7f9f9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": "88e57a3d6fe24d0b64f9ea77ffda1fade4c3289cad2a60ad34687471382fa962",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "0d9460e54a86c9d1146802454e6e3561132cc37388c9be76e4a25376bd4c0099",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_integration.py": "655f3733ef2bf30761a60cd03c30d0dc4fa2df708e89d3980319592b94ad770c"
+  },
+  "neural_algorithm_changed": false,
+  "mapper_or_driver_check_changed": false,
+  "workers_admitted": false,
+  "source_admission_changed": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "remaining_activation_requirements": [
+    "A verified authoritative GPU allocation mapping and explicit driver qualification profile.",
+    "Actual complete site gates and one complete reference update.",
+    "A separate reviewed placement policy and fresh same-allocation gates.",
+    "A persistent monitor using this integrated controller before any worker claim."
+  ],
+  "scope": "Mandatory proof for every Slurm H100 or Slurm-only-host result; exact original terminal bytes in recovery; complete new reader staging with old verified source compatibility."
+}

@@ -67,7 +67,7 @@ class QueueProtocolTests(unittest.TestCase):
         controller.layout(self.run)
         self.identity = {"worker_id": "synthetic-worker", "hostname": socket.gethostname(),
                          "worker_pid": os.getpid(), "worker_start_time": controller.process_start_time(os.getpid()),
-                         "slurm_job_id": "synthetic-test-job", "hardware_class": "h100",
+                         "slurm_job_id": "", "hardware_class": "h100",
                          "gpu_uuid": "GPU-synthetic-test", "gpu_name": "synthetic H100"}
 
     def single_case(self, context="h100"):
