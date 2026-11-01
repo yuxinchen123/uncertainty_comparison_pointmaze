@@ -1,0 +1,20 @@
+{
+  "kind": "read_only_status_wrapper_failures",
+  "at_utc": "2026-11-01T14:41:32.466073+00:00",
+  "failures": [
+    {
+      "operation": "read latest_status jobs",
+      "exception": "AttributeError: list object has no attribute get",
+      "reason": "jobs rows are lists; no job action occurred"
+    },
+    {
+      "operation": "refresh_aces_allocation_observation.py",
+      "returncode": 2,
+      "reason": "required --packet absent; argparse exited before SSH"
+    }
+  ],
+  "numerical_execution": false,
+  "job_actions": false,
+  "original_raw_tools_retained": true,
+  "corrections": "use actual JSON schema and explicit exact packet from next_actions"
+}

@@ -1,0 +1,49 @@
+{
+  "kind": "reviewed_memory_profile_integration",
+  "before_commit": "5f04650981ab931ad012e359dd4841d2fa6140df",
+  "commits": [
+    "fbd6f64374b76d4b14d35807f761d3fb624b2c5c",
+    "4a13aa0844f1c6b3377b9db4da430692dd7dddd1"
+  ],
+  "paths": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_preparations_preserved_before_uva_shape_followup.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_author_6780635_49.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_independent_6780635_51.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_source_freeze_2026-11-01.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_author_6780635_64.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_corrected_author_6780635_66.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_independent_6780635_68.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_source_freeze_2026-11-01.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_checkpoint_allocation_6780569.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_cpu_numeric_step_6780635_50.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py"
+  ],
+  "at_utc": "2026-11-01T14:38:13.284908+00:00",
+  "source_tests_repeated": false,
+  "independent_metadata_cases": 84,
+  "formal_capacity_rule_enabled": false,
+  "after_commit": "8fd2187fbe1b4a4f0907c64d012da15438d1bd02",
+  "files_sha256": {
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_preparations_preserved_before_uva_shape_followup.json": "57c21a4a1ee3184a27051159652837a24d738d4d7e4871d63950eb5ca52400cd",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_author_6780635_49.json": "5c6deab5c19f0a4d1ecce3b18ce605ebf1add23bd7e0d5aa69632eeeec6aa228",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_independent_6780635_51.json": "775868bf2e39b6217e2e60ae18a0b6c9b14ddfdac49b8f46a477a8603f3d0ea8",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/diagnostic_uva_shape_source_freeze_2026-11-01.json": "76e23fba55d7c044fb744a0ace2b2be74193ca252e0455a4e83dba5e192402ef",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_author_6780635_64.json": "a3e23b0aa64ccb989599de180bdb4a17bfd1dbff0f62e9ff37c6aa3ad239a154",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_corrected_author_6780635_66.json": "a580d5d043e370ef7f242290020d0d73e6ddd45518b4d4e2f825ab4280d5c2c6",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_independent_6780635_68.json": "a29af5ce2e90713b21b095e2545e1ce50b3560eeffe5b15e45e0efa156414b23",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/explicit_uva_cgroup_v2_ownership_source_freeze_2026-11-01.json": "85271c353341245972d4afbebfad02813ef9bdca6da561caf4f27590d8caaf52",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": "24298ed51607edadfb8a1ca37a2730743ed3933125b1c18501dbcd1ae3799477",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "bb13637efdbdf90ad39eb09b31bbf940f8c5b4639ef39facc6ec2c0c66099761",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "288ce9749e2cc24ac18f40ad413dead789c452e07a7d933ad73c59f55da226af",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_checkpoint_allocation_6780569.json": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_cpu_numeric_step_6780635_50.json": "041551ef9c6c3e9cc495be561e44b4d84c628baf10f019615f2453249aa78eb3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": "652ffae4d84078f915977cec5764b6a260a77131d4af2a856bcfdc136db963f9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py": "42a4198e9146375b930e70697aa5a4be5d3ba800501dadd5b3d2fefdb0fdcd27"
+  }
+}

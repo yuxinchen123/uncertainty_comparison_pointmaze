@@ -1,0 +1,73 @@
+{
+  "kind": "owned_cpu_monitor_handover",
+  "at_utc": "2026-11-01T14:39:08.589968+00:00",
+  "old_job_id": "6780635",
+  "new_job_id": "6781087",
+  "independent_first_report_sha256": "7c840ae1628ae69f4c3f271056252c9b1b930a9acd8a7d04b01e328e690e9304",
+  "new_actual_running_observation": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781087",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "6781087|sl5nw|RUNNING|slurm2|slurm2\n",
+    "stderr": ""
+  },
+  "old_auxiliary_step_drain_observation": {
+    "command": [
+      "squeue",
+      "-s",
+      "-h",
+      "-j",
+      "6780635",
+      "-o",
+      "%i|%j|%N"
+    ],
+    "returncode": 0,
+    "stdout": "6780635.batch|batch|slurm5\n",
+    "stderr": ""
+  },
+  "new_source_commit": "4814459cb7befc872d8f0e30682c23f4aa79b625",
+  "new_cadence_seconds": 1200,
+  "no_gpu_worker_stopped": true,
+  "exact_old_monitor_cancellation": {
+    "command": [
+      "scancel",
+      "6780635"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "old_accounting": {
+    "command": [
+      "sacct",
+      "-X",
+      "-n",
+      "-P",
+      "-j",
+      "6780635",
+      "--format=JobIDRaw,User%64,State%64,ExitCode,NodeList"
+    ],
+    "returncode": 0,
+    "stdout": "6780635|sl5nw|CANCELLED by 2618919|0:0|slurm5\n",
+    "stderr": ""
+  },
+  "new_after": {
+    "command": [
+      "squeue",
+      "-h",
+      "-j",
+      "6781087",
+      "-o",
+      "%i|%u|%T|%N|%R"
+    ],
+    "returncode": 0,
+    "stdout": "6781087|sl5nw|RUNNING|slurm2|slurm2\n",
+    "stderr": ""
+  }
+}
