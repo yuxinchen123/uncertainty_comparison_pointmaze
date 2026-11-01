@@ -1,0 +1,22 @@
+{
+  "kind": "passive_observer_current_qos_configuration_followup",
+  "command": [
+    "sacctmgr",
+    "-n",
+    "-P",
+    "show",
+    "qos",
+    "where",
+    "name=csresnolim,cspartgpu",
+    "format=Name,Flags,MaxWall,MaxTRESPU,MaxTRES,MinTRES,MaxJobsPU,MaxSubmitPU"
+  ],
+  "environment_overrides": {
+    "TZ": "UTC"
+  },
+  "returncode": 0,
+  "stdout": "cspartgpu|DenyOnLimit||cpu=400,gres/gpu=40,mem=4T||||\ncsresnolim|OverPartQOS,RequiresReservation||cpu=16384,gres/gpu=1024,mem=1P|||65536|\n",
+  "stderr": "",
+  "observed_at_utc": "2026-11-01T17:48:38.800579+00:00",
+  "reason": "The installed client rejected the MaxTRESPJ format alias; use the documented MaxTRES field with the same two exact QOS names.",
+  "job_ids_or_job_queues_queried": false
+}

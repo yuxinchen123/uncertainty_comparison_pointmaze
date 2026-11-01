@@ -1,0 +1,384 @@
+{
+  "schema_version": 1,
+  "kind": "independent_passive_collector_incoming_commit_tree_review",
+  "at_utc": "2026-11-01T17:42:20.647563+00:00",
+  "approved_for_exact_integration_merge": true,
+  "incoming_commit": "f5b353822d3383cac3082c2442e7e9e5a0dd7279",
+  "base": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "integration_head_before": "8f220460e72ca5b00ec71a401dd47842b7600597",
+  "integration_head_after": "8f220460e72ca5b00ec71a401dd47842b7600597",
+  "integration_branch": "merge-atari-cleanrl",
+  "author_roster_sha256": "3c8dde84df82e5b6bbb73db9fe695c65a62e504ec9a00e7e0624b26d179cc434",
+  "actual_pushed_author_ref": "f5b353822d3383cac3082c2442e7e9e5a0dd7279\trefs/heads/prepare-passive-installed-slurm-observation-2026-11-01\n",
+  "incoming_path_count": 30,
+  "incoming_bytes": {
+    ".review_metadata/first_corrected_passive_author_source/passive_installed_slurm_observation.py": {
+      "sha256": "98e27d091b42319c8ced51a46d313dcab7f51df93d7ef145ab6252d6975ca0fd",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "461ee75339720e436f4d8881b2a5573007bf6133"
+      }
+    },
+    ".review_metadata/first_corrected_passive_author_source/source_preservation_manifest.json": {
+      "sha256": "edc83cf87957bf3a7a0d0999604eb4ad60f79124b3f43b37c9f4166589456dd8",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "eaf1b37c6ac79f94e00ea369311443e416893d9c"
+      }
+    },
+    ".review_metadata/first_corrected_passive_author_source/test_passive_installed_slurm_observation.py": {
+      "sha256": "a042b35099368ea20a091252a5c4339b64fc3d68e5afb2cafd9d3524b14e5461",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "99cabd509bf5ffe6f1a4d56dc69d820b19233dc3"
+      }
+    },
+    ".review_metadata/first_passive_author_source/passive_installed_slurm_observation.py": {
+      "sha256": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "ae1f9486a481317a3756c243ffae2d874196cce3"
+      }
+    },
+    ".review_metadata/first_passive_author_source/run_passive_observer_author_tests.py": {
+      "sha256": "d4956fa3d5abb34c0d5646f7a1d01f93c0c9d746a9190e5c9aaaf87781a5d548",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "8db0b28d164f324ed5a3780f35e66e909f355264"
+      }
+    },
+    ".review_metadata/first_passive_author_source/source_preservation_manifest.json": {
+      "sha256": "a08e8c8b4d340feb427832a18e5b60b86074379c9194e1edd0da25b0389b0a36",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "5c95b3908cae459492c8ba6f188c1a4178cbe35b"
+      }
+    },
+    ".review_metadata/first_passive_author_source/test_passive_installed_slurm_observation.py": {
+      "sha256": "e9c59adb269966e70bf4aa9fb43ca50ba08076a918422fc411b56fa5e0445ea5",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "054b543c62fb04095a6950e47d607ea7b42c6667"
+      }
+    },
+    ".review_metadata/first_passive_independent_source/passive_installed_slurm_observation.py": {
+      "sha256": "75b49228026a3623b85e77011cff272b341a2ba83ea391221d2d6405f1621058",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "ae1f9486a481317a3756c243ffae2d874196cce3"
+      }
+    },
+    ".review_metadata/first_passive_independent_source/run_passive_observer_author_tests.py": {
+      "sha256": "d4956fa3d5abb34c0d5646f7a1d01f93c0c9d746a9190e5c9aaaf87781a5d548",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "8db0b28d164f324ed5a3780f35e66e909f355264"
+      }
+    },
+    ".review_metadata/first_passive_independent_source/source_preservation_manifest.json": {
+      "sha256": "2f5c0cb02b7b0ac5d4e67596a844cc0c00e790aec2857b59b5052c6271621439",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "20f042f9ca93aebe0dd4cf2f722b7a6d31479dc5"
+      }
+    },
+    ".review_metadata/first_passive_independent_source/test_passive_installed_slurm_observation.py": {
+      "sha256": "96dad56427f45a5515af4e344d5a1fd7df182af9c2a5b0921c8152e19c335198",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "b3a815faafff578b4bd91c478b483bb22005314f"
+      }
+    },
+    ".review_metadata/first_passive_independent_source/uva_active_configuration_observation.py": {
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "7e3d9d0cd8781eca9db8c9bcc8bf94856f86db7c"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_author_6781231_1.json": {
+      "sha256": "6c8b54357e00d2d0ff05fd7b095c005f5e4e78aaceb231768008757b35435a64",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "882ef1f9f784d4a139666c4ecdabe22f608e4a77"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_author_6781231_2.json": {
+      "sha256": "99eee2f5e8bff932a115a6796113c13e9b2a8b1c3d555fe1c6746ab36305875a",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "efbeefd7ae6d93f29f2697c839bbd8d84ebd0d93"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_author_6781231_5.json": {
+      "sha256": "35d731a781d07712d9eefa007958a52a66ca630778a0ecad7704349ca99254b4",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "5ff67d039de20765a6cf86d8192ad5dce7e32abb"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_author_6781231_6.json": {
+      "sha256": "f5609e4638c4ae5e6c1e872eb260e8538eec47ebfcf64367fe708519b34972fb",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "fd6276daae40d3c25c8f134bbc4c7b7a2f4d6e94"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_author_6781231_7.json": {
+      "sha256": "d289040b153544e5a72ff18695cf88df33479c37a08644e367237c579133b231",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "c61429910ba821d3e97551cce66464cbef0a44dd"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_corrected_source_freeze_2026-11-01.json": {
+      "sha256": "ac4ebca47e2ac9d74107c8f9f35053e26eb92633e24a7f5704c4928b3090d2c9",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "0fd69d4109e4d7f7060d9daac2a2b79e4e0506e4"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_independent_corrected_6781231_8.json": {
+      "sha256": "7061612ac2ff469aa07043898ffab0ec4ddfd447e4b033f48ab23b086c00c901",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "95821d5806a88888da3a1bdc01afde213f49ef5c"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_independent_first_6781231_4.json": {
+      "sha256": "586562d9c05e7457b412decb2a227be87c9ddc89e6e8abd035893b52f4cbf81f",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "5d6a6bb4314e3265466d144adde400b007a8e8d5"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_observer_source_design.json": {
+      "sha256": "8654c74b39bcc757338e2fc1ad92c07d9db5bc9dcf8c6559609ae521944cab3b",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "8f908e2ea35ca14725216e96a9a9ddf6573f958e"
+      }
+    },
+    ".review_metadata/passive_installed_slurm_observer_source_freeze_2026-11-01.json": {
+      "sha256": "15724b32af4ee10b77e92ba898b14de2d918553008b22fb13edce649edda8d8d",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "98f7932c01f2b2ea31961152b193a5700bd6ad70"
+      }
+    },
+    ".review_metadata/quote_and_escape_corrected_author_source/passive_installed_slurm_observation.py": {
+      "sha256": "0cbc82f9fbfd8a57ec29968cee9015ef0a407b2b80a76de8344c835f452ac555",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "3b91960a7efcaf8fcb4de63ad6ce7bca5d1f999e"
+      }
+    },
+    ".review_metadata/quote_and_escape_corrected_author_source/source_preservation_manifest.json": {
+      "sha256": "e3581a35db2e061f2cfc0afe03d04088b99b658110267493fa5d32634d6b5867",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "59b51d1376a41e2a8c753dbd1f7f7400423c625c"
+      }
+    },
+    ".review_metadata/quote_and_escape_corrected_author_source/test_passive_installed_slurm_observation.py": {
+      "sha256": "5a54aa6cb25e27cdb99513e4eaa483a04050517160d346f547d5e033f35babe3",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e6eb45b5a9b25a33c41f90bff0e36df672045f8e"
+      }
+    },
+    ".review_metadata/run_passive_observer_author_tests.py": {
+      "sha256": "684c0dd773ed74228e6bfe162e7d99d08809a76222cbfe3f32b1d3088e541cdb",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "706c0856b6c6fd59921518080651b8cd7c068a69"
+      }
+    },
+    ".review_metadata/run_passive_observer_corrected_independent_tests.py": {
+      "sha256": "95eee44e0867a785326f103fd04bd69bc92e9982c3fb910d56c08c193ff4eed5",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "dc76813e6d2d3f58bec9a083b7d2ecf772de1b58"
+      }
+    },
+    ".review_metadata/run_passive_observer_independent_tests.py": {
+      "sha256": "c73353c7c8df8f21cceeeea117949946071481816566e034b08246021fef00d3",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "dfe68680f5f1abb956cd2e4dcf512b156c423143"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e589107fba5769392fb22e0d726171036a1e18b4"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py": {
+      "sha256": "a77d6ee305cf47a2348d69d5ef8a2eebaac1dd30461d8f792c5bcb1ce6c8ed5c",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "69d8d4bd1eb1b96a74b2ecd39d1bb6006408eebb"
+      }
+    }
+  },
+  "committed_path_overlaps": [],
+  "dirty_incoming_overlaps_before": [],
+  "dirty_incoming_overlaps_after": [],
+  "ignored_paths_checked_only_for_incoming_and_parents": [
+    ".review_metadata/first_corrected_passive_author_source/source_preservation_manifest.json",
+    ".review_metadata/first_passive_author_source/source_preservation_manifest.json",
+    ".review_metadata/first_passive_independent_source/source_preservation_manifest.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_1.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_2.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_5.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_6.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_7.json",
+    ".review_metadata/passive_installed_slurm_corrected_source_freeze_2026-11-01.json",
+    ".review_metadata/passive_installed_slurm_independent_corrected_6781231_8.json",
+    ".review_metadata/passive_installed_slurm_independent_first_6781231_4.json",
+    ".review_metadata/passive_installed_slurm_observer_source_design.json",
+    ".review_metadata/passive_installed_slurm_observer_source_freeze_2026-11-01.json",
+    ".review_metadata/quote_and_escape_corrected_author_source/source_preservation_manifest.json"
+  ],
+  "untracked_or_ignored_existing_path_collisions": [],
+  "symlink_or_non_directory_parent_collisions": [],
+  "staged_diff_empty": true,
+  "integration_index_before": {
+    "mode": "0o664",
+    "inode": 4519601,
+    "device": 76,
+    "size": 1804540,
+    "mtime_ns": 1793553585503754362,
+    "ctime_ns": 1793553585503754362,
+    "kind": "file",
+    "sha256": "f23982ee01c8128fe98fcc34dfe907e5f77f0ba37985fb8de7ac7b71ca4ac823",
+    "stable": true
+  },
+  "integration_index_after": {
+    "mode": "0o664",
+    "inode": 4519601,
+    "device": 76,
+    "size": 1804540,
+    "mtime_ns": 1793553585503754362,
+    "ctime_ns": 1793553585503754362,
+    "kind": "file",
+    "sha256": "f23982ee01c8128fe98fcc34dfe907e5f77f0ba37985fb8de7ac7b71ca4ac823",
+    "stable": true
+  },
+  "integration_index_unchanged": true,
+  "original_index_unchanged": true,
+  "original_HEAD_bytes_unchanged": true,
+  "dirty_paths_before": 140,
+  "dirty_paths_after": 140,
+  "concurrent_outside_incoming_changes": {},
+  "checkout_three_way_dry_run_returncode": 0,
+  "index_only_three_way_read_tree_returncode": 0,
+  "unmerged_index_entries": "",
+  "result_tree": "74fb14869fc88a5428d92b50fa15f7e17d964ddb",
+  "result_paths_changed_from_integration": [
+    ".review_metadata/first_corrected_passive_author_source/passive_installed_slurm_observation.py",
+    ".review_metadata/first_corrected_passive_author_source/source_preservation_manifest.json",
+    ".review_metadata/first_corrected_passive_author_source/test_passive_installed_slurm_observation.py",
+    ".review_metadata/first_passive_author_source/passive_installed_slurm_observation.py",
+    ".review_metadata/first_passive_author_source/run_passive_observer_author_tests.py",
+    ".review_metadata/first_passive_author_source/source_preservation_manifest.json",
+    ".review_metadata/first_passive_author_source/test_passive_installed_slurm_observation.py",
+    ".review_metadata/first_passive_independent_source/passive_installed_slurm_observation.py",
+    ".review_metadata/first_passive_independent_source/run_passive_observer_author_tests.py",
+    ".review_metadata/first_passive_independent_source/source_preservation_manifest.json",
+    ".review_metadata/first_passive_independent_source/test_passive_installed_slurm_observation.py",
+    ".review_metadata/first_passive_independent_source/uva_active_configuration_observation.py",
+    ".review_metadata/passive_installed_slurm_author_6781231_1.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_2.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_5.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_6.json",
+    ".review_metadata/passive_installed_slurm_author_6781231_7.json",
+    ".review_metadata/passive_installed_slurm_corrected_source_freeze_2026-11-01.json",
+    ".review_metadata/passive_installed_slurm_independent_corrected_6781231_8.json",
+    ".review_metadata/passive_installed_slurm_independent_first_6781231_4.json",
+    ".review_metadata/passive_installed_slurm_observer_source_design.json",
+    ".review_metadata/passive_installed_slurm_observer_source_freeze_2026-11-01.json",
+    ".review_metadata/quote_and_escape_corrected_author_source/passive_installed_slurm_observation.py",
+    ".review_metadata/quote_and_escape_corrected_author_source/source_preservation_manifest.json",
+    ".review_metadata/quote_and_escape_corrected_author_source/test_passive_installed_slurm_observation.py",
+    ".review_metadata/run_passive_observer_author_tests.py",
+    ".review_metadata/run_passive_observer_corrected_independent_tests.py",
+    ".review_metadata/run_passive_observer_independent_tests.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py"
+  ],
+  "all_other_integration_tree_entries_identical": true,
+  "all_incoming_result_entries_exact": true,
+  "isolated_object_directory": "/tmp/rnd-passive-commit-review.j_9jva0u/isolated_objects",
+  "existing_object_store_read_only_alternate": "/p/rlprojects/RND/.git/objects",
+  "protected_D28_numerical_and_paired_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "source_admission_changed": false,
+  "actual_merge_or_ref_update_performed": false,
+  "original_or_integration_worktree_writes": false,
+  "numeric_library_device_network_cluster_or_job_actions": false,
+  "auxiliary_Slurm_steps": 0,
+  "proposed_parent_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge",
+      "--no-ff",
+      "--no-edit",
+      "f5b353822d3383cac3082c2442e7e9e5a0dd7279"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD^{tree}"
+    ]
+  ],
+  "expected_result_tree_after_parent_merge": "74fb14869fc88a5428d92b50fa15f7e17d964ddb"
+}

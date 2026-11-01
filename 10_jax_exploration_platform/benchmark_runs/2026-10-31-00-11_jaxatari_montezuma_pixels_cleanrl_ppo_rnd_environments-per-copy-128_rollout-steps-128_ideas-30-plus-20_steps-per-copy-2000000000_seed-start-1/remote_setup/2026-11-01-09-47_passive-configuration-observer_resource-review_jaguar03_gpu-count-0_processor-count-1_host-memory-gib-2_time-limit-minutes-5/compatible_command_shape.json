@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "kind": "passive_zero_gpu_observer_compatible_submission_shape",
+  "template_only_not_executable": true,
+  "shape": {
+    "node": "jaguar03",
+    "tasks": 1,
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim",
+    "reservation": "sl5nw_168"
+  },
+  "submission_command_template": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--time=00:05:00",
+    "--gres=none",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--output=<fresh observer packet>/slurm/job_%j.out",
+    "--error=<fresh observer packet>/slurm/job_%j.err",
+    "<fresh published observer packet>/job.sbatch"
+  ],
+  "numeric_step_shape": [
+    "srun",
+    "--jobid=${SLURM_JOB_ID}",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--gres=none",
+    "--cpu-bind=threads",
+    "<published standard-library observer command>"
+  ],
+  "required_allocation_check": "One requested CPU may allocate one or two logical CPUs. Two requires the actual named node ThreadsPerCore2 record. Actual numeric step, owner, cgroup and task affinity must be checked fresh.",
+  "zero_gpu_is_explicit": true,
+  "new_job_id": null,
+  "submission_performed": false,
+  "scientific_credit": 0,
+  "worker_admission": false
+}

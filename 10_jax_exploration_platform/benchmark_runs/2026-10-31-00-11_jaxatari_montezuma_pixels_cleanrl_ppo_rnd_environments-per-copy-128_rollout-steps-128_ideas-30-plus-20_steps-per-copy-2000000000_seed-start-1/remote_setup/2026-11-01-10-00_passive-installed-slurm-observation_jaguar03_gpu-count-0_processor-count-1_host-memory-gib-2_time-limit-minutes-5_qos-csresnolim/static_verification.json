@@ -1,0 +1,21 @@
+{
+  "kind": "passive_observer_actual_static_preparation_verification",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "packet_checksums_sha256": "22835e89e156114476d83adf7379d5c787c154535bcb0d3d5942cf0eb0150e99",
+  "script_syntax_passed": true,
+  "single_numeric_zero_gpu_srun": true,
+  "all_source_hashes_verified": true,
+  "null_static_identities": true,
+  "original_artifacts_preserved": true,
+  "actual_collection_run": false,
+  "job_submitted": false,
+  "admission_granted": false
+}

@@ -1,0 +1,187 @@
+{
+  "review_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-09-47_passive-configuration-observer_resource-review_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/independent_resource_review.json",
+  "review_sha256": "c2545b13b67b299f3bec611d85620ba69b6a11dea35fd69b0073c10486ab1482",
+  "shape_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-09-47_passive-configuration-observer_resource-review_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/compatible_command_shape.json",
+  "shape_sha256": "b74610797bb34f7929294a055a5c844e52dc5f6d408dce169224d9d6163938e0",
+  "age_seconds_at_preparation": 574.977461,
+  "submission_reservation": "sl5nw_168",
+  "resource_review": {
+    "schema_version": 1,
+    "kind": "passive_zero_gpu_observer_independent_current_resource_review",
+    "passed": true,
+    "reviewed_at_utc": "2026-11-01T17:50:37.119307+00:00",
+    "location": "uva",
+    "observed_slurm_cluster": "cs",
+    "owner": {
+      "username": "sl5nw",
+      "uid": 2618919,
+      "effective_uid": 2618919,
+      "primary_group": "collaborator",
+      "groups": [
+        "collaborator",
+        "rlprojects"
+      ],
+      "hostname": "portal05"
+    },
+    "historical_completed_basis": {
+      "job_id": "6781190",
+      "packet_resources": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/resource_observations.json",
+        "sha256": "034c653150525c9254863cb3493dbd055e12bad910b5193812aa9d5bc0c94659",
+        "bytes": 3593
+      },
+      "actual_observation": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/observation.json",
+        "sha256": "390cf8b2ab3f2b3aedbd01a2222590bb53e68f08f1f4cee56a8b2a39026e1bc6",
+        "bytes": 30019
+      },
+      "actual_submitted_shape": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/submission_receipt.json",
+        "sha256": "2790cb37c82c1d853b1c9202585c03cb216664ccf52aef3d1584ac8f6c0e849d",
+        "bytes": 3276
+      }
+    },
+    "actual_current_queries": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-09-47_passive-configuration-observer_resource-review_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/current_resource_queries.json",
+      "sha256": "3b83820a13b7fbe714aa59dfa165630a94fea90e575afdeecf3a8a9c1c11b239",
+      "bytes": 7310
+    },
+    "qos_followup": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-09-47_passive-configuration-observer_resource-review_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/current_qos_followup.json",
+      "sha256": "b14a36eb4a1f245d25ed855dbd9b0935ead28302b4d8dcfa825cc583c890b525",
+      "bytes": 754
+    },
+    "selected_current_node_fields": {
+      "NodeName": "jaguar03",
+      "CoresPerSocket": "56",
+      "CPUAlloc": "0",
+      "CPUEfctv": "222",
+      "CPUTot": "224",
+      "Version": "23.11.6",
+      "RealMemory": "1024000",
+      "AllocMem": "0",
+      "FreeMem": "955375",
+      "Sockets": "2",
+      "Boards": "1",
+      "State": "IDLE+RESERVED",
+      "ThreadsPerCore": "2",
+      "Partitions": "gpu",
+      "ReservationName": "sl5nw_168"
+    },
+    "selected_current_partition_fields": {
+      "PartitionName": "gpu",
+      "AllowGroups": "ALL",
+      "AllowAccounts": "ALL",
+      "AllowQos": "ALL",
+      "Default": "NO",
+      "QoS": "cspartgpu",
+      "DefaultTime": "02:00:00",
+      "MaxNodes": "UNLIMITED",
+      "MaxTime": "4-00:00:00",
+      "MinNodes": "0",
+      "MaxCPUsPerNode": "UNLIMITED",
+      "MaxCPUsPerSocket": "UNLIMITED",
+      "RootOnly": "NO",
+      "ReqResv": "NO",
+      "OverSubscribe": "NO",
+      "PreemptMode": "OFF",
+      "State": "UP",
+      "DefMemPerCPU": "256",
+      "MaxMemPerNode": "UNLIMITED"
+    },
+    "selected_current_owned_reservation_fields": {
+      "ReservationName": "sl5nw_168",
+      "StartTime": "2026-10-20T13:39:06",
+      "EndTime": "2026-11-04T04:59:59",
+      "Duration": "14-15:20:53",
+      "NodeCnt": "2",
+      "CoreCnt": "192",
+      "PartitionName": "(null)",
+      "Flags": "OVERLAP,IGNORE_JOBS,SPEC_NODES",
+      "TRES": "cpu=384",
+      "Users": "sl5nw",
+      "Groups": "(null)",
+      "Accounts": "(null)",
+      "State": "ACTIVE",
+      "MaxStartDelay": "(null)"
+    },
+    "owned_reservation_includes_selected_node": true,
+    "owned_reservation_end_utc": "2026-11-04T04:59:59+00:00",
+    "reservation_seconds_remaining_at_observation": 213119.035674,
+    "exact_user_account_association": {
+      "Cluster": "cs",
+      "Account": "sl5nw_base",
+      "User": "sl5nw",
+      "Partition": "",
+      "QOS": [
+        "csresnolim",
+        "normal"
+      ],
+      "DefaultQOS": ""
+    },
+    "qos_bounds": [
+      {
+        "Name": "cspartgpu",
+        "Flags": "DenyOnLimit",
+        "MaxWall": "",
+        "MaxTRESPerUser": "cpu=400,gres/gpu=40,mem=4T",
+        "MaxTRESPerJob": "",
+        "MinTRESPerJob": "",
+        "MaxJobsPerUser": "",
+        "MaxSubmitJobsPerUser": ""
+      },
+      {
+        "Name": "csresnolim",
+        "Flags": "OverPartQOS,RequiresReservation",
+        "MaxWall": "",
+        "MaxTRESPerUser": "cpu=16384,gres/gpu=1024,mem=1P",
+        "MaxTRESPerJob": "",
+        "MinTRESPerJob": "",
+        "MaxJobsPerUser": "65536",
+        "MaxSubmitJobsPerUser": ""
+      }
+    ],
+    "derived_shape_compatibility": {
+      "requested_processors": 1,
+      "maximum_expected_logical_charge": 2,
+      "requested_memory_mib": 2048,
+      "requested_gpu_count": 0,
+      "walltime_seconds": 300,
+      "partition_walltime_seconds": 345600,
+      "effective_unallocated_cpu_threads_from_node_configuration": 222,
+      "unallocated_scheduler_memory_mib": 1024000,
+      "reservation_required_by_selected_qos": true,
+      "explicit_reservation_and_qos_required": true,
+      "compatible": true
+    },
+    "compatible_command_shape": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-09-47_passive-configuration-observer_resource-review_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/compatible_command_shape.json",
+      "sha256": "b74610797bb34f7929294a055a5c844e52dc5f6d408dce169224d9d6163938e0",
+      "bytes": 1526
+    },
+    "limits": [
+      "This verifies current resource configuration, not a guaranteed allocation/start time. No job queue or per-user consumption was queried.",
+      "QOS per-user bounds are configuration limits; they do not establish current unused account capacity.",
+      "No future maintenance absence is inferred beyond the selected node, partition and exact owned reservation records.",
+      "The initial exact-QOS query failed only because this installed client does not accept the MaxTRESPJ output alias. Its raw failure remains in current_resource_queries.json; the same exact two QOS records succeeded using MaxTRES.",
+      "Node/partition/reservation outputs are explicitly allowlist-filtered to omit unrelated nodes and machine details; original full-output hashes and byte counts are retained. Own-user/account and exact-QOS output contain no foreign IDs.",
+      "This resource review does not qualify a GPU mapping or authorize numerical work."
+    ],
+    "job_ids_or_job_queues_queried": false,
+    "all_user_queues_queried": false,
+    "gpu_commands_or_libraries": false,
+    "ssh_or_master_or_authentication_actions": false,
+    "submission_or_job_actions": false,
+    "canonical_next_actions_or_provenance_changed": false,
+    "scientific_credit": 0,
+    "case_credit": 0,
+    "idea_credit": 0,
+    "site_qualification_credit": 0,
+    "worker_admission": false,
+    "primary_format_reference": {
+      "title": "SchedMD sacctmgr manual",
+      "url": "https://slurm.schedmd.com/sacctmgr.html",
+      "purpose": "Documented QOS format names; actual live configuration remains the evidence above."
+    }
+  }
+}

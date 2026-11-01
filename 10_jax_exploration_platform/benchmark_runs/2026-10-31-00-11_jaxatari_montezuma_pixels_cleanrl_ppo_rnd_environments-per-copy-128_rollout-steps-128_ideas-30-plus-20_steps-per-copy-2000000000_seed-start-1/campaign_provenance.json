@@ -37,14 +37,14 @@
   "gpu_mapping_verified": true,
   "h100_worker_supervisor_pid": 3567981,
   "queue_status_at_check": {
-    "pending": 3,
+    "pending": 2,
     "running": 1,
-    "completed": 116,
+    "completed": 117,
     "failed": 0
   },
   "gpu_mapping_fix_previous_pending_description": "NVML allocation filters remap visible indices; resolve the single allocated UUID with minor-number validation before submitting replacements.",
   "gpu_mapping_fix_status": "Resolved. The committed launcher validates one visible CSV GPU against its XML device minor number and UUID. All eight A4500 numerical processes have the UUID recorded in their own leases.",
-  "queue_status_checked_at": "2026-11-01T16:44:38.617220+00:00",
+  "queue_status_checked_at": "2026-11-01T18:00:49.868362+00:00",
   "liveness_audit_checked_at": "2026-10-31T20:40:46+00:00",
   "liveness_audit": "One bounded metadata call verified supervisor 3567981 and then-active runner 3890375 with their process start times, parent relationship, frozen source and canonical Python. Only the owned runner used selected card 1. That one-policy case later completed valid correctness and seven timing pairs; the two-policy case then started normally.",
   "a4500_future_worker_host_memory_gib": 64,
@@ -183,7 +183,7 @@
       }
     ]
   },
-  "monitoring_verified_utc": "2026-11-01T17:18:41.980282+00:00",
+  "monitoring_verified_utc": "2026-11-01T18:00:49.868362+00:00",
   "monitoring_cadence": "every twenty minutes",
   "cron_verified_active": true,
   "isolated_capacity_diagnosis_job_ids": [

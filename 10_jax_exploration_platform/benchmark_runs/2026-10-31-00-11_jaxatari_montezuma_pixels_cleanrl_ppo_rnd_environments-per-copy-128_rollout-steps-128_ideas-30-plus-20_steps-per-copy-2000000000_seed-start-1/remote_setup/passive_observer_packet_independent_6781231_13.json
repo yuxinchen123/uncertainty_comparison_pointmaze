@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "kind": "passive_installed_slurm_actual_packet_independent_review",
+  "at_utc": "2026-11-01T18:03:13.003294+00:00",
+  "passed": true,
+  "job_id": "6781231",
+  "numeric_step": "13",
+  "hostname": "slurm1",
+  "pid": 616509,
+  "process_start_time": "51702448",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_13/user/task_0\n",
+  "cpu_affinity": [
+    10
+  ],
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "source": {
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "source_commit": "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    }
+  },
+  "packet_files": {
+    "command.txt": "38c0a0cdf9d0f9b0f0da7bebd2bef9d5d7e66d842f5e72a0ab37eea9699d8aa1",
+    "config_resolved.yaml": "ee9315bd5368b3f8839d9edffb5bb85f00bad0ab3bf09bc72b047f79ce39c4a3",
+    "experiment_background.md": "fe8f4c603248ecda43700ac7df2dccddd4e20c520112b08b3ac1769b4f2161a6",
+    "held_submission_command.json": "eddf5697ed1f109bc2776b0c5a7968ce479ca29daab139c492025064976f1b60",
+    "job.sbatch": "d03ca12de9c67f9dda0c79386ebf4c7da70f9f1a7a1dd808b674cf385cd632a8",
+    "manifest.yaml": "8598556c53caf13c1660e7d5d94cd35fb7ca28816835db89c5ee6f68572450d0",
+    "packet_checksums.json": "22835e89e156114476d83adf7379d5c787c154535bcb0d3d5942cf0eb0150e99",
+    "preparation_receipt.json": "cbf08d426511f903b9b7c65946389aa4578eacc26b6522efbf3afba253f4001f",
+    "resource_basis.json": "cb6cad8a76de7eb440ecfb63896335f0a57ba9d176cdb2d6ce33fa5757404874",
+    "source_manifest.json": "474c8af3a6ab867575c803d187e95bf8425afbc142da35396d518d75b4896e00",
+    "static_verification.json": "b4bc84e73c48a71cfb3bf1374ccf182c31e87d7ed353a89257ddebab770d0736",
+    "unit_command.txt": "b828d1ee333393752599700a62f95de37977fd160464c26a4dbf2d0da37ea156"
+  },
+  "unit_files": {
+    "code/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "code/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+    "code/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+    "command.txt": "b828d1ee333393752599700a62f95de37977fd160464c26a4dbf2d0da37ea156",
+    "config_resolved.yaml": "ee9315bd5368b3f8839d9edffb5bb85f00bad0ab3bf09bc72b047f79ce39c4a3",
+    "experiment_background.md": "fe8f4c603248ecda43700ac7df2dccddd4e20c520112b08b3ac1769b4f2161a6",
+    "manifest.yaml": "8598556c53caf13c1660e7d5d94cd35fb7ca28816835db89c5ee6f68572450d0",
+    "observation_plan.json": "16a820c1979e5bedaf10411f319bf3b518b66aab9f22b30b632e89bd37dfb011",
+    "passive_plan.json": "8598556c53caf13c1660e7d5d94cd35fb7ca28816835db89c5ee6f68572450d0",
+    "passive_prepared.json": "acd0d2cce4cfbcccc2f3d7f9ac684e59135e695c0ad08b08cd96d9a5050b2821",
+    "prepared.json": "aa22886d82869cd6d69bf46412bc8ac0b7d1008ae91b61b01b58ab2b1df80afa",
+    "progress.json": "d4ac3f9d04eafa8e01921fcff486fba0c56d9b3be61f87ac79827f84d4069cf7"
+  },
+  "files_unchanged": true,
+  "packet_checksum_entries": 10,
+  "unit_immutable_entries": 11,
+  "old_preserved_files_verified": 90,
+  "exact_held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--time=00:05:00",
+    "--gres=none",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_%j.out",
+    "--error=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/slurm/job_%j.err",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch"
+  ],
+  "exact_numeric_zero_gpu_srun": "exec srun --jobid=\"${SLURM_JOB_ID:?actual owned allocation required}\" --exact --ntasks=1 --cpus-per-task=1 --gres=none --cpu-bind=threads /usr/bin/python3 -B /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/code/run_passive_installed_slurm_observation.py run /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+  "static_staged_import_validation": true,
+  "canonical_startup_verified": true,
+  "null_frozen_plan_identities": true,
+  "submission_or_binding_present": false,
+  "static_local_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "status",
+      "--porcelain=v1",
+      "-uall"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "show",
+      "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947:10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "show",
+      "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "show",
+      "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "status",
+      "--porcelain=v1",
+      "-uall"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-10-00_passive-installed-slurm-source_commit-fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947",
+      "show",
+      "fa7b0a291dde4e8be0acc5ab1b7ddf71ed1e2947:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "bash",
+      "-n",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim/job.sbatch"
+    ]
+  ],
+  "blocked_attempts": [],
+  "metadata_queries_or_actual_collection": false,
+  "numerical_or_library_or_device_calls": false,
+  "submission_release_cancellation_or_ssh": false,
+  "zero_scientific_credit": true,
+  "mapping_enforcement_qualification_or_admission_granted": false,
+  "limits": [
+    "resource state is the saved preparation-time evidence; no current job or resource query performed",
+    "actual returned ID must be fsynced in the canonical ledger and immutable bindings before any release",
+    "the future collector can finish with missing installed files while every mapping and admission flag remains false"
+  ]
+}

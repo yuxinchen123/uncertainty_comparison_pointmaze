@@ -1,0 +1,51 @@
+{
+  "shape": {
+    "hostname": "jaguar03",
+    "nodes": 1,
+    "ntasks": 1,
+    "requested_cpus_per_task": 1,
+    "host_memory_gib": 2,
+    "time_limit_minutes": 5,
+    "gpu_count": 0,
+    "partition": "gpu",
+    "account": "sl5nw_base",
+    "qos": "csresnolim"
+  },
+  "limits": {
+    "symlink_hops": 16,
+    "include_files": 64,
+    "configuration_bytes_per_file": 1048576,
+    "configuration_total_bytes": 67108864,
+    "unit_bytes": 65536,
+    "dropin_files": 32,
+    "path_directories": 32,
+    "program_candidates": 32,
+    "binary_bytes": 33554432,
+    "plugin_directories": 8,
+    "manual_bytes": 2097152,
+    "package_database_bytes": 16777216,
+    "passwd_bytes": 1048576,
+    "query_bytes": 1048576,
+    "query_timeout_seconds": 20,
+    "total_read_bytes": 201326592
+  },
+  "source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "python": "/usr/bin/python3",
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "admission_granted": false,
+  "physical_assignment_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "physical_gres_mapping_verified": false,
+  "configured_isolation_qualified": false,
+  "installed_binary_matches_upstream_verified": false
+}
