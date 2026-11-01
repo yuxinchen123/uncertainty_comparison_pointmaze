@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "passive_wrapper_author_metadata_tests",
+  "at_utc": "2026-11-01T17:51:55.076174+00:00",
+  "job_id": "6781231",
+  "step_id": "10",
+  "hostname": "slurm1",
+  "cpu_affinity": [
+    10
+  ],
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-09-43_passive-installed-slurm-wrapper_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "base": "f5b353822d3383cac3082c2442e7e9e5a0dd7279",
+  "source_hashes_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_run_passive_installed_slurm_observation.py": "c2d327b4b3aa9a9b0b0b5155f21e1abaee9af9eb7d5017f8c41ede39df3021b5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "source_hashes_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_run_passive_installed_slurm_observation.py": "c2d327b4b3aa9a9b0b0b5155f21e1abaee9af9eb7d5017f8c41ede39df3021b5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  "tests": 18,
+  "expected_tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 2.8248317670077085,
+  "stdout": "test_actual_id_binding_requires_fsynced_canonical_ledger_exactly_once (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nNo guessed or duplicated identifier can produce the separate returned-ID binding. ... ok\ntest_actual_validator_composition_retains_separate_observations_and_zero_credit (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nThe narrowed collector calls existing strict validators and never the old file collector. ... ok\ntest_binding_keeps_null_plan_and_all_zero_claims (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nThe actual ID is separate immutable evidence and never changes the original plan. ... ok\ntest_boolean_preparation_schema_is_not_an_integer_version (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nEquivalent Python Boolean equality cannot substitute for the literal preparation schema. ... ok\ntest_changed_live_ledger_refuses_before_any_query (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA previously bound snapshot cannot replace the current canonical owned-ID check. ... ok\ntest_data_parent_alias_is_rejected_before_writing (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nPreparation cannot write through a campaign data-directory symlink. ... ok\ntest_detached_clean_source_and_approved_dependency_bytes_are_required (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA mutable branch or changed dependency cannot become the prepared helper closure. ... ok\ntest_foreign_uid_and_unowned_ledger_refuse_before_query (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nForeign identities and missing ownership evidence cannot reach a live scheduler request. ... ok\ntest_loaded_modules_must_all_come_from_the_exact_staged_directory (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA library imported from a mutable source root refuses before any scheduler command. ... ok\ntest_nonzero_passive_claim_is_rejected (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA wrong future library result cannot grant admission through the wrapper. ... ok\ntest_owned_query_scope_and_pipe_limits_are_enforced (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nOnly exact admitted query arguments are accepted and no full over-limit output is buffered. ... ok\ntest_owned_query_timeout_and_bad_encoding_are_not_accepted (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nAn incomplete query or invalid raw byte sequence cannot supply an accepted allocation row. ... ok\ntest_passive_failure_is_saved_before_refusal (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA returned unsupported passive observation remains intact with no success result. ... ok\ntest_staged_artifact_and_source_mutation_are_rejected (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA byte change in a staged file refuses execution even when the detached source stays clean. ... ok\ntest_standard_preparation_has_exact_three_sources_and_null_identity (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nOne immutable standard packet binds every loaded source before an identifier exists. ... ok\ntest_two_logical_processors_require_actual_two_thread_topology (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA two-processor charge is not silently called one physical core without actual node evidence. ... ok\ntest_wrong_requested_gpu_or_step_memory_preserves_failed_raw_allocation (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nA contradictory actual resource row refuses before the passive file reads. ... ok\ntest_wrong_step_memory_is_rejected_by_the_unchanged_validator (test_run_passive_installed_slurm_observation.PassiveWrapperTests)\nThe current job's two-GiB allocation cannot mask a larger observed numeric step. ... ok\n\n----------------------------------------------------------------------\nRan 18 tests in 2.758s\n\nOK\n",
+  "blocked": [],
+  "local_git_commands": 588,
+  "passed": true,
+  "real_scheduler_queries": 0,
+  "slurmd_executed": false,
+  "GPU_or_device_access": false,
+  "environment_transitions": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false
+}
