@@ -13,7 +13,9 @@ from common import ACCOUNTS, PROJECT, PYTHON, now, own_live_jobs, read_json, wri
 
 RESOURCE_FILE = Path('/p/rlprojects/.claude/skills/uva-submit-gpu-sweep/school_compute_resource/server_introduction.json')
 CPU_PER_CARD = 4
-MEMORY_GIB_PER_CARD = 16
+# Confirmation jobs measured at most 1.11 GiB of host memory per allocated card.
+# This request applies only to newly submitted training jobs.
+MEMORY_GIB_PER_CARD = 8
 
 
 def slurm_fields(row):
@@ -170,7 +172,7 @@ def capacity_budgets(capacity, submissions, live):
         if status and status[3] != 'RUNNING' and key in budgets:
             for resource, amount in [('cards', record['cards']),
                     ('cpus', record.get('cpus', CPU_PER_CARD*record['cards'])),
-                    ('memory_gib', record.get('memory_gib', MEMORY_GIB_PER_CARD*record['cards']))]:
+                    ('memory_gib', record['memory_gib'])]:
                 budgets[key][resource] = max(0, budgets[key][resource]-amount)
     return budgets
 

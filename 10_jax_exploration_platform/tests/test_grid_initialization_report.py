@@ -53,14 +53,15 @@ def test_confirmation_settings_are_not_chosen_using_confirmation_outcomes():
         REPORT.select_reporting_rows(rows)
 
 
-def _paired_rows(candidate_times, geometry_kind='straight', variant='primary'):
+def _paired_rows(candidate_times, geometry_kind='straight', variant='primary', policies_per_field=2):
     """Build matching uniform and adverse confirmation rows without training."""
     # Matching policy seeds retain two policies per independent neural-field seed.
     specification = {'wave': 'confirmation', 'geometry': {'kind': geometry_kind, 'width': 4, 'turns': 0},
                      'policy_kind': 'tabular', 'field_kind': 'uniform', 'severity_exponent': 0,
                      'total_timesteps': 64, 'variant': variant}
-    base = {'configuration': {'comparison': 'shared'}, 'first_goal_steps': [10, 10, 10, 10],
-            'policy_seeds': [0, 1, 2, 3], 'field_seeds': [0, 0, 1, 1]}
+    count = len(candidate_times)
+    base = {'configuration': {'comparison': 'shared'}, 'first_goal_steps': [10] * count,
+            'policy_seeds': list(range(count)), 'field_seeds': [index//policies_per_field for index in range(count)]}
     adverse = {**specification, 'field_kind': 'random_network' if geometry_kind == 'snake' else 'high_start_cell'}
     return [{**base, 'specification': specification},
             {**base, 'specification': adverse, 'first_goal_steps': candidate_times}]
@@ -69,7 +70,8 @@ def _paired_rows(candidate_times, geometry_kind='straight', variant='primary'):
 def test_paired_confirmation_records_adjusted_difference_and_ratio():
     """Confirm a threefold delay only when its adjusted interval supports the claim."""
     # Constant paired outcomes make both adjusted interval endpoints exactly equal to the effect.
-    results = REPORT.paired_confirmation_comparisons(_paired_rows([30, 30, 30, 30]), repetitions=1000)
+    results = REPORT.paired_confirmation_comparisons(_paired_rows([30, 30, 30, 30]), repetitions=1000,
+                                                    planned_policy_seeds=4, planned_field_seeds=2)
     assert len(results) == 1
     assert results[0]['mean_difference'] == 20
     np.testing.assert_array_equal(results[0]['mean_difference_interval'], [20, 20])
@@ -82,10 +84,39 @@ def test_paired_confirmation_records_adjusted_difference_and_ratio():
 def test_paired_confirmation_keeps_neural_field_groups_and_reports_no_effect():
     """Keep neural-field dependence and report unchanged outcomes without a failure claim."""
     # Identical discovery times have difference zero and ratio one, regardless of grouping.
-    results = REPORT.paired_confirmation_comparisons(_paired_rows([10, 10, 10, 10], 'snake'), repetitions=1000)
+    results = REPORT.paired_confirmation_comparisons(_paired_rows([10, 10, 10, 10], 'snake'), repetitions=1000,
+                                                    planned_policy_seeds=4, planned_field_seeds=2)
     assert results[0]['independent_group_count'] == 2
     assert results[0]['effect_label'] == 'No confirmed increase in first-goal time'
     assert REPORT.paired_confirmation_comparisons(_paired_rows([30, 30, 30, 30], variant='field-shuffle')) == []
+
+
+def test_matching_partial_confirmation_remains_interim_without_changing_estimates():
+    """Matching the currently available seeds cannot stand in for all planned fresh seeds."""
+    # The point ratio is three in every case, but four matching policies do not complete 128.
+    result = REPORT.paired_confirmation_comparisons(_paired_rows([30]*4, 'snake'), repetitions=1000)[0]
+    assert result['mean_ratio'] == 3
+    assert result['confirmation_complete'] is False
+    assert result['confirmation_status'] == 'Interim'
+    assert result['effect_label'] == 'Interim: planned confirmation is incomplete'
+    assert result['all_current_seeds_paired'] is True
+    assert result['planned_policy_seed_count'] == 128
+    assert result['required_field_seed_count'] == 32
+
+
+def test_confirmation_requires_both_planned_policies_and_neural_field_groups():
+    """Require 128 distinct paired policies and 32 independent neural fields by default."""
+    # Holding the number of policies fixed while halving field groups leaves confirmation incomplete.
+    complete = REPORT.paired_confirmation_comparisons(
+        _paired_rows([30]*128, 'snake', policies_per_field=4), repetitions=1000)[0]
+    incomplete = REPORT.paired_confirmation_comparisons(
+        _paired_rows([30]*128, 'snake', policies_per_field=8), repetitions=1000)[0]
+    assert complete['confirmation_complete'] is True
+    assert complete['independent_group_count'] == 32
+    assert complete['effect_label'] == 'At least twice the capped mean first-goal time'
+    assert complete['family_comparison_count'] == 4 and complete['family_protocol'] == 'shared'
+    assert incomplete['confirmation_complete'] is False
+    assert incomplete['independent_group_count'] == 16
 
 
 def _write_completed_fixture(run_dir, kind, first_goal_steps, include_visit_history=False):
@@ -126,6 +157,7 @@ def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_p
     def record_figure_axes(figure, directory, name):
         """Inspect the real axes before saving without changing the underlying figure data."""
         # The uniform median seed reaches the goal at 12, which is absent from position samples.
+        captured.setdefault('figure_protocols', []).append(figure._suptitle.get_text())
         if name.endswith('_movement'):
             captured['limits'] = [axis.get_ylim() for axis in figure.axes]
             captured['markers'] = [float(line.get_xdata()[0]) for axis in figure.axes for line in axis.lines
@@ -160,6 +192,43 @@ def test_report_generates_metrics_seed_records_and_vector_behavior_figures(tmp_p
     assert captured['failures'] == 2
     assert captured['scales'] == ['log', 'log']
     assert captured['profile_extent'] == [(0., 1.)] * 2
+    assert all('Shared settings' in title for title in captured['figure_protocols'])
+    assert '4 policy seeds; 2 field seeds' in report
+    assert 'Shared settings' in report
+
+
+def test_behavior_waits_for_uniform_baseline_but_retains_all_numerical_results(tmp_path, monkeypatch):
+    """Do not draw a comparative figure before its uniform reference has completed."""
+    # One completed neural-field record remains in the numerical table while its figures wait.
+    _write_completed_fixture(tmp_path, 'random_network', [20, -1, 30, -1])
+
+    def reject_premature_figure(*arguments):
+        """Fail if the report tries to draw a comparison with no uniform baseline."""
+        raise AssertionError('Comparative figure drawn before the baseline completed.')
+
+    monkeypatch.setattr(REPORT, '_plot_comparison', reject_premature_figure)
+    result = REPORT.generate_report(tmp_path)
+    report = (tmp_path/'analysis/analysis.md').read_text()
+    assert result['reported_rows'] == 1 and result['figure_comparisons'] == 0
+    assert '28.5' in report
+    assert 'Waiting for a completed uniform-initialization baseline' in report
+    assert '4 policy seeds; 2 field seeds' in report
+
+
+def test_behavior_labels_distinguish_protocols_and_actual_field_counts(tmp_path):
+    """Name both settings protocols and avoid field-count labels for deterministic bonuses."""
+    # The same four completed policies represent two random fields or one deterministic rule.
+    _write_completed_fixture(tmp_path, 'uniform', [10, 12, 14, 16])
+    _write_completed_fixture(tmp_path, 'random_network', [20, -1, 30, -1])
+    rows = REPORT.collect_rows(tmp_path)
+    uniform = next(row for row in rows if row['specification']['field_kind'] == 'uniform')
+    neural = next(row for row in rows if row['specification']['field_kind'] == 'random_network')
+    assert '4 policy seeds' in REPORT.condition_count_label(uniform)
+    assert 'field seeds' not in REPORT.condition_count_label(uniform)
+    assert '4 policy seeds; 2 field seeds' in REPORT.condition_count_label(neural)
+    assert 'Shared settings' in REPORT.behavior_heading(uniform)
+    tuned = {**neural, 'configuration': {**neural['configuration'], 'comparison': 'independently-tuned'}}
+    assert 'Independently tuned settings' in REPORT.behavior_heading(tuned)
 
 
 def test_empty_report_has_no_claimed_failure_and_no_behavior_figures(tmp_path):

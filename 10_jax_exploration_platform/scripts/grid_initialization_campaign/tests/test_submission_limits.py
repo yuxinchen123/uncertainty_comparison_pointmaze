@@ -35,6 +35,66 @@ class SubmissionLimitTests(unittest.TestCase):
         capacity['uva-yuxinchen']['reachable'] = False
         self.assertNotIn(('uva-yuxinchen', 'gpu'), submit.capacity_budgets(capacity, [], {}))
 
+    def test_old_pending_jobs_keep_their_actual_memory_reservation(self):
+        """Do not relabel an old four-card 64-GiB job as a new 32-GiB job."""
+        capacity = {'uva-sl5nw': capacity_record(16, 100, 200)}
+        records = [{'job_id': identifier, 'account': 'sl5nw', 'partition': 'gpu',
+                    'cards': 4, 'cpus': 16, 'memory_gib': memory}
+                   for identifier, memory in [('91', 64), ('92', 32)]]
+        live = {identifier: [identifier, '', '', 'PENDING'] for identifier in ('91', '92')}
+        budgets = submit.capacity_budgets(capacity, records, live)
+        self.assertEqual(budgets[('uva-sl5nw', 'gpu')]['memory_gib'], 104)
+        self.assertEqual(records[0]['memory_gib'], 64)
+
+    def test_small_host_memory_node_admits_four_cards_with_new_request(self):
+        """A 62.5-GiB node holds four 8-GiB requests rather than three 16-GiB requests."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for state in ('pending', 'running'):
+                (root/'queue'/state).mkdir(parents=True)
+            (root/'slurm/submissions').mkdir(parents=True)
+            for index in range(4):
+                (root/'queue/pending'/f'{index}.json').write_text(json.dumps({'stage': 'research'}))
+            catalog = root/'catalog.json'
+            catalog.write_text(json.dumps({'classes': [{'nodes': ['small'], 'partition': 'gpu',
+                'gres_type': 'rtx2080', 'gpu_mem_mb': 11000, 'gpus_per_node': 4,
+                'capability_rank': 7}]}))
+            capacity = {'uva-sl5nw': capacity_record(8, 100, 200)}
+            node = ('NodeName=small CPUTot=32 CPUEfctv=30 CPUAlloc=0 RealMemory=64000 '
+                    'AllocMem=0 State=IDLE Gres=gpu:rtx2080:4 AllocTRES=')
+            def output(command, **kwargs):
+                """Return the exact host-memory shape without contacting the scheduler."""
+                return json.dumps(capacity) if '--json' in command else node
+            admitted = []
+            for memory_per_card in (16, 8):
+                with patch.object(submit, 'RESOURCE_FILE', catalog), \
+                        patch.object(submit, 'MEMORY_GIB_PER_CARD', memory_per_card), \
+                        patch.object(submit, 'own_live_jobs', return_value={}), \
+                        patch.object(submit, 'owner_reservation', return_value=None), \
+                        patch.object(submit, 'compatibility_classes', return_value=({'rtx2080'}, set())), \
+                        patch.object(submit.subprocess, 'check_output', side_effect=output), \
+                        patch.object(submit, 'submit_job', return_value='101') as send:
+                    submit.top_up(root, 'research')
+                    admitted.append(send.call_args.kwargs['cards'])
+            self.assertEqual(admitted, [3, 4])
+
+    def test_only_new_training_jobs_use_eight_gibibytes_per_card(self):
+        """Keep monitor and report requests at 16 GiB and preserve four CPUs per GPU."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root/'source.json').write_text(json.dumps({'snapshot': '/immutable', 'commit': 'test'}))
+            with patch.object(submit, 'allowed_seconds', return_value=3600), \
+                    patch.object(submit.subprocess, 'check_output', side_effect=['101', '102', '103']) as send:
+                submit.submit_job(root, 'uva-sl5nw', 'research', gpu_type='rtx2080', cards=4)
+                submit.submit_job(root, 'uva-sl5nw', 'monitor', partition='nolim', monitor=True)
+                submit.submit_job(root, 'uva-sl5nw', 'report', partition='cpu', report=True)
+            requests = [call.args[0] for call in send.call_args_list]
+            self.assertEqual([command[command.index('--mem')+1] for command in requests],
+                             ['32G', '16G', '16G'])
+            self.assertEqual([command[command.index('--cpus-per-task')+1] for command in requests],
+                             ['16', '1', '2'])
+            self.assertEqual(json.loads((root/'slurm/submissions/101.json').read_text())['memory_gib'], 32)
+
     def test_node_resources_count_cards_and_exclude_down_nodes(self):
         """Read configured minus allocated resources and refuse unhealthy nodes."""
         row = ('NodeName=example CPUTot=16 CPUEfctv=14 CPUAlloc=6 RealMemory=65536 '
