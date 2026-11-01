@@ -1,0 +1,28 @@
+{
+  "kind": "prepared_h100_allocation_observation_review",
+  "reviewed_at_utc": "2026-11-01T00:40:03.486293+00:00",
+  "independent_review_passed": true,
+  "metadata_tests_passed": 19,
+  "helper_commit": "bba2278eb57e1f76fba26f561c448c0698301750",
+  "files": {
+    "allocation_observation_plan.json": "4a878f8eedb24cc8efa2090988a2429d8eeffd942fed90f5226f6e43f04f778a",
+    "manifest.yaml": "8bfedf0ccd42f2d3b3dac9a0e865164a77a95f4b4422ad80958d284685e2bd15",
+    "job.sbatch": "607761e8e0de982384211fbf0bab982c2b5e0d5b44064045b287b82f03fd162e",
+    "command.txt": "8936bf758152c303f6cda2dd72f553f72c9dc989da3d215b858bf54eca0e98c6",
+    "config_resolved.yaml": "4a878f8eedb24cc8efa2090988a2429d8eeffd942fed90f5226f6e43f04f778a",
+    "experiment_background.md": "9a5393856a51a3baac8ce70c644962455c705b6c8327e12dfb1aa7f6459e55ef",
+    "preparation_execution.json": "4c8d8d6edd5adb6131fbd9d6cfa0f971aa79d19625bfd4ddde6f59b2620637a2"
+  },
+  "source_and_resource_receipts_verified": true,
+  "mirrored_data_files_verified": true,
+  "submission_held": true,
+  "gpu_count": 1,
+  "processor_count": 8,
+  "host_memory_gib": 64,
+  "time_limit_minutes": 5,
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}

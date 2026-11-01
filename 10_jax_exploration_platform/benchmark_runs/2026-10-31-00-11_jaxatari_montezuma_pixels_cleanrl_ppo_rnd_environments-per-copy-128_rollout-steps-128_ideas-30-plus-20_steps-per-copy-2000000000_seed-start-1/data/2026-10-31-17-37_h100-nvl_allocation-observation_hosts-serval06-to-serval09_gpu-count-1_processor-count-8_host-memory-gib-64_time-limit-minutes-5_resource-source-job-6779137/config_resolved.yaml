@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "kind": "h100_nvl_allocation_observation",
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "data_unit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+    "name": "2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137"
+  },
+  "helpers": {
+    "source_root": "/p/rlprojects/RND_worktrees/h100-allocation-observation-helpers-bba2278eb57e",
+    "source_commit": "bba2278eb57e1f76fba26f561c448c0698301750",
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    }
+  },
+  "python": "/usr/bin/python3",
+  "resource_basis": {
+    "submission": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/submission_receipt.json",
+      "sha256": "deda2f747fc5bfa7896527be9be2b6b060adb454623f375cf9ac8d08be50dc10"
+    },
+    "plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/site_validation_plan.json",
+      "sha256": "1f2b76206c333e4a03140ac497cae9b1a8fce07eb3e177fa8e2c5fd8f788ed32"
+    },
+    "job_script": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch",
+      "sha256": "e1dca553142806bc32820553af6c4b182b44e7e159c631866492bfe484301099"
+    },
+    "job_id": "6779137"
+  },
+  "job_shape": {
+    "account": "sl5nw_base",
+    "partition": "gpu",
+    "qos": "normal",
+    "nodes": 1,
+    "ntasks": 1,
+    "gres": "gpu:nvidia_h100_nvl:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time": "00:05:00",
+    "eligible_nodes": [
+      "serval06",
+      "serval07",
+      "serval08",
+      "serval09"
+    ],
+    "partition_caps": {
+      "cpus": 400,
+      "memory": "4T",
+      "gpus": 40,
+      "maximum_time": "4-00:00:00"
+    },
+    "constraint": "h100_94gb&amd_epyc_9354"
+  },
+  "allocation_fields": [
+    "SLURM_JOB_ID",
+    "SLURM_STEP_ID",
+    "SLURM_JOB_GPUS",
+    "SLURM_STEP_GPUS",
+    "SLURM_GPUS_ON_NODE",
+    "SLURM_CPUS_PER_TASK",
+    "SLURM_CPU_BIND_TYPE",
+    "SLURM_CPU_BIND_LIST",
+    "SLURM_CPU_BIND",
+    "SLURM_JOB_NODELIST",
+    "SLURM_NODELIST",
+    "SLURM_STEP_NODELIST",
+    "SLURMD_NODENAME",
+    "SLURM_NTASKS",
+    "SLURM_PROCID",
+    "SLURM_LOCALID",
+    "SLURM_NODEID",
+    "SLURM_CPUS_ON_NODE",
+    "SLURM_GPUS",
+    "SLURM_GPUS_PER_NODE",
+    "SLURM_GPUS_PER_TASK",
+    "SLURM_GPU_BIND",
+    "SLURM_TRES_BIND",
+    "CUDA_VISIBLE_DEVICES",
+    "CUDA_DEVICE_ORDER",
+    "NVIDIA_VISIBLE_DEVICES"
+  ],
+  "purpose": "hardware observations only; no alternative mapping is accepted",
+  "mapping_accepted": false,
+  "compatibility_verified": false,
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0
+}
