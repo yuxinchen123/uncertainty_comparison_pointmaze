@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/release_qualification_6782640.py",
+    "--publication-commit",
+    "c851fa90f7b25d6ced54b7bac31457106ac91aa3"
+  ],
+  "returncode": 0,
+  "stdout": "{\"validated\": true, \"job_id\": \"6782640\", \"command\": [\"scontrol\", \"release\", \"6782640\"], \"scheduler_queries\": 0, \"release_calls\": 0, \"final_inputs_written\": false}\n",
+  "stderr": ""
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "kind": "full_original_qualification_packet_author_verification",
+  "job_id": "6781231",
+  "step_id": "106",
+  "helper_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "helper_clean": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/measurement_plan.json",
+    "sha256": "7ba87ca5feb87aecc756d5d19e7b2a382f8c654c014a1187aef2d6b9388dbbbd",
+    "bytes": 26183
+  },
+  "packet_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/manifest.yaml",
+    "sha256": "e176ed9063d778669e024eed498382dadedc4a7cd4c8fd24c805b9bda1141371",
+    "bytes": 5709
+  },
+  "artifact_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/immutable_artifacts.json",
+    "sha256": "275eab53b106e042047537253bf61a825d0de14ffecb81f25c91c17e918ecb08",
+    "bytes": 33004
+  },
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/job.sbatch",
+    "sha256": "0e707010b2f1d0851c160a65ae5ec4ac98e1bf7e9834152007637565de86158d",
+    "bytes": 5398
+  },
+  "startup_barrier": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/wait_for_owned_inputs.py",
+    "sha256": "630698f5875dc216298d2879b2b5360f08ce004d8b9a2ed967687e4469850eec",
+    "bytes": 9419
+  },
+  "barrier_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/barrier_tests_receipt.json",
+    "sha256": "c1b9aeb39cc80f3c03e4b6f5b2b68acd0520bbe25374d1210497be379585e5f5",
+    "bytes": 2344
+  },
+  "held_command": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/held_submission_command.json",
+    "sha256": "f6d72d3386463fc4b3f936d056f72d79458566f5692b7d758ea890bdd905a18c",
+    "bytes": 1074
+  },
+  "immutable_file_count": 47,
+  "staged_helper_count": 20,
+  "full_original_pytest_cases": 48,
+  "frozen_original_pytest_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-m",
+    "pytest",
+    "--rootdir",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform",
+    "-q",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/atari_pixels",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/tests/test_atari_pixel_environment.py"
+  ],
+  "explicit_original_pytest_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform",
+  "full_renderer": {
+    "rooms": 33,
+    "cases": 132,
+    "synthetic_pixel_cases": 11
+  },
+  "partition_up": true,
+  "remaining_cpu_fits": true,
+  "remaining_host_memory_fits": true,
+  "one_available_typed_gpu_fits": true,
+  "reservation_active_with_three_hours_remaining": true,
+  "node_observed_state": "IDLE+RESERVED",
+  "maintenance_reason_observed": null,
+  "all_component_name_bytes_at_most_255": true,
+  "longest_component_bytes": 250,
+  "shell_syntax_returncode": 0,
+  "no_actual_job_or_gpu_identity": true,
+  "no_submission": true,
+  "no_gpu_operations": true,
+  "returncode": 0
+}

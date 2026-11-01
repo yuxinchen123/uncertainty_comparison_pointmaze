@@ -1,0 +1,163 @@
+{
+  "admission_granted": false,
+  "capability": "unresolved_plan_original_selector_current_cuda_jax_binding_v1",
+  "case_credit": 0,
+  "device": {
+    "character_device": true,
+    "major": 195,
+    "minor": 0,
+    "path": "/dev/nvidia0",
+    "symlink": false
+  },
+  "driver_capture": {
+    "bytes": 96284520,
+    "captured": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04/captured_driver/libcuda.so.580.159.04",
+      "sha256": "821992937649fe6b01b0633fa4f47665ff5c02f273ea4696763ad19154cb7c55"
+    },
+    "kind": "captured_mapped_cuda_driver_image",
+    "original": {
+      "path": "/usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04",
+      "sha256": "821992937649fe6b01b0633fa4f47665ff5c02f273ea4696763ad19154cb7c55"
+    },
+    "pid": 2004106,
+    "schema_version": 1
+  },
+  "environment_after": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "SLURM_CONF": "/etc/slurm/slurm.conf",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_GPUS_ON_NODE": "1",
+    "SLURM_JOB_GPUS": "0",
+    "SLURM_JOB_ID": "6782640",
+    "SLURM_STEP_GPUS": "0",
+    "SLURM_STEP_ID": "0"
+  },
+  "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+  "hardware": {
+    "byte_limit": 32768,
+    "capture_status": "completed",
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+      "--query-gpu=uuid,name,pci.bus_id,memory.total,driver_version",
+      "--format=csv,noheader,nounits"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_captured_bytes": 0,
+    "stderr_full_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b, NVIDIA RTX A4500, 00000000:03:00.0, 20470, 580.159.04\n",
+    "stdout_captured_bytes": 96,
+    "stdout_full_sha256": "e51daa27b24df9da3acc35bc82d39848b30860e45ac4733c44cab7be588492ce",
+    "stdout_scope": "complete_raw_utf8"
+  },
+  "idea_credit": 0,
+  "installed_binary_matches_upstream_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "kind": "uva_current_process_resolved_device_binding",
+  "metadata_sha256": "433a851d37de685adfdac178ceb3129f57209d8dfbd02946787330be2ac9bd87",
+  "native": {
+    "api_return_codes": {
+      "cuCtxGetCurrent": 0,
+      "cuCtxGetDevice": 0,
+      "cuDeviceGet": 0,
+      "cuDeviceGetCount": 0,
+      "cuDeviceGetPCIBusId": 0,
+      "cuDeviceGetUuid_v2": 0
+    },
+    "cuda_device_count": 1,
+    "cuda_device_handle": 0,
+    "current_context": 94888642517632,
+    "current_context_device": 0,
+    "driver_library": "/usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04",
+    "driver_library_sha256": "821992937649fe6b01b0633fa4f47665ff5c02f273ea4696763ad19154cb7c55",
+    "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "jax_device_kind": "NVIDIA RTX A4500",
+    "jax_identity_basis": "sole local JAX GPU, sole CUDA-visible ordinal, and that device's current CUDA context",
+    "jax_local_hardware_id": 0,
+    "mapped_driver_bytes": "14a32a1b4000-14a32a31a000 r--p 00000000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n14a32a31a000-14a32b29e000 r-xp 00166000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n14a32b29e000-14a32fc49000 r--p 010ea000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n14a32fc49000-14a32fc4a000 ---p 05a95000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n14a32fc4a000-14a32fd7f000 r--p 05a95000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n14a32fd7f000-14a32fd88000 rw-p 05bca000 fd:02 22807702                   /usr/lib/x86_64-linux-gnu/libcuda.so.580.159.04\n",
+    "mapped_driver_sha256": "42820ada5153895579eb0d666ac968774cf22beb9235302d930d981d6bb09fa6",
+    "pci_address": "0000:03:00.0",
+    "pid": 2004106
+  },
+  "original_environment": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "SLURM_CONF": "/etc/slurm/slurm.conf",
+    "SLURM_CPUS_PER_TASK": "8",
+    "SLURM_GPUS_ON_NODE": "1",
+    "SLURM_JOB_GPUS": "0",
+    "SLURM_JOB_ID": "6782640",
+    "SLURM_STEP_GPUS": "0",
+    "SLURM_STEP_ID": "0"
+  },
+  "other_gpu_processes_observed": false,
+  "pci_address": "0000:03:00.0",
+  "physical_gres_mapping_verified": false,
+  "physical_minor": 0,
+  "plan_sha256": "f262656ab49a3730f2447fbb797aedc9b5eece8bad7cafbd80bbb60e3c759585",
+  "proc": {
+    "path": "/proc/driver/nvidia/gpus/0000:03:00.0/information",
+    "raw": "Model: \t\t NVIDIA RTX A4500\nIRQ:   \t\t 449\nGPU UUID: \t GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b\nVideo BIOS: \t 94.02.88.00.01\nBus Type: \t PCIe\nDMA Size: \t 47 bits\nDMA Mask: \t 0x7fffffffffff\nBus Location: \t 0000:03:00.0\nDevice Minor: \t 0\nGPU Firmware: \t 580.159.04\nGPU Excluded:\t No\n",
+    "sha256": "8075087753221717a338c20d30083cd9b7dbd39667b40bc05739c8323398204e"
+  },
+  "process": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6782640/step_0/user/task_0\n",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      112,
+      113,
+      114,
+      115
+    ],
+    "hostname": "jaguar03",
+    "parent_pid": 2004100,
+    "pid": 2004106,
+    "process_start_time": "52873388",
+    "uid": 2618919
+  },
+  "process_after": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6782640/step_0/user/task_0\n",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      112,
+      113,
+      114,
+      115
+    ],
+    "hostname": "jaguar03",
+    "parent_pid": 2004100,
+    "pid": 2004106,
+    "process_start_time": "52873388",
+    "uid": 2618919
+  },
+  "profile": {
+    "cluster": "uva",
+    "configuration_service_name": "slurm",
+    "configuration_service_uid": 64030,
+    "driver": "580.159.04",
+    "gpu_count": 1,
+    "hostname": "jaguar03",
+    "installed_binary_matches_upstream_verified": false,
+    "isolation_basis": "explicit trust in the five reviewed administrator-managed UVA configuration files",
+    "kernel_device_enforcement_verified": false,
+    "memory_mib": 20470,
+    "model": "NVIDIA RTX A4500",
+    "name": "uva-jaguar03-autodetect-nvml-configured-isolation-version-1",
+    "physical_gres_mapping_verified": false,
+    "schema_version": 1,
+    "uid": 2618919,
+    "username": "sl5nw"
+  },
+  "schema_version": 1,
+  "site_qualification_credit": 0,
+  "startup_memory_observed": false,
+  "worker_admitted": false
+}

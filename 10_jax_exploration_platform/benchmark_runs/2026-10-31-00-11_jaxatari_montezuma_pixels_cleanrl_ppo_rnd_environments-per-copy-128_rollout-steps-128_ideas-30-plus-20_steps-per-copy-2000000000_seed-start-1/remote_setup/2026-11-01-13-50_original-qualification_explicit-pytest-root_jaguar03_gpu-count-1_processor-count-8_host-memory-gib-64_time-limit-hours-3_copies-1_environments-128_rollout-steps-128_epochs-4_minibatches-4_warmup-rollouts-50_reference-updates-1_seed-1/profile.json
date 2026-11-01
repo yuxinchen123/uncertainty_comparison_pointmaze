@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "name": "uva-jaguar03-autodetect-nvml-configured-isolation-version-1",
+  "cluster": "uva",
+  "hostname": "jaguar03",
+  "username": "sl5nw",
+  "uid": 2618919,
+  "configuration_service_name": "slurm",
+  "configuration_service_uid": 64030,
+  "model": "NVIDIA RTX A4500",
+  "memory_mib": 20470,
+  "driver": "580.159.04",
+  "gpu_count": 1,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "installed_binary_matches_upstream_verified": false,
+  "isolation_basis": "explicit trust in the five reviewed administrator-managed UVA configuration files"
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "fresh_qualification_packet_author_validation_filename_failure",
+  "job_id": "6781231",
+  "step_id": "104",
+  "accounting_observed_row": "6781231.104|FAILED|1:0|2026-11-01T16:52:13|2026-11-01T16:52:13",
+  "error_type": "FileNotFoundError",
+  "missing_child_filename": "prepare_packet_corrected.py",
+  "actual_preparation_filename": "prepare_packet.py",
+  "failed_source_sha256": "44ce5d070e1d0df1228a63f95fcd4382a5b082897e9250d9d5c097e9b0cca25a",
+  "meaning": "Only the author AST-verification file list retained an old filename. Preparation and13 barrier cases had already passed. Existing static job/config/manifest bytes will be compared, never replaced; no unit preparation or job action will be repeated.",
+  "no_submission": true,
+  "no_gpu_operations": true
+}
