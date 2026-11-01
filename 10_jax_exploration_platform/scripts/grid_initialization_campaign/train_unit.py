@@ -11,6 +11,7 @@ import sys
 import time
 
 from common import PLATFORM, append_json, now, read_json, seed_for, write_json
+from initial_field_archive import load_or_create_initial_field, uses_canonical_archive
 
 
 def memory_profile(run_dir, policy_kind):
@@ -51,6 +52,7 @@ def main():
     if jax.default_backend() != 'gpu':
         raise RuntimeError('Training requires an allocated compatible GPU; CPU fallback is forbidden.')
     spec = read_json(args.specification)
+    canonical_fields = uses_canonical_archive(spec)
     folder = args.run_dir / 'data/research' / spec['name']
     folder.mkdir(parents=True, exist_ok=True)
     if (folder / 'summary.json').exists() and read_json(folder / 'summary.json').get('completed'):
@@ -104,9 +106,14 @@ def main():
         bonus_fields, raw_fields = [], []
         for field_seed in field_seeds:
             if int(field_seed) not in field_cache:
-                field_cache[int(field_seed)] = make_initial_bonus_field(
-                    spec['field_kind'], field_geometry, seed=int(field_seed),
-                    severity_exponent=spec['severity_exponent'])
+                if canonical_fields:
+                    field_cache[int(field_seed)] = load_or_create_initial_field(
+                        args.run_dir, field_geometry, spec['field_kind'],
+                        spec['severity_exponent'], int(field_seed))
+                else:
+                    field_cache[int(field_seed)] = make_initial_bonus_field(
+                        spec['field_kind'], field_geometry, seed=int(field_seed),
+                        severity_exponent=spec['severity_exponent'])
             field = field_cache[int(field_seed)]
             normalized, raw = field.normalized.copy(), field.raw.copy()
             transform = spec.get('field_transform', 'none')

@@ -1,6 +1,7 @@
 """Check research decisions using fabricated records, without initializing a numerical runtime."""
 
 import importlib.util
+import json
 from pathlib import Path
 import sys
 
@@ -15,7 +16,8 @@ specification.loader.exec_module(campaign)
 def record(field, success, steps, policy="tabular", width=32):
     """Build a minimal complete development result for one condition."""
     return {"specification": {"geometry": {"kind": "straight", "width": width, "turns": 0},
-        "policy_kind": policy, "field_kind": field, "severity_exponent": 4,
+        "policy_kind": policy, "field_kind": field,
+        "severity_exponent": 0 if field in {"uniform", "none", "random_network"} else 4,
         "total_timesteps": 1024}, "settings": [{"goal_fraction": success,
         "capped_mean_first_goal_steps": steps, "configuration": {}}]}
 
@@ -59,3 +61,166 @@ def test_sensitivity_contains_entropy_and_effective_horizons():
     settings = campaign.sensitivity_settings()
     assert {setting["entropy_coefficient"] for setting in settings} == {0., 2**-14, 2**-10, 2**-6}
     assert {setting["gamma_int"] for setting in settings} == {1-2**-6, 1-2**-8, 1-2**-10, 1-2**-12}
+
+
+def test_primary_capped_mean_precedes_discovery_fraction():
+    """A lower capped mean wins even when its discovery fraction is slightly lower."""
+    candidate = record("high_start_cell", 1., 300)
+    smaller_mean = {"goal_fraction": .9375, "capped_mean_first_goal_steps": 200,
+                    "configuration": {"learning_rate": 2**-10}}
+    candidate["settings"].append(smaller_mean)
+    assert campaign.best_setting(candidate) is smaller_mean
+    candidate["settings"][0]["capped_mean_first_goal_steps"] = 200
+    assert campaign.best_setting(candidate)["goal_fraction"] == 1.
+
+
+def test_reliable_uniform_row_is_used_when_fastest_row_is_unreliable():
+    """Eligibility filters reliable uniform settings before minimizing the primary metric."""
+    controls = []
+    for policy in ("tabular", "neural"):
+        uniform = record("uniform", .5, 100, policy=policy)
+        uniform["settings"].append({"goal_fraction": .75, "capped_mean_first_goal_steps": 150,
+                                     "configuration": {"learning_rate": 2**-10}})
+        controls.append(uniform)
+    assert campaign.select_maps(controls) == [{"kind": "straight", "width": 32, "turns": 0}]
+    adverse = record("high_start_cell", .5, 900)
+    assert campaign.choose_comparisons([adverse, *controls])[0]["field_kind"] == "high_start_cell"
+
+
+def test_confirmation_shared_filters_reliability_and_tuned_minimizes_mean(tmp_path, monkeypatch):
+    """Shared uniform and independent tuning apply their separate prescribed selection rules."""
+    uniform = record("uniform", .5, 100)
+    uniform["settings"][0]["configuration"] = {"learning_rate": 2**-14}
+    uniform["settings"].extend([
+        {"goal_fraction": .75, "capped_mean_first_goal_steps": 150,
+         "configuration": {"learning_rate": 2**-10}},
+        {"goal_fraction": 1., "capped_mean_first_goal_steps": 200,
+         "configuration": {"learning_rate": 2**-6}}])
+    adverse = record("high_start_cell", 1., 500)
+    adverse["settings"][0]["configuration"] = {"learning_rate": 2**-6}
+    adverse["settings"].append({"goal_fraction": .9375, "capped_mean_first_goal_steps": 400,
+                                  "configuration": {"learning_rate": 2**-10}})
+    submitted = []
+    monkeypatch.setattr(campaign, 'research_task', lambda *args, **kwargs: submitted.append((args, kwargs)))
+    campaign.add_confirmation(tmp_path, [adverse['specification']], [uniform, adverse])
+    primary = [args for args, kwargs in submitted if args[4] == 'high_start_cell'
+               and kwargs.get('variant', '').startswith('rollout-')]
+    assert primary
+    selected = primary[0][6]
+    assert next(row for row in selected if row['comparison'] == 'shared')['learning_rate'] == 2**-10
+    assert next(row for row in selected if row['comparison'] == 'independently-tuned')['learning_rate'] == 2**-10
+
+
+def test_large_parameter_grid_splits_without_changing_scientific_copies(tmp_path, monkeypatch):
+    """A 181-setting grid becomes twelve claimable tasks with every setting and seed retained."""
+    submitted = []
+    monkeypatch.setattr(campaign, 'enqueue', lambda directory, task: submitted.append(task) or True)
+    settings = [{'learning_rate': 2.**(-index-1)} for index in range(181)]
+    assert campaign.research_task(tmp_path, 'fine-tuning',
+        {'kind': 'straight', 'width': 64, 'turns': 0}, 'tabular', 'uniform', 0,
+        settings, seed_start=0, seed_count=16)
+    specifications = [json.loads(Path(task['command'][-1]).read_text()) for task in submitted]
+    assert len(specifications) == 12
+    assert len({task['name'] for task in submitted}) == 12
+    assert [setting for spec in specifications for setting in spec['settings']] == settings
+    assert [spec['setting_offset'] for spec in specifications] == list(range(0, 181, 16))
+    assert specifications[-1]['setting_range'] == [176, 180]
+    assert all(spec['variant'] == 'primary' and spec['seed_start'] == 0
+               and spec['seed_count'] == 16 and spec['total_setting_count'] == 181
+               and len(spec['settings'])*spec['seed_count'] <= 256 for spec in specifications)
+
+
+def test_coarse_task_name_and_structural_variant_are_preserved(tmp_path, monkeypatch):
+    """Small live tasks retain their names, while split structural tasks retain their variant."""
+    submitted = []
+    monkeypatch.setattr(campaign, 'enqueue', lambda directory, task: submitted.append(task) or True)
+    geometry = {'kind': 'snake', 'width': 16, 'turns': 2}
+    campaign.research_task(tmp_path, 'field-search', geometry, 'neural', 'uniform', 0,
+                           campaign.coarse_settings())
+    original = json.loads(Path(submitted[0]['command'][-1]).read_text())
+    assert len(submitted) == 1 and 'settings-start-' not in original['name']
+    assert 'setting_offset' not in original
+    submitted.clear()
+    campaign.research_task(tmp_path, 'calibration', geometry, 'neural', 'uniform', 0,
+                           campaign.sensitivity_settings(), variant='rollout-256')
+    split = [json.loads(Path(task['command'][-1]).read_text()) for task in submitted]
+    assert len(split) == 4 and all(spec['variant'] == 'rollout-256' for spec in split)
+    assert [setting for spec in split for setting in spec['settings']] == campaign.sensitivity_settings()
+
+
+def test_confirmation_pools_all_split_tuning_records(tmp_path, monkeypatch):
+    """The best setting in a later physical task remains eligible for frozen confirmation."""
+    first = record('uniform', 1., 200)
+    first['settings'][0]['configuration'] = {'learning_rate': 2**-6}
+    later = record('uniform', .9375, 150)
+    later['settings'][0]['configuration'] = {'learning_rate': 2**-10}
+    later['specification'].update(setting_offset=16, setting_range=[16, 31])
+    adverse = record('high_start_cell', 1., 900)
+    adverse['settings'][0]['configuration'] = {'learning_rate': 2**-6}
+    adverse_later = record('high_start_cell', .9375, 500)
+    adverse_later['settings'][0]['configuration'] = {'learning_rate': 2**-10}
+    adverse_later['specification'].update(setting_offset=16, setting_range=[16, 31])
+    submitted = []
+    monkeypatch.setattr(campaign, 'research_task', lambda *args, **kwargs: submitted.append((args, kwargs)))
+    campaign.add_confirmation(tmp_path, [adverse['specification']], [first, later, adverse, adverse_later])
+    selected = next(args[6] for args, kwargs in submitted if args[4] == 'high_start_cell'
+                    and kwargs.get('variant', '').startswith('rollout-'))
+    assert all(configuration['learning_rate'] == 2**-10 for configuration in selected)
+
+
+def test_comparison_pools_parameter_slices_and_excludes_confirmation():
+    """One poorly performing slice cannot hide its condition's better development settings."""
+    control = record('uniform', 1., 100)
+    control['specification']['wave'] = 'field-search'
+    bad_slice = record('high_start_cell', 0., 1000)
+    bad_slice['specification'].update(wave='field-search', setting_offset=0, setting_range=[0, 15])
+    good_slice = record('high_start_cell', 1., 200)
+    good_slice['specification'].update(wave='diagnosis', setting_offset=16, setting_range=[16, 31])
+    slower_condition = record('high_start_region', .75, 500)
+    slower_condition['specification']['wave'] = 'diagnosis'
+    confirmation = record('high_interior_pair', 0., 1024)
+    confirmation['specification']['wave'] = 'confirmation'
+    long_confirmation = record('smooth_interior_peak', 0., 1024)
+    long_confirmation['specification']['wave'] = 'long-confirmation'
+    records = [control, bad_slice, good_slice, slower_condition, confirmation, long_confirmation]
+    chosen = campaign.choose_comparisons(records)
+    assert len(chosen) == 1 and chosen[0]['field_kind'] == 'high_start_region'
+    assert 'setting_offset' not in chosen[0] and 'settings' not in chosen[0]
+    assert campaign.choose_comparisons(list(reversed(records))) == chosen
+
+
+def test_confirmation_source_guard_blocks_prior_running_and_pending_workers(tmp_path, monkeypatch):
+    """Any earlier-source research worker can claim fresh tasks until its Slurm job exits."""
+    campaign.write_json(tmp_path/'source.json', {'commit': 'current-source'})
+    records = [
+        {'job_id': '11', 'stage': 'research', 'source_commit': 'old-source', 'canary': False},
+        {'job_id': '12', 'stage': 'research', 'source_commit': 'old-source', 'canary': False},
+        {'job_id': '13', 'stage': 'research', 'source_commit': 'current-source', 'canary': False},
+        {'job_id': '14', 'stage': 'research', 'source_commit': 'old-source', 'canary': True},
+        {'job_id': '15', 'stage': 'report', 'source_commit': 'old-source'},
+        {'job_id': '16', 'stage': 'monitor', 'source_commit': 'old-source'}]
+    for record in records:
+        campaign.write_json(tmp_path/'slurm/submissions'/f"{record['job_id']}.json", record)
+    live = {str(identifier): [str(identifier), 'sl5nw', 'gpu', state]
+            for identifier, state in ((11, 'RUNNING'), (12, 'PENDING'), (13, 'RUNNING'),
+                                      (14, 'RUNNING'), (15, 'RUNNING'), (16, 'RUNNING'))}
+    monkeypatch.setattr(campaign, 'own_live_jobs', lambda run_dir: live)
+    state = {}
+    assert not campaign.confirmation_source_guard(tmp_path, state)
+    assert state['waiting_for_confirmation_source'] and state['waiting_reason']
+    status = campaign.read_json(tmp_path/'confirmation_source_status.json')
+    assert {job['job_id'] for job in status['prior_source_live_research_jobs']} == {'11', '12'}
+    live.pop('11')
+    assert not campaign.confirmation_source_ready(tmp_path)
+    live.pop('12')
+    assert campaign.confirmation_source_guard(tmp_path, state)
+    assert 'waiting_for_confirmation_source' not in state and 'waiting_reason' not in state
+
+
+def test_confirmation_source_guard_requires_recorded_source(tmp_path, monkeypatch):
+    """Missing source evidence cannot admit workers into canonical-field confirmation."""
+    import pytest
+
+    monkeypatch.setattr(campaign, 'own_live_jobs', lambda run_dir: {})
+    with pytest.raises(FileNotFoundError):
+        campaign.confirmation_source_ready(tmp_path)

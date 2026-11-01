@@ -4,10 +4,12 @@ import argparse
 from dataclasses import asdict, replace
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import signal
 import socket
 import statistics
+import tempfile
 import time
 
 from ideas import resolve_idea
@@ -19,12 +21,25 @@ class BenchmarkDeadline(TimeoutError):
 
 def atomic_json(path, document):
     """Publish complete JSON documents without exposing a partially written result."""
-    # A sibling rename keeps readers from observing truncated measurement records.
+    # Every writer owns a unique sibling, so concurrent compatibility jobs cannot rename
+    # another writer's temporary file. The final replacement remains atomic.
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + ".temporary")
-    temporary.write_text(json.dumps(document, indent=2, allow_nan=False) + "\n")
-    temporary.replace(path)
+    descriptor, temporary_name = tempfile.mkstemp(prefix=path.name+'.', dir=path.parent)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, 'w') as handle:
+            json.dump(document, handle, indent=2, allow_nan=False)
+            handle.write('\n')
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.chmod(temporary, 0o664)
+        os.replace(temporary, path)
+    finally:
+        # Failed serialization leaves the prior complete record intact and removes only
+        # this call's unpublished temporary file. Exceptions are never suppressed.
+        if temporary.exists():
+            temporary.unlink()
 
 
 def require_compute_node():

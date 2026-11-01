@@ -18,6 +18,7 @@ def main():
         raise RuntimeError('Checks require an allocated compute node.')
     command = [str(PROJECT/'.venvs/atari_pixels_jax/bin/python'), '-m', 'pytest', '-q',
         str(PLATFORM/'scripts/grid_initialization_campaign/tests'),
+        str(PLATFORM/'tests/grid_initialization/test_campaign_decisions.py'),
         str(PLATFORM/'tests/test_grid_initialization_report.py')]
     environment = dict(os.environ, PYTHONPATH=str(PLATFORM/'src'), JAX_PLATFORMS='cpu',
                        JAX_ENABLE_X64='true', PYTHONNOUSERSITE='1')
