@@ -1,0 +1,47 @@
+{
+  "kind": "aces_exact_asset_view_missing_reference_package_failure",
+  "at_utc": "2026-11-01T10:12:00.972447+00:00",
+  "source_helper": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "raw_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-54_aces-exact-asset-view_original-files-4533_copied-files-4531_original-source-d28e6735e79788f618acb0ebfde8609db1f776af_helper-commit-8e43cb1dc963045fc28f4e611411097efd93185a/execution/stdout.raw",
+    "sha256": "ee0e5ff833d13f6d8fbd939510babf3a56a1e453bd4cf70850c0f1b6eeacbae9"
+  },
+  "last_actual_command": {
+    "argv": [
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+      "-I",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py",
+      "prepare",
+      "--run-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+      "--output-dir",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-43_aces-full-site_h100-pcie_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+      "--python",
+      "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+      "--cleanrl-root",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/cleanrl_source",
+      "--asset-record",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-43_aces-exact-asset-view_expected-files-4531_source-04ab9aec318c_manifest-049004b3b7e2/asset_record.json",
+      "--jaxtari-source-root",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+      "--admission-run-dir",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+      "--evidence-manifest",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/remote_setup/2026-11-01-01-16_aces-full-site-inputs_original-source-d28e673_driver-580.178.04/portable_evidence.json",
+      "--evidence-manifest-sha256",
+      "7489ef34efd50d79d3e3010e6f178491e03aee68bab94a16d2d98ae3e407c579",
+      "--helper-root",
+      "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963"
+    ],
+    "recorded_at_utc": "2026-11-01T09:55:59.743829+00:00",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/lib/python3.12/importlib/metadata/__init__.py\", line 397, in from_name\n    return next(cls.discover(name=name))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nStopIteration\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py\", line 671, in <module>\n    main()\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py\", line 657, in main\n    value = prepare(arguments)\n            ^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py\", line 190, in prepare\n    software = software_observations(plan)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_8e43cb1dc963/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py\", line 135, in software_observations\n    installed[\"packages\"].update({name: metadata.version(name) for name in (\"pytest\", \"torch\")})\n                                        ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/lib/python3.12/importlib/metadata/__init__.py\", line 889, in version\n    return distribution(distribution_name).version\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/lib/python3.12/importlib/metadata/__init__.py\", line 862, in distribution\n    return Distribution.from_name(distribution_name)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/lib/python3.12/importlib/metadata/__init__.py\", line 399, in from_name\n    raise PackageNotFoundError(name)\nimportlib.metadata.PackageNotFoundError: No package metadata was found for torch\n"
+  },
+  "asset_file_verification_completed_before_missing_package": true,
+  "site_packet_created": false,
+  "site_job_submitted": false,
+  "existing_base_environment_modified": false,
+  "repair": "Separate private environment with inherited unchanged JAX/GPU packages and seven hash-pinned CPU reference wheels; fresh metadata preparation with selected interpreter.",
+  "scientific_credit": 0
+}

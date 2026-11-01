@@ -1,0 +1,28 @@
+{
+  "at_utc": "2026-11-01T09:54:52.820685+00:00",
+  "repair_plan_sha256": "cb3185e5cbedacb31a8aebc801f78a69112c91591588a5582c59fd3d3a65756c",
+  "driver_sha256": "8e8e784b66b16d06daa48f7bbc57d5fbdff50b950f1b7ad942713213ba63aa8d",
+  "bootstrap_sha256": "5b0061d9ebff0dd865d8dbc1e5dd808b71f820af8f5648044917885c7795e93f",
+  "base_driver_sha256": "95e99f9c213b23c6f8f82c8e8123d25d2a71acf3f4166217a872b0d1126e410a",
+  "ssh_options": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "NumberOfPasswordPrompts=0",
+    "-o",
+    "ConnectionAttempts=1",
+    "-o",
+    "ConnectTimeout=10",
+    "aces"
+  ],
+  "master_separately_checked": false,
+  "authentication_retry_permitted": false,
+  "jobs_submitted": 0,
+  "timeout_seconds": 600
+}

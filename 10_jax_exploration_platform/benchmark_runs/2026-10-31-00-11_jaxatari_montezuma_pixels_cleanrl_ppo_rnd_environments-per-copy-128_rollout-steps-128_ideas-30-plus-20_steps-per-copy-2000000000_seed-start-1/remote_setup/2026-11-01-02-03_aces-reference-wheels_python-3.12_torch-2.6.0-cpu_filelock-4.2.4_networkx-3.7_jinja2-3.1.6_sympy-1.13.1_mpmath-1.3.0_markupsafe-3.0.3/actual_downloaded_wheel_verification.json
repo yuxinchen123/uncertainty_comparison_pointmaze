@@ -1,0 +1,68 @@
+{
+  "kind": "actual_downloaded_cpu_reference_wheel_verification",
+  "at_utc": "2026-11-01T10:05:06.285226+00:00",
+  "official_lock_sha256": "3c3b3e4bf7fb933d7e3b181a6596c31676c76185992e9c04f34cab85db7c59a7",
+  "wheel_count": 7,
+  "wheels": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/torch-2.6.0+cpu-cp312-cp312-linux_x86_64.whl",
+      "project": "torch",
+      "version": "2.6.0+cpu",
+      "sha256": "59e78aa0c690f70734e42670036d6b541930b8eabbaa18d94e090abf14cc4d91",
+      "bytes": 178578006,
+      "official_url": "https://download-r2.pytorch.org/whl/cpu/torch-2.6.0%2Bcpu-cp312-cp312-linux_x86_64.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/filelock-4.2.4-py3-none-any.whl",
+      "project": "filelock",
+      "version": "4.2.4",
+      "sha256": "301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e",
+      "bytes": 162475,
+      "official_url": "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/networkx-3.7-py3-none-any.whl",
+      "project": "networkx",
+      "version": "3.7",
+      "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+      "bytes": 2142205,
+      "official_url": "https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/jinja2-3.1.6-py3-none-any.whl",
+      "project": "jinja2",
+      "version": "3.1.6",
+      "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "bytes": 134899,
+      "official_url": "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/sympy-1.13.1-py3-none-any.whl",
+      "project": "sympy",
+      "version": "1.13.1",
+      "sha256": "db36cdc64bf61b9b24578b6f7bab1ecdd2452cf008f34faa33776680c26d66f8",
+      "bytes": 6189177,
+      "official_url": "https://files.pythonhosted.org/packages/b2/fe/81695a1aa331a842b582453b605175f419fe8540355886031328089d840a/sympy-1.13.1-py3-none-any.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/mpmath-1.3.0-py3-none-any.whl",
+      "project": "mpmath",
+      "version": "1.3.0",
+      "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "bytes": 536198,
+      "official_url": "https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels/markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "project": "MarkupSafe",
+      "version": "3.0.3",
+      "sha256": "d6dd0be5b5b189d31db7cda48b91d7e0a9795f31430b7f271219ab30f1d3ac9d",
+      "bytes": 22947,
+      "official_url": "https://files.pythonhosted.org/packages/3c/2e/8d0c2ab90a8c1d9a24f0399058ab8519a3279d1bd4289511d74e909f060e/markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+    }
+  ],
+  "all_official_hashes_and_sizes_match": true,
+  "installation_performed": false,
+  "environment_changed": false,
+  "numerical_execution": false
+}

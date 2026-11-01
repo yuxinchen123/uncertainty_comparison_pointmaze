@@ -1,0 +1,46 @@
+{
+  "kind": "cpu_reference_wheel_download",
+  "commands": [
+    [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-m",
+      "pip",
+      "download",
+      "--no-deps",
+      "--only-binary=:all:",
+      "--retries=0",
+      "--timeout=30",
+      "--index-url",
+      "https://download.pytorch.org/whl/cpu",
+      "--dest",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels",
+      "torch==2.6.0+cpu"
+    ],
+    [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-m",
+      "pip",
+      "download",
+      "--no-deps",
+      "--only-binary=:all:",
+      "--retries=0",
+      "--timeout=30",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--dest",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/wheels",
+      "filelock==4.2.4",
+      "networkx==3.7",
+      "jinja2==3.1.6",
+      "sympy==1.13.1",
+      "mpmath==1.3.0",
+      "MarkupSafe==3.0.3"
+    ]
+  ],
+  "torch_reference_actual_local_version": "2.6.0+cpu",
+  "official_torch_instructions": "https://pytorch.org/get-started/previous-versions/#v260",
+  "installations_or_environments_changed": false,
+  "numerical_execution": false
+}

@@ -1,0 +1,99 @@
+{
+  "kind": "independent_new_monitor_runtime_and_first_full_report",
+  "checked_utc": "2026-11-01T09:50:35.616605+00:00",
+  "passed": true,
+  "checks_passed": 43,
+  "checks": [
+    "same exact submitted monitor and source",
+    "frozen preparation hashes",
+    "release binds exact submission",
+    "root verified recurring task before release",
+    "single new ID in both UVA ledgers",
+    "new monitor absent from ACES ledger",
+    "exact unique new submission row",
+    "single successful sbatch return",
+    "held node range preserved and runtime guard unchanged",
+    "published preparation exact source ancestry",
+    "published packet bytes manifest.yaml",
+    "published packet bytes source_snapshot.json",
+    "published packet bytes smt_resource_basis.json",
+    "published packet bytes allocation_guard.py",
+    "published packet bytes verify_source.py",
+    "published packet bytes monitor.sbatch",
+    "published packet bytes monitor_replacement_plan.json",
+    "published packet bytes config_resolved.yaml",
+    "published packet bytes command.txt",
+    "published packet bytes experiment_background.md",
+    "current frozen input source_git_archive.tar",
+    "current frozen input source_snapshot.json",
+    "current frozen input smt_resource_basis.json",
+    "current frozen input allocation_guard.py",
+    "current frozen input verify_source.py",
+    "current frozen input monitor.sbatch",
+    "current frozen input monitor_replacement_plan.json",
+    "current frozen input config_resolved.yaml",
+    "current frozen input command.txt",
+    "current frozen input experiment_background.md",
+    "actual source allocation guard passed",
+    "runtime shape actual one requested two SMT logical CPUs",
+    "zero GPU and no requeue",
+    "actual startup source verifier 231 blobs",
+    "actual runtime and first report no traceback",
+    "first report all status groups",
+    "first report table matches actual job stdout",
+    "actual new full-report timestamp",
+    "new site list present and empty",
+    "first report queue complete",
+    "144 unit records and retained 252 byte auxiliary",
+    "old UVA and ACES observer collections retained",
+    "scientific admission unchanged"
+  ],
+  "new_job_id": "6780635",
+  "old_monitor_to_preserve": "6780608",
+  "source_commit": "f9a9c1672f788f52ba06836cee26f2dd6314cec7",
+  "published_preparation_commit": "a8b0e2d04e0f953896cf2e12c89147ef8963a55f",
+  "runtime": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/runtime_allocation.json",
+    "sha256": "866160db120d4ad1c4978b0a713d80e24101f529b882d86f38336ea7ee669b3d"
+  },
+  "submission": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/submission_receipt.json",
+    "sha256": "ae9f493d4b712e826f9b6e6b017e5e0adb2a98b3a9cee5979a287513c0939002"
+  },
+  "release": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_receipt.json",
+    "sha256": "48ec34cae8506f3e7d388c426babfa6d1e12f1c21d6538c7e386f63163e9aa04"
+  },
+  "first_report": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/first_report.md",
+    "sha256": "f591c13c6a950bc6b54fe5a701428578bdec8375cd74cc0c4b04ac3f7db7d772"
+  },
+  "first_status": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/first_report_status.json",
+    "sha256": "ad90bfa9a42c208a097c4e69403445fcca1bc77d2b186c07d251429fa2d31645"
+  },
+  "first_job_log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/first_report.log",
+    "sha256": "f66c7aa42fd81f7a7dcb15436ef85c7bb574b0d3df96e55e827189e2b89c5db6"
+  },
+  "first_report_queue_counts": {
+    "pending": 14,
+    "running": 1,
+    "completed": 105,
+    "failed": 0
+  },
+  "actual_runtime_resources": {
+    "requested_cpus": 1,
+    "allocated_logical_cpus": 2,
+    "threads_per_core": 2,
+    "memory": "2G",
+    "gpus": 0,
+    "host": "slurm5"
+  },
+  "source_files_verified_by_new_startup": 231,
+  "new_aces_site_list": [],
+  "source_admission_changed": false,
+  "jobs_cancelled_or_submitted_by_reviewer": 0,
+  "old_monitor_stopped_by_reviewer": false,
+  "numeric_auxiliary_step_drain_check_pending": true
+}

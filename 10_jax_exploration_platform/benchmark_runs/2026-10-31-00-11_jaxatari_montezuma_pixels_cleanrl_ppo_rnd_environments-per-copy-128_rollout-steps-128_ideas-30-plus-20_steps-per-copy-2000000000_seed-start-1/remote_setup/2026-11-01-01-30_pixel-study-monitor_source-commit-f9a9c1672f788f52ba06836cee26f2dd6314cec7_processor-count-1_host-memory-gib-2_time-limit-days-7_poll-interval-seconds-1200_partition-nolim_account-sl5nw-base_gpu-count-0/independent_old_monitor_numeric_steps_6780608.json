@@ -1,0 +1,65 @@
+{
+  "kind": "independent_old_monitor_numeric_auxiliary_step_drain",
+  "checked_utc": "2026-11-01T09:50:46.719241+00:00",
+  "old_job_id": "6780608",
+  "new_job_id": "6780635",
+  "accounting": {
+    "command": [
+      "sacct",
+      "-n",
+      "-P",
+      "-j",
+      "6780608",
+      "--format=JobIDRaw,State,ExitCode,NodeList"
+    ],
+    "returncode": 0,
+    "stdout": "6780608|RUNNING|0:0|heartpiece\n6780608.batch|RUNNING|0:0|heartpiece\n6780608.0|COMPLETED|0:0|heartpiece\n6780608.1|COMPLETED|0:0|heartpiece\n6780608.2|COMPLETED|0:0|heartpiece\n6780608.3|FAILED|1:0|heartpiece\n",
+    "stderr": ""
+  },
+  "active_steps": {
+    "command": [
+      "squeue",
+      "--steps",
+      "-h",
+      "-j",
+      "6780608",
+      "-o",
+      "%i|%T|%N"
+    ],
+    "returncode": 0,
+    "stdout": "6780608.batch|%T|heartpiece\n",
+    "stderr": "squeue: error: Invalid job step format specification: T\n"
+  },
+  "numeric_steps": [
+    [
+      "6780608.0",
+      "COMPLETED",
+      "0:0",
+      "heartpiece"
+    ],
+    [
+      "6780608.1",
+      "COMPLETED",
+      "0:0",
+      "heartpiece"
+    ],
+    [
+      "6780608.2",
+      "COMPLETED",
+      "0:0",
+      "heartpiece"
+    ],
+    [
+      "6780608.3",
+      "FAILED",
+      "1:0",
+      "heartpiece"
+    ]
+  ],
+  "active_numeric_steps": [],
+  "all_numeric_steps_terminal": true,
+  "known_failed_step_explanation": "6780608.3 is the preserved strict timestamp-comparison wrapper failure; its actual candidate monitor subprocess exited 0, and the independent semantic comparison passed without a rerun.",
+  "old_monitor_batch_may_remain_running": true,
+  "cancellation_performed": false,
+  "submission_performed": false
+}
