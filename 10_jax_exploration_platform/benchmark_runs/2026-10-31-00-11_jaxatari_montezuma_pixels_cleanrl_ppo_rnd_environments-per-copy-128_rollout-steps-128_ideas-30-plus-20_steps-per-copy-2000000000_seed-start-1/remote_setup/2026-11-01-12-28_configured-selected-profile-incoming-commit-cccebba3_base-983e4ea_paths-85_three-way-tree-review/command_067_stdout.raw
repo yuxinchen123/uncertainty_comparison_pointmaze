@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "metadata_wrapper_not_shared_failure",
+  "job_id": "6781231",
+  "step_id": "not printed; exact accounting query retained separately",
+  "command": [
+    "srun",
+    "--jobid=6781231",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "env",
+    "PYTHONNOUSERSITE=1",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/run_configured_producer_metadata_report_refresh.py"
+  ],
+  "returncode": 2,
+  "stderr": "/usr/bin/python3: can't open file '/tmp/run_configured_producer_metadata_report_refresh.py': [Errno 2] No such file or directory\nsrun: error: slurm1: task 0: Exited with exit code 2\n",
+  "numerical_work": false,
+  "tests_started": false,
+  "correction": "invoke the exact unchanged wrapper from this shared worktree instead of login-local /tmp",
+  "shared_wrapper": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_producer_metadata_runner.py",
+  "shared_wrapper_sha256": "2c0a1808522a4de6547156403105c1efd22ce70dc557c7cd181ae5c2a23721d5"
+}

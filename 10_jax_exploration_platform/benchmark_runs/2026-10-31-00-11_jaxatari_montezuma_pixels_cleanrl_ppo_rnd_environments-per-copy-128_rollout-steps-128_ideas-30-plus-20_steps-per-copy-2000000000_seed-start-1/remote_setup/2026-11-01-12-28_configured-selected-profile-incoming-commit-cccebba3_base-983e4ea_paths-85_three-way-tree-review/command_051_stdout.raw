@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_independent_final_metadata",
+  "extra": {
+    "actual_d28_test_contract": {
+      "files": 7,
+      "test_functions": 38,
+      "cases": 48,
+      "per_function_cases": {
+        "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl": 1,
+        "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original": 2,
+        "tests/atari_pixels/test_equations.py::test_empty_predictor_mask": 1,
+        "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability": 1,
+        "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter": 1,
+        "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults": 1,
+        "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks": 1,
+        "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation": 4,
+        "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout": 1,
+        "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter": 1,
+        "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values": 1,
+        "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward": 2,
+        "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture": 1,
+        "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection": 1,
+        "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences": 1,
+        "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy": 1,
+        "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence": 1,
+        "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup": 1,
+        "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation": 2,
+        "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment": 1,
+        "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged": 1,
+        "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly": 1,
+        "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies": 5,
+        "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor": 1,
+        "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry": 1,
+        "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values": 1,
+        "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients": 1,
+        "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction": 1,
+        "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions": 1,
+        "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss": 1,
+        "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return": 1,
+        "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns": 1,
+        "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack": 1,
+        "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys": 1,
+        "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output": 1,
+        "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset": 1,
+        "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset": 1,
+        "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction": 1
+      }
+    },
+    "allocator_failure_retains_proof": true,
+    "invalid_device_capture_retains_anonymous_proof": true,
+    "nonboolean_completeness_refused": true
+  },
+  "freeze_sha256": "25171871314015fa9e17266bedd9ce5c1505de6c7953588f068cf5357781fb2c",
+  "process_start_time": "52477320",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781231/step_54/user/task_0\n",
+  "hostname": "slurm1",
+  "job_id": "6781231",
+  "step_id": "54",
+  "modules": [
+    "test_configured_measurement",
+    "test_measure_selected",
+    "test_profile_selected",
+    "test_post_comparison_validation",
+    "test_device_memory_limit",
+    "test_measure_gpu_scaling",
+    "test_validate_training_deployment"
+  ],
+  "tests_run": 173,
+  "failures": [],
+  "errors": [
+    [
+      "test_actual_backend_renderer_matrix_is_fully_derived (__main__.DirectClosures)",
+      "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_producer_independent_final_full.py\", line 90, in test_actual_backend_renderer_matrix_is_fully_derived\n    matrix=support.renderer_contract(plan,backend)\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\", line 511, in renderer_contract\n    repeat = assignment(\"fixture_states\", \"room_ids\")\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\", line 509, in assignment\n    require(len(values) == 1 and isinstance(values[0], ast.Call), \"the original renderer fixture assignment is ambiguous\")\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\", line 36, in require\n    raise ValueError(message)\nValueError: the original renderer fixture assignment is ambiguous\n"
+    ]
+  ],
+  "before": {
+    "configured_measurement.py": "6c4406a516c62e7d145eecf47e1f11b9a3fd7e98b0035aa60e9d60d82cb39dcc",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "ccfc15761a7802b3bb61fdf7a2c0da75fde8b6f25c7d055b97cf4989dc006e91",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "6c4406a516c62e7d145eecf47e1f11b9a3fd7e98b0035aa60e9d60d82cb39dcc",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "ccfc15761a7802b3bb61fdf7a2c0da75fde8b6f25c7d055b97cf4989dc006e91",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 124.30459356307983,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "protected_numerical_before": {
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+  },
+  "protected_numerical_after": {
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+  },
+  "protected_numerical_unchanged": true,
+  "history_before": {
+    ".review_metadata/configured_producer_independent_findings_6781231_42.json": "d4ed01b96e159d41e93c5490f2273960ecb6f0b01972b1448ecdfef930259057",
+    ".review_metadata/configured_producer_independent_findings_corrected_6781231_43.json": "49d4bec4fa55d9bbabb34077f054e01ea4d70d9144fe2ce26801fb8a55100979",
+    ".review_metadata/configured_producer_independent_relative_freeze_argument_failure.json": "afdbdbf1ce7b51d652bab10dd29efa23cb3793ad0e10b324d932bcfca24cb594",
+    ".review_metadata/configured_selected_profile_author_6781231_31.json": "fd02ba081241d8f65ac3799a4a4f2ba52e500806656260385e037f5adb9c7a4b",
+    ".review_metadata/configured_selected_profile_author_6781231_37.json": "c84f970867836f2ec5ad644adb6889579739e468ba7c11656228fe968367867d",
+    ".review_metadata/configured_selected_profile_author_6781231_38.json": "517671f7a81a5d0f224ca3587851a85af7423db40533c76449f6f826a73e2b9c",
+    ".review_metadata/configured_selected_profile_author_6781231_40.json": "33e55475d2392512d8e16d27fa9cfd6ca29c733c53ab63d628d8bd3abc8f3f2b",
+    ".review_metadata/configured_selected_profile_author_6781231_41.json": "2fcdcfbd14b5eefc7b16ad6c4f8e775f96b560ca2012ab263e1201b1f34d4a03",
+    ".review_metadata/configured_selected_profile_author_6781231_45.json": "b47aa593ce25e8e0f0038a34848456c9abba22a87839378bda3921aeb732d7f2",
+    ".review_metadata/configured_selected_profile_author_6781231_46.json": "3b75ee39fb8872f16c62cc41952445227750a5eb92f647f9e68d8732d247467d",
+    ".review_metadata/configured_selected_profile_author_6781231_51.json": "7bd7553b3ea50f61b64df2586bdd364991b3f0b6f1ed658d59bcfc6b3d4d63a7",
+    ".review_metadata/configured_selected_profile_author_verification.json": "9261f59b51f4d8af0e20aea18fe8746d2c4b6dba68cd02556514fb39609b77b1",
+    ".review_metadata/configured_selected_profile_execution_interfaces.json": "ff4beb1a582b2b08c9a66bf8b7d04ca666970d43572fd9f729a78d46fe43cb35",
+    ".review_metadata/configured_selected_profile_independent_corrected_reader_6781231_49.json": "0117885dcef2ca5823ea11c88b97001f7f2eec94c482535eb3952c7b8faa79bd",
+    ".review_metadata/configured_selected_profile_independent_corrected_reader_6781231_50.json": "f6def2057a2ad1e98a50b7410ba158bb1b6eda56ea4853926c43e3866dd40351",
+    ".review_metadata/configured_selected_profile_producer_corrected_source_freeze.json": "8968590f633c189a8d02c0e58fc4fe4c45be97a5bb35830d50238a503d291bb3",
+    ".review_metadata/configured_selected_profile_producer_renderer_complete_source_freeze.json": "25171871314015fa9e17266bedd9ce5c1505de6c7953588f068cf5357781fb2c",
+    ".review_metadata/configured_selected_profile_producer_source_freeze.json": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011",
+    ".review_metadata/first_full_suite_source_freeze.json": "120be8fe6f408a2a806ae0373396d7bb8d0cc74910074314599b8ddae98e8f32",
+    ".review_metadata/metadata_wrapper_not_shared_failure.json": "a0f0ff3585b6aab69bede5d033ae815a3112d48a68d2b6ec80f3b722e1370444",
+    ".review_metadata/metadata_wrapper_not_shared_failure_accounting.json": "5b8115529f7042d2404e62374a2ecbcf6849e9bf80e7719794a6ab34c16098a3"
+  },
+  "history_after": {
+    ".review_metadata/configured_producer_independent_findings_6781231_42.json": "d4ed01b96e159d41e93c5490f2273960ecb6f0b01972b1448ecdfef930259057",
+    ".review_metadata/configured_producer_independent_findings_corrected_6781231_43.json": "49d4bec4fa55d9bbabb34077f054e01ea4d70d9144fe2ce26801fb8a55100979",
+    ".review_metadata/configured_producer_independent_relative_freeze_argument_failure.json": "afdbdbf1ce7b51d652bab10dd29efa23cb3793ad0e10b324d932bcfca24cb594",
+    ".review_metadata/configured_selected_profile_author_6781231_31.json": "fd02ba081241d8f65ac3799a4a4f2ba52e500806656260385e037f5adb9c7a4b",
+    ".review_metadata/configured_selected_profile_author_6781231_37.json": "c84f970867836f2ec5ad644adb6889579739e468ba7c11656228fe968367867d",
+    ".review_metadata/configured_selected_profile_author_6781231_38.json": "517671f7a81a5d0f224ca3587851a85af7423db40533c76449f6f826a73e2b9c",
+    ".review_metadata/configured_selected_profile_author_6781231_40.json": "33e55475d2392512d8e16d27fa9cfd6ca29c733c53ab63d628d8bd3abc8f3f2b",
+    ".review_metadata/configured_selected_profile_author_6781231_41.json": "2fcdcfbd14b5eefc7b16ad6c4f8e775f96b560ca2012ab263e1201b1f34d4a03",
+    ".review_metadata/configured_selected_profile_author_6781231_45.json": "b47aa593ce25e8e0f0038a34848456c9abba22a87839378bda3921aeb732d7f2",
+    ".review_metadata/configured_selected_profile_author_6781231_46.json": "3b75ee39fb8872f16c62cc41952445227750a5eb92f647f9e68d8732d247467d",
+    ".review_metadata/configured_selected_profile_author_6781231_51.json": "7bd7553b3ea50f61b64df2586bdd364991b3f0b6f1ed658d59bcfc6b3d4d63a7",
+    ".review_metadata/configured_selected_profile_author_verification.json": "9261f59b51f4d8af0e20aea18fe8746d2c4b6dba68cd02556514fb39609b77b1",
+    ".review_metadata/configured_selected_profile_execution_interfaces.json": "ff4beb1a582b2b08c9a66bf8b7d04ca666970d43572fd9f729a78d46fe43cb35",
+    ".review_metadata/configured_selected_profile_independent_corrected_reader_6781231_49.json": "0117885dcef2ca5823ea11c88b97001f7f2eec94c482535eb3952c7b8faa79bd",
+    ".review_metadata/configured_selected_profile_independent_corrected_reader_6781231_50.json": "f6def2057a2ad1e98a50b7410ba158bb1b6eda56ea4853926c43e3866dd40351",
+    ".review_metadata/configured_selected_profile_producer_corrected_source_freeze.json": "8968590f633c189a8d02c0e58fc4fe4c45be97a5bb35830d50238a503d291bb3",
+    ".review_metadata/configured_selected_profile_producer_renderer_complete_source_freeze.json": "25171871314015fa9e17266bedd9ce5c1505de6c7953588f068cf5357781fb2c",
+    ".review_metadata/configured_selected_profile_producer_source_freeze.json": "1108b9bf09bb13167608d3fed84e73af19d4320a5d5077d397d0a05e7d179011",
+    ".review_metadata/first_full_suite_source_freeze.json": "120be8fe6f408a2a806ae0373396d7bb8d0cc74910074314599b8ddae98e8f32",
+    ".review_metadata/metadata_wrapper_not_shared_failure.json": "a0f0ff3585b6aab69bede5d033ae815a3112d48a68d2b6ec80f3b722e1370444",
+    ".review_metadata/metadata_wrapper_not_shared_failure_accounting.json": "5b8115529f7042d2404e62374a2ecbcf6849e9bf80e7719794a6ab34c16098a3"
+  },
+  "history_unchanged": true,
+  "allowed_isolated_import_probes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpptk6uxvv/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpbx3g7bzp/data/unit/code",
+        "[\"profile_selected.py\", \"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmp2hds8isj/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpswyinluj/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "-c",
+        "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+        "/tmp/tmpxdtm1kdl/data/unit/code",
+        "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"passive_installed_slurm_observation.py\"]"
+      ],
+      "probe_sha256": "b134cc55c1f7a729ba418320bb883dbb9b71a97f086498f85f718b0703a2ae84"
+    }
+  ],
+  "wrapper_sha256": "180f1cd94ed5c4f58b0e4ef7efdd4b088965a496964ce48fd915dc5b49096124",
+  "numerical_work": false,
+  "job_actions": 0
+}

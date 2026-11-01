@@ -453,3 +453,7 @@ Producer metadata correction passed 166 author cases, then independent check .50
 Final producer source freeze8398f24b passed fifty-one independent closure/native/staging checks on6781231.58, reviewSHA d1c92729e50f0f2b1c4ade634a2ca4d71a58a5597d0d7c1022ea6d6fb56c2cd3. Author commit/roster and exact incoming review are next; no target admission.
 
 Full monitor6781231.59 confirms119complete/1running/0pending/0failed. Original supervisor started the final two-copy case with child1108742/birth52458150. The prior-child metadata probe saw that old PID gone; its completed case explains the transition. No signal, restart, duplicate worker or GPU query. Resource snapshot20:16 supports the intended one-A4500 qualification shape and owned reservation.
+
+## 2026-11-01 12:37 PT — Publish reviewed assigned-device measurement source
+
+Merged and pushed 43eade68238a8d010ad1d1ea681e348022a00060 with the exact independently reviewed eighty-five-path producer change and expected tree. Initial comparisons remain 119 complete, one running, zero pending and zero failed. Actual A4500 full-original qualification preparation is in progress; no qualification job, new direct worker or admission change occurred. Direct-core author checks passed twenty cases and independent review is pending. Corrected stale recurring-task fields to the actual verified twenty-minute task while preserving their old values. Original checkout, numerical source and current worker remain unchanged.

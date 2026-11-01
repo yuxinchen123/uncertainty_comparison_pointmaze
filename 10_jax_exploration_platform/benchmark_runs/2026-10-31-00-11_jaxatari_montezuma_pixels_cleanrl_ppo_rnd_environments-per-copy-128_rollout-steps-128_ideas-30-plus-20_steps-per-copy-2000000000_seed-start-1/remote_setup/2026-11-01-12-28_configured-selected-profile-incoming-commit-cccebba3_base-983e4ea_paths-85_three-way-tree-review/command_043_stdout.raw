@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "configured_selected_profile_author_metadata",
+  "job_id": "6781231",
+  "step_id": "57",
+  "modules": [
+    "test_configured_measurement.QualificationReaderTests.test_renderer_scope_traversal_rejects_duplicates_and_ignores_nested_functions"
+  ],
+  "tests_run": 1,
+  "failures": [],
+  "errors": [],
+  "before": {
+    "configured_measurement.py": "29ecb15d446ecc4b9e43d2754f0d87b354be438fa411693481db3ef43465eddd",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "47a3bb29db8f6bf9f171d646eb98c20d905d4ec6b6d10eea487df2764dbb4602",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "after": {
+    "configured_measurement.py": "29ecb15d446ecc4b9e43d2754f0d87b354be438fa411693481db3ef43465eddd",
+    "measure_selected.py": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f",
+    "profile_selected.py": "04f8dc853e69cca857f1a7cac02722162b227717026231e901e417c279ce4571",
+    "post_comparison_validation.py": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888",
+    "device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "measure_gpu_scaling.py": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3",
+    "validate_training_deployment.py": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1",
+    "tests/test_configured_measurement.py": "47a3bb29db8f6bf9f171d646eb98c20d905d4ec6b6d10eea487df2764dbb4602",
+    "uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  "unchanged": true,
+  "blocked_actions": [],
+  "duration_seconds": 0.049143075942993164,
+  "source_base": "983e4ea2b1b484f48a97757bad6a047df09ae795",
+  "allowed_isolated_import_probes": [],
+  "wrapper_sha256": "54aa3eff5c1e7dc2487725b494b63fbb9c84b314e0ffdbb29b68bfe8e63677c8",
+  "numerical_work": false,
+  "job_actions": 0
+}

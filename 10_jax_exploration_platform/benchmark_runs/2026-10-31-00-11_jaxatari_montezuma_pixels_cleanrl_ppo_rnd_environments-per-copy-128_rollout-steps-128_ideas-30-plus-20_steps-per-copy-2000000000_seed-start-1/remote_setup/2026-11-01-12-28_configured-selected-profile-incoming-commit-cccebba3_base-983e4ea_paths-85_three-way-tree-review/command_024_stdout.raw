@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "independent_metadata_runner_argument_failure",
+  "at_utc": "2026-11-01T20:12:21.168674+00:00",
+  "job_id": "6781231",
+  "actual_step_id": null,
+  "step_attribution": "not printed before early argument assertion; not guessed",
+  "wrapper": "/p/rlprojects/RND_worktrees/2026-11-01-10-44_selected-and-profile-configured-isolation_single-a4500_gpu-count-1_processor-count-8_host-memory-gib-64_unresolved-device-identity/.review_metadata/configured_producer_independent_final_full.py",
+  "wrapper_sha256": "180f1cd94ed5c4f58b0e4ef7efdd4b088965a496964ce48fd915dc5b49096124",
+  "returncode": 1,
+  "error": "relative freeze path failed the runner absolute-parent assertion before imports or tests",
+  "tests_run": 0,
+  "numerical_work": false,
+  "source_edits": 0,
+  "job_actions": 0,
+  "next_command_change": "Use the same exact runner with the absolute freeze path; no source or runner edit."
+}
