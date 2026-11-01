@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "aces_observation_refresh_author_validation",
+  "job_id": "6779550",
+  "step_id": "45",
+  "hostname": "slurm5",
+  "started_at_utc": "2026-11-01T06:36:47.464470+00:00",
+  "finished_at_utc": "2026-11-01T06:36:47.974929+00:00",
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+    "-p",
+    "test_refresh_aces_allocation_observation.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "test_actual_parenthesized_held_row_without_release_is_preserved (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nThe actual ACES held-row format remains unchanged and permits no release inference. ... ok\ntest_changed_paths_hashes_or_preparation_reject_without_snapshot_replacement (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nA plausible remote response cannot substitute another file, job, path or immutable preparation. ... ok\ntest_closed_master_never_attempts_another_command_or_retries (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nAn absent control master creates an error record and preserves the prior snapshot. ... ok\ntest_completed_payload_transfers_zero_credit_raw_file_chain (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nA remote completion adds actual immutable raw files and never grants admission or research credit. ... ok\ntest_existing_master_only_exact_owned_id_and_unchanged_preparation (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nRefresh uses one owned ACES identifier, even when UVA issued the same number. ... ok\ntest_foreign_ids_wrong_portal_and_path_fail_before_any_command (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nLocal ownership, host and packet bounds fail before checking or using a master. ... ok\ntest_local_data_symlink_and_concurrent_immutable_change_reject (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nA changed destination or source cannot redirect or replace the validated mirror. ... ok\ntest_new_immutable_collision_is_never_replaced (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nAn immutable file appearing after validation keeps its bytes and the prior snapshot. ... ok\ntest_new_remote_release_receipt_is_validated_before_immutable_copy (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nA new actual release can be mirrored without changing the older held preparation. ... ok\ntest_publication_failure_restores_prior_progress_and_snapshot (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nA late write failure cannot make the old snapshot point at changed mutable progress. ... ok\ntest_wrong_submission_kind_and_lock_symlink_never_use_network (test_refresh_aces_allocation_observation.ACESObservationRefreshTests)\nInvalid ownership labels and a redirected lock fail before any transport. ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 0.384s\n\nOK\n",
+  "source_hashes_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py": "6420645489cb49f03d654ad54021679746419988440d8455502292d099686190",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_refresh_aces_allocation_observation.py": "2e0f3d06bba0fb2d9aee6692a324b9981e5ef5c493605efff14ab524d3357109",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "686fb6123a05ed42e45ec8adfc45883789c11e26b10780b8ceb4b4bb7def92ae"
+  },
+  "source_hashes_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py": "6420645489cb49f03d654ad54021679746419988440d8455502292d099686190",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_refresh_aces_allocation_observation.py": "2e0f3d06bba0fb2d9aee6692a324b9981e5ef5c493605efff14ab524d3357109",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "686fb6123a05ed42e45ec8adfc45883789c11e26b10780b8ceb4b4bb7def92ae"
+  },
+  "live_network_commands": 0,
+  "job_actions": 0
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kind": "independent_aces_observation_refresher_static_review",
+  "reviewed_at_utc": "2026-11-01T06:38:56.321214+00:00",
+  "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py",
+  "source_sha256": "6420645489cb49f03d654ad54021679746419988440d8455502292d099686190",
+  "tests": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_refresh_aces_allocation_observation.py",
+  "tests_sha256": "2e0f3d06bba0fb2d9aee6692a324b9981e5ef5c493605efff14ab524d3357109",
+  "author_test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/monitor_validation/aces_refresh_author_6779550_45.json",
+    "sha256": "f314857d16fe998f9c73c28daa8a53f0476eaad0cd258832ec57b7df3250ab26"
+  },
+  "review_passed": true,
+  "reviewed_contracts": [
+    "Exact local portal05/sl5nw, separate ACES ledger/submission/immutable packet validated before any SSH",
+    "Existing control master checked once; missing master aborts; reused connection forbids proxy/authentication fallback",
+    "Remote actual owner/host/preparation/ledger and submission-row bytes checked before exact single-ID squeue/sacct",
+    "Original packet paths and bytes retained; allowlisted data copied only after complete temporary-mirror monitor validation",
+    "New immutable files use fsynced temporary bytes and exclusive atomic link; conflicting concurrent destination preserved",
+    "Mutable progress and snapshot replaced atomically, snapshot last; prior mutable bytes restored on failure",
+    "Raw snapshot schema matches source-pinned monitor; missing/failed/foreign/invalid input cannot invent a scheduler state"
+  ],
+  "specific_gap_found_and_fixed": "New immutable paths could previously be replaced after validation; exclusive-link publication and injected-collision regression now prevent this.",
+  "independent_runtime_tests_run": 0,
+  "reason_no_new_old_allocation_test": "Author11focused tests passed; old CPU monitor is preparing handover. Independent runtime checks can use replacement allocation.",
+  "live_ssh_commands": 0,
+  "job_actions": 0,
+  "code_edits": 0
+}
