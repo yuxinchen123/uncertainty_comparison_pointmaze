@@ -610,12 +610,21 @@ def test_collection_contract(plan):
     return expected
 
 
+def qualification_pytest_arguments(plan):
+    """Pin the complete original test selection and collection root to the exact frozen platform source."""
+    root = Path(plan["source_root"]) / "10_jax_exploration_platform"
+    return ["--rootdir", str(root), "-q", str(root / "tests/atari_pixels"),
+            str(root / "tests/test_atari_pixel_environment.py")]
+
+
 def validate_test_collection(plan, tests, stdout):
     """Require every collected source case and every passed phase, including explicit zero deselection."""
     expected = test_collection_contract(plan)
     root = Path(plan["source_root"]) / "10_jax_exploration_platform"
     rootdir = Path(tests["collection_rootdir"])
-    require(rootdir in {root, root / "tests", root.parent}, "pytest collection used an unrelated root directory")
+    require(rootdir == root, "pytest collection used an unrelated root directory")
+    require(tests.get("command") == [plan["python"], "-m", "pytest", *qualification_pytest_arguments(plan)],
+        "full original pytest command or explicit source root changed")
     nodes = tests["collected_nodeids"]
     require(isinstance(nodes, list) and nodes and all(type(node) is str for node in nodes)
         and len(nodes) == len(set(nodes)) and tests["deselected_nodeids"] == [], "test cases were absent, duplicated or deselected")
@@ -737,9 +746,8 @@ def verify_qualification_inputs(plan):
     require(actual_assets == identity.read_receipt(qualified_plan["qualification_software"]["asset_receipt"]),
         "the actual original asset receipt changed")
     tests = identity.read_receipt(identity.receipt(directory / "original_tests.json"))
-    root = Path(qualified_plan["source_root"]) / "10_jax_exploration_platform"
-    require(tests["command"] == [qualified_plan["python"], "-m", "pytest", "-q", str(root / "tests/atari_pixels"),
-        str(root / "tests/test_atari_pixel_environment.py")] and type(tests["returncode"]) is int and tests["returncode"] == 0
+    require(tests["command"] == [qualified_plan["python"], "-m", "pytest", *qualification_pytest_arguments(qualified_plan)]
+        and type(tests["returncode"]) is int and tests["returncode"] == 0
         and tests["reports"] == result["original_test_reports"] and tests["reports"]
         and all(row["outcome"] == "passed" for row in tests["reports"]), "full original test evidence changed")
     validate_test_collection(qualified_plan, tests, (directory / "original_tests.stdout").read_text())
@@ -848,7 +856,7 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment
     verify_qualification_sources(plan)
     directory = Path(directory)
     root = Path(plan["source_root"]) / "10_jax_exploration_platform"
-    tests = [str(root / "tests/atari_pixels"), str(root / "tests/test_atari_pixel_environment.py")]
+    arguments = qualification_pytest_arguments(plan)
     gates, collected, collection_reports, deselected, collection_rootdir = [], [], [], [], []
     class Reports:
         """Retain each real collected test and its call/fixture outcome."""
@@ -869,8 +877,8 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment
     # All tests run inside the already physically bound process; no unbound numerical subprocess is created.
     with (directory / "original_tests.stdout").open("x") as stdout, (directory / "original_tests.stderr").open("x") as stderr:
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            returncode = int(pytest.main(["-q", *tests], plugins=[Reports()]))
-    test_record = {"command": [plan["python"], "-m", "pytest", "-q", *tests],
+            returncode = int(pytest.main(arguments, plugins=[Reports()]))
+    test_record = {"command": [plan["python"], "-m", "pytest", *arguments],
         "execution": "same already identity-bound process via pytest.main", "returncode": returncode, "reports": gates,
         "collected_nodeids": collected, "collection_rootdir": collection_rootdir[0] if len(collection_rootdir) == 1 else None,
         "collection_reports": collection_reports, "deselected_nodeids": deselected}

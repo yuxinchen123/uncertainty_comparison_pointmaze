@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "reviewed_original_qualification_pytest_root_publication_roster",
+  "base_commit": "c851fa90f7b25d6ced54b7bac31457106ac91aa3",
+  "branch": "original-qualification-pytest-root-pinned-2026-11-01",
+  "owned_cpu_job": "6781231",
+  "step_id": "100",
+  "source_test_fixture_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json"
+  ],
+  "owned_evidence_path_count": 8,
+  "payload_path_count": 12,
+  "total_commit_path_count": 13,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "fa5b0d77e33f3bcd8a4bddbc8f5d46325c55e344e9582131c89fbb3c6d997a8e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    ".review_metadata/6781231_96_qualification_pytest_root_author.json": "e45bb7bd8dc32d36bc2658ad9ffd942a7b08a66d67b16817dd9d2d0082693a55",
+    ".review_metadata/6781231_96_qualification_pytest_root_author.log": "cbebfbbfd008e4a1dfeff6e5ebfce631a73ef278ee93c5185d2ba8284b28e65c",
+    ".review_metadata/6781231_99_qualification_pytest_root_independent.json": "e35263b3c559d40971edff158b7b4c76a10d40519721d65c98e6b36f9c868e9e",
+    ".review_metadata/6781231_99_qualification_pytest_root_independent.log": "70410b3ebf6ce4dc46351937055b51353bb431e2bccbcfbea734281da2af81a2",
+    ".review_metadata/qualification_pytest_root_final_independent_review_6781231_99.json": "7190c5768be71e80cd0575f6d861c4e0bb1fb5ae65703273afdc6bc956f952be",
+    ".review_metadata/qualification_pytest_root_source_freeze.json": "64d9d4ad2474f26299ec807579f1ee128315b0c6f74167c5e411bca9cf79c4d8",
+    ".review_metadata/run_qualification_pytest_root_independent.py": "edb5d884452a59a4428ef2cd8f8786591bcdedbbcdb5eab50074c673a66799e0",
+    ".review_metadata/run_qualification_pytest_root_metadata_tests.py": "3a3872b0d3cf90fb58fb0994134d11504c97998fb068787251eaf03d07465721"
+  },
+  "roster_path": ".review_metadata/qualification_pytest_root_publication_roster.json",
+  "roster_hash_scope": "The roster itself is the thirteenth path; its hash is recorded in the post-commit publication receipt.",
+  "independent_review_sha256": "7190c5768be71e80cd0575f6d861c4e0bb1fb5ae65703273afdc6bc956f952be",
+  "actual_failed_job_reused_or_released": false,
+  "new_gpu_work": false,
+  "integration_or_original_source_changes": false
+}

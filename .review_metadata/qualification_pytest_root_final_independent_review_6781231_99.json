@@ -1,0 +1,42 @@
+{
+  "actual_failed_fixture_exact": true,
+  "actual_failed_unit_files_unchanged": 48,
+  "admission_granted": false,
+  "approved": true,
+  "approved_source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "fa5b0d77e33f3bcd8a4bddbc8f5d46325c55e344e9582131c89fbb3c6d997a8e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e"
+  },
+  "at_utc": "2026-11-01T21:44:35.788239+00:00",
+  "base_commit": "c851fa90f7b25d6ced54b7bac31457106ac91aa3",
+  "case_credit": 0,
+  "findings": [],
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-35_original-qualification-pytest-root_source-commit-c851fa90f7b25d6ced54b7bac31457106ac91aa3/.review_metadata/qualification_pytest_root_source_freeze.json",
+    "sha256": "64d9d4ad2474f26299ec807579f1ee128315b0c6f74167c5e411bca9cf79c4d8"
+  },
+  "gpu_operations": 0,
+  "historical_failed_result_stays_rejected": true,
+  "idea_credit": 0,
+  "job_actions": 0,
+  "kind": "independent_explicit_original_pytest_root_correction_review",
+  "live_gpu_fixture_still_required": true,
+  "metadata_test_receipt": {
+    "actual_job": "6781231",
+    "actual_step": "99",
+    "failed": 0,
+    "passed": 22,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-13-35_original-qualification-pytest-root_source-commit-c851fa90f7b25d6ced54b7bac31457106ac91aa3/.review_metadata/6781231_99_qualification_pytest_root_independent.json",
+    "sha256": "e35263b3c559d40971edff158b7b4c76a10d40519721d65c98e6b36f9c868e9e"
+  },
+  "original55_artifacts_unchanged": true,
+  "prior_failed_job_rerun": false,
+  "qualification_granted": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "One shared explicit --rootdir argument list is used by the same-process producer and exact saved reader. Only the exact frozen platform root passes; parent/tests/outer roots, coherent parent aliases and duplicate/changed/missing flags fail. No test selection, finite/dtype/library/memory/render budget or numerical equations changed.",
+  "source_diff": "diff --git a/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py b/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\nindex f4bbeed..8937bea 100644\n--- a/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\n+++ b/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\n@@ -610,12 +610,21 @@ def test_collection_contract(plan):\n     return expected\n \n \n+def qualification_pytest_arguments(plan):\n+    \"\"\"Pin the complete original test selection and collection root to the exact frozen platform source.\"\"\"\n+    root = Path(plan[\"source_root\"]) / \"10_jax_exploration_platform\"\n+    return [\"--rootdir\", str(root), \"-q\", str(root / \"tests/atari_pixels\"),\n+            str(root / \"tests/test_atari_pixel_environment.py\")]\n+\n+\n def validate_test_collection(plan, tests, stdout):\n     \"\"\"Require every collected source case and every passed phase, including explicit zero deselection.\"\"\"\n     expected = test_collection_contract(plan)\n     root = Path(plan[\"source_root\"]) / \"10_jax_exploration_platform\"\n     rootdir = Path(tests[\"collection_rootdir\"])\n-    require(rootdir in {root, root / \"tests\", root.parent}, \"pytest collection used an unrelated root directory\")\n+    require(rootdir == root, \"pytest collection used an unrelated root directory\")\n+    require(tests.get(\"command\") == [plan[\"python\"], \"-m\", \"pytest\", *qualification_pytest_arguments(plan)],\n+        \"full original pytest command or explicit source root changed\")\n     nodes = tests[\"collected_nodeids\"]\n     require(isinstance(nodes, list) and nodes and all(type(node) is str for node in nodes)\n         and len(nodes) == len(set(nodes)) and tests[\"deselected_nodeids\"] == [], \"test cases were absent, duplicated or deselected\")\n@@ -737,9 +746,8 @@ def verify_qualification_inputs(plan):\n     require(actual_assets == identity.read_receipt(qualified_plan[\"qualification_software\"][\"asset_receipt\"]),\n         \"the actual original asset receipt changed\")\n     tests = identity.read_receipt(identity.receipt(directory / \"original_tests.json\"))\n-    root = Path(qualified_plan[\"source_root\"]) / \"10_jax_exploration_platform\"\n-    require(tests[\"command\"] == [qualified_plan[\"python\"], \"-m\", \"pytest\", \"-q\", str(root / \"tests/atari_pixels\"),\n-        str(root / \"tests/test_atari_pixel_environment.py\")] and type(tests[\"returncode\"]) is int and tests[\"returncode\"] == 0\n+    require(tests[\"command\"] == [qualified_plan[\"python\"], \"-m\", \"pytest\", *qualification_pytest_arguments(qualified_plan)]\n+        and type(tests[\"returncode\"]) is int and tests[\"returncode\"] == 0\n         and tests[\"reports\"] == result[\"original_test_reports\"] and tests[\"reports\"]\n         and all(row[\"outcome\"] == \"passed\" for row in tests[\"reports\"]), \"full original test evidence changed\")\n     validate_test_collection(qualified_plan, tests, (directory / \"original_tests.stdout\").read_text())\n@@ -848,7 +856,7 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment\n     verify_qualification_sources(plan)\n     directory = Path(directory)\n     root = Path(plan[\"source_root\"]) / \"10_jax_exploration_platform\"\n-    tests = [str(root / \"tests/atari_pixels\"), str(root / \"tests/test_atari_pixel_environment.py\")]\n+    arguments = qualification_pytest_arguments(plan)\n     gates, collected, collection_reports, deselected, collection_rootdir = [], [], [], [], []\n     class Reports:\n         \"\"\"Retain each real collected test and its call/fixture outcome.\"\"\"\n@@ -869,8 +877,8 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment\n     # All tests run inside the already physically bound process; no unbound numerical subprocess is created.\n     with (directory / \"original_tests.stdout\").open(\"x\") as stdout, (directory / \"original_tests.stderr\").open(\"x\") as stderr:\n         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):\n-            returncode = int(pytest.main([\"-q\", *tests], plugins=[Reports()]))\n-    test_record = {\"command\": [plan[\"python\"], \"-m\", \"pytest\", \"-q\", *tests],\n+            returncode = int(pytest.main(arguments, plugins=[Reports()]))\n+    test_record = {\"command\": [plan[\"python\"], \"-m\", \"pytest\", *arguments],\n         \"execution\": \"same already identity-bound process via pytest.main\", \"returncode\": returncode, \"reports\": gates,\n         \"collected_nodeids\": collected, \"collection_rootdir\": collection_rootdir[0] if len(collection_rootdir) == 1 else None,\n         \"collection_reports\": collection_reports, \"deselected_nodeids\": deselected}\n",
+  "source_diff_sha256": "50986aaec660b07ab6ac7ac90addb9b6371688b09fd1bfa66ff1e484d11483df"
+}
