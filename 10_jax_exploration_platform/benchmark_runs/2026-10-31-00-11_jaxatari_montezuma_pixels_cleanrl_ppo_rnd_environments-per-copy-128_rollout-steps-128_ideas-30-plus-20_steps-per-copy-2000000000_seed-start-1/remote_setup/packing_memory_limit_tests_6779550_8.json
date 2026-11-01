@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "packing_memory_limit_metadata_tests",
+  "job_step": "6779550.8",
+  "host": "slurm5",
+  "checked_at_utc": "2026-11-01T05:39:58.116523+00:00",
+  "numerical_imports": false,
+  "test_executions": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+        "-p",
+        "test_post_comparison_validation.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/packing_memory_limit_tests_6779550_8_test_post_comparison_validation.log",
+      "sha256": "cb40c84227bfa56958cf86b5e3306255ed48f0d7d6d31481ff1d328952a3ee84"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+        "-p",
+        "test_validate_training_deployment.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/packing_memory_limit_tests_6779550_8_test_validate_training_deployment.log",
+      "sha256": "bcb94ac88c77dabd7d713d7990cf0d22353e34eaa6abcd40779464bef48f5ebf"
+    }
+  ]
+}

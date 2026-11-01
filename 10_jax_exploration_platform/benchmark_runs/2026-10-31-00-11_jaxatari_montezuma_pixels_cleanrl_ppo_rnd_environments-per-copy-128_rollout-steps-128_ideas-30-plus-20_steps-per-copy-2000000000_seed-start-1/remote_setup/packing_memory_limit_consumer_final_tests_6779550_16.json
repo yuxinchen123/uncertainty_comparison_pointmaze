@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "packing_memory_limit_consumer_final_tests",
+  "job_step": "6779550.16",
+  "host": "slurm5",
+  "checked_at_utc": "2026-11-01T05:42:50.021255+00:00",
+  "tests": [
+    "test_memory_limit_target_validates_boundary_backend_and_preserves_selected_count",
+    "test_memory_limit_target_is_portable_after_all_original_sources_are_removed"
+  ],
+  "test_count": 2,
+  "successful": true,
+  "test_source_sha256": "b7f3f9649d83139506716dc3c134d3fade4d77b82972b03fece14b2f96347c83",
+  "validation_source_sha256": "60adbea534651decaed6112854678d4739e46ec032b4f8a7c38b811fdc6d463c",
+  "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/packing_memory_limit_consumer_final_tests_6779550_16.log",
+  "output_sha256": "14c758fad3192e4e6d872c9957eecf66dfe8f21ba08bc08444aa8ba896b61c95",
+  "numerical_imports": false
+}

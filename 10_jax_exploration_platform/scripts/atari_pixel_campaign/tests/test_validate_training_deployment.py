@@ -243,6 +243,36 @@ class TrainingDeploymentTests(unittest.TestCase):
         self.assertNotIn("numpy", sys.modules)
         self.assertNotIn("torch", sys.modules)
 
+    def memory_limited_target(self):
+        """Keep one actual low-headroom doubling in target evidence and repeat only the fitting count."""
+        self.specification["packing_stop_rule"] = "measured_memory_headroom"
+        self.specification["packing_confirmation_records"] = self.specification["packing_confirmation_records"][:1]
+        path = Path(self.specification["packing_records"][-1])
+        result = json.loads(path.read_text())
+        for sample in result["rounds"][0]["memory"]["device_memory_samples"]:
+            sample.update(used_bytes=900 * 2 ** 20, free_bytes=100 * 2 ** 20)
+        self.write(path, result)
+        return path
+
+    def test_memory_limit_target_validates_boundary_backend_and_preserves_selected_count(self):
+        """A low-headroom target proof is checked fully without admitting its larger copy count."""
+        boundary = self.memory_limited_target()
+        receipt = deployment.validate_deployment(self.specification)
+        self.assertEqual(receipt["configuration"], self.selected)
+        self.assertEqual(receipt["packing"]["selected_copies"], 2)
+        self.assertIn(str(boundary), {row["path"] for row in receipt["executions"]})
+        record = json.loads(boundary.read_text())
+        record["hardware"]["gpu_query"] = record["hardware"]["gpu_query"].replace("synthetic-driver", "changed-driver")
+        self.write(boundary, record)
+        self.write(boundary.parent / "hardware.json", record["hardware"])
+        with self.assertRaisesRegex(ValueError, "physical GPU, host, model, memory or driver"):
+            deployment.validate_deployment(self.specification)
+
+    def test_memory_limit_target_is_portable_after_all_original_sources_are_removed(self):
+        """The strict resolver carries the rejected-size memory proof with its full target backend evidence."""
+        self.memory_limited_target()
+        self.test_strict_resolver_preserves_deployment_receipt_after_original_paths_are_removed()
+
     def test_global_raw_gate_cannot_be_replaced_with_old_success_flags(self):
         """Deployment always rebuilds the original fifty-idea and A4500-scaling proof."""
         registry_path = Path(self.fixture.specification["study_registry"])

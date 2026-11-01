@@ -389,7 +389,10 @@ def validate_deployment(specification, resolver=None, specification_path=None):
     required = {"schema_version", "final_verification", "source_root", "source_commit", "hardware_class", "runtime_environment",
         "campaign_run_dir", "target", "correctness_record", "confirmation_record", "packing_records", "packing_confirmation_records",
         "selected_copies", "unit_id", "copy_seeds", "seed_manifest"}
-    if set(specification) != required or type(specification["schema_version"]) is not int or specification["schema_version"] != 1 or specification["hardware_class"] != "h100":
+    if (set(specification) not in (required, required | {"packing_stop_rule"})
+            or "packing_stop_rule" in specification and specification["packing_stop_rule"] != "measured_memory_headroom"
+            or type(specification["schema_version"]) is not int or specification["schema_version"] != 1
+            or specification["hardware_class"] != "h100"):
         raise ValueError("this deployment specification requires the exact version-one H100 target fields")
     if specification_path is not None and evidence.read(specification_path) != specification:
         raise ValueError("the deployment specification changed")

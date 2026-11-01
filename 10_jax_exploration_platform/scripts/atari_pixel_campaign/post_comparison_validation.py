@@ -312,7 +312,7 @@ def validate_combination(specification, evidence):
             "median_speedup": statistics.median(ratios), "one_sided_sign_probability": probability}
 
 
-def packing_point(path, context, source, runtime, evidence):
+def packing_point(path, context, source, runtime, evidence, *, require_headroom=True):
     """Validate one isolated process, its fixed update window and measured memory headroom."""
     record = evidence.read(path)
     identity(record, context, source, runtime)
@@ -351,7 +351,7 @@ def packing_point(path, context, source, runtime, evidence):
                 or sample["used_bytes"] + sample["free_bytes"] > total_bytes):
             raise ValueError("packing device memory samples disagree with the selected physical GPU")
     free_fraction = min(sample["free_bytes"] / total_bytes for sample in device_samples)
-    if free_fraction < .15:
+    if require_headroom and free_fraction < .15:
         raise ValueError("packing lacks fifteen percent measured GPU memory headroom")
     seeds = record.get("copy_seeds", [])
     if len(seeds) != copies or len(set(seeds)) != copies or any(type(seed) is not int or not 0 <= seed < 2 ** 32 for seed in seeds):
@@ -362,11 +362,86 @@ def packing_point(path, context, source, runtime, evidence):
             "total_gpu_memory_bytes": total_bytes, "free_memory_fraction": free_fraction}
 
 
-def validate_packing(specification, evidence):
-    """Repeat the first below-ten-percent doubling independently, then choose its smaller count."""
+def memory_limited_packing(specification, points, gains, processes, evidence):
+    """Use a completed low-headroom doubling and a fresh fitting repeat as a measured memory limit."""
     context, source = specification["hardware_class"], specification["source_commit"]
     runtime = runtime_environment(specification["runtime_environment"])
-    points = [packing_point(path, context, source, runtime, evidence) for path in specification["packing_records"]]
+    # Before: fitting counts 1,2 and a completed low-headroom count 4; after: select only repeated count 2.
+    if (any(point["free_memory_fraction"] < .15 for point in points[:-1])
+            or points[-1]["free_memory_fraction"] >= .15):
+        raise ValueError("a measured memory limit needs fitting points followed by one low-headroom doubling")
+    if any(gain < .10 for gain in gains[:-1]):
+        raise ValueError("packing continued beyond its first below-ten-percent doubling before its memory limit")
+    original = points[-2]
+    paths = specification.get("packing_confirmation_records", [])
+    if len(paths) > 1:
+        raise ValueError("a measured memory limit repeats only its largest fitting copy count")
+    repeated = [packing_point(path, context, source, runtime, evidence) for path in paths]
+    if repeated:
+        point = repeated[0]
+        if (point["configuration"] != original["configuration"] or point["gpu_uuid"] != original["gpu_uuid"]
+                or point["iterations"] != original["iterations"] or point["copy_seeds"] != original["copy_seeds"]
+                or tuple(point["process"]) in processes):
+            raise ValueError("memory-limit confirmation changed identity/window or reused an earlier process")
+    # Require the actual producer protocol and full physical group on every new-path record, including the boundary.
+    group = None
+    all_paths = specification["packing_records"] + paths
+    for path in all_paths:
+        record = evidence.read(path)
+        hardware = record["hardware"]
+        process = execution_identity(record)
+        rows = list(csv.reader(hardware["gpu_query"].splitlines()))
+        actual = hardware.get("runtime_environment", {})
+        if (runtime_environment({key: actual.get(key) for key in RUNTIME_KEYS}) != runtime
+                or actual.get("JAX_ENABLE_COMPILATION_CACHE") != "false"
+                or actual.get("JAX_COMPILATION_CACHE_DIR") not in (None, "")
+                or actual.get("JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES") != ""):
+            raise ValueError("memory-limit measurements need their actual full-precision uncached runtime")
+        identity_fields = (hardware["hostname"], *[part.strip() for part in rows[0]],
+                           canonical_digest({key: value for key, value in actual.items()
+                                             if key not in {"CUDA_VISIBLE_DEVICES", "NVIDIA_VISIBLE_DEVICES"}}))
+        updates = record["rounds"][0]["iterations"]
+        options = record["configuration"]["execution"]
+        multiple = options["iterations_per_call"]
+        if options["report_readout"] != "none":
+            multiple = math.lcm(multiple, options["report_every_iterations"])
+        if updates != ((10 + multiple - 1) // multiple) * multiple:
+            raise ValueError("memory-limit windows must contain the producer's complete update groups and report windows")
+        if (len(rows[0]) != 4 or any(not part for part in identity_fields)
+                or record.get("measurement_mode") != "packing-point"
+                or record.get("contaminated", False) is not False or record.get("measurement_valid", True) is not True
+                or record.get("protocol") != {"rounds": 7, "requested_minimum_updates_per_round": 10,
+                                              "actual_updates_per_round": updates}
+                or process != (hardware["hostname"], hardware["pid"], hardware["process_start_time"])):
+            raise ValueError("memory-limit evidence needs its actual producer protocol and exact hardware process")
+        total = int(re.fullmatch(r"(\d+) MiB", rows[0][2].strip()).group(1)) * 2 ** 20
+        for row in record["rounds"]:
+            observed = row["memory"]["sampled_process_peak_bytes"], row["memory"]["allocator"]["peak_bytes_in_use"]
+            if any(type(value) is not int or not 0 < value <= total for value in observed):
+                raise ValueError("memory-limit process and allocator peaks must be actual possible byte counts")
+        if group is not None and identity_fields != group:
+            raise ValueError("memory-limit measurements changed their physical GPU, host, model, memory or driver/runtime")
+        group = identity_fields
+    if not repeated:
+        return {"complete": False, "hardware_class": context, "next_action": "repeat_largest_fitting_count",
+                "required_confirmation_counts": [original["copies"]], "points": points, "marginal_gains": gains}
+    if type(specification.get("selected_copies")) is not int or specification["selected_copies"] != original["copies"]:
+        raise ValueError("the measured memory limit selects only the largest fitting copy count")
+    return {"complete": True, "hardware_class": context, "source_commit": source,
+            "selected_copies": original["copies"], "configuration": original["configuration"],
+            "points": points, "marginal_gains": gains, "confirmation": repeated,
+            "stop_reason": "completed_doubling_below_fifteen_percent_memory_headroom"}
+
+
+def validate_packing(specification, evidence):
+    """Confirm the throughput limit, or explicitly opt into a completed measured-memory boundary."""
+    context, source = specification["hardware_class"], specification["source_commit"]
+    runtime = runtime_environment(specification["runtime_environment"])
+    rule = specification.get("packing_stop_rule")
+    if "packing_stop_rule" in specification and rule != "measured_memory_headroom":
+        raise ValueError("packing_stop_rule must explicitly name measured_memory_headroom")
+    points = [packing_point(path, context, source, runtime, evidence, require_headroom=rule is None)
+              for path in specification["packing_records"]]
     points.sort(key=lambda point: point["copies"])
     if len(points) < 2 or points[0]["copies"] != 1 or any(later["copies"] != 2 * earlier["copies"] for earlier, later in zip(points, points[1:])):
         raise ValueError("packing measurements must double from one without missing a count")
@@ -382,6 +457,8 @@ def validate_packing(specification, evidence):
             raise ValueError("packing points must use distinct fresh processes")
         processes.add(process)
     gains = [later["throughput"] / earlier["throughput"] - 1 for earlier, later in zip(points, points[1:])]
+    if rule == "measured_memory_headroom":
+        return memory_limited_packing(specification, points, gains, processes, evidence)
     below = [index for index, gain in enumerate(gains) if gain < .10]
     if not below:
         return {"complete": False, "hardware_class": context, "next_copies": points[-1]["copies"] * 2,

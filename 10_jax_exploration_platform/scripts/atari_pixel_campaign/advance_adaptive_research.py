@@ -282,14 +282,33 @@ def stopped_workers(run_dir, receipt_path, evidence):
     # Before: a pending job has no worker file; after: its exact submitted row still requires terminal proof.
     run_dir = Path(run_dir)
     submissions = run_dir / "slurm/submissions.tsv"
-    rows = [line for line in evidence.file(submissions).decode().splitlines()
-            if len(line.split("\t")) == 4 and line.split("\t")[1] == "queue-worker"]
+    all_rows = [line for line in evidence.file(submissions).decode().splitlines() if line]
+    if any(len(line.split("\t")) != 4 for line in all_rows):
+        raise ValueError("every recorded submission must retain its exact four fields")
+    workers = [evidence.read(path) for path in sorted((run_dir / "queue/workers").glob("*.json"))]
+    leases = [evidence.read(path) for path in sorted((run_dir / "queue/leases").glob("*.json"))]
+    leases = [row for row in leases if row.get("runner_pid") is not None]
+    # Before: ordinary launch 123 plus retry child 456; after: both exact owned rows.
+    required_jobs = {line.split("\t")[0] for line in all_rows if line.split("\t")[1] == "queue-worker"}
+    required_jobs.update(str(row["slurm_job_id"]) for row in workers + leases if row.get("slurm_job_id"))
     jobs = {row["job_id"]: row for row in receipts["jobs"]}
-    if len(jobs) != len(receipts["jobs"]) or set(jobs) != {line.split("\t")[0] for line in rows}:
-        raise ValueError("terminal receipts must cover all submitted queue-worker jobs, including unstarted jobs")
+    if len(jobs) != len(receipts["jobs"]) or set(jobs) != required_jobs:
+        raise ValueError("terminal receipts must cover all submitted queue-worker and recorded retry jobs, including unstarted jobs")
+    ledger = run_dir / "slurm" / "submitted_jobids_uva.txt"
+    try:
+        owned = set(evidence.file(ledger).decode().splitlines()) if required_jobs else set()
+    except FileNotFoundError as error:
+        raise ValueError("worker terminal evidence requires this campaign's exact UVA job ledger") from error
+    rows = []
+    for identifier in sorted(required_jobs):
+        matches = [line for line in all_rows if line.split("\t")[0] == identifier]
+        if not identifier.isdecimal() or identifier not in owned or len(matches) != 1:
+            raise ValueError("every worker or retry job requires one exact submission row and exact UVA job ledger ownership")
+        rows.append(matches[0])
     for line in rows:
         job = jobs[line.split("\t")[0]]
-        if job.get("submission_row") != line or job.get("state") not in TERMINAL_STATES:
+        if (job.get("submission_row") != line or job.get("state") not in TERMINAL_STATES
+                or job.get("active_in_scheduler") is True):
             raise ValueError("queue-worker job proof changed its exact owned launch row or is not terminal")
         observed_time(job.get("observed_at"))
     launches = evidence.read(run_dir / "processes.json")
@@ -304,7 +323,6 @@ def stopped_workers(run_dir, receipt_path, evidence):
                 or proof.get("launch_record_digest") != controller.content_digest(launch)
                 or observed_time(proof.get("observed_at")) < observed_time(launch["time"])):
             raise ValueError("direct supervisor lacks an exact later dead-original-process observation")
-    workers = [evidence.read(path) for path in sorted((Path(run_dir) / "queue/workers").glob("*.json"))]
     indexed = {row["worker_id"]: row for row in receipts["workers"]}
     if len(indexed) != len(receipts["workers"]) or set(indexed) != {row["worker_id"] for row in workers}:
         raise ValueError("worker-stop evidence must cover each exact old worker once")
@@ -332,8 +350,6 @@ def stopped_workers(run_dir, receipt_path, evidence):
         else:
             raise ValueError("worker-stop evidence must prove a terminal job or dead original process")
     # A direct parent may exit while its child survives, so check original numerical child identities too.
-    leases = [evidence.read(path) for path in sorted((run_dir / "queue/leases").glob("*.json"))]
-    leases = [row for row in leases if row.get("runner_pid") is not None]
     children = {(row["unit_id"], row["attempt"]): row for row in receipts["runners"]}
     if len(children) != len(receipts["runners"]) or set(children) != {(row["unit_id"], row["attempt"]) for row in leases}:
         raise ValueError("stop evidence must cover every recorded original numerical child")

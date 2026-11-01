@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "aces_final_target_preparation_audit",
+  "recorded_at_utc": "2026-11-01T05:37:49.757250+00:00",
+  "origin": "portal05",
+  "scope": "read-only local and existing-connection metadata; no numerical imports, writes on ACES or submissions",
+  "existing_connection_master_pid": 3888482,
+  "authentication_attempted": false,
+  "jobs_submitted": 0,
+  "remote_hostname": "alogin1.cluster",
+  "remote_metadata_command_outcome": "completed with exit code zero after correcting Python 3.6 subprocess syntax",
+  "first_metadata_command_failure": {
+    "error": "TypeError: __init__() got an unexpected keyword argument 'capture_output'",
+    "cause": "ACES system /usr/bin/python3 is Python 3.6",
+    "work_completed_before_failure": false
+  },
+  "required_current_helper_python": "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python",
+  "verified_clean_git_roots": [
+    {
+      "root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/numerical_source_d28e6735e797",
+      "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "status_porcelain": ""
+    },
+    {
+      "root": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/study_helpers_535efed3d25c",
+      "commit": "535efed3d25c9276bba5f503b3825b1a68c5183d",
+      "status_porcelain": ""
+    }
+  ],
+  "jaxtari_checkout_exists": "/scratch/user/u.sl359075/rnd_atari_pixels/git/checkouts/jaxtari_source_04ab9aec318c",
+  "existing_resource_probe": {
+    "job_id": "2271806",
+    "data_directory": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/aces_reference_copies_1_source_d28e6735e797",
+    "completed_rounds": 7,
+    "hardware": "ac049, NVIDIA H100 PCIe, 81559 MiB, 580.178.04",
+    "case_credit": 0,
+    "idea_credit": 0,
+    "optimized_final_credit": 0
+  },
+  "reusable_tools": [
+    "measure_selected.py",
+    "prepare_portable_evidence.py",
+    "validate_training_deployment.py",
+    "deployed_training_admission.py",
+    "train_deployed.py",
+    "validate_deployed_training_completion.py",
+    "launch_deployed_training.py"
+  ],
+  "missing_or_required_work": [
+    "Stage current committed helper checkout by an incremental Git bundle; retain existing checkouts.",
+    "Review actual ACES owned allocation observations before reusing measure_selected allocated_gpu_uuid numeric ID/minor equality.",
+    "Keep ACES driver 580.178.04 separate from UVA Slurm 580.159.04 and direct reference 590.48.01.",
+    "After all fifty ideas, measure full target correctness, longer confirmation and repeat packing boundary before any final unit registration."
+  ],
+  "admission_changed": false,
+  "files_changed_on_remote": false
+}

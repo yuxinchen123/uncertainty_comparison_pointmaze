@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "packing_memory_limit_exact_source_tests",
+  "job_step": "6779550.15",
+  "host": "slurm5",
+  "checked_at_utc": "2026-11-01T05:42:10.009491+00:00",
+  "test_count": 21,
+  "successful": true,
+  "test_load_method": "compile exact source bytes, bypass cached test bytecode",
+  "test_source_sha256": "79fe6a21f5f4be8fa06da4ed41a3246631606d582f190f61e3d5b33b33d401e8",
+  "output": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/packing_memory_limit_exact_source_tests_6779550_15.log",
+  "output_sha256": "647e27059bda0516f8f025de4bf149db5a535f0e117557c9ac9b2966b887a5f1",
+  "files": {
+    "post_comparison_validation.py": "60adbea534651decaed6112854678d4739e46ec032b4f8a7c38b811fdc6d463c",
+    "validate_training_deployment.py": "ea5bbcad1af2f12bdb6140b38540df9e714fd10d2df028beb394bf9e4969d9b0",
+    "tests/test_post_comparison_validation.py": "79fe6a21f5f4be8fa06da4ed41a3246631606d582f190f61e3d5b33b33d401e8",
+    "tests/test_validate_training_deployment.py": "b7f3f9649d83139506716dc3c134d3fade4d77b82972b03fece14b2f96347c83"
+  },
+  "earlier_deployment_test_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/packing_memory_limit_tests_6779550_8.json",
+  "numerical_imports": false
+}

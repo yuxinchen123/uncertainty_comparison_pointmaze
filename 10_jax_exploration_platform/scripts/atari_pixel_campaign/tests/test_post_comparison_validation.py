@@ -313,6 +313,148 @@ class PostComparisonTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "fifteen percent"):
             VALIDATION.validate_final_verification(self.specification)
 
+    def memory_limit(self, context="h100"):
+        """Use full producer-shaped measurements: one fitting count, its low-headroom doubling and a fresh repeat."""
+        specification = self.specification["contexts"][context]
+        specification.update(packing_stop_rule="measured_memory_headroom",
+                             packing_confirmation_records=specification["packing_confirmation_records"][:1])
+        # Before: ordinary packing fixtures; after: actual producer identity/protocol fields for the opt-in path.
+        for path in specification["packing_records"] + specification["packing_confirmation_records"]:
+            record = json.loads(Path(path).read_text())
+            hardware = record["hardware"]
+            hardware["runtime_environment"] = {**self.runtime, "JAX_ENABLE_COMPILATION_CACHE": "false",
+                                               "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": ""}
+            record.update(measurement_mode="packing-point",
+                protocol={"rounds": 7, "requested_minimum_updates_per_round": 10, "actual_updates_per_round": 10},
+                execution_identity={**{name: hardware[name] for name in ("hostname", "pid", "process_start_time")},
+                                    "started_at_seconds": 1000., "finished_at_seconds": 1001.})
+            Path(path).write_text(json.dumps(record))
+        boundary = Path(specification["packing_records"][-1])
+        record = json.loads(boundary.read_text())
+        for sample in record["rounds"][0]["memory"]["device_memory_samples"]:
+            sample.update(used_bytes=900 * 2 ** 20, free_bytes=100 * 2 ** 20)
+        boundary.write_text(json.dumps(record))
+        return {**specification, "hardware_class": context, "source_commit": self.commit, "runtime_environment": self.runtime}
+
+    def test_memory_limit_selects_only_independently_repeated_fitting_count(self):
+        """A completed low-headroom doubling bounds capacity but can never be the training count."""
+        common = self.memory_limit()
+        before = copy.deepcopy(common)
+        result = VALIDATION.validate_packing(common, VALIDATION.Evidence())
+        self.assertTrue(result["complete"])
+        self.assertEqual(result["selected_copies"], 1)
+        self.assertLess(result["points"][-1]["free_memory_fraction"], .15)
+        self.assertGreaterEqual(result["confirmation"][0]["free_memory_fraction"], .15)
+        self.assertEqual(common, before)
+        self.assertTrue(VALIDATION.validate_final_verification(self.specification)["selected"]["h100"]["packing"]["complete"])
+        common["selected_copies"] = 2
+        with self.assertRaisesRegex(ValueError, "largest fitting"):
+            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+
+    def test_memory_limit_needs_successful_boundary_and_fresh_fitting_repeat(self):
+        """A missing repeat stays incomplete; incomplete or reused executions cannot establish capacity."""
+        common = self.memory_limit()
+        common["packing_confirmation_records"] = []
+        result = VALIDATION.validate_packing(common, VALIDATION.Evidence())
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["required_confirmation_counts"], [1])
+        common["packing_confirmation_records"] = common["packing_records"][:1]
+        with self.assertRaisesRegex(ValueError, "reused an earlier process"):
+            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+
+    def test_memory_limit_requires_low_boundary_and_fitting_repeat_memory(self):
+        """A larger fitting point is not a memory limit, and a low-headroom repeat is not selectable."""
+        common = self.memory_limit()
+        boundary = Path(common["packing_records"][-1])
+        original = boundary.read_bytes()
+        record = json.loads(original)
+        for row in record["rounds"]:
+            for sample in row["memory"]["device_memory_samples"]:
+                sample.update(used_bytes=10 * 2 ** 20, free_bytes=990 * 2 ** 20)
+        boundary.write_text(json.dumps(record))
+        with self.assertRaisesRegex(ValueError, "low-headroom doubling"):
+            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+        boundary.write_bytes(original)
+        repeat = Path(common["packing_confirmation_records"][0])
+        record = json.loads(repeat.read_text())
+        record["rounds"][0]["memory"]["device_memory_samples"][0].update(used_bytes=900 * 2 ** 20, free_bytes=100 * 2 ** 20)
+        repeat.write_text(json.dumps(record))
+        with self.assertRaisesRegex(ValueError, "fifteen percent"):
+            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+
+    def test_memory_limit_rejects_changed_identity_partial_rounds_and_contamination(self):
+        """A capacity boundary uses exact source/runtime/device/seeds and every complete uncontaminated update."""
+        common = self.memory_limit()
+        path = Path(common["packing_records"][-1])
+        original = path.read_bytes()
+        for kind in ("source", "runtime", "actual_runtime", "driver", "host", "seed", "process", "partial", "short", "unfinished", "contamination", "flag", "bad_memory", "bad_peak", "protocol"):
+            record = json.loads(original)
+            if kind == "source": record["source_commit"] = "a" * 40
+            elif kind == "runtime": record["runtime_environment"]["JAX_ENABLE_X64"] = "false"
+            elif kind == "actual_runtime": record["hardware"]["runtime_environment"]["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.5"
+            elif kind == "driver": record["hardware"]["gpu_query"] = record["hardware"]["gpu_query"].replace("driver-version", "another-driver")
+            elif kind == "host":
+                record["hardware"]["hostname"] = "another-compute-host"
+                record["execution_identity"]["hostname"] = "another-compute-host"
+            elif kind == "seed": record["copy_seeds"] = [8, 9]
+            elif kind == "process": record["execution_identity"]["pid"] += 1
+            elif kind == "partial": record["rounds"].pop()
+            elif kind == "short": record["rounds"][0]["iterations"] = 1
+            elif kind == "unfinished": record["completed"] = False
+            elif kind == "contamination": record["rounds"][0]["memory"]["other_gpu_processes"] = [12345]
+            elif kind == "flag": record["contaminated"] = True
+            elif kind == "bad_memory": record["rounds"][0]["memory"]["device_memory_samples"][0]["free_bytes"] = -1
+            elif kind == "bad_peak": record["rounds"][0]["memory"]["sampled_process_peak_bytes"] = 10 ** 20
+            elif kind == "protocol": record["protocol"]["actual_updates_per_round"] = 1
+            path.write_text(json.dumps(record))
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                VALIDATION.validate_packing(common, VALIDATION.Evidence())
+        path.write_bytes(original)
+
+    def test_memory_limit_cannot_skip_an_earlier_throughput_stop(self):
+        """A later memory limit cannot override an already observed below-ten-percent gain."""
+        common = self.memory_limit()
+        boundary = json.loads(Path(common["packing_records"][-1]).read_text())
+        boundary["configuration"]["learner"]["n_copies"] = 4
+        boundary["copy_seeds"] = [1, 2, 3, 4]
+        boundary["hardware"]["pid"] = 304
+        boundary["hardware"]["process_start_time"] = "304"
+        boundary["execution_identity"].update(pid=304, process_start_time="304")
+        boundary["rounds"] = [self.row(4, 1.) for _ in range(7)]
+        boundary["rounds"][0]["memory"]["device_memory_samples"][0].update(used_bytes=900 * 2 ** 20, free_bytes=100 * 2 ** 20)
+        common["packing_records"].append(str(self.write("packing_memory_limit_4.json", boundary)))
+        second = Path(common["packing_records"][1])
+        record = json.loads(second.read_text())
+        for row in record["rounds"]:
+            for sample in row["memory"]["device_memory_samples"]:
+                sample.update(used_bytes=10 * 2 ** 20, free_bytes=990 * 2 ** 20)
+        second.write_text(json.dumps(record))
+        with self.assertRaisesRegex(ValueError, "below-ten-percent"):
+            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+
+    def test_memory_limit_requires_complete_grouped_and_reporting_windows(self):
+        """Three-update groups or three-update report periods require twelve complete measured updates."""
+        common = self.memory_limit()
+        paths = common["packing_records"] + common["packing_confirmation_records"]
+        original = {path: Path(path).read_bytes() for path in paths}
+        for kind in ("group", "report"):
+            for updates in (10, 12):
+                for path in paths:
+                    record = json.loads(original[path])
+                    options = record["configuration"]["execution"]
+                    if kind == "group": options["iterations_per_call"] = 3
+                    else: options.update(report_readout="scheduled", report_every_iterations=3)
+                    record["protocol"]["actual_updates_per_round"] = updates
+                    for row in record["rounds"]:
+                        row.update(iterations=updates, training_transitions=row["copies"] * 128 * 128 * updates)
+                    Path(path).write_text(json.dumps(record))
+                with self.subTest(kind=kind, updates=updates):
+                    if updates == 10:
+                        with self.assertRaisesRegex(ValueError, "complete update groups and report windows"):
+                            VALIDATION.validate_packing(common, VALIDATION.Evidence())
+                    else:
+                        self.assertTrue(VALIDATION.validate_packing(common, VALIDATION.Evidence())["complete"])
+
     def test_duplicate_scaling_gpu_or_rate_sum_is_rejected(self):
         """Eight workers on one GPU or missing synchronized wall time cannot satisfy scaling."""
         path = Path(self.specification["scaling"]["eight_gpu_record"])

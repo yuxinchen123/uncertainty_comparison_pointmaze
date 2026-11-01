@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "reviewed_future_phase_metadata_helpers",
+  "time": "2026-11-01T05:43:50.767504+00:00",
+  "owned_validation_allocation": "6779550",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/advance_adaptive_research.py": "67585e04f972ac91ffbc4e8278d3f7776e373d1be268e92102a988c24b6af410",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "60adbea534651decaed6112854678d4739e46ec032b4f8a7c38b811fdc6d463c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "ea5bbcad1af2f12bdb6140b38540df9e714fd10d2df028beb394bf9e4969d9b0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_collect_worker_exit_receipts.py": "db4bff85d5cc95c8d35e483303552f1e1e9e8d33b06e858f7a2d3c2450f86566",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": "79fe6a21f5f4be8fa06da4ed41a3246631606d582f190f61e3d5b33b33d401e8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": "b7f3f9649d83139506716dc3c134d3fade4d77b82972b03fece14b2f96347c83"
+  },
+  "worker_exit_collection": {
+    "author_tests_passed": 13,
+    "existing_adaptive_tests_passed": 25,
+    "root_independent_collector_tests_passed_before_final_active_queue_guard": 12,
+    "actual_current_metadata_coverage": {
+      "workers": 23,
+      "owned_uva_jobs": 25,
+      "direct_launches": 2,
+      "numerical_child_leases": 98
+    },
+    "signals_or_cancellations": false,
+    "actual_collection_performed": false,
+    "remaining_prerequisite": "All initial cases and original processes must finish; prepare a fresh snapshot then collect actual own job and PID-birth observations."
+  },
+  "packing_memory_limit": {
+    "source_tests_passed": 21,
+    "full_target_deployment_tests_passed_before_complete_window_correction": 20,
+    "final_affected_target_and_strict_portable_tests_passed": 2,
+    "root_independent_tests_passed_before_complete_window_correction": 19,
+    "independent_review_passed": true,
+    "fixed_review_finding": "Reject incomplete grouped/reporting update windows and require the exact complete producer window.",
+    "stop_rule": "measured_memory_headroom",
+    "successfully_completed_boundary_only": true,
+    "out_of_memory_or_partial_failure_credit": false,
+    "training_count_still_requires_fifteen_percent_actual_free_memory": true,
+    "test_records": [
+      "packing_memory_limit_exact_source_tests_6779550_15.json",
+      "packing_memory_limit_consumer_final_tests_6779550_16.json"
+    ]
+  },
+  "current_numerical_source_admission_changed": false,
+  "scientific_idea_credit": 0,
+  "formal_case_credit": 0,
+  "existing_persistent_monitor_source_unchanged": "c9f094f4abca0742bad2087eae301587082dad57",
+  "monitor_upgrade_required_before_using_new_packing_stop_rule": true
+}
