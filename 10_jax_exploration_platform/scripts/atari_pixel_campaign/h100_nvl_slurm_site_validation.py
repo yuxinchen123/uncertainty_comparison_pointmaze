@@ -89,6 +89,53 @@ def expected_driver(plan):
     return profile["expected_driver"] if profile is not None else plan["reference"]["driver"]
 
 
+def capture_driver_image(identity, directory):
+    """Stream an independent immutable shared copy while the actual mapped driver remains on this compute node."""
+    directory = Path(directory).resolve(strict=True)
+    original = Path(identity["driver_library"])
+    if (not original.is_absolute() or not original.name.startswith("libcuda.so")
+            or identity.get("pid") != os.getpid() or not re.fullmatch(r"[0-9a-f]{64}", identity["driver_library_sha256"])):
+        raise ValueError("capture only this process's exact mapped CUDA driver identity")
+    # A new ordinary file owns copied bytes; no link to a mutable node-local driver is created.
+    folder = directory / "captured_driver"
+    if folder.is_symlink():
+        raise ValueError("the shared driver capture directory cannot be a symlink")
+    folder.mkdir(exist_ok=True)
+    target = folder / original.name
+    digest, count = hashlib.sha256(), 0
+    with original.open("rb") as source, target.open("xb") as output:
+        for block in iter(lambda: source.read(1024 * 1024), b""):
+            output.write(block)
+            digest.update(block)
+            count += len(block)
+        if digest.hexdigest() != identity["driver_library_sha256"] or count < 1:
+            raise ValueError("the actual mapped CUDA driver bytes changed before shared capture")
+        output.flush()
+        os.fsync(output.fileno())
+    for path in (folder, directory):
+        descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    return {"schema_version": 1, "kind": "captured_mapped_cuda_driver_image", "pid": os.getpid(),
+        "original": {"path": str(original), "sha256": identity["driver_library_sha256"]},
+        "captured": {"path": str(target), "sha256": identity["driver_library_sha256"]}, "bytes": count}
+
+
+def validate_driver_capture(capture, identity, directory, pid):
+    """Validate captured shared bytes without opening the original node-local driver path."""
+    expected = Path(directory) / "captured_driver" / Path(identity["driver_library"]).name
+    if (capture.get("schema_version") != 1 or capture.get("kind") != "captured_mapped_cuda_driver_image"
+            or capture.get("pid") != pid or capture.get("original") != {"path": identity["driver_library"], "sha256": identity["driver_library_sha256"]}
+            or capture.get("captured") != {"path": str(expected), "sha256": identity["driver_library_sha256"]}
+            or type(capture.get("bytes")) is not int or capture["bytes"] < 1
+            or expected.is_symlink() or expected.parent.is_symlink()
+            or expected.stat().st_size != capture["bytes"] or sha256(expected) != identity["driver_library_sha256"]):
+        raise ValueError("the immutable shared CUDA driver capture changed its bytes, process or original identity")
+    return capture
+
+
 def required_helpers(profile):
     """Pin the two extra metadata files only for the explicit target-driver qualification."""
     return HELPERS + QUALIFICATION_HELPERS if profile is not None else HELPERS
@@ -102,7 +149,8 @@ def profile_background(profile):
         "target driver 580.159.04. It trusts configured scheduler task/cgroup device isolation; live BPF device rules are not "
         "independently inspected, and a numeric Slurm-to-NVML/minor/PCI mapping is not reconstructed. Every parent and child "
         "must provide fresh own allocation and task evidence, and the reference probe must bind its actual JAX CUDA ordinal "
-        "to the selected physical UUID and PCI address.\n\n")
+        "to the selected physical UUID and PCI address. Before the allocation ends, the probe copies its actual mapped CUDA "
+        "driver bytes into immutable shared artifacts so CPU and portable readers do not require the node-local driver.\n\n")
 
 
 def read(path):
@@ -815,6 +863,7 @@ def reference_probe(directory, plan, process, training):
         "loaded_libraries": loaded, "numerical_module_paths": numerical_paths}
     if cuda_identity is not None:
         result["qualification_cuda_identity"] = cuda_identity
+        result["qualification_driver_image"] = capture_driver_image(cuda_identity, directory)
     write_once(directory / "probe_result.json", result)
     return result
 
@@ -948,9 +997,9 @@ def verify_result(directory, plan, result):
     validate_loaded(probe["loaded_libraries"], plan, process["installed_backend"])
     if qualification_profile(plan) is not None:
         identity = load("h100_nvl_slurm_qualification").validate_cuda_identity(probe.get("qualification_cuda_identity", {}), proof, process["pid"])
-        if (identity["driver_library"] not in probe["loaded_libraries"]["loaded_shared_libraries"]
-                or sha256(identity["driver_library"]) != identity["driver_library_sha256"]):
+        if identity["driver_library"] not in probe["loaded_libraries"]["loaded_shared_libraries"]:
             raise ValueError("the actual JAX CUDA identity changed its mapped qualified driver image bytes")
+        validate_driver_capture(probe.get("qualification_driver_image", {}), identity, directory, process["pid"])
     validate_numerical_paths(probe.get("numerical_module_paths", {}), plan["numerical_source"]["source_root"])
     return {"passed": True, "scope": "one exact allocated H100 NVL site only", "hostname": proof["hostname"],
         "gpu_uuid": proof["gpu_uuid"], "job_id": proof["job_id"], "workers_permitted": False,

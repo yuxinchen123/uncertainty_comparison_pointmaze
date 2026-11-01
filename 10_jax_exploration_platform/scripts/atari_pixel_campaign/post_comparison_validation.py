@@ -42,6 +42,7 @@ PREGATHER_ASYNC_RETRY_MODULE = "pregather_async_retry.py"
 H100_NVL_SLURM_QUEUE_MODULE = "h100_nvl_slurm_queue.py"
 H100_NVL_SLURM_DEPENDENCIES = ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py",
                              "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py")
+H100_NVL_SLURM_QUALIFICATION_DEPENDENCIES = ("h100_nvl_slurm_qualification.py", "h100_nvl_allocation_observation.py")
 
 
 def canonical_digest(value):
@@ -94,6 +95,19 @@ def helper_requirements(required, verified_files):
                 selected.add(relative)
             else:
                 selected.discard(relative)
+    qualification_declared = False
+    for name in ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_evidence.py"):
+        if H100_NVL_SLURM_QUEUE_MODULE in declarations and prefix + name in verified_files:
+            tree = ast.parse(verified_files[prefix + name])
+            qualification_declared |= any(isinstance(node, ast.Assign)
+                and any(isinstance(target, ast.Name) and target.id == "H100_NVL_SLURM_QUALIFICATION_MODULE" for target in node.targets)
+                and isinstance(node.value, ast.Constant) and node.value.value == "h100_nvl_slurm_qualification.py" for node in tree.body)
+    for name in H100_NVL_SLURM_QUALIFICATION_DEPENDENCIES:
+        relative = prefix + name
+        if qualification_declared:
+            selected.add(relative)
+        else:
+            selected.discard(relative)
     return selected
 
 

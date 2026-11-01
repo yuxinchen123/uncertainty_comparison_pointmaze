@@ -19,6 +19,7 @@ import subprocess
 
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 EXECUTION_KIND = "h100_nvl_slurm_original_case"
+H100_NVL_SLURM_QUALIFICATION_MODULE = "h100_nvl_slurm_qualification.py"
 TERMINAL_NAMES = ("attempt_result", "unit_result", "attempt_progress", "unit_progress")
 JAXTARI_COMMIT = "04ab9aec318c72162e2e53503a594a489d7e162b"
 
@@ -199,7 +200,53 @@ def image(path, expected, evidence):
     evidence.receipts[key] = row
 
 
-def backend(installed, loaded, reference, evidence):
+def qualification_profile(plan):
+    """Accept explicit schema3 only through the pinned pure profile contract; preserve schema2 without it."""
+    profile = plan.get("qualification_profile")
+    if profile is None:
+        require(plan.get("schema_version") == 2, "historical schema3 qualification profile is missing")
+        return None
+    require(plan.get("schema_version") == 3, "historical target profile requires explicit schema3")
+    return load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(profile)
+
+
+def target_driver(plan):
+    """Keep canonical reference590 separate from the explicitly qualified target580 driver."""
+    profile = qualification_profile(plan)
+    return profile["expected_driver"] if profile is not None else load("h100_nvl_slurm_site_validation").DRIVER
+
+
+def qualified_observation(raw, scope, pid, birth, cpus):
+    """Rebuild captured own-process scheduler and physical identity without querying the reader host."""
+    qualifier = load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem)
+    actual = qualifier.validate_allocation(raw)
+    fields = ("hostname", "job_id", "step_id", "gpu_uuid", "pci_address", "physical_minor", "driver", "slurm_allocations")
+    require(raw.get("pid") == pid and raw.get("process_start_time") == birth
+        and actual["isolation"]["cpu_affinity"] == cpus and all(actual[name] == scope[name] for name in fields),
+        "historical qualification observation changed its exact process, task, allocation or physical GPU")
+    return actual
+
+
+def qualified_cuda(record, scope, pid, loaded, capture, directory, evidence):
+    """Resolve actual captured JAX/CUDA UUID and driver-image bytes only through supplied Evidence."""
+    qualifier = load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem)
+    qualifier.validate_cuda_identity(record, scope, pid)
+    drivers = [path for path in loaded["loaded_shared_libraries"] if Path(path).name.startswith("libcuda.so")]
+    require(drivers == [record["driver_library"]], "historical CUDA identity must name its single actual mapped driver image")
+    # The node-local path is an original identity only; shared captured bytes are the actual Evidence input.
+    expected = Path(directory) / "captured_driver" / Path(record["driver_library"]).name
+    require(capture.get("schema_version") == 1 and capture.get("kind") == "captured_mapped_cuda_driver_image"
+        and capture.get("pid") == pid and capture.get("original") == {"path": record["driver_library"], "sha256": record["driver_library_sha256"]}
+        and capture.get("captured") == {"path": str(expected), "sha256": record["driver_library_sha256"]}
+        and type(capture.get("bytes")) is int and capture["bytes"] > 0, "historical CUDA driver capture changed its exact process or original/captured identities")
+    physical = evidence.physical_file(expected)
+    require(not physical.is_symlink() and not physical.parent.is_symlink(), "historical captured driver cannot be a symlink")
+    image(expected, record["driver_library_sha256"], evidence)
+    require(physical.stat().st_size == capture["bytes"], "historical captured CUDA driver size changed")
+    return record
+
+
+def backend(installed, loaded, reference, evidence, driver=None):
     """Verify captured packages, pinned JAXtari source and actual mapped library bytes without reader imports."""
     site = load("h100_nvl_slurm_site_validation")
     post = load("post_comparison_validation")
@@ -238,7 +285,8 @@ def backend(installed, loaded, reference, evidence):
         and Path(loaded.get("cuda_runtime_library", "")).name.startswith("libcudart.so")
         and all(loaded.get(name) in mapped for name in ("cudnn_library", "cuda_runtime_library")), "historical mapped library set/bytes changed")
     drivers = [path for path in loaded["loaded_shared_libraries"] if Path(path).name.startswith("libcuda.so")]
-    require(drivers and all(path.endswith("." + site.DRIVER) for path in drivers), "historical mapped driver version changed")
+    expected_driver = site.DRIVER if driver is None else driver
+    require(drivers and all(path.endswith("." + expected_driver) for path in drivers), "historical mapped driver version changed")
 
 
 def assets(plan, actual, evidence):
@@ -315,13 +363,21 @@ def reference_identity(plan, evidence):
     return installed, actual_assets
 
 
-def assignment_identity(assignment, plan):
+def assignment_identity(assignment, plan, evidence=None, directory=None):
     """Rebuild captured physical/CPU identities without querying a live job, host or ledger."""
     site, retry = load("h100_nvl_slurm_site_validation"), load("infrastructure_retry")
     proof = assignment["allocation"]
     environment = {**proof["slurm_allocations"], "SLURM_JOB_ID": proof["job_id"], "CUDA_VISIBLE_DEVICES": proof["cuda_visible_devices_original"]}
-    require(site.resolve_allocation(environment, proof["hostname"], proof["gpu_csv"], proof["gpu_xml"]) == proof
-        and proof["driver"] == site.DRIVER and assignment["runtime_environment"] == site.RUNTIME, "historical allocation/runtime changed")
+    profile = qualification_profile(plan)
+    if profile is None:
+        reconstructed = site.resolve_allocation(environment, proof["hostname"], proof["gpu_csv"], proof["gpu_xml"])
+    else:
+        require(evidence is not None and directory is not None, "historical schema3 assignment needs its supplied Evidence and exact site directory")
+        raw_receipt = assignment["qualification_observation"]
+        require(raw_receipt["path"] == str(Path(directory) / "qualification_observation.json"), "historical parent qualification observation path changed")
+        reconstructed = qualified_observation(bound(raw_receipt, evidence), proof, assignment["parent_pid"], assignment["parent_start_time"], assignment["cpu_affinity"])
+    require(reconstructed == proof and proof["driver"] == target_driver(plan) and assignment["runtime_environment"] == site.RUNTIME,
+        "historical allocation/runtime changed")
     cpu = assignment["cpu_allocation"]
     computed = retry.cpu_allocation({"SLURM_CPUS_PER_TASK": cpu["slurm_cpus_per_task"], "SLURM_CPU_BIND_TYPE": cpu["slurm_cpu_bind_type"],
         "SLURM_CPU_BIND_LIST": cpu["slurm_cpu_bind_list"], "SLURM_CPU_BIND": cpu["slurm_cpu_bind"]}, [proof["gpu_uuid"]], cpu["parent_available_cpus"])
@@ -354,7 +410,8 @@ def site_evidence(directory, worker_helpers, evidence):
     manifest = evidence.read(directory / "manifest.yaml")
     require(manifest["plan"]["path"] == str(directory / "site_validation_plan.json"), "historical site plan path changed")
     plan = bound(manifest["plan"], evidence)
-    require(plan.get("schema_version") == 2 and plan.get("kind") == "h100_nvl_slurm_site_validation"
+    profile = qualification_profile(plan)
+    require(plan.get("kind") == "h100_nvl_slurm_site_validation"
         and plan.get("source_commit") == site.SOURCE_COMMIT and plan.get("runtime_environment") == site.RUNTIME
         and plan.get("job_shape") == site.JOB_SHAPE and plan.get("reference_updates") == 1
         and plan.get("submission_control") == site.SUBMISSION_CONTROL and plan.get("gate_environment_policy") == site.GATE_ENVIRONMENT_POLICY
@@ -363,9 +420,12 @@ def site_evidence(directory, worker_helpers, evidence):
     require(manifest["job_script"]["path"] == str(directory / "job.sbatch") and manifest.get("helpers") == plan["helpers"], "historical site manifest/helper binding changed")
     bound(manifest["job_script"], evidence, document=False)
     git_record(plan["helpers"], evidence)
-    require(set(plan["helpers"]["files"]) == {PREFIX + name for name in site.HELPERS}
+    require(set(plan["helpers"]["files"]) == {PREFIX + name for name in site.required_helpers(profile)}
         and plan["helpers"]["files"][PREFIX + "h100_nvl_slurm_site_validation.py"] == worker_helpers["files"][PREFIX + "h100_nvl_slurm_site_validation.py"],
         "historical site verifier/helper closure differs from reviewed worker code")
+    if profile is not None:
+        require(all(plan["helpers"]["files"][PREFIX + name] == worker_helpers["files"].get(PREFIX + name)
+            for name in site.QUALIFICATION_HELPERS), "historical qualification metadata helpers differ from the reviewed worker closure")
     git_record(plan["numerical_source"], evidence)
     require(plan["numerical_source"]["source_commit"] == site.SOURCE_COMMIT
         and sorted(plan["numerical_source"]["files"]) == numerical_paths(plan["numerical_source"]["source_root"], site.SOURCE_COMMIT, evidence), "historical site omitted original numerical/gate source")
@@ -381,8 +441,11 @@ def site_evidence(directory, worker_helpers, evidence):
         and result.get("workers_permitted") is False and result.get("campaign_claims_permitted") is False and result.get("scientific_hypothesis_credit") == 0
         and result.get("plan") == file_receipt(directory / "site_validation_plan.json", evidence)
         and result["assignment"]["path"] == str(directory / "site_assignment.json") and result["probe"]["path"] == str(directory / "probe_result.json"), "historical site did not produce its exact passed no-claims result")
+    require(result.get("qualification_profile") == profile, "historical site result omitted or changed its explicit target profile")
+    if profile is not None:
+        load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(result["qualification_profile"])
     assignment = bound(result["assignment"], evidence)
-    proof = assignment_identity(assignment, plan)
+    proof = assignment_identity(assignment, plan, evidence, directory)
     identities = set()
     for kind in ("learner", "renderer", "probe"):
         rows = result["children"][kind]
@@ -405,6 +468,8 @@ def site_evidence(directory, worker_helpers, evidence):
         bound(terminal["log"], evidence, False)
         expected = site.original_command(plan, kind) if kind != "probe" else None
         require(process.get("original_command") == expected, "historical site child did not execute its full original gate")
+        if profile is not None:
+            qualified_observation(process.get("qualification_observation", {}), proof, owner["pid"], owner["process_start_time"], assignment["cpu_affinity"])
     probe = bound(result["probe"], evidence)
     process = bound(result["children"]["probe"]["process"], evidence)
     finite = probe.get("finite_state", {})
@@ -414,7 +479,10 @@ def site_evidence(directory, worker_helpers, evidence):
         and all(probe.get(name) == process.get(name) for name in ("pid", "process_start_time", "gpu_uuid", "source_commit"))
         and probe.get("formal_measurement") is False and probe.get("capacity_evidence") is False and probe.get("scientific_hypothesis_credit") == 0
         and probe["loaded_libraries"].get("pid") == probe["pid"], "historical site probe lacks its real dtype/finite/update/process proof")
-    backend(installed, probe["loaded_libraries"], plan["reference"]["backend"], evidence)
+    backend(installed, probe["loaded_libraries"], plan["reference"]["backend"], evidence, target_driver(plan))
+    if profile is not None:
+        qualified_cuda(probe.get("qualification_cuda_identity", {}), proof, probe["pid"], probe["loaded_libraries"],
+            probe.get("qualification_driver_image", {}), directory, evidence)
     numerical_module_paths(probe["numerical_module_paths"], plan["numerical_source"]["source_root"])
     return plan, assignment, proof
 
@@ -433,8 +501,12 @@ def policy_evidence(receipt, evidence):
     require(datetime.fromisoformat(policy["reviewed_at_utc"]).utcoffset() is not None, "historical review timestamp lacks its timezone")
     require(all(type(policy.get(name)) is int and policy[name] >= 60 for name in ("case_time_budget_seconds", "shutdown_reserve_seconds")), "historical reviewed time bounds changed")
     git_record(policy["worker_helpers"], evidence)
-    require(set(policy["worker_helpers"]["files"]) == {PREFIX + name for name in queue.HELPERS}, "historical worker helper closure changed")
     plan, assignment, proof = site_evidence(policy["site_directory"], policy["worker_helpers"], evidence)
+    profile = qualification_profile(plan)
+    require(set(policy["worker_helpers"]["files"]) == {PREFIX + name for name in queue.required_worker_helpers(profile)}
+        and policy.get("qualification_profile") == profile, "historical worker helper closure or target qualification profile changed")
+    if profile is not None:
+        load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(policy["qualification_profile"])
     require(policy["site_result"] == file_receipt(Path(policy["site_directory"]) / "result.json", evidence)
         and policy["approved_targets"] == [{"hostname": proof["hostname"], "gpu_uuid": proof["gpu_uuid"]}]
         and policy["campaign_run_dir"] == plan["campaign_run_dir"] and policy["admission"] == plan["admission"], "historical policy expanded or changed the exact approved site")
@@ -546,7 +618,7 @@ def validate_execution(attempt, case, lease=None, *, require_completed=False, ev
     require(record["hardware"]["path"] == str(attempt / "hardware.json"), "historical case hardware path changed")
     hardware = bound(record["hardware"], evidence)
     fields = [value.strip() for value in next(csv.reader([hardware["gpu_query"]]))]
-    require(fields == [record["gpu_uuid"], site.MODEL, str(site.MEMORY_MIB) + " MiB", site.DRIVER]
+    require(fields == [record["gpu_uuid"], site.MODEL, str(site.MEMORY_MIB) + " MiB", target_driver(reference)]
         and hardware.get("pid") == record["pid"] and hardware.get("process_start_time") == record["process_start_time"]
         and hardware.get("gpu_uuid") == record["gpu_uuid"] and hardware.get("slurm_job_id") == record["job_id"]
         and hardware.get("source_root") == case["source_root"] and hardware.get("source_commit") == case["source_commit"], "historical case hardware/source does not match its actual child")
@@ -554,6 +626,7 @@ def validate_execution(attempt, case, lease=None, *, require_completed=False, ev
     bound(record["allocation_validation"], evidence)
     allocation_plan, assignment, scope = site_evidence(Path(record["allocation_validation"]["path"]).parent, policy["worker_helpers"], evidence)
     require(all(reference[name] == allocation_plan[name] for name in ("campaign_run_dir", "numerical_source", "reference", "packages", "asset_record", "jaxtari_source_root", "python", "cleanrl_reference", "configuration", "runtime_environment", "admission"))
+        and reference.get("qualification_profile") == allocation_plan.get("qualification_profile")
         and {"hostname": scope["hostname"], "gpu_uuid": scope["gpu_uuid"]} in policy["approved_targets"]
         and scope["job_id"] == record["job_id"] and scope["gpu_uuid"] == record["gpu_uuid"]
         and hardware.get("hostname", "").split(".")[0] == scope["hostname"] and record["cpu_affinity"] == assignment["cpu_affinity"]
@@ -562,7 +635,15 @@ def validate_execution(attempt, case, lease=None, *, require_completed=False, ev
     expected_assets = bound(reference["reference"]["shared_asset_receipt"], evidence)
     require(record["installed_backend"] == expected_backend and record["asset_receipt"] == expected_assets
         and record["loaded_libraries"].get("pid") == record["pid"], "historical case changed its captured installed backend/assets")
-    backend(record["installed_backend"], record["loaded_libraries"], reference["reference"]["backend"], evidence)
+    profile = qualification_profile(allocation_plan)
+    require(record.get("qualification_profile") == profile, "historical case omitted or changed its explicit target qualification profile")
+    if profile is not None:
+        load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(record["qualification_profile"])
+        qualified_observation(record.get("qualification_observation", {}), scope, record["pid"], record["process_start_time"], record["cpu_affinity"])
+    backend(record["installed_backend"], record["loaded_libraries"], reference["reference"]["backend"], evidence, target_driver(allocation_plan))
+    if profile is not None:
+        qualified_cuda(record.get("qualification_cuda_identity", {}), scope, record["pid"], record["loaded_libraries"],
+            record.get("qualification_driver_image", {}), attempt, evidence)
     module_paths(case, record["module_paths"], record["jaxtari_import"], record["installed_backend"], evidence)
     files = record["terminal_files"]
     require(set(files) == set(TERMINAL_NAMES), "historical case omitted one of four original terminal writes")

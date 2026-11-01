@@ -143,7 +143,7 @@ def execute(policy_path, allocation_directory, case_path, attempt_number, token)
             or not 1 <= attempt_number <= 3 or case["source_root"] != plan["numerical_source"]["source_root"]):
         raise ValueError("the Slurm child must execute an unchanged original ordinary H100 case")
     installed, assets = queue.fresh_software(site, plan)
-    queue.current_allocation(policy, site, assignment)
+    queue.current_allocation(policy, site, assignment, plan)
     require_clean_imports()
     runner = load_original(case)
     unit, attempt = runner.attempt_paths(run, case["unit_id"], attempt_number)
@@ -175,6 +175,17 @@ def execute(policy_path, allocation_directory, case_path, attempt_number, token)
         training = site.load("train_optimized")
         loaded = training.actual_gpu_library_receipt(devices[0].client, installed["gpu_libraries"])
         site.validate_loaded(loaded, plan, installed)
+        qualification = None
+        if site.qualification_profile(plan) is not None:
+            # After all original timed work, bind this exact JAX device and fresh own-task observations.
+            qualifier = queue.load(Path(queue.H100_NVL_SLURM_QUALIFICATION_MODULE).stem)
+            observed = queue.current_allocation(policy, site, assignment, plan)
+            identity = qualifier.validate_cuda_identity(qualifier.cuda_device_identity(devices[0]), observed["allocation"], os.getpid())
+            if identity["driver_library"] not in loaded["loaded_shared_libraries"]:
+                raise ValueError("the case JAX CUDA identity changed its actual mapped qualified driver bytes")
+            qualification = {"qualification_profile": plan["qualification_profile"],
+                "qualification_observation": observed["qualification_observation"], "qualification_cuda_identity": identity,
+                "qualification_driver_image": site.capture_driver_image(identity, attempt)}
         paths = {name: str(Path(module.__file__).resolve()) for name, module in list(sys.modules.items())
             if name in ("run_case", "controller", "ideas", "paired_benchmark", "exploration_platform", "jaxtari")
             or name.startswith("exploration_platform.atari_pixels")}
@@ -189,6 +200,8 @@ def execute(policy_path, allocation_directory, case_path, attempt_number, token)
             "cpu_affinity": sorted(os.sched_getaffinity(0)), "installed_backend": installed, "asset_receipt": assets,
             "module_paths": paths, "jaxtari_import": jaxtari_import_receipt(installed),
             "loaded_libraries": loaded, "terminal_files": terminal_files}
+        if qualification is not None:
+            record.update(qualification)
         site.write_once(attempt / "slurm_execution.json", record)
         return result
     except BaseException as error:

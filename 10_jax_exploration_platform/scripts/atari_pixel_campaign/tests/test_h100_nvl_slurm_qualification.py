@@ -282,6 +282,11 @@ class QualificationTests(unittest.TestCase):
                 ("cuDeviceGetCount", "cuDeviceGet", "cuDeviceGetUuid_v2", "cuDeviceGetPCIBusId")},
             "gpu_uuid": proof["gpu_uuid"], "pci_address": proof["pci_address"],
             "driver_library": str(driver), "driver_library_sha256": site.sha256(driver)})
+        captured = directory / "captured_driver" / driver.name
+        captured.parent.mkdir()
+        captured.write_bytes(driver.read_bytes())
+        probe["qualification_driver_image"] = {"schema_version": 1, "kind": "captured_mapped_cuda_driver_image", "pid": probe["pid"],
+            "original": {"path": str(driver), "sha256": site.sha256(driver)}, "captured": site.receipt(captured), "bytes": captured.stat().st_size}
         helper.write(directory / "probe_result.json", probe)
         result["probe"] = site.receipt(directory / "probe_result.json")
         return helper, directory, plan, result, probe
@@ -311,8 +316,8 @@ class QualificationTests(unittest.TestCase):
     def test_rehashed_driver_bytes_and_nonzero_gate_cannot_pass_profile(self):
         """A valid plan/profile cannot conceal different mapped driver bytes or an unsuccessful original gate."""
         helper, directory, plan, result, probe = self.completed_profile()
-        Path(probe["qualification_cuda_identity"]["driver_library"]).write_bytes(b"changed mapped image")
-        with self.assertRaisesRegex(ValueError, "driver image bytes"):
+        Path(probe["qualification_driver_image"]["captured"]["path"]).write_bytes(b"changed captured image")
+        with self.assertRaisesRegex(ValueError, "CUDA driver capture"):
             site.verify_result(directory, plan, result)
         terminal_path = directory / "learner_terminal.json"
         terminal = site.read(terminal_path)
@@ -321,6 +326,27 @@ class QualificationTests(unittest.TestCase):
         result["children"]["learner"]["terminal"] = site.receipt(terminal_path)
         with self.assertRaisesRegex(ValueError, "successful children"):
             site.verify_result(directory, plan, result)
+
+    def test_site_driver_capture_is_independent_and_cpu_verification_never_reads_origin(self):
+        """The GPU-side producer copies bytes before exit; the CPU-side verifier works with origin removed."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = root / "node_local/libcuda.so.580.159.04"
+            original.parent.mkdir()
+            original.write_bytes(b"synthetic actual mapped CUDA driver")
+            output = root / "shared_site"
+            output.mkdir()
+            identity = {"pid": site.os.getpid(), "driver_library": str(original), "driver_library_sha256": site.sha256(original)}
+            capture = site.capture_driver_image(identity, output)
+            target = Path(capture["captured"]["path"])
+            self.assertNotEqual(original.stat().st_ino, target.stat().st_ino)
+            self.assertEqual(target.stat().st_nlink, 1)
+            original.unlink()
+            self.assertEqual(site.validate_driver_capture(capture, identity, output, identity["pid"]), capture)
+            with self.assertRaises(FileExistsError):
+                original.write_bytes(target.read_bytes())
+                site.capture_driver_image(identity, output)
 
     def test_profile_background_states_reference_target_and_isolation_limit(self):
         """Operational records distinguish the old reference from the new driver and limited isolation evidence."""

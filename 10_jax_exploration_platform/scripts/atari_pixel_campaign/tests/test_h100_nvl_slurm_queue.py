@@ -75,8 +75,13 @@ class SlurmQueueTests(unittest.TestCase):
         """Neither a missing approval nor current unintegrated consumers can authorize a pending case."""
         with self.assertRaises(FileNotFoundError):
             queue.run_worker(self.run / "absent.json", self.run / "allocation", self.run / "output")
+        unpublished = self.run / "unpublished_helpers"
+        for name in ("controller.py", "post_comparison_validation.py"):
+            path = unpublished / queue.PREFIX / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("# Synthetic helper without Slurm dispatch.\n")
         with self.assertRaisesRegex(ValueError, "not yet published"):
-            queue.require_dispatch({"worker_helpers": {"source_root": str(SCRIPTS.parents[2])}})
+            queue.require_dispatch({"worker_helpers": {"source_root": str(unpublished)}})
         self.assertTrue(self.pending.exists())
         self.assertEqual(list((self.run / "queue/leases").iterdir()), [])
 
@@ -410,6 +415,7 @@ class SlurmQueueTests(unittest.TestCase):
         # Full site/Git/backend semantics are covered by the separate historical suite; retain real child and publication bytes here.
         plan = {name: {} for name in ("campaign_run_dir", "numerical_source", "reference", "packages", "asset_record", "jaxtari_source_root",
             "python", "cleanrl_reference", "configuration", "runtime_environment", "admission")}
+        plan["schema_version"] = 2
         plan["numerical_source"] = {"source_root": self.source}
         plan["reference"] = {"shared_installed_backend": site.receipt(self.run / "installed.json"),
             "shared_asset_receipt": site.receipt(self.run / "assets.json"), "backend": {}}

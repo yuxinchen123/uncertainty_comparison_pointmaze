@@ -28,10 +28,19 @@ import uuid
 
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 EXECUTION_KIND = "h100_nvl_slurm_original_case"
+H100_NVL_SLURM_QUALIFICATION_MODULE = "h100_nvl_slurm_qualification.py"
 HELPERS = ("h100_nvl_slurm_queue.py", "h100_nvl_slurm_case.py", "h100_nvl_slurm_evidence.py", "h100_nvl_slurm_site_validation.py",
     "controller.py", "ideas.py", "admit_measurements.py", "train_optimized.py", "diagnose_gpu_execution.py",
     "post_comparison_validation.py", "infrastructure_retry.py", "pregather_async_retry.py")
 TERMINAL_NAMES = ("attempt_result", "unit_result", "attempt_progress", "unit_progress")
+
+
+def required_worker_helpers(profile=None):
+    """Keep the original twelve-file closure and pin two extra metadata files only for schema3."""
+    if profile is None:
+        return HELPERS
+    load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(profile)
+    return HELPERS + (H100_NVL_SLURM_QUALIFICATION_MODULE, "h100_nvl_allocation_observation.py")
 
 
 def load(name):
@@ -93,7 +102,12 @@ def validate_policy(path, *, admission=True):
             or policy.get("admission") != plan["admission"]):
         raise ValueError("placement permission must cover only the exact passed node/UUID and current admission")
     local.verify_source_identity(policy["worker_helpers"])
-    expected_helpers = {PREFIX + name for name in HELPERS}
+    profile = site.qualification_profile(plan)
+    if policy.get("qualification_profile") != profile:
+        raise ValueError("the placement policy changed or omitted its explicit target qualification profile")
+    if profile is not None:
+        load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem).require_profile(policy["qualification_profile"])
+    expected_helpers = {PREFIX + name for name in required_worker_helpers(profile)}
     if (set(policy["worker_helpers"]["files"]) != expected_helpers
             or Path(__file__).resolve() != Path(policy["worker_helpers"]["source_root"]) / PREFIX / Path(__file__).name):
         raise ValueError("execute only the complete committed worker metadata closure named by the policy")
@@ -131,7 +145,8 @@ def compare_site_plans(reference, allocation):
     """Retain the exact original interpreter, full configuration, software, assets and numerical source at each site check."""
     names = ("campaign_run_dir", "numerical_source", "reference", "packages", "asset_record", "jaxtari_source_root",
         "python", "cleanrl_reference", "configuration", "runtime_environment", "admission")
-    if any(reference[name] != allocation[name] for name in names):
+    if (any(reference[name] != allocation[name] for name in names)
+            or reference.get("qualification_profile") != allocation.get("qualification_profile")):
         raise ValueError("the fresh allocation changed the complete reviewed reference configuration or software inputs")
 
 
@@ -147,25 +162,42 @@ def fresh_software(site, plan):
     return installed, assets
 
 
-def current_allocation(policy, site, assignment):
+def current_allocation(policy, site, assignment, plan=None):
     """Resolve the physical card inside the active step and retain every original job/step GPU field."""
     cgroup = Path("/proc/self/cgroup").read_text()
     step = os.environ.get("SLURM_STEP_ID", "")
     if not step.isdecimal() or not re.search(r"(?:^|/)step_" + re.escape(step) + r"(?:/|$)", cgroup, re.MULTILINE):
         raise ValueError("resolve the worker GPU inside its explicit owned srun step")
     owned = site.require_owned_job(policy["campaign_run_dir"], os.environ, cgroup)
-    csv_text = site.query(["nvidia-smi", "--query-gpu=index,uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits"])
-    xml_text = site.query(["nvidia-smi", "-q", "-x"])
-    proof = site.resolve_allocation(os.environ, socket.gethostname().split(".")[0], csv_text, xml_text)
+    profile = policy.get("qualification_profile")
+    if profile is None:
+        csv_text = site.query(["nvidia-smi", "--query-gpu=index,uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits"])
+        xml_text = site.query(["nvidia-smi", "-q", "-x"])
+        proof = site.resolve_allocation(os.environ, socket.gethostname().split(".")[0], csv_text, xml_text)
+    else:
+        qualifier = load(Path(H100_NVL_SLURM_QUALIFICATION_MODULE).stem)
+        qualifier.require_profile(profile)
+        if plan is None or site.qualification_profile(plan) != profile:
+            raise ValueError("the current allocation requires its exact explicit schema3 plan")
+        gpu = assignment["allocation"]["gpu_uuid"]
+        csv_text = site.query(["nvidia-smi", "-i", gpu, "--query-gpu=index,uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits"])
+        xml_text = site.query(["nvidia-smi", "-i", gpu, "-q", "-x"])
+        observation = qualifier.capture(load("h100_nvl_allocation_observation"), os.environ, socket.gethostname().split(".")[0],
+            csv_text, xml_text, site.query, site.process_start_time(os.getpid()))
+        proof = qualifier.validate_allocation(observation)
     original = assignment["allocation"]
     fields = ("hostname", "gpu_uuid", "job_id", "physical_minor", "driver", "slurm_allocations")
+    target_driver = site.DRIVER if profile is None else profile["expected_driver"]
     if (any(proof[name] != original[name] for name in fields)
             or {"hostname": proof["hostname"], "gpu_uuid": proof["gpu_uuid"]} not in policy["approved_targets"]
-            or proof["driver"] != site.DRIVER or sorted(os.sched_getaffinity(0)) != assignment["cpu_affinity"]):
+            or proof["driver"] != target_driver or sorted(os.sched_getaffinity(0)) != assignment["cpu_affinity"]
+            or (profile is not None and (proof["step_id"] != original["step_id"] or proof["pci_address"] != original["pci_address"]
+                or proof["isolation"]["cpu_affinity"] != assignment["cpu_affinity"]))):
         raise ValueError("the active owned GPU/driver/CPU allocation differs from its fresh successful site checks")
     os.environ["CUDA_VISIBLE_DEVICES"] = proof["gpu_uuid"]
     site.require_runtime(os.environ)
-    return {"allocation": proof, "owned_job": owned, "step_id": step, "cpu_affinity": sorted(os.sched_getaffinity(0))}
+    return {"allocation": proof, "owned_job": owned, "step_id": step, "cpu_affinity": sorted(os.sched_getaffinity(0)),
+        **({"qualification_observation": observation} if profile is not None else {})}
 
 
 def step_command(policy_path, allocation_directory, output_directory):
@@ -460,7 +492,7 @@ def run_worker(policy_path, allocation_directory, output_directory):
     if sorted(os.sched_getaffinity(0)) != assignment["cpu_affinity"]:
         raise ValueError("the worker must hold the exact verified eight CPUs")
     os.environ["CUDA_VISIBLE_DEVICES"] = proof["gpu_uuid"]
-    initial_allocation = current_allocation(policy, site, assignment)
+    initial_allocation = current_allocation(policy, site, assignment, plan)
     identity = {"worker_id": uuid.uuid4().hex, "worker_pid": os.getpid(), "worker_start_time": site.process_start_time(os.getpid()),
         "hostname": proof["hostname"], "slurm_job_id": proof["job_id"], "hardware_class": "h100", "gpu_uuid": proof["gpu_uuid"],
         "gpu_name": site.MODEL, "cpu_affinity": assignment["cpu_affinity"], "placement_policy": site.receipt(policy_path)}
@@ -480,7 +512,7 @@ def run_worker(policy_path, allocation_directory, output_directory):
             if stop:
                 controller.atomic_json(output / "result.json", {"state": "stopped_after_case", "requested_signals": stop})
                 return
-            current_allocation(policy, site, assignment)
+            current_allocation(policy, site, assignment, plan)
             site.require_selected_card(proof["gpu_uuid"])
             fresh_software(site, plan)
             validate_policy(policy_path)
