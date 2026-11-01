@@ -197,10 +197,13 @@ def tick(run_dir):
     previous = read_json(run_dir/'campaign_state.json')
     deadline = previous.get('deadline')
     expired = bool(deadline and datetime.now().astimezone() >= datetime.fromisoformat(deadline))
-    if expired or (run_dir/'STOP').exists():
+    complete = previous.get('phase') == 'complete' or (run_dir/'SWEEP_COMPLETE').exists()
+    if expired or (run_dir/'STOP').exists() or complete:
         state = dict(previous, deadline_reached=expired, stopped_at=now())
         stop_workers(run_dir, live)
-        if not expired:
+        if complete:
+            state['phase'] = 'complete'
+        elif not expired:
             state['phase'] = 'stopped'
         write_json(run_dir/'campaign_state.json', state)
     else:

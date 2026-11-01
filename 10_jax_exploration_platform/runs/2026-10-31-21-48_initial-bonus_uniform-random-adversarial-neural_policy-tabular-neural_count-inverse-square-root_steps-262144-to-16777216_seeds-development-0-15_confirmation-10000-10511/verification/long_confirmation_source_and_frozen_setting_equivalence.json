@@ -1,0 +1,1231 @@
+{
+  "passed": true,
+  "created_at": "2026-11-01T03:26:01.844742-05:00",
+  "command": [
+    "srun",
+    "--jobid=6780563",
+    "--overlap",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "/p/rlprojects/RND/.venvs/platform_jax/bin/python",
+    "-",
+    "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511"
+  ],
+  "execution": {
+    "hostname": "slurm5",
+    "slurm_job_id": "6780563",
+    "slurm_step_id": "3"
+  },
+  "source_commits": [
+    "97111d49c2ff8112c482422213f16f0840486744",
+    "2041e37d78c2f63d2263f4f00bd680fe68dc4be2"
+  ],
+  "numerical_code": {
+    "package_python_file_count": 55,
+    "training_entry_point_count": 1,
+    "archive_helper_count": 1,
+    "total_file_count": 57,
+    "different_file_count": 0,
+    "file_hashes": [
+      {
+        "relative_path": "src/exploration_platform/__init__.py",
+        "source_97111d4_sha256": "8f36e98870ca0ffe74a039404de8f42d748925da7920841fb751b4fe2f872b53",
+        "source_2041e37_sha256": "8f36e98870ca0ffe74a039404de8f42d748925da7920841fb751b4fe2f872b53",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/__init__.py",
+        "source_97111d4_sha256": "adbe7e838c8899b4c6d7964582b329b5eaec68b94c055cf67c09e24828709135",
+        "source_2041e37_sha256": "adbe7e838c8899b4c6d7964582b329b5eaec68b94c055cf67c09e24828709135",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/__init__.py",
+        "source_97111d4_sha256": "c06f8e4f56c6fdd4f04e0c9a93aebd862ae3d420e4311f96ee4f98a7cf9d7522",
+        "source_2041e37_sha256": "c06f8e4f56c6fdd4f04e0c9a93aebd862ae3d420e4311f96ee4f98a7cf9d7522",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/config.py",
+        "source_97111d4_sha256": "3d86251c56a4268034fb8c8635afe9db9b05a2856f359c128df2c21e96fae0f6",
+        "source_2041e37_sha256": "3d86251c56a4268034fb8c8635afe9db9b05a2856f359c128df2c21e96fae0f6",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/losses.py",
+        "source_97111d4_sha256": "96efdcb73170bf1165b9726bd3c33d7c1760b8e5c8a95fb96e94b21b64500be5",
+        "source_2041e37_sha256": "96efdcb73170bf1165b9726bd3c33d7c1760b8e5c8a95fb96e94b21b64500be5",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/networks.py",
+        "source_97111d4_sha256": "a005e5a8ca10cd27e843ae9f09f59b4e9a3cd46d24045770e97ca4dbab4f8c29",
+        "source_2041e37_sha256": "a005e5a8ca10cd27e843ae9f09f59b4e9a3cd46d24045770e97ca4dbab4f8c29",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/presets.py",
+        "source_97111d4_sha256": "c098a1e7d369dc3ad12853ea75de624a46ea0440e7ca4b8e7173dd361a28f8c0",
+        "source_2041e37_sha256": "c098a1e7d369dc3ad12853ea75de624a46ea0440e7ca4b8e7173dd361a28f8c0",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/agents/ppo/update.py",
+        "source_97111d4_sha256": "d1fb93fdb331bc45254222809ec4ab9d4bc0d672b9936064f3d19e0cf2b22b03",
+        "source_2041e37_sha256": "d1fb93fdb331bc45254222809ec4ab9d4bc0d672b9936064f3d19e0cf2b22b03",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/__init__.py",
+        "source_97111d4_sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+        "source_2041e37_sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/checkpointing.py",
+        "source_97111d4_sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+        "source_2041e37_sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/config.py",
+        "source_97111d4_sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+        "source_2041e37_sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/environment.py",
+        "source_97111d4_sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+        "source_2041e37_sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/kernels.py",
+        "source_97111d4_sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+        "source_2041e37_sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/networks.py",
+        "source_97111d4_sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+        "source_2041e37_sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+        "source_97111d4_sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+        "source_2041e37_sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/settings.py",
+        "source_97111d4_sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+        "source_2041e37_sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/state.py",
+        "source_97111d4_sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+        "source_2041e37_sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/atari_pixels/training.py",
+        "source_97111d4_sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+        "source_2041e37_sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/__init__.py",
+        "source_97111d4_sha256": "7ea6b199d73f9bc499f5211717026df266f7b5a5607822c1f8f793a4a53cb103",
+        "source_2041e37_sha256": "7ea6b199d73f9bc499f5211717026df266f7b5a5607822c1f8f793a4a53cb103",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/none.py",
+        "source_97111d4_sha256": "370fe08f4d11f89a331774e9f6f51bed285dd7c4a8bd8f1001203c5ab0794e3b",
+        "source_2041e37_sha256": "370fe08f4d11f89a331774e9f6f51bed285dd7c4a8bd8f1001203c5ab0794e3b",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/protocol.py",
+        "source_97111d4_sha256": "6d72c78e8e1519a81581642876c19b8cf0fb35412754f640b720563ad8756a6e",
+        "source_2041e37_sha256": "6d72c78e8e1519a81581642876c19b8cf0fb35412754f640b720563ad8756a6e",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/registry.py",
+        "source_97111d4_sha256": "cc4718ef894342ba05fb46cef069ac86c085c653939a0a06fa970846a2d01fd6",
+        "source_2041e37_sha256": "cc4718ef894342ba05fb46cef069ac86c085c653939a0a06fa970846a2d01fd6",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/rnd/__init__.py",
+        "source_97111d4_sha256": "cfefd4d0a1ef5db0f364b8cd88673df7e04f187f9bdc50ac4cf96c123e2a7243",
+        "source_2041e37_sha256": "cfefd4d0a1ef5db0f364b8cd88673df7e04f187f9bdc50ac4cf96c123e2a7243",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/rnd/config.py",
+        "source_97111d4_sha256": "2c3e41556f99a661c1f470cd482c7d2594a88a15211a56a2557c534bbddbd231",
+        "source_2041e37_sha256": "2c3e41556f99a661c1f470cd482c7d2594a88a15211a56a2557c534bbddbd231",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/rnd/implementation.py",
+        "source_97111d4_sha256": "d6acca7b105c3994799cf71e901130e982d51ae01025dad929a60f181a9bd4fd",
+        "source_2041e37_sha256": "d6acca7b105c3994799cf71e901130e982d51ae01025dad929a60f181a9bd4fd",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/rnd/networks.py",
+        "source_97111d4_sha256": "c58f22dc454dbeb4b7b81be90e0ab6fee3c0dac5a03920af46c1cdb7b3138cc6",
+        "source_2041e37_sha256": "c58f22dc454dbeb4b7b81be90e0ab6fee3c0dac5a03920af46c1cdb7b3138cc6",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/visit_count/__init__.py",
+        "source_97111d4_sha256": "94cd71bdd9638aa17d7f8206f9fbfc21d36ad3b146f7cbd3feda0812401cf5f1",
+        "source_2041e37_sha256": "94cd71bdd9638aa17d7f8206f9fbfc21d36ad3b146f7cbd3feda0812401cf5f1",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/visit_count/config.py",
+        "source_97111d4_sha256": "67ebb77b5e30e01c3023a97def23674f1672ef68ccab211b48d240d16eb598e7",
+        "source_2041e37_sha256": "67ebb77b5e30e01c3023a97def23674f1672ef68ccab211b48d240d16eb598e7",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/visit_count/implementation.py",
+        "source_97111d4_sha256": "e8d9cdb3484737400137e4d4ee276357cad34bfa6a8aef78208b4be854071f18",
+        "source_2041e37_sha256": "e8d9cdb3484737400137e4d4ee276357cad34bfa6a8aef78208b4be854071f18",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/bonuses/visit_count/reference.py",
+        "source_97111d4_sha256": "de8cc5fdee65c973b2cdfe36cde2ad430742c50195d1cb4741b847ff64235505",
+        "source_2041e37_sha256": "de8cc5fdee65c973b2cdfe36cde2ad430742c50195d1cb4741b847ff64235505",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/__init__.py",
+        "source_97111d4_sha256": "884e5519c8e429dd1eaba9cdaaa091470b5ee76a84e87c6db1a9c493e3d1be1e",
+        "source_2041e37_sha256": "884e5519c8e429dd1eaba9cdaaa091470b5ee76a84e87c6db1a9c493e3d1be1e",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/antmaze/__init__.py",
+        "source_97111d4_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_2041e37_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/antmaze/am_common.py",
+        "source_97111d4_sha256": "2a9df74f1c8c54ec4e850b1dfafd933ca2623c0db2c9958dc52ec2df5999b87d",
+        "source_2041e37_sha256": "2a9df74f1c8c54ec4e850b1dfafd933ca2623c0db2c9958dc52ec2df5999b87d",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/antmaze/mjx_antmaze.py",
+        "source_97111d4_sha256": "ba551762ff7a26326690774d108c535e77f0154a1ede328b96013b3e2d843e2f",
+        "source_2041e37_sha256": "ba551762ff7a26326690774d108c535e77f0154a1ede328b96013b3e2d843e2f",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/atari_montezuma/__init__.py",
+        "source_97111d4_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_2041e37_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/atari_montezuma/jax_montezuma.py",
+        "source_97111d4_sha256": "383577567657149718ffbb246f60d9a59278723c80813304a046f1ff1617b86d",
+        "source_2041e37_sha256": "383577567657149718ffbb246f60d9a59278723c80813304a046f1ff1617b86d",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/pointmaze/__init__.py",
+        "source_97111d4_sha256": "1511cd3dd677ad9eeb24a8ce2ba7b2691fea027d6d9df8e6702ec54259a42743",
+        "source_2041e37_sha256": "1511cd3dd677ad9eeb24a8ce2ba7b2691fea027d6d9df8e6702ec54259a42743",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/pointmaze/jax_pointmaze.py",
+        "source_97111d4_sha256": "483351840ae49e8f4468b4d8df1d6ff55b957c68b5f29f62b37528622d00c008",
+        "source_2041e37_sha256": "483351840ae49e8f4468b4d8df1d6ff55b957c68b5f29f62b37528622d00c008",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/envs/pointmaze/pm_common.py",
+        "source_97111d4_sha256": "5d35697e8cfefb1988046bd49a24e37b0fb7810d341d79be708b45b20cb82a46",
+        "source_2041e37_sha256": "5d35697e8cfefb1988046bd49a24e37b0fb7810d341d79be708b45b20cb82a46",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/evaluation/__init__.py",
+        "source_97111d4_sha256": "7f76161fe1bdd03171a24e497dacef771f32b1b0f568dd9c0c913e49cc6915e6",
+        "source_2041e37_sha256": "7f76161fe1bdd03171a24e497dacef771f32b1b0f568dd9c0c913e49cc6915e6",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/evaluation/coverage.py",
+        "source_97111d4_sha256": "ca06683409385ad19a40b79d8450db480bac745c26294bd4177bc3730fc01f85",
+        "source_2041e37_sha256": "ca06683409385ad19a40b79d8450db480bac745c26294bd4177bc3730fc01f85",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/grid_initialization/config.py",
+        "source_97111d4_sha256": "4b13b0df90bed3f3dae0209113e23ebe932cde69c7e0a5d421dae16392c19d43",
+        "source_2041e37_sha256": "4b13b0df90bed3f3dae0209113e23ebe932cde69c7e0a5d421dae16392c19d43",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/grid_initialization/environments.py",
+        "source_97111d4_sha256": "223280305e0322159d02fa555c4668bfa8138b359d06782edf41b5e17bf1ffd6",
+        "source_2041e37_sha256": "223280305e0322159d02fa555c4668bfa8138b359d06782edf41b5e17bf1ffd6",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/grid_initialization/fields.py",
+        "source_97111d4_sha256": "8760208c90650a92634f4cef18e37867e9d13a08aa0159921791976ed6c25403",
+        "source_2041e37_sha256": "8760208c90650a92634f4cef18e37867e9d13a08aa0159921791976ed6c25403",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/grid_initialization/training.py",
+        "source_97111d4_sha256": "f9780781bf9c0a4ae3e3138adaa0a8586eff5ad1fc90088b4b9813966476be97",
+        "source_2041e37_sha256": "f9780781bf9c0a4ae3e3138adaa0a8586eff5ad1fc90088b4b9813966476be97",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/networks.py",
+        "source_97111d4_sha256": "4d2533e6d35001260af516d9551a39b632f5e5c26d9df85e0fafe4d54f3b6393",
+        "source_2041e37_sha256": "4d2533e6d35001260af516d9551a39b632f5e5c26d9df85e0fafe4d54f3b6393",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/statistics.py",
+        "source_97111d4_sha256": "4a62cec14de94bb2fb556705b28a01ab5a175763c7e1369cce3fe1bbf7322d4b",
+        "source_2041e37_sha256": "4a62cec14de94bb2fb556705b28a01ab5a175763c7e1369cce3fe1bbf7322d4b",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/__init__.py",
+        "source_97111d4_sha256": "2c3c9d4e6f3736b74831918857c985ba0702079c9b18827ecae61fe5640532ca",
+        "source_2041e37_sha256": "2c3c9d4e6f3736b74831918857c985ba0702079c9b18827ecae61fe5640532ca",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/blocks.py",
+        "source_97111d4_sha256": "88f8d331b9f6858c6fbdcffaf1a5b976c3e07d424056d5a02099318943a520c0",
+        "source_2041e37_sha256": "88f8d331b9f6858c6fbdcffaf1a5b976c3e07d424056d5a02099318943a520c0",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/compose.py",
+        "source_97111d4_sha256": "8f7f2900b5a80bac468498ceb197eb246b5eac5b6ddd0c48c987dbf5b74f38ec",
+        "source_2041e37_sha256": "8f7f2900b5a80bac468498ceb197eb246b5eac5b6ddd0c48c987dbf5b74f38ec",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/diagnostics.py",
+        "source_97111d4_sha256": "60dfef9c2897dc58362b0e9c02af4072458872c51bfc420db6dc4fd1d5ae693e",
+        "source_2041e37_sha256": "60dfef9c2897dc58362b0e9c02af4072458872c51bfc420db6dc4fd1d5ae693e",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/runner.py",
+        "source_97111d4_sha256": "8f38845212b8f705153e71c3bf013666dd9aa461a52b7b11f1b937e6c341a296",
+        "source_2041e37_sha256": "8f38845212b8f705153e71c3bf013666dd9aa461a52b7b11f1b937e6c341a296",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/state.py",
+        "source_97111d4_sha256": "0c0d605af712a18503cfb622c5b25ad5c37c67f16e6023be6ee177529ffbc002",
+        "source_2041e37_sha256": "0c0d605af712a18503cfb622c5b25ad5c37c67f16e6023be6ee177529ffbc002",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/sweep.py",
+        "source_97111d4_sha256": "fa33182754e94347669bc7bf7ef6175f4b40b9819fa9f6f528fc621f65cb63f4",
+        "source_2041e37_sha256": "fa33182754e94347669bc7bf7ef6175f4b40b9819fa9f6f528fc621f65cb63f4",
+        "identical": true
+      },
+      {
+        "relative_path": "src/exploration_platform/training/train_step.py",
+        "source_97111d4_sha256": "5b9dfabdaef6d2957c4bcac26e869e7ae940b2302f07e44c460a8bd972af3fc9",
+        "source_2041e37_sha256": "5b9dfabdaef6d2957c4bcac26e869e7ae940b2302f07e44c460a8bd972af3fc9",
+        "identical": true
+      },
+      {
+        "relative_path": "scripts/grid_initialization_campaign/train_unit.py",
+        "source_97111d4_sha256": "6381726bcc3d416033f434e31ecf1b1e8c584b0c13fc7a7ebce9e3b165184df3",
+        "source_2041e37_sha256": "6381726bcc3d416033f434e31ecf1b1e8c584b0c13fc7a7ebce9e3b165184df3",
+        "identical": true
+      },
+      {
+        "relative_path": "scripts/grid_initialization_campaign/initial_field_archive.py",
+        "source_97111d4_sha256": "96707dace044dec93c5c8c0e69b5e7ee9e0b83a532152d7eb99fce20e3c20a5e",
+        "source_2041e37_sha256": "96707dace044dec93c5c8c0e69b5e7ee9e0b83a532152d7eb99fce20e3c20a5e",
+        "identical": true
+      }
+    ]
+  },
+  "frozen_choices": {
+    "short_condition_count": 16,
+    "long_condition_count": 16,
+    "all_exact_equal": true,
+    "conditions": [
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "neural",
+          "high_start_cell",
+          6
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0078125,
+            "intrinsic_coefficient": 1.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0078125,
+            "intrinsic_coefficient": 1.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "neural",
+          "random_log_uniform",
+          4
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0009765625,
+            "intrinsic_coefficient": 4.0,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.999755859375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0009765625,
+            "intrinsic_coefficient": 4.0,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.999755859375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "neural",
+          "random_network",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 64,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 64,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "neural",
+          "uniform",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.00390625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "tabular",
+          "high_start_region",
+          6
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "tabular",
+          "random_log_uniform",
+          4
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "tabular",
+          "random_network",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 6.103515625e-05,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 6.103515625e-05,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "snake",
+            "turns": 2,
+            "width": 16
+          },
+          "tabular",
+          "uniform",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "neural",
+          "high_start_cell",
+          8
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "neural",
+          "random_log_uniform",
+          4
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0078125,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.0078125,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 128,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "neural",
+          "random_network",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 64,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 64,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "neural",
+          "uniform",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 0.25,
+            "entropy_coefficient": 0.015625,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "tabular",
+          "high_start_region",
+          8
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "tabular",
+          "random_log_uniform",
+          4
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0,
+            "rollout_steps": 128,
+            "gamma_int": 0.984375,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "tabular",
+          "random_network",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 6.103515625e-05,
+            "intrinsic_coefficient": 0.015625,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      },
+      {
+        "scientific_condition": [
+          {
+            "kind": "straight",
+            "turns": 0,
+            "width": 32
+          },
+          "tabular",
+          "uniform",
+          0
+        ],
+        "short_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "long_settings": [
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "shared"
+          },
+          {
+            "learning_rate": 0.015625,
+            "intrinsic_coefficient": 64.0,
+            "entropy_coefficient": 0.0009765625,
+            "rollout_steps": 256,
+            "gamma_int": 0.99,
+            "comparison": "independently-tuned"
+          }
+        ],
+        "exact_equal": true
+      }
+    ]
+  },
+  "restart_design": {
+    "description": "Independent restarts from zero counts and initialized policy parameters, using the same frozen settings, policy seeds and canonical fields. This is not continuation from the 4M final state. Linear learning-rate annealing uses each run's own total iteration budget.",
+    "transition_budgets": {
+      "confirmation": [
+        4194304
+      ],
+      "long-confirmation": [
+        16777216
+      ]
+    },
+    "policy_seed_ranges": {
+      "confirmation": [
+        10000,
+        10127,
+        128
+      ],
+      "long-confirmation": [
+        10000,
+        10127,
+        128
+      ]
+    },
+    "rollout_steps_total_iterations_anneal_enabled": {
+      "confirmation": [
+        [
+          64,
+          65536,
+          true
+        ],
+        [
+          128,
+          32768,
+          true
+        ],
+        [
+          256,
+          16384,
+          true
+        ]
+      ],
+      "long-confirmation": [
+        [
+          64,
+          262144,
+          true
+        ],
+        [
+          128,
+          131072,
+          true
+        ],
+        [
+          256,
+          65536,
+          true
+        ]
+      ]
+    },
+    "completed_main_tasks": {
+      "confirmation": 168,
+      "long-confirmation": 168
+    }
+  },
+  "wall_seconds": 2.502484313037712,
+  "command_input": "Inline Python compared SHA-256 bytes of every recorded relative source path and exact JSON settings for the sixteen scientific condition identifiers. The full input hashes and comparison values are retained in this record."
+}

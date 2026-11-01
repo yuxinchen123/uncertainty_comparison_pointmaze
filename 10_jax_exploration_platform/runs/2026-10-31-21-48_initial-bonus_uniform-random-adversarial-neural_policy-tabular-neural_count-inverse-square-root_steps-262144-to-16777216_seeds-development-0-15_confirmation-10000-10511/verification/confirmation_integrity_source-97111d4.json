@@ -1,0 +1,1366 @@
+{
+  "passed": true,
+  "at": "2026-11-01T02:31:29.759654-05:00",
+  "command": [
+    "/p/rlprojects/RND/10_jax_exploration_platform/scripts/grid_initialization_campaign/audit_confirmation_integrity.py",
+    "--run-dir",
+    "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511",
+    "--expected-source",
+    "97111d4",
+    "--output",
+    "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/verification/confirmation_integrity_source-97111d4.json"
+  ],
+  "execution": {
+    "hostname": "slurm5",
+    "slurm_job_id": "6780472",
+    "slurm_step_id": "11"
+  },
+  "audit_script": {
+    "path": "/p/rlprojects/RND/10_jax_exploration_platform/scripts/grid_initialization_campaign/audit_confirmation_integrity.py",
+    "sha256": "3a5dffead2c287b058f52d0db7a5679f574f65a013309c32a4848faf85f987da"
+  },
+  "source": {
+    "commit": "97111d49c2ff8112c482422213f16f0840486744",
+    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_97111d49c2ff8112c482422213f16f0840486744"
+  },
+  "expected_data_source_commit": "97111d4",
+  "completed_data_source_counts": {
+    "97111d49c2ff8112c482422213f16f0840486744": 236
+  },
+  "waves": [
+    "confirmation"
+  ],
+  "completed_units": 236,
+  "canonical_field_archives_checked": 328,
+  "main_groups_with_results": 32,
+  "main_groups_complete_128_policies_32_fields": 32,
+  "check_counts": {
+    "behavior_zip_crc": 236,
+    "exact_checkpoint_steps": 236,
+    "visit_history_shape": 236,
+    "visit_count_sum_equals_step": 236,
+    "visit_counts_monotonic": 236,
+    "final_counts_match": 236,
+    "goal_counts_iff_first_goal_by_checkpoint": 236,
+    "first_goal_range": 236,
+    "fresh_policy_seed_range": 236,
+    "fresh_field_seed_range": 236,
+    "completed_copies": 6272,
+    "goal_checkpoint_copy_comparisons": 81536,
+    "visitation_history_cells": 3357952,
+    "expected_data_source_commit": 236,
+    "canonical_field_reference_present": 6272,
+    "canonical_generation_source_and_inputs": 328,
+    "canonical_field_array_checksums": 6272
+  },
+  "errors": [],
+  "behavior_archive_checksums": [
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "b8d539193c2797a406cc30b9f8b238b251fffb021de4c854e594fd0fe98e58b0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-64/behavior.npz",
+      "sha256": "30a41308932435e78b0b0951e0f2c5fb69e14c1e3527a85e7634e2db369a2156"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "1dab909893e13f1858aa767a57dbcdd2270c724916b50c6c94a206bb2b0d937c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "5ad5fb1ea57da9fd0f3cc38ac21ff3b7584c648d8d487673958a0a9b4e312cf4"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "ed6671d6b354890eb40bcc17bf3a4c081cecaa68448b7f92f955a95efc1aae5e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "e7f259a7fe56c453082b3b41862ec05171561b50a1c75a17d89f4b76db9db797"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-64/behavior.npz",
+      "sha256": "2552db52286555abdade2d553a1e6899784dec04197903613081ef56bcc4fc91"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "ca737fa007be4d6e7d5296b0d78ef8fcf34fe86be1da8d7758482d026b247f8c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "4b20c77f4cd2cc3029b7034a851269d209f19662b80dc3927790279e03e30094"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "b547807b35c6059433845e53bcf3692bec48c14b7a93511cf49deefa87a2e224"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "c1db7d69ab175e0e6db45d46ae646b96ba9a95dbf8045d4306e8a1ad4004e738"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "3cf1034205459dea1fd01f6a29ebaa4124ceb4352e25e9cec6e23c780e3b6e2c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "6c70c5b0c0bca974cd44b693e8572c70bd9c5ca46a6c4d12de62f017b68eab27"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "4285290681c6e50efa4f1db7fe19ee4aa356904e6d044270ad6ac8ff5f8cbb7e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "6ef440e906a1b18561838ae01f7c5da2ac66231652a57bf82acfbb3c99933170"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "ade461f8212ec1f860d85dd60538f512adff3385f84c40885445b63426ec0e37"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "cba8b95fb98ed731ed4f2262705f3729e3357d4a68dee922d3abd9e9dce51dc3"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "495cfb1efa5355227a82148d5e6cd9607a2d4e1d6ed239f8dbbeb8cfcef1353a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-64/behavior.npz",
+      "sha256": "a9b2e0576afcf64dd1c1c6ad4e4094b33f484b04aa7d534388667a717b748199"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "76b7838b3f653014205e265e66e2adb0f18e737d4b69d26ac7061d6d7f94cb51"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "d9a9d6d8fb4819b98bccfedc68b033e178864690c597d6ae6890179acd523724"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "543e9b863c2e08a2dbad04be629960e9920f6b99c3208919296e81df94804bcb"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "c94fe54b4ef5e56a7d008e87406d0b8a6a41bd6605c08c712cd399f51be6ae8a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "5decb834375e269b3cc882ee63f9a5608f68fa66c4d528e7f315ba7f5f87461d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "b78516b315d4dd2c2aa7024204bf1c0ba70f91c6cd2d0fa19caadbeae94916db"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "7df36f8719e2319dce03a1b748d8cbfe5b3388440aef6d0027f5ed3b7382d49e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "3a31b3d98f095340437c9fa5bd83801efb5c8fbcd84026c16c2b3a7f5e21910a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "0f0420c8be5b07884b8b88d7d4d97bd032587d3d2e547127812c08cd3b917ba4"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "14b2ec4efa9d297c00d105848f22a0f21fad14f6a00e5171920063dd2427624f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "2323d4785ae73e59436ad32ae19a1302425bc506ef836f874f89e35d37a14a94"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "0fb4cf343f89b450ceddf878df8eaf7f27318706343a0568c715f3e33ad819e0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "39bf9f74e1e9783677720cfaf83227c6198edd1eec5e2302927f35ff377e2706"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "8142db61912609723b535f1a419a0c12d2a90be57351934250501e728c638d5c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "bbbc44cd63010241f2a9c7685c8065df9fa0c006404cf9ed34adeb00f45e99be"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "1af6e17d2763f5f060afd3d6be5117143fdc39c9b98dfc7e7c98b06b90b4f139"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-64/behavior.npz",
+      "sha256": "a93ad2ac15e185b1805545886768b65274bfdb1ff7ba7036eacba5250441a478"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "924ae3408f5b01962eaca30ba0785cd71be1f94cb3cf2aea28536787f3d3ebce"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "972587a5b8f2a085f7d0fdf2f9df7fa190e73d89a4d1321945fe552a3c3cd483"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "d1266a3161e76f3eaf68bb703893afb5950d3f617bdea7b8a0aef53844ff0c94"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "2bd5fca88cae48ae0a533bab28df41e2703ffbc8d428beb23fcb56d29b9dfd5a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "79dab9c35725a26eec20aed4a39ad06d71ca5391f995e1fd4bfec4356d6fefa1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "025de925638035b710824b16e27f0460566b18d776f13cc53ed316b553b768be"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "b3f86c8909fb7a03b32e20cd3e9acbe84f948d6717930dc0f725a176459a6ee3"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "fbdaa694e88a31783b65f4e264205bbc46550ad538ed584de9a5e7f0ef41e557"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "092a91f5b44aa795df73252cd07e29cb437e85b31b3c844cb2ed5461634153ed"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "f7f27d11699243abb26ee8f847f7ee0eb5bb1701f3960f7ecdc4dd7e46ad4f6b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "7b8e9fab16be22293b3d539a755713035b3761971eca2f0d04d1c151ad99439b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "7220f546becab32b3c92729dec0d256cb2c18110a26b1797e15ad4af86f5b69e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "1187019117962af9b79577694f536a74c393e6908db69ed02ef69809c2bd5df9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "9110baea345777c77301e55073cb87ef9691c811a547655a70fb4e10906d5e74"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "ce607cc7b10fa27d841f19ac45c7add36716dd7aea8b1ab89de4c36305a87387"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-64/behavior.npz",
+      "sha256": "baac95b148ae679aa792d3f8eda14c87056202a06bfb2b992929107c4c8396dd"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "b9808ce94641259b78b8847c41f71d22c1c5f6c0a9277a516d5ed8a826b974cf"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "54e0c590ff83f67949c4f5bf3e0c304042b7168ee4cfb1f9b4c3d7d7e4911ceb"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "b077bc9b2ac543fc32f574ad8db54dc5ee09d6635287b9b75a7fcc6c34c242b2"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "a37df1d3fd33429da28ab2da1ed9eef4d83e7a65279c12c62cffeabe04dcc854"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "1ed0a414d6aa11d0b640de97717f6c6513f2b4fe4d9294e64ad3b43c8fdc383b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "45f3d88720fdb89ba03f20d26b0eafe5a4814dbb52991e5a115832c0364f8756"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "198e2482a2a12bc9538d7d7ef77805b239376f22b31b7107a1fea811908fefb7"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "22851eef1e65884035bbcea5da5787fae1fea20c54a174673335d1fdcb0fc19d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "b4a4419936dc3162de7fe8ace865074d527a5cd4cac58e607ea4c88ff2a62aad"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "caf4a55e5c04206d7cb072da0b6b4181e1ea77e22c0142e011cd43cb116e8e24"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "5391b37f2ca2cac7875cc9dc7a7cb668e693979bcd2eda32497472b4443517f3"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "a13f15cb00888752c7f10274a60c8560cc4e6b343e910e8a3b31e98cf17b2593"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "7996e7c46b41860bf91a24633ff3561688709e229d4fec6690d83590d11f5cb7"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "2e5141320d9c37fff48e10ef4fa8014ea095d0a2404bebdbaf3715afbdc82f8f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-64/behavior.npz",
+      "sha256": "3ea9dbc7a768f9e20f8090da83d0e25d24d016c46006012255a2735503e49184"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "4826c85ccbcefaa3e0d52a169cc1e2a355e93115e1bea5758a9bcab40fbae66e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "169fa6bfbc5bdb5cde9b3d6b7e02754da4e84ee42e066cf13a72cbb65f337c4c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-50-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-shared-path-field/behavior.npz",
+      "sha256": "1821cf9fad82cb5cb85d3c5deabd6407847d7c69e73cbd09386ebce282bc36ad"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "f42310cf9cb95b5f3fe5c46d1815987cb59e6a8ae2abb26039d66fc60ef9ee40"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "986d7dd57520ad4412142e8606fbb88ab68d0277ffaec1e22d109f30fc4b3116"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "1960deceb49a149df7c02cb9ae038299f780a16592fc24a18c39924b95a52065"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "f95551b9933a96e2722add28a5c6ba80c176196ac95857c50c0e0291665e9611"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "68d4d0797b1639d59b880e535a592a99190d0e5ad3e208a58d9c5bea124d277a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "4ac13a9b072014d68860bb8650812295ba5b3f87e3939029b6d2f5dd142d9286"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "5ea0c34bcaaffc5bd33eaf4cff1a64aa3609125946d91eaeae529725d8976c26"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "a653c938cbe443ed06ad2e600593d76aa60544c2f18bbe7ba41a1267041fe828"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "2e73b0a7634c636836896104200400382a0860bb8724e79cbfcba9b053393f22"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "26d5e7c5d3c677f0a59c271450848d6ac1ddcbb9336a0bb0689510a2bf26478a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "edb24be7fee7c3413385d0f7617fdb503128fabe94ddb66e6214b7ab031f5881"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "5f6fc80b711feb3887284eafab51bd64882be10fe2db77ca7826f056f6b2e614"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "946e724800300ca9080debc92a06d304a872d669555396f54d105899d64636b2"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-64/behavior.npz",
+      "sha256": "ffc7be2d554daccb57e08ef9c899c67568f963fcae48be409e59ca4bd97147ac"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "93b16e649b256f2c520f180504aa8abd381966d131a1f4cecf1f167131fb88b1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "15cae0203201fea1232dbf2e222bdd7a6d2b95feeee09f380ed1b311e1cad02f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "b9bfe2ba52230384491a8f387c4bd94e1ece94783fa73ed378ab18176b74055c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "53574afa676e7a64633382ec25b372dcd34d391e12302bdaba6f6a1e120df05e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "3b9808af03c9ba38ccfc90f10977be04a0cd3179e421be19a1919f0029aa66c1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "0e8e0fd5b4bc539c08ec1d0c9d72beeffba6eff004fd8be9384e028866fdeee0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "b63749a96ad210469db48f104612c6810b75436e903be7793f0e735850883807"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "2894288973033e69ef212568f4f7d0ce8c960483f5b621dd18776cdb6aba95af"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "357840ed16faa59dce56da40c40be9e8eb7dbf0c9667f3300387dd9700bbf39b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "d090c60b956c5f651b287e60c9d17c989fd18fc27da4f4a050bc11edd36adb04"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "84b2f055ec1921c2b279410366e0762bc0140cf2116260ccfd63f707154d534d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "b7f7a7042ebf3d4bd11197ccf4394297b94d5a9e1b9c8d072bfe5ff620e22cc0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "f340d75df5e01e63e10648e12b6640a33fe2a9182dcee73c5ab49e3a1b9b6bfa"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "9b2471a730e7ac877cdb89a457f61da9ef3ad1b5b7815fa1bde27e8c36870096"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "c08816a8a0f51d27259669491b88a0fa1d7de2c20b25d40c4cab86d66a14305a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "1b35b3e530c42d1e938aea115ee829cd8afde16b92cd3956e668db7c686d64bf"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "12f9de5f2dc4a4938987dee471289797f05906cc864026c74224299904088e87"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "04953464dad9b69142562a7f609e479332276873c147cd6e9c3f6d597d42c774"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "ab485082cea1c5d3f907c95d820158fdd96245895fe08ece49575ece2c52c2b8"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "4f28c3f887e7fab46fbd6fe01c51978409323838b4f6f7e6a403e6154c0db386"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-50-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-shared-path-field/behavior.npz",
+      "sha256": "1f5ee08e48b1ef420b92d6f8d5ea0b17bbc131f6c37a4f52ae2888ee8d8c8b09"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "0ed496417a4c24939f4584b8b705c2af8d425baf75ae933371d126224d13a1ec"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "7b4a7a19d79a751939fca820ecf7ea8793549c93bea1cfc445e6b49972b72b28"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "9007449d0dee2f3e3dfe622f3e1eff42b89e04ebd6bc9457823788473e77f0c1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-64/behavior.npz",
+      "sha256": "1f4e1e5a912aff44ee5d38ba510ec552b5e909f7dfcea267a55ac6fbea07bc46"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "856c7b7701234c15657b5cc79953a9da2d0381ff488f41dc93bd7fcd03a7f451"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "9bef0a48eb6452fc7f3ed3820b4c780e28cbc02033a8d2cf04f8cd6005231bb7"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "1359c6a6b590a8ddb4ec9e149a110d4543f9db8c977c45573ec404205da15087"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-64/behavior.npz",
+      "sha256": "ad13bd1ef6b933de4e7173934148d2b856d0227f85f1fe0e87b0e17b648c87de"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "a4a1baf601512bf85cf306645a1aa68e49e364acf7fbee74eab4d6992be0c4a9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "8accf099e8a4950f4054e47b89024e336307d7c8e20f91ef2cc6e9cff32c5588"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "f7a8f63e1bfc1c1de4ab20224e79120c2875bf8af1f8e1a274b31afd087a52b9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "3375da2f15af54bb1624ce242df6293018b659f12fa09bd8efdb1568079c441a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "36f234ce17b877d9d41f25ff9b42bcaf37ee957675cfacc97cee99e8a871f15e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "9fa37994e74b5028f0c9d5c5c46ece040cf908f2ee64fbfe0a994fc59f90bf42"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "4ed05a3173f86427f72ded53944f83ce42a364f8688b1f4df3f944acb3817061"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "a119c691bdd32663ddbc71e65658d5add5ead000456c7a225aed91a290ac4af9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "3e23b59846211511de405c939e095a548e5b601a6fc3d7f9e66adec55a03f757"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "4b28740ba93bfcf8f32090ea63064d3fc218f5230e6b249b3bfdc04901103900"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "e2604af9bed598371b4cb4d2a6479faf107191be60faf1f7461137a65e96a9de"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "33ad6758e887d15f7e5fd9f824781425de4a089fa5ce10b1b6f1280b77432fe9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "17574e4426606d9a1e171e02659b683fdae35e7637f55c8ec70afca9ef3c4371"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "c1f1910194dca66ab0a265ffc92f84f3bf5e829af94d43185120d5324adf4b23"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "faf1dc5f354a21a2206d5ae541c2fea1df306a268122636e91d75d6333a1ecbd"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "f39061bbeb05b3adc6f7c8a9bf5909c4027933d4efaae3aa9dff1d4bc8051478"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "d78892f689c8b1fa59952058b8fba2c6b789f914ef2e2641f5e6b6a9818fe237"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-64/behavior.npz",
+      "sha256": "0959d70509828e1a466b1bbcca0d0e263f343d915e327f36b4c4d15a4d68d176"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "60fa4eb75237f75453160a8e7ee18b981012c8349a663f1abab873bf16a79607"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "2e1918803c1a0969cd39862184c65e0e1cbda4ea3f6d9dfb419e89973270ea7c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "fa0c05f3f40d2bf8943ae9d46cc784f871013a3e193d03cf204680d9677cc717"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "738778c9fea035188ac8356014ed6dace9d3e55386d9c411b0367dc571e106a6"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "328fc2d9eb53eb70a5b2ce95da77502062a034eb378c15b256191a4c5a1edb71"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "5207bebf68662915fe5cd7cf0bde20cc18515931fa2c20160feed33621d9f5df"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "e7bb68dde2c036245f3afe4b8c0ed0f55e2942b6191fbb9f713fc02ca938189f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "b312d617e46a9faba24c51e695f4ee98f1455dd63f3d20efbac9dcfc2b4a71fc"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-64/behavior.npz",
+      "sha256": "71c768855a217d547bf1c23bf972cb9afa1d9a70b12262787b1b42ef94c20ff7"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "e851cf865f7194332cb1cadd993f4abce592d87362f68250db5e92ebd636e349"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "cc2c4f2f9ca843aa2bc7192b54a07e9ff71b5932cf09e286dea659f28f4ee3ca"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "8275577eea8d18e5c3ce8d0e012491b9dfb8c3415b7378793fdd81bfca51556e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "40d732edd9c9a976eb4488898a750febca189852acfd853669bf59667621b7d9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "c68aa26aeb4be6b759c2b3ee42eb05bbf0b342f2dae675c38def3d4f28bd0ee1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "8494e45f7dcc5631219845d9e6a4a5c21280ed4839b771f60548861727a8b7fc"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "714158aabbd9d430ecd58c5ce681efeb043f15a87f9526109ea3ebb89896e332"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "31404376412085cc5850d34123142a65c60a4a1ad31b54795ce99dff09dede46"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "ddb4ef7aa3ca5fd35a941da45203c7526d986a01dcf73da8298422dd2e8bf610"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "04f210cefddae8cef3f908c74056e0f1a2eb28d24c594fb170f1119f3e8c581b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "8ecaa41473e21aa3e143ab1eed4b70e3e8e808b4b94d2b7789a7020ad10528e0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "93ff4c529045b6f6e7b6b4e69996fe88b30f2a371f75b1d32a2e58a328cb2e7c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "62540e03eb7d61559f654a3e337a63a72435af331f8a77bd83d42f675bd48c84"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/behavior.npz",
+      "sha256": "e633847e6fd35919a5dd88bad9e9516e92afa280f3a0e1f1ed0de95ea9428e48"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-64/behavior.npz",
+      "sha256": "2138711d1044ace1fc07cc931da0490bae1d79e9e0291c31acea4cf62d976708"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-128/behavior.npz",
+      "sha256": "9b60c096bd4453a8b86f48e882216a62989088159ae6b49207e9cd06eed5d5c0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "c1a8476773c86b62c0ddce9a4225f198173e584cc3f2e061808aa7a438dee7ed"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "3f7f55fb8605517f60ca37abeec2292ca31392b3c342047d930ae9a53f86a6f0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "dd23df4d5d2021c7cafd8333cb4b6ca5fa896526dc6a28f17c4d963e5b385000"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "866782efb7ec847e16f44236f6b9d8915bb33cecdaaa261b271ebc491c576e08"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "52b867fd913aef940d44ef9db8808cde86bbf8cb08913e9e021cefed9f725092"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "be616c4098769d4936b430b27694aeab3b5fabe5aa030b483c62ca195b15a4ed"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "bc9719bdbf67cc2fb15cc218f9e64f8ccde0138d625d030f72939c922b9ee039"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "68bce71dde276547311fc501648fe00ec4fa071cd79f0d3268bc4f46efb90edc"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10000-10015_variant-rollout-128/behavior.npz",
+      "sha256": "e05398b01fd38797e55c12a4acb97c9c55e6f730e8e7363ce2f9af6d7beefda8"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "481f9a1d47195f71fc654fa48d7d35fde4e7d38d28c9dbf57729349b6f9eed35"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "ec835b51dcee4be7dbb15ae2f2783db22c9184506afc96a603e142283c412439"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "e40a742ac6e46a43c58113c0b44ed0753881c32a4f45f7a07535dbe528001f46"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "86b5647078f7579dfe3f6a1c689fa4f53fb6506aa77e73e367be9e916ead618c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "e775dd011e39895446e9bb3cad77e856582ba09a6dc3dfb1aa5478222e6e00df"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "396dfddb8f7c71374d685de2ece5b56782eb18dc2029f0b9733a2d395c99989f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-128/behavior.npz",
+      "sha256": "7e5b7f40e391257acfb86cff0ecc3256b90d1e2b1d6104356533822e2e5642e2"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-shared-path-field/behavior.npz",
+      "sha256": "914d4e24fc8d6188fc7d7d85a2dc3ac99be64872020e0fbff0d6f320871e8657"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "1a8148fa824fbbc75054c8eb8a9e65927873fd5b06da4f3f2668bc7d7ba4c142"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "aa8cc8056727c25dfd73632ae77946ab62eff7d8cb3c4a3be4ad5421ded7de8e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "6ca07af4e44f0798ed337a347633dae93864dfb2f29d226bf2c4a3db80fc87d9"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "15959cd1c52df04ae4c1b26b88c682e821ea13e4c6ef4e22fbf7aa21ab52b7b5"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "9b451d5b691dbc317f5e934b876aa64abdd626e876ce988f5576a30497e4e067"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "53df7b15f47ff2470e05f48c7f3a6bdcf40589f89760ebfe130062dba8436002"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "321c55ec9e739a579cb678bb145a1264ba59539ffde0f24598f846c1aca30a24"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "697645bc57ef7a2069cd2efa35dfbcb2cf6a17cac9b90e18c35472457959e161"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "12ac0afc02eca927bda69dcb8fbb7894127832708c03227a8e595459c38d5c44"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "f703f5b3f6a1053db2837711d939184dcdbf592b1e6d90f6677b285a605bf644"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "1d55d827765ed332c6a997819bb0dcf1dab76671da3c8108314617696339a73c"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "aed6e3d20bf8e6304828b07dbc5cfefbc5c2eabe17b1f7f409a18fe5c9065a07"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "797c70d74fdf46eaf9926c30bfd66f84a146afab4cac078d388c89107496b247"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "96dec42c0573ca1f82e69823675a4e7210c662c02b77efde614a961cf404ceac"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-64/behavior.npz",
+      "sha256": "b2bf0b947b8ba645089715394201378e27c031dc24a02ed400f0ff703c329fc3"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "ac95cad5be417dde959de4af8b1cf165070bf09501fee3b5da7eb27ab9ad1224"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "268da3cc081391494d39a4413dda5ae0422f7249994f6a907cbace59e47e646e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "b677bda76098e10d2636cd27bcb176e7ac644168a147cb610586cd821c18d09f"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "2d0580c6c6056e230fecc2e9395002053bd0ae759f5d835c57888c78132b45a4"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "dbfbbbc3493e746327bc7ca135df1df63e5f869c9706c73fd3505f65ee4fbc81"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "7b2315514edbd27c342682a5f013245ada432c317e619da50847959538380756"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "44414d34ca7b8312b922646af3370c370e335d6b981bdb5eeef38071212253f7"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "ddf8d85ba6d5efa14ebe131e966a97590d76c9089682bdbe305b8df19b787525"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "1c6a1af3daf19825192f5c6f3538dcdb972242bf7f1d20c3c144de24aff0c220"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "3b1f881a8a5ccc07710605ad3bb2a5b7ea183b46097eceb7235491d09629f53d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "5b8a03b79b5166fa8ef6c781e05579eafdcb24994d902590933fcfd853450501"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "bc20451020a42f03a855e36832f96d68415661e8ea29ae9a5c030cc46d4163bd"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "60fa4eb75237f75453160a8e7ee18b981012c8349a663f1abab873bf16a79607"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-64/behavior.npz",
+      "sha256": "5991c22dfaf79883a893e8a111eacf19d02f0b547fa8db77e2cec0246ed6c326"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "03a6d0bef7d1a769c690e855bef95ea1c825e7d43a80674219086cb1ee861806"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "d023cffeaba539bbb41665319a8f1473f59dad4743bc837cca7729e71d0293e3"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "c0a510d19fc7d85f1e625eb6685ebeb9b415ba25234a268a298e3df1f457d47e"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "8714a46c03031c7654b56a096b527949b5b2489ef1b94286f3d56b98eae72e15"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "7734391fe507dd4ed25bd4c54c1eced8043becdfd8084be6bb190d2748792713"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-64/behavior.npz",
+      "sha256": "50aac1015e08780765b4214433cc228aec748c290e01a216ebb8ba1a1c1966af"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "a4999397c9c7ab4050a8122ae0f14a258aee2422814cf7129753d4dc7c4ad45a"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "ccaa6f00d17a72dd4be54079c2c23b1195125fff343355d43aaee22f4fb94a46"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "8999f40d8d9e3c765c621df5c4013265c71ff299dd3a3e4783046035cfd3b6d8"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "f60043cdc4339a54263c25693d5cdd98e6e5ba08dfa0fb62d388124dadc605a0"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "9cc126a991061fe306b98d6cd3f48e372616e1f7824bc75f01739e9cf70c0580"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/behavior.npz",
+      "sha256": "00dd5a7cd869f972838e5d8b17f94c07ea2c17f3f35a048d71664ac95d41ef2d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/behavior.npz",
+      "sha256": "9e6d304d88f9660acca892a3f458600ea8bbecfc25d123a7bec0414ec69e32cd"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "7dd626c81c31586be41d4c1b7bc317a61729514cce1e8197a30a7220d4e5a047"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-64/behavior.npz",
+      "sha256": "988b2ad47bb195192a1ea2b7157290ecd11f1e12b9c5bc25914e208e3a9bce91"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-128/behavior.npz",
+      "sha256": "77dbc0228ea827403bff7bf0bf173f0ee355a7cfcfac0e49ab3127970ed358a6"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-128/behavior.npz",
+      "sha256": "e5c606ce3da590d2b8f3a093085a69b9be5815b35190225f162474f86a09e942"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/behavior.npz",
+      "sha256": "855fd4976c15c92e8677bd7b5a9e50219a495e9f95b9437f1630221697dba9c6"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-shared-path-field/behavior.npz",
+      "sha256": "89f8dcaca310026f050e0a7edb9bfdac341eb068a36962587efa2738416b6e57"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/behavior.npz",
+      "sha256": "812aab504b50cca0ffdaa1de85fa5613cf33ead341c666864cfc761af0963618"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/behavior.npz",
+      "sha256": "fb941170aa24e4f996c8d6578d6001bb1ab0b5dda0a8e0c8d46dbc87eec687c6"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/behavior.npz",
+      "sha256": "cce839504eb628040c1e5ba810bfd7300f60f9d4c8b4575687b06127a0919446"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "469606ed565c65e6284cc3314443ffc0ffe6994d0617ff08369426e07c0787fd"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-128/behavior.npz",
+      "sha256": "1e396c2930e10b2f51b7391d3f2d793e3017822554dcfdc546f1b16c6b25ca64"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "f3537ba432600ca8138716d443bd71caf78b5f787bcc8d65c8f394805a65c09b"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/behavior.npz",
+      "sha256": "68c040e1358a5b2e221d538acdd3584875f2255d2116944d0614c318be9bbeda"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/behavior.npz",
+      "sha256": "bd9aede53be9ddf99f83b37182ac0a11195b710489f524a19cd97eb12ce1a682"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-128/behavior.npz",
+      "sha256": "be191abe6aa4fa3958e4647b9e2f78e7c0d6ca3825a02d33fad0b079d1fba7c6"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/behavior.npz",
+      "sha256": "dfb8536cb74b64f668cacda63bedb192eece643e24f018cc66bb70efc2c53496"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "d7873b39a7ec3287317e37405f5b3900f55ae8315eb77a5b9cf5237ed8723b9d"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-128/behavior.npz",
+      "sha256": "cbd12227ae7b14229b5051fbc10f9db9cfe014845691fbad19b8555111a929ec"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "0d30c7dfd03017e6773bc11e5d510c957ce2b77e6d7c69288f55aa7942046931"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-shuffle/behavior.npz",
+      "sha256": "be8af0ab0ca11492927feb46ad631a51800e8a3ece9a391e835cb78b3e0e13d1"
+    },
+    {
+      "path": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-4194304_seeds-10000-10031_variant-field-flatten/behavior.npz",
+      "sha256": "8a6b702cef83b9969e7a0d6df22c5d55eb79eb6c1e3592ca5cacb388cc101ae0"
+    }
+  ],
+  "tabular_duplicate_seed_shards": [
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256",
+      "job_id": "6780481",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai01",
+        "recorded_at": "2026-11-01T02:09:06.250256-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/completed_copies_0-10032_to_1-10047.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 9
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256",
+      "job_id": "6780480",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 5080",
+        "memory_mb": 16303,
+        "driver": "580.159.04",
+        "hostname": "nekomata02",
+        "recorded_at": "2026-11-01T02:09:06.130146-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/completed_copies_0-10080_to_1-10095.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 4
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256",
+      "job_id": "6780499",
+      "hardware": {
+        "gpu": "NVIDIA GeForce GTX 1080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "lynx04",
+        "recorded_at": "2026-11-01T02:10:06.226690-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/completed_copies_0-10048_to_1-10063.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 2
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256",
+      "job_id": "6780481",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai01",
+        "recorded_at": "2026-11-01T02:09:06.241732-05:00",
+        "cuda_visible_devices": "2"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/completed_copies_0-10064_to_1-10079.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 11
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256",
+      "job_id": "6780482",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai02",
+        "recorded_at": "2026-11-01T02:09:06.182712-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/completed_copies_0-10016_to_1-10031.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 6
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle",
+      "job_id": "6780490",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic03",
+        "recorded_at": "2026-11-01T02:09:36.486269-05:00",
+        "cuda_visible_devices": "3"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256",
+      "job_id": "6780502",
+      "hardware": {
+        "gpu": "NVIDIA RTX A4500",
+        "memory_mb": 20470,
+        "driver": "580.159.04",
+        "hostname": "jaguar03",
+        "recorded_at": "2026-11-01T02:09:56.775051-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10080-10095_variant-rollout-256/completed_copies_0-10080_to_1-10095.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 2
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256",
+      "job_id": "6780489",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic02",
+        "recorded_at": "2026-11-01T02:09:36.263084-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10048-10063_variant-rollout-256/completed_copies_0-10048_to_1-10063.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 6
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256",
+      "job_id": "6780502",
+      "hardware": {
+        "gpu": "NVIDIA RTX A4500",
+        "memory_mb": 20470,
+        "driver": "580.159.04",
+        "hostname": "jaguar03",
+        "recorded_at": "2026-11-01T02:09:56.805903-05:00",
+        "cuda_visible_devices": "6"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10032-10047_variant-rollout-256/completed_copies_0-10032_to_1-10047.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 1
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256",
+      "job_id": "6780502",
+      "hardware": {
+        "gpu": "NVIDIA RTX A4500",
+        "memory_mb": 20470,
+        "driver": "580.159.04",
+        "hostname": "jaguar03",
+        "recorded_at": "2026-11-01T02:09:56.914171-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10064-10079_variant-rollout-256/completed_copies_0-10064_to_1-10079.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 3
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256",
+      "job_id": "6780492",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic05",
+        "recorded_at": "2026-11-01T02:09:36.459680-05:00",
+        "cuda_visible_devices": "3"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10016-10031_variant-rollout-256/completed_copies_0-10016_to_1-10031.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 3
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle",
+      "job_id": "6780484",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai04",
+        "recorded_at": "2026-11-01T02:09:06.145514-05:00",
+        "cuda_visible_devices": "2"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-shuffle/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization",
+      "job_id": "6780482",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai02",
+        "recorded_at": "2026-11-01T02:09:06.169322-05:00",
+        "cuda_visible_devices": "2"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten",
+      "job_id": "6780490",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic03",
+        "recorded_at": "2026-11-01T02:09:36.487844-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization",
+      "job_id": "6780493",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic06",
+        "recorded_at": "2026-11-01T02:09:36.439028-05:00",
+        "cuda_visible_devices": "2"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-cleanrl-normalization/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten",
+      "job_id": "6780484",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai04",
+        "recorded_at": "2026-11-01T02:09:06.179153-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-flatten/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse",
+      "job_id": "6780502",
+      "hardware": {
+        "gpu": "NVIDIA RTX A4500",
+        "memory_mb": 20470,
+        "driver": "580.159.04",
+        "hostname": "jaguar03",
+        "recorded_at": "2026-11-01T02:09:56.855609-05:00",
+        "cuda_visible_devices": "3"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse",
+      "job_id": "6780481",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai01",
+        "recorded_at": "2026-11-01T02:09:06.248808-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10031_variant-field-reverse/completed_copies_0-10000_to_0-10031.json",
+      "duplicate_seed_pairs": 0,
+      "different_first_goal_times": 0
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256",
+      "job_id": "6780484",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "ai04",
+        "recorded_at": "2026-11-01T02:09:06.167735-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/completed_copies_0-10000_to_1-10015.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 4
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256",
+      "job_id": "6780480",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 5080",
+        "memory_mb": 16303,
+        "driver": "580.159.04",
+        "hostname": "nekomata02",
+        "recorded_at": "2026-11-01T02:09:06.110595-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/completed_copies_0-10112_to_1-10127.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 5
+    },
+    {
+      "task": "confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256",
+      "job_id": "6780485",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "lynx10",
+        "recorded_at": "2026-11-01T02:09:06.089568-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/completed_copies_0-10096_to_1-10111.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 8
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256",
+      "job_id": "6780490",
+      "hardware": {
+        "gpu": "Quadro RTX 4000",
+        "memory_mb": 8192,
+        "driver": "580.159.04",
+        "hostname": "adriatic03",
+        "recorded_at": "2026-11-01T02:09:36.475219-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10000-10015_variant-rollout-256/completed_copies_0-10000_to_1-10015.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 1
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256",
+      "job_id": "6780487",
+      "hardware": {
+        "gpu": "NVIDIA GeForce RTX 2080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "cheetah03",
+        "recorded_at": "2026-11-01T02:09:06.116240-05:00",
+        "cuda_visible_devices": "1"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10096-10111_variant-rollout-256/completed_copies_0-10096_to_1-10111.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 1
+    },
+    {
+      "task": "confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256",
+      "job_id": "6780499",
+      "hardware": {
+        "gpu": "NVIDIA GeForce GTX 1080 Ti",
+        "memory_mb": 11264,
+        "driver": "580.159.04",
+        "hostname": "lynx04",
+        "recorded_at": "2026-11-01T02:10:06.226045-05:00",
+        "cuda_visible_devices": "0"
+      },
+      "shard": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/data/research/confirmation_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-4194304_seeds-10112-10127_variant-rollout-256/completed_copies_0-10112_to_1-10127.json",
+      "duplicate_seed_pairs": 16,
+      "different_first_goal_times": 3
+    }
+  ],
+  "wall_seconds": 4.347760622971691
+}

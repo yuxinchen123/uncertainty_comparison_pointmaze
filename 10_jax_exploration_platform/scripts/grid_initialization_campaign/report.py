@@ -74,6 +74,27 @@ def geometry_label(specification):
     return f"{geometry['kind'].capitalize()} grid, width {geometry['width']}, turns {geometry['turns']}"
 
 
+def comparison_label(row):
+    """Spell out which frozen or development-selected settings a comparison uses."""
+    comparison = row['configuration'].get('comparison', 'development best')
+    return {'shared': 'Shared settings', 'independently-tuned': 'Independently tuned settings',
+            'development best': 'Development-selected settings'}[comparison]
+
+
+def condition_count_label(row, multiline=False):
+    """Show actual completed policies and independent random fields beside each condition."""
+    counts = f"{row['seed_count']} policy seeds"
+    if row['specification']['field_kind'] in ('random_network', 'random_log_uniform'):
+        counts += f"; {len(set(row['field_seeds']))} field seeds"
+    return field_label(row['specification']) + ('\n' if multiline else '; ') + counts
+
+
+def behavior_heading(row, multiline=False):
+    """Identify geometry, policy representation, and settings protocol in every figure group."""
+    return (geometry_label(row['specification']) + '; ' + row['specification']['policy_kind'] +
+            ' policy' + ('\n' if multiline else '; ') + comparison_label(row))
+
+
 def condition_variant(specification):
     """Keep sensitivity conditions separate while treating rollout length as a training setting."""
     # Different rollout lengths already appear in configuration; transforms and normalization do not.
@@ -290,7 +311,7 @@ img{max-width:100%;height:auto}section{margin-top:32px}.unread,.unread a{color:#
     write_json(history_path, history)
 
 
-def paired_confirmation_comparisons(rows, repetitions=8000):
+def paired_confirmation_comparisons(rows, repetitions=8000, planned_policy_seeds=128, planned_field_seeds=32):
     """Estimate paired adverse-minus-uniform effects with four-comparison adjusted intervals."""
     # Primary comparisons exclude shuffled fields, flattened fields, normalization, and path controls.
     confirmed = [row for row in rows if row['specification']['wave'] in (
@@ -350,6 +371,13 @@ def paired_confirmation_comparisons(rows, repetitions=8000):
                 label = 'At least twice the capped mean first-goal time'
         if reference_goal < .75:
             label += '; uniform initialization did not reach the 75 percent discovery requirement'
+        # Matching a partial set is not completion of the planned fresh-seed comparison.
+        all_paired = len(paired_seeds) == len(reference_indices) == len(candidate_indices)
+        required_fields = planned_field_seeds if spec['field_kind'] == 'random_network' else 0
+        complete = all_paired and len(paired_seeds) >= planned_policy_seeds and len(unique) >= required_fields
+        estimated_effect = label
+        if not complete:
+            label = 'Interim: planned confirmation is incomplete'
         comparisons.append({'wave': spec['wave'], 'geometry': spec['geometry'], 'policy_kind': spec['policy_kind'],
             'comparison': key[-1], 'field_kind': spec['field_kind'], 'field_label': field_label(spec),
             'budget': spec['total_timesteps'], 'paired_seed_count': len(paired_seeds),
@@ -361,7 +389,13 @@ def paired_confirmation_comparisons(rows, repetitions=8000):
             'mean_ratio_interval': ratio_interval, 'interval_confidence': .9875,
             'family_comparison_count': 4, 'uniform_goal_fraction': reference_goal,
             'candidate_goal_fraction': candidate_goal, 'effect_label': label,
-            'all_current_seeds_paired': len(paired_seeds) == len(reference_indices) == len(candidate_indices)})
+            'estimated_effect_label': estimated_effect, 'confirmation_complete': bool(complete),
+            'confirmation_status': 'Complete' if complete else 'Interim',
+            'planned_policy_seed_count': int(planned_policy_seeds),
+            'required_field_seed_count': int(required_fields),
+            'uniform_completed_policy_seed_count': len(reference_indices),
+            'candidate_completed_policy_seed_count': len(candidate_indices),
+            'family_protocol': key[-1], 'all_current_seeds_paired': all_paired})
     return comparisons
 
 
@@ -370,6 +404,8 @@ def _load_behavior(run_dir, row):
     # Before: archives containing all settings; after: matching copies concatenated along seed axis.
     gathered = defaultdict(list)
     trajectories, trajectory_steps, maximum_history = [], [], []
+    count_histories, count_history_presence = [], []
+    checkpoint_steps = None
     positions = grid = None
     for source in row['sources']:
         path = Path(run_dir) / 'data/research' / source['task'] / 'behavior.npz'
@@ -379,6 +415,22 @@ def _load_behavior(run_dir, row):
                                           not np.array_equal(grid, archive['grid'])):
                 raise ValueError('A reporting group contains incompatible physical grids.')
             positions, grid = archive['positions'].copy(), archive['grid'].copy()
+            # Old development archives omit both keys; partially recorded histories are never combined.
+            history_keys = ('visit_count_history', 'visit_count_history_steps')
+            present = [key in archive.files for key in history_keys]
+            if any(present) and not all(present):
+                raise ValueError('Visit-count history requires both its counts and checkpoint steps.')
+            count_history_presence.append(all(present))
+            if all(present):
+                counts, checkpoints = archive[history_keys[0]], archive[history_keys[1]]
+                if counts.shape != (len(checkpoints), len(selected), len(positions)) or checkpoints.ndim != 1:
+                    raise ValueError('Visit-count history must be [checkpoint,copies,states] with one step per checkpoint.')
+                if not len(checkpoints) or np.any(np.diff(checkpoints) <= 0) or checkpoints[0] <= 0:
+                    raise ValueError('Visit-count checkpoints must be positive and strictly increasing.')
+                if checkpoint_steps is not None and not np.array_equal(checkpoint_steps, checkpoints):
+                    raise ValueError('One condition has inconsistent visit-count checkpoints across seed batches.')
+                checkpoint_steps = checkpoints.copy()
+                count_histories.append(counts[:, selected, :].copy())
             for key in ('initial_fields', 'visit_counts', 'late_visit_counts', 'policy_probabilities',
                         'first_goal_steps', 'seed_ids', 'field_seed_ids'):
                 gathered[key].append(archive[key][selected].copy())
@@ -389,9 +441,27 @@ def _load_behavior(run_dir, row):
     arrays = {key: np.concatenate(values, axis=0) for key, values in gathered.items()}
     arrays.update(positions=positions, grid=grid, trajectories=trajectories,
                   trajectory_steps=trajectory_steps, maximum_history=maximum_history)
+    complete = bool(count_history_presence) and all(count_history_presence)
+    arrays.update(visit_count_history_complete=complete,
+                  visit_count_history=np.concatenate(count_histories, axis=1) if complete else None,
+                  visit_count_history_steps=checkpoint_steps if complete else None)
     if len(arrays['seed_ids']) != row['seed_count']:
         raise ValueError('Behavior archive seed count disagrees with completed summary metrics.')
     return arrays
+
+
+def early_visitation_budgets(data):
+    """Choose the same recorded early transition budgets for every displayed seed and condition."""
+    # A missing old archive disables this figure rather than silently dropping its seeds.
+    if not data or not all(values['visit_count_history_complete'] for values in data):
+        return []
+    common = set(map(int, data[0]['visit_count_history_steps']))
+    for values in data[1:]:
+        common.intersection_update(map(int, values['visit_count_history_steps']))
+    budgets = [budget for budget in (2 ** 16, 2 ** 18, 2 ** 20) if budget in common]
+    if not budgets and common and max(common) < 2 ** 16:
+        return [max(common)]
+    return budgets
 
 
 def representative_seed_index(first_goal_steps, budget, seed_ids, field_seed_ids):
@@ -446,13 +516,13 @@ def _write_sampled_position_animation(rows, data, directory, name):
     for row, values in zip(rows, data):
         index = representative_seed_index(values['first_goal_steps'], row['specification']['total_timesteps'],
                                          values['seed_ids'], values['field_seed_ids'])
-        conditions.append({'label': field_label(row['specification']),
+        conditions.append({'label': condition_count_label(row),
             'policy_seed': int(values['seed_ids'][index]), 'field_seed': int(values['field_seed_ids'][index]),
             'states': values['trajectories'][index].tolist(), 'steps': values['trajectory_steps'][index].tolist(),
             'visits': values['visit_counts'].mean(axis=0).tolist()})
     payload = json.dumps({'positions': data[0]['positions'].tolist(), 'shape': list(data[0]['grid'].shape),
                           'conditions': conditions}).replace('</', '<\\/')
-    title = html.escape(geometry_label(rows[0]['specification']) + '; ' + rows[0]['specification']['policy_kind'] + ' policy')
+    title = html.escape(behavior_heading(rows[0]))
 
     # All styles, geometry, seed identifiers and sampled positions are embedded; no network is needed.
     page = '''<!doctype html><html lang="en"><meta charset="utf-8"><title>Sampled training positions</title>
@@ -518,6 +588,7 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
     data = [_load_behavior(run_dir, row) for row in selected]
     if not selected:
         return []
+    early_budgets = early_visitation_budgets(data)
 
     # Every map in a row uses the same color scale and equal transition budgets.
     summaries = [[values[key].mean(axis=0) for values in data]
@@ -530,12 +601,31 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         minimum = min(positive_minima) if positive_minima else 1
         normalization = Normalize(vmin=0, vmax=max(1, maximum)) if metric == 0 else LogNorm(vmin=minimum, vmax=max(minimum * 2, maximum))
         for column, (row, values, field) in enumerate(zip(selected, data, fields)):
-            label = field_label(row['specification']) if metric == 0 else ('Total visits' if metric == 1 else 'Late visits')
+            label = condition_count_label(row, multiline=True) if metric == 0 else ('Total visits' if metric == 1 else 'Late visits')
             mesh = _draw_map(axes[metric, column], field, values['grid'], label, normalization)
         figure.colorbar(mesh, ax=axes[metric].tolist(), label=('Initial bonus' if metric == 0 else 'Mean visits per seed'))
-    figure.suptitle(geometry_label(selected[0]['specification']) + '; ' + selected[0]['specification']['policy_kind'] + ' policy', fontsize=12)
+    figure.suptitle(behavior_heading(selected[0], multiline=True), fontsize=12)
     _save_figure(figure, plots_dir, figure_name + '_maps')
     plt.close(figure)
+
+    if early_budgets:
+        # Before: [checkpoint,copies,states]; after: one mean-visitation map per common budget.
+        figure, axes = plt.subplots(len(early_budgets), len(selected),
+            figsize=(4.5 * len(selected), 2.5 * len(early_budgets)), squeeze=False, layout='constrained')
+        for budget_index, budget in enumerate(early_budgets):
+            fields = [values['visit_count_history'][np.flatnonzero(
+                values['visit_count_history_steps'] == budget)[0]].mean(axis=0) for values in data]
+            maximum = max(float(field.max()) for field in fields)
+            positive = [float(field[field > 0].min()) for field in fields if np.any(field > 0)]
+            minimum = min(positive) if positive else 1
+            normalization = LogNorm(vmin=minimum, vmax=max(minimum * 2, maximum))
+            for column, (row, values, field) in enumerate(zip(selected, data, fields)):
+                title = condition_count_label(row, multiline=True) + f'\nAfter {budget:,} training transitions'
+                mesh = _draw_map(axes[budget_index, column], field, values['grid'], title, normalization)
+            figure.colorbar(mesh, ax=axes[budget_index].tolist(), label='Mean visits per seed')
+        figure.suptitle(behavior_heading(selected[0], multiline=True), fontsize=12)
+        _save_figure(figure, plots_dir, figure_name + '_early_visitation')
+        plt.close(figure)
 
     # Separate field profiles expose neural variation without the large adversarial map color range.
     figure, axes = plt.subplots(1, len(selected), figsize=(4.5 * len(selected), 3.5), squeeze=False,
@@ -556,8 +646,9 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         axis.set_xlim(0, 1)
         axis.set_xlabel('Normalized distance along path')
         axis.set_ylabel('Initial bonus; separate scale per panel')
-        axis.set_title(field_label(row['specification']), fontsize=10)
+        axis.set_title(condition_count_label(row, multiline=True), fontsize=10)
         axis.legend(fontsize=7)
+    figure.suptitle(behavior_heading(selected[0], multiline=True), fontsize=12)
     _save_figure(figure, plots_dir, figure_name + '_initial_profiles')
     plt.close(figure)
 
@@ -579,7 +670,7 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
                                           values['seed_ids'], values['field_seed_ids'])
         axes[0, column].plot(steps, values['maximum_history'][index], color='#D55E00', linewidth=1,
                              label='Farthest state, representative seed')
-        axes[0, column].set_title(field_label(row['specification']), fontsize=10)
+        axes[0, column].set_title(condition_count_label(row, multiline=True), fontsize=10)
         axes[0, column].set_xlabel('Training transitions per policy')
         axes[0, column].set_ylabel('Distance along path')
         axes[0, column].legend(fontsize=7, loc='lower right')
@@ -602,8 +693,9 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         representatives.append({'condition': field_label(row['specification']),
                                 'policy_seed': int(values['seed_ids'][index]),
                                 'field_seed': int(values['field_seed_ids'][index]),
-                                'first_goal_step': first_goal})
-    figure.suptitle('Recorded training positions; goal arrivals reset to the start, including after the first goal', fontsize=11)
+                                'first_goal_step': first_goal, 'early_visitation_budgets': early_budgets})
+    figure.suptitle(behavior_heading(selected[0], multiline=True)+
+        '\nRecorded training positions; goal arrivals reset to the start, including after the first goal', fontsize=11)
     _save_figure(figure, plots_dir, figure_name + '_movement')
     plt.close(figure)
 
@@ -624,7 +716,7 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
                                    row_offset * probabilities[state, action] * .8, state))
                 else:
                     stay[state] += probabilities[state, action]
-        _draw_map(axes[0, column], stay, grid, field_label(row['specification']), Normalize(0, 1))
+        _draw_map(axes[0, column], stay, grid, condition_count_label(row, multiline=True), Normalize(0, 1))
         center = int(np.argmax(values['late_visit_counts'].mean(axis=0)))
         window = positions[max(0, center - 16):min(len(positions), center + 17)]
         for x, y, dx, dy, state in arrows:
@@ -633,7 +725,8 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
                                       color='#D55E00', width=.008)
         axes[0, column].set_xlim(window[:, 1].min() - .75, window[:, 1].max() + .75)
         axes[0, column].set_ylim(window[:, 0].max() + .75, window[:, 0].min() - .75)
-    figure.suptitle('Policy arrows near the most visited late state; color is blocked-action probability', fontsize=11)
+    figure.suptitle(behavior_heading(selected[0], multiline=True)+
+        '\nPolicy arrows near the most visited late state; color is blocked-action probability', fontsize=11)
     _save_figure(figure, plots_dir, figure_name + '_policy')
     plt.close(figure)
 
@@ -645,11 +738,12 @@ def _plot_comparison(run_dir, rows, plots_dir, figure_name):
         goals = np.asarray(row['first_goal_steps'])
         fraction = ((goals[:, None] >= 0) & (goals[:, None] <= times[None, :])).mean(axis=0)
         axis.plot(times, fraction, color=COLORS[index % len(COLORS)], linestyle=LINE_STYLES[index % len(LINE_STYLES)],
-                  label=field_label(row['specification']))
+                  label=condition_count_label(row))
     axis.set_xlabel('Training transitions per policy')
     axis.set_ylabel('Fraction of seeds reaching the goal')
     axis.set_ylim(0, 1.02)
     axis.legend(fontsize=8)
+    figure.suptitle(behavior_heading(selected[0], multiline=True), fontsize=12)
     _save_figure(figure, plots_dir, figure_name + '_discovery')
     plt.close(figure)
     _write_sampled_position_animation(selected, data, plots_dir, figure_name)
@@ -674,10 +768,139 @@ def _latex_escape(value):
     return ''.join(replacements.get(character, character) for character in str(value))
 
 
-def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_comparisons):
+def completed_confirmation_findings(comparisons):
+    """Summarize only complete four-case families without selecting settings from confirmation data."""
+    # A family contains both geometries and both policy representations under one frozen protocol.
+    grouped = defaultdict(list)
+    for comparison in comparisons:
+        grouped[(comparison['wave'], comparison['budget'], comparison['comparison'])].append(comparison)
+    required = {(geometry, policy) for geometry in ('straight', 'snake') for policy in ('tabular', 'neural')}
+    families = []
+    for identity, rows in grouped.items():
+        cases = {(row['geometry']['kind'], row['policy_kind']) for row in rows}
+        if len(rows) == 4 and cases == required and all(row.get('confirmation_complete', False) for row in rows):
+            families.append((identity, sorted(rows, key=lambda row: (
+                0 if row['geometry']['kind'] == 'straight' else 1, row['policy_kind']))))
+    families.sort(key=lambda family: (WAVE_ORDER.index(family[0][0]),
+                                      0 if family[0][2] == 'independently-tuned' else 1))
+    markdown = ['## Completed confirmation findings\n\n']
+    tex = ['\\paragraph{Completed confirmation findings.}\n']
+    if not families:
+        message = 'No complete four-case confirmation family is available yet. Partial results remain interim in the full tables.\n\n'
+        return {'markdown': markdown[0]+message, 'tex': tex[0]+message, 'family_count': 0}
+
+    # Keep the primary and longer budgets separate, with goals counted over every paired policy.
+    scope = ('Straight-grid cases compare the frozen selected adversarial initial field with uniform bonuses. '
+             'Snake-grid cases compare frozen coordinate-network initial fields with uniform bonuses. '
+             'Ratios are capped mean first-goal times relative to uniform initialization. '
+             'Intervals adjust for four cases within each settings protocol and budget. '
+             'The study measures delays and failures within fixed transition budgets.')
+    markdown.append(scope+'\n\n')
+    tex.append(_latex_escape(scope)+'\n\n')
+    for (wave, budget, protocol), rows in families:
+        stage = 'Primary confirmation: about 4 million transitions' if wave == 'confirmation' else 'Secondary confirmation: about 16 million transitions'
+        protocol_name = comparison_label({'configuration': {'comparison': protocol}})
+        title = stage+'; '+protocol_name.lower()
+        markdown.append('### '+title+'\n\n| Case | Ratio [98.75% interval] | Adverse goals | Uniform goals | Paired policies |\n'
+                        '|---|---:|---:|---:|---:|\n')
+        tex.append('\\begin{table}[H]\n\\centering\n\\setlength{\\tabcolsep}{3pt}\n'
+            '\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{3.7cm}'
+            '>{\\raggedright\\arraybackslash}p{3.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.7cm}'
+            '>{\\raggedright\\arraybackslash}p{1.6cm}@{}}\n\\toprule\n'
+            'Case & Ratio, 98.75\\% interval & Adverse goals & Uniform goals & Paired policies \\\\\n\\midrule\n')
+        for row in rows:
+            case = row['geometry']['kind'].capitalize()+' grid, '+row['policy_kind']+' policy'
+            count = row['paired_seed_count']
+            adverse_goals = f"{round(row['candidate_goal_fraction']*count)}/{count}"
+            uniform_goals = f"{round(row['uniform_goal_fraction']*count)}/{count}"
+            ratio = _format_interval(row['mean_ratio'], row['mean_ratio_interval'], decimals=3)
+            markdown.append(f'| {case} | {ratio} | {adverse_goals} | {uniform_goals} | {count} |\n')
+            tex.append(_latex_escape(case)+' & '+_latex_escape(ratio)+' & '+adverse_goals+' & '+uniform_goals+f' & {count} \\\\\n')
+        markdown.append('\n')
+        tex.append('\\bottomrule\n\\end{tabular}\n\\caption{'+_latex_escape(title)+
+            '. Each row retains its frozen configuration and all paired policy seeds.}\n\\end{table}\n')
+
+    # The longer stage starts again from initialization and has a different annealing duration.
+    if any(identity[0] == 'long-confirmation' for identity, rows in families):
+        note = ('The 16-million-transition stage restarted from initialization with the same frozen seeds and settings. '
+                'Its learning-rate annealing spans the longer budget; these are separate restarted runs.')
+        markdown.append(note+'\n\n')
+        tex.append(_latex_escape(note)+'\n\n')
+    for (wave, budget, protocol), rows in families:
+        if wave == 'long-confirmation' and protocol == 'independently-tuned':
+            row = next(item for item in rows if item['geometry']['kind'] == 'snake' and item['policy_kind'] == 'neural')
+            if row['candidate_goal_fraction'] == 1:
+                note = (f"All {row['paired_seed_count']} independently tuned neural-policy seeds on the snake grid reached the goal "
+                        'within the longer budget. Their capped mean first-goal-time ratio was '+
+                        _format_interval(row['mean_ratio'], row['mean_ratio_interval'], decimals=3)+
+                        '; this case demonstrates delayed discovery with eventual success within the measured budget.')
+                markdown.append(note+'\n\n')
+                tex.append(_latex_escape(note)+'\n\n')
+    return {'markdown': ''.join(markdown), 'tex': ''.join(tex), 'family_count': len(families)}
+
+
+def tabular_repeatability_observations(run_dir):
+    """Describe only observations recorded by the completed duplicate-seed repeatability probe."""
+    # Absent and unfinished probes contribute no experimental claims to either report.
+    path = Path(run_dir)/'data/repeatability/duplicate_tabular_policy_seeds.json'
+    if not path.exists():
+        return None
+    probe = read_json(path)
+    if not probe.get('completed'):
+        return None
+    cases = probe['cases']
+    if not cases:
+        raise ValueError('A completed tabular repeatability probe must contain its test cases.')
+    initial_keys = ('initial_parameters_equal', 'initial_action_keys_equal',
+                    'initial_minibatch_permutations_equal', 'initial_rollout_actions_equal')
+    initialization_equal = all(case[key] for case in cases for key in initial_keys)
+    random_keys_equal = all(case['first_rng_key_difference'] is None for case in cases)
+    first = (f'Across {len(cases)} duplicate-seed tests, initial parameters, action keys, minibatch '
+             'permutations, and initial rollout actions were identical.' if initialization_equal else
+             'The duplicate-seed tests did not all have identical initial parameters, keys, permutations, and actions.')
+    first += ' No random-key difference was observed.' if random_keys_equal else ' A random-key difference was recorded.'
+    gradient_maximum = max(case['fixed_minibatch_gradient_repeats']['maximum_absolute_difference'] for case in cases)
+    addition_maximum = max(case['simultaneous_repeated_state_accumulation']['maximum_absolute_difference'] for case in cases)
+    stable = all(not case[name]['different_repetitions'] for case in cases
+                 for name in ('unique_state_row_gradient_repeats', 'ordered_state_accumulation'))
+    repeats = sorted({case[name]['repetitions'] for case in cases
+                      for name in ('unique_state_row_gradient_repeats', 'ordered_state_accumulation')})
+    repeated_counts = ', '.join(f'{count}/{count}' for count in repeats)
+    second = (f'Maximum absolute differences were {gradient_maximum:.3g} for a fixed-minibatch gradient '
+              f'and {addition_maximum:.3g} for simultaneous additions to repeated state rows. ')
+    second += (f'Unique-state-row gradients and ordered state additions matched bit for bit in {repeated_counts} evaluations '
+               'in every test.' if stable else 'Unique-state-row or ordered-addition evaluations also recorded differences.')
+    updates = sorted({case['first_parameter_difference']['after_iteration'] for case in cases
+                      if case['first_parameter_difference'] is not None})
+    transitions = sorted({case['first_action_difference']['transition'] for case in cases
+                          if case['first_action_difference'] is not None})
+    third = ('Parameter differences first appeared after update '+', '.join(map(str, updates))+
+             '; action differences first appeared at transitions '+', '.join(f'{value:,}' for value in transitions)+'.')
+    if all(case['first_counter_difference'] is not None and case['first_action_difference'] is not None
+           and case['first_counter_difference']['after_iteration'] >= case['first_action_difference']['iteration']
+           for case in cases):
+        third += ' Visit-count differences followed action differences.'
+    if all(case['capture_matches_training_counts'] for case in cases):
+        third += ' Recorded-action capture matched production training counts; counts remain exact for the recorded actions.'
+    if all(case['first_goal_time_difference'] is None for case in cases):
+        third += ' The probe stopped without observing a first-goal-time difference.'
+    else:
+        third += ' A first-goal-time difference was recorded; its details remain in the raw probe record.'
+    paragraphs = [first, second, third,
+        'The evidence supports repeated floating-point additions as one source of variation. '
+        'JAX documents that overlapping indexed updates can be applied in a hardware-dependent order. '
+        'The primary training code remains frozen.']
+    return {'source': str(path), 'paragraphs': paragraphs,
+            'documentation': 'https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html'}
+
+
+def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_comparisons, repeatability=None):
     """Write generated result tables and selected behavior figures for the development document."""
     # Keep results separate across budgets and shared versus independently tuned comparisons.
     pieces = ['% Generated by scripts/grid_initialization_campaign/report.py; edit that generator.\n']
+    pieces.append(completed_confirmation_findings(paired_comparisons)['tex'])
     if not display_rows:
         pieces.append('No completed training records are available yet. No failure case has been established.\n')
     groups = defaultdict(list)
@@ -721,7 +944,9 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_compari
                       'the ratio is their capped means. The same policy seeds are paired. '
                       'Two-sided 98.75\\% intervals adjust for four geometry/policy comparisons within each comparison rule and budget.\n')
         for index, comparison in enumerate(paired_comparisons):
-            description = geometry_label({'geometry': comparison['geometry']}) + '; ' + comparison['policy_kind'] + ' policy; ' + comparison['comparison']
+            description = (geometry_label({'geometry': comparison['geometry']}) + '; ' + comparison['policy_kind'] +
+                ' policy; ' + comparison_label({'configuration': {'comparison': comparison['comparison']}}) +
+                '; ' + comparison['confirmation_status'])
             pieces.append('\\noindent ' + _latex_escape(description) + ': difference ' +
                 _latex_escape(_format_interval(comparison['mean_difference'], comparison['mean_difference_interval'])) +
                 ' transitions; ratio ' + _latex_escape(_format_interval(comparison['mean_ratio'], comparison['mean_ratio_interval'], decimals=3)) +
@@ -742,6 +967,18 @@ def _write_results_tex(analysis_dir, display_rows, figure_groups, paired_compari
             pieces.append('\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\linewidth]{\\detokenize{' +
                           str(filename) + '}}\n\\caption{' + _latex_escape(caption) +
                           '}\n\\end{figure}\n')
+        if figure.get('early_visitation_budgets'):
+            filename = analysis_dir/'plots'/(figure['name']+'_early_visitation.pdf')
+            budgets = ', '.join(f'{value:,}' for value in figure['early_visitation_budgets'])
+            pieces.append('\n\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\linewidth]{\\detokenize{'+str(filename)+
+                '}}\n\\caption{Mean visits per seed after '+budgets+' training transitions. Every condition uses the same recorded budgets '
+                'and a shared color scale within each row. White cells have zero visits; dark cells are walls. '
+                'Every displayed seed has a complete checkpoint history.}\n\\end{figure}\n')
+    if repeatability is not None:
+        pieces.append('\n\\subsection{Repeatability of tabular training}\n'+
+            '\n\n'.join(_latex_escape(paragraph) for paragraph in repeatability['paragraphs'])+'\n\n'+
+            '\\href{\\detokenize{'+repeatability['source']+'}}{Completed repeatability probe}; '+
+            '\\href{'+repeatability['documentation']+'}{JAX documentation on array updates}.\n')
     (analysis_dir / 'results.tex').write_text(''.join(pieces))
 
 
@@ -754,7 +991,11 @@ def generate_report(run_dir):
     plots_dir.mkdir(parents=True, exist_ok=True)
     rows = collect_rows(run_dir)
     display_rows = select_reporting_rows(rows)
-    paired_comparisons = paired_confirmation_comparisons(display_rows)
+    manifest_path = run_dir/'manifest.yaml'
+    manifest = read_json(manifest_path) if manifest_path.exists() else {}
+    paired_comparisons = paired_confirmation_comparisons(display_rows,
+        planned_policy_seeds=manifest.get('confirmation_policy_seeds', 128),
+        planned_field_seeds=manifest.get('confirmation_field_seeds', 32))
     state_path = run_dir/'campaign_state.json'
     state = read_json(state_path) if state_path.exists() else None
     focus_rows = select_focus_rows(display_rows, state)
@@ -772,6 +1013,7 @@ def generate_report(run_dir):
               'Development rows choose settings using development results. Confirmation comparisons retain settings '
               'chosen before their fresh seeds ran. Shared and independently tuned settings appear separately. '
               'These results concern the recorded finite budget; they do not establish permanent trapping.\n\n']
+    pieces.append(completed_confirmation_findings(paired_comparisons)['markdown'])
     pieces.append('## Numerical results\n\nEvery measured map remains in these summaries and in the seed records. '
                   'Large figures and the main document use only the maps already chosen by the campaign.\n\n')
     if not display_rows:
@@ -795,14 +1037,18 @@ def generate_report(run_dir):
         pieces.append('\n## Paired confirmation comparisons\n\n'
             'Differences are adverse initialization minus uniform initialization. Ratios divide their capped means. '
             'The same policy seeds are paired. Two-sided 98.75% bootstrap intervals adjust for four '
-            'geometry/policy comparisons within each comparison rule and transition budget. '
+            'geometry/policy comparisons within each settings protocol and transition budget; shared settings '
+            'and independently tuned settings are separate four-comparison families. '
             'Network-field comparisons resample whole field seeds; adversarial fields resample policy seeds. '
             'An unfinished confirmation uses the paired seeds currently available and remains interim.\n\n')
         for comparison in paired_comparisons:
             pieces.append('### ' + geometry_label({'geometry': comparison['geometry']}) + '; ' + comparison['policy_kind'] +
-                ' policy; ' + comparison['comparison'] + '; ' + comparison['wave'] + '\n\n' +
+                ' policy; ' + comparison_label({'configuration': {'comparison': comparison['comparison']}}) + '; ' +
+                comparison['wave'] + '; ' + comparison['confirmation_status'] + '\n\n' +
                 comparison['field_label'] + '. ' + comparison['effect_label'] + '.\n\n' +
-                '- Paired seeds: ' + str(comparison['paired_seed_count']) + '; independent groups: ' + str(comparison['independent_group_count']) + '.\n' +
+                '- Paired policy seeds: ' + str(comparison['paired_seed_count']) + ' of planned ' +
+                str(comparison['planned_policy_seed_count']) + '; independent groups: ' +
+                str(comparison['independent_group_count']) + '.\n' +
                 '- Mean difference in transitions [98.75% interval]: ' + _format_interval(comparison['mean_difference'], comparison['mean_difference_interval']) + '.\n' +
                 '- Ratio of capped means [98.75% interval]: ' + _format_interval(comparison['mean_ratio'], comparison['mean_ratio_interval'], decimals=3) + '.\n' +
                 f"- Goal found: uniform {100*comparison['uniform_goal_fraction']:.1f}%; adverse {100*comparison['candidate_goal_fraction']:.1f}%.\n\n")
@@ -827,22 +1073,44 @@ def generate_report(run_dir):
                       'The policy view covers up to 33 states around the most visited late state.\n\n')
         for index, comparison_rows in enumerate(grouped.values()):
             name = f'{WAVE_ORDER[latest]}_comparison-{index}'
+            pieces.append('### '+behavior_heading(comparison_rows[0])+'\n\n')
+            if not any(row['specification']['field_kind'] == 'uniform' for row in comparison_rows):
+                pieces.append('Waiting for a completed uniform-initialization baseline before drawing comparative behavior figures. '
+                              'Every completed numerical result remains above.\n\n')
+                for row in select_behavior_rows(comparison_rows):
+                    pieces.append('- '+condition_count_label(row)+'.\n')
+                pieces.append('\n')
+                continue
             # Immutable completed summaries identify unchanged figures without repeatedly drawing them.
             signature = hashlib.sha256((json.dumps(comparison_rows, sort_keys=True)+
                 hashlib.sha256(Path(__file__).read_bytes()).hexdigest()).encode()).hexdigest()
             required = [plots_dir/f'{name}_{suffix}.{extension}' for suffix in (
                 'maps', 'initial_profiles', 'movement', 'policy', 'discovery') for extension in ('png', 'pdf')]
             required.append(plots_dir/f'{name}_sampled_positions.html')
+            cached_representatives = render_history.get(name, {}).get('representatives', [])
+            if cached_representatives and cached_representatives[0].get('early_visitation_budgets'):
+                required.extend(plots_dir/f'{name}_early_visitation.{extension}' for extension in ('png', 'pdf'))
             if render_history.get(name, {}).get('digest') == signature and all(path.exists() for path in required):
                 representatives = render_history[name]['representatives']
             else:
                 representatives = _plot_comparison(run_dir, comparison_rows, plots_dir, name)
                 render_history[name] = {'digest': signature, 'representatives': representatives}
-            figure_groups.append({'name': name, 'representatives': representatives})
-            pieces.append(f'### {geometry_label(comparison_rows[0]["specification"])}; '
-                          f'{comparison_rows[0]["specification"]["policy_kind"]} policy\n\n')
+            early_budgets = representatives[0].get('early_visitation_budgets', []) if representatives else []
+            figure_groups.append({'name': name, 'representatives': representatives,
+                                  'early_visitation_budgets': early_budgets})
+            for row in select_behavior_rows(comparison_rows):
+                pieces.append('- '+condition_count_label(row)+'.\n')
+            pieces.append('\n')
             for suffix in ('maps', 'initial_profiles', 'movement', 'policy', 'discovery'):
                 pieces.append(f'![{suffix.capitalize()}](plots/{name}_{suffix}.png)\n\n')
+            if early_budgets:
+                pieces.append(f'![Early visitation](plots/{name}_early_visitation.png)\n\n'
+                    'Mean visits per seed after '+', '.join(f'{budget:,}' for budget in early_budgets)+
+                    ' training transitions. Every displayed condition and seed uses the same recorded budgets; '
+                    'each row has a shared color scale. White cells have zero visits and dark cells are walls.\n\n')
+            else:
+                pieces.append('Early visitation maps require complete checkpoint histories for every displayed seed and condition; '
+                              'incomplete or missing histories are not combined.\n\n')
             pieces.append('Initial-profile panels use separate vertical scales so neural-field variation remains visible. '
                           'Movement panels share the full zero-to-goal range; exact first-goal markers use saved transition counts. '
                           'Goal arrivals reset to the start, including after the first goal.\n\n')
@@ -866,6 +1134,11 @@ def generate_report(run_dir):
                 writer.writerow([spec['wave'], geometry_label(spec), spec['policy_kind'], field_label(spec),
                     json.dumps(row['configuration'], sort_keys=True), spec['total_timesteps'],
                     row['policy_seeds'][index], row['field_seeds'][index], row['first_goal_steps'][index], capped[index], condition_variant(spec)])
+    repeatability = tabular_repeatability_observations(run_dir)
+    if repeatability is not None:
+        pieces.append('\n## Repeatability of tabular training\n\n'+'\n\n'.join(repeatability['paragraphs'])+
+            '\n\n[Completed repeatability probe](../data/repeatability/duplicate_tabular_policy_seeds.json); '+
+            '[JAX documentation on array updates]('+repeatability['documentation']+').\n')
     pieces.append('\n## Records and visualization sources\n\n'
                   '[Every seed metric](data/seed_metrics.csv) is retained, including unselected development settings. '
                   'Every task retains its complete seed arrays in `data/research/<task>/behavior.npz`.\n\n'
@@ -874,7 +1147,7 @@ def generate_report(run_dir):
                   'and [initial random-network bonus maps](https://proceedings.mlr.press/v235/yang24w.html).\n')
     _write_report_with_history(analysis_dir, ''.join(pieces))
     write_json(render_history_path, render_history)
-    _write_results_tex(analysis_dir, focus_rows, figure_groups, paired_comparisons)
+    _write_results_tex(analysis_dir, focus_rows, figure_groups, paired_comparisons, repeatability)
     write_json(analysis_dir / 'data/aggregate_results.json', {'generated_at': pacific(),
         'completed_setting_groups': len(rows), 'reported_groups': display_rows, 'figures': figure_groups,
         'paired_confirmation_comparisons': paired_comparisons})

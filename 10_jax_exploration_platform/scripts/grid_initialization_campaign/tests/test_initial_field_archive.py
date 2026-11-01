@@ -209,3 +209,94 @@ def test_confirmation_train_unit_entrypoint_archives_before_training(tmp_path, m
     shards = list(folder.glob('completed_copies_*.json'))
     metadata = json.loads(shards[0].read_text())['field_metadata'][0]
     assert Path(metadata['canonical_archive']['path']).exists()
+
+
+def test_visitation_checkpoint_steps_include_powers_and_final_budget():
+    """Checkpoint times are exact, include short final budgets, and reject unaligned rollouts."""
+    from train_unit import visitation_checkpoint_steps
+
+    assert visitation_checkpoint_steps(4096, 128) == [1024, 2048, 4096]
+    assert visitation_checkpoint_steps(1536, 128) == [1024, 1536]
+    assert visitation_checkpoint_steps(8, 8) == [8]
+    with pytest.raises(ValueError, match='align'):
+        visitation_checkpoint_steps(4096, 2048)
+
+
+def test_confirmation_visitation_history_survives_partial_resume(tmp_path, monkeypatch):
+    """Saved count grids merge on the copy axis while completed shards keep their exact bytes."""
+    import jax
+    import train_unit
+    from exploration_platform.grid_initialization.training import GridTrainer
+
+    # Use actual allocated-CPU training; mock only the entry point's production GPU placement check.
+    monkeypatch.setattr(jax, 'default_backend', lambda: 'gpu')
+    monkeypatch.setattr(train_unit, 'memory_profile', lambda directory, policy: {'copies': 1, 'changes': {}})
+    specification = {'name': 'confirmation_exact_visitation_history', 'wave': 'confirmation',
+        'geometry': {'kind': 'straight', 'width': 8, 'turns': 0}, 'policy_kind': 'tabular',
+        'field_kind': 'uniform', 'severity_exponent': 0, 'total_timesteps': 4096,
+        'seed_start': 10000, 'seed_count': 2,
+        'settings': [{'learning_rate': 2**-10, 'intrinsic_coefficient': 1.,
+                      'entropy_coefficient': 2**-10, 'gamma_int': .99, 'rollout_steps': 128}]}
+    path = tmp_path/'visitation_specification.json'
+    path.write_text(json.dumps(specification))
+    monkeypatch.setattr(sys, 'argv', ['train_unit.py', '--run-dir', str(tmp_path), '--specification', str(path)])
+    original_initialize = GridTrainer.initialize
+    calls = []
+
+    def interrupt_second_copy(trainer, seeds):
+        """Stop after one complete physical shard to exercise the real resume path."""
+        calls.append(tuple(seeds))
+        if len(calls) == 2:
+            raise RuntimeError('Test interruption after the first completed physical shard.')
+        return original_initialize(trainer, seeds)
+
+    monkeypatch.setattr(GridTrainer, 'initialize', interrupt_second_copy)
+    with pytest.raises(RuntimeError, match='Test interruption'):
+        train_unit.main()
+    folder = tmp_path/'data/research'/specification['name']
+    completed_path = next(folder.glob('completed_copies_*.json'))
+    completed_bytes = completed_path.read_bytes()
+    behavior_path = folder/json.loads(completed_bytes)['behavior_file']
+    behavior_bytes = behavior_path.read_bytes()
+    monkeypatch.setattr(GridTrainer, 'initialize', original_initialize)
+    train_unit.main()
+    assert completed_path.read_bytes() == completed_bytes
+    assert behavior_path.read_bytes() == behavior_bytes
+    with np.load(folder/'behavior.npz', allow_pickle=False) as combined:
+        checkpoint_steps = combined['visit_count_history_steps']
+        histories = combined['visit_count_history']
+        np.testing.assert_array_equal(checkpoint_steps, [1024, 2048, 4096])
+        assert histories.shape == (3, 2, 8)
+        np.testing.assert_array_equal(histories.sum(axis=2), np.repeat(checkpoint_steps[:, None], 2, axis=1))
+        assert np.all(np.diff(histories, axis=0) >= 0)
+        np.testing.assert_array_equal(histories[-1], combined['visit_counts'])
+    final_bytes = (folder/'behavior.npz').read_bytes()
+    train_unit.main()
+    assert (folder/'behavior.npz').read_bytes() == final_bytes
+
+
+def test_confirmation_resume_rejects_mismatched_visitation_grid(tmp_path, monkeypatch):
+    """A malformed completed checkpoint grid fails rather than being silently regenerated."""
+    import jax
+    import train_unit
+
+    monkeypatch.setattr(jax, 'default_backend', lambda: 'gpu')
+    specification = {'name': 'confirmation_wrong_visitation_grid', 'wave': 'confirmation',
+        'geometry': {'kind': 'straight', 'width': 8, 'turns': 0}, 'policy_kind': 'tabular',
+        'field_kind': 'uniform', 'severity_exponent': 0, 'total_timesteps': 1024,
+        'seed_start': 10000, 'seed_count': 1,
+        'settings': [{'learning_rate': 2**-10, 'intrinsic_coefficient': 1.,
+                      'entropy_coefficient': 2**-10, 'gamma_int': .99, 'rollout_steps': 128}]}
+    path = tmp_path/'wrong_grid_specification.json'
+    path.write_text(json.dumps(specification))
+    monkeypatch.setattr(sys, 'argv', ['train_unit.py', '--run-dir', str(tmp_path), '--specification', str(path)])
+    train_unit.main()
+    folder = tmp_path/'data/research'/specification['name']
+    (folder/'summary.json').unlink()
+    shard = next(folder.glob('behavior_copies_*.npz'))
+    with np.load(shard, allow_pickle=False) as archive:
+        contents = {name: archive[name].copy() for name in archive.files}
+    contents['visit_count_history_steps'][0] = 512
+    np.savez_compressed(shard, **contents)
+    with pytest.raises(ValueError, match='different visitation checkpoint steps'):
+        train_unit.main()

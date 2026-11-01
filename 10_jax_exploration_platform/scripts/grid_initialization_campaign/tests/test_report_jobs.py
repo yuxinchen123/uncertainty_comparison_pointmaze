@@ -126,6 +126,35 @@ class ReportJobTests(unittest.TestCase):
                 monitor.main()
         sleep.assert_called_once_with(950)
 
+    def test_completion_stop_preserves_complete_and_early_stop_remains_stopped(self):
+        """A completion sentinel or completed phase must survive subsequent finalization ticks."""
+        for previous, sentinel, stop, expected in (
+                ('complete', False, True, 'complete'),
+                ('stopped', True, True, 'complete'),
+                ('complete', False, False, 'complete'),
+                ('long-confirmation', False, True, 'stopped')):
+            with self.subTest(previous=previous, sentinel=sentinel, stop=stop):
+                with tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    write_record(root/'campaign_state.json', {'phase': previous})
+                    if sentinel:
+                        (root/'SWEEP_COMPLETE').write_text('complete\n')
+                    if stop:
+                        (root/'STOP').write_text('stop\n')
+                    with patch.object(monitor, 'own_live_jobs', return_value={}), \
+                            patch.object(monitor, 'stop_workers'), \
+                            patch.object(monitor, 'advance') as advance, \
+                            patch.object(monitor, 'ensure_report_job', return_value={'completed': True}), \
+                            patch.object(monitor, 'queue_counts', return_value={
+                                'done': 3, 'failed': 0, 'running': 0, 'pending': 0}), \
+                            patch.object(monitor, 'inspect_progress'), \
+                            patch('performance_report.write_report'), \
+                            patch.object(monitor, 'status_lines', return_value=['status']):
+                        state, _ = monitor.tick(root)
+                    self.assertEqual(state['phase'], expected)
+                    self.assertEqual(json.loads((root/'campaign_state.json').read_text())['phase'], expected)
+                    advance.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

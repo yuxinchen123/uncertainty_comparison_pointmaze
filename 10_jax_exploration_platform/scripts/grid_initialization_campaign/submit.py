@@ -13,7 +13,9 @@ from common import ACCOUNTS, PROJECT, PYTHON, now, own_live_jobs, read_json, wri
 
 RESOURCE_FILE = Path('/p/rlprojects/.claude/skills/uva-submit-gpu-sweep/school_compute_resource/server_introduction.json')
 CPU_PER_CARD = 4
-MEMORY_GIB_PER_CARD = 16
+# Confirmation jobs measured at most 1.11 GiB of host memory per allocated card.
+# This request applies only to newly submitted training jobs.
+MEMORY_GIB_PER_CARD = 8
 
 
 def slurm_fields(row):
@@ -116,6 +118,7 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         'cards': 0 if monitor or report else cards, 'cpus': cpus, 'memory_gib': memory,
         'final_report': final_report,
         'partition': partition, 'canary': canary, 'source_commit': source.get('commit'),
+        'reservation': reservation, 'qos': 'csresnolim' if reservation else None,
         'excluded_nodes': sorted(exclude_nodes),
         'submitted_at': now(), 'script': str(script), 'wall_seconds': seconds})
     return job_id
@@ -149,6 +152,21 @@ def owner_reservation():
     return None
 
 
+def classify_submission_reservations(submissions, live):
+    """Recover legacy live reservation identities without rewriting historical records."""
+    records = []
+    for original in submissions:
+        record = dict(original)
+        if record['job_id'] in live and 'reservation' not in record:
+            fields = slurm_fields(subprocess.check_output(
+                ['scontrol', 'show', 'job', record['job_id'], '-o'], text=True))
+            reservation = fields.get('Reservation')
+            record['reservation'] = None if reservation in (None, '(null)') else reservation
+            record['qos'] = fields.get('QOS')
+        records.append(record)
+    return records
+
+
 def capacity_budgets(capacity, submissions, live):
     """Reserve pending study requests as well as every account's actual running usage."""
     # Before: account pool free figures; after: independent per-account/per-pool budgets.
@@ -160,19 +178,37 @@ def capacity_budgets(capacity, submissions, live):
         for pool in account['pools']:
             if pool['partition'] not in ('gpu', 'gnolim'):
                 continue
-            budgets[(identity, pool['partition'])] = {
+            key = (identity, pool['partition'])
+            # The live partition total intentionally includes running reservations.
+            # Reserved admission overrides these ceilings separately; it does not add
+            # their usage back into the ordinary pool's reported free capacity.
+            budgets[key] = {
                 'cards': max(0, pool['gpu_free']),
                 'cpus': max(0, pool['cpu_free']-(16 if identity == 'uva-sl5nw' else 0)),
                 'memory_gib': max(0, pool['memory_gib_free'])}
     for record in submissions:
         status = live.get(record['job_id'])
         key = ('uva-'+record['account'], record['partition'])
-        if status and status[3] != 'RUNNING' and key in budgets:
+        if status and status[3] != 'RUNNING' and key in budgets and not record.get('reservation'):
             for resource, amount in [('cards', record['cards']),
                     ('cpus', record.get('cpus', CPU_PER_CARD*record['cards'])),
-                    ('memory_gib', record.get('memory_gib', MEMORY_GIB_PER_CARD*record['cards']))]:
+                    ('memory_gib', record['memory_gib'])]:
                 budgets[key][resource] = max(0, budgets[key][resource]-amount)
     return budgets
+
+
+def reservation_budget(node, physical, submissions, live, reservation):
+    """Admit reserved work from its own physical resources, retaining sixteen owner CPUs."""
+    budget = {'cards': physical['cards'], 'cpus': max(0, physical['cpus']-16),
+              'memory_gib': physical['memory_gib']}
+    for record in submissions:
+        status = live.get(record['job_id'])
+        if (record.get('reservation') == reservation and record.get('node') in (None, node)
+                and status and status[3] != 'RUNNING'):
+            for resource, amount in [('cards', record['cards']), ('cpus', record['cpus']),
+                                     ('memory_gib', record['memory_gib'])]:
+                budget[resource] = max(0, budget[resource]-amount)
+    return budget
 
 
 def node_resources(output):
@@ -189,7 +225,8 @@ def node_resources(output):
         total = int(gpu.group(1))
         nodes[record['NodeName']] = {'cards': max(0, total-int(allocated.group(1) if allocated else 0)),
             'total_cards': total, 'cpus': max(0, int(record.get('CPUEfctv', record['CPUTot']))-int(record['CPUAlloc'])),
-            'memory_gib': max(0, int(record['RealMemory'])-int(record['AllocMem']))/1024,
+            'memory_gib': max(0, int(record['RealMemory'])-int(record['AllocMem'])
+                             -int(record.get('MemSpecLimit', 0)))/1024,
             'reservation': record.get('ReservationName')}
     return nodes
 
@@ -218,6 +255,7 @@ def top_up(run_dir, stage):
         return []
     live = own_live_jobs(run_dir)
     submissions = [read_json(path) for path in (run_dir/'slurm/submissions').glob('*.json')]
+    submissions = classify_submission_reservations(submissions, live)
     active = [record for record in submissions if record['job_id'] in live]
     tasks = [read_json(path) for state in ('pending', 'running')
              for path in (run_dir/'queue'/state).glob('*.json')]
@@ -246,6 +284,8 @@ def top_up(run_dir, stage):
     jobs = []
     # Profiling stays on the requested machine; research cards are chosen when jobs start.
     ordered = sorted(classes, key=lambda row: (row['partition'] != 'gpu', row.get('capability_rank', 999)))
+    # Open partitions come first: actual running reservation usage still counts
+    # against their partition totals, while reserved admission overrides that ceiling.
     for reserved in (False, True):
         for record in ordered:
             if record.get('gpu_mem_mb', 0) < 7000 or record['gres_type'] in failed:
@@ -265,15 +305,14 @@ def top_up(run_dir, stage):
                 identities = ('uva-sl5nw',) if reserved else ('uva-sl5nw', 'uva-yuxinchen')
                 identities = sorted(identities, key=lambda identity: -budgets.get((identity, record['partition']), {}).get('cards', 0))
                 for identity in identities:
-                    budget = budgets.get((identity, record['partition']))
+                    budget = (reservation_budget(node, physical, submissions, live, reservation)
+                              if reserved else budgets.get((identity, record['partition'])))
                     if not budget:
                         continue
                     available = min(physical['cards'], physical['cpus']//CPU_PER_CARD,
                         int(physical['memory_gib']//MEMORY_GIB_PER_CARD), budget['cards'],
                         budget['cpus']//CPU_PER_CARD, int(budget['memory_gib']//MEMORY_GIB_PER_CARD),
                         remaining, type_counts[record['gres_type']])
-                    if reserved:
-                        available = min(available, max(0, (physical['cpus']-16)//CPU_PER_CARD))
                     if available < 1:
                         continue
                     canary = stage == 'research' and record['gres_type'] not in ready
