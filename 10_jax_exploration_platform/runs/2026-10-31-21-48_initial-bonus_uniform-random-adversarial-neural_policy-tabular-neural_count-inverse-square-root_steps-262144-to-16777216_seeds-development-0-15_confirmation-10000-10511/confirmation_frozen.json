@@ -1,0 +1,636 @@
+[
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-tabular_bonus-high_start_region_severity-exponent-8_steps-1048576_seeds-0-15_variant-primary_settings-start-0-end-15",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "tabular",
+    "field_kind": "high_start_region",
+    "severity_exponent": 8,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 6.103515625e-05,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 0,
+    "setting_range": [
+      0,
+      15
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-1048576_seeds-0-15_variant-primary_settings-start-32-end-47",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "tabular",
+    "field_kind": "random_log_uniform",
+    "severity_exponent": 4,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 6.103515625e-05,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 32,
+    "setting_range": [
+      32,
+      47
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-tabular_bonus-random_network_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-48-end-63",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "tabular",
+    "field_kind": "random_network",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 6.103515625e-05,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 48,
+    "setting_range": [
+      48,
+      63
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-tabular_bonus-uniform_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-128-end-143",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "tabular",
+    "field_kind": "uniform",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 128,
+    "setting_range": [
+      128,
+      143
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-neural_bonus-high_start_cell_severity-exponent-8_steps-1048576_seeds-0-15_variant-primary_settings-start-128-end-143",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "neural",
+    "field_kind": "high_start_cell",
+    "severity_exponent": 8,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 128,
+    "setting_range": [
+      128,
+      143
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-neural_bonus-random_network_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-112-end-127",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "neural",
+    "field_kind": "random_network",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 64,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 112,
+    "setting_range": [
+      112,
+      127
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-neural_bonus-uniform_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-64-end-79",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "neural",
+    "field_kind": "uniform",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 64,
+    "setting_range": [
+      64,
+      79
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_straight-width-32-turns-0_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-1048576_seeds-0-15_variant-rollout-64",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    "policy_kind": "neural",
+    "field_kind": "random_log_uniform",
+    "severity_exponent": 4,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.0078125,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "rollout-64"
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-tabular_bonus-high_start_region_severity-exponent-6_steps-1048576_seeds-0-15_variant-primary_settings-start-128-end-143",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "tabular",
+    "field_kind": "high_start_region",
+    "severity_exponent": 6,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 6.103515625e-05,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 128,
+    "setting_range": [
+      128,
+      143
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-tabular_bonus-random_network_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-112-end-127",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "tabular",
+    "field_kind": "random_network",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 6.103515625e-05,
+        "rollout_steps": 128,
+        "gamma_int": 0.984375,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 112,
+    "setting_range": [
+      112,
+      127
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-tabular_bonus-random_log_uniform_severity-exponent-4_steps-1048576_seeds-0-15_variant-primary_settings-start-128-end-143",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "tabular",
+    "field_kind": "random_log_uniform",
+    "severity_exponent": 4,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 6.103515625e-05,
+        "intrinsic_coefficient": 0.015625,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 128,
+    "setting_range": [
+      128,
+      143
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-tabular_bonus-uniform_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-16-end-31",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "tabular",
+    "field_kind": "uniform",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 256,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 16,
+    "setting_range": [
+      16,
+      31
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-neural_bonus-random_log_uniform_severity-exponent-4_steps-1048576_seeds-0-15_variant-primary_settings-start-48-end-63",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "neural",
+    "field_kind": "random_log_uniform",
+    "severity_exponent": 4,
+    "settings": [
+      {
+        "learning_rate": 0.00390625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.0009765625,
+        "intrinsic_coefficient": 4.0,
+        "entropy_coefficient": 0.015625,
+        "rollout_steps": 128,
+        "gamma_int": 0.999755859375,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 48,
+    "setting_range": [
+      48,
+      63
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-neural_bonus-uniform_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-112-end-127",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "neural",
+    "field_kind": "uniform",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.00390625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.00390625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 112,
+    "setting_range": [
+      112,
+      127
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-neural_bonus-high_start_cell_severity-exponent-6_steps-1048576_seeds-0-15_variant-primary_settings-start-48-end-63",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "neural",
+    "field_kind": "high_start_cell",
+    "severity_exponent": 6,
+    "settings": [
+      {
+        "learning_rate": 0.00390625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.0078125,
+        "intrinsic_coefficient": 1.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 48,
+    "setting_range": [
+      48,
+      63
+    ],
+    "total_setting_count": 181
+  },
+  {
+    "name": "fine-tuning_snake-width-16-turns-2_policy-neural_bonus-random_network_severity-exponent-0_steps-1048576_seeds-0-15_variant-primary_settings-start-64-end-79",
+    "wave": "fine-tuning",
+    "geometry": {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    },
+    "policy_kind": "neural",
+    "field_kind": "random_network",
+    "severity_exponent": 0,
+    "settings": [
+      {
+        "learning_rate": 0.00390625,
+        "intrinsic_coefficient": 64.0,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 128,
+        "gamma_int": 0.99,
+        "comparison": "shared"
+      },
+      {
+        "learning_rate": 0.015625,
+        "intrinsic_coefficient": 0.25,
+        "entropy_coefficient": 0.0009765625,
+        "rollout_steps": 64,
+        "gamma_int": 0.99,
+        "comparison": "independently-tuned"
+      }
+    ],
+    "total_timesteps": 1048576,
+    "seed_start": 0,
+    "seed_count": 16,
+    "variant": "primary",
+    "setting_offset": 64,
+    "setting_range": [
+      64,
+      79
+    ],
+    "total_setting_count": 181
+  }
+]
