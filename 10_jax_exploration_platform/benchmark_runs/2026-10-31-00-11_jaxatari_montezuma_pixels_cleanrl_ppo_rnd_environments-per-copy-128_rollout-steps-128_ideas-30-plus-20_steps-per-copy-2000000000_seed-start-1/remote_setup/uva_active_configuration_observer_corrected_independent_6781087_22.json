@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_observer_corrected_independent_review",
+  "passed": true,
+  "at_utc": "2026-11-01T15:33:39.032561+00:00",
+  "source_hashes": {
+    "uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+    "test_uva_active_configuration_observation.py": "0d60189b40b02b9422680950007d5cb70d0591e3abc716491c2693915e6560e4"
+  },
+  "source_unchanged": true,
+  "author_cases_passed": 19,
+  "independent_boundary_cases": [
+    "request1_allocate2_step1_affinity1_accepted",
+    "requested_cpu2_rejected",
+    "requested_gpu_rejected",
+    "step_memory64_rejected",
+    "affinity_above_job_rejected",
+    "late_parent_symlink_rejected_without_read_descriptor"
+  ],
+  "stdlib_imports": [
+    "argparse",
+    "base64",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "socket",
+    "stat",
+    "subprocess"
+  ],
+  "gpu_device_or_runtime_access": false,
+  "mapping_claims": false,
+  "admission_claims": false,
+  "source_edits": 0,
+  "ssh_calls": 0,
+  "live_scheduler_queries": 0,
+  "job_submissions": 0,
+  "owned_job_id": "6781087",
+  "owned_step_id": "22",
+  "process": {
+    "hostname": "slurm2",
+    "pid": 684559,
+    "birth": "50801875",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_22/user/task_0\n"
+  },
+  "seconds": 1.4190634110127576,
+  "test_output": "test_allowed_configuration_filter_preserves_duplicates_but_omits_secret_settings (test_uva_active_configuration_observation.ConfigurationObservationTests)\nOnly the five approved names survive, with case-insensitive matching and comment contents removed. ... ok\ntest_atomic_path_replacement_never_pairs_old_metadata_with_new_bytes (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA renamed replacement leaves the captured bytes tied to the original pinned regular inode. ... ok\ntest_changed_source_and_staged_module_are_rejected_before_collection (test_uva_active_configuration_observation.ConfigurationObservationTests)\nUncommitted source or a changed staged copy cannot collect metadata under the original source identity. ... ok\ntest_credit_or_reservation_cannot_be_added_to_the_static_plan (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA coherently rehashed plan still cannot change the diagnostic's unresolved identity or zero-credit scope. ... ok\ntest_duplicate_or_unrecorded_returned_ids_are_rejected (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn arbitrary number or duplicate ledger entry cannot become the held observation identity. ... ok\ntest_exact_detached_source_preparation_has_null_id_and_zero_credit (test_uva_active_configuration_observation.ConfigurationObservationTests)\nActual local Git bytes are staged once, and no identifier or mapping is invented. ... ok\ntest_file_growth_is_bounded_and_never_claimed_as_a_complete_file (test_uva_active_configuration_observation.ConfigurationObservationTests)\nGrowth after descriptor metadata cannot bypass the bounded stream or produce a full-file hash claim. ... ok\ntest_foreign_or_nonbound_id_stops_before_any_query_and_preserves_failure (test_uva_active_configuration_observation.ConfigurationObservationTests)\nActual own-process failure metadata survives, while another owner or another recorded ID is never queried. ... ok\ntest_late_nonregular_replacement_never_opens_a_read_descriptor (test_uva_active_configuration_observation.ConfigurationObservationTests)\nOnly a metadata handle reaches a replaced nonregular inode; no ordinary read-open is attempted. ... ok\ntest_missing_symlink_and_read_failure_remain_explicit (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn unavailable or replaced candidate is not followed or silently omitted. ... ok\ntest_one_or_two_actual_threads_are_recorded_without_claiming_one_affinity_entry (test_uva_active_configuration_observation.ConfigurationObservationTests)\nOne requested CPU may receive one or two actual threads; a GPU or larger CPU/memory shape is rejected. ... ok\ntest_only_unique_actual_spool_cache_candidates_are_read (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAbsent, duplicate or relative spool settings never cause guessed cache paths to be read. ... ok\ntest_process_birth_owner_and_query_identity_are_bound (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAnother owner, replaced birth or changed owned job query cannot satisfy the observation reader. ... ok\ntest_requested_step_and_affinity_resources_cannot_exceed_actual_job (test_uva_active_configuration_observation.ConfigurationObservationTests)\nContradictory requested memory/GPU or step resources cannot hide behind a smaller allocated row. ... ok\ntest_returned_held_id_binding_requires_the_canonical_fsynced_ledger (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn unresolved plan stays unchanged while the actual returned ID is bound in a separate immutable artifact. ... ok\ntest_running_configuration_does_not_store_full_output_or_stderr (test_uva_active_configuration_observation.ConfigurationObservationTests)\nController output outside the allowlist is represented only by its hash and stderr byte count. ... ok\ntest_slurm_file_retains_only_filtered_settings_and_full_hash (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA raw slurm.conf secret cannot appear in the observation payload. ... ok\ntest_successful_metadata_collection_preserves_null_plan_and_ledger_growth (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA separate returned-ID snapshot survives later ledger growth and records missing cache evidence with zero credit. ... ok\ntest_untrusted_ordinary_gres_bytes_are_observed_without_qualification (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA service-owned AutoDetect file remains original evidence, never an accepted physical File mapping. ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 1.363s\n\nOK\n",
+  "limits": [
+    "Metadata collection grants zero GPU mapping, qualification, worker or scientific credit.",
+    "An unsupported actual resource or file state is retained as evidence rather than accepted."
+  ]
+}

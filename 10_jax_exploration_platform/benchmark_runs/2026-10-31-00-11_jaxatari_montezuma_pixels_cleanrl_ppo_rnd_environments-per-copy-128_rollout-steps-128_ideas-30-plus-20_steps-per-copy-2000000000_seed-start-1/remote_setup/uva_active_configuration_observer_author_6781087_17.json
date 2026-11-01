@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_observer_author_metadata_validation",
+  "created_utc": "2026-11-01T15:19:16.756133+00:00",
+  "job_id": "6781087",
+  "step_id": "17",
+  "before": {
+    "uva_active_configuration_observation.py": "90779eb1588b6840f991a7b19824774f576032d4dcc1c560bf90e9382acad449",
+    "tests/test_uva_active_configuration_observation.py": "041f1ff064536e3e99e728ae3e24688c0889d9db1b5ddc008fdb6e9d4499c9f1"
+  },
+  "after": {
+    "uva_active_configuration_observation.py": "90779eb1588b6840f991a7b19824774f576032d4dcc1c560bf90e9382acad449",
+    "tests/test_uva_active_configuration_observation.py": "041f1ff064536e3e99e728ae3e24688c0889d9db1b5ddc008fdb6e9d4499c9f1"
+  },
+  "source_unchanged": true,
+  "tests_run": 15,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "test_allowed_configuration_filter_preserves_duplicates_but_omits_secret_settings (test_uva_active_configuration_observation.ConfigurationObservationTests)\nOnly the five approved names survive, with case-insensitive matching and comment contents removed. ... ok\ntest_changed_source_and_staged_module_are_rejected_before_collection (test_uva_active_configuration_observation.ConfigurationObservationTests)\nUncommitted source or a changed staged copy cannot collect metadata under the original source identity. ... ok\ntest_credit_or_reservation_cannot_be_added_to_the_static_plan (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA coherently rehashed plan still cannot change the diagnostic's unresolved identity or zero-credit scope. ... ok\ntest_duplicate_or_unrecorded_returned_ids_are_rejected (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn arbitrary number or duplicate ledger entry cannot become the held observation identity. ... ok\ntest_exact_detached_source_preparation_has_null_id_and_zero_credit (test_uva_active_configuration_observation.ConfigurationObservationTests)\nActual local Git bytes are staged once, and no identifier or mapping is invented. ... ok\ntest_foreign_or_nonbound_id_stops_before_any_query_and_preserves_failure (test_uva_active_configuration_observation.ConfigurationObservationTests)\nActual own-process failure metadata survives, while another owner or another recorded ID is never queried. ... ok\ntest_missing_symlink_and_read_failure_remain_explicit (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn unavailable or replaced candidate is not followed or silently omitted. ... ok\ntest_one_or_two_actual_threads_are_recorded_without_claiming_one_affinity_entry (test_uva_active_configuration_observation.ConfigurationObservationTests)\nOne requested CPU may receive one or two actual threads; a GPU or larger CPU/memory shape is rejected. ... ok\ntest_only_unique_actual_spool_cache_candidates_are_read (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAbsent, duplicate or relative spool settings never cause guessed cache paths to be read. ... ok\ntest_process_birth_owner_and_query_identity_are_bound (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAnother owner, replaced birth or changed owned job query cannot satisfy the observation reader. ... ok\ntest_returned_held_id_binding_requires_the_canonical_fsynced_ledger (test_uva_active_configuration_observation.ConfigurationObservationTests)\nAn unresolved plan stays unchanged while the actual returned ID is bound in a separate immutable artifact. ... ok\ntest_running_configuration_does_not_store_full_output_or_stderr (test_uva_active_configuration_observation.ConfigurationObservationTests)\nController output outside the allowlist is represented only by its hash and stderr byte count. ... ok\ntest_slurm_file_retains_only_filtered_settings_and_full_hash (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA raw slurm.conf secret cannot appear in the observation payload. ... ok\ntest_successful_metadata_collection_preserves_null_plan_and_ledger_growth (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA separate returned-ID snapshot survives later ledger growth and records missing cache evidence with zero credit. ... ok\ntest_untrusted_ordinary_gres_bytes_are_observed_without_qualification (test_uva_active_configuration_observation.ConfigurationObservationTests)\nA service-owned AutoDetect file remains original evidence, never an accepted physical File mapping. ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 1.614s\n\nOK\n",
+  "blocked_actions": [],
+  "numerical_modules_loaded": [],
+  "local_git_fixtures_only": true,
+  "real_scheduler_queries": 0,
+  "real_configuration_reads": 0,
+  "device_opens": 0,
+  "gpu_jobs": 0,
+  "jobs_submitted": 0,
+  "physical_mapping_credit": 0,
+  "admission_credit": 0
+}

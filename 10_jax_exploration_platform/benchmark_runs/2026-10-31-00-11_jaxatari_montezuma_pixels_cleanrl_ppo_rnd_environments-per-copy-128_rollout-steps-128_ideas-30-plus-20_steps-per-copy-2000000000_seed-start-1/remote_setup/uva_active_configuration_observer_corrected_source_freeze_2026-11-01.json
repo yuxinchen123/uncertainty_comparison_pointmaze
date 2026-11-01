@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "uva_active_configuration_observer_corrected_source_freeze",
+  "created_utc": "2026-11-01T15:30:59.153383+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5",
+  "base_commit": "306a3b32470048d8806245d9590fe61336c5571a",
+  "files": {
+    "uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+    "tests/test_uva_active_configuration_observation.py": "0d60189b40b02b9422680950007d5cb70d0591e3abc716491c2693915e6560e4"
+  },
+  "prior_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_active_configuration_observer_source_freeze_2026-11-01.json",
+    "sha256": "7e014df5884d80e05b09415ca9c90263ecefb8392ac2d0d3361e1778d370c567"
+  },
+  "prior_author": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_active_configuration_observer_author_6781087_17.json",
+    "sha256": "7436457837f24dbaea2dfbded67ffe3d51b1b1407783dab8fed74665d8454c17"
+  },
+  "prior_independent_findings": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_active_configuration_observer_independent_findings_6781087_20.json",
+    "sha256": "b4d08229fccae929f8473955674d59c6bab34f0f9c37d12ab3ac492ac5ecd9dc"
+  },
+  "prior_source_bytes": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/.review_metadata/first_observer_frozen_source/uva_active_configuration_observation.py",
+      "sha256": "90779eb1588b6840f991a7b19824774f576032d4dcc1c560bf90e9382acad449"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/.review_metadata/first_observer_frozen_source/test_uva_active_configuration_observation.py",
+      "sha256": "041f1ff064536e3e99e728ae3e24688c0889d9db1b5ddc008fdb6e9d4499c9f1"
+    }
+  ],
+  "corrected_author": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-09_uva-active-configuration-observation_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/uva_active_configuration_observer_corrected_author_6781087_21.json",
+    "sha256": "2bddfde98a541f3c88754b1eb4e5f8feda25b73aa38d17f629c2d552d2d87dc2"
+  },
+  "changes": [
+    {
+      "before": "ReqTRES and step memory were not checked, and actual step CPU/affinity counts were not joined to the job allocation.",
+      "after": "Require requested CPU1/memory2GiB/node1/zeroGPU; retain actual allocatedCPU1or2 and require stepCPU<=allocatedCPU, stepmemory2GiB/node1/zeroGPU and observed affinity<=stepCPU. Preserve the actual requested1/allocated2/step1 format with explicitly synthetic one-thread affinity."
+    },
+    {
+      "before": "Path lstat metadata and subsequent pathname read could identify different inodes, and growth could exceed the prior size check.",
+      "after": "Walk non-following O_PATH directory descriptors, pin the candidate with O_PATH, require its actual inode to be regular before opening its own /proc/self/fd alias for reading, stream at most8MiB+1, retain at most8MiB and mark incomplete/grown/replaced/changed evidence explicitly. Ownership/hash fields bind the pinned inode, not an earlier path lookup."
+    }
+  ],
+  "scope_unchanged": "Standard-library only, zeroGPU metadata observation; no NVML/CUDA/JAX/slurmd execution, real device read-open, source-profile revision, physical mapping, numerical work or admission.",
+  "frozen_prior_versions_preserved": true,
+  "jobs_submitted": false,
+  "physical_assignment_verified": false,
+  "source_admission_changed": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_credit": 0,
+  "throughput_credit": 0,
+  "admission_credit": 0
+}
