@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_metadata_tests_after_independent_review",
+  "created_at_utc": "2026-11-01T07:57:31.223897+00:00",
+  "slurm_job_id": "6780433",
+  "slurm_step_id": "36",
+  "hostname": "slurm5",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/p/rlprojects/RND_worktrees/2026-11-01-00-40_aces-full-site-qualification_driver-580.178.04_model-h100-pcie_gpu-count-1_processor-count-8/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+    "-p",
+    "test_aces_slurm_*.py",
+    "-v"
+  ],
+  "source_before": {
+    "aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "aces_slurm_site_validation.py": "d7c7d1632382a74d1dc775c7179f87584c0275a71d3a6390286c65372597e1d2",
+    "tests/test_aces_slurm_qualification.py": "434caa324d2f3a5b9cf9b620eccf002c4e0b3bfba0dcf447a702b2f5f56267ba",
+    "tests/test_aces_slurm_site_validation.py": "5b900a290901d60e000a6fcc12211d0387c161e6f558eb3f781322b65af0a4b2"
+  },
+  "source_after": {
+    "aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "aces_slurm_site_validation.py": "d7c7d1632382a74d1dc775c7179f87584c0275a71d3a6390286c65372597e1d2",
+    "tests/test_aces_slurm_qualification.py": "434caa324d2f3a5b9cf9b620eccf002c4e0b3bfba0dcf447a702b2f5f56267ba",
+    "tests/test_aces_slurm_site_validation.py": "5b900a290901d60e000a6fcc12211d0387c161e6f558eb3f781322b65af0a4b2"
+  },
+  "source_unchanged": true,
+  "returncode": 0,
+  "stdout": "test_active_configuration_ambiguity_and_trust (test_aces_slurm_qualification.QualificationTests)\nOther present candidates, writable files and includes each block numerical work. ... ok\ntest_cached_file_only_preserves_allowlisted_entries (test_aces_slurm_qualification.QualificationTests)\nUnrelated values stay out of raw configuration while full bytes remain hashed. ... ok\ntest_case_insensitive_ambiguity_is_retained_and_rejected (test_aces_slurm_qualification.QualificationTests)\nLower-case Slurm entries cannot disappear from capture or override canonical values silently. ... ok\ntest_duplicate_paths_resources_and_foreign_cpuset_fail (test_aces_slurm_qualification.QualificationTests)\nDuplicate rows never take the last value, and CPU paths must belong to this exact task. ... ok\ntest_expand_only_explicit_bounded_lists (test_aces_slurm_qualification.QualificationTests)\nLeading zeros are retained and unsupported or duplicate expressions fail. ... ok\ntest_explicit_configured_mapping_not_numeric_equality (test_aces_slurm_qualification.QualificationTests)\nThe configured fourth index is joined through File/proc bytes to UUID and PCI. ... ok\ntest_missing_typed_file_mapping_is_not_autodetected (test_aces_slurm_qualification.QualificationTests)\nAutoDetect alone and duplicate device files cannot become mapping proof. ... ok\ntest_raw_query_and_running_field_hash_bindings (test_aces_slurm_qualification.QualificationTests)\nChanged query fields or selected settings must disagree with preserved raw evidence. ... ok\ntest_real_observation_alone_cannot_qualify (test_aces_slurm_qualification.QualificationTests)\nThe completed metadata-only job has no additional active GRES/cache proof. ... ok\ntest_reordered_configured_files_change_selected_identity (test_aces_slurm_qualification.QualificationTests)\nA conflicting explicit File order cannot be hidden by Slurm ID/minor numeric equality. ... ok\ntest_scope_and_resource_changes_fail (test_aces_slurm_qualification.QualificationTests)\nA foreign owner, node, step or inflated allocation cannot enter numerical work. ... ok\ntest_strict_profile_and_cuda_identity_types (test_aces_slurm_qualification.QualificationTests)\nBoolean substitutes and a foreign CUDA UUID must be rejected. ... ok\ntest_actual_selector_is_required_in_process_and_raw_observation (test_aces_slurm_site_validation.SiteTests)\nMissing or substituted selectors cannot qualify even with otherwise matching hash receipts. ... ok\ntest_complete_saved_chain_and_negative_result_paths (test_aces_slurm_site_validation.SiteTests)\nA complete portable synthetic chain passes while substituted paths and credit changes fail. ... ok\ntest_credit_types_and_missing_boundary_fields_fail (test_aces_slurm_site_validation.SiteTests)\nSite evidence cannot turn booleans into numeric zero or omit permissions. ... ok\ntest_full_chain_rejects_observer_process_substitution (test_aces_slurm_site_validation.SiteTests)\nMatching child receipts still cannot replace its fresh observer with another process. ... ok\ntest_held_aces_command_has_no_uva_placement (test_aces_slurm_site_validation.SiteTests)\nPreparation names the exact ACES account and typed one-GPU shape without submitting. ... ok\ntest_library_pid_and_cross_stage_driver_bytes_are_bound (test_aces_slurm_site_validation.SiteTests)\nForeign library processes and a later different driver image both invalidate the saved chain. ... ok\ntest_manifest_kind_cluster_and_schema_fail_before_inputs_are_read (test_aces_slurm_site_validation.SiteTests)\nA foreign preparation header cannot reach the helper or numerical stage. ... ok\ntest_original_gate_commands_and_precision_are_reused (test_aces_slurm_site_validation.SiteTests)\nOriginal complete test paths and numerical controls retain their established values. ... ok\ntest_portable_driver_verification_never_reads_node_original (test_aces_slurm_site_validation.SiteTests)\nA saved driver copy is sufficient after the original node-local path disappears. ... ok\ntest_saved_numerical_result_retains_every_process_field (test_aces_slurm_site_validation.SiteTests)\nA probe cannot retain PID while substituting source, runtime, software or original metadata. ... ok\ntest_selector_changes_only_after_identity_stage (test_aces_slurm_site_validation.SiteTests)\nThe first child keeps Slurm's selector and following children receive the proved UUID. ... ok\ntest_symlink_artifact_and_parent_are_rejected_even_with_identical_bytes (test_aces_slurm_site_validation.SiteTests)\nAn exact known child artifact cannot resolve to an external file or through a linked directory. ... ok\n\n----------------------------------------------------------------------\nRan 24 tests in 6.426s\n\nOK\n",
+  "ssh_or_submissions": false
+}

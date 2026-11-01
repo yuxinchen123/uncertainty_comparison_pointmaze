@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "kind": "aces_full_site_independent_metadata_review",
+  "started_at_utc": "2026-11-01T08:00:34.949088+00:00",
+  "finished_at_utc": "2026-11-01T08:00:41.222801+00:00",
+  "job_id": "6780433",
+  "step_id": "37",
+  "hostname": "slurm5",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-00-40_aces-full-site-qualification_driver-580.178.04_model-h100-pcie_gpu-count-1_processor-count-8",
+  "base_commit": "669586a612fa3d0b2555afec2897058e108b5ff2",
+  "source_sha256": {
+    "aces_slurm_qualification.py": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad",
+    "aces_slurm_site_validation.py": "d7c7d1632382a74d1dc775c7179f87584c0275a71d3a6390286c65372597e1d2",
+    "tests/test_aces_slurm_qualification.py": "434caa324d2f3a5b9cf9b620eccf002c4e0b3bfba0dcf447a702b2f5f56267ba",
+    "tests/test_aces_slurm_site_validation.py": "5b900a290901d60e000a6fcc12211d0387c161e6f558eb3f781322b65af0a4b2"
+  },
+  "author_freeze_verified": true,
+  "source_unchanged": true,
+  "existing_tracked_campaign_scripts_changed": [],
+  "actual_owned_allocation_observation": {
+    "job_id": "2274380",
+    "files": {
+      "/p/rlprojects/RND_worktrees/2026-11-01-00-40_aces-full-site-qualification_driver-580.178.04_model-h100-pcie_gpu-count-1_processor-count-8/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/owned_allocation.json": "0d603cb7cbbc6d2c8d89e353d9174592fa1244716586d338c296b13af09599a2",
+      "/p/rlprojects/RND_worktrees/2026-11-01-00-40_aces-full-site-qualification_driver-580.178.04_model-h100-pcie_gpu-count-1_processor-count-8/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/hardware_observations.json": "49484372e779cd103d803257114e6efe7fc44e40518dddcbd1ae081b87581fd2"
+    },
+    "scope": "metadata only; no cached GRES proof, CUDA initialization, dtype result or site qualification credit"
+  },
+  "tests_run": 24,
+  "test_names": [
+    "test_aces_slurm_qualification.QualificationTests.test_active_configuration_ambiguity_and_trust",
+    "test_aces_slurm_qualification.QualificationTests.test_cached_file_only_preserves_allowlisted_entries",
+    "test_aces_slurm_qualification.QualificationTests.test_case_insensitive_ambiguity_is_retained_and_rejected",
+    "test_aces_slurm_qualification.QualificationTests.test_duplicate_paths_resources_and_foreign_cpuset_fail",
+    "test_aces_slurm_qualification.QualificationTests.test_expand_only_explicit_bounded_lists",
+    "test_aces_slurm_qualification.QualificationTests.test_explicit_configured_mapping_not_numeric_equality",
+    "test_aces_slurm_qualification.QualificationTests.test_missing_typed_file_mapping_is_not_autodetected",
+    "test_aces_slurm_qualification.QualificationTests.test_raw_query_and_running_field_hash_bindings",
+    "test_aces_slurm_qualification.QualificationTests.test_real_observation_alone_cannot_qualify",
+    "test_aces_slurm_qualification.QualificationTests.test_reordered_configured_files_change_selected_identity",
+    "test_aces_slurm_qualification.QualificationTests.test_scope_and_resource_changes_fail",
+    "test_aces_slurm_qualification.QualificationTests.test_strict_profile_and_cuda_identity_types",
+    "test_aces_slurm_site_validation.SiteTests.test_actual_selector_is_required_in_process_and_raw_observation",
+    "test_aces_slurm_site_validation.SiteTests.test_complete_saved_chain_and_negative_result_paths",
+    "test_aces_slurm_site_validation.SiteTests.test_credit_types_and_missing_boundary_fields_fail",
+    "test_aces_slurm_site_validation.SiteTests.test_full_chain_rejects_observer_process_substitution",
+    "test_aces_slurm_site_validation.SiteTests.test_held_aces_command_has_no_uva_placement",
+    "test_aces_slurm_site_validation.SiteTests.test_library_pid_and_cross_stage_driver_bytes_are_bound",
+    "test_aces_slurm_site_validation.SiteTests.test_manifest_kind_cluster_and_schema_fail_before_inputs_are_read",
+    "test_aces_slurm_site_validation.SiteTests.test_original_gate_commands_and_precision_are_reused",
+    "test_aces_slurm_site_validation.SiteTests.test_portable_driver_verification_never_reads_node_original",
+    "test_aces_slurm_site_validation.SiteTests.test_saved_numerical_result_retains_every_process_field",
+    "test_aces_slurm_site_validation.SiteTests.test_selector_changes_only_after_identity_stage",
+    "test_aces_slurm_site_validation.SiteTests.test_symlink_artifact_and_parent_are_rejected_even_with_identical_bytes"
+  ],
+  "failures": 0,
+  "errors": 0,
+  "successful": true,
+  "forbidden_command_attempts": [],
+  "live_scheduler_ssh_or_gpu_commands": false,
+  "numerical_imports": [],
+  "official_documentation_consulted": [
+    "https://slurm.schedmd.com/slurm.conf.html",
+    "https://slurm.schedmd.com/gres.conf.html",
+    "https://slurm.schedmd.com/gres.html"
+  ],
+  "review_result": "No blocking findings remain in the corrected metadata candidate. Exact selector, process, raw configuration/query, captured-driver and ordinary-path checks reject the reviewed substitutions.",
+  "workers_permitted": false,
+  "campaign_claims_permitted": false,
+  "scientific_hypothesis_credit": 0,
+  "comparison_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0,
+  "limitations": [
+    "No live ACES full-site run was performed.",
+    "Kernel device enforcement is not independently attested.",
+    "Future optimized selected-source measurement and training require separate reviewed admission."
+  ],
+  "log": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-00-40_aces-full-site-qualification_driver-580.178.04_model-h100-pcie_gpu-count-1_processor-count-8/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_full_site_independent_review_6780433_37.log",
+    "sha256": "42902fd61d5fa38a7db8d8902e8485caecc50d6ab6de60ae8f63fa9c272d5cb1"
+  }
+}
