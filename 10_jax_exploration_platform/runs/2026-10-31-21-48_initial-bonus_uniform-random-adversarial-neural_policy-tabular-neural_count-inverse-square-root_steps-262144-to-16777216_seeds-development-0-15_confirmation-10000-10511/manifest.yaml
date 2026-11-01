@@ -63,8 +63,9 @@
   "max_measurement_attempts": 2,
   "save_checkpoints": false,
   "git": {
-    "commit": "97111d49c2ff8112c482422213f16f0840486744",
-    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_97111d49c2ff8112c482422213f16f0840486744"
+    "commit": "0d14eb307f789689f976d2dd24bf4bd1e73a22df",
+    "snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/code/source_0d14eb307f789689f976d2dd24bf4bd1e73a22df",
+    "final_report_source_commit": "0c8c4ada1429fd705e78cce524331677e5e1b684"
   },
   "owner_session_id": "01a1955c-f847-70c2-8b61-7d679c7c64d6",
   "rendering_dependency": "PyMuPDF==1.26.6",
@@ -79,7 +80,17 @@
     "report_monitor_and_queue_checks_passed": 47,
     "archive_concurrency_and_control_tests_passed": 60,
     "behavior_figure_tests_passed": 8,
-    "visitation_history_and_report_tests_passed": 22
+    "visitation_history_and_report_tests_passed": 22,
+    "resource_and_report_completeness_tests_passed": 22,
+    "short_confirmation_integrity_audit": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/verification/confirmation_integrity_source-97111d4.json",
+    "reservation_submission_and_report_job_tests_passed": 23,
+    "repeatability_report_tests_passed": 16,
+    "repeatability_probe_completed": true,
+    "repeatability_probe_seconds": 24.99,
+    "final_front_summary_report_tests_passed": 20,
+    "long_confirmation_integrity_audit": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/verification/long_confirmation_integrity_source-2041e37.json",
+    "numerical_code_and_frozen_settings_equivalence": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/verification/long_confirmation_source_and_frozen_setting_equivalence.json",
+    "completion_status_regression_tests_passed": 9
   },
   "research_started_at": "2026-11-01T01:24:35.319679-04:00",
   "research_deadline": "2026-11-05T01:24:35.319736-04:00",
@@ -101,5 +112,13 @@
       "state"
     ]
   },
-  "resource_inventory_snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/infrastructure/resource_inventory_refreshed.json"
+  "resource_inventory_snapshot": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/infrastructure/resource_inventory_refreshed.json",
+  "new_training_host_memory_gib_per_card": 8,
+  "measured_confirmation_host_memory_gib_per_card_maximum": 1.11,
+  "reservation_admission": "Ordinary pools first; reservation admission uses physical resources independently of ordinary limits, with sixteen CPUs left free.",
+  "scientific_units_completed": 1180,
+  "scientific_failures": 0,
+  "final_report": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511/analysis/final_report.pdf",
+  "final_report_sha256": "7ee79def4955baa209b978d3f07fd5758d82d44a701293d78dae2dc6cd1276fb",
+  "completed_at": "2026-11-01T03:47:20.838940-05:00"
 }

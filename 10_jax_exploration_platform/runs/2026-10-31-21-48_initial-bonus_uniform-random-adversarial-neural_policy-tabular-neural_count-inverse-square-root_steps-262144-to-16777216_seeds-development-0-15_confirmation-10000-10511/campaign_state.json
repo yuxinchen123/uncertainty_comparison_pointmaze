@@ -1,0 +1,79 @@
+{
+  "phase": "complete",
+  "created_at": "2026-11-01T00:54:18.703373-04:00",
+  "updated_at": "2026-11-01T03:47:20.838940-05:00",
+  "research_started_at": "2026-11-01T01:24:35.319679-04:00",
+  "deadline": "2026-11-05T01:24:35.319736-04:00",
+  "selected_maps": [
+    {
+      "kind": "straight",
+      "width": 64,
+      "turns": 0
+    },
+    {
+      "kind": "straight",
+      "width": 32,
+      "turns": 0
+    },
+    {
+      "kind": "snake",
+      "width": 16,
+      "turns": 4
+    },
+    {
+      "kind": "snake",
+      "width": 16,
+      "turns": 2
+    }
+  ],
+  "selected_comparisons": [
+    {
+      "geometry": {
+        "kind": "straight",
+        "width": 32,
+        "turns": 0
+      },
+      "policy_kind": "tabular",
+      "field_kind": "high_start_region",
+      "severity_exponent": 8,
+      "total_timesteps": 1048576
+    },
+    {
+      "geometry": {
+        "kind": "straight",
+        "width": 32,
+        "turns": 0
+      },
+      "policy_kind": "neural",
+      "field_kind": "high_start_cell",
+      "severity_exponent": 8,
+      "total_timesteps": 1048576
+    },
+    {
+      "geometry": {
+        "kind": "snake",
+        "width": 16,
+        "turns": 2
+      },
+      "policy_kind": "tabular",
+      "field_kind": "random_network",
+      "severity_exponent": 0,
+      "total_timesteps": 1048576
+    },
+    {
+      "geometry": {
+        "kind": "snake",
+        "width": 16,
+        "turns": 2
+      },
+      "policy_kind": "neural",
+      "field_kind": "random_network",
+      "severity_exponent": 0,
+      "total_timesteps": 1048576
+    }
+  ],
+  "deadline_reached": false,
+  "final_report_ready": true,
+  "completed_at": "2026-11-01T03:47:20.838940-05:00",
+  "recurring_monitor_deleted": true
+}
