@@ -12,4 +12,4 @@ New grid_initialization trainer and grid_initialization_campaign scripts. Thirty
 
 ## Git state
 
-Current source commit: `126b2dd6b91667ecdac4ea375bc74844a20426e5`. Source changes and verification attempts are recorded in `infrastructure_events.jsonl`; each submitted job runs an immutable snapshot. Existing unrelated working-tree changes are excluded from this study.
+Current source commit: `6912360f2cf6f710e5eb6785235159aeefbb4339`. Source changes and verification attempts are recorded in `infrastructure_events.jsonl`; each submitted job runs an immutable snapshot. Existing unrelated working-tree changes are excluded from this study.
