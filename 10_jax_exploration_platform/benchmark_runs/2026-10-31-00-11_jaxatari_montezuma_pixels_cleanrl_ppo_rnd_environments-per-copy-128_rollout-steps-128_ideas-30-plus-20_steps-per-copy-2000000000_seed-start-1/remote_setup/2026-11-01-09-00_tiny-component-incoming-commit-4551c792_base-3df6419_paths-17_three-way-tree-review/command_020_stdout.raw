@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_latency_component_discarded_probe_corrected_source_freeze",
+  "created_utc": "2026-11-01T16:41:06.348602+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11",
+  "base_commit": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+  "files": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "a8f4443ca16b48171a2806a9023450d6e0e866589cfe63b3db7ff2dabd70a187",
+    "tests/test_learning_latency_component.py": "34e170b45686ef208a76d0d9d4c2092bd616ce17232270a351cb763425be60af"
+  },
+  "prior_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_source_freeze_2026-11-01.json",
+    "sha256": "635664a509aca27727a93ef70f2b85833f8c5cce91a70117893e78c6f443eec7"
+  },
+  "prior_frozen_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_independent_first_frozen_2026-11-01-16-30-53.json",
+    "sha256": "0fc16ca1487b93b31931b3b313ddd0116ccf4b9772862399c51675a36480f0d6"
+  },
+  "preserved_prior_source_files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/learning_latency_component.py",
+      "sha256": "5e3d1fe16b67ad2790226b77d9ac15dce0e3dda5a23ff4eda30a0130ebab7cfb"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/short_learning.py",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/source_preservation_manifest.json",
+      "sha256": "ebcf42760dc8d164be082c7615a1139e3a2950fac8c9ee6f66c7119d6cba1172"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/test_learning_latency_component.py",
+      "sha256": "c44d48e99b9ee391b657f5f17884f231ba75b147ba0f11e8688e207f550fbddf"
+    }
+  ],
+  "corrected_author": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_author_6781087_62.json",
+    "sha256": "17b1ae300de70e7775e45a0b9f0fca8ad9da1cdbce5274a9ffa561a82fbc5a1a"
+  },
+  "affected_formal_62_case_pass": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+    "sha256": "d18fc83ad2f9b255fdb5b676c5a4356416508f8afdd8d8abb0569f4890721b89"
+  },
+  "formal_helper_unchanged_from_62_case_pass": true,
+  "changes": [
+    {
+      "before": "RecordingTrainer.initialize required cuDNN already loaded immediately after tensor/environment initialization, before any network convolution.",
+      "after": "For each initialization, prove the same-process current CUDA UUID/PCI first; run exactly one original full update on an independent copied state; then verify actual mapped CUDA/cuDNN library bytes. Retain original iteration-zero state exactly, preserve frozen target and precision, and record probe data even when it fails."
+    },
+    {
+      "before": "Work accounting included learning warmups/observer/replay/latency clones but no separate library-loading probe.",
+      "after": "Count every successful initialization probe as one extra full update/two policy transitions, separately from the unchanged128updates/arm primary trajectories. Preserve initial native/reset counters and raw failed/unknown probe work."
+    }
+  ],
+  "unchanged_limits": "No current-context creation/reset fallback, physical mapping relaxation, owner/profile revision, generic formal protocol override, tolerance change, source admission or GPU packet/job. Formal protocol/run still require original full configuration and50 normalization warmups. The explicit component entry retains original full networks,f32 Adam,f64 statistics,highest precision,determinism and2B horizon.",
+  "actual_gpu_component_passed": false,
+  "jobs_submitted": false,
+  "source_admission_changed": false,
+  "formal_learning_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_credit": 0,
+  "throughput_credit": 0,
+  "final_training_credit": 0
+}

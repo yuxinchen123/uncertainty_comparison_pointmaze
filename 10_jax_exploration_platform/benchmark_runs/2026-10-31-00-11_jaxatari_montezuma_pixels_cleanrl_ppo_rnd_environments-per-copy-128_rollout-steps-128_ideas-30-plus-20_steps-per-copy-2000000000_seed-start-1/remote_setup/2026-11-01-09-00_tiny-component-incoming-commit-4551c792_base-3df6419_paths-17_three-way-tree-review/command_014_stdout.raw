@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_component_corrected_independent_review",
+  "approved_source": true,
+  "at_utc": "2026-11-01T16:48:52.552697+00:00",
+  "source_before": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "a8f4443ca16b48171a2806a9023450d6e0e866589cfe63b3db7ff2dabd70a187",
+    "tests/test_learning_latency_component.py": "34e170b45686ef208a76d0d9d4c2092bd616ce17232270a351cb763425be60af"
+  },
+  "source_after": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "a8f4443ca16b48171a2806a9023450d6e0e866589cfe63b3db7ff2dabd70a187",
+    "tests/test_learning_latency_component.py": "34e170b45686ef208a76d0d9d4c2092bd616ce17232270a351cb763425be60af"
+  },
+  "tests_run": 24,
+  "tests_passed": true,
+  "additional_synthetic_boundaries": [
+    "incomplete_probe_retains_unknown_work_and_original_state",
+    "wrong_PCI_refuses_before_probe"
+  ],
+  "stdout_stderr": "........................\n----------------------------------------------------------------------\nRan 24 tests in 1.480s\n\nOK\n",
+  "blocked_actions_attempted": [],
+  "prior_formal_suite": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-07-05_learning-and-latency-component_copy-count-1_environment-count-1_rollout-steps-2_epoch-count-1_minibatch-count-1_full-updates-per-arm-128_seed-11/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+    "sha256": "d18fc83ad2f9b255fdb5b676c5a4356416508f8afdd8d8abb0569f4890721b89",
+    "cases": 62,
+    "formal_helper_byte_identical": true
+  },
+  "review_findings": [],
+  "resolved_first_finding": "Actual same-process UUID/PCI precedes one independent counted clone update; already-mapped cuDNN is checked after it. Primary initialization arrays/counters/target and128 updates per arm remain unchanged.",
+  "precision_tolerances_and_original_numerical_source_changed": false,
+  "actual_gpu_component_passed": false,
+  "physical_mapping_newly_qualified": false,
+  "numerical_imports_or_library_device_calls": false,
+  "job_actions": 0,
+  "source_edits": false,
+  "formal_learning_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "worker_admission": false,
+  "limitations": [
+    "A real owned GPU fixture is still required before claiming component success.",
+    "The original explicit File/proc physical mapping is retained; actual unsupported UVA AutoDetect remains a pre-JAX refusal."
+  ],
+  "process": {
+    "job_id": "6781087",
+    "step_id": "69",
+    "hostname": "slurm2",
+    "pid": 696719,
+    "birth": "51253202",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_69/user/task_0\n"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "cpu_monitor_6781231_release_author_metadata_verification",
+  "actual_job_id": "6781087",
+  "actual_step_id": "74",
+  "pid": 697762,
+  "uid": 2618919,
+  "hostname": "slurm2",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6781087/step_74/user/task_0\n",
+  "proc_stat": "697762 (python) R 697756 697762 697755 0 -1 4194560 4242 742 0 10 13 4 0 1 20 0 1 0 51335854 37949440 6615 2147483648 93885884874752 93885887302429 140736572347440 0 0 0 0 16781312 2 0 0 0 17 32 0 0 0 0 0 93885888727792 93885890709232 93886658838528 140736572356089 140736572356613 140736572356613 140736572362691 0\n",
+  "tests": 5,
+  "passed": true,
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_monitor_6781231.py": "46f3b9add21a7c73ed3e1c7bac54d5517bdb8473d73bd08a9905a930efff1cb6",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/test_release_monitor_6781231.py": "f630aaa777f16ebfff06e8efa65d46001888138a43ac7efd800194535bb5cd1b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_implementation_review_6781231.json": "e335979b6d13ffa9ce746eafe0ccdf78eac9598702a7b0f07ab00f586d2caca0"
+  },
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_monitor_6781231.py": "46f3b9add21a7c73ed3e1c7bac54d5517bdb8473d73bd08a9905a930efff1cb6",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/test_release_monitor_6781231.py": "f630aaa777f16ebfff06e8efa65d46001888138a43ac7efd800194535bb5cd1b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/release_implementation_review_6781231.json": "e335979b6d13ffa9ce746eafe0ccdf78eac9598702a7b0f07ab00f586d2caca0"
+  },
+  "test_output": "test_actual_default_metadata_only_and_publication_required (tests.Tests.test_actual_default_metadata_only_and_publication_required) ... ok\ntest_actual_held_record_and_bad_owner_request_restart_or_duplicate (tests.Tests.test_actual_held_record_and_bad_owner_request_restart_or_duplicate) ... ok\ntest_one_query_then_one_release_and_no_old_job_action (tests.Tests.test_one_query_then_one_release_and_no_old_job_action) ... ok\ntest_query_failure_is_saved_before_parse_and_does_not_release (tests.Tests.test_query_failure_is_saved_before_parse_and_does_not_release) ... ok\ntest_timeout_retains_intent_and_raw_return_without_retry (tests.Tests.test_timeout_retains_intent_and_raw_return_without_retry) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.211s\n\nOK\n",
+  "live_scheduler_or_network_actions": 0,
+  "numerical_modules_present": []
+}

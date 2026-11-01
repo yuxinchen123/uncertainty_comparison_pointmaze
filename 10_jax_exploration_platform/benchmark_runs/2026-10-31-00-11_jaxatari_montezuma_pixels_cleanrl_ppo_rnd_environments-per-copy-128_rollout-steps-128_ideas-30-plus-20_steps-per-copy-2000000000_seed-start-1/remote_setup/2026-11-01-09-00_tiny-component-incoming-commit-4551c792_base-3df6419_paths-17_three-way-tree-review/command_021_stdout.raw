@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kind": "tiny_learning_latency_component_producer_first_author_metadata_validation",
+  "created_utc": "2026-11-01T16:08:58.541283+00:00",
+  "job_id": "6781087",
+  "step_id": "42",
+  "before": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "927073f205f6d14c8c76942d6d8590ff433e9933d62e43fa5ae37579bc652fd1",
+    "tests/test_learning_latency_component.py": "674114a3834412b016798d3c9cfffb46a64ee678d36f32e3ccd93157b9f19dba"
+  },
+  "after": {
+    "short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "learning_latency_component.py": "927073f205f6d14c8c76942d6d8590ff433e9933d62e43fa5ae37579bc652fd1",
+    "tests/test_learning_latency_component.py": "674114a3834412b016798d3c9cfffb46a64ee678d36f32e3ccd93157b9f19dba"
+  },
+  "source_unchanged": true,
+  "tests_run": 15,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "stdout_stderr": "test_component_configuration_cannot_change_an_unapproved_original_control (test_learning_latency_component.ComponentProducerMetadataTests)\nEven a rehashed static plan cannot change the original learning rate or staged helper bytes. ... ok\ntest_component_preparation_is_complete_tiny_and_has_no_guessed_identity_or_zero_transition_claim (test_learning_latency_component.ComponentProducerMetadataTests)\nThe recipe uses full frozen defaults with only approved dimensions/readout changed and separate zero formal credit. ... ok\ntest_primary_and_every_clone_update_are_counted_separately (test_learning_latency_component.ComponentProducerMetadataTests)\nA concrete synthetic record has256 primary updates plus136 additional updates, rather than zero transitions. ... ok\ntest_runtime_precision_and_asset_schema_are_checked_before_staging (test_learning_latency_component.ComponentProducerMetadataTests)\nThe diagnostic cannot use a different precision or an unbound asset location. ... ok\ntest_sampler_records_an_unexpected_ordinary_error (test_learning_latency_component.ComponentProducerMetadataTests)\nA TypeError ends sampling explicitly and cannot silently establish a clean lifetime. ... ok\ntest_sampler_refuses_unexpected_exit_even_if_the_parent_finish_looks_successful (test_learning_latency_component.ComponentProducerMetadataTests)\nA dead or abnormally completed sampler preserves raw evidence and rejects the component stage. ... ok\ntest_thirty_minute_shape_is_separate_and_rejects_changed_gpu_or_resources (test_learning_latency_component.ComponentProducerMetadataTests)\nThe tiny learner cannot accidentally reuse the twenty-minute memory diagnostic's shape. ... ok\ntest_unsupported_physical_mapping_is_saved_and_never_reaches_jax (test_learning_latency_component.ComponentProducerMetadataTests)\nAn AutoDetect-only or inaccessible mapping remains a pre-JAX failure without an ordinal fallback. ... ok\ntest_changed_shape_seeds_horizon_or_formal_proof_is_rejected (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe component cannot expose a generic override for another shape or a formal study proof. ... ok\ntest_component_dispatch_is_explicit_and_keeps_zero_formal_credit (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nOnly the separate entry selects the component implementation and its distinctly labelled result. ... ok\ntest_existing_final_reader_rejects_renamed_component_record (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nEven an ordinary result.json filename and rehashed preparation retain the forbidden component producer kind. ... ok\ntest_formal_contract_keeps_fifty_warmups_and_component_records_actual_zero (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe approved diagnostic has128 complete updates per arm without changing formal protocol defaults. ... ok\ntest_formal_full_configuration_dispatch_retains_the_original_contract (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nThe unchanged formal shape continues through the formal entry; this test does not execute a trainer. ... ok\ntest_formal_run_rejects_component_or_tiny_plan_before_jax_and_memory (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nRenaming the diagnostic entry cannot turn its one-environment/zero-warmup plan into formal learning. ... ok\ntest_grouping_is_separate_from_active_readout_and_windows_remain_complete (test_learning_latency_component.LearningLatencyComponentMetadataTests)\nScheduled/per-update controls remain ungrouped; grouped no-readout rounds up to129 complete updates. ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 1.012s\n\nOK\n",
+  "blocked_actions": [],
+  "actual_gpu_component_passed": false,
+  "formal_credit": 0,
+  "jobs_submitted": false,
+  "source_admission_changed": false,
+  "git_branch_or_ref_changes": false
+}

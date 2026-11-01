@@ -1,0 +1,54 @@
+{
+  "kind": "owned_cpu_monitor_actual_held_resource_and_full_report_review",
+  "passed": true,
+  "at_utc": "2026-11-01T16:59:16.913928+00:00",
+  "job_id": "6781231",
+  "source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "submission_receipt_sha256": "0d5faa27c218dec7fa56aa2f7f960aa194e3e268c6dda21c37babaa31172cc6c",
+  "query": {
+    "command": [
+      "scontrol",
+      "show",
+      "job",
+      "6781231",
+      "-o"
+    ],
+    "returncode": 0,
+    "stdout": "JobId=6781231 JobName=pixel_study_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=0 Nice=0 Account=sl5nw_base QOS=normal JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-11-01T16:54:41 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T16:54:41 Scheduler=Main Partition=nolim AllocNode:Sid=portal05:1639699 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch WorkDir=/p/rlprojects/RND_worktrees/merge-atari-cleanrl StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6781231.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6781231.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+    "stderr": ""
+  },
+  "approved_fields": {
+    "JobId": "6781231",
+    "UserId": "sl5nw(2618919)",
+    "Account": "sl5nw_base",
+    "Partition": "nolim",
+    "QOS": "normal",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Requeue": "0",
+    "Restarts": "0",
+    "TimeLimit": "7-00:00:00",
+    "NumCPUs": "1",
+    "CPUs/Task": "1",
+    "NumTasks": "1",
+    "MinMemoryNode": "2G",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch",
+    "TresPerNode": "gres/gpu:0"
+  },
+  "old_monitor_job_id": "6781087",
+  "actual_full_monitor_step": "6781087.73",
+  "full_monitor_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-06-13_pixel-study-monitor_source-commit-4814459cb7befc872d8f0e30682c23f4aa79b625_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-16-57_verification.json",
+  "full_monitor_verification_sha256": "5a0028937c3c348e7267c0b23da160a93b38d7c6f04f960be1dd2f47c6c47f74",
+  "held_job_row": [
+    "6781231",
+    "PENDING",
+    "",
+    "gres/gpu:0",
+    "(JobHeldUser)"
+  ],
+  "session_cron_id": "6befb597-2098-4b32-9742-f3c9ae440297",
+  "session_cron_verified": true,
+  "cadence_seconds": 1200,
+  "scientific_credit": 0,
+  "worker_admission": false
+}

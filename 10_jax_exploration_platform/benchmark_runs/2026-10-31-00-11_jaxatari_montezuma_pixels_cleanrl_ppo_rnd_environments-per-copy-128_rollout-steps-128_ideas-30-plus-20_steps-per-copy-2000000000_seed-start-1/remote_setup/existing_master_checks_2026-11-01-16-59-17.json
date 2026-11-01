@@ -1,0 +1,32 @@
+{
+  "kind": "existing_ssh_masters_hourly_check",
+  "checked_at_utc": "2026-11-01T16:59:17+00:00",
+  "explicit_check_not_before_utc": "2026-11-01T17:59:18+00:00",
+  "connections": [
+    {
+      "cluster": "aces",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "6e7db7",
+        "wall_time_seconds": 5.0944e-05,
+        "exit_code": 0,
+        "original_token_count": 8,
+        "output": "Master running (pid=3888482)\r\n"
+      }
+    },
+    {
+      "cluster": "deltaai",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "3fe86d",
+        "wall_time_seconds": 4.4572e-05,
+        "exit_code": 0,
+        "original_token_count": 8,
+        "output": "Master running (pid=3878537)\r\n"
+      }
+    }
+  ],
+  "automatic_retries": 0,
+  "authentication_attempts": 0,
+  "mit_attempts_total": 0
+}

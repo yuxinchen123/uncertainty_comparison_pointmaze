@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "kind": "independent_tiny_component_incoming_commit_tree_review",
+  "at_utc": "2026-11-01T17:00:59.741990+00:00",
+  "approved_for_exact_integration_merge": true,
+  "incoming_commit": "4551c792ab3f6c345f7c4dafa95238173dfbf7ba",
+  "base": "3df6419cb39ac20766af902c49f3b65a9e219d8a",
+  "integration_head_before": "d40b75ee7b79c48cb52881158e1c28754e927bfd",
+  "integration_head_after": "d40b75ee7b79c48cb52881158e1c28754e927bfd",
+  "integration_branch": "merge-atari-cleanrl",
+  "author_roster_sha256": "26bd6032d7953723e2486c9e97ee5be7fc3dcd36e8c37fb69415c95efabbe33a",
+  "actual_pushed_author_ref": "4551c792ab3f6c345f7c4dafa95238173dfbf7ba\trefs/heads/prepare-learning-and-latency-component-2026-11-01\n",
+  "incoming_path_count": 17,
+  "incoming_bytes": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "4e14df4412d888c19e53a2ea634f1ce839adabe5"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/learning_latency_component.py": {
+      "sha256": "a8f4443ca16b48171a2806a9023450d6e0e866589cfe63b3db7ff2dabd70a187",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "1c141e0e518204c135c1462b08e722eca688cab0"
+      }
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_learning_latency_component.py": {
+      "sha256": "34e170b45686ef208a76d0d9d4c2092bd616ce17232270a351cb763425be60af",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "ef7a59d636e04f2269edf40bd4c3c0dee21c70de"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_combined_source_update_2026-11-01.json": {
+      "sha256": "a3c2b51efff7d2c511d31acb00625b3985c2d4cddb976c2b58dd6a7fd7884c3e",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "cc0f754a4890da6aff242de5df3fbd4567534573"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_corrected_independent_2026-11-01-16-48-52.json": {
+      "sha256": "5a56055667dc3f8c4b409359c7f2be7fca848a9aba1ff1d759572b3a7464729a",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "583ad970450c9aaae81c2be3e326621c79173f03"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_entry_draft_author_6781087_32.json": {
+      "sha256": "b5ce3ace8b71acc9e77037844c93192480b5a52c63a2ec9e39f8decb2a1c92a9",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "397794c1196b0ea64b795138ca12c732747bfdab"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_independent_first_frozen_2026-11-01-16-30-53.json": {
+      "sha256": "0fc16ca1487b93b31931b3b313ddd0116ccf4b9772862399c51675a36480f0d6",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "31c6e10d9fdd508b16800316796bc105127db7dd"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json": {
+      "sha256": "d18fc83ad2f9b255fdb5b676c5a4356416508f8afdd8d8abb0569f4890721b89",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "480059a4f928efb34f84c128dcae74c7e3f2c97f"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_completed_draft_author_6781087_49.json": {
+      "sha256": "8e1874b5a4a36301d89f1efa7b52dbce4d4919d0ede5452c12bad4bf9389311e",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "e767e3d4835df769e14e106a0219cfcc90c25e70"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_author_6781087_62.json": {
+      "sha256": "17b1ae300de70e7775e45a0b9f0fca8ad9da1cdbce5274a9ffa561a82fbc5a1a",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "2bfece4445e62b98ec7ef1badd5c732b2fa03d76"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_source_freeze_2026-11-01.json": {
+      "sha256": "8f1607294bb23638fb6cccbfd1e1aca508d24ad12ba520301ac68605178dafde",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "abc9eb94d447a854d11657d1ac2ee4037c009f7c"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_producer_first_author_6781087_42.json": {
+      "sha256": "4d670eabc97a1fe9feec426cc12b90797f45fca788df3455e8074a26c892ce03",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "f49b61e2acc53aa95df70f5574ff0e09997b1434"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_source_freeze_2026-11-01.json": {
+      "sha256": "635664a509aca27727a93ef70f2b85833f8c5cce91a70117893e78c6f443eec7",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "58ba3a4ee1ca45baac5484128c3d35b52180996f"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/source_preservation_manifest.json": {
+      "sha256": "ebcf42760dc8d164be082c7615a1139e3a2950fac8c9ee6f66c7119d6cba1172",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "91a71362a4ec85f4039e0c51d9c650a0bd3bb02a"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/short_learning.py": {
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "4e14df4412d888c19e53a2ea634f1ce839adabe5"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/learning_latency_component.py": {
+      "sha256": "5e3d1fe16b67ad2790226b77d9ac15dce0e3dda5a23ff4eda30a0130ebab7cfb",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "2415aebab1a574e8539b5903d1a6ff78ef87b5c7"
+      }
+    },
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/test_learning_latency_component.py": {
+      "sha256": "c44d48e99b9ee391b657f5f17884f231ba75b147ba0f11e8688e207f550fbddf",
+      "git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "00fda604b3da901c29a394b4c39d7a39826fe4dc"
+      }
+    }
+  },
+  "committed_path_overlaps": [],
+  "dirty_incoming_overlaps_before": [],
+  "dirty_incoming_overlaps_after": [],
+  "ignored_paths_checked_only_for_incoming_and_parents": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/source_preservation_manifest.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_combined_source_update_2026-11-01.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_corrected_independent_2026-11-01-16-48-52.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_entry_draft_author_6781087_32.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_independent_first_frozen_2026-11-01-16-30-53.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_completed_draft_author_6781087_49.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_author_6781087_62.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_source_freeze_2026-11-01.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_producer_first_author_6781087_42.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_source_freeze_2026-11-01.json"
+  ],
+  "untracked_or_ignored_existing_path_collisions": [],
+  "symlink_or_non_directory_parent_collisions": [],
+  "staged_diff_empty": true,
+  "integration_index_before": {
+    "mode": "0o664",
+    "inode": 4513471,
+    "device": 76,
+    "size": 1727784,
+    "mtime_ns": 1793551949651941097,
+    "ctime_ns": 1793551949651941097,
+    "kind": "file",
+    "sha256": "fd869b39619026d08991462827d621c23ddb73719eb871676e31a890a9e3104a",
+    "stable": true
+  },
+  "integration_index_after": {
+    "mode": "0o664",
+    "inode": 4513471,
+    "device": 76,
+    "size": 1727784,
+    "mtime_ns": 1793551949651941097,
+    "ctime_ns": 1793551949651941097,
+    "kind": "file",
+    "sha256": "fd869b39619026d08991462827d621c23ddb73719eb871676e31a890a9e3104a",
+    "stable": true
+  },
+  "integration_index_unchanged": true,
+  "original_index_unchanged": true,
+  "original_HEAD_bytes_unchanged": true,
+  "dirty_paths_before": 147,
+  "dirty_paths_after": 147,
+  "concurrent_outside_incoming_changes": {},
+  "checkout_three_way_dry_run_returncode": 0,
+  "index_only_three_way_read_tree_returncode": 0,
+  "unmerged_index_entries": "",
+  "result_tree": "d5d3dbb1f254c09469478077f65a71e30822be03",
+  "result_paths_changed_from_integration": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/learning_latency_component.py",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/short_learning.py",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/source_preservation_manifest.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-08-33_tiny-learning-latency-component_first-source-before-discarded-library-probe/test_learning_latency_component.py",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_combined_source_update_2026-11-01.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_corrected_independent_2026-11-01-16-48-52.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_entry_draft_author_6781087_32.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_component_independent_first_frozen_2026-11-01-16-30-53.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_affected_formal_author_6781087_44.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_completed_draft_author_6781087_49.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_author_6781087_62.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_discarded_probe_source_freeze_2026-11-01.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_producer_first_author_6781087_42.json",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/tiny_learning_latency_component_source_freeze_2026-11-01.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/learning_latency_component.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_learning_latency_component.py"
+  ],
+  "all_other_integration_tree_entries_identical": true,
+  "all_incoming_result_entries_exact": true,
+  "isolated_object_directory": "/tmp/rnd-tiny-commit-review.XhwJgetn/isolated_objects",
+  "existing_object_store_read_only_alternate": "/p/rlprojects/RND/.git/objects",
+  "protected_D28_numerical_and_paired_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "source_admission_changed": false,
+  "actual_merge_or_ref_update_performed": false,
+  "original_or_integration_worktree_writes": false,
+  "numeric_library_device_network_cluster_or_job_actions": false,
+  "auxiliary_Slurm_steps": 0,
+  "proposed_parent_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "merge",
+      "--no-ff",
+      "--no-edit",
+      "4551c792ab3f6c345f7c4dafa95238173dfbf7ba"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD^{tree}"
+    ]
+  ],
+  "expected_result_tree_after_parent_merge": "d5d3dbb1f254c09469478077f65a71e30822be03"
+}
