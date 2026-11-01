@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "root_review_of_exact_cpu_monitor_release_source",
+  "approved": true,
+  "at_utc": "2026-11-01T22:45:30.952045+00:00",
+  "job_id": "6782816",
+  "source_read_in_full": true,
+  "source_sha256": "95be614c6acff984d4c2f92f3bb113df735653045fc82d388ec3a5497d2a6fae",
+  "first_source_read_in_full": true,
+  "corrected_source_diff": "only additional refusal of actual preserved preflight stdout/stderr names",
+  "independent_review": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-44-32_cpu-monitor-release-independent-review_job-6782816_gpu-count-0_processor-count-1/review.json",
+  "independent_review_sha256": "5e9b50a5dbf07188d409232f9c7a9f64cc234cd654a87681701bf33ad9455bcc",
+  "author_controls": 6,
+  "independent_controls": 9,
+  "default_returncode": 0,
+  "default_scheduler_queries": 0,
+  "default_release_calls": 0,
+  "old_monitor_preserved": "6781231",
+  "one_exact_release_only_after_publication": true,
+  "held_proof_sha256": "43cf45d0eca313fc9a82e860360929e2d48d35b75163b2801550f9a5761688ce",
+  "scientific_credit": 0,
+  "worker_admission": false
+}

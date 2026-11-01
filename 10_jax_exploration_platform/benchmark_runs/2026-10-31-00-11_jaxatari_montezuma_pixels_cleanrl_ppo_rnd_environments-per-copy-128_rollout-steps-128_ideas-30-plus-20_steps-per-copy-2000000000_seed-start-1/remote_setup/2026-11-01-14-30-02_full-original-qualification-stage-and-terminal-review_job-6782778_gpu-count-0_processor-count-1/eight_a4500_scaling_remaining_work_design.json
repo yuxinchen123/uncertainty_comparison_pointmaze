@@ -1,0 +1,147 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-01T22:37:50.624647+00:00",
+  "case_credit": 0,
+  "current_or_default_admission_changed": false,
+  "current_supported_scope": "single jaguar03 A4500 configured-isolation selected correctness/confirmation or component profile, with exacteight CPUss and 64 GiB and actual numeric task0; all default paths remain unchanged",
+  "findings": [
+    {
+      "before": "Scaling explicitly refuses configured_isolation. The current qualifier requires one logical GPU in job and step, job/step GPU strings equal, one GPU allocationTRES and exacteight CPUss and 64 GiB job. It cannot prove a job owningeight GPUs with each independent numeric step owningone GPU.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:142",
+        "uva_slurm_configured_isolation.py:128",
+        "uva_slurm_configured_isolation.py:420"
+      ],
+      "required_after": "A separately reviewed group ownership interface must verify actual whole-jobeight GPU resources and each actual numeric stepone GPU resources independently, exact owner/ledger/release/source, own process UID/PID/birth/task membership and declared CPU/memory shape. It must preserve the original job/step/CUDA selectors and leave GRES mapping and enforcement claims false. Do not relax the current single-card qualifier."
+    },
+    {
+      "before": "Plan demands a full physical UUID roster before allocation. Parent performs global GPU CSV and fullXML queries, then treats numeric Slurm allocation tokens as Linux minors. Actual UVA AutoDetect lacks an explicit File map, so this route is unsupported.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:89",
+        "measure_gpu_scaling.py:163",
+        "measure_gpu_scaling.py:174",
+        "measure_gpu_scaling.py:201"
+      ],
+      "required_after": "Keep frozen plan identities unresolved and stable worker indices/seeds. Metadata-only parent records the owned group, while each one GPU step preserves its scheduler selector, initializes only its own visible CUDA/JAX context, and writes its actual UUID/PCI/proc/minor/captured-driver binding. Only after alleight bindings validate as distinct physical devices may an immutable resolved group binding be published. No index/minor inference,global GPU query or fullXML."
+    },
+    {
+      "before": "Existing parent forks8children in the same full allocation, rewrites each CUDA_VISIBLE_DEVICES to a preselected UUID and assumes inherited full Slurm allocation fields. Child only checks JAX kind/count before constructing learner.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:215",
+        "measure_gpu_scaling.py:408",
+        "measure_gpu_scaling.py:502",
+        "measure_gpu_scaling.py:522"
+      ],
+      "required_after": "Use a separately reviewed real step-per-card launch/ownership contract with one original selector per child. Same-process CUDA/JAX UUID/PCI/current-context plus proc/minor and captured library must validate before model/environment initialization. Group parent remains standard-library only. Bind every child physical/process result to its exact owned numeric step and group plan."
+    },
+    {
+      "before": "The communication channel is a socketpair descriptor inherited by direct Popen children. That descriptor and parent-child PID relation cannot simply be assumed to survive srun launching separate Slurm task processes.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:408",
+        "measure_gpu_scaling.py:414",
+        "measure_gpu_scaling.py:245"
+      ],
+      "required_after": "Design and review an actual same-host control transport suitable for separately owned steps. Bind each handshake to immutable group/worker identity,actual UID/PID/birth/step/task and an exclusive launch identifier; reject outsiders/duplicates/replayed messages. Preserve bounded messages/timeouts and raw failure evidence. Prove actual descriptor survival or use a reviewed local transport; do not infer custody from a busy lock."
+    },
+    {
+      "before": "Scaling uses the default selected.MemoryObservation and does not record/replay the new complete assigned-UUID sample-window contract. Its preflight also queries processes before actual same-process binding.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:237",
+        "measure_gpu_scaling.py:554",
+        "configured_measurement.py:141",
+        "configured_measurement.py:342"
+      ],
+      "required_after": "After binding, use the explicit assigned-UUID observer only: complete raw own-row proof,anonymous foreign-presence counts,own allocator statistics and actual device counters. Require coverage of every timed interval,normal lifecycle,correctPID and UUID and no observed foreign process. Missing/failed/busy observations invalidate formal timing. Never query another card or foreign process metadata."
+    },
+    {
+      "before": "Existing timing logic already uses one host monotonic group interval, releases all workers together, waits for GPU-complete messages and performs host copies/memory finalization after the group interval.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:308",
+        "measure_gpu_scaling.py:429",
+        "measure_gpu_scaling.py:558"
+      ],
+      "required_after": "Retain this exact common-wall definition with actual overlapping child intervals, allcomplete seven rounds and at least ten full updates rounded for whole execution/report groups. Compile and normalization warmup stay outside the measured interval. Verify counters/precision/frozen target/correctness independently. Aggregate total actual transitions divided by common wall time; never sum separate rates."
+    },
+    {
+      "before": "Seed partition and fixed-total protocol exist: disjoint contiguous per-card seed blocks and stable global seed roster, without gradient averaging.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:94",
+        "measure_gpu_scaling.py:104",
+        "post_comparison_validation.py:629",
+        "post_comparison_validation.py:1573"
+      ],
+      "required_after": "Preserve the exact frozen global seed order acrossone GPU andeight GPU variants. Same-copies-per-card compares N copies versuseight times N copies with first N seeds shared; fixed-total compares identical total copies and allglobal identities with only the per-card partition changed. Keep128environments/copy and complete independent policy/RNG/state streams; no cross-card gradient averaging or padded work."
+    },
+    {
+      "before": "Old scaling additionally requires used+free<=total. New assigned observer deliberately treats NVIDIA total/used/free counters separately, with strict typed bounds and actual free headroom, without an unsupported universal accounting equation.",
+      "files_and_lines": [
+        "measure_gpu_scaling.py:328",
+        "configured_measurement.py:342"
+      ],
+      "required_after": "In the new explicit group reader, retain exact device total,typed bounds,positive own-process/allocator peaks and>=15% actual free memory throughout every valid window. Do not add a new arithmetic identity not established by actual installed counter semantics; keep old/default readers unchanged."
+    },
+    {
+      "before": "Default scaling/final/portable identity refuses any configured-isolation declaration/helper. Existing fixed-total reader binds complete raw group/worker/source/asset/backend evidence, and fixed-total not-applicable requires exacteight-copy eligibility evidence. Current configured-isolation capacity/final/portable paths remain unsupported.",
+      "files_and_lines": [
+        "post_comparison_validation.py:258",
+        "post_comparison_validation.py:262",
+        "post_comparison_validation.py:629",
+        "post_comparison_validation.py:1545",
+        "post_comparison_validation.py:1648"
+      ],
+      "required_after": "Add a separately reviewed explicit group reader that joins all eight owned bindings,qualified source/software/assets,captured drivers,complete samples/raw worker results and group timing to the selected config. Preserve default refusal. Extend exact8eligibility/capacity and final/portable consumption only under separate reviewed support; a failed smaller count or throughput stop never proveseight does not fit. Require actual exact8one GPU full measurement or reviewed exact8memory exclusion on the final selected source afterfifty ideas."
+    },
+    {
+      "before": "Current full-original qualification and helper closure are for the explicit single-card profile; fixed-total production already requires completed-study evidence. Neither a partial 48-test pass nor the present single-card target result grants eight-card admission.",
+      "files_and_lines": [
+        "configured_measurement.py:677",
+        "uva_slurm_configured_isolation.py:132",
+        "measure_gpu_scaling.py:36",
+        "measure_gpu_scaling.py:80"
+      ],
+      "required_after": "Review/publish the group ownership/source/helper closure and its zero-credit actual ownership/current-context/observer regression before scaling. Define its explicit relation to the independently reviewed full-original qualification; a changed hardware/profile/runtime/assets/numerical source must receive its own matching qualification. Keep completed50/source-selected/configuration/packing gates for final fixed-total work. Freeze a monitor that supports the new group readers before formal execution; current31fd only supports corrected single-card A4500 readers."
+    }
+  ],
+  "gpu_operations": 0,
+  "hypotheses_selected": 0,
+  "idea_credit": 0,
+  "integration_head": "f299d33f6fe6ec4dede1e839ab6025b41a97d369",
+  "kind": "read_only_eight_a4500_scaling_producer_gap_design",
+  "minimum_later_validation": [
+    "synthetic whole-job8/step1 positive and contradictory owner/resource/step/cgroup/selector negatives",
+    "actual staged cold-helper import closure and absence of ambient/default identity fallback",
+    "duplicate UUID/PCI/process/step and substituted binding/source/asset/library negatives",
+    "sampler missing/future/stale/partial/foreign/busy/lifecycle negatives and exact per-window replay",
+    "real zero-credit one-step assignment/identity/control transport checks before any full scaling acceptance",
+    "full selected correctness/completeseven rounds of ten updates group windows onone and eight A4500 GPUs with common-wall/global-seed proof",
+    "strict exact8eligibility and native/portable/final-reader source/version checks before those modes are admitted"
+  ],
+  "new_jobs": 0,
+  "resource_shape_unselected": "This note does not choose a new whole-job CPU/memory/time request. Whole-job and per-step shape must be compatible with fresh actual jaguar03 capacity and reservations and separately reviewed.",
+  "reviewed_sources": {
+    "configured_measurement.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "sha256": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c"
+    },
+    "measure_gpu_scaling.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py",
+      "sha256": "29e8b89d9e53b598209586b1864c7e2146e491ef4eaa9b2c644f6226da4de6a3"
+    },
+    "measure_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f"
+    },
+    "post_comparison_validation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888"
+    },
+    "uva_slurm_configured_isolation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    }
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_changes": 0,
+  "status": "design only; no implementation,profile change or launch authorized by this note"
+}

@@ -1,0 +1,23 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-01T22:41:06.988008+00:00",
+  "audit_job_id": "6781231",
+  "audit_step_id": "134",
+  "command": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6782778",
+    "--format=JobIDRaw,State,ExitCode,NodeList,Elapsed"
+  ],
+  "gpu_actions": 0,
+  "kind": "actual_terminal_review_readiness_observation",
+  "no_terminal_attempt_started": true,
+  "ready": true,
+  "returncode": 0,
+  "schema_version": 1,
+  "stderr": "",
+  "stdout": "6782778|COMPLETED|0:0|jaguar03|00:10:07\n6782778.batch|COMPLETED|0:0|jaguar03|00:10:07\n6782778.0|COMPLETED|0:0|jaguar03|00:10:07\n",
+  "target_job_id": "6782778"
+}

@@ -1,0 +1,18 @@
+{
+  "actual_full_consumer_already_passed": true,
+  "actual_step_id": "not captured by that wrapper; no exact step inferred",
+  "admission_granted": false,
+  "cause": "The added review wrapper incorrectly required all samples inside the window. The unchanged producer/validator requires first and last samples to bracket the measured window.",
+  "failure_message": "actual sample time lies inside recorded qualification window",
+  "failure_type": "AssertionError",
+  "gpu_actions": 0,
+  "kind": "extra_qualification_review_first_wrapper_assumption_failure",
+  "parent_owned_allocation": "6781231",
+  "production_source_or_tolerances_changed": false,
+  "production_validation_failed": false,
+  "schema_version": 1,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/review_terminal_extra_joins.py",
+    "sha256": "5521ec3286daa08bba6dbf5d4e7952895e2b11e929511df0cbdad4ae9c7e2180"
+  }
+}

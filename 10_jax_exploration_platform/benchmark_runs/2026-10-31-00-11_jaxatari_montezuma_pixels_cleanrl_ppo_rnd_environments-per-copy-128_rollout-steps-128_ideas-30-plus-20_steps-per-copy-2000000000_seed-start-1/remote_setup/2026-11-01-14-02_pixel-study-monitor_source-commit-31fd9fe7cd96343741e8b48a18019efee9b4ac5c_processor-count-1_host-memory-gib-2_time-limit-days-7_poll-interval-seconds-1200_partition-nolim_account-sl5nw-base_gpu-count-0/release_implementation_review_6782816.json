@@ -1,0 +1,31 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "scontrol",
+    "release",
+    "6782816"
+  ],
+  "default_release_calls": 0,
+  "default_scheduler_queries": 0,
+  "exclusive_durable_intent_before_owned_query": true,
+  "held_proof_sha256": "43cf45d0eca313fc9a82e860360929e2d48d35b75163b2801550f9a5761688ce",
+  "job_id": "6782816",
+  "kind": "fixed_owned_cpu_monitor_release_implementation_review",
+  "native_cron_id": "7cbb1ee6-54aa-4e69-ab3d-a70fca25b3e5",
+  "new_source_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "old_monitor_job_id": "6781231",
+  "old_monitor_source_commit": "fb3071f3772ed836144f5876dbdda1113a5339d5",
+  "old_monitor_stopped": false,
+  "partial_preflight_raw_outputs_refused": true,
+  "pending_node_identity": "Unknown; exact empty or(null) NodeList only, no allocated resource inference.",
+  "preserved_first_freeze_sha256": "a415d51adde3687e4c6699b2e1e428cd1e7ce17e66fc892c84ea8bd3ce513bf2",
+  "raw_query_and_return_saved_before_parse": true,
+  "release_executed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_and_review_publication_required_before_action": true,
+  "source_sha256": "95be614c6acff984d4c2f92f3bb113df735653045fc82d388ec3a5497d2a6fae",
+  "submission_receipt_sha256": "74685cccf6f349244aed89d53481583ec25c92f8be76ab45148f52f943778d2d",
+  "test_sha256": "807adc70a3f588ec78261e9af4103fc336e9d5642544c23a62e8a8d6509d20b5",
+  "worker_admission": false
+}

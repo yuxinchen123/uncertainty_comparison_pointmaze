@@ -1,0 +1,98 @@
+{
+  "actual_binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/resolved_device_binding.json",
+    "sha256": "4731a99b9779d7159afc1e67911dc5a515b04040173e12ee0e3b363dd2494d66"
+  },
+  "actual_metadata": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/configured_isolation_metadata.json",
+    "sha256": "99f28ff0744753bbaab7928171983bf9382023521fb7a4414a8fa908be1ebf86"
+  },
+  "actual_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/measurement_plan.json",
+    "sha256": "7ba87ca5feb87aecc756d5d19e7b2a382f8c654c014a1187aef2d6b9388dbbbd"
+  },
+  "actual_result": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/target_qualification_result.json",
+    "sha256": "0c4f94c2d58fdd7277a261481d7a52c4bb5b19e42612a8eae67dff6890c62cd1"
+  },
+  "admission_granted": false,
+  "at_utc": "2026-11-01T22:43:10.056989+00:00",
+  "audit_job_id": "6781231",
+  "audit_step_id": "138",
+  "case_credit": 0,
+  "check_count": 26,
+  "checks": [
+    "actual ordered independent copy seeds equal the frozen plan",
+    "qualified original configuration and reference equal exactly",
+    "actual result source_commit label equals its frozen plan",
+    "actual result hardware_class label equals its frozen plan",
+    "actual result runtime_environment label equals its frozen plan",
+    "actual result asset_record label equals its frozen plan",
+    "actual result helpers label equals its frozen plan",
+    "actual result configured_isolation label equals its frozen plan",
+    "actual result mode equals original qualification correctness",
+    "generic prepared protocol labels equal plan; dedicated qualification controlled counters remain the work authority",
+    "actual execution pid equals collected current-process metadata",
+    "actual execution hostname equals collected current-process metadata",
+    "actual execution process_start_time equals collected current-process metadata",
+    "actual execution PID and birth have canonical positive types",
+    "binding/native/loaded-library records belong to the same actual process",
+    "actual hardware pid matches current-process metadata",
+    "actual hardware hostname matches current-process metadata",
+    "actual hardware process_start_time matches current-process metadata",
+    "actual hardware UUID equals same-process native physical binding",
+    "actual execution timestamps are finite positive and ordered",
+    "complete observed qualification window lies inside actual execution interval",
+    "qualification sampler uses actual current PID and physical UUID",
+    "actual sample timestamps are finite and ordered",
+    "actual boundary samples bracket the qualification window inside execution interval",
+    "all physical trust and worker/admission false flags remain false",
+    "actual terminal result unchanged during extra independent joins"
+  ],
+  "configuration_field_presence": {
+    "candidate": {
+      "present": false
+    },
+    "configuration": {
+      "present": false
+    },
+    "reference": {
+      "present": false
+    }
+  },
+  "copy_seeds": [
+    1
+  ],
+  "final_training_credit": 0,
+  "gpu_operations": 0,
+  "idea_credit": 0,
+  "kind": "actual_full_original_qualification_extra_label_process_and_time_review",
+  "network_calls": 0,
+  "no_validator_or_tolerance_changed": true,
+  "numerical_imports": 0,
+  "passed": true,
+  "prior_extra_wrapper_assumption_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/terminal_extra_first_wrapper_failure.json",
+    "sha256": "ca271f7ded4d817d7c69009d17c94c0e5d5477f325a4d83f16b17ab8b2848e0b"
+  },
+  "process_identity": {
+    "finished_at_seconds": 1793572396.1408007,
+    "hostname": "jaguar03",
+    "pid": 2017280,
+    "process_start_time": "53207206",
+    "started_at_seconds": 1793571807.7949648
+  },
+  "qualification_window": {
+    "finished_at_seconds": 1793572395.1458516,
+    "gpu_uuid": "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "pid": 2017280,
+    "started_at_seconds": 1793571819.9441082
+  },
+  "scheduler_queries": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "target_job_id": "6782778",
+  "unmodified_full_raw_reader_still_required": true,
+  "worker_admitted": false
+}

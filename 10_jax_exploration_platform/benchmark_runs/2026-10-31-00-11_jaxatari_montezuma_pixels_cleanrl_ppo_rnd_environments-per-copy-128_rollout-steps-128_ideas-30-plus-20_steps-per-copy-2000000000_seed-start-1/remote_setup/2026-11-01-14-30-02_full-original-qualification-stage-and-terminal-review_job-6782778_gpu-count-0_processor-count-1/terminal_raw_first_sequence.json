@@ -1,0 +1,54 @@
+{
+  "actual_sequence": [
+    "Require the actual owned job and every recorded step, including numeric step zero, COMPLETED with exit code0:0. Retain the exact accounting output.",
+    "Require the dedicated target_qualification_result.json exists and failure.json is absent. Recheck all exact staged helpers and original source receipts.",
+    "Call the complete review-only raw validator with only the actual result receipt. No independent review path or object exists at this stage.",
+    "Only after raw validation succeeds, write and fsync independent_actual_review.json naming that actual result and accounting, approved true with zero scientific credit and admission false.",
+    "Then call the unmodified exact staged verify_qualification_inputs using that real saved review receipt and actual result receipt. Retain a separate verification only if the entire gate passes again.",
+    "Root independently reviews/publishes the actual raw review and full consumer verification before using them for any new launch. No future worker is admitted by these files alone."
+  ],
+  "admission_granted": false,
+  "case_credit": 0,
+  "composition": "The readable review-only raw function retains every original staged raw predicate and lower validator. Its syntax is checked against exact source bytes, removing only the existing-review receipt load and the final independent-review approval requirement. No predicate about numerical work, source, device identity, counters, precision, renderer, tests, assets, libraries or memory was removed. It is not a changed production reader.",
+  "driver": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/review_terminal_raw_then_consumer.py",
+    "sha256": "b1c85fef3e9b370428377609681a74224d633353c582cc53469f02272abccf0b"
+  },
+  "execution_command": [
+    "srun",
+    "--jobid=6781231",
+    "--overlap",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/review_terminal_raw_then_consumer.py",
+    "--execute-terminal-review"
+  ],
+  "execution_state": "not executed; no current result or scheduler query was repeated for this preparation",
+  "existing_production_raw_only_callable": null,
+  "final_training_credit": 0,
+  "idea_credit": 0,
+  "kind": "resolved_first_actual_terminal_review_sequence",
+  "output_policy": "fresh terminal_full_review metadata child; refuses an existing output directory; all actual source/experiment files are read only",
+  "raw_reader": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/raw_qualification_checks.py",
+    "sha256": "e48ad26d098e3b0ddf6c698a903306343d94a54fd893c1040da48c9aa25f75b6"
+  },
+  "reason": "verify_qualification_inputs combines raw-result validation with requiring an already existing independent review; prepare_qualification_inputs calls it directly",
+  "review_only_raw_callable": "raw_qualification_checks.verify_unreviewed_actual_raw_qualification",
+  "safe_default_preparation_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/raw_then_consumer_preparation_source_verification.json",
+    "sha256": "92f2229754e41482ae309fc6a7b7c72bd41bb368f8ada1152d4c657ba4ba475b"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "source_contract": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-30-02_full-original-qualification-stage-and-terminal-review_job-6782778_gpu-count-0_processor-count-1/raw_review_source_contract.json",
+    "sha256": "b73d6af4f4ab99a5715106fbface63ae2ba98678cd614c674dc6ebf5c27591b3"
+  },
+  "supersedes_only_the_proposed_first_review_sequence_in": "terminal_review_requirements.json; previous metadata and source are retained unchanged"
+}
