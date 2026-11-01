@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "kind": "aces_private_reference_environment_setup_author_verification",
+  "at_utc": "2026-11-01T10:36:17.771196+00:00",
+  "files": {
+    "setup_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/setup_aces_private_reference_environment.py",
+      "sha256": "6e92e04f707dacb39eed31cad8e6a3fcfc380f24f00b9dcfd38b713fbfe77210"
+    },
+    "aces_private_environment_metadata.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_environment_metadata.py",
+      "sha256": "73d851e21fdf467188efc14fe51c4b3d7e31c59723a29e320038a2e21cc87f94"
+    },
+    "test_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_aces_private_reference_environment.py",
+      "sha256": "577bfc9e6ffa53e05c0854598ee697dd8a2f58f681504e35281ee0d4e5f8b471"
+    },
+    "aces_private_reference_environment_setup_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_reference_environment_setup_plan.json",
+      "sha256": "6aa2df602816394ea46f59393ef666428dbdd385c99e2f8b19600426fe9852cd"
+    },
+    "aces_private_environment_setup_description.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_environment_setup_description.json",
+      "sha256": "5be2e64759f43ac6c2c71e956c71b8d19eaf04d3b6a9a964e229c41ad2790e20"
+    },
+    "aces_cpu_wheel_full_requested_extras_preflight.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_cpu_wheel_full_requested_extras_preflight.json",
+      "sha256": "a69dcd32589d45dc605af9326e941419eeff7e20a4f5480b010ebff0fac12bc9"
+    },
+    "private_venv_inheritance_verification.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_verification.json",
+      "sha256": "316725eb38c1347140c72128c89b3d82f09e403a83f6c041fdc22f2caada3fd7"
+    }
+  },
+  "tests": {
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_aces_private_reference_environment.py",
+      "-v"
+    ],
+    "cases": 13,
+    "seconds": 3.613,
+    "passed": true
+  },
+  "actual_full_preflight": {
+    "base_distributions": 77,
+    "effective_distributions": 84,
+    "active_requirements": 128,
+    "required_extras": {
+      "etils": [
+        "epath",
+        "epy"
+      ]
+    },
+    "all_seven_official_wheel_SHA_and_ZIP_metadata_checked": true
+  },
+  "local_exact_without_pip_system_site_copies_mechanism_verified": true,
+  "old_interpreter_is_explicit_for_base_before_after": true,
+  "software_observation_is_fresh_selected_private_interpreter_only": true,
+  "private_prefix_new_purelib_and_provider_checks_before_install": true,
+  "private_overrides_exactly_seven": true,
+  "offline_installer_no_index_no_dependencies_require_hashes_ignore_installed_prefix_new_no_compile": true,
+  "PIP_overrides_removed_and_configuration_disabled_without_changing_HOME": true,
+  "installed_wheel_source_data_files_rehashed": true,
+  "base_package_source_and_library_bytes_rehashed_before_after": true,
+  "existing_asset_view_4531_source_inputs_13_clones_and_72_mappings_preserved": true,
+  "native_source_helper_unchanged": "8e43cb1dc963045fc28f4e611411097efd93185a",
+  "known_discovered_and_fixed_interpreter_issue": "Old parent cannot observe private Torch. All prepared/software observation now occurs in a fresh selected private interpreter; metadata-only regression covers parent missing and child present.",
+  "pip_invocations": 0,
+  "installs": 0,
+  "ssh_calls": 0,
+  "master_checks": 0,
+  "numerical_imports": [],
+  "jobs_submitted": 0,
+  "workers_permitted": false,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_credit": 0
+}

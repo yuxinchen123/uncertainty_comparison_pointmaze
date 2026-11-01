@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "kind": "aces_private_reference_environment_setup_independent_review",
+  "at_utc": "2026-11-01T10:35:55.959805+00:00",
+  "passed": true,
+  "files_before": {
+    "setup_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/setup_aces_private_reference_environment.py",
+      "sha256": "6e92e04f707dacb39eed31cad8e6a3fcfc380f24f00b9dcfd38b713fbfe77210",
+      "bytes": 31197
+    },
+    "aces_private_environment_metadata.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_environment_metadata.py",
+      "sha256": "73d851e21fdf467188efc14fe51c4b3d7e31c59723a29e320038a2e21cc87f94",
+      "bytes": 12816
+    },
+    "test_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_aces_private_reference_environment.py",
+      "sha256": "577bfc9e6ffa53e05c0854598ee697dd8a2f58f681504e35281ee0d4e5f8b471",
+      "bytes": 16114
+    },
+    "aces_private_reference_environment_setup_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_reference_environment_setup_plan.json",
+      "sha256": "6aa2df602816394ea46f59393ef666428dbdd385c99e2f8b19600426fe9852cd",
+      "bytes": 11317
+    }
+  },
+  "files_after": {
+    "setup_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/setup_aces_private_reference_environment.py",
+      "sha256": "6e92e04f707dacb39eed31cad8e6a3fcfc380f24f00b9dcfd38b713fbfe77210",
+      "bytes": 31197
+    },
+    "aces_private_environment_metadata.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_environment_metadata.py",
+      "sha256": "73d851e21fdf467188efc14fe51c4b3d7e31c59723a29e320038a2e21cc87f94",
+      "bytes": 12816
+    },
+    "test_aces_private_reference_environment.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/test_aces_private_reference_environment.py",
+      "sha256": "577bfc9e6ffa53e05c0854598ee697dd8a2f58f681504e35281ee0d4e5f8b471",
+      "bytes": 16114
+    },
+    "aces_private_reference_environment_setup_plan.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_private_reference_environment_setup_plan.json",
+      "sha256": "6aa2df602816394ea46f59393ef666428dbdd385c99e2f8b19600426fe9852cd",
+      "bytes": 11317
+    }
+  },
+  "tests": {
+    "interpreter": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "arguments": [
+      "-I",
+      "-B"
+    ],
+    "author_cases_passed": 13,
+    "seconds": 3.5785166430287063,
+    "stdout": "test_actual_seven_wheels_and_complete_requested_extras_pass_without_network (independent_private_setup_tests.MetadataTests.test_actual_seven_wheels_and_complete_requested_extras_pass_without_network)\nThe actual84-provider plan satisfies all128 requirements including etils epath/epy. ... ok\ntest_arbitrary_old_python_program_and_submission_are_blocked (independent_private_setup_tests.MetadataTests.test_arbitrary_old_python_program_and_submission_are_blocked)\nThe setup executor cannot run numerical code, a different installer or scheduler command. ... ok\ntest_bootstrap_rejects_changed_setup_source_before_it_can_execute (independent_private_setup_tests.MetadataTests.test_bootstrap_rejects_changed_setup_source_before_it_can_execute)\nThe small root-run wrapper verifies the whole setup-source hash before any action. ... ok\ntest_duplicate_canonical_base_names_and_active_url_requirements_reject (independent_private_setup_tests.MetadataTests.test_duplicate_canonical_base_names_and_active_url_requirements_reject)\nNo dict conversion can erase a duplicate provider and URL sources need separate binding. ... ok\ntest_exact_seven_private_providers_and_versions_are_required_after_install (independent_private_setup_tests.MetadataTests.test_exact_seven_private_providers_and_versions_are_required_after_install)\nAn extra private pip or a changed Torch version cannot reach native preparation. ... ok\ntest_extra_dependencies_propagate_until_fixed_point (independent_private_setup_tests.MetadataTests.test_extra_dependencies_propagate_until_fixed_point)\nA downstream extra activates another extra and fails when its actual required provider is absent. ... ok\ntest_installed_wheel_bytes_include_the_sympy_private_data_file (independent_private_setup_tests.MetadataTests.test_installed_wheel_bytes_include_the_sympy_private_data_file)\nThe exact Sympy manpage scheme stays under newprefix and is checked alongside source files. ... ok\ntest_offline_pip_arguments_and_environment_cannot_target_the_base (independent_private_setup_tests.MetadataTests.test_offline_pip_arguments_and_environment_cannot_target_the_base)\nOnly the newprefix and seven hash-locked binary wheels are eligible for the future root-run install. ... ok\ntest_old_python_software_verification_is_rejected_and_base_probe_stays_old (independent_private_setup_tests.MetadataTests.test_old_python_software_verification_is_rejected_and_base_probe_stays_old)\nA successful-looking old-parent verification cannot replace the new selected interpreter. ... ok\ntest_private_prefix_and_shared_provider_checks_block_wrong_install_destinations (independent_private_setup_tests.MetadataTests.test_private_prefix_and_shared_provider_checks_block_wrong_install_destinations)\nNewprefix/newpurelib and unchanged base provider paths are required before installing. ... ok\ntest_private_prepare_selects_only_new_interpreter_and_output_paths (independent_private_setup_tests.MetadataTests.test_private_prepare_selects_only_new_interpreter_and_output_paths)\nAll numerical source, reference configuration and asset identity fields retain their existing values. ... ok\ntest_software_verification_uses_fresh_private_python_when_parent_torch_is_absent (independent_private_setup_tests.MetadataTests.test_software_verification_uses_fresh_private_python_when_parent_torch_is_absent)\nThe parent may lack Torch metadata while the selected fresh child sees its CPUreference distribution. ... ok\ntest_wrong_wheel_abi_tag_and_startup_hook_reject (independent_private_setup_tests.MetadataTests.test_wrong_wheel_abi_tag_and_startup_hook_reject)\nOnly exact CP312/Linux or prescribed pure-Python tags and no startup code are accepted. ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 3.561s\n\nOK\n",
+    "extra_independent_checks": [
+      "OLD interpreter verification argv rejected by production whitelist before subprocess.",
+      "Production remote path has no parent prepared/checked_software calls and invokes child verify_preparation.",
+      "Both full base byte probes remain explicitly OLD_PYTHON."
+    ],
+    "allowed_local_child_calls": [
+      {
+        "kind": "synthetic_bootstrap",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b59bd3cafa075f6082d0406d81153422b03442c2b282d8b5b3224160029722ef"
+      },
+      {
+        "kind": "synthetic_bootstrap",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b59bd3cafa075f6082d0406d81153422b03442c2b282d8b5b3224160029722ef"
+      },
+      {
+        "kind": "synthetic_bootstrap",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b59bd3cafa075f6082d0406d81153422b03442c2b282d8b5b3224160029722ef"
+      },
+      {
+        "kind": "synthetic_bootstrap",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b59bd3cafa075f6082d0406d81153422b03442c2b282d8b5b3224160029722ef"
+      },
+      {
+        "kind": "synthetic_private_metadata_verification",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b2067934b45d6d84450ec917fcd023ae3f44a46b98d28612ba303945b0890e7c"
+      },
+      {
+        "kind": "synthetic_private_metadata_verification",
+        "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "code_sha256": "b2067934b45d6d84450ec917fcd023ae3f44a46b98d28612ba303945b0890e7c"
+      }
+    ]
+  },
+  "reviewed_boundaries": {
+    "private_prefix_only_offline_seven_wheels": true,
+    "original_base_package_files_before_after": true,
+    "all_77_inherited_providers": true,
+    "seven_private_providers_only": true,
+    "all_128_enabled_requirements": true,
+    "exact_cpu_and_pure_wheel_tags": true,
+    "duplicate_normalized_base_rejected": true,
+    "requested_extras_fixed_point": true,
+    "original_assets_inputs_roots_mappings_preserved": true,
+    "no_parent_software_verification": true,
+    "new_packet_leaf_bytes": 253
+  },
+  "findings": [],
+  "pip_invocations": 0,
+  "installs": 0,
+  "ssh_calls": 0,
+  "jobs_submitted": 0,
+  "numerical_imports": [],
+  "limits": [
+    "Native private environment setup and installation have not been executed by this review.",
+    "Successful setup still grants no numerical/site qualification, worker admission or scientific credit."
+  ]
+}

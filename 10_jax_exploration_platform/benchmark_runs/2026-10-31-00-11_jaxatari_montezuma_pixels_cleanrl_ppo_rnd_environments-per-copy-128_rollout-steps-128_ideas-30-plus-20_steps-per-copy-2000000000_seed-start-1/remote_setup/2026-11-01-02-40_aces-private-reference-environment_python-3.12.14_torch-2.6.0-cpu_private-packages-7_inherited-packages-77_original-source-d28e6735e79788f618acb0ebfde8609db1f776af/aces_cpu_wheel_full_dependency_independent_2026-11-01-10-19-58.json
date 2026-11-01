@@ -1,0 +1,1173 @@
+{
+  "schema_version": 1,
+  "kind": "aces_actual_cpu_wheel_and_full_dependency_independent_review",
+  "at_utc": "2026-11-01T10:19:58.604021+00:00",
+  "passed": true,
+  "official_lock": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_cpu_reference_wheels/2026-11-01-02-04_metadata_python-3.12_platform-linux-x86-64_torch-2.6.0-cpu/wheel_download_lock.json",
+    "sha256": "3c3b3e4bf7fb933d7e3b181a6596c31676c76185992e9c04f34cab85db7c59a7",
+    "bytes": 35357
+  },
+  "original_author_proof_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/aces_cpu_wheel_full_dependency_preflight.json",
+    "sha256": "979128972cca4ca59a7e5bf069c3a5e047f8ab2f312996d4e5bf4d8b65957e82",
+    "bytes": 29867
+  },
+  "actual_download_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-03_aces-reference-wheels_python-3.12_torch-2.6.0-cpu_filelock-4.2.4_networkx-3.7_jinja2-3.1.6_sympy-1.13.1_mpmath-1.3.0_markupsafe-3.0.3/actual_downloaded_wheel_verification.json",
+    "sha256": "dc4e90af91f96f1b4514854ba4fb342692e7944e3dcf78923ca5b522bc65bbc5"
+  },
+  "base_inventory": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_full_base_distribution_metadata_2026-11-01-10-09-13.json",
+    "sha256": "80141e90ac1e699f7a209a5f9be92e75f27ccfa5814f5d75fa056902f6f7742e"
+  },
+  "target_environment": {
+    "implementation_name": "cpython",
+    "implementation_version": "3.12.14",
+    "os_name": "posix",
+    "platform_machine": "x86_64",
+    "platform_release": "5.15.0-191-generic",
+    "platform_system": "Linux",
+    "platform_version": "#201-Ubuntu SMP Fri Aug 7 18:39:04 UTC 2026",
+    "python_full_version": "3.12.14",
+    "platform_python_implementation": "CPython",
+    "python_version": "3.12",
+    "sys_platform": "linux"
+  },
+  "wheels": [
+    {
+      "name": "torch",
+      "version": "2.6.0+cpu",
+      "requires_dist": [
+        "filelock",
+        "typing-extensions (>=4.10.0)",
+        "networkx",
+        "jinja2",
+        "fsspec",
+        "setuptools ; python_version >= \"3.12\"",
+        "sympy (==1.13.1) ; python_version >= \"3.9\"",
+        "opt-einsum (>=3.3) ; extra == 'opt-einsum'",
+        "optree (>=0.13.0) ; extra == 'optree'"
+      ],
+      "requires_python": ">=3.9.0",
+      "tags": [
+        "cp312-cp312-linux_x86_64"
+      ],
+      "metadata_sha256": "05d5e2f9aec5224a4e8e6d661125da8159b11e4a301cd5c0658ff8c5b7842b80",
+      "wheel_sha256": "59e78aa0c690f70734e42670036d6b541930b8eabbaa18d94e090abf14cc4d91",
+      "filename": "torch-2.6.0+cpu-cp312-cp312-linux_x86_64.whl",
+      "wheel_file_count": 11512,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "filelock",
+      "version": "4.2.4",
+      "requires_dist": [],
+      "requires_python": ">=3.11",
+      "tags": [
+        "py3-none-any"
+      ],
+      "metadata_sha256": "d99c0f72a7ab84c924b734018a28a5001505fe0f96280c4462b864313edddb50",
+      "wheel_sha256": "301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e",
+      "filename": "filelock-4.2.4-py3-none-any.whl",
+      "wheel_file_count": 28,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "networkx",
+      "version": "3.7",
+      "requires_dist": [
+        "asv>=0.6.5; extra == \"benchmarking\"",
+        "py-rattler<0.22,>=0.21; extra == \"benchmarking\"",
+        "virtualenv; extra == \"benchmarking\"",
+        "numpy>=2.2; extra == \"default\"",
+        "scipy>=1.15; extra == \"default\"",
+        "matplotlib>=3.10; extra == \"default\"",
+        "pandas>=2.3; extra == \"default\"",
+        "pre-commit>=4.1; extra == \"developer\"",
+        "mypy>=1.15; extra == \"developer\"",
+        "sphinx>=8.0; extra == \"doc\"",
+        "pydata-sphinx-theme>=0.16; extra == \"doc\"",
+        "sphinx-gallery>=0.18; extra == \"doc\"",
+        "numpydoc>=1.8.0; extra == \"doc\"",
+        "pillow>=10; extra == \"doc\"",
+        "texext>=0.6.7; extra == \"doc\"",
+        "myst-nb>=1.1; extra == \"doc\"",
+        "intersphinx-registry; extra == \"doc\"",
+        "osmnx>=2.0.0; extra == \"example\"",
+        "momepy>=0.7.2; extra == \"example\"",
+        "contextily>=1.6; extra == \"example\"",
+        "seaborn>=0.13; extra == \"example\"",
+        "cairocffi>=1.7; extra == \"example\"",
+        "igraph>=0.11; extra == \"example\"",
+        "scikit-learn>=1.6; extra == \"example\"",
+        "iplotx>=0.9.0; extra == \"example\"",
+        "hiveplotlib>=0.28; extra == \"example\"",
+        "lxml>=4.6; extra == \"extra\"",
+        "pygraphviz>=2.0; extra == \"extra\"",
+        "pydot>=3.0.1; extra == \"extra\"",
+        "sympy>=1.10; extra == \"extra\"",
+        "build>=0.10; extra == \"release\"",
+        "twine>=4.0; extra == \"release\"",
+        "wheel>=0.40; extra == \"release\"",
+        "changelist==0.5; extra == \"release\"",
+        "pytest>=7.2; extra == \"test\"",
+        "pytest-cov>=4.0; extra == \"test\"",
+        "pytest-xdist>=3.0; extra == \"test\"",
+        "pytest-mpl; extra == \"test-extras\"",
+        "pytest-randomly; extra == \"test-extras\""
+      ],
+      "requires_python": "!=3.14.1,>=3.12",
+      "tags": [
+        "py3-none-any"
+      ],
+      "metadata_sha256": "ffcf42a343af6ffc54ff9cc4c09cf9638cd73b131370f395abd11b630186c90c",
+      "wheel_sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+      "filename": "networkx-3.7-py3-none-any.whl",
+      "wheel_file_count": 604,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "jinja2",
+      "version": "3.1.6",
+      "requires_dist": [
+        "MarkupSafe>=2.0",
+        "Babel>=2.7 ; extra == \"i18n\""
+      ],
+      "requires_python": ">=3.7",
+      "tags": [
+        "py3-none-any"
+      ],
+      "metadata_sha256": "68c5548fb67c4132a13898d9b31ec50c6bea2abdd915d921f214355c3a6499c8",
+      "wheel_sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "filename": "jinja2-3.1.6-py3-none-any.whl",
+      "wheel_file_count": 31,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "sympy",
+      "version": "1.13.1",
+      "requires_dist": [
+        "mpmath <1.4,>=1.1.0",
+        "pytest >=7.1.0 ; extra == 'dev'",
+        "hypothesis >=6.70.0 ; extra == 'dev'"
+      ],
+      "requires_python": ">=3.8",
+      "tags": [
+        "py3-none-any"
+      ],
+      "metadata_sha256": "d1dbbf156ee3ac2102086ee84196d252330153dc5ba5b290d49918c6ae5b8b1c",
+      "wheel_sha256": "db36cdc64bf61b9b24578b6f7bab1ecdd2452cf008f34faa33776680c26d66f8",
+      "filename": "sympy-1.13.1-py3-none-any.whl",
+      "wheel_file_count": 1555,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0",
+      "requires_dist": [
+        "pytest (>=4.6) ; extra == 'develop'",
+        "pycodestyle ; extra == 'develop'",
+        "pytest-cov ; extra == 'develop'",
+        "codecov ; extra == 'develop'",
+        "wheel ; extra == 'develop'",
+        "sphinx ; extra == 'docs'",
+        "gmpy2 (>=2.1.0a4) ; (platform_python_implementation != \"PyPy\") and extra == 'gmpy'",
+        "pytest (>=4.6) ; extra == 'tests'"
+      ],
+      "requires_python": null,
+      "tags": [
+        "py3-none-any"
+      ],
+      "metadata_sha256": "44b66ea444b9c0d19ae94815d356bf047ae6b680c19268b5c265687cd6a81406",
+      "wheel_sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "filename": "mpmath-1.3.0-py3-none-any.whl",
+      "wheel_file_count": 92,
+      "startup_hooks": [],
+      "symlinks": []
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.3",
+      "requires_dist": [],
+      "requires_python": ">=3.9",
+      "tags": [
+        "cp312-cp312-manylinux_2_17_x86_64",
+        "cp312-cp312-manylinux2014_x86_64",
+        "cp312-cp312-manylinux_2_28_x86_64"
+      ],
+      "metadata_sha256": "12b4cc61a7fa288cf7667ee3f213786d9619db57fb33ff6f934afbcb5c12ec81",
+      "wheel_sha256": "d6dd0be5b5b189d31db7cda48b91d7e0a9795f31430b7f271219ab30f1d3ac9d",
+      "filename": "markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "wheel_file_count": 14,
+      "startup_hooks": [],
+      "symlinks": []
+    }
+  ],
+  "base_distribution_count": 77,
+  "proposed_distribution_count": 84,
+  "active_dependency_count": 128,
+  "enabled_extras": {
+    "etils": [
+      "epath",
+      "epy"
+    ]
+  },
+  "additional_checks_missing_from_original123": [
+    {
+      "package": "etils",
+      "requirement": "fsspec ; extra == \"epath\"",
+      "provider": "fsspec",
+      "version": "2026.9.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epath\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "zipp ; extra == \"epath\"",
+      "provider": "zipp",
+      "version": "4.1.2",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "etils[epy] ; extra == \"epath\"",
+      "provider": "etils",
+      "version": "1.14.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epy\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    }
+  ],
+  "dependencies": [
+    {
+      "package": "ale-py",
+      "requirement": "numpy>1.20",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "absl-py>=2.3.1",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "typing_extensions>=4.15.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "jax>=0.7.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "jaxlib>=0.7.0",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "numpy>=1.24.1",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "chex",
+      "requirement": "toolz>=1.0.0",
+      "provider": "toolz",
+      "version": "1.2.0",
+      "passed": true
+    },
+    {
+      "package": "contourpy",
+      "requirement": "numpy>=2.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "fsspec ; extra == \"epath\"",
+      "provider": "fsspec",
+      "version": "2026.9.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epath\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "zipp ; extra == \"epath\"",
+      "provider": "zipp",
+      "version": "4.1.2",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "etils[epy] ; extra == \"epath\"",
+      "provider": "etils",
+      "version": "1.14.0",
+      "passed": true
+    },
+    {
+      "package": "etils",
+      "requirement": "typing_extensions ; extra == \"epy\"",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "numpy>=1.23.2",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "jax>=0.10.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "msgpack",
+      "provider": "msgpack",
+      "version": "1.2.4",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "optax",
+      "provider": "optax",
+      "version": "0.2.8",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "orbax-checkpoint",
+      "provider": "orbax-checkpoint",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "tensorstore",
+      "provider": "tensorstore",
+      "version": "0.1.86",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "rich>=11.1",
+      "provider": "rich",
+      "version": "15.0.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "typing_extensions>=4.2",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "PyYAML>=5.4.1",
+      "provider": "pyyaml",
+      "version": "6.0.3",
+      "passed": true
+    },
+    {
+      "package": "flax",
+      "requirement": "treescope>=0.1.7",
+      "provider": "treescope",
+      "version": "0.1.10",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "numpy>=1.21.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "cloudpickle>=1.2.0",
+      "provider": "cloudpickle",
+      "version": "3.1.2",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "typing-extensions>=4.3.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "gymnasium",
+      "requirement": "farama-notifications>=0.0.1",
+      "provider": "farama-notifications",
+      "version": "0.0.6",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "jax",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "flax",
+      "provider": "flax",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "gymnasium",
+      "provider": "gymnasium",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "matplotlib",
+      "provider": "matplotlib",
+      "version": "3.11.2",
+      "passed": true
+    },
+    {
+      "package": "gymnax",
+      "requirement": "seaborn",
+      "provider": "seaborn",
+      "version": "0.13.2",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "jaxlib<=0.11.0,>=0.11.0",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "numpy>=2.1",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "opt_einsum",
+      "provider": "opt-einsum",
+      "version": "3.4.0",
+      "passed": true
+    },
+    {
+      "package": "jax",
+      "requirement": "scipy>=1.15",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jax-cuda12-plugin",
+      "requirement": "jax-cuda12-pjrt==0.11.0",
+      "provider": "jax-cuda12-pjrt",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "scipy>=1.14",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "numpy>=2.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jaxlib",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "absl-py>=2.3",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "ale-py>=0.11.1",
+      "provider": "ale-py",
+      "version": "0.12.1",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "chex>=0.1.87",
+      "provider": "chex",
+      "version": "0.1.92",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "flax",
+      "provider": "flax",
+      "version": "0.12.8",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "gymnasium>=1.2.0",
+      "provider": "gymnasium",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "gymnax>=0.0.8",
+      "provider": "gymnax",
+      "version": "0.0.9",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "jax",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "ml-dtypes",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "numpy",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "opt-einsum>=3.4.0",
+      "provider": "opt-einsum",
+      "version": "3.4.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "platformdirs>=4.5.1",
+      "provider": "platformdirs",
+      "version": "4.14.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "requests>=2.32.5",
+      "provider": "requests",
+      "version": "2.34.2",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "scipy>=1.15.3",
+      "provider": "scipy",
+      "version": "1.18.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "toolz>=1.0.0",
+      "provider": "toolz",
+      "version": "1.2.0",
+      "passed": true
+    },
+    {
+      "package": "jaxtari",
+      "requirement": "typing-extensions>=4.14.0",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "jinja2",
+      "requirement": "MarkupSafe>=2.0",
+      "provider": "markupsafe",
+      "version": "3.0.3",
+      "passed": true
+    },
+    {
+      "package": "markdown-it-py",
+      "requirement": "mdurl~=0.1",
+      "provider": "mdurl",
+      "version": "0.1.2",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "contourpy>=1.0.1",
+      "provider": "contourpy",
+      "version": "1.4.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "cycler>=0.10",
+      "provider": "cycler",
+      "version": "0.12.1",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "fonttools>=4.28.2",
+      "provider": "fonttools",
+      "version": "4.68.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "kiwisolver>=1.3.1",
+      "provider": "kiwisolver",
+      "version": "1.5.1",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "numpy>=1.25",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "packaging>=20.0",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "pillow>=9",
+      "provider": "pillow",
+      "version": "13.0.0",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "pyparsing>=3",
+      "provider": "pyparsing",
+      "version": "3.3.3",
+      "passed": true
+    },
+    {
+      "package": "matplotlib",
+      "requirement": "python-dateutil>=2.7",
+      "provider": "python-dateutil",
+      "version": "3.0.0",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.21",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.21.2; python_version >= \"3.10\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.23.3; python_version >= \"3.11\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "ml-dtypes",
+      "requirement": "numpy>=1.26.0; python_version >= \"3.12\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cublas-cu12",
+      "requirement": "nvidia-cuda-nvrtc-cu12",
+      "provider": "nvidia-cuda-nvrtc-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cudnn-cu12",
+      "requirement": "nvidia-cublas-cu12",
+      "provider": "nvidia-cublas-cu12",
+      "version": "12.9.2.10",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cufft-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-cublas-cu12",
+      "provider": "nvidia-cublas-cu12",
+      "version": "12.9.2.10",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusolver-cu12",
+      "requirement": "nvidia-cusparse-cu12",
+      "provider": "nvidia-cusparse-cu12",
+      "version": "12.5.10.65",
+      "passed": true
+    },
+    {
+      "package": "nvidia-cusparse-cu12",
+      "requirement": "nvidia-nvjitlink-cu12",
+      "provider": "nvidia-nvjitlink-cu12",
+      "version": "12.9.86",
+      "passed": true
+    },
+    {
+      "package": "nvidia-nvshmem-cu12",
+      "requirement": "nvidia-cuda-cccl-cu12",
+      "provider": "nvidia-cuda-cccl-cu12",
+      "version": "12.9.27",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "absl-py>=0.7.1",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "jax>=0.5.3",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "jaxlib>=0.5.3",
+      "provider": "jaxlib",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "optax",
+      "requirement": "numpy>=1.18.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "absl-py",
+      "provider": "absl-py",
+      "version": "2.5.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "etils[epath, epy]",
+      "provider": "etils",
+      "version": "1.14.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "typing_extensions",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "msgpack",
+      "provider": "msgpack",
+      "version": "1.2.4",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "jax >= 0.6.0",
+      "provider": "jax",
+      "version": "0.11.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "numpy",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "prometheus-client >= 0.20.0",
+      "provider": "prometheus-client",
+      "version": "0.26.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "pyyaml",
+      "provider": "pyyaml",
+      "version": "6.0.3",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "tensorstore >= 0.1.84",
+      "provider": "tensorstore",
+      "version": "0.1.86",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "aiofiles",
+      "provider": "aiofiles",
+      "version": "25.1.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "protobuf",
+      "provider": "protobuf",
+      "version": "7.36.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "humanize",
+      "provider": "humanize",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "simplejson >= 3.16.0",
+      "provider": "simplejson",
+      "version": "4.2.0",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "psutil",
+      "provider": "psutil",
+      "version": "7.2.2",
+      "passed": true
+    },
+    {
+      "package": "orbax-checkpoint",
+      "requirement": "uvloop; platform_system != \"Windows\"",
+      "provider": "uvloop",
+      "version": "0.23.0",
+      "passed": true
+    },
+    {
+      "package": "pandas",
+      "requirement": "numpy>=2.0.2; python_version < \"3.14\"",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "pandas",
+      "requirement": "python-dateutil>=2.9.0",
+      "provider": "python-dateutil",
+      "version": "3.0.0",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "iniconfig>=2",
+      "provider": "iniconfig",
+      "version": "2.3.1",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "packaging>=24",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "pluggy<2,>=1.6",
+      "provider": "pluggy",
+      "version": "1.7.0",
+      "passed": true
+    },
+    {
+      "package": "pytest",
+      "requirement": "pygments>=2.15",
+      "provider": "pygments",
+      "version": "2.21.0",
+      "passed": true
+    },
+    {
+      "package": "python-dateutil",
+      "requirement": "six>=1.6",
+      "provider": "six",
+      "version": "1.17.0",
+      "passed": true
+    },
+    {
+      "package": "python-dateutil",
+      "requirement": "tzdata",
+      "provider": "tzdata",
+      "version": "2026.6",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "charset_normalizer<4,>=2",
+      "provider": "charset-normalizer",
+      "version": "3.5.2",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "idna<4,>=2.5",
+      "provider": "idna",
+      "version": "3.20",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "urllib3<3,>=1.26",
+      "provider": "urllib3",
+      "version": "2.8.0",
+      "passed": true
+    },
+    {
+      "package": "requests",
+      "requirement": "certifi>=2023.5.7",
+      "provider": "certifi",
+      "version": "2026.10.23",
+      "passed": true
+    },
+    {
+      "package": "rich",
+      "requirement": "markdown-it-py (>=2.2.0)",
+      "provider": "markdown-it-py",
+      "version": "4.2.0",
+      "passed": true
+    },
+    {
+      "package": "rich",
+      "requirement": "pygments (>=2.13.0,<3.0.0)",
+      "provider": "pygments",
+      "version": "2.21.0",
+      "passed": true
+    },
+    {
+      "package": "scipy",
+      "requirement": "numpy<2.8,>=2.0.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "numpy>=1.20,!=1.24.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "pandas>=1.2",
+      "provider": "pandas",
+      "version": "3.1.0",
+      "passed": true
+    },
+    {
+      "package": "seaborn",
+      "requirement": "matplotlib>=3.4,!=3.6.1",
+      "provider": "matplotlib",
+      "version": "3.11.2",
+      "passed": true
+    },
+    {
+      "package": "sympy",
+      "requirement": "mpmath <1.4,>=1.1.0",
+      "provider": "mpmath",
+      "version": "1.3.0",
+      "passed": true
+    },
+    {
+      "package": "tensorstore",
+      "requirement": "numpy>=1.22.0",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "tensorstore",
+      "requirement": "ml_dtypes>=0.5.0",
+      "provider": "ml-dtypes",
+      "version": "0.5.4",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "filelock",
+      "provider": "filelock",
+      "version": "4.2.4",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "typing-extensions (>=4.10.0)",
+      "provider": "typing-extensions",
+      "version": "4.16.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "networkx",
+      "provider": "networkx",
+      "version": "3.7",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "jinja2",
+      "provider": "jinja2",
+      "version": "3.1.6",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "fsspec",
+      "provider": "fsspec",
+      "version": "2026.9.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "setuptools ; python_version >= \"3.12\"",
+      "provider": "setuptools",
+      "version": "84.0.0",
+      "passed": true
+    },
+    {
+      "package": "torch",
+      "requirement": "sympy (==1.13.1) ; python_version >= \"3.9\"",
+      "provider": "sympy",
+      "version": "1.13.1",
+      "passed": true
+    },
+    {
+      "package": "treescope",
+      "requirement": "numpy>=1.25.2",
+      "provider": "numpy",
+      "version": "2.5.2",
+      "passed": true
+    },
+    {
+      "package": "wheel",
+      "requirement": "packaging >= 24.0",
+      "provider": "packaging",
+      "version": "26.3",
+      "passed": true
+    }
+  ],
+  "all_archive_tags_verified_against_exact_filenames_and_target": true,
+  "metadata_only_actual_wheel_proof_passed": true,
+  "reusable_parser_review_pending_author_corrections": [
+    "Validate intended wheel tag sets.",
+    "Reject duplicate normalized base names before dictionary construction.",
+    "Propagate requested provider extras to a fixed point."
+  ],
+  "seconds": 1.238815794000402,
+  "pip_invocations": 0,
+  "installs": 0,
+  "ssh_calls": 0,
+  "wheel_downloads": 0,
+  "numerical_imports": [],
+  "limits": [
+    "Private environment installation and actual native library execution remain unperformed by this review.",
+    "This evidence grants zero site qualification, worker admission, idea credit or comparison credit."
+  ]
+}

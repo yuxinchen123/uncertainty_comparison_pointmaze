@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "kind": "private_no_pip_venv_inheritance_mechanism_verification",
+  "passed": true,
+  "at_utc": "2026-11-01T10:08:29.249253+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-m",
+        "venv",
+        "--without-pip",
+        "--system-site-packages",
+        "--copies",
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-c",
+        "from importlib import metadata\nimport hashlib,json,sys,sysconfig\nfrom pathlib import Path\nrows={}\nfor name in ('jax','jaxlib','numpy','pip','pytest'):\n d=metadata.distribution(name)\n p=Path(d._path)/'METADATA'\n rows[name]={'version':d.version,'root':str(d.locate_file('')),'metadata':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}\nprint(json.dumps({'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'purelib':sysconfig.get_path('purelib'),'packages':rows,'numerical_imports':[n for n in ('jax','jaxlib','numpy','torch') if n in sys.modules]}))\n"
+      ],
+      "returncode": 0,
+      "stdout": "{\"executable\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\", \"prefix\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax\", \"base_prefix\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax\", \"purelib\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"packages\": {\"jax\": {\"version\": \"0.11.0\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax-0.11.0.dist-info/METADATA\", \"sha256\": \"6dc7bd492285a3d0edd0b91c841d92330de177cc586859393e97680688fb127c\"}, \"jaxlib\": {\"version\": \"0.11.0\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxlib-0.11.0.dist-info/METADATA\", \"sha256\": \"079396c32938c513a8e1f40408ba35e71799c876785c9dbb752ac3260260384c\"}, \"numpy\": {\"version\": \"2.5.2\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/numpy-2.5.2.dist-info/METADATA\", \"sha256\": \"9a895d801184d2176f926af84eb47f2db1af2756afac99d64a2bf482d5d5e024\"}, \"pip\": {\"version\": \"26.2.1\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pip-26.2.1.dist-info/METADATA\", \"sha256\": \"b24017be6015980d95415353ffb2aef504d616ad6015833a1671d8fd3e7dea84\"}, \"pytest\": {\"version\": \"8.4.2\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pytest-8.4.2.dist-info/METADATA\", \"sha256\": \"93d6c5ef0a9714d53716243035037b77fa7d5f970596c48433887cf57f7f675a\"}}, \"numerical_imports\": []}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe/bin/python",
+        "-I",
+        "-c",
+        "from importlib import metadata\nimport hashlib,json,sys,sysconfig\nfrom pathlib import Path\nrows={}\nfor name in ('jax','jaxlib','numpy','pip','pytest'):\n d=metadata.distribution(name)\n p=Path(d._path)/'METADATA'\n rows[name]={'version':d.version,'root':str(d.locate_file('')),'metadata':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}\nprint(json.dumps({'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'purelib':sysconfig.get_path('purelib'),'packages':rows,'numerical_imports':[n for n in ('jax','jaxlib','numpy','torch') if n in sys.modules]}))\n"
+      ],
+      "returncode": 0,
+      "stdout": "{\"executable\": \"/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe/bin/python\", \"prefix\": \"/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe\", \"base_prefix\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax\", \"purelib\": \"/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe/lib/python3.12/site-packages\", \"packages\": {\"jax\": {\"version\": \"0.11.0\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax-0.11.0.dist-info/METADATA\", \"sha256\": \"6dc7bd492285a3d0edd0b91c841d92330de177cc586859393e97680688fb127c\"}, \"jaxlib\": {\"version\": \"0.11.0\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxlib-0.11.0.dist-info/METADATA\", \"sha256\": \"079396c32938c513a8e1f40408ba35e71799c876785c9dbb752ac3260260384c\"}, \"numpy\": {\"version\": \"2.5.2\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/numpy-2.5.2.dist-info/METADATA\", \"sha256\": \"9a895d801184d2176f926af84eb47f2db1af2756afac99d64a2bf482d5d5e024\"}, \"pip\": {\"version\": \"26.2.1\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pip-26.2.1.dist-info/METADATA\", \"sha256\": \"b24017be6015980d95415353ffb2aef504d616ad6015833a1671d8fd3e7dea84\"}, \"pytest\": {\"version\": \"8.4.2\", \"root\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages\", \"metadata\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pytest-8.4.2.dist-info/METADATA\", \"sha256\": \"93d6c5ef0a9714d53716243035037b77fa7d5f970596c48433887cf57f7f675a\"}}, \"numerical_imports\": []}\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "prefix": "/p/rlprojects/RND/.venvs/atari_pixels_jax",
+      "base_prefix": "/p/rlprojects/RND/.venvs/atari_pixels_jax",
+      "purelib": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+      "packages": {
+        "jax": {
+          "version": "0.11.0",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax-0.11.0.dist-info/METADATA",
+          "sha256": "6dc7bd492285a3d0edd0b91c841d92330de177cc586859393e97680688fb127c"
+        },
+        "jaxlib": {
+          "version": "0.11.0",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxlib-0.11.0.dist-info/METADATA",
+          "sha256": "079396c32938c513a8e1f40408ba35e71799c876785c9dbb752ac3260260384c"
+        },
+        "numpy": {
+          "version": "2.5.2",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/numpy-2.5.2.dist-info/METADATA",
+          "sha256": "9a895d801184d2176f926af84eb47f2db1af2756afac99d64a2bf482d5d5e024"
+        },
+        "pip": {
+          "version": "26.2.1",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pip-26.2.1.dist-info/METADATA",
+          "sha256": "b24017be6015980d95415353ffb2aef504d616ad6015833a1671d8fd3e7dea84"
+        },
+        "pytest": {
+          "version": "8.4.2",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pytest-8.4.2.dist-info/METADATA",
+          "sha256": "93d6c5ef0a9714d53716243035037b77fa7d5f970596c48433887cf57f7f675a"
+        }
+      },
+      "numerical_imports": []
+    },
+    {
+      "executable": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe/bin/python",
+      "prefix": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe",
+      "base_prefix": "/p/rlprojects/RND/.venvs/atari_pixels_jax",
+      "purelib": "/p/rlprojects/RND_worktrees/2026-11-01-01-58_aces-full-site-portable-evidence_driver-580.178.04_original-source-d28e673/.review_metadata/private_venv_inheritance_probe/lib/python3.12/site-packages",
+      "packages": {
+        "jax": {
+          "version": "0.11.0",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax-0.11.0.dist-info/METADATA",
+          "sha256": "6dc7bd492285a3d0edd0b91c841d92330de177cc586859393e97680688fb127c"
+        },
+        "jaxlib": {
+          "version": "0.11.0",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jaxlib-0.11.0.dist-info/METADATA",
+          "sha256": "079396c32938c513a8e1f40408ba35e71799c876785c9dbb752ac3260260384c"
+        },
+        "numpy": {
+          "version": "2.5.2",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/numpy-2.5.2.dist-info/METADATA",
+          "sha256": "9a895d801184d2176f926af84eb47f2db1af2756afac99d64a2bf482d5d5e024"
+        },
+        "pip": {
+          "version": "26.2.1",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pip-26.2.1.dist-info/METADATA",
+          "sha256": "b24017be6015980d95415353ffb2aef504d616ad6015833a1671d8fd3e7dea84"
+        },
+        "pytest": {
+          "version": "8.4.2",
+          "root": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+          "metadata": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/pytest-8.4.2.dist-info/METADATA",
+          "sha256": "93d6c5ef0a9714d53716243035037b77fa7d5f970596c48433887cf57f7f675a"
+        }
+      },
+      "numerical_imports": []
+    }
+  ],
+  "pip_invocations": 0,
+  "ssh_calls": 0,
+  "jobs_submitted": 0,
+  "numerical_imports": []
+}
