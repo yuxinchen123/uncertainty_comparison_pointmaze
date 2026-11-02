@@ -802,6 +802,8 @@ def verify_saved_measurement(directory, result):
         terminal_process(directory, metadata)
     else:
         validate_profile_terminal(directory, metadata, result)
+    if "common_correctness_inputs" in plan:
+        adjacent("direct_common_confirmation").verify_saved(directory, plan, result)
     return plan, binding
 
 

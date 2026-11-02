@@ -216,7 +216,8 @@ class DirectBackendImageTests(unittest.TestCase):
         self.assertEqual(len(selected.required_helpers(True, False, True)), 21)
         self.assertEqual(len(selected.required_helpers(False, True)), 25)
         self.assertEqual(len(selected.required_helpers(False, True, False, True)), 26)
-        with self.assertRaises(ValueError):selected.required_helpers(False, True, True, True)
+        self.assertEqual(len(selected.required_helpers(False, True, True, True)), 27)
+        self.assertIn("direct_common_confirmation.py", selected.required_helpers(False, True, True, True))
         with self.assertRaises(ValueError):selected.required_helpers(True, False, False, True)
 
     def test_own_mapping_read_is_bounded_before_utf8_decode(self):
