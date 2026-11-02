@@ -1,0 +1,21 @@
+test_complete_synthetic_chain (test_fresh_direct_raw_review.ActualJoinTests)
+The synthetic chain passes and labels fixture work unknown. ... ok
+test_invalid_synthetic_fields (test_fresh_direct_raw_review.ActualJoinTests)
+Changed identity, protocol or controller fields are refused. ... ok
+test_changed_plan_pin (test_fresh_direct_raw_review.SourceContractTests)
+A different prepared plan is refused. ... ok
+test_changed_raw_pin (test_fresh_direct_raw_review.SourceContractTests)
+A changed raw reader hash is refused. ... ok
+test_changed_source_pin (test_fresh_direct_raw_review.SourceContractTests)
+A changed staged direct consumer hash is refused. ... ok
+test_extra_omitted_statement (test_fresh_direct_raw_review.SourceContractTests)
+Removing a third raw gate is refused before raw execution. ... ok
+test_source_only (test_fresh_direct_raw_review.SourceContractTests)
+Current source passes without actual result reads. ... ok
+test_terminal_gate_changed (test_fresh_direct_raw_review.SourceContractTests)
+A changed final direct terminal call fails the AST contract. ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.108s
+
+OK
