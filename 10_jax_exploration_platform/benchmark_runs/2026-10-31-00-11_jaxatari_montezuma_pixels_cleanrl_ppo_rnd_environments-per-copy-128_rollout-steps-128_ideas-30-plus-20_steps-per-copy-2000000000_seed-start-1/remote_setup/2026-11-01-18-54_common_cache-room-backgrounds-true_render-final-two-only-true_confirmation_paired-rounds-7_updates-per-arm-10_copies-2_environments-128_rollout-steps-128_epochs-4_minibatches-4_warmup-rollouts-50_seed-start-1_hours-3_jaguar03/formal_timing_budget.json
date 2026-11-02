@@ -1,0 +1,69 @@
+{
+  "actual_correctness_raw_audit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/final_copies_2_raw_audit.json",
+    "sha256": "0b4d67f2a5a0f9fd852474a8e77d68878e6eab05f206f9d651c46f454558fa86"
+  },
+  "actual_new_correctness_execution_seconds": 793.4827952384949,
+  "actual_new_correctness_job_wall_seconds": 809.0,
+  "additional_nine_warmup_update_extrapolation_seconds": 421.9828206030652,
+  "candidate_complete_updates": 70,
+  "chosen_non_round_allowance_seconds": 1453.2555092362454,
+  "copies": 2,
+  "historical_complete_ten_update_cases": [
+    {
+      "actual_non_round_overhead_seconds": 1295.645613428147,
+      "maximum_seconds_per_complete_update": {
+        "candidate": 10.879594800702762,
+        "reference": 10.912857189099304
+      },
+      "name": "accumulate_scheduled_reports_on_device",
+      "normalized_two_warmup_call_seconds": {
+        "candidate": 21.80294085398782,
+        "reference": 21.862710981047712
+      },
+      "result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/idea-position-29__accumulate_scheduled_reports_on_device__hardware-jaguar03_rtx_a4500__copies-2__seed-start-1__updates-per-round-10__source-commit-d28e6735e79788f618acb0ebfde8609db1f776af/attempts/attempt-0001/result.json",
+        "sha256": "1e62cbb7b0a0b7f6114009a284613e34a5c949267baaa4c32906b8478e0ccc7f"
+      },
+      "round_iterations": {
+        "candidate": [
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10
+        ],
+        "reference": [
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10
+        ]
+      }
+    }
+  ],
+  "historical_maximum_non_round_overhead_seconds": 1453.2555092362454,
+  "maximum_observed_candidate_seconds_per_update": 12.603584224008955,
+  "maximum_observed_reference_seconds_per_update": 11.158389393996913,
+  "measured_new_combination_runtime": false,
+  "measured_update_cost_extrapolation_seconds": 1663.3381532604108,
+  "planned_total_seconds": 7977.152966199443,
+  "predeclared_margin_factor": 2,
+  "reference_complete_updates": 70,
+  "remaining_requested_margin_seconds": 2822.8470338005573,
+  "requested_hours": 3,
+  "requested_seconds": 10800,
+  "seven_pairs_ten_complete_updates_per_arm": true,
+  "shape_fit_basis": "The same full-config actual common correctness completed both independent variants and one full update with the selected copy count. Historical full ten-update paired windows also completed. This is not measured peak memory or15percent headroom proof.",
+  "source_budget": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_walltime_budget_6783003_35.json",
+    "sha256": "316f6e02afba386b104217283c7fe9ad6ea1461f4d8a45980433a240f8d63874"
+  },
+  "startup_allowance_seconds": 900,
+  "timing_credit": 0
+}

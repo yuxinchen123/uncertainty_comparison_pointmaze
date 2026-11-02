@@ -1,0 +1,12 @@
+{
+  "kind": "independent_packet_review_wrapper_wrong_progress_state_expectation",
+  "actual_returncode": 1,
+  "actual_cpu_job_id": "6783003",
+  "actual_step_id": null,
+  "error": "AssertionError: expected prepared, actual frozen state prepared_not_submitted",
+  "scope": "Reviewer assertion only, before child execution; no packet or source changes.",
+  "original_wrapper": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-packets-independent-review_copies-1-2_gpu-count-0/review_packets.py",
+    "sha256": "6152903aa851e5c832e6d00c73e13e208ee2e677b573cd12ca14bd24d2d76257"
+  }
+}

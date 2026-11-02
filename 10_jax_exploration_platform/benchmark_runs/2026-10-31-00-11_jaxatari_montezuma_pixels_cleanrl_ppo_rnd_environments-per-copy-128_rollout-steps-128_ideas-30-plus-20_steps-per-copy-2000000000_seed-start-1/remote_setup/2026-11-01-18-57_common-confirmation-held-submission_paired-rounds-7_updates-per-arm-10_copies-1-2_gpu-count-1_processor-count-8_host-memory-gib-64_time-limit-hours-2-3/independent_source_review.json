@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "kind": "independent_common_confirmation_source_review",
+  "approved": true,
+  "passed": true,
+  "at_utc": "2026-11-02T02:33:24.901631+00:00",
+  "review_job_id": "6783003",
+  "review_step": "37",
+  "reviewer": "common_confirmation_review",
+  "base_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_complete_source_freeze.json",
+    "sha256": "27281757454d61f4717e8d335a30f770829907c2f1d6a6a4d698c723c709cb6c"
+  },
+  "frozen_source_paths": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py": "5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py": "2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482"
+  },
+  "author_affected_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_affected_author_6783003_30.json",
+    "sha256": "e638a09e028372ba3c9a52b098d5feef92a834a6be2ac6f3e9a5fe8d07873c54"
+  },
+  "author_test_count": 172,
+  "independent_affected_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_affected_independent_6783003_32.json",
+    "sha256": "f34534dc7d6ab2fd50aba24c3f7b2a7102fd83236312bc7663f836d929f786aa"
+  },
+  "independent_test_count": 180,
+  "extra_independent_controls": 8,
+  "independent_qualification_reuse_scope": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/independent_qualification_reuse_scope_6783003_34.json",
+    "sha256": "f2823d14917f15093db66086d8d9fab2129aa3cdc7af7edea5fef56ce1fe1b4c"
+  },
+  "independent_cold_actual_return": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_independent_cold_return.json",
+    "sha256": "f620403b65c4fcf06bdd3ac637fc6609f13f7395146234d3c72aeeb70e958b34"
+  },
+  "independent_cold_actual_stdout": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_independent_cold_copies1.stdout.raw",
+    "sha256": "9b2535b75a815cfb0ef013cf6e3566dcfdc167b992ad4a5710b4160d6976e898"
+  },
+  "source_findings": [],
+  "reviewed_contract": {
+    "prior_actual_correctness_and_independent_raw_review_required": true,
+    "source_configuration_runtime_assets_seeds_physical_binding_terminal_joins": true,
+    "isolated_metadata_child_before_parent_NUM_and_card_admission": true,
+    "parent_sys_path_ideas_and_controller_preserved": true,
+    "durable_child_return_stdout_stderr_proof_and_saved_result_binding": true,
+    "saved_reader_revalidates_exact_current_prior_raw_evidence": true,
+    "rounds": 7,
+    "full_updates_per_arm_per_round": 10,
+    "paired_order": "alternating reference/candidate then candidate/reference",
+    "copies": [
+      1,
+      2
+    ],
+    "copy_seeds": {
+      "1": [
+        1
+      ],
+      "2": [
+        1,
+        2
+      ]
+    },
+    "environments_per_copy": 128,
+    "rollout_steps": 128,
+    "epochs": 4,
+    "minibatches": 4,
+    "normalization_warmup_rollouts": 50,
+    "annealing_horizon_requested_transitions": 2000000000,
+    "candidate_changes": [
+      "environment.cache_room_backgrounds=false to true",
+      "environment.render_final_two_only=false to true"
+    ],
+    "only_opt_in_A4500_common_confirmation_adds_21st_helper": true,
+    "default_and_direct_closures_unchanged": true,
+    "final_completed_fifty_and_eleven_by_twenty_paths_unchanged": true
+  },
+  "qualification_reuse": {
+    "approved_with_exact_scope": true,
+    "qualified_original_helper_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+    "qualified_original_result_sha256": "0c4f94c2d58fdd7277a261481d7a52c4bb5b19e42612a8eae67dff6890c62cd1",
+    "new_compute_AST_identical_to_6066": true,
+    "UVA_specialized_compute_AST_identical_to_E5": true,
+    "whole_E5_compute_AST_identical": false,
+    "all13_NUM_and_Executor_files_unchanged": true,
+    "unchanged_UVA_core_train_optimized_and_short_learning": true,
+    "restriction": "Only this exact reviewed metadata change, the original D28 numerical source, unchanged runtime/assets and copies one/two common configuration. A changed numerical, target, runtime or source scope requires a separate review and qualification."
+  },
+  "monitor_scope": {
+    "current_monitor_source": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+    "current_monitor_job": "6783003",
+    "progress_and_full_status_remain_usable": true,
+    "new_common_scientific_acceptance_from_old_monitor_row": false,
+    "scientific_acceptance_requires": "Exact newly staged reviewed consumer run independently on owned compute, or a separately reviewed upgraded frozen monitor."
+  },
+  "next_authorized_steps": [
+    "Commit and publish exact reviewed source and records.",
+    "Prepare fresh formal copies-one and copies-two intermediate confirmation packets with actual correctness result and review references.",
+    "Independently review exact packets and actual source/monitor/ownership gates before any one-time submission."
+  ],
+  "formal_packet_approval": false,
+  "actual_GPU_qualification_of_new_producer": false,
+  "numerical_work": false,
+  "actual_gpu_or_job_actions": 0,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false,
+  "worker_admitted": false
+}

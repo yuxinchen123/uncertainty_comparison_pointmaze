@@ -1,0 +1,11 @@
+{
+  "GPU_operations": 0,
+  "actual_NUM_work": false,
+  "actual_job": "6783003",
+  "actual_step": "43",
+  "cause": "committed metadata preparation does not create progress until actual execution",
+  "failed_assertion": "unit progress.json exists",
+  "final_verification_step": "44",
+  "kind": "preserved_initial_prelaunch_record_check_failure",
+  "repair": "created two new prepared-not-submitted progress records only, preserving every existing packet/unit byte"
+}

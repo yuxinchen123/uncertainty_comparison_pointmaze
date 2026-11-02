@@ -1,0 +1,32 @@
+{
+  "asset_record": {
+    "manifest": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/assets_manifest.json",
+    "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6"
+  },
+  "current_helper_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+  "evidence": {
+    "common_confirmation_complete_source_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_complete_source_freeze.json",
+      "sha256": "27281757454d61f4717e8d335a30f770829907c2f1d6a6a4d698c723c709cb6c"
+    },
+    "common_confirmation_independent_source_review.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_independent_source_review.json",
+      "sha256": "bf2c6eebff276c834495f01e122ecd946d45f11b44b9a175023a778ee224a4c9"
+    },
+    "qualification_reuse_scope_6783003_26.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/qualification_reuse_scope_6783003_26.json",
+      "sha256": "f5ba0a3023319f11408da0eca9c7b1d2d05f244e60c321b2e7be4c061c456910"
+    }
+  },
+  "kind": "reviewed_unchanged_a4500_numerical_qualification_scope",
+  "new_qualification_claim": false,
+  "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "only_metadata_prerequisite_added": true,
+  "qualified_helper_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_X64": "true",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  }
+}

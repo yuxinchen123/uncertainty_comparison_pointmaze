@@ -1,0 +1,34 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "copies_supported": [
+    1,
+    2
+  ],
+  "final_training_credit": 0,
+  "helper_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+  "idea_credit": 0,
+  "kind": "literal_one_shot_common_confirmation_held_submission_preparation",
+  "mode": "intermediate_confirmation",
+  "packet_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-00_common-confirmation_prepared-packets_copies-1-2_rounds-7_updates-per-arm-10.json",
+    "sha256": "44d4c779c7d29a5e708f0c57ae5e4c4a9cf419382a945c6c0121e6c77200ccd0"
+  },
+  "resources": {
+    "host_memory_gib": 64,
+    "hours": {
+      "1": 2,
+      "2": 3
+    },
+    "node": "jaguar03",
+    "processors": 8,
+    "requeue": false,
+    "reservation": "sl5nw_168",
+    "typed_gpu": "nvidia_rtx_a4500",
+    "typed_gpu_count": 1
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "submitted": false
+}

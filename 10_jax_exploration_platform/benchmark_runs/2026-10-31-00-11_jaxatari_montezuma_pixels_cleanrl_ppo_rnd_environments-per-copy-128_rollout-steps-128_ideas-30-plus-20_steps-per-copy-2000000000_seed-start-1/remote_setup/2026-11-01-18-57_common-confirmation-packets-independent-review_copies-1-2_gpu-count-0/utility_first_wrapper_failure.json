@@ -1,0 +1,15 @@
+{
+  "kind": "independent_utility_review_wrapper_git_error_text_expectation_failure",
+  "actual_returncode": 1,
+  "expected_text": "does not exist in",
+  "actual_first_stderr_line": "fatal: path '10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/target_qualification_result.json' exists on disk, but not in '9fcc43a478b93d731df780805fd7c3c514cdf67f'",
+  "scope": "Reviewer formatting assumption only, after simulated controls/defaults; actual old publication was refused.",
+  "original_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-packets-independent-review_copies-1-2_gpu-count-0/review_utility.py",
+    "sha256": "3c101de323aec79cade99cb308d6c83b030a389da5b176ef958b60897f9a8bce"
+  },
+  "actual_raw_stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-packets-independent-review_copies-1-2_gpu-count-0/utility_old_publication.stderr.raw",
+    "sha256": "5349c6a8f4257e47c1e191a126a570ce943e6b6771044189d36a6e79731643a9"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "actual_job_id": null,
+  "admission_granted": false,
+  "case_credit": 0,
+  "complete_updates_per_arm_per_round": 10,
+  "completed_rounds": 0,
+  "copy_seeds": [
+    1
+  ],
+  "correctness_prerequisite": {
+    "result": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json",
+      "sha256": "cb3a0b564a781aef466e243d839b2aaa108c95f30eef156c36bf686d62bdb267"
+    },
+    "review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_1_independent_review.json",
+      "sha256": "39f9f4c24b4ab111e4db31e12186a2a1ab40f269f178b99e718210e4fd202e55"
+    }
+  },
+  "final_training_credit": 0,
+  "gpu_uuid": null,
+  "idea_credit": 0,
+  "kind": "prepared_intermediate_common_confirmation_progress",
+  "mode": "confirmation",
+  "paired_rounds_planned": 7,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "state": "prepared_not_submitted",
+  "submitted": false
+}

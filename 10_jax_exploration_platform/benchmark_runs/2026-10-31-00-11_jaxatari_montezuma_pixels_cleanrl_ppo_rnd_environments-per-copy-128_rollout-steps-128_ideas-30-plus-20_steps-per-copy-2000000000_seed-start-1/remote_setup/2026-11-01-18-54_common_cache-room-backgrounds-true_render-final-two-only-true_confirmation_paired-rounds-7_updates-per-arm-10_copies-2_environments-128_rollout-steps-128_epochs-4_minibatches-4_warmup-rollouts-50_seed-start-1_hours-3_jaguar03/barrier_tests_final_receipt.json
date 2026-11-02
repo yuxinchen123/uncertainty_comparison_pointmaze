@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "common_confirmation_startup_barrier_metadata_tests",
+  "job_id": "6783003",
+  "step_id": "42",
+  "source_before": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/wait_for_owned_inputs.py",
+    "sha256": "df411b83b34e012962a77cd72861255947e98b2a275628da549f580afc3ce8df"
+  },
+  "source_after": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/wait_for_owned_inputs.py",
+    "sha256": "df411b83b34e012962a77cd72861255947e98b2a275628da549f580afc3ce8df"
+  },
+  "test_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/test_wait_for_owned_inputs.py",
+    "sha256": "9ad71926e54e04fb5dc7de7e8c732e81441a0c64356eb4ab0c4c44d3afd21d13"
+  },
+  "tests_run": 22,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 2.013319730758667,
+  "synthetic_launch_only": true,
+  "real_gpu_operations": 0,
+  "real_submissions": 0,
+  "real_release_actions": 0,
+  "returncode": 0
+}

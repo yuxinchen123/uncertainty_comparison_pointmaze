@@ -1,0 +1,79 @@
+{
+  "job_id": "6783003",
+  "kind": "read_only_current_scheduler_resource_metadata",
+  "no_gpu_device_or_library_calls": true,
+  "records": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "reservation",
+        "sl5nw_168",
+        "-o"
+      ],
+      "returncode": 0,
+      "started_at_utc": "2026-11-02T02:58:56.250695+00:00",
+      "stderr": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_0.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_0.stdout",
+        "sha256": "1194c8e41c9da2e25f2d391339179a1bba8b91ccb2f6c07c46191fca65f9a5e7"
+      }
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "partition",
+        "gpu",
+        "-o"
+      ],
+      "returncode": 0,
+      "started_at_utc": "2026-11-02T02:58:56.281945+00:00",
+      "stderr": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_1.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_1.stdout",
+        "sha256": "9dc6b8bfbaae7c395c66dadcb6ca6f594b373f0b22ac6019252e44addcff77e2"
+      }
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "6783003",
+        "-o"
+      ],
+      "returncode": 0,
+      "started_at_utc": "2026-11-02T02:58:56.309098+00:00",
+      "stderr": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_2.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/resource_2.stdout",
+        "sha256": "a67f81ab07ee121814874dda28d586fbdcaa72d77ff00d30bf9f3971f4814b6c"
+      }
+    }
+  ],
+  "release_actions": 0,
+  "requested_confirmation_resources": {
+    "gpu_count": 1,
+    "gpu_type": "nvidia_rtx_a4500",
+    "host_memory_gib": 64,
+    "hours_by_copies": {
+      "1": 2,
+      "2": 3
+    },
+    "processors": 8
+  },
+  "reservation_identity": "sl5nw_168",
+  "scientific_credit": 0,
+  "step_id": "45",
+  "submissions": 0
+}
