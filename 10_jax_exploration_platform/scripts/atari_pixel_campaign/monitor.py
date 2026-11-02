@@ -98,11 +98,39 @@ def recorded_scaling_group(directory):
             "slurm_job_id": proof.get("slurm_job_id", "")}
 
 
+def process_hosts(records):
+    """Join historical host and current hostname fields without accepting conflicting identities."""
+    # Before: [{unit: "qualification", hostname: "serval02"}]; after: {qualification: serval02}.
+    if records is None:
+        return {}
+    if not isinstance(records, list):
+        raise ValueError("process records must be a list")
+    hosts = {}
+    hostname_pattern = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*"
+    for record in records:
+        # Each exact unit has one declared host identity; both supported field names must agree.
+        if not isinstance(record, dict):
+            raise ValueError("each process record must be an object")
+        unit = record.get("unit")
+        if (not isinstance(unit, str) or not unit or unit in {".", ".."}
+                or "/" in unit or "\x00" in unit or len(unit.encode("utf-8")) > 255):
+            raise ValueError("process unit must be an ordinary direct-child name")
+        values = [record[key] for key in ("host", "hostname") if key in record]
+        if (not values or any(not isinstance(value, str) or len(value) > 253
+                or re.fullmatch(hostname_pattern, value) is None for value in values)):
+            raise ValueError("process host or hostname must be a valid explicit hostname: " + unit)
+        if len(set(values)) != 1:
+            raise ValueError("process host and hostname conflict: " + unit)
+        if unit in hosts:
+            raise ValueError("duplicate process unit identity: " + unit)
+        hosts[unit] = values[0]
+    return hosts
+
+
 def unit_rows(directory, excluded_unit_names=()):
     """Read one small status file per unit without retaining training histories."""
     rows = []
-    processes = read_json(directory / "processes.json") or []
-    hosts = {record["unit"]: record["host"] for record in processes}
+    hosts = process_hosts(read_json(directory / "processes.json"))
     actions = read_json(directory / "next_actions.json") or {}
     superseded = set(actions.get("packing_device_memory_failure_receipt", {}).get("preserved_unsubmitted_preparations", []))
     # A 252-byte auxiliary directory is valid, but adding ".json" would exceed
