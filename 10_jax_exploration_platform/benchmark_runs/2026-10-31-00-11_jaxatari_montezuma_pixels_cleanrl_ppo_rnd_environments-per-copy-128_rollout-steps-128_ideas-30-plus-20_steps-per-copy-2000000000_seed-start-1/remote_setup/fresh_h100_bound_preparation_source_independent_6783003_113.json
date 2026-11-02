@@ -1,0 +1,62 @@
+{
+  "GPU_or_host_or_job_actions": 0,
+  "actual_formal_preparation_or_shared_asset_verification_run": false,
+  "actual_prepared_backend_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "actual_scheduler_queries": 0,
+  "admission_granted": false,
+  "after": {
+    "history_preparation_inputs.json": "3da2c4491a0c9c123b7de529e0e25c916e7654bb0fd535fcb0169edde49860e0",
+    "preparation_request.json": "6302e4439a4b827f7e24218cc86aae506ffc0a6c96cbc46b22f1e8a76cdec537",
+    "prepare_bound_qualification.py": "ec105bf51d8e67712a141b7c3896c17966dd76ed82f2d1c26633b34e1ec497f3",
+    "verify_shared_software_assets_staged.py": "d5d8d77ce8c53217ab81345fb808d304f28350e2d7fcc5c095dbc7735f5fd6af"
+  },
+  "approved": true,
+  "at_utc": "2026-11-02T05:00:58.053047+00:00",
+  "before": {
+    "history_preparation_inputs.json": "3da2c4491a0c9c123b7de529e0e25c916e7654bb0fd535fcb0169edde49860e0",
+    "preparation_request.json": "6302e4439a4b827f7e24218cc86aae506ffc0a6c96cbc46b22f1e8a76cdec537",
+    "prepare_bound_qualification.py": "ec105bf51d8e67712a141b7c3896c17966dd76ed82f2d1c26633b34e1ec497f3",
+    "verify_shared_software_assets_staged.py": "d5d8d77ce8c53217ab81345fb808d304f28350e2d7fcc5c095dbc7735f5fd6af"
+  },
+  "controls": 8,
+  "errors": [],
+  "expected_original_tests": 48,
+  "expected_renderer_cases": 132,
+  "expected_renderer_rooms": 33,
+  "expected_synthetic_pixel_cases": 11,
+  "failures": [],
+  "history_payload_or_library_reads": 0,
+  "job_id": "6783003",
+  "kind": "independent_fresh_h100_bound_preparation_and_shared_verifier_source_review",
+  "original_configuration_runtime_assets_software_CleanRL_UUID_lock_unchanged": true,
+  "original_source_preserved": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/prepare_bound_qualification.py": "41cb9ada6218880add07ddf5f57c649f536bfa2688ef0dc3790912e01a3ed1af",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/verify_shared_software_assets_staged.py": "732309f6bc1667a9674abb471ccbef5997368a191af632e6a44702555e579543"
+  },
+  "output": "test_arguments_preserve_prepare_only_and_require_new_actual_backend (__main__.Controls) ... ok\ntest_changed_archive_is_refused_before_transition (__main__.Controls) ... ok\ntest_changed_initial_file_is_refused_before_transition (__main__.Controls) ... ok\ntest_exact_history_and_initial_records_reach_only_stopped_clone (__main__.Controls) ... ok\ntest_exact_transition_removes_only_own_five_and_preserves_all_archives_history (__main__.Controls) ... ok\ntest_existing_helper_destination_is_refused (__main__.Controls) ... ok\ntest_extra_prior_output_is_refused_before_transition (__main__.Controls) ... ok\ntest_verifier_retains_internal_lock_and_no_standing_lock (__main__.Controls) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.135s\n\nOK\n",
+  "passed": true,
+  "qualification_approval": false,
+  "root_next_commands": "After successful actual staging, run prepare_bound_qualification.py once on ownedCPU6783003 oneCPU/1GiB under external shared read lock with /usr/bin/python3 -I -S -B. Then run verifier once with request.python -I -B on the same CPU resource shape; verifier acquires its internal shared lock, so do not externally lock it again.",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/bound_preparation_source_freeze.json",
+    "sha256": "7d12515748be71e2d09d3c48e187d565e54f52cc165f7ae45a0b782ff34f2b82"
+  },
+  "standalone_qualification_no_prior_target_or_common_or_fifty_credit": true,
+  "step_id": "113",
+  "unchanged_preparation_function_AST_names": [
+    "clone",
+    "copy_payload",
+    "digest",
+    "fresh_running_guard",
+    "git",
+    "install_guards",
+    "ordinary",
+    "read",
+    "receipt",
+    "require",
+    "write"
+  ]
+}
