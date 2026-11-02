@@ -1,0 +1,89 @@
+{
+  "capture_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-50_initial-comparisons-completion_ideas-30_gpu-types-2_copies-1-2_comparisons-120_source-d28e6735e797/frozen_original_evidence/capture_manifest.json",
+    "sha256": "93b04e8322e042b120a22a56425baf75668a92288e0a431d02e88132a87afc82"
+  },
+  "direct_host_contact": false,
+  "expected_exit_counts": {
+    "jobs": 25,
+    "launches": 2,
+    "runners": 120,
+    "workers": 23
+  },
+  "expected_original_comparisons": 120,
+  "expected_original_owned_numerical_jobs": 25,
+  "git_sources": [
+    {
+      "commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "original_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "transport_repository": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study"
+    },
+    {
+      "commit": "44eb38d01669c03f610b99594354e1b76fdafa34",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-region-diagnostic-helpers-44eb38d",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "03b0f62b7756809c312011f8d7a9f3311ee0aac3",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-03b0f62",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "cd7d4161f7cc079c0124c919c995eb79315b14f6",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "5b055815757e8219747bedf87423ae791af054fe",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-allocator-helpers-5b05581",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "b9a8a366d6efad3b305caf71366efd8414d0d26a",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-async-retry-helpers-b9a8a36",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    },
+    {
+      "commit": "1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "original_root": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "transport_repository": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl"
+    }
+  ],
+  "kind": "exact_original_direct_history_preparation_inputs",
+  "logical_mappings": 693,
+  "metadata_only": true,
+  "payload_bytes": 1309199145,
+  "records": {
+    "admission": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json",
+      "sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c"
+    },
+    "exit_observations": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-53_original-worker-exit-proof_comparisons-120_owned-uva-numerical-jobs-25_serval02-supervisor-3567981/observation_2026-11-01-20-54/observations.json",
+      "sha256": "c02e16b0d3694171afe1c9c5dd9dfec063d0adb969e279fc5207396340160a9b"
+    },
+    "exit_plan": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-53_original-worker-exit-proof_comparisons-120_owned-uva-numerical-jobs-25_serval02-supervisor-3567981/exit_observation_plan.json",
+      "sha256": "1ae77ae55a810668abbc0778af64b868809fffec558a14d0c03f3b54efcdf92f"
+    },
+    "exit_status": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-53_original-worker-exit-proof_comparisons-120_owned-uva-numerical-jobs-25_serval02-supervisor-3567981/observation_2026-11-01-20-54/status.json",
+      "sha256": "db81ad5dffa61d0f1464f0fb653099fc3a7047d84507eb79fa3ed18b120cff79"
+    },
+    "registry": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/study_registry.json",
+      "sha256": "2612dd6cd0bb5974e987cda98383e038b1286188f34c69ad40058bbdc3446840"
+    },
+    "worker_stop": {
+      "original_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-12-53_original-worker-exit-proof_comparisons-120_owned-uva-numerical-jobs-25_serval02-supervisor-3567981/observation_2026-11-01-20-54/worker_stop.json",
+      "sha256": "e8ccb99b546108ef3b8fc89788188ed249b2232fbbd49bfe409f712bf4db04a5"
+    }
+  },
+  "schema_version": 1,
+  "unique_payloads": 646
+}

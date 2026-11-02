@@ -1,0 +1,25 @@
+test_boolean_copy_count (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_environment_count (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_original_source (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_reference (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_runtime (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_total_horizon (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_changed_warmup (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_confirmation_mode (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_exact_original_plus_two_flags (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_extra_environment_change (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_extra_helper (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_guard_source_cannot_replace_qualified_source (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_missing_cache_change (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_other_copy_count (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_other_physical_selector (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_seed_substitution (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_timing_requested (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_wrong_data_unit (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_wrong_packet (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+test_wrong_round_protocol (common_correctness_metadata_tests.ConfigurationContractTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.034s
+
+OK
