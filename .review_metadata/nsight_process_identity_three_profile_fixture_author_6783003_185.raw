@@ -1,0 +1,11 @@
+test_profile_parent_uses_reserved_supervisor_metadata_without_old_gpu_query (test_configured_measurement.ConfiguredProfileTests)
+The actual metadata-only supervisor branch records its own separate directory and leaves CUDA unchanged. ... ok
+test_profile_plan_null_identity_and_optional_dependencies_are_preserved (test_configured_measurement.ConfiguredProfileTests)
+Both supervisor and child use measurement_plan.json and the original unit launch-binding path. ... ok
+test_trace_child_collects_its_own_unit_metadata_without_parent_substitution (test_configured_measurement.ConfiguredProfileTests)
+The historical release format still collects the actual child's metadata, separately from the new protocol. ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.466s
+
+OK

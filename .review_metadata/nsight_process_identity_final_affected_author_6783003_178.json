@@ -1,0 +1,385 @@
+{
+  "actual_GPU_or_job_or_network_actions": 0,
+  "actual_Nsight_or_profile_experiment": false,
+  "admission_granted": false,
+  "allowed_cold_import_children": [
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "import importlib.util,pathlib,sys; p=pathlib.Path(sys.argv[1]);sys.path.insert(0,str(p));s=importlib.util.spec_from_file_location('cold_profile',p/'profile_selected.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);assert not any(k.split('.')[0] in {'jax','jaxlib','numpy','torch','flax','optax'} for k in sys.modules);assert len(m.required_helpers(True,False,True,True))==23;print('metadata-only staged profile import passed')",
+      "/tmp/tmpcv4jcxng/source/10_jax_exploration_platform/scripts/atari_pixel_campaign"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-B",
+      "-c",
+      "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+      "/tmp/tmph4batlmu/data/unit/code",
+      "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-B",
+      "-c",
+      "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+      "/tmp/tmp8qn8_vhe/data/unit/code",
+      "[\"profile_selected.py\", \"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-B",
+      "-c",
+      "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+      "/tmp/tmpl34752a5/data/unit/code",
+      "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\"]"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-B",
+      "-c",
+      "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+      "/tmp/tmpya1_1lzn/data/unit/code",
+      "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"uva_active_configuration_observation.py\", \"passive_installed_slurm_observation.py\"]"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-B",
+      "-c",
+      "\nimport builtins,ctypes,hashlib,importlib,json,pathlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve(strict=True)\nnames=json.loads(sys.argv[2])\nexpected={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}\noriginal=builtins.__import__\ndef guarded(name,*args,**kwargs):\n    if name.split('.')[0] in {'jax','jaxlib','numpy','torch','jaxtari','exploration_platform','pynvml','cupy','numba'}:\n        raise AssertionError('numerical import forbidden')\n    return original(name,*args,**kwargs)\nbuiltins.__import__=guarded\ndef audit(event,args):\n    if event in {'subprocess.Popen','socket.connect','ctypes.dlopen'}:\n        raise AssertionError('live operation forbidden:'+event)\n    if event=='open' and isinstance(args[0],str) and args[0].startswith('/dev/'):\n        raise AssertionError('device open forbidden')\nsys.addaudithook(audit)\nsys.path.insert(0,str(root))\nseen={}\nfor filename in names:\n    module=importlib.import_module(filename[:-3])\n    path=pathlib.Path(module.__file__).resolve(strict=True)\n    assert path==root/filename\n    assert hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\n    seen[filename]=str(path)\nif 'uva_slurm_configured_isolation.py' in names:\n    core=sys.modules['uva_slurm_configured_isolation']\n    for filename in core.HELPERS:\n        if filename=='uva_slurm_configured_isolation.py':continue\n        module=core.adjacent(filename[:-3])\n        path=pathlib.Path(module.__file__).resolve(strict=True)\n        assert path==root/filename and hashlib.sha256(path.read_bytes()).hexdigest()==expected[filename]\nfor name,module in list(sys.modules.items()):\n    filename=getattr(module,'__file__',None)\n    if filename and pathlib.Path(filename).name in expected:\n        assert pathlib.Path(filename).resolve(strict=True)==root/pathlib.Path(filename).name\nprint(json.dumps({'loaded':seen,'numerical_imports':False,'live_operations':0},sort_keys=True))\n",
+      "/tmp/tmpm5c4g4ah/data/unit/code",
+      "[\"measure_selected.py\", \"diagnose_gpu_execution.py\", \"post_comparison_validation.py\", \"infrastructure_retry.py\", \"pregather_async_retry.py\", \"h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_site_validation.py\", \"h100_nvl_slurm_qualification.py\", \"h100_nvl_allocation_observation.py\", \"train_optimized.py\", \"short_learning.py\", \"device_memory_limit.py\", \"validate_training_deployment.py\", \"portable_evidence.py\", \"configured_measurement.py\", \"uva_slurm_configured_isolation.py\", \"passive_installed_slurm_observation.py\"]"
+    ]
+  ],
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6783003",
+  "local_private_fixture_git_commands": [
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpmh8lg9dw/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "show",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "show",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d:10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpi0multy0/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "show",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpqb5355s3/source",
+      "show",
+      "309a9e7427ada64f244f983c75c87a9dea62c77d:10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ]
+  ],
+  "passed": true,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/nsight_process_identity_final_affected_author_6783003_178.raw",
+    "sha256": "d936689231c64452540b0db4ab95eb71722724bf08841f60f39794f09cba9e18"
+  },
+  "real_processes_launched": 6,
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/prepare_nsight_process_diagnostic.py": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "70c14e89e001226f1a8dcd55c5579a3f7a551eb83dcd410b75233331cf155966",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "f72154383196ef3b2146b72c55b41b0b1e447201b7b8b7fea093eca6ec5909ab",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "c3274c3a80964c1cd12057c440c37b80fb638872ea6789cb9afca6e3ecbf3dd4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "5d1d10cc9b5412e8cf89198eda0c04189c875299f6af40dc0c42a0e4f07e292a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": "b9a56defb7da57b976834d9fb766e0c955824721d8320c5217faa42ea1038570",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "953717fbbcf0333aca5ec9a1a3f8e78b6018921ab4abce0f5b7563269543ab79",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/prepare_nsight_process_diagnostic.py": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "70c14e89e001226f1a8dcd55c5579a3f7a551eb83dcd410b75233331cf155966",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "f72154383196ef3b2146b72c55b41b0b1e447201b7b8b7fea093eca6ec5909ab",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "c3274c3a80964c1cd12057c440c37b80fb638872ea6789cb9afca6e3ecbf3dd4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "5d1d10cc9b5412e8cf89198eda0c04189c875299f6af40dc0c42a0e4f07e292a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": "b9a56defb7da57b976834d9fb766e0c955824721d8320c5217faa42ea1038570",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "953717fbbcf0333aca5ec9a1a3f8e78b6018921ab4abce0f5b7563269543ab79",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab"
+  },
+  "step_id": "178",
+  "synthetic_proc_files_and_mocked_pidfds_only": true,
+  "tests": 135
+}

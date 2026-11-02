@@ -794,11 +794,12 @@ class ConfiguredProfileTests(unittest.TestCase):
         self.fixture.files["confirmation"].write_text(json.dumps(self.fixture.confirmation))
         self.fixture.documents["baseline"]["configured_isolation_profile"] = support.core().PROFILE
         self.fixture.files["baseline"].write_text(json.dumps(self.fixture.documents["baseline"]))
-        for name in profile.required_helpers(True):
+        for name in profile.required_helpers(True, False, False, True):
             self.fixture.helpers["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name] = support.sha((SCRIPTS / name).read_bytes())
 
     def prepared(self):
         """Stage the real new profile plan while replacing only already reviewed previous numerical evidence."""
+        import test_profile_selected as profile_fixture_module
         arguments = self.fixture.arguments()
         arguments.gpu_uuid, arguments.hardware_class = None, "jaguar03_rtx_a4500"
         arguments.configured_isolation_profile = self.profile_path
@@ -809,6 +810,8 @@ class ConfiguredProfileTests(unittest.TestCase):
             """Mark a synthetic previous actual qualification only inside this metadata fixture."""
             plan["target_qualification_inputs"] = {"synthetic_metadata_fixture": True}
         with patch.object(support, "prepare_qualification_inputs", side_effect=previous), \
+                patch.object(profile, "require_reviewed_profile_process_admission"), \
+                patch.object(profile_fixture_module.PRODUCER, "require_reviewed_profile_process_admission"), \
                 patch.object(support, "verify_saved_measurement"), patch.object(support, "bounded_query") as query:
             directory = self.fixture.prepare(arguments)
             query.assert_not_called()
@@ -851,10 +854,13 @@ class ConfiguredProfileTests(unittest.TestCase):
         self.assertFalse((directory / "resolved_device_binding.json").exists())
 
     def test_trace_child_collects_its_own_unit_metadata_without_parent_substitution(self):
-        """The released child enters the new metadata branch before the actual numerical capture function."""
+        """The historical release format still collects the actual child's metadata, separately from the new protocol."""
         import socket
         directory = self.prepared()
         plan = json.loads((directory / "measurement_plan.json").read_text())
+        plan.pop("capture_process_protocol")
+        plan["helpers"]["files"].pop("10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py")
+        (directory / "measurement_plan.json").write_text(json.dumps(plan))
         owner = {"parent_pid": 456, "parent_start_time": "4560", "pid": 123, "process_start_time": "1230"}
         child_identity = {"hostname": socket.gethostname().split(".")[0], "pid": os.getpid(),
             "process_start_time": str(os.getpid() * 10)}

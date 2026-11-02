@@ -1,0 +1,30 @@
+{
+  "approval_scope": "Diagnostic source/preparation only. New ordinary configured profile preparation, admission and scientific acceptance remain disabled until a real diagnostic/raw review and a separate reviewed admission change.",
+  "at_utc": "2026-11-02T08:25:38.519327+00:00",
+  "author_test_count_note": {
+    "focused_method_executions": 90,
+    "focused_unique_ids": 73,
+    "latest_unique_ids_covered": 75,
+    "tool_and_formatter_methods": 12
+  },
+  "git_push_or_merge_authorized": false,
+  "independent_review": {
+    "bytes": 156066,
+    "copy": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/independent_nsight_source_review/nsight_process_source_independent_6783003_194.json",
+    "original": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_source_independent_6783003_194.json",
+    "sha256": "c213e20bc49baae0a01517f14f85351d171bda140607d7c90af71cebbaa6d789"
+  },
+  "independent_tests": {
+    "actual_numeric_step": "194",
+    "actual_owned_cpu_job": "6783003",
+    "unique_test_ids": 139
+  },
+  "kind": "approved_nsight_source_isolated_commit_scope",
+  "no_actual_diagnostic_or_GPU_or_host_or_job_actions": true,
+  "numerical_source_files_not_copied_or_modified": true,
+  "old_194_payload_files_not_copied_into_commit": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/nsight_process_tool_precheck_source_freeze.json",
+    "sha256": "4ae2b838be50d725ce827a2ad50edbd7e60618bb0d0a1473748ed676b9ad1bda"
+  }
+}

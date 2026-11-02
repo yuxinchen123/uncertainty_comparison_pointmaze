@@ -1,0 +1,29 @@
+test_absent_final_sidecar_expires_without_any_tool_action (test_nsight_process_diagnostic.DiagnosticTests)
+An unreleased job never starts the actual tool experiment. ... ok
+test_changed_tool_bytes_refuse_before_even_the_version_subprocess (test_nsight_process_diagnostic.DiagnosticTests)
+Never execute an unverified binary to learn whether its recorded identity changed. ... ok
+test_cpu_monitor_or_multiple_devices_or_wrong_resources_refuse (test_nsight_process_diagnostic.DiagnosticTests)
+The diagnostic cannot run inside the CPU monitor or a different resource shape. ... ok
+test_default_command_requires_explicit_role (test_nsight_process_diagnostic.DiagnosticTests)
+The no-argument diagnostic cannot create an attempt or query a tool. ... ok
+test_duplicate_or_conflicting_owned_ledger_row_refuses (test_nsight_process_diagnostic.DiagnosticTests)
+A matching row cannot hide another recorded command for the same job. ... ok
+test_exact_released_owned_gpu_job_passes_without_query (test_nsight_process_diagnostic.DiagnosticTests)
+Reading exact own ledgers and receipts never initializes Nsight, CUDA or a scheduler query. ... ok
+test_present_invalid_final_sidecar_does_not_wait_or_retry (test_nsight_process_diagnostic.DiagnosticTests)
+Only an absent real-release file can trigger the bounded startup wait. ... ok
+test_tool_hash_is_rechecked_after_the_recorded_version_return (test_nsight_process_diagnostic.DiagnosticTests)
+A successful simulated version return cannot hide a binary change before the actual profile launch. ... ok
+test_wrong_node_refuses_without_physical_index_inference (test_nsight_process_diagnostic.DiagnosticTests)
+Logical selectors are preserved as opaque strings and never used to infer a physical identity. ... ok
+test_dirty_source_refuses_before_any_packet_creation (test_nsight_diagnostic_preparation.PreparationTests)
+An uncommitted source change cannot enter the executable staging closure. ... ok
+test_partial_or_previously_prepared_unit_is_never_reused (test_nsight_diagnostic_preparation.PreparationTests)
+A second preparation refuses rather than replacing any old artifact. ... ok
+test_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command (test_nsight_diagnostic_preparation.PreparationTests)
+A fresh private packet binds exact Git bytes and contains no future launch identity. ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.299s
+
+OK
