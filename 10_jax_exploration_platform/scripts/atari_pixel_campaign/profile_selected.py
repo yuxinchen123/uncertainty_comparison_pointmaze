@@ -79,6 +79,12 @@ def helper_receipt(configured=False, direct=False, common=False):
 
 def required_helpers(configured=False, direct=False, common=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
+    if configured and direct:
+        raise ValueError("a profile cannot combine configured A4500 and direct H100 target helpers")
+    if direct:
+        # Historical common readers stay in their accepted units; the new adapter replays them separately.
+        return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(False, True, False, True),
+            "direct_profile_prerequisites.py")))
     return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common))))
 
 
@@ -94,6 +100,12 @@ def accepted_confirmation_common_reader(plan):
             or declared != common):
         raise ValueError("the accepted confirmation and profile helper declaration differ")
     required_helpers("configured_isolation" in plan, "direct_binding" in plan, common)
+    if "direct_binding" in plan:
+        import direct_profile_prerequisites as prerequisite
+        prerequisite.contract(plan)
+        if not common or "direct_profile_prerequisites.py" not in {Path(path).name for path in plan["helpers"]["files"]}:
+            raise ValueError("new direct profiling requires genuine accepted common evidence and its separate adapter")
+        return True
     relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py"
     if (relative in plan["helpers"]["files"]) != common:
         raise ValueError("the profile omitted or added the accepted confirmation's optional reader")
@@ -138,6 +150,11 @@ def prepare(args):
     """Stage immutable profile inputs without loading an array library or touching a GPU."""
     configured = getattr(args, "configured_isolation_profile", None) is not None
     direct = getattr(args, "direct_binding_profile", None) is not None
+    if args.hardware_class == "h100" and args.gpu_uuid == measurement.CARD1 and not direct:
+        raise ValueError("new card-one profiles require the explicit current direct protocol")
+    backend_record = getattr(args, "direct_backend_image_record", None)
+    if direct != (backend_record is not None):
+        raise ValueError("every new direct profile needs its explicit backend package-image record")
     if direct and (configured or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1):
         raise ValueError("direct profiling requires only its separately approved card-one profile")
     if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"):
@@ -175,7 +192,7 @@ def prepare(args):
     if "direct_binding" in confirmation and not direct:
         raise ValueError("default profiling cannot consume an explicit direct-binding measurement")
     common_reader = "common_correctness_inputs" in confirmation
-    if common_reader and (not configured or direct):
+    if common_reader and not (configured or direct):
         raise ValueError("a common-confirmation reader requires only configured A4500 profiling")
     if direct:
         import direct_measurement as support
@@ -183,7 +200,8 @@ def prepare(args):
         support.core().require_profile(profile)
         if baseline.get("direct_binding_profile") != profile:
             raise ValueError("the accepted baseline must name the exact separate direct profile")
-        support.verify_saved_measurement(Path(confirmation_input["path"]).parent, confirmation)
+        if not common_reader:
+            raise ValueError("legacy direct timing cannot authorize a new common profile")
         validation._identity_fields(confirmation, args.hardware_class, args.source_commit, runtime)
     elif configured:
         import configured_measurement as support
@@ -231,10 +249,21 @@ def prepare(args):
     if direct:
         import direct_measurement as support
         profile, profile_input = measurement.read_document(args.direct_binding_profile)
-        support.configure_plan(plan, profile, args.direct_history_inputs, "component_profile")
+        support.configure_plan(plan, profile, args.direct_history_inputs, "component_profile",
+            backend_image_record=backend_record)
         plan["inputs"]["direct_binding_profile"] = profile_input
         plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
-        support.prepare_qualification_inputs(plan, args.direct_qualification_record, args.direct_qualification_review)
+        # Keep the actual original qualification reference, then replay its historical consumer through the adapter.
+        plan["direct_qualification_inputs"] = {"result": support.core().receipt(args.direct_qualification_record),
+            "review": support.core().receipt(args.direct_qualification_review)}
+        import direct_profile_prerequisites as prerequisite
+        prerequisite.configure_plan(plan, Path(baseline["correctness_record"]), args.direct_common_correctness_review,
+            Path(baseline["confirmation_record"]), args.direct_common_confirmation_review,
+            args.direct_profile_lifecycle_record, args.direct_profile_lifecycle_review,
+            metadata_timeout_seconds=args.direct_profile_prerequisite_timeout_seconds,
+            qualification=args.direct_profile_target_qualification,
+            capture_result=args.direct_profile_capture_qualification_record,
+            capture_review=args.direct_profile_capture_qualification_review)
     accepted_confirmation_common_reader(plan)
     artifacts = {directory / "measurement_plan.json": measurement.json_bytes(plan),
         directory / "manifest.yaml": measurement.json_bytes(plan),
@@ -267,6 +296,8 @@ def prepare(args):
 
 def verify_prepared(directory, plan):
     """Require staged helper bytes, pinned numerical files, and their original output location."""
+    if plan.get("hardware_class") == "h100" and plan.get("gpu_uuid") == measurement.CARD1 and "direct_binding" not in plan:
+        raise ValueError("legacy default profiling cannot bypass the current direct card-one prerequisites")
     if directory != Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]:
         raise ValueError("profile output differs from its immutable prepared location")
     prepared = json.loads((directory / "measurement_prepared.json").read_text())
@@ -299,6 +330,22 @@ def validate_measured_baseline(directory, plan):
         raise ValueError("the staged initial study registry differs from its prepared bytes")
     registry = json.loads(registry_path.read_text())
     initial_summaries_complete(registry)
+    if "direct_binding" in plan:
+        import direct_profile_prerequisites as prerequisite
+        proof = prerequisite.require_saved_validation(plan)
+        row, = [item for item in proof["phases"] if item["phase"] == "timing"]
+        metadata = json.loads((directory / "supervisor/direct_process_metadata.json").read_text())
+        if metadata["history"]["comparisons"] != 120:
+            raise ValueError("the actual direct profile omitted the complete original120 comparisons")
+        history_inputs = prerequisite.checked(plan["direct_binding"]["frozen_inputs"])
+        original_registry = prerequisite.checked(history_inputs["registry"])
+        if any(registry[key] != original_registry[key] for key in ("reference_commit", "initial_matched_copy_counts", "initial_ideas")):
+            raise ValueError("the staged initial study differs from the actual revalidated original history")
+        diagnostic.atomic_json(directory / "baseline_validation.json", {
+            "kind": "direct_profile_historical_combination_and_original_history_validation",
+            "original_history": metadata["history"], "accepted_combination": row["proof"]["accepted_combination"],
+            "historical_prerequisite_validation": prerequisite.reference(directory / prerequisite.PROOF_NAME)})
+        return
     evidence = validation.Evidence()
     confirmation = plan["inputs"]["accepted_confirmation"]
     if hashlib.sha256(evidence.file(confirmation["path"])).hexdigest() != confirmation["sha256"]:
@@ -425,6 +472,8 @@ def capture_and_summarize(directory, plan, held_descriptor=None):
         support.core().live_custody(parent_metadata, held_descriptor)
         metadata = support.core().read_receipt(support.core().receipt(directory / "direct_process_metadata.json"))
         result["direct_trace_process_proof"] = support.trace_process_proof(directory, metadata)
+        import direct_profile_prerequisites as prerequisite
+        result.update(prerequisite.result_binding(directory, plan))
     diagnostic.atomic_json(directory / "result.json", result)
     diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
 
@@ -448,6 +497,9 @@ def run_prepared(directory):
                 raise ValueError("the profile inherited an unsupported runtime setting: " + name)
             os.environ[name] = value
         try:
+            if "direct_binding" in plan:
+                import direct_profile_prerequisites as prerequisite
+                prerequisite.before_compute(directory, plan)
             with interruption_cleanup(), measurement.card_admission(directory, plan) as held:
                 support = measurement.producer_support(plan)
                 direct = "direct_binding" in plan
@@ -529,6 +581,10 @@ def capture(directory, direct_held_lock_fd=None):
     hardware["runtime_environment"] = runtime
     installed = json.loads((directory / "installed_backend.json").read_text())
     _capture_core(directory, plan, hardware, installed)
+    if direct:
+        import direct_profile_prerequisites as prerequisite
+        captured = json.loads((directory / "capture_result.json").read_text())
+        prerequisite.after_capture(directory, plan, captured)
 
 
 def _capture_core(directory, plan, hardware, installed):
@@ -628,9 +684,18 @@ def parse_arguments(argv=None):
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
+    parser.add_argument("--direct-backend-image-record", type=Path)
     parser.add_argument("--direct-history-inputs", type=Path)
     parser.add_argument("--direct-qualification-record", type=Path)
     parser.add_argument("--direct-qualification-review", type=Path)
+    parser.add_argument("--direct-common-correctness-review", type=Path)
+    parser.add_argument("--direct-common-confirmation-review", type=Path)
+    parser.add_argument("--direct-profile-lifecycle-record", type=Path)
+    parser.add_argument("--direct-profile-lifecycle-review", type=Path)
+    parser.add_argument("--direct-profile-capture-qualification-record", type=Path)
+    parser.add_argument("--direct-profile-capture-qualification-review", type=Path)
+    parser.add_argument("--direct-profile-target-qualification", action="store_true")
+    parser.add_argument("--direct-profile-prerequisite-timeout-seconds", type=int)
     parser.add_argument("--direct-held-lock-fd", type=int, help=argparse.SUPPRESS)
     for name in ("source-root", "configuration", "runtime-environment", "asset-record", "study-registry",
                  "accepted-baseline-specification", "profile-tool-record", "jaxtari-source-root", "run-dir"):
@@ -645,9 +710,11 @@ def parse_arguments(argv=None):
     fields = ("source_root", "source_commit", "configuration", "runtime_environment", "asset_record", "study_registry",
               "accepted_baseline_specification", "profile_tool_record", "run_dir", "unit_id", "gpu_uuid", "hardware_class")
     if args.prepared_unit or args.capture_unit or args.direct_waiter_unit or args.inspect_profile_tool:
-        if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
+        if args.prepare_only or args.direct_profile_target_qualification or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
                                                                               "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
-                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review")):
+                                                                              "direct_binding_profile", "direct_backend_image_record", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
+                                                                              "direct_common_correctness_review", "direct_common_confirmation_review", "direct_profile_lifecycle_record", "direct_profile_lifecycle_review",
+                                                                              "direct_profile_capture_qualification_record", "direct_profile_capture_qualification_review", "direct_profile_prerequisite_timeout_seconds")):
             parser.error("execution/tool inspection cannot override a prepared configuration")
         if args.direct_held_lock_fd is not None:
             if (args.capture_unit is None and args.direct_waiter_unit is None) or args.direct_held_lock_fd < 0:
@@ -669,9 +736,19 @@ def parse_arguments(argv=None):
         parser.error("target qualification inputs require an explicit configured-isolation profile")
     if args.direct_binding_profile is not None:
         if (args.configured_isolation_profile is not None or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1
-                or args.direct_history_inputs is None or args.direct_qualification_record is None or args.direct_qualification_review is None):
+                or any(getattr(args, name) is None for name in ("direct_backend_image_record", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
+                    "direct_common_correctness_review", "direct_common_confirmation_review", "direct_profile_lifecycle_record", "direct_profile_lifecycle_review",
+                    "direct_profile_prerequisite_timeout_seconds"))):
             parser.error("direct profiling requires its exact known-UUID profile,history and actual direct qualification/review")
-    elif any(value is not None for value in (args.direct_history_inputs, args.direct_qualification_record, args.direct_qualification_review)):
+        if args.direct_profile_prerequisite_timeout_seconds < 1:
+            parser.error("supply an explicit positive finite metadata-child time budget")
+        if (args.direct_profile_target_qualification and (args.direct_profile_capture_qualification_record is not None or args.direct_profile_capture_qualification_review is not None)
+                or not args.direct_profile_target_qualification and (args.direct_profile_capture_qualification_record is None or args.direct_profile_capture_qualification_review is None)):
+            parser.error("a measurement needs real reviewed capture qualification; qualification cannot depend on itself")
+    elif args.direct_profile_target_qualification or any(value is not None for value in (args.direct_backend_image_record, args.direct_history_inputs,
+            args.direct_qualification_record, args.direct_qualification_review, args.direct_common_correctness_review, args.direct_common_confirmation_review,
+            args.direct_profile_lifecycle_record, args.direct_profile_lifecycle_review, args.direct_profile_capture_qualification_record,
+            args.direct_profile_capture_qualification_review, args.direct_profile_prerequisite_timeout_seconds)):
         parser.error("direct profile inputs require the separate direct binding profile")
     if any(getattr(args, name) is None for name in fields):
         parser.error("preparation needs explicit source/config/runtime/assets/initial study/baseline/tool/GPU/output inputs")

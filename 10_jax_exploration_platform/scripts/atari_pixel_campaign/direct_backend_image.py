@@ -274,6 +274,12 @@ def validate_expected(value, python=None):
         and value["numerical_imports"] == [] and type(value["gpu_operations"]) is int and value["gpu_operations"] == 0,
         "new direct execution requires its prepared backend package-image schema two")
     require(python is None or value["selected_python"] == python, "prepared backend belongs to another Python environment")
+    selected = Path(value["selected_python"])
+    site = ordinary(value["site_packages"], directory=True)
+    require(selected.is_absolute() and ".." not in selected.parts and selected.parent.name == "bin"
+        and selected.is_file() and site.name == "site-packages"
+        and site.is_relative_to(selected.parent.parent / "lib"),
+        "prepared package records must retain the actual selected Python environment")
     require(type(value["created_at_seconds"]) in {int, float} and math.isfinite(value["created_at_seconds"])
         and value["created_at_seconds"] > 0 and value["producer_source_sha256"] == digest(Path(__file__).read_bytes()),
         "package-image preparation time or exact producer source changed")
@@ -282,6 +288,7 @@ def validate_expected(value, python=None):
         and Path(image["path"]).is_absolute() and Path(image["path"]).name == "xla_cuda_plugin.so"
         and re.fullmatch(r"[0-9a-f]{64}", image["sha256"]) and type(image["size_bytes"]) is int and image["size_bytes"] > 0,
         "prepared package image needs an exact path, SHA256 and byte count")
+    require(Path(image["path"]).is_relative_to(site), "prepared image must remain inside the selected site-packages directory")
     require(set(owner) == {"name", "version", "metadata", "record", "record_entry"}
         and type(owner["name"]) is str and owner["name"] and type(owner["version"]) is str and owner["version"],
         "prepared package distribution identity is incomplete")
@@ -298,8 +305,32 @@ def validate_expected(value, python=None):
     return value
 
 
+def profile_work_protocol(plan):
+    """Recognize only the separate direct profile protocol, never a relabelled confirmation."""
+    value = plan.get("direct_profile_prerequisites")
+    require(plan.get("kind") == "selected_configuration_profile"
+        and plan.get("hardware_class") == "h100" and plan.get("gpu_uuid") == CARD_ONE
+        and type(value) is dict and type(value.get("schema_version")) is int
+        and value["schema_version"] == 1
+        and value.get("capability") == "exact_historical_direct_consumers_and_profile_backend_version_1"
+        and value.get("mode") in {"qualification", "measurement"}
+        and plan.get("direct_binding", {}).get("consumer") == "component_profile"
+        and len(plan.get("helpers", {}).get("files", {})) == 28
+        and not any(key in plan for key in ("configured_isolation", "configured_group", "device_memory_limit_protocol",
+            "final_protocol", "final_confirmation_protocol", "completed_study", "scaling_protocol")),
+        "a direct profile needs its separate exact-source prerequisite and backend protocol")
+    adapter = Path(__file__).with_name("direct_profile_prerequisites.py")
+    require(adapter.is_file() and not adapter.is_symlink()
+        and plan["helpers"]["files"].get(PREFIX + adapter.name) == digest(adapter.read_bytes()),
+        "the exact profile-only helper must be declared and staged")
+    return value
+
+
 def plan_path(plan, directory):
-    """Use only the current selected measurement plan format."""
+    """Keep selected evidence unchanged and admit only explicitly declared direct profile work."""
+    if plan.get("kind") == "selected_configuration_profile":
+        profile_work_protocol(plan)
+        return Path(directory) / "measurement_plan.json"
     require(plan.get("kind") == "selected_configuration_measurement"
         and plan.get("mode") in {"correctness", "confirmation"}, "this new backend protocol admits only direct selected measurements")
     return Path(directory) / "measurement_plan.json"
@@ -469,6 +500,26 @@ def capture_complete(directory, plan, result):
 
 def completed_work(plan, result):
     """Require actual completed work before publishing or reading a backend completion."""
+    if plan.get("kind") == "selected_configuration_profile":
+        profile_work_protocol(plan)
+        updates = plan.get("profile_updates")
+        start, finish = result.get("profile_start_iteration"), result.get("profile_end_iteration")
+        require(type(updates) is int and updates > 0
+            and type(result.get("execution_identity", {}).get("pid")) is int
+            and result["execution_identity"]["pid"] > 0
+            and type(start) is int and start >= 0 and type(finish) is int and finish - start == updates
+            and type(result.get("profile_updates")) is int and result["profile_updates"] == updates
+            and result.get("capture_completed") is True
+            and type(result.get("normalization_warmup_iterations")) is int
+            and result["normalization_warmup_iterations"] == 50
+            and type(result.get("compiled_signatures_before")) is list
+            and result["compiled_signatures_before"]
+            and result["compiled_signatures_before"] == result.get("compiled_signatures_after")
+            and result.get("configuration") == plan["configuration"]
+            and result.get("copy_seeds") == plan["copy_seeds"]
+            and result.get("runtime_environment") == plan["runtime_environment"],
+            "backend profile completion requires the actual complete unchanged capture window")
+        return "direct_profile_complete_update_capture"
     if "direct_qualification" in plan:
         require(result.get("all_original_gates_passed") is True and type(result.get("reference_iteration")) is int
             and result["reference_iteration"] == 1 and type(result.get("reference_optimizer_step")) is int
@@ -544,10 +595,18 @@ def validate_capture(directory, plan, binding, loaded, result):
             for key in ("started_at_seconds", "finished_at_seconds"))
         and all(type(post[key]) in (int, float) and math.isfinite(post[key])
             for key in ("started_at_seconds", "finished_at_seconds"))
-        and execution["started_at_seconds"] <= maps[0]["observed_at_seconds"]
-        <= maps[1]["observed_at_seconds"] <= execution["finished_at_seconds"]
+        and execution["started_at_seconds"] <= execution["finished_at_seconds"]
         <= post["started_at_seconds"] <= post["finished_at_seconds"]
-        <= maps[2]["observed_at_seconds"], "backend snapshots do not surround this actual full numerical execution")
+        <= maps[2]["observed_at_seconds"], "backend completion does not follow this actual numerical execution")
+    if plan.get("kind") == "selected_configuration_profile":
+        # The unchanged profile core captures the image before constructing its trainer/executor.
+        profile_work_protocol(plan)
+        require(maps[0]["observed_at_seconds"] <= maps[1]["observed_at_seconds"]
+            <= execution["started_at_seconds"], "profile package capture must precede its actual full capture window")
+    else:
+        require(execution["started_at_seconds"] <= maps[0]["observed_at_seconds"]
+            <= maps[1]["observed_at_seconds"] <= execution["finished_at_seconds"],
+            "selected backend snapshots do not surround this actual full numerical execution")
     require(image["descriptor_before"] == image["descriptor_after"]
         and image["descriptor_before"]["file_identity"] == image["source_file_identity"]
         and image["descriptor_before"]["size_bytes"] == expected["image"]["size_bytes"]

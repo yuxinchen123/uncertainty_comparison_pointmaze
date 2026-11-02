@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 import sys
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -24,6 +25,8 @@ class DirectQualificationReaderTests(unittest.TestCase):
             "current_launch_inputs_path": "explicit synthetic saved launch"}, direct_qualification=direct.QUALIFICATION,
             hardware_class="h100", copy_seeds=[1])
         self.process = {"hostname": "serval02", "pid": fixtures.PID, "process_start_time": "100"}
+        self.package = {"selected_python": f.plan["python"], "site_packages": "/synthetic/site-packages",
+            "image": {"explicit_unrelated_backend_stub": True}, "distribution": {"explicit_unrelated_owner_stub": True}}
         f.result.pop("configured_isolation")
         f.result.update(kind="direct_serval02_card1_full_original_qualification", qualification_protocol=direct.QUALIFICATION,
             hardware_class="h100", direct_binding=copy.deepcopy(f.plan["direct_binding"]), copy_seeds=[1],
@@ -46,12 +49,13 @@ class DirectQualificationReaderTests(unittest.TestCase):
         outer = copy.deepcopy(f.plan)
         outer["direct_qualification_inputs"] = {"result": self.core.receipt(path), "review": self.core.receipt(ref)}
         if outer_mutation: outer_mutation(outer)
-        # These unrelated physical/source/terminal stubs never establish real qualification.
+        # These unrelated physical/source/backend/terminal stubs never establish real qualification.
         with patch.object(self.core, "validate_plan"), patch.object(self.core, "validate_binding"),\
                 patch.object(direct, "validate_original_qualification"), patch.object(direct, "verify_saved_sources"),\
                 patch.object(direct, "verify_qualification_source_receipts"),\
                 patch.object(direct, "validate_window", return_value=f.result["qualification_memory"]),\
                 patch.object(direct, "validate_startup_checks"), patch.object(direct, "validate_backend_capture"),\
+                patch.object(direct, "backend_support", return_value=SimpleNamespace(expected_for_plan=lambda plan: self.package)),\
                 patch.object(direct, "terminal_process"):
             return direct.verify_qualification_inputs(outer)
 

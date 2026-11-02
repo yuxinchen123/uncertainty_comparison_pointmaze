@@ -276,7 +276,8 @@ class DirectBackendImageTests(unittest.TestCase):
         current = function((SCRIPTS / "direct_measurement.py").read_text(), "verify_qualification_inputs").body
         retained = iter(ast.dump(node) for node in current)
         self.assertTrue(all(any(value == ast.dump(node) for value in retained) for node in old))
-        self.assertEqual(len(current), len(old) + 3)
+        # The original new-package checks remain; one profile-only branch replays older accepted consumers separately.
+        self.assertEqual(len(current), len(old) + 4)
         for name in ("train_optimized.py", "diagnose_gpu_execution.py", "configured_measurement.py", "common_confirmation.py"):
             self.assertEqual(baseline(name), (SCRIPTS / name).read_text())
 

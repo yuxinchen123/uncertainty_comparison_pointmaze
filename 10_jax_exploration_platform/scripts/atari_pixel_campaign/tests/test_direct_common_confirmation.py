@@ -365,6 +365,18 @@ class QualificationReuseTests(unittest.TestCase):
         for name in measurement.required_helpers(False, True, False, True):
             shutil.copyfile(SCRIPTS / name, self.code / name)
             files[common.PREFIX + name] = common.digest((self.code / name).read_bytes())
+        # These historical guard checks use their published55-statement source in a private folder.
+        # The new profile-only verifier has another explicit branch and cannot claim this old reuse scope.
+        historical = subprocess.check_output(["git", "-C", str(SCRIPTS.parents[2]), "show",
+            "2973bf70402aaf78337f9fea0a19764c58e35fad:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py"])
+        (self.code / "direct_measurement.py").write_bytes(historical)
+        files[common.PREFIX + "direct_measurement.py"] = common.digest(historical)
+        current = self.root / "historical_current_helper"; current.mkdir()
+        for name in ("measure_selected.py", "direct_common_confirmation.py"):
+            shutil.copyfile(SCRIPTS / name, current / name)
+        (current / "direct_measurement.py").write_bytes(historical)
+        patcher = patch.object(common, "__file__", str(current / "direct_common_confirmation.py"))
+        patcher.start(); self.addCleanup(patcher.stop)
         numerical = self.root / "synthetic_numerical_source"; numerical.mkdir()
         core, paired = {}, {}
         for index in range(13):
@@ -381,6 +393,7 @@ class QualificationReuseTests(unittest.TestCase):
                 common.digest((SCRIPTS / name).read_bytes()) for name in measurement.required_helpers(False, True, True, True)}},
             "inputs": {"direct_backend_image_record": {"path": str(self.root / "synthetic_backend.json"), "sha256": "e" * 64}}}
         self.qualified = copy.deepcopy(self.plan); self.qualified["helpers"] = {"files": files}
+        self.plan["helpers"]["files"][common.PREFIX + "direct_measurement.py"] = common.digest(historical)
         self.write(self.qual / "measurement_plan.json", self.qualified)
         self.write(self.qual / "result.json", {"source_commit": "d" * 40})
         original = next(node for node in ast.parse((self.code / "direct_measurement.py").read_text()).body
@@ -426,6 +439,14 @@ class QualificationReuseTests(unittest.TestCase):
         self.assertEqual(len(proof["protected_numerical_files"]), 13)
         self.assertEqual(len(proof["protected_function_syntax"]), 13)
         self.assertFalse(proof["numerical_work_changed"])
+
+    def test_new_profile_verifier_cannot_reuse_the_historical_timing_scope(self):
+        """A coherent helper hash cannot turn the separate profile branch into old27 timing approval."""
+        path = Path(common.__file__).with_name("direct_measurement.py")
+        path.write_bytes((SCRIPTS / path.name).read_bytes())
+        self.plan["helpers"]["files"][common.PREFIX + path.name] = common.digest(path.read_bytes())
+        with self.assertRaisesRegex(ValueError, "protected execution"):
+            common.qualification_reuse_evidence(self.support, self.plan)
 
     def test_old_raw50_or_extra_removed_gate_is_rejected_after_coherent_rehash(self):
         """A review label cannot weaken the current55/raw53 source contract."""

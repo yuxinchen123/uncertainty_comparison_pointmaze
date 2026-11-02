@@ -68,18 +68,26 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
             profile.verify_prepared(directory,plan)
 
     def test_conditional_union_adds_only_the_common_reader(self):
-        """The new configured closure differs by exactly one file; historical default/direct rosters stay fixed."""
-        for configured,direct in ((False,False),(True,False),(False,True)):
+        """The configured closure adds one reader; direct H100 uses its separately declared two-helper extension."""
+        for configured,direct in ((False,False),(True,False)):
             old=tuple(dict.fromkeys(('profile_selected.py',*profile.measurement.required_helpers(configured,direct))))
             self.assertEqual(profile.required_helpers(configured,direct),old)
+        old_direct=set(('profile_selected.py',*profile.measurement.required_helpers(False,True)))
+        self.assertEqual(set(profile.required_helpers(False,True))-old_direct,
+                         {'direct_backend_image.py','direct_profile_prerequisites.py'})
+        self.assertEqual(len(profile.required_helpers(False,True)),28)
         self.assertEqual(set(self.names)-set(profile.required_helpers(True)),{'common_confirmation.py'})
         self.assertEqual(len(self.names),len(profile.required_helpers(True))+1)
 
-    def test_default_and_direct_cannot_request_the_common_reader(self):
-        """The extra A4500 reader never opts another consumer into common-confirmation support."""
-        for configured,direct in ((False,False),(False,True),(True,True)):
+    def test_default_and_mixed_targets_cannot_request_the_common_reader(self):
+        """A direct H100 profile has its own adapter; default and mixed target requests still refuse."""
+        for configured,direct in ((False,False),(True,True)):
             with self.subTest(configured=configured,direct=direct),self.assertRaises(ValueError):
                 profile.required_helpers(configured,direct,True)
+        direct=profile.required_helpers(False,True,True)
+        self.assertIn('direct_profile_prerequisites.py',direct)
+        self.assertNotIn('common_confirmation.py',direct)
+        self.assertNotIn('direct_common_confirmation.py',direct)
 
     def test_preparation_records_the_reader_without_claiming_own_correctness_inputs(self):
         """The declaration belongs only to the accepted input, not the profile's numerical protocol."""

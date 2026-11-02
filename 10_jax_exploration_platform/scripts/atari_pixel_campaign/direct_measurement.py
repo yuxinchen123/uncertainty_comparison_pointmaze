@@ -627,6 +627,11 @@ def validate_test_collection(plan, tests, stdout):
 
 def verify_qualification_inputs(plan):
     """Refuse a missing, changed, unrelated or unreviewed actual full-original qualification."""
+    if plan.get("kind") == "selected_configuration_profile":
+        # New profile package producers must never replace a historical accepted consumer.
+        prerequisite = adjacent("direct_profile_prerequisites")
+        prerequisite.require_saved_validation(plan)
+        return core().read_receipt(plan["direct_qualification_inputs"]["result"])
     identity = core()
     expected_backend = backend_support(plan).expected_for_plan(plan)
     inputs = plan["direct_qualification_inputs"]
@@ -802,6 +807,10 @@ def verify_saved_measurement(directory, result):
         terminal_process(directory, metadata)
     else:
         validate_profile_terminal(directory, metadata, result)
+        prerequisite = adjacent("direct_profile_prerequisites")
+        expected = prerequisite.result_binding(directory, plan)
+        require(all(result.get(name) == value for name, value in expected.items()),
+            "the current profile result omitted its actual historical/package protocol binding")
     if "common_correctness_inputs" in plan:
         adjacent("direct_common_confirmation").verify_saved(directory, plan, result)
     return plan, binding
@@ -852,6 +861,8 @@ def validate_profile_terminal(directory, metadata, result):
     child = identity.read_receipt(identity.receipt(directory / "capture_identity.json"))
     release = identity.read_receipt(identity.receipt(directory / "capture_release.json"))
     capture = identity.read_receipt(identity.receipt(directory / "capture_result.json"))
+    require(set(capture).issubset(result) and all(identity.exact(capture[key], result[key]) for key in capture),
+        "the final profile result changed an actual raw capture field")
     validate_capture_wait(directory, metadata)
     require(type(value.get("schema_version")) is int and value["schema_version"] == 1
         and value.get("kind") == "direct_retained_descriptor_profile_terminal" and value.get("profiler_process") == owner
