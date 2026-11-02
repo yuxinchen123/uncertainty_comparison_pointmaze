@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "independent_direct_metadata_import_provenance_source_review",
+  "approved": true,
+  "passed": true,
+  "checked_at_utc": "2026-11-02T01:26:00.148127+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths",
+  "base_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_source_freeze.json",
+    "sha256": "5c7eff134581074f026a58af592bc886fc222b769a0ad2761c4493ae5d29ac47"
+  },
+  "exact_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_metadata_import_order_probe.py": "1c89cbef8a1ca9febc1971c461f06a55b75ac07d0b8f899eb75477f944d18cb0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_metadata_import_provenance.py": "8d2fb4046f789fb9e5fea5e9245c0657fc3a02a73023d85562a20b5adb21f186"
+  },
+  "independent_controls": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-24-25_direct-metadata-import-provenance-independent-review_gpu-count-0/independent_controls_6783003_10.json",
+    "sha256": "af733269ac7a1f112b0a9f4aacf4223414de749f7c72f16d5de4d2dc391c8d5c"
+  },
+  "actual_job_id": "6783003",
+  "actual_step_id": "10",
+  "metadata_tests_passed": 30,
+  "cold_actual_import_order_probes_passed": 2,
+  "old_failure_reproduced": true,
+  "new_actual_original_paired_and_ideas_paths_verified": true,
+  "complete_source_diff_read": true,
+  "all_existing_function_statements_unchanged_except_scope_lookup_proved": true,
+  "all_existing_numerical_source_path_gates_unchanged": true,
+  "controller_not_executed_by_metadata_scope_lookup": true,
+  "public_modules_neither_deleted_nor_replaced": true,
+  "literal_original_two_source_scopes_preserved": true,
+  "missing_duplicate_annotated_dynamic_nested_expanded_reordered_and_augmented_declarations_rejected": true,
+  "failed_original_qualification_and_original_numerical_and_integration_source_bytes_preserved": true,
+  "protected_paths_count": 20,
+  "source_bytes_unchanged_before_after": true,
+  "blocking_findings": [],
+  "author_harness_failures_preserved": [
+    "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_2.json",
+    "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_4.json"
+  ],
+  "reviewer_preparation_failure_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-24-25_direct-metadata-import-provenance-independent-review_gpu-count-0/reviewer_preparation_failure.json",
+    "sha256": "cbc8dce819c3b3501ceb6b99688d97ecc2024a988cc82326de02835d0ba19ea1"
+  },
+  "actual_gpu_actions": 0,
+  "actual_numerical_imports": 0,
+  "network_actions": 0,
+  "live_scheduler_queries_by_tests": 0,
+  "initial_owned_run_status_query_performed": true,
+  "job_actions_performed": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false,
+  "worker_admitted": false,
+  "approval_scope": "publish the exact metadata-only source correction and prepare a fresh full-original H100 qualification; no actual numerical qualification or worker admission follows",
+  "current_active_reviewer_step": false
+}

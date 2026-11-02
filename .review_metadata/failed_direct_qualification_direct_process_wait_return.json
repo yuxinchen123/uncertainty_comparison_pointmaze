@@ -1,0 +1,41 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/measure_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830"
+  ],
+  "controller_owns_gpu_standing_descriptor": false,
+  "exited_normally": true,
+  "finished_at_utc": "2026-11-02T00:32:43.972264+00:00",
+  "hostname": "serval02",
+  "idea_credit": 0,
+  "kind": "owned_direct_process_wait_return",
+  "pid": 1282807,
+  "process_start_time": "53934903",
+  "producer_owns_gpu_standing_descriptor": true,
+  "returncode": 1,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "timeouts": [],
+  "uid": 2618919,
+  "wait_semantics": "Popen.wait on this exact spawned child",
+  "waited_pid": 1282807,
+  "waiter_after": {
+    "pid": 1280844,
+    "stat": "1280844 (python) R 1 1280833 1280833 0 -1 4194304 108251 1394214 183 6073 2453 1505 8187 16068 20 0 1 0 53919672 69533696 10718 18446744073709551615 94000164642816 94000167070493 140724634111296 0 0 0 0 16781319 0 0 0 0 17 2 0 0 0 0 0 94000168495856 94000170477296 94000190717952 140724634119295 140724634119970 140724634119970 140724634120131 0\n",
+    "stat_sha256": "163e55b6dfb6c96888fe49cdd9964daa609c474cd24fc513d88b16d35ee8a8b5",
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "waiter_before": {
+    "pid": 1280844,
+    "stat": "1280844 (python) R 1 1280833 1280833 0 -1 4194304 4044 23750 160 129 46 44 25 176 20 0 1 0 53919672 47706112 6144 18446744073709551615 94000164642816 94000167070493 140724634111296 0 0 0 0 16781319 0 0 0 0 17 62 0 0 0 0 0 94000168495856 94000170477296 94000190717952 140724634119295 140724634119970 140724634119970 140724634120131 0\n",
+    "stat_sha256": "d23a239837e7f52f4227584da5eb6978c1f82007c7eb7635e6511b3cb53be43a",
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "worker_admitted": false
+}

@@ -1,0 +1,23 @@
+{
+  "actual_author_job_id": "6783003",
+  "actual_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_5.json",
+    "sha256": "ca82efa3afa0493d4b2edfb4dd1cafbbaf1a72acfb7f642ce9aff9b4bb66f491"
+  },
+  "actual_author_step_id": "5",
+  "actual_gpu_work": 0,
+  "base_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "blind_module_deletion": false,
+  "cold_exact_actual_import_order_probes_passed": 2,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_metadata_import_order_probe.py": "1c89cbef8a1ca9febc1971c461f06a55b75ac07d0b8f899eb75477f944d18cb0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_metadata_import_provenance.py": "8d2fb4046f789fb9e5fea5e9245c0657fc3a02a73023d85562a20b5adb21f186"
+  },
+  "kind": "direct_qualification_metadata_import_provenance_source_freeze",
+  "metadata_tests_passed": 28,
+  "production_change_scope": "only strict AST metadata lookup of original SOURCE_SCOPES; imported numerical path gate unchanged",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_admission_changed": false
+}

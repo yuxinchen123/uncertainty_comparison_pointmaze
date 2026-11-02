@@ -1,0 +1,33 @@
+{
+  "both_cold_old_new_probes_passed_in_each_run": true,
+  "corrected_wrapper": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/run_import_provenance_author.py",
+    "sha256": "e5811fc5139df91ca82ba2af2a7d4a7403749dd2fd9fc944b71cb0a8014ebcc9"
+  },
+  "final_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_5.json",
+    "sha256": "ca82efa3afa0493d4b2edfb4dd1cafbbaf1a72acfb7f642ce9aff9b4bb66f491"
+  },
+  "first_issue": "read-only git show and exact isolated worktree read-only root absent from the guard",
+  "first_wrapper": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/run_import_provenance_author_before_git_allowlist_correction.py",
+    "sha256": "163a01929e0f956eee3ccd4b56f41a073fbb8feb8e3b5bcd38902355091d1bbf"
+  },
+  "kind": "direct_import_author_harness_correction_history",
+  "no_real_numerical_imports_or_gpu_actions": true,
+  "preserved_first": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_2.json",
+    "sha256": "e3faad6318625200899a383b86fcf106161b09785efc486b563718f1f3124349"
+  },
+  "preserved_second": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/import_provenance_author_6783003_4.json",
+    "sha256": "ab8e20393b9983d4e3435c899261a5b31ff56d5aa3c520268c46df823930ddc9"
+  },
+  "production_source_unchanged_across_all_three_runs": true,
+  "schema_version": 1,
+  "second_issue": "the existing local shared clone and sparse metadata-source fixture commands absent from the guard",
+  "second_wrapper": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths/.review_metadata/run_import_provenance_author_before_local_clone_allowlist.py",
+    "sha256": "397eb819c3bb7019e31249077c0e6bfb12fbf0d5d48a3e2a4eb665e535ddf493"
+  }
+}

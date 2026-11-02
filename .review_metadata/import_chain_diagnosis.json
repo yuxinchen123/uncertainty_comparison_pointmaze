@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "actual_direct_qualification_metadata_import_chain_diagnosis",
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+  "actual_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/failure.json",
+    "sha256": "b6af018e70e7463a65d9f697af70392cadf3ae9d519193555e99675250800f93"
+  },
+  "actual_failed_staged_core": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/serval02_card1_binding.py",
+    "sha256": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c"
+  },
+  "chain": [
+    "measure_selected.run_prepared calls direct collect_metadata before numerical import",
+    "serval02_card1_binding.check_live_admission imports adjacent controller to read SOURCE_SCOPES",
+    "controller inserts its staged directory and imports ideas under its ordinary global name",
+    "_compute loads the actual frozen paired_benchmark but its ideas dependency is already the staged module",
+    "unchanged verify_imported_sources correctly rejects the different ideas module path"
+  ],
+  "correction": "read only the exact two literal SOURCE_SCOPES paths through strict AST; never execute the metadata controller for this lookup",
+  "strict_imported_source_gate_unchanged": true,
+  "blind_module_deletion": false,
+  "tests_pending_new_verified_cpu": true,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

@@ -1,0 +1,137 @@
+{
+  "actual_failed_qualification_preserved": true,
+  "base_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "file_count": 25,
+  "files": [
+    {
+      "bytes": 2398,
+      "path": ".review_metadata/author_harness_correction_history.json",
+      "sha256": "c94a817c5e320898658b40834ee2f169afb340751c16ff0ce4e216f83e25cc04"
+    },
+    {
+      "bytes": 1606,
+      "path": ".review_metadata/draft_status.json",
+      "sha256": "e761e6f96307688f3f5df8b24e6e09fff05c8f6604fb322e0ee7e8278c7e74d8"
+    },
+    {
+      "bytes": 452,
+      "path": ".review_metadata/failed_direct_qualification_direct_controller_outcome.json",
+      "sha256": "ece2f33efd269cab1c52d20bfe418b50bc51c50ae53da606b608c45a2f0c185f"
+    },
+    {
+      "bytes": 3022,
+      "path": ".review_metadata/failed_direct_qualification_direct_process_wait_return.json",
+      "sha256": "f8878f26bfd30275b4d1e3bed2cb8b5d16cab858e8efdc0640176b45a330ae04"
+    },
+    {
+      "bytes": 2299,
+      "path": ".review_metadata/failed_direct_qualification_failure.json",
+      "sha256": "b6af018e70e7463a65d9f697af70392cadf3ae9d519193555e99675250800f93"
+    },
+    {
+      "bytes": 2752,
+      "path": ".review_metadata/import_chain_diagnosis.json",
+      "sha256": "05eea8812abd1c60d4ba29529047a3df63ea56a139a107ea950384e47b69c744"
+    },
+    {
+      "bytes": 72779,
+      "path": ".review_metadata/import_provenance_author_6783003_2.json",
+      "sha256": "e3faad6318625200899a383b86fcf106161b09785efc486b563718f1f3124349"
+    },
+    {
+      "bytes": 23592,
+      "path": ".review_metadata/import_provenance_author_6783003_4.json",
+      "sha256": "ab8e20393b9983d4e3435c899261a5b31ff56d5aa3c520268c46df823930ddc9"
+    },
+    {
+      "bytes": 22038,
+      "path": ".review_metadata/import_provenance_author_6783003_5.json",
+      "sha256": "ca82efa3afa0493d4b2edfb4dd1cafbbaf1a72acfb7f642ce9aff9b4bb66f491"
+    },
+    {
+      "bytes": 28211,
+      "path": ".review_metadata/import_provenance_independent_review/independent_controls_6783003_10.json",
+      "sha256": "af733269ac7a1f112b0a9f4aacf4223414de749f7c72f16d5de4d2dc391c8d5c"
+    },
+    {
+      "bytes": 4191,
+      "path": ".review_metadata/import_provenance_independent_review/review.json",
+      "sha256": "18030c5b4dffec6ec5412ce243dbda1259529be4795617ee5751c12f2bc7b04c"
+    },
+    {
+      "bytes": 496,
+      "path": ".review_metadata/import_provenance_independent_review/reviewer_preparation_failure.json",
+      "sha256": "cbc8dce819c3b3501ceb6b99688d97ecc2024a988cc82326de02835d0ba19ea1"
+    },
+    {
+      "bytes": 8700,
+      "path": ".review_metadata/import_provenance_independent_review/run_independent_metadata_controls.py",
+      "sha256": "a48083de9aac1e24dccbdd08934ccdc60c050dde8e82361d9c07a24f2296aaff"
+    },
+    {
+      "bytes": 852,
+      "path": ".review_metadata/import_provenance_independent_review/runner_preparation.json",
+      "sha256": "9f3dbc6f4dddbbde967cb4b95b43f5529bed8f339aa86866d39e65e75de98984"
+    },
+    {
+      "bytes": 4338,
+      "path": ".review_metadata/import_provenance_independent_review/stderr.raw",
+      "sha256": "8944eade6947b5b5ac66ba469f3d78621f56ce8e871ed037e5be52fa92c13155"
+    },
+    {
+      "bytes": 570,
+      "path": ".review_metadata/import_provenance_independent_review/stdout.raw",
+      "sha256": "0a42ca8c201d283edcc1e1d2c705bc643db095c4ff59e69c1452c21332a946ed"
+    },
+    {
+      "bytes": 1416,
+      "path": ".review_metadata/import_provenance_source_freeze.json",
+      "sha256": "5c7eff134581074f026a58af592bc886fc222b769a0ad2761c4493ae5d29ac47"
+    },
+    {
+      "bytes": 4364,
+      "path": ".review_metadata/independent_review_copy_provenance.json",
+      "sha256": "7852a5cc2807bf95e1763cebf8e9fc6c55232c5b5d4f974e93228446c8683148"
+    },
+    {
+      "bytes": 627,
+      "path": ".review_metadata/new_cpu_running_guard_6783003.json",
+      "sha256": "e05aef8aeb7f72eec96d94ea234511dbc192bc96abbc74901d1e6a3c4e5fb3fe"
+    },
+    {
+      "bytes": 5875,
+      "path": ".review_metadata/run_import_provenance_author.py",
+      "sha256": "e5811fc5139df91ca82ba2af2a7d4a7403749dd2fd9fc944b71cb0a8014ebcc9"
+    },
+    {
+      "bytes": 5432,
+      "path": ".review_metadata/run_import_provenance_author_before_git_allowlist_correction.py",
+      "sha256": "163a01929e0f956eee3ccd4b56f41a073fbb8feb8e3b5bcd38902355091d1bbf"
+    },
+    {
+      "bytes": 5589,
+      "path": ".review_metadata/run_import_provenance_author_before_local_clone_allowlist.py",
+      "sha256": "397eb819c3bb7019e31249077c0e6bfb12fbf0d5d48a3e2a4eb665e535ddf493"
+    },
+    {
+      "bytes": 53870,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "sha256": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7"
+    },
+    {
+      "bytes": 5150,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_metadata_import_order_probe.py",
+      "sha256": "1c89cbef8a1ca9febc1971c461f06a55b75ac07d0b8f899eb75477f944d18cb0"
+    },
+    {
+      "bytes": 3951,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_metadata_import_provenance.py",
+      "sha256": "8d2fb4046f789fb9e5fea5e9245c0657fc3a02a73023d85562a20b5adb21f186"
+    }
+  ],
+  "independent_review_sha256": "18030c5b4dffec6ec5412ce243dbda1259529be4795617ee5751c12f2bc7b04c",
+  "kind": "direct_qualification_metadata_import_provenance_publication_roster",
+  "production_scope": "strict AST metadata-only original-source scope lookup; no numerical-path gate modification",
+  "schema_version": 1,
+  "source_admission_changed": false
+}

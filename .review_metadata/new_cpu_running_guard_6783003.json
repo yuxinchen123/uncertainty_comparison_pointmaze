@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-11-02T01:03:38.322989+00:00",
+  "command": [
+    "squeue",
+    "-h",
+    "-j",
+    "6783003",
+    "-o",
+    "%i|%T|%N"
+  ],
+  "job_id": "6783003",
+  "kind": "exact_owned_cpu_monitor_running_guard",
+  "owned_uva_ledger": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+  "returncode": 0,
+  "schema_version": 1,
+  "stderr": "",
+  "stdout": "6783003|RUNNING|heartpiece\n"
+}
