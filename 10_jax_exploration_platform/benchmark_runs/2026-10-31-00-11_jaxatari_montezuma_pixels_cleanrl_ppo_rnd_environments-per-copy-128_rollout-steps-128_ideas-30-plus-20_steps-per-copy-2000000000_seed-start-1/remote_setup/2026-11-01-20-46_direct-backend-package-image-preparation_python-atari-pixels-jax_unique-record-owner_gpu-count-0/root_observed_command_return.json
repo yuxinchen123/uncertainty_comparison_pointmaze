@@ -1,0 +1,43 @@
+{
+  "actual_observer_from_output": {
+    "hostname": "heartpiece",
+    "pid": 780006,
+    "process_start_time": "54994302",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-00_direct-backend-package-image_expected-before-gpu_same-process-mapped-capture_after-full-reference_preserve-numerical-source/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+    "--python",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "--site-packages",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+    "--image",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+    "--output",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json"
+  ],
+  "completion_source": "actual tools.write_stdin session17833 returned exit_code0 in this continuing root session",
+  "gpu_operations": 0,
+  "kind": "root_observed_completed_metadata_command",
+  "output": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "qualification_performed": false,
+  "recorded_at_utc": "2026-11-02T04:58:32.252512+00:00",
+  "returncode": 0,
+  "start_time_not_recorded": true,
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/stderr.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/stdout.raw",
+    "sha256": "59e6ee3d3c5f4e144856ebf1cfc6c4aee0df50b467567e8c8bb8d0a398e13fe2"
+  }
+}

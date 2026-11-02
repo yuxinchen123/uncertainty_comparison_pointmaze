@@ -1,0 +1,54 @@
+{
+  "GPU_or_library_or_network_operations": 0,
+  "actual_installed_package_preparation": false,
+  "actual_job_actions": 0,
+  "actual_scheduler_queries": 0,
+  "admission_granted": false,
+  "after": {
+    ".review_metadata/direct_backend_image_preparation/run_backend_metadata_tests.py": "716c55c6749b7dc81b5433fb1b919c77c36cd0728efbd2dc3f1c46b8e04049a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": "4c85f2022ae3591992d3581aa0db511c3eb317ea3d61c88cde01860a3e443258"
+  },
+  "approved": true,
+  "before": {
+    ".review_metadata/direct_backend_image_preparation/run_backend_metadata_tests.py": "716c55c6749b7dc81b5433fb1b919c77c36cd0728efbd2dc3f1c46b8e04049a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": "4c85f2022ae3591992d3581aa0db511c3eb317ea3d61c88cde01860a3e443258"
+  },
+  "calls": [
+    {
+      "case": "complete26",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"live_operations\": 0, \"loaded\": {\"collect_worker_exit_receipts.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/collect_worker_exit_receipts.py\", \"configured_measurement.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/configured_measurement.py\", \"controller.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/controller.py\", \"device_memory_limit.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/device_memory_limit.py\", \"diagnose_gpu_execution.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/diagnose_gpu_execution.py\", \"direct_backend_image.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_backend_image.py\", \"direct_measurement.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_measurement.py\", \"h100_nvl_allocation_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_allocation_observation.py\", \"h100_nvl_slurm_case.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_qualification.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_qualification.py\", \"h100_nvl_slurm_queue.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_site_validation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_site_validation.py\", \"ideas.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/ideas.py\", \"infrastructure_retry.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/infrastructure_retry.py\", \"measure_selected.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/measure_selected.py\", \"passive_installed_slurm_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/passive_installed_slurm_observation.py\", \"portable_evidence.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/portable_evidence.py\", \"post_comparison_validation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/post_comparison_validation.py\", \"pregather_async_retry.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/pregather_async_retry.py\", \"serval02_card1_binding.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/serval02_card1_binding.py\", \"short_learning.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/short_learning.py\", \"train_optimized.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/train_optimized.py\", \"uva_active_configuration_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/uva_active_configuration_observation.py\", \"uva_slurm_configured_isolation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/uva_slurm_configured_isolation.py\", \"validate_training_deployment.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/validate_training_deployment.py\"}, \"numerical_imports\": false}\n{\"new_schema\": 2, \"owner\": \"Different-Backend-Owner\", \"fake_file_only\": true}\n"
+    },
+    {
+      "case": "missing_new_helper",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<string>\", line 5, in <dictcomp>\n  File \"/usr/lib/python3.10/pathlib.py\", line 1126, in read_bytes\n    with self.open(mode='rb') as f:\n  File \"/usr/lib/python3.10/pathlib.py\", line 1119, in open\n    return self._accessor.open(self, mode, buffering, encoding, errors,\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmps36vb2lo/cold/data/unit/code/direct_backend_image.py'\n",
+      "stdout": ""
+    },
+    {
+      "case": "changed_new_helper",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 41, in <module>\n  File \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_measurement.py\", line 71, in backend_support\n    require(path.is_file() and core().receipt(path)[\"sha256\"] == expected,\n  File \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_measurement.py\", line 30, in require\n    raise ValueError(message)\nValueError: the exact new backend helper is missing from this direct source closure\n",
+      "stdout": "{\"live_operations\": 0, \"loaded\": {\"collect_worker_exit_receipts.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/collect_worker_exit_receipts.py\", \"configured_measurement.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/configured_measurement.py\", \"controller.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/controller.py\", \"device_memory_limit.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/device_memory_limit.py\", \"diagnose_gpu_execution.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/diagnose_gpu_execution.py\", \"direct_backend_image.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_backend_image.py\", \"direct_measurement.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/direct_measurement.py\", \"h100_nvl_allocation_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_allocation_observation.py\", \"h100_nvl_slurm_case.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_case.py\", \"h100_nvl_slurm_evidence.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_evidence.py\", \"h100_nvl_slurm_qualification.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_qualification.py\", \"h100_nvl_slurm_queue.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_queue.py\", \"h100_nvl_slurm_site_validation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/h100_nvl_slurm_site_validation.py\", \"ideas.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/ideas.py\", \"infrastructure_retry.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/infrastructure_retry.py\", \"measure_selected.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/measure_selected.py\", \"passive_installed_slurm_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/passive_installed_slurm_observation.py\", \"portable_evidence.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/portable_evidence.py\", \"post_comparison_validation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/post_comparison_validation.py\", \"pregather_async_retry.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/pregather_async_retry.py\", \"serval02_card1_binding.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/serval02_card1_binding.py\", \"short_learning.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/short_learning.py\", \"train_optimized.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/train_optimized.py\", \"uva_active_configuration_observation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/uva_active_configuration_observation.py\", \"uva_slurm_configured_isolation.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/uva_slurm_configured_isolation.py\", \"validate_training_deployment.py\": \"/tmp/tmps36vb2lo/cold/data/unit/code/validate_training_deployment.py\"}, \"numerical_imports\": false}\n"
+    }
+  ],
+  "helper_count": 26,
+  "job_id": "6783003",
+  "kind": "independent_cold_direct_backend_26_helper_metadata_review",
+  "numerical_imports": 0,
+  "only_synthetic_ordinary_package_files": true,
+  "passed": true,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-20-00_direct-backend-package-image_expected-before-gpu_same-process-mapped-capture_after-full-reference_preserve-numerical-source/.review_metadata/direct_backend_image_preparation/source_freeze_bounded_maps_post_package.json",
+    "sha256": "16089b70f6a0a8a375698aa30304f5e5c611fbdbd14aba6cbb6ef64d3fb534f2"
+  },
+  "step_id": "99"
+}

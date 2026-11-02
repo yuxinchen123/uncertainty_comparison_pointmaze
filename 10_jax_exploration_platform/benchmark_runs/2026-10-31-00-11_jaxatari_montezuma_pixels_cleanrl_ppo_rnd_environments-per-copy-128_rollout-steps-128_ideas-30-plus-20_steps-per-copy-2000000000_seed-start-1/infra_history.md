@@ -503,3 +503,5 @@ Source and numerical reuse review passed. Merge9fcc43a4 matches independently te
 ### 2026-11-02T04:07:19.760367+00:00 Common timing starts; H100 backend proof requires a new producer
 
 Both A4500 jobs were released exactly once after published checks and now run on distinct assigned GPUs. Both startup and prior-correctness checks passed. H100 raw review rejected a missing pre-execution XLA plugin package proof; preserve both failed review attempts and all GPU outputs. Separate strict metadata source and a fresh full qualification are required, with no numerical changes or old-data acceptance. The older monitor unit labels are not scientific or execution evidence; use actual owned job rows until the isolated display correction is reviewed.
+
+2026-11-02T04:58:32.252512+00:00 — Both A4500 combined timings independently accepted (1.81742665 and 1.56444101 median speedup). Reviewed backend and monitor corrections published as 0a880984; actual new package-image preparation succeeded, with no H100 qualification yet. Full monitor step6783003.108 passed. Earlier failed reviews and qualification attempts remain failed.

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "env",
+    "TZ=UTC",
+    "sacct",
+    "-j",
+    "6783296",
+    "--parsable2",
+    "--noheader",
+    "--format=JobIDRaw,JobName,User,State,ExitCode,NodeList,Elapsed,Start,AllocCPUS,ReqTRES,AllocTRES,End"
+  ],
+  "timezone_environment_override": "UTC",
+  "returncode": 0,
+  "captured_at_utc": "2026-11-02T04:34:53.026327+00:00",
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/common_confirmation_terminal_utc_6783296_2026-11-02-04-34-52_stdout.raw",
+    "sha256": "e88a80535c519a9a4f26b1ff79d948cea6c735e616cf95c53d9bde6fe8b6640a"
+  },
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/common_confirmation_terminal_utc_6783296_2026-11-02-04-34-52_stderr.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

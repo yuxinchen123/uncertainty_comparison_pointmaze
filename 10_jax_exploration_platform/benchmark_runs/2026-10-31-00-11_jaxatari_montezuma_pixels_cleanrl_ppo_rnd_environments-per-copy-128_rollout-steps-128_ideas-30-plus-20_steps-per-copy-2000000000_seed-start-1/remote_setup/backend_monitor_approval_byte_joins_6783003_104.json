@@ -1,0 +1,23 @@
+{
+  "admission_granted": false,
+  "all_six_actual_production_or_test_incoming_bytes_equal_frozen_and_genuine_reviewed_before_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "dea8682097e23b4c6ecaff4801914017a7fb7e04672d4ece1cfb3f46de62ea84",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": "4c85f2022ae3591992d3581aa0db511c3eb317ea3d61c88cde01860a3e443258",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_selected_unit_jobs.py": "01544a6f71434636c18a9f30abebe7f931f8a551815ba7a764eb1b8a186848ba"
+  },
+  "approved": true,
+  "incoming_tree_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/backend_monitor_sequential_incoming_independent_6783003_102.json",
+    "sha256": "40983df7f714d0c80be4b51a57b785f153446157827344dcf29380941186a362"
+  },
+  "job_id": "6783003",
+  "kind": "independent_incoming_frozen_approval_byte_joins",
+  "no_new_source_or_index_or_job_actions": true,
+  "passed": true,
+  "resulting_tree": "e8295654c18f5c1380f1e39befe66aceb0ba1929",
+  "step_id": "104",
+  "target_head": "46bfbd894777595e78deacc6420ffc355f028a5f"
+}

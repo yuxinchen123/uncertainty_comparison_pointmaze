@@ -1,5 +1,30 @@
 {
   "a4500_24g_supervisors_stop_after_case_requested_at": "2026-10-31T11:47:13+00:00",
+  "a4500_common_configuration_confirmation": {
+    "both_gpu_common_phase_complete": false,
+    "case_credit": 0,
+    "copies": [
+      1,
+      2
+    ],
+    "final_training_credit": 0,
+    "idea_credit": 0,
+    "independent_reviews": {
+      "1": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-35_common-a4500-confirmation-independent-raw-audit_copies-1_job-6783295_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "c949d41603813be5344bd8d39a3a6ea357fb8cc45211e0e3cb9b5af80783794f"
+      },
+      "2": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-37_common-a4500-confirmation-independent-raw-audit_copies-2_job-6783296_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "6bd2243057e95c295279e725e17c9bca622f1e95061b5737643f842541fdc306"
+      }
+    },
+    "median_speedups": {
+      "1": 1.8174266469905493,
+      "2": 1.564441012703465
+    },
+    "state": "both_a4500_counts_completed_and_independently_accepted_h100_common_pending"
+  },
   "a4500_diagnostic_job_id": "6777543",
   "a4500_future_worker_host_memory_gib": 64,
   "a4500_host_memory_failure_evidence": "Jobs 6777641 and 6777643 each recorded a 24 GiB memory.max, oom=1 and oom_kill=1 while their numerical children exited -9; retained attempts remain unchanged.",
@@ -415,6 +440,7 @@
   ],
   "replacement_monitor_job_id": "6783003",
   "replacement_monitor_released": true,
+  "reviewed_backend_and_monitor_source_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
   "standing_record_refresh_history": [

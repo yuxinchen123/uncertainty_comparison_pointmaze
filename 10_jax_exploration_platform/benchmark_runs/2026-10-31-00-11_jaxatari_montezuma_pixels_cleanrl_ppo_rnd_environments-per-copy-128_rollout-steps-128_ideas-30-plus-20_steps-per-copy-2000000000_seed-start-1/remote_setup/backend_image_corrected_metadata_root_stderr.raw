@@ -1,0 +1,514 @@
+test_actual_unique_record_owner_is_discovered_without_assuming_package_name (test_direct_backend_image.DirectBackendImageTests)
+The distinct fake owner is read from actual file ownership and headers. ... ok
+test_changed_shared_binary_metadata_and_record_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+Portable replay hashes all actual captured bytes and parses their ownership. ... ok
+test_different_process_binding_and_missing_completed_work_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+A post-work proof must remain this bound process and include actual completion. ... ok
+test_duplicate_metadata_headers_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+One distribution must name one package and one version. ... ok
+test_duplicate_owner_wrong_record_hash_size_and_repeated_image_row_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+Ambiguous ownership or any image/RECORD disagreement stops preparation. ... ok
+test_exact_prepared_bytes_are_copied_and_a_different_prior_record_is_preserved (test_direct_backend_image.DirectBackendImageTests)
+The immutable sidecar keeps the caller's actual JSON bytes. ... ok
+test_failed_capture_is_preserved_and_cannot_be_retried (test_direct_backend_image.DirectBackendImageTests)
+A missing map leaves an explicit failed attempt and never replaces it. ... ok
+test_full_original_reference_completion_and_times_are_required (test_direct_backend_image.DirectBackendImageTests)
+One full original update and its finish time precede the post-work mapping. ... ok
+test_helper_union_keeps_default_and_a4500_unchanged (test_direct_backend_image.DirectBackendImageTests)
+Only the explicit new direct protocol stages the separate backend module. ... ok
+test_image_metadata_record_and_software_version_changes_are_rejected_before_work (test_direct_backend_image.DirectBackendImageTests)
+Current files and the unchanged qualification package versions must match the pin. ... ok
+test_legacy_missing_helper_and_changed_prepared_source_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+A historical helper closure cannot start or admit a new direct run. ... ok
+test_mapping_wrong_inode_deleted_image_multiple_images_and_missing_mapping_are_rejected (test_direct_backend_image.DirectBackendImageTests)
+Filesystem mappings stay separate from GPU selectors and reject aliases. ... ok
+test_own_mapping_read_is_bounded_before_utf8_decode (test_direct_backend_image.DirectBackendImageTests)
+A large own mapping file is rejected after at most the declared byte limit plus one. ... ok
+test_post_work_installed_package_hashes_descriptor_and_times_are_retained_and_checked (test_direct_backend_image.DirectBackendImageTests)
+The existing post-work hash pass supplies independently readable actual file evidence. ... ok
+test_same_process_full_capture_replays_using_shared_bytes_and_separate_cuda_receipt (test_direct_backend_image.DirectBackendImageTests)
+Replay uses the new package proof while the CUDA receipt omits the image. ... ok
+test_saved_receipt_rejects_changed_cuda_digest_process_or_work_kind (test_direct_backend_image.DirectBackendImageTests)
+Backend proof joins the separate unchanged CUDA receipt and actual completed work. ... ok
+test_source_preserves_numerical_compute_original_gates_and_cuda_collectors (test_direct_backend_image.DirectBackendImageTests)
+Compare exact existing functions and files against the declared published base. ... ok
+test_actual_waiter_chain_and_zero_child_wait_are_required (test_direct_measurement.DirectMeasurementTests) ... ok
+test_all_unsupported_direct_modes_remain_rejected (test_direct_measurement.DirectMeasurementTests) ... ok
+test_cached_module_substitution_is_rejected (test_direct_measurement.DirectMeasurementTests) ... ok
+test_cleanup_never_signals_changed_parent_or_birth (test_direct_measurement.DirectMeasurementTests) ... ok
+test_cold_direct_and_combined_closures_require_every_exact_sibling (test_direct_measurement.DirectMeasurementTests) ... ok
+test_complete_helpers_are_rechecked_before_observation (test_direct_measurement.DirectMeasurementTests) ... ok
+test_direct_full_window_is_distinct_and_replays_without_live_queries (test_direct_measurement.DirectMeasurementTests) ... ok
+test_direct_preparation_flags_cannot_override_prepared_execution (test_direct_measurement.DirectMeasurementTests) ... usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+ok
+test_direct_window_keeps_actual_fifteen_percent_free_requirement (test_direct_measurement.DirectMeasurementTests) ... ok
+test_direct_window_rejects_wrong_total_foreign_row_bad_shutdown_and_lost_custody (test_direct_measurement.DirectMeasurementTests) ... ok
+test_exception_cleanup_keeps_descriptor_until_exact_descendants_end (test_direct_measurement.DirectMeasurementTests) ... ok
+test_native_trace_other_pid_zero_events_and_unknown_schema_refuse (test_direct_measurement.DirectMeasurementTests) ... ok
+test_native_trace_positive_events_join_actual_capture_and_exact_bytes (test_direct_measurement.DirectMeasurementTests) ... ok
+test_observer_refuses_remembered_binding_and_wrong_directory_before_queries (test_direct_measurement.DirectMeasurementTests) ... ok
+test_original_selectors_are_not_rewritten_by_child_command (test_direct_measurement.DirectMeasurementTests) ... ok
+test_paired_observer_reuses_unique_windows_and_restores_original (test_direct_measurement.DirectMeasurementTests) ... ok
+test_private_descriptor_and_waiter_flags_cannot_change_other_modes (test_direct_measurement.DirectMeasurementTests) ... usage: run_backend_metadata_tests.py [-h]
+                                     [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                                     [--prepare-only]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--source-root SOURCE_ROOT]
+                                     [--configuration CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--study-registry STUDY_REGISTRY]
+                                     [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                                     [--profile-tool-record PROFILE_TOOL_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                                     [--hardware-class HARDWARE_CLASS]
+                                     [--seed-start SEED_START]
+                                     [--minimum-updates MINIMUM_UPDATES]
+                                     [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: the actual inherited descriptor applies only to a prepared direct capture child
+usage: run_backend_metadata_tests.py [-h]
+                                     [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                                     [--prepare-only]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--source-root SOURCE_ROOT]
+                                     [--configuration CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--study-registry STUDY_REGISTRY]
+                                     [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                                     [--profile-tool-record PROFILE_TOOL_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                                     [--hardware-class HARDWARE_CLASS]
+                                     [--seed-start SEED_START]
+                                     [--minimum-updates MINIMUM_UPDATES]
+                                     [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: the direct waiter requires its actual inherited descriptor
+usage: run_backend_metadata_tests.py [-h]
+                                     [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                                     [--prepare-only]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--source-root SOURCE_ROOT]
+                                     [--configuration CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--study-registry STUDY_REGISTRY]
+                                     [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                                     [--profile-tool-record PROFILE_TOOL_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                                     [--hardware-class HARDWARE_CLASS]
+                                     [--seed-start SEED_START]
+                                     [--minimum-updates MINIMUM_UPDATES]
+                                     [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: execution/tool inspection cannot override a prepared configuration
+ok
+test_production_waiter_does_not_turn_child_failure_into_nsight_success (test_direct_measurement.DirectMeasurementTests) ... ok
+test_production_waiter_spawns_one_exact_child_and_records_actual_zero_wait (test_direct_measurement.DirectMeasurementTests) ... ok
+test_saved_capture_argv_bytes_are_independently_checked (test_direct_measurement.DirectMeasurementTests) ... ok
+test_window_cleanup_preserves_original_numerical_failure (test_direct_measurement.DirectMeasurementTests) ... ok
+test_wrong_capture_parent_or_dropped_descriptor_refuses_before_live_reads (test_direct_measurement.DirectMeasurementTests) ... ok
+test_algorithm_changes_and_output_reuse_are_rejected (test_measure_selected.SelectedMeasurementTests)
+No source preparation or partial artifact can authorize a changed CleanRL setting. ... ok
+test_backend_versions_are_actual_complete_and_missing_packages_reject (test_measure_selected.SelectedMeasurementTests)
+Retain every installed package identity without guessing a missing distribution version. ... ok
+test_completed_instrumented_attempt_retains_raw_data_without_ordinary_result_credit (test_measure_selected.SelectedMeasurementTests)
+A successful extra-sampler attempt needs a fresh ordinary measurement before throughput can be used. ... ok
+test_completed_result_created_before_lock_acquisition_is_preserved (test_measure_selected.SelectedMeasurementTests)
+The locked duplicate check closes the gap after the initial result-presence check. ... ok
+test_compute_receives_the_same_full_observed_hardware_as_its_sidecar (test_measure_selected.SelectedMeasurementTests)
+Capture applied defaults and cache flags once, rather than replacing them with planned flags. ... ok
+test_expanded_complete_update_window_is_explicit (test_measure_selected.SelectedMeasurementTests)
+A future group-three configuration needs twelve real updates rather than padded work. ... ok
+test_explicit_ownership_profile_requires_instrumentation_and_rejects_execution_override (test_measure_selected.SelectedMeasurementTests)
+A profile cannot be silently ignored during ordinary preparation or prepared execution. ... ok
+test_explicit_uva_profile_is_staged_only_for_matching_instrumented_allocation (test_measure_selected.SelectedMeasurementTests)
+Mock publication only; real profile selection rejects direct or ACES use before producing artifacts. ... ok
+test_full_configuration_and_helpers_are_staged_before_any_gpu_access (test_measure_selected.SelectedMeasurementTests)
+A group-five selected variant preserves the requested seven-by-ten protocol. ... ok
+test_imported_source_and_installed_jaxtari_paths_are_bound (test_measure_selected.SelectedMeasurementTests)
+A valid installed-file receipt cannot admit a different shadowing Python package. ... ok
+test_instrumented_packing_opt_in_snapshots_ledger_without_gpu_access (test_measure_selected.SelectedMeasurementTests)
+The optional capability copies ownership bytes once while leaving ordinary preparation unchanged. ... ok
+test_login_and_serval02_other_card_fail_before_gpu_access (test_measure_selected.SelectedMeasurementTests)
+A mistaken location or UUID cannot initialize arrays or query an unrelated card. ... ok
+test_memory_limit_opt_in_refuses_paired_comparison_modes (test_measure_selected.SelectedMeasurementTests)
+Diagnostic memory failures cannot be attached to ordinary correctness or confirmation work. ... ok
+test_memory_preparation_options_require_explicit_opt_in (test_measure_selected.SelectedMeasurementTests)
+A misplaced memory option fails at parsing before any launch artifact is created. ... ok
+test_memory_sampling_records_driver_usage_and_contamination (test_measure_selected.SelectedMeasurementTests)
+Device used/free samples include memory outside the measured Python process. ... ok
+test_mutable_entrypoint_cannot_execute_a_prepared_unit (test_measure_selected.SelectedMeasurementTests)
+Actual numerical invocation must use the staged producer command rather than mutable working code. ... ok
+test_packing_changes_only_copy_count_and_retains_no_reference (test_measure_selected.SelectedMeasurementTests)
+One packing invocation has one resident configuration and explicit independent seeds. ... ok
+test_prepared_execution_rejects_all_memory_preparation_overrides (test_measure_selected.SelectedMeasurementTests)
+Execution cannot silently ignore a memory-protocol preparation flag. ... ok
+test_private_child_flag_requires_a_declared_prepared_packing_protocol (test_measure_selected.SelectedMeasurementTests)
+The private entry cannot be attached to preparation or an ordinary prepared measurement. ... ok
+test_remapped_visible_card_must_match_every_slurm_physical_allocation (test_measure_selected.SelectedMeasurementTests)
+A visible ordinal zero cannot select another physical card or ignore a step conflict. ... ok
+test_slurm_mapping_uses_allocated_physical_gpu (test_measure_selected.SelectedMeasurementTests)
+A selected UUID is verified against allocation index five rather than CUDA ordinal zero. ... ok
+test_unsupported_frozen_correctness_group_pair_fails_during_preparation (test_measure_selected.SelectedMeasurementTests)
+The old gate cannot silently replace its five-versus-three update check with a new one. ... ok
+test_child_request_leaves_parent_paths_and_public_modules_unchanged (test_common_confirmation.CommonConfirmationTests)
+The parent dispatches only the declared no-site interpreter and changes no import paths. ... ok
+test_cli_requires_both_actual_records_and_refuses_final_or_prepared_overrides (test_common_confirmation.CommonConfirmationTests)
+Preparation options cannot silently change the frozen protocol. ... usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: reviewed common correctness requires only an intermediate configured confirmation
+usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: run_backend_metadata_tests.py [-h] [--prepared-unit PREPARED_UNIT]
+                                     [--record-device-memory-limit]
+                                     [--memory-limit-allocation-kind {direct,slurm}]
+                                     [--memory-limit-cluster {uva,aces}]
+                                     [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                     [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                     [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                     [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                     [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                     [--target-qualification]
+                                     [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                     [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                     [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                     [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                     [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                     [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                     [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                     [--direct-target-qualification]
+                                     [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                     [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                     [--prepare-only]
+                                     [--mode {correctness,confirmation,packing-point,learning-check}]
+                                     [--source-root SOURCE_ROOT]
+                                     [--source-commit SOURCE_COMMIT]
+                                     [--configuration CONFIGURATION]
+                                     [--reference-configuration REFERENCE_CONFIGURATION]
+                                     [--runtime-environment RUNTIME_ENVIRONMENT]
+                                     [--asset-record ASSET_RECORD]
+                                     [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                     [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                     [--gpu-uuid GPU_UUID]
+                                     [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                     [--seed-start SEED_START]
+                                     [--copies COPIES] [--rounds ROUNDS]
+                                     [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                     [--final-confirmation]
+                                     [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                     [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                     [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                     [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                     [--python PYTHON]
+run_backend_metadata_tests.py: error: reviewed common correctness requires only an intermediate configured confirmation
+ok
+test_default_direct_and_new_helper_closures_stay_separate (test_common_confirmation.CommonConfirmationTests)
+Add only the new configured dependency while retaining all existing helper declarations. ... ok
+test_different_parent_raw_plan_and_boolean_gpu_claim_are_rejected (test_common_confirmation.CommonConfirmationTests)
+A successful child response must describe this exact parent and plan. ... ok
+test_equal_or_extra_candidate_change_and_wrong_seeds_are_rejected (test_common_confirmation.CommonConfirmationTests)
+Only the independently checked two environment changes are permitted. ... ok
+test_failed_and_malformed_child_return_preserves_raw_without_success_proof (test_common_confirmation.CommonConfirmationTests)
+Retain both nonzero and invalid successful output before refusing the worker. ... ok
+test_final_direct_capacity_and_wrong_mode_are_rejected (test_common_confirmation.CommonConfirmationTests)
+No opt-in field can authorize a different or later protocol. ... ok
+test_intermediate_contract_accepts_both_explicit_copy_counts (test_common_confirmation.CommonConfirmationTests)
+The two accepted copy configurations retain their exact seed lists. ... ok
+test_saved_proof_requires_same_actual_parent_and_precedes_numeric_work (test_common_confirmation.CommonConfirmationTests)
+The saved result cannot claim another worker's or later validation. ... ok
+test_staged_helper_bytes_and_reference_hashes_are_required (test_common_confirmation.CommonConfirmationTests)
+A different helper or changed saved bytes do not substitute for the frozen records. ... ok
+test_success_captures_raw_child_before_publishing_proof_and_cannot_repeat (test_common_confirmation.CommonConfirmationTests)
+Keep one durable actual validation attempt and its exact raw successful return. ... ok
+test_timeout_preserves_partial_output_and_attempt (test_common_confirmation.CommonConfirmationTests)
+A timed-out child never becomes a successful prerequisite or starts a repeat. ... ok
+test_window_types_and_incomplete_prerequisites_are_rejected (test_common_confirmation.CommonConfirmationTests)
+Boolean counters, a reduced window and one missing record cannot pass. ... ok
+test_actual_semantic_reader_positive_joins_all_bound_inputs (test_common_confirmation.CommonSavedReaderTests)
+A complete matching synthetic review and raw accounting pass. ... ok
+test_coherently_rehashed_review_labels_and_credit_types_are_rejected (test_common_confirmation.CommonSavedReaderTests)
+Changing approved labels cannot disagree with the saved correctness plan. ... ok
+test_outer_runtime_or_seed_change_is_not_covered_by_old_correctness (test_common_confirmation.CommonSavedReaderTests)
+A later plan must preserve the full independently checked configuration. ... ok
+test_raw_terminal_bytes_and_derived_rows_must_agree (test_common_confirmation.CommonSavedReaderTests)
+A successful review cannot replace failed or modified actual terminal evidence. ... ok
+
+----------------------------------------------------------------------
+Ran 78 tests in 13.523s
+
+OK

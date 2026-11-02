@@ -1,0 +1,92 @@
+{
+  "GPU_or_host_or_job_actions": 0,
+  "actual_history_staging_performed": false,
+  "actual_initial_standard_records": {
+    "command.txt": {
+      "archive": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/initial_planned_data_records/command.txt",
+        "sha256": "a21e29d579380a9fea22dc9c4ef8dbb3c63b8ba6f0f5ad86ed3d12e7b232b173"
+      },
+      "data_sha256": "a21e29d579380a9fea22dc9c4ef8dbb3c63b8ba6f0f5ad86ed3d12e7b232b173"
+    },
+    "config_resolved.yaml": {
+      "archive": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/initial_planned_data_records/config_resolved.yaml",
+        "sha256": "6eabdb4bc00a639a924162e7b52d2c8cf9c5528822ce67084f0c7bccb0a276df"
+      },
+      "data_sha256": "6eabdb4bc00a639a924162e7b52d2c8cf9c5528822ce67084f0c7bccb0a276df"
+    },
+    "experiment_background.md": {
+      "archive": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/initial_planned_data_records/experiment_background.md",
+        "sha256": "4c9c5e7e80f1282fd1137cbe7f9748bac33c41e7e523a0b50398a90eabfe47c6"
+      },
+      "data_sha256": "4c9c5e7e80f1282fd1137cbe7f9748bac33c41e7e523a0b50398a90eabfe47c6"
+    },
+    "manifest.yaml": {
+      "archive": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/initial_planned_data_records/manifest.yaml",
+        "sha256": "fe062b84512db6f85a502d5f79b12e9be69564cd3e4f8d1c13ff9b242ede2138"
+      },
+      "data_sha256": "fe062b84512db6f85a502d5f79b12e9be69564cd3e4f8d1c13ff9b242ede2138"
+    },
+    "progress.json": {
+      "archive": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/initial_planned_data_records/progress.json",
+        "sha256": "912e16cab0abf0229b84e5a4ae56d66f529cfa0525a4556b80b04782878cbcf7"
+      },
+      "data_sha256": "912e16cab0abf0229b84e5a4ae56d66f529cfa0525a4556b80b04782878cbcf7"
+    }
+  },
+  "actual_scheduler_queries": 0,
+  "admission_granted": false,
+  "after": {
+    "history_preparation_inputs.json": "3da2c4491a0c9c123b7de529e0e25c916e7654bb0fd535fcb0169edde49860e0",
+    "preparation_request.json": "6302e4439a4b827f7e24218cc86aae506ffc0a6c96cbc46b22f1e8a76cdec537",
+    "preparation_request_unbound.json": "96dcae62c14d85b1068ae830e1ba9e3a2b21ba88618d82590ccd580a69d87bfa",
+    "stage_immutable_history.py": "0d1386a049e7e9c09bb316f83cee60064fc4c0c4c5203d3d01ad6decdd078dd7"
+  },
+  "approved": true,
+  "at_utc": "2026-11-02T04:58:41.712786+00:00",
+  "before": {
+    "history_preparation_inputs.json": "3da2c4491a0c9c123b7de529e0e25c916e7654bb0fd535fcb0169edde49860e0",
+    "preparation_request.json": "6302e4439a4b827f7e24218cc86aae506ffc0a6c96cbc46b22f1e8a76cdec537",
+    "preparation_request_unbound.json": "96dcae62c14d85b1068ae830e1ba9e3a2b21ba88618d82590ccd580a69d87bfa",
+    "stage_immutable_history.py": "0d1386a049e7e9c09bb316f83cee60064fc4c0c4c5203d3d01ad6decdd078dd7"
+  },
+  "changed_function_AST_names": [
+    "stage"
+  ],
+  "controls": 8,
+  "errors": [],
+  "failures": [],
+  "history_payloads_read_or_copied": 0,
+  "job_id": "6783003",
+  "kind": "independent_fresh_h100_unbound_history_stage_source_review",
+  "numerical_imports": 0,
+  "old_stage_source_sha256_before_after": "6a15385029519795ba11fa7c6012c9d94cc9564f621c5755fffe12d429ceff7e",
+  "output": "test_aliased_archive_is_refused (__main__.Controls) ... ok\ntest_aliased_data_record_is_refused (__main__.Controls) ... ok\ntest_bound_helper_cannot_enter_unbound_stage (__main__.Controls) ... ok\ntest_changed_archived_record_is_refused (__main__.Controls) ... ok\ntest_changed_data_record_is_refused (__main__.Controls) ... ok\ntest_exact_five_records_reach_only_the_stopped_query_boundary (__main__.Controls) ... ok\ntest_extra_partial_history_is_refused (__main__.Controls) ... ok\ntest_missing_initial_record_is_refused (__main__.Controls) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.042s\n\nOK\n",
+  "passed": true,
+  "qualification_approval": false,
+  "safe_next_command_scope": "Root may run the exact frozen stage once on owned CPU6783003 with one CPU/1GiB and external exclusive campaign large-read lock. No GPU launch.",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/unbound_staging_source_freeze.json",
+    "sha256": "16581fd0fa7fe637e503d1e672c5f210a6385a78eb86952d1001b084df90215c"
+  },
+  "step_id": "109",
+  "unchanged_function_AST_names": [
+    "clone",
+    "copy_payload",
+    "encoded",
+    "field",
+    "fresh_running",
+    "install_guards",
+    "pinned_reader",
+    "read",
+    "receipt",
+    "require",
+    "run",
+    "stable",
+    "write"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "admission_granted": false,
+  "cold26_review_sha256": "3a4a2d956259d84325eea3d0317bbeefc880bbdf288deb6b6a0fce287ed500a7",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-00_direct-backend-package-image_expected-before-gpu_same-process-mapped-capture_after-full-reference_preserve-numerical-source/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+    "--python",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "--site-packages",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages",
+    "--image",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+    "--output",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json"
+  ],
+  "gpu_operations": 0,
+  "independent_source_review_sha256": "0cb179c62a6b27e577d9cb4baf5d8dc910a2412e59b4247edeb41e10ae2de0dc",
+  "kind": "pre_gpu_direct_backend_package_image_metadata_preparation",
+  "numerical_imports": [],
+  "scientific_credit": 0,
+  "source_commit": "1faeb133e023e070f775f8e597207e75f64ddd32",
+  "source_freeze_sha256": "16089b70f6a0a8a375698aa30304f5e5c611fbdbd14aba6cbb6ef64d3fb534f2",
+  "source_path": "/p/rlprojects/RND_worktrees/2026-11-01-20-00_direct-backend-package-image_expected-before-gpu_same-process-mapped-capture_after-full-reference_preserve-numerical-source/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+  "source_sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4"
+}
