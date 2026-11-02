@@ -1,0 +1,26 @@
+{
+  "actual_job_id": "6783003",
+  "actual_job_rows_used": true,
+  "actual_monitor_step": "6783003.66",
+  "actual_releases": 0,
+  "actual_step_id": "73",
+  "admission_granted": false,
+  "display_limit": "Old79a displays the new prepared unit rows as generic RUNNING with text prepared not submitted. Those unit labels do not establish execution; only exact owned job rows support held state.",
+  "full_report": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-02-03-31-00_report.md",
+    "sha256": "2e46ff2c10d5980d0bf710c893985c9f52398cd398206f8c226b62e578c01987"
+  },
+  "full_status": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-02-03-31-00_status.json",
+    "sha256": "b293f11b4c8ca4d8953d97886a32c726612c0cb259495b97a3fde73b90313524"
+  },
+  "jobs": {
+    "6783295": "PENDING JobHeldUser",
+    "6783296": "PENDING JobHeldUser"
+  },
+  "kind": "explicit_old_monitor_unit_display_limit_for_held_proofs",
+  "monitor_source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "no_source_or_proof_bytes_changed": true,
+  "schema_version": 1,
+  "unit_display_labels_used_for_release_authority": false
+}

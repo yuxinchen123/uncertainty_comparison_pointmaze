@@ -1,0 +1,8 @@
+{
+  "kind": "root_held_shape_review_field_assumption_failure",
+  "failed": true,
+  "reason": "The review expected the typed GPU in ReqTRES; actual Slurm records generic GPU count in ReqTRES and typed request separately. Same captured raw bytes will be used for corrected verification. No job action or resource change occurred.",
+  "actual_job_id": "6783295",
+  "raw_query_preserved": "root_actual_held_scontrol.raw",
+  "additional_query_for_this_correction": false
+}

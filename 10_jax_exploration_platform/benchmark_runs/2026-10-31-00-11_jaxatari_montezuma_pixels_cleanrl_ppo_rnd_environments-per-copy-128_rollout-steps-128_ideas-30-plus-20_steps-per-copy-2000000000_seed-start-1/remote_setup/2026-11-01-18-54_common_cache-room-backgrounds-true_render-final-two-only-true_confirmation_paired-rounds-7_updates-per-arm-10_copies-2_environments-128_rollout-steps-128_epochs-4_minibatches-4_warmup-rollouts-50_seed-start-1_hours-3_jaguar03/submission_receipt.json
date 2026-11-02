@@ -1,0 +1,71 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-02T03:18:16.846895+00:00",
+  "automatic_retry_permitted": false,
+  "case_credit": 0,
+  "cluster": "uva",
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03",
+  "held_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=03:00:00",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--reservation=sl5nw_168",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/job.sbatch"
+  ],
+  "idea_credit": 0,
+  "job_id": "6783296",
+  "kind": "owned_uva_configured_isolation_submission",
+  "ledger_appends": [
+    {
+      "after_sha256": "7c53b502e3cbaed4a357ff758ff8733f3b20b3414d97077c201c3b6b3128caed",
+      "before_sha256": "cecafcb9fd28c36767b44650ce04bf886d151fb8369937454f84df46b1455cd3",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids.txt"
+    },
+    {
+      "after_sha256": "0d78261e11a88b828c7b630a1a081c48bfb0800452187463a6c5480c769397c6",
+      "before_sha256": "01bc2d8e0a3c5db671d3e04d2db5fa6ac7328300cbc5f95a64eec7ad838f7a9f",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt"
+    },
+    {
+      "after_sha256": "35b6a58eb5f092893854058c35eb6dc9c1c1e8d3a1770731e51683b9a9aaf5b7",
+      "before_sha256": "1676e041b80a3e3081e76a7831c356ae1eaacf06a53aaa7eeedc46f58702b9b6",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions.tsv"
+    }
+  ],
+  "ledgers_and_submission_row_fsynced_before_this_receipt": true,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03",
+  "plan_sha256": "935a40dce6ce7eafbe0393a16776fe00ac179e742ccd44f597ba33a9769a064a",
+  "publication_commit": "4ef27e7e46bce2b64ea6b8050935f88986ded12e",
+  "released": false,
+  "returncode": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "script_sha256": "39643a68aa7d6782973350fc9c2b66fad82d3fb633aa546ced515c20526932d1",
+  "source_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+  "submission_intent": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/submission_intent.json",
+    "sha256": "83fca1a45d0ca337b76b670bf6888bbe84341d60164a4a13e2174a587c073780"
+  },
+  "submission_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/submission_return.json",
+    "sha256": "3cdd3add5fff0b87c70ad65d6d65055020246c629e7450a6536e4ddb3698ded2"
+  },
+  "submission_row": [
+    "6783296",
+    "selected_configuration_measurement",
+    "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/job.sbatch"
+  ],
+  "worker_admitted": false
+}

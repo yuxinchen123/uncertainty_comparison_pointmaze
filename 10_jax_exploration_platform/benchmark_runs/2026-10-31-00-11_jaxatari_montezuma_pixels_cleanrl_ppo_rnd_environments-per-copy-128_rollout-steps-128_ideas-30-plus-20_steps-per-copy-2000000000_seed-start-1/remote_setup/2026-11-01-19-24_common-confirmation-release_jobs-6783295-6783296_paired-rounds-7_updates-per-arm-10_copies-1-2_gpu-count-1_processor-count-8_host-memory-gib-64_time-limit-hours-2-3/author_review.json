@@ -1,0 +1,29 @@
+{
+  "NUM_work": false,
+  "admission_granted": false,
+  "frozen_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-24_common-confirmation-release_jobs-6783295-6783296_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/release_frozen_inputs.json",
+    "sha256": "ae959ea98a6daba71b0c7a651a8342e4c959c05d6b269d3af7c31ed6ed540a9b"
+  },
+  "jobs": {
+    "1": "6783295",
+    "2": "6783296"
+  },
+  "kind": "fixed_common_confirmation_release_implementation_review",
+  "maximum_startup_wait_seconds": 180,
+  "real_monitor_proofs": {
+    "1": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-24_common-confirmation-release_jobs-6783295-6783296_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_1.json",
+      "sha256": "4f123fd3f913ef508fac92f723f678e87c32f7a837d14158d8cd3139ddeb96a1"
+    },
+    "2": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-24_common-confirmation-release_jobs-6783295-6783296_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_2.json",
+      "sha256": "bfb9528d74e56ac39e4ecdca36ec7bcdbeec90819cfada41cd82fb63c39c16af"
+    }
+  },
+  "release_executed": false,
+  "schema_version": 1,
+  "selected_target_only_mutable_state": true,
+  "shared_static_file_count": 153,
+  "source_sha256": "d6529e5f852c425dbce27e04a496496b6de855cb727ce3092ccb858e28583ea3"
+}

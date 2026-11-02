@@ -1,0 +1,21 @@
+{
+  "kind": "unbound_fixed_confirmation_release_synthetic_author_controls",
+  "passed": true,
+  "job_id": "6783003",
+  "step_id": "64",
+  "tests": 17,
+  "errors": [],
+  "failures": [],
+  "source_before": {
+    "release_common_confirmation.py": "f2f2a1276ac77fd7d92fd55bae63c296a01cee759d2c1270ce94e92b889ce888",
+    "test_release_common_confirmation.py": "11791a3b76f24a010a814b5a91f83e57b7281674d704e37b2394b4a276bbcaa9"
+  },
+  "source_after": {
+    "release_common_confirmation.py": "f2f2a1276ac77fd7d92fd55bae63c296a01cee759d2c1270ce94e92b889ce888",
+    "test_release_common_confirmation.py": "11791a3b76f24a010a814b5a91f83e57b7281674d704e37b2394b4a276bbcaa9"
+  },
+  "numerical_import_attempts": [],
+  "real_subprocesses": 0,
+  "actual_release_calls": 0,
+  "full_monitor_proofs_not_yet_bound": true
+}
