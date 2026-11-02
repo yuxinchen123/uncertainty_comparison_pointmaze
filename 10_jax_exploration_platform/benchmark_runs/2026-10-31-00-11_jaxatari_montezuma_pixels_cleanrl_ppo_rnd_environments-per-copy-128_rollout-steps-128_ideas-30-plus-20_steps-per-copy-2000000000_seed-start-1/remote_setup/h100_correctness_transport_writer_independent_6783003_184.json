@@ -1,0 +1,35 @@
+{
+  "actual_host_GPU_or_scheduler_actions": 0,
+  "actual_writer_or_transport_executed": false,
+  "admission_granted": false,
+  "approved": true,
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "frozen_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/prepare_root_launch_transport.py": "633406cf7b332484f795d3c34aeb5c2be3483c7281ebf7c7e412b1695669c898",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/root_controller_transport_template.py.txt": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2"
+  },
+  "frozen_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/prepare_root_launch_transport.py": "633406cf7b332484f795d3c34aeb5c2be3483c7281ebf7c7e412b1695669c898",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/root_controller_transport_template.py.txt": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2"
+  },
+  "job_id": "6783003",
+  "kind": "independent_h100_correctness_transport_metadata_writer_review",
+  "only_prior_publication_literal_replaced": true,
+  "passed": true,
+  "prior_transport_template_sha256": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2",
+  "publication_check_mocked_only_in_private_formatter_tests": true,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_transport_writer_independent_6783003_184.raw",
+    "sha256": "9eba7cfd0df7dd146e404f13f9a25c49fb17ef3cacc91396bd287640a1edc529"
+  },
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/launch_transport_preparation_source_freeze.json",
+    "sha256": "8796752cd292a08a22674868d66a728c00bd6253c8102343ae9450661f7f0c2c"
+  },
+  "step_id": "184",
+  "tests": 4
+}

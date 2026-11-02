@@ -1,0 +1,10 @@
+test_changed_template_is_rejected_before_output (private_transport_metadata_tests.TransportMetadataTests) ... ok
+test_failed_publication_check_creates_no_output_metadata (private_transport_metadata_tests.TransportMetadataTests) ... ok
+test_prior_dangling_temporary_cannot_be_reused (private_transport_metadata_tests.TransportMetadataTests) ... ok
+test_private_metadata_output_changes_only_the_real_supplied_publication_literal (private_transport_metadata_tests.TransportMetadataTests) ... ok
+test_second_metadata_attempt_preserves_first_complete_bytes (private_transport_metadata_tests.TransportMetadataTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.033s
+
+OK
