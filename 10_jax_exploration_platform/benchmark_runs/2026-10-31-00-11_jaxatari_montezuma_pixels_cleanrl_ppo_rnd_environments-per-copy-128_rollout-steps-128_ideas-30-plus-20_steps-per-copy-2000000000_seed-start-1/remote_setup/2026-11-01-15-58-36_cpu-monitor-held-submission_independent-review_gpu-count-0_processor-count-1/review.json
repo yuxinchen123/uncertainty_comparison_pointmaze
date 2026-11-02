@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "independent_cpu_monitor_one_shot_held_submission_source_review",
+  "approved": true,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/submit_monitor_held.py",
+    "sha256": "f4fa96593ed120f94e738c34c1fe497d62c87b6a3ed51e7b921f2e5948c6a4c0"
+  },
+  "tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/test_submit_monitor_held.py",
+    "sha256": "af0ca544af4417d5419b0de60a2df0efd02c4de4e75dd89aacaf59798e08b4c6"
+  },
+  "inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/held_submission_inputs.json",
+    "sha256": "e1363e27ad6615277ff959e131231642f69281f8d003339977b8e04254a16cc3"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/held_submission_source_freeze.json",
+    "sha256": "f880f81f2e9ce1d79b9c466e433bb782620eaadcc33c9e565063237fde921c84"
+  },
+  "metadata_test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-58-36_cpu-monitor-held-submission_independent-review_gpu-count-0_processor-count-1/independent_6782816_41.json",
+    "sha256": "871424a36a5b4c34b61fb1a11c9dee67bc74969716b5aeb62925ad4dbe399f7e"
+  },
+  "actual_step": "6782816.41",
+  "tests_passed": 19,
+  "actual314input_hashes_unchanged": true,
+  "actual_successful_full_candidate_step": "6782816.34",
+  "actual_candidate_proof_sha256": "53d2b06fed87889cdb75c02f51fc0cc510487fee3dacf0aab8878973d3e5483e",
+  "root_actual_candidate_approval_sha256": "28d93b8a2c1a3b1523a5485d4ddd9b47d12d987d53eddb811cda4a7c9e30691d",
+  "static_review_sha256": "d322a67ed7b9422beecd45b0c6063df71e418c122cfbfa1e74aac6bc94d3ba91",
+  "source_files": 263,
+  "old_framing_failure_proof_not_accepted": true,
+  "real_own_write_protected_maps_required": true,
+  "private_complete_ledger_append_failure_no_duplicate_retry": true,
+  "actual_default_with_mocked_publication_no_action": true,
+  "full_mocked_publication_object_checks_and_changed_object_refusal": true,
+  "actual_publication_claimed": false,
+  "actual_scheduler_calls": 0,
+  "actual_submissions": 0,
+  "release_calls": 0,
+  "device_library_or_network_actions": 0,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "remaining_required": "Root publishes exact reviewed inputs and utility before the one held submission; old monitor6782816 remains until replacement runtime/full report and auxiliary-step drain are verified."
+}

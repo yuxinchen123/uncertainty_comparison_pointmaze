@@ -1,0 +1,35 @@
+{
+  "admission_granted": false,
+  "approved_expected_tree": "9b550987914e964065e1e0126498668711363fdd",
+  "at_utc": "2026-11-01T23:15:41.687797+00:00",
+  "disjoint_other_agent_writes": "Five newly prepared A4500/direct packet metadata files outside incoming paths were observed and retained; no canonical root edits or changed existing dirty bytes were found.",
+  "final_review_actual_step": "6782816.5",
+  "kind": "incoming_direct_review_scope_and_preserved_reviewer_failure",
+  "no_gpu_or_numeric_execution": true,
+  "no_merge_or_ref_update": true,
+  "original_pdf_coverage": "Every tracked PDF, current dirty/untracked PDF and known development-document PDF was covered (489 paths). Ignored unrelated environments/datasets were not recursively scanned; incoming paths and parents were checked for ignored collisions.",
+  "retained_first_failure": {
+    "attribution": "Exact owned6782816 accounting read; scheduler Start/End were not forced toUTC and are not converted or represented asUTC.",
+    "before_scan_reused": "Complete6167 original dirty/untracked and submodule before-snapshots from the first step were retained; no duplicate whole-tree before-scan was performed. The completed proof re-read final state and exact recorded PDF set.",
+    "exit_code": "1:0",
+    "job_id": "6782816",
+    "reason": "Reviewer historical basename selector included two extra snapshot copies; no source or merge check failed.",
+    "record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-12_direct-selected-profile-incoming-commit-44f7d99d_base-c851fa90_paths-105_three-way-tree-review/first_selector_failure_reviewer_selector_failure.json",
+      "sha256": "0a1aa665e9d926b93fc534cbea32b0775064315390ab248772b9ff90a265fac3"
+    },
+    "source": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-12_direct-selected-profile-incoming-commit-44f7d99d_base-c851fa90_paths-105_three-way-tree-review/first_selector_failure_review_incoming_commit.py",
+      "sha256": "30c9d816cf0deecbec8f8371d44ec212f38bd4064ac6aaa2b314ef7d48d30694"
+    },
+    "state": "FAILED",
+    "step_id": "3"
+  },
+  "review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-12_direct-selected-profile-incoming-commit-44f7d99d_base-c851fa90_paths-105_three-way-tree-review/review.json",
+    "sha256": "a7ca66471d96b3b087a0a9c11423513cb49cf416407e0c6e9d28b4ae96fc109e"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope_correction": "The review made no original or integration SOURCE, real-index, HEAD or ref writes. Authorized new review artifacts were written under the author worktree and this campaign remote_setup folder. The earlier generic original_or_integration_worktree_writes:false wording is limited to checkout/source/index/ref mutation; it must not be read as a claim that no new metadata was written anywhere under integration."
+}

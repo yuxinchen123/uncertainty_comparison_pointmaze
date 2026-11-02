@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "kind": "metadata_freeze_verifier_failure",
+  "actual_step": "6782816.18",
+  "exit_code": "1:0",
+  "error": "Reviewer verifier compared commit-prefixed Git archive member paths directly to unprefixed manifest paths.",
+  "archive_file_count": 263,
+  "manifest_file_count": 263,
+  "archive_prefix": "7fd40de24201b5e1efce398f49549db26c1e94d9/",
+  "source_changed": false,
+  "candidate_full_tick_executed": false,
+  "new_jobs": 0,
+  "verifier_source_sha256": "032a8be2682cee58cedfe0dd7e2e4ef5185816fcc74dbe8fbbb77c71753d4129",
+  "correction": "Require and remove the exact committed archive prefix before path-set comparison."
+}

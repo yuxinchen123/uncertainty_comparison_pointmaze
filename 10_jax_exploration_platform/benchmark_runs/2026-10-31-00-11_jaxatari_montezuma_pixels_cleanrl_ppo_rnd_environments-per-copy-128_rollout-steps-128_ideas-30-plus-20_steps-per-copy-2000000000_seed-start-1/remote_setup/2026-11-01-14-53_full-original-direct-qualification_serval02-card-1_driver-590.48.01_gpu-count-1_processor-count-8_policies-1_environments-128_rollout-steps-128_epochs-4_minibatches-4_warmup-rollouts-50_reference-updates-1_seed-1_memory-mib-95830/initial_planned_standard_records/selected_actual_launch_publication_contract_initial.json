@@ -1,0 +1,40 @@
+{
+  "actual_controller_or_child_started": false,
+  "actual_cpu_control": [
+    "Read the controller own allowed CPU mask at the actual approved host/UID; require at least eight entries.",
+    "Choose exactly eight entries from that observed mask and set/record the controller own mask before the unchanged-argv Popen call. The child inherits it.",
+    "Verify/record the actual returned child affinity and source metadata affinity contain exactly those eight entries; refuse otherwise.",
+    "Do not guess CPU indices, claim a Slurm allocation or claim exclusive physical CPUs."
+  ],
+  "actual_gpu_runtime_and_raw_audit_pending": true,
+  "actual_identity_publication_order": [
+    "Write/synchronize an intent before Popen without any future child identity.",
+    "Popen exactly the frozen producer argv; only afterward collect the actual own child PID, birth, all four UIDs, actual argv and inherited CPU affinity.",
+    "Write and synchronize a separate actual spawn journal, including its parent identity and captured raw kernel/argv/affinity bytes. Do not label an intended argv an observed argv.",
+    "Lock the owned live process ledger, append/synchronize the actual row, then publish/synchronize its immutable unit snapshot.",
+    "Prepare the complete direct_current_launch bytes in an exclusive reserved temporary file and synchronize it before exposing the final readiness path. The actual spawn journal and ownership snapshot must already be durable before that path becomes visible. Use no-replace publication and directory synchronization; retain partials and never retry automatically.",
+    "The producer reads and validates that complete actual launch record before numerical import/device use. A missing, malformed or changed record fails before CUDA. No wrapper or spawn-versus-exec identity substitution is supported.",
+    "Keep the external controller alive, serialize successors until the real exact-child Popen.wait result, and write the true before/after parent and child terminal proof. The controller does not claim custody of the producer-owned standing descriptor."
+  ],
+  "actual_terminal_record_required": {
+    "command": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/measure_selected.py --prepared-unit /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+    "kind": "owned_direct_process_wait_return",
+    "pid_and_birth": "actual returned child only",
+    "returncode": "actual integer; only ordinary zero may qualify",
+    "wait_semantics": "Popen.wait on this exact spawned child",
+    "waiter_before_and_after": "actual same parent with all four UIDs and unchanged birth"
+  },
+  "controller_owns_gpu_standing_descriptor": false,
+  "kind": "future_selected_direct_controller_publication_contract",
+  "no_capacity_final_scaling_or_portable_credit": true,
+  "producer_owns_gpu_standing_descriptor": true,
+  "qualification_credit": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/selected_custody_and_launch_protocol.json",
+    "sha256": "4ff7d53968ec6840c123730bed4201c40564723fafe2dacd946f8d3b6954e222"
+  },
+  "source_commit": "44f7d99db22c01bfd8beefefc5f548f5517d5348",
+  "worker_admitted": false
+}

@@ -1,0 +1,75 @@
+{
+  "actual_fixture_cpu_counts": [
+    1
+  ],
+  "actual_gpu_qualification": false,
+  "actual_metadata_step": "6782816.30",
+  "actual_metadata_test_count": 18,
+  "actual_metadata_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_metadata_tests/author_6782816_30.json",
+    "sha256": "a15f461047ff634054b09f18421d574853e376d4ca1d665c5d733f063c5e9828"
+  },
+  "actual_production_api_used": [
+    "serval02_card1_binding.launch_inputs validates the exact plan/current row/copied and live ledgers.",
+    "direct_measurement.terminal_process accepts the real child wait and raw parent UID/birth fields in the private positive fixture."
+  ],
+  "actual_target_contact": false,
+  "actual_target_launch": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-01T23:42:20.592862+00:00",
+  "case_credit": 0,
+  "controller_owns_gpu_standing_descriptor": false,
+  "first_run": {
+    "cause": "The fixture tried to parse deliberately malformed collision bytes as JSON. Exact tested source and raw failure receipt are saved. The failing fixture data was not serialized by that first helper; no missing private bytes are described as recovered.",
+    "passed": 15,
+    "record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_metadata_tests/author_6782816_26.json",
+      "sha256": "265a043eca385d8c52576bef2a8aec9ace86ca26c325a7767eadf841f80247e8"
+    },
+    "test_helper_errors": 1,
+    "tests": 16
+  },
+  "fixture_profile_host_label_is_synthetic": true,
+  "focused_fixture_correction": {
+    "passed_tests": 1,
+    "record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_metadata_tests/author_6782816_27.json",
+      "sha256": "add4a1f26673e3025768357b84e6cc0817db4fe09c8ae199b924c413007e4539"
+    }
+  },
+  "followup_source_changes_before_final_18_pass": [
+    "Require the actual controller/test in its publication freeze.",
+    "Publish the actual wait record before output hashing and stream the output hashes, so a large log cannot discard an observed wait result."
+  ],
+  "idea_credit": 0,
+  "kind": "direct_qualification_controller_author_source_and_metadata_review",
+  "natural_immediate_protected_launch_reader_fixture_passed": true,
+  "no_real_dynamic_library_or_gpu_or_network_operation": true,
+  "original_packet_66_before_after_unchanged": true,
+  "passed": true,
+  "producer_owns_gpu_standing_descriptor": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_files": {
+    "direct_qualification_controller.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+      "sha256": "44ccf1ee4a8febcd906489130788e0722c458ea3154582b3e97bb44bd2c8e82b"
+    },
+    "run_direct_controller_metadata_tests.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/run_direct_controller_metadata_tests.py",
+      "sha256": "aa940ce2bf5d29656f4fd968fdb37874d6d520f9ee550e1d8fdd30b10360e6b9"
+    },
+    "test_direct_qualification_controller.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/test_direct_qualification_controller.py",
+      "sha256": "86368deacbab7be6de11ac14012fc4c7d7d9a092d38f19087252a39226f64835"
+    }
+  },
+  "startup_barrier_added": false,
+  "strict_scope_limits": [
+    "Real target CUDA/context/PCI/minor/driver/lock/window and full original numerical gates still require actual target execution.",
+    "The external controller has no standing-lock descriptor; the selected producer retains its own descriptor.",
+    "A publication race remains a deliberate zero-credit failure path. No retry or guessed PID is implemented.",
+    "Only root publication and its independent launch review can enable the actual entry."
+  ],
+  "worker_admitted": false
+}

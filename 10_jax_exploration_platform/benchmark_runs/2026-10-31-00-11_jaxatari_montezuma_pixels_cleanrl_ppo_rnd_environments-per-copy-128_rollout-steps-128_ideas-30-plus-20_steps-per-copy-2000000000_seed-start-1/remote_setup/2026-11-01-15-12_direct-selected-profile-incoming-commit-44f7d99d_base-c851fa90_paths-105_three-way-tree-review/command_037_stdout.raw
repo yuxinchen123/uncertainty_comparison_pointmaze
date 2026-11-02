@@ -1,0 +1,67 @@
+{
+  "actual_direct_host_contact": false,
+  "actual_gpu_operations": false,
+  "actual_jobs_submitted_or_released": 0,
+  "actual_numerical_updates": 0,
+  "actual_tests_in_this_adapter": 0,
+  "admission_granted": false,
+  "approved_design_sha256": "71460bb4cda6e1be8e07872f210107cbcc768311bd6c20e1bee18ef4451a088c",
+  "at_utc": "2026-11-01T21:37:26.038626+00:00",
+  "base_commit": "c851fa90f7b25d6ced54b7bac31457106ac91aa3",
+  "branch": "direct-serval02-card-one-selected-profile-assigned-device-observation",
+  "direct_terminal_interface": {
+    "future_launcher_review_required": true,
+    "identity": [
+      "hostname",
+      "uid2618919",
+      "pid",
+      "process_start_time"
+    ],
+    "kind": "direct_serval02_card1_terminal_process",
+    "launch": "exact receipt of unit/direct_current_launch.json",
+    "record": "unit/direct_terminal_process.json",
+    "return_record": "immutable actual own-child wait record,kind owned_direct_process_wait_return,exact unit command,PID/birth/UID,integer returncode0 and exited_normally true"
+  },
+  "draft_source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "ba69836b1cc44e2f0a29946a6c52128909b5c967a507ccecd5f326503cd2ef38",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "82fd3e2fa1c99e7e2130dc53508df46f8b0ba6971329951f982aa9cceb3da9dd"
+  },
+  "implemented_draft": [
+    "Separate direct module loads only exact adjacent identity/shared helpers.",
+    "Explicit unit-bound frozen-history plan support; no live-ledger/history fallback.",
+    "Shared sampler dispatch only for exact validated UVA or direct literal binding policies and fixed totals; public UVA window reader remains UVA-only.",
+    "Direct boundary source/sentinel/descriptor checks, distinct raw proof and failure records, one reused paired observer across all saved windows.",
+    "Post-current-context conservative H100 mode,confidential-computing and 1024 MiB startup checks with pre-context coverage false.",
+    "Mapped backend capture and distinct full-original direct qualification/intermediate/profile saved-reader paths."
+  ],
+  "kind": "direct_h100_producer_adapter_implementation_status",
+  "protected_source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "qualification_section_coordination": "No collection-root/test-selection logic was changed. Existing one-line returned gate-artifact receipt routing is isolated. Report author owns its current validate_test_collection/run_qualification correction sections.",
+  "remaining": [
+    "Complete selected producer CLI/preparation/run/compute hooks and result markers.",
+    "Complete profiling parent descriptor pass and actual inherited-child hooks.",
+    "Complete explicit unsupported-reader/scaling/final/portable guards and conditional staging closure.",
+    "Add metadata fixtures and run all meaningful tests only on owned CPU6781231.",
+    "Merge only the separately reviewed exact collection-root correction when report author publishes it.",
+    "Independent source/tests review before any author publication."
+  ],
+  "root_design_review_sha256": "6438ed2dfd827bb1d94fe29adf66f44a5542e34c8c72da332231b56741741eb6",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_admission_changed": false,
+  "state": "draft_not_frozen_or_tested",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830"
+}

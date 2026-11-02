@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "metadata_freeze_verifier_failure",
+  "actual_step": "6782816.19",
+  "exit_code": "1:0",
+  "error": "Reviewer verifier demanded755 execute mask on a clean cache file checked out770 under shared ACL.",
+  "affected_path": "10_jax_exploration_platform/scripts/refresh_corrected_report.sh",
+  "git_mode": "100755",
+  "cache_actual_mode": "0770",
+  "snapshot_execute_mask": "0111",
+  "archive_execute_mask": "0111",
+  "source_changed": false,
+  "candidate_full_tick_executed": false,
+  "verifier_source_sha256": "8e34bf1f42494977d4e70391477a4da595e6a1ee62b02e6af849eefe3128e0ae",
+  "correction": "Require exact archive/snapshot execute bits; require user-executable state and clean Git mode for cache; record actual cache modes."
+}

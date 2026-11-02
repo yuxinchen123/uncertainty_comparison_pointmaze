@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "common_correctness_startup_barrier_metadata_tests",
+  "job_id": "6782816",
+  "step_id": "10",
+  "source_before": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/wait_for_owned_inputs.py",
+    "sha256": "9af50f3d5109581c5dd24e5d49c80765e22c355df15ecb546eb6dc775d7b81af"
+  },
+  "source_after": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/wait_for_owned_inputs.py",
+    "sha256": "9af50f3d5109581c5dd24e5d49c80765e22c355df15ecb546eb6dc775d7b81af"
+  },
+  "test_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/test_wait_for_owned_inputs.py",
+    "sha256": "6324ea6869763ab2e0ec9088851bff919515ae8b8a96ae7d8ba0ec6c5a3f4e5d"
+  },
+  "tests_run": 20,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 2.3235771656036377,
+  "synthetic_launch_only": true,
+  "real_gpu_operations": 0,
+  "real_submissions": 0,
+  "real_release_actions": 0,
+  "returncode": 0
+}

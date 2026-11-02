@@ -1,0 +1,140 @@
+"""Run only private metadata process tests inside the current owned CPU allocation."""
+import ctypes
+from datetime import datetime, timezone
+import hashlib
+import importlib.abc
+import importlib.util
+import json
+import os
+from pathlib import Path
+import socket
+import sys
+import time
+import unittest
+
+PACKET = Path('/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830')
+SOURCE_NAMES = ("direct_qualification_controller.py", "test_direct_qualification_controller.py",
+                "run_direct_controller_metadata_tests.py")
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def main():
+    if os.environ.get("SLURM_JOB_ID") != "6782816" or not os.environ.get("SLURM_STEP_ID", "").isdigit():
+        raise ValueError("metadata checks require the actual current owned allocation 6782816 and a numeric step")
+    source_before = {name: sha(PACKET / name) for name in SOURCE_NAMES}
+    original_freeze_raw = (PACKET / "packet_metadata_freeze.json").read_bytes()
+    original_files = json.loads(original_freeze_raw)["files"]
+    original_before = {name: sha(name) for name in original_files}
+    frozen_before=sha(PACKET/"controller_source_freeze.json")
+    added_before={name:sha(name) for name in json.loads((PACKET/"controller_source_freeze.json").read_bytes())["files"]}
+    assert added_before==json.loads((PACKET/"controller_source_freeze.json").read_bytes())["files"]
+    if original_before != original_files:
+        raise ValueError("the original 66-file freeze changed before testing")
+    blocked = {"jax", "jaxlib", "numpy", "torch", "cupy", "flax", "optax", "scipy", "jaxtari", "exploration_platform"}
+    if blocked & {name.split(".", 1)[0] for name in sys.modules}:
+        raise AssertionError("a numerical module was already loaded")
+    class NoNumericalImports(importlib.abc.MetaPathFinder):
+        def find_spec(self, fullname, path=None, target=None):
+            if fullname.split(".", 1)[0] in blocked:
+                raise AssertionError("numerical import is forbidden in controller metadata tests")
+    sys.meta_path.insert(0, NoNumericalImports())
+    actions = []
+    def audit(event, args):
+        if event.startswith("socket.") and event != "socket.gethostname":
+            raise AssertionError("network access is forbidden")
+        if event == "ctypes.dlopen" or event == "ctypes.dlsym":
+            raise AssertionError("real dynamic-library access is forbidden")
+        if event == "open":
+            name = str(args[0])
+            if name.startswith(("/dev/nvidia", "/dev/dri")) or name == "/tmp/sl5nw_serval02_card1.lock":
+                raise AssertionError("GPU device and standing-lock access are forbidden")
+        if event == "subprocess.Popen":
+            executable, command, cwd, env = args
+            command = list(command)
+            if not (len(command) == 4 and command[0] == sys.executable
+                    and command[2] == "--prepared-unit"
+                    and str(command[1]).startswith("/tmp/direct-controller-private-cpu-")
+                    and str(command[1]).endswith("/campaign/data/private-cpu-fixture/code/measure_selected.py")
+                    and str(command[3]) == str(Path(command[1]).parent.parent)
+                    and str(cwd) == command[3]):
+                raise AssertionError("only the exact private CPU fixture producer may be spawned")
+            actions.append({"kind": "private_cpu_metadata_child", "command": command, "cwd": str(cwd)})
+    sys.addaudithook(audit)
+    spec = importlib.util.spec_from_file_location("direct_controller_regression", PACKET / "test_direct_qualification_controller.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    def intervention_reader_refuses(self):
+        self.fixture['after_guard_seconds']=10
+        path=self.unit/'code/measure_selected.py'
+        source=path.read_text().replace('time.sleep(fixture.get("after_guard_seconds", .05))',
+            'import signal\nsignal.signal(signal.SIGTERM, lambda *unused: sys.exit(0))\ntime.sleep(fixture.get("after_guard_seconds", .05))')
+        path.write_text(source)
+        result=self.run_fixture(seconds=.5)
+        self.assertFalse(result['passed'])
+        waited=module.controller.document(self.unit/'direct_process_wait_return.json')
+        self.assertEqual(waited['returncode'],0)
+        self.assertTrue(waited['timeouts'])
+        self.assertFalse((self.unit/'direct_terminal_process.json').exists())
+        module.controller.publish(self.unit/'direct_terminal_process.json',{
+            'schema_version':1,'kind':'direct_serval02_card1_terminal_process',
+            'launch':module.controller.receipt(self.unit/'direct_current_launch.json'),
+            'pid':waited['pid'],'hostname':waited['hostname'],'process_start_time':waited['process_start_time'],
+            'uid':os.getuid(),'return_record':module.controller.receipt(self.unit/'direct_process_wait_return.json')})
+        spec=importlib.util.spec_from_file_location('independent_intervention_terminal_reader',module.CORE_PATH.with_name('direct_measurement.py'))
+        direct=importlib.util.module_from_spec(spec);spec.loader.exec_module(direct)
+        metadata={'after':{'identity':{'pid':waited['pid'],'hostname':waited['hostname'],
+            'process_start_time':waited['process_start_time'],'parent_pid':os.getpid()}}}
+        with self.assertRaisesRegex(ValueError,'did not return normally'):
+            direct.terminal_process(self.unit,metadata)
+    module.ControllerTests.test_independent_unchanged_reader_refuses_intervention_wait=intervention_reader_refuses
+    if len(sys.argv) == 1:
+        suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+    else:
+        if sys.argv[1:] != ["ControllerTests.test_late_launch_collision_preserves_existing_bytes_and_no_terminal"]:
+            raise ValueError("only the exact corrected collision fixture may be selected separately")
+        suite = unittest.defaultTestLoader.loadTestsFromName(sys.argv[1], module)
+    started = time.monotonic()
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    source_after = {name: sha(PACKET / name) for name in SOURCE_NAMES}
+    original_after = {name: sha(name) for name in original_files}
+    added_after={name:sha(name) for name in added_before}
+    assert added_before==added_after and frozen_before==sha(PACKET/"controller_source_freeze.json")
+    if source_before != source_after or original_before != original_after:
+        raise AssertionError("a tested or original frozen source changed during metadata testing")
+    raw_stat = Path("/proc/self/stat").read_text()
+    uid_line = "".join(line + "\n" for line in Path("/proc/self/status").read_text().splitlines() if line.startswith("Uid:"))
+    step = os.environ["SLURM_STEP_ID"]
+    record = {"schema_version": 1, "kind": "direct_qualification_controller_metadata_independent_corrected_verification",
+        "at_utc": datetime.now(timezone.utc).isoformat(), "job_id": "6782816", "step_id": step,
+        "actual_hostname": socket.gethostname(), "actual_pid": os.getpid(),
+        "actual_process_start_time": raw_stat[raw_stat.rfind(")") + 2:].split()[19],
+        "actual_raw_stat": raw_stat, "actual_uid_line": uid_line,
+        "actual_cgroup": Path("/proc/self/cgroup").read_text(),
+        "actual_affinity": sorted(os.sched_getaffinity(0)), "source_before": source_before,
+        "source_after": source_after, "original_66_before": original_before, "original_66_after": original_after,
+        "original_packet_freeze_sha256": hashlib.sha256(original_freeze_raw).hexdigest(), "controller_freeze_sha256":frozen_before, "controller_added43_before":added_before, "controller_added43_after":added_after,
+        "tests_run": result.testsRun, "passed": result.wasSuccessful(), "elapsed_seconds": time.monotonic() - started,
+        "failures": [{"test": str(test), "traceback": text} for test, text in result.failures],
+        "errors": [{"test": str(test), "traceback": text} for test, text in result.errors],
+        "private_child_actions": actions, "private_cpu_fixtures": module.ControllerTests.fixture_results,
+        "numerical_modules_loaded": sorted(blocked & {name.split(".", 1)[0] for name in sys.modules}),
+        "actual_direct_contact": False, "actual_target_process_started": False, "gpu_or_standing_lock_access": False,
+        "no_actual_gpu_qualification": True, "scientific_credit": 0, "case_credit": 0, "idea_credit": 0,
+        "worker_admitted": False, "admission_granted": False}
+    directory = Path('/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-45_direct-qualification-controller_independent-review_private-cpu-only/corrected_controller_review')
+    directory.mkdir(exist_ok=True)
+    path = directory / ("author_6782816_" + step + ".json")
+    with path.open("xb") as stream:
+        stream.write((json.dumps(record, indent=2, sort_keys=True, allow_nan=False) + "\n").encode())
+        stream.flush()
+        os.fsync(stream.fileno())
+    descriptor = os.open(directory, os.O_DIRECTORY)
+    os.fsync(descriptor)
+    os.close(descriptor)
+    print(json.dumps({"receipt": str(path), "sha256": sha(path), "tests_run": result.testsRun,
+                      "passed": result.wasSuccessful(), "step_id": step}, sort_keys=True))
+    return 0 if result.wasSuccessful() else 1
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+

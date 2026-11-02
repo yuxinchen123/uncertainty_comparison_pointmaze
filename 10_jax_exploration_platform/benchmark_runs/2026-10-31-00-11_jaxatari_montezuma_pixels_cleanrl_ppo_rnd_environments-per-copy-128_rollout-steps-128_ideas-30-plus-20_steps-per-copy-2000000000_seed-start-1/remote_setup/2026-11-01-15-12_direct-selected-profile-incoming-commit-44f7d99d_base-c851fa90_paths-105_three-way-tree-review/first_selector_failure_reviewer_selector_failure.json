@@ -1,0 +1,10 @@
+{
+  "kind": "reviewer_historical_path_selector_assertion_failure",
+  "at_utc": "2026-11-01T23:12:02.146026+00:00",
+  "source_sha256": "30c9d816cf0deecbec8f8371d44ec212f38bd4064ac6aaa2b314ef7d48d30694",
+  "exception": "AssertionError at len(historical)==5",
+  "reason": "Broad basename matching included two duplicate historical logs inside a disjoint original saved source snapshot. Exact top-level source paths are now used.",
+  "production_or_original_mutation": false,
+  "before_snapshot_retained": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/incoming_direct_review_2026-11-01/original_before.json",
+  "continuation": "/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/incoming_direct_review_corrected_2026-11-01/review_incoming_commit.py"
+}

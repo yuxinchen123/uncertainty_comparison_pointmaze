@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "independent_common_correctness_one_shot_held_submission_source_review",
+  "approved": true,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-36_common-correctness-held-submission_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1-2/submit_common_correctness_held.py",
+    "sha256": "1bde921ad862a437566795a8c400cc493cb226bb5d89d3a50a71903c3b5ac89c"
+  },
+  "tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-36_common-correctness-held-submission_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1-2/test_submit_common_correctness_held.py",
+    "sha256": "fd2fe4eb8a506813bd95d3a90545b5d0602a251de0f401c14097d9a16fe3f87a"
+  },
+  "inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-36_common-correctness-held-submission_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1-2/submission_inputs.json",
+    "sha256": "1223a7c898dee709b7b3e6666901a558000286cc7a91c864ff403ed225618455"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-36_common-correctness-held-submission_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1-2/source_freeze.json",
+    "sha256": "519bd78b59183f7c9b4061f473e15c8b92271644ae04e12bb4a1d18d96e0cee1"
+  },
+  "publication_roster": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-36_common-correctness-held-submission_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1-2/publication_roster.json",
+    "sha256": "dcc9274606756df22885022bc84cc79b173e04f1d0e856a6f394100e419d2afe"
+  },
+  "metadata_test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-55-16_common-correctness-held-submission_independent-review_copies-1-2_gpu-count-0/independent_controls_6782816_40.json",
+    "sha256": "1052412e28b8d5ffdbeff7fe644a9c8a680219e203a21a86d76c7dde7438adc8"
+  },
+  "guarded_independent_runner": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-55-16_common-correctness-held-submission_independent-review_copies-1-2_gpu-count-0/guarded_independent_runner.py",
+    "sha256": "14f0b1f6043cdf7d87f4fc51122746ad5f47b3e890492c678fbb0537b9af791f"
+  },
+  "actual_step": "6782816.40",
+  "unittest_cases_passed": 17,
+  "additional_actual_defaults": 2,
+  "additional_old_publication_refusals": 2,
+  "frozen185_plus_roster_unchanged": true,
+  "copy_two_actual_core_synthetic_release_reconstruction_and_foreign_release_command_refusal": true,
+  "private_snapshot_failure_after_global_append_has_one_ID_row_and_no_duplicate_retry": true,
+  "scope": "one explicit invocation for one selected copy count; one durable intent and at most one held submission; no release path",
+  "actual_scheduler_queries": 0,
+  "actual_submissions": 0,
+  "actual_releases": 0,
+  "numerical_imports": false,
+  "device_or_network_actions": 0,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "admission_granted": false,
+  "remaining_required": "Root must publish the exact reviewed source, all frozen inputs and review before invoking each separately authorized copy-count submission."
+}

@@ -1,0 +1,16 @@
+{
+  "actual_parent_cpu_allocation": "6782816",
+  "actual_step_id": "not captured by that wrapper; no exact step inferred",
+  "cause": "Some original cases require complete execution groups and record more than one full update per round; their actual positive iteration counts must be used.",
+  "error": "AssertionError: all(pair[arm][iterations] ==1 for all initial rounds)",
+  "gpu_operations": 0,
+  "jobs_submitted": 0,
+  "kind": "historical_budget_preparation_first_metadata_assumption_failure",
+  "new_measurement_plan_mutated": false,
+  "numerical_experiment_failure": false,
+  "schema_version": 1,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/finish_launch_metadata_and_timing_budget.py",
+    "sha256": "aae77b8d28a572d631de1baf3efb98f76dbfb456f5069b991a88785acd944a53"
+  }
+}

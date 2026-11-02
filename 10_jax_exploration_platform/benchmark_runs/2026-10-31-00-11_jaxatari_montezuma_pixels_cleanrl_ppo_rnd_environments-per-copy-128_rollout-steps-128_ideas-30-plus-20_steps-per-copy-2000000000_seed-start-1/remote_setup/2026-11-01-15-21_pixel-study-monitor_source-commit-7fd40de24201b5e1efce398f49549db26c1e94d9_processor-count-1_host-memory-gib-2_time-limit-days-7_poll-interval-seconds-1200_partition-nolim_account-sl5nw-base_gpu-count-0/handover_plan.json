@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "prepared_monitor_handover_requirements",
+  "source_commit": "7fd40de24201b5e1efce398f49549db26c1e94d9",
+  "old_job_id": "6782816",
+  "old_source_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "new_job_id": null,
+  "candidate_full_tick_executed": false,
+  "candidate_waits_for_root_fresh_aces_mirrors": true,
+  "requirements": [
+    "Root coordinates fresh ACES snapshots before the candidate full tick.",
+    "Independently review source, preparation and actual candidate report before publication.",
+    "Root publishes and submits one held zero-GPU monitor, recording exact IDs and ownership.",
+    "Root reviews and releases the exact new monitor, verifies actual runtime and first full report.",
+    "Keep old 6782816 until the replacement is verified and all old auxiliary steps have ended."
+  ],
+  "supports_reviewed_direct_selected_and_profile_readers": true,
+  "direct_final_capacity_scaling_portable_supported": false,
+  "new_jobs_submitted": 0,
+  "job_actions": 0,
+  "worker_admission": false,
+  "scientific_credit": 0
+}

@@ -1,0 +1,44 @@
+{
+  "actual_author_verification": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_metadata_tests/author_6782816_36.json",
+    "sha256": "4c8d1ebd18adfc55c9e62d1f3be8572c9d3c57ff4935b1be89d1372c339bdf07"
+  },
+  "actual_step": "6782816.36",
+  "actual_target_contact": false,
+  "actual_target_launch": false,
+  "actual_tests": 19,
+  "actual_zero_return_preserved": true,
+  "admission_granted": false,
+  "after": "Any nonempty timeout/intervention list makes the controller fail, retains the actual integer return, writes a distinct wait kind and timeout observation, and publishes no ordinary terminal process record.",
+  "approved_44f_source_unchanged": true,
+  "at_utc": "2026-11-01T23:48:45.651361+00:00",
+  "before": "A signaled child could handle SIGTERM and return zero; the controller then published ordinary terminal success.",
+  "case_credit": 0,
+  "idea_credit": 0,
+  "independent_reproduction": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_metadata_tests/independent_timeout_finding_6782816_35.json",
+    "sha256": "8028e29160025393a09d73852e6f429d4e30379e328d226c0256ee87b082e73a"
+  },
+  "kind": "direct_qualification_controller_timeout_correction_author_review",
+  "natural_zero_positive_still_passes": true,
+  "no_original_producer_or_reader_change": true,
+  "original_packet_66_unchanged": true,
+  "passed": true,
+  "previous_27_file_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_source_versions/before_timeout_correction_6782816_35/controller_source_freeze.json",
+    "sha256": "6272aa7ee61618fd90c352075af3a9183351ce6f510e1f6f71f18bd20c062889"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "sha256": "f8c6a95d587d1ccf1b643622af63e034babc08742904106029d886a90fc70d70"
+  },
+  "tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/test_direct_qualification_controller.py",
+    "sha256": "5911c32340b1649a6f1e92a84eb5ae842d48caafb53c060b7324ec3ad73d6d76"
+  },
+  "timeout_handler_zero_negative_passes": true,
+  "unchanged_terminal_reader_requires_an_ordinary_wait_kind": true,
+  "worker_admitted": false
+}

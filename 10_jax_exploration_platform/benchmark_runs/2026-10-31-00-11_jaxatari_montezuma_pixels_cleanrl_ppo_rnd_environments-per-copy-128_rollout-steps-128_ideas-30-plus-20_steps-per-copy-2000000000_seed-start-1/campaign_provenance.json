@@ -1,7 +1,7 @@
 {
   "cron_id": "5ee3830e-3ee6-4cea-95b0-da29af23d529",
   "merge_complete": true,
-  "current_branch_integrated_commit": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+  "current_branch_integrated_commit": "7fd40de24201b5e1efce398f49549db26c1e94d9",
   "original_local_edits_preserved": true,
   "performance_diagnostic_unit": "serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b",
   "h100_reference_trace_recovery": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b/trace/recovery_2026-10-31-03-22-29/result.json",
@@ -415,5 +415,6 @@
   "replacement_monitor_released": true,
   "persistent_monitor_previous_job_id": "6781231",
   "persistent_monitor_runtime_review_sha256": "e069a695ee0c2eb78189e8a806bf4cca2f80c4cb423700d05d63a7bee0293a78",
-  "previous_monitor_terminal_state": "6781231 CANCELLED by 2618919 after independently verified replacement and 145 terminal numeric steps"
+  "previous_monitor_terminal_state": "6781231 CANCELLED by 2618919 after independently verified replacement and 145 terminal numeric steps",
+  "direct_adapter_original_content_preservation_sha256": "b5a515cdcfbbb04e935dff9f3a33f147d76b746bd218f35bd832db2c88b366d5"
 }
