@@ -1,0 +1,48 @@
+{
+  "actual_release_ids_unbound": true,
+  "actual_release_proof_unbound": true,
+  "held_function_AST_equal": {
+    "append_ledgers": true,
+    "checked": true,
+    "digest": true,
+    "document": true,
+    "main": true,
+    "ordinary": true,
+    "publish": true,
+    "publish_bytes": true,
+    "read_bytes": true,
+    "receipt": true,
+    "require": true,
+    "unattempted": true,
+    "validate_publication": false
+  },
+  "held_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-18-57_common-confirmation-held-submission_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/submit_common_confirmation_held.py",
+    "sha256": "e58311c6c687a7ac66fe364829b01e2e269c70df88d534a9ef72a667633a05f3"
+  },
+  "release_function_AST_equal": {
+    "capture": true,
+    "checked_ref": true,
+    "contents": true,
+    "core": true,
+    "document": true,
+    "encoded": true,
+    "field": true,
+    "main": true,
+    "put": true,
+    "ref": true,
+    "release_once": true,
+    "require": true,
+    "require_unattempted_release": true,
+    "sha": true,
+    "utc_observation": true,
+    "validate_frozen_files": true,
+    "validate_held": true,
+    "validate_pre_release": true,
+    "validate_proof": true
+  },
+  "release_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-24_common-confirmation-release_jobs-6783295-6783296_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/release_common_confirmation.py",
+    "sha256": "d6529e5f852c425dbce27e04a496496b6de855cb727ce3092ccb858e28583ea3"
+  }
+}

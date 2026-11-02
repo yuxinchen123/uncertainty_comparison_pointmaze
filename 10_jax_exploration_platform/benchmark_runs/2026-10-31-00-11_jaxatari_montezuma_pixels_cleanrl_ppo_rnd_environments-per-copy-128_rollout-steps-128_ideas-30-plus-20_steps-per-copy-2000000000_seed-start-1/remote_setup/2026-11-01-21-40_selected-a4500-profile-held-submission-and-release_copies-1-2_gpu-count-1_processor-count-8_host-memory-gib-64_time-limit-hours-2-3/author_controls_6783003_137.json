@@ -1,0 +1,69 @@
+{
+  "GPU_operations": 0,
+  "actual_local_defaults": [
+    {
+      "copies": 1,
+      "kind": "selected_configuration_profile",
+      "plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-2/measurement_plan.json",
+        "sha256": "b19a49821ba9f54ad0d458cfa4857a78f4bf4432b0ca837fcf81d6014e2835b6"
+      },
+      "scheduler_queries": 0,
+      "submissions": 0
+    },
+    {
+      "copies": 2,
+      "kind": "selected_configuration_profile",
+      "plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-3/measurement_plan.json",
+        "sha256": "a32a36013893fd489b380877f73c3dbf4fa87ee3f5389f5b76a7c28d512d0890"
+      },
+      "scheduler_queries": 0,
+      "submissions": 0
+    }
+  ],
+  "actual_releases": 0,
+  "actual_scheduler_queries": 0,
+  "actual_submissions": 0,
+  "actual_unbound_release_refusal": "the actual held proof and immutable release inputs are not frozen",
+  "admission_granted": false,
+  "at_utc": "2026-11-02T05:46:18.650772+00:00",
+  "birth": "55350099",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_137/user/task_0\n",
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6783003",
+  "kind": "selected_profile_held_and_unbound_release_metadata_author_controls",
+  "numerical_import_attempts": [],
+  "passed": true,
+  "pid": 794886,
+  "protected_bytes_unchanged": true,
+  "protected_files": 178,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-40_selected-a4500-profile-held-submission-and-release_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/author_controls_6783003_137.raw",
+    "sha256": "0710f39c2c416aacceca30ec1fae45a3144dc1217d1401c13290eaf3756040bc"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_after": {
+    "release_selected_profiles.py": "1539492533531599630d456118a6a3b8d1d2112077a8003dbd6f5cd14c3dd817",
+    "submission_inputs.json": "39d9af6e53b680edf084fba97a50dd8b1e2454569ac469bd4d79849665bad4f2",
+    "submit_selected_profiles_held.py": "7b90b243143af71d480c0b19fcd90bab077b63defa99f86d71e490a316e697d4",
+    "test_profile_submission_scope.py": "cbc98e370ae2cb7d5cf5ee3e03297d766e6c778c97666fd770b5eb70f8ca22b4",
+    "test_release_selected_profiles.py": "c1004cf7ccfa66b6f8c8be6128918e5801154fb74d0c2e8bb51cd219809c7518",
+    "test_submit_selected_profiles_held.py": "15f946cc3bb0cc858844afb46c58cbdca266d505ac72481616082effa54c25ba"
+  },
+  "source_before": {
+    "release_selected_profiles.py": "1539492533531599630d456118a6a3b8d1d2112077a8003dbd6f5cd14c3dd817",
+    "submission_inputs.json": "39d9af6e53b680edf084fba97a50dd8b1e2454569ac469bd4d79849665bad4f2",
+    "submit_selected_profiles_held.py": "7b90b243143af71d480c0b19fcd90bab077b63defa99f86d71e490a316e697d4",
+    "test_profile_submission_scope.py": "cbc98e370ae2cb7d5cf5ee3e03297d766e6c778c97666fd770b5eb70f8ca22b4",
+    "test_release_selected_profiles.py": "c1004cf7ccfa66b6f8c8be6128918e5801154fb74d0c2e8bb51cd219809c7518",
+    "test_submit_selected_profiles_held.py": "15f946cc3bb0cc858844afb46c58cbdca266d505ac72481616082effa54c25ba"
+  },
+  "started_at_utc": "2026-11-02T05:46:16.212257+00:00",
+  "step_id": "137",
+  "tests": 53
+}
