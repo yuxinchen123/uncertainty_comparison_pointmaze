@@ -1188,23 +1188,30 @@
     "root_review_sha256": "52556a0d06c3bcce59508c7e61a92119394898f9ce0b78081710c91a719b45a4",
     "state": "published_independently_reviewed"
   },
+  "latest_root_full_monitor": {
+    "job_id": "6783003",
+    "native_task_id": "3d18c595-bd2f-4608-942c-92449bc33509",
+    "new_scientific_units_progress_only": true,
+    "prefix": "scheduled_check_2026-11-02-07-34-00",
+    "proof": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-02-07-34-00_verification.json",
+      "sha256": "da8910491de8cb6c998053569f3982182e99d74e97ecb5b1ce446f6584387a01"
+    },
+    "step_id": "169"
+  },
   "monitoring_session_cron": {
-    "actual_new_owned_profile_jobs": [
-      "6783807",
-      "6783808"
-    ],
     "cadence_seconds": 1200,
     "cron": "*/20 * * * *",
-    "expires_at": "2026-11-09T06:20:00Z",
-    "id": "576bcd02-b929-4599-8d78-ddfe41dbe7ea",
+    "expires_at": "2026-11-09T07:20:00Z",
+    "id": "3d18c595-bd2f-4608-942c-92449bc33509",
     "list_verified": true,
-    "next_run_at": "2026-11-02T06:20:00Z",
-    "old_id_deleted": "213f2e00-68e6-40e5-8e91-439d6ebb8239",
+    "next_run_at": "2026-11-02T07:40:00Z",
+    "old_id_deleted": "576bcd02-b929-4599-8d78-ddfe41dbe7ea",
     "persistent_job_id": "6783003",
-    "prompt_bytes": 15961,
-    "prompt_sha256": "eccd24603cba729a6f314b9388e0434068933aa906da8808b43870ffd5f3f634",
-    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-02-06-16.json",
-    "record_sha256": "00f91b40bd55ff46ed6744283806bbfed8ed4a286f5d3f057a16da2fdfd90f27",
+    "prompt_bytes": 15978,
+    "prompt_sha256": "e2bb0e3f53b5352b7b0ab5cb602b07b1a715011c849d5419c6e47cd37cf87b1b",
+    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-02-07-33.json",
+    "record_sha256": "72435c9af25ce0b82e30b4dd2dbe8bb8c7130cdb2a4711afe3656c7a3194a29a",
     "timezone": "America/Los_Angeles"
   },
   "monitoring_session_cron_previous_records": [
@@ -1302,6 +1309,25 @@
       "prompt_sha256": "4d10a7d988127fc401c78b7c40f0be434b2133f2745bcc47c768a2b9cc527d57",
       "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-02-05-50.json",
       "record_sha256": "b9be62b99caca2fd980b8f0b52c1ef38c861bae68830e18d117769d5d35bf289",
+      "timezone": "America/Los_Angeles"
+    },
+    {
+      "actual_new_owned_profile_jobs": [
+        "6783807",
+        "6783808"
+      ],
+      "cadence_seconds": 1200,
+      "cron": "*/20 * * * *",
+      "expires_at": "2026-11-09T06:20:00Z",
+      "id": "576bcd02-b929-4599-8d78-ddfe41dbe7ea",
+      "list_verified": true,
+      "next_run_at": "2026-11-02T06:20:00Z",
+      "old_id_deleted": "213f2e00-68e6-40e5-8e91-439d6ebb8239",
+      "persistent_job_id": "6783003",
+      "prompt_bytes": 15961,
+      "prompt_sha256": "eccd24603cba729a6f314b9388e0434068933aa906da8808b43870ffd5f3f634",
+      "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-02-06-16.json",
+      "record_sha256": "00f91b40bd55ff46ed6744283806bbfed8ed4a286f5d3f057a16da2fdfd90f27",
       "timezone": "America/Los_Angeles"
     }
   ],
