@@ -1,0 +1,12 @@
+test_actual_new_readiness_and_both_profiles_pass (__main__.ReadinessRevisionTests) ... ok
+test_expired_version_one_readiness_is_refused (__main__.ReadinessRevisionTests) ... ok
+test_new_inputs_hash_and_handler_ast_match (__main__.ReadinessRevisionTests) ... ok
+test_unbound_release_remains_refused_before_any_query (__main__.ReadinessRevisionTests) ... ok
+test_actual_helper_commit_refuses_absent_new_publication_objects (test_profile_publication.PublicationTests) ... ok
+test_both_actual_defaults_do_not_create_an_attempt (test_profile_publication.PublicationTests) ... ok
+test_exact_mocked_publication_and_changed_object_refusal (test_profile_publication.PublicationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.672s
+
+OK

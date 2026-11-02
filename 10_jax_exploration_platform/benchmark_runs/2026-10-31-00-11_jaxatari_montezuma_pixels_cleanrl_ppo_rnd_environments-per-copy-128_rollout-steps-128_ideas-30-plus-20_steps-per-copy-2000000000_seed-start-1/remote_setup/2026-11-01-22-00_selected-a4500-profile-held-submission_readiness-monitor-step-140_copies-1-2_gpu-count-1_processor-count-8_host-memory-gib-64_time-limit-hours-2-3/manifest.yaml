@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "selected_a4500_profile_held_submission_and_release_metadata_preparation",
+  "copies": [
+    1,
+    2
+  ],
+  "helper_commit": "fdb35f886ad01c6d4ed387dc55b172d0221a9853",
+  "requested_gpus_per_job": 1,
+  "requested_processors": 8,
+  "requested_host_memory_gib": 64,
+  "requested_job_hours": {
+    "1": 2,
+    "2": 3
+  },
+  "future_job_ids": null,
+  "actual_submissions": 0,
+  "actual_releases": 0,
+  "worker_admitted": false,
+  "admission_granted": false
+}

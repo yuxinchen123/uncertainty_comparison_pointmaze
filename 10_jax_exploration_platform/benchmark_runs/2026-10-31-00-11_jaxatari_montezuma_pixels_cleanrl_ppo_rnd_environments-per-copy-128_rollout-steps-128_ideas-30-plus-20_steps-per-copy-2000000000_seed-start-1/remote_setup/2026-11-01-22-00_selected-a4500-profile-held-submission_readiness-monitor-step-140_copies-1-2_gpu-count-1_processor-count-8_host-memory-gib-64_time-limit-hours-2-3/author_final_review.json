@@ -1,0 +1,43 @@
+{
+  "actual_delta_controls": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-00_selected-a4500-profile-held-submission_readiness-monitor-step-140_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/readiness_revision_author_6783003_142.json",
+    "sha256": "a2de41b2edb1d002f57ae60022b17ca162abd3c1183b3cf5c99a11419a4ba9a4"
+  },
+  "actual_releases": 0,
+  "actual_scheduler_queries": 0,
+  "actual_submissions": 0,
+  "admission_granted": false,
+  "all_four_test_modules_identical": true,
+  "at_utc": "2026-11-02T06:05:10.724261+00:00",
+  "delta_scope": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-00_selected-a4500-profile-held-submission_readiness-monitor-step-140_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/readiness_revision_scope.json",
+    "sha256": "a7a2786ea7052698fdbdb2bd9de32c45a4cd010e0b8dbc877d9ea960b2ed915e"
+  },
+  "delta_tests_passed": 7,
+  "expiry_utc": "2026-11-02T06:15:43.452701+00:00",
+  "full_handler_AST_equal_except_INPUTS_SHA": true,
+  "inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-00_selected-a4500-profile-held-submission_readiness-monitor-step-140_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/submission_inputs.json",
+    "sha256": "54a965a212458b23a634cc159368b59692eee41645333c1b0597ecc34d57c42f"
+  },
+  "kind": "selected_profile_monitoring_readiness_revision_final_author_review",
+  "passed": true,
+  "previous_56_author_and_59_independent_controls_retained": true,
+  "previous_independent_source_approval": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_held_utility_independent_6783003_141.json",
+    "sha256": "23445d70eff410b8f54045864f0c376773e1c10753a4b1d29e1c5260844758ab"
+  },
+  "previous_publication": "d96c47d1df6a6f2422c85cc824eef52750c12039",
+  "readiness": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-00_selected-a4500-profile-held-submission_readiness-monitor-step-140_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/submission_readiness.json",
+    "sha256": "47c4e6741c44c88697a884b3160ef521423f098bf444e4124467bcee24e6cdac"
+  },
+  "release_template_identical": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-00_selected-a4500-profile-held-submission_readiness-monitor-step-140_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/submit_selected_profiles_held.py",
+    "sha256": "823069e93028e3b2abf7da07c668c4f0867e6a4d67f21054306bf0df83137f01"
+  },
+  "unrelated_tests_not_repeated": true
+}
