@@ -127,7 +127,126 @@ def process_hosts(records):
     return hosts
 
 
-def unit_rows(directory, excluded_unit_names=()):
+def selected_unit_job(directory, unit, jobs):
+    """Display configured selected units only after joining their exact owned submission records."""
+    plan_path = unit / "measurement_plan.json"
+    if not plan_path.exists() and not plan_path.is_symlink():
+        return None
+    # Read only metadata: this display join never imports a producer or qualifies its result.
+    def contents(path):
+        """Read an ordinary artifact without following a path alias."""
+        if path.resolve(strict=True) != path or not path.is_file() or path.is_symlink():
+            raise ValueError("selected display metadata requires an exact ordinary path")
+        return path.read_bytes()
+
+    def document(path, reference=None):
+        """Bind one exact JSON object to its optional raw-byte receipt."""
+        raw = contents(path)
+        if reference is not None and reference != {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}:
+            raise ValueError("selected display metadata byte receipt changed")
+        value = json.loads(raw)
+        if not isinstance(value, dict):
+            raise ValueError("selected display metadata must be a JSON object")
+        return value
+
+    plan = document(plan_path)
+    if (not isinstance(plan, dict) or plan.get("kind") not in
+            {"selected_configuration_measurement", "selected_configuration_profile"}
+            or "configured_isolation" not in plan or "direct_binding" in plan):
+        return None
+    packet = directory / "remote_setup" / unit.name
+    if (type(plan.get("schema_version")) is not int or plan["schema_version"] != 1
+            or plan.get("campaign_run_dir") != str(directory) or plan.get("unit_id") != unit.name
+            or plan.get("hardware_class") != "jaguar03_rtx_a4500" or not isinstance(plan["configured_isolation"], dict)
+            or plan["configured_isolation"].get("consumer") != {"selected_configuration_measurement": "selected_measurement",
+                "selected_configuration_profile": "component_profile"}[plan["kind"]]
+            or plan["configured_isolation"].get("owned_inputs_path") != str(unit / "owned_allocation_inputs.json")):
+        raise ValueError("selected plan does not identify this exact campaign and unit")
+    submission_path, pre_path = packet / "submission_receipt.json", unit / "configured_isolation_pre_release_inputs.json"
+    present = lambda path: path.exists() or path.is_symlink()
+    if not present(submission_path):
+        if present(pre_path) or present(unit / "owned_allocation_inputs.json"):
+            raise ValueError("selected ownership inputs have no submission receipt")
+        return {"job_id": "", "state": "planned", "progress": "not submitted; prepared unit"}
+    if not present(pre_path):
+        return {"job_id": "", "state": "planned", "progress": "submission recorded; ownership metadata incomplete"}
+    submission, pre = document(submission_path), document(pre_path)
+    identifier = submission.get("job_id")
+    helper = plan["helpers"]["source_commit"]
+    row = [identifier, plan["kind"], helper, str(packet / "job.sbatch")]
+    plan_ref = {"path": str(plan_path), "sha256": hashlib.sha256(contents(plan_path)).hexdigest()}
+    if (not isinstance(identifier, str) or re.fullmatch(r"[1-9][0-9]*", identifier) is None
+            or type(submission.get("schema_version")) is not int or submission["schema_version"] != 1
+            or submission.get("kind") != "owned_uva_configured_isolation_submission"
+            or submission.get("cluster") != "uva" or submission.get("source_commit") != helper
+            or submission.get("packet") != str(packet) or submission.get("data_unit") != str(unit)
+            or type(submission.get("returncode")) is not int or submission["returncode"] != 0
+            or submission.get("plan_sha256") != plan_ref["sha256"]
+            or submission.get("script_sha256") != hashlib.sha256(contents(packet / "job.sbatch")).hexdigest()
+            or submission.get("submission_row") != row
+            or submission.get("ledgers_and_submission_row_fsynced_before_this_receipt") is not True):
+        raise ValueError("selected submission does not bind this exact plan, script and helper source")
+    command = submission.get("held_command")
+    if (not isinstance(command, list) or not command or command[0] != "sbatch"
+            or "--hold" not in command or "--no-requeue" not in command or command[-1] != row[-1]):
+        raise ValueError("selected submission is not the exact held job script")
+    if (set(pre) != {"schema_version", "kind", "job_id", "plan", "ledger", "submissions", "submission", "submission_row"}
+            or type(pre["schema_version"]) is not int or pre["schema_version"] != 1
+            or pre["kind"] != "uva_configured_isolation_pre_release_inputs" or pre["job_id"] != identifier
+            or pre["plan"] != plan_ref or pre["submission_row"] != row):
+        raise ValueError("selected pre-release ownership envelope changed")
+    document(submission_path, pre["submission"])
+    # Before: a receipt names 123; after: private and live UVA records each contain the same exact row once.
+    for key, filename, private_name, member in (
+            ("ledger", "submitted_jobids_uva.txt", "configured_isolation_owned_job_ids.txt", identifier),
+            ("submissions", "submissions.tsv", "configured_isolation_owned_submissions.tsv", "\t".join(row))):
+        record, live, private = pre[key], directory / "slurm" / filename, unit / private_name
+        if (set(record) != {"snapshot", "source_path"} or record["source_path"] != str(live)
+                or record["snapshot"] != {"path": str(private), "sha256": hashlib.sha256(contents(private)).hexdigest()}):
+            raise ValueError("selected private ownership snapshot changed")
+        for path in (private, live):
+            if path.resolve(strict=True) != path or not path.is_file() or path.is_symlink():
+                raise ValueError("selected ownership ledger requires an exact ordinary path")
+            lines = path.read_text().splitlines()
+            if (lines.count(member) != 1 or key == "ledger" and len(lines) != len(set(lines))
+                    or key == "submissions" and [line for line in lines if line.split("\t", 1)[0] == identifier] != [member]):
+                raise ValueError("selected job is missing, duplicated or conflicting in its owned UVA records")
+    # A final envelope is optional before release; when present it must preserve every pre-release field.
+    final_path = unit / "owned_allocation_inputs.json"
+    if present(final_path):
+        final = document(final_path)
+        if (set(final) != set(pre) | {"release"} or type(final.get("schema_version")) is not int
+                or final.get("kind") != "uva_configured_isolation_owned_inputs"
+                or {key: value for key, value in final.items() if key not in {"kind", "release"}}
+                != {key: value for key, value in pre.items() if key != "kind"}):
+            raise ValueError("selected final ownership inputs differ from their pre-release envelope")
+        returned = document(packet / "release_receipt.json", final["release"])
+        if (type(returned.get("schema_version")) is not int or returned["schema_version"] != 1
+                or returned.get("kind") != "owned_uva_configured_isolation_release" or returned.get("cluster") != "uva"
+                or returned.get("job_id") != identifier or returned.get("plan_sha256") != plan_ref["sha256"]
+                or returned.get("data_unit") != str(unit) or type(returned.get("returncode")) is not int
+                or returned["returncode"] != 0 or returned.get("command") != ["scontrol", "release", identifier]
+                or returned.get("submission_receipt_sha256") != pre["submission"]["sha256"]):
+            raise ValueError("selected final inputs have no matching successful release receipt")
+    observed = [job for job in jobs if job[0] == identifier]
+    if len(observed) > 1 or observed and (len(observed[0]) != 5 or not all(isinstance(value, str) for value in observed[0])):
+        raise ValueError("selected job has conflicting scheduler rows")
+    state, progress = "waiting", "owned submission; no current scheduler observation"
+    if observed:
+        _, scheduler_state, _, _, reason = observed[0]
+        if scheduler_state == "RUNNING":
+            state, progress = "running", "allocation running; producer progress pending"
+        elif scheduler_state == "PENDING":
+            state = "held" if reason.strip("()") == "JobHeldUser" else "waiting"
+            progress = "held; awaiting release" if state == "held" else "pending; " + reason.strip("()")
+        else:
+            progress = "owned scheduler state " + scheduler_state
+    return {"job_id": identifier, "state": state, "progress": progress,
+            "node": observed[0][2] if observed else "",
+            "requested_gpu": "RTX A4500 requested" if "--gres=gpu:nvidia_rtx_a4500:1" in command else None}
+
+
+def unit_rows(directory, excluded_unit_names=(), jobs=()):
     """Read one small status file per unit without retaining training histories."""
     rows = []
     hosts = process_hosts(read_json(directory / "processes.json"))
@@ -212,10 +331,33 @@ def unit_rows(directory, excluded_unit_names=()):
             if (value.get("kind") == "device_memory_capture_component_regression"
                     and not submitted and not executed and str(packet) in superseded):
                 state, progress = "superseded", "superseded before submission; 0 completed fixtures"
-        rows.append({"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name, "unknown")),
-                     "gpu": group["gpu"] if group else selected[1:2],
-                     "slurm_job_id": group["slurm_job_id"] if group else hardware.get("slurm_job_id", ""),
-                     "state": state, "progress": progress, "age_seconds": age})
+        selected_job = None
+        try:
+            selected_job = selected_unit_job(directory, path.parent, jobs)
+        except (OSError, ValueError, TypeError, KeyError) as error:
+            # Keep an ownership metadata error visible without calling it a failed numerical experiment.
+            selected_job = {"job_id": "", "state": "unknown", "progress": "selected ownership metadata error: " + str(error)}
+        if selected_job is not None:
+            if hardware.get("slurm_job_id") not in (None, "", selected_job["job_id"]):
+                selected_job = {"job_id": "", "state": "unknown", "progress": "selected hardware names a different job"}
+            if phase not in {"completed", "checkpointed", "failed"} and not failure:
+                state = selected_job["state"]
+                if state != "running" or phase in {"planned", "prepared", "prepared_not_submitted"}:
+                    progress = selected_job["progress"]
+            elif selected_job["state"] == "unknown":
+                progress += "; " + selected_job["progress"]
+            if selected_job["state"] == "unknown":
+                hardware, selected, group = {}, [], None
+        row = {"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name,
+                         selected_job.get("node") or "UVA gpu" if selected_job is not None else "unknown")),
+                     "gpu": group["gpu"] if group else selected[1:2] or
+                         ([selected_job["requested_gpu"]] if selected_job is not None and selected_job.get("requested_gpu") else []),
+                     "slurm_job_id": selected_job["job_id"] if selected_job is not None else group["slurm_job_id"] if group else hardware.get("slurm_job_id", ""),
+                     "state": state, "progress": progress, "age_seconds": age}
+        if selected_job is not None:
+            row["selected_owned_job"] = bool(selected_job["job_id"])
+            row["selected_unit_name"] = path.parent.name
+        rows.append(row)
     return rows
 
 
@@ -799,7 +941,9 @@ def tick(directory):
     aces_sites, aces_site_status = aces_full_site_rows(directory)
     aces_rows = aces_rows + aces_sites
     excluded_units = {row["data_unit_name"] for row in sites + aces_rows if row.get("data_unit_name")}
-    units = unit_rows(directory, excluded_unit_names=excluded_units)
+    units = unit_rows(directory, excluded_unit_names=excluded_units, jobs=jobs)
+    selected_jobs = {unit["slurm_job_id"] for unit in units if unit.get("selected_owned_job")
+                     and unit["state"] in {"running", "initializing", "normalization_warmup", "waiting", "held"}}
     display_units = units + sites + aces_rows
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
     rows = [table_row("run or job", "pool", "gpu", "state", "progress")]
@@ -811,8 +955,9 @@ def tick(directory):
             identifier, kind, _, _ = line.split("\t", 3)
             names[identifier] = kind
     observed_jobs = set()
+    selected_units = {unit["selected_unit_name"] for unit in units if "selected_unit_name" in unit}
     for path in (directory / "data").glob("*/hardware.json"):
-        if path.parent.name in excluded_units:
+        if path.parent.name in excluded_units or path.parent.name in selected_units:
             continue
         hardware = read_json(path)
         observed_jobs.add(hardware.get("slurm_job_id", ""))
@@ -841,10 +986,10 @@ def tick(directory):
                               final_training_progress(final_training)))
     for unit in display_units:
         if unit["state"] == "waiting":
-            gpu = gpu_label(unit["gpu"][0]) if unit.get("kind") in {"site_validation", "allocation_observation", "aces_full_site"} else "none"
+            gpu = gpu_label(unit["gpu"][0]) if unit.get("selected_owned_job") and unit["gpu"] or unit.get("kind") in {"site_validation", "allocation_observation", "aces_full_site"} else "none"
             rows.append(table_row(unit["run"], unit["pool"], gpu, "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
-        if state == "PENDING" and identifier not in site_jobs:
+        if state == "PENDING" and identifier not in site_jobs and identifier not in selected_jobs:
             if "Held" not in reason:
                 rows.append(table_row("scheduled study job", "UVA", gpu, state, reason))
     rows.append("HELD")
@@ -855,7 +1000,7 @@ def tick(directory):
     if final_training["state"] == "held":
         rows.append(table_row("final training continuation", "UVA", "RTX A4500", "HELD", final_training["reason"]))
     for identifier, state, node, gpu, reason in jobs:
-        if identifier not in site_jobs and (state.startswith("RESV_DEL") or "Held" in reason):
+        if identifier not in site_jobs and identifier not in selected_jobs and (state.startswith("RESV_DEL") or "Held" in reason):
             rows.append(table_row("held study job", "UVA", gpu, "HELD", reason))
     rows.append("FINISHED")
     if final_training["state"] == "finished":
@@ -871,9 +1016,9 @@ def tick(directory):
         rows.append(table_row("queue controller", "UVA", "none", "FAILED", controller_error))
     rows.append("PLANNED")
     for unit in display_units:
-        if unit["state"] == "planned":
+        if unit["state"] in {"planned", "unknown"}:
             gpu = gpu_label(unit["gpu"][0]) if unit["gpu"] else "none"
-            rows.append(table_row(unit["run"], unit["pool"], gpu, "PLANNED", unit["progress"]))
+            rows.append(table_row(unit["run"], unit["pool"], gpu, unit["state"].upper(), unit["progress"]))
     state_path = directory / "campaign_state.json"
     campaign = read_json(state_path) or {"phase": "implementation"}
     counts = campaign.get("queue_counts", {})

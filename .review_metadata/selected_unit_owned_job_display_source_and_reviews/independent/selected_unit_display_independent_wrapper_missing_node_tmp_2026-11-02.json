@@ -1,0 +1,11 @@
+{
+  "kind": "independent_review_wrapper_preexecution_failure",
+  "at_utc": "2026-11-02T04:33:31.410382+00:00",
+  "job_id": "6783003",
+  "step_id": null,
+  "returncode": 2,
+  "stderr": "/usr/bin/python3: can't open file '/tmp/rnd_monitor_display_independent_review.py': [Errno 2] No such file or directory\nsrun: error: heartpiece: task 0: Exited with exit code 2\n",
+  "tests_run": 0,
+  "approved": false,
+  "correction": "Use the exact shared campaign script path. Source/test freeze unchanged."
+}
