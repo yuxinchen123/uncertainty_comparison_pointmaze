@@ -193,6 +193,22 @@
     },
     "worker_admitted": false
   },
+  "direct_common_correctness_current": {
+    "actual_child_birth_counter": "56774003",
+    "actual_child_pid": 1577481,
+    "controller_birth_counter": "56747359",
+    "controller_pid": 1574381,
+    "copy_two_unbound": true,
+    "metadata_mode_restore": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/root_metadata_lock_permission_restore.json",
+      "sha256": "97f4c4221caf636aa11635f44d4ce40c7e668102250c247c474ed8252a7900ab"
+    },
+    "metadata_modes_restored": true,
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3",
+    "relaunch_forbidden": true,
+    "started_at_utc": "2026-11-02T08:08:12.998633+00:00",
+    "state": "copy_one_child_registered_startup_no_result"
+  },
   "direct_full_original_qualification_birth_counter": "54683794",
   "direct_full_original_qualification_controller_birth_counter": "54671452",
   "direct_full_original_qualification_controller_pid": 1319515,
@@ -290,7 +306,7 @@
   "isolated_capacity_helper_commit": "332bff2faf89df98d7f48fc2296555313c5be290",
   "job_ledgers": "slurm/submitted_jobids_*.txt",
   "last_active_persistent_monitor_job_id": "6782816",
-  "last_verified_full_monitor": "6783003.169",
+  "last_verified_full_monitor": "6783003.190",
   "latest_actual_target_qualification_release": {
     "actual_core_reader_passed": true,
     "at_utc": "2026-11-01T22:23:12.249529+00:00",
