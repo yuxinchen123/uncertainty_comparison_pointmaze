@@ -1,8 +1,8 @@
 {
-  "candidate": {
+  "reference": {
     "environment": {
       "batch_layout": "flat",
-      "cache_room_backgrounds": true,
+      "cache_room_backgrounds": false,
       "combine_palette_and_sprite_drawing": false,
       "episodic_life": true,
       "frame_skip": 4,
@@ -11,7 +11,7 @@
       "max_episode_steps": 108000,
       "noop_max": 30,
       "num_envs": 128,
-      "render_final_two_only": true,
+      "render_final_two_only": false,
       "reset_only_when_needed": true,
       "stack_update": "concatenate",
       "sticky_action_probability": 0.25
@@ -74,10 +74,10 @@
       "warmup_keeps_initial_observation": true
     }
   },
-  "reference": {
+  "candidate": {
     "environment": {
       "batch_layout": "flat",
-      "cache_room_backgrounds": false,
+      "cache_room_backgrounds": true,
       "combine_palette_and_sprite_drawing": false,
       "episodic_life": true,
       "frame_skip": 4,
@@ -86,7 +86,7 @@
       "max_episode_steps": 108000,
       "noop_max": 30,
       "num_envs": 128,
-      "render_final_two_only": false,
+      "render_final_two_only": true,
       "reset_only_when_needed": true,
       "stack_update": "concatenate",
       "sticky_action_probability": 0.25

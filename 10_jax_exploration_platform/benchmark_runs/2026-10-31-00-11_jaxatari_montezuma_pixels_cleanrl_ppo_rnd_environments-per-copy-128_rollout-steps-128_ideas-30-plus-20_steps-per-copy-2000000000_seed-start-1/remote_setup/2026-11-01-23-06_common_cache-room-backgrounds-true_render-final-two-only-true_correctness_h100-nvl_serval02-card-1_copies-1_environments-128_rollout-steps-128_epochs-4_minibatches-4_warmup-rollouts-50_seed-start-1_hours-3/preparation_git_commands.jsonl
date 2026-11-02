@@ -1,0 +1,3 @@
+{"command": ["git", "-c", "core.hooksPath=/dev/null", "-C", "/p/rlprojects/RND_worktrees/atari-direct-backend-package-helpers-0a880984b4a0", "rev-parse", "HEAD"], "returncode": 0, "stderr": "", "stdout": "0a880984b4a03a2ff7335337cc18576628bc9fc1\n"}
+{"command": ["git", "-c", "core.hooksPath=/dev/null", "-C", "/p/rlprojects/RND_worktrees/atari-direct-backend-package-helpers-0a880984b4a0", "status", "--porcelain", "--untracked-files=all"], "returncode": 0, "stderr": "", "stdout": ""}
+{"command": ["git", "-c", "core.hooksPath=/dev/null", "-C", "/p/rlprojects/RND_worktrees/atari-direct-backend-package-helpers-0a880984b4a0", "symbolic-ref", "--quiet", "HEAD"], "returncode": 1, "stderr": "", "stdout": ""}

@@ -1,0 +1,53 @@
+test_boolean_copy_count (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_environment_count (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_original_source (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_reference (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_runtime (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_total_horizon (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_changed_warmup (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_confirmation_mode (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_exact_original_plus_two_flags (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_extra_environment_change (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_extra_helper (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_guard_source_cannot_replace_qualified_source (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_missing_cache_change (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_other_copy_count (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_other_physical_selector (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_seed_substitution (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_timing_requested (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_wrong_data_unit (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_wrong_packet (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_wrong_round_protocol (reviewed_correctness_preparation_tests_1.ConfigurationContractTests) ... ok
+test_boolean_copy_count (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_environment_count (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_original_source (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_reference (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_runtime (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_total_horizon (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_changed_warmup (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_confirmation_mode (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_exact_original_plus_two_flags (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_extra_environment_change (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_extra_helper (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_guard_source_cannot_replace_qualified_source (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_missing_cache_change (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_other_copy_count (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_other_physical_selector (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_seed_substitution (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_timing_requested (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_wrong_data_unit (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_wrong_packet (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_wrong_round_protocol (reviewed_correctness_preparation_tests_2.ConfigurationContractTests) ... ok
+test_actual_accepted_original_plan_matches_both_requested_arms (__main__.AdditionalIndependentChecks) ... ok
+test_actual_all_five_initial_records_and_archives_match (__main__.AdditionalIndependentChecks) ... ok
+test_changed_qualified_python_is_refused (__main__.AdditionalIndependentChecks) ... ok
+test_changed_qualified_source_path_is_refused (__main__.AdditionalIndependentChecks) ... ok
+test_original_stale_packet_versions_are_preserved (__main__.AdditionalIndependentChecks) ... ok
+test_private_helper_path_cannot_be_substituted (__main__.AdditionalIndependentChecks) ... ok
+test_serial_predecessors_and_unresolved_launch_are_explicit (__main__.AdditionalIndependentChecks) ... ok
+test_stage_is_prior_proven_source_plus_only_current_namespace_guard (__main__.AdditionalIndependentChecks) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 0.126s
+
+OK

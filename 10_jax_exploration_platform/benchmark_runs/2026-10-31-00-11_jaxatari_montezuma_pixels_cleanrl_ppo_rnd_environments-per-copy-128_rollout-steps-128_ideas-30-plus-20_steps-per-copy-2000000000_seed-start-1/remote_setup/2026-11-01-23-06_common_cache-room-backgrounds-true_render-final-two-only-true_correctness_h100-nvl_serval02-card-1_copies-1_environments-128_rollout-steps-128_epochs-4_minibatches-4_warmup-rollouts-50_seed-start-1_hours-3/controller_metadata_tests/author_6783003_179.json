@@ -1,0 +1,2924 @@
+{
+  "actual_affinity": [
+    9
+  ],
+  "actual_cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_179/user/task_0\n",
+  "actual_direct_contact": false,
+  "actual_hostname": "heartpiece",
+  "actual_pid": 832781,
+  "actual_process_start_time": "56097965",
+  "actual_raw_stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9295 37722 0 0 94 27 119 17 20 0 1 0 56097965 55296000 8946 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+  "actual_target_process_started": false,
+  "actual_uid_line": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+  "admission_granted": false,
+  "at_utc": "2026-11-02T07:50:59.066179+00:00",
+  "case_credit": 0,
+  "elapsed_seconds": 4.129623775021173,
+  "errors": [],
+  "failures": [],
+  "gpu_or_standing_lock_access": false,
+  "idea_credit": 0,
+  "job_id": "6783003",
+  "kind": "unbound_direct_common_correctness_controller_metadata_author_verification",
+  "no_actual_gpu_qualification": true,
+  "numerical_modules_loaded": [],
+  "original_inputs_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/bind_controller_after_preparation.py": "361fd8b92c3bdcc45eb4eb83682b75d54db93ba3aa1a7bb5a801c764f2a2ae45",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/direct_qualification_controller.py": "08abeca4458ff89d5080ac65d49e57c85d7e59662d953345a1a07937f02d0569",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/preparation_request.json": "f6843f5e60e62ab539cf4e4b0f5a605452e4b448f000b56530e3f5a8e511be0f",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/run_direct_controller_metadata_tests.py": "98969c515f53253cec41d062003806baa951c4364e1b0af6677a598f3195aa2b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/test_direct_qualification_controller.py": "f20db49ad258a590fd2be2e70e406f7a2ccd44bda523bc5f865b89645c51614c"
+  },
+  "original_inputs_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/bind_controller_after_preparation.py": "361fd8b92c3bdcc45eb4eb83682b75d54db93ba3aa1a7bb5a801c764f2a2ae45",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/direct_qualification_controller.py": "08abeca4458ff89d5080ac65d49e57c85d7e59662d953345a1a07937f02d0569",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/preparation_request.json": "f6843f5e60e62ab539cf4e4b0f5a605452e4b448f000b56530e3f5a8e511be0f",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/run_direct_controller_metadata_tests.py": "98969c515f53253cec41d062003806baa951c4364e1b0af6677a598f3195aa2b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/test_direct_qualification_controller.py": "f20db49ad258a590fd2be2e70e406f7a2ccd44bda523bc5f865b89645c51614c"
+  },
+  "original_packet_freeze_sha256": "30b8f9d2024c05c24e5d71e7e9f8cdb2af0a504ccb3716fca10e4d968ae64d1f",
+  "passed": true,
+  "private_child_actions": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+        "--prepared-unit",
+        "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+      ],
+      "cwd": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture",
+      "kind": "private_cpu_metadata_child"
+    }
+  ],
+  "private_cpu_fixtures": [
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832782,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:54.945074+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "actual child parent, argv or inherited CPU affinity differs",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ValueError",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:54.942184+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:54.942150+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 7229 0 0 0 22 4 0 0 20 0 1 0 56097965 36876288 6697 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "0437a84f701a48791372fb5afcda38d6b1b68f7eedd661e31f4c533ee51a7c1e",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "e80e1b8699becf59e0fb741c0b66ef3375558e45d44ca4b90c1b6acfe1321d29"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "at_utc": "2026-11-02T07:50:54.945074+00:00",
+            "error": "actual child parent, argv or inherited CPU affinity differs",
+            "type": "ValueError"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "b10a836a2355e054abb884d9dd5926f98a583136903ae47215505684f8e3765b"
+          },
+          "worker_admitted": false
+        },
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:55.060012+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return",
+          "pid": 832782,
+          "process_start_time": "56098000",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 13,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832782,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 7235 3050 0 0 22 4 7 1 20 0 1 0 56097965 36876288 6697 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "a2f36e910328cc8669929e672d19c7f1c0276ca355e3b3a6bdffb062076fe9d2",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 7229 0 0 0 22 4 0 0 20 0 1 0 56097965 36876288 6697 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "0437a84f701a48791372fb5afcda38d6b1b68f7eedd661e31f4c533ee51a7c1e",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_guard_failure.json": {
+          "error": "[Errno 2] No such file or directory: '/tmp/direct-controller-private-cpu-9jw1d4he/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+          "type": "FileNotFoundError"
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "at_utc": "2026-11-02T07:50:54.945074+00:00",
+          "error": "actual child parent, argv or inherited CPU affinity differs",
+          "type": "ValueError"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_changed_observed_child_argv_never_publishes_launch"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832783,
+          "actual_wait_saved": false,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.129266+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "synthetic missing kernel observation",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ValueError",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.126225+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.126196+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8228 3050 0 0 27 5 7 1 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "6aea87f8d0b2a683493c1931a6c9c8481269bd38b68e11d10b3c7edbca75cbc9",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "e267d903443b8a887a087ff4551e1d02674668aa5649a8534236c210d229be12"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": false,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "at_utc": "2026-11-02T07:50:55.129266+00:00",
+            "error": "synthetic missing kernel observation",
+            "type": "ValueError"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_unidentified_wait.json": {
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.243589+00:00",
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_popen_wait_without_complete_identity",
+          "pid": 832783,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 13,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "synthetic_guard_failure.json": {
+          "error": "[Errno 2] No such file or directory: '/tmp/direct-controller-private-cpu-5_26bg6v/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+          "type": "FileNotFoundError"
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": false,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "at_utc": "2026-11-02T07:50:55.129266+00:00",
+          "error": "synthetic missing kernel observation",
+          "type": "ValueError"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_incomplete_actual_child_identity_still_gets_true_wait_without_terminal"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832784,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.260420+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "[Errno 17] File exists: '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json.prepared' -> '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "FileExistsError",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.253414+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.253384+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8228 6094 0 0 28 5 14 4 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "965e57b50ca2247cd1a64364606145d15776bbe61c27daacbba8fc916ec8d926",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "aaf0ac543a71fd058cdf702399c96dbe064eefa0a4309599046f3ac0a276e8e1"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "at_utc": "2026-11-02T07:50:55.260420+00:00",
+            "error": "[Errno 17] File exists: '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json.prepared' -> '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+            "type": "FileExistsError"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "c5dc9de961bd75f0cbc147e5687a5d1783bad67d14e370899f249fa49c66a6e2"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.256073+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8228 6094 0 0 28 5 14 4 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "965e57b50ca2247cd1a64364606145d15776bbe61c27daacbba8fc916ec8d926",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d35617968366278332f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d35617968366278332f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "07df9739a7d4b09d743508d5395c3722f7de3c5e40e16959124ebe2512dd7fd0",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.255831+00:00",
+            "parent_pid": 832781,
+            "pid": 832784,
+            "process_start_time": "56098031",
+            "stat": "832784 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098031 6627328 1 536870912 94902427881472 94902430717773 140728437482128 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94902433089552 94902433373688 94902641004544 140728437489361 140728437489575 140728437489575 140728437489639 0\n",
+            "stat_sha256": "b76a2142c32a0f74129969ad86228e49b4b790f874af85cedf80459b5c6d418f",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832784,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:55.255848+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:55.255012+00:00",
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "deliberately_non_json_raw_hex": "666f726569676e2073796e746865746963206279746573",
+          "sha256": "b0688f54255edefabdcee9add9c92f7fde5aaeccac1906ca1c1c36dab6fa6239"
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832784,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-5ayh6bx3/synthetic-source",
+            "start_time": "56098031",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:55.425174+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return",
+          "pid": 832784,
+          "process_start_time": "56098031",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 13,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832784,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8228 10147 0 0 28 5 25 7 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "ea1bea140be3e60b55c516731461ac54453f70580f92a1444281784e9f6d6f94",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8228 6094 0 0 28 5 14 4 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "965e57b50ca2247cd1a64364606145d15776bbe61c27daacbba8fc916ec8d926",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_guard_failure.json": {
+          "error": "Expecting value: line 1 column 1 (char 0)",
+          "type": "JSONDecodeError"
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "at_utc": "2026-11-02T07:50:55.260420+00:00",
+          "error": "[Errno 17] File exists: '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json.prepared' -> '/tmp/direct-controller-private-cpu-5ayh6bx3/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+          "type": "FileExistsError"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_late_launch_collision_preserves_existing_bytes_and_no_terminal"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832785,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:56.042310+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "actual child exited or changed before durable registration",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ValueError",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:55.436464+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.436434+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 10147 0 0 29 6 25 7 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "b208afc0d04cb38cee1a51d01179f82d25349e53907d476c754e139797740269",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "b64b6f055f2fe17f3947fecd5ecaad5e41e9d33465e0a0cd933f97696468d43d"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "at_utc": "2026-11-02T07:50:56.042310+00:00",
+            "error": "actual child exited or changed before durable registration",
+            "type": "ValueError"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "9a0d86350971e5210aeaf2c926dbc25070276785b8f6339af487d4c5c0cd538f"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.439180+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 10147 0 0 29 6 25 7 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "b208afc0d04cb38cee1a51d01179f82d25349e53907d476c754e139797740269",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a6c7264696b69642f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a6c7264696b69642f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "6f6c9a7c80ad88cf69a8dee4db19bc21e4068b084aac061d3bc46cf3adef232f",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:55.438915+00:00",
+            "parent_pid": 832781,
+            "pid": 832785,
+            "process_start_time": "56098050",
+            "stat": "832785 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098050 6627328 1 536870912 94918736859136 94918739695437 140736666412096 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94918742067216 94918742351352 94919431831552 140736666414801 140736666415015 140736666415015 140736666415079 0\n",
+            "stat_sha256": "6c536e8a8f340f0e1459a27be11c0fda152ae1ddbbf0a11d5823e252402d9dda",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832785,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:55.438935+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:55.438047+00:00",
+          "worker_admitted": false
+        },
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:56.043286+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return",
+          "pid": 832785,
+          "process_start_time": "56098050",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 13,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832785,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 13192 0 0 29 6 33 8 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "8612fd68301562217d802a858e069d5b97e3da9f58c92ecc0a7594dc507fca4d",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 10147 0 0 29 6 25 7 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "b208afc0d04cb38cee1a51d01179f82d25349e53907d476c754e139797740269",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_guard_failure.json": {
+          "error": "[Errno 2] No such file or directory: '/tmp/direct-controller-private-cpu-jlrdikid/campaign/data/private-cpu-fixture/direct_current_launch.json'",
+          "type": "FileNotFoundError"
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "at_utc": "2026-11-02T07:50:56.042310+00:00",
+          "error": "actual child exited or changed before durable registration",
+          "type": "ValueError"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_missing_launch_record_is_rejected_before_synthetic_compute_marker"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:56.059739+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.059708+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 13192 0 0 30 6 33 8 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "75c099b31b5bcf88ddb958fcc35549bbee2d55a0993715401590ea174c625920",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "3290c115d5a03ad7e3eb27aad86a8594885dcae39371215253eaa3f7c6d9aa73"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": null,
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "c14772af67d3e237d82c8129d2dead0a60a01e852b9cfceeee085b49624b8dae"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.062779+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 13192 0 0 30 6 33 8 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "75c099b31b5bcf88ddb958fcc35549bbee2d55a0993715401590ea174c625920",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6f67336f646c6d6d2f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6f67336f646c6d6d2f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "9fd8843fe49441fac524147324fd2f06fb82249a5777727253c13b904e535208",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.062499+00:00",
+            "parent_pid": 832781,
+            "pid": 832787,
+            "process_start_time": "56098112",
+            "stat": "832787 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098112 6627328 1 536870912 94787233476608 94787236312909 140725228953824 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94787238684688 94787238968824 94788104126464 140725228961489 140725228961703 140725228961703 140725228961767 0\n",
+            "stat_sha256": "1e2657acd6216c4aa18befe62140aeaa82fbb71c57d398b86474531c39072530",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832787,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:56.062519+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:56.061585+00:00",
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "kind": "serval02_card1_current_launch",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "3290c115d5a03ad7e3eb27aad86a8594885dcae39371215253eaa3f7c6d9aa73"
+          },
+          "process_ledger": {
+            "snapshot": {
+              "path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/direct_current_process_ledger_snapshot.json",
+              "sha256": "1d71ac9d90b2dbed1512f1b7042a96267fba57dda8afe6f04f16f7f620f06e72"
+            },
+            "source_path": "/tmp/direct-controller-private-cpu-og3odlmm/campaign/processes.json"
+          },
+          "process_row": {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832787,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-og3odlmm/synthetic-source",
+            "start_time": "56098112",
+            "unit": "private-cpu-fixture"
+          },
+          "schema_version": 1
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832787,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-og3odlmm/synthetic-source",
+            "start_time": "56098112",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-og3odlmm/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:56.332886+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return",
+          "pid": 832787,
+          "process_start_time": "56098112",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 7,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832787,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 18306 0 0 31 6 52 9 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "c7fdc02fa02ad6629425de1b0cb83c07579548ab1e133a4fb33f07ddcd624bf6",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8229 13192 0 0 30 6 33 8 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "75c099b31b5bcf88ddb958fcc35549bbee2d55a0993715401590ea174c625920",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_compute_allowed.json": {
+          "actual_affinity": [
+            9
+          ],
+          "actual_pid": 832787,
+          "fixture_host_label_is_synthetic": true,
+          "numerical_work": false,
+          "protected_launch_reader_passed": true
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": null,
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_nonzero_ordinary_child_exit_retains_wait_and_never_terminal_success"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832788,
+          "actual_returncode": -15,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:57.026985+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ControllerTimeoutOrWaitFailure",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:56.506598+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.506566+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 18306 0 0 43 10 52 9 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "72894d6b263352f802681137af6f11b35e2a03f24383ba89e0ed1afe5daa3896",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "bbb1b7d93afe444e5723c0c1048df6c57615f0b3193f2f37d849b0300bce1d31"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "actual_returncode": -15,
+            "at_utc": "2026-11-02T07:50:57.026985+00:00",
+            "error": "the child did not complete within an uninterrupted exact controller wait",
+            "type": "ControllerTimeoutOrWaitFailure"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "5516ef3e756493ed458e7202147071fa8c9523cab5223395fbd5801016654df1"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.509653+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 18306 0 0 43 10 52 9 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "72894d6b263352f802681137af6f11b35e2a03f24383ba89e0ed1afe5daa3896",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "323313ffb324e65e7192e3658ffe9cfc0b9a3622bce5406b4de8b8a384295764",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:56.509404+00:00",
+            "parent_pid": 832781,
+            "pid": 832788,
+            "process_start_time": "56098157",
+            "stat": "832788 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098157 6627328 1 536870912 94653192503296 94653195339597 140735446421584 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94653197711376 94653197995512 94654075359232 140735446425297 140735446425511 140735446425511 140735446425575 0\n",
+            "stat_sha256": "7eeeb03b1edba263c8c5c2b6070a3320cbed8f55f393ecfe1ce16c2369d2254d",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832788,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:56.509422+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:56.508532+00:00",
+          "worker_admitted": false
+        },
+        "direct_controller_timeout_observation.json": {
+          "actual_exited_normally": false,
+          "actual_returncode": -15,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "direct_child_interrupted_controller_wait",
+          "ordinary_successful_terminal_proof_allowed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:57.016259+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "323313ffb324e65e7192e3658ffe9cfc0b9a3622bce5406b4de8b8a384295764",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:57.016205+00:00",
+                "parent_pid": 832781,
+                "pid": 832788,
+                "process_start_time": "56098157",
+                "stat": "832788 (python3) S 832781 832781 832774 0 -1 4194304 5101 0 0 0 15 1 0 0 20 0 1 0 56098157 46063616 6753 536870912 94653192503296 94653195339597 140735446421584 0 0 0 0 16781312 2 1 0 0 17 9 0 0 0 0 0 94653197711376 94653197995512 94654075359232 140735446425297 140735446425511 140735446425511 140735446425575 0\n",
+                "stat_sha256": "74dde5c242fbf60a8520e8f1e2d1853db86f07bbd25454998f8c9150be64f43e",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "5516ef3e756493ed458e7202147071fa8c9523cab5223395fbd5801016654df1"
+          },
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "kind": "serval02_card1_current_launch",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "bbb1b7d93afe444e5723c0c1048df6c57615f0b3193f2f37d849b0300bce1d31"
+          },
+          "process_ledger": {
+            "snapshot": {
+              "path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/direct_current_process_ledger_snapshot.json",
+              "sha256": "84140a6e41b7e66970d4eaff610092d5ae25a5d04a82286ae70e2bdae54b5297"
+            },
+            "source_path": "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/processes.json"
+          },
+          "process_row": {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832788,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-1zbidzzk/synthetic-source",
+            "start_time": "56098157",
+            "unit": "private-cpu-fixture"
+          },
+          "schema_version": 1
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832788,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-1zbidzzk/synthetic-source",
+            "start_time": "56098157",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": false,
+          "finished_at_utc": "2026-11-02T07:50:57.027773+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return_after_controller_intervention",
+          "pid": 832788,
+          "process_start_time": "56098157",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": -15,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:57.016259+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-1zbidzzk/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d317a6269647a7a6b2f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "323313ffb324e65e7192e3658ffe9cfc0b9a3622bce5406b4de8b8a384295764",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:57.016205+00:00",
+                "parent_pid": 832781,
+                "pid": 832788,
+                "process_start_time": "56098157",
+                "stat": "832788 (python3) S 832781 832781 832774 0 -1 4194304 5101 0 0 0 15 1 0 0 20 0 1 0 56098157 46063616 6753 536870912 94653192503296 94653195339597 140735446421584 0 0 0 0 16781312 2 1 0 0 17 9 0 0 0 0 0 94653197711376 94653197995512 94654075359232 140735446425297 140735446425511 140735446425511 140735446425575 0\n",
+                "stat_sha256": "74dde5c242fbf60a8520e8f1e2d1853db86f07bbd25454998f8c9150be64f43e",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832788,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 23407 0 0 44 10 67 11 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "ad6846484d84ada93026a7bb7a8649754ce84a94d2911bac3b4b1fbd1ae5e1f4",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 18306 0 0 43 10 52 9 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "72894d6b263352f802681137af6f11b35e2a03f24383ba89e0ed1afe5daa3896",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_compute_allowed.json": {
+          "actual_affinity": [
+            9
+          ],
+          "actual_pid": 832788,
+          "fixture_host_label_is_synthetic": true,
+          "numerical_work": false,
+          "protected_launch_reader_passed": true
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "actual_returncode": -15,
+          "at_utc": "2026-11-02T07:50:57.026985+00:00",
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "type": "ControllerTimeoutOrWaitFailure"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_own_timeout_signals_only_observed_child_and_retains_signal_exit"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": null,
+          "actual_wait_saved": false,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:57.045869+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "private synthetic spawn failure",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "OSError",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:57.043984+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-9_pbc1m3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-9_pbc1m3/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.043952+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 23407 0 0 44 11 67 11 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "7f55ac55a0586209e23bedbc55746157a625555a9797b7ccdf206f37a1298fcc",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-9_pbc1m3/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "1ab44d45d5dadfa7c0a1a535eedf5e690eefa670ea02666f16e3820d4a72ab6f"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": false,
+          "actual_wait_saved": false,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "at_utc": "2026-11-02T07:50:57.045869+00:00",
+            "error": "private synthetic spawn failure",
+            "type": "OSError"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": false,
+        "actual_wait_saved": false,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "at_utc": "2026-11-02T07:50:57.045869+00:00",
+          "error": "private synthetic spawn failure",
+          "type": "OSError"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_popen_failure_keeps_attempt_failure_and_restores_affinity"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:57.055338+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.055311+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 23407 0 0 45 11 67 11 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "07b5fc430aafe394c47eb4f86867a5d78c4ba6f29b2d0e35488a2980e0cdbff4",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "4c7bc6fcc2c7fabce95df32251d203c7e297550d60e556284e4899dec0f879e6"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": null,
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": true,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "1b4b4ad37c2c0fcb9bc66c27a57d3c0885df3b3e122e1083d13d6b9f0270e6e8"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.058022+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 23407 0 0 45 11 67 11 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "07b5fc430aafe394c47eb4f86867a5d78c4ba6f29b2d0e35488a2980e0cdbff4",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6f3036636a74346e2f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6f3036636a74346e2f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "f87b7268d46f78294577962aa7a2c119fb0565881d8a26e3b24b1339dcfbd146",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.057774+00:00",
+            "parent_pid": 832781,
+            "pid": 832789,
+            "process_start_time": "56098212",
+            "stat": "832789 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098212 6627328 1 536870912 94515476987904 94515479824205 140722257014960 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94515482195984 94515482480120 94516480880640 140722257018577 140722257018791 140722257018791 140722257018855 0\n",
+            "stat_sha256": "f17760100c31d9dd42bbc0afe2b3284c598137b3862594dfd7962b7434bfb089",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832789,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:57.057791+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:57.056951+00:00",
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "kind": "serval02_card1_current_launch",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "4c7bc6fcc2c7fabce95df32251d203c7e297550d60e556284e4899dec0f879e6"
+          },
+          "process_ledger": {
+            "snapshot": {
+              "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_current_process_ledger_snapshot.json",
+              "sha256": "e51d3bd5965ede4bc197a3f958fd696c43080ab7bf18684cfd32a3f0c1c01ad4"
+            },
+            "source_path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/processes.json"
+          },
+          "process_row": {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832789,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-o06cjt4n/synthetic-source",
+            "start_time": "56098212",
+            "unit": "private-cpu-fixture"
+          },
+          "schema_version": 1
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832789,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-o06cjt4n/synthetic-source",
+            "start_time": "56098212",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:57.328251+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return",
+          "pid": 832789,
+          "process_start_time": "56098212",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 0,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832789,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 28523 0 0 45 11 85 12 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "f24cfe7b3b3a0438eddc396700c0ca7833367679aaca77e6057a9bd5d048ae06",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 8230 23407 0 0 45 11 67 11 20 0 1 0 56097965 49303552 7701 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "07b5fc430aafe394c47eb4f86867a5d78c4ba6f29b2d0e35488a2980e0cdbff4",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "direct_terminal_process.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "direct_serval02_card1_terminal_process",
+          "launch": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_current_launch.json",
+            "sha256": "93b6db37b7fb8cac3b9a27eb437684094cc32120c0d9e5d0a2ca00c8e568f27e"
+          },
+          "pid": 832789,
+          "process_start_time": "56098212",
+          "producer_owns_gpu_standing_descriptor": true,
+          "return_record": {
+            "path": "/tmp/direct-controller-private-cpu-o06cjt4n/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "1b4b4ad37c2c0fcb9bc66c27a57d3c0885df3b3e122e1083d13d6b9f0270e6e8"
+          },
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "uid": 2618919,
+          "worker_admitted": false
+        },
+        "synthetic_compute_allowed.json": {
+          "actual_affinity": [
+            9
+          ],
+          "actual_pid": 832789,
+          "fixture_host_label_is_synthetic": true,
+          "numerical_work": false,
+          "protected_launch_reader_passed": true
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": null,
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": true,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832790,
+          "actual_returncode": 0,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:58.002652+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ControllerTimeoutOrWaitFailure",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:57.461715+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.461685+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9117 28523 0 0 56 13 85 12 20 0 1 0 56097965 55140352 8748 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "8ac77a6f6dc52b9d27f48b276b6a053808bdc6fbad137e5912630f688f739f6a",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "7c4d094719b74249ff8510dd1b265f758713383ca1898eb262e3913b0865ca6e"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "actual_returncode": 0,
+            "at_utc": "2026-11-02T07:50:58.002652+00:00",
+            "error": "the child did not complete within an uninterrupted exact controller wait",
+            "type": "ControllerTimeoutOrWaitFailure"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "6165f9fe7a578495f13aafe425fefb9be137cee9cdbfd2a008fe18b74640622b"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.464571+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9117 28523 0 0 56 13 85 12 20 0 1 0 56097965 55140352 8748 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "8ac77a6f6dc52b9d27f48b276b6a053808bdc6fbad137e5912630f688f739f6a",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "d69c47cff64e8f0bd6346b6a018db87bfb2ef201d67e18cf841cb785ea1e3bbb",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:57.464324+00:00",
+            "parent_pid": 832781,
+            "pid": 832790,
+            "process_start_time": "56098252",
+            "stat": "832790 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098252 6627328 1 536870912 93863633317888 93863636154189 140736417674080 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 93863638525968 93863638810104 93864399011840 140736417681105 140736417681319 140736417681319 140736417681383 0\n",
+            "stat_sha256": "33552095424c99ab0951fe38e8a2d6862804d2260416446ccb0dc5bff85d5416",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832790,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:57.464341+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:57.463486+00:00",
+          "worker_admitted": false
+        },
+        "direct_controller_timeout_observation.json": {
+          "actual_exited_normally": true,
+          "actual_returncode": 0,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "direct_child_interrupted_controller_wait",
+          "ordinary_successful_terminal_proof_allowed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:57.970859+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "d69c47cff64e8f0bd6346b6a018db87bfb2ef201d67e18cf841cb785ea1e3bbb",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:57.970802+00:00",
+                "parent_pid": 832781,
+                "pid": 832790,
+                "process_start_time": "56098252",
+                "stat": "832790 (python3) S 832781 832781 832774 0 -1 4194304 4593 0 0 0 14 2 0 0 20 0 1 0 56098252 46215168 6743 536870912 93863633317888 93863636154189 140736417674080 0 0 0 0 16781312 16386 1 0 0 17 9 0 0 0 0 0 93863638525968 93863638810104 93864399011840 140736417681105 140736417681319 140736417681319 140736417681383 0\n",
+                "stat_sha256": "d51c720ad0b4ac2aa9da84fa6fad2e4184fb08e4affa9bbf76864b59dc2f8cca",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "6165f9fe7a578495f13aafe425fefb9be137cee9cdbfd2a008fe18b74640622b"
+          },
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "kind": "serval02_card1_current_launch",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "7c4d094719b74249ff8510dd1b265f758713383ca1898eb262e3913b0865ca6e"
+          },
+          "process_ledger": {
+            "snapshot": {
+              "path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/direct_current_process_ledger_snapshot.json",
+              "sha256": "70f8dd2e5a672693d496b83c76f160db31349fe8b8b5ecbe5fefa28d5feed41a"
+            },
+            "source_path": "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/processes.json"
+          },
+          "process_row": {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832790,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-kqy0w25e/synthetic-source",
+            "start_time": "56098252",
+            "unit": "private-cpu-fixture"
+          },
+          "schema_version": 1
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832790,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-kqy0w25e/synthetic-source",
+            "start_time": "56098252",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:58.003255+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return_after_controller_intervention",
+          "pid": 832790,
+          "process_start_time": "56098252",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 0,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:57.970859+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-kqy0w25e/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6b717930773235652f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "d69c47cff64e8f0bd6346b6a018db87bfb2ef201d67e18cf841cb785ea1e3bbb",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:57.970802+00:00",
+                "parent_pid": 832781,
+                "pid": 832790,
+                "process_start_time": "56098252",
+                "stat": "832790 (python3) S 832781 832781 832774 0 -1 4194304 4593 0 0 0 14 2 0 0 20 0 1 0 56098252 46215168 6743 536870912 93863633317888 93863636154189 140736417674080 0 0 0 0 16781312 16386 1 0 0 17 9 0 0 0 0 0 93863638525968 93863638810104 93864399011840 140736417681105 140736417681319 140736417681319 140736417681383 0\n",
+                "stat_sha256": "d51c720ad0b4ac2aa9da84fa6fad2e4184fb08e4affa9bbf76864b59dc2f8cca",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832790,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9117 33124 0 0 57 13 101 15 20 0 1 0 56097965 55140352 8748 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "79ea43aedea1dbd055972545111de296a667afb6e67469998ba5315ce316f425",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9117 28523 0 0 56 13 85 12 20 0 1 0 56097965 55140352 8748 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "8ac77a6f6dc52b9d27f48b276b6a053808bdc6fbad137e5912630f688f739f6a",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_compute_allowed.json": {
+          "actual_affinity": [
+            9
+          ],
+          "actual_pid": 832790,
+          "fixture_host_label_is_synthetic": true,
+          "numerical_work": false,
+          "protected_launch_reader_passed": true
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "actual_returncode": 0,
+          "at_utc": "2026-11-02T07:50:58.002652+00:00",
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "type": "ControllerTimeoutOrWaitFailure"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader"
+    },
+    {
+      "actual_test_host": "heartpiece",
+      "files": {
+        "direct_controller_failure.json": {
+          "actual_child_pid": 832792,
+          "actual_returncode": 0,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:58.635395+00:00",
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_failure",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "type": "ControllerTimeoutOrWaitFailure",
+          "worker_admitted": false
+        },
+        "direct_controller_intent.json": {
+          "actual_child_pid": null,
+          "admission_granted": false,
+          "at_utc": "2026-11-02T07:50:58.094518+00:00",
+          "available_cpu_affinity": [
+            9
+          ],
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:58.094489+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9294 33124 0 0 65 13 101 15 20 0 1 0 56097965 55296000 8946 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "f9695eb14da9795de84386e12ee1d39f48c6ca56d395f175cb8e5aafe6fae11d",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "intended_environment": {
+            "PATH": "/usr/bin:/bin",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1"
+          },
+          "kind": "one_direct_qualification_controller_attempt",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "6a5e8fc9a6be5961f418dca49638c07d7109a8a97e3ae45eefeea2c609a76c13"
+          },
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "selected_cpu_affinity": [
+            9
+          ],
+          "slurm_cpu_allocation_claimed": false,
+          "worker_admitted": false
+        },
+        "direct_controller_outcome.json": {
+          "actual_child_started": true,
+          "actual_wait_saved": true,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "failure": {
+            "actual_returncode": 0,
+            "at_utc": "2026-11-02T07:50:58.635395+00:00",
+            "error": "the child did not complete within an uninterrupted exact controller wait",
+            "type": "ControllerTimeoutOrWaitFailure"
+          },
+          "idea_credit": 0,
+          "kind": "direct_qualification_controller_outcome",
+          "passed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "qualification_independently_verified": false,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "worker_admitted": false
+        },
+        "direct_controller_output_hashes.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_child_output_hashes_after_wait",
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "stderr": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/direct_controller_stderr.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "stdout": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/direct_controller_stdout.raw",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size_bytes": 0
+          },
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "75e48378b888d6ad5fabdc11e78a4344fcd652f10e7593b977d574b6cdf07c06"
+          },
+          "worker_admitted": false
+        },
+        "direct_controller_spawn.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+          ],
+          "controller": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "-I",
+              "-S",
+              "-B",
+              "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/review_h100_correctness_controller_source_2026-11-02.py"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f72656d6f74655f73657475702f7265766965775f683130305f636f72726563746e6573735f636f6e74726f6c6c65725f736f757263655f323032362d31312d30322e707900",
+            "command_sha256": "f07df7065d8c5b990872ad32bd8fb5bceadc4ae06ba15646cfe0b4ae7a5c2685",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:58.097387+00:00",
+            "parent_pid": 832775,
+            "pid": 832781,
+            "process_start_time": "56097965",
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9294 33124 0 0 66 13 101 15 20 0 1 0 56097965 55296000 8946 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "b0f413d3bc711cdeb4566b71d3a41ab8f3463592ca8b95daf47c5ffcbd1dc072",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "controller_owns_gpu_standing_descriptor": false,
+          "cpu_affinity_is_exclusive": false,
+          "idea_credit": 0,
+          "kind": "actual_direct_qualification_popen_return",
+          "observed_child": {
+            "affinity": [
+              9
+            ],
+            "command": [
+              "/usr/bin/python3",
+              "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+              "--prepared-unit",
+              "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+            ],
+            "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+            "command_sha256": "848d4989ac97bebe353f56b1d492371b279fdd04d5eb7015e034fd7a5edf2a28",
+            "hostname": "heartpiece",
+            "observed_at_utc": "2026-11-02T07:50:58.097139+00:00",
+            "parent_pid": 832781,
+            "pid": 832792,
+            "process_start_time": "56098315",
+            "stat": "832792 (python3) R 832781 832781 832774 0 -1 4194304 4 0 0 0 0 0 0 0 20 0 1 0 56098315 6627328 1 536870912 94903937982464 94903940818765 140735440426512 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94903943190544 94903943474680 94904566255616 140735440428753 140735440428967 140735440428967 140735440429031 0\n",
+            "stat_sha256": "4f2caee5fc3776d44b18f35d47f7f3a214d422c55ef6b5378e7315ed41761df9",
+            "uid": 2618919,
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "popen_pid": 832792,
+          "producer_owns_gpu_standing_descriptor": true,
+          "returned_at_utc": "2026-11-02T07:50:58.097157+00:00",
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "slurm_cpu_allocation_claimed": false,
+          "started_at_utc": "2026-11-02T07:50:58.096276+00:00",
+          "worker_admitted": false
+        },
+        "direct_controller_timeout_observation.json": {
+          "actual_exited_normally": true,
+          "actual_returncode": 0,
+          "admission_granted": false,
+          "case_credit": 0,
+          "controller_owns_gpu_standing_descriptor": false,
+          "idea_credit": 0,
+          "kind": "direct_child_interrupted_controller_wait",
+          "ordinary_successful_terminal_proof_allowed": false,
+          "producer_owns_gpu_standing_descriptor": true,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:58.603600+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "848d4989ac97bebe353f56b1d492371b279fdd04d5eb7015e034fd7a5edf2a28",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:58.603546+00:00",
+                "parent_pid": 832781,
+                "pid": 832792,
+                "process_start_time": "56098315",
+                "stat": "832792 (python3) S 832781 832781 832774 0 -1 4194304 4591 0 0 0 15 1 0 0 20 0 1 0 56098315 46215168 6757 536870912 94903937982464 94903940818765 140735440426512 0 0 0 0 16781312 16386 1 0 0 17 9 0 0 0 0 0 94903943190544 94903943474680 94904566255616 140735440428753 140735440428967 140735440428967 140735440429031 0\n",
+                "stat_sha256": "b3abc67934d1f2d857c0a5ecb3ac71e180d241399dd3f45fc06729a6adc10952",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "wait": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/direct_process_wait_return.json",
+            "sha256": "75e48378b888d6ad5fabdc11e78a4344fcd652f10e7593b977d574b6cdf07c06"
+          },
+          "worker_admitted": false
+        },
+        "direct_current_launch.json": {
+          "kind": "serval02_card1_current_launch",
+          "plan": {
+            "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/measurement_plan.json",
+            "sha256": "6a5e8fc9a6be5961f418dca49638c07d7109a8a97e3ae45eefeea2c609a76c13"
+          },
+          "process_ledger": {
+            "snapshot": {
+              "path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/direct_current_process_ledger_snapshot.json",
+              "sha256": "3ab019599c647bea0cae45e70abb8029e0052b67352351808018a61f59bdd73d"
+            },
+            "source_path": "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/processes.json"
+          },
+          "process_row": {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832792,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-jgplb1l3/synthetic-source",
+            "start_time": "56098315",
+            "unit": "private-cpu-fixture"
+          },
+          "schema_version": 1
+        },
+        "direct_current_process_ledger_snapshot.json": [
+          {
+            "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+            "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+            "hostname": "serval02",
+            "kind": "selected_configuration_measurement",
+            "pid": 832792,
+            "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+            "source_root": "/tmp/direct-controller-private-cpu-jgplb1l3/synthetic-source",
+            "start_time": "56098315",
+            "unit": "private-cpu-fixture"
+          }
+        ],
+        "direct_process_wait_return.json": {
+          "admission_granted": false,
+          "case_credit": 0,
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+            "--prepared-unit",
+            "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+          ],
+          "controller_owns_gpu_standing_descriptor": false,
+          "exited_normally": true,
+          "finished_at_utc": "2026-11-02T07:50:58.635997+00:00",
+          "hostname": "serval02",
+          "idea_credit": 0,
+          "kind": "owned_direct_process_wait_return_after_controller_intervention",
+          "pid": 832792,
+          "process_start_time": "56098315",
+          "producer_owns_gpu_standing_descriptor": true,
+          "returncode": 0,
+          "schema_version": 1,
+          "scientific_credit": 0,
+          "timeouts": [
+            {
+              "at_utc": "2026-11-02T07:50:58.603600+00:00",
+              "observed_identity": {
+                "affinity": [
+                  9
+                ],
+                "command": [
+                  "/usr/bin/python3",
+                  "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture/code/measure_selected.py",
+                  "--prepared-unit",
+                  "/tmp/direct-controller-private-cpu-jgplb1l3/campaign/data/private-cpu-fixture"
+                ],
+                "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d666978747572652f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f746d702f6469726563742d636f6e74726f6c6c65722d707269766174652d6370752d6a67706c62316c332f63616d706169676e2f646174612f707269766174652d6370752d6669787475726500",
+                "command_sha256": "848d4989ac97bebe353f56b1d492371b279fdd04d5eb7015e034fd7a5edf2a28",
+                "hostname": "heartpiece",
+                "observed_at_utc": "2026-11-02T07:50:58.603546+00:00",
+                "parent_pid": 832781,
+                "pid": 832792,
+                "process_start_time": "56098315",
+                "stat": "832792 (python3) S 832781 832781 832774 0 -1 4194304 4591 0 0 0 15 1 0 0 20 0 1 0 56098315 46215168 6757 536870912 94903937982464 94903940818765 140735440426512 0 0 0 0 16781312 16386 1 0 0 17 9 0 0 0 0 0 94903943190544 94903943474680 94904566255616 140735440428753 140735440428967 140735440428967 140735440429031 0\n",
+                "stat_sha256": "b3abc67934d1f2d857c0a5ecb3ac71e180d241399dd3f45fc06729a6adc10952",
+                "uid": 2618919,
+                "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+                "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+              },
+              "signal": 15
+            }
+          ],
+          "uid": 2618919,
+          "wait_semantics": "Popen.wait on this exact spawned child",
+          "waited_pid": 832792,
+          "waiter_after": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9294 37722 0 0 66 13 119 17 20 0 1 0 56097965 55296000 8946 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "c4bedd54a3bd5ad2ed2b83ef99e266be4676f6ce330b50e6e50c162a13d49a4d",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "waiter_before": {
+            "pid": 832781,
+            "stat": "832781 (python3) R 832775 832781 832774 0 -1 4194560 9294 33124 0 0 65 13 101 15 20 0 1 0 56097965 55296000 8946 536870912 94585942753280 94585945589581 140736893652080 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94585947961360 94585948245496 94585987534848 140736893659200 140736893659545 140736893659545 140736893665255 0\n",
+            "stat_sha256": "f9695eb14da9795de84386e12ee1d39f48c6ca56d395f175cb8e5aafe6fae11d",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+          },
+          "worker_admitted": false
+        },
+        "synthetic_compute_allowed.json": {
+          "actual_affinity": [
+            9
+          ],
+          "actual_pid": 832792,
+          "fixture_host_label_is_synthetic": true,
+          "numerical_work": false,
+          "protected_launch_reader_passed": true
+        }
+      },
+      "fixture_serval02_label_is_synthetic": true,
+      "no_actual_gpu_qualification": true,
+      "outcome": {
+        "actual_child_started": true,
+        "actual_wait_saved": true,
+        "admission_granted": false,
+        "case_credit": 0,
+        "controller_owns_gpu_standing_descriptor": false,
+        "failure": {
+          "actual_returncode": 0,
+          "at_utc": "2026-11-02T07:50:58.635395+00:00",
+          "error": "the child did not complete within an uninterrupted exact controller wait",
+          "type": "ControllerTimeoutOrWaitFailure"
+        },
+        "idea_credit": 0,
+        "kind": "direct_qualification_controller_outcome",
+        "passed": false,
+        "producer_owns_gpu_standing_descriptor": true,
+        "qualification_independently_verified": false,
+        "schema_version": 1,
+        "scientific_credit": 0,
+        "worker_admitted": false
+      },
+      "stderr": "",
+      "stdout": "",
+      "test": "direct_controller_regression.ControllerTests.test_timeout_with_handler_returning_zero_keeps_true_zero_and_refuses_terminal_success"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_after": {
+    "bind_controller_after_preparation.py": "361fd8b92c3bdcc45eb4eb83682b75d54db93ba3aa1a7bb5a801c764f2a2ae45",
+    "direct_qualification_controller.py": "08abeca4458ff89d5080ac65d49e57c85d7e59662d953345a1a07937f02d0569",
+    "run_unbound_controller_metadata_tests.py": "8036e5d6a1dd0d3c0da4d65106530f5956a97cc470290b7c15609b05cf851bed",
+    "test_direct_qualification_controller.py": "f20db49ad258a590fd2be2e70e406f7a2ccd44bda523bc5f865b89645c51614c"
+  },
+  "source_before": {
+    "bind_controller_after_preparation.py": "361fd8b92c3bdcc45eb4eb83682b75d54db93ba3aa1a7bb5a801c764f2a2ae45",
+    "direct_qualification_controller.py": "08abeca4458ff89d5080ac65d49e57c85d7e59662d953345a1a07937f02d0569",
+    "run_unbound_controller_metadata_tests.py": "8036e5d6a1dd0d3c0da4d65106530f5956a97cc470290b7c15609b05cf851bed",
+    "test_direct_qualification_controller.py": "f20db49ad258a590fd2be2e70e406f7a2ccd44bda523bc5f865b89645c51614c"
+  },
+  "step_id": "179",
+  "tests_run": 58,
+  "worker_admitted": false
+}

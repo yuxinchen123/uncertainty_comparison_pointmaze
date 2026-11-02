@@ -1,0 +1,45 @@
+{
+  "actual_bound_author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_metadata_tests/author_6783003_181.json",
+    "sha256": "6b7937063984e8955adf41e605eb52ea5eb5b15968317ae49e4e629ecf753dd4"
+  },
+  "actual_controller_pid": null,
+  "actual_numerical_child_pid": null,
+  "actual_source_author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_metadata_tests/author_6783003_175.json",
+    "sha256": "a290ad256ca7e6697d496b8acdf9ee451a938d7046ee9d1870b8257faad7df08"
+  },
+  "at_utc": "2026-11-02T07:59:52.049556+00:00",
+  "case_credit": 0,
+  "controller_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_source_freeze.json",
+    "sha256": "ba541214226ace93229eb1c6eaf9d603a191136cab00cd76d214190b8a54c61c"
+  },
+  "controller_owns_gpu_standing_descriptor": false,
+  "idea_credit": 0,
+  "independent_bound_inputs_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_copy1_bound_independent_6783003_182.json",
+    "sha256": "0eb87366f5fa0e8bc0d1a29c62582e73228b3acaeadb07748e593104e2a0d4ad"
+  },
+  "independent_source_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_controller_source_independent_6783003_179.json",
+    "sha256": "ac8d4f0e4ac4655a67e3a1c4cc9de6a366e314509743e14c1cf1eebb9cef0020"
+  },
+  "kind": "direct_qualification_controller_root_independent_review",
+  "launch_approved": true,
+  "only_approved_card_one": true,
+  "packet_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/packet_metadata_freeze.json",
+    "sha256": "1bf67f5b9b8031053cb7161f7b141bf9705ac826a5460c6889722aa8d6b74542"
+  },
+  "passed": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "503d308d2401ab713e0cf50dd3665b2e001ef5f07305fd76053f0439b6938060"
+  },
+  "producer_owns_gpu_standing_descriptor": true,
+  "publication_and_reviewed_transport_required_before_actual_launch": true,
+  "review_scope": "Actual one-copy correctness controller inputs and unchanged process lifecycle; no two-copy launch approval.",
+  "schema_version": 1,
+  "scientific_credit": 0
+}

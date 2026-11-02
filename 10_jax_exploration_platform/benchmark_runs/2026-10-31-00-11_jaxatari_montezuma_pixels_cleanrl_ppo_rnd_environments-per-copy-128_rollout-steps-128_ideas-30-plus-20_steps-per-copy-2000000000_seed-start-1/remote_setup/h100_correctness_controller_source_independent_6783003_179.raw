@@ -1,0 +1,73 @@
+test_any_previous_intent_prevents_another_popen (direct_controller_regression.ControllerTests) ... ok
+test_changed_observed_child_argv_never_publishes_launch (direct_controller_regression.ControllerTests) ... ok
+test_exact_safe_environment_removes_slurm_cache_and_python_injection (direct_controller_regression.ControllerTests) ... ok
+test_frozen_source_order_proves_guard_before_numerical_compute_and_producer_lock_scope (direct_controller_regression.ControllerTests) ... ok
+test_incomplete_actual_child_identity_still_gets_true_wait_without_terminal (direct_controller_regression.ControllerTests) ... ok
+test_late_launch_collision_preserves_existing_bytes_and_no_terminal (direct_controller_regression.ControllerTests) ... ok
+test_missing_launch_record_is_rejected_before_synthetic_compute_marker (direct_controller_regression.ControllerTests) ... ok
+test_nonzero_ordinary_child_exit_retains_wait_and_never_terminal_success (direct_controller_regression.ControllerTests) ... ok
+test_observed_cpu_selection_has_no_guessed_or_boolean_indices (direct_controller_regression.ControllerTests) ... ok
+test_ordinary_reader_rejects_symlink_and_fifo_before_opening_for_read (direct_controller_regression.ControllerTests) ... ok
+test_output_hashing_streams_a_log_larger_than_metadata_bound (direct_controller_regression.ControllerTests) ... ok
+test_own_timeout_signals_only_observed_child_and_retains_signal_exit (direct_controller_regression.ControllerTests) ... ok
+test_partial_launch_prepared_file_prevents_any_spawn (direct_controller_regression.ControllerTests) ... ok
+test_popen_failure_keeps_attempt_failure_and_restores_affinity (direct_controller_regression.ControllerTests) ... ok
+test_prepublication_metadata_launch_refuses_without_any_popen (direct_controller_regression.ControllerTests) ... ok
+test_publication_freeze_must_include_the_running_controller_and_test (direct_controller_regression.ControllerTests) ... ok
+test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard (direct_controller_regression.ControllerTests) ... ok
+test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader (direct_controller_regression.ControllerTests) ... ok
+test_timeout_with_handler_returning_zero_keeps_true_zero_and_refuses_terminal_success (direct_controller_regression.ControllerTests) ... ok
+test_unbound_default_refuses_missing_binding_before_any_command (direct_controller_regression.ControllerTests) ... ok
+test_boolean_operation_count_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_boolean_wait_schema_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_assets_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_helper_root_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_numerical_source_root_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_python_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_runtime_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_changed_saved_record_after_binding (direct_controller_regression.SerialPredecessorTests) ... ok
+test_controller_still_present (direct_controller_regression.SerialPredecessorTests) ... ok
+test_duplicate_role_and_missing_child (direct_controller_regression.SerialPredecessorTests) ... ok
+test_exact_private_saved_normal_wait_and_both_exits (direct_controller_regression.SerialPredecessorTests) ... ok
+test_failed_controller_outcome (direct_controller_regression.SerialPredecessorTests) ... ok
+test_foreign_observer_uid (direct_controller_regression.SerialPredecessorTests) ... ok
+test_intervened_wait_cannot_pass (direct_controller_regression.SerialPredecessorTests) ... ok
+test_observation_before_normal_wait (direct_controller_regression.SerialPredecessorTests) ... ok
+test_original_qualification_still_requires_completed (direct_controller_regression.SerialPredecessorTests) ... ok
+test_other_predecessor_unit (direct_controller_regression.SerialPredecessorTests) ... ok
+test_result_wrong_process (direct_controller_regression.SerialPredecessorTests) ... ok
+test_second_copy_refuses_result_configuration_substitution (direct_controller_regression.SerialPredecessorTests) ... ok
+test_second_copy_refuses_wrong_actual_measurement_mode (direct_controller_regression.SerialPredecessorTests) ... ok
+test_second_unit_refuses_different_first_copy_seed (direct_controller_regression.SerialPredecessorTests) ... ok
+test_second_unit_requires_actual_successful_first_copy_and_exact_exit (direct_controller_regression.SerialPredecessorTests) ... ok
+test_serial_proof_substitution (direct_controller_regression.SerialPredecessorTests) ... ok
+test_timeout_with_success_exit_refuses (direct_controller_regression.SerialPredecessorTests) ... ok
+test_wrong_controller_birth (direct_controller_regression.SerialPredecessorTests) ... ok
+test_wrong_numerical_birth_coherently_rehashed (direct_controller_regression.SerialPredecessorTests) ... ok
+test_boolean_freeze_schema_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_changed_required_bytes_refuse (direct_controller_regression.MetadataClosureTests) ... ok
+test_dangling_prior_temporary_refuses_before_any_new_intent (direct_controller_regression.MetadataClosureTests) ... ok
+test_exact_fixed_records_all_archives_history_and_twenty_six_helpers (direct_controller_regression.MetadataClosureTests) ... ok
+test_existing_prior_binding_refuses_before_any_new_intent (direct_controller_regression.MetadataClosureTests) ... ok
+test_extra_unreviewed_path_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_fresh_binding_paths_create_no_intent_in_metadata_check (direct_controller_regression.MetadataClosureTests) ... ok
+test_missing_actual_software_record_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_missing_archived_progress_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_missing_history_manifest_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_missing_staged_helper_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+test_wrong_freeze_kind_refuses (direct_controller_regression.MetadataClosureTests) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 4.126s
+
+OK
+{"passed": true, "receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_metadata_tests/author_6783003_179.json", "sha256": "c012e37d9faa6ff4712168fa2834bc285978b6cc8ff2d258106d517b0015355d", "step_id": "179", "tests_run": 58}
+test_actual_predecessor_small_metadata_chain_passes (__main__.AdditionalIndependentChecks) ... ok
+test_actual_preparation_and_software_refs_agree_without_recomputation (__main__.AdditionalIndependentChecks) ... ok
+test_genuine_current_plan_uses_only_qualified_source_and_two_environment_changes (__main__.AdditionalIndependentChecks) ... ok
+test_new_binding_factory_refuses_all_dangling_temporaries_before_intent (__main__.AdditionalIndependentChecks) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.873s
+
+OK

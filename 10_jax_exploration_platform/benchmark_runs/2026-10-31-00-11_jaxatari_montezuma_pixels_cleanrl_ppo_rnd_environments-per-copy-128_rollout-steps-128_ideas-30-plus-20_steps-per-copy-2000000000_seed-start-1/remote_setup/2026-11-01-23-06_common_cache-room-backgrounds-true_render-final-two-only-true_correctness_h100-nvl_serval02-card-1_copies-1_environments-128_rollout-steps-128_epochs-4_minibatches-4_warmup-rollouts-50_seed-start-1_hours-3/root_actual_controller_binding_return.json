@@ -1,0 +1,32 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "--time=00:20:00",
+    "flock",
+    "-x",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/cpu_monitor_large_artifact_read.lock",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/bind_controller_after_preparation.py",
+    "--exit-observation",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/root_prior_process_exit_observation_2026-11-02-07-12.json"
+  ],
+  "started_at_utc": "2026-11-02T07:52:37.938834+00:00",
+  "finished_at_utc": "2026-11-02T07:52:39.953297+00:00",
+  "returncode": 0,
+  "independent_source_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_controller_source_independent_6783003_179.json",
+    "sha256": "ac8d4f0e4ac4655a67e3a1c4cc9de6a366e314509743e14c1cf1eebb9cef0020"
+  },
+  "host_contact": false,
+  "gpu_operations": 0,
+  "automatic_retry_permitted": false
+}
