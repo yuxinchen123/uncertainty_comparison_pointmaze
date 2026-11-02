@@ -1,0 +1,26 @@
+{
+  "kind": "serval02_card1_current_launch",
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+    "sha256": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+  },
+  "process_ledger": {
+    "snapshot": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_current_process_ledger_snapshot.json",
+      "sha256": "819f57bc2e7b3d88b69f2fdecaee7d8de07af4a40db957735e96c08424974b6e"
+    },
+    "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.json"
+  },
+  "process_row": {
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "helper_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+    "hostname": "serval02",
+    "kind": "selected_configuration_measurement",
+    "pid": 1321350,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "start_time": "54683794",
+    "unit": "2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830"
+  },
+  "schema_version": 1
+}

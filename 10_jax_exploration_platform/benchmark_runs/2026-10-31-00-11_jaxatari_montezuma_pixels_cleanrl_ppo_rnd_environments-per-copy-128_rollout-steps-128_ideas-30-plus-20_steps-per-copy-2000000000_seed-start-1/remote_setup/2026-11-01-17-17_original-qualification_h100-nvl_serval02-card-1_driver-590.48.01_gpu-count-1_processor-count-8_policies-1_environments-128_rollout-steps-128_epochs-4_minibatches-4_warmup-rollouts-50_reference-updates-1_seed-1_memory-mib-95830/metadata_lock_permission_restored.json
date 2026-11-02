@@ -1,0 +1,37 @@
+{
+  "actual_process_row": {
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "helper_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+    "hostname": "serval02",
+    "kind": "selected_configuration_measurement",
+    "pid": 1321350,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "start_time": "54683794",
+    "unit": "2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830"
+  },
+  "at_utc": "2026-11-02T02:25:36.156856+00:00",
+  "current_launch_sha256": "e06151ba161aaad24f46bae0af97707ec858361e52e1d642b7b4b51ce987deed",
+  "exact_live_ledger_and_immutable_snapshot_contain_row": true,
+  "kind": "campaign_metadata_permissions_restored_after_actual_durable_registration",
+  "locks": [
+    {
+      "device": 76,
+      "inode": 4329110,
+      "mode_restored": "0660",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/metadata.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 2618919
+    },
+    {
+      "device": 76,
+      "inode": 4304699,
+      "mode_restored": "0660",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 2618919
+    }
+  ],
+  "spawn_sha256": "526793c57302353a25f6dcdf42c81db47250f6d4819d7637f805542dac214f1d",
+  "standing_gpu_lock_affected": false
+}
